@@ -71,35 +71,30 @@ static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     }
 }
 
-PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, IncludedProperties includedProperties, Direction direction)
+PropertyCascade::PropertyCascade(const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, IncludedProperties includedProperties, Direction direction)
     : m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
-    , m_maximumCascadeLevel(maximumCascadeLevel)
     , m_direction(direction)
 {
-    buildCascade();
+    buildCascade(cascadeLevels);
 }
 
-PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel maximumCascadeLevel, CascadeLayerPriority maximumCascadeLayerPriority)
+PropertyCascade::PropertyCascade(const PropertyCascade& parent, OptionSet<CascadeLevel> cascadeLevels)
     : m_matchResult(parent.m_matchResult)
     , m_includedProperties(parent.m_includedProperties)
-    , m_maximumCascadeLevel(maximumCascadeLevel)
-    , m_maximumCascadeLayerPriority(maximumCascadeLayerPriority)
     , m_direction(parent.direction())
     , m_directionIsUnresolved(false)
 {
-    buildCascade();
+    buildCascade(cascadeLevels);
 }
 
 PropertyCascade::~PropertyCascade() = default;
 
-void PropertyCascade::buildCascade()
+void PropertyCascade::buildCascade(OptionSet<CascadeLevel> cascadeLevels)
 {
     OptionSet<CascadeLevel> cascadeLevelsWithImportant;
 
-    for (auto cascadeLevel : { CascadeLevel::UserAgent, CascadeLevel::User, CascadeLevel::Author }) {
-        if (cascadeLevel > m_maximumCascadeLevel)
-            break;
+    for (auto cascadeLevel : cascadeLevels) {
         bool hasImportant = addNormalMatches(cascadeLevel);
         if (hasImportant)
             cascadeLevelsWithImportant.add(cascadeLevel);
@@ -118,8 +113,6 @@ void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, 
     property.id = id;
     property.level = cascadeLevel;
     property.styleScopeOrdinal = matchedProperties.styleScopeOrdinal;
-    property.cascadeLayerPriority = matchedProperties.cascadeLayerPriority;
-
     if (matchedProperties.linkMatchType == SelectorChecker::MatchAll) {
         property.cssValue[0] = &cssValue;
         property.cssValue[SelectorChecker::MatchLink] = &cssValue;
@@ -177,9 +170,6 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
 
 bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
 {
-    if (matchedProperties.cascadeLayerPriority > m_maximumCascadeLayerPriority && cascadeLevel == m_maximumCascadeLevel && matchedProperties.styleScopeOrdinal == ScopeOrdinal::Element)
-        return false;
-
     auto& styleProperties = *matchedProperties.properties;
     auto propertyAllowlist = matchedProperties.allowlistType;
     bool hasImportantProperties = false;
@@ -247,14 +237,12 @@ static bool hasImportantProperties(const StyleProperties& properties)
 
 void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
 {
-    struct ImportantMatch {
+    struct IndexAndOrdinal {
         unsigned index;
         ScopeOrdinal ordinal;
-        CascadeLayerPriority layerPriority;
-        FromStyleAttribute fromStyleAttribute;
     };
-    Vector<ImportantMatch> importantMatches;
-    bool hasMatchesFromOtherScopesOrLayers = false;
+    Vector<IndexAndOrdinal> importantMatches;
+    bool hasMatchesFromOtherScopes = false;
 
     auto& matchedDeclarations = declarationsForCascadeLevel(m_matchResult, cascadeLevel);
 
@@ -264,30 +252,49 @@ void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
         if (!hasImportantProperties(*matchedProperties.properties))
             continue;
 
-        importantMatches.append({ i, matchedProperties.styleScopeOrdinal, matchedProperties.cascadeLayerPriority, matchedProperties.fromStyleAttribute });
+        importantMatches.append({ i, matchedProperties.styleScopeOrdinal });
 
-        if (matchedProperties.styleScopeOrdinal != ScopeOrdinal::Element || matchedProperties.cascadeLayerPriority != RuleSet::cascadeLayerPriorityForUnlayered)
-            hasMatchesFromOtherScopesOrLayers = true;
+        if (matchedProperties.styleScopeOrdinal != ScopeOrdinal::Element)
+            hasMatchesFromOtherScopes = true;
     }
 
     if (importantMatches.isEmpty())
         return;
 
-    if (hasMatchesFromOtherScopesOrLayers) {
+    if (hasMatchesFromOtherScopes) {
+        // For !important properties a later shadow tree wins.
         // Match results are sorted in reverse tree context order so this is not needed for normal properties.
-        std::stable_sort(importantMatches.begin(), importantMatches.end(), [] (auto& a, auto& b) {
-            // For !important properties a later shadow tree wins.
-            if (a.ordinal != b.ordinal)
-                return a.ordinal < b.ordinal;
-            // Lower priority layer wins, except if style attribute is involved.
-            if (a.fromStyleAttribute != b.fromStyleAttribute)
-                return a.fromStyleAttribute == FromStyleAttribute::No;
-            return a.layerPriority > b.layerPriority;
+        std::stable_sort(importantMatches.begin(), importantMatches.end(), [] (const IndexAndOrdinal& a, const IndexAndOrdinal& b) {
+            return a.ordinal < b.ordinal;
         });
     }
 
     for (auto& match : importantMatches)
         addMatch(matchedDeclarations[match.index], cascadeLevel, true);
+}
+
+const PropertyCascade* PropertyCascade::propertyCascadeForRollback(CascadeLevel cascadeLevel) const
+{
+    switch (cascadeLevel) {
+    case CascadeLevel::Author:
+        if (!m_authorRollbackCascade) {
+            auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent, CascadeLevel::User };
+            m_authorRollbackCascade = makeUnique<const PropertyCascade>(*this, cascadeLevels);
+        }
+        return m_authorRollbackCascade.get();
+
+    case CascadeLevel::User:
+        if (!m_userRollbackCascade) {
+            auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent };
+            m_userRollbackCascade = makeUnique<const PropertyCascade>(*this, cascadeLevels);
+        }
+        return m_userRollbackCascade.get();
+
+    case CascadeLevel::UserAgent:
+        return nullptr;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 PropertyCascade::Direction PropertyCascade::resolveDirectionAndWritingMode(Direction inheritedDirection) const

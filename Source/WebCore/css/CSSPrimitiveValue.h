@@ -120,7 +120,6 @@ public:
     bool isInheritValue() const { return valueID() == CSSValueInherit; }
     bool isUnsetValue() const { return valueID() == CSSValueUnset; }
     bool isRevertValue() const { return valueID() == CSSValueRevert; }
-    bool isRevertLayerValue() const { return valueID() == CSSValueRevertLayer; }
     bool isCSSWideKeyword() const;
 
     static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }

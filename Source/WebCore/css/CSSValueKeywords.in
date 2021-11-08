@@ -5,7 +5,6 @@ inherit
 initial
 unset
 revert
-revert-layer
 
 //
 // CSS_PROP_OUTLINE_STYLE

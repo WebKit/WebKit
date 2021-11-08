@@ -1,3 +1,16 @@
+2021-11-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r285408.
+        https://bugs.webkit.org/show_bug.cgi?id=232829
+
+        Depending on r285392, which caused 4% Speedometer2 regression
+
+        Reverted changeset:
+
+        "[CSS Cascade Layers] Support 'revert-layer' value"
+        https://bugs.webkit.org/show_bug.cgi?id=232236
+        https://commits.webkit.org/r285408
+
 2021-11-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r284883.

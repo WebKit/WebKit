@@ -66,15 +66,11 @@ struct MatchedRule {
     unsigned cascadeLayerPriority;
 };
 
-enum class FromStyleAttribute : bool { No, Yes };
-
 struct MatchedProperties {
     RefPtr<const StyleProperties> properties;
     uint16_t linkMatchType { SelectorChecker::MatchAll };
     PropertyAllowlist allowlistType { PropertyAllowlist::None };
     ScopeOrdinal styleScopeOrdinal { ScopeOrdinal::Element };
-    CascadeLayerPriority cascadeLayerPriority { RuleSet::cascadeLayerPriorityForUnlayered };
-    FromStyleAttribute fromStyleAttribute { FromStyleAttribute::No };
 };
 
 struct MatchResult {
@@ -125,7 +121,7 @@ public:
     bool didMatchUncommonAttributeSelector() const { return m_didMatchUncommonAttributeSelector; }
 
 private:
-    void addElementStyleProperties(const StyleProperties*, bool isCacheable = true, FromStyleAttribute = FromStyleAttribute::No);
+    void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
     void matchUARules(const RuleSet&);
 

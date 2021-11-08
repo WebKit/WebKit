@@ -510,11 +510,6 @@ bool CSSValue::isRevertValue() const
     return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isRevertValue();
 }
 
-bool CSSValue::isRevertLayerValue() const
-{
-    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isRevertLayerValue();
-}
-
 bool CSSValue::isCSSWideKeyword() const
 {
     return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isCSSWideKeyword();
