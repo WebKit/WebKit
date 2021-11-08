@@ -1,3 +1,12 @@
+2021-11-08  Saam Barati  <sbarati@apple.com>
+
+        We need to PreferNumber when calling toPrimitive for negate
+        https://bugs.webkit.org/show_bug.cgi?id=232679
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/negate-prefer-number-to-primitive.js
+
 2021-11-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r284635. rdar://problem/85039977

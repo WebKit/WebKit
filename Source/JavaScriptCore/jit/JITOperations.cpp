@@ -3411,7 +3411,7 @@ JSC_DEFINE_JIT_OPERATION(operationArithNegateProfiled, EncodedJSValue, (JSGlobal
     JSValue operand = JSValue::decode(encodedOperand);
     arithProfile->observeArg(operand);
 
-    JSValue primValue = operand.toPrimitive(globalObject);
+    JSValue primValue = operand.toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
 #if USE(BIGINT32)
@@ -3455,7 +3455,7 @@ JSC_DEFINE_JIT_OPERATION(operationArithNegateProfiledOptimize, EncodedJSValue, (
     callFrame->codeBlock()->dumpMathICStats();
 #endif
     
-    JSValue primValue = operand.toPrimitive(globalObject);
+    JSValue primValue = operand.toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
 #if USE(BIGINT32)
@@ -3498,7 +3498,7 @@ JSC_DEFINE_JIT_OPERATION(operationArithNegateOptimize, EncodedJSValue, (JSGlobal
     callFrame->codeBlock()->dumpMathICStats();
 #endif
 
-    JSValue primValue = operand.toPrimitive(globalObject);
+    JSValue primValue = operand.toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
 #if USE(BIGINT32)
