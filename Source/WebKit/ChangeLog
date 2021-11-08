@@ -1,3 +1,17 @@
+2021-11-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Add additional mach message filter 
+        https://bugs.webkit.org/show_bug.cgi?id=232819
+        <rdar://84827214>
+
+        Reviewed by Per Arne Vollan.
+
+        Add support for an additional mach message trap endpoint when available. I also
+        adjusted some whitespace to make the rules easier for me to follow.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-11-08  Per Arne Vollan <pvollan@apple.com>
 
         [macOS][GPUP] Remove access in sandbox to com.apple.audio.AudioComponentRegistrar

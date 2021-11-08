@@ -1528,6 +1528,11 @@
         (machtrap-number MSC_task_name_for_pid)
         (machtrap-number MSC_task_self_trap)
         (machtrap-number MSC_thread_get_special_reply_port))
+    (when (defined? 'MSC_mach_msg2_trap)
+        (allow syscall-mach
+            (machtrap-number MSC_mach_msg2_trap)
+        )
+    )
 
     (allow syscall-mach (with telemetry-backtrace)
         (machtrap-number MSC_mach_msg_overwrite_trap)
