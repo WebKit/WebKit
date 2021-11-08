@@ -1,3 +1,26 @@
+2021-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enabling "media source inline painting" by default should work when using GPU Process for media
+        https://bugs.webkit.org/show_bug.cgi?id=232802
+
+        Reviewed by Eric Carlson.
+
+        Propagate the bit for `MediaSourceInlinePaintingEnabled` over to the GPU process when updating preferences in
+        GPUProcessProxy.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::setMediaSourceInlinePaintingEnabled):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::updatePreferences):
+
+        Also, add a couple of FIXMEs here. Note that due to the latter FIXME, this change *still* doesn't allow us to
+        turn on media source inline painting when using GPU process for media by simply toggling the feature in user
+        defaults or through UI. This is because preferences on WebPageGroups are not modified when changing experimental
+        feature user defaults, so logic that iterates through all page groups and looks at preferences will still only
+        get the default value of each feature flag (as defined in the yaml file).
+
 2021-11-08  Kate Cheney  <katherine_cheney@apple.com>
 
         trustd network connections occasionally omitted from App Privacy report

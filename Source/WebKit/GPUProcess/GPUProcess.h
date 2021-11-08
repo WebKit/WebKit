@@ -171,6 +171,10 @@ private:
     void setVorbisDecoderEnabled(bool);
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    void setMediaSourceInlinePaintingEnabled(bool);
+#endif
+
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
     void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
@@ -228,6 +232,9 @@ private:
 #endif
 #if ENABLE(VORBIS)
     bool m_vorbisEnabled { false };
+#endif
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
     String m_applicationVisibleName;
 };

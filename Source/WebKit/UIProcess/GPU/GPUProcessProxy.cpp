@@ -602,6 +602,20 @@ void GPUProcessProxy::updatePreferences()
     bool hasEnabledVorbis = false;
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    bool hasEnabledMediaSourceInlinePainting = false;
+#endif
+
+    // FIXME: We should consider consolidating these into a single struct and propagating it to the GPU process as a single IPC message,
+    // instead of sending one message for each preference.
+    //
+    // FIXME: Additionally, it seems wrong to consult preferences on WebPageGroup rather than WebPreferences corresponding to each page.
+    // This effectively means that each of the below preferences will always be set to the default value and cannot be toggled through the
+    // develop menu or user defaults, since the defaults for each group are prefixed with a unique identifier.
+    //
+    // Since each of these features apply to the entire GPU process at once (i.e. they affect all web pages using the GPU process), we
+    // could instead refactor this so that we iterate through all web pages' preferences when initializing the GPU process for the first
+    // time, and then update these flags when creating new web pages.
     WebPageGroup::forEach([&] (auto& group) mutable {
         if (!group.preferences().useGPUProcessForMediaEnabled())
             return;
@@ -625,6 +639,11 @@ void GPUProcessProxy::updatePreferences()
         if (group.preferences().webMParserEnabled())
             hasEnabledWebMParser = true;
 #endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+        if (group.preferences().mediaSourceInlinePaintingEnabled())
+            hasEnabledMediaSourceInlinePainting = true;
+#endif
     });
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
@@ -641,6 +660,10 @@ void GPUProcessProxy::updatePreferences()
 
 #if ENABLE(VORBIS)
     send(Messages::GPUProcess::SetVorbisDecoderEnabled(hasEnabledVorbis), 0);
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    send(Messages::GPUProcess::SetMediaSourceInlinePaintingEnabled(hasEnabledMediaSourceInlinePainting), 0);
 #endif
 
 #if PLATFORM(MAC)

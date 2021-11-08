@@ -497,6 +497,16 @@ void GPUProcess::setVorbisDecoderEnabled(bool enabled)
 }
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+void GPUProcess::setMediaSourceInlinePaintingEnabled(bool enabled)
+{
+    if (m_mediaSourceInlinePaintingEnabled == enabled)
+        return;
+    m_mediaSourceInlinePaintingEnabled = enabled;
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setMediaSourceInlinePaintingEnabled(m_mediaSourceInlinePaintingEnabled);
+}
+#endif
+
 void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());

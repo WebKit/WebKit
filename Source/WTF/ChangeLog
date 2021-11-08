@@ -1,3 +1,20 @@
+2021-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enabling "media source inline painting" by default should work when using GPU Process for media
+        https://bugs.webkit.org/show_bug.cgi?id=232802
+
+        Reviewed by Eric Carlson.
+
+        Clean up this experimental feature -- since it's backed by a global RuntimeEnabledFeature, we should:
+        1. Add `webcoreBinding: RuntimeEnabledFeatures`, and also:
+        2. Not be adding the corresponding page-scoped WebCore setting as well.
+
+        This adjustment makes it possible to enable this experimental feature when the GPU process is disabled, since
+        we now actually call into RuntimeEnabledFeatures to set the value (instead of just setting the WebCore setting
+        which wasn't consulted by anything).
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Enable libpas on macOS
