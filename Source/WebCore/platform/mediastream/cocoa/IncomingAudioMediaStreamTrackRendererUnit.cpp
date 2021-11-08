@@ -154,10 +154,10 @@ void IncomingAudioMediaStreamTrackRendererUnit::postTask(Function<void()>&& call
     });
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::newAudioChunkPushed()
+void IncomingAudioMediaStreamTrackRendererUnit::newAudioChunkPushed(uint64_t currentAudioSampleCount)
 {
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    postTask([this, currentAudioSampleCount = m_audioModule.currentAudioSampleCount()] {
+    postTask([this, currentAudioSampleCount] {
         renderAudioChunk(currentAudioSampleCount);
     });
 }

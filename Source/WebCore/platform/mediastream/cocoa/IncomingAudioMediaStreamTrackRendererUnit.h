@@ -58,7 +58,7 @@ public:
     explicit IncomingAudioMediaStreamTrackRendererUnit(LibWebRTCAudioModule&);
     ~IncomingAudioMediaStreamTrackRendererUnit();
 
-    void newAudioChunkPushed();
+    void newAudioChunkPushed(uint64_t);
 
 private:
     void start();

@@ -142,7 +142,7 @@ void LibWebRTCAudioModule::pollFromSource()
         m_audioTransport->PullRenderData(LibWebRTCAudioFormat::sampleByteSize * 8, LibWebRTCAudioFormat::sampleRate, channels, LibWebRTCAudioFormat::chunkSampleCount, data, &elapsedTime, &ntpTime);
 #if PLATFORM(COCOA)
         if (m_isRenderingIncomingAudio)
-            m_incomingAudioMediaStreamTrackRendererUnit->newAudioChunkPushed();
+            m_incomingAudioMediaStreamTrackRendererUnit->newAudioChunkPushed(m_currentAudioSampleCount);
         m_currentAudioSampleCount += LibWebRTCAudioFormat::chunkSampleCount;
 #endif
     }
