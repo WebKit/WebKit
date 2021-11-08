@@ -1,3 +1,16 @@
+2021-11-08  Antoine Quint  <graouts@webkit.org>
+
+        Discrete animation of content property does not work
+        https://bugs.webkit.org/show_bug.cgi?id=183544
+        <rdar://problem/38360395>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test to check that we can animate the "content" property using a discrete animation.
+
+        * web-platform-tests/css/css-content/content-animation-expected.txt: Added.
+        * web-platform-tests/css/css-content/content-animation.html: Added.
+
 2021-11-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r285408.
