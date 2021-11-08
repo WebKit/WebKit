@@ -321,7 +321,7 @@ static EventSenderProxy::WheelEventPhase eventPhaseFromString(NSString *phaseStr
 {
     if ([phaseStr isEqualToString:@"began"])
         return EventSenderProxy::WheelEventPhase::Began;
-    if ([phaseStr isEqualToString:@"changed"])
+    if ([phaseStr isEqualToString:@"changed"] || [phaseStr isEqualToString:@"continue"]) // Allow "continue" for ease of conversion from mouseScrollByWithWheelAndMomentumPhases values.
         return EventSenderProxy::WheelEventPhase::Changed;
     if ([phaseStr isEqualToString:@"ended"])
         return EventSenderProxy::WheelEventPhase::Ended;
@@ -381,8 +381,13 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
             if (id phaseString = event[PhaseKey])
                 phase = eventPhaseFromString(phaseString);
 
-            if (id phaseString = event[MomentumPhaseKey])
+            if (id phaseString = event[MomentumPhaseKey]) {
                 momentumPhase = eventPhaseFromString(phaseString);
+                if (momentumPhase == EventSenderProxy::WheelEventPhase::Cancelled || momentumPhase == EventSenderProxy::WheelEventPhase::MayBegin) {
+                    WTFLogAlways("Invalid value %@ for momentumPhase", phaseString);
+                    break;
+                }
+            }
 
             ASSERT_IMPLIES(phase == EventSenderProxy::WheelEventPhase::None, momentumPhase != EventSenderProxy::WheelEventPhase::None);
             ASSERT_IMPLIES(momentumPhase == EventSenderProxy::WheelEventPhase::None, phase != EventSenderProxy::WheelEventPhase::None);

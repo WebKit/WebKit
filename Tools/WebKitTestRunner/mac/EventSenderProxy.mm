@@ -753,28 +753,7 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     }
 }
 
-
-static CGScrollPhase cgScrollPhaseFromPhase(EventSenderProxy::WheelEventPhase phase)
-{
-    switch (phase) {
-    case EventSenderProxy::WheelEventPhase::None:
-        return static_cast<CGScrollPhase>(0);
-    case EventSenderProxy::WheelEventPhase::Began:
-        return kCGScrollPhaseBegan;
-    case EventSenderProxy::WheelEventPhase::Changed:
-        return kCGScrollPhaseChanged;
-    case EventSenderProxy::WheelEventPhase::Ended:
-        return kCGScrollPhaseEnded;
-    case EventSenderProxy::WheelEventPhase::Cancelled:
-        return kCGScrollPhaseCancelled;
-    case EventSenderProxy::WheelEventPhase::MayBegin:
-        return kCGScrollPhaseMayBegin;
-    }
-    ASSERT_NOT_REACHED();
-    return static_cast<CGScrollPhase>(0);
-}
-
-static CGGesturePhase cgGesturePhaseFromString(EventSenderProxy::WheelEventPhase phase)
+static CGGesturePhase cgScrollPhaseFromPhase(EventSenderProxy::WheelEventPhase phase)
 {
     switch (phase) {
     case EventSenderProxy::WheelEventPhase::None:
@@ -790,9 +769,28 @@ static CGGesturePhase cgGesturePhaseFromString(EventSenderProxy::WheelEventPhase
     case EventSenderProxy::WheelEventPhase::MayBegin:
         return kCGGesturePhaseMayBegin;
     }
-
     ASSERT_NOT_REACHED();
     return kCGGesturePhaseNone;
+}
+
+static CGMomentumScrollPhase cgMomentumPhaseFromPhase(EventSenderProxy::WheelEventPhase phase)
+{
+    switch (phase) {
+    case EventSenderProxy::WheelEventPhase::None:
+        return kCGMomentumScrollPhaseNone;
+    case EventSenderProxy::WheelEventPhase::Began:
+        return kCGMomentumScrollPhaseBegin;
+    case EventSenderProxy::WheelEventPhase::Changed:
+        return kCGMomentumScrollPhaseContinue;
+    case EventSenderProxy::WheelEventPhase::Ended:
+        return kCGMomentumScrollPhaseEnd;
+    case EventSenderProxy::WheelEventPhase::Cancelled:
+    case EventSenderProxy::WheelEventPhase::MayBegin:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kCGMomentumScrollPhaseNone;
 }
 
 void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, double windowY, double deltaX, double deltaY, WheelEventPhase phase, WheelEventPhase momentumPhase)
@@ -809,7 +807,7 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
 
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, cgScrollPhaseFromPhase(phase));
-    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, cgGesturePhaseFromString(momentumPhase));
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, cgMomentumPhaseFromPhase(momentumPhase));
 
     NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
     // Our event should have the correct settings:

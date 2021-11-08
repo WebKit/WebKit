@@ -1,3 +1,27 @@
+2021-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the CGEvent types used for wheel event generation from streams
+        https://bugs.webkit.org/show_bug.cgi?id=232805
+
+        Reviewed by Sam Weinig.
+
+        The set of enum values for wheel event types are confusing, and I used the wrong ones in
+        r285390, so fix that. Values are all the same other than kCGMomentumScrollPhaseEnd which is
+        now correct.
+
+        Also relax parsing of event steam JSON to allow "continue" for momentumPhase; this is the
+        name of the CG-level enum, but AppKit calls this "changed". This will ease conversion from
+        eventSender in tests.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::cgScrollPhaseFromPhase):
+        (WTR::cgMomentumPhaseFromPhase):
+        (WTR::EventSenderProxy::sendWheelEvent):
+        (WTR::cgGesturePhaseFromString): Deleted.
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::eventPhaseFromString):
+        (WTR::UIScriptControllerMac::sendEventStream):
+
 2021-11-08  Andres Gonzalez  <andresg_22@apple.com>
 
         WTR::AccessibilityController::focusedElement() cannot get the focused object via WKAccessibilityFocusedObject in isolated tree mode.
