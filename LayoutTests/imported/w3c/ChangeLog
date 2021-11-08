@@ -1,3 +1,84 @@
+2021-11-08  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Add support for composite operations for software animations
+        https://bugs.webkit.org/show_bug.cgi?id=230404
+        <rdar://problem/83495091>
+
+        Reviewed by Dean Jackson.
+
+        Mark 1546 new PASS results among tests for composite operations. There are technically 10
+        new FAIL results for a few transform-related tests, but these were only passing because the
+        entire feature of composite operations was missing and will be fixed before this feature
+        is enabled.
+
+        * web-platform-tests/css/css-align/animation/column-gap-composition-expected.txt:
+        * web-platform-tests/css/css-align/animation/row-gap-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-bottom-left-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-bottom-right-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-top-left-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-top-right-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-bottom-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-left-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-right-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-top-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-bottom-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-left-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-right-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-top-composition-expected.txt:
+        * web-platform-tests/css/css-color/animation/color-composition-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-composition-expected.txt:
+        * web-platform-tests/css/css-masking/animations/clip-path-composition-expected.txt:
+        * web-platform-tests/css/css-masking/animations/clip-path-interpolation-002-expected.txt:
+        * web-platform-tests/css/css-masking/clip-path/interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/bottom-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/left-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/right-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/top-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/basic-shape-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/aspect-ratio-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/width-composition-expected.txt:
+        * web-platform-tests/css/css-text/animations/letter-spacing-composition-expected.txt:
+        * web-platform-tests/css/css-text/animations/text-indent-composition-expected.txt:
+        * web-platform-tests/css/css-text/animations/word-spacing-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/perspective-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-rotate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-scale-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-skew-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-translate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/KeyframeEffect-setKeyframes.tentative-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-composition-expected.txt:
+        * web-platform-tests/css/css-ui/animation/caret-color-composition-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-offset-composition-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-width-composition-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-anchor-composition-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-distance-composition-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-position-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/combining-effects/effect-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-filling-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-replaced-animations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+
 2021-11-07  Cameron McCormack  <heycam@apple.com>
 
         Restore canvas WPTs removed in bug 232449

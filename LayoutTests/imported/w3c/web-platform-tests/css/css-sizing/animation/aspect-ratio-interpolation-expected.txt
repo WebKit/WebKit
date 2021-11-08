@@ -187,6 +187,6 @@ PASS Web Animations: property <aspect-ratio> from [1 / 1] to [0 / 1] at (0.6) sh
 PASS Web Animations: property <aspect-ratio> from [1 / 1] to [0 / 1] at (1) should be [0 / 1]
 PASS Web Animations: property <aspect-ratio> from [1 / 1] to [0 / 1] at (1.5) should be [0 / 1]
 PASS Compositing: property <aspect-ratio> underlying [2 / 1] from replace [0.5 / 1] to add [1 / 1] at (0) should be [0.5 / 1]
-FAIL Compositing: property <aspect-ratio> underlying [2 / 1] from replace [0.5 / 1] to add [1 / 1] at (0.5) should be [1 / 1] assert_equals: expected "1 / 1 " but got "0.71 / 1 "
-FAIL Compositing: property <aspect-ratio> underlying [2 / 1] from replace [0.5 / 1] to add [1 / 1] at (1) should be [2 / 1] assert_equals: expected "2 / 1 " but got "1 / 1 "
+PASS Compositing: property <aspect-ratio> underlying [2 / 1] from replace [0.5 / 1] to add [1 / 1] at (0.5) should be [1 / 1]
+PASS Compositing: property <aspect-ratio> underlying [2 / 1] from replace [0.5 / 1] to add [1 / 1] at (1) should be [2 / 1]
 

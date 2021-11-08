@@ -3859,7 +3859,6 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/border-i
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css-border-radius-001.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/first-letter-space-not-selected.html [ ImageOnlyFailure ]
 
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-fallback-additive-keyframe.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inside-transform-1.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-041.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-042.html [ ImageOnlyFailure ]

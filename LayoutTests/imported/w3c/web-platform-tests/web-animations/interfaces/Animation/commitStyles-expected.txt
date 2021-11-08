@@ -13,8 +13,8 @@ PASS Commits transforms
 FAIL Commits transforms as a transform list assert_equals: expected "translate(20px, 20px)" but got "matrix(1, 0, 0, 1, 20, 20)"
 FAIL Commits matrix-interpolated relative transforms assert_equals: Resolved transform is correct after commit. expected "matrix(2, 0, 0, 2, 100, 0)" but got "matrix(2, 0, 0, 2, 0, 0)"
 FAIL Commits "none" transform assert_equals: Resolved transform is correct after commit. expected "none" but got "matrix(1, 0, 0, 1, 0, 0)"
-FAIL Commits the intermediate value of an animation in the middle of stack assert_approx_equals: expected 0.4 +/- 0.0001 but got 0.20000000298023224
-FAIL Commit composites on top of the underlying value assert_approx_equals: expected 0.5 +/- 0.0001 but got 0.20000000298023224
+PASS Commits the intermediate value of an animation in the middle of stack
+FAIL Commit composites on top of the underlying value assert_approx_equals: expected 0.5 +/- 0.0001 but got 1
 PASS Triggers mutation observers when updating style
 FAIL Does NOT trigger mutation observers when the change to style is redundant assert_equals: Should have no mutation records expected 0 but got 1
 PASS Throws if the target element is a pseudo element

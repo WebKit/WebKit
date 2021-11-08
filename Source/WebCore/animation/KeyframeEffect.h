@@ -193,6 +193,7 @@ private:
     void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
+    TimingFunction* timingFunctionForBlendingKeyframe(const KeyframeValue&) const;
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computedNeedsForcedLayout();
     void computeStackingContextImpact();

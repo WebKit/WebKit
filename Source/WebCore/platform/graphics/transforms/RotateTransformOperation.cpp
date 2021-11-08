@@ -59,9 +59,8 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     // angle is used or (0, 0, 1) if both angles are zero.
 
     auto normalizedVector = [](const RotateTransformOperation& op) -> FloatPoint3D {
-        FloatPoint3D vector { static_cast<float>(op.m_x), static_cast<float>(op.m_y), static_cast<float>(op.m_z) };
-        vector.normalize();
-        return vector;
+        auto length = std::hypot(op.m_x, op.m_y, op.m_z);
+        return { static_cast<float>(op.m_x / length), static_cast<float>(op.m_y / length), static_cast<float>(op.m_z / length) };
     };
 
     double fromAngle = fromOp ? fromOp->m_angle : 0.0;

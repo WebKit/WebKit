@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
+#include "CompositeOperation.h"
 #include "RenderStyleConstants.h"
 #include "StyleScopeOrdinal.h"
 #include "TimingFunction.h"
@@ -47,6 +48,7 @@ public:
     bool isPlayStateSet() const { return m_playStateSet; }
     bool isPropertySet() const { return m_propertySet; }
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
+    bool isCompositeOperationSet() const { return m_compositeOperationSet; }
 
     // Flags this to be the special "none" animation (animation-name: none)
     bool isNoneAnimation() const { return m_isNone; }
@@ -60,7 +62,7 @@ public:
         return !m_directionSet && !m_durationSet && !m_fillModeSet
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
             && !m_delaySet && !m_timingFunctionSet && !m_propertySet
-            && !m_isNone;
+            && !m_isNone && !m_compositeOperationSet;
     }
 
     bool isEmptyOrZeroDuration() const
@@ -77,6 +79,7 @@ public:
     void clearPlayState() { m_playStateSet = false; }
     void clearProperty() { m_propertySet = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; }
+    void clearCompositeOperation() { m_compositeOperationSet = false; }
 
     void clearAll()
     {
@@ -89,6 +92,7 @@ public:
         clearPlayState();
         clearProperty();
         clearTimingFunction();
+        clearCompositeOperation();
     }
 
     double delay() const { return m_delay; }
@@ -167,6 +171,9 @@ public:
     bool fillsBackwards() const { return m_fillModeSet && (fillMode() == AnimationFillMode::Backwards || fillMode() == AnimationFillMode::Both); }
     bool fillsForwards() const { return m_fillModeSet && (fillMode() == AnimationFillMode::Forwards || fillMode() == AnimationFillMode::Both); }
 
+    CompositeOperation compositeOperation() const { return static_cast<CompositeOperation>(m_compositeOperation); }
+    void setCompositeOperation(CompositeOperation op) { m_compositeOperation = static_cast<unsigned>(op); m_compositeOperationSet = true; }
+
 private:
     WEBCORE_EXPORT Animation();
     Animation(const Animation&);
@@ -188,6 +195,7 @@ private:
     unsigned m_direction : 2; // AnimationDirection
     unsigned m_fillMode : 2; // AnimationFillMode
     unsigned m_playState : 2; // AnimationPlayState
+    unsigned m_compositeOperation : 2; // CompositeOperation
 
     bool m_delaySet : 1;
     bool m_directionSet : 1;
@@ -198,6 +206,7 @@ private:
     bool m_playStateSet : 1;
     bool m_propertySet : 1;
     bool m_timingFunctionSet : 1;
+    bool m_compositeOperationSet : 1;
 
     bool m_isNone : 1;
 
@@ -209,6 +218,7 @@ public:
     static double initialIterationCount() { return 1.0; }
     static const Name& initialName();
     static AnimationPlayState initialPlayState() { return AnimationPlayState::Playing; }
+    static CompositeOperation initialCompositeOperation() { return CompositeOperation::Replace; }
     static TransitionProperty initialProperty() { return { TransitionMode::All, CSSPropertyInvalid }; }
     static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
 };

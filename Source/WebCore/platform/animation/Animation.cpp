@@ -36,6 +36,7 @@ Animation::Animation()
     , m_direction(initialDirection())
     , m_fillMode(static_cast<unsigned>(initialFillMode()))
     , m_playState(static_cast<unsigned>(initialPlayState()))
+    , m_compositeOperation(static_cast<unsigned>(initialCompositeOperation()))
     , m_delaySet(false)
     , m_directionSet(false)
     , m_durationSet(false)
@@ -45,6 +46,7 @@ Animation::Animation()
     , m_playStateSet(false)
     , m_propertySet(false)
     , m_timingFunctionSet(false)
+    , m_compositeOperationSet(false)
     , m_isNone(false)
 {
 }
@@ -61,6 +63,7 @@ Animation::Animation(const Animation& o)
     , m_direction(o.m_direction)
     , m_fillMode(o.m_fillMode)
     , m_playState(o.m_playState)
+    , m_compositeOperation(o.m_compositeOperation)
     , m_delaySet(o.m_delaySet)
     , m_directionSet(o.m_directionSet)
     , m_durationSet(o.m_durationSet)
@@ -70,6 +73,7 @@ Animation::Animation(const Animation& o)
     , m_playStateSet(o.m_playStateSet)
     , m_propertySet(o.m_propertySet)
     , m_timingFunctionSet(o.m_timingFunctionSet)
+    , m_compositeOperationSet(o.m_compositeOperationSet)
     , m_isNone(o.m_isNone)
 {
 }
@@ -86,6 +90,7 @@ Animation& Animation::operator=(const Animation& o)
     m_direction = o.m_direction;
     m_fillMode = o.m_fillMode;
     m_playState = o.m_playState;
+    m_compositeOperation = o.m_compositeOperation;
 
     m_delaySet = o.m_delaySet;
     m_directionSet = o.m_directionSet;
@@ -96,6 +101,7 @@ Animation& Animation::operator=(const Animation& o)
     m_playStateSet = o.m_playStateSet;
     m_propertySet = o.m_propertySet;
     m_timingFunctionSet = o.m_timingFunctionSet;
+    m_compositeOperationSet = o.m_compositeOperationSet;
     m_isNone = o.m_isNone;
 
     return *this;
@@ -107,6 +113,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
 {
     bool result = m_name.string == other.m_name.string
         && m_playState == other.m_playState
+        && m_compositeOperation == other.m_compositeOperation
         && m_playStateSet == other.m_playStateSet
         && m_iterationCount == other.m_iterationCount
         && m_delay == other.m_delay
@@ -122,6 +129,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_iterationCountSet == other.m_iterationCountSet
         && m_nameSet == other.m_nameSet
         && m_timingFunctionSet == other.m_timingFunctionSet
+        && m_compositeOperationSet == other.m_compositeOperationSet
         && m_isNone == other.m_isNone;
 
     if (!result)

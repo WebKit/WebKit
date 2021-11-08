@@ -1,3 +1,17 @@
+2021-11-08  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Add support for composite operations for software animations
+        https://bugs.webkit.org/show_bug.cgi?id=230404
+        <rdar://problem/83495091>
+
+        Reviewed by Dean Jackson.
+
+        Remove two platform-specicfic expectations that are not required anymore and mark one ref test as newly passing.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-box/animation/padding-bottom-composition-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-box/animation/padding-top-composition-expected.txt: Removed.
+        * TestExpectations:
+
 2021-11-07  Cameron McCormack  <heycam@apple.com>
 
         Restore canvas WPTs removed in bug 232449

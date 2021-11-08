@@ -280,22 +280,30 @@ bool Length::isCalculatedEqual(const Length& other) const
     return calculationValue() == other.calculationValue();
 }
 
+static Length makeCalculated(CalcOperator calcOperator, const Length& a, const Length& b)
+{
+    Vector<std::unique_ptr<CalcExpressionNode>> lengths;
+    lengths.reserveInitialCapacity(2);
+    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(a));
+    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(b));
+    auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), calcOperator);
+    return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
+}
+
 Length convertTo100PercentMinusLength(const Length& length)
 {
     if (length.isPercent())
         return Length(100 - length.value(), LengthType::Percent);
     
     // Turn this into a calc expression: calc(100% - length)
-    Vector<std::unique_ptr<CalcExpressionNode>> lengths;
-    lengths.reserveInitialCapacity(2);
-    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(Length(100, LengthType::Percent)));
-    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(length));
-    auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
-    return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
+    return makeCalculated(CalcOperator::Subtract, Length(100, LengthType::Percent), length);
 }
 
 static Length blendMixedTypes(const Length& from, const Length& to, const BlendingContext& context)
 {
+    if (context.compositeOperation != CompositeOperation::Replace)
+        return makeCalculated(CalcOperator::Add, from, to);
+
     if (!to.isCalculated() && !from.isPercent() && (context.progress == 1 || from.isZero()))
         return blend(Length(0, to.type()), to, context);
 
@@ -317,10 +325,10 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
     if (from.isCalculated() || to.isCalculated() || (from.type() != to.type()))
         return blendMixedTypes(from, to, context);
 
-    if (!context.progress)
+    if (!context.progress && context.compositeOperation == CompositeOperation::Replace)
         return from;
 
-    if (context.progress == 1)
+    if (context.progress == 1 && context.compositeOperation == CompositeOperation::Replace)
         return to;
 
     LengthType resultType = to.type();

@@ -390,15 +390,13 @@ std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderEl
     if (!styleable)
         return RenderStyle::clonePtr(renderer.style());
 
-    auto* animations = styleable->animations();
-    if (!animations)
+    auto* effectStack = styleable->keyframeEffectStack();
+    if (!effectStack)
         return RenderStyle::clonePtr(renderer.style());
 
     std::unique_ptr<RenderStyle> result;
-    for (const auto& animation : *animations) {
-        if (is<KeyframeEffect>(animation->effect()))
-            downcast<KeyframeEffect>(animation->effect())->getAnimatedStyle(result);
-    }
+    for (const auto& effect : effectStack->sortedEffects())
+        effect->getAnimatedStyle(result);
 
     if (!result)
         result = RenderStyle::clonePtr(renderer.style());

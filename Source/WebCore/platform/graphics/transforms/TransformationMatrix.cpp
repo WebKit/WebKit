@@ -1635,10 +1635,12 @@ AffineTransform TransformationMatrix::toAffineTransform() const
                            m_matrix[1][1], m_matrix[3][0], m_matrix[3][1]);
 }
 
-static inline void blendFloat(double& from, double to, double progress, CompositeOperation)
+static inline void blendFloat(double& from, double to, double progress, CompositeOperation compositeOperation)
 {
-    if (from != to)
+    if (compositeOperation == CompositeOperation::Replace)
         from = from + (to - from) * progress;
+    else
+        from += from + (to - from) * progress;
 }
 
 void TransformationMatrix::blend2(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
@@ -1715,12 +1717,12 @@ void TransformationMatrix::blend4(const TransformationMatrix& from, double progr
 
 void TransformationMatrix::blend(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
 {
-    if (!progress) {
+    if (!progress && compositeOperation == CompositeOperation::Replace) {
         *this = from;
         return;
     }
 
-    if (progress == 1)
+    if (progress == 1 && compositeOperation == CompositeOperation::Replace)
         return;
 
     if (from.isIdentity() && isIdentity())
