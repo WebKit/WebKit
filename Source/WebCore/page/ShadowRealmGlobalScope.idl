@@ -25,9 +25,10 @@
 
 
 [
-    Exposed=Worker,
+    Exposed=ShadowRealm,
     JSCustomMarkFunction,
     JSLegacyParent=JSShadowRealmGlobalScopeBase,
+    Global,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
 ] interface ShadowRealmGlobalScope : EventTarget {
