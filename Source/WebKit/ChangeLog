@@ -1,3 +1,16 @@
+2021-11-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        trustd network connections occasionally omitted from App Privacy report
+        https://bugs.webkit.org/show_bug.cgi?id=232770
+        <rdar://problem/83840427>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (NetworkSessionCocoa::setClientAuditToken):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
 2021-11-08  Andres Gonzalez  <andresg_22@apple.com>
 
         WTR::AccessibilityController::focusedElement() cannot get the focused object via WKAccessibilityFocusedObject in isolated tree mode.

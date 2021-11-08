@@ -99,6 +99,7 @@ CF_RETURNS_RETAINED SecTrustRef SecTrustDeserialize(CFDataRef serializedTrust, C
 #endif
 
 CF_RETURNS_RETAINED CFDictionaryRef SecTrustCopyInfo(SecTrustRef);
+OSStatus SecTrustSetClientAuditToken(SecTrustRef, CFDataRef);
 
 extern const CFStringRef kSecTrustInfoExtendedValidationKey;
 extern const CFStringRef kSecTrustInfoCompanyNameKey;

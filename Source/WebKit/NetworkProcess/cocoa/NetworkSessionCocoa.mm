@@ -60,6 +60,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/WTFString.h>
@@ -699,6 +700,19 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     return nullptr;
 }
 
+void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChallenge& challenge)
+{
+#if ENABLE(APP_PRIVACY_REPORT)
+    if (auto auditToken = networkProcess().sourceApplicationAuditToken()) {
+        auto& tokenValue = *auditToken;
+        RetainPtr<NSData> token = adoptNS([[NSData alloc] initWithBytes:(uint8_t *)&tokenValue length:sizeof(tokenValue)]);
+        SecTrustSetClientAuditToken(challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust, bridge_cast(token.get()));
+    }
+#else
+    UNUSED_PARAM(challenge);
+#endif
+}
+
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
     auto* sessionCocoa = [self sessionFromTask: task];
@@ -720,6 +734,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
 
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        sessionCocoa->setClientAuditToken(challenge);
         if (NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
