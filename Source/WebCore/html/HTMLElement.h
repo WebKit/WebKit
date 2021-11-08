@@ -138,6 +138,7 @@ public:
     WEBCORE_EXPORT static bool isInsideImageOverlay(const Node&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node*);
+    void removeImageOverlaySoonIfNeeded();
 
 #if ENABLE(IMAGE_ANALYSIS)
     IntRect containerRectForTextRecognition();

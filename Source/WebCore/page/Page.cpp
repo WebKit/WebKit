@@ -3715,6 +3715,11 @@ void Page::resetTextRecognitionResults()
     m_textRecognitionResults.clear();
 }
 
+void Page::resetTextRecognitionResult(const HTMLElement& element)
+{
+    m_textRecognitionResults.remove(element);
+}
+
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(SERVICE_WORKER)

@@ -1324,6 +1324,38 @@ bool HTMLElement::isImageOverlayText(const Node& node)
     return false;
 }
 
+void HTMLElement::removeImageOverlaySoonIfNeeded()
+{
+    if (!hasImageOverlay())
+        return;
+
+    document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        RefPtr shadowRoot = protectedThis->userAgentShadowRoot();
+        if (!shadowRoot)
+            return;
+
+        RefPtr<HTMLDivElement> containerToRemove;
+        for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
+            if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
+                containerToRemove = &child;
+                break;
+            }
+        }
+
+        if (containerToRemove)
+            containerToRemove->remove();
+
+#if ENABLE(IMAGE_ANALYSIS)
+        if (auto page = protectedThis->document().page())
+            page->resetTextRecognitionResult(*protectedThis);
+#endif
+    });
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 IntRect HTMLElement::containerRectForTextRecognition()

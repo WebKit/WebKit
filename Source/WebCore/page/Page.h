@@ -890,6 +890,7 @@ public:
 #if ENABLE(IMAGE_ANALYSIS)
     WEBCORE_EXPORT bool hasCachedTextRecognitionResult(const HTMLElement&) const;
     void cacheTextRecognitionResult(const HTMLElement&, const IntRect& containerRect, const TextRecognitionResult&);
+    void resetTextRecognitionResult(const HTMLElement&);
 #endif
 
     WEBCORE_EXPORT PermissionController& permissionController();
