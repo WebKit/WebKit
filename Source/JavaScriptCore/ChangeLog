@@ -1,5 +1,13 @@
 2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix the newly added code
+        https://bugs.webkit.org/show_bug.cgi?id=215438
+
+        * runtime/TemporalObject.cpp:
+        (JSC::roundNumberToIncrement):
+
+2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Implement IntlNumberFormat v3
         https://bugs.webkit.org/show_bug.cgi?id=215438
 

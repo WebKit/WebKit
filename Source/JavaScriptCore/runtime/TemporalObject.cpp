@@ -500,6 +500,13 @@ Int128 roundNumberToIncrement(Int128 x, Int128 increment, RoundingMode mode)
         if (abs(remainder * 2) >= increment)
             quotient += sign ? -1 : 1;
         break;
+    // They are not supported in Temporal right now.
+    case RoundingMode::Expand:
+    case RoundingMode::HalfCeil:
+    case RoundingMode::HalfFloor:
+    case RoundingMode::HalfTrunc:
+    case RoundingMode::HalfEven:
+        break;
     }
     return quotient * increment;
 }
