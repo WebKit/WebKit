@@ -1,3 +1,14 @@
+2021-11-08  Tim Nguyen  <ntim@apple.com>
+
+        Stop skipping html/semantics/interactive-elements/the-details-element/toggleEvent.html in import-expectations.json
+
+        Unreviewed.
+
+        No point skipping it, WebKit passes the test, and we want that test to be up to date.
+        Also, with directory-wide imports, that test will no longer be wrongly deleted.
+
+        * resources/import-expectations.json:
+
 2021-11-08  Antoine Quint  <graouts@webkit.org>
 
         Discrete animation of content property does not work
