@@ -97,6 +97,8 @@ class TestParser(object):
                     ref_file = self.filesystem.join(self.source_root_directory, href_match_file.lstrip('/'))
                 else:
                     ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), href_match_file)
+
+                reference_type = matches[0]['rel'][0] if isinstance(matches[0]['rel'], list) else matches[0]['rel']
             except KeyError as e:
                 # FIXME: Figure out what to do w/ invalid test files.
                 _log.error('%s has a reference link but is missing the "href"', self.filesystem)
@@ -108,7 +110,7 @@ class TestParser(object):
             if self.ref_doc is None:
                 self.load_file(ref_file, True)
 
-            test_info = {'test': self.filename, 'reference': ref_file}
+            test_info = {'test': self.filename, 'reference': ref_file, 'type': reference_type}
 
             # If the ref file does not live in the same directory as the test file, check it for support files
             test_info['reference_support_info'] = {}

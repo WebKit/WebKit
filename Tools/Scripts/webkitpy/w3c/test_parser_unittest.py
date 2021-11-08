@@ -53,6 +53,26 @@ class TestParserTest(unittest.TestCase):
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
         self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
         self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
+        self.assertTrue('type' in test_info.keys(), 'did not find a reference type')
+        self.assertEqual(test_info['type'], 'match', 'reference type is not correct')
+        self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
+        self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
+
+    def test_analyze_test_reftest_one_mismatch(self):
+        test_html = """<head>
+<link rel="mismatch" href="green-box-ref.xht" />
+</head>
+"""
+        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+        parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
+        test_info = parser.analyze_test(test_contents=test_html)
+
+        self.assertNotEqual(test_info, None, 'did not find a test')
+        self.assertTrue('test' in test_info.keys(), 'did not find a test file')
+        self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
+        self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
+        self.assertTrue('type' in test_info.keys(), 'did not find a reference type')
+        self.assertEqual(test_info['type'], 'mismatch', 'reference type is not correct')
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 

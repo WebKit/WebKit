@@ -1,3 +1,20 @@
+2021-11-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        WPT test importer imports rel="mismatch" as the reference
+        https://bugs.webkit.org/show_bug.cgi?id=207175
+        <rdar://problem/69332102>
+
+        Reviewed by Jonathan Bedard.
+
+        Setting "-expected-mismatch" suffix for <meta rel="mismatch"> references from WPT.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests): Adding "-mismatch" suffix as needed.
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.analyze_test): Store the reference type in test_info["type"].
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+        (test_analyze_test_reftest_one_mismatch): Add new test cases for the reference type.
+
 2021-11-08  Kate Cheney  <katherine_cheney@apple.com>
 
         [ iOS15 EWS ] TestWebKitAPI.AppPrivacyReport.LoadSimulatedRequest tests are timing out
