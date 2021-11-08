@@ -1,3 +1,19 @@
+2021-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKSyntheticTapGestureRecognizer's action targets should be weak pointers
+        https://bugs.webkit.org/show_bug.cgi?id=232812
+
+        Reviewed by Tim Horton.
+
+        Make WKSyntheticTapGestureRecognizer robust against the case where it outlives its WKContentView, by making its
+        "reset", "gesture identified", and "gesture failed" targets weak pointers instead of raw pointers.
+
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.mm:
+        (-[WKSyntheticTapGestureRecognizer lastTouchedScrollView]):
+
+        Drive-by fix: we can also make `_lastTouchedScrollView` use the __weak ivar attribute instead of WeakObjCPtr,
+        now that __weak is enabled in WebKit2.
+
 2021-11-08  Devin Rousso  <drousso@apple.com>
 
         webView.scrollView.indicatorStyle does not work on iOS 15
