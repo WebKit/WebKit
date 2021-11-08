@@ -43,8 +43,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.languages = userPreferredLanguages();
     parameters.memoryPressureHandlerConfiguration = s_networkProcessMemoryPressureHandlerConfiguration;
 
+#if OS(LINUX)
     if (MemoryPressureMonitor::disabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
+#endif // OS(LINUX)
 }
 
 } // namespace WebKit

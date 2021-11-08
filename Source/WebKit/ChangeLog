@@ -1,3 +1,16 @@
+2021-11-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GLIB][SOUP] Unify memoryPressureMonitorDisabled implementation
+        https://bugs.webkit.org/show_bug.cgi?id=232706
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Add missing OS(LINUX) guard
+        around MemoryPressureMonitor.
+
 2021-11-08  Per Arne  <pvollan@apple.com>
 
         [macOS][GPUP] Remove sandbox read access to files
