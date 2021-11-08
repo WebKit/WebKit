@@ -1,3 +1,32 @@
+2021-11-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        WTR::AccessibilityController::focusedElement() cannot get the focused object via WKAccessibilityFocusedObject in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=232756
+        <rdar://problem/85069882>
+
+        Reviewed by Chris Fleizach.
+
+        WTR::AccessibilityController::focusedElement() was getting the focused
+        object from WKAccessibilityFocusedObject, which has to run on the main
+        thread. WKAccessibilityFocusedObject was in turn calling AXObjectCache::
+        focusedUIElementForPage that tried to return the isolated focused
+        object. The problem with this is that the isolated focused object can
+        only be retrieved on the secondary thread.
+        The solution in this patch is to retrieve the focused object from the
+        root object as an AT client would do.
+        Added AccessibilityUIElement::focusedElement in order to retrieve the
+        focused object from the root object.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::focusedElement):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::focusedElement const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::focusedElement const):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::focusedElement const):
+
 2021-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Implement UIScriptController.sendEventStream() on macOS for wheel events

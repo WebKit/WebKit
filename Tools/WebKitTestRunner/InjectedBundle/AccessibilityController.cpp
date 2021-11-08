@@ -93,8 +93,11 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     auto page = InjectedBundle::singleton().page()->page();
-    PlatformUIElement focusedElement = static_cast<PlatformUIElement>(WKAccessibilityFocusedObject(page));
-    return AccessibilityUIElement::create(focusedElement);
+    auto root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
+    auto rootElement = AccessibilityUIElement::create(root);
+    if (auto focusedElement = rootElement->focusedElement())
+        return *focusedElement;
+    return AccessibilityUIElement::create(nullptr);
 }
 
 void AccessibilityController::executeOnAXThreadAndWait(Function<void()>&& function)

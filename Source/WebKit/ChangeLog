@@ -1,3 +1,24 @@
+2021-11-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        WTR::AccessibilityController::focusedElement() cannot get the focused object via WKAccessibilityFocusedObject in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=232756
+        <rdar://problem/85069882>
+
+        Reviewed by Chris Fleizach.
+
+        WTR::AccessibilityController::focusedElement() was getting the focused
+        object from WKAccessibilityFocusedObject, which has to run on the main
+        thread. WKAccessibilityFocusedObject was in turn calling AXObjectCache::
+        focusedUIElementForPage that tried to return the isolated focused
+        object. The problem with this is that the isolated focused object can
+        only be retrieved on the secondary thread.
+        The solution in this patch is to retrieve the focused object from the
+        root object as an AT client would do.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityFocusedObject):
+        Now uses AXObjectCache::focusedObejctForPage().
+
 2021-11-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/media-stream-video-track-interrupted.html is failing since added in 242093@main

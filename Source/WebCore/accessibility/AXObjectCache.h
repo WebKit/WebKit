@@ -148,8 +148,6 @@ public:
     explicit AXObjectCache(Document&);
     ~AXObjectCache();
 
-    WEBCORE_EXPORT AXCoreObject* focusedUIElementForPage(const Page*);
-
     // Returns the root object for the entire document.
     WEBCORE_EXPORT AXCoreObject* rootObject();
     // Returns the root object for a specific frame.
@@ -201,26 +199,17 @@ public:
     void recomputeIsIgnored(RenderObject*);
     void recomputeIsIgnored(Node*);
 
-#if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();
 
-    static AXCoreObject* focusedObjectForPage(const Page*);
+    WEBCORE_EXPORT AccessibilityObject* focusedObjectForPage(const Page*);
 
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
-    
+
     // Note: these may be called from a non-main thread concurrently as other readers.
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
-#else
-    static AXCoreObject* focusedObjectForPage(const Page*) { return nullptr; }
-    static void enableAccessibility() { }
-    static void disableAccessibility() { }
-    static void setEnhancedUserInterfaceAccessibility(bool) { }
-    static bool accessibilityEnabled() { return false; }
-    static bool accessibilityEnhancedUserInterfaceEnabled() { return false; }
-#endif
 
     const Element* rootAXEditableElement(const Node*);
     bool nodeIsTextControl(const Node*);
@@ -383,7 +372,6 @@ public:
 private:
     static bool clientSupportsIsolatedTree();
     AXCoreObject* isolatedTreeRootObject();
-    AXCoreObject* isolatedTreeFocusedObject();
     void setIsolatedTreeFocusedObject(Node*);
     RefPtr<AXIsolatedTree> getOrCreateIsolatedTree() const;
     void updateIsolatedTree(AXCoreObject&, AXNotification);
@@ -559,7 +547,6 @@ inline void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectC
 inline void AXComputedObjectAttributeCache::setIgnored(AXID, AccessibilityObjectInclusion) { }
 inline AXObjectCache::AXObjectCache(Document& document) : m_document(document), m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired), m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired), m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired), m_focusModalNodeTimer(*this, &AXObjectCache::focusModalNodeTimerFired), m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired) { }
 inline AXObjectCache::~AXObjectCache() { }
-inline AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Widget*) { return nullptr; }
@@ -569,6 +556,12 @@ inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return nullptr; 
 inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr; }
 inline AXCoreObject* AXObjectCache::rootObject() { return nullptr; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page*) { return nullptr; }
+inline static void AXObjectCache::enableAccessibility() { }
+inline static void AXObjectCache::disableAccessibility() { }
+inline static void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool) { }
+inline static bool AXObjectCache::accessibilityEnabled() { return false; }
+inline static bool AXObjectCache::accessibilityEnhancedUserInterfaceEnabled() { return false; }
 inline bool nodeHasRole(Node*, const String&) { return false; }
 inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates() { }
 inline void AXObjectCache::stopCachingComputedObjectAttributes() { }

@@ -169,7 +169,8 @@ public:
     JSRetainPtr<JSStringRef> selectedTextRange();
     bool isEnabled();
     bool isRequired() const;
-    
+
+    RefPtr<AccessibilityUIElement> focusedElement() const;
     bool isFocused() const;
     bool isFocusable() const;
     bool isSelected() const;

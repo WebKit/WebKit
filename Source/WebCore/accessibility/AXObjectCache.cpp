@@ -374,7 +374,7 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     return nullptr;
 }
 
-AXCoreObject* AXObjectCache::focusedObjectForPage(const Page* page)
+AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page* page)
 {
     ASSERT(isMainThread());
 
@@ -392,11 +392,7 @@ AXCoreObject* AXObjectCache::focusedObjectForPage(const Page* page)
     if (is<HTMLAreaElement>(focusedElement))
         return focusedImageMapUIElement(downcast<HTMLAreaElement>(focusedElement));
 
-    auto* axObjectCache = document->axObjectCache();
-    if (!axObjectCache)
-        return nullptr;
-
-    AXCoreObject* focus = axObjectCache->getOrCreate(focusedElement ? focusedElement : static_cast<Node*>(document));
+    auto* focus = getOrCreate(focusedElement ? focusedElement : static_cast<Node*>(document));
     if (!focus)
         return nullptr;
 
@@ -407,22 +403,12 @@ AXCoreObject* AXObjectCache::focusedObjectForPage(const Page* page)
 
     // the HTML element, for example, is focusable but has an AX object that is ignored
     if (focus->accessibilityIsIgnored())
-        focus = focus->parentObjectUnignored();
+        focus = downcast<AccessibilityObject>(focus->parentObjectUnignored());
 
     return focus;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-AXCoreObject* AXObjectCache::isolatedTreeFocusedObject()
-{
-    if (auto tree = getOrCreateIsolatedTree())
-        return tree->focusedNode().get();
-
-    // Should not get here, couldn't create the IsolatedTree.
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 void AXObjectCache::setIsolatedTreeFocusedObject(Node* focusedNode)
 {
     ASSERT(isMainThread());
@@ -435,16 +421,6 @@ void AXObjectCache::setIsolatedTreeFocusedObject(Node* focusedNode)
         tree->setFocusedNodeID(focus ? focus->objectID() : InvalidAXID);
 }
 #endif
-
-AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page* page)
-{
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (isIsolatedTreeEnabled())
-        return isolatedTreeFocusedObject();
-#endif
-
-    return focusedObjectForPage(page);
-}
 
 AccessibilityObject* AXObjectCache::get(Widget* widget)
 {

@@ -42,6 +42,7 @@
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (UIAccessibilityHidden)
+- (id)accessibilityFocusedUIElement;
 - (id)accessibilityHitTest:(CGPoint)point;
 - (id)accessibilityLinkedElement;
 - (id)accessibilityTitleElement;
@@ -628,6 +629,11 @@ bool AccessibilityUIElement::isEnabled()
 bool AccessibilityUIElement::isRequired() const
 {
     return false;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const
+{
+    return AccessibilityUIElement::create([m_element accessibilityFocusedUIElement]);
 }
 
 bool AccessibilityUIElement::isFocused() const

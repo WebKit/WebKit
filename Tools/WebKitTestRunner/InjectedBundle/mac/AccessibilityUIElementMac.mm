@@ -156,6 +156,8 @@ RetainPtr<id> attributeValue(id element, NSString *attribute)
             value = [element accessibilityRole];
         else if ([attribute isEqual:NSAccessibilityValueAttribute] && [element respondsToSelector:@selector(accessibilityValue)])
             value = [element accessibilityValue];
+        else if ([attribute isEqual:NSAccessibilityFocusedUIElementAttribute] && [element respondsToSelector:@selector(accessibilityFocusedUIElement)])
+            value = [element accessibilityFocusedUIElement];
         else
             value = [element accessibilityAttributeValue:attribute];
     });
@@ -968,6 +970,16 @@ bool AccessibilityUIElement::isRequired() const
     END_AX_OBJC_EXCEPTIONS
 
     return false;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    if (auto focus = attributeValue(NSAccessibilityFocusedUIElementAttribute))
+        return AccessibilityUIElement::create(focus.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
 }
 
 bool AccessibilityUIElement::isFocused() const

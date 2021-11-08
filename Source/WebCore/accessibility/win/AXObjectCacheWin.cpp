@@ -174,7 +174,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocuse
     if (!page || !page->chrome().platformPageClient())
         return;
 
-    AXCoreObject* focusedObject = focusedUIElementForPage(page);
+    auto* focusedObject = focusedObjectForPage(page);
     if (!focusedObject)
         return;
 

@@ -114,6 +114,7 @@ JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 #endif
 
 #if !PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const { return nullptr; }
