@@ -557,11 +557,9 @@ inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr
 inline AXCoreObject* AXObjectCache::rootObject() { return nullptr; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page*) { return nullptr; }
-inline static void AXObjectCache::enableAccessibility() { }
-inline static void AXObjectCache::disableAccessibility() { }
-inline static void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool) { }
-inline static bool AXObjectCache::accessibilityEnabled() { return false; }
-inline static bool AXObjectCache::accessibilityEnhancedUserInterfaceEnabled() { return false; }
+inline void AXObjectCache::enableAccessibility() { }
+inline void AXObjectCache::disableAccessibility() { }
+inline void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool) { }
 inline bool nodeHasRole(Node*, const String&) { return false; }
 inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates() { }
 inline void AXObjectCache::stopCachingComputedObjectAttributes() { }
