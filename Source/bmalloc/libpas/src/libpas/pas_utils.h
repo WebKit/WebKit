@@ -46,6 +46,12 @@
 #include <stdint.h>
 #include <string.h>
 
+#ifdef __APPLE__
+#include <Availability.h>
+#include <AvailabilityMacros.h>
+#include <TargetConditionals.h>
+#endif
+
 #include "pas_utils_prefix.h"
 
 #define pas_zero_memory bzero

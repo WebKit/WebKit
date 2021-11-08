@@ -43,12 +43,6 @@
 #define PAS_HAVE_PTHREAD_PRIVATE 0
 #endif
 
-#ifdef __APPLE__
-#include <Availability.h>
-#include <AvailabilityMacros.h>
-#include <TargetConditionals.h>
-#endif
-
 PAS_BEGIN_EXTERN_C;
 
 struct pas_magazine;
