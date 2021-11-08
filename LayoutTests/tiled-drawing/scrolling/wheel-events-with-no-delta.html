@@ -6,9 +6,11 @@ body {
 }
 </style>
 
+<script src="../../resources/ui-helper.js"></script>
 <script>
 
-function mouseWheelFired(e) {
+function mouseWheelFired(e)
+{
     if (e.wheelDelta == 0)
         document.getElementById('log').textContent = "FAIL. We got a wheel event with a delta of 0.";
 
@@ -16,15 +18,40 @@ function mouseWheelFired(e) {
         testRunner.notifyDone();
 }
 
-function scrollTest()
+async function scrollTest()
 {
-    eventSender.mouseMoveTo(20, 20);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'continue');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    const events = [
+        {
+            type : "wheel",
+            viewX : 20,
+            viewY : 20,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
 }
 
 function loaded()

@@ -13,6 +13,7 @@
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
     window.jsTestIsAsync = true;
 
@@ -57,7 +58,7 @@
         finishJSTest();
     }
 
-    function scrollTest()
+    async function scrollTest()
     {
         pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
@@ -66,20 +67,51 @@
         divScrollPositionBefore = divTarget.scrollTop;
 
         // Scroll the #source until we reach the #target.
-        var startPosX = Math.round(divTarget.offsetLeft) + 20;
-        var startPosY = Math.round(divTarget.offsetTop) - 42;
-        eventSender.mouseMoveTo(startPosX, startPosY);
+        const startPosX = Math.round(divTarget.offsetLeft) + 20;
+        const startPosY = Math.round(divTarget.offsetTop) - 42;
+
         debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -4, 'none', 'continue');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        eventSender.callAfterScrollingCompletes(() => {
-            requestAnimationFrame(checkForScroll);
-        });
+
+        const events = [
+            {
+                type : "wheel",
+                viewX : startPosX,
+                viewY : startPosY,
+                deltaY : -10,
+                phase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                phase : "ended"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                momentumPhase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -40,
+                momentumPhase : "changed"
+            },
+            {
+                type : "wheel",
+                momentumPhase : "ended"
+            }
+        ];
+
+        await UIHelper.mouseWheelSequence({ events: events });
+        checkForScroll();
         // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
     }
 
@@ -88,8 +120,6 @@
         if (window.eventSender) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
-
-            eventSender.monitorWheelEvents();
             setTimeout(scrollTest, 0);
         } else {
             var messageLocation = document.getElementById('parent');

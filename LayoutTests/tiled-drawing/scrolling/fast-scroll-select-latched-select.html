@@ -26,6 +26,7 @@
 
 </style>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
 function onLoad() {
     setupTopLevel();
@@ -59,7 +60,7 @@ function checkForScroll()
     testRunner.notifyDone();
 }
 
-function scrollTest()
+async function scrollTest()
 {
     pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
@@ -69,19 +70,52 @@ function scrollTest()
     selectScrollPositionBefore = selectTarget.scrollTop;
 
     // Scroll the #source until we reach the #target.
-    var startPosX = Math.round(selectTarget.offsetLeft) + 20;
+    const startPosX = Math.round(selectTarget.offsetLeft) + 20;
+    const startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42;
+
     debug("div display height = " + Math.round(selectTarget.clientHeight));
-    var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42;
-    eventSender.mouseMoveTo(startPosX, startPosY);
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    eventSender.callAfterScrollingCompletes(checkForScroll);
+
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    checkForScroll();
 }
 
 function setupTopLevel()
@@ -89,8 +123,6 @@ function setupTopLevel()
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
-
-        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');

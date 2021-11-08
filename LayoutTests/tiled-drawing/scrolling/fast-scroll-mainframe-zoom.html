@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js" type="text/javascript"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <style>
     #parent {
         background-color: #eee;
@@ -46,19 +47,39 @@
             setTimeout(zoomPageOut, 100);
     }
 
-    function scrollDown()
+    async function scrollDown()
     {
         // Scroll the #source until we reach the #target.
-        var selectTarget = document.getElementById('target');
-        var startPosX = Math.round(selectTarget.offsetLeft) + 20;
-        var startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the target div
-        eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the target div
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-        for (var i = 0; i < 40; ++i) {
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
-        }
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-         
+        const selectTarget = document.getElementById('target');
+        const startPosX = Math.round(selectTarget.offsetLeft) + 20;
+        const startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the target div
+
+        let events = [
+            {
+                type : "wheel",
+                viewX : startPosX,
+                viewY : startPosY,
+                deltaY : -10,
+                phase : "began"
+            }
+        ];
+
+        const changedEvent = {
+            type : "wheel",
+            deltaY : -100,
+            phase : "changed"
+        };
+
+        const changedEventCount = 40;
+        const changedEvents = Array(changedEventCount).fill(changedEvent);
+        events.push(...changedEvents);
+        events.push({
+            type : "wheel",
+            phase : "ended"
+        });
+
+        await UIHelper.mouseWheelSequence({ events: events });
+
         setTimeout(zoomPageOut, 700);
     }
 

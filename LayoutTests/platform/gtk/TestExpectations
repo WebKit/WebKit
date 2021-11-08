@@ -1365,7 +1365,6 @@ webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.h
 
 # Timing out due to missing functionality.
 webkit.org/b/212202 webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ] # Failure Timeout.
-webkit.org/b/212202 webkit.org/b/197507 fast/scrolling/momentum-scroll-with-borders.html [ Skip ] # Timeout Pass.
 webkit.org/b/212202 webkit.org/b/158917 fast/scrolling/overflow-scroll-past-max.html [ Skip ] # Failure Pass Timeout.
 webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
