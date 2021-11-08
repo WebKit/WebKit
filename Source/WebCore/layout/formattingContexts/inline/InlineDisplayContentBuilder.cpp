@@ -75,7 +75,11 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
     ASSERT(!contentNeedsBidiReordering || lineContent.visualOrderList.size() == runs.size());
 
-    auto contentRightInVisualOrder = InlineLayoutUnit { };
+    auto contentRightInVisualOrder = lineBoxLogicalTopLeft.x();
+    // First visual run's initial content position depends on the block's inline direction.
+    if (!root().style().isLeftToRightDirection())
+        contentRightInVisualOrder += lineContent.lineLogicalWidth - lineBox.logicalRectForRootInlineBox().width();
+
     for (size_t i = 0; i < runs.size(); ++i) {
         auto visualIndex = contentNeedsBidiReordering ? lineContent.visualOrderList[i] : i;
         auto& lineRun = runs[visualIndex];
@@ -111,15 +115,6 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             auto distanceFromLogicalPreviousRun = logicalPreviousRun ? lineRun.logicalLeft() - logicalPreviousRun->logicalRight() : lineRun.logicalLeft();
             auto visualOrderRect = logicalRect;
             auto contentLeft = contentRightInVisualOrder + distanceFromLogicalPreviousRun;
-            if (!i) {
-                // First visual run. Initial content position depends on the block's inline direction.
-                contentLeft += lineBoxLogicalTopLeft.x();
-
-                auto rootInlineBox = boxes[0];
-                ASSERT(rootInlineBox.isRootInlineBox());
-                if (!rootInlineBox.style().isLeftToRightDirection())
-                    contentLeft += lineContent.lineLogicalWidth - rootInlineBox.logicalWidth();
-            }
             visualOrderRect.setLeft(contentLeft);
             // The inline box right edge includes its content as well as the inline box end (padding-right etc).
             // What we need here is the inline box start run's width.
