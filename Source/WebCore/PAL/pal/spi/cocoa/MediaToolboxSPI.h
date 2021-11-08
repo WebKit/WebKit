@@ -44,6 +44,7 @@ enum {
     kMTPluginFormatReaderError_ParsingFailure = -16503,
     kMTPluginSampleCursorError_NoSamples = -16507,
     kMTPluginSampleCursorError_LocationNotAvailable = -16508,
+    kMTPluginByteSourceError_EndOfStream = -16511,
 };
 
 enum {

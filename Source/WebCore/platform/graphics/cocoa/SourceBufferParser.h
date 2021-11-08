@@ -33,6 +33,7 @@
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
 #include <variant>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Expected.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -75,7 +76,11 @@ public:
         RefPtr<SharedBuffer> getSharedBuffer() const;
 
         size_t size() const;
-        size_t read(size_t position, size_t, uint8_t* destination) const;
+
+        enum class ReadError { EndOfFile, FatalError };
+        using ReadResult = Expected<size_t, ReadError>;
+
+        ReadResult read(size_t position, size_t, uint8_t* destination) const;
 
     private:
         std::variant<

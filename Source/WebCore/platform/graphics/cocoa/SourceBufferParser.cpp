@@ -32,8 +32,10 @@
 #include "SharedBuffer.h"
 #include "SourceBufferParserAVFObjC.h"
 #include "SourceBufferParserWebM.h"
-#include <pal/cocoa/MediaToolboxSoftLink.h>
+#include <pal/spi/cocoa/MediaToolboxSPI.h>
 #include <wtf/text/WTFString.h>
+
+#include <pal/cocoa/MediaToolboxSoftLink.h>
 
 namespace WebCore {
 
@@ -106,21 +108,24 @@ size_t SourceBufferParser::Segment::size() const
     );
 }
 
-size_t SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uint8_t* destination) const
+auto SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uint8_t* destination) const -> ReadResult
 {
     size_t segmentSize = size();
     sizeToRead = std::min(sizeToRead, segmentSize - std::min(position, segmentSize));
     return WTF::switchOn(m_segment,
 #if HAVE(MT_PLUGIN_FORMAT_READER)
-        [&](const RetainPtr<MTPluginByteSourceRef>& byteSource) -> size_t
+        [&](const RetainPtr<MTPluginByteSourceRef>& byteSource) -> ReadResult
         {
             size_t sizeRead = 0;
-            if (MTPluginByteSourceRead(byteSource.get(), sizeToRead, CheckedInt64(position), destination, &sizeRead) != noErr)
-                return 0;
-            return sizeRead;
+            auto status = MTPluginByteSourceRead(byteSource.get(), sizeToRead, CheckedInt64(position), destination, &sizeRead);
+            if (status == noErr)
+                return sizeRead;
+            if (status == kMTPluginByteSourceError_EndOfStream)
+                return Unexpected<ReadError> { ReadError::EndOfFile };
+            return Unexpected<ReadError> { ReadError::FatalError };
         },
 #endif
-        [&](const Ref<SharedBuffer>& buffer)
+        [&](const Ref<SharedBuffer>& buffer) -> ReadResult
         {
             buffer->copyTo(destination, position, sizeToRead);
             return sizeToRead;
@@ -135,7 +140,10 @@ Ref<SharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
         [&](RetainPtr<MTPluginByteSourceRef>&)
         {
             Vector<uint8_t> vector(size());
-            vector.shrink(read(0, vector.size(), vector.data()));
+            auto readResult = read(0, vector.size(), vector.data());
+            if (!readResult.has_value())
+                return SharedBuffer::create();
+            vector.shrink(readResult.value());
             return SharedBuffer::create(WTFMove(vector));
         },
 #endif

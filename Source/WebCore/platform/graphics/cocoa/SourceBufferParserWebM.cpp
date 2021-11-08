@@ -273,6 +273,14 @@ static bool isWebmParserAvailable()
 
 using namespace webm;
 
+static Status segmentReadErrorToWebmStatus(SourceBufferParser::Segment::ReadError error)
+{
+    switch (error) {
+    case SourceBufferParser::Segment::ReadError::EndOfFile: return Status(Status::kEndOfFile);
+    case SourceBufferParser::Segment::ReadError::FatalError: return Status(Status::Code(SourceBufferParserWebM::ErrorCode::ReaderFailed));
+    }
+}
+
 class SourceBufferParserWebM::SegmentReader final : public webm::Reader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -301,7 +309,10 @@ public:
                 continue;
             }
 
-            uint64_t lastRead = currentSegment.read(m_positionWithinSegment, numToRead, outputBuffer);
+            auto readResult = currentSegment.read(m_positionWithinSegment, numToRead, outputBuffer);
+            if (!readResult.has_value())
+                return segmentReadErrorToWebmStatus(readResult.error());
+            auto lastRead = readResult.value();
             m_position += lastRead;
             *numActuallyRead += lastRead;
             m_positionWithinSegment += lastRead;
@@ -391,7 +402,10 @@ public:
                 err = PAL::CMBlockBufferGetDataPointer(rawBlockBuffer, 0, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData);
                 if (err != kCMBlockBufferNoErr)
                     return Status(Status::kNotEnoughMemory);
-                lastRead = currentSegment.read(m_positionWithinSegment, numToRead, blockBufferData);
+                auto readResult = currentSegment.read(m_positionWithinSegment, numToRead, blockBufferData);
+                if (!readResult.has_value())
+                    return segmentReadErrorToWebmStatus(readResult.error());
+                lastRead = readResult.value();
                 destinationOffset = 0;
             } else {
                 ASSERT(sharedBuffer->hasOneSegment(), "Can only deal with sharedBuffer containing a single DataSegment");

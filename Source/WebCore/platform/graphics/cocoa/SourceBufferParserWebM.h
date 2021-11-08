@@ -101,6 +101,7 @@ public:
         UnsupportedAudioCodec,
         ContentEncrypted,
         VariableFrameDuration,
+        ReaderFailed,
     };
 
     enum class State : uint8_t {
