@@ -10678,6 +10678,13 @@ void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 #endif
 }
 
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+void WebPageProxy::setMockCameraIsInterrupted(bool isInterrupted)
+{
+    send(Messages::WebPage::SetMockCameraIsInterrupted(isInterrupted));
+}
+#endif
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebPageProxy::getLoadedSubresourceDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
 {

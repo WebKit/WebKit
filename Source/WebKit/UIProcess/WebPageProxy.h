@@ -1838,6 +1838,10 @@ public:
 
     void setOrientationForMediaCapture(uint64_t);
 
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+    void setMockCameraIsInterrupted(bool);
+#endif
+
     bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }
     bool isHandlingPreventableTouchEnd() const { return m_handlingPreventableTouchEndCount; }
 

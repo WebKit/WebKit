@@ -3134,6 +3134,9 @@ void WKPageSetMockCameraIsInterrupted(WKPageRef pageRef, bool isInterrupted)
     auto& gpuProcess = toImpl(pageRef)->process().processPool().ensureGPUProcess();
     gpuProcess.setMockCameraIsInterrupted(isInterrupted);
 #endif
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+    toImpl(pageRef)->setMockCameraIsInterrupted(isInterrupted);
+#endif
 }
 
 void WKPageLoadedSubresourceDomains(WKPageRef pageRef, WKPageLoadedSubresourceDomainsFunction callback, void* callbackContext)

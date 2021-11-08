@@ -1,3 +1,22 @@
+2021-11-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/mediastream/media-stream-video-track-interrupted.html is failing since added in 242093@main
+        https://bugs.webkit.org/show_bug.cgi?id=231057
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Wire up mock camera interruption IPC support in WPE/GTK.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMockCameraIsInterrupted):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMockCameraIsInterrupted):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setMockCameraIsInterrupted):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-11-06  Simon Fraser  <simon.fraser@apple.com>
 
         WheelEventDeltaFilter::shouldApplyFilteringForEvent can be a static function

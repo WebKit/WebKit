@@ -347,6 +347,10 @@
 #include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
 #endif
 
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
+#endif
+
 #if ENABLE(WEB_AUTHN)
 #include "WebAuthenticatorCoordinator.h"
 #include <WebCore/AuthenticatorCoordinator.h>
@@ -4788,6 +4792,11 @@ void WebPage::setOrientationForMediaCapture(uint64_t rotation)
     m_page->forEachDocument([&](auto& document) {
         document.orientationChanged(rotation);
     });
+}
+
+void WebPage::setMockCameraIsInterrupted(bool isInterrupted)
+{
+    MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted(isInterrupted);
 }
 #endif // USE(GSTREAMER)
 
