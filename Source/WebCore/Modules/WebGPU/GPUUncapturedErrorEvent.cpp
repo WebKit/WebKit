@@ -28,14 +28,17 @@
 
 namespace WebCore {
 
-GPUUncapturedErrorEvent::GPUUncapturedErrorEvent(String&& type, const GPUUncapturedErrorEventInit&)
-{
-    UNUSED_PARAM(type);
-}
-
 GPUError GPUUncapturedErrorEvent::error() const
 {
-    return RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create());
+    if (!m_backing)
+        return m_uncapturedErrorEventInit.error;
+
+    return WTF::switchOn(PAL::WebGPU::Error(m_backing->error()), [] (Ref<PAL::WebGPU::OutOfMemoryError>&& outOfMemoryError) -> GPUError {
+        return RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
+    }, [] (Ref<PAL::WebGPU::ValidationError>&& validationError) -> GPUError {
+        return RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
+    });
+
 }
 
 }

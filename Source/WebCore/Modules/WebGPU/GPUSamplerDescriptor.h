@@ -31,10 +31,28 @@
 #include "GPUObjectDescriptorBase.h"
 #include <cstdint>
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUSamplerDescriptor.h>
 
 namespace WebCore {
 
 struct GPUSamplerDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::SamplerDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            WebCore::convertToBacking(addressModeU),
+            WebCore::convertToBacking(addressModeV),
+            WebCore::convertToBacking(addressModeW),
+            WebCore::convertToBacking(magFilter),
+            WebCore::convertToBacking(minFilter),
+            WebCore::convertToBacking(mipmapFilter),
+            lodMinClamp,
+            lodMaxClamp,
+            compare ? std::optional { WebCore::convertToBacking(*compare) } : std::nullopt,
+            maxAnisotropy,
+        };
+    }
+
     GPUAddressMode addressModeU;
     GPUAddressMode addressModeV;
     GPUAddressMode addressModeW;

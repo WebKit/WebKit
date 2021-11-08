@@ -27,10 +27,21 @@
 
 #include "GPUCompareFunction.h"
 #include "GPUStencilOperation.h"
+#include <pal/graphics/WebGPU/WebGPUStencilFaceState.h>
 
 namespace WebCore {
 
 struct GPUStencilFaceState {
+    PAL::WebGPU::StencilFaceState convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(compare),
+            WebCore::convertToBacking(failOp),
+            WebCore::convertToBacking(depthFailOp),
+            WebCore::convertToBacking(passOp),
+        };
+    }
+
     GPUCompareFunction compare;
     GPUStencilOperation failOp;
     GPUStencilOperation depthFailOp;

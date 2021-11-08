@@ -28,6 +28,7 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPredefinedColorSpace.h"
 #include "HTMLVideoElement.h"
+#include <pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -35,7 +36,16 @@ namespace WebCore {
 class HTMLVideoElement;
 
 struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
-    RefPtr<HTMLVideoElement> source;
+    PAL::WebGPU::ExternalTextureDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            // FIXME: Handle the video element.
+            WebCore::convertToBacking(colorSpace),
+        };
+    }
+
+    HTMLVideoElement* source;
     GPUPredefinedColorSpace colorSpace;
 };
 

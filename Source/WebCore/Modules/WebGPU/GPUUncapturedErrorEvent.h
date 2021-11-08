@@ -28,6 +28,7 @@
 #include "Event.h"
 #include "GPUError.h"
 #include "GPUUncapturedErrorEventInit.h"
+#include <pal/graphics/WebGPU/WebGPUUncapturedErrorEvent.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -41,10 +42,31 @@ public:
         return adoptRef(*new GPUUncapturedErrorEvent(WTFMove(type), gpuUncapturedErrorEventInitDict));
     }
 
+    static Ref<GPUUncapturedErrorEvent> create(Ref<PAL::WebGPU::UncapturedErrorEvent>&& backing)
+    {
+        return adoptRef(*new GPUUncapturedErrorEvent(WTFMove(backing)));
+    }
+
     GPUError error() const;
 
+    PAL::WebGPU::UncapturedErrorEvent* backing() { return m_backing.get(); }
+    const PAL::WebGPU::UncapturedErrorEvent* backing() const { return m_backing.get(); }
+
 private:
-    GPUUncapturedErrorEvent(String&& type, const GPUUncapturedErrorEventInit&);
+    GPUUncapturedErrorEvent(String&& type, const GPUUncapturedErrorEventInit& uncapturedErrorEventInit)
+        : m_type(WTFMove(type))
+        , m_uncapturedErrorEventInit(uncapturedErrorEventInit)
+    {
+    }
+
+    GPUUncapturedErrorEvent(Ref<PAL::WebGPU::UncapturedErrorEvent>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    String m_type;
+    GPUUncapturedErrorEventInit m_uncapturedErrorEventInit;
+    RefPtr<PAL::WebGPU::UncapturedErrorEvent> m_backing;
 };
 
 }

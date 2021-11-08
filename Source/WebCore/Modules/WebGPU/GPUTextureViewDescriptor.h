@@ -31,10 +31,25 @@
 #include "GPUTextureFormat.h"
 #include "GPUTextureViewDimension.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
 
 namespace WebCore {
 
 struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::TextureViewDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            format ? std::optional { WebCore::convertToBacking(*format) } : std::nullopt,
+            dimension ? std::optional { WebCore::convertToBacking(*dimension) } : std::nullopt,
+            WebCore::convertToBacking(aspect),
+            baseMipLevel,
+            mipLevelCount,
+            baseArrayLayer,
+            arrayLayerCount,
+        };
+    }
+
     std::optional<GPUTextureFormat> format;
     std::optional<GPUTextureViewDimension> dimension;
     GPUTextureAspect aspect;

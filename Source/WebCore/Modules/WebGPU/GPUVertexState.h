@@ -28,11 +28,37 @@
 #include "GPUProgrammableStage.h"
 #include "GPUVertexBufferLayout.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUVertexState.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUVertexState : public GPUProgrammableStage {
+    PAL::WebGPU::VertexState convertToBacking() const
+    {
+        ASSERT(module);
+        return {
+            {
+                module->backing(),
+                entryPoint,
+                ([this] () {
+                    Vector<KeyValuePair<String, PAL::WebGPU::PipelineConstantValue>> constants;
+                    constants.reserveInitialCapacity(this->constants.size());
+                    for (auto& constant : this->constants)
+                        constants.uncheckedAppend(makeKeyValuePair(constant.key, constant.value));
+                    return constants;
+                })(),
+            },
+            ([this] () {
+                Vector<std::optional<PAL::WebGPU::VertexBufferLayout>> buffers;
+                buffers.reserveInitialCapacity(this->buffers.size());
+                for (auto& buffer : this->buffers)
+                    buffers.append(buffer ? std::optional { buffer->convertToBacking() } : std::nullopt);
+                return buffers;
+            })(),
+        };
+    }
+
     Vector<std::optional<GPUVertexBufferLayout>> buffers;
 };
 

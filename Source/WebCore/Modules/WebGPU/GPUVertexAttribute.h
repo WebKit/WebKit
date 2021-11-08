@@ -27,10 +27,20 @@
 
 #include "GPUIntegralTypes.h"
 #include "GPUVertexFormat.h"
+#include <pal/graphics/WebGPU/WebGPUVertexAttribute.h>
 
 namespace WebCore {
 
 struct GPUVertexAttribute {
+    PAL::WebGPU::VertexAttribute convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(format),
+            offset,
+            shaderLocation,
+        };
+    }
+
     GPUVertexFormat format;
     GPUSize64 offset;
 

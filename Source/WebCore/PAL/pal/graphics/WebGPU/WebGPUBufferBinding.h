@@ -34,7 +34,7 @@ namespace PAL {
 namespace WebGPU {
 
 struct BufferBinding {
-    RefPtr<Buffer> buffer;
+    Buffer& buffer;
     Size64 offset;
     std::optional<Size64> size;
 };

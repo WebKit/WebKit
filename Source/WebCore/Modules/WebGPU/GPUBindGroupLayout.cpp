@@ -30,11 +30,12 @@ namespace WebCore {
 
 String GPUBindGroupLayout::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUBindGroupLayout::setLabel(String&&)
+void GPUBindGroupLayout::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
 }

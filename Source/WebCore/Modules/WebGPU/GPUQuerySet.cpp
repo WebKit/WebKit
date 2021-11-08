@@ -32,15 +32,17 @@ namespace WebCore {
 
 String GPUQuerySet::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUQuerySet::setLabel(String&&)
+void GPUQuerySet::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
 void GPUQuerySet::destroy()
 {
+    m_backing->destroy();
 }
 
 }

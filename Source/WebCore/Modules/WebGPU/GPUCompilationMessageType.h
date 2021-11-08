@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUCompilationMessageType.h>
 
 namespace WebCore {
 
@@ -34,5 +35,18 @@ enum class GPUCompilationMessageType : uint8_t {
     Warning,
     Info
 };
+
+inline PAL::WebGPU::CompilationMessageType convertToBacking(GPUCompilationMessageType compilationMessageType)
+{
+    switch (compilationMessageType) {
+    case GPUCompilationMessageType::Error:
+        return PAL::WebGPU::CompilationMessageType::Error;
+    case GPUCompilationMessageType::Warning:
+        return PAL::WebGPU::CompilationMessageType::Warning;
+    case GPUCompilationMessageType::Info:
+        return PAL::WebGPU::CompilationMessageType::Info;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

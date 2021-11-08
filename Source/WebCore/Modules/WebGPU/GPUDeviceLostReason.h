@@ -26,11 +26,21 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUDeviceLostReason.h>
 
 namespace WebCore {
 
 enum class GPUDeviceLostReason : uint8_t {
     Destroyed
 };
+
+inline PAL::WebGPU::DeviceLostReason convertToBacking(GPUDeviceLostReason deviceLostReason)
+{
+    switch (deviceLostReason) {
+    case GPUDeviceLostReason::Destroyed:
+        return PAL::WebGPU::DeviceLostReason::Destroyed;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

@@ -28,12 +28,12 @@
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUValidationError.h"
 #include <variant>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace PAL {
 namespace WebGPU {
 
-using Error = std::variant<RefPtr<OutOfMemoryError>, RefPtr<ValidationError>>;
+using Error = std::variant<Ref<OutOfMemoryError>, Ref<ValidationError>>;
 
 }
 }

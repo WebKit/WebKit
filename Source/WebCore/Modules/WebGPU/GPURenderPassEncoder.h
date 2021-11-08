@@ -30,6 +30,7 @@
 #include "GPUIntegralTypes.h"
 #include <JavaScriptCore/Uint32Array.h>
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPURenderPassEncoder.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -46,9 +47,9 @@ class GPURenderPipeline;
 
 class GPURenderPassEncoder : public RefCounted<GPURenderPassEncoder> {
 public:
-    static Ref<GPURenderPassEncoder> create()
+    static Ref<GPURenderPassEncoder> create(Ref<PAL::WebGPU::RenderPassEncoder>&& backing)
     {
-        return adoptRef(*new GPURenderPassEncoder());
+        return adoptRef(*new GPURenderPassEncoder(WTFMove(backing)));
     }
 
     String label() const;
@@ -100,8 +101,16 @@ public:
     void executeBundles(Vector<RefPtr<GPURenderBundle>>&&);
     void endPass();
 
+    PAL::WebGPU::RenderPassEncoder& backing() { return m_backing; }
+    const PAL::WebGPU::RenderPassEncoder& backing() const { return m_backing; }
+
 private:
-    GPURenderPassEncoder() = default;
+    GPURenderPassEncoder(Ref<PAL::WebGPU::RenderPassEncoder>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::RenderPassEncoder> m_backing;
 };
 
 }

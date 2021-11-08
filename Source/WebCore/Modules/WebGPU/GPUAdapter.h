@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUAdapter.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -40,9 +41,9 @@ namespace WebCore {
 
 class GPUAdapter : public RefCounted<GPUAdapter> {
 public:
-    static Ref<GPUAdapter> create()
+    static Ref<GPUAdapter> create(Ref<PAL::WebGPU::Adapter>&& backing)
     {
-        return adoptRef(*new GPUAdapter());
+        return adoptRef(*new GPUAdapter(WTFMove(backing)));
     }
 
     String name() const;
@@ -53,8 +54,16 @@ public:
     using RequestDevicePromise = DOMPromiseDeferred<IDLInterface<GPUDevice>>;
     void requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&);
 
+    PAL::WebGPU::Adapter& backing() { return m_backing; }
+    const PAL::WebGPU::Adapter& backing() const { return m_backing; }
+
 private:
-    GPUAdapter() = default;
+    GPUAdapter(Ref<PAL::WebGPU::Adapter>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::Adapter> m_backing;
 };
 
 }

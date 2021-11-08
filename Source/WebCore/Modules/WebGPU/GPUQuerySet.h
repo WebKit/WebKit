@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUQuerySet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,9 +34,9 @@ namespace WebCore {
 
 class GPUQuerySet : public RefCounted<GPUQuerySet> {
 public:
-    static Ref<GPUQuerySet> create()
+    static Ref<GPUQuerySet> create(Ref<PAL::WebGPU::QuerySet>&& backing)
     {
-        return adoptRef(*new GPUQuerySet());
+        return adoptRef(*new GPUQuerySet(WTFMove(backing)));
     }
 
     String label() const;
@@ -43,8 +44,16 @@ public:
 
     void destroy();
 
+    PAL::WebGPU::QuerySet& backing() { return m_backing; }
+    const PAL::WebGPU::QuerySet& backing() const { return m_backing; }
+
 private:
-    GPUQuerySet() = default;
+    GPUQuerySet(Ref<PAL::WebGPU::QuerySet>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::QuerySet> m_backing;
 };
 
 }

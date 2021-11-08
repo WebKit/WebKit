@@ -26,30 +26,43 @@
 #include "config.h"
 #include "GPUAdapter.h"
 
+#include "JSGPUDevice.h"
+
 namespace WebCore {
 
 String GPUAdapter::name() const
 {
-    return StringImpl::empty();
+    return m_backing->name();
 }
 
 Ref<GPUSupportedFeatures> GPUAdapter::features() const
 {
-    return GPUSupportedFeatures::create();
+    return GPUSupportedFeatures::create(PAL::WebGPU::SupportedFeatures::clone(m_backing->features()));
 }
 
 Ref<GPUSupportedLimits> GPUAdapter::limits() const
 {
-    return GPUSupportedLimits::create();
+    return GPUSupportedLimits::create(PAL::WebGPU::SupportedLimits::clone(m_backing->limits()));
 }
 
 bool GPUAdapter::isFallbackAdapter() const
 {
-    return false;
+    return m_backing->isFallbackAdapter();
 }
 
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
+static PAL::WebGPU::DeviceDescriptor convertToBacking(const std::optional<GPUDeviceDescriptor>& options)
 {
+    if (!options)
+        return { };
+
+    return options->convertToBacking();
+}
+
+void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>& deviceDescriptor, RequestDevicePromise&& promise)
+{
+    m_backing->requestDevice(convertToBacking(deviceDescriptor), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::Device>&& device) mutable {
+        promise.resolve(GPUDevice::create(nullptr, WTFMove(device)));
+    });
 }
 
 }

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUTextureView.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,16 +34,24 @@ namespace WebCore {
 
 class GPUTextureView : public RefCounted<GPUTextureView> {
 public:
-    static Ref<GPUTextureView> create()
+    static Ref<GPUTextureView> create(Ref<PAL::WebGPU::TextureView>&& backing)
     {
-        return adoptRef(*new GPUTextureView());
+        return adoptRef(*new GPUTextureView(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
+    PAL::WebGPU::TextureView& backing() { return m_backing; }
+    const PAL::WebGPU::TextureView& backing() const { return m_backing; }
+
 private:
-    GPUTextureView() = default;
+    GPUTextureView(Ref<PAL::WebGPU::TextureView>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::TextureView> m_backing;
 };
 
 }

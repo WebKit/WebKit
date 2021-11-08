@@ -32,33 +32,35 @@ namespace WebCore {
 
 String GPUBuffer::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUBuffer::setLabel(String&&)
+void GPUBuffer::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, std::optional<GPUSize64> size, Ref<DeferredPromise>&&)
+void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
 {
-    UNUSED_PARAM(mode);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
+    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [promise = WTFMove(promise)] () mutable {
+        promise.resolve(nullptr);
+    });
 }
 
 Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
-    return ArrayBuffer::create(nullptr, 0);
+    auto mappedRange = m_backing->getMappedRange(offset, size);
+    return ArrayBuffer::create(mappedRange.source, mappedRange.byteLength);
 }
 
 void GPUBuffer::unmap()
 {
+    m_backing->unmap();
 }
 
 void GPUBuffer::destroy()
 {
+    m_backing->destroy();
 }
 
 }

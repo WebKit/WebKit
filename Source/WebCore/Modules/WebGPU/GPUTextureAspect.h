@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUTextureAspect.h>
 
 namespace WebCore {
 
@@ -34,5 +35,18 @@ enum class GPUTextureAspect : uint8_t {
     StencilOnly,
     DepthOnly
 };
+
+inline PAL::WebGPU::TextureAspect convertToBacking(GPUTextureAspect textureAspect)
+{
+    switch (textureAspect) {
+    case GPUTextureAspect::All:
+        return PAL::WebGPU::TextureAspect::All;
+    case GPUTextureAspect::StencilOnly:
+        return PAL::WebGPU::TextureAspect::StencilOnly;
+    case GPUTextureAspect::DepthOnly:
+        return PAL::WebGPU::TextureAspect::DepthOnly;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

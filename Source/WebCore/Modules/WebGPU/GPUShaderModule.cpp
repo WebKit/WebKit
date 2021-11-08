@@ -25,20 +25,25 @@
 
 #include "config.h"
 #include "GPUShaderModule.h"
+#include "JSGPUCompilationInfo.h"
 
 namespace WebCore {
 
 String GPUShaderModule::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUShaderModule::setLabel(String&&)
+void GPUShaderModule::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-void GPUShaderModule::compilationInfo(Ref<DeferredPromise>&&)
+void GPUShaderModule::compilationInfo(CompilationInfoPromise&& promise)
 {
+    m_backing->compilationInfo([promise = WTFMove(promise)] (Ref<PAL::WebGPU::CompilationInfo>&& compilationInfo) mutable {
+        promise.resolve(GPUCompilationInfo::create(WTFMove(compilationInfo)));
+    });
 }
 
 }

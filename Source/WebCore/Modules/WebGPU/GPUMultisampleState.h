@@ -26,10 +26,20 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
+#include <pal/graphics/WebGPU/WebGPUMultisampleState.h>
 
 namespace WebCore {
 
 struct GPUMultisampleState {
+    PAL::WebGPU::MultisampleState convertToBacking() const
+    {
+        return {
+            count,
+            mask,
+            alphaToCoverageEnabled,
+        };
+    }
+
     GPUSize32 count;
     GPUSampleMask mask;
     bool alphaToCoverageEnabled;

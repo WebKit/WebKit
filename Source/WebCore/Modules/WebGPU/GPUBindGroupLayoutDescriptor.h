@@ -27,11 +27,26 @@
 
 #include "GPUBindGroupLayoutEntry.h"
 #include "GPUObjectDescriptorBase.h"
+#include <pal/graphics/WebGPU/WebGPUBindGroupLayoutDescriptor.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUBindGroupLayoutDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::BindGroupLayoutDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            ([this] () {
+                Vector<PAL::WebGPU::BindGroupLayoutEntry> entries;
+                entries.reserveInitialCapacity(this->entries.size());
+                for (auto& entry : this->entries)
+                    entries.uncheckedAppend(entry.convertToBacking());
+                return entries;
+            })(),
+        };
+    }
+
     Vector<GPUBindGroupLayoutEntry> entries;
 };
 

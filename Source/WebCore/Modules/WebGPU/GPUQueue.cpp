@@ -34,53 +34,58 @@ namespace WebCore {
 
 String GPUQueue::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUQueue::setLabel(String&&)
+void GPUQueue::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-void GPUQueue::submit(Vector<RefPtr<GPUCommandBuffer>>)
+void GPUQueue::submit(Vector<RefPtr<GPUCommandBuffer>>&& commandBuffers)
 {
+    Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>> result;
+    result.reserveInitialCapacity(commandBuffers.size());
+    for (const auto& commandBuffer : commandBuffers) {
+        if (!commandBuffer)
+            continue;
+        result.uncheckedAppend(commandBuffer->backing());
+    }
+    m_backing->submit(WTFMove(result));
 }
 
-void GPUQueue::onSubmittedWorkDone(Ref<DeferredPromise>&&)
+void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)
 {
+    m_backing->onSubmittedWorkDone([promise = WTFMove(promise)] () mutable {
+        promise.resolve(nullptr);
+    });
 }
 
 void GPUQueue::writeBuffer(
-    const GPUBuffer&,
+    const GPUBuffer& buffer,
     GPUSize64 bufferOffset,
     BufferSource&& data,
     std::optional<GPUSize64> dataOffset,
     std::optional<GPUSize64> size)
 {
-    UNUSED_PARAM(bufferOffset);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(dataOffset);
-    UNUSED_PARAM(size);
+    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), data.length(), dataOffset.value_or(0), size);
 }
 
 void GPUQueue::writeTexture(
-    GPUImageCopyTexture destination,
+    const GPUImageCopyTexture& destination,
     BufferSource&& data,
-    GPUImageDataLayout,
-    GPUExtent3D size)
+    const GPUImageDataLayout& imageDataLayout,
+    const GPUExtent3D& size)
 {
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(size);
+    m_backing->writeTexture(destination.convertToBacking(), data.data(), data.length(), imageDataLayout.convertToBacking(), convertToBacking(size));
 }
 
 void GPUQueue::copyExternalImageToTexture(
-    GPUImageCopyExternalImage source,
-    GPUImageCopyTextureTagged destination,
-    GPUExtent3D copySize)
+    const GPUImageCopyExternalImage& source,
+    const GPUImageCopyTextureTagged& destination,
+    const GPUExtent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    m_backing->copyExternalImageToTexture(source.convertToBacking(), destination.convertToBacking(), convertToBacking(copySize));
 }
 
 }

@@ -36,6 +36,7 @@
 #include "GPURenderPassDescriptor.h"
 #include "GPURenderPassEncoder.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUCommandEncoder.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -47,16 +48,16 @@ class GPUQuerySet;
 
 class GPUCommandEncoder : public RefCounted<GPUCommandEncoder> {
 public:
-    static Ref<GPUCommandEncoder> create()
+    static Ref<GPUCommandEncoder> create(Ref<PAL::WebGPU::CommandEncoder>&& backing)
     {
-        return adoptRef(*new GPUCommandEncoder());
+        return adoptRef(*new GPUCommandEncoder(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
-    Ref<GPURenderPassEncoder> beginRenderPass(GPURenderPassDescriptor);
-    Ref<GPUComputePassEncoder> beginComputePass(std::optional<GPUComputePassDescriptor>);
+    Ref<GPURenderPassEncoder> beginRenderPass(const GPURenderPassDescriptor&);
+    Ref<GPUComputePassEncoder> beginComputePass(const std::optional<GPUComputePassDescriptor>&);
 
     void copyBufferToBuffer(
         const GPUBuffer& source,
@@ -66,19 +67,19 @@ public:
         GPUSize64);
 
     void copyBufferToTexture(
-        GPUImageCopyBuffer source,
-        GPUImageCopyTexture destination,
-        GPUExtent3D copySize);
+        const GPUImageCopyBuffer& source,
+        const GPUImageCopyTexture& destination,
+        const GPUExtent3D& copySize);
 
     void copyTextureToBuffer(
-        GPUImageCopyTexture source,
-        GPUImageCopyBuffer destination,
-        GPUExtent3D copySize);
+        const GPUImageCopyTexture& source,
+        const GPUImageCopyBuffer& destination,
+        const GPUExtent3D& copySize);
 
     void copyTextureToTexture(
-        GPUImageCopyTexture source,
-        GPUImageCopyTexture destination,
-        GPUExtent3D copySize);
+        const GPUImageCopyTexture& source,
+        const GPUImageCopyTexture& destination,
+        const GPUExtent3D& copySize);
 
     void fillBuffer(
         const GPUBuffer& destination,
@@ -98,10 +99,18 @@ public:
         const GPUBuffer& destination,
         GPUSize64 destinationOffset);
 
-    Ref<GPUCommandBuffer> finish(std::optional<GPUCommandBufferDescriptor>);
+    Ref<GPUCommandBuffer> finish(const std::optional<GPUCommandBufferDescriptor>&);
+
+    PAL::WebGPU::CommandEncoder& backing() { return m_backing; }
+    const PAL::WebGPU::CommandEncoder& backing() const { return m_backing; }
 
 private:
-    GPUCommandEncoder() = default;
+    GPUCommandEncoder(Ref<PAL::WebGPU::CommandEncoder>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::CommandEncoder> m_backing;
 };
 
 }

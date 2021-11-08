@@ -27,6 +27,7 @@
 
 #include "GPUIntegralTypes.h"
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUTextureUsage.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,5 +41,21 @@ public:
     static constexpr GPUFlagsConstant STORAGE_BINDING   = 0x08;
     static constexpr GPUFlagsConstant RENDER_ATTACHMENT = 0x10;
 };
+
+inline PAL::WebGPU::TextureUsageFlags convertTextureUsageFlagsToBacking(GPUTextureUsageFlags textureUsageFlags)
+{
+    PAL::WebGPU::TextureUsageFlags result = 0;
+    if (textureUsageFlags & GPUTextureUsage::COPY_SRC)
+        result |= PAL::WebGPU::TextureUsage::COPY_SRC;
+    if (textureUsageFlags & GPUTextureUsage::COPY_DST)
+        result |= PAL::WebGPU::TextureUsage::COPY_DST;
+    if (textureUsageFlags & GPUTextureUsage::TEXTURE_BINDING)
+        result |= PAL::WebGPU::TextureUsage::TEXTURE_BINDING;
+    if (textureUsageFlags & GPUTextureUsage::STORAGE_BINDING)
+        result |= PAL::WebGPU::TextureUsage::STORAGE_BINDING;
+    if (textureUsageFlags & GPUTextureUsage::RENDER_ATTACHMENT)
+        result |= PAL::WebGPU::TextureUsage::RENDER_ATTACHMENT;
+    return result;
+}
 
 }

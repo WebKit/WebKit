@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUCompareFunction.h>
 
 namespace WebCore {
 
@@ -39,5 +40,28 @@ enum class GPUCompareFunction : uint8_t {
     GreaterEqual,
     Always
 };
+
+inline PAL::WebGPU::CompareFunction convertToBacking(GPUCompareFunction compareFunction)
+{
+    switch (compareFunction) {
+    case GPUCompareFunction::Never:
+        return PAL::WebGPU::CompareFunction::Never;
+    case GPUCompareFunction::Less:
+        return PAL::WebGPU::CompareFunction::Less;
+    case GPUCompareFunction::Equal:
+        return PAL::WebGPU::CompareFunction::Equal;
+    case GPUCompareFunction::LessEqual:
+        return PAL::WebGPU::CompareFunction::LessEqual;
+    case GPUCompareFunction::Greater:
+        return PAL::WebGPU::CompareFunction::Greater;
+    case GPUCompareFunction::NotEqual:
+        return PAL::WebGPU::CompareFunction::NotEqual;
+    case GPUCompareFunction::GreaterEqual:
+        return PAL::WebGPU::CompareFunction::GreaterEqual;
+    case GPUCompareFunction::Always:
+        return PAL::WebGPU::CompareFunction::Always;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

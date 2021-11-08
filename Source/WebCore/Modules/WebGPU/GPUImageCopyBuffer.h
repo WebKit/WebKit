@@ -27,12 +27,26 @@
 
 #include "GPUBuffer.h"
 #include "GPUImageDataLayout.h"
+#include <pal/graphics/WebGPU/WebGPUImageCopyBuffer.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct GPUImageCopyBuffer : public GPUImageDataLayout {
-    RefPtr<GPUBuffer> buffer;
+    PAL::WebGPU::ImageCopyBuffer convertToBacking() const
+    {
+        ASSERT(buffer);
+        return {
+            {
+                offset,
+                bytesPerRow,
+                rowsPerImage,
+            },
+            buffer->backing()
+        };
+    }
+
+    GPUBuffer* buffer;
 };
 
 }

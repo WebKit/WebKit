@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUFrontFace.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUFrontFace : uint8_t {
     Ccw,
     Cw
 };
+
+inline PAL::WebGPU::FrontFace convertToBacking(GPUFrontFace frontFace)
+{
+    switch (frontFace) {
+    case GPUFrontFace::Ccw:
+        return PAL::WebGPU::FrontFace::CCW;
+    case GPUFrontFace::Cw:
+        return PAL::WebGPU::FrontFace::CW;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

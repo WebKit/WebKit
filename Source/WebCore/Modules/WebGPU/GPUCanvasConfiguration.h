@@ -30,16 +30,29 @@
 #include "GPUExtent3DDict.h"
 #include "GPUPredefinedColorSpace.h"
 #include "GPUTextureFormat.h"
+#include "GPUTextureUsage.h"
 #include <cstdint>
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUCanvasConfiguration.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-using GPUTextureUsageFlags = uint32_t; // FIXME: This doesn't need to be here.
-
 struct GPUCanvasConfiguration {
-    RefPtr<GPUDevice> device;
+    PAL::WebGPU::CanvasConfiguration convertToBacking() const
+    {
+        ASSERT(device);
+        return {
+            device->backing(),
+            WebCore::convertToBacking(format),
+            convertTextureUsageFlagsToBacking(usage),
+            WebCore::convertToBacking(colorSpace),
+            WebCore::convertToBacking(compositingAlphaMode),
+            size ? std::optional { WebCore::convertToBacking(*size) } : std::nullopt,
+        };
+    }
+
+    GPUDevice* device;
     GPUTextureFormat format;
     GPUTextureUsageFlags usage; // GPUTextureUsage.RENDER_ATTACHMENT
     GPUPredefinedColorSpace colorSpace;

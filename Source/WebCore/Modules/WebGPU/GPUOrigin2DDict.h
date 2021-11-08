@@ -26,16 +26,34 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
+#include <pal/graphics/WebGPU/WebGPUOrigin2D.h>
 #include <variant>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUOrigin2DDict {
+    PAL::WebGPU::Origin2DDict convertToBacking() const
+    {
+        return {
+            x,
+            y,
+        };
+    }
+
     GPUIntegerCoordinate x;
     GPUIntegerCoordinate y;
 };
 
 using GPUOrigin2D = std::variant<Vector<GPUIntegerCoordinate>, GPUOrigin2DDict>;
+
+inline PAL::WebGPU::Origin2D convertToBacking(const GPUOrigin2D& origin2D)
+{
+    return WTF::switchOn(origin2D, [] (const Vector<GPUIntegerCoordinate>& vector) -> PAL::WebGPU::Origin2D {
+        return vector;
+    }, [] (const GPUOrigin2DDict& origin2D) -> PAL::WebGPU::Origin2D {
+        return origin2D.convertToBacking();
+    });
+}
 
 }

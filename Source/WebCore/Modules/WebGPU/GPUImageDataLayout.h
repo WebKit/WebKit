@@ -27,10 +27,20 @@
 
 #include "GPUIntegralTypes.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUImageDataLayout.h>
 
 namespace WebCore {
 
 struct GPUImageDataLayout {
+    PAL::WebGPU::ImageDataLayout convertToBacking() const
+    {
+        return {
+            offset,
+            bytesPerRow,
+            rowsPerImage,
+        };
+    }
+
     GPUSize64 offset;
     std::optional<GPUSize32> bytesPerRow;
     std::optional<GPUSize32> rowsPerImage;

@@ -30,6 +30,7 @@
 #include "GPURenderBundleDescriptor.h"
 #include <JavaScriptCore/Uint32Array.h>
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -44,9 +45,9 @@ class GPURenderPipeline;
 
 class GPURenderBundleEncoder : public RefCounted<GPURenderBundleEncoder> {
 public:
-    static Ref<GPURenderBundleEncoder> create()
+    static Ref<GPURenderBundleEncoder> create(Ref<PAL::WebGPU::RenderBundleEncoder>&& backing)
     {
-        return adoptRef(*new GPURenderBundleEncoder());
+        return adoptRef(*new GPURenderBundleEncoder(WTFMove(backing)));
     }
 
     String label() const;
@@ -79,10 +80,18 @@ public:
     void popDebugGroup();
     void insertDebugMarker(String&& markerLabel);
 
-    Ref<GPURenderBundle> finish(std::optional<GPURenderBundleDescriptor>);
+    Ref<GPURenderBundle> finish(const std::optional<GPURenderBundleDescriptor>&);
+
+    PAL::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
+    const PAL::WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
 
 private:
-    GPURenderBundleEncoder() = default;
+    GPURenderBundleEncoder(Ref<PAL::WebGPU::RenderBundleEncoder>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::RenderBundleEncoder> m_backing;
 };
 
 }

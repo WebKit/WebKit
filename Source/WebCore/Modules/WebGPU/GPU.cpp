@@ -26,11 +26,25 @@
 #include "config.h"
 #include "GPU.h"
 
+#include "JSGPUAdapter.h"
+
 namespace WebCore {
 
-void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&)
+static PAL::WebGPU::RequestAdapterOptions convertToBacking(const std::optional<GPURequestAdapterOptions>& options)
 {
+    if (!options)
+        return { std::nullopt, false };
 
+    return options->convertToBacking();
+}
+
+void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
+{
+    m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
+        if (!adapter)
+            promise.resolve(nullptr);
+        promise.resolve(GPUAdapter::create(adapter.releaseNonNull()).ptr());
+    });
 }
 
 }

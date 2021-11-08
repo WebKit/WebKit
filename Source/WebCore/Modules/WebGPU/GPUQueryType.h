@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUQueryType.h>
 
 namespace WebCore {
 
@@ -34,5 +35,18 @@ enum class GPUQueryType : uint8_t {
     PipelineStatistics,
     Timestamp
 };
+
+inline PAL::WebGPU::QueryType convertToBacking(GPUQueryType queryType)
+{
+    switch (queryType) {
+    case GPUQueryType::Occlusion:
+        return PAL::WebGPU::QueryType::Occlusion;
+    case GPUQueryType::PipelineStatistics:
+        return PAL::WebGPU::QueryType::PipelineStatistics;
+    case GPUQueryType::Timestamp:
+        return PAL::WebGPU::QueryType::Timestamp;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

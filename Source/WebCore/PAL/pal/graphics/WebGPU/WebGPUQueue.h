@@ -26,7 +26,7 @@
 #pragma once
 
 #include "WebGPUCommandBuffer.h"
-#include "WebGPUExtent3DDict.h"
+#include "WebGPUExtent3D.h"
 #include "WebGPUImageCopyExternalImage.h"
 #include "WebGPUImageCopyTexture.h"
 #include "WebGPUImageCopyTextureTagged.h"
@@ -36,7 +36,6 @@
 #include <utility>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -57,7 +56,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void submit(Vector<RefPtr<CommandBuffer>>) = 0;
+    virtual void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) = 0;
 
     virtual void onSubmittedWorkDone(std::function<void()>&&) = 0;
 
@@ -66,7 +65,7 @@ public:
         Size64 bufferOffset,
         const void* source,
         size_t byteLength,
-        std::optional<Size64> dataOffset,
+        Size64 dataOffset,
         std::optional<Size64>) = 0;
 
     virtual void writeTexture(

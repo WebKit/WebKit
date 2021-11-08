@@ -27,6 +27,7 @@
 
 #include "GPUCompilationMessageType.h"
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -35,20 +36,28 @@ namespace WebCore {
 
 class GPUCompilationMessage : public RefCounted<GPUCompilationMessage> {
 public:
-    static Ref<GPUCompilationMessage> create()
+    static Ref<GPUCompilationMessage> create(Ref<PAL::WebGPU::CompilationMessage>&& backing)
     {
-        return adoptRef(*new GPUCompilationMessage());
+        return adoptRef(*new GPUCompilationMessage(WTFMove(backing)));
     }
 
-    String message() const;
+    const String& message() const;
     GPUCompilationMessageType type() const;
     uint64_t lineNum() const;
     uint64_t linePos() const;
     uint64_t offset() const;
     uint64_t length() const;
 
+    PAL::WebGPU::CompilationMessage& backing() { return m_backing; }
+    const PAL::WebGPU::CompilationMessage& backing() const { return m_backing; }
+
 private:
-    GPUCompilationMessage() = default;
+    GPUCompilationMessage(Ref<PAL::WebGPU::CompilationMessage>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::CompilationMessage> m_backing;
 };
 
 }

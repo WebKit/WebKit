@@ -27,21 +27,41 @@
 #include "GPUTexture.h"
 
 #include "GPUTextureView.h"
+#include "GPUTextureViewDescriptor.h"
+#include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
 
 namespace WebCore {
 
 String GPUTexture::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUTexture::setLabel(String&&)
+void GPUTexture::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-Ref<GPUTextureView> GPUTexture::createView(const std::optional<GPUTextureViewDescriptor>&) const
+static PAL::WebGPU::TextureViewDescriptor convertToBacking(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor)
 {
-    return GPUTextureView::create();
+    if (!textureViewDescriptor) {
+        return {
+            { },
+            std::nullopt,
+            std::nullopt,
+            PAL::WebGPU::TextureAspect::All,
+            0,
+            std::nullopt,
+            0,
+            std::nullopt
+        };
+    }
+    return textureViewDescriptor->convertToBacking();
+}
+
+Ref<GPUTextureView> GPUTexture::createView(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor) const
+{
+    return GPUTextureView::create(m_backing->createView(convertToBacking(textureViewDescriptor)));
 }
 
 void GPUTexture::destroy()

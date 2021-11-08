@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUCanvasCompositingAlphaMode : uint8_t {
     Opaque,
     Premultiplied
 };
+
+inline PAL::WebGPU::CanvasCompositingAlphaMode convertToBacking(GPUCanvasCompositingAlphaMode canvasCompositingAlphaMode)
+{
+    switch (canvasCompositingAlphaMode) {
+    case GPUCanvasCompositingAlphaMode::Opaque:
+        return PAL::WebGPU::CanvasCompositingAlphaMode::Opaque;
+    case GPUCanvasCompositingAlphaMode::Premultiplied:
+        return PAL::WebGPU::CanvasCompositingAlphaMode::Premultiplied;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

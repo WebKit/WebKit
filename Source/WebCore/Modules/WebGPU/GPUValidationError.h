@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUValidationError.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -38,12 +39,29 @@ public:
         return adoptRef(*new GPUValidationError(WTFMove(message)));
     }
 
-    String message() const;
+    static Ref<GPUValidationError> create(Ref<PAL::WebGPU::ValidationError>&& backing)
+    {
+        return adoptRef(*new GPUValidationError(WTFMove(backing)));
+    }
+
+    const String& message() const;
+
+    PAL::WebGPU::ValidationError* backing() { return m_backing.get(); }
+    const PAL::WebGPU::ValidationError* backing() const { return m_backing.get(); }
 
 private:
-    GPUValidationError(String&& message);
+    GPUValidationError(String&& message)
+        : m_message(WTFMove(message))
+    {
+    }
+
+    GPUValidationError(Ref<PAL::WebGPU::ValidationError>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
 
     String m_message;
+    RefPtr<PAL::WebGPU::ValidationError> m_backing;
 };
 
 }

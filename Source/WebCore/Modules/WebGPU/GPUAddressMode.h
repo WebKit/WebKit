@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUAddressMode.h>
 
 namespace WebCore {
 
@@ -34,5 +35,18 @@ enum class GPUAddressMode : uint8_t {
     Repeat,
     MirrorRepeat
 };
+
+inline PAL::WebGPU::AddressMode convertToBacking(GPUAddressMode addressMode)
+{
+    switch (addressMode) {
+    case GPUAddressMode::ClampToEdge:
+        return PAL::WebGPU::AddressMode::ClampToEdge;
+    case GPUAddressMode::Repeat:
+        return PAL::WebGPU::AddressMode::Repeat;
+    case GPUAddressMode::MirrorRepeat:
+        return PAL::WebGPU::AddressMode::MirrorRepeat;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

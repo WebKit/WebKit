@@ -29,10 +29,20 @@
 #include "GPUColorWrite.h"
 #include "GPUTextureFormat.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUColorTargetState.h>
 
 namespace WebCore {
 
 struct GPUColorTargetState {
+    PAL::WebGPU::ColorTargetState convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(format),
+            blend ? std::optional { blend->convertToBacking() } : std::nullopt,
+            convertColorWriteFlagsToBacking(writeMask),
+        };
+    }
+
     GPUTextureFormat format;
 
     std::optional<GPUBlendState> blend;

@@ -27,11 +27,20 @@
 
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPipelineLayout.h"
+#include <pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h>
 
 namespace WebCore {
 
 struct GPUPipelineDescriptorBase : public GPUObjectDescriptorBase {
-    RefPtr<GPUPipelineLayout> layout;
+    PAL::WebGPU::PipelineDescriptorBase convertToBacking() const
+    {
+        return {
+            { label },
+            layout ? &layout->backing() : nullptr,
+        };
+    }
+
+    GPUPipelineLayout* layout;
 };
 
 }

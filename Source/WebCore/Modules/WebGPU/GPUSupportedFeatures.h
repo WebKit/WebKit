@@ -27,6 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMSetLike.h"
+#include <pal/graphics/WebGPU/WebGPUSupportedFeatures.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -35,15 +36,23 @@ namespace WebCore {
 
 class GPUSupportedFeatures : public RefCounted<GPUSupportedFeatures> {
 public:
-    static Ref<GPUSupportedFeatures> create()
+    static Ref<GPUSupportedFeatures> create(Ref<PAL::WebGPU::SupportedFeatures>&& backing)
     {
-        return adoptRef(*new GPUSupportedFeatures());
+        return adoptRef(*new GPUSupportedFeatures(WTFMove(backing)));
     }
 
     void initializeSetLike(DOMSetAdapter&) const;
 
+    PAL::WebGPU::SupportedFeatures& backing() { return m_backing; }
+    const PAL::WebGPU::SupportedFeatures& backing() const { return m_backing; }
+
 private:
-    GPUSupportedFeatures() = default;
+    GPUSupportedFeatures(Ref<PAL::WebGPU::SupportedFeatures>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::SupportedFeatures> m_backing;
 };
 
 }

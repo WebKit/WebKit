@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUBlendFactor.h>
 
 namespace WebCore {
 
@@ -44,5 +45,38 @@ enum class GPUBlendFactor : uint8_t {
     Constant,
     OneMinusConstant
 };
+
+inline PAL::WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)
+{
+    switch (blendFactor) {
+    case GPUBlendFactor::Zero:
+        return PAL::WebGPU::BlendFactor::Zero;
+    case GPUBlendFactor::One:
+        return PAL::WebGPU::BlendFactor::One;
+    case GPUBlendFactor::Src:
+        return PAL::WebGPU::BlendFactor::Src;
+    case GPUBlendFactor::OneMinusSrc:
+        return PAL::WebGPU::BlendFactor::OneMinusSrc;
+    case GPUBlendFactor::SrcAlpha:
+        return PAL::WebGPU::BlendFactor::SrcAlpha;
+    case GPUBlendFactor::OneMinusSrcAlpha:
+        return PAL::WebGPU::BlendFactor::OneMinusSrcAlpha;
+    case GPUBlendFactor::Dst:
+        return PAL::WebGPU::BlendFactor::Dst;
+    case GPUBlendFactor::OneMinusDst:
+        return PAL::WebGPU::BlendFactor::OneMinusDst;
+    case GPUBlendFactor::DstAlpha:
+        return PAL::WebGPU::BlendFactor::DstAlpha;
+    case GPUBlendFactor::OneMinusDstAlpha:
+        return PAL::WebGPU::BlendFactor::OneMinusDstAlpha;
+    case GPUBlendFactor::SrcAlphaSaturated:
+        return PAL::WebGPU::BlendFactor::SrcAlphaSaturated;
+    case GPUBlendFactor::Constant:
+        return PAL::WebGPU::BlendFactor::Constant;
+    case GPUBlendFactor::OneMinusConstant:
+        return PAL::WebGPU::BlendFactor::OneMinusConstant;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

@@ -73,7 +73,8 @@ public:
         std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets) = 0;
 
     virtual void setBindGroup(Index32, const BindGroup&,
-        Vector<uint32_t>&& dynamicOffsetsData,
+        const uint32_t* dynamicOffsetsArrayBuffer,
+        size_t dynamicOffsetsArrayBufferLength,
         Size64 dynamicOffsetsDataStart,
         Size32 dynamicOffsetsDataLength) = 0;
 
@@ -81,7 +82,7 @@ public:
     virtual void popDebugGroup() = 0;
     virtual void insertDebugMarker(String&& markerLabel) = 0;
 
-    virtual Ref<RenderBundle> finish(std::optional<RenderBundleDescriptor>) = 0;
+    virtual Ref<RenderBundle> finish(const RenderBundleDescriptor&) = 0;
 
 protected:
     RenderBundleEncoder() = default;

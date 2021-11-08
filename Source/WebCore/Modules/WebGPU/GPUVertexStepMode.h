@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUVertexStepMode.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUVertexStepMode : uint8_t {
     Vertex,
     Instance
 };
+
+inline PAL::WebGPU::VertexStepMode convertToBacking(GPUVertexStepMode vertexStepMode)
+{
+    switch (vertexStepMode) {
+    case GPUVertexStepMode::Vertex:
+        return PAL::WebGPU::VertexStepMode::Vertex;
+    case GPUVertexStepMode::Instance:
+        return PAL::WebGPU::VertexStepMode::Instance;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

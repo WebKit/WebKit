@@ -30,13 +30,13 @@
 #include "WebGPUStoreOp.h"
 #include "WebGPUTextureView.h"
 #include <variant>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace PAL {
 namespace WebGPU {
 
 struct RenderPassDepthStencilAttachment {
-    RefPtr<TextureView> view;
+    TextureView& view;
 
     std::variant<LoadOp, float> depthLoadValue;
     StoreOp depthStoreOp;

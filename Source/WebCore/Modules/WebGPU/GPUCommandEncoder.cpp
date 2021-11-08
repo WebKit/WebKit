@@ -35,21 +35,22 @@ namespace WebCore {
 
 String GPUCommandEncoder::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUCommandEncoder::setLabel(String&&)
+void GPUCommandEncoder::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-Ref<GPURenderPassEncoder> GPUCommandEncoder::beginRenderPass(GPURenderPassDescriptor)
+Ref<GPURenderPassEncoder> GPUCommandEncoder::beginRenderPass(const GPURenderPassDescriptor& renderPassDescriptor)
 {
-    return GPURenderPassEncoder::create();
+    return GPURenderPassEncoder::create(m_backing->beginRenderPass(renderPassDescriptor.convertToBacking()));
 }
 
-Ref<GPUComputePassEncoder> GPUCommandEncoder::beginComputePass(std::optional<GPUComputePassDescriptor>)
+Ref<GPUComputePassEncoder> GPUCommandEncoder::beginComputePass(const std::optional<GPUComputePassDescriptor>& computePassDescriptor)
 {
-    return GPUComputePassEncoder::create();
+    return GPUComputePassEncoder::create(m_backing->beginComputePass(computePassDescriptor ? std::optional { computePassDescriptor->convertToBacking() } : std::nullopt));
 }
 
 void GPUCommandEncoder::copyBufferToBuffer(
@@ -59,41 +60,31 @@ void GPUCommandEncoder::copyBufferToBuffer(
     GPUSize64 destinationOffset,
     GPUSize64 size)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(sourceOffset);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(destinationOffset);
-    UNUSED_PARAM(size);
+    m_backing->copyBufferToBuffer(source.backing(), sourceOffset, destination.backing(), destinationOffset, size);
 }
 
 void GPUCommandEncoder::copyBufferToTexture(
-    GPUImageCopyBuffer source,
-    GPUImageCopyTexture destination,
-    GPUExtent3D copySize)
+    const GPUImageCopyBuffer& source,
+    const GPUImageCopyTexture& destination,
+    const GPUExtent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    m_backing->copyBufferToTexture(source.convertToBacking(), destination.convertToBacking(), convertToBacking(copySize));
 }
 
 void GPUCommandEncoder::copyTextureToBuffer(
-    GPUImageCopyTexture source,
-    GPUImageCopyBuffer destination,
-    GPUExtent3D copySize)
+    const GPUImageCopyTexture& source,
+    const GPUImageCopyBuffer& destination,
+    const GPUExtent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    m_backing->copyTextureToBuffer(source.convertToBacking(), destination.convertToBacking(), convertToBacking(copySize));
 }
 
 void GPUCommandEncoder::copyTextureToTexture(
-    GPUImageCopyTexture source,
-    GPUImageCopyTexture destination,
-    GPUExtent3D copySize)
+    const GPUImageCopyTexture& source,
+    const GPUImageCopyTexture& destination,
+    const GPUExtent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    m_backing->copyTextureToTexture(source.convertToBacking(), destination.convertToBacking(), convertToBacking(copySize));
 }
 
 void GPUCommandEncoder::fillBuffer(
@@ -101,47 +92,50 @@ void GPUCommandEncoder::fillBuffer(
     GPUSize64 destinationOffset,
     GPUSize64 size)
 {
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(destinationOffset);
-    UNUSED_PARAM(size);
+    m_backing->fillBuffer(destination.backing(), destinationOffset, size);
 }
 
 void GPUCommandEncoder::pushDebugGroup(String&& groupLabel)
 {
-    UNUSED_PARAM(groupLabel);
+    m_backing->pushDebugGroup(WTFMove(groupLabel));
 }
 
 void GPUCommandEncoder::popDebugGroup()
 {
-
+    m_backing->popDebugGroup();
 }
 
 void GPUCommandEncoder::insertDebugMarker(String&& markerLabel)
 {
-    UNUSED_PARAM(markerLabel);
+    m_backing->insertDebugMarker(WTFMove(markerLabel));
 }
 
-void GPUCommandEncoder::writeTimestamp(const GPUQuerySet&, GPUSize32 queryIndex)
+void GPUCommandEncoder::writeTimestamp(const GPUQuerySet& querySet, GPUSize32 queryIndex)
 {
-    UNUSED_PARAM(queryIndex);
+    m_backing->writeTimestamp(querySet.backing(), queryIndex);
 }
 
 void GPUCommandEncoder::resolveQuerySet(
-    const GPUQuerySet&,
+    const GPUQuerySet& querySet,
     GPUSize32 firstQuery,
     GPUSize32 queryCount,
     const GPUBuffer& destination,
     GPUSize64 destinationOffset)
 {
-    UNUSED_PARAM(firstQuery);
-    UNUSED_PARAM(queryCount);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(destinationOffset);
+    m_backing->resolveQuerySet(querySet.backing(), firstQuery, queryCount, destination.backing(), destinationOffset);
 }
 
-Ref<GPUCommandBuffer> GPUCommandEncoder::finish(std::optional<GPUCommandBufferDescriptor>)
+static PAL::WebGPU::CommandBufferDescriptor convertToBacking(const std::optional<GPUCommandBufferDescriptor>& commandBufferDescriptor)
 {
-    return GPUCommandBuffer::create();
+    if (!commandBufferDescriptor)
+        return { };
+
+    return commandBufferDescriptor->convertToBacking();
+}
+
+Ref<GPUCommandBuffer> GPUCommandEncoder::finish(const std::optional<GPUCommandBufferDescriptor>& commandBufferDescriptor)
+{
+    return GPUCommandBuffer::create(m_backing->finish(convertToBacking(commandBufferDescriptor)));
 }
 
 }

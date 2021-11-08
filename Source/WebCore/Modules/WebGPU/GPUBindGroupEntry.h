@@ -30,6 +30,7 @@
 #include "GPUIntegralTypes.h"
 #include "GPUSampler.h"
 #include "GPUTextureView.h"
+#include <pal/graphics/WebGPU/WebGPUBindGroupEntry.h>
 #include <utility>
 #include <variant>
 
@@ -37,7 +38,31 @@ namespace WebCore {
 
 using GPUBindingResource = std::variant<RefPtr<GPUSampler>, RefPtr<GPUTextureView>, GPUBufferBinding, RefPtr<GPUExternalTexture>>;
 
+inline PAL::WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindingResource)
+{
+    return WTF::switchOn(bindingResource, [] (const RefPtr<GPUSampler>& sampler) -> PAL::WebGPU::BindingResource {
+        ASSERT(sampler);
+        return sampler->backing();
+    }, [] (const RefPtr<GPUTextureView>& textureView) -> PAL::WebGPU::BindingResource {
+        ASSERT(textureView);
+        return textureView->backing();
+    }, [] (const GPUBufferBinding& bufferBinding) -> PAL::WebGPU::BindingResource {
+        return bufferBinding.convertToBacking();
+    }, [] (const RefPtr<GPUExternalTexture>& externalTexture) -> PAL::WebGPU::BindingResource {
+        ASSERT(externalTexture);
+        return externalTexture->backing();
+    });
+}
+
 struct GPUBindGroupEntry {
+    PAL::WebGPU::BindGroupEntry convertToBacking() const
+    {
+        return {
+            binding,
+            WebCore::convertToBacking(resource),
+        };
+    }
+
     GPUIndex32 binding;
     GPUBindingResource resource;
 };

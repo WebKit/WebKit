@@ -27,10 +27,20 @@
 
 #include "GPUBlendFactor.h"
 #include "GPUBlendOperation.h"
+#include <pal/graphics/WebGPU/WebGPUBlendComponent.h>
 
 namespace WebCore {
 
 struct GPUBlendComponent {
+    PAL::WebGPU::BlendComponent convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(operation),
+            WebCore::convertToBacking(srcFactor),
+            WebCore::convertToBacking(dstFactor),
+        };
+    }
+
     GPUBlendOperation operation;
     GPUBlendFactor srcFactor;
     GPUBlendFactor dstFactor;

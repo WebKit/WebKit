@@ -28,14 +28,14 @@
 #include "WebGPUComputePassTimestampLocation.h"
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUQuerySet.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace PAL {
 namespace WebGPU {
 
 struct ComputePassTimestampWrite {
-    RefPtr<QuerySet> querySet;
+    QuerySet& querySet;
     Size32 queryIndex;
     ComputePassTimestampLocation location;
 };

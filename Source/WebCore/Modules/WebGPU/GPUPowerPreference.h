@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUPowerPreference.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUPowerPreference : uint8_t {
     LowPower,
     HighPerformance
 };
+
+inline PAL::WebGPU::PowerPreference convertToBacking(GPUPowerPreference powerPreference)
+{
+    switch (powerPreference) {
+    case GPUPowerPreference::LowPower:
+        return PAL::WebGPU::PowerPreference::LowPower;
+    case GPUPowerPreference::HighPerformance:
+        return PAL::WebGPU::PowerPreference::HighPerformance;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

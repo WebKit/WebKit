@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUCommandBuffer.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,16 +34,24 @@ namespace WebCore {
 
 class GPUCommandBuffer : public RefCounted<GPUCommandBuffer> {
 public:
-    static Ref<GPUCommandBuffer> create()
+    static Ref<GPUCommandBuffer> create(Ref<PAL::WebGPU::CommandBuffer>&& backing)
     {
-        return adoptRef(*new GPUCommandBuffer());
+        return adoptRef(*new GPUCommandBuffer(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
+    PAL::WebGPU::CommandBuffer& backing() { return m_backing; }
+    const PAL::WebGPU::CommandBuffer& backing() const { return m_backing; }
+
 private:
-    GPUCommandBuffer() = default;
+    GPUCommandBuffer(Ref<PAL::WebGPU::CommandBuffer>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::CommandBuffer> m_backing;
 };
 
 }

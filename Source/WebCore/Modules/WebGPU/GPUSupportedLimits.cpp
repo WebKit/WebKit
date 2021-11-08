@@ -30,132 +30,132 @@ namespace WebCore {
 
 uint32_t GPUSupportedLimits::maxTextureDimension1D() const
 {
-    return 0;
+    return m_backing->maxTextureDimension1D();
 }
 
 uint32_t GPUSupportedLimits::maxTextureDimension2D() const
 {
-    return 0;
+    return m_backing->maxTextureDimension2D();
 }
 
 uint32_t GPUSupportedLimits::maxTextureDimension3D() const
 {
-    return 0;
+    return m_backing->maxTextureDimension3D();
 }
 
 uint32_t GPUSupportedLimits::maxTextureArrayLayers() const
 {
-    return 0;
+    return m_backing->maxTextureArrayLayers();
 }
 
 uint32_t GPUSupportedLimits::maxBindGroups() const
 {
-    return 0;
+    return m_backing->maxBindGroups();
 }
 
 uint32_t GPUSupportedLimits::maxDynamicUniformBuffersPerPipelineLayout() const
 {
-    return 0;
+    return m_backing->maxDynamicUniformBuffersPerPipelineLayout();
 }
 
 uint32_t GPUSupportedLimits::maxDynamicStorageBuffersPerPipelineLayout() const
 {
-    return 0;
+    return m_backing->maxDynamicStorageBuffersPerPipelineLayout();
 }
 
 uint32_t GPUSupportedLimits::maxSampledTexturesPerShaderStage() const
 {
-    return 0;
+    return m_backing->maxSampledTexturesPerShaderStage();
 }
 
 uint32_t GPUSupportedLimits::maxSamplersPerShaderStage() const
 {
-    return 0;
+    return m_backing->maxSamplersPerShaderStage();
 }
 
 uint32_t GPUSupportedLimits::maxStorageBuffersPerShaderStage() const
 {
-    return 0;
+    return m_backing->maxStorageBuffersPerShaderStage();
 }
 
 uint32_t GPUSupportedLimits::maxStorageTexturesPerShaderStage() const
 {
-    return 0;
+    return m_backing->maxStorageTexturesPerShaderStage();
 }
 
 uint32_t GPUSupportedLimits::maxUniformBuffersPerShaderStage() const
 {
-    return 0;
+    return m_backing->maxUniformBuffersPerShaderStage();
 }
 
 uint64_t GPUSupportedLimits::maxUniformBufferBindingSize() const
 {
-    return 0;
+    return m_backing->maxUniformBufferBindingSize();
 }
 
 uint64_t GPUSupportedLimits::maxStorageBufferBindingSize() const
 {
-    return 0;
+    return m_backing->maxStorageBufferBindingSize();
 }
 
 uint32_t GPUSupportedLimits::minUniformBufferOffsetAlignment() const
 {
-    return 0;
+    return m_backing->minUniformBufferOffsetAlignment();
 }
 
 uint32_t GPUSupportedLimits::minStorageBufferOffsetAlignment() const
 {
-    return 0;
+    return m_backing->minStorageBufferOffsetAlignment();
 }
 
 uint32_t GPUSupportedLimits::maxVertexBuffers() const
 {
-    return 0;
+    return m_backing->maxVertexBuffers();
 }
 
 uint32_t GPUSupportedLimits::maxVertexAttributes() const
 {
-    return 0;
+    return m_backing->maxVertexAttributes();
 }
 
 uint32_t GPUSupportedLimits::maxVertexBufferArrayStride() const
 {
-    return 0;
+    return m_backing->maxVertexBufferArrayStride();
 }
 
 uint32_t GPUSupportedLimits::maxInterStageShaderComponents() const
 {
-    return 0;
+    return m_backing->maxInterStageShaderComponents();
 }
 
 uint32_t GPUSupportedLimits::maxComputeWorkgroupStorageSize() const
 {
-    return 0;
+    return m_backing->maxComputeWorkgroupStorageSize();
 }
 
 uint32_t GPUSupportedLimits::maxComputeInvocationsPerWorkgroup() const
 {
-    return 0;
+    return m_backing->maxComputeInvocationsPerWorkgroup();
 }
 
 uint32_t GPUSupportedLimits::maxComputeWorkgroupSizeX() const
 {
-    return 0;
+    return m_backing->maxComputeWorkgroupSizeX();
 }
 
 uint32_t GPUSupportedLimits::maxComputeWorkgroupSizeY() const
 {
-    return 0;
+    return m_backing->maxComputeWorkgroupSizeY();
 }
 
 uint32_t GPUSupportedLimits::maxComputeWorkgroupSizeZ() const
 {
-    return 0;
+    return m_backing->maxComputeWorkgroupSizeZ();
 }
 
 uint32_t GPUSupportedLimits::maxComputeWorkgroupsPerDimension() const
 {
-    return 0;
+    return m_backing->maxComputeWorkgroupsPerDimension();
 }
 
 }

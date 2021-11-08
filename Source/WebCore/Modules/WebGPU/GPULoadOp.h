@@ -26,11 +26,21 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPULoadOp.h>
 
 namespace WebCore {
 
 enum class GPULoadOp : uint8_t {
     Load
 };
+
+inline PAL::WebGPU::LoadOp convertToBacking(GPULoadOp loadOp)
+{
+    switch (loadOp) {
+    case GPULoadOp::Load:
+        return PAL::WebGPU::LoadOp::Load;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

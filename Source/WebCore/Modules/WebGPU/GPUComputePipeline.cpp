@@ -32,16 +32,17 @@ namespace WebCore {
 
 String GPUComputePipeline::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUComputePipeline::setLabel(String&&)
+void GPUComputePipeline::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-Ref<GPUBindGroupLayout> GPUComputePipeline::getBindGroupLayout(uint32_t)
+Ref<GPUBindGroupLayout> GPUComputePipeline::getBindGroupLayout(uint32_t index)
 {
-    return GPUBindGroupLayout::create();
+    return GPUBindGroupLayout::create(m_backing->getBindGroupLayout(index));
 }
 
 }

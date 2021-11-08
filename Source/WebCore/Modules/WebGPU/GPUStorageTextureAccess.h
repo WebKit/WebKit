@@ -26,11 +26,21 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUStorageTextureAccess.h>
 
 namespace WebCore {
 
 enum class GPUStorageTextureAccess : uint8_t {
     WriteOnly
 };
+
+inline PAL::WebGPU::StorageTextureAccess convertToBacking(GPUStorageTextureAccess storageTextureAccess)
+{
+    switch (storageTextureAccess) {
+    case GPUStorageTextureAccess::WriteOnly:
+        return PAL::WebGPU::StorageTextureAccess::WriteOnly;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

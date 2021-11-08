@@ -29,12 +29,29 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPipelineStatisticName.h"
 #include "GPUQueryType.h"
+#include <pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUQuerySetDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::QuerySetDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            WebCore::convertToBacking(type),
+            count,
+            ([this] () {
+                Vector<PAL::WebGPU::PipelineStatisticName> pipelineStatistics;
+                pipelineStatistics.reserveInitialCapacity(this->pipelineStatistics.size());
+                for (const auto& pipelineStatistic : this->pipelineStatistics)
+                    pipelineStatistics.uncheckedAppend(WebCore::convertToBacking(pipelineStatistic));
+                return pipelineStatistics;
+            })(),
+        };
+    }
+
     GPUQueryType type;
     GPUSize32 count;
     Vector<GPUPipelineStatisticName> pipelineStatistics;

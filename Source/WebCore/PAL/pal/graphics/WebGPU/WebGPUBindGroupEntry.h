@@ -36,7 +36,7 @@
 namespace PAL {
 namespace WebGPU {
 
-using BindingResource = std::variant<RefPtr<Sampler>, RefPtr<TextureView>, BufferBinding, RefPtr<ExternalTexture>>;
+using BindingResource = std::variant<std::reference_wrapper<Sampler>, std::reference_wrapper<TextureView>, BufferBinding, std::reference_wrapper<ExternalTexture>>;
 
 struct BindGroupEntry {
     Index32 binding;

@@ -68,7 +68,6 @@ namespace WebCore {
 
 NavigatorBase::NavigatorBase(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
-    , m_gpuForWebGPU(GPU::create())
 {
 }
 

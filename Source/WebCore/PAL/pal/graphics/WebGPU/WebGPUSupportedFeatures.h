@@ -39,6 +39,11 @@ public:
         return adoptRef(*new SupportedFeatures(WTFMove(features)));
     }
 
+    static Ref<SupportedFeatures> clone(const SupportedFeatures& features)
+    {
+        return adoptRef(*new SupportedFeatures(Vector<String>(features.features())));
+    }
+
     const Vector<String>& features() const { return m_features; }
 
 protected:

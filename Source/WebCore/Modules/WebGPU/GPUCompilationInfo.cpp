@@ -30,7 +30,12 @@ namespace WebCore {
 
 Vector<Ref<GPUCompilationMessage>> GPUCompilationInfo::messages() const
 {
-    return { };
+    auto messages = m_backing->messages();
+    Vector<Ref<GPUCompilationMessage>> result;
+    result.reserveInitialCapacity(messages.size());
+    for (auto& message : messages)
+        result.uncheckedAppend(GPUCompilationMessage::create(WTFMove(message)));
+    return result;
 }
 
 }

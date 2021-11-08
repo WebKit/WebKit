@@ -90,6 +90,37 @@ public:
             maxComputeWorkgroupsPerDimension));
     }
 
+    static Ref<SupportedLimits> clone(const SupportedLimits& limits)
+    {
+        return adoptRef(*new SupportedLimits(
+            limits.maxTextureDimension1D(),
+            limits.maxTextureDimension2D(),
+            limits.maxTextureDimension3D(),
+            limits.maxTextureArrayLayers(),
+            limits.maxBindGroups(),
+            limits.maxDynamicUniformBuffersPerPipelineLayout(),
+            limits.maxDynamicStorageBuffersPerPipelineLayout(),
+            limits.maxSampledTexturesPerShaderStage(),
+            limits.maxSamplersPerShaderStage(),
+            limits.maxStorageBuffersPerShaderStage(),
+            limits.maxStorageTexturesPerShaderStage(),
+            limits.maxUniformBuffersPerShaderStage(),
+            limits.maxUniformBufferBindingSize(),
+            limits.maxStorageBufferBindingSize(),
+            limits.minUniformBufferOffsetAlignment(),
+            limits.minStorageBufferOffsetAlignment(),
+            limits.maxVertexBuffers(),
+            limits.maxVertexAttributes(),
+            limits.maxVertexBufferArrayStride(),
+            limits.maxInterStageShaderComponents(),
+            limits.maxComputeWorkgroupStorageSize(),
+            limits.maxComputeInvocationsPerWorkgroup(),
+            limits.maxComputeWorkgroupSizeX(),
+            limits.maxComputeWorkgroupSizeY(),
+            limits.maxComputeWorkgroupSizeZ(),
+            limits.maxComputeWorkgroupsPerDimension()));
+    }
+
     uint32_t maxTextureDimension1D() const { return m_maxTextureDimension1D; }
     uint32_t maxTextureDimension2D() const { return m_maxTextureDimension2D; }
     uint32_t maxTextureDimension3D() const { return m_maxTextureDimension3D; }

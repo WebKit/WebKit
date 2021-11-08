@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUPipelineLayout.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,16 +34,24 @@ namespace WebCore {
 
 class GPUPipelineLayout : public RefCounted<GPUPipelineLayout> {
 public:
-    static Ref<GPUPipelineLayout> create()
+    static Ref<GPUPipelineLayout> create(Ref<PAL::WebGPU::PipelineLayout>&& backing)
     {
-        return adoptRef(*new GPUPipelineLayout());
+        return adoptRef(*new GPUPipelineLayout(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
+    PAL::WebGPU::PipelineLayout& backing() { return m_backing; }
+    const PAL::WebGPU::PipelineLayout& backing() const { return m_backing; }
+
 private:
-    GPUPipelineLayout() = default;
+    GPUPipelineLayout(Ref<PAL::WebGPU::PipelineLayout>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::PipelineLayout> m_backing;
 };
 
 }

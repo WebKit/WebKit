@@ -27,10 +27,19 @@
 
 #include "GPUComputePassTimestampWrite.h"
 #include "GPUObjectDescriptorBase.h"
+#include <pal/graphics/WebGPU/WebGPUComputePassDescriptor.h>
 
 namespace WebCore {
 
 struct GPUComputePassDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::ComputePassDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            WebCore::convertToBacking(timestampWrites),
+        };
+    }
+
     GPUComputePassTimestampWrites timestampWrites;
 };
 

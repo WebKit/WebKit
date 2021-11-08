@@ -31,8 +31,8 @@ namespace PAL {
 namespace WebGPU {
 
 enum class FrontFace : uint8_t {
-    Ccw,
-    Cw
+    CCW,
+    CW
 };
 
 }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUPipelineStatisticName.h>
 
 namespace WebCore {
 
@@ -36,5 +37,22 @@ enum class GPUPipelineStatisticName : uint8_t {
     FragmentShaderInvocations,
     ComputeShaderInvocations
 };
+
+inline PAL::WebGPU::PipelineStatisticName convertToBacking(GPUPipelineStatisticName pipelineStatisticName)
+{
+    switch (pipelineStatisticName) {
+    case GPUPipelineStatisticName::VertexShaderInvocations:
+        return PAL::WebGPU::PipelineStatisticName::VertexShaderInvocations;
+    case GPUPipelineStatisticName::ClipperInvocations:
+        return PAL::WebGPU::PipelineStatisticName::ClipperInvocations;
+    case GPUPipelineStatisticName::ClipperPrimitivesOut:
+        return PAL::WebGPU::PipelineStatisticName::ClipperPrimitivesOut;
+    case GPUPipelineStatisticName::FragmentShaderInvocations:
+        return PAL::WebGPU::PipelineStatisticName::FragmentShaderInvocations;
+    case GPUPipelineStatisticName::ComputeShaderInvocations:
+        return PAL::WebGPU::PipelineStatisticName::ComputeShaderInvocations;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

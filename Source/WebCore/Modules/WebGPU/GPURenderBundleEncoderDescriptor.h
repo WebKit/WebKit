@@ -26,10 +26,31 @@
 #pragma once
 
 #include "GPURenderPassLayout.h"
+#include <pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h>
 
 namespace WebCore {
 
 struct GPURenderBundleEncoderDescriptor : public GPURenderPassLayout {
+    PAL::WebGPU::RenderBundleEncoderDescriptor convertToBacking() const
+    {
+        return {
+            {
+                { label },
+                ([this] () {
+                    Vector<PAL::WebGPU::TextureFormat> colorFormats;
+                    colorFormats.reserveInitialCapacity(this->colorFormats.size());
+                    for (const auto& colorFormat : this->colorFormats)
+                        colorFormats.uncheckedAppend(WebCore::convertToBacking(colorFormat));
+                    return colorFormats;
+                })(),
+                depthStencilFormat ? std::optional { WebCore::convertToBacking(*depthStencilFormat) } : std::nullopt,
+                sampleCount,
+            },
+            depthReadOnly,
+            stencilReadOnly,
+        };
+    }
+
     bool depthReadOnly;
     bool stencilReadOnly;
 };

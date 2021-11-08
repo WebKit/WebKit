@@ -28,11 +28,27 @@
 #include "GPUIntegralTypes.h"
 #include "GPUVertexAttribute.h"
 #include "GPUVertexStepMode.h"
+#include <pal/graphics/WebGPU/WebGPUVertexBufferLayout.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUVertexBufferLayout {
+    PAL::WebGPU::VertexBufferLayout convertToBacking() const
+    {
+        return {
+            arrayStride,
+            WebCore::convertToBacking(stepMode),
+            ([this] () {
+                Vector<PAL::WebGPU::VertexAttribute> attributes;
+                attributes.reserveInitialCapacity(this->attributes.size());
+                for (auto& attribute : this->attributes)
+                    attributes.uncheckedAppend(attribute.convertToBacking());
+                return attributes;
+            })(),
+        };
+    }
+
     GPUSize64 arrayStride;
     GPUVertexStepMode stepMode;
     Vector<GPUVertexAttribute> attributes;

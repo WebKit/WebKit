@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUSampler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,16 +34,24 @@ namespace WebCore {
 
 class GPUSampler : public RefCounted<GPUSampler> {
 public:
-    static Ref<GPUSampler> create()
+    static Ref<GPUSampler> create(Ref<PAL::WebGPU::Sampler>&& backing)
     {
-        return adoptRef(*new GPUSampler());
+        return adoptRef(*new GPUSampler(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
+    PAL::WebGPU::Sampler& backing() { return m_backing; }
+    const PAL::WebGPU::Sampler& backing() const { return m_backing; }
+
 private:
-    GPUSampler() = default;
+    GPUSampler(Ref<PAL::WebGPU::Sampler>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::Sampler> m_backing;
 };
 
 }

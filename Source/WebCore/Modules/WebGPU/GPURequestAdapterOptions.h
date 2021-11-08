@@ -27,10 +27,19 @@
 
 #include "GPUPowerPreference.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPURequestAdapterOptions.h>
 
 namespace WebCore {
 
 struct GPURequestAdapterOptions {
+    PAL::WebGPU::RequestAdapterOptions convertToBacking() const
+    {
+        return {
+            powerPreference ? std::optional { WebCore::convertToBacking(*powerPreference) } : std::nullopt,
+            forceFallbackAdapter,
+        };
+    }
+
     std::optional<GPUPowerPreference> powerPreference;
     bool forceFallbackAdapter;
 };

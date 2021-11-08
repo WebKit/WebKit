@@ -31,10 +31,22 @@
 #include "GPUIntegralTypes.h"
 #include "GPUPrimitiveTopology.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUPrimitiveState.h>
 
 namespace WebCore {
 
 struct GPUPrimitiveState {
+    PAL::WebGPU::PrimitiveState convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(topology),
+            stripIndexFormat ? std::optional { WebCore::convertToBacking(*stripIndexFormat) } : std::nullopt,
+            WebCore::convertToBacking(frontFace),
+            WebCore::convertToBacking(cullMode),
+            unclippedDepth,
+        };
+    }
+
     GPUPrimitiveTopology topology;
     std::optional<GPUIndexFormat> stripIndexFormat;
     GPUFrontFace frontFace;

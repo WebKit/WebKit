@@ -28,34 +28,42 @@
 
 namespace WebCore {
 
-String GPUCompilationMessage::message() const
+const String& GPUCompilationMessage::message() const
 {
-    return StringImpl::empty();
+    return m_backing->message();
 }
 
 GPUCompilationMessageType GPUCompilationMessage::type() const
 {
-    return GPUCompilationMessageType::Error;
+    switch (m_backing->type()) {
+    case PAL::WebGPU::CompilationMessageType::Error:
+        return GPUCompilationMessageType::Error;
+    case PAL::WebGPU::CompilationMessageType::Warning:
+        return GPUCompilationMessageType::Warning;
+    case PAL::WebGPU::CompilationMessageType::Info:
+        return GPUCompilationMessageType::Info;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 uint64_t GPUCompilationMessage::lineNum() const
 {
-    return 0;
+    return m_backing->lineNum();
 }
 
 uint64_t GPUCompilationMessage::linePos() const
 {
-    return 0;
+    return m_backing->linePos();
 }
 
 uint64_t GPUCompilationMessage::offset() const
 {
-    return 0;
+    return m_backing->offset();
 }
 
 uint64_t GPUCompilationMessage::length() const
 {
-    return 0;
+    return m_backing->length();
 }
 
 }

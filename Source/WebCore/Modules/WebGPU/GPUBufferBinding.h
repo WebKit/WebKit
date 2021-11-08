@@ -28,12 +28,23 @@
 #include "GPUBuffer.h"
 #include "GPUIntegralTypes.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUBufferBinding.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 struct GPUBufferBinding {
-    RefPtr<GPUBuffer> buffer;
+    PAL::WebGPU::BufferBinding convertToBacking() const
+    {
+        ASSERT(buffer);
+        return {
+            buffer->backing(),
+            offset,
+            size,
+        };
+    }
+
+    GPUBuffer* buffer;
     GPUSize64 offset;
     std::optional<GPUSize64> size;
 };

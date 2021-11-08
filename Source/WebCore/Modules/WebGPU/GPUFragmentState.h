@@ -27,11 +27,37 @@
 
 #include "GPUColorTargetState.h"
 #include "GPUProgrammableStage.h"
+#include <pal/graphics/WebGPU/WebGPUFragmentState.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUFragmentState : public GPUProgrammableStage {
+    PAL::WebGPU::FragmentState convertToBacking() const
+    {
+        ASSERT(module);
+        return {
+            {
+                module->backing(),
+                entryPoint,
+                ([this] () {
+                    Vector<KeyValuePair<String, PAL::WebGPU::PipelineConstantValue>> constants;
+                    constants.reserveInitialCapacity(this->constants.size());
+                    for (const auto& constant : this->constants)
+                        constants.uncheckedAppend(makeKeyValuePair(constant.key, constant.value));
+                    return constants;
+                })(),
+            },
+            ([this] () {
+                Vector<PAL::WebGPU::ColorTargetState> targets;
+                targets.reserveInitialCapacity(this->targets.size());
+                for (auto& target : this->targets)
+                    targets.uncheckedAppend(target.convertToBacking());
+                return targets;
+            })(),
+        };
+    }
+
     Vector<GPUColorTargetState> targets;
 };
 

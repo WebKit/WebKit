@@ -31,6 +31,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <cstdint>
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUBuffer.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -39,22 +40,31 @@ namespace WebCore {
 
 class GPUBuffer : public RefCounted<GPUBuffer> {
 public:
-    static Ref<GPUBuffer> create()
+    static Ref<GPUBuffer> create(Ref<PAL::WebGPU::Buffer>&& backing)
     {
-        return adoptRef(*new GPUBuffer());
+        return adoptRef(*new GPUBuffer(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
-    void mapAsync(GPUMapModeFlags, std::optional<GPUSize64> offset, std::optional<GPUSize64> sizeForMap, Ref<DeferredPromise>&&);
+    using MapAsyncPromise = DOMPromiseDeferred<IDLNull>;
+    void mapAsync(GPUMapModeFlags, std::optional<GPUSize64> offset, std::optional<GPUSize64> sizeForMap, MapAsyncPromise&&);
     Ref<JSC::ArrayBuffer> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
     void unmap();
 
     void destroy();
 
+    PAL::WebGPU::Buffer& backing() { return m_backing; }
+    const PAL::WebGPU::Buffer& backing() const { return m_backing; }
+
 private:
-    GPUBuffer() = default;
+    GPUBuffer(Ref<PAL::WebGPU::Buffer>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::Buffer> m_backing;
 };
 
 }

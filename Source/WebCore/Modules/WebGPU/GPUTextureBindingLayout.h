@@ -27,10 +27,20 @@
 
 #include "GPUTextureSampleType.h"
 #include "GPUTextureViewDimension.h"
+#include <pal/graphics/WebGPU/WebGPUTextureBindingLayout.h>
 
 namespace WebCore {
 
 struct GPUTextureBindingLayout {
+    PAL::WebGPU::TextureBindingLayout convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(sampleType),
+            WebCore::convertToBacking(viewDimension),
+            multisampled,
+        };
+    }
+
     GPUTextureSampleType sampleType;
     GPUTextureViewDimension viewDimension;
     bool multisampled;

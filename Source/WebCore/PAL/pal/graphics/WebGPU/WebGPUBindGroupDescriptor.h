@@ -34,7 +34,7 @@ namespace PAL {
 namespace WebGPU {
 
 struct BindGroupDescriptor : public ObjectDescriptorBase {
-    RefPtr<BindGroupLayout> layout;
+    BindGroupLayout& layout;
     Vector<BindGroupEntry> entries;
 };
 

@@ -28,10 +28,20 @@
 #include "GPUStorageTextureAccess.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureViewDimension.h"
+#include <pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h>
 
 namespace WebCore {
 
 struct GPUStorageTextureBindingLayout {
+    PAL::WebGPU::StorageTextureBindingLayout convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(access),
+            WebCore::convertToBacking(format),
+            WebCore::convertToBacking(viewDimension),
+        };
+    }
+
     GPUStorageTextureAccess access;
     GPUTextureFormat format;
     GPUTextureViewDimension viewDimension;

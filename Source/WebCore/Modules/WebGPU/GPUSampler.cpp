@@ -30,11 +30,12 @@ namespace WebCore {
 
 String GPUSampler::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUSampler::setLabel(String&&)
+void GPUSampler::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
 }

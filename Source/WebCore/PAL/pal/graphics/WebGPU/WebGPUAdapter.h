@@ -48,13 +48,13 @@ public:
     const SupportedLimits& limits() const { return m_limits; }
     bool isFallbackAdapter() const { return m_isFallbackAdapter; }
 
-    virtual void requestDevice(const std::optional<DeviceDescriptor>&, std::function<void(Ref<Device>)>&&) = 0;
+    virtual void requestDevice(const DeviceDescriptor&, std::function<void(Ref<Device>)>&&) = 0;
 
 protected:
-    Adapter(String&& name, Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits, bool isFallbackAdapter)
+    Adapter(String&& name, SupportedFeatures& features, SupportedLimits& limits, bool isFallbackAdapter)
         : m_name(WTFMove(name))
-        , m_features(WTFMove(features))
-        , m_limits(WTFMove(limits))
+        , m_features(features)
+        , m_limits(limits)
         , m_isFallbackAdapter(isFallbackAdapter)
     {
     }

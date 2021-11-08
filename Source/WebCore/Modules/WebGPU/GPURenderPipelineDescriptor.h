@@ -32,10 +32,26 @@
 #include "GPUPrimitiveState.h"
 #include "GPUVertexState.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h>
 
 namespace WebCore {
 
 struct GPURenderPipelineDescriptor : public GPUPipelineDescriptorBase {
+    PAL::WebGPU::RenderPipelineDescriptor convertToBacking() const
+    {
+        return {
+            {
+                { label },
+                layout ? &layout->backing() : nullptr,
+            },
+            vertex.convertToBacking(),
+            primitive ? std::optional { primitive->convertToBacking() } : std::nullopt,
+            depthStencil ? std::optional { depthStencil->convertToBacking() } : std::nullopt,
+            multisample ? std::optional { multisample->convertToBacking() } : std::nullopt,
+            fragment ? std::optional { fragment->convertToBacking() } : std::nullopt,
+        };
+    }
+
     GPUVertexState vertex;
     std::optional<GPUPrimitiveState> primitive;
     std::optional<GPUDepthStencilState> depthStencil;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUExtent3DDict.h"
+#include "WebGPUExtent3D.h"
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPUTextureDimension.h"

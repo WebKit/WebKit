@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUSamplerBindingType.h>
 
 namespace WebCore {
 
@@ -34,5 +35,18 @@ enum class GPUSamplerBindingType : uint8_t {
     NonFiltering,
     Comparison
 };
+
+inline PAL::WebGPU::SamplerBindingType convertToBacking(GPUSamplerBindingType samplerBindingType)
+{
+    switch (samplerBindingType) {
+    case GPUSamplerBindingType::Filtering:
+        return PAL::WebGPU::SamplerBindingType::Filtering;
+    case GPUSamplerBindingType::NonFiltering:
+        return PAL::WebGPU::SamplerBindingType::NonFiltering;
+    case GPUSamplerBindingType::Comparison:
+        return PAL::WebGPU::SamplerBindingType::Comparison;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

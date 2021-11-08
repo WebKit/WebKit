@@ -26,10 +26,19 @@
 #pragma once
 
 #include "GPUBlendComponent.h"
+#include <pal/graphics/WebGPU/WebGPUBlendState.h>
 
 namespace WebCore {
 
 struct GPUBlendState {
+    PAL::WebGPU::BlendState convertToBacking() const
+    {
+        return {
+            color.convertToBacking(),
+            alpha.convertToBacking(),
+        };
+    }
+
     GPUBlendComponent color;
     GPUBlendComponent alpha;
 };

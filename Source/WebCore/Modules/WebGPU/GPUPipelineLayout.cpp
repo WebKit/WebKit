@@ -30,11 +30,12 @@ namespace WebCore {
 
 String GPUPipelineLayout::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUPipelineLayout::setLabel(String&&)
+void GPUPipelineLayout::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
 }

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPURenderBundle.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,16 +34,24 @@ namespace WebCore {
 
 class GPURenderBundle : public RefCounted<GPURenderBundle> {
 public:
-    static Ref<GPURenderBundle> create()
+    static Ref<GPURenderBundle> create(Ref<PAL::WebGPU::RenderBundle>&& backing)
     {
-        return adoptRef(*new GPURenderBundle());
+        return adoptRef(*new GPURenderBundle(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
+    PAL::WebGPU::RenderBundle& backing() { return m_backing; }
+    const PAL::WebGPU::RenderBundle& backing() const { return m_backing; }
+
 private:
-    GPURenderBundle() = default;
+    GPURenderBundle(Ref<PAL::WebGPU::RenderBundle>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::RenderBundle> m_backing;
 };
 
 }

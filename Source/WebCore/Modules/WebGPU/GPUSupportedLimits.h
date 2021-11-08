@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUSupportedLimits.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -33,9 +34,9 @@ namespace WebCore {
 
 class GPUSupportedLimits : public RefCounted<GPUSupportedLimits> {
 public:
-    static Ref<GPUSupportedLimits> create()
+    static Ref<GPUSupportedLimits> create(Ref<PAL::WebGPU::SupportedLimits>&& backing)
     {
-        return adoptRef(*new GPUSupportedLimits());
+        return adoptRef(*new GPUSupportedLimits(WTFMove(backing)));
     }
 
     uint32_t maxTextureDimension1D() const;
@@ -65,8 +66,16 @@ public:
     uint32_t maxComputeWorkgroupSizeZ() const;
     uint32_t maxComputeWorkgroupsPerDimension() const;
 
+    PAL::WebGPU::SupportedLimits& backing() { return m_backing; }
+    const PAL::WebGPU::SupportedLimits& backing() const { return m_backing; }
+
 private:
-    GPUSupportedLimits() = default;
+    GPUSupportedLimits(Ref<PAL::WebGPU::SupportedLimits>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::SupportedLimits> m_backing;
 };
 
 }

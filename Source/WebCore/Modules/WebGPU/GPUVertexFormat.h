@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUVertexFormat.h>
 
 namespace WebCore {
 
@@ -61,5 +62,72 @@ enum class GPUVertexFormat : uint8_t {
     Sint32x3,
     Sint32x4
 };
+
+inline PAL::WebGPU::VertexFormat convertToBacking(GPUVertexFormat vertexFormat)
+{
+    switch (vertexFormat) {
+    case GPUVertexFormat::Uint8x2:
+        return PAL::WebGPU::VertexFormat::Uint8x2;
+    case GPUVertexFormat::Uint8x4:
+        return PAL::WebGPU::VertexFormat::Uint8x4;
+    case GPUVertexFormat::Sint8x2:
+        return PAL::WebGPU::VertexFormat::Sint8x2;
+    case GPUVertexFormat::Sint8x4:
+        return PAL::WebGPU::VertexFormat::Sint8x4;
+    case GPUVertexFormat::Unorm8x2:
+        return PAL::WebGPU::VertexFormat::Unorm8x2;
+    case GPUVertexFormat::Unorm8x4:
+        return PAL::WebGPU::VertexFormat::Unorm8x4;
+    case GPUVertexFormat::Snorm8x2:
+        return PAL::WebGPU::VertexFormat::Snorm8x2;
+    case GPUVertexFormat::Snorm8x4:
+        return PAL::WebGPU::VertexFormat::Snorm8x4;
+    case GPUVertexFormat::Uint16x2:
+        return PAL::WebGPU::VertexFormat::Uint16x2;
+    case GPUVertexFormat::Uint16x4:
+        return PAL::WebGPU::VertexFormat::Uint16x4;
+    case GPUVertexFormat::Sint16x2:
+        return PAL::WebGPU::VertexFormat::Sint16x2;
+    case GPUVertexFormat::Sint16x4:
+        return PAL::WebGPU::VertexFormat::Sint16x4;
+    case GPUVertexFormat::Unorm16x2:
+        return PAL::WebGPU::VertexFormat::Unorm16x2;
+    case GPUVertexFormat::Unorm16x4:
+        return PAL::WebGPU::VertexFormat::Unorm16x4;
+    case GPUVertexFormat::Snorm16x2:
+        return PAL::WebGPU::VertexFormat::Snorm16x2;
+    case GPUVertexFormat::Snorm16x4:
+        return PAL::WebGPU::VertexFormat::Snorm16x4;
+    case GPUVertexFormat::Float16x2:
+        return PAL::WebGPU::VertexFormat::Float16x2;
+    case GPUVertexFormat::Float16x4:
+        return PAL::WebGPU::VertexFormat::Float16x4;
+    case GPUVertexFormat::Float32:
+        return PAL::WebGPU::VertexFormat::Float32;
+    case GPUVertexFormat::Float32x2:
+        return PAL::WebGPU::VertexFormat::Float32x2;
+    case GPUVertexFormat::Float32x3:
+        return PAL::WebGPU::VertexFormat::Float32x3;
+    case GPUVertexFormat::Float32x4:
+        return PAL::WebGPU::VertexFormat::Float32x4;
+    case GPUVertexFormat::Uint32:
+        return PAL::WebGPU::VertexFormat::Uint32;
+    case GPUVertexFormat::Uint32x2:
+        return PAL::WebGPU::VertexFormat::Uint32x2;
+    case GPUVertexFormat::Uint32x3:
+        return PAL::WebGPU::VertexFormat::Uint32x3;
+    case GPUVertexFormat::Uint32x4:
+        return PAL::WebGPU::VertexFormat::Uint32x4;
+    case GPUVertexFormat::Sint32:
+        return PAL::WebGPU::VertexFormat::Sint32;
+    case GPUVertexFormat::Sint32x2:
+        return PAL::WebGPU::VertexFormat::Sint32x2;
+    case GPUVertexFormat::Sint32x3:
+        return PAL::WebGPU::VertexFormat::Sint32x3;
+    case GPUVertexFormat::Sint32x4:
+        return PAL::WebGPU::VertexFormat::Sint32x4;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

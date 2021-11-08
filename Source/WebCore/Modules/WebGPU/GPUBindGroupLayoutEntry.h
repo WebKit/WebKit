@@ -33,10 +33,24 @@
 #include "GPUStorageTextureBindingLayout.h"
 #include "GPUTextureBindingLayout.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h>
 
 namespace WebCore {
 
 struct GPUBindGroupLayoutEntry {
+    PAL::WebGPU::BindGroupLayoutEntry convertToBacking() const
+    {
+        return {
+            binding,
+            convertShaderStageFlagsToBacking(visibility),
+            buffer ? std::optional { buffer->convertToBacking() } : std::nullopt,
+            sampler ? std::optional { sampler->convertToBacking() } : std::nullopt,
+            texture ? std::optional { texture->convertToBacking() } : std::nullopt,
+            storageTexture ? std::optional { storageTexture->convertToBacking() } : std::nullopt,
+            externalTexture ? std::optional { externalTexture->convertToBacking() } : std::nullopt,
+        };
+    }
+
     GPUIndex32 binding;
     GPUShaderStageFlags visibility;
 

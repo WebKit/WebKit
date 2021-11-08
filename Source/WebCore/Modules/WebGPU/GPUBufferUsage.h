@@ -27,6 +27,7 @@
 
 #include "GPUIntegralTypes.h"
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUBufferUsage.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -46,5 +47,31 @@ public:
     static constexpr GPUFlagsConstant INDIRECT      = 0x0100;
     static constexpr GPUFlagsConstant QUERY_RESOLVE = 0x0200;
 };
+
+inline PAL::WebGPU::BufferUsageFlags convertBufferUsageFlagsToBacking(GPUBufferUsageFlags bufferUsageFlags)
+{
+    PAL::WebGPU::BufferUsageFlags result = 0;
+    if (bufferUsageFlags & GPUBufferUsage::MAP_READ)
+        result |= PAL::WebGPU::BufferUsage::MAP_READ;
+    if (bufferUsageFlags & GPUBufferUsage::MAP_WRITE)
+        result |= PAL::WebGPU::BufferUsage::MAP_WRITE;
+    if (bufferUsageFlags & GPUBufferUsage::COPY_SRC)
+        result |= PAL::WebGPU::BufferUsage::COPY_SRC;
+    if (bufferUsageFlags & GPUBufferUsage::COPY_DST)
+        result |= PAL::WebGPU::BufferUsage::COPY_DST;
+    if (bufferUsageFlags & GPUBufferUsage::INDEX)
+        result |= PAL::WebGPU::BufferUsage::INDEX;
+    if (bufferUsageFlags & GPUBufferUsage::VERTEX)
+        result |= PAL::WebGPU::BufferUsage::VERTEX;
+    if (bufferUsageFlags & GPUBufferUsage::UNIFORM)
+        result |= PAL::WebGPU::BufferUsage::UNIFORM;
+    if (bufferUsageFlags & GPUBufferUsage::STORAGE)
+        result |= PAL::WebGPU::BufferUsage::STORAGE;
+    if (bufferUsageFlags & GPUBufferUsage::INDIRECT)
+        result |= PAL::WebGPU::BufferUsage::INDIRECT;
+    if (bufferUsageFlags & GPUBufferUsage::QUERY_RESOLVE)
+        result |= PAL::WebGPU::BufferUsage::QUERY_RESOLVE;
+    return result;
+}
 
 }

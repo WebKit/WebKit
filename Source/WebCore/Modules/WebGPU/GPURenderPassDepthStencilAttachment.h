@@ -29,13 +29,36 @@
 #include "GPULoadOp.h"
 #include "GPUStoreOp.h"
 #include "GPUTextureView.h"
+#include <pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h>
 #include <variant>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct GPURenderPassDepthStencilAttachment {
-    RefPtr<GPUTextureView> view;
+    PAL::WebGPU::RenderPassDepthStencilAttachment convertToBacking() const
+    {
+        ASSERT(view);
+        return {
+            view->backing(),
+            WTF::switchOn(depthLoadValue, [&] (GPULoadOp loadOp) -> std::variant<PAL::WebGPU::LoadOp, float> {
+                return WebCore::convertToBacking(loadOp);
+            }, [&] (float f) -> std::variant<PAL::WebGPU::LoadOp, float> {
+                return f;
+            }),
+            WebCore::convertToBacking(depthStoreOp),
+            depthReadOnly,
+            WTF::switchOn(stencilLoadValue, [&] (GPULoadOp loadOp) -> std::variant<PAL::WebGPU::LoadOp, PAL::WebGPU::StencilValue> {
+                return WebCore::convertToBacking(loadOp);
+            }, [&] (GPUStencilValue stencilValue) -> std::variant<PAL::WebGPU::LoadOp, PAL::WebGPU::StencilValue> {
+                return stencilValue;
+            }),
+            WebCore::convertToBacking(stencilStoreOp),
+            stencilReadOnly,
+        };
+    }
+
+    GPUTextureView* view;
 
     std::variant<GPULoadOp, float> depthLoadValue;
     GPUStoreOp depthStoreOp;

@@ -26,17 +26,17 @@
 #pragma once
 
 #include "WebGPUIntegralTypes.h"
-#include "WebGPUOrigin3DDict.h"
+#include "WebGPUOrigin3D.h"
 #include "WebGPUTexture.h"
 #include "WebGPUTextureAspect.h"
 #include <optional>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace PAL {
 namespace WebGPU {
 
 struct ImageCopyTexture {
-    RefPtr<Texture> texture;
+    Texture& texture;
     IntegerCoordinate mipLevel;
     std::optional<Origin3D> origin;
     TextureAspect aspect;

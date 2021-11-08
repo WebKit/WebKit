@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUIndexFormat.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUIndexFormat : uint8_t {
     Uint16,
     Uint32
 };
+
+inline PAL::WebGPU::IndexFormat convertToBacking(GPUIndexFormat indexFormat)
+{
+    switch (indexFormat) {
+    case GPUIndexFormat::Uint16:
+        return PAL::WebGPU::IndexFormat::Uint16;
+    case GPUIndexFormat::Uint32:
+        return PAL::WebGPU::IndexFormat::Uint32;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

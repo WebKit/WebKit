@@ -31,10 +31,24 @@
 #include "GPUTextureDimension.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
+#include <pal/graphics/WebGPU/WebGPUTextureDescriptor.h>
 
 namespace WebCore {
 
 struct GPUTextureDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::TextureDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            WebCore::convertToBacking(size),
+            mipLevelCount,
+            sampleCount,
+            WebCore::convertToBacking(dimension),
+            WebCore::convertToBacking(format),
+            convertTextureUsageFlagsToBacking(usage),
+        };
+    }
+
     GPUExtent3D size;
     GPUIntegerCoordinate mipLevelCount;
     GPUSize32 sampleCount;

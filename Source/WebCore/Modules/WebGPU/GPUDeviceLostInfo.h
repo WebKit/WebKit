@@ -27,6 +27,7 @@
 
 #include "GPUDeviceLostReason.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUDeviceLostInfo.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -37,16 +38,24 @@ class GPUDeviceLostInfo : public RefCounted<GPUDeviceLostInfo> {
 public:
     using Reason = std::optional<GPUDeviceLostReason>;
 
-    static Ref<GPUDeviceLostInfo> create(Reason&& reason, String&& message)
+    static Ref<GPUDeviceLostInfo> create(Ref<PAL::WebGPU::DeviceLostInfo>&& backing)
     {
-        return adoptRef(*new GPUDeviceLostInfo(WTFMove(reason), WTFMove(message)));
+        return adoptRef(*new GPUDeviceLostInfo(WTFMove(backing)));
     }
 
     Reason reason() const;
-    String message() const;
+    const String& message() const;
+
+    PAL::WebGPU::DeviceLostInfo& backing() { return m_backing; }
+    const PAL::WebGPU::DeviceLostInfo& backing() const { return m_backing; }
 
 private:
-    GPUDeviceLostInfo(Reason&&, String&& message);
+    GPUDeviceLostInfo(Ref<PAL::WebGPU::DeviceLostInfo>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::DeviceLostInfo> m_backing;
 };
 
 }

@@ -30,12 +30,24 @@
 #include "GPUTexture.h"
 #include "GPUTextureAspect.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUImageCopyTexture.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct GPUImageCopyTexture {
-    RefPtr<GPUTexture> texture;
+    PAL::WebGPU::ImageCopyTexture convertToBacking() const
+    {
+        ASSERT(texture);
+        return {
+            texture->backing(),
+            mipLevel,
+            origin ? std::optional { WebCore::convertToBacking(*origin) } : std::nullopt,
+            WebCore::convertToBacking(aspect),
+        };
+    }
+
+    GPUTexture* texture;
     GPUIntegerCoordinate mipLevel;
     std::optional<GPUOrigin3D> origin;
     GPUTextureAspect aspect;

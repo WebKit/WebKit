@@ -28,19 +28,21 @@
 
 namespace WebCore {
 
-GPUDeviceLostInfo::GPUDeviceLostInfo(Reason&&, String&& message)
-{
-    UNUSED_PARAM(message);
-}
-
 auto GPUDeviceLostInfo::reason() const -> Reason
 {
-    return std::nullopt;
+    auto result = m_backing->reason();
+    if (!result)
+        return std::nullopt;
+    switch (*result) {
+    case PAL::WebGPU::DeviceLostReason::Destroyed:
+        return GPUDeviceLostReason::Destroyed;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-String GPUDeviceLostInfo::message() const
+const String& GPUDeviceLostInfo::message() const
 {
-    return StringImpl::empty();
+    return m_backing->message();
 }
 
 }

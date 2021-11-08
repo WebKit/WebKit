@@ -28,11 +28,21 @@
 #include "GPUObjectDescriptorBase.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct GPUShaderModuleDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::ShaderModuleDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            code,
+            // FIXME: Handle the sourceMap.
+        };
+    }
+
     String code;
     JSC::Strong<JSC::JSObject> sourceMap;
 };

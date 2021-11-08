@@ -27,7 +27,7 @@
 
 #include "WebGPUShaderModule.h"
 #include <wtf/KeyValuePair.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace PAL {
@@ -36,7 +36,7 @@ namespace WebGPU {
 using PipelineConstantValue = double; // May represent WGSL’s bool, f32, i32, u32.
 
 struct ProgrammableStage {
-    RefPtr<ShaderModule> module;
+    ShaderModule& module;
     String entryPoint;
     Vector<KeyValuePair<String, PipelineConstantValue>> constants;
 };

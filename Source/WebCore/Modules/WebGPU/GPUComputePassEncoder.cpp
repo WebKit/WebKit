@@ -37,74 +37,71 @@ namespace WebCore {
 
 String GPUComputePassEncoder::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUComputePassEncoder::setLabel(String&&)
+void GPUComputePassEncoder::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-void GPUComputePassEncoder::setPipeline(const GPUComputePipeline&)
+void GPUComputePassEncoder::setPipeline(const GPUComputePipeline& computePipeline)
 {
+    m_backing->setPipeline(computePipeline.backing());
 }
 
 void GPUComputePassEncoder::dispatch(GPUSize32 x, std::optional<GPUSize32> y, std::optional<GPUSize32> z)
 {
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
+    m_backing->dispatch(x, y, z);
 }
 
 void GPUComputePassEncoder::dispatchIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectOffset);
+    m_backing->dispatchIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
-void GPUComputePassEncoder::beginPipelineStatisticsQuery(const GPUQuerySet&, GPUSize32 queryIndex)
+void GPUComputePassEncoder::beginPipelineStatisticsQuery(const GPUQuerySet& querySet, GPUSize32 queryIndex)
 {
-    UNUSED_PARAM(queryIndex);
+    m_backing->beginPipelineStatisticsQuery(querySet.backing(), queryIndex);
 }
 
 void GPUComputePassEncoder::endPipelineStatisticsQuery()
 {
-
+    m_backing->endPipelineStatisticsQuery();
 }
 
 void GPUComputePassEncoder::endPass()
 {
-
+    m_backing->endPass();
 }
 
-void GPUComputePassEncoder::setBindGroup(GPUIndex32, const GPUBindGroup&,
-    std::optional<Vector<GPUBufferDynamicOffset>>&&)
+void GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,
+    std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-
+    m_backing->setBindGroup(index, bindGroup.backing(), WTFMove(dynamicOffsets));
 }
 
-void GPUComputePassEncoder::setBindGroup(GPUIndex32, const GPUBindGroup&,
+void GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,
     const JSC::Uint32Array& dynamicOffsetsData,
     GPUSize64 dynamicOffsetsDataStart,
     GPUSize32 dynamicOffsetsDataLength)
 {
-    UNUSED_PARAM(dynamicOffsetsData);
-    UNUSED_PARAM(dynamicOffsetsDataStart);
-    UNUSED_PARAM(dynamicOffsetsDataLength);
+    m_backing->setBindGroup(index, bindGroup.backing(), dynamicOffsetsData.data(), dynamicOffsetsData.length(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
 }
 
 void GPUComputePassEncoder::pushDebugGroup(String&& groupLabel)
 {
-    UNUSED_PARAM(groupLabel);
+    m_backing->pushDebugGroup(WTFMove(groupLabel));
 }
 
 void GPUComputePassEncoder::popDebugGroup()
 {
-
+    m_backing->popDebugGroup();
 }
 
 void GPUComputePassEncoder::insertDebugMarker(String&& markerLabel)
 {
-    UNUSED_PARAM(markerLabel);
+    m_backing->insertDebugMarker(WTFMove(markerLabel));
 }
 
 }

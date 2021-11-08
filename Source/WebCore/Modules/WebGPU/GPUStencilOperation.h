@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUStencilOperation.h>
 
 namespace WebCore {
 
@@ -39,5 +40,28 @@ enum class GPUStencilOperation : uint8_t {
     IncrementWrap,
     DecrementWrap
 };
+
+inline PAL::WebGPU::StencilOperation convertToBacking(GPUStencilOperation stencilOperation)
+{
+    switch (stencilOperation) {
+    case GPUStencilOperation::Keep:
+        return PAL::WebGPU::StencilOperation::Keep;
+    case GPUStencilOperation::Zero:
+        return PAL::WebGPU::StencilOperation::Zero;
+    case GPUStencilOperation::Replace:
+        return PAL::WebGPU::StencilOperation::Replace;
+    case GPUStencilOperation::Invert:
+        return PAL::WebGPU::StencilOperation::Invert;
+    case GPUStencilOperation::IncrementClamp:
+        return PAL::WebGPU::StencilOperation::IncrementClamp;
+    case GPUStencilOperation::DecrementClamp:
+        return PAL::WebGPU::StencilOperation::DecrementClamp;
+    case GPUStencilOperation::IncrementWrap:
+        return PAL::WebGPU::StencilOperation::IncrementWrap;
+    case GPUStencilOperation::DecrementWrap:
+        return PAL::WebGPU::StencilOperation::DecrementWrap;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

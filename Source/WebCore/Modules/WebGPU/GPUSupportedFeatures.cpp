@@ -25,11 +25,14 @@
 
 #include "config.h"
 #include "GPUSupportedFeatures.h"
+#include "IDLTypes.h"
 
 namespace WebCore {
 
-void GPUSupportedFeatures::initializeSetLike(DOMSetAdapter&) const
+void GPUSupportedFeatures::initializeSetLike(DOMSetAdapter& set) const
 {
+    for (const auto& feature : m_backing->features())
+        set.add<IDLDOMString>(feature);
 }
 
 }

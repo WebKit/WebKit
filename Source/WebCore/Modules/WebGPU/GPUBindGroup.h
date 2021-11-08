@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUBindGroup.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,16 +34,24 @@ namespace WebCore {
 
 class GPUBindGroup : public RefCounted<GPUBindGroup> {
 public:
-    static Ref<GPUBindGroup> create()
+    static Ref<GPUBindGroup> create(Ref<PAL::WebGPU::BindGroup>&& backing)
     {
-        return adoptRef(*new GPUBindGroup());
+        return adoptRef(*new GPUBindGroup(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
+    PAL::WebGPU::BindGroup& backing() { return m_backing; }
+    const PAL::WebGPU::BindGroup& backing() const { return m_backing; }
+
 private:
-    GPUBindGroup() = default;
+    GPUBindGroup(Ref<PAL::WebGPU::BindGroup>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::BindGroup> m_backing;
 };
 
 }

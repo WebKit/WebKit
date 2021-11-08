@@ -27,13 +27,13 @@
 
 #include "WebGPUBuffer.h"
 #include "WebGPUImageDataLayout.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace PAL {
 namespace WebGPU {
 
 struct ImageCopyBuffer : public ImageDataLayout {
-    RefPtr<Buffer> buffer;
+    Buffer& buffer;
 };
 
 }

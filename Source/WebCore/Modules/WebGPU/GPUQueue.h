@@ -35,6 +35,7 @@
 #include "GPUIntegralTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUQueue.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -47,17 +48,18 @@ class GPUBuffer;
 
 class GPUQueue : public RefCounted<GPUQueue> {
 public:
-    static Ref<GPUQueue> create()
+    static Ref<GPUQueue> create(Ref<PAL::WebGPU::Queue>&& backing)
     {
-        return adoptRef(*new GPUQueue());
+        return adoptRef(*new GPUQueue(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
-    void submit(Vector<RefPtr<GPUCommandBuffer>>);
+    void submit(Vector<RefPtr<GPUCommandBuffer>>&&);
 
-    void onSubmittedWorkDone(Ref<DeferredPromise>&&);
+    using OnSubmittedWorkDonePromise = DOMPromiseDeferred<IDLNull>;
+    void onSubmittedWorkDone(OnSubmittedWorkDonePromise&&);
 
     void writeBuffer(
         const GPUBuffer&,
@@ -67,18 +69,26 @@ public:
         std::optional<GPUSize64>);
 
     void writeTexture(
-        GPUImageCopyTexture destination,
+        const GPUImageCopyTexture& destination,
         BufferSource&& data,
-        GPUImageDataLayout,
-        GPUExtent3D size);
+        const GPUImageDataLayout&,
+        const GPUExtent3D& size);
 
     void copyExternalImageToTexture(
-        GPUImageCopyExternalImage source,
-        GPUImageCopyTextureTagged destination,
-        GPUExtent3D copySize);
+        const GPUImageCopyExternalImage& source,
+        const GPUImageCopyTextureTagged& destination,
+        const GPUExtent3D& copySize);
+
+    PAL::WebGPU::Queue& backing() { return m_backing; }
+    const PAL::WebGPU::Queue& backing() const { return m_backing; }
 
 private:
-    GPUQueue() = default;
+    GPUQueue(Ref<PAL::WebGPU::Queue>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::Queue> m_backing;
 };
 
 }

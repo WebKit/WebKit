@@ -29,7 +29,6 @@
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPUPipelineStatisticName.h"
 #include "WebGPUQueryType.h"
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace PAL {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUStoreOp.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUStoreOp : uint8_t {
     Store,
     Discard
 };
+
+inline PAL::WebGPU::StoreOp convertToBacking(GPUStoreOp storeOp)
+{
+    switch (storeOp) {
+    case GPUStoreOp::Store:
+        return PAL::WebGPU::StoreOp::Store;
+    case GPUStoreOp::Discard:
+        return PAL::WebGPU::StoreOp::Discard;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

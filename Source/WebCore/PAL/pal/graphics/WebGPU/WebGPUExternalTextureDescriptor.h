@@ -27,7 +27,6 @@
 
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPUPredefinedColorSpace.h"
-#include <wtf/RefPtr.h>
 
 namespace PAL {
 namespace WebGPU {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUErrorFilter.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUErrorFilter : uint8_t {
     OutOfMemory,
     Validation
 };
+
+inline PAL::WebGPU::ErrorFilter convertToBacking(GPUErrorFilter errorFilter)
+{
+    switch (errorFilter) {
+    case GPUErrorFilter::OutOfMemory:
+        return PAL::WebGPU::ErrorFilter::OutOfMemory;
+    case GPUErrorFilter::Validation:
+        return PAL::WebGPU::ErrorFilter::Validation;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

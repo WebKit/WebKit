@@ -30,7 +30,6 @@
 #include <cstdint>
 #include <wtf/HashMap.h>
 #include <wtf/KeyValuePair.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace PAL {

@@ -29,6 +29,7 @@
 #include "GPULoadOp.h"
 #include "GPUStoreOp.h"
 #include "GPUTextureView.h"
+#include <pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h>
 #include <variant>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -36,8 +37,25 @@
 namespace WebCore {
 
 struct GPURenderPassColorAttachment {
-    RefPtr<GPUTextureView> view;
-    RefPtr<GPUTextureView> resolveTarget;
+    PAL::WebGPU::RenderPassColorAttachment convertToBacking() const
+    {
+        ASSERT(view);
+        return {
+            view->backing(),
+            resolveTarget ? &resolveTarget->backing() : nullptr,
+            WTF::switchOn(loadValue, [&] (GPULoadOp loadOp) -> std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict> {
+                return WebCore::convertToBacking(loadOp);
+            }, [&] (const Vector<double>& vector) -> std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict> {
+                return vector;
+            }, [&] (const GPUColorDict& color) -> std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict> {
+                return color.convertToBacking();
+            }),
+            WebCore::convertToBacking(storeOp),
+        };
+    }
+
+    GPUTextureView* view;
+    GPUTextureView* resolveTarget;
 
     std::variant<GPULoadOp, Vector<double>, GPUColorDict> loadValue;
     GPUStoreOp storeOp;

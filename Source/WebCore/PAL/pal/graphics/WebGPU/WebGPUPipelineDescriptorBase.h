@@ -32,7 +32,7 @@ namespace PAL {
 namespace WebGPU {
 
 struct PipelineDescriptorBase : public ObjectDescriptorBase {
-    RefPtr<PipelineLayout> layout;
+    PipelineLayout* layout;
 };
 
 }

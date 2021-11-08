@@ -36,6 +36,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUDevice.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
@@ -74,9 +75,9 @@ struct GPUTextureDescriptor;
 
 class GPUDevice : public ActiveDOMObject, public EventTargetWithInlineData {
 public:
-    static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext)
+    static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::WebGPU::Device>&& backing)
     {
-        return adoptRef(*new GPUDevice(scriptExecutionContext));
+        return adoptRef(*new GPUDevice(scriptExecutionContext, WTFMove(backing)));
     }
 
     virtual ~GPUDevice();
@@ -112,15 +113,19 @@ public:
     Ref<GPUQuerySet> createQuerySet(const GPUQuerySetDescriptor&);
 
     void pushErrorScope(GPUErrorFilter);
-    using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUError>>>;
+    using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>>>>;
     void popErrorScope(ErrorScopePromise&&);
 
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
     LostPromise& lost() { return m_lostPromise; }
 
+    PAL::WebGPU::Device& backing() { return m_backing; }
+    const PAL::WebGPU::Device& backing() const { return m_backing; }
+
 private:
-    GPUDevice(ScriptExecutionContext* scriptExecutionContext)
+    GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::WebGPU::Device>&& backing)
         : ActiveDOMObject { scriptExecutionContext }
+        , m_backing(WTFMove(backing))
     {
     }
 
@@ -135,6 +140,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     LostPromise m_lostPromise;
+    Ref<PAL::WebGPU::Device>&& m_backing;
 };
 
 }

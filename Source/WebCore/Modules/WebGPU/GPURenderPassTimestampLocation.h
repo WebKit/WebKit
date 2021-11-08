@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPURenderPassTimestampLocation : uint8_t {
     Beginning,
     End
 };
+
+inline PAL::WebGPU::RenderPassTimestampLocation convertToBacking(GPURenderPassTimestampLocation renderPassTimestampLocation)
+{
+    switch (renderPassTimestampLocation) {
+    case GPURenderPassTimestampLocation::Beginning:
+        return PAL::WebGPU::RenderPassTimestampLocation::Beginning;
+    case GPURenderPassTimestampLocation::End:
+        return PAL::WebGPU::RenderPassTimestampLocation::End;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

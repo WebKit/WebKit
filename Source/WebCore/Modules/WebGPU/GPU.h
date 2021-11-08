@@ -29,6 +29,7 @@
 #include "GPURequestAdapterOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPU.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -36,16 +37,24 @@ namespace WebCore {
 
 class GPU : public RefCounted<GPU> {
 public:
-    static Ref<GPU> create()
+    static Ref<GPU> create(Ref<PAL::WebGPU::GPU>&& backing)
     {
-        return adoptRef(*new GPU());
+        return adoptRef(*new GPU(WTFMove(backing)));
     }
 
     using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
     void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
 
+    PAL::WebGPU::GPU& backing() { return m_backing; }
+    const PAL::WebGPU::GPU& backing() const { return m_backing; }
+
 private:
-    GPU() = default;
+    GPU(Ref<PAL::WebGPU::GPU>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::GPU> m_backing;
 };
 
 }

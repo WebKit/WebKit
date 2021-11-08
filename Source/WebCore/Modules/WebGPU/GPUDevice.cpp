@@ -54,6 +54,10 @@
 #include "GPUSupportedLimits.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include "JSGPUComputePipeline.h"
+#include "JSGPUOutOfMemoryError.h"
+#include "JSGPURenderPipeline.h"
+#include "JSGPUValidationError.h"
 
 namespace WebCore {
 
@@ -61,106 +65,155 @@ GPUDevice::~GPUDevice() = default;
 
 String GPUDevice::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUDevice::setLabel(String&&)
+void GPUDevice::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
 Ref<GPUSupportedFeatures> GPUDevice::features() const
 {
-    return GPUSupportedFeatures::create();
+    return GPUSupportedFeatures::create(m_backing->features());
 }
 
 Ref<GPUSupportedLimits> GPUDevice::limits() const
 {
-    return GPUSupportedLimits::create();
+    return GPUSupportedLimits::create(m_backing->limits());
 }
 
 void GPUDevice::destroy()
 {
+    m_backing->destroy();
 }
 
-Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor&)
+Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
 {
-    return GPUBuffer::create();
+    return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()));
 }
 
-Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor&)
+Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
 {
-    return GPUTexture::create();
+    return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()));
 }
 
-Ref<GPUSampler> GPUDevice::createSampler(const std::optional<GPUSamplerDescriptor>&)
+static PAL::WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)
 {
-    return GPUSampler::create();
+    if (!samplerDescriptor) {
+        return {
+            { },
+            PAL::WebGPU::AddressMode::ClampToEdge,
+            PAL::WebGPU::AddressMode::ClampToEdge,
+            PAL::WebGPU::AddressMode::ClampToEdge,
+            PAL::WebGPU::FilterMode::Nearest,
+            PAL::WebGPU::FilterMode::Nearest,
+            PAL::WebGPU::FilterMode::Nearest,
+            0,
+            32,
+            std::nullopt,
+            1
+        };
+    }
+
+    return samplerDescriptor->convertToBacking();
 }
 
-Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor&)
+Ref<GPUSampler> GPUDevice::createSampler(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)
 {
-    return GPUExternalTexture::create();
+    return GPUSampler::create(m_backing->createSampler(convertToBacking(samplerDescriptor)));
 }
 
-Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor&)
+Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
-    return GPUBindGroupLayout::create();
+    return GPUExternalTexture::create(m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking()));
 }
 
-Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(const GPUPipelineLayoutDescriptor&)
+Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor& bindGroupLayoutDescriptor)
 {
-    return GPUPipelineLayout::create();
+    return GPUBindGroupLayout::create(m_backing->createBindGroupLayout(bindGroupLayoutDescriptor.convertToBacking()));
 }
 
-Ref<GPUBindGroup> GPUDevice::createBindGroup(const GPUBindGroupDescriptor&)
+Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(const GPUPipelineLayoutDescriptor& pipelineLayoutDescriptor)
 {
-    return GPUBindGroup::create();
+    return GPUPipelineLayout::create(m_backing->createPipelineLayout(pipelineLayoutDescriptor.convertToBacking()));
 }
 
-Ref<GPUShaderModule> GPUDevice::createShaderModule(const GPUShaderModuleDescriptor&)
+Ref<GPUBindGroup> GPUDevice::createBindGroup(const GPUBindGroupDescriptor& bindGroupDescriptor)
 {
-    return GPUShaderModule::create();
+    return GPUBindGroup::create(m_backing->createBindGroup(bindGroupDescriptor.convertToBacking()));
 }
 
-Ref<GPUComputePipeline> GPUDevice::createComputePipeline(const GPUComputePipelineDescriptor&)
+Ref<GPUShaderModule> GPUDevice::createShaderModule(const GPUShaderModuleDescriptor& shaderModuleDescriptor)
 {
-    return GPUComputePipeline::create();
+    return GPUShaderModule::create(m_backing->createShaderModule(shaderModuleDescriptor.convertToBacking()));
 }
 
-Ref<GPURenderPipeline> GPUDevice::createRenderPipeline(const GPURenderPipelineDescriptor&)
+Ref<GPUComputePipeline> GPUDevice::createComputePipeline(const GPUComputePipelineDescriptor& computePipelineDescriptor)
 {
-    return GPURenderPipeline::create();
+    return GPUComputePipeline::create(m_backing->createComputePipeline(computePipelineDescriptor.convertToBacking()));
 }
 
-void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor&, CreateComputePipelineAsyncPromise&&)
+Ref<GPURenderPipeline> GPUDevice::createRenderPipeline(const GPURenderPipelineDescriptor& renderPipelineDescriptor)
 {
+    return GPURenderPipeline::create(m_backing->createRenderPipeline(renderPipelineDescriptor.convertToBacking()));
 }
 
-void GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&)
+void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor& computePipelineDescriptor, CreateComputePipelineAsyncPromise&& promise)
 {
+    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
+        promise.resolve(GPUComputePipeline::create(WTFMove(computePipeline)));
+    });
 }
 
-Ref<GPUCommandEncoder> GPUDevice::createCommandEncoder(const std::optional<GPUCommandEncoderDescriptor>&)
+void GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor& renderPipelineDescriptor, CreateRenderPipelineAsyncPromise&& promise)
 {
-    return GPUCommandEncoder::create();
+    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
+        promise.resolve(GPURenderPipeline::create(WTFMove(renderPipeline)));
+    });
 }
 
-Ref<GPURenderBundleEncoder> GPUDevice::createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor&)
+static PAL::WebGPU::CommandEncoderDescriptor convertToBacking(const std::optional<GPUCommandEncoderDescriptor>& commandEncoderDescriptor)
 {
-    return GPURenderBundleEncoder::create();
+    if (!commandEncoderDescriptor)
+        return { };
+
+    return commandEncoderDescriptor->convertToBacking();
 }
 
-Ref<GPUQuerySet> GPUDevice::createQuerySet(const GPUQuerySetDescriptor&)
+Ref<GPUCommandEncoder> GPUDevice::createCommandEncoder(const std::optional<GPUCommandEncoderDescriptor>& commandEncoderDescriptor)
 {
-    return GPUQuerySet::create();
+    return GPUCommandEncoder::create(m_backing->createCommandEncoder(convertToBacking(commandEncoderDescriptor)));
 }
 
-void GPUDevice::pushErrorScope(GPUErrorFilter)
+Ref<GPURenderBundleEncoder> GPUDevice::createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
 {
+    return GPURenderBundleEncoder::create(m_backing->createRenderBundleEncoder(renderBundleEncoderDescriptor.convertToBacking()));
 }
 
-void GPUDevice::popErrorScope(ErrorScopePromise&&)
+Ref<GPUQuerySet> GPUDevice::createQuerySet(const GPUQuerySetDescriptor& querySetDescriptor)
 {
+    return GPUQuerySet::create(m_backing->createQuerySet(querySetDescriptor.convertToBacking()));
+}
+
+void GPUDevice::pushErrorScope(GPUErrorFilter errorFilter)
+{
+    m_backing->pushErrorScope(convertToBacking(errorFilter));
+}
+
+void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)
+{
+    m_backing->popErrorScope([promise = WTFMove(errorScopePromise)] (std::optional<PAL::WebGPU::Error>&& error) mutable {
+        if (!error)
+            promise.resolve(std::nullopt);
+        WTF::switchOn(WTFMove(*error), [&] (Ref<PAL::WebGPU::OutOfMemoryError>&& outOfMemoryError) {
+            GPUError error = RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
+            promise.resolve(error);
+        }, [&] (Ref<PAL::WebGPU::ValidationError>&& validationError) {
+            GPUError error = RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
+            promise.resolve(error);
+        });
+    });
 }
 
 }

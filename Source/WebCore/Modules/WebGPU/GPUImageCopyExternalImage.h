@@ -29,12 +29,21 @@
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h>
 #include <variant>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct GPUImageCopyExternalImage {
+    PAL::WebGPU::ImageCopyExternalImage convertToBacking() const
+    {
+        return {
+            // FIXME: Handle the canvas element.
+            origin ? std::optional { WebCore::convertToBacking(*origin) } : std::nullopt,
+        };
+    }
+
     std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>> source;
     std::optional<GPUOrigin2D> origin;
 };

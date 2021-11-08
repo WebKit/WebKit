@@ -26,10 +26,17 @@
 #pragma once
 
 #include "GPUObjectDescriptorBase.h"
+#include <pal/graphics/WebGPU/WebGPUCommandBufferDescriptor.h>
 
 namespace WebCore {
 
 struct GPUCommandBufferDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::CommandBufferDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+        };
+    }
 };
 
 }

@@ -28,10 +28,21 @@
 #include "GPUBufferUsage.h"
 #include "GPUIntegralTypes.h"
 #include "GPUObjectDescriptorBase.h"
+#include <pal/graphics/WebGPU/WebGPUBufferDescriptor.h>
 
 namespace WebCore {
 
 struct GPUBufferDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::BufferDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            size,
+            convertBufferUsageFlagsToBacking(usage),
+            mappedAtCreation,
+        };
+    }
+
     GPUSize64 size;
     GPUBufferUsageFlags usage;
     bool mappedAtCreation;

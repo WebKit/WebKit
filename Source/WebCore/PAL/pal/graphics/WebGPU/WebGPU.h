@@ -40,7 +40,7 @@ class GPU : public RefCounted<GPU> {
 public:
     virtual ~GPU() = default;
 
-    virtual void requestAdapter(const std::optional<RequestAdapterOptions>&, std::function<void(RefPtr<Adapter>)>&&) = 0;
+    virtual void requestAdapter(const RequestAdapterOptions&, std::function<void(RefPtr<Adapter>&&)>&&) = 0;
 
 protected:
     GPU() = default;

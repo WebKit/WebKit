@@ -25,10 +25,9 @@
 
 #pragma once
 
-#include "WebGPUOrigin2DDict.h"
+#include "WebGPUOrigin2D.h"
 #include <optional>
 #include <variant>
-#include <wtf/RefPtr.h>
 
 namespace PAL {
 namespace WebGPU {

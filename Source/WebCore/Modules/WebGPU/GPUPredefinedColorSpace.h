@@ -26,11 +26,21 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
 
 namespace WebCore {
 
 enum class GPUPredefinedColorSpace : uint8_t {
     SRGB
 };
+
+inline PAL::WebGPU::PredefinedColorSpace convertToBacking(GPUPredefinedColorSpace predefinedColorSpace)
+{
+    switch (predefinedColorSpace) {
+    case GPUPredefinedColorSpace::SRGB:
+        return PAL::WebGPU::PredefinedColorSpace::SRGB;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

@@ -28,14 +28,11 @@
 
 namespace WebCore {
 
-GPUValidationError::GPUValidationError(String&& message)
+const String& GPUValidationError::message() const
 {
-    UNUSED_PARAM(message);
-}
-
-String GPUValidationError::message() const
-{
-    return StringImpl::empty();
+    if (m_backing)
+        return m_backing->message();
+    return m_message;
 }
 
 }

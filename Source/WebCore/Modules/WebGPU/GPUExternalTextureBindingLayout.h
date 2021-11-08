@@ -25,9 +25,15 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h>
+
 namespace WebCore {
 
 struct GPUExternalTextureBindingLayout {
+    PAL::WebGPU::ExternalTextureBindingLayout convertToBacking() const
+    {
+        return { };
+    }
 };
 
 }

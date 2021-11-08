@@ -29,7 +29,7 @@
 #include "WebGPUCommandBufferDescriptor.h"
 #include "WebGPUComputePassDescriptor.h"
 #include "WebGPUComputePassEncoder.h"
-#include "WebGPUExtent3DDict.h"
+#include "WebGPUExtent3D.h"
 #include "WebGPUImageCopyBuffer.h"
 #include "WebGPUImageCopyTexture.h"
 #include "WebGPUIntegralTypes.h"
@@ -58,8 +58,8 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual Ref<RenderPassEncoder> beginRenderPass(RenderPassDescriptor) = 0;
-    virtual Ref<ComputePassEncoder> beginComputePass(std::optional<ComputePassDescriptor>) = 0;
+    virtual Ref<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) = 0;
+    virtual Ref<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) = 0;
 
     virtual void copyBufferToBuffer(
         const Buffer& source,
@@ -101,7 +101,7 @@ public:
         const Buffer& destination,
         Size64 destinationOffset) = 0;
 
-    virtual Ref<CommandBuffer> finish(std::optional<CommandBufferDescriptor>) = 0;
+    virtual Ref<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
 
 protected:
     CommandEncoder() = default;

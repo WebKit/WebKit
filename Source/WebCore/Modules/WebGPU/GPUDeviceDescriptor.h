@@ -28,6 +28,7 @@
 #include "GPUFeatureName.h"
 #include "GPUObjectDescriptorBase.h"
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUDeviceDescriptor.h>
 #include <wtf/HashMap.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/RefPtr.h>
@@ -36,6 +37,20 @@
 namespace WebCore {
 
 struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::DeviceDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            ([this] () {
+                Vector<PAL::WebGPU::FeatureName> requiredFeatures;
+                requiredFeatures.reserveInitialCapacity(this->requiredFeatures.size());
+                for (const auto& requiredFeature : this->requiredFeatures)
+                    requiredFeatures.uncheckedAppend(WebCore::convertToBacking(requiredFeature));
+                return requiredFeatures;
+            })(),
+        };
+    }
+
     Vector<GPUFeatureName> requiredFeatures;
     // Vector<KeyValuePair<String, uint64_t>> requiredLimits;
 };

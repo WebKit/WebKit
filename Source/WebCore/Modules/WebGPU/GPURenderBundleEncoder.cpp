@@ -28,44 +28,42 @@
 #include "config.h"
 #include "GPURenderBundleEncoder.h"
 
+#include "GPUBindGroup.h"
 #include "GPUBuffer.h"
 #include "GPURenderBundle.h"
+#include "GPURenderPipeline.h"
 
 namespace WebCore {
 
 String GPURenderBundleEncoder::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPURenderBundleEncoder::setLabel(String&&)
+void GPURenderBundleEncoder::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
-void GPURenderBundleEncoder::setPipeline(const GPURenderPipeline&)
+void GPURenderBundleEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
 {
+    m_backing->setPipeline(renderPipeline.backing());
 }
 
-void GPURenderBundleEncoder::setIndexBuffer(const GPUBuffer&, GPUIndexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderBundleEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
 {
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
+    m_backing->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
 }
 
-void GPURenderBundleEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer&, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderBundleEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer& buffer, GPUSize64 offset, std::optional<GPUSize64> size)
 {
-    UNUSED_PARAM(slot);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
+    m_backing->setVertexBuffer(slot, buffer.backing(), offset, size);
 }
 
 void GPURenderBundleEncoder::draw(GPUSize32 vertexCount, GPUSize32 instanceCount,
     GPUSize32 firstVertex, GPUSize32 firstInstance)
 {
-    UNUSED_PARAM(vertexCount);
-    UNUSED_PARAM(instanceCount);
-    UNUSED_PARAM(firstVertex);
-    UNUSED_PARAM(firstInstance);
+    m_backing->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void GPURenderBundleEncoder::drawIndexed(GPUSize32 indexCount, GPUSize32 instanceCount,
@@ -73,58 +71,58 @@ void GPURenderBundleEncoder::drawIndexed(GPUSize32 indexCount, GPUSize32 instanc
     GPUSignedOffset32 baseVertex,
     GPUSize32 firstInstance)
 {
-    UNUSED_PARAM(indexCount);
-    UNUSED_PARAM(instanceCount);
-    UNUSED_PARAM(firstIndex);
-    UNUSED_PARAM(baseVertex);
-    UNUSED_PARAM(firstInstance);
+    m_backing->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void GPURenderBundleEncoder::drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectOffset);
+    m_backing->drawIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
 void GPURenderBundleEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectOffset);
+    m_backing->drawIndexedIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
-void GPURenderBundleEncoder::setBindGroup(GPUIndex32, const GPUBindGroup&,
+void GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,
     std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-    UNUSED_PARAM(dynamicOffsets);
+    m_backing->setBindGroup(index, bindGroup.backing(), WTFMove(dynamicOffsets));
 }
 
-void GPURenderBundleEncoder::setBindGroup(GPUIndex32, const GPUBindGroup&,
+void GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,
     const Uint32Array& dynamicOffsetsData,
     GPUSize64 dynamicOffsetsDataStart,
     GPUSize32 dynamicOffsetsDataLength)
 {
-    UNUSED_PARAM(dynamicOffsetsData);
-    UNUSED_PARAM(dynamicOffsetsDataStart);
-    UNUSED_PARAM(dynamicOffsetsDataLength);
+    m_backing->setBindGroup(index, bindGroup.backing(), dynamicOffsetsData.data(), dynamicOffsetsData.length(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
 }
 
 void GPURenderBundleEncoder::pushDebugGroup(String&& groupLabel)
 {
-    UNUSED_PARAM(groupLabel);
+    m_backing->pushDebugGroup(WTFMove(groupLabel));
 }
 
 void GPURenderBundleEncoder::popDebugGroup()
 {
+    m_backing->popDebugGroup();
 }
 
 void GPURenderBundleEncoder::insertDebugMarker(String&& markerLabel)
 {
-    UNUSED_PARAM(markerLabel);
+    m_backing->insertDebugMarker(WTFMove(markerLabel));
 }
 
-Ref<GPURenderBundle> GPURenderBundleEncoder::finish(std::optional<GPURenderBundleDescriptor>)
+static PAL::WebGPU::RenderBundleDescriptor convertToBacking(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
 {
-    return GPURenderBundle::create();
+    if (!renderBundleDescriptor)
+        return { };
+    return renderBundleDescriptor->convertToBacking();
+}
+
+Ref<GPURenderBundle> GPURenderBundleEncoder::finish(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
+{
+    return GPURenderBundle::create(m_backing->finish(convertToBacking(renderBundleDescriptor)));
 }
 
 }

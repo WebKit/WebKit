@@ -27,6 +27,7 @@
 
 #include "GPUIntegralTypes.h"
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUShaderStage.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,5 +39,17 @@ public:
     static constexpr GPUFlagsConstant FRAGMENT = 0x2;
     static constexpr GPUFlagsConstant COMPUTE  = 0x4;
 };
+
+inline PAL::WebGPU::ShaderStageFlags convertShaderStageFlagsToBacking(GPUShaderStageFlags shaderStageFlags)
+{
+    PAL::WebGPU::ShaderStageFlags result = 0;
+    if (shaderStageFlags & GPUShaderStage::VERTEX)
+        result |= PAL::WebGPU::ShaderStage::VERTEX;
+    if (shaderStageFlags & GPUShaderStage::FRAGMENT)
+        result |= PAL::WebGPU::ShaderStage::FRAGMENT;
+    if (shaderStageFlags & GPUShaderStage::COMPUTE)
+        result |= PAL::WebGPU::ShaderStage::COMPUTE;
+    return result;
+}
 
 }

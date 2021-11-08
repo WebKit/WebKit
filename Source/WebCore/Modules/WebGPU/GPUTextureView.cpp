@@ -30,11 +30,12 @@ namespace WebCore {
 
 String GPUTextureView::label() const
 {
-    return StringImpl::empty();
+    return m_backing->label();
 }
 
-void GPUTextureView::setLabel(String&&)
+void GPUTextureView::setLabel(String&& label)
 {
+    m_backing->setLabel(WTFMove(label));
 }
 
 }

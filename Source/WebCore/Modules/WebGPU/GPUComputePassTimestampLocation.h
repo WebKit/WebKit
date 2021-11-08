@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h>
 
 namespace WebCore {
 
@@ -33,5 +34,16 @@ enum class GPUComputePassTimestampLocation : uint8_t {
     Beginning,
     End
 };
+
+inline PAL::WebGPU::ComputePassTimestampLocation convertToBacking(GPUComputePassTimestampLocation computePassTimestampLocation)
+{
+    switch (computePassTimestampLocation) {
+    case GPUComputePassTimestampLocation::Beginning:
+        return PAL::WebGPU::ComputePassTimestampLocation::Beginning;
+    case GPUComputePassTimestampLocation::End:
+        return PAL::WebGPU::ComputePassTimestampLocation::End;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

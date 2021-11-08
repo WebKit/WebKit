@@ -27,10 +27,26 @@
 
 #include "GPUImageCopyTexture.h"
 #include "GPUPredefinedColorSpace.h"
+#include <pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h>
 
 namespace WebCore {
 
 struct GPUImageCopyTextureTagged : public GPUImageCopyTexture {
+    PAL::WebGPU::ImageCopyTextureTagged convertToBacking() const
+    {
+        ASSERT(texture);
+        return {
+            {
+                texture->backing(),
+                mipLevel,
+                origin ? std::optional { WebCore::convertToBacking(*origin) } : std::nullopt,
+                WebCore::convertToBacking(aspect),
+            },
+            WebCore::convertToBacking(colorSpace),
+            premultipliedAlpha,
+        };
+    }
+
     GPUPredefinedColorSpace colorSpace;
     bool premultipliedAlpha;
 };

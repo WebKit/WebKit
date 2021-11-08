@@ -26,12 +26,12 @@
 #pragma once
 
 #include "WebGPUCanvasCompositingAlphaMode.h"
-#include "WebGPUExtent3DDict.h"
+#include "WebGPUExtent3D.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUTextureFormat.h"
 #include <cstdint>
 #include <optional>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace PAL {
 namespace WebGPU {
@@ -41,7 +41,7 @@ class Device;
 using TextureUsageFlags = uint32_t; // FIXME: This doesn't need to be here.
 
 struct CanvasConfiguration {
-    RefPtr<Device> device;
+    Device& device;
     TextureFormat format;
     TextureUsageFlags usage; // TextureUsage.RENDER_ATTACHMENT
     PredefinedColorSpace colorSpace;

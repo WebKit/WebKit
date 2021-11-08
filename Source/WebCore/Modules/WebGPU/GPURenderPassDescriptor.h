@@ -31,15 +31,33 @@
 #include "GPURenderPassDepthStencilAttachment.h"
 #include "GPURenderPassTimestampWrite.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPURenderPassDescriptor.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
+    PAL::WebGPU::RenderPassDescriptor convertToBacking() const
+    {
+        return {
+            { label },
+            ([this] () {
+                Vector<PAL::WebGPU::RenderPassColorAttachment> colorAttachments;
+                colorAttachments.reserveInitialCapacity(this->colorAttachments.size());
+                for (auto& colorAttachment : this->colorAttachments)
+                    colorAttachments.uncheckedAppend(colorAttachment.convertToBacking());
+                return colorAttachments;
+            })(),
+            depthStencilAttachment ? std::optional { depthStencilAttachment->convertToBacking() } : std::nullopt,
+            occlusionQuerySet ? &occlusionQuerySet->backing() : nullptr,
+            WebCore::convertToBacking(timestampWrites),
+        };
+    }
+
     Vector<GPURenderPassColorAttachment> colorAttachments;
     std::optional<GPURenderPassDepthStencilAttachment> depthStencilAttachment;
-    RefPtr<GPUQuerySet> occlusionQuerySet;
+    GPUQuerySet* occlusionQuerySet;
     GPURenderPassTimestampWrites timestampWrites;
 };
 

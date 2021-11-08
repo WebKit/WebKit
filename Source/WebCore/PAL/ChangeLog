@@ -1,3 +1,55 @@
+2021-11-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Connect JS bindings code to internal WebGPU interface
+        https://bugs.webkit.org/show_bug.cgi?id=232804
+
+        Reviewed by Dean Jackson.
+
+        Various assorted cleanups.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/graphics/WebGPU/WebGPU.h:
+        * pal/graphics/WebGPU/WebGPUAdapter.h:
+        (PAL::WebGPU::Adapter::Adapter):
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h:
+        * pal/graphics/WebGPU/WebGPUBuffer.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUColor.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUColorDict.h.
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUComputePassTimestampWrite.h.
+        * pal/graphics/WebGPU/WebGPUDevice.h:
+        (PAL::WebGPU::Device::features):
+        (PAL::WebGPU::Device::limits):
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUError.h:
+        * pal/graphics/WebGPU/WebGPUExtent3D.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUExtent3DDict.h.
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUFrontFace.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUOrigin2D.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUOrigin2DDict.h.
+        * pal/graphics/WebGPU/WebGPUOrigin3D.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUOrigin3DDict.h.
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h:
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassTimestampWrite.h.
+        * pal/graphics/WebGPU/WebGPUShaderModule.h:
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h:
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+
 2021-11-08  Jer Noble  <jer.noble@apple.com>
 
         Infinite loop in SourceBufferParserWebM::SegmentReader::Read

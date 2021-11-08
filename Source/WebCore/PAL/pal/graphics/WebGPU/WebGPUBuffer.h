@@ -54,7 +54,7 @@ public:
         const void* source;
         size_t byteLength;
     };
-    virtual MappedRange getMappedRange(std::optional<Size64> offset, std::optional<Size64> rangeSize) = 0;
+    virtual MappedRange getMappedRange(std::optional<Size64> offset, std::optional<Size64>) = 0;
     virtual void unmap() = 0;
 
     virtual void destroy() = 0;

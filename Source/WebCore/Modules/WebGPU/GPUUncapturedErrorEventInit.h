@@ -27,6 +27,7 @@
 
 #include "EventInit.h"
 #include "GPUError.h"
+#include <pal/graphics/WebGPU/WebGPUUncapturedErrorEventInit.h>
 
 namespace WebCore {
 

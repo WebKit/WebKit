@@ -26,6 +26,9 @@
 #pragma once
 
 #include "GPUBindGroupLayout.h"
+#include "GPUCompilationInfo.h"
+#include "JSDOMPromiseDeferred.h"
+#include <pal/graphics/WebGPU/WebGPUShaderModule.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,18 +39,27 @@ class DeferredPromise;
 
 class GPUShaderModule : public RefCounted<GPUShaderModule> {
 public:
-    static Ref<GPUShaderModule> create()
+    static Ref<GPUShaderModule> create(Ref<PAL::WebGPU::ShaderModule>&& backing)
     {
-        return adoptRef(*new GPUShaderModule());
+        return adoptRef(*new GPUShaderModule(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
-    void compilationInfo(Ref<DeferredPromise>&&);
+    using CompilationInfoPromise = DOMPromiseDeferred<IDLInterface<GPUCompilationInfo>>;
+    void compilationInfo(CompilationInfoPromise&&);
+
+    PAL::WebGPU::ShaderModule& backing() { return m_backing; }
+    const PAL::WebGPU::ShaderModule& backing() const { return m_backing; }
 
 private:
-    GPUShaderModule() = default;
+    GPUShaderModule(Ref<PAL::WebGPU::ShaderModule>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::ShaderModule> m_backing;
 };
 
 }

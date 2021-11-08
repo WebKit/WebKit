@@ -30,10 +30,27 @@
 #include "GPUStencilFaceState.h"
 #include "GPUTextureFormat.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUDepthStencilState.h>
 
 namespace WebCore {
 
 struct GPUDepthStencilState {
+    PAL::WebGPU::DepthStencilState convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(format),
+            depthWriteEnabled,
+            WebCore::convertToBacking(depthCompare),
+            stencilFront.convertToBacking(),
+            stencilBack.convertToBacking(),
+            stencilReadMask ? std::optional { *stencilReadMask } : std::nullopt,
+            stencilWriteMask ? std::optional { *stencilWriteMask } : std::nullopt,
+            depthBias,
+            depthBiasSlopeScale,
+            depthBiasClamp,
+        };
+    }
+
     GPUTextureFormat format;
 
     bool depthWriteEnabled;

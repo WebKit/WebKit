@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUBlendOperation.h>
 
 namespace WebCore {
 
@@ -36,5 +37,22 @@ enum class GPUBlendOperation : uint8_t {
     Min,
     Max
 };
+
+inline PAL::WebGPU::BlendOperation convertToBacking(GPUBlendOperation blendOperation)
+{
+    switch (blendOperation) {
+    case GPUBlendOperation::Add:
+        return PAL::WebGPU::BlendOperation::Add;
+    case GPUBlendOperation::Subtract:
+        return PAL::WebGPU::BlendOperation::Subtract;
+    case GPUBlendOperation::ReverseSubtract:
+        return PAL::WebGPU::BlendOperation::ReverseSubtract;
+    case GPUBlendOperation::Min:
+        return PAL::WebGPU::BlendOperation::Min;
+    case GPUBlendOperation::Max:
+        return PAL::WebGPU::BlendOperation::Max;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

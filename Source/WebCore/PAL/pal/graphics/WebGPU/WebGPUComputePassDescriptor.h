@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUComputePassTimestampWrite.h"
+#include "WebGPUComputePassTimestampWrites.h"
 #include "WebGPUObjectDescriptorBase.h"
 
 namespace PAL {

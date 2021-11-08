@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUFeatureName.h>
 
 namespace WebCore {
 
@@ -39,5 +40,28 @@ enum class GPUFeatureName : uint8_t {
     TextureCompressionAstc,
     TimestampQuery
 };
+
+inline PAL::WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
+{
+    switch (featureName) {
+    case GPUFeatureName::DepthClamping:
+        return PAL::WebGPU::FeatureName::DepthClamping;
+    case GPUFeatureName::Depth24unormStencil8:
+        return PAL::WebGPU::FeatureName::Depth24unormStencil8;
+    case GPUFeatureName::Depth32floatStencil8:
+        return PAL::WebGPU::FeatureName::Depth32floatStencil8;
+    case GPUFeatureName::PipelineStatisticsQuery:
+        return PAL::WebGPU::FeatureName::PipelineStatisticsQuery;
+    case GPUFeatureName::TextureCompressionBc:
+        return PAL::WebGPU::FeatureName::TextureCompressionBc;
+    case GPUFeatureName::TextureCompressionEtc2:
+        return PAL::WebGPU::FeatureName::TextureCompressionEtc2;
+    case GPUFeatureName::TextureCompressionAstc:
+        return PAL::WebGPU::FeatureName::TextureCompressionAstc;
+    case GPUFeatureName::TimestampQuery:
+        return PAL::WebGPU::FeatureName::TimestampQuery;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

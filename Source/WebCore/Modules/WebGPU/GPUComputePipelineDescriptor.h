@@ -27,10 +27,22 @@
 
 #include "GPUPipelineDescriptorBase.h"
 #include "GPUProgrammableStage.h"
+#include <pal/graphics/WebGPU/WebGPUComputePipelineDescriptor.h>
 
 namespace WebCore {
 
 struct GPUComputePipelineDescriptor : public GPUPipelineDescriptorBase {
+    PAL::WebGPU::ComputePipelineDescriptor convertToBacking() const
+    {
+        return {
+            {
+                { label },
+                layout ? &layout->backing() : nullptr,
+            },
+            compute.convertToBacking()
+        };
+    }
+
     GPUProgrammableStage compute;
 };
 

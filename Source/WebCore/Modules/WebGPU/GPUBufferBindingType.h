@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUBufferBindingType.h>
 
 namespace WebCore {
 
@@ -34,5 +35,18 @@ enum class GPUBufferBindingType : uint8_t {
     Storage,
     ReadOnlyStorage
 };
+
+inline PAL::WebGPU::BufferBindingType convertToBacking(GPUBufferBindingType bufferBindingType)
+{
+    switch (bufferBindingType) {
+    case GPUBufferBindingType::Uniform:
+        return PAL::WebGPU::BufferBindingType::Uniform;
+    case GPUBufferBindingType::Storage:
+        return PAL::WebGPU::BufferBindingType::Storage;
+    case GPUBufferBindingType::ReadOnlyStorage:
+        return PAL::WebGPU::BufferBindingType::ReadOnlyStorage;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

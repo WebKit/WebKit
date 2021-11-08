@@ -26,10 +26,18 @@
 #pragma once
 
 #include "GPUSamplerBindingType.h"
+#include <pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h>
 
 namespace WebCore {
 
 struct GPUSamplerBindingLayout {
+    PAL::WebGPU::SamplerBindingLayout convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(type),
+        };
+    }
+
     GPUSamplerBindingType type;
 };
 

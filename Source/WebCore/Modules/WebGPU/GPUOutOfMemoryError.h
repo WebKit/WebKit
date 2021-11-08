@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUOutOfMemoryError.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -37,8 +38,25 @@ public:
         return adoptRef(*new GPUOutOfMemoryError());
     }
 
+    static Ref<GPUOutOfMemoryError> create(Ref<PAL::WebGPU::OutOfMemoryError>&& backing)
+    {
+        return adoptRef(*new GPUOutOfMemoryError(WTFMove(backing)));
+    }
+
+    PAL::WebGPU::OutOfMemoryError* backing() { return m_backing.get(); }
+    const PAL::WebGPU::OutOfMemoryError* backing() const { return m_backing.get(); }
+
 private:
-    GPUOutOfMemoryError() = default;
+    GPUOutOfMemoryError()
+    {
+    }
+
+    GPUOutOfMemoryError(Ref<PAL::WebGPU::OutOfMemoryError>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    RefPtr<PAL::WebGPU::OutOfMemoryError> m_backing;
 };
 
 }

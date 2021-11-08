@@ -28,6 +28,7 @@
 #include "GPUIntegralTypes.h"
 #include <JavaScriptCore/Uint32Array.h>
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -42,9 +43,9 @@ class GPUQuerySet;
 
 class GPUComputePassEncoder : public RefCounted<GPUComputePassEncoder> {
 public:
-    static Ref<GPUComputePassEncoder> create()
+    static Ref<GPUComputePassEncoder> create(Ref<PAL::WebGPU::ComputePassEncoder>&& backing)
     {
-        return adoptRef(*new GPUComputePassEncoder());
+        return adoptRef(*new GPUComputePassEncoder(WTFMove(backing)));
     }
 
     String label() const;
@@ -71,8 +72,16 @@ public:
     void popDebugGroup();
     void insertDebugMarker(String&& markerLabel);
 
+    PAL::WebGPU::ComputePassEncoder& backing() { return m_backing; }
+    const PAL::WebGPU::ComputePassEncoder& backing() const { return m_backing; }
+
 private:
-    GPUComputePassEncoder() = default;
+    GPUComputePassEncoder(Ref<PAL::WebGPU::ComputePassEncoder>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::ComputePassEncoder> m_backing;
 };
 
 }

@@ -25,20 +25,20 @@
 
 #pragma once
 
-#include "WebGPUColorDict.h"
+#include "WebGPUColor.h"
 #include "WebGPULoadOp.h"
 #include "WebGPUStoreOp.h"
 #include "WebGPUTextureView.h"
 #include <variant>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace PAL {
 namespace WebGPU {
 
 struct RenderPassColorAttachment {
-    RefPtr<TextureView> view;
-    RefPtr<TextureView> resolveTarget;
+    TextureView& view;
+    TextureView* resolveTarget;
 
     std::variant<LoadOp, Vector<double>, ColorDict> loadValue;
     StoreOp storeOp;

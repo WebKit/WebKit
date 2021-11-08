@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUTextureDimension.h>
 
 namespace WebCore {
 
@@ -34,5 +35,18 @@ enum class GPUTextureDimension : uint8_t {
     _2d,
     _3d
 };
+
+inline PAL::WebGPU::TextureDimension convertToBacking(GPUTextureDimension textureDimension)
+{
+    switch (textureDimension) {
+    case GPUTextureDimension::_1d:
+        return PAL::WebGPU::TextureDimension::_1d;
+    case GPUTextureDimension::_2d:
+        return PAL::WebGPU::TextureDimension::_2d;
+    case GPUTextureDimension::_3d:
+        return PAL::WebGPU::TextureDimension::_3d;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

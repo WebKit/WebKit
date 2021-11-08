@@ -25,11 +25,17 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct GPUObjectDescriptorBase {
+    PAL::WebGPU::ObjectDescriptorBase convertToBacking() const
+    {
+        return { label };
+    }
+
     String label;
 };
 

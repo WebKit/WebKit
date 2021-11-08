@@ -27,6 +27,7 @@
 
 #include "GPUIntegralTypes.h"
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUMapMode.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,5 +39,15 @@ public:
     static constexpr GPUFlagsConstant READ  = 0x0001;
     static constexpr GPUFlagsConstant WRITE = 0x0002;
 };
+
+inline PAL::WebGPU::MapModeFlags convertMapModeFlagsToBacking(GPUMapModeFlags mapModeFlags)
+{
+    PAL::WebGPU::MapModeFlags result = 0;
+    if (mapModeFlags & GPUMapMode::READ)
+        result |= PAL::WebGPU::MapMode::READ;
+    if (mapModeFlags & GPUMapMode::WRITE)
+        result |= PAL::WebGPU::MapMode::WRITE;
+    return result;
+}
 
 }

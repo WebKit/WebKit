@@ -29,6 +29,7 @@
 #include "GPUBlendOperation.h"
 #include "GPUIntegralTypes.h"
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUColorWrite.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,5 +43,19 @@ public:
     static constexpr GPUFlagsConstant ALPHA = 0x8;
     static constexpr GPUFlagsConstant ALL   = 0xF;
 };
+
+inline PAL::WebGPU::ColorWriteFlags convertColorWriteFlagsToBacking(GPUColorWriteFlags colorWriteFlags)
+{
+    PAL::WebGPU::ColorWriteFlags result = 0;
+    if (colorWriteFlags & GPUColorWrite::RED)
+        result |= PAL::WebGPU::ColorWrite::RED;
+    if (colorWriteFlags & GPUColorWrite::GREEN)
+        result |= PAL::WebGPU::ColorWrite::GREEN;
+    if (colorWriteFlags & GPUColorWrite::BLUE)
+        result |= PAL::WebGPU::ColorWrite::BLUE;
+    if (colorWriteFlags & GPUColorWrite::ALPHA)
+        result |= PAL::WebGPU::ColorWrite::ALPHA;
+    return result;
+}
 
 }

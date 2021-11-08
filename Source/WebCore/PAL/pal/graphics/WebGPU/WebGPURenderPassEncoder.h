@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "WebGPUColorDict.h"
+#include "WebGPUColor.h"
 #include "WebGPUIndexFormat.h"
 #include "WebGPUIntegralTypes.h"
 #include <optional>
+#include <utility>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -75,7 +75,8 @@ public:
         std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets) = 0;
 
     virtual void setBindGroup(Index32, const BindGroup&,
-        Vector<uint32_t>&& dynamicOffsetsData,
+        const uint32_t* dynamicOffsetsArrayBuffer,
+        size_t dynamicOffsetsArrayBufferLength,
         Size64 dynamicOffsetsDataStart,
         Size32 dynamicOffsetsDataLength) = 0;
 
@@ -99,7 +100,7 @@ public:
     virtual void beginPipelineStatisticsQuery(const QuerySet&, Size32 queryIndex) = 0;
     virtual void endPipelineStatisticsQuery() = 0;
 
-    virtual void executeBundles(Vector<RefPtr<RenderBundle>>&&) = 0;
+    virtual void executeBundles(Vector<std::reference_wrapper<RenderBundle>>&&) = 0;
     virtual void endPass() = 0;
 
 protected:

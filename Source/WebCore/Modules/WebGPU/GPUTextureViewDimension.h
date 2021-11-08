@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUTextureViewDimension.h>
 
 namespace WebCore {
 
@@ -37,5 +38,24 @@ enum class GPUTextureViewDimension : uint8_t {
     CubeArray,
     _3d
 };
+
+inline PAL::WebGPU::TextureViewDimension convertToBacking(GPUTextureViewDimension textureViewDimension)
+{
+    switch (textureViewDimension) {
+    case GPUTextureViewDimension::_1d:
+        return PAL::WebGPU::TextureViewDimension::_1d;
+    case GPUTextureViewDimension::_2d:
+        return PAL::WebGPU::TextureViewDimension::_2d;
+    case GPUTextureViewDimension::_2dArray:
+        return PAL::WebGPU::TextureViewDimension::_2dArray;
+    case GPUTextureViewDimension::Cube:
+        return PAL::WebGPU::TextureViewDimension::Cube;
+    case GPUTextureViewDimension::CubeArray:
+        return PAL::WebGPU::TextureViewDimension::CubeArray;
+    case GPUTextureViewDimension::_3d:
+        return PAL::WebGPU::TextureViewDimension::_3d;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

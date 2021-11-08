@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/graphics/WebGPU/WebGPUExternalTexture.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -33,16 +34,24 @@ namespace WebCore {
 
 class GPUExternalTexture : public RefCounted<GPUExternalTexture> {
 public:
-    static Ref<GPUExternalTexture> create()
+    static Ref<GPUExternalTexture> create(Ref<PAL::WebGPU::ExternalTexture>&& backing)
     {
-        return adoptRef(*new GPUExternalTexture());
+        return adoptRef(*new GPUExternalTexture(WTFMove(backing)));
     }
 
     String label() const;
     void setLabel(String&&);
 
+    PAL::WebGPU::ExternalTexture& backing() { return m_backing; }
+    const PAL::WebGPU::ExternalTexture& backing() const { return m_backing; }
+
 private:
-    GPUExternalTexture() = default;
+    GPUExternalTexture(Ref<PAL::WebGPU::ExternalTexture>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
+
+    Ref<PAL::WebGPU::ExternalTexture> m_backing;
 };
 
 }

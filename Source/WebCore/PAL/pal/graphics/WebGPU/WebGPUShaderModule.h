@@ -48,7 +48,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void compilationInfo(std::function<void(Ref<CompilationInfo>)>&&) = 0;
+    virtual void compilationInfo(std::function<void(Ref<CompilationInfo>&&)>&&) = 0;
 
 protected:
     ShaderModule() = default;

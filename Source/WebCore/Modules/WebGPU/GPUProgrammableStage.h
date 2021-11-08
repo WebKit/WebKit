@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GPUShaderModule.h"
+#include <pal/graphics/WebGPU/WebGPUProgrammableStage.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -35,7 +36,23 @@ namespace WebCore {
 using GPUPipelineConstantValue = double; // May represent WGSL’s bool, f32, i32, u32.
 
 struct GPUProgrammableStage {
-    RefPtr<GPUShaderModule> module;
+    PAL::WebGPU::ProgrammableStage convertToBacking() const
+    {
+        ASSERT(module);
+        return {
+            module->backing(),
+            entryPoint,
+            ([this] () {
+                Vector<KeyValuePair<String, PAL::WebGPU::PipelineConstantValue>> constants;
+                constants.reserveInitialCapacity(this->constants.size());
+                for (const auto& constant : this->constants)
+                    constants.uncheckedAppend(makeKeyValuePair(constant.key, constant.value));
+                return constants;
+            })(),
+        };
+    }
+
+    GPUShaderModule* module;
     String entryPoint;
     Vector<KeyValuePair<String, GPUPipelineConstantValue>> constants;
 };

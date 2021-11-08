@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <pal/graphics/WebGPU/WebGPUTextureSampleType.h>
 
 namespace WebCore {
 
@@ -36,5 +37,22 @@ enum class GPUTextureSampleType : uint8_t {
     Sint,
     Uint
 };
+
+inline PAL::WebGPU::TextureSampleType convertToBacking(GPUTextureSampleType textureSampleType)
+{
+    switch (textureSampleType) {
+    case GPUTextureSampleType::Float:
+        return PAL::WebGPU::TextureSampleType::Float;
+    case GPUTextureSampleType::UnfilterableFloat:
+        return PAL::WebGPU::TextureSampleType::UnfilterableFloat;
+    case GPUTextureSampleType::Depth:
+        return PAL::WebGPU::TextureSampleType::Depth;
+    case GPUTextureSampleType::Sint:
+        return PAL::WebGPU::TextureSampleType::Sint;
+    case GPUTextureSampleType::Uint:
+        return PAL::WebGPU::TextureSampleType::Uint;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }

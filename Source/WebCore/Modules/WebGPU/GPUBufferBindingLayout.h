@@ -27,10 +27,20 @@
 
 #include "GPUBufferBindingType.h"
 #include "GPUIntegralTypes.h"
+#include <pal/graphics/WebGPU/WebGPUBufferBindingLayout.h>
 
 namespace WebCore {
 
 struct GPUBufferBindingLayout {
+    PAL::WebGPU::BufferBindingLayout convertToBacking() const
+    {
+        return {
+            WebCore::convertToBacking(type),
+            hasDynamicOffset,
+            minBindingSize,
+        };
+    }
+
     GPUBufferBindingType type;
     bool hasDynamicOffset;
     GPUSize64 minBindingSize;

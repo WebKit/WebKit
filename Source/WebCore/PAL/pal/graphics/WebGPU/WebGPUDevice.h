@@ -30,6 +30,8 @@
 #include "WebGPUError.h"
 #include "WebGPUErrorFilter.h"
 #include "WebGPURenderPipeline.h"
+#include "WebGPUSupportedFeatures.h"
+#include "WebGPUSupportedLimits.h"
 #include <optional>
 #include <utility>
 #include <wtf/HashSet.h>
@@ -65,8 +67,6 @@ class Sampler;
 struct SamplerDescriptor;
 class ShaderModule;
 struct ShaderModuleDescriptor;
-class SupportedFeatures;
-class SupportedLimits;
 class Texture;
 struct TextureDescriptor;
 
@@ -82,14 +82,16 @@ public:
         setLabelInternal(m_label);
     }
 
+    SupportedFeatures& features() { return m_features; }
     const SupportedFeatures& features() const { return m_features; }
+    SupportedLimits& limits() { return m_limits; }
     const SupportedLimits& limits() const { return m_limits; }
 
     virtual void destroy() = 0;
 
     virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
     virtual Ref<Texture> createTexture(const TextureDescriptor&) = 0;
-    virtual Ref<Sampler> createSampler(const std::optional<SamplerDescriptor>&) = 0;
+    virtual Ref<Sampler> createSampler(const SamplerDescriptor&) = 0;
     virtual Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
 
     virtual Ref<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) = 0;
@@ -99,8 +101,8 @@ public:
     virtual Ref<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) = 0;
     virtual Ref<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) = 0;
     virtual Ref<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) = 0;
-    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, std::function<void(Ref<ComputePipeline>)>&&) = 0;
-    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, std::function<void(Ref<RenderPipeline>)>&&) = 0;
+    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, std::function<void(Ref<ComputePipeline>&&)>&&) = 0;
+    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, std::function<void(Ref<RenderPipeline>&&)>&&) = 0;
 
     virtual Ref<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) = 0;
     virtual Ref<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) = 0;
@@ -108,7 +110,7 @@ public:
     virtual Ref<QuerySet> createQuerySet(const QuerySetDescriptor&) = 0;
 
     virtual void pushErrorScope(ErrorFilter) = 0;
-    virtual void popErrorScope(std::function<void(std::optional<Error>)>&&) = 0;
+    virtual void popErrorScope(std::function<void(std::optional<Error>&&)>&&) = 0;
 
     class DeviceLostClient {
         virtual ~DeviceLostClient() = default;

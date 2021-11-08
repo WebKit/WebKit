@@ -29,11 +29,28 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUTextureFormat.h"
 #include <optional>
+#include <pal/graphics/WebGPU/WebGPURenderPassLayout.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPURenderPassLayout : public GPUObjectDescriptorBase {
+    PAL::WebGPU::RenderPassLayout convertToBacking() const
+    {
+        return {
+            { label },
+            ([this] () {
+                Vector<PAL::WebGPU::TextureFormat> colorFormats;
+                colorFormats.reserveInitialCapacity(this->colorFormats.size());
+                for (const auto& colorFormat : this->colorFormats)
+                    colorFormats.uncheckedAppend(WebCore::convertToBacking(colorFormat));
+                return colorFormats;
+            })(),
+            depthStencilFormat ? std::optional { WebCore::convertToBacking(*depthStencilFormat) } : std::nullopt,
+            sampleCount,
+        };
+    }
+
     Vector<GPUTextureFormat> colorFormats;
     std::optional<GPUTextureFormat> depthStencilFormat;
     GPUSize32 sampleCount;

@@ -29,9 +29,8 @@
 #include "WebGPUQuerySet.h"
 #include "WebGPURenderPassColorAttachment.h"
 #include "WebGPURenderPassDepthStencilAttachment.h"
-#include "WebGPURenderPassTimestampWrite.h"
+#include "WebGPURenderPassTimestampWrites.h"
 #include <optional>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace PAL {
@@ -40,7 +39,7 @@ namespace WebGPU {
 struct RenderPassDescriptor : public ObjectDescriptorBase {
     Vector<RenderPassColorAttachment> colorAttachments;
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
-    RefPtr<QuerySet> occlusionQuerySet;
+    QuerySet* occlusionQuerySet;
     RenderPassTimestampWrites timestampWrites;
 };
 
