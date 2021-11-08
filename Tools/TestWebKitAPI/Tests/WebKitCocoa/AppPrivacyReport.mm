@@ -707,10 +707,11 @@ static void loadSimulatedRequestTest(IsAppInitiated isAppInitiated)
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSMutableURLRequest *loadRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org"]];
+    NSMutableURLRequest *loadRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
     loadRequest.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 
-    NSString *HTML = @"<html><head></head><body><img src='https://apple.com/'></img></body></html>";
+    NSString *HTML = @"<html><head></head><body><iframe src='http://127.0.0.1/'></iframe></body></html>";
+
     [webView loadSimulatedRequest:loadRequest responseHTMLString:HTML];
     [delegate waitForDidFinishNavigation];
 
@@ -725,12 +726,12 @@ static void loadSimulatedRequestTest(IsAppInitiated isAppInitiated)
 }
 
 // FIXME: Re-enable these two tests once webkit.org/b/232166 is resolved.
-TEST(AppPrivacyReport, DISABLED_LoadSimulatedRequestIsAppInitiated)
+TEST(AppPrivacyReport, LoadSimulatedRequestIsAppInitiated)
 {
     loadSimulatedRequestTest(IsAppInitiated::Yes);
 }
 
-TEST(AppPrivacyReport, DISABLED_LoadSimulatedRequestIsNonAppInitiated)
+TEST(AppPrivacyReport, LoadSimulatedRequestIsNonAppInitiated)
 {
     loadSimulatedRequestTest(IsAppInitiated::No);
 }
