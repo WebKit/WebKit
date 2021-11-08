@@ -46,8 +46,8 @@ public:
         WritingMode writingMode;
     };
 
-    PropertyCascade(const MatchResult&, OptionSet<CascadeLevel>, IncludedProperties, Direction);
-    PropertyCascade(const PropertyCascade&, OptionSet<CascadeLevel>);
+    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, Direction);
+    PropertyCascade(const PropertyCascade&, CascadeLevel, CascadeLayerPriority maximumCascadeLayerPriority = RuleSet::cascadeLayerPriorityForUnlayered);
 
     ~PropertyCascade();
 
@@ -55,6 +55,7 @@ public:
         CSSPropertyID id;
         CascadeLevel level;
         ScopeOrdinal styleScopeOrdinal;
+        CascadeLayerPriority cascadeLayerPriority;
         CSSValue* cssValue[3]; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
 
@@ -69,10 +70,11 @@ public:
 
     Direction direction() const;
 
-    const PropertyCascade* propertyCascadeForRollback(CascadeLevel) const;
+    auto maximumCascadeLevel() const { return m_maximumCascadeLevel; }
+    auto maximumCascadeLayerPriority() const { return m_maximumCascadeLayerPriority; }
 
 private:
-    void buildCascade(OptionSet<CascadeLevel>);
+    void buildCascade();
     bool addNormalMatches(CascadeLevel);
     void addImportantMatches(CascadeLevel);
     bool addMatch(const MatchedProperties&, CascadeLevel, bool important);
@@ -85,6 +87,8 @@ private:
 
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
+    const CascadeLevel m_maximumCascadeLevel;
+    const CascadeLayerPriority m_maximumCascadeLayerPriority { RuleSet::cascadeLayerPriorityForUnlayered };
     mutable Direction m_direction;
     mutable bool m_directionIsUnresolved { true };
 
@@ -93,9 +97,6 @@ private:
 
     Vector<Property, 8> m_deferredProperties;
     HashMap<AtomString, Property> m_customProperties;
-
-    mutable std::unique_ptr<const PropertyCascade> m_authorRollbackCascade;
-    mutable std::unique_ptr<const PropertyCascade> m_userRollbackCascade;
 };
 
 inline bool PropertyCascade::hasProperty(CSSPropertyID id) const
