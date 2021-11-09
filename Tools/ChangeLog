@@ -1,3 +1,42 @@
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r283180. rdar://problem/85168105
+
+    Validate DeviceIdHashSaltStorage persistent data
+    https://bugs.webkit.org/show_bug.cgi?id=230852
+    <rdar://problem/83615408>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebKit:
+    
+    Add nullptr check to decoded data.
+    Covered by API test.
+    
+    * UIProcess/DeviceIdHashSaltStorage.cpp:
+    (WebKit::DeviceIdHashSaltStorage::loadStorageFromDisk):
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+    * TestWebKitAPI/Tests/WebKit/invalidDeviceIDHashSalts: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283180 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-28  Youenn Fablet  <youenn@apple.com>
+
+            Validate DeviceIdHashSaltStorage persistent data
+            https://bugs.webkit.org/show_bug.cgi?id=230852
+            <rdar://problem/83615408>
+
+            Reviewed by Eric Carlson.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+            * TestWebKitAPI/Tests/WebKit/invalidDeviceIDHashSalts: Added.
+
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r285239. rdar://problem/80991209
