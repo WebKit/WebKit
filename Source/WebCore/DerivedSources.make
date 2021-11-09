@@ -1438,6 +1438,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/workers/SharedWorkerGlobalScope.idl \
     $(WebCore)/workers/Worker.idl \
     $(WebCore)/workers/WorkerGlobalScope.idl \
+    $(WebCore)/page/ShadowRealm.idl \
     $(WebCore)/page/ShadowRealmGlobalScope.idl \
     $(WebCore)/workers/WorkerLocation.idl \
 	$(WebCore)/workers/WorkerOptions.idl \

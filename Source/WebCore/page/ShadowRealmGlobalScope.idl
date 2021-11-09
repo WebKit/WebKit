@@ -28,24 +28,24 @@
     Exposed=ShadowRealm,
     JSCustomMarkFunction,
     JSLegacyParent=JSShadowRealmGlobalScopeBase,
-    Global,
+    Global=ShadowRealm,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
-] interface ShadowRealmGlobalScope : EventTarget {
+] interface ShadowRealmGlobalScope {
     readonly attribute ShadowRealmGlobalScope self;
-    readonly attribute WorkerLocation location;
-    readonly attribute WorkerNavigator navigator;
+    /* readonly attribute WorkerLocation location; */
+    /* readonly attribute WorkerNavigator navigator; */
     undefined importScripts(USVString... urls);
 
     // FIXME: The spec 'onerror' should be of type 'OnErrorEventHandler'.
-    attribute EventHandler onerror;
+    /* attribute EventHandler onerror; */
     // FIXME: Implement 'onlanguagechange'.
     // attribute EventHandler onlanguagechange;
-    attribute EventHandler onoffline;
-    attribute EventHandler ononline;
-    attribute EventHandler onrejectionhandled;
-    attribute EventHandler onunhandledrejection;
+    /* attribute EventHandler onoffline; */
+    /* attribute EventHandler ononline; */
+    /* attribute EventHandler onrejectionhandled; */
+    /* attribute EventHandler onunhandledrejection; */
 };
 
-ShadowRealmGlobalScope includes WindowOrWorkerGlobalScope;
-ShadowRealmGlobalScope includes FontFaceSource;
+/* ShadowRealmGlobalScope includes WindowOrWorkerGlobalScope; */
+/* ShadowRealmGlobalScope includes FontFaceSource; */

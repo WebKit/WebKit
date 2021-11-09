@@ -1181,6 +1181,8 @@ set(WebCore_NON_SVG_IDL_FILES
     page/ResizeObserverOptions.idl
     page/ResizeObserverSize.idl
     page/Screen.idl
+    page/ShadowRealm.idl
+    page/ShadowRealmGlobalScope.idl
     page/ScrollBehavior.idl
     page/ScrollIntoViewOptions.idl
     page/ScrollLogicalPosition.idl
