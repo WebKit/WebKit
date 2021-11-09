@@ -2976,6 +2976,17 @@
    },
    {
       "emails" : [
+         "j_pascoe@apple.com"
+      ],
+      "github" : "pascoej",
+      "name" : "J Pascoe",
+      "nicks" : [
+         "j_pascoe"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "jfbastien@apple.com",
          "jfb@chromium.org"
       ],

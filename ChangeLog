@@ -1,3 +1,13 @@
+2021-11-09  J Pascoe  <j_pascoe@apple.com>
+
+        Add j_pascoe to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232904
+        <rdar://problem/85222703>
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-11-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make WebGPU.xcodeproj and WebGPU.framework
