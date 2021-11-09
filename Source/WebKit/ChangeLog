@@ -1,5 +1,42 @@
 2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r285179. rdar://problem/84919898
+
+    Crash under WebPage::sendCOEPCORPViolation()
+    https://bugs.webkit.org/show_bug.cgi?id=232631
+    <rdar://84919898>
+    
+    Reviewed by Alex Christensen.
+    
+    Add missing null checks for the frame after calling `WebProcess::singleton().webFrame(frameID)`.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::sendCOEPPolicyInheritenceViolation):
+    (WebKit::WebPage::sendCOEPCORPViolation):
+    (WebKit::WebPage::sendViolationReportWhenNavigatingToCOOPResponse):
+    (WebKit::WebPage::sendViolationReportWhenNavigatingAwayFromCOOPResponse):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285179 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-02  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebPage::sendCOEPCORPViolation()
+            https://bugs.webkit.org/show_bug.cgi?id=232631
+            <rdar://84919898>
+
+            Reviewed by Alex Christensen.
+
+            Add missing null checks for the frame after calling `WebProcess::singleton().webFrame(frameID)`.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::sendCOEPPolicyInheritenceViolation):
+            (WebKit::WebPage::sendCOEPCORPViolation):
+            (WebKit::WebPage::sendViolationReportWhenNavigatingToCOOPResponse):
+            (WebKit::WebPage::sendViolationReportWhenNavigatingAwayFromCOOPResponse):
+
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r283470. rdar://problem/85166382
 
     WebCore::Length incorrectly uses memcpy() for copy constructors/operator and IPC encoding/decoding
