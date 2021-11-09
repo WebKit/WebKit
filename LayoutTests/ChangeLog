@@ -1,3 +1,10 @@
+2021-11-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused file
+        https://bugs.webkit.org/show_bug.cgi?id=220094
+
+        * http/tests/contentextensions/whitelist.html.json: Removed.
+
 2021-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         Convert some tests that use eventSender.eventSender.mouseScrollByWithWheelAndMomentumPhases() to sendEventStream()
