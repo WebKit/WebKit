@@ -150,10 +150,6 @@ using namespace WebCore;
 #define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
 #endif
 
-#ifndef NSAccessibilityChildrenInNavigationOrderAttribute
-#define NSAccessibilityChildrenInNavigationOrderAttribute @"AXChildrenInNavigationOrder"
-#endif
-
 #ifndef NSAccessibilityAccessKeyAttribute
 #define NSAccessibilityAccessKeyAttribute @"AXAccessKey"
 #endif
