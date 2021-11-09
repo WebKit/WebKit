@@ -480,8 +480,14 @@ private:
     HashMap<Node*, AXID> m_nodeObjectMapping;
     ListHashSet<Node*> m_textMarkerNodes;
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
+
+#if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static bool gAccessibilityEnabled;
     WEBCORE_EXPORT static bool gAccessibilityEnhancedUserInterfaceEnabled;
+#else
+    static constexpr bool gAccessibilityEnabled = false;
+    static constexpr bool gAccessibilityEnhancedUserInterfaceEnabled = false;
+#endif
 
     HashSet<AXID> m_idsInUse;
 
