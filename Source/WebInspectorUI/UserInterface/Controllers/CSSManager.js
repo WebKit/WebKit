@@ -283,6 +283,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (!name || name.length < 8 || name.charAt(0) !== "-")
             return name;
 
+        // Keep in sync with prefix list from Source/WebInspectorUI/Scripts/update-inspector-css-documentation
         var match = name.match(/^(?:-webkit-|-khtml-|-apple-)(.+)/);
         if (!match)
             return name;

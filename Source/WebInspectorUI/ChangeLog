@@ -1,3 +1,22 @@
+2021-11-09  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Add script to update CSSDocumentation.js
+        https://bugs.webkit.org/show_bug.cgi?id=232433
+        <rdar://problem/84753008>
+
+        Reviewed by Devin Rousso.
+
+        * Scripts/update-inspector-css-documentation: Added.
+
+        Add a script to update the contextual CSS documentation data source at
+        `Source/WebInspectorUI/UserInterface/External/CSSDocumentation/CSSDocumentation.js`
+        with the latest information from the upstream data source.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype.canonicalNameForPropertyName):
+
+        Add a comment to keep the list of accepted prefixes in sync with the one from the script.
+
 2021-11-08  Razvan Caliman  <rcaliman@apple.com>
 
         Update CSSDocumentation.js with latest upstream data to fix wrong documentation for block-size
