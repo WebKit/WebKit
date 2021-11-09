@@ -31,6 +31,7 @@
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/MathExtras.h>
 
 namespace JSC { namespace DFG {
 
@@ -44,7 +45,7 @@ public:
         , m_flagsAtHead(graph)
     {
     }
-    
+
     bool run()
     {
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -213,6 +214,10 @@ private:
         return changed;
     }
     
+    static constexpr NodeFlags VariableIsUsed = 1 << (1 + WTF::getMSBSetConstexpr(NodeBytecodeBackPropMask));
+    static_assert(!(VariableIsUsed & NodeBytecodeBackPropMask));
+    static_assert(VariableIsUsed > NodeBytecodeBackPropMask, "Verify the above doesn't overflow");
+    
     void propagate(Node* node)
     {
         NodeFlags flags = node->flags() & NodeBytecodeBackPropMask;
@@ -220,9 +225,9 @@ private:
         switch (node->op()) {
         case GetLocal: {
             VariableAccessData* variableAccessData = node->variableAccessData();
-            NodeFlags& flagsRef = m_currentFlags.operand(variableAccessData->operand());
-            mergeFlags(flagsRef, flags);
-            variableAccessData->mergeFlags(flagsRef & ~NodeBytecodeUsesAsInt); // We don't care about cross-block uses-as-int for this.
+            flags |= m_currentFlags.operand(variableAccessData->operand());
+            flags |= VariableIsUsed;
+            m_currentFlags.operand(variableAccessData->operand()) = flags;
             break;
         }
             
@@ -231,10 +236,11 @@ private:
 
             Operand operand = variableAccessData->operand();
             NodeFlags flags = m_currentFlags.operand(operand);
-            if (!flags)
+            if (!(flags & VariableIsUsed))
                 break;
 
-            RELEASE_ASSERT(!(flags & ~NodeBytecodeBackPropMask));
+            flags &= NodeBytecodeBackPropMask;
+            flags &= ~NodeBytecodeUsesAsInt; // We don't care about cross-block uses-as-int.
 
             variableAccessData->mergeFlags(flags);
             // We union with NodeBytecodeUsesAsNumber to account for the fact that control flow may cause overflows that our modeling can't handle.
@@ -247,9 +253,13 @@ private:
             
         case Flush: {
             VariableAccessData* variableAccessData = node->variableAccessData();
-            NodeFlags& flagsRef = m_currentFlags.operand(variableAccessData->operand());
-            mergeFlags(flagsRef, NodeBytecodeUsesAsValue);
-            variableAccessData->mergeFlags(flagsRef);
+            mergeFlags(m_currentFlags.operand(variableAccessData->operand()), NodeBytecodeUsesAsValue | VariableIsUsed);
+            break;
+        }
+
+        case PhantomLocal: {
+            VariableAccessData* variableAccessData = node->variableAccessData();
+            mergeFlags(m_currentFlags.operand(variableAccessData->operand()), VariableIsUsed);
             break;
         }
             
