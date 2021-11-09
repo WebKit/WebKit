@@ -343,6 +343,8 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirs
         // We need to make sure that there's an [InlineBoxStart] for every inline box that's present on the current line.
         // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level.
         auto& firstInlineItem = m_inlineItems[leadingInlineItemIndex];
+        // Let's treat these spanning inline items as opaque bidi content. They should not change the bidi levels on adjacent content.
+        auto bidiLevelForOpaqueInlineItem = firstInlineItem.bidiLevel();
         // If the parent is the formatting root, we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
         // unless the inline box closing is forced over to the current line.
         // e.g.
@@ -360,7 +362,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirs
             ancestor = &ancestor->parent();
         }
         for (auto* spanningInlineBox : makeReversedRange(spanningLayoutBoxList))
-            m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart });
+            m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart, bidiLevelForOpaqueInlineItem });
     };
     createLineSpanningInlineBoxes();
     m_line.initialize(m_lineSpanningInlineBoxes);
