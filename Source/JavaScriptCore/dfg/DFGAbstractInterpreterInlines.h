@@ -2615,24 +2615,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(m_vm, globalObjectValue)) {
                 if (!globalObject->isHavingABadTime()) {
                     m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
-
-                    RegExp* regExp = nullptr;
-                    if (node->op() == RegExpExec) {
-                        if (Node* regExpObjectNode = node->child2().node()) {
-                            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(m_vm))
-                                regExp = regExpObject->regExp();
-                            else if (regExpObjectNode->op() == NewRegexp)
-                                regExp = regExpObjectNode->castOperand<RegExp*>();
-                        }
-                    } else if (node->op() == RegExpExecNonGlobalOrSticky)
-                        regExp = node->castOperand<RegExp*>();
-
                     RegisteredStructureSet structureSet;
-                    // If regExp is unknown, we need to put both regExp MatchesArray structure variants in our set.
-                    if (!regExp || !regExp->hasIndices())
-                        structureSet.add(m_graph.registerStructure(globalObject->regExpMatchesArrayStructure()));
-                    if (!regExp || regExp->hasIndices())
-                        structureSet.add(m_graph.registerStructure(globalObject->regExpMatchesArrayWithIndicesStructure()));
+                    structureSet.add(m_graph.registerStructure(globalObject->regExpMatchesArrayStructure()));
+                    structureSet.add(m_graph.registerStructure(globalObject->regExpMatchesArrayWithIndicesStructure()));
                     setForNode(node, structureSet);
                     forNode(node).merge(SpecOther);
                     break;
