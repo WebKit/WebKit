@@ -1,3 +1,13 @@
+2021-10-28  Darin Adler  <darin@apple.com>
+
+        [CF] Reduce duplication and unneeded buffer allocations and copying in URL code, also remove unused methods and functions
+        https://bugs.webkit.org/show_bug.cgi?id=232220
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST): Removed extra argument to URLWithUserTypedString/Deprecated.
+
 2021-11-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Stub out methods in WebGPU.framework

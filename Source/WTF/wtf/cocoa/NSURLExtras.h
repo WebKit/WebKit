@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2012, 2014 Apple, Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 namespace WTF {
 
 WTF_EXPORT_PRIVATE NSString *userVisibleString(NSURL *);
-WTF_EXPORT_PRIVATE NSURL *URLWithUserTypedString(NSString *, NSURL *baseURL); // Return value of nil means error.
+WTF_EXPORT_PRIVATE NSURL *URLWithUserTypedString(NSString *, NSURL *ignored = nil); // Return value of nil means error.
 WTF_EXPORT_PRIVATE NSURL *URLByRemovingUserInfo(NSURL *);
 WTF_EXPORT_PRIVATE NSString *decodeHostName(NSString *); // Return value of nil means error.
 WTF_EXPORT_PRIVATE NSString *encodeHostName(NSString *); // Return value of nil means error.
@@ -41,10 +41,8 @@ WTF_EXPORT_PRIVATE NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CF
 WTF_EXPORT_PRIVATE NSURL *URLWithData(NSData *, NSURL *baseURL);
 WTF_EXPORT_PRIVATE NSData *originalURLData(NSURL *);
 WTF_EXPORT_PRIVATE NSData *dataForURLComponentType(NSURL *, CFURLComponentType);
-WTF_EXPORT_PRIVATE NSURL *URLWithUserTypedStringDeprecated(NSString *, NSURL *baseURL);
+WTF_EXPORT_PRIVATE NSURL *URLWithUserTypedStringDeprecated(NSString *);
 
-NSRange rangeOfURLScheme(NSString *);
 WTF_EXPORT_PRIVATE BOOL isUserVisibleURL(NSString *);
-WTF_EXPORT_PRIVATE BOOL looksLikeAbsoluteURL(NSString *);
 
 } // namespace WTF

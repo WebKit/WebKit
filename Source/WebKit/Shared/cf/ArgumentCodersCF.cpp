@@ -643,9 +643,7 @@ void ArgumentCoder<CFURLRef>::encode(Encoder& encoder, CFURLRef url)
     if (baseURL)
         encoder << baseURL;
 
-    WTF::URLCharBuffer urlBytes;
-    WTF::getURLBytes(url, urlBytes);
-    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(urlBytes.data()), urlBytes.size());
+    encoder << IPC::DataReference(bytesAsVector(url));
 }
 
 template void ArgumentCoder<CFURLRef>::encode<Encoder>(Encoder&, CFURLRef);

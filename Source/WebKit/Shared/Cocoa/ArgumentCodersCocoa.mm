@@ -104,9 +104,8 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     if (hasBaseURL)
         [coder encodeObject:baseURL forKey:baseURLKey];
 
-    WTF::URLCharBuffer urlBytes;
-    WTF::getURLBytes(bridge_cast(m_wrappedURL.get()), urlBytes);
-    [coder encodeBytes:urlBytes.data() length:urlBytes.size()];
+    auto bytes = bytesAsVector(bridge_cast(m_wrappedURL.get()));
+    [coder encodeBytes:bytes.data() length:bytes.size()];
 }
 
 - (_Nullable instancetype)initWithCoder:(NSCoder *)coder

@@ -60,6 +60,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cf/CFURLExtras.h>
 
 NSString * const WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
 NSString * const WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";
@@ -157,7 +158,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (userData)
         wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
-    _page->loadFile([URL _web_originalDataAsWTFString], [allowedDirectory _web_originalDataAsWTFString], wkUserData.get());
+    _page->loadFile(bytesAsString(bridge_cast(URL)), bytesAsString(bridge_cast(allowedDirectory)), wkUserData.get());
 }
 
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL
@@ -172,7 +173,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
     NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, "text/html"_s, "UTF-8"_s, [baseURL _web_originalDataAsWTFString], wkUserData.get());
+    _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
@@ -192,7 +193,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (userData)
         wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
-    _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, encodingName, [baseURL _web_originalDataAsWTFString], wkUserData.get());
+    _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
 }
 
 - (void)stopLoading
@@ -508,7 +509,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             if (originatingFrame) {
                 actionDictionary = adoptNS([actionDictionary mutableCopy]);
-                [(NSMutableDictionary *)actionDictionary.get() setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url().string()] forKey:WKActionOriginatingFrameURLKey];
+                [(NSMutableDictionary *)actionDictionary.get() setObject:(NSURL *)WebKit::toImpl(originatingFrame)->url() forKey:WKActionOriginatingFrameURLKey];
             }
             
             [policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary.get() decisionHandler:makePolicyDecisionBlock(listener).get()];

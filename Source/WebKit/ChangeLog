@@ -1,3 +1,49 @@
+2021-10-28  Darin Adler  <darin@apple.com>
+
+        [CF] Reduce duplication and unneeded buffer allocations and copying in URL code, also remove unused methods and functions
+        https://bugs.webkit.org/show_bug.cgi?id=232220
+
+        Reviewed by Alex Christensen.
+
+        * Shared/API/c/cf/WKURLCF.mm:
+        (WKURLCreateWithCFURL): Use bytesAsString, saving creation and destruction
+        of a CString each time this is called.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (-[WKSecureCodingURLWrapper encodeWithCoder:]): Use bytesAsVector.
+
+        * Shared/Cocoa/WKNSURLExtras.h: Removed unused methods
+        +[NSURL _web_URLWithWTFString:relativeToURL:] and
+        -[NSURL _web_originalDataAsWTFString].
+
+        * Shared/Cocoa/WKNSURLExtras.mm:
+        (+[NSURL _web_URLWithWTFString:relativeToURL:]): Deleted.
+        (-[NSURL _web_originalDataAsWTFString]): Deleted.
+
+        * Shared/Cocoa/WKNSURLRequest.mm:
+        (-[WKNSURLRequest URL]): Removed unneeded call to +[NSURL _web_URLWithWTFString:]
+        because this code is converting a WTF::URL to an NSURL, which can use the conversion
+        operator in the WTF::URL class.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::ArgumentCoder<CFURLRef>::encode): Use bytesAsVector.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:userData:]):
+        Use bytesAsString and bridge_cast.
+        (-[WKBrowsingContextController loadHTMLString:baseURL:userData:]): Ditto.
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]): Ditto.
+        (setUpPagePolicyClient): Removed unneeded call to +[NSURL _web_URLWithWTFString:]
+        because this code is converting a WTF::URL to an NSURL, which can use the conversion
+        operator in the WTF::URL class.
+
+        * UIProcess/Cocoa/LegacyDownloadClient.mm:
+        (WebKit::LegacyDownloadClient::willSendRequest): Removed unneeded call to
+        +[NSURL _web_URLWithWTFString:] because this code is converting a WTF::URL to an NSURL,
+        which can use the conversion operator in the WTF::URL class.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame URL]): Ditto.
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         BroadcastChannel is still disabled in service workers

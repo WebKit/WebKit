@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,22 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+
+typedef const struct __CFData* CFDataRef;
+typedef const struct __CFURL* CFURLRef;
 
 namespace WTF {
 
-class URL;
-typedef Vector<char, 512> URLCharBuffer;
+constexpr size_t URLBytesVectorInlineCapacity = 2048;
 
-WTF_EXPORT_PRIVATE void getURLBytes(CFURLRef, URLCharBuffer&);
-WTF_EXPORT_PRIVATE void getURLBytes(CFURLRef, CString&);
+RetainPtr<CFDataRef> bytesAsCFData(CFURLRef);
+WTF_EXPORT_PRIVATE String bytesAsString(CFURLRef);
+WTF_EXPORT_PRIVATE Vector<uint8_t, URLBytesVectorInlineCapacity> bytesAsVector(CFURLRef);
 
-bool isCFURLSameOrigin(CFURLRef, const URL&);
+bool isSameOrigin(CFURLRef, const URL&);
 
 }
+
+using WTF::bytesAsCFData;
+using WTF::bytesAsString;
+using WTF::bytesAsVector;

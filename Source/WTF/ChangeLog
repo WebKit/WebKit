@@ -1,3 +1,96 @@
+2021-10-28  Darin Adler  <darin@apple.com>
+
+        [CF] Reduce duplication and unneeded buffer allocations and copying in URL code, also remove unused methods and functions
+        https://bugs.webkit.org/show_bug.cgi?id=232220
+
+        Reviewed by Alex Christensen.
+
+        * wtf/URL.h: Removed unneeded includes. Use default instead of { }
+        for empty destructor. Added emptyCFURL function.
+
+        * wtf/cf/CFURLExtras.cpp:
+        (WTF::bytesAsCFData): Added. Replaces originalURLData from NSURLExtras.mm,
+        but with a simpler implementation and more error checking. Here it's also
+        alongside the other nearly identical functions.
+        (WTF::bytesAsString): Added. Replaces getURLBytes for callers that are
+        going to turn the bytes into a WTF::String. Before this patch, the callers
+        were converting from CFURLRef to WTF::CString and then to WTF::String, so
+        this eliminates the malloc/free pair for CString.
+        (WTF::bytesAsVector): Added. Replaces getURLBytes using a return value
+        instead of an out argument. Adds the optimization of filling the buffer if
+        the inline capacity is sufficient, which was in originalURLData, but not
+        here in getURLBytes before.
+        (WTF::isSameOrigin): Renamed from isCFURLSameOrigin and rewrote this to
+        have fewer type casts and more parallel structure so it's easier to read,
+        while adapting it to use bytesAsVector.
+
+        * wtf/cf/CFURLExtras.h: Replaced URLCharBuffer, getURLBytes, and
+        isCFURLSameOrigin with URLBytesVectorInlineCapacity, bytesAsCFData,
+        bytesAsString, bytesAsVector, and isSameOrigin. Got rid of unneeded
+        includes.
+
+        * wtf/cf/URLCF.cpp:
+        (WTF::URL::URL): Use bytesAsString to streamline implementation and
+        remove allocation/deallcation of a CString.
+        (WTF::URL::emptyCFURL): Added. Used to refactor createCFURL so we can
+        share it across Foundation and non-Foundation versions.
+        (WTF::URL::createCFURL const): Added the logic that was in the version
+        in URLCocoa.mm so we can share this single version, and removed the #if
+        surrounding this.
+        (WTF::URL::fileSystemPath const): Use auto.
+
+        * wtf/cocoa/NSURLExtras.h: Changed URLWithUserTypedString to ignore
+        the baseURL argument. It's not used, but the function is exported and
+        currently used in Safari source code, which, like all callers passes
+        a nil for baseURL. so, for now left the argument. Removed the baseURL
+        argument from URLWithUserTypedStringDeprecated. Removed unused functions
+        rangeOfURLScheme and looksLikeAbsoluteURL.
+
+        * wtf/cocoa/NSURLExtras.mm: Removed "using namespace URLHelpers".
+        (WTF::readIDNAllowedScriptListFile): Use URLHelpers explicitly.
+        (WTF::decodeHostName): Ditto.
+        (WTF::encodeHostName): Ditto.
+        (WTF::URLByTruncatingOneCharacterBeforeComponent): Simplified by using
+        the bytesAsVector function.
+        (WTF::URLByRemovingResourceSpecifier): Deleted.
+        (WTF::URLWithData): Call URLByTruncatingOneCharacterBeforeComponent
+        directly.
+        (WTF::URLWithUserTypedString): Removed the unneeded support for a
+        base URL. Use URLHelpers explicitly.
+        (WTF::URLWithUserTypedStringDeprecated): Ditto.
+        (WTF::hasQuestionMarkOnlyQueryString): Use bridge_cast.
+        (WTF::dataForURLComponentType): Rearranged to simplify a bit, remove support
+        for special value for CFURLComponentType that means the complete URL, since
+        no callers were using that, and use bytesAsVector.
+        (WTF::URLByRemovingComponentAndSubsequentCharacter): Use bridge_cast and
+        bytesAsVector.
+        (WTF::originalURLData): Use bridge_cast and bytesAsCFData.
+        (WTF::userVisibleString): Use URLHelpers explicitly.
+        (WTF::isUserVisibleURL): Rewrote for simplicity and coding style; since
+        the local characters are a null-terminated C string, we don't need
+        length checks as long as we validate characters first, since a '\0'
+        character can be read and will not be valid.
+        (WTF::rangeOfURLScheme): Deleted.
+        (WTF::looksLikeAbsoluteURL): Deleted.
+
+        * wtf/cocoa/URLCocoa.mm:
+        (WTF::URL::URL): Changed to just call the CFURLRef constructor so we
+        don't need to repeat things twice.
+        (WTF::URL::emptyCFURL): Added. This is the one part of the createCFURL
+        function that depends on Objective-C.
+        (WTF::URL::createCFURL const): Merged into the function in URLCF.cpp.
+        (WTF::makeNSArrayElement): Use bridge_cast instead of the trickier
+        idiom with explicit calls to leakRef and __bridge_transfer.
+
+        * wtf/mac/FileSystemMac.mm:
+        (WTF::FileSystem::setMetadataURL): Updated since URLWithUserTypedString
+        no longer requires a baseURL of nil to be passed. Also removed explicit
+        WTF namespace since this code itself is in the WTF namespace.
+
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::String::String): Use bridge_cast.
+        (WTF::makeNSArrayElement): Use bridge_cast.
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         BroadcastChannel is still disabled in service workers
