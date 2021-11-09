@@ -29,6 +29,7 @@
 #include "CSSToStyleMap.h"
 #include "CascadeLevel.h"
 #include "RenderStyle.h"
+#include "RuleSet.h"
 #include "SelectorChecker.h"
 #include <wtf/Bitmap.h>
 
@@ -136,6 +137,7 @@ private:
 
     CascadeLevel m_cascadeLevel { };
     ScopeOrdinal m_styleScopeOrdinal { };
+    CascadeLayerPriority m_cascadeLayerPriority { };
     SelectorChecker::LinkMatchMask m_linkMatch { };
 
     bool m_fontDirty { false };

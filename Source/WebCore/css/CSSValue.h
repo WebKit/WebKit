@@ -111,6 +111,7 @@ public:
     bool isInitialValue() const;
     bool isUnsetValue() const;
     bool isRevertValue() const;
+    bool isRevertLayerValue() const;
     bool isCSSWideKeyword() const;
     bool treatAsInitialValue(CSSPropertyID) const;
     bool treatAsInheritedValue(CSSPropertyID) const;
