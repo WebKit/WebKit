@@ -38,13 +38,15 @@ namespace WebCore {
 
 struct PublicKeyCredentialRequestOptions {
 #if ENABLE(WEB_AUTHN)
-    BufferSource challenge;
+    BufferSource challenge; // challenge becomes challengeVector once it is passed to UIProcess.
     std::optional<unsigned> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
     std::optional<AuthenticatorAttachment> authenticatorAttachment;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
+
+    Vector<uint8_t> challengeVector;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
@@ -57,6 +59,8 @@ template<class Encoder>
 void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
 {
     encoder << timeout << rpId << allowCredentials << userVerification << extensions;
+    encoder << static_cast<uint64_t>(challenge.length());
+    encoder.encodeFixedLengthData(challenge.data(), challenge.length(), 1);
 }
 
 template<class Decoder>
@@ -86,6 +90,9 @@ std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptio
     if (!extensions)
         return std::nullopt;
     result.extensions = WTFMove(*extensions);
+
+    if (!decoder.decode(result.challengeVector))
+        return std::nullopt;
 
     return result;
 }

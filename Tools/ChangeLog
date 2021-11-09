@@ -1,3 +1,21 @@
+2021-11-08  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] challenge does not get passed to -[_WKWebAuthenticationPanel getAssertionWithChallenge:origin:options:completionHandler:]
+        https://bugs.webkit.org/show_bug.cgi?id=232836
+        rdar://85163927
+
+        Reviewed by Brent Fulgham.
+
+        -[_WKWebAuthenticationPanel getAssertionWithChallenge:origin:options:completionHandler:] receives
+        an empty challenge, causing _WKWebAuthenticationPanel to immediately close when using the new UNIFIED_ASC_AUTH_UI. 
+
+        This change encodes/decodes challenge in PublicKeyCredentialRequestOptions. Before this
+        field was not used after xpc, but with the new UNIFIED_ASC_AUTH_UI it is.
+        This change also adds an empty value for tests.
+
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-11-08  Alex Christensen  <achristensen@webkit.org>
 
         Parse redirect and modify-headers actions for WKContentRuleList

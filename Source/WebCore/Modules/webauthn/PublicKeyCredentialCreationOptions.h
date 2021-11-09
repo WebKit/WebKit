@@ -76,7 +76,7 @@ struct PublicKeyCredentialCreationOptions {
     RpEntity rp;
     UserEntity user;
 
-    BufferSource challenge;
+    BufferSource challenge; // challenge becomes challengeVector once it is passed to UIProcess.
     Vector<Parameters> pubKeyCredParams;
 
     std::optional<unsigned> timeout;
@@ -84,6 +84,8 @@ struct PublicKeyCredentialCreationOptions {
     std::optional<AuthenticatorSelectionCriteria> authenticatorSelection;
     AttestationConveyancePreference attestation;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
+
+    Vector<uint8_t> challengeVector;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PublicKeyCredentialCreationOptions> decode(Decoder&);
@@ -144,6 +146,8 @@ void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
     encoder << static_cast<uint64_t>(user.id.length());
     encoder.encodeFixedLengthData(user.id.data(), user.id.length(), 1);
     encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection << attestation << extensions;
+    encoder << static_cast<uint64_t>(challenge.length());
+    encoder.encodeFixedLengthData(challenge.data(), challenge.length(), 1);
 }
 
 template<class Decoder>
@@ -193,6 +197,9 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
     if (!extensions)
         return std::nullopt;
     result.extensions = WTFMove(*extensions);
+
+    if (!decoder.decode(result.challengeVector))
+        return std::nullopt;
 
     return result;
 }

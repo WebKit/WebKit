@@ -178,7 +178,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
 
     auto credentialCreationOptions = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
 
-    [credentialCreationOptions setChallenge:toNSData(options.challenge).get()];
+    [credentialCreationOptions setChallenge:toNSData(options.challengeVector).get()];
     [credentialCreationOptions setRelyingPartyIdentifier:options.rp.id];
     [credentialCreationOptions setUserName:options.user.name];
     [credentialCreationOptions setUserIdentifier:toNSData(options.user.id).get()];
@@ -236,7 +236,7 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
     [requestContext setRelyingPartyIdentifier:options.rpId];
 
-    auto challenge = toNSData(options.challenge);
+    auto challenge = toNSData(options.challengeVector);
 
     if (requestTypes & ASCCredentialRequestTypePlatformPublicKeyAssertion)
         [requestContext setPlatformKeyCredentialAssertionOptions:[allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]];
