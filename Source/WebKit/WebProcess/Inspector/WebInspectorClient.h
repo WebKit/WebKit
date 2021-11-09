@@ -72,6 +72,7 @@ private:
 
     bool overridesShowPaintRects() const override { return true; }
     void showPaintRect(const WebCore::FloatRect&) override;
+    unsigned paintRectCount() const override { return m_paintRectLayers.size(); }
 
     void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>) final;
 

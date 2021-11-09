@@ -1766,6 +1766,15 @@ ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
     return DOMRectList::create(highlight.quads);
 }
 
+ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
+{
+    auto document = contextDocument();
+    if (!document || !document->page())
+        return Exception { InvalidAccessError };
+
+    return document->page()->inspectorController().paintRectCount();
+}
+
 ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& markerType)
 {
     OptionSet<DocumentMarker::MarkerType> markerTypes;

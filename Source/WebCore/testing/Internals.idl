@@ -373,6 +373,7 @@ enum AutoplayPolicy {
 
     unsigned long inspectorGridOverlayCount();
     DOMRectList inspectorHighlightRects();
+    unsigned long inspectorPaintRectCount();
 
     unsigned long markerCountForNode(Node node, DOMString markerType);
     Range? markerRangeForNode(Node node, DOMString markerType, unsigned long index);

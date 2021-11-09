@@ -200,6 +200,7 @@ public:
 
     void setShowPaintRects(bool);
     void showPaintRect(const FloatRect&);
+    unsigned paintRectCount() const { return m_paintRects.size(); }
 
     void setShowRulers(bool);
     void setShowRulersDuringElementSelection(bool enabled) { m_showRulersDuringElementSelection = enabled; }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+window._test_hasPaintRects = false;
+window._test_hasPaintRectsObserver = setInterval(() => {
+    let paintRectsCount = window.internals.inspectorPaintRectCount();
+
+    // Exact paint rect counts may vary, so only check if there are paint rects.
+    if (!!paintRectsCount != window._test_hasPaintRects) {
+        window._test_hasPaintRects = !!paintRectsCount;
+        TestPage.dispatchEventToFrontend("TestHasPaintRectsDidChange");
+    }
+}, 0);
+
+function test()
+{
+    async function expectHasPaintRectsDidChangeTo(expected) {
+        await InspectorTest.awaitEvent("TestHasPaintRectsDidChange");
+        await expectHasPaintRects(expected);
+    }
+
+    async function expectHasPaintRects(expected) {
+        let hasPaintRects = await InspectorTest.evaluateInPage(`window._test_hasPaintRects`);
+        InspectorTest.expectEqual(hasPaintRects, expected, `Should ${expected ? "" : "not "}have paint rects displayed.`);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Page.setShowPaintRects");
+
+    suite.addTestCase({
+        name: "Page.setShowPaintRects.Enabled",
+        description: "Test that paint rects are correctly created and removed while enabled.",
+        async test() {
+            await PageAgent.setShowPaintRects(true);
+            await expectHasPaintRects(false);
+
+            let hasPaintRectsPromise = expectHasPaintRectsDidChangeTo(true);
+
+            await InspectorTest.evaluateInPage(`document.getElementById("test").style.backgroundColor = "papayawhip"`);
+            await hasPaintRectsPromise;
+            await expectHasPaintRectsDidChangeTo(false);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.setShowPaintRects.Disabled",
+        description: "Test that paint rects are not created while disabled.",
+        async test() {
+            await PageAgent.setShowPaintRects(false);
+            await expectHasPaintRects(false);
+
+            let hasPaintRectsDidChange = Promise.race([
+                InspectorTest.awaitEvent("TestHasPaintRectsDidChange").then(() => true),
+                new Promise((resolve) => { setTimeout(resolve, 500, false); }),
+            ]);
+
+            await InspectorTest.evaluateInPage(`document.getElementById("test").style.backgroundColor = "rebeccapurple"`);
+            InspectorTest.expectFalse(await hasPaintRectsDidChange, `Should not have had any paint rects displayed.`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+#test {
+    width: 100px;
+    height: 100px;
+    background-color: gainsboro;
+}
+</style>
+</head>
+<body onload="runTest()">
+<p>Tests for the Page.setShowPaintRects.</p>
+<div id="test"></div>
+</body>
+</html>

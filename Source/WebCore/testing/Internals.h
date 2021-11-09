@@ -287,6 +287,7 @@ public:
 
     ExceptionOr<Ref<DOMRectList>> inspectorHighlightRects();
     ExceptionOr<unsigned> inspectorGridOverlayCount();
+    ExceptionOr<unsigned> inspectorPaintRectCount();
 
     ExceptionOr<unsigned> markerCountForNode(Node&, const String&);
     ExceptionOr<RefPtr<Range>> markerRangeForNode(Node&, const String& markerType, unsigned index);

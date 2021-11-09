@@ -3085,9 +3085,11 @@ void GraphicsLayerCA::updateAnimations()
             animation.m_playState = PlayState::Playing;
     };
 
-    auto addAnimation = [&](LayerPropertyAnimation& animation, Additive additive = Additive::Yes) {
-        prepareAnimationForAddition(animation, additive);
-        addAnimationGroup(animation.m_property, { animation.m_animation });
+    auto addLeafAnimation = [&](LayerPropertyAnimation& animation) {
+        ASSERT(animation.m_beginTime);
+        *animation.m_beginTime += animationGroupBeginTime;
+        prepareAnimationForAddition(animation, Additive::No);
+        setAnimationOnLayer(animation);
     };
 
     enum class TransformationMatrixSource { UseIdentityMatrix, AskClient };
@@ -3122,8 +3124,10 @@ void GraphicsLayerCA::updateAnimations()
         // is the initial base value transform animation and must override the current transform value for this layer.
         // Otherwise, it is meant to apply the underlying value for one specific transform-related property and be additive
         // to be combined with the other base value transform animations and interpolating animations.
-        if (auto* animation = makeBaseValueTransformAnimation(property, matrixSource, beginTimeOfEarliestPropertyAnimation))
-            addAnimation(*animation, matrixSource == TransformationMatrixSource::AskClient ? Additive::Yes : Additive::No);
+        if (auto* animation = makeBaseValueTransformAnimation(property, matrixSource, beginTimeOfEarliestPropertyAnimation)) {
+            prepareAnimationForAddition(*animation, matrixSource == TransformationMatrixSource::AskClient ? Additive::Yes : Additive::No);
+            addAnimationGroup(animation->m_property, { animation->m_animation });
+        }
     };
 
     // Iterate through all animations to set the begin time of any new animations.
@@ -3132,7 +3136,10 @@ void GraphicsLayerCA::updateAnimations()
             animation.m_beginTime = currentTime - animationGroupBeginTime;
     }
 
-    // Now, remove all animation groups from the layer so that we no longer have any layer animations.
+    // Now, remove all animation groups and leaf animations from the layer so that
+    // we no longer have any layer animations.
+    for (auto& animation : m_animations)
+        removeCAAnimationFromLayer(animation);
     for (auto& animationGroup : m_animationGroups)
         removeCAAnimationFromLayer(animationGroup);
 
@@ -3187,7 +3194,7 @@ void GraphicsLayerCA::updateAnimations()
 #if ENABLE(FILTERS_LEVEL_2)
         case AnimatedPropertyWebkitBackdropFilter:
 #endif
-            addAnimation(animation, Additive::No);
+            addLeafAnimation(animation);
             break;
         case AnimatedPropertyInvalid:
             ASSERT_NOT_REACHED();
