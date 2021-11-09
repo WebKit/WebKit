@@ -591,4 +591,9 @@ messages -> WebPageProxy {
 #endif
 
     requestPermission(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor) -> (enum:uint8_t WebCore::PermissionState state) Async
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+    StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result) Async
+    AbortApplePayAMSUISession()
+#endif
 }

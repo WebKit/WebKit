@@ -589,6 +589,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/LocalCurrentGraphicsContext.h
     platform/cocoa/NetworkExtensionContentFilter.h
     platform/cocoa/PlatformView.h
+    platform/cocoa/PlatformViewController.h
     platform/cocoa/PlaybackSessionModel.h
     platform/cocoa/PlaybackSessionModelMediaElement.h
     platform/cocoa/PowerSourceNotifier.h
@@ -793,6 +794,8 @@ list(APPEND WebCore_IDL_FILES
 
     Modules/applepay/paymentrequest/ApplePayModifier.idl
     Modules/applepay/paymentrequest/ApplePayRequest.idl
+
+    Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl
 
     Modules/plugins/QuickTimePluginReplacement.idl
 )

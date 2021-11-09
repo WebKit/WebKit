@@ -91,6 +91,7 @@ namespace IDBClient {
 class IDBConnectionToServer;
 }
 
+class ApplePayAMSUIPaymentHandler;
 class ActivityStateChangeObserver;
 class AlternativeTextClient;
 class ApplicationCacheStorage;
@@ -167,6 +168,7 @@ class WebGLStateTracker;
 class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 
+struct ApplePayAMSUIRequest;
 struct SimpleRange;
 struct TextRecognitionResult;
 
@@ -539,6 +541,12 @@ public:
 #if ENABLE(APPLE_PAY)
     PaymentCoordinator& paymentCoordinator() const { return *m_paymentCoordinator; }
     WEBCORE_EXPORT void setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&&);
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+    bool hasActiveApplePayAMSUISession() const { return m_activeApplePayAMSUIPaymentHandler; }
+    bool startApplePayAMSUISession(Document&, ApplePayAMSUIPaymentHandler&, const ApplePayAMSUIRequest&);
+    void abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler&);
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -1186,6 +1194,10 @@ private:
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<PaymentCoordinator> m_paymentCoordinator;
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+    RefPtr<ApplePayAMSUIPaymentHandler> m_activeApplePayAMSUIPaymentHandler;
 #endif
 
 #if ENABLE(WEB_AUTHN)

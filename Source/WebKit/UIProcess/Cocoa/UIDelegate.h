@@ -29,6 +29,7 @@
 
 #import "APIContextMenuClient.h"
 #import "APIUIClient.h"
+#import <WebCore/PlatformViewController.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
@@ -148,8 +149,8 @@ private:
 #endif
         RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) final;
         void didNotHandleTapAsClick(const WebCore::IntPoint&) final;
-        UIViewController *presentingViewController() final;
 #endif // PLATFORM(IOS_FAMILY)
+        PlatformViewController *presentingViewController() final;
 
         NSDictionary *dataDetectionContext() final;
 
@@ -241,8 +242,8 @@ private:
 #endif
         bool webViewActionsForElementDefaultActions : 1;
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
-        bool presentingViewControllerForWebView : 1;
 #endif
+        bool presentingViewControllerForWebView : 1;
         bool dataDetectionContextForWebView : 1;
         bool webViewImageOrMediaDocumentSizeChanged : 1;
 #if ENABLE(POINTER_LOCK)

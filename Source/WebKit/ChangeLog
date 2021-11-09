@@ -1,3 +1,43 @@
+2021-11-08  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] Add a new payment method for showing AMS UI
+        https://bugs.webkit.org/show_bug.cgi?id=232634
+        <rdar://problem/79024227>
+
+        Reviewed by Tim Horton.
+
+        Leverage the W3C Payment Request API as a way for Apple domains to show alternate native
+        payment UIs without having to add new proprietary APIs (e.g. Apple Pay JS). This new payment
+        method is quite bare-bones in that it just takes some JSON and passes it to AMS, which then
+        decides what UI to show based on that. No data is exposed back to the page other than either
+        an error or a yes/no as to whether the payment was successful.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::startApplePayAMSUISession): Added.
+        (WebKit::WebChromeClient::abortApplePayAMSUISession): Added.
+        Add plumbing between WebCore/WebProcess and UIProcess.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::startApplePayAMSUISession): Added.
+        (WebKit::WebPageProxy::abortApplePayAMSUISession): Added.
+        Use AMS to present UI for the given engagement request data and originating URL.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::presentingViewController):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::presentingViewController):
+        Add support for `-[WKUIDelegatePrivate _presentingViewControllerForWebView:]` on macOS too.
+
+        * Platform/spi/Cocoa/AppleMediaServicesSPI.h: Added.
+        * Platform/spi/Cocoa/AppleMediaServicesUISPI.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-11-08  Alex Christensen  <achristensen@webkit.org>
 
         Parse redirect and modify-headers actions for WKContentRuleList

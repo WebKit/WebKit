@@ -494,6 +494,11 @@ void PaymentRequest::abort(AbortPromise&& promise)
         return;
     }
 
+    if (m_activePaymentHandler && !activePaymentHandler()->canAbortSession()) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
+
     abortWithException(Exception { AbortError });
     promise.resolve();
 }
@@ -697,6 +702,35 @@ void PaymentRequest::whenDetailsSettled(std::function<void()>&& callback)
     });
 }
 
+void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFunction&& detailsFunction)
+{
+    ASSERT(!m_isUpdating);
+    ASSERT(m_state == State::Interactive);
+
+    bool isRetry = m_response;
+    if (!isRetry) {
+        m_response = PaymentResponse::create(scriptExecutionContext(), *this);
+        m_response->setRequestId(m_details.id);
+    }
+
+    m_response->setMethodName(methodName);
+    m_response->setDetailsFunction(WTFMove(detailsFunction));
+    m_response->setShippingAddress(nullptr);
+    m_response->setShippingOption(nullString());
+    m_response->setPayerName(nullString());
+    m_response->setPayerEmail(nullString());
+    m_response->setPayerPhone(nullString());
+
+    if (!isRetry)
+        settleShowPromise(*m_response);
+    else {
+        ASSERT(m_response->hasRetryPromise());
+        m_response->settleRetryPromise();
+    }
+
+    m_state = State::Closed;
+}
+
 void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFunction&& detailsFunction, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone)
 {
     ASSERT(!m_isUpdating);
@@ -724,6 +758,11 @@ void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFu
     }
 
     m_state = State::Closed;
+}
+
+void PaymentRequest::reject(Exception&& exception)
+{
+    abortWithException(WTFMove(exception));
 }
 
 ExceptionOr<void> PaymentRequest::complete(std::optional<PaymentComplete>&& result)

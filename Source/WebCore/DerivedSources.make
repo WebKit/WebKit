@@ -236,6 +236,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayModifier.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayRequest.idl \
+    $(WebCore)/Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl \
     $(WebCore)/Modules/async-clipboard/Clipboard.idl \
     $(WebCore)/Modules/async-clipboard/ClipboardItem.idl \
     $(WebCore)/Modules/async-clipboard/Navigator+Clipboard.idl \

@@ -226,6 +226,8 @@ struct UIEdgeInsets;
 
 #else // !TARGET_OS_IPHONE
 
+- (NSViewController *)_presentingViewControllerForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 - (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_cancelImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_completeImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));

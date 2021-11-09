@@ -230,6 +230,7 @@ class SharedBufferCopy;
 }
 
 #if PLATFORM(COCOA)
+OBJC_CLASS AMSUIEngagementTask;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextAlternatives;
@@ -591,6 +592,11 @@ public:
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(const WebCore::ElementContext&, const URL&, const String&, const WebCore::FloatSize&);
     void modelElementPreviewDidObtainContextId(const WebCore::ElementContext&, const String&, uint32_t);
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+    void startApplePayAMSUISession(URL&&, WebCore::ApplePayAMSUIRequest&&, CompletionHandler<void(std::optional<bool>&&)>&&);
+    void abortApplePayAMSUISession();
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -2655,6 +2661,10 @@ private:
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     std::unique_ptr<ModelElementController> m_modelElementController;
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+    RetainPtr<AMSUIEngagementTask> m_applePayAMSUISession;
 #endif
 
 #if ENABLE(WEB_AUTHN)

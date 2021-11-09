@@ -91,6 +91,10 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TextIndicator.h>
 
+#if ENABLE(APPLE_PAY_AMS_UI)
+#include <WebCore/ApplePayAMSUIRequest.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
 #endif
@@ -1533,5 +1537,19 @@ void WebChromeClient::modelElementDidCreatePreview(WebCore::HTMLModelElement& el
     m_page.modelElementDidCreatePreview(element, url, uuid, size);
 }
 #endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+
+void WebChromeClient::startApplePayAMSUISession(const URL& originatingURL, const ApplePayAMSUIRequest& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+{
+    m_page.sendWithAsyncReply(Messages::WebPageProxy::StartApplePayAMSUISession(originatingURL, request), WTFMove(completionHandler));
+}
+
+void WebChromeClient::abortApplePayAMSUISession()
+{
+    m_page.send(Messages::WebPageProxy::AbortApplePayAMSUISession());
+}
+
+#endif // ENABLE(APPLE_PAY_AMS_UI)
 
 } // namespace WebKit

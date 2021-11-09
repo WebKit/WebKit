@@ -76,6 +76,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationPlaybackEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationPlaybackEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationTimeline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationTimeline.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayAMSUIRequest.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayAMSUIRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayCancelEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayCancelEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayContactField.cpp

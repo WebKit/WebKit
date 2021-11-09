@@ -29,6 +29,7 @@
 #import "APIAttachment.h"
 #import "APIPageConfiguration.h"
 #import "APIUIClient.h"
+#import "AppleMediaServicesUISPI.h"
 #import "CocoaImage.h"
 #import "Connection.h"
 #import "DataDetectionResult.h"
@@ -51,6 +52,7 @@
 #import "WebsiteDataStore.h"
 #import "WKErrorInternal.h"
 #import <Foundation/NSURLRequest.h>
+#import <WebCore/ApplePayAMSUIRequest.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HighlightVisibility.h>
@@ -86,6 +88,14 @@ SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AppleMediaServices)
+SOFT_LINK_CLASS_OPTIONAL(AppleMediaServices, AMSEngagementRequest)
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AppleMediaServicesUI)
+SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
@@ -627,6 +637,47 @@ void WebPageProxy::setUpHighlightsObserver()
 }
 
 #endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+
+void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+{
+    if (!AppleMediaServicesUILibrary()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    PlatformViewController *presentingViewController = uiClient().presentingViewController();
+    if (!presentingViewController) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    auto amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[WTFMove(request.engagementRequest) dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil])]);
+    [amsRequest setOriginatingURL:WTFMove(originatingURL)];
+
+    auto amsBag = retainPtr([getAMSUIEngagementTaskClass() createBagForSubProfile]);
+
+    m_applePayAMSUISession = adoptNS([allocAMSUIEngagementTaskInstance() initWithRequest:amsRequest.get() bag:amsBag.get() presentingViewController:presentingViewController]);
+    [m_applePayAMSUISession setRemotePresentation:YES];
+
+    auto amsResult = retainPtr([m_applePayAMSUISession presentEngagement]);
+    [amsResult addFinishBlock:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (AMSEngagementResult *result, NSError *error) mutable {
+        if (error) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(result);
+    }).get()];
+}
+
+void WebPageProxy::abortApplePayAMSUISession()
+{
+    [std::exchange(m_applePayAMSUISession, nullptr) cancel];
+}
+
+#endif // ENABLE(APPLE_PAY_AMS_UI)
 
 Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {

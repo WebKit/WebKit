@@ -33,6 +33,10 @@
 #include <WebCore/FloatRect.h>
 #include <wtf/CompletionHandler.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/PlatformViewController.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS NSArray;
 OBJC_CLASS _WKActivatedElementInfo;
@@ -161,9 +165,9 @@ public:
 #endif
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return defaultActions; }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }
-    virtual UIViewController *presentingViewController() { return nullptr; }
 #endif
 #if PLATFORM(COCOA)
+    virtual PlatformViewController *presentingViewController() { return nullptr; }
     virtual NSDictionary *dataDetectionContext() { return nullptr; }
 #endif
 

@@ -52,6 +52,7 @@ public:
 
     virtual ExceptionOr<void> convertData(JSC::JSValue) = 0;
     virtual ExceptionOr<void> show(Document&) = 0;
+    virtual bool canAbortSession() = 0;
     virtual void hide() = 0;
     virtual void canMakePayment(Document&, Function<void(bool)>&& completionHandler) = 0;
     virtual ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) = 0;

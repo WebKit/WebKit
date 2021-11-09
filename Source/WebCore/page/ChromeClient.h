@@ -124,6 +124,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 #endif
 
 struct AppHighlight;
+struct ApplePayAMSUIRequest;
 struct ContactsRequestData;
 struct ContentRuleListResults;
 struct DataDetectorElementInfo;
@@ -609,6 +610,11 @@ public:
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     virtual void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const { };
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+    virtual void startApplePayAMSUISession(const URL&, const ApplePayAMSUIRequest&, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler) { completionHandler(std::nullopt); }
+    virtual void abortApplePayAMSUISession() { }
 #endif
 
 protected:

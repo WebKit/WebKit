@@ -1,3 +1,16 @@
+2021-11-08  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] Add a new payment method for showing AMS UI
+        https://bugs.webkit.org/show_bug.cgi?id=232634
+        <rdar://problem/79024227>
+
+        Reviewed by Tim Horton.
+
+        * http/tests/ssl/applepay-ams-ui/PaymentRequest.https.html: Added.
+        * http/tests/ssl/applepay-ams-ui/PaymentRequest.https-expected.txt: Added.
+
+        * TestExpectations:
+
 2021-11-08  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused file

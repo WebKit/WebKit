@@ -205,6 +205,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayValidateMerchantEvent.idl
 $(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayModifier.idl
 $(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayRequest.idl
+$(PROJECT_DIR)/Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl
 $(PROJECT_DIR)/Modules/async-clipboard/Clipboard.idl
 $(PROJECT_DIR)/Modules/async-clipboard/ClipboardItem.idl
 $(PROJECT_DIR)/Modules/async-clipboard/Navigator+Clipboard.idl

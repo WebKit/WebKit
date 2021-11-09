@@ -73,6 +73,7 @@ private:
     // PaymentHandler
     ExceptionOr<void> convertData(JSC::JSValue) final;
     ExceptionOr<void> show(Document&) final;
+    bool canAbortSession() final { return true; }
     void hide() final;
     void canMakePayment(Document&, Function<void(bool)>&& completionHandler) final;
     ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;

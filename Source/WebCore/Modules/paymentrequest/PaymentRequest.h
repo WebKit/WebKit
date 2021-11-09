@@ -96,7 +96,9 @@ public:
     void paymentMethodChanged(const String& methodName, PaymentMethodChangeEvent::MethodDetailsFunction&&);
     ExceptionOr<void> updateWith(UpdateReason, Ref<DOMPromise>&&);
     ExceptionOr<void> completeMerchantValidation(Event&, Ref<DOMPromise>&&);
+    void accept(const String& methodName, PaymentResponse::DetailsFunction&&);
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
+    void reject(Exception&&);
     ExceptionOr<void> complete(std::optional<PaymentComplete>&&);
     ExceptionOr<void> retry(PaymentValidationErrors&&);
     void cancel();

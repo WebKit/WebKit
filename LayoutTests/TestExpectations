@@ -263,6 +263,7 @@ fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Skip ]
 fast/css/webkit-named-image/apple-pay-logo-black [ Skip ]
 fast/css/webkit-named-image/apple-pay-logo-white [ Skip ]
 http/tests/ssl/applepay/ [ Skip ]
+http/tests/ssl/applepay-ams-ui/ [ Skip ]
 
 # Only WK2 allows unconstrained scrolling
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Skip ]

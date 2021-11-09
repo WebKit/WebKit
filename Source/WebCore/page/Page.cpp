@@ -168,6 +168,10 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(APPLE_PAY_AMS_UI)
+#include "ApplePayAMSUIPaymentHandler.h"
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "HTMLVideoElement.h"
 #include "MediaPlaybackTarget.h"
@@ -3481,6 +3485,42 @@ void Page::setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&& paymentCo
     m_paymentCoordinator = WTFMove(paymentCoordinator);
 }
 #endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+
+bool Page::startApplePayAMSUISession(Document& document, ApplePayAMSUIPaymentHandler& paymentHandler, const ApplePayAMSUIRequest& request)
+{
+    if (hasActiveApplePayAMSUISession())
+        return false;
+
+    m_activeApplePayAMSUIPaymentHandler = &paymentHandler;
+
+    chrome().client().startApplePayAMSUISession(document.url(), request, [weakThis = WeakPtr { *this }, paymentHandlerPtr = &paymentHandler] (std::optional<bool>&& result) {
+        auto strongThis = weakThis.get();
+        if (!strongThis)
+            return;
+
+        if (paymentHandlerPtr != strongThis->m_activeApplePayAMSUIPaymentHandler)
+            return;
+
+        if (auto activePaymentHandler = std::exchange(strongThis->m_activeApplePayAMSUIPaymentHandler, nullptr))
+            activePaymentHandler->finishSession(WTFMove(result));
+    });
+    return true;
+}
+
+void Page::abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler& paymentHandler)
+{
+    if (&paymentHandler != m_activeApplePayAMSUIPaymentHandler)
+        return;
+
+    chrome().client().abortApplePayAMSUISession();
+
+    if (auto activePaymentHandler = std::exchange(m_activeApplePayAMSUIPaymentHandler, nullptr))
+        activePaymentHandler->finishSession(std::nullopt);
+}
+
+#endif // ENABLE(APPLE_PAY_AMS_UI)
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void Page::setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& mediaSessionCoordinator)
