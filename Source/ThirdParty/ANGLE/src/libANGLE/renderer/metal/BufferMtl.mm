@@ -333,7 +333,8 @@ ConversionBufferMtl *BufferMtl::getVertexConversionBuffer(ContextMtl *context,
 {
     for (VertexConversionBufferMtl &buffer : mVertexConversionBuffers)
     {
-        if (buffer.formatID == formatID && buffer.stride == stride && buffer.offset == offset)
+        if (buffer.formatID == formatID && buffer.stride == stride &&
+            buffer.offset <= offset && buffer.offset%buffer.stride == offset%stride)
         {
             return &buffer;
         }
