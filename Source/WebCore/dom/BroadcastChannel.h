@@ -70,6 +70,8 @@ private:
     void dispatchMessage(Ref<SerializedScriptValue>&&);
     void ensureOnMainThread(Function<void(Document&)>&&);
 
+    bool isEligibleForMessaging() const;
+
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return BroadcastChannelEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

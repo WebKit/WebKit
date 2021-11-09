@@ -1,0 +1,3 @@
+
+FAIL BroadcastChannel works in service workers promise_test: Unhandled rejection with value: object "TypeError: ReferenceError: Can't find variable: BroadcastChannel"
+
