@@ -300,22 +300,10 @@ static inline bool fontNameIsSystemFont(CFStringRef fontName)
     return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
 }
 
-static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
-{
-#if defined(HAVE_CTFontCopyVariationAxesInternal) // This macro is defined inside CoreText, not WebKit.
-    if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
-        return adoptCF(CTFontCopyVariationAxes(font));
-    return adoptCF(CTFontCopyVariationAxesInternal(font));
-#else
-    UNUSED_PARAM(shouldLocalizeAxisNames);
-    return adoptCF(CTFontCopyVariationAxes(font));
-#endif
-}
-
-VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
+VariationDefaultsMap defaultVariationValues(CTFontRef font)
 {
     VariationDefaultsMap result;
-    auto axes = variationAxes(font, shouldLocalizeAxisNames);
+    auto axes = adoptCF(CTFontCopyVariationAxes(font));
     if (!axes)
         return result;
     auto size = CFArrayGetCount(axes.get());
@@ -530,7 +518,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     auto fontOpticalSizing = fontDescription.opticalSizing();
 
-    auto defaultValues = defaultVariationValues(originalFont, ShouldLocalizeAxisNames::No);
+    auto defaultValues = defaultVariationValues(originalFont);
 
     auto fontSelectionRequest = fontDescription.fontSelectionRequest();
     auto fontStyleAxis = fontDescription.fontStyleAxis();
@@ -1033,7 +1021,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
         return result;
 
     auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, 0, nullptr));
-    auto variations = variationAxes(font.get(), ShouldLocalizeAxisNames::No);
+    auto variations = adoptCF(CTFontCopyVariationAxes(font.get()));
     if (!variations)
         return result;
 

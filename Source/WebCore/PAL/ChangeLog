@@ -1,3 +1,17 @@
+2021-11-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r285318.
+        https://bugs.webkit.org/show_bug.cgi?id=232894
+
+        broke Apple internal build
+
+        Reverted changeset:
+
+        "[Cocoa] Migrate from CTFontCopyVariationAxes() to
+        CTFontCopyVariationAxesInternal() if possible"
+        https://bugs.webkit.org/show_bug.cgi?id=232690
+        https://commits.webkit.org/r285318
+
 2021-11-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Connect JS bindings code to internal WebGPU interface

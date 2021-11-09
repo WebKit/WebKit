@@ -62,14 +62,14 @@ RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t) const
     return nullptr;
 }
 
-Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(ShouldLocalizeAxisNames shouldLocalizeAxisNames) const
+Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes() const
 {
     auto platformFont = ctFont();
     if (!platformFont)
         return { };
     
     Vector<FontVariationAxis> results;
-    for (auto& [tag, values] : defaultVariationValues(platformFont, shouldLocalizeAxisNames))
+    for (auto& [tag, values] : defaultVariationValues(platformFont))
         results.append(FontPlatformData::FontVariationAxis(values.axisName, String(tag.data(), tag.size()), values.defaultValue, values.minimumValue, values.maximumValue));
     
     return results;
