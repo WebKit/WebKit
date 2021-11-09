@@ -1,3 +1,51 @@
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r281795. rdar://problem/85166335
+
+    Nullptr crash in TypingCommand::willAddTypingToOpenCommand via TypingCommand::deleteKeyPressed
+    https://bugs.webkit.org/show_bug.cgi?id=229277
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2021-08-31
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Rewtite CompositeEditCommand::shouldBreakOutOfEmptyListItem() to return just VisibleSelection
+    and check that it is not none in TypingCommand::willAddTypingToOpenCommand.
+    
+    Test: editing/deleting/delete-key-crash.html
+    
+    * editing/CompositeEditCommand.cpp:
+    (WebCore::CompositeEditCommand::moveParagraphs):
+    * editing/CompositeEditCommand.h:
+    * editing/TypingCommand.cpp:
+    (WebCore::TypingCommand::deleteKeyPressed):
+    
+    LayoutTests:
+    
+    * editing/deleting/delete-key-crash-expected.txt: Added.
+    * editing/deleting/delete-key-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281795 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-31  Rob Buis  <rbuis@igalia.com>
+
+            Nullptr crash in TypingCommand::willAddTypingToOpenCommand via TypingCommand::deleteKeyPressed
+            https://bugs.webkit.org/show_bug.cgi?id=229277
+
+            Reviewed by Ryosuke Niwa.
+
+            Rewtite CompositeEditCommand::shouldBreakOutOfEmptyListItem() to return just VisibleSelection
+            and check that it is not none in TypingCommand::willAddTypingToOpenCommand.
+
+            Test: editing/deleting/delete-key-crash.html
+
+            * editing/CompositeEditCommand.cpp:
+            (WebCore::CompositeEditCommand::moveParagraphs):
+            * editing/CompositeEditCommand.h:
+            * editing/TypingCommand.cpp:
+            (WebCore::TypingCommand::deleteKeyPressed):
+
 2021-11-08  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/83438282
