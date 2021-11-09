@@ -314,8 +314,8 @@
 
 /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
 #if !defined(BENABLE_LIBPAS)
-/* Currently not enabling libpas on ARM64 (not ARM64E) due to performance reason. */
-#if BPLATFORM(COCOA) && BCPU(ADDRESS64) && (BCPU(X86_64) || BCPU(ARM64E))
+/* Currently not enabling libpas on ARM64 (not ARM64E) on iOS family due to performance reason. */
+#if BCPU(ADDRESS64) && (BOS(MAC) || (BPLATFORM(COCOA) && (BCPU(X86_64) || BCPU(ARM64E))))
 #define BENABLE_LIBPAS 1
 #else
 #define BENABLE_LIBPAS 0

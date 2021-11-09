@@ -1,5 +1,12 @@
 2021-11-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, keep enabling mac libpas on OSS build
+        https://bugs.webkit.org/show_bug.cgi?id=232026
+
+        * bmalloc/BPlatform.h:
+
+2021-11-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, disabling libpas on ARM64 (not ARM64E!) for now due to performance issue only happening on newer SDK
         https://bugs.webkit.org/show_bug.cgi?id=232026
 
