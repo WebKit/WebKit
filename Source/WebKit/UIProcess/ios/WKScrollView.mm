@@ -224,7 +224,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
-    _backgroundColorSetByClient = backgroundColor;
+    _backgroundColorSetByClient = !!backgroundColor;
 
     super.backgroundColor = backgroundColor;
 

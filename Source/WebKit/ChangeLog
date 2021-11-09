@@ -1,3 +1,15 @@
+2021-11-09  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed internal build fix after r285424
+        <rdar://problem/85207411>
+
+        ```
+        WKScrollView.mm:227:35: error: incompatible pointer to integer conversion assigning to 'BOOL' (aka 'signed char') from 'UIColor * _Nullable'
+        ```
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView setBackgroundColor:]):
+
 2021-11-09  Sihui Liu  <sihui_liu@apple.com>
 
         Fix wrong frame count of CARingBuffer in SpeechRecognitionRemoteRealtimeMediaSource
