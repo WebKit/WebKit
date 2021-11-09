@@ -1,3 +1,15 @@
+2021-11-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Reduce telemetry for well-understood sandbox rules
+        https://bugs.webkit.org/show_bug.cgi?id=232885
+        <rdar://problem/84950269>
+
+        Reviewed by Per Arne Vollan.
+
+        Now that we have telemetry showing the use case for this syscall, remove the telemetry.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         New spec: Block external protocol handler in sandboxed frames

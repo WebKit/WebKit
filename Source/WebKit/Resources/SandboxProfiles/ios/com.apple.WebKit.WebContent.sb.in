@@ -1261,6 +1261,7 @@
         (syscall-number SYS_mprotect)
         (syscall-number SYS_msync)
         (syscall-number SYS_munmap)
+        (syscall-number SYS_objc_bp_assist_cfg_np)
         (syscall-number SYS_os_fault_with_payload)
         (syscall-number SYS_pathconf)
         (syscall-number SYS_pread)
@@ -1287,9 +1288,6 @@
         (syscall-number SYS_ulock_wake)
         (syscall-number SYS_workq_kernreturn)
         (syscall-number SYS_workq_open))
-
-    (allow syscall-unix (with telemetry)
-        (syscall-number SYS_objc_bp_assist_cfg_np))
 
     (allow syscall-unix (with telemetry-backtrace)
         (syscall-number SYS___pthread_kill)
