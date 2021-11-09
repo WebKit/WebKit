@@ -154,6 +154,10 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             findOrMakeActionLocation(makeHTTPSActionsMap);
         }, [&] (const NotifyAction& actionData) {
             findOrMakeStringActionLocation(notifyActionsMap, actionData);
+        }, [&] (const ModifyHeadersAction&) {
+            // FIXME: Implement
+        }, [&] (const RedirectAction&) {
+            // FIXME: Implement
         }), actionData);
         actionLocations.append(actionLocation);
     }
@@ -263,7 +267,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 {
 #if ASSERT_ENABLED
     callOnMainThread([ruleJSON = ruleJSON.isolatedCopy(), parsedRuleList = parsedRuleList.isolatedCopy()] {
-        ASSERT(parseRuleList(ruleJSON).value() == parsedRuleList);
+        ASSERT(parseRuleList(ruleJSON, { }).value() == parsedRuleList);
     });
 #endif
 

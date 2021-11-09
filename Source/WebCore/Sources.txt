@@ -637,6 +637,7 @@ contentextensions/CombinedFiltersAlphabet.cpp
 contentextensions/CombinedURLFilters.cpp
 contentextensions/CompiledContentExtension.cpp
 contentextensions/ContentExtension.cpp
+contentextensions/ContentExtensionActions.cpp
 contentextensions/ContentExtensionCompiler.cpp
 contentextensions/ContentExtensionError.cpp
 contentextensions/ContentExtensionParser.cpp

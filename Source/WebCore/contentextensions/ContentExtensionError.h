@@ -45,7 +45,6 @@ enum class ContentExtensionError {
     JSONInvalidTrigger,
     JSONInvalidURLFilterInTrigger,
     JSONInvalidTriggerFlagsArray,
-    JSONInvalidObjectInTriggerFlagsArray,
     JSONInvalidStringInTriggerFlagsArray,
     JSONInvalidConditionList,
     JSONDomainNotLowerCaseASCII,
@@ -58,6 +57,25 @@ enum class ContentExtensionError {
     JSONInvalidCSSDisplayNoneActionType,
     JSONInvalidNotification,
     JSONInvalidRegex,
+
+    JSONRedirectMissing,
+    JSONRedirectExtensionPathDoesNotStartWithSlash,
+    JSONRedirectURLSchemeNotAllowed,
+    JSONRedirectInvalidType,
+
+    JSONRemoveParametersNotStringArray,
+
+    JSONAddOrReplaceParametersNotArray,
+    JSONAddOrReplaceParametersKeyValueNotADictionary,
+    JSONAddOrReplaceParametersKeyValueMissingKeyString,
+    JSONAddOrReplaceParametersKeyValueMissingValueString,
+
+    JSONModifyHeadersNotArray,
+    JSONModifyHeadersInfoNotADictionary,
+    JSONModifyHeadersMissingOperation,
+    JSONModifyHeadersInvalidOperation,
+    JSONModifyHeadersMissingHeader,
+    JSONModifyHeadersMissingValue,
 
     ErrorWritingSerializedNFA,
 };

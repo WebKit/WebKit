@@ -494,6 +494,11 @@ RefPtr<Object> Value::asObject()
     return nullptr;
 }
 
+RefPtr<const Object> Value::asObject() const
+{
+    return nullptr;
+}
+
 RefPtr<Array> Value::asArray()
 {
     return nullptr;
@@ -638,6 +643,12 @@ RefPtr<Object> ObjectBase::asObject()
 {
     COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
     return static_cast<Object*>(this);
+}
+
+RefPtr<const Object> ObjectBase::asObject() const
+{
+    COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
+    return static_cast<const Object*>(this);
 }
 
 size_t ObjectBase::memoryCost() const

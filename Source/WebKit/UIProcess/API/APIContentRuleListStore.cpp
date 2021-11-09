@@ -536,7 +536,7 @@ void ContentRuleListStore::compileContentRuleList(const WTF::String& identifier,
     AtomString::init();
     WebCore::QualifiedName::init();
     
-    auto parsedRules = WebCore::ContentExtensions::parseRuleList(json);
+    auto parsedRules = WebCore::ContentExtensions::parseRuleList(json, { });
     if (!parsedRules.has_value())
         return completionHandler(nullptr, parsedRules.error());
     

@@ -1,3 +1,13 @@
+2021-11-08  Alex Christensen  <achristensen@webkit.org>
+
+        Parse redirect and modify-headers actions for WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=232838
+
+        Reviewed by Tim Hatcher.
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::compileContentRuleList):
+
 2021-11-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GLIB][SOUP] Unify memoryPressureMonitorDisabled implementation

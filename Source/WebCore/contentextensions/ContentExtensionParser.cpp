@@ -54,11 +54,12 @@ static bool containsOnlyASCIIWithNoUppercase(const String& domain)
 static Expected<Vector<String>, std::error_code> getStringList(const JSON::Array& array)
 {
     Vector<String> strings;
+    strings.reserveInitialCapacity(array.length());
     for (auto& value : array) {
         String string = value->asString();
         if (string.isEmpty())
             return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
-        strings.append(string);
+        strings.uncheckedAppend(string);
     }
     return strings;
 }
@@ -178,7 +179,7 @@ bool isValidCSSSelector(const String& selector)
     return !!parser.parseSelector(selector);
 }
 
-static Expected<std::optional<Action>, std::error_code> loadAction(const JSON::Object& ruleObject)
+static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const HashSet<String>& allowedRedirectURLSchemes)
 {
     auto actionObject = ruleObject.getObject("action");
     if (!actionObject)
@@ -187,49 +188,58 @@ static Expected<std::optional<Action>, std::error_code> loadAction(const JSON::O
     String actionType = actionObject->getString("type");
 
     if (actionType == "block")
-        return { Action(BlockLoadAction()) };
+        return Action { BlockLoadAction() };
     if (actionType == "ignore-previous-rules")
-        return { Action(IgnorePreviousRulesAction()) };
+        return Action { IgnorePreviousRulesAction() };
     if (actionType == "block-cookies")
-        return { Action(BlockCookiesAction()) };
+        return Action { BlockCookiesAction() };
     if (actionType == "css-display-none") {
         String selectorString = actionObject->getString("selector");
         if (!selectorString)
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
-        if (!isValidCSSSelector(selectorString)) {
-            // Skip rules with invalid selectors to be backwards-compatible.
-            return { std::nullopt };
-        }
-        return { Action { CSSDisplayNoneSelectorAction { { WTFMove(selectorString) } } } };
+        if (!isValidCSSSelector(selectorString))
+            return std::nullopt; // Skip rules with invalid selectors to be backwards-compatible.
+        return Action { CSSDisplayNoneSelectorAction { { WTFMove(selectorString) } } };
     }
     if (actionType == "make-https")
-        return { Action(MakeHTTPSAction()) };
+        return Action { MakeHTTPSAction() };
     if (actionType == "notify") {
         String notification = actionObject->getString("notification");
         if (!notification)
             return makeUnexpected(ContentExtensionError::JSONInvalidNotification);
-        return { Action { NotifyAction { { WTFMove(notification) } } } };
+        return Action { NotifyAction { { WTFMove(notification) } } };
+    }
+    if (actionType == "redirect") {
+        auto action = RedirectAction::parse(*actionObject, allowedRedirectURLSchemes);
+        if (!action)
+            return makeUnexpected(action.error());
+        return Action { RedirectAction { WTFMove(*action) } };
+    }
+    if (actionType == "modify-headers") {
+        auto action = ModifyHeadersAction::parse(*actionObject);
+        if (!action)
+            return makeUnexpected(action.error());
+        return Action { WTFMove(*action) };
     }
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
 
-static Expected<std::optional<ContentExtensionRule>, std::error_code> loadRule(const JSON::Object& ruleObject)
+static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject, const HashSet<String>& allowedRedirectURLSchemes)
 {
     auto trigger = loadTrigger(ruleObject);
     if (!trigger.has_value())
         return makeUnexpected(trigger.error());
 
-    auto action = loadAction(ruleObject);
-    if (!action.has_value())
-        return makeUnexpected(action.error());
+    auto action = loadAction(ruleObject, allowedRedirectURLSchemes);
+    if (!action)
+        return std::nullopt;
+    if (!action->has_value())
+        return makeUnexpected(action->error());
 
-    if (action.value())
-        return {{{ WTFMove(trigger.value()), WTFMove(action.value().value()) }}};
-
-    return { std::nullopt };
+    return { { { WTFMove(trigger.value()), WTFMove(action->value()) } } };
 }
 
-static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON)
+static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON, const HashSet<String>& allowedRedirectURLSchemes)
 {
     auto decodedRules = JSON::Value::parseJSON(ruleJSON);
 
@@ -245,28 +255,30 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
     constexpr size_t maxRuleCount = 150000;
     if (topLevelArray->length() > maxRuleCount)
         return makeUnexpected(ContentExtensionError::JSONTooManyRules);
+    ruleList.reserveInitialCapacity(topLevelArray->length());
     for (auto& value : *topLevelArray) {
         auto ruleObject = value->asObject();
         if (!ruleObject)
             return makeUnexpected(ContentExtensionError::JSONInvalidRule);
 
-        auto rule = loadRule(*ruleObject);
-        if (!rule.has_value())
-            return makeUnexpected(rule.error());
-        if (rule.value())
-            ruleList.append(WTFMove(*rule.value()));
+        auto rule = loadRule(*ruleObject, allowedRedirectURLSchemes);
+        if (!rule)
+            continue;
+        if (!rule->has_value())
+            return makeUnexpected(rule->error());
+        ruleList.uncheckedAppend(WTFMove(rule->value()));
     }
 
     return ruleList;
 }
 
-Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON)
+Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON, const HashSet<String>& allowedRedirectURLSchemes)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime loadExtensionStartTime = MonotonicTime::now();
 #endif
 
-    auto ruleList = loadEncodedRules(ruleJSON);
+    auto ruleList = loadEncodedRules(ruleJSON, allowedRedirectURLSchemes);
 
     if (!ruleList.has_value())
         return makeUnexpected(ruleList.error());

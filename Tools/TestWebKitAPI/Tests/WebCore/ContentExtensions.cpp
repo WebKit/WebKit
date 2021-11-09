@@ -128,7 +128,7 @@ public:
     {
         CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
-        auto parsedRules = ContentExtensions::parseRuleList(filter);
+        auto parsedRules = ContentExtensions::parseRuleList(filter, { });
         auto compilerError = ContentExtensions::compileRuleList(client, WTFMove(filter), WTFMove(parsedRules.value()));
 
         // Compiling should always succeed here. We have other tests for compile failures.
@@ -1360,11 +1360,11 @@ TEST_F(ContentExtensionTest, DeepNFA)
     EXPECT_EQ(1ul, createNFAs(combinedURLFilters).size());
 }
 
-void checkCompilerError(const char* json, std::error_code expectedError)
+void checkCompilerError(const char* json, std::error_code expectedError, const HashSet<String>& allowedRedirectURLSchemes = { })
 {
     CompiledContentExtensionData extensionData;
     InMemoryContentExtensionCompilationClient client(extensionData);
-    auto parsedRules = ContentExtensions::parseRuleList(json);
+    auto parsedRules = ContentExtensions::parseRuleList(json, allowedRedirectURLSchemes);
     std::error_code compilerError;
     if (parsedRules.has_value())
         compilerError = ContentExtensions::compileRuleList(client, json, WTFMove(parsedRules.value()));
@@ -1440,52 +1440,52 @@ TEST_F(ContentExtensionTest, MatchesEverything)
     
 TEST_F(ContentExtensionTest, InvalidJSON)
 {
-    checkCompilerError("[", ContentExtensions::ContentExtensionError::JSONInvalid);
-    checkCompilerError("123", ContentExtensions::ContentExtensionError::JSONTopLevelStructureNotAnArray);
-    checkCompilerError("{}", ContentExtensions::ContentExtensionError::JSONTopLevelStructureNotAnArray);
-    // FIXME: Add unit test for JSONInvalidRule if that is possible to hit.
-    checkCompilerError("[]", ContentExtensions::ContentExtensionError::JSONContainsNoRules);
+    using namespace ContentExtensions;
+    checkCompilerError("[", ContentExtensionError::JSONInvalid);
+    checkCompilerError("123", ContentExtensionError::JSONTopLevelStructureNotAnArray);
+    checkCompilerError("{}", ContentExtensionError::JSONTopLevelStructureNotAnArray);
+    checkCompilerError("[5]", ContentExtensionError::JSONInvalidRule);
+    checkCompilerError("[]", ContentExtensionError::JSONContainsNoRules);
 
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":5}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTrigger);
+        ContentExtensionError::JSONInvalidTrigger);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"\"}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidURLFilterInTrigger);
+        ContentExtensionError::JSONInvalidURLFilterInTrigger);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":{}}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidURLFilterInTrigger);
+        ContentExtensionError::JSONInvalidURLFilterInTrigger);
 
-    // FIXME: Add unit test for JSONInvalidObjectInTriggerFlagsArray if that is possible to hit.
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":{}}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[\"invalid\"]}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[5]}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":5}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":\"first-party\"}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":null}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":false}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":{}}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[\"invalid\"]}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[5]}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":5}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":\"document\"}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":null}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":false}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        ContentExtensionError::JSONInvalidTriggerFlagsArray);
     
-    checkCompilerError("[{\"action\":{\"type\":\"notify\"},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidNotification);
-    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":5},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidNotification);
-    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":[]},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\"},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":5},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":[]},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensionError::JSONInvalidNotification);
     checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"here's my notification\"},\"trigger\":{\"url-filter\":\".*\"}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"\\u1234\"},\"trigger\":{\"url-filter\":\".*\"}}]", { });
     
@@ -1498,57 +1498,79 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     rules150000.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]");
     rules150001.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]");
     checkCompilerError(rules150000.utf8().data(), { });
-    checkCompilerError(rules150001.utf8().data(), ContentExtensions::ContentExtensionError::JSONTooManyRules);
+    checkCompilerError(rules150001.utf8().data(), ContentExtensionError::JSONTooManyRules);
     
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]", ContentExtensionError::JSONInvalidConditionList);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":\"a\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":false}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":null}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":\"a\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":null}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":false}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"A\"]}}]", ContentExtensions::ContentExtensionError::JSONDomainNotLowerCaseASCII);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\\u00DC\"]}}]", ContentExtensions::ContentExtensionError::JSONDomainNotLowerCaseASCII);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":\"a\"}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":false}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":null}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":{}}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[5]}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\"]}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":\"a\"}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":null}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":false}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"A\"]}}]", ContentExtensionError::JSONDomainNotLowerCaseASCII);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\\u00DC\"]}}]", ContentExtensionError::JSONDomainNotLowerCaseASCII);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"0\"]}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", { });
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5,\"unless-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[]}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":5}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5,\"unless-domain\":5}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[]}}]", ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[]}}]", ContentExtensionError::JSONMultipleConditions);
 
     checkCompilerError("[{\"action\":5,\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidAction);
+        ContentExtensionError::JSONInvalidAction);
     checkCompilerError("[{\"action\":{\"type\":\"invalid\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidActionType);
+        ContentExtensionError::JSONInvalidActionType);
     checkCompilerError("[{\"action\":{\"type\":\"css-display-none\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
+        ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
 
     checkCompilerError("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"webkit.org\"}},"
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"a\"]}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"a\"]}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[\"}}]",
-        ContentExtensions::ContentExtensionError::JSONInvalidRegex);
+        ContentExtensionError::JSONInvalidRegex);
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONTopURLAndDomainConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONTopURLAndDomainConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"[\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidRegex);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[]}}]", ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-domain\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", ContentExtensionError::JSONTopURLAndDomainConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONTopURLAndDomainConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"[\"]}}]", ContentExtensionError::JSONInvalidRegex);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\", \"unexpected-identifier-should-be-ignored\":5}}]", { });
+
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectMissing);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectInvalidType);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"remove-parameters\":5}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRemoveParametersNotStringArray);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"remove-parameters\":[5]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRemoveParametersNotStringArray);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":5}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersNotArray);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[5]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":\"k\",\"value\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"about:blank\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectURLSchemeNotAllowed);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"about:blank\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { }, { "about" });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"extension-path\":\"does/not/start/with/slash/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"extension-path\":\"/does/start/with/slash/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"about\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectURLSchemeNotAllowed);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"about\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { }, { "about" });
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":5},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersNotArray);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[5]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersMissingOperation);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{\"operation\":\"remove\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersMissingHeader);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{\"operation\":\"set\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersMissingValue);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{\"operation\":\"invalid\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersInvalidOperation);
 }
 
 TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1)

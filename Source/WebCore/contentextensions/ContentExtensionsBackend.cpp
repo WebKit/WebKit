@@ -228,6 +228,10 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 }
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
+            }, [&] (const ModifyHeadersAction&) {
+                // FIXME: Implement
+            }, [&] (const RedirectAction&) {
+                // FIXME: Implement
             }), action.data());
         }
 
@@ -287,6 +291,10 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
                     results.summary.madeHTTPS = true;
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
+            }, [&] (const ModifyHeadersAction&) {
+                // FIXME: Implement
+            }, [&] (const RedirectAction&) {
+                // FIXME: Implement
             }), action.data());
         }
     }

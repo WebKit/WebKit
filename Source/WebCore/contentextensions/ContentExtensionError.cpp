@@ -63,8 +63,6 @@ const std::error_category& contentExtensionErrorCategory()
                 return "Invalid url-filter object.";
             case ContentExtensionError::JSONInvalidTriggerFlagsArray:
                 return "Invalid trigger flags array.";
-            case ContentExtensionError::JSONInvalidObjectInTriggerFlagsArray:
-                return "Invalid object in the trigger flags array.";
             case ContentExtensionError::JSONInvalidStringInTriggerFlagsArray:
                 return "Invalid string in the trigger flags array.";
             case ContentExtensionError::JSONInvalidAction:
@@ -89,6 +87,36 @@ const std::error_category& contentExtensionErrorCategory()
                 return "A notify action must have a string notification";
             case ContentExtensionError::ErrorWritingSerializedNFA:
                 return "Internal I/O error";
+            case ContentExtensionError::JSONRedirectMissing:
+                return "A redirect action must have a redirect member";
+            case ContentExtensionError::JSONRemoveParametersNotStringArray:
+                return "A remove-parameters value must be an array of strings";
+            case ContentExtensionError::JSONAddOrReplaceParametersNotArray:
+                return "An add-or-replace-parameters value must be an array";
+            case ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary:
+                return "Members of the add-or-replace-parameters array must be a dictionary";
+            case ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString:
+                return "Members of the add-or-replace-parameters array must contain a key that is a string";
+            case ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString:
+                return "Members of the add-or-replace-parameters array must contain a value that is a string";
+            case ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash:
+                return "A redirect extension path must start with a slash";
+            case ContentExtensionError::JSONRedirectURLSchemeNotAllowed:
+                return "A redirect url scheme must be in the set of allowed schemes";
+            case ContentExtensionError::JSONRedirectInvalidType:
+                return "A redirect must have a member named \"extension-path\", \"regex-substitution\", \"transform\" or \"url\"";
+            case ContentExtensionError::JSONModifyHeadersInvalidOperation:
+                return "A modify-headers operation must have an operation that is either \"set\", \"append\", or \"remove\"";
+            case ContentExtensionError::JSONModifyHeadersInfoNotADictionary:
+                return "A modify-headers operation must be a dictionary";
+            case ContentExtensionError::JSONModifyHeadersMissingOperation:
+                return "A modify-headers operation must have an operation";
+            case ContentExtensionError::JSONModifyHeadersMissingHeader:
+                return "A modify-headers operation must have a header";
+            case ContentExtensionError::JSONModifyHeadersMissingValue:
+                return "A modify-headers operation of \"set\" or \"append\" must have a value";
+            case ContentExtensionError::JSONModifyHeadersNotArray:
+                return "A headers member must be an array";
             }
 
             return std::string();

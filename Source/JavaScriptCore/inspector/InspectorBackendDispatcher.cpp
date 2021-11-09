@@ -346,7 +346,9 @@ RefPtr<JSON::Value> BackendDispatcher::getValue(JSON::Object* params, const Stri
 
 RefPtr<JSON::Object> BackendDispatcher::getObject(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<RefPtr<JSON::Object>>(params, name, required, &JSON::Value::asObject, "Object");
+    return getPropertyValue<RefPtr<JSON::Object>>(params, name, required, [](JSON::Value& value) {
+        return value.asObject();
+    }, "Object");
 }
 
 RefPtr<JSON::Array> BackendDispatcher::getArray(JSON::Object* params, const String& name, bool required)

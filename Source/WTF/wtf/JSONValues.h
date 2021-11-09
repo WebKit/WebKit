@@ -99,6 +99,7 @@ public:
     String asString() const;
     RefPtr<Value> asValue();
     virtual RefPtr<Object> asObject();
+    virtual RefPtr<const Object> asObject() const;
     virtual RefPtr<Array> asArray();
 
     static RefPtr<Value> parseJSON(const String&);
@@ -170,6 +171,7 @@ public:
     using const_iterator = DataStorage::const_iterator;
 
     WTF_EXPORT_PRIVATE RefPtr<Object> asObject() final;
+    WTF_EXPORT_PRIVATE RefPtr<const Object> asObject() const final;
 
     WTF_EXPORT_PRIVATE size_t memoryCost() const final;
 
