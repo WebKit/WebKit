@@ -17,7 +17,7 @@ ifeq (iosmac,$(SDK_VARIANT))
 	WEBINSPECTORUI_MODULE =
 endif
 
-MODULES = bmalloc WTF JavaScriptCore ThirdParty WebCore $(WEBINSPECTORUI_MODULE) WebKitLegacy WebKit
+MODULES = bmalloc WTF JavaScriptCore WebGPU ThirdParty WebCore $(WEBINSPECTORUI_MODULE) WebKitLegacy WebKit
 
 define build_target_for_each_module
 	for dir in $(MODULES); do \

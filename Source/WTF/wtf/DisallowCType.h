@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 // The behavior of many of the functions in the <ctype.h> header is dependent
 // on the current locale. But almost all uses of these functions are for
 // locale-independent, ASCII-specific purposes. In WebKit code we use our own

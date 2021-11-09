@@ -1,0 +1,41 @@
+2021-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make WebGPU.xcodeproj and WebGPU.framework
+        https://bugs.webkit.org/show_bug.cgi?id=231661
+
+        Reviewed by Dean Jackson and Robin Morisset.
+
+        We've gotten some requests to be able to use WebGPU from native code,
+        without requiring all of WebKit. This patch creates a new Xcode project
+        that creates a new framework for WebGPU, so these internal users can
+        build it / include it in their own projects.
+
+        This project has two targets: One for WGSL and one for WebGPU. WGSL
+        creates a static library, and WebGPU links with it, and produces a
+        framework. This patch implements one dummy function from each of them.
+
+        * Configurations/Base.xcconfig: Added.
+        * Configurations/DebugRelease.xcconfig: Added.
+        * Configurations/SDKVariant.xcconfig: Added.
+        * Configurations/WGSL.xcconfig: Added.
+        * Configurations/WebGPU.xcconfig: Added.
+        * Info.plist: Added.
+        * Makefile: Added.
+        * WGSL/AST.h: Added.
+        * WGSL/WGSL.cpp: Added.
+        (WGSL::check):
+        (WGSL::SuccessfulCheck::~SuccessfulCheck):
+        * WGSL/WGSL.h: Added.
+        * WGSL/config.h: Added.
+        * WebGPU.xcodeproj/project.pbxproj: Added.
+        * WebGPU.xcodeproj/xcshareddata/xcschemes/WGSL.xcscheme: Added.
+        * WebGPU.xcodeproj/xcshareddata/xcschemes/WebGPU.xcscheme: Added.
+        * WebGPU/ExportMacros.h: Added.
+        * WebGPU/ShaderModule.h: Added.
+        * WebGPU/WebGPU.cpp: Added.
+        (wgpuDeviceCreateShaderModule):
+        * WebGPU/WebGPU.h: Added.
+        * WebGPU/WebGPUObjC.h: Added.
+        * WebGPU/WebGPUObjC.mm: Added.
+        (objcFunction):
+        * WebGPU/config.h: Added.
