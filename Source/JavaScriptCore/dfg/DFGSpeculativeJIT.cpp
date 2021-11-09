@@ -2110,8 +2110,14 @@ void SpeculativeJIT::compileLoopHint(Node* node)
             if constexpr (validateDFGDoesGC) {
                 if (Options::validateDoesGC()) {
                     // We need to mock what a Return does: claims to GC.
-                    m_jit.move(CCallHelpers::TrustedImmPtr(vm().heap.addressOfDoesGC()), GPRInfo::regT0);
-                    m_jit.store32(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized)), CCallHelpers::Address(GPRInfo::regT0));
+                    DoesGCCheck check;
+                    check.u.encoded = DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized);
+#if USE(JSVALUE64)
+                    m_jit.store64(CCallHelpers::TrustedImm64(check.u.encoded), vm().heap.addressOfDoesGC());
+#else
+                    m_jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm().heap.addressOfDoesGC()->u.other);
+                    m_jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm().heap.addressOfDoesGC()->u.nodeIndex);
+#endif
                 }
             }
 

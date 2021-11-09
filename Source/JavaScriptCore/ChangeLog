@@ -1,5 +1,80 @@
 2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r283207. rdar://problem/85173933
+
+    DoesGCCheck does not use enough bits for nodeIndex
+    https://bugs.webkit.org/show_bug.cgi?id=230915
+    <rdar://83297515>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/verify-can-gc-node-index.js: Added.
+    (gen):
+    (f):
+    
+    Source/JavaScriptCore:
+    
+    * dfg/DFGDoesGCCheck.h:
+    (JSC::DFG::DoesGCCheck::DoesGCCheck):
+    (JSC::DFG::DoesGCCheck::encode):
+    (JSC::DFG::DoesGCCheck::set):
+    (JSC::DFG::DoesGCCheck::expectDoesGC const):
+    (JSC::DFG::DoesGCCheck::isSpecial const):
+    (JSC::DFG::DoesGCCheck::special):
+    (JSC::DFG::DoesGCCheck::nodeOp):
+    (JSC::DFG::DoesGCCheck::nodeIndex):
+    * dfg/DFGOSRExit.cpp:
+    (JSC::DFG::OSRExit::compileExit):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileLoopHint):
+    * dfg/DFGSpeculativeJIT32_64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * dfg/DFGSpeculativeJIT64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    * ftl/FTLOSRExitCompiler.cpp:
+    (JSC::FTL::compileStub):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283207 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-28  Saam Barati  <sbarati@apple.com>
+
+            DoesGCCheck does not use enough bits for nodeIndex
+            https://bugs.webkit.org/show_bug.cgi?id=230915
+            <rdar://83297515>
+
+            Reviewed by Mark Lam.
+
+            * dfg/DFGDoesGCCheck.h:
+            (JSC::DFG::DoesGCCheck::DoesGCCheck):
+            (JSC::DFG::DoesGCCheck::encode):
+            (JSC::DFG::DoesGCCheck::set):
+            (JSC::DFG::DoesGCCheck::expectDoesGC const):
+            (JSC::DFG::DoesGCCheck::isSpecial const):
+            (JSC::DFG::DoesGCCheck::special):
+            (JSC::DFG::DoesGCCheck::nodeOp):
+            (JSC::DFG::DoesGCCheck::nodeIndex):
+            * dfg/DFGOSRExit.cpp:
+            (JSC::DFG::OSRExit::compileExit):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileLoopHint):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+            * ftl/FTLOSRExitCompiler.cpp:
+            (JSC::FTL::compileStub):
+
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r282821. rdar://problem/85167490
 
     Differential testing: live statement don't execute
