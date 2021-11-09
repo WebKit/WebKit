@@ -133,6 +133,9 @@
 /* BCPU(ARM64) */
 #if defined(__arm64__) || defined(__aarch64__)
 #define BCPU_ARM64 1
+#if defined(__arm64e__)
+#define BCPU_ARM64E 1
+#endif
 #endif
 
 /* BCPU(ARM) - ARM, any version*/
@@ -311,7 +314,8 @@
 
 /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
 #if !defined(BENABLE_LIBPAS)
-#if BPLATFORM(COCOA) && BCPU(ADDRESS64)
+/* Currently not enabling libpas on ARM64 (not ARM64E) due to performance reason. */
+#if BPLATFORM(COCOA) && BCPU(ADDRESS64) && (BCPU(X86_64) || BCPU(ARM64E))
 #define BENABLE_LIBPAS 1
 #else
 #define BENABLE_LIBPAS 0
