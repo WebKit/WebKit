@@ -1342,11 +1342,8 @@ public:
     void compileGetPrototypeOf(Node*);
     void compileIdentity(Node*);
     
-#if USE(JSVALUE32_64)
-    template<typename BaseOperandType, typename PropertyOperandType, typename ValueOperandType, typename TagType>
-    void compileContiguousPutByVal(Node*, BaseOperandType&, PropertyOperandType&, ValueOperandType&, GPRReg valuePayloadReg, TagType valueTag);
-#endif
-    void compileDoublePutByVal(Node*, SpeculateCellOperand& base, SpeculateStrictInt32Operand& property);
+    void compileContiguousPutByVal(Node*);
+    void compileDoublePutByVal(Node*);
     bool putByValWillNeedExtraRegister(ArrayMode arrayMode)
     {
         return arrayMode.mayStoreToHole();
@@ -1357,6 +1354,8 @@ public:
         return temporaryRegisterForPutByVal(temporary, node->arrayMode());
     }
     
+    void compilePutByVal(Node*);
+
     // We use a scopedLambda to placate register allocation validation.
     enum class CanUseFlush { Yes, No };
     void compileGetByVal(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
@@ -1447,13 +1446,13 @@ public:
     void compileGetTypedArrayByteOffsetAsInt52(Node*);
 #endif
     void compileGetByValOnIntTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
-    void compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
+    void compilePutByValForIntTypedArray(Node*, TypedArrayType);
     void compileGetByValOnFloatTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
-    void compilePutByValForFloatTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
+    void compilePutByValForFloatTypedArray(Node*, TypedArrayType);
     void compileGetByValForObjectWithString(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
     void compileGetByValForObjectWithSymbol(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
-    void compilePutByValForCellWithString(Node*, Edge& child1, Edge& child2, Edge& child3);
-    void compilePutByValForCellWithSymbol(Node*, Edge& child1, Edge& child2, Edge& child3);
+    void compilePutByValForCellWithString(Node*);
+    void compilePutByValForCellWithSymbol(Node*);
     void compileGetByValWithThis(Node*);
     void compilePutPrivateName(Node*);
     void compilePutPrivateNameById(Node*);

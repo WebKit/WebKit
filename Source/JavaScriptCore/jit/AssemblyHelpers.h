@@ -969,6 +969,15 @@ public:
 #endif
     }
 
+    Jump branchIfEmpty(BaseIndex address)
+    {
+#if USE(JSVALUE64)
+        return branchTest64(Zero, address);
+#else
+        return branch32(Equal, address.withOffset(TagOffset), TrustedImm32(JSValue::EmptyValueTag));
+#endif
+    }
+
     Jump branchIfEmpty(GPRReg gpr)
     {
 #if USE(JSVALUE64)
@@ -984,6 +993,15 @@ public:
         return branchIfEmpty(regs.gpr());
 #else
         return branchIfEmpty(regs.tagGPR());
+#endif
+    }
+
+    Jump branchIfNotEmpty(BaseIndex address)
+    {
+#if USE(JSVALUE64)
+        return branchTest64(NonZero, address);
+#else
+        return branch32(NotEqual, address.withOffset(TagOffset), TrustedImm32(JSValue::EmptyValueTag));
 #endif
     }
 

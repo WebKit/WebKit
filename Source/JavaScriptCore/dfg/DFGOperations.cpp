@@ -820,24 +820,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValNonStrict, void, (JSGlobalObject* glob
     putByValInternal<false, false>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationPutByValCellStrict, void, (JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<true, false>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationPutByValCellNonStrict, void, (JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<false, false>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
-}
-
 JSC_DEFINE_JIT_OPERATION(operationPutByValCellStringStrict, void, (JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue))
 {
     VM& vm = globalObject->vm();
@@ -994,24 +976,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValDirectNonStrict, void, (JSGlobalObject
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     putByValInternal<false, true>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationPutByValDirectCellStrict, void, (JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<true, true>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationPutByValDirectCellNonStrict, void, (JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<false, true>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByValDirectCellStringStrict, void, (JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue))

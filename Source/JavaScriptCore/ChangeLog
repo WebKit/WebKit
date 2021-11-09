@@ -1,3 +1,344 @@
+2021-11-09  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Refactoring and PutByVal cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=232265
+
+        Reviewed by Saam Barati.
+
+        Follow-up from https://bugs.webkit.org/show_bug.cgi?id=232242,
+        this patch includes several small code changes but the patch doesn't
+        add/remove any feature:
+
+        1. Removed several calls to operationPutByVal*Cell* that were
+        only used by the 32 bit code paths due to the lack of registers.
+        These calls were replaced by the calls used by the 64 bit paths,
+        that expect EncodedJSValues
+        2. Because of #1, this patch removes those methods, since no one
+        uses them anymore.
+        3. Created compilePutByVal to handle all cases (similar to compileGetByVal).
+        4. Removed the Edge& childX from the PutByVal handling (and all methods
+        that expected them) in favor of getting them from node when needed.
+        5. Unified compileContiguousPutByVal so it could be used by both 32
+        and 64 bit archs.
+        6. Removed a lot of whitespace.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compilePutByVal):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithString): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithSymbol): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateName): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateNameByVal): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateNameById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithString): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithSymbol): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetByValWithThis): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateName): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateNameById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckPrivateBrand): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSetPrivateBrand): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckTypeInfoFlags): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileParseInt): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileOverridesHasInstance): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForCells): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueBitNot): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileBitwiseNot): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitUntypedOrAnyBigIntBitOp): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueBitwiseOp): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileBitwiseOp): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueLShiftOp): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueBitRShift): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileShiftOp): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueAdd): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueSub): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMathIC): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfCustom): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsCellWithType): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsTypedArrayView): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToObjectOrCallObjectConstructor): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithAdd): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithAbs): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithClz32): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithDoubleUnaryOp): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithSub): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIncOrDec): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueNegate): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithNegate): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueMul): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithMul): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueDiv): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithDiv): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithFRound): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValueMod): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithMod): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithRounding): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithUnary): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithSqrt): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithMinMax): Deleted.
+        (JSC::DFG::compileArithPowIntegerFastPath): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileValuePow): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithPow): Deleted.
+        (JSC::DFG::SpeculativeJIT::compare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCompareUnsigned): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStrictEq): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileBooleanCompare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSymbolEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleSymbolEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitBitwiseJSValueEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitBranchOnBitwiseJSValueEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStringEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStringToUntypedEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStringIdentEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStringIdentToNotStringVarEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStringCompare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStringIdentCompare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSameValue): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToBooleanString): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToBooleanStringOrOther): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitStringBranch): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitStringOrOtherBranch): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileConstantStoragePointer): Deleted.
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetScope): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSkipScope): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetGlobalObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetGlobalThis): Deleted.
+        (JSC::DFG::SpeculativeJIT::canBeRope): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckIdent): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewFunction): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSetFunctionName): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileVarargsLength): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLoadVarargs): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileForwardVarargs): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetFromArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutToArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetArgument): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateScopedArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateClonedArguments): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateArgumentsButterfly): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateRest): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSpread): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetRestLength): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitPopulateSliceIndex): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArraySlice): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArrayPush): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNotifyWrite): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileTypeOfIsObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsCallable): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsConstructor): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileTypeOf): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitStructureCheck): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckIsConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckNotEmpty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckStructure): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNukeStructureAndSetButterfly): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetButterfly): Deleted.
+        (JSC::DFG::allocateTemporaryRegistersForSnippet): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCallDOM): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCheckJSCast): Deleted.
+        (JSC::DFG::SpeculativeJIT::temporaryRegisterForPutByVal): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf): Deleted.
+        (JSC::DFG::getExecutable): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileFunctionToString): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNumberToStringWithValidRadixConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNumberToStringWithRadix): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewStringObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewSymbol): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitNewTypedArrayWithSizeInRegister): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewRegexp): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateCellTypeWithoutTypeFiltering): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateCellType): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateInt32): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNumber): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateRealNumber): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepReal): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateBoolean): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateCell): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateCellOrOther): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateFunction): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateFinalObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateRegExpObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateProxyObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateDerivedArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculatePromiseObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateDateObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateMapObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateSetObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateWeakMapObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateWeakSetObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateDataViewObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateString): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateStringOrOther): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateStringIdent): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateStringObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNotStringVar): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNotSymbol): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateSymbol): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateHeapBigInt): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNotCell): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNotCellNorBigInt): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNotDouble): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigInt): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateOther): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateMisc): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculate): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitBinarySwitchStringRecurse): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitSwitchString): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitSwitch): Deleted.
+        (JSC::DFG::SpeculativeJIT::addBranch): Deleted.
+        (JSC::DFG::SpeculativeJIT::linkBranches): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutGetterSetterById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileResolveScope): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileResolveScopeForHoistingFuncDeclInEval): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetGlobalVariable): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutGlobalVariable): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetDynamicVar): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutDynamicVar): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetClosureVar): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutClosureVar): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetInternalField): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutInternalField): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorByVal): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetRegExpObjectLastIndex): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSetRegExpObjectLastIndex): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileRegExpTest): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStringReplace): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileRegExpExecNonGlobalOrSticky): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileRegExpMatchFastGlobal): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileRegExpMatchFast): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLazyJSConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMaterializeNewObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileRecordRegExpCachedResult): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDefineDataProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDefineAccessorProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitAllocateButterfly): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetMapBucketHead): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetMapBucketNext): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLoadKeyFromMapBucket): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLoadValueFromMapBucket): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileExtractValueFromWeakMapGet): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileThrow): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileThrowStaticError): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextUpdateIndexAndMode): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextExtractIndex): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextExtractMode): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextUpdatePropertyName): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorInByVal): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasOwnProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutByIdFlush): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutByIdDirect): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutByIdWithThis): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetByOffset): Deleted.
+        (JSC::DFG::SpeculativeJIT::compilePutByOffset): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMatchStructure): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetPropertyEnumerator): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetExecutable): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetGetter): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetSetter): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetCallee): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSetCallee): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentCountIncludingThis): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSetArgumentCountIncludingThis): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileStrCat): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewArrayBuffer): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSize): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToThis): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileObjectKeysOrObjectGetOwnPropertyNames): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileObjectAssign): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileObjectCreate): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateThis): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreatePromise): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateInternalFieldObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateGenerator): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCreateAsyncGenerator): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewInternalFieldObjectImpl): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewGenerator): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewAsyncGenerator): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileNewInternalFieldObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToPrimitive): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToPropertyKey): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToNumeric): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCallNumberConstructor): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogShadowChickenPrologue): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogShadowChickenTail): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileSetAdd): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMapSet): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileWeakMapGet): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileWeakSetAdd): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileWeakMapSet): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetPrototypeOf): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIdentity): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitInitializeButterfly): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileExtractCatchLocal): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileClearCatchLocals): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileProfileType): Deleted.
+        (JSC::DFG::SpeculativeJIT::cachedPutById): Deleted.
+        (JSC::DFG::SpeculativeJIT::genericJSValueNonPeepholeCompare): Deleted.
+        (JSC::DFG::SpeculativeJIT::genericJSValuePeepholeBranch): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileHeapBigIntEquality): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMakeRope): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfEmpty):
+        (JSC::AssemblyHelpers::branchIfNotEmpty):
+
 2021-11-09  Saam Barati  <sbarati@apple.com>
 
         When inlining NewSymbol in the DFG don't universally call ToString on the input
