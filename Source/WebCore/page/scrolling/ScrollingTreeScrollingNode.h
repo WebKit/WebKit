@@ -132,6 +132,8 @@ protected:
 
     void willStartAnimatedScroll();
     void didStopAnimatedScroll();
+
+    bool momentumScrollingAnimatorEnabled() const;
     
     void setScrollAnimationInProgress(bool);
 

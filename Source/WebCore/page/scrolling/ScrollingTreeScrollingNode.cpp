@@ -225,6 +225,11 @@ void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
     scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
 }
 
+bool ScrollingTreeScrollingNode::momentumScrollingAnimatorEnabled() const
+{
+    return scrollingTree().momentumScrollingAnimatorEnabled();
+}
+
 void ScrollingTreeScrollingNode::willStartAnimatedScroll()
 {
 }

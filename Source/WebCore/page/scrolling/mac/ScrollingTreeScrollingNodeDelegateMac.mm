@@ -442,6 +442,11 @@ void ScrollingTreeScrollingNodeDelegateMac::releaseReferencesToScrollerImpsOnThe
     }
 }
 
+bool ScrollingTreeScrollingNodeDelegateMac::momentumScrollingAnimatorEnabled() const
+{
+    return scrollingNode().momentumScrollingAnimatorEnabled();
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)

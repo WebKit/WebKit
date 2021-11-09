@@ -120,6 +120,8 @@ public:
     virtual float pageScaleFactor() const = 0;
     virtual ScrollExtents scrollExtents() const = 0;
     virtual bool scrollAnimationEnabled() const { return true; }
+
+    virtual bool momentumScrollingAnimatorEnabled() const { return false; }
 };
 
 class ScrollingEffectsController : public ScrollAnimationClient {

@@ -149,6 +149,7 @@ template<> struct EnumTraits<WebCore::ScrollingStateNode::Property> {
         WebCore::ScrollingStateNode::Property::FixedElementsLayoutRelativeToFrame,
         WebCore::ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport,
         WebCore::ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled,
+        WebCore::ScrollingStateNode::Property::MomentumScrollingAnimatorEnabled,
         WebCore::ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking,
         WebCore::ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled,
         WebCore::ScrollingStateNode::Property::LayoutViewport,
@@ -251,6 +252,7 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::MinLayoutViewportOrigin, minLayoutViewportOrigin)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::MaxLayoutViewportOrigin, maxLayoutViewportOrigin)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::OverrideVisualViewportSize, overrideVisualViewportSize)
+    // MomentumScrollingAnimatorEnabled is not relevant for UI-side compositing.
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer());
@@ -365,6 +367,7 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::MinLayoutViewportOrigin, FloatPoint, setMinLayoutViewportOrigin)
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::MaxLayoutViewportOrigin, FloatPoint, setMaxLayoutViewportOrigin)
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::OverrideVisualViewportSize, std::optional<FloatSize>, setOverrideVisualViewportSize)
+    // MomentumScrollingAnimatorEnabled is not encoded.
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer)) {
         GraphicsLayer::PlatformLayerID layerID;

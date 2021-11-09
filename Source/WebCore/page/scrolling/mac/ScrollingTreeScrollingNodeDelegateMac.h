@@ -93,6 +93,8 @@ private:
     void rubberBandingStateChanged(bool) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
 
+    bool momentumScrollingAnimatorEnabled() const final;
+
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
 
     FloatPoint scrollOffset() const final;
