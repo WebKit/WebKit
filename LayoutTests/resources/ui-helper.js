@@ -108,14 +108,15 @@ window.UIHelper = class UIHelper {
         await UIHelper.animationFrame();
     }
 
-    static async mouseWheelSequence(eventStream)
+    static async mouseWheelSequence(eventStream, { waitForCompletion = true } = {})
     {
         if (!this.isWebKit2()) {
             console.log('UIHelper.mouseWheelSequence() does not work in DumpRenderTree')
             return Promise.resolve();
         }
 
-        eventSender.monitorWheelEvents();
+        if (waitForCompletion)
+            eventSender.monitorWheelEvents();
         const eventStreamAsString = JSON.stringify(eventStream);
         await new Promise(resolve => {
             testRunner.runUIScript(`
@@ -127,7 +128,8 @@ window.UIHelper = class UIHelper {
             `, resolve);
         });
 
-        await UIHelper.waitForScrollCompletion();
+        if (waitForCompletion)
+            await UIHelper.waitForScrollCompletion();
     }
 
     static async waitForScrollCompletion()

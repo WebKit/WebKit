@@ -60,18 +60,40 @@
 
     async function scrollTest()
     {
-        eventSender.mouseMoveTo(100, 100);
+        const events = [
+            {
+                type : "wheel",
+                viewX : 100,
+                viewY : 100,
+                deltaX : -10,
+                phase : "began"
+            },
+            {
+                type : "wheel",
+                deltaX : -100,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                phase : "ended"
+            },
+            {
+                type : "wheel",
+                deltaX : -100,
+                momentumPhase : "began"
+            },
+            {
+                type : "wheel",
+                deltaX : -100,
+                momentumPhase : "changed"
+            },
+            {
+                type : "wheel",
+                momentumPhase : "ended"
+            }
+        ];
 
-        // Sideways scroll.
-        eventSender.monitorWheelEvents();
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'begin');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'continue');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        await UIHelper.waitForScrollCompletion();
-
+        await UIHelper.mouseWheelSequence({ events });
         checkForScroll();
     }
 

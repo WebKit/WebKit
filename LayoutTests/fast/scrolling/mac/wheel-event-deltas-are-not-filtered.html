@@ -8,17 +8,52 @@
 
         async function dispatchWheelEvents()
         {
-            eventSender.monitorWheelEvents();
-            eventSender.mouseMoveTo(100, 100);
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 100,
+                    viewY : 100,
+                    deltaX : 10,
+                    deltaY : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaX : 10,
+                    deltaY : -20,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaX : 10,
+                    deltaY : -10,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    viewX : 101, // Defeat coalescing
+                    deltaX : 10,
+                    deltaY : -20,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 102, // Defeat coalescing
+                    deltaX : 20,
+                    deltaY : -30,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
 
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -1, "began", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -1, "none", "begin");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "none", "continue");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(2, -3, "none", "continue");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-            await UIHelper.waitForScrollCompletion();
+            await UIHelper.mouseWheelSequence({ events });
             finishJSTest();
         }
 
