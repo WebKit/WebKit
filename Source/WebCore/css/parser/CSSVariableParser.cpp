@@ -32,6 +32,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserContext.h"
+#include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 
@@ -161,7 +162,7 @@ static CSSValueID classifyVariableRange(CSSParserTokenRange range, bool& hasRefe
     range.consumeWhitespace();
     if (range.peek().type() == IdentToken) {
         CSSValueID id = range.consumeIncludingWhitespace().id();
-        if (range.atEnd() && (id == CSSValueInherit || id == CSSValueInitial || id == CSSValueUnset || id == CSSValueRevert))
+        if (range.atEnd() && isCSSWideKeyword(id))
             return id;
     }
 

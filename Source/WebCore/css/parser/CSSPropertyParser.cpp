@@ -4565,8 +4565,7 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
         m_range.consumeWhitespace();
 
         // First check for keywords
-        CSSValueID id = m_range.peek().id();
-        if (id == CSSValueInherit || id == CSSValueInitial || id == CSSValueRevert)
+        if (isCSSWideKeyword(m_range.peek().id()))
             return true;
 
         auto localRange = m_range;
