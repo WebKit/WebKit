@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html, body {
+    font-size: 16px;
+}
+
+#target {
+    width: 150px;
+    height: 150px;
+    background-color: tomato;
+    -webkit-user-select: none;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that long pressing an element with <code>-webkit-user-select: none;</code> does not begin a text selection gesture. To manually run the test, long press the square below and verify that no text is selected.");
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.longPressElement(document.getElementById("target"));
+    shouldBeEqualToString("getSelection().toString()", "");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<p>Hello world</p>
+<div id="target"></div>
+</body>
+</html>
