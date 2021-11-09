@@ -488,40 +488,35 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
     // Every comma-separated list of identifiers is a valid will-change value,
     // unless the list includes an explicitly disallowed identifier.
-    while (true) {
-        if (range.peek().type() != IdentToken)
+    while (!range.atEnd()) {
+        switch (range.peek().id()) {
+        case CSSValueContents:
+        case CSSValueScrollPosition:
+            values->append(consumeIdent(range).releaseNonNull());
+            break;
+        case CSSValueNone:
+        case CSSValueAll:
+        case CSSValueAuto:
             return nullptr;
-        CSSPropertyID propertyID = cssPropertyID(range.peek().value());
-        if (propertyID != CSSPropertyInvalid) {
-            // Now "all" is used by both CSSValue and CSSPropertyValue.
-            // Need to return nullptr when currentValue is CSSPropertyAll.
-            if (propertyID == CSSPropertyWillChange || propertyID == CSSPropertyAll)
+        default:
+            CSSPropertyID propertyID = cssPropertyID(range.peek().value());
+            if (propertyID == CSSPropertyWillChange)
                 return nullptr;
-            values->append(CSSValuePool::singleton().createIdentifierValue(propertyID));
-            range.consumeIncludingWhitespace();
-        } else {
-            auto id = range.peek().id();
-            switch (id) {
-            case CSSValueNone:
-            case CSSValueAll:
-            case CSSValueAuto:
-                return nullptr;
-            case CSSValueContents:
-            case CSSValueScrollPosition:
-                values->append(consumeIdent(range).releaseNonNull());
-                break;
-            default:
-                if (!isValidCustomIdentifier(id))
-                    return nullptr;
-                // Append properties we don't recognize, but that are legal, as strings.
-                values->append(consumeCustomIdent(range).releaseNonNull());
+            if (propertyID != CSSPropertyInvalid) {
+                values->append(CSSValuePool::singleton().createIdentifierValue(propertyID));
+                range.consumeIncludingWhitespace();
                 break;
             }
+            if (auto customIdent = consumeCustomIdent(range)) {
+                // Append properties we don't recognize, but that are legal, as strings.
+                values->append(customIdent.releaseNonNull());
+                break;
+            }
+            return nullptr;
         }
 
-        if (range.atEnd())
-            break;
-        if (!consumeCommaIncludingWhitespace(range))
+        // This is a comma separated list
+        if (!range.atEnd() && !consumeCommaIncludingWhitespace(range))
             return nullptr;
     }
 
