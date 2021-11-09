@@ -1,3 +1,22 @@
+2021-11-09  Rob Buis  <rbuis@igalia.com>
+
+        Import css/css-sizing/aspect-ratio tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=232783
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import based on SHA d91cc9b3a0.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-002.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-004.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-031-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-031.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-032-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-032.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-033-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-033.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         Ignore BroadcastChannel::postMessage from detached iframe / closing worker contexts
