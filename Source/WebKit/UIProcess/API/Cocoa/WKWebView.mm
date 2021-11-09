@@ -1763,7 +1763,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     if (![readAccessURL isFileURL])
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
 
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
+    bool isAppInitiated = true;
+#if ENABLE(APP_PRIVACY_REPORT)
+    isAppInitiated = request.attribution == NSURLRequestAttributionDeveloper;
+#endif
+
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString, isAppInitiated));
 }
 
 - (CocoaColor *)themeColor

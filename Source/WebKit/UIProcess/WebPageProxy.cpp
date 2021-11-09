@@ -1422,7 +1422,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     process->startResponsivenessTimer();
 }
 
-RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, API::Object* userData)
+RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, bool isAppInitiated, API::Object* userData)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadFile:");
 
@@ -1467,9 +1467,13 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
     m_pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), fileURLString }, resourceDirectoryURL);
 
+    auto request = ResourceRequest(fileURL);
+    request.setIsAppInitiated(isAppInitiated);
+    m_lastNavigationWasAppInitiated = isAppInitiated;
+
     LoadParameters loadParameters;
     loadParameters.navigationID = navigation->navigationID();
-    loadParameters.request = fileURL;
+    loadParameters.request = WTFMove(request);
     loadParameters.shouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     const bool checkAssumedReadAccessToResourceURL = false;
