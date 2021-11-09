@@ -1,3 +1,31 @@
+2021-11-08  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Remove non-platform code form the FEImage class
+        https://bugs.webkit.org/show_bug.cgi?id=232369
+        rdar://84966765
+
+        Reviewed by Simon Fraser.
+
+        * fast/shadow-dom/svg-feimage-href-in-shadow-tree.html:
+        The default primitive subregion of <feImage> is { -10%, -10%, 120%, 120% }
+        of the bounding box. So the filter result will be shifted (-10, -10) of
+        this test case if we do not specify the 'x' and then 'y' attributes.
+        Unlike the Image based feImage, the default behavior is to display the
+        ImageBuffer of the element with its logical size otherwise the drawing
+        will be pixelated if we try to fill the whole primitive subregion. To
+        make this test page matches its expected page, we need to specify the 'x'
+        and the 'y' attributes of the <feImage> to be zeros.
+
+        With and without specifying the 'x' and the 'y' attributes, the drawing
+        with this patch matches the drawing of this test page in other browsers.
+
+        * svg/filters/feImage-change-target-id-expected.txt:
+        * svg/filters/feImage-element-primitive-subregion-expected.svg: Added.
+        * svg/filters/feImage-element-primitive-subregion.svg: Added.
+        * svg/filters/feImage-image-primitive-subregion-expected.svg: Added.
+        * svg/filters/feImage-image-primitive-subregion.svg: Added.
+        * svg/filters/feImage-remove-target-expected.txt:
+
 2021-11-08  Patrick Griffis  <pgriffis@igalia.com>
 
         Implement nonce-hiding

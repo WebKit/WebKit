@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <rect id="red-rectangle" x="-100" y="-100" width="200" height="200" fill="red"/>
+        <path id="green-triangle" d="M 0 0 L 150 0 L 150 150 z" fill="green"/>
+        <path id="blue-triangle"  d="M 0 0 L 0 150 L 150 0 z" fill="blue"/>
+        <clipPath id="square-clip">
+            <rect width="100" height="100"/>
+        </clipPath>
+    </defs>
+    <g>
+        <g transform="translate(50, 50)">
+            <use clip-path="url(#square-clip)" href="#red-rectangle" />
+        </g>
+
+        <g transform="translate(200, 50)">
+            <use clip-path="url(#square-clip)" href="#green-triangle" />
+        </g>
+
+        <g transform="translate(350, 50)">
+            <use clip-path="url(#square-clip)" href="#blue-triangle" />
+        </g>
+    </g>
+</svg>
