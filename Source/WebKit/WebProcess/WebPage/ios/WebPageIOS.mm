@@ -105,6 +105,7 @@
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLSummaryElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
+#import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/InputMode.h>
@@ -129,6 +130,7 @@
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderThemeIOS.h>
+#import <WebCore/RenderVideo.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -2785,6 +2787,38 @@ static std::optional<std::pair<RenderImage&, Image&>> imageRendererAndImage(Elem
     return {{ renderImage, *image }};
 }
 
+static void videoPositionInformation(WebPage& page, HTMLVideoElement& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    if (!element.paused())
+        return;
+
+    auto renderVideo = element.renderer();
+    if (!renderVideo)
+        return;
+
+    info.isPausedVideo = true;
+
+    if (request.includeImageData)
+        info.image = createShareableBitmap(*renderVideo);
+
+    info.hostImageOrVideoElementContext = page.contextForElement(element);
+}
+
+static RefPtr<HTMLVideoElement> hostVideoElementIgnoringImageOverlay(Node& node)
+{
+    if (HTMLElement::isInsideImageOverlay(node))
+        return { };
+
+    if (is<HTMLVideoElement>(node))
+        return downcast<HTMLVideoElement>(&node);
+
+    RefPtr shadowHost = node.shadowHost();
+    if (!is<HTMLVideoElement>(shadowHost.get()))
+        return { };
+
+    return downcast<HTMLVideoElement>(shadowHost.get());
+}
+
 static void imagePositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     auto rendererAndImage = imageRendererAndImage(element);
@@ -2799,7 +2833,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     if (request.includeSnapshot || request.includeImageData)
         info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
 
-    info.imageElementContext = page.contextForElement(element);
+    info.hostImageOrVideoElementContext = page.contextForElement(element);
 }
 
 static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)
@@ -2863,8 +2897,12 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
                 }
             }
         }
-        if (shouldCollectImagePositionInformation)
-            imagePositionInformation(page, element, request, info);
+        if (shouldCollectImagePositionInformation) {
+            if (auto video = hostVideoElementIgnoringImageOverlay(element))
+                videoPositionInformation(page, *video, request, info);
+            else
+                imagePositionInformation(page, element, request, info);
+        }
         boundsPositionInformation(*renderer, info);
     }
 
@@ -3100,8 +3138,12 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
             info.image = shareableBitmapSnapshotForNode(element);
     }
 
-    if (!info.isImage && request.includeImageData && is<HTMLImageElement>(hitTestNode))
-        imagePositionInformation(*this, downcast<HTMLImageElement>(*hitTestNode), request, info);
+    if (!info.isImage && request.includeImageData) {
+        if (auto video = hostVideoElementIgnoringImageOverlay(*hitTestNode))
+            videoPositionInformation(*this, *video, request, info);
+        else if (is<HTMLImageElement>(hitTestNode))
+            imagePositionInformation(*this, downcast<HTMLImageElement>(*hitTestNode), request, info);
+    }
 
     selectionPositionInformation(*this, request, info);
 

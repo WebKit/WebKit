@@ -2885,7 +2885,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (_elementPendingImageAnalysis && _positionInformation.imageElementContext == _elementPendingImageAnalysis)
+    if (_elementPendingImageAnalysis && _positionInformation.hostImageOrVideoElementContext == _elementPendingImageAnalysis)
         return YES;
 #endif
 
@@ -2966,7 +2966,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (_elementPendingImageAnalysis && _positionInformation.imageElementContext == _elementPendingImageAnalysis)
+    if (_elementPendingImageAnalysis && _positionInformation.hostImageOrVideoElementContext == _elementPendingImageAnalysis)
         return YES;
 #endif
 
@@ -10193,7 +10193,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
             if (!information.image)
                 return false;
 
-            if (!information.imageElementContext)
+            if (!information.hostImageOrVideoElementContext)
                 return false;
 
             if (information.isAnimatedImage)
@@ -10218,10 +10218,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
         RELEASE_LOG(Images, "Image analysis preflight gesture initiated (request %" PRIu64 ").", requestIdentifier.toUInt64());
 
-        strongSelf->_elementPendingImageAnalysis = information.imageElementContext;
+        strongSelf->_elementPendingImageAnalysis = information.hostImageOrVideoElementContext;
 
         auto requestLocation = information.request.point;
-        WebCore::ElementContext elementContext = *information.imageElementContext;
+        WebCore::ElementContext elementContext = *information.hostImageOrVideoElementContext;
 
         auto requestForTextSelection = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
         auto requestForContextMenu = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:cgImage.get()];
