@@ -5066,7 +5066,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/grammar-spell
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/grammar-spelling-errors-002.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-001.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-002.html [ ImageOnlyFailure ]
-webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-animate-002.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-024.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-hyphens.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-letter-spacing.html [ ImageOnlyFailure ]
