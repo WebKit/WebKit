@@ -505,6 +505,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         || style.hasClip()
         || style.clipPath()
         || style.hasFilter()
+        || style.hasIsolation()
+        || style.hasMask()
 #if ENABLE(FILTERS_LEVEL_2)
         || style.hasBackdropFilter()
 #endif

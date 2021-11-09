@@ -1,0 +1,7 @@
+PASS nonflat.getBoundingClientRect().width is nonflatWidth
+PASS document.getElementById('webkit-mask-box-image').getBoundingClientRect().width is not nonflatWidth
+PASS document.getElementById('webkit-mask-box-image-source').getBoundingClientRect().width is not nonflatWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
