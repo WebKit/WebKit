@@ -23,19 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "RenderPipeline.h"
 
-#import "WebGPU.h"
+#import "BindGroupLayout.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
-};
-
+BindGroupLayout RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
+{
+    UNUSED_PARAM(groupIndex);
+    return { };
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
-};
+void RenderPipeline::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
+} // namespace WebGPU
+
+void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
+{
+    delete renderPipeline;
+}
+
+WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
+{
+    return new WGPUBindGroupLayoutImpl { renderPipeline->renderPipeline.getBindGroupLayout(groupIndex) };
+}
+
+void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* label)
+{
+    renderPipeline->renderPipeline.setLabel(label);
+}
+

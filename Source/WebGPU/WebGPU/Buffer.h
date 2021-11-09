@@ -26,16 +26,21 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <functional>
 
 namespace WebGPU {
 
-class ShaderModule {
+class Buffer {
 public:
-    void setLabel(const char*);
+    void destroy();
+    const void* getConstMappedRange(size_t offset, size_t);
+    void* getMappedRange(size_t offset, size_t);
+    void mapAsync(WGPUMapModeFlags, size_t offset, size_t, std::function<void(WGPUBufferMapAsyncStatus)>&& callback);
+    void unmap();
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUBufferImpl {
+    WebGPU::Buffer buffer;
 };

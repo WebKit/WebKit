@@ -29,13 +29,12 @@
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
+class PipelineLayout {
+
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUPipelineLayoutImpl {
+    WebGPU::PipelineLayout pipelineLayout;
 };

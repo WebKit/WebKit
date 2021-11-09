@@ -29,13 +29,29 @@
 
 namespace WebGPU {
 
-class ShaderModule {
+class BindGroup;
+class Buffer;
+class RenderBundle;
+class RenderPipeline;
+
+class RenderBundleEncoder {
 public:
-    void setLabel(const char*);
+    void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
+    void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
+    void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
+    void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
+    RenderBundle finish(const WGPURenderBundleDescriptor*);
+    void insertDebugMarker(const char* markerLabel);
+    void popDebugGroup();
+    void pushDebugGroup(const char* groupLabel);
+    void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
+    void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
+    void setPipeline(const RenderPipeline&);
+    void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPURenderBundleEncoderImpl {
+    WebGPU::RenderBundleEncoder renderBundleEncoder;
 };

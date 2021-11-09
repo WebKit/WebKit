@@ -398,7 +398,8 @@ _SKIPPED_FILES_WITH_WARNING = [
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'webkit-web-extension.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'webkit-web-extension.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'DOM', 'webkitdom.h'),
-    os.path.join('Source', 'WebGPU', 'WebGPU', 'WebGPU.h')]
+    os.path.join('Source', 'WebGPU', 'WebGPU', 'WebGPU.h'),
+    os.path.join('Source', 'WebGPU', 'WebGPU', 'WebGPUExt.h')]
 
 # Files to skip that are more common or obvious.
 #

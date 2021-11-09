@@ -23,19 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "QuerySet.h"
 
-#import "WebGPU.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
-};
-
+void QuerySet::destroy()
+{
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
-};
+} // namespace WebGPU
+
+void wgpuQuerySetRelease(WGPUQuerySet querySet)
+{
+    delete querySet;
+}
+
+void wgpuQuerySetDestroy(WGPUQuerySet querySet)
+{
+    querySet->querySet.destroy();
+}
+

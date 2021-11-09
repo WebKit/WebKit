@@ -29,13 +29,16 @@
 
 namespace WebGPU {
 
-class ShaderModule {
+class TextureView;
+
+class Texture {
 public:
-    void setLabel(const char*);
+    TextureView createView(const WGPUTextureViewDescriptor*);
+    void destroy();
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUTextureImpl {
+    WebGPU::Texture texture;
 };

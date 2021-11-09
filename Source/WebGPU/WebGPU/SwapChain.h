@@ -29,13 +29,16 @@
 
 namespace WebGPU {
 
-class ShaderModule {
+class TextureView;
+
+class SwapChain {
 public:
-    void setLabel(const char*);
+    TextureView getCurrentTextureView();
+    void present();
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUSwapChainImpl {
+    WebGPU::SwapChain swapChain;
 };

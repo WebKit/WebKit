@@ -29,13 +29,15 @@
 
 namespace WebGPU {
 
-class ShaderModule {
+class Adapter;
+
+class Surface {
 public:
-    void setLabel(const char*);
+    WGPUTextureFormat getPreferredFormat(const Adapter&);
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUSurfaceImpl {
+    WebGPU::Surface surface;
 };

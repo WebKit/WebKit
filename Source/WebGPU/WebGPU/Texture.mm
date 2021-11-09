@@ -23,19 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "Texture.h"
 
-#import "WebGPU.h"
+#import "TextureView.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
-};
-
+TextureView Texture::createView(const WGPUTextureViewDescriptor* descriptor)
+{
+    UNUSED_PARAM(descriptor);
+    return { };
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
-};
+void Texture::destroy()
+{
+}
+
+} // namespace WebGPU
+
+void wgpuTextureRelease(WGPUTexture texture)
+{
+    delete texture;
+}
+
+WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
+{
+    return new WGPUTextureViewImpl { texture->texture.createView(descriptor) };
+}
+
+void wgpuTextureDestroy(WGPUTexture texture)
+{
+    texture->texture.destroy();
+}
+

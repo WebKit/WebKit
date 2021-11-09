@@ -23,19 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "RenderBundle.h"
 
-#import "WebGPU.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
-};
-
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
-};
+void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
+{
+    delete renderBundle;
+}

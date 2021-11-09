@@ -29,13 +29,16 @@
 
 namespace WebGPU {
 
-class ShaderModule {
+class BindGroupLayout;
+
+class RenderPipeline {
 public:
+    BindGroupLayout getBindGroupLayout(uint32_t groupIndex);
     void setLabel(const char*);
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPURenderPipelineImpl {
+    WebGPU::RenderPipeline renderPipeline;
 };

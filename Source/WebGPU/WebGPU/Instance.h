@@ -26,16 +26,22 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <functional>
 
 namespace WebGPU {
 
-class ShaderModule {
+class Adapter;
+class Surface;
+
+class Instance {
 public:
-    void setLabel(const char*);
+    Surface createSurface(const WGPUSurfaceDescriptor*);
+    void processEvents();
+    void requestAdapter(const WGPURequestAdapterOptions*, std::function<void(WGPURequestAdapterStatus, Adapter&&, const char*)>&& callback);
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUInstanceImpl {
+    WebGPU::Instance instance;
 };

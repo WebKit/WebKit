@@ -23,16 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPU.h"
+#pragma once
 
-#include "ShaderModule.h"
-#include <WGSL.h>
+#import "WebGPU.h"
 
-WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice, WGPUShaderModuleDescriptor const *)
-{
-    ASSERT_NOT_REACHED();
-    WGSL::check(StringImpl::empty(), std::nullopt);
-    return new WGPUShaderModuleImpl;
+namespace WebGPU {
+
+class RenderBundle {
+
+};
+
 }
 
+struct WGPURenderBundleImpl {
+    WebGPU::RenderBundle renderBundle;
+};

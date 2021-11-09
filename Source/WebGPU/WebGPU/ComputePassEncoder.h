@@ -29,13 +29,28 @@
 
 namespace WebGPU {
 
-class ShaderModule {
+class BindGroup;
+class Buffer;
+class ComputePipeline;
+class QuerySet;
+
+class ComputePassEncoder {
 public:
-    void setLabel(const char*);
+    void beginPipelineStatisticsQuery(const QuerySet&, uint32_t queryIndex);
+    void dispatch(uint32_t x, uint32_t y, uint32_t z);
+    void dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
+    void endPass();
+    void endPipelineStatisticsQuery();
+    void insertDebugMarker(const char* markerLabel);
+    void popDebugGroup();
+    void pushDebugGroup(const char* groupLabel);
+    void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
+    void setPipeline(const ComputePipeline&);
+    void writeTimestamp(const QuerySet&, uint32_t queryIndex);
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUComputePassEncoderImpl {
+    WebGPU::ComputePassEncoder computePassEncoder;
 };

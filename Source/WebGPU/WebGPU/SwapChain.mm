@@ -24,13 +24,36 @@
  */
 
 #import "config.h"
-#import "WebGPUObjC.h"
+#import "SwapChain.h"
 
-#import <Metal/Metal.h>
+#import "TextureView.h"
+#import "WebGPUExt.h"
 
-void objcFunction()
+namespace WebGPU {
+
+TextureView SwapChain::getCurrentTextureView()
 {
-    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
-    UNUSED_VARIABLE(device);
+    return { };
+}
+
+void SwapChain::present()
+{
+}
+
+} // namespace WebGPU
+
+void wgpuSwapChainRelease(WGPUSwapChain swapChain)
+{
+    delete swapChain;
+}
+
+WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
+{
+    return new WGPUTextureViewImpl { swapChain->swapChain.getCurrentTextureView() };
+}
+
+void wgpuSwapChainPresent(WGPUSwapChain swapChain)
+{
+    swapChain->swapChain.present();
 }
 

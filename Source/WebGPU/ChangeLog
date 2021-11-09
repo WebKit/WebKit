@@ -1,3 +1,304 @@
+2021-11-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Stub out methods in WebGPU.framework
+        https://bugs.webkit.org/show_bug.cgi?id=232872
+
+        Reviewed by Dean Jackson.
+
+        This creates empty implementations for all the methods in WebGPU.framework.
+        This means that there are now implementations for every API call, so PAL
+        can successfully call into WebGPU.framework and link with it.
+
+        * Configurations/Version.xcconfig: Added.
+        * Configurations/WebGPU.xcconfig:
+        * WebGPU.xcodeproj/project.pbxproj:
+        * WebGPU/Adapter.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/Adapter.mm: Added.
+        (WebGPU::Adapter::getLimits):
+        (WebGPU::Adapter::getProperties):
+        (WebGPU::Adapter::hasFeature):
+        (WebGPU::Adapter::requestDevice):
+        (wgpuAdapterRelease):
+        (wgpuAdapterGetLimits):
+        (wgpuAdapterGetProperties):
+        (wgpuAdapterHasFeature):
+        (wgpuAdapterRequestDevice):
+        * WebGPU/BindGroup.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/BindGroup.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (wgpuBindGroupRelease):
+        * WebGPU/BindGroupLayout.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/BindGroupLayout.mm: Renamed from Source/WebGPU/WebGPU/WebGPU.cpp.
+        (wgpuBindGroupLayoutRelease):
+        * WebGPU/Buffer.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/Buffer.mm: Added.
+        (WebGPU::Buffer::destroy):
+        (WebGPU::Buffer::getConstMappedRange):
+        (WebGPU::Buffer::getMappedRange):
+        (WebGPU::Buffer::mapAsync):
+        (WebGPU::Buffer::unmap):
+        (wgpuBufferRelease):
+        (wgpuBufferDestroy):
+        (wgpuBufferGetConstMappedRange):
+        (wgpuBufferGetMappedRange):
+        (wgpuBufferMapAsync):
+        (wgpuBufferUnmap):
+        * WebGPU/CommandBuffer.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/CommandBuffer.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (wgpuCommandBufferRelease):
+        * WebGPU/CommandEncoder.h: Added.
+        * WebGPU/CommandEncoder.mm: Added.
+        (WebGPU::CommandEncoder::beginComputePass):
+        (WebGPU::CommandEncoder::beginRenderPass):
+        (WebGPU::CommandEncoder::copyBufferToBuffer):
+        (WebGPU::CommandEncoder::copyBufferToTexture):
+        (WebGPU::CommandEncoder::copyTextureToBuffer):
+        (WebGPU::CommandEncoder::copyTextureToTexture):
+        (WebGPU::CommandEncoder::finish):
+        (WebGPU::CommandEncoder::insertDebugMarker):
+        (WebGPU::CommandEncoder::popDebugGroup):
+        (WebGPU::CommandEncoder::pushDebugGroup):
+        (WebGPU::CommandEncoder::resolveQuerySet):
+        (WebGPU::CommandEncoder::writeTimestamp):
+        (wgpuCommandEncoderRelease):
+        (wgpuCommandEncoderBeginComputePass):
+        (wgpuCommandEncoderBeginRenderPass):
+        (wgpuCommandEncoderCopyBufferToBuffer):
+        (wgpuCommandEncoderCopyBufferToTexture):
+        (wgpuCommandEncoderCopyTextureToBuffer):
+        (wgpuCommandEncoderCopyTextureToTexture):
+        (wgpuCommandEncoderFinish):
+        (wgpuCommandEncoderInsertDebugMarker):
+        (wgpuCommandEncoderPopDebugGroup):
+        (wgpuCommandEncoderPushDebugGroup):
+        (wgpuCommandEncoderResolveQuerySet):
+        (wgpuCommandEncoderWriteTimestamp):
+        * WebGPU/ComputePassEncoder.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/ComputePassEncoder.mm: Added.
+        (WebGPU::ComputePassEncoder::beginPipelineStatisticsQuery):
+        (WebGPU::ComputePassEncoder::dispatch):
+        (WebGPU::ComputePassEncoder::dispatchIndirect):
+        (WebGPU::ComputePassEncoder::endPass):
+        (WebGPU::ComputePassEncoder::endPipelineStatisticsQuery):
+        (WebGPU::ComputePassEncoder::insertDebugMarker):
+        (WebGPU::ComputePassEncoder::popDebugGroup):
+        (WebGPU::ComputePassEncoder::pushDebugGroup):
+        (WebGPU::ComputePassEncoder::setBindGroup):
+        (WebGPU::ComputePassEncoder::setPipeline):
+        (WebGPU::ComputePassEncoder::writeTimestamp):
+        (wgpuComputePassEncoderRelease):
+        (wgpuComputePassEncoderBeginPipelineStatisticsQuery):
+        (wgpuComputePassEncoderDispatch):
+        (wgpuComputePassEncoderDispatchIndirect):
+        (wgpuComputePassEncoderEndPass):
+        (wgpuComputePassEncoderEndPipelineStatisticsQuery):
+        (wgpuComputePassEncoderInsertDebugMarker):
+        (wgpuComputePassEncoderPopDebugGroup):
+        (wgpuComputePassEncoderPushDebugGroup):
+        (wgpuComputePassEncoderSetBindGroup):
+        (wgpuComputePassEncoderSetPipeline):
+        (wgpuComputePassEncoderWriteTimestamp):
+        * WebGPU/ComputePipeline.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/ComputePipeline.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (WebGPU::ComputePipeline::getBindGroupLayout):
+        (WebGPU::ComputePipeline::setLabel):
+        (wgpuComputePipelineRelease):
+        (wgpuComputePipelineGetBindGroupLayout):
+        (wgpuComputePipelineSetLabel):
+        * WebGPU/Device.h: Added.
+        * WebGPU/Device.mm: Added.
+        (WebGPU::Device::createBindGroup):
+        (WebGPU::Device::createBindGroupLayout):
+        (WebGPU::Device::createBuffer):
+        (WebGPU::Device::createCommandEncoder):
+        (WebGPU::Device::createComputePipeline):
+        (WebGPU::Device::createComputePipelineAsync):
+        (WebGPU::Device::createPipelineLayout):
+        (WebGPU::Device::createQuerySet):
+        (WebGPU::Device::createRenderBundleEncoder):
+        (WebGPU::Device::createRenderPipeline):
+        (WebGPU::Device::createRenderPipelineAsync):
+        (WebGPU::Device::createSampler):
+        (WebGPU::Device::createShaderModule):
+        (WebGPU::Device::createSwapChain):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Device::destroy):
+        (WebGPU::Device::getLimits):
+        (WebGPU::Device::getQueue):
+        (WebGPU::Device::popErrorScope):
+        (WebGPU::Device::pushErrorScope):
+        (WebGPU::Device::setDeviceLostCallback):
+        (WebGPU::Device::setUncapturedErrorCallback):
+        (wgpuDeviceRelease):
+        (wgpuDeviceCreateBindGroup):
+        (wgpuDeviceCreateBindGroupLayout):
+        (wgpuDeviceCreateBuffer):
+        (wgpuDeviceCreateCommandEncoder):
+        (wgpuDeviceCreateComputePipeline):
+        (wgpuDeviceCreateComputePipelineAsync):
+        (wgpuDeviceCreatePipelineLayout):
+        (wgpuDeviceCreateQuerySet):
+        (wgpuDeviceCreateRenderBundleEncoder):
+        (wgpuDeviceCreateRenderPipeline):
+        (wgpuDeviceCreateRenderPipelineAsync):
+        (wgpuDeviceCreateSampler):
+        (wgpuDeviceCreateShaderModule):
+        (wgpuDeviceCreateSwapChain):
+        (wgpuDeviceCreateTexture):
+        (wgpuDeviceDestroy):
+        (wgpuDeviceGetLimits):
+        (wgpuDeviceGetQueue):
+        (wgpuDevicePopErrorScope):
+        (wgpuDevicePushErrorScope):
+        (wgpuDeviceSetDeviceLostCallback):
+        (wgpuDeviceSetUncapturedErrorCallback):
+        * WebGPU/ExportMacros.h:
+        * WebGPU/Instance.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/Instance.mm: Added.
+        (WebGPU::Instance::createSurface):
+        (WebGPU::Instance::processEvents):
+        (WebGPU::Instance::requestAdapter):
+        (wgpuInstanceRelease):
+        (wgpuCreateInstance):
+        (wgpuGetProcAddress):
+        (wgpuInstanceCreateSurface):
+        (wgpuInstanceProcessEvents):
+        (wgpuInstanceRequestAdapter):
+        * WebGPU/PipelineLayout.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/PipelineLayout.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (wgpuPipelineLayoutRelease):
+        * WebGPU/QuerySet.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/QuerySet.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (WebGPU::QuerySet::destroy):
+        (wgpuQuerySetRelease):
+        (wgpuQuerySetDestroy):
+        * WebGPU/Queue.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/Queue.mm: Added.
+        (WebGPU::Queue::onSubmittedWorkDone):
+        (WebGPU::Queue::submit):
+        (WebGPU::Queue::writeBuffer):
+        (WebGPU::Queue::writeTexture):
+        (wgpuQueueRelease):
+        (wgpuQueueOnSubmittedWorkDone):
+        (wgpuQueueSubmit):
+        (wgpuQueueWriteBuffer):
+        (wgpuQueueWriteTexture):
+        * WebGPU/RenderBundle.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/RenderBundle.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (wgpuRenderBundleRelease):
+        * WebGPU/RenderBundleEncoder.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/RenderBundleEncoder.mm: Added.
+        (WebGPU::RenderBundleEncoder::draw):
+        (WebGPU::RenderBundleEncoder::drawIndexed):
+        (WebGPU::RenderBundleEncoder::drawIndexedIndirect):
+        (WebGPU::RenderBundleEncoder::drawIndirect):
+        (WebGPU::RenderBundleEncoder::finish):
+        (WebGPU::RenderBundleEncoder::insertDebugMarker):
+        (WebGPU::RenderBundleEncoder::popDebugGroup):
+        (WebGPU::RenderBundleEncoder::pushDebugGroup):
+        (WebGPU::RenderBundleEncoder::setBindGroup):
+        (WebGPU::RenderBundleEncoder::setIndexBuffer):
+        (WebGPU::RenderBundleEncoder::setPipeline):
+        (WebGPU::RenderBundleEncoder::setVertexBuffer):
+        (wgpuRenderBundleEncoderRelease):
+        (wgpuRenderBundleEncoderDraw):
+        (wgpuRenderBundleEncoderDrawIndexed):
+        (wgpuRenderBundleEncoderDrawIndexedIndirect):
+        (wgpuRenderBundleEncoderDrawIndirect):
+        (wgpuRenderBundleEncoderFinish):
+        (wgpuRenderBundleEncoderInsertDebugMarker):
+        (wgpuRenderBundleEncoderPopDebugGroup):
+        (wgpuRenderBundleEncoderPushDebugGroup):
+        (wgpuRenderBundleEncoderSetBindGroup):
+        (wgpuRenderBundleEncoderSetIndexBuffer):
+        (wgpuRenderBundleEncoderSetPipeline):
+        (wgpuRenderBundleEncoderSetVertexBuffer):
+        * WebGPU/RenderPassEncoder.h: Added.
+        * WebGPU/RenderPassEncoder.mm: Added.
+        (WebGPU::RenderPassEncoder::beginOcclusionQuery):
+        (WebGPU::RenderPassEncoder::beginPipelineStatisticsQuery):
+        (WebGPU::RenderPassEncoder::draw):
+        (WebGPU::RenderPassEncoder::drawIndexed):
+        (WebGPU::RenderPassEncoder::drawIndexedIndirect):
+        (WebGPU::RenderPassEncoder::drawIndirect):
+        (WebGPU::RenderPassEncoder::endOcclusionQuery):
+        (WebGPU::RenderPassEncoder::endPass):
+        (WebGPU::RenderPassEncoder::endPipelineStatisticsQuery):
+        (WebGPU::RenderPassEncoder::executeBundles):
+        (WebGPU::RenderPassEncoder::insertDebugMarker):
+        (WebGPU::RenderPassEncoder::popDebugGroup):
+        (WebGPU::RenderPassEncoder::pushDebugGroup):
+        (WebGPU::RenderPassEncoder::setBindGroup):
+        (WebGPU::RenderPassEncoder::setBlendConstant):
+        (WebGPU::RenderPassEncoder::setIndexBuffer):
+        (WebGPU::RenderPassEncoder::setPipeline):
+        (WebGPU::RenderPassEncoder::setScissorRect):
+        (WebGPU::RenderPassEncoder::setStencilReference):
+        (WebGPU::RenderPassEncoder::setVertexBuffer):
+        (WebGPU::RenderPassEncoder::setViewport):
+        (WebGPU::RenderPassEncoder::writeTimestamp):
+        (wgpuRenderPassEncoderRelease):
+        (wgpuRenderPassEncoderBeginOcclusionQuery):
+        (wgpuRenderPassEncoderBeginPipelineStatisticsQuery):
+        (wgpuRenderPassEncoderDraw):
+        (wgpuRenderPassEncoderDrawIndexed):
+        (wgpuRenderPassEncoderDrawIndexedIndirect):
+        (wgpuRenderPassEncoderDrawIndirect):
+        (wgpuRenderPassEncoderEndOcclusionQuery):
+        (wgpuRenderPassEncoderEndPass):
+        (wgpuRenderPassEncoderEndPipelineStatisticsQuery):
+        (wgpuRenderPassEncoderExecuteBundles):
+        (wgpuRenderPassEncoderInsertDebugMarker):
+        (wgpuRenderPassEncoderPopDebugGroup):
+        (wgpuRenderPassEncoderPushDebugGroup):
+        (wgpuRenderPassEncoderSetBindGroup):
+        (wgpuRenderPassEncoderSetBlendConstant):
+        (wgpuRenderPassEncoderSetIndexBuffer):
+        (wgpuRenderPassEncoderSetPipeline):
+        (wgpuRenderPassEncoderSetScissorRect):
+        (wgpuRenderPassEncoderSetStencilReference):
+        (wgpuRenderPassEncoderSetVertexBuffer):
+        (wgpuRenderPassEncoderSetViewport):
+        (wgpuRenderPassEncoderWriteTimestamp):
+        * WebGPU/RenderPipeline.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/RenderPipeline.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (WebGPU::RenderPipeline::getBindGroupLayout):
+        (WebGPU::RenderPipeline::setLabel):
+        (wgpuRenderPipelineRelease):
+        (wgpuRenderPipelineGetBindGroupLayout):
+        (wgpuRenderPipelineSetLabel):
+        * WebGPU/Sampler.h: Renamed from Source/WebGPU/WebGPU/WebGPUObjC.h.
+        * WebGPU/Sampler.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (wgpuSamplerRelease):
+        * WebGPU/ShaderModule.h:
+        * WebGPU/ShaderModule.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (WebGPU::ShaderModule::setLabel):
+        (wgpuShaderModuleRelease):
+        (wgpuShaderModuleSetLabel):
+        * WebGPU/Surface.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/Surface.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (WebGPU::Surface::getPreferredFormat):
+        (wgpuSurfaceRelease):
+        (wgpuSurfaceGetPreferredFormat):
+        * WebGPU/SwapChain.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/SwapChain.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (WebGPU::SwapChain::getCurrentTextureView):
+        (WebGPU::SwapChain::present):
+        (wgpuSwapChainRelease):
+        (wgpuSwapChainGetCurrentTextureView):
+        (wgpuSwapChainPresent):
+        * WebGPU/Texture.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/Texture.mm: Copied from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (WebGPU::Texture::createView):
+        (WebGPU::Texture::destroy):
+        (wgpuTextureRelease):
+        (wgpuTextureCreateView):
+        (wgpuTextureDestroy):
+        * WebGPU/TextureView.h: Copied from Source/WebGPU/WebGPU/ShaderModule.h.
+        * WebGPU/TextureView.mm: Renamed from Source/WebGPU/WebGPU/WebGPUObjC.mm.
+        (wgpuTextureViewRelease):
+        * WebGPU/WebGPU.modulemap: Added.
+        * WebGPU/WebGPUExt.h: Added.
+
 2021-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make WebGPU.xcodeproj and WebGPU.framework

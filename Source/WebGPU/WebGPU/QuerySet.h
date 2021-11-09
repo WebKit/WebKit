@@ -25,4 +25,17 @@
 
 #pragma once
 
-void objcFunction();
+#import "WebGPU.h"
+
+namespace WebGPU {
+
+class QuerySet {
+public:
+    void destroy();
+};
+
+}
+
+struct WGPUQuerySetImpl {
+    WebGPU::QuerySet querySet;
+};

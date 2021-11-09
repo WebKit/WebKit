@@ -29,13 +29,12 @@
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
+class Sampler {
+
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUSamplerImpl {
+    WebGPU::Sampler sampler;
 };

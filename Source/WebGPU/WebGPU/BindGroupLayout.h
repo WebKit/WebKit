@@ -29,13 +29,12 @@
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
+class BindGroupLayout {
+
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUBindGroupLayoutImpl {
+    WebGPU::BindGroupLayout bindGroupLayout;
 };

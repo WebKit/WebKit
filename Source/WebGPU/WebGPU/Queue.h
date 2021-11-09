@@ -26,16 +26,24 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <functional>
+#import <wtf/Vector.h>
 
 namespace WebGPU {
 
-class ShaderModule {
+class Buffer;
+class CommandBuffer;
+
+class Queue {
 public:
-    void setLabel(const char*);
+    void onSubmittedWorkDone(uint64_t signalValue, std::function<void(WGPUQueueWorkDoneStatus)>&& callback);
+    void submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands);
+    void writeBuffer(const Buffer&, uint64_t bufferOffset, const void* data, size_t);
+    void writeTexture(const WGPUImageCopyTexture* destination, const void* data, size_t dataSize, const WGPUTextureDataLayout*, const WGPUExtent3D* writeSize);
 };
 
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+struct WGPUQueueImpl {
+    WebGPU::Queue queue;
 };

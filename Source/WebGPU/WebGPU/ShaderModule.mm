@@ -23,19 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "ShaderModule.h"
 
-#import "WebGPU.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-class ShaderModule {
-public:
-    void setLabel(const char*);
-};
-
+void ShaderModule::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
 }
 
-struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
-};
+} // namespace WebGPU
+
+void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
+{
+    delete shaderModule;
+}
+
+void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, const char* label)
+{
+    shaderModule->shaderModule.setLabel(label);
+}
+

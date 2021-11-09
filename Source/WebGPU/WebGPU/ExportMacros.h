@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include <wtf/ExportMacros.h>
+#import <wtf/ExportMacros.h>
 
 #if !defined(WEBGPU_EXPORT)
 
