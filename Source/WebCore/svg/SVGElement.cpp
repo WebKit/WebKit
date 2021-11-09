@@ -894,6 +894,8 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
             return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
 
+    hideNonce();
+
     return InsertedIntoAncestorResult::Done;
 }
 

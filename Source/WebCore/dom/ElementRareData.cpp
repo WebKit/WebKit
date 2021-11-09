@@ -37,7 +37,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     LayoutSize sizeForResizing;
     IntPoint savedLayerScrollPosition;
     Vector<std::unique_ptr<ElementAnimationRareData>> animationRareData;
-    void* pointers[10];
+    void* pointers[11];
     void* intersectionObserverData;
 #if ENABLE(CSS_TYPED_OM)
     void* typedOMData;

@@ -499,6 +499,13 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& va
         setAttributeEventListener(eventName, name, value);
 }
 
+Node::InsertedIntoAncestorResult HTMLElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& containerNode)
+{
+    auto result = Element::insertedIntoAncestor(insertionType, containerNode);
+    hideNonce();
+    return result;
+}
+
 static Ref<DocumentFragment> textToFragment(Document& document, const String& text)
 {
     auto fragment = DocumentFragment::create(document);

@@ -314,6 +314,38 @@ int Element::defaultTabIndex() const
     return -1;
 }
 
+const AtomString& Element::nonce() const
+{
+    return hasRareData() ? elementRareData()->nonce() : emptyAtom();
+}
+
+void Element::setNonce(const AtomString& newValue)
+{
+    if (newValue == emptyAtom() && !hasRareData())
+        return;
+
+    ensureElementRareData().setNonce(newValue);
+}
+
+void Element::hideNonce()
+{
+    // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#nonce-attributes
+    if (!isConnected())
+        return;
+
+    const auto& csp = document().contentSecurityPolicy();
+    if (!csp->isHeaderDelivered())
+        return;
+
+    // Retain previous IDL nonce.
+    AtomString currentNonce = nonce();
+
+    if (!getAttribute(nonceAttr).isEmpty())
+        setAttribute(nonceAttr, emptyAtom());
+
+    setNonce(currentNonce);
+}
+
 bool Element::supportsFocus() const
 {
     return !!tabIndexSetExplicitly();
@@ -1860,7 +1892,10 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
         } else if (name == HTMLNames::nameAttr)
             elementData()->setHasNameAttribute(!newValue.isNull());
-        else if (name == HTMLNames::pseudoAttr) {
+        else if (name == HTMLNames::nonceAttr) {
+            if (is<HTMLElement>(*this) || is<SVGElement>(*this))
+                setNonce(newValue.isNull() ? emptyAtom() : newValue);
+        } else if (name == HTMLNames::pseudoAttr) {
             if (needsStyleInvalidation() && isInShadowTree())
                 invalidateStyleForSubtree();
         } else if (name == HTMLNames::slotAttr) {
@@ -4483,6 +4518,8 @@ void Element::cloneAttributesFromElement(const Element& other)
 
     for (const Attribute& attribute : attributesIterator())
         attributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedByCloning);
+
+    setNonce(other.nonce());
 }
 
 void Element::cloneDataFromElement(const Element& other)

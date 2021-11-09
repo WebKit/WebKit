@@ -195,7 +195,8 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
     if (policyFrom == PolicyFrom::API) {
         ASSERT(m_policies.isEmpty());
         m_hasAPIPolicy = true;
-    }
+    } else if (policyFrom == PolicyFrom::HTTPHeader)
+        m_isHeaderDelivered = true;
 
     m_cachedResponseHeaders = std::nullopt;
 

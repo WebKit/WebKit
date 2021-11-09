@@ -103,6 +103,9 @@ public:
     ResizeObserverData* resizeObserverData() { return m_resizeObserverData.get(); }
     void setResizeObserverData(std::unique_ptr<ResizeObserverData>&& data) { m_resizeObserverData = WTFMove(data); }
 
+    const AtomString& nonce() const { return m_nonce; }
+    void setNonce(const AtomString& value) { m_nonce = value; }
+
 #if ENABLE(CSS_TYPED_OM)
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
     void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
@@ -146,6 +149,8 @@ public:
             result.add(UseType::PartList);
         if (!m_partNames.isEmpty())
             result.add(UseType::PartNames);
+        if (m_nonce)
+            result.add(UseType::Nonce);
         return result;
     }
 #endif
@@ -176,6 +181,8 @@ private:
 
     std::unique_ptr<DOMTokenList> m_partList;
     SpaceSplitString m_partNames;
+
+    AtomString m_nonce;
 
     void releasePseudoElement(PseudoElement*);
 };

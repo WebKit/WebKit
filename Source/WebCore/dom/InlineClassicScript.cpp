@@ -36,7 +36,7 @@ Ref<InlineClassicScript> InlineClassicScript::create(ScriptElement& scriptElemen
 {
     auto& element = scriptElement.element();
     return adoptRef(*new InlineClassicScript(
-        element.attributeWithoutSynchronization(HTMLNames::nonceAttr),
+        element.nonce(),
         element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
         scriptElement.scriptCharset(),
         element.localName(),

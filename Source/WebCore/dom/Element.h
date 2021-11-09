@@ -359,6 +359,11 @@ public:
     WEBCORE_EXPORT void setTabIndexForBindings(int);
     virtual RefPtr<Element> focusDelegate();
 
+    // Used by the HTMLElement and SVGElement IDLs.
+    WEBCORE_EXPORT const AtomString& nonce() const;
+    WEBCORE_EXPORT void setNonce(const AtomString&);
+    void hideNonce();
+
     ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
 
     WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);

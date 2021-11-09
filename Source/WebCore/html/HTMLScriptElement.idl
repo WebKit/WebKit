@@ -30,7 +30,6 @@
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
     [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
-    [Reflect] attribute DOMString nonce;
     [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
     [CEReactions=NotNeeded, Reflect, EnabledBySetting=SubresourceIntegrityEnabled] attribute DOMString integrity;
     [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;

@@ -291,7 +291,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     ASSERT(!m_loadableScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
         auto script = LoadableClassicScript::create(
-            m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr),
+            m_element.nonce(),
             m_element.document().settings().subresourceIntegrityEnabled() ? m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string() : emptyString(),
             referrerPolicy(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
@@ -304,7 +304,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
         m_element.document().willLoadScriptElement(scriptURL);
 
         const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
-        if (!contentSecurityPolicy.allowNonParserInsertedScripts(scriptURL, m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), String(), m_parserInserted))
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(scriptURL, m_element.nonce(), String(), m_parserInserted))
             return false;
 
         if (script->load(m_element.document(), scriptURL)) {
@@ -326,7 +326,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
     // Module is always CORS request. If attribute is not given, it should be same-origin credential.
-    String nonce = m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr);
+    String nonce = m_element.nonce();
     String crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     if (crossOriginMode.isNull())
         crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
@@ -397,10 +397,10 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(m_element.document().contentSecurityPolicy());
         const ContentSecurityPolicy& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
-        if (!contentSecurityPolicy.allowNonParserInsertedScripts(m_element.document().url(), m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(m_element.document().url(), m_element.nonce(), sourceCode.source(), m_parserInserted))
             return;
 
-        bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), m_element.isInUserAgentShadowTree());
+        bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(m_element.nonce(), m_element.isInUserAgentShadowTree());
         if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), hasKnownNonce))
             return;
     }

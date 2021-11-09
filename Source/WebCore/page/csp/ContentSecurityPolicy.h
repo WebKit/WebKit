@@ -185,6 +185,8 @@ public:
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
+    bool isHeaderDelivered() const { return m_isHeaderDelivered; }
+
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const OrdinalNumber& contextLine = OrdinalNumber::beforeFirst(), const OrdinalNumber& contextColumn = OrdinalNumber::beforeFirst(), JSC::JSGlobalObject* = nullptr) const;
     void applyPolicyToScriptExecutionContext();
@@ -247,6 +249,7 @@ private:
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
     HashSet<SecurityOriginData> m_insecureNavigationRequestsToUpgrade;
     mutable std::optional<ContentSecurityPolicyResponseHeaders> m_cachedResponseHeaders;
+    bool m_isHeaderDelivered { false };
 };
 
 }
