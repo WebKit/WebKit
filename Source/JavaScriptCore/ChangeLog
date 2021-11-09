@@ -1,3 +1,132 @@
+2021-11-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Add assembly, disassembly infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=232870
+
+        Reviewed by Yusuke Suzuki.
+
+        Provide the necessary facilities for assembling and disassembling
+        RISC-V instructions. This is just a preliminary patch that introduces
+        the necessary assembly and disassembly infrastructure while actual
+        enhancements to RISCV64Assembler and MacroAssemblerRISCV64 classes are
+        left for later.
+
+        In RISCV64Assembler.h header, necessary helper functions, enumerations
+        and structs are introduced that enable crafting instruction values in
+        accordance with the base RISC-V specification. All the necessary
+        immediate and instruction types are supported, and the relevant
+        instruction definitions are introduced and become usable in future work.
+
+        For debugging purposes, a custom RISC-V disassembler is also introduced
+        and is enabled when appropriate. The implementation utilizes
+        functionality introduced in RISCV64Assembler.h, and different formatters
+        are introduced to handle special cases even among the established
+        instruction types.
+
+        * Sources.txt:
+        * assembler/RISCV64Assembler.h:
+        (JSC::RISCV64Instructions::registerValue):
+        (JSC::RISCV64Instructions::InstructionValue::InstructionValue):
+        (JSC::RISCV64Instructions::InstructionValue::field):
+        (JSC::RISCV64Instructions::InstructionValue::opcode):
+        (JSC::RISCV64Instructions::ImmediateBase::isValid):
+        (JSC::RISCV64Instructions::ImmediateBase::v):
+        (JSC::RISCV64Instructions::ImmediateBase::ImmediateBase):
+        (JSC::RISCV64Instructions::ImmediateBase::field):
+        (JSC::RISCV64Instructions::IImmediate::IImmediate):
+        (JSC::RISCV64Instructions::IImmediate::value):
+        (JSC::RISCV64Instructions::SImmediate::SImmediate):
+        (JSC::RISCV64Instructions::SImmediate::value):
+        (JSC::RISCV64Instructions::BImmediate::BImmediate):
+        (JSC::RISCV64Instructions::BImmediate::value):
+        (JSC::RISCV64Instructions::UImmediate::UImmediate):
+        (JSC::RISCV64Instructions::UImmediate::value):
+        (JSC::RISCV64Instructions::JImmediate::JImmediate):
+        (JSC::RISCV64Instructions::JImmediate::value):
+        (JSC::RISCV64Instructions::RegistersBase::Size):
+        (JSC::RISCV64Instructions::RTypeBase::construct):
+        (JSC::RISCV64Instructions::RTypeBase::matches):
+        (JSC::RISCV64Instructions::RTypeBase::rd):
+        (JSC::RISCV64Instructions::RTypeBase::rs1):
+        (JSC::RISCV64Instructions::RTypeBase::rs2):
+        (JSC::RISCV64Instructions::RTypeBaseWithRoundingMode::construct):
+        (JSC::RISCV64Instructions::RTypeBaseWithRoundingMode::matches):
+        (JSC::RISCV64Instructions::RTypeBaseWithRoundingMode::rd):
+        (JSC::RISCV64Instructions::RTypeBaseWithRoundingMode::rs1):
+        (JSC::RISCV64Instructions::RTypeBaseWithRoundingMode::rs2):
+        (JSC::RISCV64Instructions::RTypeBaseWithRoundingMode::rm):
+        (JSC::RISCV64Instructions::RTypeBaseWithAqRl::construct):
+        (JSC::RISCV64Instructions::RTypeBaseWithAqRl::matches):
+        (JSC::RISCV64Instructions::RTypeBaseWithAqRl::rd):
+        (JSC::RISCV64Instructions::RTypeBaseWithAqRl::rs1):
+        (JSC::RISCV64Instructions::RTypeBaseWithAqRl::rs2):
+        (JSC::RISCV64Instructions::RTypeBaseWithAqRl::aqrl):
+        (JSC::RISCV64Instructions::R4TypeBaseWithRoundingMode::construct):
+        (JSC::RISCV64Instructions::R4TypeBaseWithRoundingMode::matches):
+        (JSC::RISCV64Instructions::R4TypeBaseWithRoundingMode::rd):
+        (JSC::RISCV64Instructions::R4TypeBaseWithRoundingMode::rs1):
+        (JSC::RISCV64Instructions::R4TypeBaseWithRoundingMode::rs2):
+        (JSC::RISCV64Instructions::R4TypeBaseWithRoundingMode::rs3):
+        (JSC::RISCV64Instructions::R4TypeBaseWithRoundingMode::rm):
+        (JSC::RISCV64Instructions::ITypeBase::construct):
+        (JSC::RISCV64Instructions::ITypeBase::matches):
+        (JSC::RISCV64Instructions::ITypeBase::rd):
+        (JSC::RISCV64Instructions::ITypeBase::rs1):
+        (JSC::RISCV64Instructions::STypeBase::construct):
+        (JSC::RISCV64Instructions::STypeBase::matches):
+        (JSC::RISCV64Instructions::STypeBase::rs1):
+        (JSC::RISCV64Instructions::STypeBase::rs2):
+        (JSC::RISCV64Instructions::BTypeBase::construct):
+        (JSC::RISCV64Instructions::BTypeBase::matches):
+        (JSC::RISCV64Instructions::BTypeBase::rs1):
+        (JSC::RISCV64Instructions::BTypeBase::rs2):
+        (JSC::RISCV64Instructions::UTypeBase::construct):
+        (JSC::RISCV64Instructions::UTypeBase::matches):
+        (JSC::RISCV64Instructions::UTypeBase::rd):
+        (JSC::RISCV64Instructions::JTypeBase::construct):
+        (JSC::RISCV64Instructions::JTypeBase::matches):
+        (JSC::RISCV64Instructions::JTypeBase::rd):
+        (JSC::RISCV64Instructions::SLLI::construct):
+        (JSC::RISCV64Instructions::SRLI::construct):
+        (JSC::RISCV64Instructions::SRAI::construct):
+        (JSC::RISCV64Instructions::SLLIW::construct):
+        (JSC::RISCV64Instructions::SRLIW::construct):
+        (JSC::RISCV64Instructions::SRAIW::construct):
+        (JSC::RISCV64Instructions::FCVTImpl::construct):
+        (JSC::RISCV64Instructions::FMVImpl::construct):
+        * disassembler/RISCV64Disassembler.cpp: Added.
+        (JSC::RISCV64Disassembler::StringBufferBase::data):
+        (JSC::RISCV64Disassembler::StringBufferBase::size):
+        (JSC::RISCV64Disassembler::StringBufferBase::createString):
+        (JSC::RISCV64Disassembler::registerName<RISCV64Instructions::RegistersBase::GType>):
+        (JSC::RISCV64Disassembler::registerName<RISCV64Instructions::RegistersBase::FType>):
+        (JSC::RISCV64Disassembler::roundingMode):
+        (JSC::RISCV64Disassembler::memoryOperationFlags):
+        (JSC::RISCV64Disassembler::aqrlFlags):
+        (JSC::RISCV64Disassembler::InstructionList::contains):
+        (JSC::RISCV64Disassembler::RTypeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::RTypeR2Formatting::disassemble):
+        (JSC::RISCV64Disassembler::RTypeWithRoundingModeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::RTypeWithRoundingModeFSQRTFormatting::disassemble):
+        (JSC::RISCV64Disassembler::RTypeWithRoundingModeFCVTFormatting::disassemble):
+        (JSC::RISCV64Disassembler::RTypeWithAqRlDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::RTypeWithAqRlLRFormatting::disassemble):
+        (JSC::RISCV64Disassembler::R4TypeWithRoundingModeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::ITypeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::ITypeImmediateAsOffsetFormatting::disassemble):
+        (JSC::RISCV64Disassembler::STypeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::BTypeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::UTypeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::JTypeDefaultFormatting::disassemble):
+        (JSC::RISCV64Disassembler::FenceInstructionFormatting::disassemble):
+        (JSC::RISCV64Disassembler::FenceIInstructionFormatting::disassemble):
+        (JSC::RISCV64Disassembler::EnvironmentInstructionFormatting::disassemble):
+        (JSC::RISCV64Disassembler::DisassemblyFormatting::disassemble):
+        (JSC::RISCV64Disassembler::Disassembler::disassemble):
+        (JSC::RISCV64Disassembler::Disassembler<InsnType>::disassemble):
+        (JSC::RISCV64Disassembler::disassembleOpcode):
+        (JSC::tryToDisassemble):
+
 2021-11-09  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Refactoring and PutByVal cleanup
