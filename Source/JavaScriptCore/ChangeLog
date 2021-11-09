@@ -1,3 +1,11 @@
+2021-11-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, suppress scope check failures on Debug JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=215438
+
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+
 2021-11-08  Alex Christensen  <achristensen@webkit.org>
 
         Parse redirect and modify-headers actions for WKContentRuleList
