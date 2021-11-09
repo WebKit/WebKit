@@ -1,3 +1,27 @@
+2021-11-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix wrong frame count of CARingBuffer in SpeechRecognitionRemoteRealtimeMediaSource
+        https://bugs.webkit.org/show_bug.cgi?id=232863
+        <rdar://83381842>
+
+        Reviewed by Youenn Fablet.
+
+        SpeechRecognitionRealtimeMediaSourceManager::Source uses shared ring buffer to pass audio data to 
+        SpeechRecognitionRemoteRealtimeMediaSource. We used to ask CARingBuffer in 
+        SpeechRecognitionRealtimeMediaSourceManager::Source to allocate with m_numberOfFrames and send m_numberOfFrames
+        to SpeechRecognitionRemoteRealtimeMediaSource (so SpeechRecognitionRemoteRealtimeMediaSource can create a 
+        corresponding CARingBuffer). This is wrong because CARingBuffer::allocate() rounds up frameCount to power of 
+        two, which means m_numberOfFrames may be not the number used. We should get the actual frameCount in the 
+        setStorage callback of SharedRingBufferStorage, and pass that value to SpeechRecognitionRemoteRealtimeMediaSource.
+
+        Manually tested.
+
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::setStorage):
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::Source):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::storageChanged):
+
 2021-11-09  Brent Fulgham  <bfulgham@apple.com>
 
         Reduce telemetry for well-understood sandbox rules
