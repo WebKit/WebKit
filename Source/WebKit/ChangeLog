@@ -1,55 +1,5 @@
 2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r285236. rdar://problem/83950623
-
-    AX: WKAccessibilityWebPageObjectMac.mm should expose accessibilityChildrenInNavigationOrder and NSAccessibilityChildrenInNavigationOrderAttribute
-    https://bugs.webkit.org/show_bug.cgi?id=232654
-    
-    Patch by Tyler Wilcock <tyler_w@apple.com> on 2021-11-03
-    Reviewed by Chris Fleizach.
-    
-    Some clients expect accessibilityChildrenInNavigationOrder and
-    NSAccessibilityChildrenInNavigationOrderAttribute to be available,
-    and WKAccessibilityWebPageObjectMac didn't expose them.
-    
-    Source/WebCore:
-    
-    * accessibility/mac/WebAccessibilityObjectWrapperMac.h:
-    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
-    Move #define NSAccessibilityChildrenInNavigationOrderAttribute to
-    header so it can be used in the WebKit layer.
-    
-    Source/WebKit:
-    
-    * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
-    (-[WKAccessibilityWebPageObject accessibilityChildrenInNavigationOrder]): Added.
-    (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
-    Handle NSAccessibilityChildrenInNavigationOrderAttribute.
-    (-[WKAccessibilityWebPageObject accessibilityAttributeNames:]):
-    Add NSAccessibilityChildrenInNavigationOrderAttribute.
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285236 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2021-11-03  Tyler Wilcock  <tyler_w@apple.com>
-
-            AX: WKAccessibilityWebPageObjectMac.mm should expose accessibilityChildrenInNavigationOrder and NSAccessibilityChildrenInNavigationOrderAttribute
-            https://bugs.webkit.org/show_bug.cgi?id=232654
-
-            Reviewed by Chris Fleizach.
-
-            Some clients expect accessibilityChildrenInNavigationOrder and
-            NSAccessibilityChildrenInNavigationOrderAttribute to be available,
-            and WKAccessibilityWebPageObjectMac didn't expose them.
-
-            * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
-            (-[WKAccessibilityWebPageObject accessibilityChildrenInNavigationOrder]): Added.
-            (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
-            Handle NSAccessibilityChildrenInNavigationOrderAttribute.
-            (-[WKAccessibilityWebPageObject accessibilityAttributeNames:]):
-            Add NSAccessibilityChildrenInNavigationOrderAttribute.
-
-2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
-
         Cherry-pick r285219. rdar://problem/84686676
 
     [Catalina] HLS streams will not select HDR variants when GPU Process is enabled
