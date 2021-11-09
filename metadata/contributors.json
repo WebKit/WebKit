@@ -5212,13 +5212,14 @@
    },
    {
       "emails" : [
-         "peng.liu6@apple.com"
+         "peng.liu6@apple.com",
+         "peng.liu6@icloud.com"
       ],
       "name" : "Peng Liu",
       "nicks" : [
          "peng"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
