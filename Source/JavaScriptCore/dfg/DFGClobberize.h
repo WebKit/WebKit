@@ -1732,12 +1732,19 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
     }
 
+    case NewSymbol:
+        if (!node->child1() || node->child1().useKind() == StringUse) {
+            read(HeapObjectCount);
+            write(HeapObjectCount);
+        } else
+            clobberTop();
+        return;
+
     case NewObject:
     case NewGenerator:
     case NewAsyncGenerator:
     case NewInternalFieldObject:
     case NewRegexp:
-    case NewSymbol:
     case NewStringObject:
     case PhantomNewObject:
     case MaterializeNewObject:

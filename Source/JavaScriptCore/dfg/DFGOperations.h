@@ -264,7 +264,8 @@ JSC_DECLARE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObje
 JSC_DECLARE_JIT_OPERATION(operationParseIntGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, int32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationNewSymbol, Symbol*, (VM*));
-JSC_DECLARE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalObject*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationNewSymbolWithStringDescription, Symbol*, (JSGlobalObject*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewStringObject, JSCell*, (VM*, JSString*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationToStringOnCell, JSString*, (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationToString, JSString*, (JSGlobalObject*, EncodedJSValue));

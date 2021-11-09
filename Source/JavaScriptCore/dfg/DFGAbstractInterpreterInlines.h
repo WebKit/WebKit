@@ -2888,6 +2888,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case NewSymbol: {
+        if (node->child1() && node->child1().useKind() != StringUse)
+            clobberWorld();
         setForNode(node, m_vm.symbolStructure.get());
         break;
     }

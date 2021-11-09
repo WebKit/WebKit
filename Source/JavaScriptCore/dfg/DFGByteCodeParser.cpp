@@ -4169,7 +4169,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         if (argumentCountIncludingThis <= 1)
             resultNode = addToGraph(NewSymbol);
         else
-            resultNode = addToGraph(NewSymbol, addToGraph(ToString, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+            resultNode = addToGraph(NewSymbol, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
 
         set(result, resultNode);
         return true;

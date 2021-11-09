@@ -1,3 +1,14 @@
+2021-11-09  Saam Barati  <sbarati@apple.com>
+
+        When inlining NewSymbol in the DFG don't universally call ToString on the input
+        https://bugs.webkit.org/show_bug.cgi?id=232754
+
+        Reviewed by Robin Morisset.
+
+        * stress/inline-new-symbol-dfg-undefined-first-arg.js: Added.
+        (assert):
+        (foo):
+
 2021-11-09  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Unskip array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg on ARM

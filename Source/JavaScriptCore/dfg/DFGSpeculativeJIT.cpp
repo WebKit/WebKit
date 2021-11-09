@@ -11142,15 +11142,26 @@ void SpeculativeJIT::compileNewSymbol(Node* node)
     }
 
 
-    ASSERT(node->child1().useKind() == KnownStringUse);
-    SpeculateCellOperand operand(this, node->child1());
+    if (node->child1().useKind() == StringUse) {
+        SpeculateCellOperand operand(this, node->child1());
+        GPRReg stringGPR = operand.gpr();
+        speculateString(node->child1(), stringGPR);
 
-    GPRReg stringGPR = operand.gpr();
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationNewSymbolWithStringDescription, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), stringGPR);
+        m_jit.exceptionCheck();
+        cellResult(resultGPR, node);
+        return;
+    }
 
+    JSValueOperand operand(this, node->child1());
+    JSValueRegs inputRegs = operand.jsValueRegs();
     flushRegisters();
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
-    callOperation(operationNewSymbolWithDescription, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), stringGPR);
+    callOperation(operationNewSymbolWithDescription, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputRegs);
     m_jit.exceptionCheck();
     cellResult(resultGPR, node);
 }

@@ -7473,8 +7473,11 @@ IGNORE_CLANG_WARNINGS_END
             setJSValue(vmCall(pointerType(), operationNewSymbol, m_vmValue));
             return;
         }
-        ASSERT(m_node->child1().useKind() == KnownStringUse);
-        setJSValue(vmCall(pointerType(), operationNewSymbolWithDescription, weakPointer(globalObject), lowString(m_node->child1())));
+
+        if (m_node->child1().useKind() == StringUse)
+            setJSValue(vmCall(pointerType(), operationNewSymbolWithStringDescription, weakPointer(globalObject), lowString(m_node->child1())));
+        else
+            setJSValue(vmCall(pointerType(), operationNewSymbolWithDescription, weakPointer(globalObject), lowJSValue(m_node->child1())));
     }
 
     void compileNewArray()

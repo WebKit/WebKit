@@ -1637,8 +1637,11 @@ private:
         }
 
         case NewSymbol: {
-            if (node->child1())
-                fixEdge<KnownStringUse>(node->child1());
+            if (node->child1() && node->child1()->shouldSpeculateString())
+                fixEdge<StringUse>(node->child1());
+
+            if (!node->child1() || node->child1().useKind() == StringUse)
+                node->clearFlags(NodeMustGenerate);
             break;
         }
 

@@ -1,3 +1,35 @@
+2021-11-09  Saam Barati  <sbarati@apple.com>
+
+        When inlining NewSymbol in the DFG don't universally call ToString on the input
+        https://bugs.webkit.org/show_bug.cgi?id=232754
+
+        Reviewed by Robin Morisset.
+
+        When inlining Symbol(x) in the DFG, we were always calling ToString on x.
+        However, this is wrong spec wise. If x is undefined, the symbol should
+        produce a description value of `undefined`, but calling ToString on x was causing
+        us to produce a description with the string `"undefined"`.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewSymbol):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewSymbol):
+
 2021-11-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, suppress scope check failures on Debug JSC tests

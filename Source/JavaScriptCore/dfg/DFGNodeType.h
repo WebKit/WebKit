@@ -376,7 +376,7 @@ namespace JSC { namespace DFG {
     macro(NewInternalFieldObject, NodeResultJS) \
     macro(NewTypedArray, NodeResultJS | NodeMustGenerate) \
     macro(NewRegexp, NodeResultJS) \
-    macro(NewSymbol, NodeResultJS) \
+    macro(NewSymbol, NodeResultJS | NodeMustGenerate) \
     macro(NewStringObject, NodeResultJS) \
     /* Rest Parameter */\
     macro(GetRestLength, NodeResultInt32) \

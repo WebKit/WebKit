@@ -2710,7 +2710,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewSymbol, Symbol*, (VM* vmPointer))
     return Symbol::create(vm);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalObject* globalObject, JSString* description))
+JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithStringDescription, Symbol*, (JSGlobalObject* globalObject, JSString* description))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2718,6 +2718,23 @@ JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String string = description->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    return Symbol::createWithDescription(vm, string);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalObject* globalObject, EncodedJSValue encodedDescription))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue description = JSValue::decode(encodedDescription);
+    if (description.isUndefined())
+        return Symbol::create(vm);
+
+    String string = description.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return Symbol::createWithDescription(vm, string);
