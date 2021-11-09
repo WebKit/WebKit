@@ -4306,10 +4306,10 @@ WebFullScreenManager* WebPage::fullScreenManager()
 }
 #endif
 
-void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, WebCore::ResourceLoaderIdentifier requestID)
+void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, std::optional<WebCore::ResourceLoaderIdentifier> requestID)
 {
     if (auto* frame = WebProcess::singleton().webFrame(frameID))
-        frame->addConsoleMessage(messageSource, messageLevel, message, requestID.toUInt64());
+        frame->addConsoleMessage(messageSource, messageLevel, message, requestID ? requestID->toUInt64() : 0);
 }
 
 void WebPage::sendCSPViolationReport(FrameIdentifier frameID, const URL& reportURL, IPC::FormDataReference&& reportData)

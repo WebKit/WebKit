@@ -442,7 +442,7 @@ public:
     WebFullScreenManager* fullScreenManager();
 #endif
 
-    void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, WebCore::ResourceLoaderIdentifier = { });
+    void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
     void sendCSPViolationReport(WebCore::FrameIdentifier, const URL& reportURL, IPC::FormDataReference&&);
     void sendCOEPPolicyInheritenceViolation(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& embedderOrigin, const String& endpoint, WebCore::COEPDisposition, const String& type, const URL& blockedURL);
     void sendCOEPCORPViolation(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& embedderOrigin, const String& endpoint, WebCore::COEPDisposition, WebCore::FetchOptions::Destination, const URL& blockedURL);

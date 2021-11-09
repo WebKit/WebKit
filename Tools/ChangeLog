@@ -1,3 +1,16 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        New spec: Block external protocol handler in sandboxed frames
+        https://bugs.webkit.org/show_bug.cgi?id=231727
+        <rdar://problem/84498192>
+
+        Reviewed by Brent Fulgham.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+
 2021-11-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EWS] Allow the optimization of running only the subset of failed tests on run-layout-tests-without-patch also for patches modifying the TestExpectations files

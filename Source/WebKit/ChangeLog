@@ -1,3 +1,30 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        New spec: Block external protocol handler in sandboxed frames
+        https://bugs.webkit.org/show_bug.cgi?id=231727
+        <rdar://problem/84498192>
+
+        Reviewed by Brent Fulgham.
+
+        Per the HTML specification [1][2], we should prevent sandboxed iframes from opening
+        external applications by navigating to a URL with a custom procotol (e.g. rdar://).
+
+        Indeed, it would be surprising if malvertisers would be able to redirect you to
+        an external app.
+
+        To support valid use cases, we still allow such navigations in sandboxed iframes
+        if any of the following is true:
+        - sandboxFlags contains "allow-top-navigation-by-user-activation" and hasTransientActivation is true
+        - sandboxFlags contains "allow-top-navigation"
+        - sandboxFlags contains "allow-popups"
+
+        [1] https://github.com/whatwg/html/issues/2191
+        [2] https://html.spec.whatwg.org/#hand-off-to-external-software
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::frameSandboxAllowsOpeningExternalCustomProtocols):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2021-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a position information bit to indicate whether the hit-tested element is a paused video

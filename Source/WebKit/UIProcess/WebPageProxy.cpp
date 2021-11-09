@@ -5249,11 +5249,20 @@ void WebPageProxy::decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProx
         process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision, createNetworkExtensionsSandboxExtensions(process)), webPageID);
     });
 
-    decidePolicyForNavigationAction(process.copyRef(), *frame, WTFMove(frameInfo), navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID,
+    decidePolicyForNavigationAction(process.copyRef(), webPageID, *frame, WTFMove(frameInfo), navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID,
         originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(sender));
 }
 
-void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, FrameInfoData&& frameInfo, uint64_t navigationID,
+// https://html.spec.whatwg.org/#hand-off-to-external-software
+static bool frameSandboxAllowsOpeningExternalCustomProtocols(SandboxFlags sandboxFlags, bool hasUserGesture)
+{
+    if (!(sandboxFlags & SandboxPopups) || !(sandboxFlags & SandboxTopNavigation))
+        return true;
+
+    return !(sandboxFlags & SandboxTopNavigationByUserActivation) && hasUserGesture;
+}
+
+void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, WebFrameProxy& frame, FrameInfoData&& frameInfo, uint64_t navigationID,
     NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfoData, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request,
     IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, Ref<PolicyDecisionSender>&& sender)
 {
@@ -5340,6 +5349,17 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request)) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "Ignoring request to load this main resource because it was handled by content filter");
+        return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(navigationID), nullptr, WTFMove(navigationAction), WTFMove(sender));
+    }
+#endif
+
+    // Other ports do not implement WebPage::platformCanHandleRequest().
+#if PLATFORM(COCOA)
+    // Sandboxed iframes should be allowed to open external apps via custom protocols unless explicitely allowed (https://html.spec.whatwg.org/#hand-off-to-external-software).
+    bool canHandleRequest = navigationActionData.canHandleRequest || m_urlSchemeHandlersByScheme.contains(request.url().protocol().toStringWithoutCopying());
+    if (!canHandleRequest && !destinationFrameInfo->isMainFrame() && !frameSandboxAllowsOpeningExternalCustomProtocols(navigationActionData.effectiveSandboxFlags, !!navigationActionData.userGestureTokenIdentifier)) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "Ignoring request to load this main resource because it has a custom protocol and comes from a sandboxed iframe");
+        process->send(Messages::WebPage::AddConsoleMessage(frame.frameID(), MessageSource::Security, MessageLevel::Error, "Ignoring request to load this main resource because it has a custom protocol and comes from a sandboxed iframe"_s, std::nullopt), webPageID);
         return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(navigationID), nullptr, WTFMove(navigationAction), WTFMove(sender));
     }
 #endif
@@ -5515,17 +5535,17 @@ void WebPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier frameID, 
             didCreateSubframe(frameID);
     }
 
-    decidePolicyForNavigationActionSyncShared(m_process.copyRef(), frameID, isMainFrame, WTFMove(frameInfo), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(reply));
+    decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, frameID, isMainFrame, WTFMove(frameInfo), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(reply));
 }
 
-void WebPageProxy::decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, bool isMainFrame, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
+void WebPageProxy::decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, bool isMainFrame, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
     auto sender = PolicyDecisionSender::create(identifier, WTFMove(reply));
 
     auto* frame = process->webFrame(frameID);
     MESSAGE_CHECK(process, frame);
 
-    decidePolicyForNavigationAction(WTFMove(process), *frame, WTFMove(frameInfo), navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, sender.copyRef());
+    decidePolicyForNavigationAction(WTFMove(process), webPageID, *frame, WTFMove(frameInfo), navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, sender.copyRef());
 
     // If the client did not respond synchronously, proceed with the load.
     sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Use, navigationID, std::nullopt, std::nullopt });

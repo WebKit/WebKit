@@ -389,7 +389,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier f
     }
     ASSERT(m_mainFrame);
 
-    m_page.decidePolicyForNavigationActionSyncShared(m_process.copyRef(), frameID, isMainFrame, WTFMove(frameInfoData), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(reply));
+    m_page.decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, frameID, isMainFrame, WTFMove(frameInfoData), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(reply));
 }
 
 void ProvisionalPageProxy::logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)
