@@ -1,3 +1,16 @@
+2021-11-09  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Windows] Non-find based status file finding in run-jsc-stress-tests needs to release status files
+        https://bugs.webkit.org/show_bug.cgi?id=232851
+
+        Reviewed by Don Olmstead.
+
+        Change the reading of status files in the non-find search
+        to properly scope the file access to release the status
+        files.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         New spec: Block external protocol handler in sandboxed frames

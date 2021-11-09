@@ -2367,8 +2367,10 @@ def getStatusMap(map={})
         Dir.chdir($runnerDir) {
             Dir.glob("#{STATUS_FILE_PREFIX}*").each do |name|
                 if File.size(name) > 0
-                    line = File.open(name).first
-                    processStatusLine(map, "./#{name} #{line}")
+                    File.open(name, 'r') { |f|
+                        line = f.first
+                        processStatusLine(map, "./#{name} #{line}")
+                    }
                 end
             end
         }
