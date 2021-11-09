@@ -500,19 +500,19 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
             values->append(CSSValuePool::singleton().createIdentifierValue(propertyID));
             range.consumeIncludingWhitespace();
         } else {
-            switch (range.peek().id()) {
+            auto id = range.peek().id();
+            switch (id) {
             case CSSValueNone:
             case CSSValueAll:
             case CSSValueAuto:
-            case CSSValueDefault:
-            case CSSValueInitial:
-            case CSSValueInherit:
                 return nullptr;
             case CSSValueContents:
             case CSSValueScrollPosition:
                 values->append(consumeIdent(range).releaseNonNull());
                 break;
             default:
+                if (!isValidCustomIdentifier(id))
+                    return nullptr;
                 // Append properties we don't recognize, but that are legal, as strings.
                 values->append(consumeCustomIdent(range).releaseNonNull());
                 break;
