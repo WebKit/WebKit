@@ -3340,19 +3340,20 @@ void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg
     }
 }
 
-void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRegs, TypedArrayType type, bool canSpeculate, bool shouldBox)
+void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRegs, TypedArrayType type, bool canSpeculate, bool shouldBox, FPRReg resultFPR)
 {
     bool isUInt32 = elementSize(type) == 4 && !isSigned(type);
+    if (isUInt32)
+        ASSERT(resultFPR != InvalidFPRReg);
     GPRReg resultReg = resultRegs.payloadGPR();
 
     if (shouldBox) {
         if (isUInt32) {
-            FPRTemporary fresult(this);
-            m_jit.convertInt32ToDouble(resultReg, fresult.fpr());
+            m_jit.convertInt32ToDouble(resultReg, resultFPR);
             JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, resultReg, TrustedImm32(0));
-            m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), fresult.fpr());
+            m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), resultFPR);
             positive.link(&m_jit);
-            m_jit.boxDouble(fresult.fpr(), resultRegs);
+            m_jit.boxDouble(resultFPR, resultRegs);
         } else
             m_jit.boxInt32(resultRegs.payloadGPR(), resultRegs);
         jsValueResult(resultRegs, node);
@@ -3380,12 +3381,11 @@ void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRe
     }
 #endif
     
-    FPRTemporary fresult(this);
-    m_jit.convertInt32ToDouble(resultReg, fresult.fpr());
+    m_jit.convertInt32ToDouble(resultReg, resultFPR);
     JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, resultReg, TrustedImm32(0));
-    m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), fresult.fpr());
+    m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), resultFPR);
     positive.link(&m_jit);
-    doubleResult(fresult.fpr(), node);
+    doubleResult(resultFPR, node);
 }
 
 void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType type, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
@@ -3402,6 +3402,13 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     GPRReg storageReg = storage.gpr();
     GPRReg scratchGPR = scratch.gpr();
 
+    std::optional<FPRTemporary> fprTemp;
+    FPRReg resultFPR = InvalidFPRReg;
+    if (elementSize(type) == 4 && !isSigned(type)) {
+        fprTemp.emplace(this);
+        resultFPR = fprTemp->fpr();
+    }
+
     JSValueRegs resultRegs;
     DataFormat format;
     std::tie(resultRegs, format) = prefix(DataFormatInt32);
@@ -3410,7 +3417,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg, scratchGPR);
     loadFromIntTypedArray(storageReg, propertyReg, resultRegs.payloadGPR(), type);
     constexpr bool canSpeculate = true;
-    setIntTypedArrayLoadResult(node, resultRegs, type, canSpeculate, shouldBox);
+    setIntTypedArrayLoadResult(node, resultRegs, type, canSpeculate, shouldBox, resultFPR);
 }
 
 bool SpeculativeJIT::getIntTypedArrayStoreOperand(

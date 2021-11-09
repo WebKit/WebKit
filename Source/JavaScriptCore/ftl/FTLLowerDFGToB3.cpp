@@ -13637,7 +13637,7 @@ IGNORE_CLANG_WARNINGS_END
             if (elementSize(type) < 4 || isSigned(type))
                 genericResult = boxInt32(genericResult);
             else
-                genericResult = strictInt52ToJSValue(genericResult);
+                genericResult = strictInt52ToJSValue(m_out.zeroExt(genericResult, Int64));
         } else if (genericResult->type() == Double)
             genericResult = boxDouble(genericResult);
 
