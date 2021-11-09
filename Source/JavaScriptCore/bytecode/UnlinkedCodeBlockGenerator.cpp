@@ -152,6 +152,9 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<InstructionStream> ins
             m_codeBlock->m_rareData->m_bitVectors = WTFMove(m_bitVectors);
             m_codeBlock->m_rareData->m_constantIdentifierSets = WTFMove(m_constantIdentifierSets);
         }
+
+        if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing()))
+            m_codeBlock->initializeLoopHintExecutionCounter();
     }
     m_vm.heap.writeBarrier(m_codeBlock.get());
     m_vm.heap.reportExtraMemoryAllocated(m_codeBlock->m_instructions->sizeInBytes() + m_codeBlock->m_metadata->sizeInBytes());
