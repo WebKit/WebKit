@@ -1,3 +1,15 @@
+2021-11-09  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Unskip array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=232811
+
+        Unreviewed gardening.
+
+        Gate the number of iterations adjustment on $memoryLimited instead of
+        the arch.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+
 2021-11-09  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Unskip deltablue-for-of.js on arm and mips

@@ -1,5 +1,4 @@
-//@ skip if $memoryLimited and not ["mips"].include?($architecture)
-//@ requireOptions("-e", "let iterations=40000") if ["mips"].include?($architecture)
+//@ requireOptions("-e", "let iterations=40000") if $memoryLimited
 //@ runDefault("--jitPolicyScale=0")
 
 iterations = typeof(iterations) === 'undefined' ? 10000000 : iterations;
