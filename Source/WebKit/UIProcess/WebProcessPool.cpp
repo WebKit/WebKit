@@ -437,8 +437,12 @@ void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy)
 #if ENABLE(GPU_PROCESS)
 GPUProcessProxy& WebProcessPool::ensureGPUProcess()
 {
-    if (!m_gpuProcess)
+    if (!m_gpuProcess) {
         m_gpuProcess = GPUProcessProxy::getOrCreate();
+        for (auto& process : m_processes)
+            m_gpuProcess->updatePreferences(process);
+        m_gpuProcess->updateScreenPropertiesIfNeeded();
+    }
     return *m_gpuProcess;
 }
 
@@ -1105,8 +1109,10 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         m_webProcessCache->updateCapacity(*this);
 
 #if ENABLE(GPU_PROCESS)
-    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
-        gpuProcess->updatePreferences();
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated()) {
+        gpuProcess->updatePreferences(*process);
+        gpuProcess->updateScreenPropertiesIfNeeded();
+    }
 #endif
 
     return page;

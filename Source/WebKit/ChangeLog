@@ -1,3 +1,46 @@
+2021-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make it possible to toggle several experimental media features when GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=232818
+
+        Reviewed by Tim Horton.
+
+        Refactor a bit of logic around `GPUProcessProxy::updatePreferences`, such that the experimental features that
+        are set underneath this method can be toggled by checking or unchecking the preference in the experimental
+        features menu in Safari, and then restarting Safari (or simply killing and relaunching the GPU process).
+
+        As detailed in the existing FIXME, we currently consult the global WebPageGroups' WebPreferences, which do not
+        account for changes to the experimental feature defaults since they initialize their own WebPreferences that
+        are (1) prefixed with a unique identifier, and (2) have `keyPrefix` and `globalDebugKeyPrefix` that are
+        different from normal WebPreferences on WebPageProxy.
+
+        Instead, we can add some plumbing to provide a WebProcessProxy to `updatePreferences()`, and use this to
+        determine whether we need to enable any experimental features by iterating over each WebPageProxy's preferences
+        and enabling each feature if it's enabled by at least one web page (roughly matching the current behavior).
+        While it's still not ideal, these features are all process-global and there is only one GPU process, so in lieu
+        of more extensive refactoring around these media feature flags, it makes sense to just turn them on if it's
+        enabled in any individual instance of WebPreferences.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getOrCreate):
+
+        Hoist the call to `updatePreferences()` out of this method and into `WebProcessPool::ensureGPUProcess` instead,
+        so that we can pass in WebProcessProxy.
+
+        (WebKit::GPUProcessProxy::updatePreferences):
+
+        See above for more details.
+
+        (WebKit::GPUProcessProxy::updateScreenPropertiesIfNeeded):
+
+        Split out logic to update screen properties into a separate method, so that we don't end up unnecessarily
+        computing and sending redundant screen properties `WebProcessPool::ensureGPUProcess()`.
+
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureGPUProcess):
+        (WebKit::WebProcessPool::createWebPage):
+
 2021-11-08  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] challenge does not get passed to -[_WKWebAuthenticationPanel getAssertionWithChallenge:origin:options:completionHandler:]

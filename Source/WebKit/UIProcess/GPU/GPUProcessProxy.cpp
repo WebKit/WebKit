@@ -112,7 +112,6 @@ Ref<GPUProcessProxy> GPUProcessProxy::getOrCreate()
         return *existingGPUProcess;
     }
     auto gpuProcess = adoptRef(*new GPUProcessProxy);
-    gpuProcess->updatePreferences();
     singleton() = gpuProcess;
     return gpuProcess;
 }
@@ -587,93 +586,68 @@ void GPUProcessProxy::setScreenProperties(const ScreenProperties& properties)
 }
 #endif
 
-void GPUProcessProxy::updatePreferences()
+void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
 {
     if (!canSendMessage())
         return;
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-    bool hasEnabledWebMParser = false;
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-    bool hasEnabledWebMFormatReader = false;
-#endif
-
-#if ENABLE(OPUS)
-    bool hasEnabledOpus = false;
-#endif
-
-#if ENABLE(VORBIS)
-    bool hasEnabledVorbis = false;
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    bool hasEnabledMediaSourceInlinePainting = false;
-#endif
-
     // FIXME: We should consider consolidating these into a single struct and propagating it to the GPU process as a single IPC message,
     // instead of sending one message for each preference.
-    //
-    // FIXME: Additionally, it seems wrong to consult preferences on WebPageGroup rather than WebPreferences corresponding to each page.
-    // This effectively means that each of the below preferences will always be set to the default value and cannot be toggled through the
-    // develop menu or user defaults, since the defaults for each group are prefixed with a unique identifier.
-    //
-    // Since each of these features apply to the entire GPU process at once (i.e. they affect all web pages using the GPU process), we
-    // could instead refactor this so that we iterate through all web pages' preferences when initializing the GPU process for the first
-    // time, and then update these flags when creating new web pages.
-    WebPageGroup::forEach([&] (auto& group) mutable {
-        if (!group.preferences().useGPUProcessForMediaEnabled())
-            return;
+    // FIXME: It's not ideal that these features are controlled by preferences-level feature flags (i.e. per-web view), but there is only
+    // one GPU process and the runtime-enabled features backing these preferences are process-wide. We should refactor each of these features
+    // so that they aren't process-global, and then reimplement this feature flag propagation to the GPU Process in a way that respects the
+    // settings of the page that is hosting each media element.
+    // For the time being, each of the below features are enabled in the GPU Process if it is enabled by at least one web page's preferences.
+    // In practice, all web pages' preferences should agree on these feature flag values.
+    for (auto page : webProcess.pages()) {
+        auto& preferences = page->preferences();
+        if (!preferences.useGPUProcessForMediaEnabled())
+            continue;
 
 #if ENABLE(OPUS)
-        if (group.preferences().opusDecoderEnabled())
-            hasEnabledOpus = true;
+        if (!m_hasEnabledOpus && preferences.opusDecoderEnabled()) {
+            m_hasEnabledOpus = true;
+            send(Messages::GPUProcess::SetOpusDecoderEnabled(m_hasEnabledOpus), 0);
+        }
 #endif
 
 #if ENABLE(VORBIS)
-        if (group.preferences().vorbisDecoderEnabled())
-            hasEnabledVorbis = true;
+        if (!m_hasEnabledVorbis && preferences.vorbisDecoderEnabled()) {
+            m_hasEnabledVorbis = true;
+            send(Messages::GPUProcess::SetVorbisDecoderEnabled(m_hasEnabledVorbis), 0);
+        }
 #endif
 
 #if ENABLE(WEBM_FORMAT_READER)
-        if (group.preferences().webMFormatReaderEnabled())
-            hasEnabledWebMFormatReader = true;
+        if (!m_hasEnabledWebMFormatReader && preferences.webMFormatReaderEnabled()) {
+            m_hasEnabledWebMFormatReader = true;
+            send(Messages::GPUProcess::SetWebMFormatReaderEnabled(m_hasEnabledWebMFormatReader), 0);
+        }
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-        if (group.preferences().webMParserEnabled())
-            hasEnabledWebMParser = true;
+        if (!m_hasEnabledWebMParser && preferences.webMParserEnabled()) {
+            m_hasEnabledWebMParser = true;
+            send(Messages::GPUProcess::SetWebMParserEnabled(m_hasEnabledWebMParser), 0);
+        }
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-        if (group.preferences().mediaSourceInlinePaintingEnabled())
-            hasEnabledMediaSourceInlinePainting = true;
+        if (!m_hasEnabledMediaSourceInlinePainting && preferences.mediaSourceInlinePaintingEnabled()) {
+            m_hasEnabledMediaSourceInlinePainting = true;
+            send(Messages::GPUProcess::SetMediaSourceInlinePaintingEnabled(m_hasEnabledMediaSourceInlinePainting), 0);
+        }
 #endif
-    });
+    }
+}
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-    send(Messages::GPUProcess::SetWebMParserEnabled(hasEnabledWebMParser), 0);
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-    send(Messages::GPUProcess::SetWebMFormatReaderEnabled(hasEnabledWebMFormatReader), 0);
-#endif
-
-#if ENABLE(OPUS)
-    send(Messages::GPUProcess::SetOpusDecoderEnabled(hasEnabledOpus), 0);
-#endif
-
-#if ENABLE(VORBIS)
-    send(Messages::GPUProcess::SetVorbisDecoderEnabled(hasEnabledVorbis), 0);
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    send(Messages::GPUProcess::SetMediaSourceInlinePaintingEnabled(hasEnabledMediaSourceInlinePainting), 0);
-#endif
-
+void GPUProcessProxy::updateScreenPropertiesIfNeeded()
+{
 #if PLATFORM(MAC)
-    setScreenProperties(WebCore::collectScreenProperties());
+    if (!canSendMessage())
+        return;
+
+    setScreenProperties(collectScreenProperties());
 #endif
 }
 
