@@ -687,10 +687,8 @@
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data (with telemetry)
     (ipc-posix-name-prefix "AudioIO"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
 (allow mach-lookup
     (global-name "com.apple.audio.AudioComponentRegistrar"))
-#endif
 
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup (with telemetry)

@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "AuxiliaryProcess.h"
-#include "DataReference.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
@@ -109,10 +108,6 @@ public:
     void tryExitIfUnusedAndUnderMemoryPressure();
 
     const String& applicationVisibleName() const { return m_applicationVisibleName; }
-
-#if PLATFORM(COCOA)
-    void consumeAudioComponentRegistrations(const IPC::DataReference&);
-#endif
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 

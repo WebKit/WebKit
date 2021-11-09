@@ -1,3 +1,17 @@
+2021-11-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r285432.
+        https://bugs.webkit.org/show_bug.cgi?id=232864
+
+        Introduced audio capture regression
+
+        Reverted changeset:
+
+        "[macOS][GPUP] Remove access in sandbox to
+        com.apple.audio.AudioComponentRegistrar"
+        https://bugs.webkit.org/show_bug.cgi?id=231694
+        https://commits.webkit.org/r285432
+
 2021-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make it possible to toggle several experimental media features when GPU Process is enabled

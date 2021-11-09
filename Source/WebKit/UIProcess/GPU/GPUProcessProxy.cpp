@@ -63,10 +63,6 @@
 #include <wtf/FileSystem.h>
 #endif
 
-#if PLATFORM(COCOA)
-#include "AudioComponentRegistration.h"
-#endif
-
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
 
 namespace WebKit {
@@ -452,8 +448,6 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     if (!store)
         return;
     m_hasSentNetworkProcessXPCEndpoint = store->sendNetworkProcessXPCEndpointToProcess(*this);
-
-    sendAudioComponentRegistrations<Messages::GPUProcess::ConsumeAudioComponentRegistrations>(*this);
 #endif
 }
 
