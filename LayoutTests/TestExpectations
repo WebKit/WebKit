@@ -1399,7 +1399,6 @@ webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/repl
 
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html [ ImageOnlyFailure ]
-webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-dynamic-block-size.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-002.html [ ImageOnlyFailure ]

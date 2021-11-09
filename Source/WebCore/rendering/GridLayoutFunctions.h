@@ -40,6 +40,7 @@ namespace GridLayoutFunctions {
 LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
 LayoutUnit marginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
 bool isOrthogonalChild(const RenderGrid&, const RenderBox&);
+bool isAspectRatioBlockSizeDependentChild(const RenderBox&);
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);

@@ -82,6 +82,11 @@ bool isOrthogonalChild(const RenderGrid& grid, const RenderBox& child)
     return child.isHorizontalWritingMode() != grid.isHorizontalWritingMode();
 }
 
+bool isAspectRatioBlockSizeDependentChild(const RenderBox& child)
+{
+    return (child.style().hasAspectRatio() || child.hasIntrinsicAspectRatio()) && child.hasRelativeLogicalHeight();
+}
+
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid& grid, const RenderBox& child, GridTrackSizingDirection direction)
 {
     return !isOrthogonalChild(grid, child) ? direction : (direction == ForColumns ? ForRows : ForColumns);

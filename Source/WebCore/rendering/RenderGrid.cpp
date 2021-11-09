@@ -161,7 +161,7 @@ void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns,
     // a new cycle of the sizing algorithm; there may be more. In addition, not all the
     // cases with orthogonal flows require this extra cycle; we need a more specific
     // condition to detect whether child's min-content contribution has changed or not.
-    if (m_hasAnyOrthogonalItem || m_trackSizingAlgorithm.hasAnyPercentSizedRowsIndefiniteHeight()) {
+    if (m_hasAnyOrthogonalItem || m_trackSizingAlgorithm.hasAnyPercentSizedRowsIndefiniteHeight() || m_hasAspectRatioBlockSizeDependentItem) {
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
         computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
         computeTrackSizesForDefiniteSize(ForRows, availableSpaceForRows);
@@ -199,6 +199,8 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // FIXME: We might need to cache the hasDefiniteLogicalHeight if the call of RenderBlock::hasDefiniteLogicalHeight() causes a relevant performance regression.
         bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
         m_hasAnyOrthogonalItem = false;
+        m_hasAspectRatioBlockSizeDependentItem = false;
+        Vector<RenderBox*> aspectRatioBlockSizeDependentGridItems;
         for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
             if (child->isOutOfFlowPositioned())
                 continue;
@@ -210,7 +212,13 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             // We may need to repeat the track sizing in case of any grid item was orthogonal.
             if (GridLayoutFunctions::isOrthogonalChild(*this, *child))
                 m_hasAnyOrthogonalItem = true;
-
+            
+            // For a grid item that has an aspect-ratio and block-constraints such as the relative logical height,
+            // when the grid width is auto, we may need get the real grid width before laying out the item. 
+            if (GridLayoutFunctions::isAspectRatioBlockSizeDependentChild(*child) && (style().logicalWidth().isAuto() || style().logicalWidth().isMinContent() || style().logicalWidth().isMaxContent())) {
+                aspectRatioBlockSizeDependentGridItems.append(child);
+                m_hasAspectRatioBlockSizeDependentItem = true;
+            }
             // We keep a cache of items with baseline as alignment values so
             // that we only compute the baseline shims for such items. This
             // cache is needed for performance related reasons due to the
@@ -272,6 +280,11 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         // 2.5- Compute Content Distribution offsets for rows tracks
         computeContentPositionAndDistributionOffset(ForRows, m_trackSizingAlgorithm.freeSpace(ForRows).value(), nonCollapsedTracks(ForRows));
+
+        if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
+            updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems);
+            updateLogicalWidth();
+        }
 
         // 3- If the min-content contribution of any grid items have changed based on the row
         // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
@@ -940,6 +953,15 @@ void RenderGrid::updateGridAreaLogicalSize(RenderBox& child, std::optional<Layou
 
     child.setOverridingContainingBlockContentLogicalWidth(width);
     child.setOverridingContainingBlockContentLogicalHeight(height);
+}
+
+void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& autoGridItems)
+{
+    populateGridPositionsForDirection(ForColumns);
+    populateGridPositionsForDirection(ForRows);
+
+    for (auto& autoGridItem : autoGridItems) 
+        updateGridAreaLogicalSize(*autoGridItem, gridAreaBreadthForChildIncludingAlignmentOffsets(*autoGridItem, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*autoGridItem, ForRows));
 }
 
 void RenderGrid::layoutGridItems()

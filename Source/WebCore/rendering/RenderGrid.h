@@ -130,6 +130,7 @@ private:
 
     void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows);
 
+    void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&);
     void layoutGridItems();
     void populateGridPositionsForDirection(GridTrackSizingDirection);
 
@@ -204,6 +205,7 @@ private:
     OutOfFlowPositionsMap m_outOfFlowItemRow;
 
     bool m_hasAnyOrthogonalItem {false};
+    bool m_hasAspectRatioBlockSizeDependentItem { false };
     bool m_baselineItemsCached {false};
 };
 
