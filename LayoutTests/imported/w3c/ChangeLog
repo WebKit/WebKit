@@ -1,3 +1,14 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        BroadcastChannel is still disabled in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=232855
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/webmessaging/broadcastchannel/service-worker.https-expected.txt:
+
 2021-11-09  Rob Buis  <rbuis@igalia.com>
 
         Import css/css-sizing/aspect-ratio tests from WPT

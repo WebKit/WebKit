@@ -1,3 +1,18 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        BroadcastChannel is still disabled in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=232855
+
+        Reviewed by Darin Adler.
+
+        No new tests, rebaselined existing test.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        Make sure BroadcastChannel is functional is Service Workers by setting up proper
+        BroadcastChannelRegistry on the PageConfiguration we use to construct the service
+        worker's dummy page.
+
 2021-11-09  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION(r272201): Safari showed red distortion on webview after using Web Inspector, returning from another app

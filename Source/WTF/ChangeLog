@@ -1,3 +1,15 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        BroadcastChannel is still disabled in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=232855
+
+        Reviewed by Darin Adler.
+
+        Turn on BroadcastChannel experimental feature in WebCore since this is the value that Service Workers
+        end up using. We only need to disable it in WebKitLegacy.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-11-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Add assembly, disassembly infrastructure

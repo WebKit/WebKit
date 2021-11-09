@@ -127,7 +127,7 @@ BroadcastChannelEnabled:
     WebKit:
       default: true
     WebCore:
-      default: false
+      default: true
 
 BroadcastChannelOriginPartitioningEnabled:
   type: bool
