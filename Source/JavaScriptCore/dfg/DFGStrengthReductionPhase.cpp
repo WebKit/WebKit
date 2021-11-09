@@ -491,11 +491,13 @@ private:
 
             Node* regExpObjectNode = nullptr;
             RegExp* regExp = nullptr;
+            bool regExpObjectNodeIsConstant = false;
             if (m_node->op() == RegExpExec || m_node->op() == RegExpTest || m_node->op() == RegExpMatchFast) {
                 regExpObjectNode = m_node->child2().node();
-                if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm()))
+                if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm())) {
                     regExp = regExpObject->regExp();
-                else if (regExpObjectNode->op() == NewRegexp)
+                    regExpObjectNodeIsConstant = true;
+                } else if (regExpObjectNode->op() == NewRegexp)
                     regExp = regExpObjectNode->castOperand<RegExp*>();
                 else {
                     if (verbose)
@@ -545,6 +547,8 @@ private:
                 for (unsigned otherNodeIndex = m_nodeIndex; otherNodeIndex--;) {
                     Node* otherNode = m_block->at(otherNodeIndex);
                     if (otherNode == regExpObjectNode) {
+                        if (regExpObjectNodeIsConstant)
+                            break;
                         lastIndex = 0;
                         break;
                     }
