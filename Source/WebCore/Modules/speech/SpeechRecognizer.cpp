@@ -32,6 +32,7 @@
 
 #if PLATFORM(COCOA)
 #include "MediaUtilities.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
 namespace WebCore {
@@ -39,6 +40,9 @@ namespace WebCore {
 SpeechRecognizer::SpeechRecognizer(DelegateCallback&& delegateCallback, UniqueRef<SpeechRecognitionRequest>&& request)
     : m_delegateCallback(WTFMove(delegateCallback))
     , m_request(WTFMove(request))
+#if HAVE(SPEECHRECOGNIZER)
+    , m_currentAudioSampleTime(PAL::kCMTimeZero)
+#endif
 {
 }
 

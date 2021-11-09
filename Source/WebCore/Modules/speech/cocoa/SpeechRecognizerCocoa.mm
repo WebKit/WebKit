@@ -36,10 +36,11 @@
 
 namespace WebCore {
 
-void SpeechRecognizer::dataCaptured(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
+void SpeechRecognizer::dataCaptured(const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
-    auto buffer = createAudioSampleBuffer(data, description, PAL::toCMTime(time), sampleCount);
+    auto buffer = createAudioSampleBuffer(data, description, m_currentAudioSampleTime, sampleCount);
     [m_task audioSamplesAvailable:buffer.get()];
+    m_currentAudioSampleTime = CMTimeAdd(m_currentAudioSampleTime, PAL::toCMTime(MediaTime(sampleCount, description.sampleRate())));
 }
 
 bool SpeechRecognizer::startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier identifier, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives)
