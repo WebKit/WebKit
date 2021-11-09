@@ -16,4 +16,6 @@ function f() {
     f();
     f();
 };
-f();
+try {
+    f();
+} catch { }
