@@ -1,5 +1,20 @@
 2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [libpas] Enable libpas on iOS family
+        https://bugs.webkit.org/show_bug.cgi?id=232026
+
+        Reviewed by Filip Pizlo.
+
+        Enabling libpas on iOS family platforms. This helps libpas transition.
+        And it offers large performance improvement.
+
+            1. Speedometer2 is 0.7% improved on low-end iOS device (iPhone 6s Plus), 1.3% improved on high-end iOS device (iPhone 12).
+            2. JetStream2 is neutral on both.
+
+        * bmalloc/BPlatform.h:
+
+2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, tweak header include
         https://bugs.webkit.org/show_bug.cgi?id=231815
 

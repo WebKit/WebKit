@@ -311,7 +311,7 @@
 
 /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
 #if !defined(BENABLE_LIBPAS)
-#if BOS(MAC)
+#if BPLATFORM(COCOA) && BCPU(ADDRESS64)
 #define BENABLE_LIBPAS 1
 #else
 #define BENABLE_LIBPAS 0
