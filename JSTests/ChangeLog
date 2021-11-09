@@ -1,5 +1,53 @@
 2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r282821. rdar://problem/85167490
+
+    Differential testing: live statement don't execute
+    https://bugs.webkit.org/show_bug.cgi?id=229939
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/in-by-val-should-throw.js: Added.
+    (doesThrow):
+    (noInline.doesThrow.noFTL.doesThrow.blackbox):
+    (noInline.blackbox.doesNotThrow):
+    (noInline.doesNotThrow.noFTL.doesNotThrow.main):
+    
+    Source/JavaScriptCore:
+    
+    In statements are supposed to throw if they are applied to a non-object. We incorrectly converted
+    InByVals into HasIndexedProperty any time they were a cell, so we silently converted non-objects. Before converting
+    an InByVal, we first speculate that the base is an object now.
+    
+    We do not always require an object edge for HasIndexedProperty because enumerator next() does not
+    throw if it encounters a cell that requires conversion during the call to toObject (for example, a
+    string literal). That is, we should silently convert the string during enumeration, but not for an
+    In statement, and so HasIndexedProperty is prepared to handle both cases.
+    
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282821 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-21  Justin Michaud  <justin_michaud@apple.com>
+
+            Differential testing: live statement don't execute
+            https://bugs.webkit.org/show_bug.cgi?id=229939
+
+            Reviewed by Saam Barati.
+
+            * stress/in-by-val-should-throw.js: Added.
+            (doesThrow):
+            (noInline.doesThrow.noFTL.doesThrow.blackbox):
+            (noInline.blackbox.doesNotThrow):
+            (noInline.doesNotThrow.noFTL.doesNotThrow.main):
+
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r282212. rdar://problem/85165960
 
     Differential testing: incorrect constant propagation around Uint8ClampedArray

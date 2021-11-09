@@ -2095,7 +2095,8 @@ private:
         }
 
         case InByVal: {
-            if (node->child2()->shouldSpeculateInt32()) {
+            if (node->child1()->shouldSpeculateObject()
+                && node->child2()->shouldSpeculateInt32()) {
                 convertToHasIndexedProperty(node);
                 break;
             }
@@ -4158,7 +4159,7 @@ private:
         if (arrayMode.isJSArrayWithOriginalStructure() && arrayMode.speculation() == Array::InBounds)
             setSaneChainIfPossible(node, Array::InBoundsSaneChain);
 
-        fixEdge<CellUse>(m_graph.varArgChild(node, 0));
+        fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
         fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
     }
 
