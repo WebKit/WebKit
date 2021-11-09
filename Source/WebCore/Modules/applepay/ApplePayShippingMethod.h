@@ -43,6 +43,10 @@ struct ApplePayShippingMethod final {
     std::optional<ApplePayDateComponentsRange> dateComponentsRange;
 #endif
 
+#if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
+    bool selected { false };
+#endif
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ApplePayShippingMethod> decode(Decoder&);
 };
@@ -56,6 +60,9 @@ void ApplePayShippingMethod::encode(Encoder& encoder) const
     encoder << identifier;
 #if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
     encoder << dateComponentsRange;
+#endif
+#if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
+    encoder << selected;
 #endif
 }
 
@@ -75,6 +82,9 @@ std::optional<ApplePayShippingMethod> ApplePayShippingMethod::decode(Decoder& de
 #if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
     DECODE(dateComponentsRange, std::optional<ApplePayDateComponentsRange>)
 #endif
+#if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
+    DECODE(selected, bool)
+#endif
 
 #undef DECODE
 
@@ -85,6 +95,9 @@ std::optional<ApplePayShippingMethod> ApplePayShippingMethod::decode(Decoder& de
         WTFMove(*identifier),
 #if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
         WTFMove(*dateComponentsRange),
+#endif
+#if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
+        WTFMove(*selected),
 #endif
     } };
 }

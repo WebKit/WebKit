@@ -201,6 +201,22 @@ PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod& ship
     return result;
 }
 
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+
+PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>& webShippingMethods)
+{
+    RetainPtr<PKShippingMethod> defaultMethod;
+    auto methods = createNSArray(webShippingMethods, [&defaultMethod] (const auto& webShippingMethod) {
+        auto pkShippingMethod = toPKShippingMethod(webShippingMethod);
+        if (webShippingMethod.selected)
+            defaultMethod = pkShippingMethod;
+        return pkShippingMethod;
+    });
+    return [PAL::allocPKShippingMethodsInstance() initWithMethods:methods.get() defaultMethod:defaultMethod.get()];
+}
+
+#endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+
 #if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
 
 static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::ApplePayShippingContactEditingMode shippingContactEditingMode)
@@ -267,9 +283,13 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setShippingType:toPKShippingType(paymentRequest.shippingType())];
 
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+    [result setAvailableShippingMethods:toPKShippingMethods(paymentRequest.shippingMethods())];
+#else
     [result setShippingMethods:createNSArray(paymentRequest.shippingMethods(), [] (auto& method) {
         return toPKShippingMethod(method);
     }).get()];
+#endif
 
     [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
 

@@ -1,3 +1,18 @@
+2021-11-09  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r271735): PaymentShippingOption.selected ignored
+        https://bugs.webkit.org/show_bug.cgi?id=221960
+        <rdar://problem/73464404>
+
+        Reviewed by Tim Horton.
+
+        Leverage new `PKShippingMethods` SPI to provide both the general list of `PKShippingMethod`
+        and the default selected `PKShippingMethods` when creating/updating a payment request.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm:
+        * pal/spi/cocoa/PassKitSPI.h:
+
 2021-11-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r285318.

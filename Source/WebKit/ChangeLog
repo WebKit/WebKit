@@ -1,3 +1,39 @@
+2021-11-09  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r271735): PaymentShippingOption.selected ignored
+        https://bugs.webkit.org/show_bug.cgi?id=221960
+        <rdar://problem/73464404>
+
+        Reviewed by Tim Horton.
+
+        Leverage new `PKShippingMethods` SPI to provide both the general list of `PKShippingMethod`
+        and the default selected `PKShippingMethods` when creating/updating a payment request.
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKShippingMethods): Added.
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+        Add new helper to generate the `PKShippingMethods` from WebCore objects.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::PaymentAuthorizationPresenter::completePaymentMethodSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingMethodSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeCouponCodeChange):
+        (WebKit::toPKShippingMethods): Deleted.
+
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (-[WKPaymentAuthorizationDelegate completePaymentMethodSelection:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:]):
+        (-[WKPaymentAuthorizationDelegate completeShippingMethodSelection:]):
+        (-[WKPaymentAuthorizationDelegate completeCouponCodeChange:]):
+        (-[WKPaymentAuthorizationDelegate _initWithRequest:presenter:]):
+        (toShippingMethod):
+        (-[WKPaymentAuthorizationDelegate _didSelectShippingMethod:completion:]):
+        (-[WKPaymentAuthorizationDelegate summaryItems]): Deleted.
+        (-[WKPaymentAuthorizationDelegate shippingMethods]): Deleted.
+        Drive-by: Delete unused methods.
+
 2021-11-09  Sihui Liu  <sihui_liu@apple.com>
 
         Keep track of captured data time in SpeechRecognizer

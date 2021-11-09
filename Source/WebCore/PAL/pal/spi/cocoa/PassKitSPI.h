@@ -71,6 +71,10 @@ WTF_EXTERN_C_END
 #import <PassKitCore/PKRecurringPaymentSummaryItem.h>
 #endif
 
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+#import <PassKitCore/PKShippingMethods.h>
+#endif
+
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 #import <PassKitCore/PKDateComponentsRange.h>
 #endif
@@ -258,6 +262,12 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @end
 #endif
 
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+@interface PKShippingMethods : NSObject
+- (instancetype)initWithMethods:(NSArray<PKShippingMethod *> *)methods defaultMethod:(nullable PKShippingMethod *)defaultMethod;
+@end
+#endif
+
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 @interface PKDateComponentsRange : NSObject <NSCopying, NSSecureCoding>
 - (nullable instancetype)initWithStartDateComponents:(NSDateComponents *)startDateComponents endDateComponents:(NSDateComponents *)endDateComponents;
@@ -302,6 +312,10 @@ typedef NS_ENUM(NSUInteger, PKShippingContactEditingMode) {
 #if HAVE(PASSKIT_COUPON_CODE)
 @property (nonatomic, assign) BOOL supportsCouponCode;
 @property (nonatomic, copy, nullable) NSString *couponCode;
+#endif
+
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+@property (nonatomic, copy) PKShippingMethods *availableShippingMethods;
 #endif
 
 #if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
@@ -459,16 +473,18 @@ NS_ASSUME_NONNULL_BEGIN
 #if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
 @property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
 #endif
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+@property (nonatomic, copy) PKShippingMethods *availableShippingMethods;
+#endif
 @end
 
 @interface PKPaymentRequestPaymentMethodUpdate : PKPaymentRequestUpdate
-- (instancetype)initWithErrors:(nullable NSArray<NSError *> *)errors paymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)summaryItems;
 @property (null_resettable, nonatomic, copy) NSArray<NSError *> *errors;
 @end
 
 @interface PKPaymentRequestShippingContactUpdate : PKPaymentRequestUpdate
-- (instancetype)initWithErrors:(nullable NSArray<NSError *> *)errors paymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(nonnull NSArray<PKShippingMethod *> *)shippingMethods;
 @property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
+@property (nonatomic, copy, null_resettable) NSArray<NSError *> *errors;
 @end
 
 @interface PKPaymentRequestShippingMethodUpdate : PKPaymentRequestUpdate
@@ -476,7 +492,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if HAVE(PASSKIT_COUPON_CODE)
 @interface PKPaymentRequestCouponCodeUpdate : PKPaymentRequestUpdate
-- (instancetype)initWithErrors:(nullable NSArray<NSError *> *)errors paymentSummaryItems:(NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems shippingMethods:(NSArray<PKShippingMethod *> *)shippingMethods;
+@property (nonatomic, copy, null_resettable) NSArray<NSError *> *errors;
 @end
 #endif
 

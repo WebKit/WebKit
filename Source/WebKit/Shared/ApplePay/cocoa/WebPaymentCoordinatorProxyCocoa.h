@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 OBJC_CLASS PKShippingMethod;
+OBJC_CLASS PKShippingMethods;
 
 namespace WebCore {
 struct ApplePayShippingMethod;
@@ -39,6 +40,9 @@ namespace WebKit {
 // how to convert themselves to and from their platform representations.
 NSDecimalNumber *toDecimalNumber(const String& amount);
 PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod&);
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>&);
+#endif
 
 } // namespace WebKit
 

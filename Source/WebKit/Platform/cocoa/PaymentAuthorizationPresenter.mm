@@ -195,13 +195,6 @@ static RetainPtr<NSArray> toNSErrors(const Vector<RefPtr<WebCore::ApplePayError>
     });
 }
 
-static RetainPtr<NSArray> toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>& shippingMethods)
-{
-    return createNSArray(shippingMethods, [] (auto& method) {
-        return toPKShippingMethod(method);
-    });
-}
-
 void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::PaymentMerchantSession& merchantSession)
 {
     ASSERT(platformDelegate());
@@ -223,7 +216,13 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
     auto paymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
 #if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
     [paymentMethodUpdate setErrors:toNSErrors(WTFMove(update->errors)).get()];
-    [paymentMethodUpdate setShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()];
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+    [paymentMethodUpdate setAvailableShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods))];
+#else
+    [paymentMethodUpdate setShippingMethods:createNSArray(WTFMove(update->newShippingMethods), [] (auto& method) {
+        return toPKShippingMethod(method);
+    }).get()];
+#endif
 #endif
 #if HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
     [paymentMethodUpdate setInstallmentGroupIdentifier:WTFMove(update->installmentGroupIdentifier)];
@@ -248,9 +247,15 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(std::option
         return;
     }
 
-    auto shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:toNSErrors(WTFMove(update->errors)).get()
-        paymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))
-        shippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()]);
+    auto shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
+    [shippingContactUpdate setErrors:toNSErrors(WTFMove(update->errors)).get()];
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+    [shippingContactUpdate setAvailableShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods))];
+#else
+    [shippingContactUpdate setShippingMethods:createNSArray(WTFMove(update->newShippingMethods), [] (auto& method) {
+        return toPKShippingMethod(method);
+    }).get()];
+#endif
     merge(shippingContactUpdate.get(), *update);
     [platformDelegate() completeShippingContactSelection:shippingContactUpdate.get()];
 }
@@ -264,8 +269,12 @@ void PaymentAuthorizationPresenter::completeShippingMethodSelection(std::optiona
     }
 
     auto shippingMethodUpdate = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
-#if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
-    [shippingMethodUpdate setShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()];
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+    [shippingMethodUpdate setAvailableShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods))];
+#elif HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
+    [shippingMethodUpdate setShippingMethods:createNSArray(WTFMove(update->newShippingMethods), [] (auto& method) {
+        return toPKShippingMethod(method);
+    }).get()];
 #endif
     merge(shippingMethodUpdate.get(), *update);
     [platformDelegate() completeShippingMethodSelection:shippingMethodUpdate.get()];
@@ -281,7 +290,14 @@ void PaymentAuthorizationPresenter::completeCouponCodeChange(std::optional<WebCo
         return;
     }
 
-    auto couponCodeUpdate = adoptNS([PAL::allocPKPaymentRequestCouponCodeUpdateInstance() initWithErrors:toNSErrors(WTFMove(update->errors)).get() paymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems)) shippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()]);
+    auto couponCodeUpdate = adoptNS([PAL::allocPKPaymentRequestCouponCodeUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+    [couponCodeUpdate setAvailableShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods))];
+#else
+    [couponCodeUpdate setShippingMethods:createNSArray(WTFMove(update->newShippingMethods), [] (auto& method) {
+        return toPKShippingMethod(method);
+    }).get()];
+#endif
     merge(couponCodeUpdate.get(), *update);
     [platformDelegate() completeCouponCodeChange:couponCodeUpdate.get()];
 }

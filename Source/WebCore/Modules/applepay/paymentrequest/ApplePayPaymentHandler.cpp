@@ -299,10 +299,18 @@ ExceptionOr<Vector<ApplePayShippingMethod>> ApplePayPaymentHandler::computeShipp
 
         shippingOptions.reserveInitialCapacity(details.shippingOptions->size());
         for (auto& shippingOption : *details.shippingOptions) {
-            auto shippingMethod = convertAndValidate(shippingOption, currency);
-            if (shippingMethod.hasException())
-                return shippingMethod.releaseException();
-            shippingOptions.uncheckedAppend(shippingMethod.releaseReturnValue());
+            auto shippingMethodOrException = convertAndValidate(shippingOption, currency);
+            if (shippingMethodOrException.hasException())
+                return shippingMethodOrException.releaseException();
+
+            auto shippingMethod = shippingMethodOrException.releaseReturnValue();
+
+#if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
+            if (shippingMethod.identifier == m_paymentRequest->shippingOption())
+                shippingMethod.selected = true;
+#endif
+
+            shippingOptions.uncheckedAppend(WTFMove(shippingMethod));
         }
     }
 

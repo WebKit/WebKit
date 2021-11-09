@@ -218,13 +218,19 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
                 if (!addResult.isNewEntry)
                     return Exception { TypeError, "Shipping option IDs must be unique." };
 
-                // FIXME: <rdar://problem/73464404>
+#if ENABLE(PAYMENT_REQUEST_SELECTED_SHIPPING_OPTION)
+                if (shippingOption.selected)
+                    selectedShippingOption = shippingOption.id;
+                UNUSED_PARAM(context);
+                UNUSED_VARIABLE(didLog);
+#else
                 if (!selectedShippingOption)
                     selectedShippingOption = shippingOption.id;
                 else if (!didLog && shippingOption.selected) {
                     context.addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, "WebKit currently uses the first shipping option even if other shipping options are marked as selected."_s);
                     didLog = true;
                 }
+#endif
             }
         } else if (isUpdate == IsUpdate::No)
             details.shippingOptions = { { } };

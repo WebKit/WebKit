@@ -1,3 +1,16 @@
+2021-11-09  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r271735): PaymentShippingOption.selected ignored
+        https://bugs.webkit.org/show_bug.cgi?id=221960
+        <rdar://problem/73464404>
+
+        Reviewed by Tim Horton.
+
+        * http/tests/paymentrequest/payment-request-change-shipping-option.https.html:
+        * http/tests/paymentrequest/payment-request-change-shipping-option.https-expected.txt:
+        * http/tests/paymentrequest/updateWith-shippingOptions.https.html:
+        * http/tests/paymentrequest/updateWith-shippingOptions.https-expected.txt:
+
 2021-11-09  Rob Buis  <rbuis@igalia.com>
 
         Import css/css-sizing/aspect-ratio tests from WPT
