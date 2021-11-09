@@ -349,6 +349,39 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # Now check that we don't run anything.
         self.assertEqual(get_tests_run(['--skipped=always', 'passes/skipped/skip.html']), [])
 
+    def test_ews_corner_case_failing_test(self):
+        # We should skip running tests marked as failures (or flakies) when passing '--skip-failing-tests'
+        self.assertEqual(get_tests_run(['--skip-failing-tests', 'failures/expected']), [])
+        # But if we specify the name of the individual tests, then those tests should run
+        list_of_tests_failing = ['failures/expected/timeout.html', 'failures/expected/text.html', 'failures/expected/crash.html', 'failures/expected/missing_image.html']
+        self.assertEqual(get_tests_run(['--skip-failing-tests'] + list_of_tests_failing), list_of_tests_failing)
+        # Unless we specify also '--skipped=always', then they should be skipped even when we list them individually on the command line
+        self.assertEqual(get_tests_run(['--skip-failing-tests', '--skipped=always'] + list_of_tests_failing), [])
+
+    def test_ews_corner_case_failing_directory(self):
+        # When a whole directory is is marked as failing (or flaky), then the tests inside should not run if we specify the name of the directory and we pass '--skip-failing-tests'
+        self.assertEqual(get_tests_run(['--skip-failing-tests', 'corner-cases/ews/directory-flaky']), [])
+        # But if we specify on the command-line the name of individual tests inside that directory the tests should run (even with '--skip-failing-tests')
+        list_of_tests_failing = ['corner-cases/ews/directory-skipped/failure.html', 'corner-cases/ews/directory-skipped/timeout.html']
+        self.assertEqual(get_tests_run(['--no-retry-failures', '--skip-failing-tests'] + list_of_tests_failing), list_of_tests_failing)
+        # Unless we specify also '--skipped=always' (in combination with '--skip-failing-tests'), then they should be skipped even when we list them individually on the command line
+        self.assertEqual(get_tests_run(['--no-retry-failures',  '--skip-failing-tests', '--skipped=always'] + list_of_tests_failing), [])
+
+    def test_ews_corner_case_skipped_test(self):
+        # When we specify on the command line the name of a test skipped this test should run
+        self.assertEqual(get_tests_run(['passes/skipped/skip.html']), ['passes/skipped/skip.html'])
+        # Unless we specify also '--skipped=always', then it should be skipped even when we list it on the command line
+        self.assertEqual(get_tests_run(['--skipped=always', 'passes/skipped/skip.html']), [])
+
+    def test_ews_corner_case_skipped_directory(self):
+        # When a whole directory is skipped, then the tests inside should not run if we specify the name of the directory
+        self.assertEqual(get_tests_run(['corner-cases/ews/directory-skipped']), [])
+        # But if we specify on the command-line the name of individual tests inside that directory the tests should run
+        list_of_tests_failing = ['corner-cases/ews/directory-skipped/failure.html', 'corner-cases/ews/directory-skipped/timeout.html']
+        self.assertEqual(get_tests_run(['--no-retry-failures'] + list_of_tests_failing), list_of_tests_failing)
+        # Unless we specify also '--skipped=always', then they should be skipped even when we list them individually on the command line
+        self.assertEqual(get_tests_run(['--no-retry-failures', '--skipped=always'] + list_of_tests_failing), [])
+
     def test_iterations(self):
         tests_to_run = ['passes/image.html', 'passes/text.html']
         tests_run = get_tests_run(['--iterations', '2'] + tests_to_run)

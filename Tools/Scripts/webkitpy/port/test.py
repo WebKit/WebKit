@@ -106,8 +106,8 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 71
-TOTAL_SKIPS = 9
+TOTAL_TESTS = 75
+TOTAL_SKIPS = 11
 TOTAL_RETRIES = 11
 
 UNEXPECTED_PASSES = 6
@@ -260,6 +260,11 @@ layer at (0,0) size 800x34
         actual_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum_fail',
         expected_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum-png')
 
+    tests.add('corner-cases/ews/directory-skipped/failure.html', expected_text='ok-txt', actual_text='text_fail-txt')
+    tests.add('corner-cases/ews/directory-skipped/timeout.html', timeout=True)
+    tests.add('corner-cases/ews/directory-flaky/failure.html', expected_text='ok-txt', actual_text='text_fail-txt')
+    tests.add('corner-cases/ews/directory-flaky/timeout.html', timeout=True)
+
     return tests
 
 
@@ -304,6 +309,8 @@ Bug(test) failures/expected/keyboard.html [ WontFix ]
 Bug(test) failures/expected/exception.html [ WontFix ]
 Bug(test) failures/unexpected/pass.html [ Failure ]
 Bug(test) passes/skipped/skip.html [ Skip ]
+Bug(test) corner-cases/ews/directory-skipped [ Skip ]
+Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
 """)
 
     # FIXME: This test was only being ignored because of missing a leading '/'.
