@@ -1,3 +1,33 @@
+2021-11-08  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285417. rdar://problem/85180053
+
+    Unreviewed, reverting r284883.
+    
+    Caused high energy use on wsj.com <rdar://85156874>
+    
+    Reverted changeset:
+    
+    "<link> elements should be able to fire more than one load /
+    error event"
+    https://bugs.webkit.org/show_bug.cgi?id=232309
+    https://commits.webkit.org/r284883
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285417 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-08  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, reverting r284883.
+
+            Caused high energy use on wsj.com <rdar://85156874>
+
+            Reverted changeset:
+
+            "<link> elements should be able to fire more than one load /
+            error event"
+            https://bugs.webkit.org/show_bug.cgi?id=232309
+            https://commits.webkit.org/r284883
+
 2021-10-31  Antti Koivisto  <antti@apple.com>
 
         Fix :host invalidation when combined with pseudo classes in descendant position
