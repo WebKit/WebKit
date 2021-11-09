@@ -47,6 +47,9 @@ messages -> GPUProcess LegacyReceiver {
 #endif
 #if PLATFORM(MAC)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+    SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
+#endif
+
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

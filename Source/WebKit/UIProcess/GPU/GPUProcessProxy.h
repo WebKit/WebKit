@@ -49,6 +49,7 @@
 
 namespace WebCore {
 struct MockMediaDevice;
+struct ScreenProperties;
 struct SecurityOriginData;
 }
 
@@ -89,6 +90,7 @@ public:
 
 #if PLATFORM(MAC)
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
+    void setScreenProperties(const WebCore::ScreenProperties&);
 #endif
 
     void updatePreferences();
