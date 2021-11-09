@@ -1,5 +1,67 @@
 2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r283332. rdar://problem/85173157
+
+    The DFG/FTL need to be aware that Proxy's can produce "function" for typeof and might be callable
+    https://bugs.webkit.org/show_bug.cgi?id=230804
+    <rdar://problem/83543951>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/ai-typeof-needs-to-be-aware-of-proxy-2.js: Added.
+    (assert):
+    (builtin.vm.createBuiltin):
+    (builtin2.vm.createBuiltin):
+    (let.p.new.Proxy):
+    * stress/ai-typeof-needs-to-be-aware-of-proxy.js: Added.
+    (assert):
+    (builtin.vm.createBuiltin):
+    (let.p.new.Proxy):
+    * stress/is-callable-in-ftl-needs-to-be-aware-of-proxy.js: Added.
+    (main):
+    
+    Source/JavaScriptCore:
+    
+    This patch fixes a couple bugs:
+    - We were constant folding typeof on ProxyObject to "object"
+      even when ProxyObject might produce a callable Proxy, and hence,
+      should produce "function". This was a bug in AI.
+    - This also fixes a similar bug in IsCallable's implementation in
+      the FTL where we assumed that ProxyObject's type can't be callable.
+    
+    * bytecode/SpeculatedType.h:
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283332 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-30  Saam Barati  <sbarati@apple.com>
+
+            The DFG/FTL need to be aware that Proxy's can produce "function" for typeof and might be callable
+            https://bugs.webkit.org/show_bug.cgi?id=230804
+            <rdar://problem/83543951>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/ai-typeof-needs-to-be-aware-of-proxy-2.js: Added.
+            (assert):
+            (builtin.vm.createBuiltin):
+            (builtin2.vm.createBuiltin):
+            (let.p.new.Proxy):
+            * stress/ai-typeof-needs-to-be-aware-of-proxy.js: Added.
+            (assert):
+            (builtin.vm.createBuiltin):
+            (let.p.new.Proxy):
+            * stress/is-callable-in-ftl-needs-to-be-aware-of-proxy.js: Added.
+            (main):
+
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r283232. rdar://problem/85166097
 
     Code inside strength reduction can incorrectly prove that we know what lastIndex is
