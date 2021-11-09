@@ -55,8 +55,6 @@
 @end
 
 @interface AMSEngagementRequest : NSObject <NSSecureCoding>
-- (instancetype)initWithRequestDictionary:(NSDictionary *)dictionary
-@property (NS_NONATOMIC_IOSONLY, strong, nullable) NSURL *originatingURL;
 @end
 
 @interface AMSEngagementResult : NSObject <NSSecureCoding>
@@ -67,5 +65,10 @@
 @end
 
 #endif // !USE(APPLE_INTERNAL_SDK)
+
+@interface AMSEngagementRequest (Staging_84159382)
+- (instancetype)initWithRequestDictionary:(NSDictionary *)dictionary
+@property (NS_NONATOMIC_IOSONLY, strong, nullable) NSURL *originatingURL;
+@end
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)

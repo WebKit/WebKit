@@ -1,3 +1,9 @@
+2021-11-09  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed internal build fix after r285444
+
+        * Platform/spi/Cocoa/AppleMediaServicesSPI.h:
+
 2021-11-09  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] User handle is not saved on create via ASC
