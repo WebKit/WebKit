@@ -576,8 +576,6 @@ public:
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
 
-    WEBCORE_EXPORT bool mediaPlayerRenderingCanBeAccelerated() final;
-
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -663,6 +661,7 @@ private:
     void mediaPlayerResourceNotSupported() final;
     void mediaPlayerRepaint() final;
     void mediaPlayerSizeChanged() final;
+    bool mediaPlayerRenderingCanBeAccelerated() final;
     void mediaPlayerRenderingModeChanged() final;
     bool mediaPlayerAcceleratedCompositingEnabled() final;
     void mediaPlayerEngineUpdated() final;
