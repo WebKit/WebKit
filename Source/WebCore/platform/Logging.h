@@ -115,6 +115,7 @@ namespace WebCore {
     M(StyleSheets) \
     M(SVG) \
     M(TextAutosizing) \
+    M(TextFragment) \
     M(TextShaping) \
     M(Tiling) \
     M(Threading) \
