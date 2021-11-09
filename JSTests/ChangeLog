@@ -1,3 +1,17 @@
+2021-11-09  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip deltablue-for-of.js on arm and mips
+        https://bugs.webkit.org/show_bug.cgi?id=227291
+
+        Unreviewed gardening.
+
+        The test is not crashing but timeouts because of the number of
+        iterations. So to enable testing in more archs, we reduced the
+        number of iterations and constraints.
+
+        * typeProfiler/deltablue-for-of.js:
+        (deltaBlue):
+
 2021-11-09  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Unskip microbenchmarks/memcpy-typed-loop.js on arm/mips
