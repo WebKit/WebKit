@@ -181,7 +181,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     [credentialCreationOptions setChallenge:toNSData(options.challengeVector).get()];
     [credentialCreationOptions setRelyingPartyIdentifier:options.rp.id];
     [credentialCreationOptions setUserName:options.user.name];
-    [credentialCreationOptions setUserIdentifier:toNSData(options.user.id).get()];
+    [credentialCreationOptions setUserIdentifier:toNSData(options.user.idVector).get()];
     [credentialCreationOptions setUserDisplayName:options.user.displayName];
     [credentialCreationOptions setUserVerificationPreference:userVerification.get()];
     [credentialCreationOptions setShouldRequireResidentKey:shouldRequireResidentKey];
