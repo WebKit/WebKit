@@ -75,12 +75,22 @@ void setAuxiliaryProcessType(AuxiliaryProcessType type)
     auxiliaryProcessType() = type;
 }
 
+void setAuxiliaryProcessTypeForTesting(std::optional<AuxiliaryProcessType> type)
+{
+    auxiliaryProcessType() = type;
+}
+
 bool checkAuxiliaryProcessType(AuxiliaryProcessType type)
 {
     auto currentType = auxiliaryProcessType();
     if (!currentType)
         return false;
     return *currentType == type; 
+}
+
+std::optional<AuxiliaryProcessType> processType()
+{
+    return auxiliaryProcessType();
 }
 
 } // namespace WebCore

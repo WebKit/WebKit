@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -45,7 +46,9 @@ enum class AuxiliaryProcessType : uint8_t {
 };
 
 WEBCORE_EXPORT void setAuxiliaryProcessType(AuxiliaryProcessType);
+WEBCORE_EXPORT void setAuxiliaryProcessTypeForTesting(std::optional<AuxiliaryProcessType>);
 WEBCORE_EXPORT bool checkAuxiliaryProcessType(AuxiliaryProcessType);
+WEBCORE_EXPORT std::optional<AuxiliaryProcessType> processType();
 
 bool isInAuxiliaryProcess();
 inline bool isInWebProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::WebContent); }
