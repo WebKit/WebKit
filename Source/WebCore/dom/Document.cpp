@@ -4526,11 +4526,14 @@ void Document::flushAutofocusCandidates()
     if (m_isAutofocusProcessed)
         return;
     while (!m_autofocusCandidates.isEmpty()) {
-        RefPtr element = m_autofocusCandidates.takeFirst().get();
-        if (!element || !element->document().isFullyActive() || &element->document().topDocument() != this)
+        RefPtr element = m_autofocusCandidates.first().get();
+        if (!element || !element->document().isFullyActive() || &element->document().topDocument() != this) {
+            m_autofocusCandidates.removeFirst();
             continue;
+        }
         if (auto* parser = scriptableDocumentParser(); parser && parser->hasScriptsWaitingForStylesheets())
             break;
+        m_autofocusCandidates.removeFirst();
         // FIXME: Need to ignore if the inclusive ancestor documents has a target element.
         // FIXME: Use the result of getting the focusable area for element if element is not focusable.
         if (element->isFocusable()) {
