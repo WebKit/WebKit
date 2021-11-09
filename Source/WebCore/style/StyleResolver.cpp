@@ -283,7 +283,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     state.setStyle(RenderStyle::clonePtr(*elementStyle));
     state.setParentStyle(RenderStyle::clonePtr(context.parentStyle ? *context.parentStyle : *elementStyle));
 
-    Builder builder(*state.style(), builderContext(state), result, CascadeLevel::Author);
+    Builder builder(*state.style(), builderContext(state), result, { CascadeLevel::Author });
     builder.applyAllProperties();
 
     Adjuster adjuster(document(), *state.parentStyle(), nullptr, nullptr);
@@ -436,7 +436,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 
     auto& result = collector.matchResult();
 
-    Builder builder(*state.style(), builderContext(state), result, CascadeLevel::Author);
+    Builder builder(*state.style(), builderContext(state), result, { CascadeLevel::Author });
     builder.applyAllProperties();
 
     // Now return the style.
@@ -555,13 +555,13 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
         auto userAgentStyle = RenderStyle::clonePtr(style);
-        Builder builder(*userAgentStyle, builderContext(state), matchResult, CascadeLevel::UserAgent);
+        Builder builder(*userAgentStyle, builderContext(state), matchResult, { CascadeLevel::UserAgent });
         builder.applyAllProperties();
 
         state.setUserAgentAppearanceStyle(WTFMove(userAgentStyle));
     }
 
-    Builder builder(*state.style(), builderContext(state), matchResult, CascadeLevel::Author, includedProperties);
+    Builder builder(*state.style(), builderContext(state), matchResult, allCascadeLevels(), includedProperties);
 
     // High priority properties may affect resolution of other properties (they are mostly font related).
     builder.applyHighPriorityProperties();

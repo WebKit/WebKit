@@ -124,7 +124,7 @@ void ElementRuleCollector::clearMatchedRules()
     m_matchedRuleTransferIndex = 0;
 }
 
-inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable, FromStyleAttribute fromStyleAttribute)
+inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable)
 {
     if (!propertySet || propertySet->isEmpty())
         return;
@@ -132,9 +132,7 @@ inline void ElementRuleCollector::addElementStyleProperties(const StylePropertie
     if (!isCacheable)
         m_result.isCacheable = false;
 
-    auto matchedProperty = MatchedProperties { propertySet };
-    matchedProperty.fromStyleAttribute = fromStyleAttribute;
-    addMatchedProperties(WTFMove(matchedProperty), DeclarationOrigin::Author);
+    addMatchedProperties({ propertySet }, DeclarationOrigin::Author);
 }
 
 void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest)
@@ -205,8 +203,7 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
             &matchedRule.ruleData->styleRule().properties(),
             static_cast<uint16_t>(matchedRule.ruleData->linkMatchType()),
             matchedRule.ruleData->propertyAllowlist(),
-            matchedRule.styleScopeOrdinal,
-            matchedRule.cascadeLayerPriority
+            matchedRule.styleScopeOrdinal
         }, declarationOrigin);
     }
 }
@@ -563,7 +560,7 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
     if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyle()) {
         // FIXME: Media control shadow trees seem to have problems with caching.
         bool isInlineStyleCacheable = !inlineStyle->isMutable() && !element().isInShadowTree();
-        addElementStyleProperties(inlineStyle, isInlineStyleCacheable, FromStyleAttribute::Yes);
+        addElementStyleProperties(inlineStyle, isInlineStyleCacheable);
     }
 
     if (includeSMILProperties && is<SVGElement>(element()))
