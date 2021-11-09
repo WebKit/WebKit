@@ -1,5 +1,63 @@
 2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r283470. rdar://problem/85166382
+
+    WebCore::Length incorrectly uses memcpy() for copy constructors/operator and IPC encoding/decoding
+    https://bugs.webkit.org/show_bug.cgi?id=230744
+    
+    Reviewed by David Kilzer.
+    Source/WebCore:
+    
+    Copy-constructing Length by memcpy is sketchy; replace with code that initializes the appropriate
+    fields based on type, taking care to deref() and ref() the calc handle.
+    
+    Expose isFloat() for encoding.
+    
+    * css/parser/CSSPropertyParserHelpers.cpp:
+    (WebCore::CSSPropertyParserHelpers::CalcParser::consumeValueIfCategory): Add a bit of calc logging.
+    * platform/Length.cpp:
+    (WebCore::Length::Length):
+    * platform/Length.h:
+    (WebCore::Length::Length):
+    (WebCore::Length::operator=):
+    (WebCore::Length::isFloat const):
+    
+    Source/WebKit:
+    
+    Safe encoding/decoding of Length requires that we encode the enum and fields separately,
+    and don't allow calc types (there isn't enough context in the receiving process to resolve
+    calc).
+    
+    * Shared/WebCoreArgumentCoders.cpp:
+    (IPC::ArgumentCoder<Length>::encode):
+    (IPC::ArgumentCoder<Length>::decode):
+    * Shared/WebCoreArgumentCoders.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283470 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+            WebCore::Length incorrectly uses memcpy() for copy constructors/operator and IPC encoding/decoding
+            https://bugs.webkit.org/show_bug.cgi?id=230744
+
+            Reviewed by David Kilzer.
+
+            Copy-constructing Length by memcpy is sketchy; replace with code that initializes the appropriate
+            fields based on type, taking care to deref() and ref() the calc handle.
+
+            Expose isFloat() for encoding.
+
+            * css/parser/CSSPropertyParserHelpers.cpp:
+            (WebCore::CSSPropertyParserHelpers::CalcParser::consumeValueIfCategory): Add a bit of calc logging.
+            * platform/Length.cpp:
+            (WebCore::Length::Length):
+            * platform/Length.h:
+            (WebCore::Length::Length):
+            (WebCore::Length::operator=):
+            (WebCore::Length::isFloat const):
+
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r281795. rdar://problem/85166335
 
     Nullptr crash in TypingCommand::willAddTypingToOpenCommand via TypingCommand::deleteKeyPressed

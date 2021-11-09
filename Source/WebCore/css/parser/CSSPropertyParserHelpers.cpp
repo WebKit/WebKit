@@ -45,12 +45,14 @@
 #include "CalculationCategory.h"
 #include "ColorConversion.h"
 #include "ColorLuminance.h"
+#include "Logging.h"
 #include "Pair.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -141,8 +143,13 @@ public:
 
     RefPtr<CSSPrimitiveValue> consumeValueIfCategory(CalculationCategory category)
     {
-        if (!m_calcValue || m_calcValue->category() != category)
+        if (!m_calcValue)
             return nullptr;
+
+        if (m_calcValue->category() != category) {
+            LOG_WITH_STREAM(Calc, stream << "CalcParser::consumeValueIfCategory - failing because calc category " << m_calcValue->category() << " does not match requested category " << category);
+            return nullptr;
+        }
         m_sourceRange = m_range;
         return m_pool.createValue(WTFMove(m_calcValue));
     }
