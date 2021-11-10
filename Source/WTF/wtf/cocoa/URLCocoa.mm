@@ -39,8 +39,17 @@
 namespace WTF {
 
 URL::URL(NSURL *cocoaURL)
-    : URL(bridge_cast(cocoaURL))
 {
+    if (!cocoaURL) {
+        invalidate();
+        return;
+    }
+
+    // FIXME: Why is it OK to ignore base URL here?
+    CString bytes;
+    WTF::getURLBytes(bridge_cast(cocoaURL), bytes);
+    URLParser parser(bytes.data());
+    *this = parser.result();
 }
 
 URL::operator NSURL *() const
@@ -50,11 +59,28 @@ URL::operator NSURL *() const
     return createCFURL().bridgingAutorelease();
 }
 
-RetainPtr<CFURLRef> URL::emptyCFURL()
+RetainPtr<CFURLRef> URL::createCFURL() const
 {
-    // We use the toll-free bridge to create an empty value that is distinct from null that no CFURL function can create.
-    // FIXME: When we originally wrote this, we thought that creating empty CF URLs was valuable; can we do without it now?
-    return bridge_cast(adoptNS([[NSURL alloc] initWithString:@""]));
+    if (isNull())
+        return nullptr;
+
+    if (isEmpty()) {
+        // We use the toll-free bridge between NSURL and CFURL to create a CFURLRef supporting both empty and null values.
+        return bridge_cast(adoptNS([[NSURL alloc] initWithString:@""]));
+    }
+
+    RetainPtr<CFURLRef> cfURL;
+    if (LIKELY(m_string.is8Bit() && m_string.isAllASCII()))
+        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, m_string.characters8(), m_string.length(), kCFStringEncodingUTF8, nullptr, true));
+    else {
+        CString utf8 = m_string.utf8();
+        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, utf8.dataAsUInt8Ptr(), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
+    }
+
+    if (protocolIsInHTTPFamily() && !WTF::isCFURLSameOrigin(cfURL.get(), *this))
+        return nullptr;
+
+    return cfURL;
 }
 
 bool URL::hostIsIPAddress(StringView host)
@@ -64,7 +90,7 @@ bool URL::hostIsIPAddress(StringView host)
 
 RetainPtr<id> makeNSArrayElement(const URL& vectorElement)
 {
-    return bridge_cast(vectorElement.createCFURL());
+    return adoptNS((__bridge_transfer id)vectorElement.createCFURL().leakRef());
 }
 
 std::optional<URL> makeVectorElement(const URL*, id arrayElement)

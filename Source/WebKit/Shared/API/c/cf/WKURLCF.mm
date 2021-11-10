@@ -30,6 +30,7 @@
 #import "WKNSURL.h"
 #import <objc/runtime.h>
 #import <wtf/cf/CFURLExtras.h>
+#import <wtf/text/CString.h>
 
 static inline Class wkNSURLClass()
 {
@@ -44,14 +45,16 @@ static inline Class wkNSURLClass()
 WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 {
     if (!cfURL)
-        return nullptr;
+        return 0;
 
     // Since WKNSURL is an internal class with no subclasses, we can do a simple equality check.
     if (object_getClass((__bridge NSURL *)cfURL) == wkNSURLClass())
         return WebKit::toAPI(static_cast<API::URL*>(&[(WKNSURL *)(__bridge NSURL *)CFRetain(cfURL) _apiObject]));
 
-    // FIXME: Why is it OK to ignore the base URL in the CFURL here?
-    return WebKit::toCopiedURLAPI(bytesAsString(cfURL));
+    CString urlBytes;
+    WTF::getURLBytes(cfURL, urlBytes);
+
+    return WebKit::toCopiedURLAPI(urlBytes.data());
 }
 
 CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)

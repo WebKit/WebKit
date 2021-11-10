@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,38 +41,70 @@
 #import <wtf/Assertions.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/NSURLExtras.h>
-#import <wtf/cocoa/TypeCastsCocoa.h>
+
+using namespace WebCore;
+using namespace WTF;
+
+#define URL_BYTES_BUFFER_LENGTH 2048
 
 @implementation NSURL (WebNSURLExtras)
 
++ (NSURL *)_web_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL
+{
+    return URLWithUserTypedStringDeprecated(string, URL);
+}
+
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string
 {
-    return WTF::URLWithUserTypedStringDeprecated(string);
+    return URLWithUserTypedStringDeprecated(string, nil);
+}
+
++ (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL
+{
+    return URLWithUserTypedString(string, URL);
 }
 
 + (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string
 {
-    return WTF::URLWithUserTypedString(string);
+    return URLWithUserTypedString(string, nil);
 }
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string
 {
+    if (string == nil) {
+        return nil;
+    }
     return [self _web_URLWithDataAsString:string relativeToURL:nil];
 }
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string relativeToURL:(NSURL *)baseURL
 {
-    return WTF::URLWithData([[string _webkit_stringByTrimmingWhitespace] dataUsingEncoding:NSISOLatin1StringEncoding], baseURL);
+    if (string == nil) {
+        return nil;
+    }
+    string = [string _webkit_stringByTrimmingWhitespace];
+    NSData *data = [string dataUsingEncoding:NSISOLatin1StringEncoding];
+    return URLWithData(data, baseURL);
+}
+
++ (NSURL *)_web_URLWithData:(NSData *)data
+{
+    return URLWithData(data, nil);
+}      
+
++ (NSURL *)_web_URLWithData:(NSData *)data relativeToURL:(NSURL *)baseURL
+{
+    return URLWithData(data, baseURL);
 }
 
 - (NSData *)_web_originalData
 {
-    return WTF::originalURLData(self);
+    return originalURLData(self);
 }
 
 - (NSString *)_web_originalDataAsString
 {
-    return adoptNS([[NSString alloc] initWithData:WTF::originalURLData(self) encoding:NSISOLatin1StringEncoding]).autorelease();
+    return adoptNS([[NSString alloc] initWithData:originalURLData(self) encoding:NSISOLatin1StringEncoding]).autorelease();
 }
 
 - (NSString *)_web_userVisibleString
@@ -82,22 +114,22 @@
 
 - (BOOL)_web_isEmpty
 {
-    if (!CFURLGetBaseURL(bridge_cast(self)))
-        return !CFURLGetBytes(bridge_cast(self), nullptr, 0);
-    return ![WTF::originalURLData(self) length];
+    if (!CFURLGetBaseURL((CFURLRef)self))
+        return CFURLGetBytes((CFURLRef)self, NULL, 0) == 0;
+    return [originalURLData(self) length] == 0;
 }
 
-- (const char*)_web_URLCString
+- (const char *)_web_URLCString
 {
     NSMutableData *data = [NSMutableData data];
-    [data appendData:WTF::originalURLData(self)];
+    [data appendData:originalURLData(self)];
     [data appendBytes:"\0" length:1];
-    return (const char*)[data bytes];
+    return (const char *)[data bytes];
  }
 
 - (NSURL *)_webkit_canonicalize
 {
-    return WebCore::URLByCanonicalizingURL(self);
+    return URLByCanonicalizingURL(self);
 }
 
 - (NSURL *)_webkit_canonicalize_with_wtf
@@ -108,7 +140,7 @@
 
 - (NSURL *)_webkit_URLByRemovingFragment 
 {
-    return WTF::URLByTruncatingOneCharacterBeforeComponent(self, kCFURLComponentFragment);
+    return URLByTruncatingOneCharacterBeforeComponent(self, kCFURLComponentFragment);
 }
 
 - (NSURL *)_web_URLByRemovingUserInfo
@@ -131,6 +163,27 @@
     return [[self _web_originalDataAsString] _webkit_isFileURL];
 }
 
+-(NSData *)_web_schemeSeparatorWithoutColon
+{
+    NSData *result = nil;
+    CFRange rangeWithSeparators;
+    CFRange range = CFURLGetByteRangeForComponent((CFURLRef)self, kCFURLComponentScheme, &rangeWithSeparators);
+    if (rangeWithSeparators.location != kCFNotFound) {
+        NSString *absoluteString = [self absoluteString];
+        NSRange separatorsRange = NSMakeRange(range.location + range.length + 1, rangeWithSeparators.length - range.length - 1);
+        if (separatorsRange.location + separatorsRange.length <= [absoluteString length]) {
+            NSString *slashes = [absoluteString substringWithRange:separatorsRange];
+            result = [slashes dataUsingEncoding:NSISOLatin1StringEncoding];
+        }
+    }
+    return result;
+}
+
+-(NSData *)_web_dataForURLComponentType:(CFURLComponentType)componentType
+{
+    return WTF::dataForURLComponentType(self, componentType);
+}
+
 -(NSData *)_web_schemeData
 {
     return WTF::dataForURLComponentType(self, kCFURLComponentScheme);
@@ -139,11 +192,11 @@
 -(NSData *)_web_hostData
 {
     NSData *result = WTF::dataForURLComponentType(self, kCFURLComponentHost);
-
-    // Take off localhost for file.
-    if ([result _web_isCaseInsensitiveEqualToCString:"localhost"] && [[self _web_schemeData] _web_isCaseInsensitiveEqualToCString:"file"])
-        return nil;
-
+    NSData *scheme = [self _web_schemeData];
+    // Take off localhost for file
+    if ([scheme _web_isCaseInsensitiveEqualToCString:"file"]) {
+        return ([result _web_isCaseInsensitiveEqualToCString:"localhost"]) ? nil : result;
+    }
     return result;
 }
 
@@ -170,7 +223,7 @@
 
 - (BOOL)_web_isUserVisibleURL
 {
-    return WTF::isUserVisibleURL(self);
+    return isUserVisibleURL(self);
 }
 
 - (BOOL)_webkit_isJavaScriptURL
@@ -185,7 +238,7 @@
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes
 {
-    return WebCore::decodeURLEscapeSequences(String(self));
+    return decodeURLEscapeSequences(String(self));
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL
@@ -198,24 +251,24 @@
 
 - (NSString *)_web_decodeHostName
 {
-    NSString *name = WTF::decodeHostName(self);
+    NSString *name = decodeHostName(self);
     return !name ? self : name;
 }
 
 - (NSString *)_web_encodeHostName
 {
-    NSString *name = WTF::encodeHostName(self);
+    NSString *name = encodeHostName(self);
     return !name ? self : name;
 }
 
 - (NSString *)_webkit_decodeHostName
 {
-    return WTF::decodeHostName(self);
+    return decodeHostName(self);
 }
 
 - (NSString *)_webkit_encodeHostName
 {
-    return WTF::encodeHostName(self);
+    return encodeHostName(self);
 }
 
 -(NSRange)_webkit_rangeOfURLScheme
