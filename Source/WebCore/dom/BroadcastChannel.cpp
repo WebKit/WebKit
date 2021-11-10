@@ -38,6 +38,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -208,12 +209,15 @@ void BroadcastChannel::close()
 void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdentifier, Ref<SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainThread());
+    auto completionHandlerCallingScope = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
+        callOnMainThread(WTFMove(completionHandler));
+    });
+
     auto contextIdentifier = channelToContextIdentifier().get(channelIdentifier);
     if (!contextIdentifier)
-        return completionHandler();
+        return;
 
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [channelIdentifier, message = WTFMove(message), callbackAggregator = WTFMove(callbackAggregator)](auto&) mutable {
+    ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [channelIdentifier, message = WTFMove(message), completionHandlerCallingScope = WTFMove(completionHandlerCallingScope)](auto&) mutable {
         RefPtr<BroadcastChannel> channel;
         {
             Locker locker { allBroadcastChannelsLock };
@@ -221,8 +225,6 @@ void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdent
         }
         if (channel)
             channel->dispatchMessage(WTFMove(message));
-
-        callOnMainThread([callbackAggregator = WTFMove(callbackAggregator)] { });
     });
 }
 
