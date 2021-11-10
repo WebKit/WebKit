@@ -167,6 +167,25 @@ void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
 #endif
 };
 
+void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens)
+{
+#if !PLATFORM(MACCATALYST)
+    auto session = [PAL::getAVAudioSessionClass() sharedInstance];
+    if (![session respondsToSelector:@selector(setAuditTokensForProcessAssertion:error:)])
+        return;
+
+    auto nsAuditTokens = adoptNS([[NSMutableArray alloc] init]);
+    for (auto& token : auditTokens) {
+        auto nsToken = adoptNS([[NSData alloc] initWithBytes:token.val length:sizeof(token.val)]);
+        [nsAuditTokens addObject:nsToken.get()];
+    }
+
+    NSError *error = nil;
+    [session setAuditTokensForProcessAssertion:nsAuditTokens.get() error:&error];
+    if (error)
+        RELEASE_LOG_ERROR(Media, "Failed to set audit tokens for process assertion with error: %@", error.localizedDescription);
+#endif
+}
 
 void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy policy)
 {

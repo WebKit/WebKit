@@ -234,6 +234,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if ENABLE(MEDIA_STREAM)
     , m_captureOrigin(SecurityOrigin::createUnique())
 #endif
+#if HAVE(AUDIT_TOKEN)
+    , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
+#endif
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif

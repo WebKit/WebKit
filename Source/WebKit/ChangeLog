@@ -1,3 +1,55 @@
+2021-11-10  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Adopt -[AVAudioSession setAuditTokensForProcessAssertion:]
+        https://bugs.webkit.org/show_bug.cgi?id=232909
+        <rdar://68184444>
+
+        Reviewed by Eric Carlson.
+
+        When a page is loaded through SafariViewService, the UIProcess is SVS, but the "presenting"
+        application is the client of SafariViewController. To further compliate things, multiple apps
+        all using a SafariViewController will use a singleton SafariViewService application. When such
+        an application goes to the background while playing audio, the audio subsystem will keep the
+        UIProcess from suspending, but not the presenting application. The audio subsystem will see
+        that the presenting application has become suspended, and will interrupt audio playback.
+
+        Opt into a AVAudioSession behavior where a client can provide an array of audit tokens for
+        those processes which are "presenting" the audio playback to the user. This will include the
+        UIProcess, but also the process which is hosting the SafariViewController. The audio subsystem
+        will keep the processes in that list from becoming suspended during audio playback.
+
+        Since there may be different clients of SafariViewService existing simultaneously, only include
+        those presenting application tokens whose WebContent processes require an "active" audio session.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::presentingApplicationAuditToken const):
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::audioSessionManager const):
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        (WebKit::RemoteAudioSessionProxy::tryToSetActive):
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+        (WebKit::RemoteAudioSessionProxy::gpuConnectionToWebProcess const):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager):
+        (WebKit::RemoteAudioSessionProxyManager::updatePresentingProcesses):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+        * Scripts/process-entitlements.sh:
+        * Shared/GPUProcessConnectionParameters.h:
+        (WebKit::GPUProcessConnectionParameters::encode const):
+        (WebKit::GPUProcessConnectionParameters::decode):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setPresentingApplicationProcessToken:]):
+        (-[_WKProcessPoolConfiguration presentingApplicationProcessToken]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        * WebProcess/GPU/GPUProcessConnection.h:
+
 2021-11-10  Per Arne Vollan <pvollan@apple.com>
 
         [iOS][GPUP] Remove access to sysctl properties

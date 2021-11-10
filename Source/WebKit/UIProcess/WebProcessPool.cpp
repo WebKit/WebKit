@@ -473,6 +473,11 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, G
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
+
+#if HAVE(AUDIT_TOKEN)
+    parameters.presentingApplicationAuditToken = configuration().presentingApplicationProcessToken();
+#endif
+
     ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = WeakPtr { *this }, parameters, webProcessProxy = WeakPtr { webProcessProxy }, reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
             // Retry on the next RunLoop iteration because we may be inside the WebProcessPool destructor.

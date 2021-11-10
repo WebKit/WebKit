@@ -92,6 +92,8 @@ void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& 
 {
     m_active = audioSessionManager().tryToSetActiveForProcess(*this, active);
     completion(m_active);
+
+    audioSessionManager().updatePresentingProcesses();
 }
 
 void RemoteAudioSessionProxy::setIsPlayingToBluetoothOverride(std::optional<bool>&& value)

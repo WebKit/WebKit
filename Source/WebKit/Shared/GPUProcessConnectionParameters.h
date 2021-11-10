@@ -39,6 +39,9 @@ struct GPUProcessConnectionParameters {
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
+#if HAVE(AUDIT_TOKEN)
+    std::optional<audit_token_t> presentingApplicationAuditToken;
+#endif
 
     void encode(IPC::Encoder& encoder) const
     {
@@ -48,6 +51,9 @@ struct GPUProcessConnectionParameters {
         encoder << overrideLanguages;
 #if ENABLE(IPC_TESTING_API)
         encoder << ignoreInvalidMessageForTesting;
+#endif
+#if HAVE(AUDIT_TOKEN)
+        encoder << presentingApplicationAuditToken;
 #endif
     }
 
@@ -72,6 +78,12 @@ struct GPUProcessConnectionParameters {
             return std::nullopt;
 #endif
 
+#if HAVE(AUDIT_TOKEN)
+        std::optional<audit_token_t> presentingApplicationAuditToken;
+        if (!decoder.decode(presentingApplicationAuditToken))
+            return std::nullopt;
+#endif
+
         return GPUProcessConnectionParameters {
 #if HAVE(TASK_IDENTITY_TOKEN)
             WTFMove(*webProcessIdentityToken),
@@ -79,6 +91,9 @@ struct GPUProcessConnectionParameters {
             WTFMove(*overrideLanguages),
 #if ENABLE(IPC_TESTING_API)
             *ignoreInvalidMessageForTesting,
+#endif
+#if HAVE(AUDIT_TOKEN)
+            WTFMove(presentingApplicationAuditToken),
 #endif
         };
     }

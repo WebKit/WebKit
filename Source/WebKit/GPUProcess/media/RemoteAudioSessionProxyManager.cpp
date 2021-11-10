@@ -43,7 +43,8 @@ static bool categoryCanMixWithOthers(AudioSession::CategoryType category)
     return category == AudioSession::CategoryType::AmbientSound;
 }
 
-RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager()
+RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager(GPUProcess& gpuProcess)
+    : m_gpuProcess(gpuProcess)
 {
     AudioSession::sharedSession().addInterruptionObserver(*this);
     AudioSession::sharedSession().addConfigurationChangeObserver(*this);
@@ -173,6 +174,27 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
     }
 #endif
     return true;
+}
+
+void RemoteAudioSessionProxyManager::updatePresentingProcesses()
+{
+    Vector<audit_token_t> presentingProcesses;
+
+    if (auto token = m_gpuProcess.parentProcessConnection()->getAuditToken())
+        presentingProcesses.append(*token);
+
+    // AVAudioSession will take out an assertion on all the "presenting applications"
+    // when it moves to a "playing" state. But it's possible that (e.g.) multiple
+    // applications may be using SafariViewService simultaneously. So only include
+    // tokens from those proxies whose sessions are currently "active". Only their
+    // presenting applications will be kept from becoming "suspended" during playback.
+    m_proxies.forEach([&](auto& proxy) {
+        if (!proxy.isActive())
+            return;
+        if (auto& token = proxy.gpuConnectionToWebProcess().presentingApplicationAuditToken())
+            presentingProcesses.append(*token);
+    });
+    AudioSession::sharedSession().setPresentingProcesses(WTFMove(presentingProcesses));
 }
 
 void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()

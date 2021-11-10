@@ -65,6 +65,8 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
+    GPUConnectionToWebProcess& gpuConnectionToWebProcess() const { return m_gpuConnection; }
+
 private:
     friend UniqueRef<RemoteAudioSessionProxy> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSessionProxy>(GPUConnectionToWebProcess&);
     explicit RemoteAudioSessionProxy(GPUConnectionToWebProcess&);

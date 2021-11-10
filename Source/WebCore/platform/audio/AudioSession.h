@@ -131,6 +131,7 @@ public:
     static void setShouldManageAudioSessionCategory(bool flag) { s_shouldManageAudioSessionCategory = flag; }
 
     virtual void setHostProcessAttribution(audit_token_t) { };
+    virtual void setPresentingProcesses(Vector<audit_token_t>&&) { };
 
 protected:
     friend class NeverDestroyed<AudioSession>;

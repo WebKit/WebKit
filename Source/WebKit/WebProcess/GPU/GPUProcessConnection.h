@@ -71,6 +71,8 @@ public:
 #if HAVE(AUDIT_TOKEN)
     void setAuditToken(std::optional<audit_token_t> auditToken) { m_auditToken = auditToken; }
     std::optional<audit_token_t> auditToken() const { return m_auditToken; }
+
+    void setPresentingApplicationAuditToken(std::optional<audit_token_t>&&);
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();

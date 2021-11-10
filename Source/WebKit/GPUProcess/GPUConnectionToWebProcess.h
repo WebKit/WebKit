@@ -187,6 +187,10 @@ public:
     using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
     const RemoteRenderingBackendMap& remoteRenderingBackendMap() const { return m_remoteRenderingBackendMap; }
 
+#if HAVE(AUDIT_TOKEN)
+    const std::optional<audit_token_t>& presentingApplicationAuditToken() const { return m_presentingApplicationAuditToken; }
+#endif
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID, GPUProcessConnectionParameters&&);
 
@@ -294,6 +298,9 @@ private:
     bool m_allowsAudioCapture { false };
     bool m_allowsVideoCapture { false };
     bool m_allowsDisplayCapture { false };
+#endif
+#if HAVE(AUDIT_TOKEN)
+    std::optional<audit_token_t> m_presentingApplicationAuditToken;
 #endif
 
     RemoteRenderingBackendMap m_remoteRenderingBackendMap;
