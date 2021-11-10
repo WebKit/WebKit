@@ -4,6 +4,7 @@ AXRole: AXStaticText
 AXSubrole: (null)
 AXRoleDescription: text
 AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
 AXHelp:
 AXParent: <AXStaticText>
 AXSize: NSSize: {64, 18}

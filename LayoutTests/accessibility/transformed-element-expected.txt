@@ -3,6 +3,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {291, 123}

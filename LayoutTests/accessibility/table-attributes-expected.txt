@@ -12,6 +12,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {145, 66}
@@ -49,6 +50,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {145, 66}
@@ -86,6 +88,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {71, 66}
@@ -123,6 +126,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {122, 30}
@@ -160,6 +164,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {122, 30}
@@ -201,6 +206,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {92, 60}
@@ -238,6 +244,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 30}
@@ -279,6 +286,7 @@ AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXColumn>
 AXSize: NSSize: {145, 126}
@@ -313,6 +321,7 @@ AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXColumn>
 AXSize: NSSize: {145, 126}
@@ -347,6 +356,7 @@ AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXColumn>
 AXSize: NSSize: {71, 126}
@@ -381,6 +391,7 @@ AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXColumn>
 AXSize: NSSize: {122, 126}
@@ -415,6 +426,7 @@ AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXColumn>
 AXSize: NSSize: {122, 126}
@@ -453,6 +465,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXRow>
 AXSize: NSSize: {335, 30}
@@ -484,6 +497,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXRow>
 AXSize: NSSize: {335, 36}
@@ -515,6 +529,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXRow>
 AXSize: NSSize: {335, 30}
@@ -546,6 +561,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXRow>
 AXSize: NSSize: {335, 30}
@@ -581,6 +597,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {145, 66}
@@ -618,6 +635,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {71, 66}
@@ -655,6 +673,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {122, 30}
@@ -692,6 +711,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 36}
@@ -729,6 +749,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {69, 36}
@@ -766,6 +787,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {92, 60}
@@ -803,6 +825,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 30}
@@ -840,6 +863,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {71, 30}
@@ -877,6 +901,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 30}
@@ -914,6 +939,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {69, 30}
@@ -951,6 +977,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 30}
@@ -988,6 +1015,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {71, 30}
@@ -1025,6 +1053,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 30}
@@ -1062,6 +1091,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {69, 30}
@@ -1103,6 +1133,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {335, 66}

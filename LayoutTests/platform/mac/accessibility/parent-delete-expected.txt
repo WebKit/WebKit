@@ -2,6 +2,7 @@ This test passes if there is no crash.
 AXRole: AXWebArea
 AXRoleDescription: HTML content
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXWebArea>
 AXSize: NSSize: {800, 600}

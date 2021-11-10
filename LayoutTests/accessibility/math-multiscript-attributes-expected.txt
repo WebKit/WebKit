@@ -12,6 +12,7 @@ AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {14, 25}
@@ -42,6 +43,7 @@ AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {10, 19}
@@ -72,6 +74,7 @@ AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {9, 18}
@@ -102,6 +105,7 @@ AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {9, 19}
@@ -132,6 +136,7 @@ AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {10, 18}

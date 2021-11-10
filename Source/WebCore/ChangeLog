@@ -1,5 +1,71 @@
 2021-11-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r285169. rdar://problem/83950623
+
+    AX: WebKit needs to include NSAccessibilityChildrenInNavigationOrderAttribute in accessibilityAttributeNames
+    https://bugs.webkit.org/show_bug.cgi?id=232595
+    
+    Patch by Tyler Wilcock <tyler_w@apple.com> on 2021-11-02
+    Reviewed by Andres Gonzalez.
+    
+    This patch adds NSAccessibilityChildrenInNavigationOrderAttribute
+    (a.k.a. AXChildrenInNavigationOrder) to
+    WebAccessibilityObjectWrapperMac::accessibilityAttributeNames. The Mac
+    wrapper supported this attribute prior to this patch, but we didn't
+    advertise that we supported it because we didn't include it in our
+    exported attribute names.
+    
+    Source/WebCore:
+    
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    Add NSAccessibilityChildrenInNavigationOrderAttribute to list of base
+    supported attributes.
+    
+    LayoutTests:
+    
+    * accessibility/image-link-expected.txt:
+    * accessibility/image-map2-expected.txt:
+    * accessibility/internal-link-anchors2-expected.txt:
+    * accessibility/mac/aria-columnrowheaders-expected.txt:
+    * accessibility/mac/bounds-for-range-expected.txt:
+    * accessibility/mac/document-attributes-expected.txt:
+    * accessibility/mac/document-links-expected.txt:
+    * accessibility/mac/internal-link-anchors-expected.txt:
+    * accessibility/math-multiscript-attributes-expected.txt:
+    * accessibility/table-attributes-expected.txt:
+    * accessibility/table-cell-spans-expected.txt:
+    * accessibility/table-cells-expected.txt:
+    * accessibility/table-detection-expected.txt:
+    * accessibility/table-one-cell-expected.txt:
+    * accessibility/table-sections-expected.txt:
+    * accessibility/table-with-rules-expected.txt:
+    * accessibility/transformed-element-expected.txt:
+    * platform/mac/accessibility/lists-expected.txt:
+    * platform/mac/accessibility/parent-delete-expected.txt:
+    Add expected AXChildrenInNavigationOrder attribute output.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285169 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-02  Tyler Wilcock  <tyler_w@apple.com>
+
+            AX: WebKit needs to include NSAccessibilityChildrenInNavigationOrderAttribute in accessibilityAttributeNames
+            https://bugs.webkit.org/show_bug.cgi?id=232595
+
+            Reviewed by Andres Gonzalez.
+
+            This patch adds NSAccessibilityChildrenInNavigationOrderAttribute
+            (a.k.a. AXChildrenInNavigationOrder) to
+            WebAccessibilityObjectWrapperMac::accessibilityAttributeNames. The Mac
+            wrapper supported this attribute prior to this patch, but we didn't
+            advertise that we supported it because we didn't include it in our
+            exported attribute names.
+
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            Add NSAccessibilityChildrenInNavigationOrderAttribute to list of base
+            supported attributes.
+
+2021-11-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284453. rdar://problem/85034820
 
     cachedCGColor() and nsColor() should return smart pointers

@@ -4,6 +4,7 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
 AXHelp:
 AXParent: <AXLink>
 AXSize: NSSize: {123, 62}
@@ -38,6 +39,7 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
 AXHelp:
 AXParent: <AXLink>
 AXSize: NSSize: {113, 22}
@@ -72,6 +74,7 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXLink: 'link 3'>
 AXSize: NSSize: {37, 18}
@@ -105,6 +108,7 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXLink: 'link 4'>
 AXSize: NSSize: {37, 18}
