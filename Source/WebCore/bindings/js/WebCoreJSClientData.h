@@ -98,6 +98,7 @@ private:
 public:
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDOMWindow;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDedicatedWorkerGlobalScope;
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSShadowRealmGlobalScope;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSRemoteDOMWindow;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkerGlobalScope;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSSharedWorkerGlobalScope;

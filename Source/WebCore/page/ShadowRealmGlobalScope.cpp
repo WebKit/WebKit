@@ -82,7 +82,6 @@ ShadowRealmGlobalScope::ShadowRealmGlobalScope(WorkerThreadType type, const Work
     , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
     , m_topOrigin(WTFMove(topOrigin))
     , m_socketProvider(socketProvider)
-    , m_performance(Performance::create(this, params.timeOrigin))
     , m_referrerPolicy(params.referrerPolicy)
     , m_settingsValues(params.settingsValues)
     , m_workerType(params.workerType)
@@ -114,8 +113,6 @@ ShadowRealmGlobalScope::~ShadowRealmGlobalScope()
         allWorkerGlobalScopeIdentifiers().remove(contextIdentifier());
     }
 
-    m_performance = nullptr;
-
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
     thread().workerReportingProxy().workerGlobalScopeDestroyed();
 }
@@ -134,8 +131,6 @@ void ShadowRealmGlobalScope::prepareForDestruction()
 void ShadowRealmGlobalScope::removeAllEventListeners()
 {
     WorkerOrWorkletGlobalScope::removeAllEventListeners();
-    m_performance->removeAllEventListeners();
-    m_performance->removeAllObservers();
 }
 
 bool ShadowRealmGlobalScope::isSecureContext() const
@@ -345,11 +340,6 @@ void ShadowRealmGlobalScope::addMessage(MessageSource source, MessageLevel level
     else
         message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
     InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
-}
-
-Performance& ShadowRealmGlobalScope::performance() const
-{
-    return *m_performance;
 }
 
 void ShadowRealmGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)

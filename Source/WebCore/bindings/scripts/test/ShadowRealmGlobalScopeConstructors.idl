@@ -1,8 +1,3 @@
 partial interface ShadowRealmGlobalScope {
-    attribute ExposedToWorkerAndWindowConstructor ExposedToWorkerAndWindow;
-    attribute TestDefaultToJSONFilteredByExposedConstructor TestDefaultToJSONFilteredByExposed;
-    attribute TestNodeConstructor TestNode;
-    attribute TestObjConstructor TestObject;
-    attribute TestPromiseRejectionEventConstructor TestPromiseRejectionEvent;
     attribute ShadowRealmGlobalScopeConstructor ShadowRealmGlobalScope;
 };

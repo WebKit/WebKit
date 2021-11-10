@@ -57,11 +57,12 @@ class WorkerNavigator;
 class WorkerSWClientConnection;
 struct WorkerParameters;
 
-class ShadowRealmGlobalScope : public Supplementable<ShadowRealmGlobalScope>, public Base64Utilities, public WindowOrWorkerGlobalScope, public WorkerOrWorkletGlobalScope {
+class ShadowRealmGlobalScope : public Supplementable<ShadowRealmGlobalScope>, public Base64Utilities
+                               , public WindowOrWorkerGlobalScope, public WorkerOrWorkletGlobalScope
+  {
     WTF_MAKE_ISO_ALLOCATED(ShadowRealmGlobalScope);
 public:
-    ~ShadowRealmGlobalScope() {
-    }
+    virtual ~ShadowRealmGlobalScope();
 
     virtual bool isDedicatedWorkerGlobalScope() const { return false; }
     virtual bool isSharedWorkerGlobalScope() const { return false; }
