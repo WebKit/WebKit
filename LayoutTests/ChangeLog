@@ -1,3 +1,17 @@
+2021-11-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines after r284521
+        https://bugs.webkit.org/show_bug.cgi?id=232913
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/svg/foreignObject/background-render-phase-expected.txt: Added.
+        * platform/glib/svg/foreignObject/multiple-foreign-objects-expected.txt: Added.
+        * platform/glib/svg/wicd/sizing-flakiness-expected.txt: Added.
+        * platform/gtk/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/wpe/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+
 2021-11-10  Sihui Liu  <sihui_liu@apple.com>
 
         Perform FileSystemSyncAccessHandle operations in web process
