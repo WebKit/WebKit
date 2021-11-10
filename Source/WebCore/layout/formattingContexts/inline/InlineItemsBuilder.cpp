@@ -139,6 +139,38 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
     }
 }
 
+static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& inlineTextBox, StringBuilder& paragraphContentBuilder)
+{
+    // ubidi prefers non-preserved new lines as whitespace characters.
+    if (TextUtil::shouldPreserveNewline(inlineTextBox))
+        return paragraphContentBuilder.append(inlineTextBox.content());
+
+    auto textContent = inlineTextBox.content();
+    auto contentLength = textContent.length();
+    auto needsUnicodeHandling = !textContent.is8Bit();
+    size_t nonReplacedContentStartPosition = 0;
+    for (size_t position = 0; position < contentLength;) {
+        auto startPosition = position;
+        auto isNewLineCharacter = [&] {
+            if (needsUnicodeHandling) {
+                UChar32 character;
+                U16_NEXT(textContent.characters16(), position, contentLength, character);
+                return character == newlineCharacter;
+            }
+            return textContent[position++] == newlineCharacter;
+        };
+        if (!isNewLineCharacter())
+            continue;
+
+        if (nonReplacedContentStartPosition < startPosition)
+            paragraphContentBuilder.append(textContent.substring(nonReplacedContentStartPosition, startPosition - nonReplacedContentStartPosition));
+        paragraphContentBuilder.append(space);
+        nonReplacedContentStartPosition = position;
+    }
+    if (nonReplacedContentStartPosition < contentLength)
+        paragraphContentBuilder.append(textContent.right(contentLength - nonReplacedContentStartPosition));
+}
+
 using InlineItemOffsetList = Vector<std::optional<size_t>>;
 static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
 {
@@ -151,7 +183,7 @@ static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBui
         if (inlineItem.isText()) {
             if (lastInlineTextBox != &layoutBox) {
                 inlineTextBoxOffset = paragraphContentBuilder.length();
-                paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
+                replaceNonPreservedNewLineCharactersAndAppend(downcast<InlineTextBox>(layoutBox), paragraphContentBuilder);
                 lastInlineTextBox = &layoutBox;
             }
             inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineTextItem>(inlineItem).start() });
