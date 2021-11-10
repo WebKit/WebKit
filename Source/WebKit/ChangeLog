@@ -1,5 +1,17 @@
 2021-11-10  Per Arne Vollan <pvollan@apple.com>
 
+        [iOS][GPUP] Remove access to mach-register
+        https://bugs.webkit.org/show_bug.cgi?id=232442
+        <rdar://problem/84763289>
+
+        Reviewed by Darin Adler.
+
+        Based on telemetry, remove access to mach-register in the GPU process' sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
+2021-11-10  Per Arne Vollan <pvollan@apple.com>
+
         [iOS][GPUP] Block access to mapping of executables
         https://bugs.webkit.org/show_bug.cgi?id=232824
         <rdar://problem/85163925>

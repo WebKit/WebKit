@@ -215,8 +215,6 @@
 )
 
 (define-once (accessibility-support)
-    (allow mach-register (with telemetry)
-        (local-name "com.apple.iphone.axserver"))
     (mobile-preferences-read "com.apple.Accessibility")
     
     ;; <rdar://problem/10809394>
