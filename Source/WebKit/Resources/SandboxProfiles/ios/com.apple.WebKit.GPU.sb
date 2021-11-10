@@ -504,9 +504,6 @@
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.tccd"))
 
-(allow ipc-posix-shm-read* (with telemetry)
-       (ipc-posix-name-prefix "apple.cfprefs."))
- 
 ;; <rdar://problem/12413942>
 (allow file-read* (with telemetry)
        (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
@@ -549,7 +546,7 @@
 
 (allow mach-lookup (with telemetry)
        (global-name "com.apple.system.notification_center"))
-(allow ipc-posix-shm-read* (with telemetry)
+(allow ipc-posix-shm-read*
        (ipc-posix-name "apple.shm.notification_center"))
 
 (managed-configuration-read-public)
