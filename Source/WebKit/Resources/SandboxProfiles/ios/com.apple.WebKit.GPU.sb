@@ -519,12 +519,9 @@
         (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
         (extension "com.apple.fileprovider.read-write")))
 
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.logd")
-    (global-name "com.apple.logd.events")
-    (global-name "com.apple.distributed_notifications@1v3")
-    (global-name "com.apple.aggregated")
-)
+    (global-name "com.apple.logd.events"))
 
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.tccd"))
@@ -561,9 +558,6 @@
            (sysctl-name "vm.footprint_suspend"))
     (allow nvram-get (with telemetry) (nvram-variable "emu")) ;; <rdar://problem/78363040>
 )
-
-(allow mach-lookup (with telemetry)
-       (global-name "com.apple.system.logger"))
 
 (allow file-read-metadata (with telemetry)
        (literal "/private/var/run/syslog"))
@@ -623,10 +617,6 @@
 (media-remote)
 
 (url-translation)
-
-;; TextInput framework
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.TextInput"))
 
 (mobile-preferences-read "com.apple.da")
 
@@ -891,17 +881,6 @@
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
-(allow mach-lookup (with telemetry)
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name
-            "com.apple.PowerManagement.control"
-            "com.apple.frontboard.systemappservices"
-            "com.apple.iconservices"
-        )
-    )
-)
-
 (allow iokit-open (with telemetry)
     (require-all
         (extension "com.apple.webkit.extension.iokit")
@@ -936,16 +915,6 @@
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.systemstatus.activityattribution")
 )
-
-(allow mach-lookup (with telemetry)
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd")))
-
-(allow mach-lookup (with telemetry)
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (xpc-service-name-prefix "com.apple.AGXCompilerService")))
 
 (media-capture-support)
 
