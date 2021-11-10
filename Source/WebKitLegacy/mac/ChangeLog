@@ -1,3 +1,50 @@
+2021-11-10  Darin Adler  <darin@apple.com>
+
+        [CF] Reduce duplication and unneeded buffer allocations and copying in URL code, also remove unused methods and functions
+        https://bugs.webkit.org/show_bug.cgi?id=232220
+
+        Reviewed by Alex Christensen.
+
+        * Misc/WebNSURLExtras.h: Tweaked comments a bit. No need to say methods are "new", since
+        that won't be true in the future. Removed unused methods
+        +[NSURL _web_URLWithUserTypedString:relativeToURL:],
+        +[NSURL _webkit_URLWithUserTypedString:relativeToURL:],
+        +[NSURL _web_URLWithData:], +[NSURL _web_URLWithData:relatveToURL:].
+        Wanted to remove even more nearly unused methods: many were used only
+        inside the WebKit project, in legacy plug-in code, and some seemed unused,
+        but it wasn't easy for me to quickly verify that.
+
+        * Misc/WebNSURLExtras.mm: Removed "using namespace WebCore" and
+        "using namespace WTF".
+        (+[NSURL _web_URLWithUserTypedString:relativeToURL:]): Deleted.
+        (+[NSURL _web_URLWithUserTypedString:]): Use WTF prefix explicitly.
+        (+[NSURL _webkit_URLWithUserTypedString:relativeToURL:]): Deleted.
+        (+[NSURL _webkit_URLWithUserTypedString:]): Use WTF prefix explicitly.
+        (+[NSURL _web_URLWithDataAsString:]): Removed special case for nil since the code
+        will do the right thing with nil without an explicit check.
+        (+[NSURL _web_URLWithDataAsString:relativeToURL]): Ditto. Also formatted the code
+        as a one-liner.
+        (+[NSURL _web_URLWithData:]): Deleted.
+        (+[NSURL _web_URLWithData:relativeToURL:]): Deleted.
+        (-[NSURL _web_originalData]): Use WTF prefix explicitly.
+        (-[NSURL _web_originalDataAsString]): Ditto.
+        (-[NSURL _web_isEmpty]): Use bridge_cast and make code style checker happy by using
+        "!" instead of "== 0".
+        (-[NSURL _web_URLCString]): Use WTF prefix explicitly.
+        (-[NSURL _webkit_canonicalize]): Use WebCore prefix explicitly.
+        (-[NSURL _webkit_URLByRemovingFragment]): Use WTF prefix explicitly.
+        (-[NSURL _web_schemeSeparatorWithoutColon]): Deleted.
+        (-[NSURL _web_dataForURLComponentType:]): Deleted.
+        (-[NSURL _web_hostData]): Use WTF prefix explicitly. Rearranged for clarity and
+        slightly improved efficiency as well.
+        (-[NSString _web_isUserVisibleURL]): Use WTF prefix explicitly.
+        (-[NSString _webkit_stringByReplacingValidPercentEscapes]): Use WebCore prefix
+        explicitly.
+        (-[NSString _web_decodeHostName]): Use WTF prefix explicitly.
+        (-[NSString _web_encodeHostName]): Ditto.
+        (-[NSString _webkit_decodeHostName]): Ditto.
+        (-[NSString _webkit_encodeHostName]): Ditto.
+
 2021-11-10  Tim Nguyen  <ntim@apple.com>
 
         Migrate DialogElementEnabled from RuntimeFlags to Settings

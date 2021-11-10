@@ -35,39 +35,47 @@ namespace WTF {
 
 URL::URL(CFURLRef url)
 {
-    if (!url) {
+    // FIXME: Why is it OK to ignore the base URL in the CFURL here?
+    if (!url)
         invalidate();
-        return;
-    }
-
-    // FIXME: Why is it OK to ignore base URL here?
-    CString urlBytes;
-    getURLBytes(url, urlBytes);
-    URLParser parser(urlBytes.data());
-    *this = parser.result();
+    else
+        *this = URLParser(bytesAsString(url)).result();
 }
 
 #if !USE(FOUNDATION)
+
+RetainPtr<CFURLRef> URL::emptyCFURL()
+{
+    return nullptr;
+}
+
+#endif
+
 RetainPtr<CFURLRef> URL::createCFURL() const
 {
-    RetainPtr<CFURLRef> cfURL;
-    if (LIKELY(m_string.is8Bit() && m_string.isAllASCII()))
-        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, m_string.characters8(), m_string.length(), kCFStringEncodingUTF8, nullptr, true));
-    else {
-        CString utf8 = m_string.utf8();
-        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, utf8.dataAsUInt8Ptr(), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
-    }
-
-    if (protocolIsInHTTPFamily() && !isCFURLSameOrigin(cfURL.get(), *this))
+    if (isNull())
         return nullptr;
 
-    return cfURL;
+    if (isEmpty())
+        return emptyCFURL();
+
+    RetainPtr<CFURLRef> result;
+    if (LIKELY(m_string.is8Bit() && m_string.isAllASCII()))
+        result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, m_string.characters8(), m_string.length(), kCFStringEncodingUTF8, nullptr, true));
+    else {
+        CString utf8 = m_string.utf8();
+        result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, utf8.dataAsUInt8Ptr(), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
+    }
+
+    if (protocolIsInHTTPFamily() && !isSameOrigin(result.get(), *this))
+        return nullptr;
+
+    return result;
 }
-#endif
 
 String URL::fileSystemPath() const
 {
-    RetainPtr<CFURLRef> cfURL = createCFURL();
+    auto cfURL = createCFURL();
     if (!cfURL)
         return String();
 

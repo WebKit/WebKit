@@ -37,8 +37,8 @@ namespace WTF {
 void FileSystem::setMetadataURL(const String& path, const String& metadataURLString, const String& referrer)
 {
     String urlString;
-    if (NSURL *url = URLWithUserTypedString(metadataURLString, nil))
-        urlString = WTF::userVisibleString(WTF::URLByRemovingUserInfo(url));
+    if (NSURL *url = URLWithUserTypedString(metadataURLString))
+        urlString = userVisibleString(URLByRemovingUserInfo(url));
     else
         urlString = metadataURLString;
 

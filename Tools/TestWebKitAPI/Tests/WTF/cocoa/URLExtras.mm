@@ -249,10 +249,10 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
 
 TEST(WTF_URLExtras, URLExtras_Nil)
 {
-    NSURL *url1 = WTF::URLWithUserTypedString(nil, nil);
+    NSURL *url1 = WTF::URLWithUserTypedString(nil);
     EXPECT_TRUE(url1 == nil);
 
-    NSURL *url2 = WTF::URLWithUserTypedStringDeprecated(nil, nil);
+    NSURL *url2 = WTF::URLWithUserTypedStringDeprecated(nil);
     EXPECT_TRUE(url2 == nil);
 }
 

@@ -110,7 +110,7 @@
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:_frame->url().string()];
+    return _frame->url();
 }
 
 - (NSArray *)childFrames

@@ -37,7 +37,7 @@
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:static_cast<API::URLRequest*>(&self._apiObject)->resourceRequest().url().string()];
+    return static_cast<API::URLRequest*>(&self._apiObject)->resourceRequest().url();
 }
 
 #pragma mark NSCopying protocol implementation
