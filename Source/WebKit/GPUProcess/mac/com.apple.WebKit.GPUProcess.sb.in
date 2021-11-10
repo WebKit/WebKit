@@ -110,11 +110,11 @@
     ;; OpenCL
     (allow iokit-open (with telemetry)
         (iokit-connection "IOAccelerator")
-        (iokit-registry-entry-class "IOAccelerationUserClient")
-        (iokit-registry-entry-class "IOSurfaceRootUserClient")
-        (iokit-registry-entry-class "IOSurfaceSendRight"))
+        (iokit-registry-entry-class "IOSurfaceRootUserClient"))
+    (deny iokit-open (with telemetry)
+        (iokit-registry-entry-class "IOAccelerationUserClient"))
     ;; CoreVideo CVCGDisplayLink
-    (allow iokit-open (with telemetry)
+    (deny iokit-open (with telemetry)
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
 
     ;; These are needed for Encrypted Media on some hardware (MacMini8,1 for example)
@@ -124,12 +124,12 @@
     )
 
     ;; QuartzCore
-    (allow iokit-open (with telemetry)
+    (deny iokit-open (with telemetry)
         (iokit-registry-entry-class "AGPMClient")
         (iokit-registry-entry-class "AppleGraphicsControlClient")
         (iokit-registry-entry-class "AppleGraphicsPolicyClient"))
     ;; OpenGL
-    (allow iokit-open (with telemetry)
+    (deny iokit-open (with telemetry)
         (iokit-registry-entry-class "AppleMGPUPowerControlClient"))
     ;; GPU bundles
     (allow file-read* (with telemetry)
@@ -665,14 +665,16 @@
 
 ;; IOKit user clients
 (allow iokit-open (with telemetry)
-    (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "AppleUpstreamUserClient")
-    (iokit-user-client-class "IOHIDParamUserClient")
     (iokit-user-client-class "RootDomainUserClient")
     (iokit-user-client-class "IOAudioControlUserClient")
     (iokit-user-client-class "IOAudioEngineUserClient")
     ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
     (iokit-user-client-class "AudioAUUC"))
+
+(deny iokit-open (with telemetry)
+    (iokit-user-client-class "AppleMultitouchDeviceUserClient")
+    (iokit-user-client-class "IOHIDParamUserClient"))
 
 ;; Audio
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
@@ -898,7 +900,7 @@
         )
 #endif
         )
-    (allow iokit-open (with telemetry)
+    (deny iokit-open (with telemetry)
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))

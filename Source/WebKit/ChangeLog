@@ -1,3 +1,15 @@
+2021-11-10  Per Arne Vollan <pvollan@apple.com>
+
+        [macOS][GPUP] Remove access to IOKit classes
+        https://bugs.webkit.org/show_bug.cgi?id=232308
+        <rdar://problem/84665748>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, remove access to unused IOKit classes in the GPU process' sandbox on macOS.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-10  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc to M96
