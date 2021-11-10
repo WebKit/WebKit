@@ -1,3 +1,13 @@
+2021-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        Implement serialization and deserialization of redirect and modify headers actions for WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=232901
+
+        Reviewed by Timothy Hatcher.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-11-10  Chris Dumez  <cdumez@apple.com>
 
         Add basic support for launching CaptivePortalMode WebProcesses

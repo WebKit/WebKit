@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "Utilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/CombinedURLFilters.h>
+#include <WebCore/ContentExtensionActions.h>
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
 #include <WebCore/ContentExtensionParser.h>
@@ -908,7 +909,6 @@ static const char* jsonWithStringsToCombine = "["
 
 TEST_F(ContentExtensionTest, StringParameters)
 {
-    using namespace ContentExtensions;
     auto backend1 = makeBackend("[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"matches\"}}]");
     ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend1, mainDocumentRequest("test:///matches")), Vector<Action>::from(Action { ContentExtensions::NotifyAction { { "testnotification" } } })));
 
@@ -1440,7 +1440,6 @@ TEST_F(ContentExtensionTest, MatchesEverything)
     
 TEST_F(ContentExtensionTest, InvalidJSON)
 {
-    using namespace ContentExtensions;
     checkCompilerError("[", ContentExtensionError::JSONInvalid);
     checkCompilerError("123", ContentExtensionError::JSONTopLevelStructureNotAnArray);
     checkCompilerError("{}", ContentExtensionError::JSONTopLevelStructureNotAnArray);
@@ -3006,6 +3005,46 @@ TEST_F(ContentExtensionTest, CombinedQuantifiedOneOrMoreRangesCase11And13InGroup
 TEST_F(ContentExtensionTest, ValidSelector)
 {
     EXPECT_TRUE(WebCore::ContentExtensions::isValidCSSSelector("a[href*=hsv]"));
+}
+
+TEST_F(ContentExtensionTest, Serialization)
+{
+    auto checkRedirectActionSerialization = [] (const RedirectAction& action, size_t expectedSerializedBufferLength) {
+        Vector<uint8_t> buffer;
+        action.serialize(buffer);
+        EXPECT_EQ(expectedSerializedBufferLength, buffer.size());
+        auto deserialized = RedirectAction::deserialize({ buffer.data(), buffer.size() });
+        EXPECT_EQ(deserialized, action);
+    };
+    checkRedirectActionSerialization({ { RedirectAction::ExtensionPathAction { "extensionPath" } } }, 18);
+    checkRedirectActionSerialization({ { RedirectAction::RegexSubstitutionAction { "regexSubstitution" } } }, 22);
+    checkRedirectActionSerialization({ { RedirectAction::URLAction { "url" } } }, 8);
+    checkRedirectActionSerialization({ { RedirectAction::URLTransformAction {
+        "frägment",
+        "host",
+        "password",
+        { /* path */ },
+        "port",
+        { /* query */ },
+        "scheme",
+        "username"
+    } } }, 75);
+    checkRedirectActionSerialization({ { RedirectAction::URLTransformAction { { }, { }, { }, { }, { }, { "query" }, { }, { } } } }, 20);
+    checkRedirectActionSerialization({ { RedirectAction::URLTransformAction { { }, { }, { }, { }, { },
+        { RedirectAction::URLTransformAction::QueryTransform { { { "key1", false, "value1" }, { "key💩", false, "value2" } }, { "testString1", "testString2" } } }, { }, { },
+    } } }, 94);
+
+    ModifyHeadersAction modifyHeaders { {
+        { { ModifyHeadersAction::ModifyHeaderInfo::AppendOperation { "key1", "value1" } } },
+        { { ModifyHeadersAction::ModifyHeaderInfo::SetOperation { "key2", "value2" } } }
+    }, {
+        { { ModifyHeadersAction::ModifyHeaderInfo::RemoveOperation { "💩" } } }
+    } };
+    Vector<uint8_t> modifyHeadersBuffer;
+    modifyHeaders.serialize(modifyHeadersBuffer);
+    EXPECT_EQ(modifyHeadersBuffer.size(), 59u);
+    auto deserializedModifyHeaders = ModifyHeadersAction::deserialize({ modifyHeadersBuffer.data(), modifyHeadersBuffer.size() });
+    EXPECT_EQ(modifyHeaders, deserializedModifyHeaders);
 }
 
 } // namespace TestWebKitAPI

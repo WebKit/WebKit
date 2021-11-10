@@ -60,7 +60,7 @@ struct NotifyAction : public ActionWithStringMetadata<NotifyAction> { };
 struct IgnorePreviousRulesAction : public ActionWithoutMetadata<IgnorePreviousRulesAction> { };
 struct MakeHTTPSAction : public ActionWithoutMetadata<MakeHTTPSAction> { };
 
-struct ModifyHeadersAction {
+struct WEBCORE_EXPORT ModifyHeadersAction {
     struct ModifyHeaderInfo {
         struct AppendOperation {
             String header;
@@ -82,7 +82,8 @@ struct ModifyHeadersAction {
             RemoveOperation isolatedCopy() const { return { header.isolatedCopy() }; }
             bool operator==(const RemoveOperation& other) const { return other.header == this->header; }
         };
-        std::variant<AppendOperation, SetOperation, RemoveOperation> operation;
+        using OperationVariant = std::variant<AppendOperation, SetOperation, RemoveOperation>;
+        OperationVariant operation;
 
         static Expected<ModifyHeaderInfo, std::error_code> parse(const JSON::Value&);
         ModifyHeaderInfo isolatedCopy() const;
@@ -97,13 +98,13 @@ struct ModifyHeadersAction {
 
     static Expected<ModifyHeadersAction, std::error_code> parse(const JSON::Object&);
     ModifyHeadersAction isolatedCopy() const;
-    WEBCORE_EXPORT bool operator==(const ModifyHeadersAction&) const;
+    bool operator==(const ModifyHeadersAction&) const;
     void serialize(Vector<uint8_t>&) const;
     static ModifyHeadersAction deserialize(Span<const uint8_t>);
     static size_t serializedLength(Span<const uint8_t>);
 };
 
-struct RedirectAction {
+struct WEBCORE_EXPORT RedirectAction {
     struct ExtensionPathAction {
         String extensionPath;
 
@@ -147,7 +148,8 @@ struct RedirectAction {
         String password;
         String path;
         String port;
-        std::variant<String, QueryTransform> queryTransform;
+        using QueryTransformVariant = std::variant<String, QueryTransform>;
+        QueryTransformVariant queryTransform;
         String scheme;
         String username;
 
@@ -165,11 +167,12 @@ struct RedirectAction {
         bool operator==(const URLAction& other) const { return other.url == this->url; }
     };
 
-    std::variant<ExtensionPathAction, RegexSubstitutionAction, URLTransformAction, URLAction> action;
+    using ActionVariant = std::variant<ExtensionPathAction, RegexSubstitutionAction, URLTransformAction, URLAction>;
+    ActionVariant action;
 
     static Expected<RedirectAction, std::error_code> parse(const JSON::Object&, const HashSet<String>&);
     RedirectAction isolatedCopy() const;
-    WEBCORE_EXPORT bool operator==(const RedirectAction&) const;
+    bool operator==(const RedirectAction&) const;
     void serialize(Vector<uint8_t>&) const;
     static RedirectAction deserialize(Span<const uint8_t>);
     static size_t serializedLength(Span<const uint8_t>);

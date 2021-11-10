@@ -33,6 +33,52 @@
 
 namespace WebCore::ContentExtensions {
 
+static void append(Vector<uint8_t>& vector, size_t length)
+{
+    RELEASE_ASSERT(length <= std::numeric_limits<uint32_t>::max());
+    uint32_t integer = length;
+    vector.append(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(&integer), sizeof(integer) });
+}
+
+static void uncheckedAppend(Vector<uint8_t>& vector, size_t length)
+{
+    RELEASE_ASSERT(length <= std::numeric_limits<uint32_t>::max());
+    uint32_t integer = length;
+    vector.uncheckedAppend(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(&integer), sizeof(integer) });
+}
+
+static void append(Vector<uint8_t>& vector, const CString& string)
+{
+    vector.append(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(string.data()), string.length() });
+}
+
+static void uncheckedAppend(Vector<uint8_t>& vector, const CString& string)
+{
+    vector.uncheckedAppend(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(string.data()), string.length() });
+}
+
+static size_t deserializeLength(Span<const uint8_t> span, size_t offset)
+{
+    RELEASE_ASSERT(span.size() >= offset + sizeof(uint32_t));
+    return *reinterpret_cast<const uint32_t*>(span.data() + offset);
+}
+
+static String deserializeUTF8String(Span<const uint8_t> span, size_t offset, size_t length)
+{
+    RELEASE_ASSERT(span.size() >= offset + length);
+    return String::fromUTF8(span.data() + offset, length);
+}
+
+static void writeLengthToVectorAtOffset(Vector<uint8_t>& vector, size_t offset)
+{
+    auto length = vector.size() - offset;
+    RELEASE_ASSERT(length <= std::numeric_limits<uint32_t>::max());
+    uint32_t integer = length;
+    RELEASE_ASSERT(vector.size() >= offset + sizeof(uint32_t));
+    RELEASE_ASSERT(!*reinterpret_cast<uint32_t*>(vector.data() + offset));
+    *reinterpret_cast<uint32_t*>(vector.data() + offset) = integer;
+}
+
 Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const JSON::Object& modifyHeaders)
 {
     auto parseHeaders = [] (const JSON::Object& modifyHeaders, ASCIILiteral arrayName) -> Expected<Vector<ModifyHeaderInfo>, std::error_code> {
@@ -78,19 +124,45 @@ bool ModifyHeadersAction::operator==(const ModifyHeadersAction& other) const
         && other.responseHeaders == this->responseHeaders;
 }
 
-// FIXME: Implement serialization and deserialization of each of these types, then do their actions.
-void ModifyHeadersAction::serialize(Vector<uint8_t>&) const
+void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
 {
+    auto beginIndex = vector.size();
+    append(vector, 0);
+    auto requestHeadersLengthIndex = vector.size();
+    append(vector, 0);
+    for (auto& headerInfo : requestHeaders)
+        headerInfo.serialize(vector);
+    writeLengthToVectorAtOffset(vector, requestHeadersLengthIndex);
+    for (auto& headerInfo : responseHeaders)
+        headerInfo.serialize(vector);
+    writeLengthToVectorAtOffset(vector, beginIndex);
 }
 
-ModifyHeadersAction ModifyHeadersAction::deserialize(Span<const uint8_t>)
+ModifyHeadersAction ModifyHeadersAction::deserialize(Span<const uint8_t> span)
 {
-    return { };
+    auto serializedLength = deserializeLength(span, 0);
+    auto requestHeadersLength = deserializeLength(span, sizeof(uint32_t));
+    size_t progress = sizeof(uint32_t) * 2;
+    Vector<ModifyHeaderInfo> requestHeaders;
+    while (progress < requestHeadersLength + sizeof(uint32_t)) {
+        auto subspan = span.subspan(progress);
+        progress += ModifyHeaderInfo::serializedLength(subspan);
+        requestHeaders.append(ModifyHeaderInfo::deserialize(subspan));
+    }
+    RELEASE_ASSERT(progress == requestHeadersLength + sizeof(uint32_t));
+    Vector<ModifyHeaderInfo> responseHeaders;
+    while (progress < serializedLength) {
+        auto subspan = span.subspan(progress);
+        progress += ModifyHeaderInfo::serializedLength(subspan);
+        responseHeaders.append(ModifyHeaderInfo::deserialize(subspan));
+    }
+    RELEASE_ASSERT(progress == serializedLength);
+    return { WTFMove(requestHeaders), WTFMove(responseHeaders) };
 }
 
-size_t ModifyHeadersAction::serializedLength(Span<const uint8_t>)
+size_t ModifyHeadersAction::serializedLength(Span<const uint8_t> span)
 {
-    return 0;
+    return deserializeLength(span, 0);
 }
 
 auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) -> Expected<ModifyHeaderInfo, std::error_code>
@@ -136,18 +208,50 @@ bool ModifyHeadersAction::ModifyHeaderInfo::operator==(const ModifyHeaderInfo& o
     return other.operation == this->operation;
 }
 
-void ModifyHeadersAction::ModifyHeaderInfo::serialize(Vector<uint8_t>&) const
+void ModifyHeadersAction::ModifyHeaderInfo::serialize(Vector<uint8_t>& vector) const
 {
+    auto beginIndex = vector.size();
+    append(vector, 0);
+    vector.append(operation.index());
+    std::visit(WTF::makeVisitor([&] (const RemoveOperation& operation) {
+        append(vector, operation.header.utf8());
+    }, [&] (const auto& operation) {
+        auto valueUTF8 = operation.value.utf8();
+        append(vector, valueUTF8.length());
+        append(vector, operation.header.utf8());
+        append(vector, valueUTF8);
+    }), operation);
+    writeLengthToVectorAtOffset(vector, beginIndex);
 }
 
-auto ModifyHeadersAction::ModifyHeaderInfo::deserialize(Span<const uint8_t>) -> ModifyHeaderInfo
+auto ModifyHeadersAction::ModifyHeaderInfo::deserialize(Span<const uint8_t> span) -> ModifyHeaderInfo
 {
-    return { };
+    constexpr auto headerSize = sizeof(uint32_t) + sizeof(uint8_t);
+    RELEASE_ASSERT(span.size() >= headerSize);
+    auto serializedLength = deserializeLength(span, 0);
+    return { [&] () -> OperationVariant {
+        switch (auto index = span[sizeof(uint32_t)]) {
+        case WTF::alternativeIndexV<RemoveOperation, OperationVariant>:
+            return RemoveOperation { deserializeUTF8String(span, headerSize, serializedLength - headerSize) };
+        case WTF::alternativeIndexV<AppendOperation, OperationVariant>:
+        case WTF::alternativeIndexV<SetOperation, OperationVariant>: {
+            auto valueLength = deserializeLength(span, headerSize);
+            auto headerLength = serializedLength - headerSize - valueLength - sizeof(uint32_t);
+            auto header = deserializeUTF8String(span, headerSize + sizeof(uint32_t), headerLength);
+            auto value = deserializeUTF8String(span, headerSize + sizeof(uint32_t) + headerLength, valueLength);
+            if (index == WTF::alternativeIndexV<AppendOperation, OperationVariant>)
+                return AppendOperation { WTFMove(header), WTFMove(value) };
+            return SetOperation { WTFMove(header), WTFMove(value) };
+        }
+
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }() };
 }
 
-size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(Span<const uint8_t>)
+size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(Span<const uint8_t> span)
 {
-    return 0;
+    return deserializeLength(span, 0);
 }
 
 Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const HashSet<String>& allowedRedirectURLSchemes)
@@ -193,23 +297,51 @@ bool RedirectAction::operator==(const RedirectAction& other) const
     return other.action == this->action;
 }
 
-void RedirectAction::serialize(Vector<uint8_t>&) const
+void RedirectAction::serialize(Vector<uint8_t>& vector) const
 {
+    auto beginIndex = vector.size();
+    append(vector, 0);
+    vector.append(action.index());
+    std::visit(WTF::makeVisitor([&](const ExtensionPathAction& action) {
+        append(vector, action.extensionPath.utf8());
+    }, [&](const RegexSubstitutionAction& action) {
+        append(vector, action.regexSubstitution.utf8());
+    }, [&](const URLTransformAction& action) {
+        action.serialize(vector);
+    }, [&](const URLAction& action) {
+        append(vector, action.url.utf8());
+    }), action);
+    writeLengthToVectorAtOffset(vector, beginIndex);
 }
 
-RedirectAction RedirectAction::deserialize(Span<const uint8_t>)
+RedirectAction RedirectAction::deserialize(Span<const uint8_t> span)
 {
-    return { };
+    constexpr auto headerSize = sizeof(uint32_t) + sizeof(uint8_t);
+    auto stringLength = deserializeLength(span, 0) - headerSize;
+    RELEASE_ASSERT(span.size() >= headerSize);
+    return { [&] () -> ActionVariant {
+        switch (span[sizeof(uint32_t)]) {
+        case WTF::alternativeIndexV<ExtensionPathAction, ActionVariant>:
+            return ExtensionPathAction { deserializeUTF8String(span, headerSize, stringLength) };
+        case WTF::alternativeIndexV<RegexSubstitutionAction, ActionVariant>:
+            return RegexSubstitutionAction { deserializeUTF8String(span, headerSize, stringLength) };
+        case WTF::alternativeIndexV<URLTransformAction, ActionVariant>:
+            return URLTransformAction::deserialize(span.subspan(headerSize));
+        case WTF::alternativeIndexV<URLAction, ActionVariant>:
+            return URLAction { deserializeUTF8String(span, headerSize, stringLength) };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }() };
 }
 
-size_t RedirectAction::serializedLength(Span<const uint8_t>)
+size_t RedirectAction::serializedLength(Span<const uint8_t> span)
 {
-    return 0;
+    return deserializeLength(span, 0);
 }
 
 auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform, const HashSet<String>& allowedRedirectURLSchemes) -> Expected<URLTransformAction, std::error_code>
 {
-    RedirectAction::URLTransformAction action;
+    URLTransformAction action;
     action.fragment = transform.getString("fragment");
     action.host = transform.getString("host");
     action.password = transform.getString("password");
@@ -256,23 +388,140 @@ bool RedirectAction::URLTransformAction::operator==(const URLTransformAction& ot
         && other.username == this->username;
 }
 
-void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>&) const
+void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) const
 {
+    uint8_t hasFragment = !!fragment;
+    uint8_t hasHost = !!host;
+    uint8_t hasPassword = !!password;
+    uint8_t hasPath = !!path;
+    uint8_t hasPort = !!port;
+    uint8_t hasScheme = !!scheme;
+    uint8_t hasUsername = !!username;
+    auto* queryString = std::get_if<String>(&queryTransform);
+    uint8_t hasQuery = !queryString || !!*queryString;
+
+    auto fragmentUTF8 = fragment.utf8();
+    auto hostUTF8 = host.utf8();
+    auto passwordUTF8 = password.utf8();
+    auto pathUTF8 = path.utf8();
+    auto portUTF8 = port.utf8();
+    auto schemeUTF8 = scheme.utf8();
+    auto usernameUTF8 = username.utf8();
+
+    vector.reserveCapacity(vector.size() + sizeof(uint32_t) + sizeof(uint8_t)
+        + (hasFragment ? sizeof(uint32_t) + fragmentUTF8.length() : 0)
+        + (hasHost ? sizeof(uint32_t) + hostUTF8.length() : 0)
+        + (hasPassword ? sizeof(uint32_t) + passwordUTF8.length() : 0)
+        + (hasPath ? sizeof(uint32_t) + pathUTF8.length() : 0)
+        + (hasPort ? sizeof(uint32_t) + portUTF8.length() : 0)
+        + (hasScheme ? sizeof(uint32_t) + schemeUTF8.length() : 0)
+        + (hasUsername ? sizeof(uint32_t) + usernameUTF8.length() : 0));
+
+    auto beginIndex = vector.size();
+    uncheckedAppend(vector, 0);
+    vector.uncheckedAppend(
+        hasFragment << 7
+        | hasHost << 6
+        | hasPassword << 5
+        | hasPath << 4
+        | hasPort << 3
+        | hasScheme << 2
+        | hasUsername << 1
+        | hasQuery << 0
+    );
+    auto uncheckedAppendLengthAndString = [&] (const CString& string) {
+        uncheckedAppend(vector, string.length());
+        uncheckedAppend(vector, string);
+    };
+    if (hasFragment)
+        uncheckedAppendLengthAndString(fragmentUTF8);
+    if (hasHost)
+        uncheckedAppendLengthAndString(hostUTF8);
+    if (hasPassword)
+        uncheckedAppendLengthAndString(passwordUTF8);
+    if (hasPath)
+        uncheckedAppendLengthAndString(pathUTF8);
+    if (hasPort)
+        uncheckedAppendLengthAndString(portUTF8);
+    if (hasScheme)
+        uncheckedAppendLengthAndString(schemeUTF8);
+    if (hasUsername)
+        uncheckedAppendLengthAndString(usernameUTF8);
+    if (hasQuery) {
+        vector.append(queryTransform.index());
+        std::visit(WTF::makeVisitor([&](const String& queryString) {
+            auto queryStringUTF8 = queryString.utf8();
+            append(vector, queryStringUTF8.length());
+            append(vector, queryStringUTF8);
+        }, [&](const QueryTransform& transform) {
+            transform.serialize(vector);
+        }), queryTransform);
+    }
+    writeLengthToVectorAtOffset(vector, beginIndex);
 }
 
-auto RedirectAction::URLTransformAction::deserialize(Span<const uint8_t>) -> URLTransformAction
+auto RedirectAction::URLTransformAction::deserialize(Span<const uint8_t> span) -> URLTransformAction
 {
-    return { };
+    constexpr auto headerLength = sizeof(uint32_t) + sizeof(uint8_t);
+    RELEASE_ASSERT(span.size() >= headerLength);
+    uint8_t flags = span[sizeof(uint32_t)];
+
+    bool hasFragment = flags & (1 << 7);
+    bool hasHost = flags & (1 << 6);
+    bool hasPassword = flags & (1 << 5);
+    bool hasPath = flags & (1 << 4);
+    bool hasPort = flags & (1 << 3);
+    bool hasScheme = flags & (1 << 2);
+    bool hasUsername = flags & (1 << 1);
+    bool hasQuery = flags & (1 << 0);
+
+    size_t progress = headerLength;
+    auto deserializeString = [&] {
+        auto stringLength = deserializeLength(span, progress);
+        auto string = deserializeUTF8String(span, progress + sizeof(uint32_t), stringLength);
+        progress += sizeof(uint32_t) + stringLength;
+        return string;
+    };
+    auto fragment = hasFragment ? deserializeString() : String();
+    auto host = hasHost ? deserializeString() : String();
+    auto password = hasPassword ? deserializeString() : String();
+    auto path = hasPath ? deserializeString() : String();
+    auto port = hasPort ? deserializeString() : String();
+    auto scheme = hasScheme ? deserializeString() : String();
+    auto username = hasUsername ? deserializeString() : String();
+    QueryTransformVariant queryTransform;
+    if (hasQuery) {
+        RELEASE_ASSERT(span.size() > progress);
+        uint8_t variantIndex = span[progress++];
+        if (variantIndex == WTF::alternativeIndexV<String, QueryTransformVariant>) {
+            auto queryStringLength = deserializeLength(span, progress);
+            queryTransform = deserializeUTF8String(span, progress + sizeof(uint32_t), queryStringLength);
+        } else if (variantIndex == WTF::alternativeIndexV<QueryTransform, QueryTransformVariant>)
+            queryTransform = QueryTransform::deserialize(span.subspan(progress));
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return {
+        WTFMove(fragment),
+        WTFMove(host),
+        WTFMove(password),
+        WTFMove(path),
+        WTFMove(port),
+        WTFMove(queryTransform),
+        WTFMove(scheme),
+        WTFMove(username)
+    };
 }
 
-size_t RedirectAction::URLTransformAction::serializedLength(Span<const uint8_t>)
+size_t RedirectAction::URLTransformAction::serializedLength(Span<const uint8_t> span)
 {
-    return 0;
+    return deserializeLength(span, 0);
 }
 
 auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Object& queryTransform) -> Expected<QueryTransform, std::error_code>
 {
-    RedirectAction::URLTransformAction::QueryTransform parsedQueryTransform;
+    QueryTransform parsedQueryTransform;
 
     if (auto removeParametersValue = queryTransform.getValue("remove-parameters")) {
         auto removeParametersArray = removeParametersValue->asArray();
@@ -320,18 +569,49 @@ bool RedirectAction::URLTransformAction::QueryTransform::operator==(const QueryT
         && other.removeParams == this->removeParams;
 }
 
-void RedirectAction::URLTransformAction::QueryTransform::serialize(Vector<uint8_t>&) const
+void RedirectAction::URLTransformAction::QueryTransform::serialize(Vector<uint8_t>& vector) const
 {
+    auto beginIndex = vector.size();
+    append(vector, 0);
+    auto keyValueBeginIndex = vector.size();
+    append(vector, 0);
+    for (auto& queryKeyValue : addOrReplaceParams)
+        queryKeyValue.serialize(vector);
+    writeLengthToVectorAtOffset(vector, keyValueBeginIndex);
+    for (auto& string : removeParams) {
+        auto utf8 = string.utf8();
+        append(vector, utf8.length());
+        append(vector, utf8);
+    }
+    writeLengthToVectorAtOffset(vector, beginIndex);
 }
 
-auto RedirectAction::URLTransformAction::QueryTransform::deserialize(Span<const uint8_t>) -> QueryTransform
+auto RedirectAction::URLTransformAction::QueryTransform::deserialize(Span<const uint8_t> span) -> QueryTransform
 {
-    return { };
+    auto serializedLength = deserializeLength(span, 0);
+    auto keyValuesSerializedLength = deserializeLength(span, sizeof(uint32_t));
+    Vector<QueryKeyValue> queryKeyValues;
+    auto queryKeyValuesProgress = sizeof(uint32_t);
+    while (queryKeyValuesProgress < keyValuesSerializedLength) {
+        auto subspan = span.subspan(sizeof(uint32_t) + queryKeyValuesProgress);
+        queryKeyValuesProgress += QueryKeyValue::serializedLength(subspan);
+        queryKeyValues.append(QueryKeyValue::deserialize(subspan));
+    }
+    RELEASE_ASSERT(queryKeyValuesProgress == keyValuesSerializedLength);
+    
+    Vector<String> strings;
+    auto stringsProgress = sizeof(uint32_t) + queryKeyValuesProgress;
+    while (stringsProgress < serializedLength) {
+        auto stringLength = deserializeLength(span, stringsProgress);
+        strings.append(deserializeUTF8String(span, stringsProgress + sizeof(uint32_t), stringLength));
+        stringsProgress += sizeof(uint32_t) + stringLength;
+    }
+    return { WTFMove(queryKeyValues), WTFMove(strings) };
 }
 
-size_t RedirectAction::URLTransformAction::QueryTransform::serializedLength(Span<const uint8_t>)
+size_t RedirectAction::URLTransformAction::QueryTransform::serializedLength(Span<const uint8_t> span)
 {
-    return 0;
+    return deserializeLength(span, 0);
 }
 
 auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(const JSON::Value& keyValueValue) -> Expected<QueryKeyValue, std::error_code>
@@ -371,18 +651,39 @@ bool RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::operator
         && other.value == this->value;
 }
 
-void RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serialize(Vector<uint8_t>&) const
+void RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serialize(Vector<uint8_t>& vector) const
 {
+    constexpr auto headerLength = sizeof(uint32_t) + sizeof(uint32_t) + sizeof(bool);
+    // FIXME: All these allocations and copies aren't strictly necessary.
+    // We would need a way to query exactly what the UTF-8 encoded length would be to remove them, though.
+    auto keyUTF8 = key.utf8();
+    auto valueUTF8 = value.utf8();
+    auto serializedLength = headerLength + keyUTF8.length() + valueUTF8.length();
+    vector.reserveCapacity(vector.size() + serializedLength);
+    uncheckedAppend(vector, serializedLength);
+    uncheckedAppend(vector, keyUTF8.length());
+    vector.uncheckedAppend(replaceOnly);
+    uncheckedAppend(vector, keyUTF8);
+    uncheckedAppend(vector, valueUTF8);
 }
 
-auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::deserialize(Span<const uint8_t>) -> QueryKeyValue
+auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::deserialize(Span<const uint8_t> span) -> QueryKeyValue
 {
-    return { };
+    // FIXME: Using null terminated strings would reduce the binary size considerably.
+    // We would need to disallow null strings when parsing, though.
+    constexpr auto headerLength = sizeof(uint32_t) + sizeof(uint32_t) + sizeof(bool);
+    RELEASE_ASSERT(span.size() >= headerLength);
+    auto serializedLength = deserializeLength(span, 0);
+    auto keyUTF8Length = deserializeLength(span, sizeof(uint32_t));
+    bool replaceOnly = span[sizeof(uint32_t) + sizeof(uint32_t)];
+    auto key = deserializeUTF8String(span, headerLength, keyUTF8Length);
+    auto value = deserializeUTF8String(span, headerLength + keyUTF8Length, serializedLength - headerLength - keyUTF8Length);
+    return { WTFMove(key), replaceOnly, WTFMove(value) };
 }
 
-size_t RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serializedLength(Span<const uint8_t>)
+size_t RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serializedLength(Span<const uint8_t> span)
 {
-    return 0;
+    return deserializeLength(span, 0);
 }
 
 } // namespace WebCore::ContentExtensions
