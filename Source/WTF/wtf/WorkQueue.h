@@ -56,6 +56,7 @@ public:
     ~WorkQueue() override;
 
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) override;
+    WTF_EXPORT_PRIVATE void dispatchWithQOS(Function<void()>&&, QOS);
     WTF_EXPORT_PRIVATE virtual void dispatchAfter(Seconds, Function<void()>&&);
     WTF_EXPORT_PRIVATE virtual void dispatchSync(Function<void()>&&);
 
