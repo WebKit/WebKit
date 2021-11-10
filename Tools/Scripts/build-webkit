@@ -192,7 +192,13 @@ if ($useCCache == 1) {
 my $productDir = productDir();
 
 # Check that all the project directories are there.
-my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKitLegacy");
+my @projects = ("Source/JavaScriptCore");
+if (isAppleCocoaWebKit()) {
+    push @projects, ("Source/WebGPU");
+}
+push @projects, ("Source/WebCore");
+push @projects, ("Source/WebKitLegacy");
+
 
 # Build WTF as a separate static library on ports which support it.
 splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo() or isFTW();
