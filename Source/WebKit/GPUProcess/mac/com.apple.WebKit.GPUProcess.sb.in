@@ -91,8 +91,10 @@
 
 ;;; Allow IPC to standard system agents.
 (allow ipc-posix-shm-read* (with telemetry)
-    (ipc-posix-name "apple.shm.notification_center")
-    (ipc-posix-name-prefix "apple.cfprefs."))
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+    (ipc-posix-name-prefix "apple.cfprefs.")
+#endif
+    (ipc-posix-name "apple.shm.notification_center"))
 
 ;;; (system-graphics) - Allow access to graphics hardware.
 (define (system-graphics)
@@ -672,15 +674,8 @@
     ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
     (iokit-user-client-class "AudioAUUC"))
 
-;; cookied.
-;; FIXME: Update for <rdar://problem/13642852>.
-(allow ipc-posix-shm-read-data (with telemetry)
-    (ipc-posix-name "FNetwork.defaultStorageSession")
-    (ipc-posix-name-regex #"\.PrivateBrowsing-")
-    (ipc-posix-name-prefix "WebKit Test-"))
-
 ;; Audio
-(allow ipc-posix-shm-read* ipc-posix-shm-write-data (with telemetry)
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data
     (ipc-posix-name-prefix "AudioIO"))
 
 (allow mach-lookup
@@ -749,8 +744,8 @@
 (allow file-read*
     (subpath "/private/var/db/mds"))
 
-(allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create (with telemetry)
-       (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create
+    (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 (allow mach-lookup (with telemetry)
@@ -760,8 +755,6 @@
 #endif
 )
 
-(allow ipc-posix-shm (with telemetry)
-    (ipc-posix-name-prefix "CFPBS:")) ; <rdar://problem/13757475>
 (allow system-fsctl (with telemetry) (fsctl-command (_IO "h" 47)))
 
 ;; Graphics
