@@ -4248,7 +4248,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (JSValue constant = property.value()) {
             if (constant.isString()) {
                 JSString* string = asString(constant);
-                if (CacheableIdentifier::isCacheableIdentifierCell(string))
+                if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid()))
                     m_state.setShouldTryConstantFolding(true);
             }
         }

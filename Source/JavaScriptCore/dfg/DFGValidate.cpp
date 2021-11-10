@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ButterflyInlines.h"
+#include "CacheableIdentifierInlines.h"
 #include "DFGClobberize.h"
 #include "DFGClobbersExitState.h"
 #include "DFGDominators.h"
@@ -233,6 +234,11 @@ public:
                         VALIDATE((node), !node->child3());
                     if (!node->child1())
                         VALIDATE((node), !node->child2());
+                }
+
+                if (node->hasCacheableIdentifier()) {
+                    auto* uid = node->cacheableIdentifier().uid();
+                    VALIDATE((node), !parseIndex(*uid));
                 }
                  
                 switch (node->op()) {

@@ -681,7 +681,7 @@ private:
                 if (JSValue constant = property.value()) {
                     if (constant.isString()) {
                         JSString* string = asString(constant);
-                        if (CacheableIdentifier::isCacheableIdentifierCell(string)) {
+                        if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid())) {
                             const StringImpl* impl = string->tryGetValueImpl();
                             RELEASE_ASSERT(impl);
                             m_graph.freezeStrong(string);

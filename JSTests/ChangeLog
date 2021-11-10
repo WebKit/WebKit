@@ -1,3 +1,19 @@
+2021-11-10  Saam Barati  <sbarati@apple.com>
+
+        in_by_val should not constant fold to in_by_id when the property is a property index
+        https://bugs.webkit.org/show_bug.cgi?id=232753
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dont-in-by-id-when-index-2.js: Added.
+        (assert):
+        (main.v179):
+        (main.async v244):
+        (main):
+        * stress/dont-in-by-id-when-index.js: Added.
+        (assert):
+        (test):
+
 2021-11-10  Xan Lopez  <xan@igalia.com>
 
         [JSC][32bit] Unskip JSTests/stress/json-stringify-string-builder-overflow.js
