@@ -1527,13 +1527,7 @@ void CSSComputedStyleDeclaration::deref()
 
 String CSSComputedStyleDeclaration::cssText() const
 {
-    StringBuilder result;
-    for (unsigned i = 0; i < numComputedPropertyIDs; i++) {
-        if (i)
-            result.append(' ');
-        result.append(getPropertyName(computedPropertyIDs[i]), ": ", getPropertyValue(computedPropertyIDs[i]), ';');
-    }
-    return result.toString();
+    return emptyString();
 }
 
 ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
