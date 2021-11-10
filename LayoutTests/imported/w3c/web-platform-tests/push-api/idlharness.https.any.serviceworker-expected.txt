@@ -65,18 +65,18 @@ PASS PushEvent interface: attribute data
 PASS PushEvent must be primary interface of new PushEvent("type")
 PASS Stringification of new PushEvent("type")
 PASS PushEvent interface: new PushEvent("type") must inherit property "data" with the proper type
-FAIL PushSubscriptionChangeEvent interface: existence and properties of interface object assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent interface object length assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent interface object name assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent interface: attribute newSubscription assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent interface: attribute oldSubscription assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
-FAIL PushSubscriptionChangeEvent must be primary interface of new PushSubscriptionChangeEvent("pushsubscriptionchange") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushSubscriptionChangeEvent"
-FAIL Stringification of new PushSubscriptionChangeEvent("pushsubscriptionchange") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushSubscriptionChangeEvent"
-FAIL PushSubscriptionChangeEvent interface: new PushSubscriptionChangeEvent("pushsubscriptionchange") must inherit property "newSubscription" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushSubscriptionChangeEvent"
-FAIL PushSubscriptionChangeEvent interface: new PushSubscriptionChangeEvent("pushsubscriptionchange") must inherit property "oldSubscription" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushSubscriptionChangeEvent"
+PASS PushSubscriptionChangeEvent interface: existence and properties of interface object
+PASS PushSubscriptionChangeEvent interface object length
+PASS PushSubscriptionChangeEvent interface object name
+PASS PushSubscriptionChangeEvent interface: existence and properties of interface prototype object
+PASS PushSubscriptionChangeEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS PushSubscriptionChangeEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS PushSubscriptionChangeEvent interface: attribute newSubscription
+PASS PushSubscriptionChangeEvent interface: attribute oldSubscription
+PASS PushSubscriptionChangeEvent must be primary interface of new PushSubscriptionChangeEvent("pushsubscriptionchange")
+PASS Stringification of new PushSubscriptionChangeEvent("pushsubscriptionchange")
+PASS PushSubscriptionChangeEvent interface: new PushSubscriptionChangeEvent("pushsubscriptionchange") must inherit property "newSubscription" with the proper type
+PASS PushSubscriptionChangeEvent interface: new PushSubscriptionChangeEvent("pushsubscriptionchange") must inherit property "oldSubscription" with the proper type
 PASS ServiceWorkerRegistration interface: attribute pushManager
 PASS ServiceWorkerRegistration interface: registration must inherit property "pushManager" with the proper type
 PASS ServiceWorkerGlobalScope interface: attribute onpush

@@ -1899,6 +1899,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscription.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscription.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionChangeEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionChangeEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionChangeEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionChangeEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionJSON.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionJSON.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionOptions.cpp

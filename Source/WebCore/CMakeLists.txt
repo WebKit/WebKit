@@ -509,6 +509,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/push-api/PushMessageData.idl
     Modules/push-api/PushPermissionState.idl
     Modules/push-api/PushSubscription.idl
+    Modules/push-api/PushSubscriptionChangeEvent.idl
+    Modules/push-api/PushSubscriptionChangeEventInit.idl
     Modules/push-api/PushSubscriptionJSON.idl
     Modules/push-api/PushSubscriptionOptions.idl
     Modules/push-api/PushSubscriptionOptionsInit.idl

@@ -37,7 +37,7 @@
     readonly attribute EpochTimeStamp? expirationTime;
     [SameObject] readonly attribute PushSubscriptionOptions options;
     ArrayBuffer? getKey(PushEncryptionKeyName name);
-    Promise<boolean> unsubscribe();
+    [CallWith=ScriptExecutionContext] Promise<boolean> unsubscribe();
 
     PushSubscriptionJSON toJSON();
 };

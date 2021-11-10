@@ -1,11 +1,6 @@
 // META: title=PushManager tests
 // META: global=window,serviceworker
-
-const INVALID_SERVER_KEY = new Uint8Array(new Array(65).fill(4));
-const VALID_SERVER_KEY = new Uint8Array([4, 13, 71, 199, 60, 162, 213, 21, 12, 213, 190, 112, 143, 27, 39, 238, 113, 177, 2, 204, 240, 218, 238, 181, 155, 94, 184, 139, 115, 43, 0, 140, 71, 23, 166, 10, 230, 30, 18, 13, 136, 156, 249, 212, 110, 83, 244, 66, 60, 39, 192, 229, 170, 189, 162, 52, 176, 147, 150, 54, 18, 96, 165, 4, 251]);
-
-const INVALID_BASE64_SERVER_KEY = "BAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQ";
-const VALID_BASE64_SERVER_KEY = "BA1Hxzyi1RUM1b5wjxsn7nGxAszw2u61m164i3MrAIxHF6YK5h4SDYic-dRuU_RCPCfA5aq9ojSwk5Y2EmClBPs";
+// META: script=constants.js
 
 let registration = null;
 let pushManager = null;

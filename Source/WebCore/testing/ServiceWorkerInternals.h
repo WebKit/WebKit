@@ -27,15 +27,18 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "EpochTimeStamp.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ServiceWorkerIdentifier.h"
+#include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class FetchEvent;
 class FetchResponse;
+class PushSubscription;
 class ScriptExecutionContext;
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -62,6 +65,8 @@ public:
     int processIdentifier() const;
 
     void lastNavigationWasAppInitiated(Ref<DeferredPromise>&&);
+    
+    RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);

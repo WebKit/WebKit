@@ -30,7 +30,6 @@
     ActiveDOMObject,
     SecureContext,
     Exposed=(Window,ServiceWorker),
-    ExportMacro=WEBCORE_EXPORT,
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorkerEnabled,
     GenerateIsReachable=Impl,

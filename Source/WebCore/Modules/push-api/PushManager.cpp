@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "CryptoKeyEC.h"
+#include "EventLoop.h"
 #include "Exception.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"
@@ -68,66 +69,72 @@ void PushManager::subscribe(ScriptExecutionContext& scriptExecutionContext, std:
 {
     RELEASE_ASSERT(scriptExecutionContext.isSecureContext());
     
-    if (!options || !options->userVisibleOnly) {
-        promise.reject(Exception { NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_s });
-        return;
-    }
-    
-    if (!options || !options->applicationServerKey) {
-        promise.reject(Exception { NotSupportedError, "Subscribing for push requires an applicationServerKey"_s });
-        return;
-    }
-    
-    using KeyDataResult = ExceptionOr<Vector<uint8_t>>;
-    auto keyDataResult = WTF::switchOn(*options->applicationServerKey, [](RefPtr<JSC::ArrayBuffer>& value) -> KeyDataResult {
-        if (!value)
-            return Vector<uint8_t> { };
-        return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(value->data()), value->byteLength() };
-    }, [](RefPtr<JSC::ArrayBufferView>& value) -> KeyDataResult {
-        if (!value)
-            return Vector<uint8_t> { };
-        return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(value->baseAddress()), value->byteLength() };
-    }, [](String& value) -> KeyDataResult {
-        auto decoded = base64URLDecode(value);
-        if (!decoded)
-            return Exception { InvalidCharacterError, "applicationServerKey is not properly base64url-encoded"_s };
-        return WTFMove(decoded.value());
-    });
-    
-    if (keyDataResult.hasException()) {
-        promise.reject(keyDataResult.releaseException());
-        return;
-    }
-    
+    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, options = WTFMove(options), promise = WTFMove(promise)]() mutable {
+        if (!options || !options->userVisibleOnly) {
+            promise.reject(Exception { NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_s });
+            return;
+        }
+
+        if (!options || !options->applicationServerKey) {
+            promise.reject(Exception { NotSupportedError, "Subscribing for push requires an applicationServerKey"_s });
+            return;
+        }
+
+        using KeyDataResult = ExceptionOr<Vector<uint8_t>>;
+        auto keyDataResult = WTF::switchOn(*options->applicationServerKey, [](RefPtr<JSC::ArrayBuffer>& value) -> KeyDataResult {
+            if (!value)
+                return Vector<uint8_t> { };
+            return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(value->data()), value->byteLength() };
+        }, [](RefPtr<JSC::ArrayBufferView>& value) -> KeyDataResult {
+            if (!value)
+                return Vector<uint8_t> { };
+            return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(value->baseAddress()), value->byteLength() };
+        }, [](String& value) -> KeyDataResult {
+            auto decoded = base64URLDecode(value);
+            if (!decoded)
+                return Exception { InvalidCharacterError, "applicationServerKey is not properly base64url-encoded"_s };
+            return WTFMove(decoded.value());
+        });
+
+        if (keyDataResult.hasException()) {
+            promise.reject(keyDataResult.releaseException());
+            return;
+        }
+
 #if ENABLE(WEB_CRYPTO)
-    auto keyData = keyDataResult.returnValue();
-    auto key = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDSA, "P-256"_s, WTFMove(keyData), false, CryptoKeyUsageVerify);
+        auto keyData = keyDataResult.returnValue();
+        auto key = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDSA, "P-256"_s, WTFMove(keyData), false, CryptoKeyUsageVerify);
 #else
-    auto key = nullptr;
+        auto key = nullptr;
 #endif
-    
-    if (!key) {
-        promise.reject(Exception { InvalidAccessError, "applicationServerKey must contain a valid P-256 public key"_s });
-        return;
-    }
 
-    if (!m_serviceWorkerRegistration.active()) {
-        promise.reject(Exception { InvalidStateError, "Subscribing for push requires an active service worker"_s });
-        return;
-    }
-    
-    m_serviceWorkerRegistration.subscribeToPushService(keyDataResult.releaseReturnValue(), WTFMove(promise));
+        if (!key) {
+            promise.reject(Exception { InvalidAccessError, "applicationServerKey must contain a valid P-256 public key"_s });
+            return;
+        }
+
+        if (!m_serviceWorkerRegistration.active()) {
+            promise.reject(Exception { InvalidStateError, "Subscribing for push requires an active service worker"_s });
+            return;
+        }
+
+        m_serviceWorkerRegistration.subscribeToPushService(keyDataResult.releaseReturnValue(), WTFMove(promise));
+    });
 }
 
-void PushManager::getSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
+void PushManager::getSubscription(ScriptExecutionContext& scriptExecutionContext, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
-    m_serviceWorkerRegistration.getPushSubscription(WTFMove(promise));
+    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
+        m_serviceWorkerRegistration.getPushSubscription(WTFMove(promise));
+    });
 }
 
-void PushManager::permissionState(std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
+void PushManager::permissionState(ScriptExecutionContext& scriptExecutionContext, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
 {
     UNUSED_PARAM(options);
-    m_serviceWorkerRegistration.getPushPermissionState(WTFMove(promise));
+    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
+        m_serviceWorkerRegistration.getPushPermissionState(WTFMove(promise));
+    });
 }
 
 } // namespace WebCore

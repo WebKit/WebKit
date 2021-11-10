@@ -1,3 +1,14 @@
+2021-11-09  Ben Nham  <nham@apple.com>
+
+        Add support for PushSubscriptionChangeEvent
+        https://bugs.webkit.org/show_bug.cgi?id=232455
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/push-api/idlharness.https.any.serviceworker-expected.txt:
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         BroadcastChannel is still disabled in service workers

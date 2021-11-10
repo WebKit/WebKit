@@ -1,3 +1,33 @@
+2021-11-09  Ben Nham  <nham@apple.com>
+
+        Add support for PushSubscriptionChangeEvent
+        https://bugs.webkit.org/show_bug.cgi?id=232455
+
+        Reviewed by Youenn Fablet.
+
+        Added PushSubscriptionChangeEvent tests and made PushSubscription tests also run in the
+        service worker context.
+
+        * http/wpt/push-api/constants.js: Added.
+        (bytesFrom):
+        * http/wpt/push-api/pushManager.any.js:
+        * http/wpt/push-api/pushSubscription.https.any-expected.txt:
+        * http/wpt/push-api/pushSubscription.https.any.js:
+        (GLOBAL.isWorker):
+        (async promise_test):
+        (bytesFrom): Deleted.
+        (promise_test.async test): Deleted.
+        (promise_test): Deleted.
+        * http/wpt/push-api/pushSubscription.https.any.serviceworker-expected.txt: Added.
+        * http/wpt/push-api/pushSubscription.https.any.serviceworker.html: Added.
+        * http/wpt/push-api/pushSubscriptionChangeEvent.any.js: Added.
+        (test):
+        (promise_test.async newSubscription):
+        (promise_test.async return):
+        (promise_test):
+        * http/wpt/push-api/pushSubscriptionChangeEvent.any.serviceworker-expected.txt: Added.
+        * http/wpt/push-api/pushSubscriptionChangeEvent.any.serviceworker.html: Added.
+
 2021-11-09  Jean-Yves Avenard  <jyavenard@gmail.com>
 
         Unreviewed test gardening, skip failing test.

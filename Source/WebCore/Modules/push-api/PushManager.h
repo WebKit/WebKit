@@ -52,8 +52,8 @@ public:
     static Vector<String> supportedContentEncodings();
 
     void subscribe(ScriptExecutionContext&, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLInterface<PushSubscription>>&&);
-    void getSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
-    void permissionState(std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
+    void getSubscription(ScriptExecutionContext&, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
+    void permissionState(ScriptExecutionContext&, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
 private:
     ServiceWorkerRegistration& m_serviceWorkerRegistration;

@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class PushSubscriptionOptions;
+class ScriptExecutionContext;
 class ServiceWorkerContainer;
 class ServiceWorkerRegistration;
 
@@ -54,14 +55,15 @@ public:
     std::optional<EpochTimeStamp> expirationTime() const;
     PushSubscriptionOptions& options() const;
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> getKey(PushEncryptionKeyName) const;
-    void unsubscribe(DOMPromiseDeferred<IDLBoolean>&&);
+    void unsubscribe(ScriptExecutionContext&, DOMPromiseDeferred<IDLBoolean>&&);
 
     PushSubscriptionJSON toJSON() const;
 
 private:
-    WEBCORE_EXPORT PushSubscription(Ref<ServiceWorkerRegistration>&&, String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
+    WEBCORE_EXPORT PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
+    PushSubscription(Ref<ServiceWorkerRegistration>&&, String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
 
-    Ref<ServiceWorkerRegistration> m_serviceWorkerRegistration;
+    RefPtr<ServiceWorkerRegistration> m_serviceWorkerRegistration;
     String m_endpoint;
     std::optional<EpochTimeStamp> m_expirationTime;
     Ref<PushSubscriptionOptions> m_options;

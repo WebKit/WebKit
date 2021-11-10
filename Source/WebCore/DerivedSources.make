@@ -495,6 +495,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/push-api/PushMessageData.idl \
     $(WebCore)/Modules/push-api/PushPermissionState.idl \
     $(WebCore)/Modules/push-api/PushSubscription.idl \
+    $(WebCore)/Modules/push-api/PushSubscriptionChangeEvent.idl \
+    $(WebCore)/Modules/push-api/PushSubscriptionChangeEventInit.idl \
     $(WebCore)/Modules/push-api/PushSubscriptionJSON.idl \
     $(WebCore)/Modules/push-api/PushSubscriptionOptions.idl \
     $(WebCore)/Modules/push-api/PushSubscriptionOptionsInit.idl \

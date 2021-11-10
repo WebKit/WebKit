@@ -252,6 +252,7 @@ namespace WebCore {
     macro(PushManager) \
     macro(PushMessageData) \
     macro(PushSubscription) \
+    macro(PushSubscriptionChangeEvent) \
     macro(PushSubscriptionOptions) \
     macro(ResizeObserver) \
     macro(ResizeObserverEntry) \

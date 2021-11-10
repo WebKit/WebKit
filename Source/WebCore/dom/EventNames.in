@@ -37,6 +37,7 @@ PopStateEvent
 ProgressEvent
 PromiseRejectionEvent
 PushEvent conditional=SERVICE_WORKER
+PushSubscriptionChangeEvent conditional=SERVICE_WORKER
 SubmitEvent
 TextEvent
 TransitionEvent

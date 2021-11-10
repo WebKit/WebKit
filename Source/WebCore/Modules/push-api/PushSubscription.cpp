@@ -28,8 +28,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "EventLoop.h"
 #include "Exception.h"
 #include "PushSubscriptionOptions.h"
+#include "ScriptExecutionContext.h"
 #include "ServiceWorkerContainer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/Base64.h>
@@ -37,6 +39,15 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PushSubscription);
+
+PushSubscription::PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
+    : m_endpoint(WTFMove(endpoint))
+    , m_expirationTime(expirationTime)
+    , m_options(PushSubscriptionOptions::create(WTFMove(serverVAPIDPublicKey)))
+    , m_clientECDHPublicKey(WTFMove(clientECDHPublicKey))
+    , m_sharedAuthenticationSecret(WTFMove(sharedAuthenticationSecret))
+{
+}
 
 PushSubscription::PushSubscription(Ref<ServiceWorkerRegistration>&& registration, String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
     : m_serviceWorkerRegistration(WTFMove(registration))
@@ -86,9 +97,16 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKey
     return buffer;
 }
 
-void PushSubscription::unsubscribe(DOMPromiseDeferred<IDLBoolean>&& promise)
+void PushSubscription::unsubscribe(ScriptExecutionContext& scriptExecutionContext, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    m_serviceWorkerRegistration->unsubscribeFromPushService(WTFMove(promise));
+    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
+        if (!m_serviceWorkerRegistration) {
+            promise.resolve(false);
+            return;
+        }
+
+        m_serviceWorkerRegistration->unsubscribeFromPushService(WTFMove(promise));
+    });
 }
 
 PushSubscriptionJSON PushSubscription::toJSON() const

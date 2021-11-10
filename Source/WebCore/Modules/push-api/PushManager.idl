@@ -35,6 +35,6 @@
     [SameObject] static readonly attribute FrozenArray<DOMString> supportedContentEncodings;
 
     [CallWith=ScriptExecutionContext] Promise<PushSubscription> subscribe(optional PushSubscriptionOptionsInit options);
-    Promise<PushSubscription?> getSubscription();
-    Promise<PushPermissionState> permissionState(optional PushSubscriptionOptionsInit options);
+    [CallWith=ScriptExecutionContext] Promise<PushSubscription?> getSubscription();
+    [CallWith=ScriptExecutionContext] Promise<PushPermissionState> permissionState(optional PushSubscriptionOptionsInit options);
 };
