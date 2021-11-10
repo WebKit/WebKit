@@ -300,10 +300,25 @@ static inline bool fontNameIsSystemFont(CFStringRef fontName)
     return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
 }
 
-VariationDefaultsMap defaultVariationValues(CTFontRef font)
+static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
+{
+#if defined(HAVE_CTFontCopyVariationAxesInternal) // This macro is defined inside CoreText, not WebKit.
+    if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
+        return adoptCF(CTFontCopyVariationAxes(font));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+    return adoptCF(CTFontCopyVariationAxesInternal(font));
+#pragma clang diagnostic pop
+#else
+    UNUSED_PARAM(shouldLocalizeAxisNames);
+    return adoptCF(CTFontCopyVariationAxes(font));
+#endif
+}
+
+VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
 {
     VariationDefaultsMap result;
-    auto axes = adoptCF(CTFontCopyVariationAxes(font));
+    auto axes = variationAxes(font, shouldLocalizeAxisNames);
     if (!axes)
         return result;
     auto size = CFArrayGetCount(axes.get());
@@ -518,7 +533,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     auto fontOpticalSizing = fontDescription.opticalSizing();
 
-    auto defaultValues = defaultVariationValues(originalFont);
+    auto defaultValues = defaultVariationValues(originalFont, ShouldLocalizeAxisNames::No);
 
     auto fontSelectionRequest = fontDescription.fontSelectionRequest();
     auto fontStyleAxis = fontDescription.fontStyleAxis();
@@ -1021,7 +1036,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
         return result;
 
     auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, 0, nullptr));
-    auto variations = adoptCF(CTFontCopyVariationAxes(font.get()));
+    auto variations = variationAxes(font.get(), ShouldLocalizeAxisNames::No);
     if (!variations)
         return result;
 

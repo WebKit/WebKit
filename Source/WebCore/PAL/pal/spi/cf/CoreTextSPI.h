@@ -169,6 +169,7 @@ CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF
 CTFontRef CTFontCreateForCharactersWithLanguageAndOption(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CTFontFallbackOption, CFIndex *coveredLength);
 CTFontRef CTFontCopyPhysicalFont(CTFontRef);
 CTFontSymbolicTraits CTFontGetPhysicalSymbolicTraits(CTFontRef);
+CFArrayRef CTFontCopyVariationAxesInternal(CTFontRef);
 
 extern const CFStringRef kCTUIFontTextStyleShortHeadline;
 extern const CFStringRef kCTUIFontTextStyleShortBody;

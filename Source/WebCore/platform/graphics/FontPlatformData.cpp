@@ -82,7 +82,7 @@ String FontPlatformData::familyName() const
 #endif
 
 #if !PLATFORM(COCOA)
-Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes() const
+Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(ShouldLocalizeAxisNames) const
 {
     // FIXME: <webkit.org/b/219614> Not implemented yet.
     return { };

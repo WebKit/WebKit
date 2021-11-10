@@ -25,6 +25,7 @@
 #pragma once
 
 #include "SharedBuffer.h"
+#include "ShouldLocalizeAxisNames.h"
 #include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -179,7 +180,7 @@ public:
     bool isForTextCombine() const { return widthVariant() != FontWidthVariant::RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
 
     String familyName() const;
-    Vector<FontVariationAxis> variationAxes() const;
+    Vector<FontVariationAxis> variationAxes(ShouldLocalizeAxisNames) const;
 
 #if USE(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }
