@@ -1,3 +1,14 @@
+2021-11-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Build WebGPU on our bots
+        https://bugs.webkit.org/show_bug.cgi?id=232924
+
+        Reviewed by Dean Jackson.
+
+        Simply tell the build script about the existence of WebGPU.
+
+        * Scripts/build-webkit:
+
 2021-11-10  Alex Christensen  <achristensen@webkit.org>
 
         Implement serialization and deserialization of redirect and modify headers actions for WKContentRuleList
