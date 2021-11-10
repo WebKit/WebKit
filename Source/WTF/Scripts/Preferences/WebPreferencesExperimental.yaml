@@ -440,8 +440,6 @@ DialogElementEnabled:
   type: bool
   humanReadableName: "Dialog Element"
   humanReadableDescription: "Enable the Dialog Element"
-  webKitLegacyPreferenceKey: WebKitDialogElementEnabledPreferenceKey
-  webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
       default: true

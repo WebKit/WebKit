@@ -347,7 +347,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL coreMathMLEnabled;
 @property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 @property (nonatomic) BOOL remotePlaybackEnabled;
-@property (nonatomic) BOOL dialogElementEnabled;
 @property (nonatomic) BOOL readableByteStreamAPIEnabled;
 @property (nonatomic) BOOL transformStreamAPIEnabled;
 @property (nonatomic) BOOL mediaRecorderEnabled;

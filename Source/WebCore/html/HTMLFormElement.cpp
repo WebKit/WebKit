@@ -54,7 +54,6 @@
 #include "Page.h"
 #include "RadioNodeList.h"
 #include "RenderTextControl.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SubmitEvent.h"
@@ -437,8 +436,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
         m_plannedFormSubmission->cancel();
 
     m_plannedFormSubmission = formSubmission;
-    
-    if (RuntimeEnabledFeatures::sharedFeatures().dialogElementEnabled() && formSubmission->method() == FormSubmission::Method::Dialog)
+
+    if (document().settings().dialogElementEnabled() && formSubmission->method() == FormSubmission::Method::Dialog)
         submitDialog(WTFMove(formSubmission));
     else
         frame->loader().submitForm(WTFMove(formSubmission));
@@ -531,7 +530,7 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
     } else if (name == targetAttr)
         m_attributes.setTarget(value);
     else if (name == methodAttr)
-        m_attributes.updateMethodType(value);
+        m_attributes.updateMethodType(value, document().settings().dialogElementEnabled());
     else if (name == enctypeAttr)
         m_attributes.updateEncodingType(value);
     else if (name == accept_charsetAttr)
@@ -738,7 +737,7 @@ void HTMLFormElement::setEnctype(const String& value)
 
 String HTMLFormElement::method() const
 {
-    return FormSubmission::Attributes::methodString(m_attributes.method());
+    return FormSubmission::Attributes::methodString(m_attributes.method(), document().settings().dialogElementEnabled());
 }
 
 void HTMLFormElement::setMethod(const String& value)

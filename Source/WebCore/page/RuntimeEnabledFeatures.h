@@ -131,9 +131,6 @@ public:
     void setWebSQLEnabled(bool isEnabled) { m_webSQLEnabled = isEnabled; }
     bool webSQLEnabled() const { return m_webSQLEnabled; }
 
-    void setDialogElementEnabled(bool isEnabled) { m_dialogElementEnabled = isEnabled; }
-    bool dialogElementEnabled() const { return m_dialogElementEnabled; }
-
     void setKeygenElementEnabled(bool isEnabled) { m_keygenElementEnabled = isEnabled; }
     bool keygenElementEnabled() const { return m_keygenElementEnabled; }
 
@@ -292,7 +289,6 @@ private:
     bool m_attrStyleEnabled { false };
     bool m_webAPIStatisticsEnabled { false };
     bool m_syntheticEditingCommandsEnabled { true };
-    bool m_dialogElementEnabled { true };
     bool m_webSQLEnabled { false };
     bool m_keygenElementEnabled { false };
     bool m_pageAtRuleSupportEnabled { false };

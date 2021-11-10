@@ -33,7 +33,6 @@
 #include "FormState.h"
 #include "FrameLoaderTypes.h"
 #include "ReferrerPolicy.h"
-#include "RuntimeEnabledFeatures.h"
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -51,9 +50,9 @@ public:
     class Attributes {
     public:
         Method method() const { return m_method; }
-        static Method parseMethodType(const String&);
-        void updateMethodType(const String&);
-        static ASCIILiteral methodString(Method);
+        static Method parseMethodType(const String&, bool);
+        void updateMethodType(const String&, bool);
+        static ASCIILiteral methodString(Method, bool);
 
         const String& action() const { return m_action; }
         void parseAction(const String&);

@@ -1,3 +1,15 @@
+2021-11-10  Tim Nguyen  <ntim@apple.com>
+
+        Migrate DialogElementEnabled from RuntimeFlags to Settings
+        https://bugs.webkit.org/show_bug.cgi?id=232926
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDialogElementEnabled): Deleted.
+        (WKPreferencesGetDialogElementEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2021-11-10  Sihui Liu  <sihui_liu@apple.com>
 
         Perform FileSystemSyncAccessHandle operations in web process

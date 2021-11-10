@@ -1,3 +1,12 @@
+2021-11-10  Tim Nguyen  <ntim@apple.com>
+
+        Migrate DialogElementEnabled from RuntimeFlags to Settings
+        https://bugs.webkit.org/show_bug.cgi?id=232926
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-11-10  Antti Koivisto  <antti@apple.com>
 
         Hasher should be able to hash pointers

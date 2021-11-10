@@ -51,7 +51,6 @@
 #include "Quirks.h"
 #include "RenderTheme.h"
 #include "RuleSetBuilder.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SVGElement.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
@@ -169,8 +168,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
                 plugInsStyleSheet = parseUASheet(plugInsRules);
                 addToDefaultStyle(*plugInsStyleSheet);
             }
-        }
-        else if (is<HTMLDialogElement>(element) && RuntimeEnabledFeatures::sharedFeatures().dialogElementEnabled()) {
+        } else if (is<HTMLDialogElement>(element) && element.document().settings().dialogElementEnabled()) {
             if (!dialogStyleSheet) {
                 dialogStyleSheet = parseUASheet(StringImpl::createWithoutCopying(dialogUserAgentStyleSheet, sizeof(dialogUserAgentStyleSheet)));
                 addToDefaultStyle(*dialogStyleSheet);

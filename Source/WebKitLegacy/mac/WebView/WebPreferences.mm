@@ -3289,16 +3289,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:remotePlaybackEnabled forKey:WebKitRemotePlaybackEnabledPreferenceKey];
 }
 
-- (BOOL)dialogElementEnabled
-{
-    return [self _boolValueForKey:WebKitDialogElementEnabledPreferenceKey];
-}
-
-- (void)setDialogElementEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitDialogElementEnabledPreferenceKey];
-}
-
 - (BOOL)readableByteStreamAPIEnabled
 {
     return [self _boolValueForKey:WebKitReadableByteStreamAPIEnabledPreferenceKey];

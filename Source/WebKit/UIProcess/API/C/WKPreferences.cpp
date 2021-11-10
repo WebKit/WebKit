@@ -1592,16 +1592,6 @@ bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->customPasteboardDataEnabled();
 }
 
-void WKPreferencesSetDialogElementEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setDialogElementEnabled(flag);
-}
-
-bool WKPreferencesGetDialogElementEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->dialogElementEnabled();
-}
-
 void WKPreferencesSetKeygenElementEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setKeygenElementEnabled(flag);

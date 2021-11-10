@@ -447,10 +447,6 @@ WK_EXPORT void WKPreferencesSetCustomPasteboardDataEnabled(WKPreferencesRef, boo
 WK_EXPORT bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetDialogElementEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetDialogElementEnabled(WKPreferencesRef);
-
-// Defaults to false
 WK_EXPORT void WKPreferencesSetKeygenElementEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetKeygenElementEnabled(WKPreferencesRef);
 

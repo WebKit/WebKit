@@ -99,7 +99,8 @@ String HTMLFormControlElement::formMethod() const
     auto& formMethodAttr = attributeWithoutSynchronization(formmethodAttr);
     if (formMethodAttr.isNull())
         return emptyString();
-    return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr));
+    bool dialogElementEnabled = document().settings().dialogElementEnabled();
+    return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr, dialogElementEnabled), dialogElementEnabled);
 }
 
 void HTMLFormControlElement::setFormMethod(const String& value)
