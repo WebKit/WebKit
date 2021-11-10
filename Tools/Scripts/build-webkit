@@ -243,7 +243,6 @@ if (isAppleCocoaWebKit()) {
     if (portName() eq Mac or portName() eq iOS) {
         splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc");
     }
-    splice @projects, 0, 0, ("Source/WebGPU");
 
     push @projects, ("Source/WebKit");
 
