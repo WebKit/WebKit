@@ -1,5 +1,4 @@
-// https://bugs.webkit.org/show_bug.cgi?id=190755
-//@ skip if ($architecture == "arm" and $hostOS == "linux") || $memoryLimited
+//@ skip if $memoryLimited
 //  &&&&
 description('Test that we do not overflow the stack while handling regular expressions');
 

@@ -1,3 +1,15 @@
+2021-11-10  Geza Lore  <glore@igalia.com>
+
+        [JSC][ARMv7] Unskip LayoutTests/js/script-tests/stack-overflow-regexp.js
+        https://bugs.webkit.org/show_bug.cgi?id=232945
+
+        Unreviewed gardening.
+
+        This test no longer seems flaky on ARMv7. Remove architecture specific
+        skip condition.
+
+        * js/script-tests/stack-overflow-regexp.js:
+
 2021-11-10  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make ancestor computation cheaper by setting flags upon child insertion
