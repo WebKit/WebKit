@@ -29,6 +29,7 @@
 #pragma once
 
 #include "FontDescription.h"
+#include "ShouldLocalizeAxisNames.h"
 
 #include <CoreText/CTFont.h>
 
@@ -70,5 +71,5 @@ RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef, AllowUserInstalledFo
 void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts);
 
-VariationDefaultsMap defaultVariationValues(CTFontRef);
+VariationDefaultsMap defaultVariationValues(CTFontRef, ShouldLocalizeAxisNames);
 }
