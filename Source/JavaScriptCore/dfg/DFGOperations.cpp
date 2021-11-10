@@ -2506,7 +2506,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, (
     return result;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, uint32_t index, JSPropertyNameEnumerator* enumerator))
+JSC_DEFINE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue baseValue, uint32_t index, JSPropertyNameEnumerator* enumerator))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2517,7 +2517,8 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSVal
     PropertyName propertyName = string->toIdentifier(globalObject);
     // This should only really return for TerminationException since we know string is backed by a UUID.
     RETURN_IF_EXCEPTION(scope, { });
-    JSObject* object = base->toObject(globalObject);
+    JSValue base = JSValue::decode(baseValue);
+    JSObject* object = base.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(object->get(globalObject, propertyName)));
