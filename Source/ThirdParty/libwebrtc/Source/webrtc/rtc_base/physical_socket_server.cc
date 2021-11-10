@@ -283,7 +283,7 @@ void PhysicalSocket::SetError(int error) {
   error_ = error;
 }
 
-AsyncSocket::ConnState PhysicalSocket::GetState() const {
+Socket::ConnState PhysicalSocket::GetState() const {
   return state_;
 }
 
@@ -460,7 +460,7 @@ int PhysicalSocket::Listen(int backlog) {
   return err;
 }
 
-AsyncSocket* PhysicalSocket::Accept(SocketAddress* out_addr) {
+Socket* PhysicalSocket::Accept(SocketAddress* out_addr) {
   // Always re-subscribe DE_ACCEPT to make sure new incoming connections will
   // trigger an event even if DoAccept returns an error here.
   EnableEvents(DE_ACCEPT);
@@ -717,7 +717,7 @@ bool SocketDispatcher::IsDescriptorClosed() {
   if (udp_) {
     // The MSG_PEEK trick doesn't work for UDP, since (at least in some
     // circumstances) it requires reading an entire UDP packet, which would be
-    // bad for performance here. So, just check whether |s_| has been closed,
+    // bad for performance here. So, just check whether `s_` has been closed,
     // which should be sufficient.
     return s_ == INVALID_SOCKET;
   }
@@ -1089,16 +1089,6 @@ void PhysicalSocketServer::WakeUp() {
 }
 
 Socket* PhysicalSocketServer::CreateSocket(int family, int type) {
-  PhysicalSocket* socket = new PhysicalSocket(this);
-  if (socket->Create(family, type)) {
-    return socket;
-  } else {
-    delete socket;
-    return nullptr;
-  }
-}
-
-AsyncSocket* PhysicalSocketServer::CreateAsyncSocket(int family, int type) {
   SocketDispatcher* dispatcher = new SocketDispatcher(this);
   if (dispatcher->Create(family, type)) {
     return dispatcher;
@@ -1108,7 +1098,7 @@ AsyncSocket* PhysicalSocketServer::CreateAsyncSocket(int family, int type) {
   }
 }
 
-AsyncSocket* PhysicalSocketServer::WrapSocket(SOCKET s) {
+Socket* PhysicalSocketServer::WrapSocket(SOCKET s) {
   SocketDispatcher* dispatcher = new SocketDispatcher(s, this);
   if (dispatcher->Initialize()) {
     return dispatcher;

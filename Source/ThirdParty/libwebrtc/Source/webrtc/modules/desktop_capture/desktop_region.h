@@ -80,9 +80,9 @@ class RTC_EXPORT DesktopRegion {
    private:
     const DesktopRegion& region_;
 
-    // Updates |rect_| based on the current |row_| and |row_span_|. If
-    // |row_span_| matches spans on consecutive rows then they are also merged
-    // into |rect_|, to generate more efficient output.
+    // Updates `rect_` based on the current `row_` and `row_span_`. If
+    // `row_span_` matches spans on consecutive rows then they are also merged
+    // into `rect_`, to generate more efficient output.
     void UpdateCurrentRect();
 
     Rows::const_iterator row_;
@@ -106,7 +106,7 @@ class RTC_EXPORT DesktopRegion {
   // Reset the region to be empty.
   void Clear();
 
-  // Reset region to contain just |rect|.
+  // Reset region to contain just `rect`.
   void SetRect(const DesktopRect& rect);
 
   // Adds specified rect(s) or region to the region.
@@ -117,16 +117,16 @@ class RTC_EXPORT DesktopRegion {
   // Finds intersection of two regions and stores them in the current region.
   void Intersect(const DesktopRegion& region1, const DesktopRegion& region2);
 
-  // Same as above but intersects content of the current region with |region|.
+  // Same as above but intersects content of the current region with `region`.
   void IntersectWith(const DesktopRegion& region);
 
-  // Clips the region by the |rect|.
+  // Clips the region by the `rect`.
   void IntersectWith(const DesktopRect& rect);
 
-  // Subtracts |region| from the current content of the region.
+  // Subtracts `region` from the current content of the region.
   void Subtract(const DesktopRegion& region);
 
-  // Subtracts |rect| from the current content of the region.
+  // Subtracts `rect` from the current content of the region.
   void Subtract(const DesktopRect& rect);
 
   // Adds (dx, dy) to the position of the region.
@@ -136,14 +136,14 @@ class RTC_EXPORT DesktopRegion {
 
  private:
   // Comparison functions used for std::lower_bound(). Compare left or right
-  // edges withs a given |value|.
+  // edges withs a given `value`.
   static bool CompareSpanLeft(const RowSpan& r, int32_t value);
   static bool CompareSpanRight(const RowSpan& r, int32_t value);
 
   // Adds a new span to the row, coalescing spans if necessary.
   static void AddSpanToRow(Row* row, int32_t left, int32_t right);
 
-  // Returns true if the |span| exists in the given |row|.
+  // Returns true if the `span` exists in the given `row`.
   static bool IsSpanInRow(const Row& row, const RowSpan& rect);
 
   // Calculates the intersection of two sets of spans.
@@ -155,9 +155,9 @@ class RTC_EXPORT DesktopRegion {
                            const RowSpanSet& set_b,
                            RowSpanSet* output);
 
-  // Merges |row| with the row above it if they contain the same spans. Doesn't
-  // do anything if called with |row| set to rows_.begin() (i.e. first row of
-  // the region). If the rows were merged |row| remains a valid iterator to the
+  // Merges `row` with the row above it if they contain the same spans. Doesn't
+  // do anything if called with `row` set to rows_.begin() (i.e. first row of
+  // the region). If the rows were merged `row` remains a valid iterator to the
   // merged row.
   void MergeWithPrecedingRow(Rows::iterator row);
 

@@ -31,7 +31,7 @@ class VideoCodecTestStatsImpl : public VideoCodecTestStats {
   // Creates a FrameStatistics for the next frame to be processed.
   void AddFrame(const FrameStatistics& frame_stat);
 
-  // Returns the FrameStatistics corresponding to |frame_number| or |timestamp|.
+  // Returns the FrameStatistics corresponding to `frame_number` or `timestamp`.
   FrameStatistics* GetFrame(size_t frame_number, size_t spatial_idx);
   FrameStatistics* GetFrameWithTimestamp(size_t timestamp, size_t spatial_idx);
 

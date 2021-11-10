@@ -29,10 +29,12 @@ TEST(PlatformThreadTest, StartFinalize) {
   EXPECT_FALSE(thread.empty());
   thread.Finalize();
   EXPECT_TRUE(thread.empty());
-  thread = PlatformThread::SpawnDetached([] {}, "2");
+  rtc::Event done;
+  thread = PlatformThread::SpawnDetached([&] { done.Set(); }, "2");
   EXPECT_FALSE(thread.empty());
   thread.Finalize();
   EXPECT_TRUE(thread.empty());
+  done.Wait(30000);
 }
 
 TEST(PlatformThreadTest, MovesEmpty) {
@@ -47,10 +49,12 @@ TEST(PlatformThreadTest, MovesHandles) {
   PlatformThread thread2 = std::move(thread1);
   EXPECT_TRUE(thread1.empty());
   EXPECT_FALSE(thread2.empty());
-  thread1 = PlatformThread::SpawnDetached([] {}, "2");
+  rtc::Event done;
+  thread1 = PlatformThread::SpawnDetached([&] { done.Set(); }, "2");
   thread2 = std::move(thread1);
   EXPECT_TRUE(thread1.empty());
   EXPECT_FALSE(thread2.empty());
+  done.Wait(30000);
 }
 
 TEST(PlatformThreadTest,

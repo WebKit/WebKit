@@ -1,3 +1,15 @@
+2021-11-10  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc to M96
+        https://bugs.webkit.org/show_bug.cgi?id=232873
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addTrack.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver.https-expected.txt:
+        * web-platform-tests/webrtc/protocol/dtls-setup.https-expected.txt:
+
 2021-11-10  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Wavy decorations don't cover the whole line length

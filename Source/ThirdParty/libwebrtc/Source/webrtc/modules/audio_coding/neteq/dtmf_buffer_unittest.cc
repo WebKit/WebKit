@@ -208,12 +208,12 @@ TEST(DtmfBuffer, ExtrapolationTime) {
   DtmfEvent event2(timestamp, event_no, volume, duration, end_bit);
   EXPECT_EQ(DtmfBuffer::kOK, buffer.InsertEvent(event2));
   EXPECT_EQ(2u, buffer.Length());
-  // Now we expect to get the new event when supplying |timestamp_now|.
+  // Now we expect to get the new event when supplying `timestamp_now`.
   EXPECT_TRUE(buffer.GetEvent(timestamp_now, &out_event));
   EXPECT_TRUE(EqualEvents(event2, out_event));
   // Expect the the first event to be erased now.
   EXPECT_EQ(1u, buffer.Length());
-  // Move |timestamp_now| to more than 560 samples after the end of the second
+  // Move `timestamp_now` to more than 560 samples after the end of the second
   // event. Expect that event to be erased.
   timestamp_now = timestamp + duration + 600;
 #ifdef LEGACY_BITEXACT

@@ -208,11 +208,13 @@ class FakePortAllocatorSession : public PortAllocatorSession {
 
 class FakePortAllocator : public cricket::PortAllocator {
  public:
+  // TODO(bugs.webrtc.org/13145): Require non-null `factory`.
   FakePortAllocator(rtc::Thread* network_thread,
                     rtc::PacketSocketFactory* factory)
       : network_thread_(network_thread), factory_(factory) {
     if (factory_ == NULL) {
-      owned_factory_.reset(new rtc::BasicPacketSocketFactory(network_thread_));
+      owned_factory_.reset(new rtc::BasicPacketSocketFactory(
+          network_thread_ ? network_thread_->socketserver() : nullptr));
       factory_ = owned_factory_.get();
     }
 
@@ -238,10 +240,19 @@ class FakePortAllocator : public cricket::PortAllocator {
 
   bool initialized() const { return initialized_; }
 
+  // For testing: Manipulate MdnsObfuscationEnabled()
+  bool MdnsObfuscationEnabled() const override {
+    return mdns_obfuscation_enabled_;
+  }
+  void SetMdnsObfuscationEnabledForTesting(bool enabled) {
+    mdns_obfuscation_enabled_ = enabled;
+  }
+
  private:
   rtc::Thread* network_thread_;
   rtc::PacketSocketFactory* factory_;
   std::unique_ptr<rtc::BasicPacketSocketFactory> owned_factory_;
+  bool mdns_obfuscation_enabled_ = false;
 };
 
 }  // namespace cricket

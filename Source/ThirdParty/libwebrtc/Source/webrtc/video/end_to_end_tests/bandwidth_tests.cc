@@ -94,7 +94,7 @@ class BandwidthStatsTest : public test::EndToEndTest {
 
   ~BandwidthStatsTest() override {
     // Block until all already posted tasks run to avoid races when such task
-    // accesses |this|.
+    // accesses `this`.
     SendTask(RTC_FROM_HERE, task_queue_, [] {});
   }
 
@@ -206,7 +206,7 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
 
     ~BweObserver() override {
       // Block until all already posted tasks run to avoid races when such task
-      // accesses |this|. Also make sure we free |rtp_rtcp_| on the correct
+      // accesses `this`. Also make sure we free `rtp_rtcp_` on the correct
       // thread/task queue.
       SendTask(RTC_FROM_HERE, task_queue_, [this]() { rtp_rtcp_ = nullptr; });
     }

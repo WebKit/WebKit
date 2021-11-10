@@ -15,10 +15,10 @@
 
 namespace webrtc {
 
-// Clears a DesktopFrame |frame| by setting its data() into 0.
+// Clears a DesktopFrame `frame` by setting its data() into 0.
 void ClearDesktopFrame(DesktopFrame* frame);
 
-// Compares size() and data() of two DesktopFrames |left| and |right|.
+// Compares size() and data() of two DesktopFrames `left` and `right`.
 bool DesktopFrameDataEquals(const DesktopFrame& left,
                             const DesktopFrame& right);
 

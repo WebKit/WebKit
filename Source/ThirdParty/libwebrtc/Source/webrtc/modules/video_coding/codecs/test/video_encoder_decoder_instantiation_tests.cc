@@ -21,6 +21,7 @@
 #elif defined(WEBRTC_IOS)
 #include "modules/video_coding/codecs/test/objc_codec_factory_helper.h"
 #endif
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/video_codec_settings.h"
 
@@ -28,6 +29,9 @@ namespace webrtc {
 namespace test {
 
 namespace {
+
+using ::testing::NotNull;
+
 const VideoEncoder::Capabilities kCapabilities(false);
 
 int32_t InitEncoder(VideoCodecType codec_type, VideoEncoder* encoder) {
@@ -42,14 +46,11 @@ int32_t InitEncoder(VideoCodecType codec_type, VideoEncoder* encoder) {
                                      1200 /* max_payload_size */));
 }
 
-int32_t InitDecoder(VideoCodecType codec_type, VideoDecoder* decoder) {
-  VideoCodec codec;
-  CodecSettings(codec_type, &codec);
-  codec.width = 640;
-  codec.height = 480;
-  codec.maxFramerate = 30;
-  RTC_CHECK(decoder);
-  return decoder->InitDecode(&codec, 1 /* number_of_cores */);
+VideoDecoder::Settings DecoderSettings(VideoCodecType codec_type) {
+  VideoDecoder::Settings settings;
+  settings.set_max_render_resolution({640, 480});
+  settings.set_codec_type(codec_type);
+  return settings;
 }
 
 }  // namespace
@@ -126,7 +127,8 @@ TEST_P(VideoEncoderDecoderInstantiationTest, DISABLED_InstantiateVp8Codecs) {
   for (int i = 0; i < num_decoders_; ++i) {
     std::unique_ptr<VideoDecoder> decoder =
         decoder_factory_->CreateVideoDecoder(vp8_format_);
-    EXPECT_EQ(0, InitDecoder(kVideoCodecVP8, decoder.get()));
+    ASSERT_THAT(decoder, NotNull());
+    EXPECT_TRUE(decoder->Configure(DecoderSettings(kVideoCodecVP8)));
     decoders_.emplace_back(std::move(decoder));
   }
 }
@@ -143,8 +145,9 @@ TEST_P(VideoEncoderDecoderInstantiationTest,
   for (int i = 0; i < num_decoders_; ++i) {
     std::unique_ptr<VideoDecoder> decoder =
         decoder_factory_->CreateVideoDecoder(h264cbp_format_);
-    EXPECT_EQ(0, InitDecoder(kVideoCodecH264, decoder.get()));
-    decoders_.emplace_back(std::move(decoder));
+    ASSERT_THAT(decoder, NotNull());
+    EXPECT_TRUE(decoder->Configure(DecoderSettings(kVideoCodecH264)));
+    decoders_.push_back(std::move(decoder));
   }
 }
 

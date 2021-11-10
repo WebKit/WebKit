@@ -23,7 +23,7 @@ TEST(ComfortNoise, CreateAndDestroy) {
   MockDecoderDatabase db;
   SyncBuffer sync_buffer(1, 1000);
   ComfortNoise cn(fs, &db, &sync_buffer);
-  EXPECT_CALL(db, Die());  // Called when |db| goes out of scope.
+  EXPECT_CALL(db, Die());  // Called when `db` goes out of scope.
 }
 
 // TODO(hlundin): Write more tests.

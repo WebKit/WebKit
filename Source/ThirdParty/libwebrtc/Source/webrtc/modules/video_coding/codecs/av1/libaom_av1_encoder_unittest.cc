@@ -25,6 +25,7 @@ namespace webrtc {
 namespace {
 
 using ::testing::ElementsAre;
+using ::testing::Field;
 using ::testing::IsEmpty;
 using ::testing::SizeIs;
 
@@ -133,6 +134,37 @@ TEST(LibaomAv1EncoderTest, EncoderInfoProvidesFpsAllocation) {
   EXPECT_THAT(encoder_info.fps_allocation[1], ElementsAre(15, 30, 60));
   EXPECT_THAT(encoder_info.fps_allocation[2], ElementsAre(15, 30, 60));
   EXPECT_THAT(encoder_info.fps_allocation[3], IsEmpty());
+}
+
+TEST(LibaomAv1EncoderTest, PopulatesEncodedFrameSize) {
+  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder();
+  VideoCodec codec_settings = DefaultCodecSettings();
+  ASSERT_GT(codec_settings.width, 4);
+  // Configure encoder with 3 spatial layers.
+  codec_settings.SetScalabilityMode("L3T1");
+  ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
+            WEBRTC_VIDEO_CODEC_OK);
+
+  using Frame = EncodedVideoFrameProducer::EncodedFrame;
+  std::vector<Frame> encoded_frames =
+      EncodedVideoFrameProducer(*encoder).SetNumInputFrames(1).Encode();
+  EXPECT_THAT(
+      encoded_frames,
+      ElementsAre(
+          Field(&Frame::encoded_image,
+                AllOf(Field(&EncodedImage::_encodedWidth,
+                            codec_settings.width / 4),
+                      Field(&EncodedImage::_encodedHeight,
+                            codec_settings.height / 4))),
+          Field(&Frame::encoded_image,
+                AllOf(Field(&EncodedImage::_encodedWidth,
+                            codec_settings.width / 2),
+                      Field(&EncodedImage::_encodedHeight,
+                            codec_settings.height / 2))),
+          Field(&Frame::encoded_image,
+                AllOf(Field(&EncodedImage::_encodedWidth, codec_settings.width),
+                      Field(&EncodedImage::_encodedHeight,
+                            codec_settings.height)))));
 }
 
 }  // namespace

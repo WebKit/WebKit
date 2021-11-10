@@ -25,19 +25,12 @@
 #include "rtc_base/socket_adapters.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/ssl_adapter.h"
-#include "rtc_base/thread.h"
 
 namespace rtc {
 
-BasicPacketSocketFactory::BasicPacketSocketFactory()
-    : thread_(Thread::Current()), socket_factory_(NULL) {}
-
-BasicPacketSocketFactory::BasicPacketSocketFactory(Thread* thread)
-    : thread_(thread), socket_factory_(NULL) {}
-
 BasicPacketSocketFactory::BasicPacketSocketFactory(
     SocketFactory* socket_factory)
-    : thread_(NULL), socket_factory_(socket_factory) {}
+    : socket_factory_(socket_factory) {}
 
 BasicPacketSocketFactory::~BasicPacketSocketFactory() {}
 
@@ -46,8 +39,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateUdpSocket(
     uint16_t min_port,
     uint16_t max_port) {
   // UDP sockets are simple.
-  AsyncSocket* socket =
-      socket_factory()->CreateAsyncSocket(address.family(), SOCK_DGRAM);
+  Socket* socket = socket_factory_->CreateSocket(address.family(), SOCK_DGRAM);
   if (!socket) {
     return NULL;
   }
@@ -59,7 +51,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateUdpSocket(
   return new AsyncUDPSocket(socket);
 }
 
-AsyncPacketSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
+AsyncListenSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
     const SocketAddress& local_address,
     uint16_t min_port,
     uint16_t max_port,
@@ -70,8 +62,8 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
     return NULL;
   }
 
-  AsyncSocket* socket =
-      socket_factory()->CreateAsyncSocket(local_address.family(), SOCK_STREAM);
+  Socket* socket =
+      socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
   if (!socket) {
     return NULL;
   }
@@ -96,8 +88,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
     socket = new AsyncSSLSocket(socket);
   }
 
-  if (opts & PacketSocketFactory::OPT_STUN)
-    return new cricket::AsyncStunTCPSocket(socket, true);
+  RTC_CHECK(!(opts & PacketSocketFactory::OPT_STUN));
 
   return new AsyncTCPSocket(socket, true);
 }
@@ -108,8 +99,8 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
     const ProxyInfo& proxy_info,
     const std::string& user_agent,
     const PacketSocketTcpOptions& tcp_options) {
-  AsyncSocket* socket =
-      socket_factory()->CreateAsyncSocket(local_address.family(), SOCK_STREAM);
+  Socket* socket =
+      socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
   if (!socket) {
     return NULL;
   }
@@ -191,7 +182,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   // Finally, wrap that socket in a TCP or STUN TCP packet socket.
   AsyncPacketSocket* tcp_socket;
   if (tcp_options.opts & PacketSocketFactory::OPT_STUN) {
-    tcp_socket = new cricket::AsyncStunTCPSocket(socket, false);
+    tcp_socket = new cricket::AsyncStunTCPSocket(socket);
   } else {
     tcp_socket = new AsyncTCPSocket(socket, false);
   }
@@ -203,7 +194,7 @@ AsyncResolverInterface* BasicPacketSocketFactory::CreateAsyncResolver() {
   return new AsyncResolver();
 }
 
-int BasicPacketSocketFactory::BindSocket(AsyncSocket* socket,
+int BasicPacketSocketFactory::BindSocket(Socket* socket,
                                          const SocketAddress& local_address,
                                          uint16_t min_port,
                                          uint16_t max_port) {
@@ -218,15 +209,6 @@ int BasicPacketSocketFactory::BindSocket(AsyncSocket* socket,
     }
   }
   return ret;
-}
-
-SocketFactory* BasicPacketSocketFactory::socket_factory() {
-  if (thread_) {
-    RTC_DCHECK(thread_ == Thread::Current());
-    return thread_->socketserver();
-  } else {
-    return socket_factory_;
-  }
 }
 
 }  // namespace rtc

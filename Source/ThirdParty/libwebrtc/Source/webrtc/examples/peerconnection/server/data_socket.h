@@ -37,6 +37,8 @@ class SocketBase {
  public:
   SocketBase() : socket_(INVALID_SOCKET) {}
   explicit SocketBase(NativeSocket socket) : socket_(socket) {}
+  SocketBase(SocketBase& other) = delete;
+  SocketBase& operator=(const SocketBase& other) = delete;
   ~SocketBase() { Close(); }
 
   NativeSocket socket() const { return socket_; }
@@ -97,14 +99,14 @@ class DataSocket : public SocketBase {
   // Send a raw buffer of bytes.
   bool Send(const std::string& data) const;
 
-  // Send an HTTP response.  The |status| should start with a valid HTTP
+  // Send an HTTP response.  The `status` should start with a valid HTTP
   // response code, followed by a string.  E.g. "200 OK".
-  // If |connection_close| is set to true, an extra "Connection: close" HTTP
-  // header will be included.  |content_type| is the mime content type, not
+  // If `connection_close` is set to true, an extra "Connection: close" HTTP
+  // header will be included.  `content_type` is the mime content type, not
   // including the "Content-Type: " string.
-  // |extra_headers| should be either empty or a list of headers where each
+  // `extra_headers` should be either empty or a list of headers where each
   // header terminates with "\r\n".
-  // |data| is the body of the message.  It's length will be specified via
+  // `data` is the body of the message.  It's length will be specified via
   // a "Content-Length" header.
   bool Send(const std::string& status,
             bool connection_close,

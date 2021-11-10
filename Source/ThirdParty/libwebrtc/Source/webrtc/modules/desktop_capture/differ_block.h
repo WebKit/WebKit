@@ -27,7 +27,7 @@ const int kBytesPerPixel = 4;
 bool VectorDifference(const uint8_t* image1, const uint8_t* image2);
 
 // Low level function to compare 2 blocks of pixels of size
-// (kBlockSize, |height|).  Returns whether the blocks differ.
+// (kBlockSize, `height`).  Returns whether the blocks differ.
 bool BlockDifference(const uint8_t* image1,
                      const uint8_t* image2,
                      int height,

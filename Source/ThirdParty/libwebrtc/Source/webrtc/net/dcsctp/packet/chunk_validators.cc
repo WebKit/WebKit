@@ -38,9 +38,7 @@ SackChunk ChunkValidators::Clean(SackChunk&& sack) {
   // Not more than at most one remaining? Exit early.
   if (gap_ack_blocks.size() <= 1) {
     return SackChunk(sack.cumulative_tsn_ack(), sack.a_rwnd(),
-                     std::move(gap_ack_blocks),
-                     std::vector<TSN>(sack.duplicate_tsns().begin(),
-                                      sack.duplicate_tsns().end()));
+                     std::move(gap_ack_blocks), sack.duplicate_tsns());
   }
 
   // Sort the intervals by their start value, to aid in the merging below.
@@ -63,8 +61,7 @@ SackChunk ChunkValidators::Clean(SackChunk&& sack) {
   }
 
   return SackChunk(sack.cumulative_tsn_ack(), sack.a_rwnd(), std::move(merged),
-                   std::vector<TSN>(sack.duplicate_tsns().begin(),
-                                    sack.duplicate_tsns().end()));
+                   sack.duplicate_tsns());
 }
 
 bool ChunkValidators::Validate(const SackChunk& sack) {

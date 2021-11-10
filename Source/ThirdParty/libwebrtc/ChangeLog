@@ -1,3 +1,19 @@
+2021-11-10  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
+
+        Update libwebrtc to M96
+        https://bugs.webkit.org/show_bug.cgi?id=232873
+
+        Reviewed by Alex Christensen.
+
+        Updated libwebrtc code according M96 upstream branch.
+
+        * CMakeLists.txt:
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc: resynced.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2021-10-27  David Kilzer  <ddkilzer@apple.com>
 
         [WebRTC] Enable -Wformat=2 warnings

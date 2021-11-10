@@ -22,7 +22,7 @@
 
 namespace webrtc {
 
-// Returns true if |size| and |alignment| are valid combinations.
+// Returns true if `size` and `alignment` are valid combinations.
 bool CorrectUsage(size_t size, size_t alignment) {
   std::unique_ptr<char, AlignedFreeDeleter> scoped(
       static_cast<char*>(AlignedMalloc(size, alignment)));

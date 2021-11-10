@@ -83,7 +83,7 @@ class VideoCodecUnitTest : public ::testing::Test {
                            CodecSpecificInfo* codec_specific_info);
 
   // Helper methods for waiting for multiple encoded frames. Caller must
-  // define how many frames are to be waited for via |num_frames| before calling
+  // define how many frames are to be waited for via `num_frames` before calling
   // Encode(). Then, they can expect to retrive them via WaitForEncodedFrames().
   void SetWaitForEncodedFramesThreshold(size_t num_frames);
   bool WaitForEncodedFrames(

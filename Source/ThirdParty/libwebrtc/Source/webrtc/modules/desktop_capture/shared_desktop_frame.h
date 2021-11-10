@@ -40,7 +40,7 @@ class RTC_EXPORT SharedDesktopFrame final : public DesktopFrame {
   // Returns the underlying instance of DesktopFrame.
   DesktopFrame* GetUnderlyingFrame();
 
-  // Returns whether |this| and |other| share the underlying DesktopFrame.
+  // Returns whether `this` and `other` share the underlying DesktopFrame.
   bool ShareFrameWith(const SharedDesktopFrame& other) const;
 
   // Creates a clone of this object.

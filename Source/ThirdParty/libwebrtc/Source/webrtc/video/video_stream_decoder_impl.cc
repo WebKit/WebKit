@@ -102,9 +102,9 @@ VideoDecoder* VideoStreamDecoderImpl::GetDecoder(int payload_type) {
     return nullptr;
   }
 
-  int num_cores = decoder_settings_it->second.second;
-  int32_t init_result = decoder->InitDecode(nullptr, num_cores);
-  if (init_result != WEBRTC_VIDEO_CODEC_OK) {
+  VideoDecoder::Settings settings;
+  settings.set_number_of_cores(decoder_settings_it->second.second);
+  if (!decoder->Configure(settings)) {
     RTC_LOG(LS_WARNING) << "Failed to initialize decoder for payload type "
                         << payload_type << ".";
     return nullptr;
@@ -185,7 +185,7 @@ void VideoStreamDecoderImpl::OnNextFrameCallback(
     }
     case video_coding::FrameBuffer::kTimeout: {
       callbacks_->OnNonDecodableState();
-      // The |frame_buffer_| requires the frame callback function to complete
+      // The `frame_buffer_` requires the frame callback function to complete
       // before NextFrame is called again. For this reason we call
       // StartNextDecode in a later task to allow this task to complete first.
       bookkeeping_queue_.PostTask([this]() {

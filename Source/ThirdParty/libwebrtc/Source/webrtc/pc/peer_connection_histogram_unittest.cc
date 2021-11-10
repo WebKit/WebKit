@@ -19,7 +19,6 @@
 #include "api/jsep.h"
 #include "api/jsep_session_description.h"
 #include "api/peer_connection_interface.h"
-#include "api/peer_connection_proxy.h"
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
@@ -29,6 +28,7 @@
 #include "p2p/client/basic_port_allocator.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_factory.h"
+#include "pc/peer_connection_proxy.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/sdp_utils.h"
 #include "pc/test/mock_peer_connection_observers.h"
@@ -651,7 +651,7 @@ TEST_F(PeerConnectionUsageHistogramTest,
   EXPECT_TRUE(caller->observer()->candidate_gathered());
   // Get the current offer that contains candidates and pass it to the callee.
   //
-  // Note that we cannot use CloneSessionDescription on |cur_offer| to obtain an
+  // Note that we cannot use CloneSessionDescription on `cur_offer` to obtain an
   // SDP with candidates. The method above does not strictly copy everything, in
   // particular, not copying the ICE candidates.
   // TODO(qingsi): Technically, this is a bug. Fix it.

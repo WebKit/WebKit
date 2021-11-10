@@ -36,5 +36,5 @@ FAIL checkRemoteRollback assert_equals: expected "[]" but got "[{}]"
 FAIL checkMsectionReuse assert_equals: expected "[{currentDirection:null,mid:null}]" but got "[{currentDirection:\"inactive\",mid:\"0\"}]"
 PASS checkStopAfterCreateOfferWithReusedMsection
 PASS checkAddIceCandidateToStoppedTransceiver
-FAIL checkBundleTagRejected promise_test: Unhandled rejection with value: object "InvalidAccessError: Failed to set remote offer sdp: The m= section with mid='1' should be rejected."
+PASS checkBundleTagRejected
 

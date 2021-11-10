@@ -66,7 +66,7 @@ private:
     {
         callOnMainThread([origin = m_origin.releaseNonNull(), callback = WTFMove(m_resultCallback), certificate]() mutable {
             Vector<RTCCertificate::DtlsFingerprint> fingerprints;
-            auto stats = certificate->ssl_certificate().GetStats();
+            auto stats = certificate->GetSSLCertificate().GetStats();
             auto* info = stats.get();
             while (info) {
                 StringView fingerprint { reinterpret_cast<const unsigned char*>(info->fingerprint.data()), static_cast<unsigned>(info->fingerprint.length()) };

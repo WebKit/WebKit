@@ -12,6 +12,7 @@
 
 #include "absl/strings/match.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_codec.h"
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_decoder.h"
@@ -34,6 +35,24 @@ std::vector<SdpVideoFormat> InternalDecoderFactory::GetSupportedFormats()
   if (kIsLibaomAv1DecoderSupported)
     formats.push_back(SdpVideoFormat(cricket::kAv1CodecName));
   return formats;
+}
+
+VideoDecoderFactory::CodecSupport InternalDecoderFactory::QueryCodecSupport(
+    const SdpVideoFormat& format,
+    bool reference_scaling) const {
+  // Query for supported formats and check if the specified format is supported.
+  // Return unsupported if an invalid combination of format and
+  // reference_scaling is specified.
+  if (reference_scaling) {
+    VideoCodecType codec = PayloadStringToCodecType(format.name);
+    if (codec != kVideoCodecVP9 && codec != kVideoCodecAV1) {
+      return {/*is_supported=*/false, /*is_power_efficient=*/false};
+    }
+  }
+
+  CodecSupport codec_support;
+  codec_support.is_supported = format.IsCodecInList(GetSupportedFormats());
+  return codec_support;
 }
 
 std::unique_ptr<VideoDecoder> InternalDecoderFactory::CreateVideoDecoder(

@@ -12,79 +12,63 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_PACKET_H_
 
 #include <list>
-#include <memory>
 
-#include "api/rtp_headers.h"  // NOLINT(build/include)
+#include "api/array_view.h"
+#include "api/rtp_headers.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "rtc_base/constructor_magic.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
-
-namespace RtpUtility {
-class RtpHeaderParser;
-}  // namespace RtpUtility
-
 namespace test {
 
 // Class for handling RTP packets in test applications.
 class Packet {
  public:
   // Creates a packet, with the packet payload (including header bytes) in
-  // |packet_memory|. The length of |packet_memory| is |allocated_bytes|.
-  // The new object assumes ownership of |packet_memory| and will delete it
-  // when the Packet object is deleted. The |time_ms| is an extra time
-  // associated with this packet, typically used to denote arrival time.
-  // The first bytes in |packet_memory| will be parsed using |parser|.
-  // |virtual_packet_length_bytes| is typically used when reading RTP dump files
+  // `packet`. The `time_ms` is an extra time associated with this packet,
+  // typically used to denote arrival time.
+  // `virtual_packet_length_bytes` is typically used when reading RTP dump files
   // that only contain the RTP headers, and no payload (a.k.a RTP dummy files or
-  // RTP light). The |virtual_packet_length_bytes| tells what size the packet
-  // had on wire, including the now discarded payload, whereas |allocated_bytes|
-  // is the length of the remaining payload (typically only the RTP header).
-  Packet(uint8_t* packet_memory,
-         size_t allocated_bytes,
+  // RTP light). The `virtual_packet_length_bytes` tells what size the packet
+  // had on wire, including the now discarded payload.
+  Packet(rtc::CopyOnWriteBuffer packet,
          size_t virtual_packet_length_bytes,
          double time_ms,
-         const RtpUtility::RtpHeaderParser& parser,
          const RtpHeaderExtensionMap* extension_map = nullptr);
+
+  Packet(rtc::CopyOnWriteBuffer packet,
+         double time_ms,
+         const RtpHeaderExtensionMap* extension_map = nullptr)
+      : Packet(packet, packet.size(), time_ms, extension_map) {}
 
   // Same as above, but creates the packet from an already parsed RTPHeader.
   // This is typically used when reading RTP dump files that only contain the
-  // RTP headers, and no payload. The |virtual_packet_length_bytes| tells what
+  // RTP headers, and no payload. The `virtual_packet_length_bytes` tells what
   // size the packet had on wire, including the now discarded payload,
-  // The |virtual_payload_length_bytes| tells the size of the payload.
+  // The `virtual_payload_length_bytes` tells the size of the payload.
   Packet(const RTPHeader& header,
          size_t virtual_packet_length_bytes,
          size_t virtual_payload_length_bytes,
          double time_ms);
 
-  // The following constructors are the same as the first two, but without a
-  // parser. Note that when the object is constructed using any of these
-  // methods, the header will be parsed using a default RtpHeaderParser object.
-  // In particular, RTP header extensions won't be parsed.
-  Packet(uint8_t* packet_memory, size_t allocated_bytes, double time_ms);
-
-  Packet(uint8_t* packet_memory,
-         size_t allocated_bytes,
-         size_t virtual_packet_length_bytes,
-         double time_ms);
-
   virtual ~Packet();
 
   // Parses the first bytes of the RTP payload, interpreting them as RED headers
-  // according to RFC 2198. The headers will be inserted into |headers|. The
+  // according to RFC 2198. The headers will be inserted into `headers`. The
   // caller of the method assumes ownership of the objects in the list, and
   // must delete them properly.
   bool ExtractRedHeaders(std::list<RTPHeader*>* headers) const;
 
-  // Deletes all RTPHeader objects in |headers|, but does not delete |headers|
+  // Deletes all RTPHeader objects in `headers`, but does not delete `headers`
   // itself.
   static void DeleteRedHeaders(std::list<RTPHeader*>* headers);
 
-  const uint8_t* payload() const { return payload_; }
+  const uint8_t* payload() const { return rtp_payload_.data(); }
 
-  size_t packet_length_bytes() const { return packet_length_bytes_; }
+  size_t packet_length_bytes() const { return packet_.size(); }
 
-  size_t payload_length_bytes() const { return payload_length_bytes_; }
+  size_t payload_length_bytes() const { return rtp_payload_.size(); }
 
   size_t virtual_packet_length_bytes() const {
     return virtual_packet_length_bytes_;
@@ -100,21 +84,17 @@ class Packet {
   bool valid_header() const { return valid_header_; }
 
  private:
-  bool ParseHeader(const webrtc::RtpUtility::RtpHeaderParser& parser,
-                   const RtpHeaderExtensionMap* extension_map);
+  bool ParseHeader(const RtpHeaderExtensionMap* extension_map);
   void CopyToHeader(RTPHeader* destination) const;
 
   RTPHeader header_;
-  const std::unique_ptr<uint8_t[]> payload_memory_;
-  const uint8_t* payload_ = nullptr;      // First byte after header.
-  const size_t packet_length_bytes_ = 0;  // Total length of packet.
-  size_t payload_length_bytes_ = 0;  // Length of the payload, after RTP header.
-                                     // Zero for dummy RTP packets.
+  const rtc::CopyOnWriteBuffer packet_;
+  rtc::ArrayView<const uint8_t> rtp_payload_;  // Empty for dummy RTP packets.
   // Virtual lengths are used when parsing RTP header files (dummy RTP files).
   const size_t virtual_packet_length_bytes_;
   size_t virtual_payload_length_bytes_ = 0;
   const double time_ms_;     // Used to denote a packet's arrival time.
-  const bool valid_header_;  // Set by the RtpHeaderParser.
+  const bool valid_header_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(Packet);
 };

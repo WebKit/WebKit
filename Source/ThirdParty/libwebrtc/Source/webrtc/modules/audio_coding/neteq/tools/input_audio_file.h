@@ -27,22 +27,22 @@ class InputAudioFile {
 
   virtual ~InputAudioFile();
 
-  // Reads |samples| elements from source file to |destination|. Returns true
+  // Reads `samples` elements from source file to `destination`. Returns true
   // if the read was successful, otherwise false. If the file end is reached,
   // the file is rewound and reading continues from the beginning.
-  // The output |destination| must have the capacity to hold |samples| elements.
+  // The output `destination` must have the capacity to hold `samples` elements.
   virtual bool Read(size_t samples, int16_t* destination);
 
-  // Fast-forwards (|samples| > 0) or -backwards (|samples| < 0) the file by the
+  // Fast-forwards (`samples` > 0) or -backwards (`samples` < 0) the file by the
   // indicated number of samples. Just like Read(), Seek() starts over at the
   // beginning of the file if the end is reached. However, seeking backwards
   // past the beginning of the file is not possible.
   virtual bool Seek(int samples);
 
   // Creates a multi-channel signal from a mono signal. Each sample is repeated
-  // |channels| times to create an interleaved multi-channel signal where all
-  // channels are identical. The output |destination| must have the capacity to
-  // hold samples * channels elements. Note that |source| and |destination| can
+  // `channels` times to create an interleaved multi-channel signal where all
+  // channels are identical. The output `destination` must have the capacity to
+  // hold samples * channels elements. Note that `source` and `destination` can
   // be the same array (i.e., point to the same address).
   static void DuplicateInterleaved(const int16_t* source,
                                    size_t samples,

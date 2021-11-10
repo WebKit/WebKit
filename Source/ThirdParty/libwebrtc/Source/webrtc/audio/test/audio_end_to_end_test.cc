@@ -92,6 +92,8 @@ void AudioEndToEndTest::ModifyAudioConfigs(
                                               {{"stereo", "1"}});
   send_config->send_codec_spec = AudioSendStream::Config::SendCodecSpec(
       test::CallTest::kAudioSendPayloadType, kDefaultFormat);
+  send_config->min_bitrate_bps = 32000;
+  send_config->max_bitrate_bps = 32000;
 }
 
 void AudioEndToEndTest::OnAudioStreamsCreated(

@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "net/dcsctp/common/handover_testing.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_chunk.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
@@ -146,6 +147,89 @@ TEST_F(TraditionalReassemblyStreamsTest,
   ForwardTsnChunk::SkippedStream skipped[] = {
       ForwardTsnChunk::SkippedStream(StreamID(1), SSN(0))};
   EXPECT_EQ(streams.HandleForwardTsn(tsn(4), skipped), 8u);
+}
+
+TEST_F(TraditionalReassemblyStreamsTest, NoStreamsCanBeHandedOver) {
+  NiceMock<MockFunction<ReassemblyStreams::OnAssembledMessage>> on_assembled;
+
+  TraditionalReassemblyStreams streams1("", on_assembled.AsStdFunction());
+  EXPECT_TRUE(streams1.GetHandoverReadiness().IsReady());
+
+  DcSctpSocketHandoverState state;
+  streams1.AddHandoverState(state);
+  g_handover_state_transformer_for_test(&state);
+  TraditionalReassemblyStreams streams2("", on_assembled.AsStdFunction(),
+                                        &state);
+
+  EXPECT_EQ(streams2.Add(tsn(1), gen_.Ordered({1}, "B")), 1);
+  EXPECT_EQ(streams2.Add(tsn(2), gen_.Ordered({2, 3, 4})), 3);
+  EXPECT_EQ(streams2.Add(tsn(1), gen_.Unordered({1}, "B")), 1);
+  EXPECT_EQ(streams2.Add(tsn(2), gen_.Unordered({2, 3, 4})), 3);
+}
+
+TEST_F(TraditionalReassemblyStreamsTest,
+       OrderedStreamsCanBeHandedOverWhenNoUnassembledChunksExist) {
+  NiceMock<MockFunction<ReassemblyStreams::OnAssembledMessage>> on_assembled;
+
+  TraditionalReassemblyStreams streams1("", on_assembled.AsStdFunction());
+
+  EXPECT_EQ(streams1.Add(tsn(1), gen_.Ordered({1}, "B")), 1);
+  EXPECT_EQ(streams1.GetHandoverReadiness(),
+            HandoverReadinessStatus(
+                HandoverUnreadinessReason::kOrderedStreamHasUnassembledChunks));
+  EXPECT_EQ(streams1.Add(tsn(2), gen_.Ordered({2, 3, 4})), 3);
+  EXPECT_EQ(streams1.GetHandoverReadiness(),
+            HandoverReadinessStatus(
+                HandoverUnreadinessReason::kOrderedStreamHasUnassembledChunks));
+  EXPECT_EQ(streams1.Add(tsn(3), gen_.Ordered({5, 6})), 2);
+  EXPECT_EQ(streams1.GetHandoverReadiness(),
+            HandoverReadinessStatus(
+                HandoverUnreadinessReason::kOrderedStreamHasUnassembledChunks));
+
+  ForwardTsnChunk::SkippedStream skipped[] = {
+      ForwardTsnChunk::SkippedStream(StreamID(1), SSN(0))};
+  EXPECT_EQ(streams1.HandleForwardTsn(tsn(3), skipped), 6u);
+  EXPECT_TRUE(streams1.GetHandoverReadiness().IsReady());
+
+  DcSctpSocketHandoverState state;
+  streams1.AddHandoverState(state);
+  g_handover_state_transformer_for_test(&state);
+  TraditionalReassemblyStreams streams2("", on_assembled.AsStdFunction(),
+                                        &state);
+  EXPECT_EQ(streams2.Add(tsn(4), gen_.Ordered({7})), 1);
+}
+
+TEST_F(TraditionalReassemblyStreamsTest,
+       UnorderedStreamsCanBeHandedOverWhenNoUnassembledChunksExist) {
+  NiceMock<MockFunction<ReassemblyStreams::OnAssembledMessage>> on_assembled;
+
+  TraditionalReassemblyStreams streams1("", on_assembled.AsStdFunction());
+
+  EXPECT_EQ(streams1.Add(tsn(1), gen_.Unordered({1}, "B")), 1);
+  EXPECT_EQ(
+      streams1.GetHandoverReadiness(),
+      HandoverReadinessStatus(
+          HandoverUnreadinessReason::kUnorderedStreamHasUnassembledChunks));
+  EXPECT_EQ(streams1.Add(tsn(2), gen_.Unordered({2, 3, 4})), 3);
+  EXPECT_EQ(
+      streams1.GetHandoverReadiness(),
+      HandoverReadinessStatus(
+          HandoverUnreadinessReason::kUnorderedStreamHasUnassembledChunks));
+  EXPECT_EQ(streams1.Add(tsn(3), gen_.Unordered({5, 6})), 2);
+  EXPECT_EQ(
+      streams1.GetHandoverReadiness(),
+      HandoverReadinessStatus(
+          HandoverUnreadinessReason::kUnorderedStreamHasUnassembledChunks));
+
+  EXPECT_EQ(streams1.HandleForwardTsn(tsn(3), {}), 6u);
+  EXPECT_TRUE(streams1.GetHandoverReadiness().IsReady());
+
+  DcSctpSocketHandoverState state;
+  streams1.AddHandoverState(state);
+  g_handover_state_transformer_for_test(&state);
+  TraditionalReassemblyStreams streams2("", on_assembled.AsStdFunction(),
+                                        &state);
+  EXPECT_EQ(streams2.Add(tsn(4), gen_.Unordered({7})), 1);
 }
 
 }  // namespace

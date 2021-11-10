@@ -19,11 +19,11 @@
 
 namespace webrtc {
 
-// Creates a DesktopFrame to contain only the area of |rect| in the original
-// |frame|.
-// |frame| should not be nullptr. |rect| is in |frame| coordinate, i.e.
-// |frame|->top_left() does not impact the area of |rect|.
-// Returns nullptr frame if |rect| is not contained by the bounds of |frame|.
+// Creates a DesktopFrame to contain only the area of `rect` in the original
+// `frame`.
+// `frame` should not be nullptr. `rect` is in `frame` coordinate, i.e.
+// `frame`->top_left() does not impact the area of `rect`.
+// Returns nullptr frame if `rect` is not contained by the bounds of `frame`.
 std::unique_ptr<DesktopFrame> RTC_EXPORT
 CreateCroppedDesktopFrame(std::unique_ptr<DesktopFrame> frame,
                           const DesktopRect& rect);

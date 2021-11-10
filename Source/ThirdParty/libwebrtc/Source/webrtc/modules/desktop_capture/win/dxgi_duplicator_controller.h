@@ -26,6 +26,7 @@
 #include "modules/desktop_capture/win/dxgi_context.h"
 #include "modules/desktop_capture/win/dxgi_frame.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -40,7 +41,7 @@ namespace webrtc {
 // but a later Duplicate() returns false, this usually means the display mode is
 // changing. Consumers should retry after a while. (Typically 50 milliseconds,
 // but according to hardware performance, this time may vary.)
-class DxgiDuplicatorController {
+class RTC_EXPORT DxgiDuplicatorController {
  public:
   using Context = DxgiFrameContext;
 
@@ -68,7 +69,7 @@ class DxgiDuplicatorController {
     INVALID_MONITOR_ID,
   };
 
-  // Converts |result| into user-friendly string representation. The return
+  // Converts `result` into user-friendly string representation. The return
   // value should not be used to identify error types.
   static std::string ResultName(Result result);
 
@@ -84,19 +85,19 @@ class DxgiDuplicatorController {
   bool IsSupported();
 
   // Returns a copy of D3dInfo composed by last Initialize() function call. This
-  // function always copies the latest information into |info|. But once the
-  // function returns false, the information in |info| may not accurate.
+  // function always copies the latest information into `info`. But once the
+  // function returns false, the information in `info` may not accurate.
   bool RetrieveD3dInfo(D3dInfo* info);
 
-  // Captures current screen and writes into |frame|.
+  // Captures current screen and writes into `frame`.
   // TODO(zijiehe): Windows cannot guarantee the frames returned by each
   // IDXGIOutputDuplication are synchronized. But we are using a totally
   // different threading model than the way Windows suggested, it's hard to
   // synchronize them manually. We should find a way to do it.
   Result Duplicate(DxgiFrame* frame);
 
-  // Captures one monitor and writes into target. |monitor_id| should >= 0. If
-  // |monitor_id| is greater than the total screen count of all the Duplicators,
+  // Captures one monitor and writes into target. `monitor_id` should >= 0. If
+  // `monitor_id` is greater than the total screen count of all the Duplicators,
   // this function returns false.
   Result DuplicateMonitor(DxgiFrame* frame, int monitor_id);
 
@@ -135,21 +136,21 @@ class DxgiDuplicatorController {
   void AddRef();
   void Release();
 
-  // Does the real duplication work. Setting |monitor_id| < 0 to capture entire
+  // Does the real duplication work. Setting `monitor_id` < 0 to capture entire
   // screen. This function calls Initialize(). And if the duplication failed,
   // this function calls Deinitialize() to ensure the Dxgi components can be
   // reinitialized next time.
   Result DoDuplicate(DxgiFrame* frame, int monitor_id);
 
   // Unload all the DXGI components and releases the resources. This function
-  // wraps Deinitialize() with |mutex_|.
+  // wraps Deinitialize() with `mutex_`.
   void Unload();
 
   // Unregisters Context from this instance and all DxgiAdapterDuplicator(s)
   // it owns.
   void Unregister(const Context* const context);
 
-  // All functions below should be called in |mutex_| locked scope and should be
+  // All functions below should be called in `mutex_` locked scope and should be
   // after a successful Initialize().
 
   // If current instance has not been initialized, executes DoInitialize()
@@ -187,14 +188,14 @@ class DxgiDuplicatorController {
                       SharedDesktopFrame* target)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // The minimum GetNumFramesCaptured() returned by |duplicators_|.
+  // The minimum GetNumFramesCaptured() returned by `duplicators_`.
   int64_t GetNumFramesCaptured() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Returns a DesktopSize to cover entire |desktop_rect_|.
+  // Returns a DesktopSize to cover entire `desktop_rect_`.
   DesktopSize desktop_size() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Returns the size of one screen. |id| should be >= 0. If system does not
-  // support DXGI based capturer, or |id| is greater than the total screen count
+  // Returns the size of one screen. `id` should be >= 0. If system does not
+  // support DXGI based capturer, or `id` is greater than the total screen count
   // of all the Duplicators, this function returns an empty DesktopRect.
   DesktopRect ScreenRect(int id) const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
@@ -203,8 +204,8 @@ class DxgiDuplicatorController {
   void GetDeviceNamesUnlocked(std::vector<std::string>* output) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Returns the desktop size of the selected screen |monitor_id|. Setting
-  // |monitor_id| < 0 to return the entire screen size.
+  // Returns the desktop size of the selected screen `monitor_id`. Setting
+  // `monitor_id` < 0 to return the entire screen size.
   DesktopSize SelectedDesktopSize(int monitor_id) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
@@ -216,7 +217,7 @@ class DxgiDuplicatorController {
   bool EnsureFrameCaptured(Context* context, SharedDesktopFrame* target)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Moves |desktop_rect_| and all underlying |duplicators_|, putting top left
+  // Moves `desktop_rect_` and all underlying `duplicators_`, putting top left
   // corner of the desktop at (0, 0). This is necessary because DXGI_OUTPUT_DESC
   // may return negative coordinates. Called from DoInitialize() after all
   // DxgiAdapterDuplicator and DxgiOutputDuplicator instances are initialized.

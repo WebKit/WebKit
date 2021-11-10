@@ -62,7 +62,7 @@ TEST_F(AudioVectorTest, PushBackAndCopy) {
   AudioVector vec;
   AudioVector vec_copy;
   vec.PushBack(array_, array_length());
-  vec.CopyTo(&vec_copy);  // Copy from |vec| to |vec_copy|.
+  vec.CopyTo(&vec_copy);  // Copy from `vec` to `vec_copy`.
   ASSERT_EQ(array_length(), vec.Size());
   ASSERT_EQ(array_length(), vec_copy.Size());
   for (size_t i = 0; i < array_length(); ++i) {
@@ -70,7 +70,7 @@ TEST_F(AudioVectorTest, PushBackAndCopy) {
     EXPECT_EQ(array_[i], vec_copy[i]);
   }
 
-  // Clear |vec| and verify that it is empty.
+  // Clear `vec` and verify that it is empty.
   vec.Clear();
   EXPECT_TRUE(vec.Empty());
 
@@ -178,8 +178,8 @@ TEST_F(AudioVectorTest, InsertAt) {
   int insert_position = 5;
   vec.InsertAt(new_array, kNewLength, insert_position);
   // Verify that the vector looks as follows:
-  // {0, 1, ..., |insert_position| - 1, 100, 101, ..., 100 + kNewLength - 1,
-  //  |insert_position|, |insert_position| + 1, ..., kLength - 1}.
+  // {0, 1, ..., `insert_position` - 1, 100, 101, ..., 100 + kNewLength - 1,
+  //  `insert_position`, `insert_position` + 1, ..., kLength - 1}.
   size_t pos = 0;
   for (int i = 0; i < insert_position; ++i) {
     EXPECT_EQ(array_[i], vec[pos]);
@@ -309,8 +309,8 @@ TEST_F(AudioVectorTest, OverwriteAt) {
   size_t insert_position = 2;
   vec.OverwriteAt(new_array, kNewLength, insert_position);
   // Verify that the vector looks as follows:
-  // {0, ..., |insert_position| - 1, 100, 101, ..., 100 + kNewLength - 1,
-  //  |insert_position|, |insert_position| + 1, ..., kLength - 1}.
+  // {0, ..., `insert_position` - 1, 100, 101, ..., 100 + kNewLength - 1,
+  //  `insert_position`, `insert_position` + 1, ..., kLength - 1}.
   size_t pos = 0;
   for (pos = 0; pos < insert_position; ++pos) {
     EXPECT_EQ(array_[pos], vec[pos]);
@@ -340,8 +340,8 @@ TEST_F(AudioVectorTest, OverwriteBeyondEnd) {
   vec.OverwriteAt(new_array, kNewLength, insert_position);
   ASSERT_EQ(array_length() - 2u + kNewLength, vec.Size());
   // Verify that the vector looks as follows:
-  // {0, ..., |insert_position| - 1, 100, 101, ..., 100 + kNewLength - 1,
-  //  |insert_position|, |insert_position| + 1, ..., kLength - 1}.
+  // {0, ..., `insert_position` - 1, 100, 101, ..., 100 + kNewLength - 1,
+  //  `insert_position`, `insert_position` + 1, ..., kLength - 1}.
   int pos = 0;
   for (pos = 0; pos < insert_position; ++pos) {
     EXPECT_EQ(array_[pos], vec[pos]);
@@ -350,7 +350,7 @@ TEST_F(AudioVectorTest, OverwriteBeyondEnd) {
     EXPECT_EQ(new_array[i], vec[pos]);
     ++pos;
   }
-  // Verify that we checked to the end of |vec|.
+  // Verify that we checked to the end of `vec`.
   EXPECT_EQ(vec.Size(), static_cast<size_t>(pos));
 }
 
@@ -359,7 +359,7 @@ TEST_F(AudioVectorTest, CrossFade) {
   static const size_t kFadeLength = 10;
   AudioVector vec1(kLength);
   AudioVector vec2(kLength);
-  // Set all vector elements to 0 in |vec1| and 100 in |vec2|.
+  // Set all vector elements to 0 in `vec1` and 100 in `vec2`.
   for (size_t i = 0; i < kLength; ++i) {
     vec1[i] = 0;
     vec2[i] = 100;

@@ -11,6 +11,8 @@
 
 #import "RTCCodecSpecificInfoH265+Private.h"
 
+#include "modules/video_coding/codecs/h265/include/h265_globals.h"
+
 // H265 specific settings.
 @implementation RTCCodecSpecificInfoH265
 

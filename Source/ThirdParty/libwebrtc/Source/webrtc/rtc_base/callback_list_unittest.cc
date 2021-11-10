@@ -128,7 +128,7 @@ struct LargeNonTrivial {
   LargeNonTrivial(LargeNonTrivial&& m) {}
   ~LargeNonTrivial() = default;
 
-  void operator()(int& a) { a = 1; }
+  void operator()(int& b) { b = 1; }
 };
 
 TEST(CallbackList, LargeNonTrivialTest) {

@@ -96,8 +96,8 @@ void ExpectEqual(const RidDescription& expected, const RidDescription& actual) {
 class SimulcastSdpSerializerTest : public TestWithParam<const char*> {
  public:
   // Runs a test for deserializing Simulcast.
-  // |str| - The serialized Simulcast to parse.
-  // |expected| - The expected output Simulcast to compare to.
+  // `str` - The serialized Simulcast to parse.
+  // `expected` - The expected output Simulcast to compare to.
   void TestDeserialization(const std::string& str,
                            const SimulcastDescription& expected) const {
     SdpSerializer deserializer;
@@ -107,8 +107,8 @@ class SimulcastSdpSerializerTest : public TestWithParam<const char*> {
   }
 
   // Runs a test for serializing Simulcast.
-  // |simulcast| - The Simulcast to serialize.
-  // |expected| - The expected output string to compare to.
+  // `simulcast` - The Simulcast to serialize.
+  // `expected` - The expected output string to compare to.
   void TestSerialization(const SimulcastDescription& simulcast,
                          const std::string& expected) const {
     SdpSerializer serializer;
@@ -280,8 +280,8 @@ TEST_F(SimulcastSdpSerializerTest, Serialize_ComplexSerialization) {
 class RidDescriptionSdpSerializerTest : public TestWithParam<const char*> {
  public:
   // Runs a test for deserializing Rid Descriptions.
-  // |str| - The serialized Rid Description to parse.
-  // |expected| - The expected output RidDescription to compare to.
+  // `str` - The serialized Rid Description to parse.
+  // `expected` - The expected output RidDescription to compare to.
   void TestDeserialization(const std::string& str,
                            const RidDescription& expected) const {
     SdpSerializer deserializer;
@@ -291,8 +291,8 @@ class RidDescriptionSdpSerializerTest : public TestWithParam<const char*> {
   }
 
   // Runs a test for serializing RidDescriptions.
-  // |rid_description| - The RidDescription to serialize.
-  // |expected| - The expected output string to compare to.
+  // `rid_description` - The RidDescription to serialize.
+  // `expected` - The expected output string to compare to.
   void TestSerialization(const RidDescription& rid_description,
                          const std::string& expected) const {
     SdpSerializer serializer;

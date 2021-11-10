@@ -12,6 +12,7 @@
 #define STATS_TEST_RTC_TEST_STATS_H_
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -42,6 +43,8 @@ class RTC_EXPORT RTCTestStats : public RTCStats {
   RTCStatsMember<std::vector<uint64_t>> m_sequence_uint64;
   RTCStatsMember<std::vector<double>> m_sequence_double;
   RTCStatsMember<std::vector<std::string>> m_sequence_string;
+  RTCStatsMember<std::map<std::string, uint64_t>> m_map_string_uint64;
+  RTCStatsMember<std::map<std::string, double>> m_map_string_double;
 };
 
 }  // namespace webrtc

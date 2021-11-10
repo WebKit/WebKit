@@ -166,5 +166,5 @@ page.
 [ChromeBugList]: https://bugs.chromium.org/p/chromium/issues/list?can=1&q=Type%3DBug-Security+component%3ABlink%3EWebRTC+-status%3ADuplicate%2CWontfix&sort=-closed&colspec=ID+Pri+M+Component+Status+Owner+Summary+OS+Closed&x=m&y=releaseblock&cells=ids
 [WebRtcBugList]: https://bugs.chromium.org/p/webrtc/issues/list?q=Type%3DBug-Security&can=1
 [ChromeSecurity]: https://www.chromium.org/Home/chromium-security
-[SeverityGuidelines]: https://chromium.googlesource.com/chromium/src/+/master/docs/security/severity-guidelines.md
-[SecurityFaq]: https://chromium.googlesource.com/chromium/src/+/master/docs/security/faq.md
+[SeverityGuidelines]: https://chromium.googlesource.com/chromium/src/+/main/docs/security/severity-guidelines.md
+[SecurityFaq]: https://chromium.googlesource.com/chromium/src/+/main/docs/security/faq.md

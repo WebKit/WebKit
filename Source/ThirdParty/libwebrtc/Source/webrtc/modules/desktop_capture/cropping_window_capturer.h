@@ -45,7 +45,7 @@ class RTC_EXPORT CroppingWindowCapturer : public DesktopCapturer,
   bool FocusOnSelectedSource() override;
   bool IsOccluded(const DesktopVector& pos) override;
 
-  // DesktopCapturer::Callback implementation, passed to |screen_capturer_| to
+  // DesktopCapturer::Callback implementation, passed to `screen_capturer_` to
   // intercept the capture result.
   void OnCaptureResult(DesktopCapturer::Result result,
                        std::unique_ptr<DesktopFrame> frame) override;

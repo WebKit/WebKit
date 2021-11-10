@@ -25,5 +25,8 @@ specific_include_rules = {
   ],
   "rtp_transport_controller_send_interface\.h": [
     "+common_video/frame_counts.h",
+  ],
+  "call_perf_tests\.cc": [
+    "+media/engine",
   ]
 }

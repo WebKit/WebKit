@@ -28,9 +28,9 @@ namespace webrtc {
 namespace {
 
 // Helper to convert some time format to resolution used in absolute send time
-// header extension, rounded upwards. |t| is the time to convert, in some
-// resolution. |denom| is the value to divide |t| by to get whole seconds,
-// e.g. |denom| = 1000 if |t| is in milliseconds.
+// header extension, rounded upwards. `t` is the time to convert, in some
+// resolution. `denom` is the value to divide `t` by to get whole seconds,
+// e.g. `denom` = 1000 if `t` is in milliseconds.
 uint32_t AbsSendTime(int64_t t, int64_t denom) {
   return (((t << 18) + (denom >> 1)) / denom) & 0x00fffffful;
 }

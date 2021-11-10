@@ -48,7 +48,7 @@ struct DxgiFrameContext final {
   // Reset current Context, so it will be reinitialized next time.
   void Reset();
 
-  // A Context will have an exactly same |controller_id| as
+  // A Context will have an exactly same `controller_id` as
   // DxgiDuplicatorController, to ensure it has been correctly setted up after
   // each DxgiDuplicatorController::Initialize().
   int controller_id = 0;

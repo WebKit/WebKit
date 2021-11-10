@@ -71,8 +71,8 @@ class AcmReceiveTestOldApi {
   RTC_DISALLOW_COPY_AND_ASSIGN(AcmReceiveTestOldApi);
 };
 
-// This test toggles the output frequency every |toggle_period_ms|. The test
-// starts with |output_freq_hz_1|. Except for the toggling, it does the same
+// This test toggles the output frequency every `toggle_period_ms`. The test
+// starts with `output_freq_hz_1`. Except for the toggling, it does the same
 // thing as AcmReceiveTestOldApi.
 class AcmReceiveTestToggleOutputFreqOldApi : public AcmReceiveTestOldApi {
  public:

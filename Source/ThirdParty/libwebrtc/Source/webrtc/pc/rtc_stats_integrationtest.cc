@@ -192,7 +192,7 @@ class RTCStatsIntegrationTest : public ::testing::Test {
     return stats_obtainer->report();
   }
 
-  // |network_thread_| uses |virtual_socket_server_| so they must be
+  // `network_thread_` uses `virtual_socket_server_` so they must be
   // constructed/destructed in the correct order.
   rtc::VirtualSocketServer virtual_socket_server_;
   std::unique_ptr<rtc::Thread> network_thread_;
@@ -405,13 +405,13 @@ class RTCStatsReportVerifier {
       } else if (stats.type() == RTCAudioSourceStats::kType) {
         // RTCAudioSourceStats::kType and RTCVideoSourceStats::kType both have
         // the value "media-source", but they are distinguishable with pointer
-        // equality (==). In JavaScript they would be distinguished with |kind|.
+        // equality (==). In JavaScript they would be distinguished with `kind`.
         verify_successful &=
             VerifyRTCAudioSourceStats(stats.cast_to<RTCAudioSourceStats>());
       } else if (stats.type() == RTCVideoSourceStats::kType) {
         // RTCAudioSourceStats::kType and RTCVideoSourceStats::kType both have
         // the value "media-source", but they are distinguishable with pointer
-        // equality (==). In JavaScript they would be distinguished with |kind|.
+        // equality (==). In JavaScript they would be distinguished with `kind`.
         verify_successful &=
             VerifyRTCVideoSourceStats(stats.cast_to<RTCVideoSourceStats>());
       } else if (stats.type() == RTCTransportStats::kType) {
@@ -489,7 +489,13 @@ class RTCStatsReportVerifier {
     verifier.TestMemberIsDefined(candidate_pair.nominated);
     verifier.TestMemberIsDefined(candidate_pair.writable);
     verifier.TestMemberIsUndefined(candidate_pair.readable);
+    verifier.TestMemberIsNonNegative<uint64_t>(candidate_pair.packets_sent);
+    verifier.TestMemberIsNonNegative<uint64_t>(
+        candidate_pair.packets_discarded_on_send);
+    verifier.TestMemberIsNonNegative<uint64_t>(candidate_pair.packets_received);
     verifier.TestMemberIsNonNegative<uint64_t>(candidate_pair.bytes_sent);
+    verifier.TestMemberIsNonNegative<uint64_t>(
+        candidate_pair.bytes_discarded_on_send);
     verifier.TestMemberIsNonNegative<uint64_t>(candidate_pair.bytes_received);
     verifier.TestMemberIsNonNegative<double>(
         candidate_pair.total_round_trip_time);
@@ -749,7 +755,7 @@ class RTCStatsReportVerifier {
       verifier.TestMemberIsUndefined(
           media_stream_track.sum_squared_frame_durations);
       // Audio-only members
-      // TODO(hbos): |echo_return_loss| and |echo_return_loss_enhancement| are
+      // TODO(hbos): `echo_return_loss` and `echo_return_loss_enhancement` are
       // flaky on msan bot (sometimes defined, sometimes undefined). Should the
       // test run until available or is there a way to have it always be
       // defined? crbug.com/627816
@@ -800,7 +806,9 @@ class RTCStatsReportVerifier {
   bool VerifyRTCInboundRTPStreamStats(
       const RTCInboundRTPStreamStats& inbound_stream) {
     RTCStatsVerifier verifier(report_, &inbound_stream);
-    VerifyRTCReceivedRtpStreamStats(inbound_stream, verifier);
+    VerifyRTCReceivedRtpStreamStats(inbound_stream, verifier,
+                                    inbound_stream.media_type.is_defined() &&
+                                        *inbound_stream.media_type == "audio");
     verifier.TestMemberIsOptionalIDReference(
         inbound_stream.remote_id, RTCRemoteOutboundRtpStreamStats::kType);
     if (inbound_stream.media_type.is_defined() &&
@@ -840,11 +848,12 @@ class RTCStatsReportVerifier {
       verifier.TestMemberIsUndefined(inbound_stream.frames_per_second);
     }
     verifier.TestMemberIsUndefined(inbound_stream.frame_bit_depth);
+    verifier.TestMemberIsNonNegative<double>(
+        inbound_stream.jitter_buffer_delay);
+    verifier.TestMemberIsNonNegative<uint64_t>(
+        inbound_stream.jitter_buffer_emitted_count);
     if (inbound_stream.media_type.is_defined() &&
         *inbound_stream.media_type == "video") {
-      verifier.TestMemberIsUndefined(inbound_stream.jitter_buffer_delay);
-      verifier.TestMemberIsUndefined(
-          inbound_stream.jitter_buffer_emitted_count);
       verifier.TestMemberIsUndefined(inbound_stream.total_samples_received);
       verifier.TestMemberIsUndefined(inbound_stream.concealed_samples);
       verifier.TestMemberIsUndefined(inbound_stream.silent_concealed_samples);
@@ -864,10 +873,6 @@ class RTCStatsReportVerifier {
       verifier.TestMemberIsUndefined(inbound_stream.fir_count);
       verifier.TestMemberIsUndefined(inbound_stream.pli_count);
       verifier.TestMemberIsUndefined(inbound_stream.nack_count);
-      verifier.TestMemberIsNonNegative<double>(
-          inbound_stream.jitter_buffer_delay);
-      verifier.TestMemberIsNonNegative<uint64_t>(
-          inbound_stream.jitter_buffer_emitted_count);
       verifier.TestMemberIsPositive<uint64_t>(
           inbound_stream.total_samples_received);
       verifier.TestMemberIsNonNegative<uint64_t>(
@@ -887,7 +892,6 @@ class RTCStatsReportVerifier {
       verifier.TestMemberIsUndefined(inbound_stream.frames_received);
     }
     verifier.TestMemberIsUndefined(inbound_stream.round_trip_time);
-    verifier.TestMemberIsUndefined(inbound_stream.packets_discarded);
     verifier.TestMemberIsUndefined(inbound_stream.packets_repaired);
     verifier.TestMemberIsUndefined(inbound_stream.burst_packets_lost);
     verifier.TestMemberIsUndefined(inbound_stream.burst_packets_discarded);
@@ -937,7 +941,6 @@ class RTCStatsReportVerifier {
                                        RTCVideoSourceStats::kType);
       verifier.TestMemberIsNonNegative<uint32_t>(outbound_stream.fir_count);
       verifier.TestMemberIsNonNegative<uint32_t>(outbound_stream.pli_count);
-      verifier.TestMemberIsNonNegative<uint32_t>(outbound_stream.nack_count);
       if (*outbound_stream.frames_encoded > 0) {
         verifier.TestMemberIsNonNegative<uint64_t>(outbound_stream.qp_sum);
       } else {
@@ -946,11 +949,11 @@ class RTCStatsReportVerifier {
     } else {
       verifier.TestMemberIsUndefined(outbound_stream.fir_count);
       verifier.TestMemberIsUndefined(outbound_stream.pli_count);
-      verifier.TestMemberIsUndefined(outbound_stream.nack_count);
       verifier.TestMemberIsIDReference(outbound_stream.media_source_id,
                                        RTCAudioSourceStats::kType);
       verifier.TestMemberIsUndefined(outbound_stream.qp_sum);
     }
+    verifier.TestMemberIsNonNegative<uint32_t>(outbound_stream.nack_count);
     verifier.TestMemberIsOptionalIDReference(
         outbound_stream.remote_id, RTCRemoteInboundRtpStreamStats::kType);
     verifier.TestMemberIsNonNegative<uint32_t>(outbound_stream.packets_sent);
@@ -973,6 +976,8 @@ class RTCStatsReportVerifier {
       verifier.TestMemberIsNonNegative<double>(
           outbound_stream.total_packet_send_delay);
       verifier.TestMemberIsDefined(outbound_stream.quality_limitation_reason);
+      verifier.TestMemberIsDefined(
+          outbound_stream.quality_limitation_durations);
       verifier.TestMemberIsNonNegative<uint32_t>(
           outbound_stream.quality_limitation_resolution_changes);
       // The integration test is not set up to test screen share; don't require
@@ -1006,6 +1011,8 @@ class RTCStatsReportVerifier {
       verifier.TestMemberIsUndefined(outbound_stream.total_packet_send_delay);
       verifier.TestMemberIsUndefined(outbound_stream.quality_limitation_reason);
       verifier.TestMemberIsUndefined(
+          outbound_stream.quality_limitation_durations);
+      verifier.TestMemberIsUndefined(
           outbound_stream.quality_limitation_resolution_changes);
       verifier.TestMemberIsUndefined(outbound_stream.content_type);
       // TODO(hbos): Implement for audio as well.
@@ -1022,16 +1029,23 @@ class RTCStatsReportVerifier {
 
   void VerifyRTCReceivedRtpStreamStats(
       const RTCReceivedRtpStreamStats& received_rtp,
-      RTCStatsVerifier& verifier) {
+      RTCStatsVerifier& verifier,
+      bool packets_discarded_defined) {
     VerifyRTCRTPStreamStats(received_rtp, verifier);
     verifier.TestMemberIsNonNegative<double>(received_rtp.jitter);
     verifier.TestMemberIsDefined(received_rtp.packets_lost);
+    if (packets_discarded_defined) {
+      verifier.TestMemberIsNonNegative<uint64_t>(
+          received_rtp.packets_discarded);
+    } else {
+      verifier.TestMemberIsUndefined(received_rtp.packets_discarded);
+    }
   }
 
   bool VerifyRTCRemoteInboundRtpStreamStats(
       const RTCRemoteInboundRtpStreamStats& remote_inbound_stream) {
     RTCStatsVerifier verifier(report_, &remote_inbound_stream);
-    VerifyRTCReceivedRtpStreamStats(remote_inbound_stream, verifier);
+    VerifyRTCReceivedRtpStreamStats(remote_inbound_stream, verifier, false);
     verifier.TestMemberIsDefined(remote_inbound_stream.fraction_lost);
     verifier.TestMemberIsIDReference(remote_inbound_stream.local_id,
                                      RTCOutboundRTPStreamStats::kType);
@@ -1078,6 +1092,12 @@ class RTCStatsReportVerifier {
     verifier.TestMemberIsNonNegative<double>(audio_source.audio_level);
     verifier.TestMemberIsPositive<double>(audio_source.total_audio_energy);
     verifier.TestMemberIsPositive<double>(audio_source.total_samples_duration);
+    // TODO(hbos): `echo_return_loss` and `echo_return_loss_enhancement` are
+    // flaky on msan bot (sometimes defined, sometimes undefined). Should the
+    // test run until available or is there a way to have it always be
+    // defined? crbug.com/627816
+    verifier.MarkMemberTested(audio_source.echo_return_loss, true);
+    verifier.MarkMemberTested(audio_source.echo_return_loss_enhancement, true);
     return verifier.ExpectAllMembersSuccessfullyTested();
   }
 
@@ -1086,7 +1106,7 @@ class RTCStatsReportVerifier {
     VerifyRTCMediaSourceStats(video_source, &verifier);
     // TODO(hbos): This integration test uses fakes that doesn't support
     // VideoTrackSourceInterface::Stats. When this is fixed we should
-    // TestMemberIsNonNegative<uint32_t>() for |width| and |height| instead to
+    // TestMemberIsNonNegative<uint32_t>() for `width` and `height` instead to
     // reflect real code.
     verifier.TestMemberIsUndefined(video_source.width);
     verifier.TestMemberIsUndefined(video_source.height);

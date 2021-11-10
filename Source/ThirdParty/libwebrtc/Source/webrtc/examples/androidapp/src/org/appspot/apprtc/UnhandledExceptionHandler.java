@@ -66,7 +66,7 @@ public class UnhandledExceptionHandler implements Thread.UncaughtExceptionHandle
     });
   }
 
-  // Returns the Message attached to the original Cause of |t|.
+  // Returns the Message attached to the original Cause of `t`.
   private static String getTopLevelCauseMessage(Throwable t) {
     Throwable topLevelCause = t;
     while (topLevelCause.getCause() != null) {
@@ -75,8 +75,8 @@ public class UnhandledExceptionHandler implements Thread.UncaughtExceptionHandle
     return topLevelCause.getMessage();
   }
 
-  // Returns a human-readable String of the stacktrace in |t|, recursively
-  // through all Causes that led to |t|.
+  // Returns a human-readable String of the stacktrace in `t`, recursively
+  // through all Causes that led to `t`.
   private static String getRecursiveStackTrace(Throwable t) {
     StringWriter writer = new StringWriter();
     t.printStackTrace(new PrintWriter(writer));

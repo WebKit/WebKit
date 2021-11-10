@@ -58,7 +58,7 @@ class EnumPins : public IEnumPins {
   }
 
   STDMETHOD(Clone)(IEnumPins** pins) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -83,7 +83,7 @@ class EnumPins : public IEnumPins {
   }
 
   STDMETHOD(Skip)(ULONG count) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -176,7 +176,7 @@ void GetSampleProperties(IMediaSample* sample, AM_SAMPLE2_PROPERTIES* props) {
 }
 
 // Returns true if the media type is supported, false otherwise.
-// For supported types, the |capability| will be populated accordingly.
+// For supported types, the `capability` will be populated accordingly.
 bool TranslateMediaTypeToVideoCaptureCapability(
     const AM_MEDIA_TYPE* media_type,
     VideoCaptureCapability* capability) {
@@ -274,7 +274,7 @@ class MediaTypesEnum : public IEnumMediaTypes {
 
   // IEnumMediaTypes
   STDMETHOD(Clone)(IEnumMediaTypes** pins) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -364,7 +364,7 @@ class MediaTypesEnum : public IEnumMediaTypes {
   }
 
   STDMETHOD(Skip)(ULONG count) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -538,7 +538,7 @@ STDMETHODIMP CaptureInputPin::Connect(IPin* receive_pin,
     return VFW_E_NOT_STOPPED;
 
   if (receive_pin_) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
     return VFW_E_ALREADY_CONNECTED;
   }
 
@@ -564,7 +564,7 @@ STDMETHODIMP CaptureInputPin::ReceiveConnection(
   RTC_DCHECK(Filter()->IsStopped());
 
   if (receive_pin_) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
     return VFW_E_ALREADY_CONNECTED;
   }
 

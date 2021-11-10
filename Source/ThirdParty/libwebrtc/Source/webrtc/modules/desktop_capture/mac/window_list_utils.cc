@@ -44,15 +44,15 @@ bool ToUtf8(const CFStringRef str16, std::string* str8) {
   return true;
 }
 
-// Get CFDictionaryRef from |id| and call |on_window| against it. This function
-// returns false if native APIs fail, typically it indicates that the |id| does
-// not represent a window. |on_window| will not be called if false is returned
+// Get CFDictionaryRef from `id` and call `on_window` against it. This function
+// returns false if native APIs fail, typically it indicates that the `id` does
+// not represent a window. `on_window` will not be called if false is returned
 // from this function.
 bool GetWindowRef(CGWindowID id,
                   rtc::FunctionView<void(CFDictionaryRef)> on_window) {
   RTC_DCHECK(on_window);
 
-  // TODO(zijiehe): |id| is a 32-bit integer, casting it to an array seems not
+  // TODO(zijiehe): `id` is a 32-bit integer, casting it to an array seems not
   // safe enough. Maybe we should create a new
   // const void* arr[] = {
   //   reinterpret_cast<void*>(id) }

@@ -34,7 +34,7 @@ class I010Buffer : public I010BufferInterface {
   // Convert and put I420 buffer into a new buffer.
   static rtc::scoped_refptr<I010Buffer> Copy(const I420BufferInterface& buffer);
 
-  // Return a rotated copy of |src|.
+  // Return a rotated copy of `src`.
   static rtc::scoped_refptr<I010Buffer> Rotate(const I010BufferInterface& src,
                                                VideoRotation rotation);
 
@@ -55,15 +55,15 @@ class I010Buffer : public I010BufferInterface {
   uint16_t* MutableDataU();
   uint16_t* MutableDataV();
 
-  // Scale the cropped area of |src| to the size of |this| buffer, and
-  // write the result into |this|.
+  // Scale the cropped area of `src` to the size of `this` buffer, and
+  // write the result into `this`.
   void CropAndScaleFrom(const I010BufferInterface& src,
                         int offset_x,
                         int offset_y,
                         int crop_width,
                         int crop_height);
 
-  // Scale all of |src| to the size of |this| buffer, with no cropping.
+  // Scale all of `src` to the size of `this` buffer, with no cropping.
   void ScaleFrom(const I010BufferInterface& src);
 
   // Pastes whole picture to canvas at (offset_row, offset_col).

@@ -252,8 +252,7 @@ class PacingControllerTest
     Send(type, ssrc, sequence_number, capture_time_ms, size);
     EXPECT_CALL(callback_,
                 SendPacket(ssrc, sequence_number, capture_time_ms,
-                           type == RtpPacketMediaType::kRetransmission, false))
-        .Times(1);
+                           type == RtpPacketMediaType::kRetransmission, false));
   }
 
   std::unique_ptr<RtpPacketToSend> BuildRtpPacket(RtpPacketMediaType type) {
@@ -2133,6 +2132,39 @@ TEST_P(PacingControllerTest, SendsFecPackets) {
   });
   AdvanceTimeAndProcess();
   AdvanceTimeAndProcess();
+}
+
+TEST_P(PacingControllerTest, GapInPacingDoesntAccumulateBudget) {
+  if (PeriodicProcess()) {
+    // This test checks behavior when not using interval budget.
+    return;
+  }
+
+  const uint32_t kSsrc = 12345;
+  uint16_t sequence_number = 1234;
+  const DataSize kPackeSize = DataSize::Bytes(250);
+  const TimeDelta kPacketSendTime = TimeDelta::Millis(15);
+
+  pacer_->SetPacingRates(kPackeSize / kPacketSendTime,
+                         /*padding_rate=*/DataRate::Zero());
+
+  // Send an initial packet.
+  SendAndExpectPacket(RtpPacketMediaType::kVideo, kSsrc, sequence_number++,
+                      clock_.TimeInMilliseconds(), kPackeSize.bytes());
+  pacer_->ProcessPackets();
+  ::testing::Mock::VerifyAndClearExpectations(&callback_);
+
+  // Advance time kPacketSendTime past where the media debt should be 0.
+  clock_.AdvanceTime(2 * kPacketSendTime);
+
+  // Enqueue two new packets. Expect only one to be sent one ProcessPackets().
+  Send(RtpPacketMediaType::kVideo, kSsrc, sequence_number + 1,
+       clock_.TimeInMilliseconds(), kPackeSize.bytes());
+  Send(RtpPacketMediaType::kVideo, kSsrc, sequence_number + 2,
+       clock_.TimeInMilliseconds(), kPackeSize.bytes());
+  EXPECT_CALL(callback_, SendPacket(kSsrc, sequence_number + 1,
+                                    clock_.TimeInMilliseconds(), false, false));
+  pacer_->ProcessPackets();
 }
 
 INSTANTIATE_TEST_SUITE_P(

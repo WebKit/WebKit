@@ -15,6 +15,8 @@ rtc_library("common_video") {
     "bitrate_adjuster.cc",
     "frame_rate_estimator.cc",
     "frame_rate_estimator.h",
+    "framerate_controller.cc",
+    "framerate_controller.h",
     "h264/h264_bitstream_parser.cc",
     "h264/h264_bitstream_parser.h",
     "h264/h264_common.cc",
@@ -40,6 +42,7 @@ rtc_library("common_video") {
   ]
 
   deps = [
+    "../api:array_view",
     "../api:scoped_refptr",
     "../api:sequence_checker",
     "../api/task_queue",
@@ -53,6 +56,7 @@ rtc_library("common_video") {
     "../api/video_codecs:bitstream_parser_api",
     "../api/video_codecs:video_codecs_api",
     "../rtc_base",
+    "../rtc_base:bitstream_reader",
     "../rtc_base:checks",
     "../rtc_base:rtc_task_queue",
     "../rtc_base:safe_minmax",
@@ -61,7 +65,10 @@ rtc_library("common_video") {
     "../system_wrappers:metrics",
     "//third_party/libyuv",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/numeric:bits",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
 }
 
 rtc_source_set("frame_counts") {
@@ -87,6 +94,7 @@ if (rtc_include_tests && !build_with_chromium) {
     sources = [
       "bitrate_adjuster_unittest.cc",
       "frame_rate_estimator_unittest.cc",
+      "framerate_controller_unittest.cc",
       "h264/h264_bitstream_parser_unittest.cc",
       "h264/pps_parser_unittest.cc",
       "h264/sps_parser_unittest.cc",

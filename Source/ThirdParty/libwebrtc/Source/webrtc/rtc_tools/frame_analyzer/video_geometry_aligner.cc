@@ -61,7 +61,7 @@ rtc::scoped_refptr<I420BufferInterface> CropAndZoom(
                     adjusted_frame->MutableDataY(), adjusted_frame->StrideY(),
                     adjusted_frame->MutableDataU(), adjusted_frame->StrideU(),
                     adjusted_frame->MutableDataV(), adjusted_frame->StrideV(),
-                    frame->width(), frame->height(), libyuv::kFilterBilinear);
+                    frame->width(), frame->height(), libyuv::kFilterBox);
 
   return adjusted_frame;
 }

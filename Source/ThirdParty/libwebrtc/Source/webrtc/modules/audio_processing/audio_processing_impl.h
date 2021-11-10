@@ -55,10 +55,9 @@ class AudioProcessingImpl : public AudioProcessing {
  public:
   // Methods forcing APM to run in a single-threaded manner.
   // Acquires both the render and capture locks.
-  explicit AudioProcessingImpl(const webrtc::Config& config);
+  AudioProcessingImpl();
   // AudioProcessingImpl takes ownership of capture post processor.
-  AudioProcessingImpl(const webrtc::Config& config,
-                      std::unique_ptr<CustomProcessing> capture_post_processor,
+  AudioProcessingImpl(std::unique_ptr<CustomProcessing> capture_post_processor,
                       std::unique_ptr<CustomProcessing> render_pre_processor,
                       std::unique_ptr<EchoControlFactory> echo_control_factory,
                       rtc::scoped_refptr<EchoDetector> echo_detector,
@@ -143,6 +142,11 @@ class AudioProcessingImpl : public AudioProcessing {
   // Overridden in a mock.
   virtual void InitializeLocked()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_render_, mutex_capture_);
+  void AssertLockedForTest()
+      RTC_ASSERT_EXCLUSIVE_LOCK(mutex_render_, mutex_capture_) {
+    mutex_render_.AssertHeld();
+    mutex_capture_.AssertHeld();
+  }
 
  private:
   // TODO(peah): These friend classes should be removed as soon as the new
@@ -164,7 +168,7 @@ class AudioProcessingImpl : public AudioProcessing {
       const ApmSubmoduleCreationOverrides& overrides);
 
   // Class providing thread-safe message pipe functionality for
-  // |runtime_settings_|.
+  // `runtime_settings_`.
   class RuntimeSettingEnqueuer {
    public:
     explicit RuntimeSettingEnqueuer(
@@ -181,6 +185,8 @@ class AudioProcessingImpl : public AudioProcessing {
   std::unique_ptr<ApmDataDumper> data_dumper_;
   static int instance_count_;
   const bool use_setup_specific_default_aec3_config_;
+
+  const bool use_denormal_disabler_;
 
   SwapQueue<RuntimeSetting> capture_runtime_settings_;
   SwapQueue<RuntimeSetting> render_runtime_settings_;
@@ -315,8 +321,8 @@ class AudioProcessingImpl : public AudioProcessing {
 
   // Collects configuration settings from public and private
   // submodules to be saved as an audioproc::Config message on the
-  // AecDump if it is attached.  If not |forced|, only writes the current
-  // config if it is different from the last saved one; if |forced|,
+  // AecDump if it is attached.  If not `forced`, only writes the current
+  // config if it is different from the last saved one; if `forced`,
   // writes the config regardless of the last saved.
   void WriteAecDumpConfigMessage(bool forced)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);

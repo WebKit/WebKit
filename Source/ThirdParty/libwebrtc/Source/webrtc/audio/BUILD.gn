@@ -92,9 +92,11 @@ rtc_library("audio") {
     "../rtc_base:rtc_task_queue",
     "../rtc_base:safe_minmax",
     "../rtc_base:threading",
+    "../rtc_base/containers:flat_set",
     "../rtc_base/experiments:field_trial_parser",
     "../rtc_base/synchronization:mutex",
     "../rtc_base/system:no_unique_address",
+    "../rtc_base/task_utils:pending_task_safety_flag",
     "../rtc_base/task_utils:to_queued_task",
     "../system_wrappers",
     "../system_wrappers:field_trial",
@@ -139,6 +141,8 @@ if (rtc_include_tests) {
       "mock_voe_channel_proxy.h",
       "remix_resample_unittest.cc",
       "test/audio_stats_test.cc",
+      "test/nack_test.cc",
+      "test/non_sender_rtt_test.cc",
     ]
     deps = [
       ":audio",
@@ -151,6 +155,7 @@ if (rtc_include_tests) {
       "../api/audio_codecs:audio_codecs_api",
       "../api/audio_codecs/opus:audio_decoder_opus",
       "../api/audio_codecs/opus:audio_encoder_opus",
+      "../api/crypto:frame_decryptor_interface",
       "../api/rtc_event_log",
       "../api/task_queue:default_task_queue_factory",
       "../api/units:time_delta",

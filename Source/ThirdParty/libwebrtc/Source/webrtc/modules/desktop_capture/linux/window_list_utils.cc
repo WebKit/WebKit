@@ -40,7 +40,7 @@ DeferXFree::~DeferXFree() {
     XFree(data_);
 }
 
-// Iterates through |window| hierarchy to find first visible window, i.e. one
+// Iterates through `window` hierarchy to find first visible window, i.e. one
 // that has WM_STATE property set to NormalState.
 // See http://tronche.com/gui/x/icccm/sec-4.html#s-4.1.3.1 .
 ::Window GetApplicationWindow(XAtomCache* cache, ::Window window) {
@@ -76,7 +76,7 @@ DeferXFree::~DeferXFree() {
   return app_window;
 }
 
-// Returns true if the |window| is a desktop element.
+// Returns true if the `window` is a desktop element.
 bool IsDesktopElement(XAtomCache* cache, ::Window window) {
   RTC_DCHECK(cache);
   if (window == 0)

@@ -150,9 +150,9 @@ If want to run Release builds instead; pass `is_debug=false` to GN (and
 preferably generate the projects files into a directory like `out/Release`).
 Then use the scripts generated in `out/Release/bin` instead.
 
-[webrtc-prerequisite-sw]: https://webrtc.googlesource.com/src/+/refs/heads/master/docs/native-code/development/prerequisite-sw/index.md
-[webrtc-jni-doc]: https://webrtc.googlesource.com/src/+/master/sdk/android/README
-[apprtc-doc]: https://webrtc.googlesource.com/src/+/master/examples/androidapp/README
+[webrtc-prerequisite-sw]: https://webrtc.googlesource.com/src/+/main/docs/native-code/development/prerequisite-sw/index.md
+[webrtc-jni-doc]: https://webrtc.googlesource.com/src/+/main/sdk/android/README
+[apprtc-doc]: https://webrtc.googlesource.com/src/+/main/examples/androidapp/README
 [ninja]: https://ninja-build.org/
 [prebuilt-libraries]: https://bintray.com/google/webrtc/google-webrtc
-[webrtc-development]: https://webrtc.googlesource.com/src/+/refs/heads/master/docs/native-code/development/index.md
+[webrtc-development]: https://webrtc.googlesource.com/src/+/main/docs/native-code/development/index.md

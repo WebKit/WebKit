@@ -50,6 +50,7 @@ rtc_library("video_codecs_api") {
     "../../rtc_base/system:rtc_export",
     "../units:data_rate",
     "../video:encoded_image",
+    "../video:render_resolution",
     "../video:video_bitrate_allocation",
     "../video:video_codec_constants",
     "../video:video_frame",

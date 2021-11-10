@@ -35,7 +35,7 @@ namespace {
 // TODO(henrika): more research is needed before we can enable low-latency.
 const bool kEnableLowLatencyIfSupported = false;
 
-// Each unit of reference time is 100 nanoseconds, hence |kReftimesPerSec|
+// Each unit of reference time is 100 nanoseconds, hence `kReftimesPerSec`
 // corresponds to one second.
 // TODO(henrika): possibly add usage in Init().
 // const REFERENCE_TIME kReferenceTimesPerSecond = 10000000;
@@ -230,9 +230,9 @@ bool CoreAudioBase::IsDefaultCommunicationsDevice(int index) const {
 }
 
 bool CoreAudioBase::IsDefaultDeviceId(const std::string& device_id) const {
-  // Returns true if |device_id| corresponds to the id of the default
+  // Returns true if `device_id` corresponds to the id of the default
   // device. Note that, if only one device is available (or if the user has not
-  // explicitly set a default device), |device_id| will also math
+  // explicitly set a default device), `device_id` will also math
   // IsDefaultCommunicationsDeviceId().
   return (IsInput() &&
           (device_id == core_audio_utility::GetDefaultInputDeviceID())) ||
@@ -242,9 +242,9 @@ bool CoreAudioBase::IsDefaultDeviceId(const std::string& device_id) const {
 
 bool CoreAudioBase::IsDefaultCommunicationsDeviceId(
     const std::string& device_id) const {
-  // Returns true if |device_id| corresponds to the id of the default
+  // Returns true if `device_id` corresponds to the id of the default
   // communication device. Note that, if only one device is available (or if
-  // the user has not explicitly set a communication device), |device_id| will
+  // the user has not explicitly set a communication device), `device_id` will
   // also math IsDefaultDeviceId().
   return (IsInput() &&
           (device_id ==
@@ -341,9 +341,9 @@ bool CoreAudioBase::Init() {
   RTC_DCHECK(!audio_client_);
   RTC_DCHECK(!audio_session_control_.Get());
 
-  // Use an existing combination of |device_index_| and |device_id_| to set
+  // Use an existing combination of `device_index_` and `device_id_` to set
   // parameters which are required to create an audio client. It is up to the
-  // parent class to set |device_index_| and |device_id_|.
+  // parent class to set `device_index_` and `device_id_`.
   std::string device_id = AudioDeviceName::kDefaultDeviceId;
   ERole role = ERole();
   if (IsDefaultDevice(device_index_)) {
@@ -400,7 +400,7 @@ bool CoreAudioBase::Init() {
     return false;
   }
 
-  // Define the output WAVEFORMATEXTENSIBLE format in |format_|.
+  // Define the output WAVEFORMATEXTENSIBLE format in `format_`.
   WAVEFORMATEX* format = &format_.Format;
   format->wFormatTag = WAVE_FORMAT_EXTENSIBLE;
   // Check the preferred channel configuration and request implicit channel
@@ -448,7 +448,7 @@ bool CoreAudioBase::Init() {
   // - HDAudio driver
   // - kEnableLowLatencyIfSupported changed from false (default) to true.
   // TODO(henrika): IsLowLatencySupported() returns AUDCLNT_E_UNSUPPORTED_FORMAT
-  // when |sample_rate_.has_value()| returns true if rate conversion is
+  // when `sample_rate_.has_value()` returns true if rate conversion is
   // actually required (i.e., client asks for other than the default rate).
   bool low_latency_support = false;
   uint32_t min_period_in_frames = 0;
@@ -475,7 +475,7 @@ bool CoreAudioBase::Init() {
     // Initialize the audio stream between the client and the device in shared
     // mode using event-driven buffer handling. Also, using 0 as requested
     // buffer size results in a default (minimum) endpoint buffer size.
-    // TODO(henrika): possibly increase |requested_buffer_size| to add
+    // TODO(henrika): possibly increase `requested_buffer_size` to add
     // robustness.
     const REFERENCE_TIME requested_buffer_size = 0;
     if (FAILED(core_audio_utility::SharedModeInitialize(
@@ -905,15 +905,15 @@ void CoreAudioBase::ThreadRun() {
                                                wait_array, false, INFINITE);
     switch (wait_result) {
       case WAIT_OBJECT_0 + 0:
-        // |stop_event_| has been set.
+        // `stop_event_` has been set.
         streaming = false;
         break;
       case WAIT_OBJECT_0 + 1:
-        // |restart_event_| has been set.
+        // `restart_event_` has been set.
         error = !HandleRestartEvent();
         break;
       case WAIT_OBJECT_0 + 2:
-        // |audio_samples_event_| has been set.
+        // `audio_samples_event_` has been set.
         error = !on_data_callback_(device_frequency);
         break;
       default:

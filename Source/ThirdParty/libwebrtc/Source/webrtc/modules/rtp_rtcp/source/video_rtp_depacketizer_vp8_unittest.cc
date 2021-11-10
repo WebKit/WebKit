@@ -17,32 +17,40 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-namespace webrtc {
-namespace {
-
-// Payload descriptor
+// VP8 payload descriptor
+// https://datatracker.ietf.org/doc/html/rfc7741#section-4.2
+//
 //       0 1 2 3 4 5 6 7
 //      +-+-+-+-+-+-+-+-+
-//      |X|R|N|S|PartID | (REQUIRED)
+//      |X|R|N|S|R| PID | (REQUIRED)
 //      +-+-+-+-+-+-+-+-+
-// X:   |I|L|T|K|  RSV  | (OPTIONAL)
+// X:   |I|L|T|K| RSV   | (OPTIONAL)
 //      +-+-+-+-+-+-+-+-+
-// I:   |   PictureID   | (OPTIONAL)
+// I:   |M| PictureID   | (OPTIONAL)
+//      +-+-+-+-+-+-+-+-+
+//      |   PictureID   |
 //      +-+-+-+-+-+-+-+-+
 // L:   |   TL0PICIDX   | (OPTIONAL)
 //      +-+-+-+-+-+-+-+-+
-// T/K: |TID:Y| KEYIDX  | (OPTIONAL)
+// T/K: |TID|Y| KEYIDX  | (OPTIONAL)
 //      +-+-+-+-+-+-+-+-+
 //
-// Payload header
+// VP8 payload header. Considered part of the actual payload, sent to decoder.
+// https://datatracker.ietf.org/doc/html/rfc7741#section-4.3
+//
 //       0 1 2 3 4 5 6 7
 //      +-+-+-+-+-+-+-+-+
 //      |Size0|H| VER |P|
 //      +-+-+-+-+-+-+-+-+
-//      :               :
+//      :      ...      :
+//      +-+-+-+-+-+-+-+-+
+
+namespace webrtc {
+namespace {
+
 TEST(VideoRtpDepacketizerVp8Test, BasicHeader) {
   uint8_t packet[4] = {0};
-  packet[0] = 0b0001'0100;  // S = 1, PartID = 4.
+  packet[0] = 0b0001'0100;  // S = 1, partition ID = 4.
   packet[1] = 0x01;         // P frame.
 
   RTPVideoHeader video_header;
@@ -145,7 +153,7 @@ TEST(VideoRtpDepacketizerVp8Test, KeyIdx) {
 
 TEST(VideoRtpDepacketizerVp8Test, MultipleExtensions) {
   uint8_t packet[10] = {0};
-  packet[0] = 0b1010'0110;  // X and N bit set, partID = 6
+  packet[0] = 0b1010'0110;  // X and N bit set, partition ID = 6
   packet[1] = 0b1111'0000;
   packet[2] = 0x80 | 0x12;  // PictureID, high 7 bits.
   packet[3] = 0x34;         // PictureID, low 8 bits.

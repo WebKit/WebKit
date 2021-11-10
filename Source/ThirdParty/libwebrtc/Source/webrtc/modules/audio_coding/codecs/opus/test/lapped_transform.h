@@ -84,11 +84,11 @@ class LappedTransform {
                                    std::complex<float>* const* out_block) = 0;
   };
 
-  // Construct a transform instance. |chunk_length| is the number of samples in
-  // each channel. |window| defines the window, owned by the caller (a copy is
-  // made internally); |window| should have length equal to |block_length|.
-  // |block_length| defines the length of a block, in samples.
-  // |shift_amount| is in samples. |callback| is the caller-owned audio
+  // Construct a transform instance. `chunk_length` is the number of samples in
+  // each channel. `window` defines the window, owned by the caller (a copy is
+  // made internally); `window` should have length equal to `block_length`.
+  // `block_length` defines the length of a block, in samples.
+  // `shift_amount` is in samples. `callback` is the caller-owned audio
   // processing function called for each block of the input chunk.
   LappedTransform(size_t num_in_channels,
                   size_t num_out_channels,
@@ -99,10 +99,10 @@ class LappedTransform {
                   Callback* callback);
   ~LappedTransform();
 
-  // Main audio processing helper method. Internally slices |in_chunk| into
+  // Main audio processing helper method. Internally slices `in_chunk` into
   // blocks, transforms them to frequency domain, calls the callback for each
   // block and returns a de-blocked time domain chunk of audio through
-  // |out_chunk|. Both buffers are caller-owned.
+  // `out_chunk`. Both buffers are caller-owned.
   void ProcessChunk(const float* const* in_chunk, float* const* out_chunk);
 
   // Get the chunk length.
@@ -132,8 +132,8 @@ class LappedTransform {
 
   // Returns the initial delay.
   //
-  // This is the delay introduced by the |blocker_| to be able to get and return
-  // chunks of |chunk_length|, but process blocks of |block_length|.
+  // This is the delay introduced by the `blocker_` to be able to get and return
+  // chunks of `chunk_length`, but process blocks of `block_length`.
   size_t initial_delay() const { return blocker_.initial_delay(); }
 
  private:

@@ -13,11 +13,9 @@
 
 #include "absl/types/optional.h"
 
-namespace rtc {
-class BitBuffer;
-}
-
 namespace webrtc {
+
+class BitstreamReader;
 
 // A class for parsing out sequence parameter set (VPS) data from an H265 NALU.
 class H265VpsParser {
@@ -36,7 +34,7 @@ class H265VpsParser {
  protected:
   // Parse the VPS state, for a bit buffer where RBSP decoding has already been
   // performed.
-  static absl::optional<VpsState> ParseInternal(rtc::BitBuffer* bit_buffer);
+  static absl::optional<VpsState> ParseInternal(BitstreamReader* bit_buffer);
 };
 
 }  // namespace webrtc

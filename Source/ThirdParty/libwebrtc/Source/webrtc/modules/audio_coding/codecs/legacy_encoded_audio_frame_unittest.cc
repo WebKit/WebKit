@@ -88,7 +88,7 @@ class SplitBySamplesTest : public ::testing::TestWithParam<NetEqDecoder> {
         samples_per_ms_ = 8;
         break;
       default:
-        assert(false);
+        RTC_NOTREACHED();
         break;
     }
   }

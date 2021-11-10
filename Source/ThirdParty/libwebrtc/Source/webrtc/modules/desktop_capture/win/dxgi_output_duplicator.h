@@ -54,10 +54,10 @@ class DxgiOutputDuplicator {
   // Initializes duplication_ object.
   bool Initialize();
 
-  // Copies the content of current IDXGIOutput to the |target|. To improve the
+  // Copies the content of current IDXGIOutput to the `target`. To improve the
   // performance, this function copies only regions merged from
-  // |context|->updated_region and DetectUpdatedRegion(). The |offset| decides
-  // the offset in the |target| where the content should be copied to. i.e. this
+  // `context`->updated_region and DetectUpdatedRegion(). The `offset` decides
+  // the offset in the `target` where the content should be copied to. i.e. this
   // function copies the content to the rectangle of (offset.x(), offset.y()) to
   // (offset.x() + desktop_rect_.width(), offset.y() + desktop_rect_.height()).
   // Returns false in case of a failure.
@@ -78,12 +78,12 @@ class DxgiOutputDuplicator {
   // How many frames have been captured by this DxigOutputDuplicator.
   int64_t num_frames_captured() const;
 
-  // Moves |desktop_rect_|. See DxgiDuplicatorController::TranslateRect().
+  // Moves `desktop_rect_`. See DxgiDuplicatorController::TranslateRect().
   void TranslateRect(const DesktopVector& position);
 
  private:
   // Calls DoDetectUpdatedRegion(). If it fails, this function sets the
-  // |updated_region| as entire UntranslatedDesktopRect().
+  // `updated_region` as entire UntranslatedDesktopRect().
   void DetectUpdatedRegion(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
                            DesktopRegion* updated_region);
 
@@ -106,7 +106,7 @@ class DxgiOutputDuplicator {
   // (0, 0).
   DesktopRect GetUntranslatedDesktopRect() const;
 
-  // Spreads changes from |context| to other registered Context(s) in
+  // Spreads changes from `context` to other registered Context(s) in
   // contexts_.
   void SpreadContextChange(const Context* const context);
 
@@ -132,7 +132,7 @@ class DxgiOutputDuplicator {
 
   // The last full frame of this output and its offset. If on AcquireNextFrame()
   // failed because of timeout, i.e. no update, we can copy content from
-  // |last_frame_|.
+  // `last_frame_`.
   std::unique_ptr<SharedDesktopFrame> last_frame_;
   DesktopVector last_frame_offset_;
 

@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <limits>
 #include <list>
 #include <map>
 #include <memory>
@@ -37,7 +38,6 @@
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
 #include "api/peer_connection_interface.h"
-#include "api/peer_connection_proxy.h"
 #include "api/rtc_error.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/rtc_event_log/rtc_event_log_factory_interface.h"
@@ -84,6 +84,7 @@
 #include "pc/media_session.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_factory.h"
+#include "pc/peer_connection_proxy.h"
 #include "pc/rtp_media_utils.h"
 #include "pc/session_description.h"
 #include "pc/test/fake_audio_capture_module.h"
@@ -149,8 +150,8 @@ static const char kDataChannelLabel[] = "data_channel";
 
 // SRTP cipher name negotiated by the tests. This must be updated if the
 // default changes.
-static const int kDefaultSrtpCryptoSuite = rtc::SRTP_AES128_CM_SHA1_80;
-static const int kDefaultSrtpCryptoSuiteGcm = rtc::SRTP_AEAD_AES_256_GCM;
+static const int kDefaultSrtpCryptoSuite = rtc::kSrtpAes128CmSha1_80;
+static const int kDefaultSrtpCryptoSuiteGcm = rtc::kSrtpAeadAes256Gcm;
 
 static const SocketAddress kDefaultLocalAddress("192.168.1.1", 0);
 
@@ -213,32 +214,6 @@ class MockRtpReceiverObserver : public webrtc::RtpReceiverObserverInterface {
 class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
                                          public SignalingMessageReceiver {
  public:
-  // Different factory methods for convenience.
-  // TODO(deadbeef): Could use the pattern of:
-  //
-  // PeerConnectionIntegrationWrapper =
-  //     WrapperBuilder.WithConfig(...).WithOptions(...).build();
-  //
-  // To reduce some code duplication.
-  static PeerConnectionIntegrationWrapper* CreateWithDtlsIdentityStore(
-      const std::string& debug_name,
-      std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
-      rtc::Thread* network_thread,
-      rtc::Thread* worker_thread) {
-    PeerConnectionIntegrationWrapper* client(
-        new PeerConnectionIntegrationWrapper(debug_name));
-    webrtc::PeerConnectionDependencies dependencies(nullptr);
-    dependencies.cert_generator = std::move(cert_generator);
-    if (!client->Init(nullptr, nullptr, std::move(dependencies), network_thread,
-                      worker_thread, nullptr,
-                      /*reset_encoder_factory=*/false,
-                      /*reset_decoder_factory=*/false)) {
-      delete client;
-      return nullptr;
-    }
-    return client;
-  }
-
   webrtc::PeerConnectionFactoryInterface* pc_factory() const {
     return peer_connection_factory_.get();
   }
@@ -704,7 +679,13 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
     audio_concealed_stat_ = *track_stats->concealed_samples;
   }
 
+  // Sets number of candidates expected
+  void ExpectCandidates(int candidate_count) {
+    candidates_expected_ = candidate_count;
+  }
+
  private:
+  // Constructor used by friend class PeerConnectionIntegrationBaseTest.
   explicit PeerConnectionIntegrationWrapper(const std::string& debug_name)
       : debug_name_(debug_name) {}
 
@@ -793,7 +774,7 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
       const PeerConnectionInterface::RTCConfiguration* config,
       webrtc::PeerConnectionDependencies dependencies) {
     PeerConnectionInterface::RTCConfiguration modified_config;
-    // If |config| is null, this will result in a default configuration being
+    // If `config` is null, this will result in a default configuration being
     // used.
     if (config) {
       modified_config = *config;
@@ -950,7 +931,7 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
     }
   }
 
-  // Simulate sending a blob of SDP with delay |signaling_delay_ms_| (0 by
+  // Simulate sending a blob of SDP with delay `signaling_delay_ms_` (0 by
   // default).
   void SendSdpMessage(SdpType type, const std::string& msg) {
     if (signaling_delay_ms_ == 0) {
@@ -971,7 +952,7 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
     }
   }
 
-  // Simulate trickling an ICE candidate with delay |signaling_delay_ms_| (0 by
+  // Simulate trickling an ICE candidate with delay `signaling_delay_ms_` (0 by
   // default).
   void SendIceMessage(const std::string& sdp_mid,
                       int sdp_mline_index,
@@ -1089,6 +1070,9 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
       }
     }
 
+    // Check if we expected to have a candidate.
+    EXPECT_GT(candidates_expected_, 1);
+    candidates_expected_--;
     std::string ice_sdp;
     EXPECT_TRUE(candidate->ToString(&ice_sdp));
     if (signaling_message_receiver_ == nullptr || !signal_ice_candidates_) {
@@ -1116,7 +1100,7 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
   std::string debug_name_;
 
   std::unique_ptr<rtc::FakeNetworkManager> fake_network_manager_;
-  // Reference to the mDNS responder owned by |fake_network_manager_| after set.
+  // Reference to the mDNS responder owned by `fake_network_manager_` after set.
   webrtc::FakeMdnsResponder* mdns_responder_ = nullptr;
 
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
@@ -1144,7 +1128,7 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
   // them, if required.
   std::vector<rtc::scoped_refptr<webrtc::VideoTrackSource>>
       video_track_sources_;
-  // |local_video_renderer_| attached to the first created local video track.
+  // `local_video_renderer_` attached to the first created local video track.
   std::unique_ptr<webrtc::FakeVideoTrackRenderer> local_video_renderer_;
 
   SdpSemantics sdp_semantics_;
@@ -1171,6 +1155,9 @@ class PeerConnectionIntegrationWrapper : public webrtc::PeerConnectionObserver,
   std::vector<PeerConnectionInterface::SignalingState>
       peer_connection_signaling_state_history_;
   webrtc::FakeRtcEventLogFactory* event_log_factory_;
+
+  // Number of ICE candidates expected. The default is no limit.
+  int candidates_expected_ = std::numeric_limits<int>::max();
 
   // Variables for tracking delay stats on an audio track
   int audio_packets_stat_ = 0;
@@ -1391,7 +1378,7 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
                 webrtc::PeerConnectionInterface::kIceConnectionCompleted);
   }
 
-  // When |event_log_factory| is null, the default implementation of the event
+  // When `event_log_factory` is null, the default implementation of the event
   // log factory will be used.
   std::unique_ptr<PeerConnectionIntegrationWrapper> CreatePeerConnectionWrapper(
       const std::string& debug_name,
@@ -1642,8 +1629,8 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
 
   PeerConnectionIntegrationWrapper* caller() { return caller_.get(); }
 
-  // Set the |caller_| to the |wrapper| passed in and return the
-  // original |caller_|.
+  // Set the `caller_` to the `wrapper` passed in and return the
+  // original `caller_`.
   PeerConnectionIntegrationWrapper* SetCallerPcWrapperAndReturnCurrent(
       PeerConnectionIntegrationWrapper* wrapper) {
     PeerConnectionIntegrationWrapper* old = caller_.release();
@@ -1653,8 +1640,8 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
 
   PeerConnectionIntegrationWrapper* callee() { return callee_.get(); }
 
-  // Set the |callee_| to the |wrapper| passed in and return the
-  // original |callee_|.
+  // Set the `callee_` to the `wrapper` passed in and return the
+  // original `callee_`.
   PeerConnectionIntegrationWrapper* SetCalleePcWrapperAndReturnCurrent(
       PeerConnectionIntegrationWrapper* wrapper) {
     PeerConnectionIntegrationWrapper* old = callee_.release();
@@ -1675,7 +1662,7 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
 
   // Expects the provided number of new frames to be received within
   // kMaxWaitForFramesMs. The new expected frames are specified in
-  // |media_expectations|. Returns false if any of the expectations were
+  // `media_expectations`. Returns false if any of the expectations were
   // not met.
   bool ExpectNewFrames(const MediaExpectations& media_expectations) {
     // Make sure there are no bogus tracks confusing the issue.
@@ -1829,11 +1816,11 @@ class PeerConnectionIntegrationBaseTest : public ::testing::Test {
   SdpSemantics sdp_semantics_;
 
  private:
-  // |ss_| is used by |network_thread_| so it must be destroyed later.
+  // `ss_` is used by `network_thread_` so it must be destroyed later.
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
   std::unique_ptr<rtc::FirewallSocketServer> fss_;
-  // |network_thread_| and |worker_thread_| are used by both
-  // |caller_| and |callee_| so they must be destroyed
+  // `network_thread_` and `worker_thread_` are used by both
+  // `caller_` and `callee_` so they must be destroyed
   // later.
   std::unique_ptr<rtc::Thread> network_thread_;
   std::unique_ptr<rtc::Thread> worker_thread_;

@@ -69,7 +69,7 @@ class TransportDescriptionFactoryTest : public ::testing::Test {
   // This test ice restart by doing two offer answer exchanges. On the second
   // exchange ice is restarted. The test verifies that the ufrag and password
   // in the offer and answer is changed.
-  // If |dtls| is true, the test verifies that the finger print is not changed.
+  // If `dtls` is true, the test verifies that the finger print is not changed.
   void TestIceRestart(bool dtls) {
     SetDtls(dtls);
     cricket::TransportOptions options;
@@ -291,25 +291,25 @@ TEST_F(TransportDescriptionFactoryTest, TestAnswerDtlsToDtls) {
 }
 
 // Test that ice ufrag and password is changed in an updated offer and answer
-// if |TransportDescriptionOptions::ice_restart| is true.
+// if `TransportDescriptionOptions::ice_restart` is true.
 TEST_F(TransportDescriptionFactoryTest, TestIceRestart) {
   TestIceRestart(false);
 }
 
 // Test that ice ufrag and password is changed in an updated offer and answer
-// if |TransportDescriptionOptions::ice_restart| is true and DTLS is enabled.
+// if `TransportDescriptionOptions::ice_restart` is true and DTLS is enabled.
 TEST_F(TransportDescriptionFactoryTest, TestIceRestartWithDtls) {
   TestIceRestart(true);
 }
 
 // Test that ice renomination is set in an updated offer and answer
-// if |TransportDescriptionOptions::enable_ice_renomination| is true.
+// if `TransportDescriptionOptions::enable_ice_renomination` is true.
 TEST_F(TransportDescriptionFactoryTest, TestIceRenomination) {
   TestIceRenomination(false);
 }
 
 // Test that ice renomination is set in an updated offer and answer
-// if |TransportDescriptionOptions::enable_ice_renomination| is true and DTLS
+// if `TransportDescriptionOptions::enable_ice_renomination` is true and DTLS
 // is enabled.
 TEST_F(TransportDescriptionFactoryTest, TestIceRenominationWithDtls) {
   TestIceRenomination(true);
@@ -351,4 +351,51 @@ TEST_F(TransportDescriptionFactoryTest, CreateAnswerIceCredentialsIterator) {
       offer.get(), options, false, nullptr, &credentialsIterator);
   EXPECT_EQ(answer->GetIceParameters().ufrag, credentials[0].ufrag);
   EXPECT_EQ(answer->GetIceParameters().pwd, credentials[0].pwd);
+}
+
+TEST_F(TransportDescriptionFactoryTest, CreateAnswerToDtlsActpassOffer) {
+  f1_.set_secure(cricket::SEC_ENABLED);
+  f1_.set_certificate(cert1_);
+
+  f2_.set_secure(cricket::SEC_ENABLED);
+  f2_.set_certificate(cert2_);
+  cricket::TransportOptions options;
+  std::unique_ptr<TransportDescription> offer =
+      f1_.CreateOffer(options, nullptr, &ice_credentials_);
+
+  std::unique_ptr<TransportDescription> answer =
+      f2_.CreateAnswer(offer.get(), options, false, nullptr, &ice_credentials_);
+  EXPECT_EQ(answer->connection_role, cricket::CONNECTIONROLE_ACTIVE);
+}
+
+TEST_F(TransportDescriptionFactoryTest, CreateAnswerToDtlsActiveOffer) {
+  f1_.set_secure(cricket::SEC_ENABLED);
+  f1_.set_certificate(cert1_);
+
+  f2_.set_secure(cricket::SEC_ENABLED);
+  f2_.set_certificate(cert2_);
+  cricket::TransportOptions options;
+  std::unique_ptr<TransportDescription> offer =
+      f1_.CreateOffer(options, nullptr, &ice_credentials_);
+  offer->connection_role = cricket::CONNECTIONROLE_ACTIVE;
+
+  std::unique_ptr<TransportDescription> answer =
+      f2_.CreateAnswer(offer.get(), options, false, nullptr, &ice_credentials_);
+  EXPECT_EQ(answer->connection_role, cricket::CONNECTIONROLE_PASSIVE);
+}
+
+TEST_F(TransportDescriptionFactoryTest, CreateAnswerToDtlsPassiveOffer) {
+  f1_.set_secure(cricket::SEC_ENABLED);
+  f1_.set_certificate(cert1_);
+
+  f2_.set_secure(cricket::SEC_ENABLED);
+  f2_.set_certificate(cert2_);
+  cricket::TransportOptions options;
+  std::unique_ptr<TransportDescription> offer =
+      f1_.CreateOffer(options, nullptr, &ice_credentials_);
+  offer->connection_role = cricket::CONNECTIONROLE_PASSIVE;
+
+  std::unique_ptr<TransportDescription> answer =
+      f2_.CreateAnswer(offer.get(), options, false, nullptr, &ice_credentials_);
+  EXPECT_EQ(answer->connection_role, cricket::CONNECTIONROLE_ACTIVE);
 }

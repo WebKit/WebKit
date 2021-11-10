@@ -71,9 +71,9 @@ class PainterDesktopFrameGenerator final : public DesktopFrameGenerator {
   // regions' return from OS APIs.
   void set_enlarge_updated_region(bool enlarge_updated_region);
 
-  // The range to enlarge a updated region if |enlarge_updated_region_| is true.
+  // The range to enlarge a updated region if `enlarge_updated_region_` is true.
   // If this field is less than zero, it will be treated as zero, and
-  // |enlarge_updated_region_| will be ignored.
+  // `enlarge_updated_region_` will be ignored.
   void set_enlarge_range(int enlarge_range);
 
   // Decides whether BaseDesktopFrameGenerator randomly add some updated regions
@@ -81,10 +81,10 @@ class PainterDesktopFrameGenerator final : public DesktopFrameGenerator {
   // updated regions' return from OS APIs.
   void set_add_random_updated_region(bool add_random_updated_region);
 
-  // Sets the painter object to do the real painting work, if no |painter_| has
+  // Sets the painter object to do the real painting work, if no `painter_` has
   // been set to this instance, the DesktopFrame returned by GetNextFrame()
   // function will keep in an undefined but valid state.
-  // PainterDesktopFrameGenerator does not take ownership of the |painter|.
+  // PainterDesktopFrameGenerator does not take ownership of the `painter`.
   void set_desktop_frame_painter(DesktopFramePainter* painter);
 
  private:

@@ -47,6 +47,7 @@ rtc_library("adaptive_digital") {
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_compare",
     "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
   ]
 
@@ -90,6 +91,7 @@ rtc_library("fixed_digital") {
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
     "../../../system_wrappers:metrics",
   ]
@@ -110,24 +112,15 @@ rtc_library("gain_applier") {
 
 rtc_library("noise_level_estimator") {
   sources = [
-    "down_sampler.cc",
-    "down_sampler.h",
     "noise_level_estimator.cc",
     "noise_level_estimator.h",
-    "noise_spectrum_estimator.cc",
-    "noise_spectrum_estimator.h",
-    "signal_classifier.cc",
-    "signal_classifier.h",
   ]
   deps = [
     ":biquad_filter",
     "..:apm_logging",
     "..:audio_frame_view",
     "../../../api:array_view",
-    "../../../common_audio",
-    "../../../common_audio/third_party/ooura:fft_size_128",
     "../../../rtc_base:checks",
-    "../../../rtc_base:macromagic",
     "../../../system_wrappers",
   ]
 
@@ -187,6 +180,7 @@ rtc_library("adaptive_digital_unittests") {
     ":common",
     ":gain_applier",
     ":test_utils",
+    "..:api",
     "..:apm_logging",
     "..:audio_frame_view",
     "../../../api:array_view",
@@ -241,10 +235,7 @@ rtc_library("noise_estimator_unittests") {
   testonly = true
   configs += [ "..:apm_debug_dump" ]
 
-  sources = [
-    "noise_level_estimator_unittest.cc",
-    "signal_classifier_unittest.cc",
-  ]
+  sources = [ "noise_level_estimator_unittest.cc" ]
   deps = [
     ":noise_level_estimator",
     ":test_utils",

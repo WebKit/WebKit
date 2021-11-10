@@ -75,7 +75,7 @@ void CheckIfMonotoneSamplesModules(const ChannelBuffer<float>* prev,
 }
 
 // Checks that the samples in each pair have the same sign unless the sample in
-// |dst| is zero (because of zero gain).
+// `dst` is zero (because of zero gain).
 void CheckSameSign(const ChannelBuffer<float>* src,
                    const ChannelBuffer<float>* dst) {
   RTC_DCHECK_EQ(src->num_channels(), dst->num_channels());

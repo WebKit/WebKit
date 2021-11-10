@@ -17,11 +17,9 @@
 #include <stdint.h>
 #endif
 
-namespace rtc {
-class BitBuffer;
-}
-
 namespace webrtc {
+
+class BitstreamReader;
 
 // A class for parsing out picture parameter set (PPS) data from a H265 NALU.
 class H265PpsParser {
@@ -57,8 +55,8 @@ class H265PpsParser {
  protected:
   // Parse the PPS state, for a bit buffer where RBSP decoding has already been
   // performed.
-  static absl::optional<PpsState> ParseInternal(rtc::BitBuffer* bit_buffer);
-  static bool ParsePpsIdsInternal(rtc::BitBuffer* bit_buffer,
+  static absl::optional<PpsState> ParseInternal(BitstreamReader* bit_buffer);
+  static bool ParsePpsIdsInternal(BitstreamReader* bit_buffer,
                                   uint32_t* pps_id,
                                   uint32_t* sps_id);
 };

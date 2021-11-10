@@ -195,43 +195,8 @@ TEST_P(VideoAdapterTest, AdaptFramerateToHalf) {
 
   // Capture 10 frames and verify that every other frame is dropped. The first
   // frame should not be dropped.
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 1);
-  EXPECT_EQ(0, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 2);
-  EXPECT_EQ(1, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 3);
-  EXPECT_EQ(1, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 4);
-  EXPECT_EQ(2, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 5);
-  EXPECT_EQ(2, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 6);
-  EXPECT_EQ(3, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 7);
-  EXPECT_EQ(3, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 8);
-  EXPECT_EQ(4, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 9);
-  EXPECT_EQ(4, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
+  for (int i = 0; i < 10; ++i)
+    adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
   EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 10);
   EXPECT_EQ(5, adapter_wrapper_->GetStats().dropped_frames);
 }
@@ -244,43 +209,8 @@ TEST_P(VideoAdapterTest, AdaptFramerateToTwoThirds) {
 
   // Capture 10 frames and verify that every third frame is dropped. The first
   // frame should not be dropped.
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 1);
-  EXPECT_EQ(0, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 2);
-  EXPECT_EQ(0, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 3);
-  EXPECT_EQ(1, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 4);
-  EXPECT_EQ(1, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 5);
-  EXPECT_EQ(1, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 6);
-  EXPECT_EQ(2, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 7);
-  EXPECT_EQ(2, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 8);
-  EXPECT_EQ(2, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
-  EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 9);
-  EXPECT_EQ(3, adapter_wrapper_->GetStats().dropped_frames);
-
-  adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
+  for (int i = 0; i < 10; ++i)
+    adapter_wrapper_->AdaptFrame(frame_source_->GetFrame());
   EXPECT_GE(adapter_wrapper_->GetStats().captured_frames, 10);
   EXPECT_EQ(3, adapter_wrapper_->GetStats().dropped_frames);
 }
@@ -316,75 +246,6 @@ TEST_P(VideoAdapterTest, AdaptFramerateToHalfWithNoPixelLimit) {
     VerifyAdaptedResolution(adapter_wrapper_->GetStats(), kWidth, kHeight,
                             kWidth, kHeight);
   }
-}
-
-// After the first timestamp, add a big offset to the timestamps. Expect that
-// the adapter is conservative and resets to the new offset and does not drop
-// any frame.
-TEST_P(VideoAdapterTest, AdaptFramerateTimestampOffset) {
-  const int64_t capture_interval = VideoFormat::FpsToInterval(kDefaultFps);
-  OnOutputFormatRequest(640, 480, kDefaultFps);
-
-  const int64_t first_timestamp = 0;
-  adapter_.AdaptFrameResolution(640, 480, first_timestamp, &cropped_width_,
-                                &cropped_height_, &out_width_, &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-
-  const int64_t big_offset = -987654321LL * 1000;
-  const int64_t second_timestamp = big_offset;
-  adapter_.AdaptFrameResolution(640, 480, second_timestamp, &cropped_width_,
-                                &cropped_height_, &out_width_, &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-
-  const int64_t third_timestamp = big_offset + capture_interval;
-  adapter_.AdaptFrameResolution(640, 480, third_timestamp, &cropped_width_,
-                                &cropped_height_, &out_width_, &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-}
-
-// Request 30 fps and send 30 fps with jitter. Expect that no frame is dropped.
-TEST_P(VideoAdapterTest, AdaptFramerateTimestampJitter) {
-  const int64_t capture_interval = VideoFormat::FpsToInterval(kDefaultFps);
-  OnOutputFormatRequest(640, 480, kDefaultFps);
-
-  adapter_.AdaptFrameResolution(640, 480, capture_interval * 0 / 10,
-                                &cropped_width_, &cropped_height_, &out_width_,
-                                &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-
-  adapter_.AdaptFrameResolution(640, 480, capture_interval * 10 / 10 - 1,
-                                &cropped_width_, &cropped_height_, &out_width_,
-                                &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-
-  adapter_.AdaptFrameResolution(640, 480, capture_interval * 25 / 10,
-                                &cropped_width_, &cropped_height_, &out_width_,
-                                &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-
-  adapter_.AdaptFrameResolution(640, 480, capture_interval * 30 / 10,
-                                &cropped_width_, &cropped_height_, &out_width_,
-                                &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-
-  adapter_.AdaptFrameResolution(640, 480, capture_interval * 35 / 10,
-                                &cropped_width_, &cropped_height_, &out_width_,
-                                &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
-
-  adapter_.AdaptFrameResolution(640, 480, capture_interval * 50 / 10,
-                                &cropped_width_, &cropped_height_, &out_width_,
-                                &out_height_);
-  EXPECT_GT(out_width_, 0);
-  EXPECT_GT(out_height_, 0);
 }
 
 // Adapt the frame rate to be half of the capture rate after capturing no less

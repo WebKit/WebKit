@@ -61,11 +61,8 @@ class DecisionLogicTest : public ::testing::Test {
     NetEqController::Config config;
     config.tick_timer = &tick_timer_;
     config.allow_time_stretching = true;
-    std::unique_ptr<Histogram> histogram =
-        std::make_unique<Histogram>(200, 12345, 2);
     auto delay_manager = std::make_unique<MockDelayManager>(
-        200, 0, 12300, absl::nullopt, 2000, config.tick_timer,
-        std::move(histogram));
+        DelayManager::Config(), config.tick_timer);
     mock_delay_manager_ = delay_manager.get();
     auto buffer_level_filter = std::make_unique<MockBufferLevelFilter>();
     mock_buffer_level_filter_ = buffer_level_filter.get();

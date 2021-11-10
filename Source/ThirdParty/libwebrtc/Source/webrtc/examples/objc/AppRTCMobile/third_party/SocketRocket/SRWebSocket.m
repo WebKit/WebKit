@@ -1478,7 +1478,7 @@ static const size_t SRFrameHeaderOverhead = 32;
                 
             case NSStreamEventHasBytesAvailable: {
                 SRFastLog(@"NSStreamEventHasBytesAvailable %@", aStream);
-                const int bufferSize = 2048;
+                enum EnumType : int { bufferSize = 2048 };
                 uint8_t buffer[bufferSize];
 
                 while (self->_inputStream.hasBytesAvailable) {

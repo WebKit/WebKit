@@ -424,7 +424,7 @@ namespace test {
 
     // At this point, the pace queue is drained so there is no more intersting
     // update to be made - but there is still as schduled task that should run
-    // |kMaxTimeBetweenStatsUpdates| after the first update.
+    // `kMaxTimeBetweenStatsUpdates` after the first update.
     time_controller.AdvanceTime(start_time + kMaxTimeBetweenStatsUpdates -
                                 clock->CurrentTime());
     EXPECT_EQ(pacer.num_stats_updates_, ++num_expected_stats_updates);

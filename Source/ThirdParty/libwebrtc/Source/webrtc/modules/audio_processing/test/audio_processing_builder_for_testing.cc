@@ -23,32 +23,19 @@ AudioProcessingBuilderForTesting::~AudioProcessingBuilderForTesting() = default;
 
 #ifdef WEBRTC_EXCLUDE_AUDIO_PROCESSING_MODULE
 
-AudioProcessing* AudioProcessingBuilderForTesting::Create() {
-  webrtc::Config config;
-  return Create(config);
-}
-
-AudioProcessing* AudioProcessingBuilderForTesting::Create(
-    const webrtc::Config& config) {
-  return new rtc::RefCountedObject<AudioProcessingImpl>(
-      config, std::move(capture_post_processing_),
-      std::move(render_pre_processing_), std::move(echo_control_factory_),
-      std::move(echo_detector_), std::move(capture_analyzer_));
+rtc::scoped_refptr<AudioProcessing> AudioProcessingBuilderForTesting::Create() {
+  return rtc::make_ref_counted<AudioProcessingImpl>(
+      std::move(capture_post_processing_), std::move(render_pre_processing_),
+      std::move(echo_control_factory_), std::move(echo_detector_),
+      std::move(capture_analyzer_));
 }
 
 #else
 
-AudioProcessing* AudioProcessingBuilderForTesting::Create() {
+rtc::scoped_refptr<AudioProcessing> AudioProcessingBuilderForTesting::Create() {
   AudioProcessingBuilder builder;
   TransferOwnershipsToBuilder(&builder);
   return builder.Create();
-}
-
-AudioProcessing* AudioProcessingBuilderForTesting::Create(
-    const webrtc::Config& config) {
-  AudioProcessingBuilder builder;
-  TransferOwnershipsToBuilder(&builder);
-  return builder.Create(config);
 }
 
 #endif

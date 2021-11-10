@@ -320,7 +320,7 @@ void TestAllCodecs::RegisterSendCodec(char side,
   // If G.722, store half the size to compensate for the timestamp bug in the
   // RFC for G.722.
   // If iSAC runs in adaptive mode, packet size in samples can change on the
-  // fly, so we exclude this test by setting |packet_size_samples_| to -1.
+  // fly, so we exclude this test by setting `packet_size_samples_` to -1.
   int clockrate_hz = sampling_freq_hz;
   size_t num_channels = 1;
   if (absl::EqualsIgnoreCase(codec_name, "G722")) {

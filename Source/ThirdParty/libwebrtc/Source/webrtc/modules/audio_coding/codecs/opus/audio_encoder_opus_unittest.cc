@@ -228,8 +228,8 @@ TEST_P(AudioEncoderOpusTest,
 
 TEST_P(AudioEncoderOpusTest, SetReceiverFrameLengthRange) {
   auto states = CreateCodec(sample_rate_hz_, 2);
-  // Before calling to |SetReceiverFrameLengthRange|,
-  // |supported_frame_lengths_ms| should contain only the frame length being
+  // Before calling to `SetReceiverFrameLengthRange`,
+  // `supported_frame_lengths_ms` should contain only the frame length being
   // used.
   using ::testing::ElementsAre;
   EXPECT_THAT(states->encoder->supported_frame_lengths_ms(),
@@ -348,7 +348,7 @@ TEST_P(AudioEncoderOpusTest,
   // will fail.
   constexpr float kPacketLossFraction_1 = 0.02f;
   constexpr float kPacketLossFraction_2 = 0.198f;
-  // |kSecondSampleTimeMs| is chosen to ease the calculation since
+  // `kSecondSampleTimeMs` is chosen to ease the calculation since
   // 0.9999 ^ 6931 = 0.5.
   constexpr int64_t kSecondSampleTimeMs = 6931;
 
@@ -380,7 +380,7 @@ TEST_P(AudioEncoderOpusTest, DoNotInvokeSetTargetBitrateIfOverheadUnknown) {
   states->encoder->OnReceivedUplinkBandwidth(kDefaultOpusRate * 2,
                                              absl::nullopt);
 
-  // Since |OnReceivedOverhead| has not been called, the codec bitrate should
+  // Since `OnReceivedOverhead` has not been called, the codec bitrate should
   // not change.
   EXPECT_EQ(kDefaultOpusRate, states->encoder->GetTargetBitrate());
 }

@@ -11,6 +11,7 @@
 #include "modules/audio_coding/codecs/isac/fix/include/isacfix.h"
 #include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 #include "modules/audio_coding/codecs/tools/audio_codec_speed_test.h"
+#include "rtc_base/checks.h"
 
 using std::string;
 
@@ -83,7 +84,7 @@ float IsacSpeedTest::EncodeABlock(int16_t* in_data,
   }
   clocks = clock() - clocks;
   *encoded_bytes = static_cast<size_t>(value);
-  assert(*encoded_bytes <= max_bytes);
+  RTC_DCHECK_LE(*encoded_bytes, max_bytes);
   return 1000.0 * clocks / CLOCKS_PER_SEC;
 }
 

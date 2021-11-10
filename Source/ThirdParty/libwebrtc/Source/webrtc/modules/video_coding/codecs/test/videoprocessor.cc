@@ -196,10 +196,12 @@ VideoProcessor::VideoProcessor(webrtc::VideoEncoder* encoder,
   for (size_t i = 0; i < num_simulcast_or_spatial_layers_; ++i) {
     decode_callback_.push_back(
         std::make_unique<VideoProcessorDecodeCompleteCallback>(this, i));
-    RTC_CHECK_EQ(
-        decoders_->at(i)->InitDecode(&config_.codec_settings,
-                                     static_cast<int>(config_.NumberOfCores())),
-        WEBRTC_VIDEO_CODEC_OK);
+    VideoDecoder::Settings decoder_settings;
+    decoder_settings.set_max_render_resolution(
+        {config_.codec_settings.width, config_.codec_settings.height});
+    decoder_settings.set_codec_type(config_.codec_settings.codecType);
+    decoder_settings.set_number_of_cores(config_.NumberOfCores());
+    RTC_CHECK(decoders_->at(i)->Configure(decoder_settings));
     RTC_CHECK_EQ(decoders_->at(i)->RegisterDecodeCompleteCallback(
                      decode_callback_.at(i).get()),
                  WEBRTC_VIDEO_CODEC_OK);
@@ -591,7 +593,7 @@ void VideoProcessor::FrameDecoded(const VideoFrame& decoded_frame,
 
   // Erase all buffered input frames that we have moved past for all
   // simulcast/spatial layers. Never buffer more than
-  // |kMaxBufferedInputFrames| frames, to protect against long runs of
+  // `kMaxBufferedInputFrames` frames, to protect against long runs of
   // consecutive frame drops for a particular layer.
   const auto min_last_decoded_frame_num = std::min_element(
       last_decoded_frame_num_.cbegin(), last_decoded_frame_num_.cend());

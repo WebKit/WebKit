@@ -14,27 +14,16 @@
 #define typeof __typeof__
 #include <pipewire/pipewire.h>
 #include <spa/param/video/format-utils.h>
-#if PW_CHECK_VERSION(0, 3, 0)
 #include <spa/utils/result.h>
-#endif
 
 #include "absl/types/optional.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/linux/egl_dmabuf.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
-
-#if !PW_CHECK_VERSION(0, 3, 0)
-class PipeWireType {
- public:
-  spa_type_media_type media_type;
-  spa_type_media_subtype media_subtype;
-  spa_type_format_video format_video;
-  spa_type_video_format video_format;
-};
-#endif
 
 class BaseCapturerPipeWire : public DesktopCapturer {
  public:
@@ -45,6 +34,12 @@ class BaseCapturerPipeWire : public DesktopCapturer {
     kScreen = 0b01,
     kWindow = 0b10,
     kAny = 0b11
+  };
+
+  enum class CursorMode : uint32_t {
+    kHidden = 0b01,
+    kEmbedded = 0b10,
+    kMetadata = 0b100
   };
 
   explicit BaseCapturerPipeWire(CaptureSourceType source_type);
@@ -61,7 +56,6 @@ class BaseCapturerPipeWire : public DesktopCapturer {
 
  private:
   // PipeWire types -->
-#if PW_CHECK_VERSION(0, 3, 0)
   struct pw_context* pw_context_ = nullptr;
   struct pw_core* pw_core_ = nullptr;
   struct pw_stream* pw_stream_ = nullptr;
@@ -75,23 +69,6 @@ class BaseCapturerPipeWire : public DesktopCapturer {
   pw_stream_events pw_stream_events_ = {};
 
   struct spa_video_info_raw spa_video_format_;
-#else
-  pw_core* pw_core_ = nullptr;
-  pw_type* pw_core_type_ = nullptr;
-  pw_stream* pw_stream_ = nullptr;
-  pw_remote* pw_remote_ = nullptr;
-  pw_loop* pw_loop_ = nullptr;
-  pw_thread_loop* pw_main_loop_ = nullptr;
-  PipeWireType* pw_type_ = nullptr;
-
-  spa_hook spa_stream_listener_ = {};
-  spa_hook spa_remote_listener_ = {};
-
-  pw_stream_events pw_stream_events_ = {};
-  pw_remote_events pw_remote_events_ = {};
-
-  spa_video_info_raw* spa_video_format_ = nullptr;
-#endif
 
   guint32 pw_stream_node_id_ = 0;
   gint32 pw_fd_ = -1;
@@ -112,18 +89,21 @@ class BaseCapturerPipeWire : public DesktopCapturer {
   guint sources_request_signal_id_ = 0;
   guint start_request_signal_id_ = 0;
 
+  int64_t modifier_;
   DesktopSize video_size_;
   DesktopSize desktop_size_ = {};
   DesktopCaptureOptions options_ = {};
 
   webrtc::Mutex current_frame_lock_;
-  std::unique_ptr<uint8_t[]> current_frame_;
+  std::unique_ptr<BasicDesktopFrame> current_frame_;
   Callback* callback_ = nullptr;
 
   bool portal_init_failed_ = false;
 
+  std::unique_ptr<EglDmaBuf> egl_dmabuf_;
+
+  void Init();
   void InitPortal();
-  void InitPipeWire();
   void InitPipeWireTypes();
 
   pw_stream* CreateReceivingStream();
@@ -131,7 +111,6 @@ class BaseCapturerPipeWire : public DesktopCapturer {
 
   void ConvertRGBxToBGRx(uint8_t* frame, uint32_t size);
 
-#if PW_CHECK_VERSION(0, 3, 0)
   static void OnCoreError(void* data,
                           uint32_t id,
                           int seq,
@@ -140,13 +119,6 @@ class BaseCapturerPipeWire : public DesktopCapturer {
   static void OnStreamParamChanged(void* data,
                                    uint32_t id,
                                    const struct spa_pod* format);
-#else
-  static void OnStateChanged(void* data,
-                             pw_remote_state old_state,
-                             pw_remote_state state,
-                             const char* error);
-  static void OnStreamFormatChanged(void* data, const struct spa_pod* format);
-#endif
   static void OnStreamStateChanged(void* data,
                                    pw_stream_state old_state,
                                    pw_stream_state state,

@@ -28,7 +28,7 @@ namespace webrtc {
 namespace rnn_vad {
 namespace {
 
-// Generates the values for the array named |kOpusBandWeights24kHz20ms| in the
+// Generates the values for the array named `kOpusBandWeights24kHz20ms` in the
 // anonymous namespace of the .cc file, which is the array of FFT coefficient
 // weights for the Opus scale triangular filters.
 std::vector<float> ComputeTriangularFiltersWeights() {
@@ -66,7 +66,7 @@ TEST(RnnVadTest, TestOpusScaleBoundaries) {
 
 // Checks that the computed triangular filters weights for the Opus scale are
 // monotonic withing each Opus band. This test should only be enabled when
-// ComputeTriangularFiltersWeights() is changed and |kOpusBandWeights24kHz20ms|
+// ComputeTriangularFiltersWeights() is changed and `kOpusBandWeights24kHz20ms`
 // is updated accordingly.
 TEST(RnnVadTest, DISABLED_TestOpusScaleWeights) {
   auto weights = ComputeTriangularFiltersWeights();

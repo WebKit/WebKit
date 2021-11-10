@@ -44,12 +44,12 @@ class StunRequestManager {
   void Send(StunRequest* request);
   void SendDelayed(StunRequest* request, int delay);
 
-  // If |msg_type| is kAllRequests, sends all pending requests right away.
+  // If `msg_type` is kAllRequests, sends all pending requests right away.
   // Otherwise, sends those that have a matching type right away.
   // Only for testing.
   void Flush(int msg_type);
 
-  // Returns true if at least one request with |msg_type| is scheduled for
+  // Returns true if at least one request with `msg_type` is scheduled for
   // transmission. For testing only.
   bool HasRequest(int msg_type);
 
@@ -112,10 +112,10 @@ class StunRequest : public rtc::MessageHandler {
   // Returns the STUN type of the request message.
   int type();
 
-  // Returns a const pointer to |msg_|.
+  // Returns a const pointer to `msg_`.
   const StunMessage* msg() const;
 
-  // Returns a mutable pointer to |msg_|.
+  // Returns a mutable pointer to `msg_`.
   StunMessage* mutable_msg();
 
   // Time elapsed since last send (in ms)

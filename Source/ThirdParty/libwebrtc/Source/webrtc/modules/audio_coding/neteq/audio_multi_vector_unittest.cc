@@ -94,7 +94,7 @@ TEST_P(AudioMultiVectorTest, PushBackInterleavedAndCopy) {
   AudioMultiVector vec(num_channels_);
   vec.PushBackInterleaved(array_interleaved_);
   AudioMultiVector vec_copy(num_channels_);
-  vec.CopyTo(&vec_copy);  // Copy from |vec| to |vec_copy|.
+  vec.CopyTo(&vec_copy);  // Copy from `vec` to `vec_copy`.
   ASSERT_EQ(num_channels_, vec.Channels());
   ASSERT_EQ(array_length(), vec.Size());
   ASSERT_EQ(num_channels_, vec_copy.Channels());
@@ -106,7 +106,7 @@ TEST_P(AudioMultiVectorTest, PushBackInterleavedAndCopy) {
     }
   }
 
-  // Clear |vec| and verify that it is empty.
+  // Clear `vec` and verify that it is empty.
   vec.Clear();
   EXPECT_TRUE(vec.Empty());
 
@@ -208,7 +208,7 @@ TEST_P(AudioMultiVectorTest, PopFront) {
   vec.PushBackInterleaved(array_interleaved_);
   vec.PopFront(1);  // Remove one element from each channel.
   ASSERT_EQ(array_length() - 1u, vec.Size());
-  // Let |ptr| point to the second element of the first channel in the
+  // Let `ptr` point to the second element of the first channel in the
   // interleaved array.
   int16_t* ptr = &array_interleaved_[num_channels_];
   for (size_t i = 0; i < array_length() - 1; ++i) {
@@ -227,7 +227,7 @@ TEST_P(AudioMultiVectorTest, PopBack) {
   vec.PushBackInterleaved(array_interleaved_);
   vec.PopBack(1);  // Remove one element from each channel.
   ASSERT_EQ(array_length() - 1u, vec.Size());
-  // Let |ptr| point to the first element of the first channel in the
+  // Let `ptr` point to the first element of the first channel in the
   // interleaved array.
   int16_t* ptr = array_interleaved_.data();
   for (size_t i = 0; i < array_length() - 1; ++i) {

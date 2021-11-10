@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "api/rtp_sender_interface.h"
+#include "api/test/mock_video_track.h"
 #include "api/transport/rtp/rtp_source.h"
 #include "media/base/media_channel.h"
 #include "pc/audio_track.h"
@@ -79,27 +80,39 @@ rtc::scoped_refptr<MockRtpReceiverInternal> CreateMockRtpReceiver(
   return receiver;
 }
 
+rtc::scoped_refptr<VideoTrackInterface> CreateVideoTrack(
+    const std::string& id) {
+  return VideoTrack::Create(id, FakeVideoTrackSource::Create(false),
+                            rtc::Thread::Current());
+}
+
+rtc::scoped_refptr<VideoTrackInterface> CreateMockVideoTrack(
+    const std::string& id) {
+  auto track = MockVideoTrack::Create();
+  EXPECT_CALL(*track, kind())
+      .WillRepeatedly(::testing::Return(VideoTrack::kVideoKind));
+  return track;
+}
+
 class TrackMediaInfoMapTest : public ::testing::Test {
  public:
   TrackMediaInfoMapTest() : TrackMediaInfoMapTest(true) {}
 
-  explicit TrackMediaInfoMapTest(bool use_current_thread)
+  explicit TrackMediaInfoMapTest(bool use_real_video_track)
       : voice_media_info_(new cricket::VoiceMediaInfo()),
         video_media_info_(new cricket::VideoMediaInfo()),
         local_audio_track_(AudioTrack::Create("LocalAudioTrack", nullptr)),
         remote_audio_track_(AudioTrack::Create("RemoteAudioTrack", nullptr)),
-        local_video_track_(VideoTrack::Create(
-            "LocalVideoTrack",
-            FakeVideoTrackSource::Create(false),
-            use_current_thread ? rtc::Thread::Current() : nullptr)),
-        remote_video_track_(VideoTrack::Create(
-            "RemoteVideoTrack",
-            FakeVideoTrackSource::Create(false),
-            use_current_thread ? rtc::Thread::Current() : nullptr)) {}
+        local_video_track_(use_real_video_track
+                               ? CreateVideoTrack("LocalVideoTrack")
+                               : CreateMockVideoTrack("LocalVideoTrack")),
+        remote_video_track_(use_real_video_track
+                                ? CreateVideoTrack("RemoteVideoTrack")
+                                : CreateMockVideoTrack("LocalVideoTrack")) {}
 
   ~TrackMediaInfoMapTest() {
     // If we have a map the ownership has been passed to the map, only delete if
-    // |CreateMap| has not been called.
+    // `CreateMap` has not been called.
     if (!map_) {
       delete voice_media_info_;
       delete video_media_info_;
@@ -179,8 +192,8 @@ class TrackMediaInfoMapTest : public ::testing::Test {
   std::unique_ptr<TrackMediaInfoMap> map_;
   rtc::scoped_refptr<AudioTrack> local_audio_track_;
   rtc::scoped_refptr<AudioTrack> remote_audio_track_;
-  rtc::scoped_refptr<VideoTrack> local_video_track_;
-  rtc::scoped_refptr<VideoTrack> remote_video_track_;
+  rtc::scoped_refptr<VideoTrackInterface> local_video_track_;
+  rtc::scoped_refptr<VideoTrackInterface> remote_video_track_;
 };
 
 }  // namespace

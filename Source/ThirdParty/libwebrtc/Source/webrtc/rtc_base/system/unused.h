@@ -13,7 +13,7 @@
 
 // Prevent the compiler from warning about an unused variable. For example:
 //   int result = DoSomething();
-//   assert(result == 17);
+//   RTC_DCHECK(result == 17);
 //   RTC_UNUSED(result);
 // Note: In most cases it is better to remove the unused variable rather than
 // suppressing the compiler warning.

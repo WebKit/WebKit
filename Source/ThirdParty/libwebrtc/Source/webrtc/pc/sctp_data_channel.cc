@@ -15,13 +15,14 @@
 #include <string>
 #include <utility>
 
-#include "api/proxy.h"
 #include "media/sctp/sctp_transport_internal.h"
+#include "pc/proxy.h"
 #include "pc/sctp_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/ref_counted_object.h"
+#include "rtc_base/system/unused.h"
 #include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/thread.h"
 
@@ -65,7 +66,7 @@ PROXY_CONSTMETHOD0(uint64_t, buffered_amount)
 PROXY_METHOD0(void, Close)
 // TODO(bugs.webrtc.org/11547): Change to run on the network thread.
 PROXY_METHOD1(bool, Send, const DataBuffer&)
-END_PROXY_MAP()
+END_PROXY_MAP(DataChannel)
 
 }  // namespace
 
@@ -178,6 +179,7 @@ SctpDataChannel::SctpDataChannel(const InternalDataChannelInit& config,
       observer_(nullptr),
       provider_(provider) {
   RTC_DCHECK_RUN_ON(signaling_thread_);
+  RTC_UNUSED(network_thread_);
 }
 
 bool SctpDataChannel::Init() {
@@ -381,13 +383,11 @@ void SctpDataChannel::OnTransportChannelCreated() {
   }
 }
 
-void SctpDataChannel::OnTransportChannelClosed() {
-  // The SctpTransport is unusable (for example, because the SCTP m= section
-  // was rejected, or because the DTLS transport closed), so we need to close
-  // abruptly.
-  RTCError error = RTCError(RTCErrorType::OPERATION_ERROR_WITH_DATA,
-                            "Transport channel closed");
-  error.set_error_detail(RTCErrorDetailType::SCTP_FAILURE);
+void SctpDataChannel::OnTransportChannelClosed(RTCError error) {
+  // The SctpTransport is unusable, which could come from multiplie reasons:
+  // - the SCTP m= section was rejected
+  // - the DTLS transport is closed
+  // - the SCTP transport is closed
   CloseAbruptlyWithError(std::move(error));
 }
 

@@ -15,7 +15,7 @@ rtc_library("nack_module") {
   ]
 
   deps = [
-    "..:nack_module",
+    "..:nack_requester",
     "../..:module_api",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",

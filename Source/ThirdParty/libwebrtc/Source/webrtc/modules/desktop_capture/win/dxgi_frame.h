@@ -32,7 +32,7 @@ class DxgiFrame final {
  public:
   using Context = DxgiFrameContext;
 
-  // DxgiFrame does not take ownership of |factory|, consumers should ensure it
+  // DxgiFrame does not take ownership of `factory`, consumers should ensure it
   // outlives this instance. nullptr is acceptable.
   explicit DxgiFrame(SharedMemoryFactory* factory);
   ~DxgiFrame();

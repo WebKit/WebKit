@@ -23,18 +23,18 @@ namespace webrtc {
 
 namespace {
 
-// Loads |left| from resources, converts it to a |MouseCursor| instance and
-// compares pixels with |right|. Returns true of MouseCursor bits match |right|.
-// |right| must be a 32bpp cursor with alpha channel.
+// Loads `left` from resources, converts it to a `MouseCursor` instance and
+// compares pixels with `right`. Returns true of MouseCursor bits match `right`.
+// `right` must be a 32bpp cursor with alpha channel.
 bool ConvertToMouseShapeAndCompare(unsigned left, unsigned right) {
   HMODULE instance = GetModuleHandle(NULL);
 
-  // Load |left| from the EXE module's resources.
+  // Load `left` from the EXE module's resources.
   win::ScopedCursor cursor(reinterpret_cast<HCURSOR>(
       LoadImage(instance, MAKEINTRESOURCE(left), IMAGE_CURSOR, 0, 0, 0)));
   EXPECT_TRUE(cursor != NULL);
 
-  // Convert |cursor| to |mouse_shape|.
+  // Convert `cursor` to `mouse_shape`.
   HDC dc = GetDC(NULL);
   std::unique_ptr<MouseCursor> mouse_shape(
       CreateMouseCursorFromHCursor(dc, cursor));
@@ -42,7 +42,7 @@ bool ConvertToMouseShapeAndCompare(unsigned left, unsigned right) {
 
   EXPECT_TRUE(mouse_shape.get());
 
-  // Load |right|.
+  // Load `right`.
   cursor.Set(reinterpret_cast<HCURSOR>(
       LoadImage(instance, MAKEINTRESOURCE(right), IMAGE_CURSOR, 0, 0, 0)));
 
@@ -54,7 +54,7 @@ bool ConvertToMouseShapeAndCompare(unsigned left, unsigned right) {
   win::ScopedBitmap scoped_mask(iinfo.hbmMask);
   win::ScopedBitmap scoped_color(iinfo.hbmColor);
 
-  // Get |scoped_color| dimensions.
+  // Get `scoped_color` dimensions.
   BITMAP bitmap_info;
   EXPECT_TRUE(GetObject(scoped_color, sizeof(bitmap_info), &bitmap_info));
 
@@ -62,12 +62,12 @@ bool ConvertToMouseShapeAndCompare(unsigned left, unsigned right) {
   int height = bitmap_info.bmHeight;
   EXPECT_TRUE(DesktopSize(width, height).equals(mouse_shape->image()->size()));
 
-  // Get the pixels from |scoped_color|.
+  // Get the pixels from `scoped_color`.
   int size = width * height;
   std::unique_ptr<uint32_t[]> data(new uint32_t[size]);
   EXPECT_TRUE(GetBitmapBits(scoped_color, size * sizeof(uint32_t), data.get()));
 
-  // Compare the 32bpp image in |mouse_shape| with the one loaded from |right|.
+  // Compare the 32bpp image in `mouse_shape` with the one loaded from `right`.
   return memcmp(data.get(), mouse_shape->image()->data(),
                 size * sizeof(uint32_t)) == 0;
 }

@@ -23,8 +23,8 @@ namespace rtc {
 
 namespace {
 // Computes the difference x_k - mean(x), when x_k is the linear sequence x_k =
-// k, and the "mean" is plain mean for the first |window_size| samples, followed
-// by exponential averaging with weight 1 / |window_size| for each new sample.
+// k, and the "mean" is plain mean for the first `window_size` samples, followed
+// by exponential averaging with weight 1 / `window_size` for each new sample.
 // This is needed to predict the effect of camera clock drift on the timestamp
 // translation. See the comment on TimestampAligner::UpdateOffset for more
 // context.
@@ -158,9 +158,9 @@ TEST(TimestampAlignerTest, ClipToMonotonous) {
 
   // Non-monotonic translated timestamps can happen when only for
   // translated timestamps in the future. Which is tolerated if
-  // |timestamp_aligner.clip_bias_us| is large enough. Instead of
+  // `timestamp_aligner.clip_bias_us` is large enough. Instead of
   // changing that private member for this test, just add the bias to
-  // |kSystemTimeUs| when calling ClipTimestamp.
+  // `kSystemTimeUs` when calling ClipTimestamp.
   const int64_t kClipBiasUs = 100000;
 
   bool did_clip = false;

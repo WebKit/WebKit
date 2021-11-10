@@ -26,29 +26,30 @@ namespace aec3 {
 
 // Verifies that the check for non-null output gains works.
 TEST(SuppressionGainDeathTest, NullOutputGains) {
-  std::vector<std::array<float, kFftLengthBy2Plus1>> E2(1, {0.f});
-  std::vector<std::array<float, kFftLengthBy2Plus1>> R2(1, {0.f});
+  std::vector<std::array<float, kFftLengthBy2Plus1>> E2(1, {0.0f});
+  std::vector<std::array<float, kFftLengthBy2Plus1>> R2(1, {0.0f});
+  std::vector<std::array<float, kFftLengthBy2Plus1>> R2_unbounded(1, {0.0f});
   std::vector<std::array<float, kFftLengthBy2Plus1>> S2(1);
-  std::vector<std::array<float, kFftLengthBy2Plus1>> N2(1, {0.f});
+  std::vector<std::array<float, kFftLengthBy2Plus1>> N2(1, {0.0f});
   for (auto& S2_k : S2) {
-    S2_k.fill(.1f);
+    S2_k.fill(0.1f);
   }
   FftData E;
   FftData Y;
-  E.re.fill(0.f);
-  E.im.fill(0.f);
-  Y.re.fill(0.f);
-  Y.im.fill(0.f);
+  E.re.fill(0.0f);
+  E.im.fill(0.0f);
+  Y.re.fill(0.0f);
+  Y.im.fill(0.0f);
 
   float high_bands_gain;
   AecState aec_state(EchoCanceller3Config{}, 1);
   EXPECT_DEATH(
       SuppressionGain(EchoCanceller3Config{}, DetectOptimization(), 16000, 1)
-          .GetGain(E2, S2, R2, N2,
+          .GetGain(E2, S2, R2, R2_unbounded, N2,
                    RenderSignalAnalyzer((EchoCanceller3Config{})), aec_state,
                    std::vector<std::vector<std::vector<float>>>(
                        3, std::vector<std::vector<float>>(
-                              1, std::vector<float>(kBlockSize, 0.f))),
+                              1, std::vector<float>(kBlockSize, 0.0f))),
                    false, &high_bands_gain, nullptr),
       "");
 }
@@ -67,15 +68,17 @@ TEST(SuppressionGain, BasicGainComputation) {
   float high_bands_gain;
   std::vector<std::array<float, kFftLengthBy2Plus1>> E2(kNumCaptureChannels);
   std::vector<std::array<float, kFftLengthBy2Plus1>> S2(kNumCaptureChannels,
-                                                        {0.f});
+                                                        {0.0f});
   std::vector<std::array<float, kFftLengthBy2Plus1>> Y2(kNumCaptureChannels);
   std::vector<std::array<float, kFftLengthBy2Plus1>> R2(kNumCaptureChannels);
+  std::vector<std::array<float, kFftLengthBy2Plus1>> R2_unbounded(
+      kNumCaptureChannels);
   std::vector<std::array<float, kFftLengthBy2Plus1>> N2(kNumCaptureChannels);
   std::array<float, kFftLengthBy2Plus1> g;
   std::vector<SubtractorOutput> output(kNumCaptureChannels);
   std::vector<std::vector<std::vector<float>>> x(
       kNumBands, std::vector<std::vector<float>>(
-                     kNumRenderChannels, std::vector<float>(kBlockSize, 0.f)));
+                     kNumRenderChannels, std::vector<float>(kBlockSize, 0.0f)));
   EchoCanceller3Config config;
   AecState aec_state(config, kNumCaptureChannels);
   ApmDataDumper data_dumper(42);
@@ -89,8 +92,9 @@ TEST(SuppressionGain, BasicGainComputation) {
   for (size_t ch = 0; ch < kNumCaptureChannels; ++ch) {
     E2[ch].fill(10.f);
     Y2[ch].fill(10.f);
-    R2[ch].fill(.1f);
-    N2[ch].fill(100.f);
+    R2[ch].fill(0.1f);
+    R2_unbounded[ch].fill(0.1f);
+    N2[ch].fill(100.0f);
   }
   for (auto& subtractor_output : output) {
     subtractor_output.Reset();
@@ -107,17 +111,18 @@ TEST(SuppressionGain, BasicGainComputation) {
     aec_state.Update(delay_estimate, subtractor.FilterFrequencyResponses(),
                      subtractor.FilterImpulseResponses(),
                      *render_delay_buffer->GetRenderBuffer(), E2, Y2, output);
-    suppression_gain.GetGain(E2, S2, R2, N2, analyzer, aec_state, x, false,
-                             &high_bands_gain, &g);
+    suppression_gain.GetGain(E2, S2, R2, R2_unbounded, N2, analyzer, aec_state,
+                             x, false, &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
-                [](float a) { EXPECT_NEAR(1.f, a, 0.001); });
+                [](float a) { EXPECT_NEAR(1.0f, a, 0.001f); });
 
   // Ensure that a strong nearend is detected to mask any echoes.
   for (size_t ch = 0; ch < kNumCaptureChannels; ++ch) {
     E2[ch].fill(100.f);
     Y2[ch].fill(100.f);
     R2[ch].fill(0.1f);
+    R2_unbounded[ch].fill(0.1f);
     S2[ch].fill(0.1f);
     N2[ch].fill(0.f);
   }
@@ -126,22 +131,23 @@ TEST(SuppressionGain, BasicGainComputation) {
     aec_state.Update(delay_estimate, subtractor.FilterFrequencyResponses(),
                      subtractor.FilterImpulseResponses(),
                      *render_delay_buffer->GetRenderBuffer(), E2, Y2, output);
-    suppression_gain.GetGain(E2, S2, R2, N2, analyzer, aec_state, x, false,
-                             &high_bands_gain, &g);
+    suppression_gain.GetGain(E2, S2, R2, R2_unbounded, N2, analyzer, aec_state,
+                             x, false, &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
-                [](float a) { EXPECT_NEAR(1.f, a, 0.001); });
+                [](float a) { EXPECT_NEAR(1.0f, a, 0.001f); });
 
   // Add a strong echo to one of the channels and ensure that it is suppressed.
-  E2[1].fill(1000000000.f);
-  R2[1].fill(10000000000000.f);
+  E2[1].fill(1000000000.0f);
+  R2[1].fill(10000000000000.0f);
+  R2_unbounded[1].fill(10000000000000.0f);
 
   for (int k = 0; k < 10; ++k) {
-    suppression_gain.GetGain(E2, S2, R2, N2, analyzer, aec_state, x, false,
-                             &high_bands_gain, &g);
+    suppression_gain.GetGain(E2, S2, R2, R2_unbounded, N2, analyzer, aec_state,
+                             x, false, &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
-                [](float a) { EXPECT_NEAR(0.f, a, 0.001); });
+                [](float a) { EXPECT_NEAR(0.0f, a, 0.001f); });
 }
 
 }  // namespace aec3

@@ -88,13 +88,12 @@ absl::optional<SackChunk> SackChunk::Parse(rtc::ArrayView<const uint8_t> data) {
     offset += kGapAckBlockSize;
   }
 
-  std::vector<TSN> duplicate_tsns;
-  duplicate_tsns.reserve(nbr_of_gap_blocks);
+  std::set<TSN> duplicate_tsns;
   for (int i = 0; i < nbr_of_dup_tsns; ++i) {
     BoundedByteReader<kDupTsnBlockSize> sub_reader =
         reader->sub_reader<kDupTsnBlockSize>(offset);
 
-    duplicate_tsns.push_back(TSN(sub_reader.Load32<0>()));
+    duplicate_tsns.insert(TSN(sub_reader.Load32<0>()));
     offset += kDupTsnBlockSize;
   }
   RTC_DCHECK(offset == reader->variable_data_size());
@@ -124,11 +123,11 @@ void SackChunk::SerializeTo(std::vector<uint8_t>& out) const {
     offset += kGapAckBlockSize;
   }
 
-  for (int i = 0; i < nbr_of_dup_tsns; ++i) {
+  for (TSN tsn : duplicate_tsns_) {
     BoundedByteWriter<kDupTsnBlockSize> sub_writer =
         writer.sub_writer<kDupTsnBlockSize>(offset);
 
-    sub_writer.Store32<0>(*duplicate_tsns_[i]);
+    sub_writer.Store32<0>(*tsn);
     offset += kDupTsnBlockSize;
   }
 

@@ -66,12 +66,12 @@ class FlexfecReceiverTest : public ::testing::Test {
             ForwardErrorCorrection::CreateFlexfec(kFlexfecSsrc, kMediaSsrc)),
         packet_generator_(kMediaSsrc, kFlexfecSsrc) {}
 
-  // Generates |num_media_packets| corresponding to a single frame.
+  // Generates `num_media_packets` corresponding to a single frame.
   void PacketizeFrame(size_t num_media_packets,
                       size_t frame_offset,
                       PacketList* media_packets);
 
-  // Generates |num_fec_packets| FEC packets, given |media_packets|.
+  // Generates `num_fec_packets` FEC packets, given `media_packets`.
   std::list<Packet*> EncodeFec(const PacketList& media_packets,
                                size_t num_fec_packets);
 
@@ -470,7 +470,7 @@ TEST_F(FlexfecReceiverTest, SurvivesOldRecoveredPacketBeingReinserted) {
     FlexfecReceiver* receiver_;
   } loopback_recovered_packet_receiver;
 
-  // Feed recovered packets back into |receiver|.
+  // Feed recovered packets back into `receiver`.
   FlexfecReceiver receiver(Clock::GetRealTimeClock(), kFlexfecSsrc, kMediaSsrc,
                            &loopback_recovered_packet_receiver);
   loopback_recovered_packet_receiver.SetReceiver(&receiver);
@@ -594,7 +594,7 @@ TEST_F(FlexfecReceiverTest, RecoveryCallbackDoesNotLoopInfinitely) {
     bool deep_recursion_;
   } loopback_recovered_packet_receiver;
 
-  // Feed recovered packets back into |receiver|.
+  // Feed recovered packets back into `receiver`.
   FlexfecReceiver receiver(Clock::GetRealTimeClock(), kFlexfecSsrc, kMediaSsrc,
                            &loopback_recovered_packet_receiver);
   loopback_recovered_packet_receiver.SetReceiver(&receiver);
@@ -670,7 +670,7 @@ TEST_F(FlexfecReceiverTest, DoesNotDecodeWrappedMediaSequenceUsingOldFec) {
     PacketizeFrame(kNumMediaPacketsPerFrame, i, &media_packets);
   }
 
-  // Receive first (|kFirstFrameNumMediaPackets| + 192) media packets.
+  // Receive first (`kFirstFrameNumMediaPackets` + 192) media packets.
   // Simulate an old FEC packet by separating it from its encoded media
   // packets by at least 192 packets.
   auto media_it = media_packets.begin();

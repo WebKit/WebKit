@@ -129,6 +129,12 @@ TEST_F(JsepSessionDescriptionTest, CloneDefault) {
   EXPECT_EQ(jsep_desc_->session_version(), new_desc->session_version());
 }
 
+TEST_F(JsepSessionDescriptionTest, CloneRollback) {
+  auto jsep_desc = std::make_unique<JsepSessionDescription>(SdpType::kRollback);
+  auto new_desc = jsep_desc->Clone();
+  EXPECT_EQ(jsep_desc->type(), new_desc->type());
+}
+
 TEST_F(JsepSessionDescriptionTest, CloneWithCandidates) {
   cricket::Candidate candidate_v4(
       cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",

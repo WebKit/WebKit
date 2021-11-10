@@ -1544,7 +1544,7 @@ TEST_F(TestJitterBufferNack, NackTooOldPackets) {
   EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   EXPECT_TRUE(DecodeCompleteFrame());
 
-  // Drop one frame and insert |kNackHistoryLength| to trigger NACKing a too
+  // Drop one frame and insert `kNackHistoryLength` to trigger NACKing a too
   // old packet.
   DropFrame(1);
   // Insert a frame which should trigger a recycle until the next key frame.
@@ -1597,7 +1597,7 @@ TEST_F(TestJitterBufferNack, NackListFull) {
   EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   EXPECT_TRUE(DecodeCompleteFrame());
 
-  // Generate and drop |kNackHistoryLength| packets to fill the NACK list.
+  // Generate and drop `kNackHistoryLength` packets to fill the NACK list.
   DropFrame(max_nack_list_size_ + 1);
   // Insert a frame which should trigger a recycle until the next key frame.
   EXPECT_EQ(kFlushIndicator, InsertFrame(VideoFrameType::kVideoFrameDelta));

@@ -202,25 +202,6 @@ TEST(FifoBufferTest, TestAll) {
   // Check that the stream is now empty
   EXPECT_EQ(SR_BLOCK, buf.Read(out, kSize, &bytes, nullptr));
 
-  // Try growing the buffer
-  EXPECT_EQ(SR_SUCCESS, buf.Write(in, kSize, &bytes, nullptr));
-  EXPECT_EQ(kSize, bytes);
-  EXPECT_TRUE(buf.SetCapacity(kSize * 2));
-  EXPECT_EQ(SR_SUCCESS, buf.Write(in + kSize, kSize, &bytes, nullptr));
-  EXPECT_EQ(kSize, bytes);
-  EXPECT_EQ(SR_SUCCESS, buf.Read(out, kSize * 2, &bytes, nullptr));
-  EXPECT_EQ(kSize * 2, bytes);
-  EXPECT_EQ(0, memcmp(in, out, kSize * 2));
-
-  // Try shrinking the buffer
-  EXPECT_EQ(SR_SUCCESS, buf.Write(in, kSize, &bytes, nullptr));
-  EXPECT_EQ(kSize, bytes);
-  EXPECT_TRUE(buf.SetCapacity(kSize));
-  EXPECT_EQ(SR_BLOCK, buf.Write(in, kSize, &bytes, nullptr));
-  EXPECT_EQ(SR_SUCCESS, buf.Read(out, kSize, &bytes, nullptr));
-  EXPECT_EQ(kSize, bytes);
-  EXPECT_EQ(0, memcmp(in, out, kSize));
-
   // Write to the stream, close it, read the remaining bytes
   EXPECT_EQ(SR_SUCCESS, buf.Write(in, kSize / 2, &bytes, nullptr));
   buf.Close();
@@ -238,55 +219,6 @@ TEST(FifoBufferTest, FullBufferCheck) {
   size_t free;
   EXPECT_TRUE(buff.GetWriteBuffer(&free) != nullptr);
   EXPECT_EQ(0U, free);
-}
-
-TEST(FifoBufferTest, WriteOffsetAndReadOffset) {
-  const size_t kSize = 16;
-  const char in[kSize * 2 + 1] = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
-  char out[kSize * 2];
-  FifoBuffer buf(kSize);
-
-  // Write 14 bytes.
-  EXPECT_EQ(SR_SUCCESS, buf.Write(in, 14, nullptr, nullptr));
-
-  // Make sure data is in |buf|.
-  size_t buffered;
-  EXPECT_TRUE(buf.GetBuffered(&buffered));
-  EXPECT_EQ(14u, buffered);
-
-  // Read 10 bytes.
-  buf.ConsumeReadData(10);
-
-  // There should be now 12 bytes of available space.
-  size_t remaining;
-  EXPECT_TRUE(buf.GetWriteRemaining(&remaining));
-  EXPECT_EQ(12u, remaining);
-
-  // Write at offset 12, this should fail.
-  EXPECT_EQ(SR_BLOCK, buf.WriteOffset(in, 10, 12, nullptr));
-
-  // Write 8 bytes at offset 4, this wraps around the buffer.
-  EXPECT_EQ(SR_SUCCESS, buf.WriteOffset(in, 8, 4, nullptr));
-
-  // Number of available space remains the same until we call
-  // ConsumeWriteBuffer().
-  EXPECT_TRUE(buf.GetWriteRemaining(&remaining));
-  EXPECT_EQ(12u, remaining);
-  buf.ConsumeWriteBuffer(12);
-
-  // There's 4 bytes bypassed and 4 bytes no read so skip them and verify the
-  // 8 bytes written.
-  size_t read;
-  EXPECT_EQ(SR_SUCCESS, buf.ReadOffset(out, 8, 8, &read));
-  EXPECT_EQ(8u, read);
-  EXPECT_EQ(0, memcmp(out, in, 8));
-
-  // There should still be 16 bytes available for reading.
-  EXPECT_TRUE(buf.GetBuffered(&buffered));
-  EXPECT_EQ(16u, buffered);
-
-  // Read at offset 16, this should fail since we don't have that much data.
-  EXPECT_EQ(SR_BLOCK, buf.ReadOffset(out, 10, 16, nullptr));
 }
 
 }  // namespace rtc

@@ -76,7 +76,7 @@ class TCPPort : public Port {
              bool payload) override;
 
   // Accepts incoming TCP connection.
-  void OnNewConnection(rtc::AsyncPacketSocket* socket,
+  void OnNewConnection(rtc::AsyncListenSocket* socket,
                        rtc::AsyncPacketSocket* new_socket);
 
  private:
@@ -102,11 +102,8 @@ class TCPPort : public Port {
 
   void OnReadyToSend(rtc::AsyncPacketSocket* socket);
 
-  void OnAddressReady(rtc::AsyncPacketSocket* socket,
-                      const rtc::SocketAddress& address);
-
   bool allow_listen_;
-  rtc::AsyncPacketSocket* socket_;
+  std::unique_ptr<rtc::AsyncListenSocket> listen_socket_;
   int error_;
   std::list<Incoming> incoming_;
 

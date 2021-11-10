@@ -7,13 +7,12 @@
 # tree. An additional intellectual property rights grant can be found
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
-"""WebRTC iOS FAT libraries build script.
+"""WebRTC iOS XCFramework build script.
 Each architecture is compiled separately before being merged together.
 By default, the library is created in out_ios_libs/. (Change with -o.)
 """
 
 import argparse
-import distutils.dir_util
 import logging
 import os
 import shutil
@@ -29,9 +28,22 @@ import find_depot_tools
 
 SDK_OUTPUT_DIR = os.path.join(SRC_DIR, 'out_ios_libs')
 SDK_FRAMEWORK_NAME = 'WebRTC.framework'
+SDK_DSYM_NAME = 'WebRTC.dSYM'
+SDK_XCFRAMEWORK_NAME = 'WebRTC.xcframework'
 
-DEFAULT_ARCHS = ENABLED_ARCHS = ['arm64', 'arm', 'x64', 'x86']
-IOS_DEPLOYMENT_TARGET = '10.0'
+ENABLED_ARCHS = [
+    'device:arm64', 'simulator:arm64', 'simulator:x64',
+    'catalyst:arm64', 'catalyst:x64',
+    'arm64', 'x64'
+]
+DEFAULT_ARCHS = [
+    'device:arm64', 'simulator:arm64', 'simulator:x64'
+]
+IOS_DEPLOYMENT_TARGET = {
+    'device': '12.0',
+    'simulator': '12.0',
+    'catalyst': '14.0'
+}
 LIBVPX_BUILD_VP9 = False
 
 sys.path.append(os.path.join(SCRIPT_DIR, '..', 'libs'))
@@ -114,19 +126,40 @@ def _CleanTemporary(output_dir, architectures):
     if os.path.isdir(output_dir):
         logging.info('Removing temporary build files.')
         for arch in architectures:
-            arch_lib_path = os.path.join(output_dir, arch + '_libs')
+            arch_lib_path = os.path.join(output_dir, arch)
             if os.path.isdir(arch_lib_path):
                 shutil.rmtree(arch_lib_path)
 
 
-def BuildWebRTC(output_dir, target_arch, flavor, gn_target_name,
-                ios_deployment_target, libvpx_build_vp9, use_bitcode, use_goma,
-                extra_gn_args):
-    output_dir = os.path.join(output_dir, target_arch + '_libs')
+def _ParseArchitecture(architectures):
+    result = dict()
+    for arch in architectures:
+        if ":" in arch:
+            target_environment, target_cpu = arch.split(":")
+        else:
+            logging.warning('The environment for build is not specified.')
+            logging.warning('It is assumed based on cpu type.')
+            logging.warning('See crbug.com/1138425 for more details.')
+            if arch == "x64":
+                target_environment = "simulator"
+            else:
+                target_environment = "device"
+            target_cpu = arch
+        archs = result.get(target_environment)
+        if archs is None:
+            result[target_environment] = {target_cpu}
+        else:
+            archs.add(target_cpu)
+
+    return result
+
+
+def BuildWebRTC(output_dir, target_environment, target_arch, flavor,
+                gn_target_name, ios_deployment_target, libvpx_build_vp9,
+                use_bitcode, use_goma, extra_gn_args):
     gn_args = [
         'target_os="ios"', 'ios_enable_code_signing=false',
-        'use_xcode_clang=true', 'is_component_build=false',
-        'rtc_include_tests=false',
+        'is_component_build=false', 'rtc_include_tests=false',
     ]
 
     # Add flavor option.
@@ -136,6 +169,8 @@ def BuildWebRTC(output_dir, target_arch, flavor, gn_target_name,
         gn_args.append('is_debug=false')
     else:
         raise ValueError('Unexpected flavor type: %s' % flavor)
+
+    gn_args.append('target_environment="%s"' % target_environment)
 
     gn_args.append('target_cpu="%s"' % target_arch)
 
@@ -147,7 +182,7 @@ def BuildWebRTC(output_dir, target_arch, flavor, gn_target_name,
     gn_args.append('enable_ios_bitcode=' +
                    ('true' if use_bitcode else 'false'))
     gn_args.append('use_goma=' + ('true' if use_goma else 'false'))
-    gn_args.append('rtc_enable_symbol_export=true')
+    gn_args.append('rtc_enable_objc_symbol_export=true')
 
     args_string = ' '.join(gn_args + extra_gn_args)
     logging.info('Building WebRTC with args: %s', args_string)
@@ -182,11 +217,14 @@ def main():
         _CleanArtifacts(args.output_dir)
         return 0
 
-    architectures = list(args.arch)
+    # architectures is typed as Dict[str, Set[str]],
+    # where key is for the environment (device or simulator)
+    # and value is for the cpu type.
+    architectures = _ParseArchitecture(args.arch)
     gn_args = args.extra_gn_args
 
     if args.purify:
-        _CleanTemporary(args.output_dir, architectures)
+        _CleanTemporary(args.output_dir, architectures.keys())
         return 0
 
     gn_target_name = 'framework_objc'
@@ -195,78 +233,117 @@ def main():
     gn_args.append('enable_stripping=true')
 
     # Build all architectures.
-    for arch in architectures:
-        BuildWebRTC(args.output_dir, arch, args.build_config, gn_target_name,
-                    IOS_DEPLOYMENT_TARGET, LIBVPX_BUILD_VP9, args.bitcode,
-                    args.use_goma, gn_args)
+    framework_paths = []
+    all_lib_paths = []
+    for (environment, archs) in architectures.items():
+        framework_path = os.path.join(args.output_dir, environment)
+        framework_paths.append(framework_path)
+        lib_paths = []
+        for arch in archs:
+            lib_path = os.path.join(framework_path, arch + '_libs')
+            lib_paths.append(lib_path)
+            BuildWebRTC(lib_path, environment, arch, args.build_config,
+                        gn_target_name, IOS_DEPLOYMENT_TARGET[environment],
+                        LIBVPX_BUILD_VP9, args.bitcode, args.use_goma, gn_args)
+        all_lib_paths.extend(lib_paths)
 
-    # Create FAT archive.
-    lib_paths = [
-        os.path.join(args.output_dir, arch + '_libs') for arch in architectures
-    ]
-
-    # Combine the slices.
-    dylib_path = os.path.join(SDK_FRAMEWORK_NAME, 'WebRTC')
-    # Dylibs will be combined, all other files are the same across archs.
-    # Use distutils instead of shutil to support merging folders.
-    distutils.dir_util.copy_tree(
-        os.path.join(lib_paths[0], SDK_FRAMEWORK_NAME),
-        os.path.join(args.output_dir, SDK_FRAMEWORK_NAME))
-    logging.info('Merging framework slices.')
-    dylib_paths = [os.path.join(path, dylib_path) for path in lib_paths]
-    out_dylib_path = os.path.join(args.output_dir, dylib_path)
-    try:
-        os.remove(out_dylib_path)
-    except OSError:
-        pass
-    cmd = ['lipo'] + dylib_paths + ['-create', '-output', out_dylib_path]
-    _RunCommand(cmd)
-
-    # Merge the dSYM slices.
-    lib_dsym_dir_path = os.path.join(lib_paths[0], 'WebRTC.dSYM')
-    if os.path.isdir(lib_dsym_dir_path):
-        distutils.dir_util.copy_tree(
-            lib_dsym_dir_path, os.path.join(args.output_dir, 'WebRTC.dSYM'))
-        logging.info('Merging dSYM slices.')
-        dsym_path = os.path.join('WebRTC.dSYM', 'Contents', 'Resources',
-                                 'DWARF', 'WebRTC')
-        lib_dsym_paths = [os.path.join(path, dsym_path) for path in lib_paths]
-        out_dsym_path = os.path.join(args.output_dir, dsym_path)
+        # Combine the slices.
+        dylib_path = os.path.join(SDK_FRAMEWORK_NAME, 'WebRTC')
+        # Dylibs will be combined, all other files are the same across archs.
+        shutil.rmtree(
+            os.path.join(framework_path, SDK_FRAMEWORK_NAME),
+            ignore_errors=True)
+        shutil.copytree(
+            os.path.join(lib_paths[0], SDK_FRAMEWORK_NAME),
+            os.path.join(framework_path, SDK_FRAMEWORK_NAME),
+            symlinks=True)
+        logging.info('Merging framework slices for %s.', environment)
+        dylib_paths = [os.path.join(path, dylib_path) for path in lib_paths]
+        out_dylib_path = os.path.join(framework_path, dylib_path)
+        if os.path.islink(out_dylib_path):
+            out_dylib_path = os.path.join(os.path.dirname(out_dylib_path),
+                                          os.readlink(out_dylib_path))
         try:
-            os.remove(out_dsym_path)
+            os.remove(out_dylib_path)
         except OSError:
             pass
-        cmd = ['lipo'] + lib_dsym_paths + ['-create', '-output', out_dsym_path]
+        cmd = ['lipo'] + dylib_paths + ['-create', '-output', out_dylib_path]
         _RunCommand(cmd)
 
-        # Generate the license file.
-        ninja_dirs = [
-            os.path.join(args.output_dir, arch + '_libs')
-            for arch in architectures
-        ]
-        gn_target_full_name = '//sdk:' + gn_target_name
-        builder = LicenseBuilder(ninja_dirs, [gn_target_full_name])
-        builder.GenerateLicenseText(
-            os.path.join(args.output_dir, SDK_FRAMEWORK_NAME))
+        # Merge the dSYM slices.
+        lib_dsym_dir_path = os.path.join(lib_paths[0], SDK_DSYM_NAME)
+        if os.path.isdir(lib_dsym_dir_path):
+            shutil.rmtree(
+                os.path.join(framework_path, SDK_DSYM_NAME),
+                ignore_errors=True)
+            shutil.copytree(
+                lib_dsym_dir_path, os.path.join(framework_path, SDK_DSYM_NAME))
+            logging.info('Merging dSYM slices.')
+            dsym_path = os.path.join(SDK_DSYM_NAME, 'Contents', 'Resources',
+                                     'DWARF', 'WebRTC')
+            lib_dsym_paths = [
+                os.path.join(path, dsym_path) for path in lib_paths
+            ]
+            out_dsym_path = os.path.join(framework_path, dsym_path)
+            try:
+                os.remove(out_dsym_path)
+            except OSError:
+                pass
+            cmd = ['lipo'
+                   ] + lib_dsym_paths + ['-create', '-output', out_dsym_path]
+            _RunCommand(cmd)
 
-        # Modify the version number.
-        # Format should be <Branch cut MXX>.<Hotfix #>.<Rev #>.
-        # e.g. 55.0.14986 means branch cut 55, no hotfixes, and revision 14986.
-        infoplist_path = os.path.join(args.output_dir, SDK_FRAMEWORK_NAME,
-                                      'Info.plist')
-        cmd = [
-            'PlistBuddy', '-c', 'Print :CFBundleShortVersionString',
-            infoplist_path
+            # Check for Mac-style WebRTC.framework/Resources/ (for Catalyst)...
+            resources_dir = os.path.join(framework_path, SDK_FRAMEWORK_NAME,
+                                        'Resources')
+            if not os.path.exists(resources_dir):
+                # ...then fall back to iOS-style WebRTC.framework/
+                resources_dir = os.path.dirname(resources_dir)
+
+            # Modify the version number.
+            # Format should be <Branch cut MXX>.<Hotfix #>.<Rev #>.
+            # e.g. 55.0.14986 means
+            # branch cut 55, no hotfixes, and revision 14986.
+            infoplist_path = os.path.join(resources_dir, 'Info.plist')
+            cmd = [
+                'PlistBuddy', '-c', 'Print :CFBundleShortVersionString',
+                infoplist_path
+            ]
+            major_minor = subprocess.check_output(cmd).strip()
+            version_number = '%s.%s' % (major_minor, args.revision)
+            logging.info('Substituting revision number: %s', version_number)
+            cmd = [
+                'PlistBuddy', '-c', 'Set :CFBundleVersion ' + version_number,
+                infoplist_path
+            ]
+            _RunCommand(cmd)
+            _RunCommand(['plutil', '-convert', 'binary1', infoplist_path])
+
+    xcframework_dir = os.path.join(args.output_dir, SDK_XCFRAMEWORK_NAME)
+    if os.path.isdir(xcframework_dir):
+        shutil.rmtree(xcframework_dir)
+
+    logging.info('Creating xcframework.')
+    cmd = ['xcodebuild', '-create-xcframework', '-output', xcframework_dir]
+
+    # Apparently, xcodebuild needs absolute paths for input arguments
+    for framework_path in framework_paths:
+        cmd += [
+            '-framework',
+            os.path.abspath(os.path.join(framework_path, SDK_FRAMEWORK_NAME)),
         ]
-        major_minor = subprocess.check_output(cmd).strip()
-        version_number = '%s.%s' % (major_minor, args.revision)
-        logging.info('Substituting revision number: %s', version_number)
-        cmd = [
-            'PlistBuddy', '-c', 'Set :CFBundleVersion ' + version_number,
-            infoplist_path
-        ]
-        _RunCommand(cmd)
-        _RunCommand(['plutil', '-convert', 'binary1', infoplist_path])
+        dsym_full_path = os.path.join(framework_path, SDK_DSYM_NAME)
+        if os.path.exists(dsym_full_path):
+            cmd += ['-debug-symbols', os.path.abspath(dsym_full_path)]
+
+    _RunCommand(cmd)
+
+    # Generate the license file.
+    logging.info('Generate license file.')
+    gn_target_full_name = '//sdk:' + gn_target_name
+    builder = LicenseBuilder(all_lib_paths, [gn_target_full_name])
+    builder.GenerateLicenseText(
+        os.path.join(args.output_dir, SDK_XCFRAMEWORK_NAME))
 
     logging.info('Done.')
     return 0

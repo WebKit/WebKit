@@ -39,4 +39,29 @@ TEST(string_toutf, Empty) {
 
 #endif  // WEBRTC_WIN
 
+TEST(CompileTimeString, MakeActsLikeAString) {
+  EXPECT_STREQ(MakeCompileTimeString("abc123"), "abc123");
+}
+
+TEST(CompileTimeString, ConvertibleToStdString) {
+  EXPECT_EQ(std::string(MakeCompileTimeString("abab")), "abab");
+}
+
+namespace detail {
+constexpr bool StringEquals(const char* a, const char* b) {
+  while (*a && *a == *b)
+    a++, b++;
+  return *a == *b;
+}
+}  // namespace detail
+
+static_assert(detail::StringEquals(MakeCompileTimeString("handellm"),
+                                   "handellm"),
+              "String should initialize.");
+
+static_assert(detail::StringEquals(MakeCompileTimeString("abc123").Concat(
+                                       MakeCompileTimeString("def456ghi")),
+                                   "abc123def456ghi"),
+              "Strings should concatenate.");
+
 }  // namespace rtc

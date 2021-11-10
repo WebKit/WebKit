@@ -1,5 +1,15 @@
 2021-11-10  Youenn Fablet  <youenn@apple.com>
 
+        Update libwebrtc to M96
+        https://bugs.webkit.org/show_bug.cgi?id=232873
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+
+2021-11-10  Youenn Fablet  <youenn@apple.com>
+
         [iOS] Add audio gain in case category switches to PlayAndRecord
         https://bugs.webkit.org/show_bug.cgi?id=232941
         <rdar://85250248>

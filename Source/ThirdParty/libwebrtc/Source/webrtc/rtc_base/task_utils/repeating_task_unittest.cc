@@ -276,4 +276,22 @@ TEST(RepeatingTaskTest, ClockIntegration) {
   handle.Stop();
 }
 
+TEST(RepeatingTaskTest, CanBeStoppedAfterTaskQueueDeletedTheRepeatingTask) {
+  std::unique_ptr<QueuedTask> repeating_task;
+
+  MockTaskQueue task_queue;
+  EXPECT_CALL(task_queue, PostDelayedTask)
+      .WillOnce([&](std::unique_ptr<QueuedTask> task, uint32_t milliseconds) {
+        repeating_task = std::move(task);
+      });
+
+  RepeatingTaskHandle handle =
+      RepeatingTaskHandle::DelayedStart(&task_queue, TimeDelta::Millis(100),
+                                        [] { return TimeDelta::Millis(100); });
+
+  // shutdown task queue: delete all pending tasks and run 'regular' task.
+  repeating_task = nullptr;
+  handle.Stop();
+}
+
 }  // namespace webrtc

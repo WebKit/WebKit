@@ -12,6 +12,7 @@
 #include <stddef.h>
 
 #include <cstdint>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -48,7 +49,7 @@ class SackChunk : public Chunk, public TLVTrait<SackChunkConfig> {
   SackChunk(TSN cumulative_tsn_ack,
             uint32_t a_rwnd,
             std::vector<GapAckBlock> gap_ack_blocks,
-            std::vector<TSN> duplicate_tsns)
+            std::set<TSN> duplicate_tsns)
       : cumulative_tsn_ack_(cumulative_tsn_ack),
         a_rwnd_(a_rwnd),
         gap_ack_blocks_(std::move(gap_ack_blocks)),
@@ -63,7 +64,7 @@ class SackChunk : public Chunk, public TLVTrait<SackChunkConfig> {
   rtc::ArrayView<const GapAckBlock> gap_ack_blocks() const {
     return gap_ack_blocks_;
   }
-  rtc::ArrayView<const TSN> duplicate_tsns() const { return duplicate_tsns_; }
+  const std::set<TSN>& duplicate_tsns() const { return duplicate_tsns_; }
 
  private:
   static constexpr size_t kGapAckBlockSize = 4;
@@ -72,7 +73,7 @@ class SackChunk : public Chunk, public TLVTrait<SackChunkConfig> {
   const TSN cumulative_tsn_ack_;
   const uint32_t a_rwnd_;
   std::vector<GapAckBlock> gap_ack_blocks_;
-  std::vector<TSN> duplicate_tsns_;
+  std::set<TSN> duplicate_tsns_;
 };
 }  // namespace dcsctp
 

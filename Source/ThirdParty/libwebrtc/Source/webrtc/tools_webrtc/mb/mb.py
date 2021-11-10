@@ -96,6 +96,9 @@ class MetaBuildWrapper(object):
                         default=self.default_isolate_map,
                         help='path to isolate map file '
                              '(default is %(default)s)')
+      subp.add_argument('-r', '--realm', default='webrtc:try',
+                        help='optional LUCI realm to use (for '
+                             'example when triggering tasks on Swarming)')
       subp.add_argument('-g', '--goma-dir',
                         help='path to goma directory')
       subp.add_argument('--android-version-code',
@@ -364,12 +367,7 @@ class MetaBuildWrapper(object):
       if out:
         self.Print(out, end='')
       if err:
-        # The swarming client will return an exit code of 2 (via
-        # argparse.ArgumentParser.error()) and print a message to indicate
-        # that auth failed, so we have to parse the message to check.
-        if (ret == 2 and 'Please login to' in err):
-          err = err.replace(' auth.py', ' tools/swarming_client/auth.py')
-          self.Print(err, end='', file=sys.stderr)
+        self.Print(err, end='', file=sys.stderr)
 
       return ret
 
@@ -395,6 +393,8 @@ class MetaBuildWrapper(object):
       cmd = [
           self.PathJoin('tools', 'luci-go', 'swarming'),
           'trigger',
+          '-realm',
+          self.args.realm,
           '-digest',
           cas_digest,
           '-server',
@@ -911,9 +911,8 @@ class MetaBuildWrapper(object):
         cmdline.append('../../tools_webrtc/ensure_webcam_is_running.py')
         extra_files.append('../../tools_webrtc/ensure_webcam_is_running.py')
 
-      # This needs to mirror the settings in //build/config/ui.gni:
-      # use_x11 = is_linux && !use_ozone.
-      use_x11 = is_linux and not 'use_ozone=true' in vals['gn_args']
+      # is_linux uses use_ozone and x11 by default.
+      use_x11 = is_linux
 
       xvfb = use_x11 and test_type == 'windowed_test_launcher'
       if xvfb:

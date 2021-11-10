@@ -37,7 +37,7 @@ bool GetScreenList(DesktopCapturer::SourceList* screens,
     device.cb = sizeof(device);
     enum_result = EnumDisplayDevicesW(NULL, device_index, &device, 0);
 
-    // |enum_result| is 0 if we have enumerated all devices.
+    // `enum_result` is 0 if we have enumerated all devices.
     if (!enum_result) {
       break;
     }
@@ -57,7 +57,7 @@ bool GetScreenList(DesktopCapturer::SourceList* screens,
 
 bool GetHmonitorFromDeviceIndex(const DesktopCapturer::SourceId device_index,
                                 HMONITOR* hmonitor) {
-  // A device index of |kFullDesktopScreenId| or -1 represents all screens, an
+  // A device index of `kFullDesktopScreenId` or -1 represents all screens, an
   // HMONITOR of 0 indicates the same.
   if (device_index == kFullDesktopScreenId) {
     *hmonitor = 0;

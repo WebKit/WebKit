@@ -13,6 +13,8 @@
 #include <ctype.h>
 #include <stddef.h>
 
+#include <string>
+
 namespace cricket {
 
 // There are multiple variants of the RTP protocol stack, including
@@ -26,17 +28,17 @@ const char kMediaProtocolDtlsSctp[] = "DTLS/SCTP";
 const char kMediaProtocolUdpDtlsSctp[] = "UDP/DTLS/SCTP";
 const char kMediaProtocolTcpDtlsSctp[] = "TCP/DTLS/SCTP";
 
-bool IsDtlsSctp(const std::string& protocol) {
+bool IsDtlsSctp(absl::string_view protocol) {
   return protocol == kMediaProtocolDtlsSctp ||
          protocol == kMediaProtocolUdpDtlsSctp ||
          protocol == kMediaProtocolTcpDtlsSctp;
 }
 
-bool IsPlainSctp(const std::string& protocol) {
+bool IsPlainSctp(absl::string_view protocol) {
   return protocol == kMediaProtocolSctp;
 }
 
-bool IsRtpProtocol(const std::string& protocol) {
+bool IsRtpProtocol(absl::string_view protocol) {
   if (protocol.empty()) {
     return true;
   }
@@ -51,7 +53,7 @@ bool IsRtpProtocol(const std::string& protocol) {
   return false;
 }
 
-bool IsSctpProtocol(const std::string& protocol) {
+bool IsSctpProtocol(absl::string_view protocol) {
   return IsPlainSctp(protocol) || IsDtlsSctp(protocol);
 }
 

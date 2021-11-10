@@ -25,16 +25,21 @@ std::unique_ptr<DesktopFrame> CreateTestFrame() {
 
 TEST(CroppedDesktopFrameTest, DoNotCreateWrapperIfSizeIsNotChanged) {
   std::unique_ptr<DesktopFrame> original = CreateTestFrame();
-  // owned by |original| and CroppedDesktopFrame.
+  // owned by `original` and CroppedDesktopFrame.
   DesktopFrame* raw_original = original.get();
   std::unique_ptr<DesktopFrame> cropped = CreateCroppedDesktopFrame(
       std::move(original), DesktopRect::MakeWH(10, 20));
   ASSERT_EQ(cropped.get(), raw_original);
 }
 
-TEST(CroppedDesktopFrameTest, ReturnNullptrIfSizeIsNotSufficient) {
-  ASSERT_EQ(nullptr, CreateCroppedDesktopFrame(CreateTestFrame(),
-                                               DesktopRect::MakeWH(11, 10)));
+TEST(CroppedDesktopFrameTest, CropWhenPartiallyOutOfBounds) {
+  std::unique_ptr<DesktopFrame> cropped =
+      CreateCroppedDesktopFrame(CreateTestFrame(), DesktopRect::MakeWH(11, 10));
+  ASSERT_NE(nullptr, cropped);
+  ASSERT_EQ(cropped->size().width(), 10);
+  ASSERT_EQ(cropped->size().height(), 10);
+  ASSERT_EQ(cropped->top_left().x(), 0);
+  ASSERT_EQ(cropped->top_left().y(), 0);
 }
 
 TEST(CroppedDesktopFrameTest, ReturnNullIfCropRegionIsOutOfBounds) {

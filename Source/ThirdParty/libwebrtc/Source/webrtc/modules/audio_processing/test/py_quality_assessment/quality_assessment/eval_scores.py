@@ -397,7 +397,7 @@ class TotalHarmonicDistorsionScore(EvaluationScore):
         # TODO(alessiob): Fix or remove if not needed.
         # thd = np.sqrt(np.sum(b_terms[1:]**2)) / b_terms[0]
 
-        # TODO(alessiob): Check the range of |thd_plus_noise| and update the class
+        # TODO(alessiob): Check the range of `thd_plus_noise` and update the class
         # docstring above if accordingly.
         thd_plus_noise = distortion_and_noise / b_terms[0]
 

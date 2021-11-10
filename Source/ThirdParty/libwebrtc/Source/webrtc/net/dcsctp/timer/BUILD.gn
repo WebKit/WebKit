@@ -14,8 +14,9 @@ rtc_library("timer") {
     "../../../rtc_base",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/containers:flat_map",
+    "../../../rtc_base/containers:flat_set",
     "../public:socket",
-    "../public:strong_alias",
     "../public:types",
   ]
   sources = [
@@ -39,7 +40,6 @@ rtc_library("task_queue_timeout") {
     "../../../rtc_base/task_utils:pending_task_safety_flag",
     "../../../rtc_base/task_utils:to_queued_task",
     "../public:socket",
-    "../public:strong_alias",
     "../public:types",
   ]
   sources = [

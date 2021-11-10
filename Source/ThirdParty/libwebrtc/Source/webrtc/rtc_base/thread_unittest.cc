@@ -17,6 +17,7 @@
 #include "rtc_base/async_invoker.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/atomic_ops.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/internal/default_socket_server.h"
@@ -63,7 +64,7 @@ struct TestMessage : public MessageData {
 // Receives on a socket and sends by posting messages.
 class SocketClient : public TestGenerator, public sigslot::has_slots<> {
  public:
-  SocketClient(AsyncSocket* socket,
+  SocketClient(Socket* socket,
                const SocketAddress& addr,
                Thread* post_thread,
                MessageHandler* phandler)
@@ -220,14 +221,13 @@ TEST(ThreadTest, DISABLED_Main) {
 
   // Create the messaging client on its own thread.
   auto th1 = Thread::CreateWithSocketServer();
-  Socket* socket =
-      th1->socketserver()->CreateAsyncSocket(addr.family(), SOCK_DGRAM);
+  Socket* socket = th1->socketserver()->CreateSocket(addr.family(), SOCK_DGRAM);
   MessageClient msg_client(th1.get(), socket);
 
   // Create the socket client on its own thread.
   auto th2 = Thread::CreateWithSocketServer();
-  AsyncSocket* asocket =
-      th2->socketserver()->CreateAsyncSocket(addr.family(), SOCK_DGRAM);
+  Socket* asocket =
+      th2->socketserver()->CreateSocket(addr.family(), SOCK_DGRAM);
   SocketClient sock_client(asocket, addr, th1.get(), &msg_client);
 
   socket->Connect(sock_client.address());
@@ -366,7 +366,7 @@ TEST(ThreadTest, Wrap) {
   ThreadManager::Instance()->SetCurrentThread(current_thread);
 }
 
-#if (!defined(NDEBUG) || defined(DCHECK_ALWAYS_ON))
+#if (!defined(NDEBUG) || RTC_DCHECK_IS_ON)
 TEST(ThreadTest, InvokeToThreadAllowedReturnsTrueWithoutPolicies) {
   // Create and start the thread.
   auto thread1 = Thread::CreateWithSocketServer();
@@ -410,7 +410,7 @@ TEST(ThreadTest, InvokesDisallowedWhenDisallowAllInvokes) {
   Thread* th_main = Thread::Current();
   th_main->ProcessMessages(100);
 }
-#endif  // (!defined(NDEBUG) || defined(DCHECK_ALWAYS_ON))
+#endif  // (!defined(NDEBUG) || RTC_DCHECK_IS_ON)
 
 TEST(ThreadTest, InvokesAllowedByDefault) {
   // Create and start the thread.
@@ -446,7 +446,7 @@ TEST(ThreadTest, Invoke) {
 // not deadlock but crash.
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 TEST(ThreadTest, TwoThreadsInvokeDeathTest) {
-  ::testing::GTEST_FLAG(death_test_style) = "threadsafe";
+  GTEST_FLAG_SET(death_test_style, "threadsafe");
   AutoThread thread;
   Thread* main_thread = Thread::Current();
   auto other_thread = Thread::CreateWithSocketServer();
@@ -457,7 +457,7 @@ TEST(ThreadTest, TwoThreadsInvokeDeathTest) {
 }
 
 TEST(ThreadTest, ThreeThreadsInvokeDeathTest) {
-  ::testing::GTEST_FLAG(death_test_style) = "threadsafe";
+  GTEST_FLAG_SET(death_test_style, "threadsafe");
   AutoThread thread;
   Thread* first = Thread::Current();
 
@@ -511,7 +511,7 @@ TEST(ThreadTest, ThreeThreadsInvoke) {
       thread->Invoke<void>(RTC_FROM_HERE, [out] { Set(out); });
     }
 
-    // Set |out| true and call InvokeSet on |thread|.
+    // Set `out` true and call InvokeSet on `thread`.
     static void SetAndInvokeSet(LockedBool* out,
                                 Thread* thread,
                                 LockedBool* out_inner) {
@@ -519,8 +519,8 @@ TEST(ThreadTest, ThreeThreadsInvoke) {
       InvokeSet(thread, out_inner);
     }
 
-    // Asynchronously invoke SetAndInvokeSet on |thread1| and wait until
-    // |thread1| starts the call.
+    // Asynchronously invoke SetAndInvokeSet on `thread1` and wait until
+    // `thread1` starts the call.
     static void AsyncInvokeSetAndWait(DEPRECATED_AsyncInvoker* invoker,
                                       Thread* thread1,
                                       Thread* thread2,
@@ -842,8 +842,8 @@ TEST_F(AsyncInvokeTest, KillInvokerDuringExecuteWithReentrantInvoke) {
       Thread::Current()->SleepMs(kWaitTimeout);
       invoker.AsyncInvoke<void>(RTC_FROM_HERE, main, reentrant_functor);
     };
-    // This queues a task on |thread| to sleep for |kWaitTimeout| then queue a
-    // task on |main|. But this second queued task should never run, since the
+    // This queues a task on `thread` to sleep for `kWaitTimeout` then queue a
+    // task on `main`. But this second queued task should never run, since the
     // destructor will be entered before it's even invoked.
     invoker.AsyncInvoke<void>(RTC_FROM_HERE, &thread, functor);
     functor_started.Wait(Event::kForever);

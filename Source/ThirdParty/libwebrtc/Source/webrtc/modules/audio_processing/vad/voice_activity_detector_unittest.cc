@@ -133,7 +133,7 @@ TEST(VoiceActivityDetectorTest, Noise16kHzHasLowVoiceProbabilities) {
     vad.ProcessChunk(&data[0], data.size(), kSampleRateHz);
 
     // Before the |vad has enough data to process an ISAC block it will return
-    // the default value, 1.f, which would ruin the |max_probability| value.
+    // the default value, 1.f, which would ruin the `max_probability` value.
     if (i > kNumChunksPerIsacBlock) {
       max_probability = std::max(max_probability, vad.last_voice_probability());
     }
@@ -156,7 +156,7 @@ TEST(VoiceActivityDetectorTest, Noise32kHzHasLowVoiceProbabilities) {
     vad.ProcessChunk(&data[0], data.size(), 2 * kSampleRateHz);
 
     // Before the |vad has enough data to process an ISAC block it will return
-    // the default value, 1.f, which would ruin the |max_probability| value.
+    // the default value, 1.f, which would ruin the `max_probability` value.
     if (i > kNumChunksPerIsacBlock) {
       max_probability = std::max(max_probability, vad.last_voice_probability());
     }

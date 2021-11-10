@@ -29,11 +29,11 @@ class AudioRingBuffer final {
   AudioRingBuffer(size_t channels, size_t max_frames);
   ~AudioRingBuffer();
 
-  // Copies |data| to the buffer and advances the write pointer. |channels| must
+  // Copies `data` to the buffer and advances the write pointer. `channels` must
   // be the same as at creation time.
   void Write(const float* const* data, size_t channels, size_t frames);
 
-  // Copies from the buffer to |data| and advances the read pointer. |channels|
+  // Copies from the buffer to `data` and advances the read pointer. `channels`
   // must be the same as at creation time.
   void Read(float* const* data, size_t channels, size_t frames);
 

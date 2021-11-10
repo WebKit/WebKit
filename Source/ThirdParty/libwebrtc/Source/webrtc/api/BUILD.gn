@@ -29,7 +29,10 @@ rtc_source_set("call_api") {
 rtc_source_set("callfactory_api") {
   visibility = [ "*" ]
   sources = [ "call/call_factory_interface.h" ]
-  deps = [ "../rtc_base/system:rtc_export" ]
+  deps = [
+    "../call:rtp_interfaces",
+    "../rtc_base/system:rtc_export",
+  ]
 }
 
 if (!build_with_chromium) {
@@ -135,14 +138,8 @@ rtc_library("libjingle_peerconnection_api") {
     "jsep_ice_candidate.cc",
     "jsep_ice_candidate.h",
     "jsep_session_description.h",
-    "media_stream_proxy.h",
-    "media_stream_track_proxy.h",
-    "peer_connection_factory_proxy.h",
     "peer_connection_interface.cc",
     "peer_connection_interface.h",
-    "peer_connection_proxy.h",
-    "proxy.cc",
-    "proxy.h",
     "rtp_receiver_interface.cc",
     "rtp_receiver_interface.h",
     "rtp_sender_interface.cc",
@@ -157,7 +154,7 @@ rtc_library("libjingle_peerconnection_api") {
     "stats_types.h",
     "turn_customizer.h",
     "uma_metrics.h",
-    "video_track_source_proxy.h",
+    "video_track_source_proxy_factory.h",
   ]
   deps = [
     ":array_view",
@@ -178,6 +175,7 @@ rtc_library("libjingle_peerconnection_api") {
     ":rtp_transceiver_direction",
     ":scoped_refptr",
     ":sequence_checker",
+    "../call:rtp_interfaces",
     "../rtc_base:network_constants",
     "adaptation:resource_adaptation_api",
     "audio:audio_mixer_api",
@@ -257,6 +255,7 @@ rtc_source_set("packet_socket_factory") {
   ]
   deps = [
     ":async_dns_resolver",
+    ":wrapping_async_dns_resolver",
     "../rtc_base:async_resolver_interface",
     "../rtc_base:rtc_base",
     "../rtc_base:socket_address",
@@ -265,11 +264,34 @@ rtc_source_set("packet_socket_factory") {
 }
 
 rtc_source_set("async_dns_resolver") {
+  visibility = [ "*" ]
   sources = [ "async_dns_resolver.h" ]
   deps = [
     "../rtc_base:socket_address",
     "../rtc_base/system:rtc_export",
   ]
+}
+
+rtc_source_set("wrapping_async_dns_resolver") {
+  visibility = [
+    ":*",
+    "../p2p:rtc_p2p",
+  ]
+  sources = [
+    "wrapping_async_dns_resolver.cc",
+    "wrapping_async_dns_resolver.h",
+  ]
+  deps = [
+    ":async_dns_resolver",
+    ":sequence_checker",
+    "../rtc_base:async_resolver_interface",
+    "../rtc_base:checks",
+    "../rtc_base:macromagic",
+    "../rtc_base:socket_address",
+    "../rtc_base:threading",
+    "../rtc_base/third_party/sigslot",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
 }
 
 rtc_source_set("scoped_refptr") {
@@ -328,6 +350,7 @@ rtc_source_set("rtp_transceiver_direction") {
 }
 
 rtc_source_set("priority") {
+  visibility = [ "*" ]
   sources = [ "priority.h" ]
 }
 
@@ -623,6 +646,7 @@ rtc_source_set("network_emulation_manager_api") {
   ]
   deps = [
     ":array_view",
+    ":packet_socket_factory",
     ":simulated_network_api",
     ":time_controller",
     "../call:simulated_network",
@@ -802,7 +826,6 @@ if (rtc_include_tests) {
       "test/videocodec_test_stats.h",
     ]
     deps = [
-      "../media:rtc_h264_profile_id",
       "../modules/video_coding:video_codec_interface",
       "../rtc_base:stringutils",
       "video:video_frame_type",
@@ -827,6 +850,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("mock_audio_mixer") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_audio_mixer.h" ]
 
@@ -834,6 +858,18 @@ if (rtc_include_tests) {
       "../test:test_support",
       "audio:audio_mixer_api",
     ]
+  }
+
+  rtc_source_set("mock_audio_sink") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "test/mock_audio_sink.h" ]
+
+    deps = [
+      "../api:media_stream_interface",
+      "../test:test_support",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 
   rtc_source_set("mock_data_channel") {
@@ -848,6 +884,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("mock_fec_controller_override") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_fec_controller_override.h" ]
     deps = [
@@ -857,6 +894,7 @@ if (rtc_include_tests) {
   }
 
   rtc_library("mock_frame_encryptor") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_frame_encryptor.h" ]
     deps = [
@@ -868,6 +906,7 @@ if (rtc_include_tests) {
   }
 
   rtc_library("mock_frame_decryptor") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_frame_decryptor.h" ]
     deps = [
@@ -878,6 +917,7 @@ if (rtc_include_tests) {
   }
 
   rtc_library("fake_frame_encryptor") {
+    visibility = [ "*" ]
     testonly = true
     sources = [
       "test/fake_frame_encryptor.cc",
@@ -894,6 +934,7 @@ if (rtc_include_tests) {
   }
 
   rtc_library("fake_frame_decryptor") {
+    visibility = [ "*" ]
     testonly = true
     sources = [
       "test/fake_frame_decryptor.cc",
@@ -940,6 +981,8 @@ if (rtc_include_tests) {
 
     deps = [
       ":libjingle_peerconnection_api",
+      "../api:scoped_refptr",
+      "../rtc_base:refcount",
       "../test:test_support",
     ]
   }
@@ -956,6 +999,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("mock_async_dns_resolver") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_async_dns_resolver.h" ]
     deps = [
@@ -980,6 +1024,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("mock_transformable_video_frame") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_transformable_video_frame.h" ]
 
@@ -990,6 +1035,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("mock_video_bitrate_allocator") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_video_bitrate_allocator.h" ]
 
@@ -1000,6 +1046,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("mock_video_bitrate_allocator_factory") {
+    visibility = [ "*" ]
     testonly = true
     sources = [ "test/mock_video_bitrate_allocator_factory.h" ]
 
@@ -1010,6 +1057,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("mock_video_codec_factory") {
+    visibility = [ "*" ]
     testonly = true
     sources = [
       "test/mock_video_decoder_factory.h",
@@ -1024,7 +1072,6 @@ if (rtc_include_tests) {
 
   rtc_library("mock_video_decoder") {
     visibility = [ "*" ]
-
     testonly = true
     sources = [ "test/mock_video_decoder.h" ]
 
@@ -1036,12 +1083,24 @@ if (rtc_include_tests) {
 
   rtc_library("mock_video_encoder") {
     visibility = [ "*" ]
-
     testonly = true
     sources = [ "test/mock_video_encoder.h" ]
 
     deps = [
       "../api/video_codecs:video_codecs_api",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_library("mock_video_track") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "test/mock_video_track.h" ]
+
+    deps = [
+      "../api:media_stream_interface",
+      "../api:scoped_refptr",
+      "../rtc_base:refcount",
       "../test:test_support",
     ]
   }
@@ -1059,6 +1118,7 @@ if (rtc_include_tests) {
       ":time_controller",
       "../call",
       "../call:call_interfaces",
+      "../call:rtp_interfaces",
       "../test/time_controller",
     ]
   }
@@ -1103,6 +1163,7 @@ if (rtc_include_tests) {
       "units:time_delta",
       "units:timestamp",
       "units:units_unittests",
+      "video:rtp_video_frame_assembler_unittests",
       "video:video_unittests",
     ]
   }
@@ -1118,6 +1179,7 @@ if (rtc_include_tests) {
       ":fake_frame_encryptor",
       ":mock_async_dns_resolver",
       ":mock_audio_mixer",
+      ":mock_audio_sink",
       ":mock_data_channel",
       ":mock_frame_decryptor",
       ":mock_frame_encryptor",
@@ -1131,6 +1193,7 @@ if (rtc_include_tests) {
       ":mock_video_codec_factory",
       ":mock_video_decoder",
       ":mock_video_encoder",
+      ":mock_video_track",
       ":rtc_api_unittests",
       "units:units_unittests",
     ]

@@ -35,8 +35,10 @@ rtc_library("call_interfaces") {
   if (!build_with_mozilla) {
     sources += [ "audio_send_stream.cc" ]
   }
+
   deps = [
     ":audio_sender_interface",
+    ":receive_stream_interface",
     ":rtp_interfaces",
     ":video_stream_api",
     "../api:fec_controller_api",
@@ -51,7 +53,6 @@ rtc_library("call_interfaces") {
     "../api/audio:audio_frame_processor",
     "../api/audio:audio_mixer_api",
     "../api/audio_codecs:audio_codecs_api",
-    "../api/crypto:frame_decryptor_interface",
     "../api/crypto:frame_encryptor_interface",
     "../api/crypto:options",
     "../api/neteq:neteq_api",
@@ -59,7 +60,6 @@ rtc_library("call_interfaces") {
     "../api/transport:bitrate_settings",
     "../api/transport:network_control",
     "../api/transport:webrtc_key_value_config",
-    "../api/transport/rtp:rtp_source",
     "../modules/async_audio_processing",
     "../modules/audio_device",
     "../modules/audio_processing",
@@ -86,7 +86,7 @@ rtc_source_set("audio_sender_interface") {
 }
 
 # TODO(nisse): These RTP targets should be moved elsewhere
-# when interfaces have stabilized. See also TODO for |mock_rtp_interfaces|.
+# when interfaces have stabilized. See also TODO for `mock_rtp_interfaces`.
 rtc_library("rtp_interfaces") {
   # Client code SHOULD NOT USE THIS TARGET, but for now it needs to be public
   # because there exists client code that uses it.
@@ -98,22 +98,29 @@ rtc_library("rtp_interfaces") {
     "rtp_config.h",
     "rtp_packet_sink_interface.h",
     "rtp_stream_receiver_controller_interface.h",
+    "rtp_transport_config.h",
+    "rtp_transport_controller_send_factory_interface.h",
     "rtp_transport_controller_send_interface.h",
   ]
   deps = [
     "../api:array_view",
     "../api:fec_controller_api",
     "../api:frame_transformer_interface",
+    "../api:network_state_predictor_api",
     "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api/crypto:options",
     "../api/rtc_event_log",
     "../api/transport:bitrate_settings",
+    "../api/transport:network_control",
+    "../api/transport:webrtc_key_value_config",
     "../api/units:timestamp",
     "../common_video:frame_counts",
     "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../modules/utility",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
@@ -140,6 +147,8 @@ rtc_library("rtp_receiver") {
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/containers:flat_map",
+    "../rtc_base/containers:flat_set",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
@@ -150,6 +159,7 @@ rtc_library("rtp_sender") {
     "rtp_payload_params.h",
     "rtp_transport_controller_send.cc",
     "rtp_transport_controller_send.h",
+    "rtp_transport_controller_send_factory.h",
     "rtp_video_sender.cc",
     "rtp_video_sender.h",
     "rtp_video_sender_interface.h",
@@ -313,6 +323,17 @@ rtc_library("call") {
   ]
 }
 
+rtc_source_set("receive_stream_interface") {
+  sources = [ "receive_stream.h" ]
+  deps = [
+    "../api:frame_transformer_interface",
+    "../api:rtp_parameters",
+    "../api:scoped_refptr",
+    "../api/crypto:frame_decryptor_interface",
+    "../api/transport/rtp:rtp_source",
+  ]
+}
+
 rtc_library("video_stream_api") {
   sources = [
     "video_receive_stream.cc",
@@ -321,6 +342,7 @@ rtc_library("video_stream_api") {
     "video_send_stream.h",
   ]
   deps = [
+    ":receive_stream_interface",
     ":rtp_interfaces",
     "../api:frame_transformer_interface",
     "../api:rtp_headers",
@@ -328,10 +350,8 @@ rtc_library("video_stream_api") {
     "../api:scoped_refptr",
     "../api:transport_api",
     "../api/adaptation:resource_adaptation_api",
-    "../api/crypto:frame_decryptor_interface",
     "../api/crypto:frame_encryptor_interface",
     "../api/crypto:options",
-    "../api/transport/rtp:rtp_source",
     "../api/video:recordable_encoded_frame",
     "../api/video:video_frame",
     "../api/video:video_rtp_headers",
@@ -505,6 +525,8 @@ if (rtc_include_tests) {
         "../api/video:builtin_video_bitrate_allocator_factory",
         "../api/video:video_bitrate_allocation",
         "../api/video_codecs:video_codecs_api",
+        "../media:rtc_internal_video_codecs",
+        "../media:rtc_simulcast_encoder_adapter",
         "../modules/audio_coding",
         "../modules/audio_device",
         "../modules/audio_device:audio_device_impl",
@@ -515,9 +537,9 @@ if (rtc_include_tests) {
         "../rtc_base:checks",
         "../rtc_base:rtc_base_approved",
         "../rtc_base:task_queue_for_test",
-        "../rtc_base:task_queue_for_test",
         "../rtc_base:threading",
         "../rtc_base/synchronization:mutex",
+        "../rtc_base/task_utils:pending_task_safety_flag",
         "../rtc_base/task_utils:repeating_task",
         "../system_wrappers",
         "../system_wrappers:metrics",
@@ -528,7 +550,6 @@ if (rtc_include_tests) {
         "../test:fileutils",
         "../test:null_transport",
         "../test:perf_test",
-        "../test:rtp_test_utils",
         "../test:test_common",
         "../test:test_support",
         "../test:video_test_common",
@@ -539,7 +560,7 @@ if (rtc_include_tests) {
     }
   }
 
-  # TODO(eladalon): This should be moved, as with the TODO for |rtp_interfaces|.
+  # TODO(eladalon): This should be moved, as with the TODO for `rtp_interfaces`.
   rtc_source_set("mock_rtp_interfaces") {
     testonly = true
 

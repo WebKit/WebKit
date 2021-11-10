@@ -42,6 +42,20 @@ struct NegotiateRoleParams {
   SdpType remote_type;
 };
 
+std::ostream& operator<<(std::ostream& os, const ConnectionRole& role) {
+  std::string str = "invalid";
+  ConnectionRoleToString(role, &str);
+  os << str;
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const NegotiateRoleParams& param) {
+  os << "[Local role " << param.local_role << " Remote role "
+     << param.remote_role << " LocalType " << SdpTypeToString(param.local_type)
+     << " RemoteType " << SdpTypeToString(param.remote_type) << "]";
+  return os;
+}
+
 rtc::scoped_refptr<webrtc::IceTransportInterface> CreateIceTransport(
     std::unique_ptr<FakeIceTransport> internal) {
   if (!internal) {
@@ -118,11 +132,10 @@ class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
         std::move(rtcp_ice), std::move(unencrypted_rtp_transport),
         std::move(sdes_transport), std::move(dtls_srtp_transport),
         std::move(rtp_dtls_transport), std::move(rtcp_dtls_transport),
-        /*sctp_transport=*/nullptr);
+        /*sctp_transport=*/nullptr,
+        /*rtcp_mux_active_callback=*/[&]() { OnRtcpMuxActive(); });
 
     signal_rtcp_mux_active_received_ = false;
-    jsep_transport->SignalRtcpMuxActive.connect(
-        this, &JsepTransport2Test::OnRtcpMuxActive);
     return jsep_transport;
   }
 
@@ -158,7 +171,7 @@ class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
 
   std::unique_ptr<JsepTransport> jsep_transport_;
   bool signal_rtcp_mux_active_received_ = false;
-  // The SrtpTransport is owned by |jsep_transport_|. Keep a raw pointer here
+  // The SrtpTransport is owned by `jsep_transport_`. Keep a raw pointer here
   // for testing.
   webrtc::SrtpTransport* sdes_transport_ = nullptr;
 };
@@ -446,7 +459,13 @@ TEST_P(JsepTransport2WithRtcpMux, ValidDtlsRoleNegotiation) {
       {CONNECTIONROLE_ACTPASS, CONNECTIONROLE_PASSIVE, SdpType::kOffer,
        SdpType::kAnswer},
       {CONNECTIONROLE_ACTPASS, CONNECTIONROLE_PASSIVE, SdpType::kOffer,
-       SdpType::kPrAnswer}};
+       SdpType::kPrAnswer},
+      // Combinations permitted by RFC 8842 section 5.3
+      {CONNECTIONROLE_ACTIVE, CONNECTIONROLE_PASSIVE, SdpType::kAnswer,
+       SdpType::kOffer},
+      {CONNECTIONROLE_ACTIVE, CONNECTIONROLE_PASSIVE, SdpType::kPrAnswer,
+       SdpType::kOffer},
+  };
 
   for (auto& param : valid_client_params) {
     jsep_transport_ =
@@ -488,7 +507,11 @@ TEST_P(JsepTransport2WithRtcpMux, ValidDtlsRoleNegotiation) {
       {CONNECTIONROLE_ACTPASS, CONNECTIONROLE_ACTIVE, SdpType::kOffer,
        SdpType::kAnswer},
       {CONNECTIONROLE_ACTPASS, CONNECTIONROLE_ACTIVE, SdpType::kOffer,
-       SdpType::kPrAnswer}};
+       SdpType::kPrAnswer},
+      // Combinations permitted by RFC 8842 section 5.3
+      {CONNECTIONROLE_PASSIVE, CONNECTIONROLE_ACTIVE, SdpType::kPrAnswer,
+       SdpType::kOffer},
+  };
 
   for (auto& param : valid_server_params) {
     jsep_transport_ =
@@ -591,20 +614,15 @@ TEST_P(JsepTransport2WithRtcpMux, InvalidDtlsRoleNegotiation) {
     }
   }
 
-  // Invalid parameters due to the offerer not using ACTPASS.
+  // Invalid parameters due to the offerer not using a role consistent with the
+  // state
   NegotiateRoleParams offerer_without_actpass_params[] = {
-      {CONNECTIONROLE_ACTIVE, CONNECTIONROLE_PASSIVE, SdpType::kAnswer,
-       SdpType::kOffer},
-      {CONNECTIONROLE_PASSIVE, CONNECTIONROLE_ACTIVE, SdpType::kAnswer,
-       SdpType::kOffer},
+      // Cannot use ACTPASS in an answer
       {CONNECTIONROLE_ACTPASS, CONNECTIONROLE_PASSIVE, SdpType::kAnswer,
-       SdpType::kOffer},
-      {CONNECTIONROLE_ACTIVE, CONNECTIONROLE_PASSIVE, SdpType::kPrAnswer,
-       SdpType::kOffer},
-      {CONNECTIONROLE_PASSIVE, CONNECTIONROLE_ACTIVE, SdpType::kPrAnswer,
        SdpType::kOffer},
       {CONNECTIONROLE_ACTPASS, CONNECTIONROLE_PASSIVE, SdpType::kPrAnswer,
        SdpType::kOffer},
+      // Cannot send ACTIVE or PASSIVE in an offer (must handle, must not send)
       {CONNECTIONROLE_ACTIVE, CONNECTIONROLE_PASSIVE, SdpType::kOffer,
        SdpType::kAnswer},
       {CONNECTIONROLE_PASSIVE, CONNECTIONROLE_ACTIVE, SdpType::kOffer,
@@ -630,20 +648,24 @@ TEST_P(JsepTransport2WithRtcpMux, InvalidDtlsRoleNegotiation) {
       EXPECT_TRUE(jsep_transport_
                       ->SetLocalJsepTransportDescription(local_description,
                                                          param.local_type)
-                      .ok());
+                      .ok())
+          << param;
       EXPECT_FALSE(jsep_transport_
                        ->SetRemoteJsepTransportDescription(remote_description,
                                                            param.remote_type)
-                       .ok());
+                       .ok())
+          << param;
     } else {
       EXPECT_TRUE(jsep_transport_
                       ->SetRemoteJsepTransportDescription(remote_description,
                                                           param.remote_type)
-                      .ok());
+                      .ok())
+          << param;
       EXPECT_FALSE(jsep_transport_
                        ->SetLocalJsepTransportDescription(local_description,
                                                           param.local_type)
-                       .ok());
+                       .ok())
+          << param;
     }
   }
 }
@@ -925,8 +947,8 @@ TEST_F(JsepTransport2Test, SdesNegotiation) {
 
   JsepTransportDescription offer_desc;
   offer_desc.cryptos.push_back(cricket::CryptoParams(
-      1, rtc::CS_AES_CM_128_HMAC_SHA1_32,
-      "inline:" + rtc::CreateRandomString(40), std::string()));
+      1, rtc::kCsAesCm128HmacSha1_32, "inline:" + rtc::CreateRandomString(40),
+      std::string()));
   ASSERT_TRUE(
       jsep_transport_
           ->SetLocalJsepTransportDescription(offer_desc, SdpType::kOffer)
@@ -934,8 +956,8 @@ TEST_F(JsepTransport2Test, SdesNegotiation) {
 
   JsepTransportDescription answer_desc;
   answer_desc.cryptos.push_back(cricket::CryptoParams(
-      1, rtc::CS_AES_CM_128_HMAC_SHA1_32,
-      "inline:" + rtc::CreateRandomString(40), std::string()));
+      1, rtc::kCsAesCm128HmacSha1_32, "inline:" + rtc::CreateRandomString(40),
+      std::string()));
   ASSERT_TRUE(
       jsep_transport_
           ->SetRemoteJsepTransportDescription(answer_desc, SdpType::kAnswer)
@@ -951,8 +973,8 @@ TEST_F(JsepTransport2Test, SdesNegotiationWithEmptyCryptosInAnswer) {
 
   JsepTransportDescription offer_desc;
   offer_desc.cryptos.push_back(cricket::CryptoParams(
-      1, rtc::CS_AES_CM_128_HMAC_SHA1_32,
-      "inline:" + rtc::CreateRandomString(40), std::string()));
+      1, rtc::kCsAesCm128HmacSha1_32, "inline:" + rtc::CreateRandomString(40),
+      std::string()));
   ASSERT_TRUE(
       jsep_transport_
           ->SetLocalJsepTransportDescription(offer_desc, SdpType::kOffer)
@@ -975,8 +997,8 @@ TEST_F(JsepTransport2Test, SdesNegotiationWithMismatchedCryptos) {
 
   JsepTransportDescription offer_desc;
   offer_desc.cryptos.push_back(cricket::CryptoParams(
-      1, rtc::CS_AES_CM_128_HMAC_SHA1_32,
-      "inline:" + rtc::CreateRandomString(40), std::string()));
+      1, rtc::kCsAesCm128HmacSha1_32, "inline:" + rtc::CreateRandomString(40),
+      std::string()));
   ASSERT_TRUE(
       jsep_transport_
           ->SetLocalJsepTransportDescription(offer_desc, SdpType::kOffer)
@@ -984,8 +1006,8 @@ TEST_F(JsepTransport2Test, SdesNegotiationWithMismatchedCryptos) {
 
   JsepTransportDescription answer_desc;
   answer_desc.cryptos.push_back(cricket::CryptoParams(
-      1, rtc::CS_AES_CM_128_HMAC_SHA1_80,
-      "inline:" + rtc::CreateRandomString(40), std::string()));
+      1, rtc::kCsAesCm128HmacSha1_80, "inline:" + rtc::CreateRandomString(40),
+      std::string()));
   // Expected to fail because the crypto parameters don't match.
   ASSERT_FALSE(
       jsep_transport_
@@ -1149,7 +1171,7 @@ TEST_P(JsepTransport2HeaderExtensionTest, EncryptedHeaderExtensionNegotiation) {
   recv_encrypted_headers1_.push_back(kHeaderExtensionIDs[0]);
   recv_encrypted_headers2_.push_back(kHeaderExtensionIDs[1]);
 
-  cricket::CryptoParams sdes_param(1, rtc::CS_AES_CM_128_HMAC_SHA1_80,
+  cricket::CryptoParams sdes_param(1, rtc::kCsAesCm128HmacSha1_80,
                                    "inline:" + rtc::CreateRandomString(40),
                                    std::string());
   if (use_gcm) {
@@ -1158,8 +1180,8 @@ TEST_P(JsepTransport2HeaderExtensionTest, EncryptedHeaderExtensionNegotiation) {
     auto fake_dtls2 =
         static_cast<FakeDtlsTransport*>(jsep_transport2_->rtp_dtls_transport());
 
-    fake_dtls1->SetSrtpCryptoSuite(rtc::SRTP_AEAD_AES_256_GCM);
-    fake_dtls2->SetSrtpCryptoSuite(rtc::SRTP_AEAD_AES_256_GCM);
+    fake_dtls1->SetSrtpCryptoSuite(rtc::kSrtpAeadAes256Gcm);
+    fake_dtls2->SetSrtpCryptoSuite(rtc::kSrtpAeadAes256Gcm);
   }
 
   if (scenario == Scenario::kDtlsBeforeCallerSendOffer) {

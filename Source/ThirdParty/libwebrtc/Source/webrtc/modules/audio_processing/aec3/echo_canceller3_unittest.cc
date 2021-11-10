@@ -698,23 +698,6 @@ TEST(EchoCanceller3Messaging, EchoLeakage) {
 }
 
 // Tests the parameter functionality for the field trial override for the
-// default_len parameter.
-TEST(EchoCanceller3FieldTrials, Aec3SuppressorEpStrengthDefaultLenOverride) {
-  EchoCanceller3Config default_config;
-  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
-  ASSERT_EQ(default_config.ep_strength.default_len,
-            adjusted_config.ep_strength.default_len);
-
-  webrtc::test::ScopedFieldTrials field_trials(
-      "WebRTC-Aec3SuppressorEpStrengthDefaultLenOverride/-0.02/");
-  adjusted_config = AdjustConfig(default_config);
-
-  ASSERT_NE(default_config.ep_strength.default_len,
-            adjusted_config.ep_strength.default_len);
-  EXPECT_FLOAT_EQ(-0.02f, adjusted_config.ep_strength.default_len);
-}
-
-// Tests the parameter functionality for the field trial override for the
 // anti-howling gain.
 TEST(EchoCanceller3FieldTrials, Aec3SuppressorAntiHowlingGainOverride) {
   EchoCanceller3Config default_config;
@@ -767,7 +750,7 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideAllParams) {
       "detection_enr_threshold:1.3,dominant_nearend_detection_enr_exit_"
       "threshold:1.4,dominant_nearend_detection_snr_threshold:1.5,dominant_"
       "nearend_detection_hold_duration:10,dominant_nearend_detection_trigger_"
-      "threshold:11,ep_strength_default_len:1.6/");
+      "threshold:11/");
 
   EchoCanceller3Config default_config;
   EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
@@ -808,8 +791,6 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideAllParams) {
   ASSERT_NE(
       adjusted_config.suppressor.dominant_nearend_detection.trigger_threshold,
       default_config.suppressor.dominant_nearend_detection.trigger_threshold);
-  ASSERT_NE(adjusted_config.ep_strength.default_len,
-            default_config.ep_strength.default_len);
 
   EXPECT_FLOAT_EQ(
       adjusted_config.suppressor.nearend_tuning.mask_lf.enr_transparent, 0.1);
@@ -846,7 +827,6 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideAllParams) {
   EXPECT_EQ(
       adjusted_config.suppressor.dominant_nearend_detection.trigger_threshold,
       11);
-  EXPECT_FLOAT_EQ(adjusted_config.ep_strength.default_len, 1.6);
 }
 
 // Testing the field trial-based override of the suppressor parameters for
@@ -898,6 +878,16 @@ TEST(EchoCanceller3FieldTrials, Aec3SuppressorTuningOverrideOneParam) {
 
   EXPECT_FLOAT_EQ(adjusted_config.suppressor.nearend_tuning.max_inc_factor,
                   0.5);
+}
+
+// Testing the field trial-based that override the exponential decay parameters.
+TEST(EchoCanceller3FieldTrials, Aec3UseNearendReverb) {
+  webrtc::test::ScopedFieldTrials field_trials(
+      "WebRTC-Aec3UseNearendReverbLen/default_len:0.9,nearend_len:0.8/");
+  EchoCanceller3Config default_config;
+  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EXPECT_FLOAT_EQ(adjusted_config.ep_strength.default_len, 0.9);
+  EXPECT_FLOAT_EQ(adjusted_config.ep_strength.nearend_len, 0.8);
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)

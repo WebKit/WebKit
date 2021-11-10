@@ -24,12 +24,12 @@ class ApmDataDumper;
 // Level estimator for the digital adaptive gain controller.
 class AdaptiveModeLevelEstimator {
  public:
-  explicit AdaptiveModeLevelEstimator(ApmDataDumper* apm_data_dumper);
+  AdaptiveModeLevelEstimator(
+      ApmDataDumper* apm_data_dumper,
+      const AudioProcessing::Config::GainController2::AdaptiveDigital& config);
   AdaptiveModeLevelEstimator(const AdaptiveModeLevelEstimator&) = delete;
   AdaptiveModeLevelEstimator& operator=(const AdaptiveModeLevelEstimator&) =
       delete;
-  AdaptiveModeLevelEstimator(ApmDataDumper* apm_data_dumper,
-                             int adjacent_speech_frames_threshold);
 
   // Updates the level estimation.
   void Update(const VadLevelAnalyzer::Result& vad_data);
@@ -47,14 +47,13 @@ class AdaptiveModeLevelEstimator {
     inline bool operator!=(const LevelEstimatorState& s) const {
       return !(*this == s);
     }
+    // TODO(bugs.webrtc.org/7494): Remove `time_to_confidence_ms` if redundant.
+    int time_to_confidence_ms;
     struct Ratio {
       float numerator;
       float denominator;
       float GetRatio() const;
-    };
-    // TODO(crbug.com/webrtc/7494): Remove time_to_confidence_ms if redundant.
-    int time_to_confidence_ms;
-    Ratio level_dbfs;
+    } level_dbfs;
   };
   static_assert(std::is_trivially_copyable<LevelEstimatorState>::value, "");
 
@@ -64,6 +63,7 @@ class AdaptiveModeLevelEstimator {
 
   ApmDataDumper* const apm_data_dumper_;
 
+  const float initial_speech_level_dbfs_;
   const int adjacent_speech_frames_threshold_;
   LevelEstimatorState preliminary_state_;
   LevelEstimatorState reliable_state_;

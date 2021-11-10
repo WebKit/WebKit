@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// This file contains tests for |RtpTransceiver|.
+// This file contains tests for `RtpTransceiver`.
 
 #include "pc/rtp_transceiver.h"
 
@@ -32,7 +32,7 @@ using ::testing::ReturnRef;
 
 namespace webrtc {
 
-// Checks that a channel cannot be set on a stopped |RtpTransceiver|.
+// Checks that a channel cannot be set on a stopped `RtpTransceiver`.
 TEST(RtpTransceiverTest, CannotSetChannelOnStoppedTransceiver) {
   auto cm = cricket::ChannelManager::Create(
       nullptr, true, rtc::Thread::Current(), rtc::Thread::Current());
@@ -58,7 +58,7 @@ TEST(RtpTransceiverTest, CannotSetChannelOnStoppedTransceiver) {
   EXPECT_EQ(&channel1, transceiver.channel());
 }
 
-// Checks that a channel can be unset on a stopped |RtpTransceiver|
+// Checks that a channel can be unset on a stopped `RtpTransceiver`
 TEST(RtpTransceiverTest, CanUnsetChannelOnStoppedTransceiver) {
   auto cm = cricket::ChannelManager::Create(
       nullptr, true, rtc::Thread::Current(), rtc::Thread::Current());
@@ -76,7 +76,7 @@ TEST(RtpTransceiverTest, CanUnsetChannelOnStoppedTransceiver) {
   transceiver.StopInternal();
   EXPECT_EQ(&channel, transceiver.channel());
 
-  // Set the channel to |nullptr|.
+  // Set the channel to `nullptr`.
   transceiver.SetChannel(nullptr);
   EXPECT_EQ(nullptr, transceiver.channel());
 }

@@ -30,13 +30,12 @@ using ::testing::Return;
 
 static const int kTimeout = 5000;
 
-static rtc::AsyncSocket* CreateSocket(const rtc::SSLMode& ssl_mode) {
+static rtc::Socket* CreateSocket(const rtc::SSLMode& ssl_mode) {
   rtc::SocketAddress address(rtc::IPAddress(INADDR_ANY), 0);
 
-  rtc::AsyncSocket* socket =
-      rtc::Thread::Current()->socketserver()->CreateAsyncSocket(
-          address.family(),
-          (ssl_mode == rtc::SSL_MODE_DTLS) ? SOCK_DGRAM : SOCK_STREAM);
+  rtc::Socket* socket = rtc::Thread::Current()->socketserver()->CreateSocket(
+      address.family(),
+      (ssl_mode == rtc::SSL_MODE_DTLS) ? SOCK_DGRAM : SOCK_STREAM);
   socket->Bind(address);
 
   return socket;
@@ -59,7 +58,7 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
  public:
   explicit SSLAdapterTestDummyClient(const rtc::SSLMode& ssl_mode)
       : ssl_mode_(ssl_mode) {
-    rtc::AsyncSocket* socket = CreateSocket(ssl_mode_);
+    rtc::Socket* socket = CreateSocket(ssl_mode_);
 
     ssl_adapter_.reset(rtc::SSLAdapter::Create(socket));
 
@@ -96,9 +95,7 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
     return ssl_adapter_->GetLocalAddress();
   }
 
-  rtc::AsyncSocket::ConnState GetState() const {
-    return ssl_adapter_->GetState();
-  }
+  rtc::Socket::ConnState GetState() const { return ssl_adapter_->GetState(); }
 
   const std::string& GetReceivedData() const { return data_; }
 
@@ -127,7 +124,7 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
     return ssl_adapter_->Send(message.data(), message.length());
   }
 
-  void OnSSLAdapterReadEvent(rtc::AsyncSocket* socket) {
+  void OnSSLAdapterReadEvent(rtc::Socket* socket) {
     char buffer[4096] = "";
 
     // Read data received from the server and store it in our internal buffer.
@@ -141,11 +138,11 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
     }
   }
 
-  void OnSSLAdapterCloseEvent(rtc::AsyncSocket* socket, int error) {
+  void OnSSLAdapterCloseEvent(rtc::Socket* socket, int error) {
     // OpenSSLAdapter signals handshake failure with a close event, but without
     // closing the socket! Let's close the socket here. This way GetState() can
     // return CS_CLOSED after failure.
-    if (socket->GetState() != rtc::AsyncSocket::CS_CLOSED) {
+    if (socket->GetState() != rtc::Socket::CS_CLOSED) {
       socket->Close();
     }
   }
@@ -221,14 +218,14 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
     ASSERT_EQ(rtc::SSL_MODE_DTLS, ssl_mode_);
 
     // Transfer ownership of the socket to the SSLStreamAdapter object.
-    rtc::AsyncSocket* socket = server_socket_.release();
+    rtc::Socket* socket = server_socket_.release();
 
     socket->Connect(address);
 
     DoHandshake(socket);
   }
 
-  void OnServerSocketReadEvent(rtc::AsyncSocket* socket) {
+  void OnServerSocketReadEvent(rtc::Socket* socket) {
     // Only a single connection is supported.
     ASSERT_TRUE(ssl_stream_adapter_ == nullptr);
 
@@ -254,7 +251,7 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
   }
 
  private:
-  void DoHandshake(rtc::AsyncSocket* socket) {
+  void DoHandshake(rtc::Socket* socket) {
     ssl_stream_adapter_ = rtc::SSLStreamAdapter::Create(
         std::make_unique<rtc::SocketStream>(socket));
 
@@ -284,7 +281,7 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
 
   const rtc::SSLMode ssl_mode_;
 
-  std::unique_ptr<rtc::AsyncSocket> server_socket_;
+  std::unique_ptr<rtc::Socket> server_socket_;
   std::unique_ptr<rtc::SSLStreamAdapter> ssl_stream_adapter_;
 
   std::unique_ptr<rtc::SSLIdentity> ssl_identity_;
@@ -335,13 +332,13 @@ class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
     int rv;
 
     // The initial state is CS_CLOSED
-    ASSERT_EQ(rtc::AsyncSocket::CS_CLOSED, client_->GetState());
+    ASSERT_EQ(rtc::Socket::CS_CLOSED, client_->GetState());
 
     rv = client_->Connect(server_->GetHostname(), server_->GetAddress());
     ASSERT_EQ(0, rv);
 
     // Now the state should be CS_CONNECTING
-    ASSERT_EQ(rtc::AsyncSocket::CS_CONNECTING, client_->GetState());
+    ASSERT_EQ(rtc::Socket::CS_CONNECTING, client_->GetState());
 
     if (ssl_mode_ == rtc::SSL_MODE_DTLS) {
       // For DTLS, call AcceptConnection() with the client's address.
@@ -351,7 +348,7 @@ class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
     if (expect_success) {
       // If expecting success, the client should end up in the CS_CONNECTED
       // state after handshake.
-      EXPECT_EQ_WAIT(rtc::AsyncSocket::CS_CONNECTED, client_->GetState(),
+      EXPECT_EQ_WAIT(rtc::Socket::CS_CONNECTED, client_->GetState(),
                      handshake_wait_);
 
       RTC_LOG(LS_INFO) << GetSSLProtocolName(ssl_mode_)
@@ -359,7 +356,7 @@ class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
 
     } else {
       // On handshake failure the client should end up in the CS_CLOSED state.
-      EXPECT_EQ_WAIT(rtc::AsyncSocket::CS_CLOSED, client_->GetState(),
+      EXPECT_EQ_WAIT(rtc::Socket::CS_CLOSED, client_->GetState(),
                      handshake_wait_);
 
       RTC_LOG(LS_INFO) << GetSSLProtocolName(ssl_mode_) << " handshake failed.";

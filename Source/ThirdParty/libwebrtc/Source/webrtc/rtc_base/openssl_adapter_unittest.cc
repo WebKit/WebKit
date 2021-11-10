@@ -15,17 +15,17 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "rtc_base/async_socket.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/socket.h"
 #include "test/gmock.h"
 
 namespace rtc {
 namespace {
 
-class MockAsyncSocket : public AsyncSocket {
+class MockAsyncSocket : public Socket {
  public:
   virtual ~MockAsyncSocket() = default;
-  MOCK_METHOD(AsyncSocket*, Accept, (SocketAddress*), (override));
+  MOCK_METHOD(Socket*, Accept, (SocketAddress*), (override));
   MOCK_METHOD(SocketAddress, GetLocalAddress, (), (const, override));
   MOCK_METHOD(SocketAddress, GetRemoteAddress, (), (const, override));
   MOCK_METHOD(int, Bind, (const SocketAddress&), (override));
@@ -84,7 +84,7 @@ TEST(OpenSSLAdapterTest, TestTransformAlpnProtocols) {
 // Verifies that SSLStart works when OpenSSLAdapter is started in standalone
 // mode.
 TEST(OpenSSLAdapterTest, TestBeginSSLBeforeConnection) {
-  AsyncSocket* async_socket = new MockAsyncSocket();
+  Socket* async_socket = new MockAsyncSocket();
   OpenSSLAdapter adapter(async_socket);
   EXPECT_EQ(adapter.StartSSL("webrtc.org"), 0);
 }
@@ -92,7 +92,7 @@ TEST(OpenSSLAdapterTest, TestBeginSSLBeforeConnection) {
 // Verifies that the adapter factory can create new adapters.
 TEST(OpenSSLAdapterFactoryTest, CreateSingleOpenSSLAdapter) {
   OpenSSLAdapterFactory adapter_factory;
-  AsyncSocket* async_socket = new MockAsyncSocket();
+  Socket* async_socket = new MockAsyncSocket();
   auto simple_adapter = std::unique_ptr<OpenSSLAdapter>(
       adapter_factory.CreateAdapter(async_socket));
   EXPECT_NE(simple_adapter, nullptr);
@@ -107,7 +107,7 @@ TEST(OpenSSLAdapterFactoryTest, CreateWorksWithCustomVerifier) {
 
   OpenSSLAdapterFactory adapter_factory;
   adapter_factory.SetCertVerifier(cert_verifier.get());
-  AsyncSocket* async_socket = new MockAsyncSocket();
+  Socket* async_socket = new MockAsyncSocket();
   auto simple_adapter = std::unique_ptr<OpenSSLAdapter>(
       adapter_factory.CreateAdapter(async_socket));
   EXPECT_NE(simple_adapter, nullptr);

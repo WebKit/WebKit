@@ -78,8 +78,8 @@ class OperationTracker {
     callback();
   }
 
-  // This operation is completed asynchronously; it pings |background_thread_|,
-  // blocking that thread until |unblock_operation_event| is signaled and then
+  // This operation is completed asynchronously; it pings `background_thread_`,
+  // blocking that thread until `unblock_operation_event` is signaled and then
   // completes upon posting back to the thread that the operation started on.
   // Note that this requires the starting thread to be executing tasks (handle
   // messages), i.e. must not be blocked.
@@ -191,7 +191,7 @@ class OperationTrackerProxy {
     return operation_complete_event;
   }
 
-  // The order of completed events. Touches the |operation_tracker_| on the
+  // The order of completed events. Touches the `operation_tracker_` on the
   // calling thread, this is only thread safe if all chained operations have
   // completed.
   const std::vector<Event*>& completed_operation_events() const {
@@ -212,7 +212,7 @@ class SignalOnDestruction final {
     RTC_DCHECK(destructor_called_);
   }
   ~SignalOnDestruction() {
-    // Moved objects will have |destructor_called_| set to null. Destroying a
+    // Moved objects will have `destructor_called_` set to null. Destroying a
     // moved SignalOnDestruction should not signal.
     if (destructor_called_) {
       *destructor_called_ = true;

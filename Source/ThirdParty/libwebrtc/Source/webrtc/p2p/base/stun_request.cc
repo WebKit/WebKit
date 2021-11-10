@@ -106,7 +106,7 @@ void StunRequestManager::Clear() {
 
   for (uint32_t i = 0; i < requests.size(); ++i) {
     // StunRequest destructor calls Remove() which deletes requests
-    // from |requests_|.
+    // from `requests_`.
     delete requests[i];
   }
 }

@@ -36,7 +36,7 @@ class XServerPixelBuffer {
 
   void Release();
 
-  // Allocate (or reallocate) the pixel buffer for |window|. Returns false in
+  // Allocate (or reallocate) the pixel buffer for `window`. Returns false in
   // case of an error (e.g. window doesn't exist).
   bool Init(XAtomCache* cache, Window window);
 
@@ -58,10 +58,10 @@ class XServerPixelBuffer {
   // beginning.
   void Synchronize();
 
-  // Capture the specified rectangle and stores it in the |frame|. In the case
+  // Capture the specified rectangle and stores it in the `frame`. In the case
   // where the full-screen data is captured by Synchronize(), this simply
   // returns the pointer without doing any more work. The caller must ensure
-  // that |rect| is not larger than window_size().
+  // that `rect` is not larger than window_size().
   bool CaptureRect(const DesktopRect& rect, DesktopFrame* frame);
 
  private:

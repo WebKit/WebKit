@@ -16,6 +16,7 @@
 #include <string>
 
 #include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/svc/scalability_structure_test_helpers.h"
@@ -29,12 +30,14 @@ namespace {
 using ::testing::AllOf;
 using ::testing::Contains;
 using ::testing::Each;
+using ::testing::ElementsAreArray;
 using ::testing::Field;
 using ::testing::Ge;
 using ::testing::IsEmpty;
 using ::testing::Le;
 using ::testing::Lt;
 using ::testing::Not;
+using ::testing::NotNull;
 using ::testing::SizeIs;
 using ::testing::TestWithParam;
 using ::testing::Values;
@@ -49,6 +52,28 @@ struct SvcTestParam {
 };
 
 class ScalabilityStructureTest : public TestWithParam<SvcTestParam> {};
+
+TEST_P(ScalabilityStructureTest,
+       StaticConfigMatchesConfigReturnedByController) {
+  std::unique_ptr<ScalableVideoController> controller =
+      CreateScalabilityStructure(GetParam().name);
+  absl::optional<ScalableVideoController::StreamLayersConfig> static_config =
+      ScalabilityStructureConfig(GetParam().name);
+  ASSERT_THAT(controller, NotNull());
+  ASSERT_NE(static_config, absl::nullopt);
+  ScalableVideoController::StreamLayersConfig config =
+      controller->StreamConfig();
+  EXPECT_EQ(config.num_spatial_layers, static_config->num_spatial_layers);
+  EXPECT_EQ(config.num_temporal_layers, static_config->num_temporal_layers);
+  EXPECT_THAT(
+      rtc::MakeArrayView(config.scaling_factor_num, config.num_spatial_layers),
+      ElementsAreArray(static_config->scaling_factor_num,
+                       static_config->num_spatial_layers));
+  EXPECT_THAT(
+      rtc::MakeArrayView(config.scaling_factor_den, config.num_spatial_layers),
+      ElementsAreArray(static_config->scaling_factor_den,
+                       static_config->num_spatial_layers));
+}
 
 TEST_P(ScalabilityStructureTest,
        NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent) {

@@ -379,7 +379,7 @@ TEST_F(FakeNetworkPipeTest, BurstLoss) {
   fake_clock_.AdvanceTimeMilliseconds(1000);
   pipe->Process();
 
-  // Check that the average loss is |kLossPercent| percent.
+  // Check that the average loss is `kLossPercent` percent.
   int lost_packets = kNumPackets - receiver.delivered_sequence_numbers_.size();
   double loss_fraction = lost_packets / static_cast<double>(kNumPackets);
 

@@ -45,7 +45,7 @@ class ScreenCaptureFrameQueue {
   void MoveToNextFrame() { current_ = (current_ + 1) % kQueueLength; }
 
   // Replaces the current frame with a new one allocated by the caller. The
-  // existing frame (if any) is destroyed. Takes ownership of |frame|.
+  // existing frame (if any) is destroyed. Takes ownership of `frame`.
   void ReplaceCurrentFrame(std::unique_ptr<FrameType> frame) {
     frames_[current_] = std::move(frame);
   }

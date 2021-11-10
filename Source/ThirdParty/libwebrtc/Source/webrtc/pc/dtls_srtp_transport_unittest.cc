@@ -127,7 +127,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
                                           packet_size);
 
     rtc::PacketOptions options;
-    // Send a packet from |srtp_transport1_| to |srtp_transport2_| and verify
+    // Send a packet from `srtp_transport1_` to `srtp_transport2_` and verify
     // that the packet can be successfully received and decrypted.
     int prev_received_packets = transport_observer2_.rtp_count();
     ASSERT_TRUE(dtls_srtp_transport1_->SendRtpPacket(&rtp_packet1to2, options,
@@ -157,7 +157,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
     rtc::CopyOnWriteBuffer rtcp_packet2to1(kRtcpReport, rtcp_len, packet_size);
 
     rtc::PacketOptions options;
-    // Send a packet from |srtp_transport1_| to |srtp_transport2_| and verify
+    // Send a packet from `srtp_transport1_` to `srtp_transport2_` and verify
     // that the packet can be successfully received and decrypted.
     int prev_received_packets = transport_observer2_.rtcp_count();
     ASSERT_TRUE(dtls_srtp_transport1_->SendRtcpPacket(&rtcp_packet1to2, options,
@@ -202,7 +202,7 @@ class DtlsSrtpTransportTest : public ::testing::Test,
     memcpy(original_rtp_data, rtp_packet_data, rtp_len);
 
     rtc::PacketOptions options;
-    // Send a packet from |srtp_transport1_| to |srtp_transport2_| and verify
+    // Send a packet from `srtp_transport1_` to `srtp_transport2_` and verify
     // that the packet can be successfully received and decrypted.
     ASSERT_TRUE(dtls_srtp_transport1_->SendRtpPacket(&rtp_packet1to2, options,
                                                      cricket::PF_SRTP_BYPASS));
@@ -518,7 +518,7 @@ TEST_F(DtlsSrtpTransportTest, SrtpSessionNotResetWhenRtcpTransportRemoved) {
 }
 
 // Tests that RTCP packets can be sent and received if both sides actively reset
-// the SRTP parameters with the |active_reset_srtp_params_| flag.
+// the SRTP parameters with the `active_reset_srtp_params_` flag.
 TEST_F(DtlsSrtpTransportTest, ActivelyResetSrtpParams) {
   auto rtp_dtls1 = std::make_unique<FakeDtlsTransport>(
       "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
@@ -537,7 +537,7 @@ TEST_F(DtlsSrtpTransportTest, ActivelyResetSrtpParams) {
   // Send some RTCP packets, causing the SRTCP index to be incremented.
   SendRecvRtcpPackets();
 
-  // Only set the |active_reset_srtp_params_| flag to be true one side.
+  // Only set the `active_reset_srtp_params_` flag to be true one side.
   dtls_srtp_transport1_->SetActiveResetSrtpParams(true);
   // Set RTCP transport to null to trigger the SRTP parameters update.
   dtls_srtp_transport1_->SetDtlsTransports(rtp_dtls1.get(), nullptr);

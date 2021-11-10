@@ -58,7 +58,7 @@ TEST(TimestampScaler, TestNoScalingLargeStep) {
   // Test both sides of the timestamp wrap-around.
   static const uint32_t kStep = 160;
   uint32_t start_timestamp = 0;
-  // |external_timestamp| will be a large positive value.
+  // `external_timestamp` will be a large positive value.
   start_timestamp = start_timestamp - 5 * kStep;
   for (uint32_t timestamp = start_timestamp; timestamp != 5 * kStep;
        timestamp += kStep) {
@@ -111,7 +111,7 @@ TEST(TimestampScaler, TestG722LargeStep) {
   // Test both sides of the timestamp wrap-around.
   static const uint32_t kStep = 320;
   uint32_t external_timestamp = 0;
-  // |external_timestamp| will be a large positive value.
+  // `external_timestamp` will be a large positive value.
   external_timestamp = external_timestamp - 5 * kStep;
   uint32_t internal_timestamp = external_timestamp;
   for (; external_timestamp != 5 * kStep; external_timestamp += kStep) {
@@ -290,7 +290,7 @@ TEST(TimestampScaler, TestOpusLargeStep) {
   // Test both sides of the timestamp wrap-around.
   static const uint32_t kStep = 960;
   uint32_t external_timestamp = 0;
-  // |external_timestamp| will be a large positive value.
+  // `external_timestamp` will be a large positive value.
   external_timestamp = external_timestamp - 5 * kStep;
   uint32_t internal_timestamp = external_timestamp;
   for (; external_timestamp != 5 * kStep; external_timestamp += kStep) {

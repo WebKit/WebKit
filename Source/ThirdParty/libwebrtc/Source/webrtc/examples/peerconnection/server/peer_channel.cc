@@ -10,7 +10,6 @@
 
 #include "examples/peerconnection/server/peer_channel.h"
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,6 +17,7 @@
 
 #include "examples/peerconnection/server/data_socket.h"
 #include "examples/peerconnection/server/utils.h"
+#include "rtc_base/checks.h"
 
 // Set to the peer id of the originator when messages are being
 // exchanged between peers, but set to the id of the receiving peer
@@ -57,9 +57,9 @@ ChannelMember::ChannelMember(DataSocket* socket)
       id_(++s_member_id_),
       connected_(true),
       timestamp_(time(NULL)) {
-  assert(socket);
-  assert(socket->method() == DataSocket::GET);
-  assert(socket->PathEquals("/sign_in"));
+  RTC_DCHECK(socket);
+  RTC_DCHECK_EQ(socket->method(), DataSocket::GET);
+  RTC_DCHECK(socket->PathEquals("/sign_in"));
   name_ = socket->request_arguments();
   if (name_.empty())
     name_ = "peer_" + int2str(id_);
@@ -85,14 +85,14 @@ std::string ChannelMember::GetPeerIdHeader() const {
 }
 
 bool ChannelMember::NotifyOfOtherMember(const ChannelMember& other) {
-  assert(&other != this);
+  RTC_DCHECK_NE(&other, this);
   QueueResponse("200 OK", "text/plain", GetPeerIdHeader(), other.GetEntry());
   return true;
 }
 
 // Returns a string in the form "name,id,connected\n".
 std::string ChannelMember::GetEntry() const {
-  assert(name_.length() <= kMaxNameLength);
+  RTC_DCHECK(name_.length() <= kMaxNameLength);
 
   // name, 11-digit int, 1-digit bool, newline, null
   char entry[kMaxNameLength + 15];
@@ -102,8 +102,8 @@ std::string ChannelMember::GetEntry() const {
 }
 
 void ChannelMember::ForwardRequestToPeer(DataSocket* ds, ChannelMember* peer) {
-  assert(peer);
-  assert(ds);
+  RTC_DCHECK(peer);
+  RTC_DCHECK(ds);
 
   std::string extra_headers(GetPeerIdHeader());
 
@@ -129,8 +129,8 @@ void ChannelMember::QueueResponse(const std::string& status,
                                   const std::string& extra_headers,
                                   const std::string& data) {
   if (waiting_socket_) {
-    assert(queue_.empty());
-    assert(waiting_socket_->method() == DataSocket::GET);
+    RTC_DCHECK(queue_.empty());
+    RTC_DCHECK_EQ(waiting_socket_->method(), DataSocket::GET);
     bool ok =
         waiting_socket_->Send(status, true, content_type, extra_headers, data);
     if (!ok) {
@@ -149,9 +149,9 @@ void ChannelMember::QueueResponse(const std::string& status,
 }
 
 void ChannelMember::SetWaitingSocket(DataSocket* ds) {
-  assert(ds->method() == DataSocket::GET);
+  RTC_DCHECK_EQ(ds->method(), DataSocket::GET);
   if (ds && !queue_.empty()) {
-    assert(waiting_socket_ == NULL);
+    RTC_DCHECK(!waiting_socket_);
     const QueuedResponse& response = queue_.front();
     ds->Send(response.status, true, response.content_type,
              response.extra_headers, response.data);
@@ -167,13 +167,13 @@ void ChannelMember::SetWaitingSocket(DataSocket* ds) {
 
 // static
 bool PeerChannel::IsPeerConnection(const DataSocket* ds) {
-  assert(ds);
+  RTC_DCHECK(ds);
   return (ds->method() == DataSocket::POST && ds->content_length() > 0) ||
          (ds->method() == DataSocket::GET && ds->PathEquals("/sign_in"));
 }
 
 ChannelMember* PeerChannel::Lookup(DataSocket* ds) const {
-  assert(ds);
+  RTC_DCHECK(ds);
 
   if (ds->method() != DataSocket::GET && ds->method() != DataSocket::POST)
     return NULL;
@@ -209,7 +209,7 @@ ChannelMember* PeerChannel::Lookup(DataSocket* ds) const {
 }
 
 ChannelMember* PeerChannel::IsTargetedRequest(const DataSocket* ds) const {
-  assert(ds);
+  RTC_DCHECK(ds);
   // Regardless of GET or POST, we look for the peer_id parameter
   // only in the request_path.
   const std::string& path = ds->request_path();
@@ -239,7 +239,7 @@ ChannelMember* PeerChannel::IsTargetedRequest(const DataSocket* ds) const {
 }
 
 bool PeerChannel::AddMember(DataSocket* ds) {
-  assert(IsPeerConnection(ds));
+  RTC_DCHECK(IsPeerConnection(ds));
   ChannelMember* new_guy = new ChannelMember(ds);
   Members failures;
   BroadcastChangedState(*new_guy, &failures);
@@ -308,7 +308,7 @@ void PeerChannel::DeleteAll() {
 void PeerChannel::BroadcastChangedState(const ChannelMember& member,
                                         Members* delivery_failures) {
   // This function should be called prior to DataSocket::Close().
-  assert(delivery_failures);
+  RTC_DCHECK(delivery_failures);
 
   if (!member.connected()) {
     printf("Member disconnected: %s\n", member.name().c_str());
@@ -329,12 +329,12 @@ void PeerChannel::BroadcastChangedState(const ChannelMember& member,
 }
 
 void PeerChannel::HandleDeliveryFailures(Members* failures) {
-  assert(failures);
+  RTC_DCHECK(failures);
 
   while (!failures->empty()) {
     Members::iterator i = failures->begin();
     ChannelMember* member = *i;
-    assert(!member->connected());
+    RTC_DCHECK(!member->connected());
     failures->erase(i);
     BroadcastChangedState(*member, failures);
     delete member;
@@ -344,14 +344,14 @@ void PeerChannel::HandleDeliveryFailures(Members* failures) {
 // Builds a simple list of "name,id\n" entries for each member.
 std::string PeerChannel::BuildResponseForNewMember(const ChannelMember& member,
                                                    std::string* content_type) {
-  assert(content_type);
+  RTC_DCHECK(content_type);
 
   *content_type = "text/plain";
   // The peer itself will always be the first entry.
   std::string response(member.GetEntry());
   for (Members::iterator i = members_.begin(); i != members_.end(); ++i) {
     if (member.id() != (*i)->id()) {
-      assert((*i)->connected());
+      RTC_DCHECK((*i)->connected());
       response += (*i)->GetEntry();
     }
   }

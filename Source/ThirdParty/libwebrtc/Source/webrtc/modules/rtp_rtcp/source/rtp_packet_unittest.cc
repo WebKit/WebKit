@@ -354,6 +354,35 @@ TEST(RtpPacketTest, CreateWithMaxSizeHeaderExtension) {
   EXPECT_EQ(read, kValue);
 }
 
+TEST(RtpPacketTest, SetsRegisteredExtension) {
+  RtpPacketToSend::ExtensionManager extensions;
+  extensions.Register<TransmissionOffset>(kTransmissionOffsetExtensionId);
+  RtpPacketToSend packet(&extensions);
+
+  EXPECT_TRUE(packet.IsRegistered<TransmissionOffset>());
+  EXPECT_FALSE(packet.HasExtension<TransmissionOffset>());
+
+  // Try to set the extensions.
+  EXPECT_TRUE(packet.SetExtension<TransmissionOffset>(kTimeOffset));
+
+  EXPECT_TRUE(packet.HasExtension<TransmissionOffset>());
+  EXPECT_EQ(packet.GetExtension<TransmissionOffset>(), kTimeOffset);
+}
+
+TEST(RtpPacketTest, FailsToSetUnregisteredExtension) {
+  RtpPacketToSend::ExtensionManager extensions;
+  extensions.Register<TransmissionOffset>(kTransmissionOffsetExtensionId);
+  RtpPacketToSend packet(&extensions);
+
+  EXPECT_FALSE(packet.IsRegistered<TransportSequenceNumber>());
+  EXPECT_FALSE(packet.HasExtension<TransportSequenceNumber>());
+
+  EXPECT_FALSE(packet.SetExtension<TransportSequenceNumber>(42));
+
+  EXPECT_FALSE(packet.HasExtension<TransportSequenceNumber>());
+  EXPECT_EQ(packet.GetExtension<TransportSequenceNumber>(), absl::nullopt);
+}
+
 TEST(RtpPacketTest, SetReservedExtensionsAfterPayload) {
   const size_t kPayloadSize = 4;
   RtpPacketToSend::ExtensionManager extensions;
@@ -473,6 +502,76 @@ TEST(RtpPacketTest, ParseWithExtension) {
   EXPECT_EQ(kTimeOffset, time_offset);
   EXPECT_EQ(0u, packet.payload_size());
   EXPECT_EQ(0u, packet.padding_size());
+}
+
+TEST(RtpPacketTest, ParseHeaderOnly) {
+  // clang-format off
+  constexpr uint8_t kPaddingHeader[] = {
+      0x80, 0x62, 0x35, 0x79,
+      0x65, 0x43, 0x12, 0x78,
+      0x12, 0x34, 0x56, 0x78};
+  // clang-format on
+
+  RtpPacket packet;
+  EXPECT_TRUE(packet.Parse(rtc::CopyOnWriteBuffer(kPaddingHeader)));
+  EXPECT_EQ(packet.PayloadType(), 0x62u);
+  EXPECT_EQ(packet.SequenceNumber(), 0x3579u);
+  EXPECT_EQ(packet.Timestamp(), 0x65431278u);
+  EXPECT_EQ(packet.Ssrc(), 0x12345678u);
+
+  EXPECT_FALSE(packet.has_padding());
+  EXPECT_EQ(packet.padding_size(), 0u);
+  EXPECT_EQ(packet.payload_size(), 0u);
+}
+
+TEST(RtpPacketTest, ParseHeaderOnlyWithPadding) {
+  // clang-format off
+  constexpr uint8_t kPaddingHeader[] = {
+      0xa0, 0x62, 0x35, 0x79,
+      0x65, 0x43, 0x12, 0x78,
+      0x12, 0x34, 0x56, 0x78};
+  // clang-format on
+
+  RtpPacket packet;
+  EXPECT_TRUE(packet.Parse(rtc::CopyOnWriteBuffer(kPaddingHeader)));
+
+  EXPECT_TRUE(packet.has_padding());
+  EXPECT_EQ(packet.padding_size(), 0u);
+  EXPECT_EQ(packet.payload_size(), 0u);
+}
+
+TEST(RtpPacketTest, ParseHeaderOnlyWithExtensionAndPadding) {
+  // clang-format off
+  constexpr uint8_t kPaddingHeader[] = {
+      0xb0, 0x62, 0x35, 0x79,
+      0x65, 0x43, 0x12, 0x78,
+      0x12, 0x34, 0x56, 0x78,
+      0xbe, 0xde, 0x00, 0x01,
+      0x11, 0x00, 0x00, 0x00};
+  // clang-format on
+
+  RtpHeaderExtensionMap extensions;
+  extensions.Register<TransmissionOffset>(1);
+  RtpPacket packet(&extensions);
+  EXPECT_TRUE(packet.Parse(rtc::CopyOnWriteBuffer(kPaddingHeader)));
+  EXPECT_TRUE(packet.has_padding());
+  EXPECT_TRUE(packet.HasExtension<TransmissionOffset>());
+  EXPECT_EQ(packet.padding_size(), 0u);
+}
+
+TEST(RtpPacketTest, ParsePaddingOnlyPacket) {
+  // clang-format off
+  constexpr uint8_t kPaddingHeader[] = {
+      0xa0, 0x62, 0x35, 0x79,
+      0x65, 0x43, 0x12, 0x78,
+      0x12, 0x34, 0x56, 0x78,
+      0, 0, 3};
+  // clang-format on
+
+  RtpPacket packet;
+  EXPECT_TRUE(packet.Parse(rtc::CopyOnWriteBuffer(kPaddingHeader)));
+  EXPECT_TRUE(packet.has_padding());
+  EXPECT_EQ(packet.padding_size(), 3u);
 }
 
 TEST(RtpPacketTest, GetExtensionWithoutParametersReturnsOptionalValue) {
@@ -757,7 +856,7 @@ struct UncopyableValue {
 };
 struct UncopyableExtension {
   static constexpr RTPExtensionType kId = kRtpExtensionGenericFrameDescriptor02;
-  static constexpr char kUri[] = "uri";
+  static constexpr absl::string_view Uri() { return "uri"; }
 
   static size_t ValueSize(const UncopyableValue& value) { return 1; }
   static bool Write(rtc::ArrayView<uint8_t> data,
@@ -770,7 +869,6 @@ struct UncopyableExtension {
   }
 };
 constexpr RTPExtensionType UncopyableExtension::kId;
-constexpr char UncopyableExtension::kUri[];
 
 TEST(RtpPacketTest, SetUncopyableExtension) {
   RtpPacket::ExtensionManager extensions;

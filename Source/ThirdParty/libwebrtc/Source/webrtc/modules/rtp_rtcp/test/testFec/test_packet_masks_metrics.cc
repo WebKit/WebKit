@@ -155,7 +155,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
   uint8_t fec_packet_masks_[kMaxNumberMediaPackets][kMaxNumberMediaPackets];
   FILE* fp_mask_;
 
-  // Measure of the gap of the loss for configuration given by |state|.
+  // Measure of the gap of the loss for configuration given by `state`.
   // This is to measure degree of consecutiveness for the loss configuration.
   // Useful if the packets are sent out in order of sequence numbers and there
   // is little/no re-ordering during transmission.
@@ -183,8 +183,8 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
   }
 
   // Returns the number of recovered media packets for the XOR code, given the
-  // packet mask |fec_packet_masks_|, for the loss state/configuration given by
-  // |state|.
+  // packet mask `fec_packet_masks_`, for the loss state/configuration given by
+  // `state`.
   int RecoveredMediaPackets(int num_media_packets,
                             int num_fec_packets,
                             uint8_t* state) {
@@ -225,7 +225,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
               }
             }
             // Check that we can only recover 1 packet.
-            assert(check_num_recovered == 1);
+            RTC_DCHECK_EQ(check_num_recovered, 1);
             // Update the state with the newly recovered media packet.
             state_tmp[jsel] = 0;
           }
@@ -241,7 +241,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
   }
 
   // Compute the probability of occurence of the loss state/configuration,
-  // given by |state|, for all the loss models considered in this test.
+  // given by `state`, for all the loss models considered in this test.
   void ComputeProbabilityWeight(double* prob_weight,
                                 uint8_t* state,
                                 int tot_num_packets) {
@@ -260,7 +260,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
           }
         }
       } else {  // Gilbert-Elliot model for burst model.
-        assert(loss_model_[k].loss_type == kBurstyLossModel);
+        RTC_DCHECK_EQ(loss_model_[k].loss_type, kBurstyLossModel);
         // Transition probabilities: from previous to current state.
         // Prob. of previous = lost --> current = received.
         double prob10 = 1.0 / burst_length;
@@ -317,8 +317,8 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
   }
 
   // Compute the residual loss per gap, by summing the
-  // |residual_loss_per_loss_gap| over all loss configurations up to loss number
-  // = |num_fec_packets|.
+  // `residual_loss_per_loss_gap` over all loss configurations up to loss number
+  // = `num_fec_packets`.
   double ComputeResidualLossPerGap(MetricsFecCode metrics,
                                    int gap_number,
                                    int num_fec_packets,
@@ -339,7 +339,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
   }
 
   // Compute the recovery rate per loss number, by summing the
-  // |residual_loss_per_loss_gap| over all gap configurations.
+  // `residual_loss_per_loss_gap` over all gap configurations.
   void ComputeRecoveryRatePerLoss(MetricsFecCode* metrics,
                                   int num_media_packets,
                                   int num_fec_packets,
@@ -358,7 +358,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
       if (tot_num_configs > 0) {
         arl = arl / static_cast<double>(tot_num_configs);
       }
-      // Recovery rate for a given loss |loss| is 1 minus the scaled |arl|,
+      // Recovery rate for a given loss `loss` is 1 minus the scaled `arl`,
       // where the scale factor is relative to code size/parameters.
       double scaled_loss =
           static_cast<double>(loss * num_media_packets) /
@@ -376,8 +376,8 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
            sizeof(double) * 2 * kMaxMediaPacketsTest + 1);
   }
 
-  // Compute the metrics for an FEC code, given by the code type |code_type|
-  // (XOR-random/ bursty or RS), and by the code index |code_index|
+  // Compute the metrics for an FEC code, given by the code type `code_type`
+  // (XOR-random/ bursty or RS), and by the code index `code_index`
   // (which containes the code size parameters/protection length).
   void ComputeMetricsForCode(CodeType code_type, int code_index) {
     std::unique_ptr<double[]> prob_weight(new double[kNumLossModels]);
@@ -393,7 +393,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
 
     int num_loss_configurations = 1 << tot_num_packets;
     // Loop over all loss configurations for the symbol sequence of length
-    // |tot_num_packets|. In this version we process up to (k=12, m=12) codes,
+    // `tot_num_packets`. In this version we process up to (k=12, m=12) codes,
     // and get exact expressions for the residual loss.
     // TODO(marpan): For larger codes, loop over some random sample of loss
     // configurations, sampling driven by the underlying statistical loss model
@@ -425,8 +425,8 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
           }
         }
       }  // Done with loop over total number of packets.
-      assert(num_media_packets_lost <= num_media_packets);
-      assert(num_packets_lost <= tot_num_packets && num_packets_lost > 0);
+      RTC_DCHECK_LE(num_media_packets_lost, num_media_packets);
+      RTC_DCHECK_LE(num_packets_lost, tot_num_packets && num_packets_lost > 0);
       double residual_loss = 0.0;
       // Only need to compute residual loss (number of recovered packets) for
       // configurations that have at least one media packet lost.
@@ -445,7 +445,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
             num_recovered_packets = num_media_packets_lost;
           }
         }
-        assert(num_recovered_packets <= num_media_packets);
+        RTC_DCHECK_LE(num_recovered_packets, num_media_packets);
         // Compute the residual loss. We only care about recovering media/source
         // packets, so residual loss is based on lost/recovered media packets.
         residual_loss =
@@ -464,22 +464,22 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
       // Update the distribution statistics.
       // Compute the gap of the loss (the "consecutiveness" of the loss).
       int gap_loss = GapLoss(tot_num_packets, state.get());
-      assert(gap_loss < kMaxGapSize);
+      RTC_DCHECK_LT(gap_loss, kMaxGapSize);
       int index = gap_loss * (2 * kMaxMediaPacketsTest) + num_packets_lost;
-      assert(index < kNumStatesDistribution);
+      RTC_DCHECK_LT(index, kNumStatesDistribution);
       metrics_code.residual_loss_per_loss_gap[index] += residual_loss;
       if (code_type == xor_random_code) {
         // The configuration density is only a function of the code length and
-        // only needs to computed for the first |code_type| passed here.
+        // only needs to computed for the first `code_type` passed here.
         code_params_[code_index].configuration_density[index]++;
       }
     }  // Done with loop over configurations.
     // Normalize the average residual loss and compute/normalize the variance.
     for (int k = 0; k < kNumLossModels; k++) {
       // Normalize the average residual loss by the total number of packets
-      // |tot_num_packets| (i.e., the code length). For a code with no (zero)
+      // `tot_num_packets` (i.e., the code length). For a code with no (zero)
       // recovery, the average residual loss for that code would be reduced like
-      // ~|average_loss_rate| * |num_media_packets| / |tot_num_packets|. This is
+      // ~`average_loss_rate` * `num_media_packets` / `tot_num_packets`. This is
       // the expected reduction in the average residual loss just from adding
       // FEC packets to the symbol sequence.
       metrics_code.average_residual_loss[k] =
@@ -492,8 +492,8 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
           metrics_code.variance_residual_loss[k] -
           (metrics_code.average_residual_loss[k] *
            metrics_code.average_residual_loss[k]);
-      assert(metrics_code.variance_residual_loss[k] >= 0.0);
-      assert(metrics_code.average_residual_loss[k] > 0.0);
+      RTC_DCHECK_GE(metrics_code.variance_residual_loss[k], 0.0);
+      RTC_DCHECK_GT(metrics_code.average_residual_loss[k], 0.0);
       metrics_code.variance_residual_loss[k] =
           std::sqrt(metrics_code.variance_residual_loss[k]) /
           metrics_code.average_residual_loss[k];
@@ -509,14 +509,14 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
     } else if (code_type == xor_bursty_code) {
       CopyMetrics(&kMetricsXorBursty[code_index], metrics_code);
     } else {
-      assert(false);
+      RTC_NOTREACHED();
     }
   }
 
   void WriteOutMetricsAllFecCodes() {
     std::string filename = test::OutputPath() + "data_metrics_all_codes";
     FILE* fp = fopen(filename.c_str(), "wb");
-    // Loop through codes up to |kMaxMediaPacketsTest|.
+    // Loop through codes up to `kMaxMediaPacketsTest`.
     int code_index = 0;
     for (int num_media_packets = 1; num_media_packets <= kMaxMediaPacketsTest;
          num_media_packets++) {
@@ -588,7 +588,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
         num_loss_models++;
       }
     }
-    assert(num_loss_models == kNumLossModels);
+    RTC_DCHECK_EQ(num_loss_models, kNumLossModels);
   }
 
   void SetCodeParams() {
@@ -714,7 +714,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
     const int packet_mask_max = kMaxMediaPackets[fec_mask_type];
     std::unique_ptr<uint8_t[]> packet_mask(
         new uint8_t[packet_mask_max * kUlpfecMaxPacketMaskSize]);
-    // Loop through codes up to |kMaxMediaPacketsTest|.
+    // Loop through codes up to `kMaxMediaPacketsTest`.
     for (int num_media_packets = 1; num_media_packets <= kMaxMediaPacketsTest;
          ++num_media_packets) {
       const int mask_bytes_fec_packet =
@@ -738,7 +738,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
         code_index++;
       }
     }
-    assert(code_index == kNumberCodes);
+    RTC_DCHECK_EQ(code_index, kNumberCodes);
     return 0;
   }
 
@@ -955,7 +955,7 @@ TEST_F(FecPacketMaskMetricsTest, FecXorBurstyPerfectRecoveryConsecutiveLoss) {
   for (int code_index = 0; code_index < max_num_codes_; code_index++) {
     int num_fec_packets = code_params_[code_index].num_fec_packets;
     for (int loss = 1; loss <= num_fec_packets; loss++) {
-      int index = loss;  // |gap| is zero.
+      int index = loss;  // `gap` is zero.
       EXPECT_EQ(kMetricsXorBursty[code_index].residual_loss_per_loss_gap[index],
                 0.0);
     }
@@ -1010,8 +1010,8 @@ TEST_F(FecPacketMaskMetricsTest, FecRecoveryRateUnderLossConditions) {
   for (int code_index = 0; code_index < max_num_codes_; code_index++) {
     int num_media_packets = code_params_[code_index].num_media_packets;
     int num_fec_packets = code_params_[code_index].num_fec_packets;
-    // Perfect recovery (|recovery_rate_per_loss| == 1) is expected for
-    // |loss_number| = 1, for all codes.
+    // Perfect recovery (`recovery_rate_per_loss` == 1) is expected for
+    // `loss_number` = 1, for all codes.
     int loss_number = 1;
     EXPECT_EQ(
         kMetricsReedSolomon[code_index].recovery_rate_per_loss[loss_number],
@@ -1020,7 +1020,7 @@ TEST_F(FecPacketMaskMetricsTest, FecRecoveryRateUnderLossConditions) {
               1.0);
     EXPECT_EQ(kMetricsXorBursty[code_index].recovery_rate_per_loss[loss_number],
               1.0);
-    // For |loss_number| = |num_fec_packets| / 2, we expect the following:
+    // For `loss_number` = `num_fec_packets` / 2, we expect the following:
     // Perfect recovery for RS, and recovery for XOR above the threshold.
     loss_number = num_fec_packets / 2 > 0 ? num_fec_packets / 2 : 1;
     EXPECT_EQ(
@@ -1030,7 +1030,7 @@ TEST_F(FecPacketMaskMetricsTest, FecRecoveryRateUnderLossConditions) {
               kRecoveryRateXorRandom[0]);
     EXPECT_GE(kMetricsXorBursty[code_index].recovery_rate_per_loss[loss_number],
               kRecoveryRateXorBursty[0]);
-    // For |loss_number| = |num_fec_packets|, we expect the following:
+    // For `loss_number` = `num_fec_packets`, we expect the following:
     // Perfect recovery for RS, and recovery for XOR above the threshold.
     loss_number = num_fec_packets;
     EXPECT_EQ(
@@ -1040,7 +1040,7 @@ TEST_F(FecPacketMaskMetricsTest, FecRecoveryRateUnderLossConditions) {
               kRecoveryRateXorRandom[1]);
     EXPECT_GE(kMetricsXorBursty[code_index].recovery_rate_per_loss[loss_number],
               kRecoveryRateXorBursty[1]);
-    // For |loss_number| = |num_fec_packets| + 1, we expect the following:
+    // For `loss_number` = `num_fec_packets` + 1, we expect the following:
     // Zero recovery for RS, but non-zero recovery for XOR.
     if (num_fec_packets > 1 && num_media_packets > 2) {
       loss_number = num_fec_packets + 1;

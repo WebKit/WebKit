@@ -24,7 +24,6 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
-#include "test/rtp_header_parser.h"
 
 using ::testing::ElementsAre;
 using ::testing::Eq;
@@ -72,11 +71,10 @@ class SendTransport : public Transport {
   bool SendRtp(const uint8_t* data,
                size_t len,
                const PacketOptions& options) override {
-    RTPHeader header;
-    std::unique_ptr<RtpHeaderParser> parser(RtpHeaderParser::CreateForTest());
-    EXPECT_TRUE(parser->Parse(static_cast<const uint8_t*>(data), len, &header));
+    RtpPacket packet;
+    EXPECT_TRUE(packet.Parse(data, len));
     ++rtp_packets_sent_;
-    last_rtp_header_ = header;
+    last_rtp_sequence_number_ = packet.SequenceNumber();
     return true;
   }
   bool SendRtcp(const uint8_t* data, size_t len) override {
@@ -98,7 +96,7 @@ class SendTransport : public Transport {
   int64_t delay_ms_;
   int rtp_packets_sent_;
   size_t rtcp_packets_sent_;
-  RTPHeader last_rtp_header_;
+  uint16_t last_rtp_sequence_number_;
   std::vector<uint16_t> last_nack_list_;
 };
 
@@ -138,7 +136,7 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
   }
   int RtpSent() { return transport_.rtp_packets_sent_; }
   uint16_t LastRtpSequenceNumber() {
-    return transport_.last_rtp_header_.sequenceNumber;
+    return transport_.last_rtp_sequence_number_;
   }
   std::vector<uint16_t> LastNackListSent() {
     return transport_.last_nack_list_;
@@ -568,6 +566,7 @@ TEST_F(RtpRtcpImplTest, StoresPacketInfoForSentPackets) {
   const uint32_t kStartTimestamp = 1u;
   SetUp();
   sender_.impl_->SetStartTimestamp(kStartTimestamp);
+  sender_.impl_->SetSequenceNumber(1);
 
   PacedPacketInfo pacing_info;
   RtpPacketToSend packet(nullptr);
@@ -576,7 +575,6 @@ TEST_F(RtpRtcpImplTest, StoresPacketInfoForSentPackets) {
 
   // Single-packet frame.
   packet.SetTimestamp(1);
-  packet.SetSequenceNumber(1);
   packet.set_first_packet_of_frame(true);
   packet.SetMarker(true);
   sender_.impl_->TrySendPacket(&packet, pacing_info);
@@ -591,16 +589,13 @@ TEST_F(RtpRtcpImplTest, StoresPacketInfoForSentPackets) {
 
   // Three-packet frame.
   packet.SetTimestamp(2);
-  packet.SetSequenceNumber(2);
   packet.set_first_packet_of_frame(true);
   packet.SetMarker(false);
   sender_.impl_->TrySendPacket(&packet, pacing_info);
 
-  packet.SetSequenceNumber(3);
   packet.set_first_packet_of_frame(false);
   sender_.impl_->TrySendPacket(&packet, pacing_info);
 
-  packet.SetSequenceNumber(4);
   packet.SetMarker(true);
   sender_.impl_->TrySendPacket(&packet, pacing_info);
 
@@ -621,12 +616,12 @@ TEST_F(RtpRtcpImplTest, StoresPacketInfoForSentPackets) {
                                           /*is_last=*/1)));
 }
 
-// Checks that the sender report stats are not available if no RTCP SR was sent.
+// Checks that the remote sender stats are not available if no RTCP SR was sent.
 TEST_F(RtpRtcpImplTest, SenderReportStatsNotAvailable) {
   EXPECT_THAT(receiver_.impl_->GetSenderReportStats(), Eq(absl::nullopt));
 }
 
-// Checks that the sender report stats are available if an RTCP SR was sent.
+// Checks that the remote sender stats are available if an RTCP SR was sent.
 TEST_F(RtpRtcpImplTest, SenderReportStatsAvailable) {
   // Send a frame in order to send an SR.
   SendFrame(&sender_, sender_video_.get(), kBaseLayerTid);
@@ -635,7 +630,7 @@ TEST_F(RtpRtcpImplTest, SenderReportStatsAvailable) {
   EXPECT_THAT(receiver_.impl_->GetSenderReportStats(), Not(Eq(absl::nullopt)));
 }
 
-// Checks that the sender report stats are not available if an RTCP SR with an
+// Checks that the remote sender stats are not available if an RTCP SR with an
 // unexpected SSRC is received.
 TEST_F(RtpRtcpImplTest, SenderReportStatsNotUpdatedWithUnexpectedSsrc) {
   constexpr uint32_t kUnexpectedSenderSsrc = 0x87654321;
@@ -675,7 +670,7 @@ TEST_F(RtpRtcpImplTest, SenderReportStatsCheckStatsFromLastReport) {
                      Field(&SenderReportStats::bytes_sent, Eq(kOctetCount)))));
 }
 
-// Checks that the sender report stats count equals the number of sent RTCP SRs.
+// Checks that the remote sender stats count equals the number of sent RTCP SRs.
 TEST_F(RtpRtcpImplTest, SenderReportStatsCount) {
   using SenderReportStats = RtpRtcpInterface::SenderReportStats;
   // Send a frame in order to send an SR.
@@ -690,7 +685,7 @@ TEST_F(RtpRtcpImplTest, SenderReportStatsCount) {
               Optional(Field(&SenderReportStats::reports_count, Eq(2u))));
 }
 
-// Checks that the sender report stats include a valid arrival time if an RTCP
+// Checks that the remote sender stats include a valid arrival time if an RTCP
 // SR was sent.
 TEST_F(RtpRtcpImplTest, SenderReportStatsArrivalTimestampSet) {
   // Send a frame in order to send an SR.

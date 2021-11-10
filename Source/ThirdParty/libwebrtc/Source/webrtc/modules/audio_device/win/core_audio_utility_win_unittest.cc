@@ -107,7 +107,7 @@ TEST_F(CoreAudioUtilityWinTest, WaveFormatWrapper) {
 
 TEST_F(CoreAudioUtilityWinTest, WaveFormatWrapperExtended) {
   // Use default constructor for WAVEFORMATEXTENSIBLE and verify that it
-  // results in same size as for WAVEFORMATEX even if the size of |format_ex|
+  // results in same size as for WAVEFORMATEX even if the size of `format_ex`
   // equals the size of WAVEFORMATEXTENSIBLE.
   WAVEFORMATEXTENSIBLE format_ex = {};
   core_audio_utility::WaveFormatWrapper wave_format_ex(&format_ex);
@@ -319,7 +319,7 @@ TEST_F(CoreAudioUtilityWinTest, CreateSessionManager2) {
   EDataFlow data_flow[] = {eRender, eCapture};
 
   // Obtain reference to an IAudioSessionManager2 interface for a default audio
-  // endpoint device specified by two different data flows and the |eConsole|
+  // endpoint device specified by two different data flows and the `eConsole`
   // role.
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
     ComPtr<IMMDevice> device(core_audio_utility::CreateDevice(
@@ -339,7 +339,7 @@ TEST_F(CoreAudioUtilityWinTest, CreateSessionEnumerator) {
 
   // Obtain reference to an IAudioSessionEnumerator interface for a default
   // audio endpoint device specified by two different data flows and the
-  // |eConsole| role.
+  // `eConsole` role.
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
     ComPtr<IMMDevice> device(core_audio_utility::CreateDevice(
         AudioDeviceName::kDefaultDeviceId, data_flow[i], eConsole));
@@ -364,7 +364,7 @@ TEST_F(CoreAudioUtilityWinTest, NumberOfActiveSessions) {
   EDataFlow data_flow[] = {eRender, eCapture};
 
   // Count number of active audio session for a default audio endpoint device
-  // specified by two different data flows and the |eConsole| role.
+  // specified by two different data flows and the `eConsole` role.
   // Ensure that the number of active audio sessions is less than or equal to
   // the total number of audio sessions on that same device.
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
@@ -394,7 +394,7 @@ TEST_F(CoreAudioUtilityWinTest, CreateClient) {
   EDataFlow data_flow[] = {eRender, eCapture};
 
   // Obtain reference to an IAudioClient interface for a default audio endpoint
-  // device specified by two different data flows and the |eConsole| role.
+  // device specified by two different data flows and the `eConsole` role.
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
     ComPtr<IAudioClient> client = core_audio_utility::CreateClient(
         AudioDeviceName::kDefaultDeviceId, data_flow[i], eConsole);
@@ -409,7 +409,7 @@ TEST_F(CoreAudioUtilityWinTest, CreateClient2) {
   EDataFlow data_flow[] = {eRender, eCapture};
 
   // Obtain reference to an IAudioClient2 interface for a default audio endpoint
-  // device specified by two different data flows and the |eConsole| role.
+  // device specified by two different data flows and the `eConsole` role.
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
     ComPtr<IAudioClient2> client2 = core_audio_utility::CreateClient2(
         AudioDeviceName::kDefaultDeviceId, data_flow[i], eConsole);
@@ -424,7 +424,7 @@ TEST_F(CoreAudioUtilityWinTest, CreateClient3) {
   EDataFlow data_flow[] = {eRender, eCapture};
 
   // Obtain reference to an IAudioClient3 interface for a default audio endpoint
-  // device specified by two different data flows and the |eConsole| role.
+  // device specified by two different data flows and the `eConsole` role.
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
     ComPtr<IAudioClient3> client3 = core_audio_utility::CreateClient3(
         AudioDeviceName::kDefaultDeviceId, data_flow[i], eConsole);

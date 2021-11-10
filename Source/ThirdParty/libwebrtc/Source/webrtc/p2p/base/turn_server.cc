@@ -139,7 +139,7 @@ TurnServer::~TurnServer() {
 
   for (ServerSocketMap::iterator it = server_listen_sockets_.begin();
        it != server_listen_sockets_.end(); ++it) {
-    rtc::AsyncSocket* socket = it->first;
+    rtc::Socket* socket = it->first;
     delete socket;
   }
 }
@@ -152,7 +152,7 @@ void TurnServer::AddInternalSocket(rtc::AsyncPacketSocket* socket,
   socket->SignalReadPacket.connect(this, &TurnServer::OnInternalPacket);
 }
 
-void TurnServer::AddInternalServerSocket(rtc::AsyncSocket* socket,
+void TurnServer::AddInternalServerSocket(rtc::Socket* socket,
                                          ProtocolType proto) {
   RTC_DCHECK_RUN_ON(thread_);
   RTC_DCHECK(server_listen_sockets_.end() ==
@@ -169,21 +169,21 @@ void TurnServer::SetExternalSocketFactory(
   external_addr_ = external_addr;
 }
 
-void TurnServer::OnNewInternalConnection(rtc::AsyncSocket* socket) {
+void TurnServer::OnNewInternalConnection(rtc::Socket* socket) {
   RTC_DCHECK_RUN_ON(thread_);
   RTC_DCHECK(server_listen_sockets_.find(socket) !=
              server_listen_sockets_.end());
   AcceptConnection(socket);
 }
 
-void TurnServer::AcceptConnection(rtc::AsyncSocket* server_socket) {
+void TurnServer::AcceptConnection(rtc::Socket* server_socket) {
   // Check if someone is trying to connect to us.
   rtc::SocketAddress accept_addr;
-  rtc::AsyncSocket* accepted_socket = server_socket->Accept(&accept_addr);
+  rtc::Socket* accepted_socket = server_socket->Accept(&accept_addr);
   if (accepted_socket != NULL) {
     ProtocolType proto = server_listen_sockets_[server_socket];
     cricket::AsyncStunTCPSocket* tcp_socket =
-        new cricket::AsyncStunTCPSocket(accepted_socket, false);
+        new cricket::AsyncStunTCPSocket(accepted_socket);
 
     tcp_socket->SignalClose.connect(this, &TurnServer::OnInternalSocketClose);
     // Finally add the socket so it can start communicating with the client.

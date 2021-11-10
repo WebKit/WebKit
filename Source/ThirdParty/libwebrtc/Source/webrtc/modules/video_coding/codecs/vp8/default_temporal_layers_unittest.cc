@@ -653,8 +653,8 @@ TEST_F(TemporalLayersTest, KeyFrame) {
 
   uint32_t timestamp = 0;
   for (int i = 0; i < 7; ++i) {
-    // Temporal pattern starts from 0 after key frame. Let the first |i| - 1
-    // frames be delta frames, and the |i|th one key frame.
+    // Temporal pattern starts from 0 after key frame. Let the first `i` - 1
+    // frames be delta frames, and the `i`th one key frame.
     for (int j = 1; j <= i; ++j) {
       // Since last frame was always a keyframe and thus index 0 in the pattern,
       // this loop starts at index 1.
@@ -685,6 +685,25 @@ TEST_F(TemporalLayersTest, KeyFrame) {
         << "Key frame is universal switch";
     EXPECT_TRUE(checker.CheckTemporalConfig(true, tl_config));
   }
+}
+
+TEST_F(TemporalLayersTest, SetsTlCountOnFirstConfigUpdate) {
+  // Create an instance and fetch config update without setting any rate.
+  constexpr int kNumLayers = 2;
+  DefaultTemporalLayers tl(kNumLayers);
+  Vp8EncoderConfig config = tl.UpdateConfiguration(0);
+
+  // Config should indicate correct number of temporal layers, but zero bitrate.
+  ASSERT_TRUE(config.temporal_layer_config.has_value());
+  EXPECT_EQ(config.temporal_layer_config->ts_number_layers,
+            uint32_t{kNumLayers});
+  std::array<uint32_t, Vp8EncoderConfig::TemporalLayerConfig::kMaxLayers>
+      kZeroRate = {};
+  EXPECT_EQ(config.temporal_layer_config->ts_target_bitrate, kZeroRate);
+
+  // On second call, no new update.
+  config = tl.UpdateConfiguration(0);
+  EXPECT_FALSE(config.temporal_layer_config.has_value());
 }
 
 class TemporalLayersReferenceTest : public TemporalLayersTest,
@@ -761,7 +780,7 @@ TEST_P(TemporalLayersReferenceTest, ValidFrameConfigs) {
   // of the buffer state; which buffers references which temporal layers (if
   // (any). If a given buffer is never updated, it is legal to reference it
   // even for sync frames. In order to be general, don't assume TL0 always
-  // updates |last|.
+  // updates `last`.
   std::vector<Vp8FrameConfig> tl_configs(kMaxPatternLength);
   for (int i = 0; i < kMaxPatternLength; ++i) {
     Vp8FrameConfig tl_config = tl.NextFrameConfig(0, timestamp_);

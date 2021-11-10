@@ -26,7 +26,7 @@ const char kByeMessage[] = "BYE";
 // Delay between server connection retries, in milliseconds
 const int kReconnectDelay = 2000;
 
-rtc::AsyncSocket* CreateClientSocket(int family) {
+rtc::Socket* CreateClientSocket(int family) {
 #ifdef WIN32
   rtc::Win32Socket* sock = new rtc::Win32Socket();
   sock->CreateT(family, SOCK_STREAM);
@@ -34,7 +34,7 @@ rtc::AsyncSocket* CreateClientSocket(int family) {
 #elif defined(WEBRTC_POSIX)
   rtc::Thread* thread = rtc::Thread::Current();
   RTC_DCHECK(thread != NULL);
-  return thread->socketserver()->CreateAsyncSocket(family, SOCK_STREAM);
+  return thread->socketserver()->CreateSocket(family, SOCK_STREAM);
 #else
 #error Platform not supported.
 #endif
@@ -227,14 +227,14 @@ bool PeerConnectionClient::ConnectControlSocket() {
   return true;
 }
 
-void PeerConnectionClient::OnConnect(rtc::AsyncSocket* socket) {
+void PeerConnectionClient::OnConnect(rtc::Socket* socket) {
   RTC_DCHECK(!onconnect_data_.empty());
   size_t sent = socket->Send(onconnect_data_.c_str(), onconnect_data_.length());
   RTC_DCHECK(sent == onconnect_data_.length());
   onconnect_data_.clear();
 }
 
-void PeerConnectionClient::OnHangingGetConnect(rtc::AsyncSocket* socket) {
+void PeerConnectionClient::OnHangingGetConnect(rtc::Socket* socket) {
   char buffer[1024];
   snprintf(buffer, sizeof(buffer), "GET /wait?peer_id=%i HTTP/1.0\r\n\r\n",
            my_id_);
@@ -283,7 +283,7 @@ bool PeerConnectionClient::GetHeaderValue(const std::string& data,
   return false;
 }
 
-bool PeerConnectionClient::ReadIntoBuffer(rtc::AsyncSocket* socket,
+bool PeerConnectionClient::ReadIntoBuffer(rtc::Socket* socket,
                                           std::string* data,
                                           size_t* content_length) {
   char buffer[0xffff];
@@ -321,7 +321,7 @@ bool PeerConnectionClient::ReadIntoBuffer(rtc::AsyncSocket* socket,
   return ret;
 }
 
-void PeerConnectionClient::OnRead(rtc::AsyncSocket* socket) {
+void PeerConnectionClient::OnRead(rtc::Socket* socket) {
   size_t content_length = 0;
   if (ReadIntoBuffer(socket, &control_data_, &content_length)) {
     size_t peer_id = 0, eoh = 0;
@@ -373,7 +373,7 @@ void PeerConnectionClient::OnRead(rtc::AsyncSocket* socket) {
   }
 }
 
-void PeerConnectionClient::OnHangingGetRead(rtc::AsyncSocket* socket) {
+void PeerConnectionClient::OnHangingGetRead(rtc::Socket* socket) {
   RTC_LOG(INFO) << __FUNCTION__;
   size_t content_length = 0;
   if (ReadIntoBuffer(socket, &notification_data_, &content_length)) {
@@ -471,7 +471,7 @@ bool PeerConnectionClient::ParseServerResponse(const std::string& response,
   return true;
 }
 
-void PeerConnectionClient::OnClose(rtc::AsyncSocket* socket, int err) {
+void PeerConnectionClient::OnClose(rtc::Socket* socket, int err) {
   RTC_LOG(INFO) << __FUNCTION__;
 
   socket->Close();

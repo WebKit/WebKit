@@ -23,7 +23,7 @@
 namespace webrtc {
 
 // This class records the frame type, and delegates actual sending to the
-// |next_| AudioPacketizationCallback.
+// `next_` AudioPacketizationCallback.
 class MonitoringAudioPacketizationCallback : public AudioPacketizationCallback {
  public:
   explicit MonitoringAudioPacketizationCallback(
@@ -67,9 +67,9 @@ class TestVadDtx {
   // the expectation. Saves result to a file.
   // expects[x] means
   // -1 : do not care,
-  // 0  : there have been no packets of type |x|,
-  // 1  : there have been packets of type |x|,
-  // with |x| indicates the following packet types
+  // 0  : there have been no packets of type `x`,
+  // 1  : there have been packets of type `x`,
+  // with `x` indicates the following packet types
   // 0 - kEmptyFrame
   // 1 - kAudioFrameSpeech
   // 2 - kAudioFrameCN

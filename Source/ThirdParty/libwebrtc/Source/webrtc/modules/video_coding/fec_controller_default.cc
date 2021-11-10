@@ -125,17 +125,17 @@ uint32_t FecControllerDefault::UpdateFecRates(
     // Get the FEC code rate for Delta frames (set to 0 when NA).
     delta_fec_params.fec_rate =
         loss_prot_logic_->SelectedMethod()->RequiredProtectionFactorD();
-    // The RTP module currently requires the same |max_fec_frames| for both
+    // The RTP module currently requires the same `max_fec_frames` for both
     // key and delta frames.
     delta_fec_params.max_fec_frames =
         loss_prot_logic_->SelectedMethod()->MaxFramesFec();
     key_fec_params.max_fec_frames =
         loss_prot_logic_->SelectedMethod()->MaxFramesFec();
   }
-  // Set the FEC packet mask type. |kFecMaskBursty| is more effective for
+  // Set the FEC packet mask type. `kFecMaskBursty` is more effective for
   // consecutive losses and little/no packet re-ordering. As we currently
   // do not have feedback data on the degree of correlated losses and packet
-  // re-ordering, we keep default setting to |kFecMaskRandom| for now.
+  // re-ordering, we keep default setting to `kFecMaskRandom` for now.
   delta_fec_params.fec_mask_type = kFecMaskRandom;
   key_fec_params.fec_mask_type = kFecMaskRandom;
   // Update protection callback with protection settings.

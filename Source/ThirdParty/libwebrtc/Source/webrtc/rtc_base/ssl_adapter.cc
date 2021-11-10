@@ -20,7 +20,7 @@ SSLAdapterFactory* SSLAdapterFactory::Create() {
   return new OpenSSLAdapterFactory();
 }
 
-SSLAdapter* SSLAdapter::Create(AsyncSocket* socket) {
+SSLAdapter* SSLAdapter::Create(Socket* socket) {
   return new OpenSSLAdapter(socket);
 }
 

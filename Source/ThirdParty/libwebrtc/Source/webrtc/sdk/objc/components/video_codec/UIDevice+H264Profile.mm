@@ -115,7 +115,7 @@ absl::optional<ProfileLevelId> FindMaxSupportedProfileForDevice(RTCDeviceType de
 
 @implementation UIDevice (H264Profile)
 
-+ (absl::optional<webrtc::H264::ProfileLevelId>)maxSupportedH264Profile {
++ (absl::optional<webrtc::H264ProfileLevelId>)maxSupportedH264Profile {
   return FindMaxSupportedProfileForDevice([self deviceType]);
 }
 

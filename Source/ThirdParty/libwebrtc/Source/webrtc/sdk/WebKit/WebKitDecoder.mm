@@ -131,7 +131,7 @@ public:
     bool isVP9() const { return m_isVP9; }
 
 private:
-    int32_t InitDecode(const VideoCodec*, int32_t number_of_cores) final;
+    bool Configure(const Settings&) final;
     int32_t Decode(const EncodedImage&, bool missing_frames, int64_t render_time_ms) final;
     int32_t RegisterDecodeCompleteCallback(DecodedImageCallback*) final;
     int32_t Release() final;
@@ -185,9 +185,9 @@ void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, CVPixelBufferR
     static_cast<DecodedImageCallback*>(callback)->Decoded(videoFrame);
 }
 
-int32_t RemoteVideoDecoder::InitDecode(const VideoCodec* codec_settings, int32_t number_of_cores)
+bool RemoteVideoDecoder::Configure(const Settings&)
 {
-    return WEBRTC_VIDEO_CODEC_OK;
+    return true;
 }
 
 int32_t RemoteVideoDecoder::Decode(const EncodedImage& input_image, bool missing_frames, int64_t render_time_ms)

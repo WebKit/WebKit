@@ -83,19 +83,19 @@ TEST_P(QualityLimitationReasonTrackerTestWithParamReason,
 TEST_P(QualityLimitationReasonTrackerTestWithParamReason,
        SwitchBetweenReasonsBackAndForth) {
   int64_t initial_duration_ms = tracker_.DurationsMs()[reason_];
-  // Spend 100 ms in |different_reason_|.
+  // Spend 100 ms in `different_reason_`.
   tracker_.SetReason(different_reason_);
   fake_clock_.AdvanceTimeMilliseconds(100);
   EXPECT_EQ(initial_duration_ms, tracker_.DurationsMs()[reason_]);
-  // Spend 50 ms in |reason_|.
+  // Spend 50 ms in `reason_`.
   tracker_.SetReason(reason_);
   fake_clock_.AdvanceTimeMilliseconds(50);
   EXPECT_EQ(initial_duration_ms + 50, tracker_.DurationsMs()[reason_]);
-  // Spend another 1000 ms in |different_reason_|.
+  // Spend another 1000 ms in `different_reason_`.
   tracker_.SetReason(different_reason_);
   fake_clock_.AdvanceTimeMilliseconds(1000);
   EXPECT_EQ(initial_duration_ms + 50, tracker_.DurationsMs()[reason_]);
-  // Spend another 100 ms in |reason_|.
+  // Spend another 100 ms in `reason_`.
   tracker_.SetReason(reason_);
   fake_clock_.AdvanceTimeMilliseconds(100);
   EXPECT_EQ(initial_duration_ms + 150, tracker_.DurationsMs()[reason_]);

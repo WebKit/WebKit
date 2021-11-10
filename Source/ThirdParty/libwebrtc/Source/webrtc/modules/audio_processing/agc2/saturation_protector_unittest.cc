@@ -18,7 +18,6 @@ namespace webrtc {
 namespace {
 
 constexpr float kInitialHeadroomDb = 20.0f;
-constexpr float kNoExtraHeadroomDb = 0.0f;
 constexpr int kNoAdjacentSpeechFramesRequired = 1;
 constexpr float kMaxSpeechProbability = 1.0f;
 
@@ -47,8 +46,7 @@ float RunOnConstantLevel(int num_iterations,
 TEST(GainController2SaturationProtector, Reset) {
   ApmDataDumper apm_data_dumper(0);
   auto saturation_protector = CreateSaturationProtector(
-      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
-      &apm_data_dumper);
+      kInitialHeadroomDb, kNoAdjacentSpeechFramesRequired, &apm_data_dumper);
   const float initial_headroom_db = saturation_protector->HeadroomDb();
   RunOnConstantLevel(/*num_iterations=*/10, kMaxSpeechProbability,
                      /*peak_dbfs=*/0.0f,
@@ -71,41 +69,11 @@ TEST(GainController2SaturationProtector, EstimatesCrestRatio) {
 
   ApmDataDumper apm_data_dumper(0);
   auto saturation_protector = CreateSaturationProtector(
-      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
-      &apm_data_dumper);
+      kInitialHeadroomDb, kNoAdjacentSpeechFramesRequired, &apm_data_dumper);
   RunOnConstantLevel(kNumIterations, kMaxSpeechProbability, kPeakLevelDbfs,
                      kSpeechLevelDbfs, *saturation_protector);
   EXPECT_NEAR(saturation_protector->HeadroomDb(), kCrestFactorDb,
               kMaxDifferenceDb);
-}
-
-// Checks that the extra headroom is applied.
-TEST(GainController2SaturationProtector, ExtraHeadroomApplied) {
-  constexpr float kExtraHeadroomDb = 5.1234f;
-  constexpr int kNumIterations = 10;
-  constexpr float kPeakLevelDbfs = -20.0f;
-  constexpr float kSpeechLevelDbfs = kPeakLevelDbfs - 15.0f;
-
-  ApmDataDumper apm_data_dumper(0);
-
-  auto saturation_protector_no_extra = CreateSaturationProtector(
-      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
-      &apm_data_dumper);
-  for (int i = 0; i < kNumIterations; ++i) {
-    saturation_protector_no_extra->Analyze(kMaxSpeechProbability,
-                                           kPeakLevelDbfs, kSpeechLevelDbfs);
-  }
-
-  auto saturation_protector_extra = CreateSaturationProtector(
-      kInitialHeadroomDb, kExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
-      &apm_data_dumper);
-  for (int i = 0; i < kNumIterations; ++i) {
-    saturation_protector_extra->Analyze(kMaxSpeechProbability, kPeakLevelDbfs,
-                                        kSpeechLevelDbfs);
-  }
-
-  EXPECT_EQ(saturation_protector_no_extra->HeadroomDb() + kExtraHeadroomDb,
-            saturation_protector_extra->HeadroomDb());
 }
 
 // Checks that the headroom does not change too quickly.
@@ -119,8 +87,7 @@ TEST(GainController2SaturationProtector, ChangeSlowly) {
 
   ApmDataDumper apm_data_dumper(0);
   auto saturation_protector = CreateSaturationProtector(
-      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
-      &apm_data_dumper);
+      kInitialHeadroomDb, kNoAdjacentSpeechFramesRequired, &apm_data_dumper);
   float max_difference_db =
       RunOnConstantLevel(kNumIterations, kMaxSpeechProbability, kPeakLevelDbfs,
                          kSpeechLevelDbfs, *saturation_protector);
@@ -142,8 +109,7 @@ class SaturationProtectorParametrization
 TEST_P(SaturationProtectorParametrization, DoNotAdaptToShortSpeechSegments) {
   ApmDataDumper apm_data_dumper(0);
   auto saturation_protector = CreateSaturationProtector(
-      kInitialHeadroomDb, kNoExtraHeadroomDb,
-      adjacent_speech_frames_threshold(), &apm_data_dumper);
+      kInitialHeadroomDb, adjacent_speech_frames_threshold(), &apm_data_dumper);
   const float initial_headroom_db = saturation_protector->HeadroomDb();
   RunOnConstantLevel(/*num_iterations=*/adjacent_speech_frames_threshold() - 1,
                      kMaxSpeechProbability,
@@ -156,8 +122,7 @@ TEST_P(SaturationProtectorParametrization, DoNotAdaptToShortSpeechSegments) {
 TEST_P(SaturationProtectorParametrization, AdaptToEnoughSpeechSegments) {
   ApmDataDumper apm_data_dumper(0);
   auto saturation_protector = CreateSaturationProtector(
-      kInitialHeadroomDb, kNoExtraHeadroomDb,
-      adjacent_speech_frames_threshold(), &apm_data_dumper);
+      kInitialHeadroomDb, adjacent_speech_frames_threshold(), &apm_data_dumper);
   const float initial_headroom_db = saturation_protector->HeadroomDb();
   RunOnConstantLevel(/*num_iterations=*/adjacent_speech_frames_threshold() + 1,
                      kMaxSpeechProbability,

@@ -305,7 +305,7 @@ INSTANTIATE_TEST_SUITE_P(
 
         // Next run through some additional cases interesting for WebRTC.
         // We skip some extreme downsampled cases (192 -> {8, 16}, 96 -> 8)
-        // because they violate |kHighFrequencyMaxError|, which is not
+        // because they violate `kHighFrequencyMaxError`, which is not
         // unexpected. It's very unlikely that we'll see these conversions in
         // practice anyway.
 

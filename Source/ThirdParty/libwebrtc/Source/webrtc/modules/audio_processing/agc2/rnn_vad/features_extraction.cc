@@ -55,10 +55,10 @@ bool FeaturesExtractor::CheckSilenceComputeFeatures(
   if (use_high_pass_filter_) {
     std::array<float, kFrameSize10ms24kHz> samples_filtered;
     hpf_.Process(samples, samples_filtered);
-    // Feed buffer with the pre-processed version of |samples|.
+    // Feed buffer with the pre-processed version of `samples`.
     pitch_buf_24kHz_.Push(samples_filtered);
   } else {
-    // Feed buffer with |samples|.
+    // Feed buffer with `samples`.
     pitch_buf_24kHz_.Push(samples);
   }
   // Extract the LP residual.

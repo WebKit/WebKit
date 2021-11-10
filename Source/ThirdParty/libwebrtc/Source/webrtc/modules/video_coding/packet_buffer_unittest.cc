@@ -377,9 +377,9 @@ TEST_F(PacketBufferTest, InsertPacketAfterSequenceNumberWrapAround) {
   EXPECT_THAT(packets, SizeIs(7));
 }
 
-// If |sps_pps_idr_is_keyframe| is true, we require keyframes to contain
+// If `sps_pps_idr_is_keyframe` is true, we require keyframes to contain
 // SPS/PPS/IDR and the keyframes we create as part of the test do contain
-// SPS/PPS/IDR. If |sps_pps_idr_is_keyframe| is false, we only require and
+// SPS/PPS/IDR. If `sps_pps_idr_is_keyframe` is false, we only require and
 // create keyframes containing only IDR.
 class PacketBufferH264Test : public PacketBufferTest {
  protected:

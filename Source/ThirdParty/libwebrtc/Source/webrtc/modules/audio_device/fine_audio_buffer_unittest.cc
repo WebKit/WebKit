@@ -36,7 +36,7 @@ const int kSamplesPer10Ms = kSampleRate * 10 / 1000;
 // E.g. if there are two buffers of size 3, buffer 1 would contain 0,1,2 and
 // buffer 2 would contain 3,4,5. Note that SCHAR_MAX is 127 so wrap-around
 // will happen.
-// |buffer| is the audio buffer to verify.
+// `buffer` is the audio buffer to verify.
 bool VerifyBuffer(const int16_t* buffer, int buffer_number, int size) {
   int start_value = (buffer_number * size) % SCHAR_MAX;
   for (int i = 0; i < size; ++i) {
@@ -51,9 +51,9 @@ bool VerifyBuffer(const int16_t* buffer, int buffer_number, int size) {
 // called (which is done implicitly when calling GetBufferData). It writes the
 // sequence 0,1,..SCHAR_MAX-1,0,1,... to the buffer. Note that this is likely a
 // buffer of different size than the one VerifyBuffer verifies.
-// |iteration| is the number of calls made to UpdateBuffer prior to this call.
-// |samples_per_10_ms| is the number of samples that should be written to the
-// buffer (|arg0|).
+// `iteration` is the number of calls made to UpdateBuffer prior to this call.
+// `samples_per_10_ms` is the number of samples that should be written to the
+// buffer (`arg0`).
 ACTION_P2(UpdateBuffer, iteration, samples_per_10_ms) {
   int16_t* buffer = static_cast<int16_t*>(arg0);
   int start_value = (iteration * samples_per_10_ms) % SCHAR_MAX;
@@ -64,7 +64,7 @@ ACTION_P2(UpdateBuffer, iteration, samples_per_10_ms) {
   return samples_per_10_ms / kChannels;
 }
 
-// Writes a periodic ramp pattern to the supplied |buffer|. See UpdateBuffer()
+// Writes a periodic ramp pattern to the supplied `buffer`. See UpdateBuffer()
 // for details.
 void UpdateInputBuffer(int16_t* buffer, int iteration, int size) {
   int start_value = (iteration * size) % SCHAR_MAX;
@@ -74,7 +74,7 @@ void UpdateInputBuffer(int16_t* buffer, int iteration, int size) {
 }
 
 // Action macro which verifies that the recorded 10ms chunk of audio data
-// (in |arg0|) contains the correct reference values even if they have been
+// (in `arg0`) contains the correct reference values even if they have been
 // supplied using a buffer size that is smaller or larger than 10ms.
 // See VerifyBuffer() for details.
 ACTION_P2(VerifyInputBuffer, iteration, samples_per_10_ms) {

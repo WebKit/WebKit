@@ -39,7 +39,7 @@ class DesktopFrameCGImage final : public DesktopFrame {
   static std::unique_ptr<DesktopFrameCGImage> CreateFromCGImage(
       rtc::ScopedCFTypeRef<CGImageRef> cg_image);
 
-  // This constructor expects |cg_image| to hold a non-null CGImageRef.
+  // This constructor expects `cg_image` to hold a non-null CGImageRef.
   DesktopFrameCGImage(DesktopSize size,
                       int stride,
                       uint8_t* data,

@@ -78,7 +78,7 @@ class ChannelBufferWavReader final {
   explicit ChannelBufferWavReader(std::unique_ptr<WavReader> file);
   ~ChannelBufferWavReader();
 
-  // Reads data from the file according to the |buffer| format. Returns false if
+  // Reads data from the file according to the `buffer` format. Returns false if
   // a full buffer can't be read from the file.
   bool Read(ChannelBuffer<float>* buffer);
 
@@ -115,7 +115,7 @@ class ChannelBufferVectorWriter final {
       delete;
   ~ChannelBufferVectorWriter();
 
-  // Creates an interleaved copy of |buffer|, converts the samples to float S16
+  // Creates an interleaved copy of `buffer`, converts the samples to float S16
   // and appends the result to output_.
   void Write(const ChannelBuffer<float>& buffer);
 

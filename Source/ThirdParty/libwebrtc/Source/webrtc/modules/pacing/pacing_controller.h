@@ -73,7 +73,7 @@ class PacingController {
   // Increasing this factor will result in lower delays in cases of bitrate
   // overshoots from the encoder.
   static const float kDefaultPaceMultiplier;
-  // If no media or paused, wake up at least every |kPausedProcessIntervalMs| in
+  // If no media or paused, wake up at least every `kPausedProcessIntervalMs` in
   // order to send a keep-alive packet so we don't get stuck in a bad state due
   // to lack of feedback.
   static const TimeDelta kPausedProcessInterval;
@@ -192,11 +192,11 @@ class PacingController {
   DataSize transport_overhead_per_packet_;
 
   // TODO(webrtc:9716): Remove this when we are certain clocks are monotonic.
-  // The last millisecond timestamp returned by |clock_|.
+  // The last millisecond timestamp returned by `clock_`.
   mutable Timestamp last_timestamp_;
   bool paused_;
 
-  // If |use_interval_budget_| is true, |media_budget_| and |padding_budget_|
+  // If `use_interval_budget_` is true, `media_budget_` and `padding_budget_`
   // will be used to track when packets can be sent. Otherwise the media and
   // padding debt counters will be used together with the target rates.
 

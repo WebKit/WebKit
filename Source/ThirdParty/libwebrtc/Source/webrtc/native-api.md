@@ -91,7 +91,7 @@ You can achieve this by defining the preprocessor macro
 argument `rtc_exclude_field_trial_default` to true and GN will define the
 macro for you.
 
-[field_trial_h]: https://webrtc.googlesource.com/src/+/master/system_wrappers/include/field_trial.h
+[field_trial_h]: https://webrtc.googlesource.com/src/+/main/system_wrappers/include/field_trial.h
 
 ## `WEBRTC_EXCLUDE_METRICS_DEFAULT`
 If you want to provide your own implementation of `webrtc::metrics` functions
@@ -103,7 +103,7 @@ You can achieve this by defining the preprocessor macro
 argument `rtc_exclude_metrics_default` to true and GN will define the
 macro for you.
 
-[metrics_h]: https://webrtc.googlesource.com/src/+/master/system_wrappers/include/metrics.h
+[metrics_h]: https://webrtc.googlesource.com/src/+/main/system_wrappers/include/metrics.h
 
 ## `WEBRTC_EXCLUDE_TRANSIENT_SUPPRESSOR`
 The transient suppressor functionality in the audio processing module is not

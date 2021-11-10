@@ -34,7 +34,7 @@ struct SmoothingFilterStates {
 
 // This function does the following:
 //   1. Add a sample to filter at current clock,
-//   2. Advance the clock by |advance_time_ms|,
+//   2. Advance the clock by `advance_time_ms`,
 //   3. Get the output of both SmoothingFilter and verify that it equals to an
 //      expected value.
 void CheckOutput(SmoothingFilterStates* states,
@@ -141,7 +141,7 @@ TEST(SmoothingFilterTest, CannotChangeTimeConstantDuringInitialization) {
   SmoothingFilterStates states(kInitTimeMs);
   states.smoothing_filter.AddSample(0.0);
 
-  // During initialization, |SetTimeConstantMs| does not take effect.
+  // During initialization, `SetTimeConstantMs` does not take effect.
   states.fake_clock.AdvanceTime(TimeDelta::Millis(kInitTimeMs - 1));
   states.smoothing_filter.AddSample(0.0);
 
@@ -152,11 +152,11 @@ TEST(SmoothingFilterTest, CannotChangeTimeConstantDuringInitialization) {
   states.fake_clock.AdvanceTime(TimeDelta::Millis(1));
   states.smoothing_filter.AddSample(0.0);
   // When initialization finishes, the time constant should be come
-  // |kInitTimeConstantMs|.
+  // `kInitTimeConstantMs`.
   EXPECT_FLOAT_EQ(std::exp(-1.0f / kInitTimeMs),
                   states.smoothing_filter.alpha());
 
-  // After initialization, |SetTimeConstantMs| takes effect.
+  // After initialization, `SetTimeConstantMs` takes effect.
   EXPECT_TRUE(states.smoothing_filter.SetTimeConstantMs(kInitTimeMs * 2));
   EXPECT_FLOAT_EQ(std::exp(-1.0f / (kInitTimeMs * 2)),
                   states.smoothing_filter.alpha());

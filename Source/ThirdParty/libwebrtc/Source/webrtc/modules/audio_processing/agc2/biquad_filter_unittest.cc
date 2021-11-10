@@ -64,7 +64,7 @@ void ExpectNearRelative(rtc::ArrayView<const float> expected,
                         rtc::ArrayView<const float> computed,
                         const float tolerance) {
   // The relative error is undefined when the expected value is 0.
-  // When that happens, check the absolute error instead. |safe_den| is used
+  // When that happens, check the absolute error instead. `safe_den` is used
   // below to implement such logic.
   auto safe_den = [](float x) { return (x == 0.f) ? 1.f : std::fabs(x); };
   ASSERT_EQ(expected.size(), computed.size());

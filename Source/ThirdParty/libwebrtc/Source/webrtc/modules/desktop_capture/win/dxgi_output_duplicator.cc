@@ -171,7 +171,7 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
 
   // We need to merge updated region with the one from context, but only spread
   // updated region from current frame. So keeps a copy of updated region from
-  // context here. The |updated_region| always starts from (0, 0).
+  // context here. The `updated_region` always starts from (0, 0).
   DesktopRegion updated_region;
   updated_region.Swap(&context->updated_region);
   if (error.Error() == S_OK && frame_info.AccumulatedFrames > 0 && resource) {
@@ -188,7 +188,7 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
     if (rotation_ != Rotation::CLOCK_WISE_0) {
       for (DesktopRegion::Iterator it(updated_region); !it.IsAtEnd();
            it.Advance()) {
-        // The |updated_region| returned by Windows is rotated, but the |source|
+        // The `updated_region` returned by Windows is rotated, but the `source`
         // frame is not. So we need to rotate it reversely.
         const DesktopRect source_rect =
             RotateRect(it.rect(), desktop_size(), ReverseRotation(rotation_));
@@ -197,7 +197,7 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
     } else {
       for (DesktopRegion::Iterator it(updated_region); !it.IsAtEnd();
            it.Advance()) {
-        // The DesktopRect in |target|, starts from offset.
+        // The DesktopRect in `target`, starts from offset.
         DesktopRect dest_rect = it.rect();
         dest_rect.Translate(offset);
         target->CopyPixelsFrom(source, it.rect().top_left(), dest_rect);
@@ -216,9 +216,9 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
     // export last frame to the target.
     for (DesktopRegion::Iterator it(updated_region); !it.IsAtEnd();
          it.Advance()) {
-      // The DesktopRect in |source|, starts from last_frame_offset_.
+      // The DesktopRect in `source`, starts from last_frame_offset_.
       DesktopRect source_rect = it.rect();
-      // The DesktopRect in |target|, starts from offset.
+      // The DesktopRect in `target`, starts from offset.
       DesktopRect target_rect = source_rect;
       source_rect.Translate(last_frame_offset_);
       target_rect.Translate(offset);

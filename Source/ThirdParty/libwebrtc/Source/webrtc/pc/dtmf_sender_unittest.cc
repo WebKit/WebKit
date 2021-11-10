@@ -129,8 +129,8 @@ class DtmfSenderTest : public ::testing::Test {
     }
   }
 
-  // Constructs a list of DtmfInfo from |tones|, |duration| and
-  // |inter_tone_gap|.
+  // Constructs a list of DtmfInfo from `tones`, `duration` and
+  // `inter_tone_gap`.
   void GetDtmfInfoFromString(
       const std::string& tones,
       int duration,

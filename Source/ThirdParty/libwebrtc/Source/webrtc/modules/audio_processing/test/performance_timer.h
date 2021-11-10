@@ -31,7 +31,7 @@ class PerformanceTimer {
   double GetDurationStandardDeviation() const;
 
   // These methods are the same as those above, but they ignore the first
-  // |number_of_warmup_samples| measurements.
+  // `number_of_warmup_samples` measurements.
   double GetDurationAverage(size_t number_of_warmup_samples) const;
   double GetDurationStandardDeviation(size_t number_of_warmup_samples) const;
 

@@ -61,10 +61,10 @@ bool IsTimingFrame(const EncodedImage& image) {
          image.timing_.flags != VideoSendTiming::kNotTriggered;
 }
 
-// Emulates |num_frames| on |num_streams| frames with capture timestamps
+// Emulates `num_frames` on `num_streams` frames with capture timestamps
 // increased by 1 from 0. Size of each frame is between
-// |min_frame_size| and |max_frame_size|, outliers are counted relatevely to
-// |average_frame_sizes[]| for each stream.
+// `min_frame_size` and `max_frame_size`, outliers are counted relatevely to
+// `average_frame_sizes[]` for each stream.
 std::vector<std::vector<FrameType>> GetTimingFrames(
     const int64_t delay_ms,
     const size_t min_frame_size,
