@@ -117,8 +117,7 @@
         ;; <rdar://problem/11569106>
         (allow file-read* (with telemetry) asset-access-filter)
         (if (memq 'with-media-playback options)
-            (play-media asset-access-filter))
-        (mobile-preferences-read "com.apple.MobileAsset")))
+            (play-media asset-access-filter))))
 
 (define-once (play-audio)
     (allow mach-lookup (with telemetry)
@@ -169,8 +168,6 @@
         "com.apple.coremedia"
         "com.apple.corevideo"
         "com.apple.itunesstored" ; Needed by MediaPlayer framework
-        "com.apple.mobileipod" ; Ditto
-        "com.apple.audio.virtualaudio" ; <rdar://problem/57170333>
     )
 
     ;; AVF needs to see these network preferences:
@@ -192,8 +189,7 @@
 
 (define-once (media-remote)
     (mobile-preferences-read
-        "com.apple.mediaremote"
-        "com.apple.mobileipod")
+        "com.apple.mediaremote")
     (allow mach-lookup (with telemetry)
            (global-name "com.apple.mediaremoted.xpc"))
 )
@@ -235,9 +231,7 @@
         (global-name "com.apple.accessibility.mediaaccessibilityd"))
 
     ;; <rdar://problem/12250145>
-    (mobile-preferences-read "com.apple.mediaaccessibility")
-    (mobile-preferences-read "com.apple.mediaaccessibility.public")
-)
+    (mobile-preferences-read "com.apple.mediaaccessibility"))
 
 (define-once (url-translation)
     ;; For translating http:// & https:// URLs referencing itms:// URLs.
@@ -286,9 +280,7 @@
        (xpc-service-name "com.apple.MTLCompilerService"))
     
     (mobile-preferences-read
-        "com.apple.Metal" ;; <rdar://problem/25535471>
-        "com.apple.opengl" ;; <rdar://problem/23321675>
-    )
+        "com.apple.Metal") ;; <rdar://problem/25535471>
 )
 
 (define-once (internal-debugging-support)
@@ -318,10 +310,7 @@
         ;; <rdar://problem/8107758>
         (allow file-read* file-map-executable
                (subpath "/System/Library/Frameworks")
-               (subpath "/System/Library/PrivateFrameworks"))
-
-        ;; <rdar://problem/32544921>
-        (mobile-preferences-read "com.apple.hangtracer"))
+               (subpath "/System/Library/PrivateFrameworks")))
 
 (define-once (device-access)
     (deny file-read* file-write*
@@ -372,13 +361,7 @@
 ;; Things required by UIKit
 (define-once (uikit-requirements)
     (mobile-preferences-read
-        "com.apple.UIKit"
-        "com.apple.WebUI"
-        "com.apple.airplay"
-        "com.apple.avkit"
-        "com.apple.coreanimation"
-        "com.apple.mt"
-        "com.apple.preferences.sounds")
+        "com.apple.coreanimation")
 
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
@@ -411,11 +394,6 @@
 
 (allow file-read-metadata (with telemetry)
     (vnode-type DIRECTORY))
-
-(mobile-preferences-read "com.apple.security")
-
-(with-filter (system-attribute apple-internal)
-  (mobile-preferences-read "com.apple.PrototypeTools"))
 
 (with-elevated-precedence
     (allow file-read* (with telemetry)
@@ -618,8 +596,6 @@
 
 (url-translation)
 
-(mobile-preferences-read "com.apple.da")
-
 (speech-synthesis-and-voiceover)
 
 ;; Permit reading assets via MobileAsset framework.
@@ -632,17 +608,6 @@
 ;; Access the keyboards
 (allow file-read* (with telemetry)
     (home-subpath "/Library/Caches/com.apple.keyboards"))
-
-(mobile-preferences-read
-    "com.apple.EmojiPreferences"
-    ; <rdar://problem/8477596> com.apple.InputModePreferences
-    "com.apple.InputModePreferences"
-    ; <rdar://problem/8206632> Weather(1038) deny file-read-data ~/Library/Preferences/com.apple.keyboard.plist
-    "com.apple.keyboard"
-    ; <rdar://problem/9384085>
-    "com.apple.Preferences"
-    "com.apple.lookup.shared" ; Needed for DataDetector (Spotlight) support
-)
 
 ;; Silently deny unnecessary accesses caused by MessageUI framework.
 ;; This can be removed once <rdar://problem/47038102> is resolved.
@@ -690,14 +655,9 @@
     (home-prefix "/Library/Preferences/com.apple.springboard.plist")
     (with no-log))
 
-;; <rdar://problem/34986314>
-(mobile-preferences-read "com.apple.indigo")
-
 ;;;
 ;;; End UIKit-apps.sb content
 ;;;
-
-(mobile-preferences-read "com.apple.AdLib.plist")
 
 (deny sysctl*)
 (allow sysctl-read (with telemetry)
@@ -828,11 +788,7 @@
 
 ;; Read-only preferences and data
 (mobile-preferences-read
-    "com.apple.LaunchServices"
-    "com.apple.WebFoundation"
-    "com.apple.avfoundation.frecents" ;; <rdar://problem/33137029>
-    "com.apple.avfoundation.videoperformancehud" ;; <rdar://problem/31594568>
-    "com.apple.voiceservices.logging")
+    "com.apple.avfoundation.videoperformancehud") ;; <rdar://problem/31594568>
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
