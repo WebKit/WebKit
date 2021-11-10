@@ -96,6 +96,11 @@ inline void add(Hasher& hasher, float number)
     add(hasher, bitwise_cast<uint32_t>(number));
 }
 
+template<typename T> inline void add(Hasher& hasher, T* ptr)
+{
+    add(hasher, bitwise_cast<uintptr_t>(ptr));
+}
+
 inline void add(Hasher& hasher, const String& string)
 {
     // Chose to hash the characters here. Assuming this is better than hashing the possibly-already-computed hash of the characters.

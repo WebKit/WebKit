@@ -1,3 +1,13 @@
+2021-11-10  Antti Koivisto  <antti@apple.com>
+
+        Hasher should be able to hash pointers
+        https://bugs.webkit.org/show_bug.cgi?id=232927
+
+        Reviewed by Kimmo Kinnunen.
+
+        * wtf/Hasher.h:
+        (WTF::add):
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Enable NSURLSession partitioning based on first-party domain at CFNetwork level

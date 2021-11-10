@@ -189,6 +189,17 @@ TEST(WTF, Hasher_multiple)
     EXPECT_EQ(1652352321U, computeHash(std::make_pair(std::make_pair(1, 2), std::make_pair(3, 4))));
 }
 
+TEST(WTF, Hasher_pointer)
+{
+    char* nullPtr = nullptr;
+    char* onePtr = nullPtr + 1;
+    char* ffffffPtr = nullPtr + 0xffffff;
+
+    EXPECT_EQ(computeHash(static_cast<uintptr_t>(0)), computeHash(nullPtr));
+    EXPECT_EQ(computeHash(static_cast<uintptr_t>(0x1)), computeHash(onePtr));
+    EXPECT_EQ(computeHash(static_cast<uintptr_t>(0xffffff)), computeHash(ffffffPtr));
+}
+
 struct HasherAddCustom1 { };
 
 void add(Hasher& hasher, const HasherAddCustom1&)
