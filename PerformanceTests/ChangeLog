@@ -1,3 +1,12 @@
+2021-11-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix broken test
+        https://bugs.webkit.org/show_bug.cgi?id=232949
+
+        useGrouping: 'false' is no longer allowed according to the spec.
+
+        * Intl/numberformat-format-all-options.html:
+
 2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         All the SDKVariant.xcconfig files should match
