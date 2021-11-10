@@ -63,15 +63,27 @@ public:
         : m_storage(size)
     { }
 
-    template<typename Container, std::enable_if_t<!std::is_integral_v<Container>, bool> = true>
-    explicit FixedVector(Container&& other)
-        : m_storage(std::forward<Container>(other))
+    template<size_t inlineCapacity, typename OverflowHandler>
+    explicit FixedVector(const Vector<T, inlineCapacity, OverflowHandler>& other)
+        : m_storage(other)
     { }
 
-    template<typename Container, std::enable_if_t<!std::is_integral_v<Container>, bool> = true>
-    FixedVector& operator=(Container&& other)
+    template<size_t inlineCapacity, typename OverflowHandler>
+    FixedVector& operator=(const Vector<T, inlineCapacity, OverflowHandler>& other)
     {
-        m_storage = std::forward<Container>(other);
+        m_storage = other;
+        return *this;
+    }
+
+    template<size_t inlineCapacity, typename OverflowHandler>
+    explicit FixedVector(Vector<T, inlineCapacity, OverflowHandler>&& other)
+        : m_storage(WTFMove(other))
+    { }
+
+    template<size_t inlineCapacity, typename OverflowHandler>
+    FixedVector& operator=(Vector<T, inlineCapacity, OverflowHandler>&& other)
+    {
+        m_storage = WTFMove(other);
         return *this;
     }
 

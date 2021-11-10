@@ -415,13 +415,14 @@ ALWAYS_INLINE void StructureStubInfo::setCacheType(const ConcurrentJSLockerBase&
     m_cacheType = newCacheType;
 }
 
-StructureStubInfo::StructureStubInfo(const UnlinkedStructureStubInfo& unlinkedStubInfo)
-    : StructureStubInfo(unlinkedStubInfo.accessType, CodeOrigin(unlinkedStubInfo.bytecodeIndex))
+void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, UnlinkedStructureStubInfo& unlinkedStubInfo)
 {
+    accessType = unlinkedStubInfo.accessType;
     start = unlinkedStubInfo.start;
     doneLocation = unlinkedStubInfo.doneLocation;
     slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
+    codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
     m_codePtr = slowPathStartLocation;
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
 

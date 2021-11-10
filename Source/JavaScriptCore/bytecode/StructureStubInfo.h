@@ -103,7 +103,9 @@ public:
         regs.thisGPR = InvalidGPRReg;
     }
 
-    StructureStubInfo(const UnlinkedStructureStubInfo& unlinkedStubInfo);
+    StructureStubInfo()
+        : StructureStubInfo(AccessType::GetById, { })
+    { }
 
     ~StructureStubInfo();
 
@@ -119,6 +121,8 @@ public:
 
     void deref();
     void aboutToDie();
+
+    void initializeFromUnlinkedStructureStubInfo(CodeBlock*, UnlinkedStructureStubInfo&);
 
     DECLARE_VISIT_AGGREGATE;
 
