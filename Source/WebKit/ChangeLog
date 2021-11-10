@@ -1,3 +1,35 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (Safari 15): AudioContext.currentTime speeds up (and audio won't play) when Bluetooth speaker connected
+        https://bugs.webkit.org/show_bug.cgi?id=232728
+        <rdar://problem/85075538>
+
+        Reviewed by Jer Noble.
+
+        This was a regression from us moving WebAudio to the GPUProcess in Safari 15. The issue occurred because the
+        WebProcess (writer) would get further and further ahead of the GPUProcess (reader) after a hardware sample
+        rate change.
+
+        When rendering on https://mdn.github.io/webaudio-examples/audiocontext-states/ with a hardware sample rate of
+        96Khz, RemoteAudioDestination::render() would get called with a numberOfFrame=128. Each time
+        RemoteAudioDestination::render() was called, it would signal the IPC semaphore, causing the WebProcess to
+        produce one WebAudio rendering quantum (128 frames). This would match perfectly and there would be no issues.
+        However, if during playback, the hardware sample rate changes (which can happen when connecting to bluetooth
+        speakers), CoreAudio would start calling RemoteAudioDestination::render() with a different numberOfFrame.
+        For example, when switching the hardware sample rate to 44.1Khz, numberOfFrames would be 278. Every time it
+        is called, render() would signal the semaphore 3 times, causing the WebProcess to produce 3 WebAudio rendering
+        quantums (3 * 128 = 384 frames). So each time render() is called, the WebProcess would generate `384 - 278 = 105`
+        frames too many, causing it to get further and further ahead of the GPUProcess. One symptom would be that
+        AudioContext.currentTime would progress too fast. Also, eventually, our RingBuffer between the 2 process would
+        fill up and lead to rendering issues.
+
+        To address the issue, I updated RemoteAudioDestination::render() to keep track of how many extra samples it
+        requested from the WebProcess previously. This avoids signalling the IPC semaphore too many times and the
+        WebProcess can no longer get too far ahead of the GPUProcess. The logic matches what was already done in
+        RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::render().
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+
 2021-11-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r285536.
