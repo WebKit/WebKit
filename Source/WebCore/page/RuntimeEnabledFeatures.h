@@ -292,7 +292,7 @@ private:
     bool m_attrStyleEnabled { false };
     bool m_webAPIStatisticsEnabled { false };
     bool m_syntheticEditingCommandsEnabled { true };
-    bool m_dialogElementEnabled { false };
+    bool m_dialogElementEnabled { true };
     bool m_webSQLEnabled { false };
     bool m_keygenElementEnabled { false };
     bool m_pageAtRuleSupportEnabled { false };

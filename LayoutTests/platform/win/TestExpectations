@@ -1251,8 +1251,6 @@ webkit.org/b/21796 editing/selection/drag-in-iframe.html [ Skip ]
 # These test fail due to 'notifyDone' not being executed.
 webkit.org/b/121509 editing/spelling/grammar-paste.html [ Skip ]
 
-webkit.org/b/231962 editing/selection/modal-dialog-select-paragraph.html [ Failure ]
-
 ###### Command enabling
 editing/execCommand/enabling-and-selection-2.html [ Failure ]
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
@@ -3643,9 +3641,6 @@ webkit.org/b/162415 imported/w3c/web-platform-tests/html/syntax [ Skip ]
 # Only Mac has implemented DictionaryLookup
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 
-# Dialog showModal is disabled on Windows
-fast/layers/render-layer-rebuild-z-order-lists.html [ Skip ]
-
 # webrtc not supported
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
@@ -4648,8 +4643,6 @@ imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Timeout ]
 fast/forms/form-submission-crash-3.html [ Timeout ]
 
 webkit.org/b/227896 fast/text/pua-charactersTreatedAsSpace.html [ ImageOnlyFailure ]
-
-webkit.org/b/227802 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-display-none.html [ ImageOnlyFailure ]
 
 webkit.org/b/228110 fast/forms/basic-selects.html [ Skip ]
 webkit.org/b/228110 fast/forms/indeterminate.html [ Skip ]

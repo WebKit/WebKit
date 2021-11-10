@@ -1,3 +1,15 @@
+2021-11-10  Tim Nguyen  <ntim@apple.com>
+
+        Enable dialog tests on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=232911
+
+        Reviewed by Youenn Fablet.
+
+        The runtime flag sometimes seems to be off for Windows, change the member in
+        RuntimeEnabledFeatures.h and re-enable tests.
+
+        * platform/win/TestExpectations:
+
 2021-11-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines after r284521
