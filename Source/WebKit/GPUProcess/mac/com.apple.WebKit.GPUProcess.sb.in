@@ -58,14 +58,10 @@
     (subpath "/usr/share"))))
 
 ;;; Allow mapping of system frameworks + dylibs
-(allow file-map-executable (with telemetry)
-    (subpath "/Library/Apple/System/Library/Frameworks")
-    (subpath "/Library/Apple/System/Library/PrivateFrameworks")
+(allow file-map-executable
     (subpath "/System/Library/Frameworks")
     (subpath "/System/Library/PrivateFrameworks")
-    (subpath "/usr/lib")
-    (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
-)
+    (subpath "/usr/lib"))
 
 (allow file-read-metadata
     (literal "/var")

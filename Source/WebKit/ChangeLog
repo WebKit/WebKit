@@ -1,3 +1,15 @@
+2021-11-09  Per Arne  <pvollan@apple.com>
+
+        [macOS][GPUP] Block access to mapping of executables
+        https://bugs.webkit.org/show_bug.cgi?id=232257
+        <rdar://problem/84623297>
+
+        Reviewed by Brent Fulgham.
+
+        Block access to mapping of certain executables in the GPU process on macOS.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (Safari 15): AudioContext.currentTime speeds up (and audio won't play) when Bluetooth speaker connected
