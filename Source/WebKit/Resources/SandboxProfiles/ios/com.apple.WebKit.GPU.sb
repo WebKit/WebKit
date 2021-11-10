@@ -437,7 +437,6 @@
            (home-literal "/Library/Caches/powerlog.launchd"))
 
     (allow-read-and-issue-generic-extensions (executable-bundle))
-    (allow file-map-executable (with telemetry) (executable-bundle))
 
     ;; <rdar://problem/13963294>
     (deny file-read-data file-issue-extension file-map-executable
@@ -823,9 +822,6 @@
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
-
-;; Allow loading injected bundles.
-(allow file-map-executable (with telemetry))
 
 ;; Allow ManagedPreference access
 (allow file-read* (with telemetry) (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
