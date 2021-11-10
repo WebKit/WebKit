@@ -22,7 +22,7 @@ int main()
 }
 ```
 
-[](#indentation-namespace) The contents of an outermost `namespace` block (and any nested namespaces with the same scope) should not be indented. The contents of other nested namespaces should be indented.
+[](#indentation-namespace) The contents of namespaces should not be indented.
 
 ###### Right:
 
@@ -36,7 +36,12 @@ class Document {
 };
 
 namespace NestedNamespace {
+
+class OtherDocument {
+    OtherDocument();
     ...
+};
+
 }
 
 } // namespace WebCore
@@ -49,7 +54,29 @@ Document::Document()
     ...
 }
 
+namespace NestedNamespace {
+
+OtherDocument::OtherDocument()
+{
+    ...
+}
+
+} // namespace NestedNamespace
+
 } // namespace WebCore
+```
+
+###### Right:
+
+```cpp
+// PrivateClickMeasurementDatabase.h
+namespace WebKit::PCM {
+
+class Database {
+    ...
+};
+
+} // namespace WebKit::PCM
 ```
 
 ###### Wrong:

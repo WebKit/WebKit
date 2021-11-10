@@ -1,3 +1,13 @@
+2021-11-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Coding style for inner namespaces is should be simplified to not indented
+        https://bugs.webkit.org/show_bug.cgi?id=232073
+
+        Reviewed by Antti Koivisto.
+
+        * .clang-format:
+        Do not indent contents of inner namespaces, match current code.
+
 2021-11-09  J Pascoe  <j_pascoe@apple.com>
 
         Add j_pascoe to contributors.json

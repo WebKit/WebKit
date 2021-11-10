@@ -1,3 +1,14 @@
+2021-11-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Coding style for inner namespaces is should be simplified to not indented
+        https://bugs.webkit.org/show_bug.cgi?id=232073
+
+        Reviewed by Antti Koivisto.
+
+        * code-style.md:
+        Simplify coding style to match the existing code: contents of inner namespaces
+        should not be indented.
+
 2021-11-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add Monterey to WebKit Build Archives page
