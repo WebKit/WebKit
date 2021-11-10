@@ -103,13 +103,25 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         return;
     auto& gl = *m_context.graphicsContextGL();
 
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
+    GCGLenum textureTarget = gCGL->drawingBufferTextureTarget();
+    GCGLenum textureTargetBinding = gCGL->drawingBufferTextureTargetQueryForDrawingTarget(textureTarget);
+#else
+    GCGLenum textureTarget = GL::TEXTURE_2D;
+    GCGLenum textureTargetBinding = GL::TEXTURE_BINDING_2D;
+#endif
+
     m_framebuffer->setOpaqueActive(true);
 
     GCGLint boundFBO { 0 };
-
+    GCGLint boundTexture { 0 };
     gl.getIntegerv(GL::FRAMEBUFFER_BINDING, makeGCGLSpan(&boundFBO, 1));
-    auto scopedFBOs = makeScopeExit([&gl, boundFBO]() {
+    gl.getIntegerv(textureTargetBinding, makeGCGLSpan(&boundTexture, 1));
+
+    auto scopedBindings = makeScopeExit([&gl, boundFBO, boundTexture, textureTarget]() {
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
+        gl.bindTexture(textureTarget, boundTexture);
     });
 
     gl.bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer->object());
@@ -121,9 +133,6 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     ASSERT(data.surface);
-
-    auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
-    GCGLenum textureTarget = gCGL->drawingBufferTextureTarget();
 
     if (!m_opaqueTexture)
         m_opaqueTexture = gCGL->createTexture();
@@ -156,11 +165,12 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         return;
     }
 
-    // If we're not multisampling, set up the framebuffer to use the texture that points to the IOSurface. The depth and
-    // stencil buffers were attached by setupFramebuffer. If we are multisampling, the framebuffer was initialized in setupFramebuffer,
-    // and we'll resolve into the m_opaqueTexture in endFrame.
-    if (!m_multisampleColorBuffer)
-        gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
+    // Set up the framebuffer to use the texture that points to the IOSurface. If we're not multisampling,
+    // the target framebuffer is m_framebuffer->object() (bound above). If we are multisampling, the target
+    // is the resolved framebuffer we created in setupFramebuffer.
+    if (m_multisampleColorBuffer)
+        gl.bindFramebuffer(GL::FRAMEBUFFER, m_resolvedFBO);
+    gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, textureTarget, m_opaqueTexture, 0);
 
     // At this point the framebuffer should be "complete".
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
@@ -199,20 +209,21 @@ void WebXROpaqueFramebuffer::endFrame()
         TemporaryOpenGLSetting scopedStencil(GL::STENCIL_TEST, 0);
 #endif
 
+        GCGLint boundFBO { 0 };
         GCGLint boundReadFBO { 0 };
         GCGLint boundDrawFBO { 0 };
+        gl.getIntegerv(GL::FRAMEBUFFER_BINDING, makeGCGLSpan(&boundFBO, 1));
         gl.getIntegerv(GL::READ_FRAMEBUFFER_BINDING, makeGCGLSpan(&boundReadFBO, 1));
         gl.getIntegerv(GL::DRAW_FRAMEBUFFER_BINDING, makeGCGLSpan(&boundDrawFBO, 1));
 
-        auto scopedFBOs = makeScopeExit([&gl, boundReadFBO, boundDrawFBO]() {
+        auto scopedBindings = makeScopeExit([&gl, boundFBO, boundReadFBO, boundDrawFBO]() {
+            gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
             gl.bindFramebuffer(GL::READ_FRAMEBUFFER, boundReadFBO);
             gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, boundDrawFBO);
         });
 
-        gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, m_resolvedFBO);
-        gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
-
         gl.bindFramebuffer(GL::READ_FRAMEBUFFER, m_framebuffer->object());
+        gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, m_resolvedFBO);
         gl.blitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::NEAREST);
     }
 
@@ -245,19 +256,19 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         return false;
     auto& gl = *m_context.graphicsContextGL();
 
-    // Bind current FBOs when exiting the function
+    // Restore bindings when exiting the function.
     GCGLint boundFBO { 0 };
     GCGLint boundRenderbuffer { 0 };
     gl.getIntegerv(GL::FRAMEBUFFER_BINDING, makeGCGLSpan(&boundFBO, 1));
     gl.getIntegerv(GL::RENDERBUFFER_BINDING, makeGCGLSpan(&boundRenderbuffer, 1));
-    auto scopedFBO = makeScopeExit([&gl, boundFBO, boundRenderbuffer]() {
+
+    auto scopedBindings = makeScopeExit([&gl, boundFBO, boundRenderbuffer]() {
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
         gl.bindRenderbuffer(GL::RENDERBUFFER, boundRenderbuffer);
     });
 
     // Set up color, depth and stencil formats
     bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;
-    auto colorFormat = m_attributes.alpha ? GL::RGBA8 : GL::RGB8;
 #if USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
     bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil");
@@ -325,7 +336,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         m_multisampleColorBuffer = gl.createRenderbuffer();
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
         gl.bindRenderbuffer(GL::RENDERBUFFER, m_multisampleColorBuffer);
-        gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, colorFormat, m_width, m_height);
+        gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, GL::RGBA8, m_width, m_height);
         gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_multisampleColorBuffer);
         if (hasDepthOrStencil) {
             m_depthStencilBuffer = gl.createRenderbuffer();
