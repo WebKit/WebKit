@@ -47,7 +47,6 @@ public:
     std::unique_ptr<SVGFilterBuilder> builder;
     RefPtr<ImageBuffer> sourceGraphicBuffer;
     GraphicsContext* savedContext { nullptr };
-    AffineTransform shearFreeAbsoluteTransform;
     FloatRect boundaries;
     FloatRect drawingRegion;
     FloatSize scale;

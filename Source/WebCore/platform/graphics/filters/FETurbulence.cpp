@@ -371,17 +371,16 @@ void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData&
     ASSERT(endY > startY);
 
     IntRect filterRegion = absolutePaintRect();
-    filterRegion.scale(filter().filterScale());
     FloatPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
-    AffineTransform inverseTransfrom = filter().absoluteTransform().inverse().value_or(AffineTransform());
+    FloatSize inverseScale = { 1 / filter().filterScale().width(), 1 / filter().filterScale().height() };
 
     for (int y = startY; y < endY; ++y) {
         point.setY(point.y() + 1);
         point.setX(filterRegion.x());
         for (int x = 0; x < filterRegion.width(); ++x) {
             point.setX(point.x() + 1);
-            FloatPoint localPoint = inverseTransfrom.mapPoint(point);
+            FloatPoint localPoint = point.scaled(inverseScale.width(), inverseScale.height());
             auto values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
             pixelArray.setRange(values.components.data(), 4, indexOfPixelChannel);
             indexOfPixelChannel += 4;
@@ -403,7 +402,6 @@ void FETurbulence::platformApplySoftware()
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
     IntSize resultSize(absolutePaintRect().size());
-    resultSize.scale(filter().filterScale());
 
     if (resultSize.isEmpty()) {
         destinationPixelArray.zeroFill();

@@ -53,7 +53,7 @@ void FEDropShadow::determineAbsolutePaintRect()
 
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     FloatRect absoluteOffsetPaintRect(absolutePaintRect);
-    absoluteOffsetPaintRect.move(filter.scaledByFilterResolution({ m_dx, m_dy }));
+    absoluteOffsetPaintRect.move(filter.scaledByFilterScale({ m_dx, m_dy }));
     absolutePaintRect.unite(absoluteOffsetPaintRect);
 
     IntSize kernelSize = FEGaussianBlur::calculateKernelSize(filter, { m_stdX, m_stdY });
@@ -80,9 +80,8 @@ void FEDropShadow::platformApplySoftware()
 
     Filter& filter = this->filter();
     
-    FloatSize blurRadius = 2 * filter.scaledByFilterResolution({ m_stdX, m_stdY });
-    blurRadius.scale(filter.filterScale());
-    FloatSize offset = filter.scaledByFilterResolution({ m_dx, m_dy });
+    FloatSize blurRadius = 2 * filter.scaledByFilterScale({ m_stdX, m_stdY });
+    FloatSize offset = filter.scaledByFilterScale({ m_dx, m_dy });
 
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
     FloatRect drawingRegionWithOffset(drawingRegion);

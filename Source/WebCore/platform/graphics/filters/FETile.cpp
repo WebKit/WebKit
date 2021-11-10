@@ -61,7 +61,7 @@ void FETile::platformApplySoftware()
     if (in->filterType() == FilterEffect::Type::SourceGraphic || in->filterType() == FilterEffect::Type::SourceAlpha) {
         Filter& filter = this->filter();
         tileRect = filter.filterRegion();
-        tileRect.scale(filter.filterResolution().width(), filter.filterResolution().height());
+        tileRect.scale(filter.filterScale());
     }
 
     auto tileImage = SVGRenderingContext::createImageBuffer(tileRect, tileRect, DestinationColorSpace::SRGB(), filter().renderingMode());

@@ -1,3 +1,20 @@
+2021-11-10  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make SVGFilter and CSSFilter work in the same coordinates system
+        https://bugs.webkit.org/show_bug.cgi?id=232457
+        rdar://85035379
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        Skip the hidpi reference filter tests till we connect the FilterEffects
+        to the correct parent Filter.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        Remove unnecessary un-skipping for conic-gradients tests since they were
+        not skipped globally.
+
 2021-11-10  Geza Lore  <glore@igalia.com>
 
         [JSC][ARMv7] Unskip LayoutTests/js/script-tests/stack-overflow-regexp.js

@@ -485,7 +485,7 @@ IntSize FEGaussianBlur::calculateUnscaledKernelSize(FloatSize stdDeviation)
 
 IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, FloatSize stdDeviation)
 {
-    return calculateUnscaledKernelSize(filter.scaledByFilterResolution(stdDeviation));
+    return calculateUnscaledKernelSize(filter.scaledByFilterScale(stdDeviation));
 }
 
 IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
@@ -537,10 +537,8 @@ void FEGaussianBlur::platformApplySoftware()
         return;
 
     IntSize kernelSize = calculateKernelSize(filter(), { m_stdX, m_stdY });
-    kernelSize.scale(filter().filterScale());
 
     IntSize paintSize = absolutePaintRect().size();
-    paintSize.scale(filter().filterScale());
     auto tmpImageData = Uint8ClampedArray::tryCreateUninitialized(paintSize.area() * 4);
     if (!tmpImageData)
         return;

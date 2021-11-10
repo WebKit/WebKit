@@ -20,9 +20,7 @@
 
 #pragma once
 
-#include "AffineTransform.h"
 #include "Filter.h"
-#include "FilterEffect.h"
 #include "FloatRect.h"
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
@@ -31,25 +29,16 @@ namespace WebCore {
 
 class SVGFilter final : public Filter {
 public:
-    static Ref<SVGFilter> create(const AffineTransform&, const FloatRect&, const FloatRect&, const FloatRect&, bool);
+    static Ref<SVGFilter> create(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
 
-    FloatRect filterRegionInUserSpace() const final { return m_filterRegion; }
-    FloatRect filterRegion() const final { return m_absoluteFilterRegion; }
+    FloatSize scaledByFilterScale(FloatSize) const final;
 
-    FloatSize scaledByFilterResolution(FloatSize) const final;
-
-    FloatRect sourceImageRect() const final { return m_absoluteSourceDrawingRegion; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
-    bool isSVGFilter() const final { return true; }
-
 private:
-    SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
+    SVGFilter(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
 
-    FloatRect m_absoluteSourceDrawingRegion;
     FloatRect m_targetBoundingBox;
-    FloatRect m_absoluteFilterRegion;
-    FloatRect m_filterRegion;
     bool m_effectBBoxMode;
 };
 

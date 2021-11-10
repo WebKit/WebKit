@@ -242,7 +242,7 @@ ImageBuffer* FilterEffectRendererCoreImage::output() const
 void FilterEffectRendererCoreImage::renderToImageBuffer(FilterEffect& lastEffect)
 {
     FloatSize clampedSize = ImageBuffer::clampedSize(lastEffect.absolutePaintRect().size());
-    m_outputImageBuffer = IOSurfaceImageBuffer::create(clampedSize, lastEffect.filter().filterScale(), lastEffect.resultColorSpace(), PixelFormat::BGRA8);
+    m_outputImageBuffer = IOSurfaceImageBuffer::create(clampedSize, 1, lastEffect.resultColorSpace(), PixelFormat::BGRA8);
     if (!m_outputImageBuffer) {
         clearResult();
         return;
@@ -254,7 +254,6 @@ void FilterEffectRendererCoreImage::renderToImageBuffer(FilterEffect& lastEffect
 FloatRect FilterEffectRendererCoreImage::destRect(const FilterEffect& lastEffect) const
 {
     IntSize destSize = lastEffect.absolutePaintRect().size();
-    destSize.scale(lastEffect.filter().filterScale());
     FloatRect destRect = FloatRect(FloatPoint(), destSize);
     return destRect;
 }

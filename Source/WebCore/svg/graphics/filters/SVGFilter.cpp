@@ -24,27 +24,24 @@
 
 namespace WebCore {
 
-SVGFilter::SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)
-    : Filter(Filter::Type::CSSFilter, absoluteTransform)
-    , m_absoluteSourceDrawingRegion(absoluteSourceDrawingRegion)
+SVGFilter::SVGFilter(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, bool effectBBoxMode)
+    : Filter(Filter::Type::SVGFilter, filterScale, sourceImageRect, filterRegion)
     , m_targetBoundingBox(targetBoundingBox)
-    , m_filterRegion(filterRegion)
     , m_effectBBoxMode(effectBBoxMode)
 {
-    m_absoluteFilterRegion = absoluteTransform.mapRect(filterRegion);
 }
 
-FloatSize SVGFilter::scaledByFilterResolution(FloatSize size) const
+FloatSize SVGFilter::scaledByFilterScale(FloatSize size) const
 {
     if (m_effectBBoxMode)
         size = size * m_targetBoundingBox.size();
 
-    return Filter::scaledByFilterResolution(size) * m_absoluteFilterRegion.size() / m_filterRegion.size();
+    return Filter::scaledByFilterScale(size);
 }
 
-Ref<SVGFilter> SVGFilter::create(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)
+Ref<SVGFilter> SVGFilter::create(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, bool effectBBoxMode)
 {
-    return adoptRef(*new SVGFilter(absoluteTransform, absoluteSourceDrawingRegion, targetBoundingBox, filterRegion, effectBBoxMode));
+    return adoptRef(*new SVGFilter(filterScale, sourceImageRect, filterRegion, targetBoundingBox, effectBBoxMode));
 }
 
 } // namespace WebCore

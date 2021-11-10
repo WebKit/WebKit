@@ -33,49 +33,45 @@ class FilterEffect;
 
 class Filter : public FilterFunction {
 public:
-    void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
+    FloatSize filterScale() const { return m_filterScale; }
+    void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
+
+    FloatRect sourceImageRect() const { return m_sourceImageRect; }
+    void setSourceImageRect(const FloatRect& sourceImageRect) { m_sourceImageRect = sourceImageRect; }
+
+    FloatRect filterRegion() const { return m_filterRegion; }
+    void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
+
+    virtual FloatSize scaledByFilterScale(FloatSize size) const { return size * m_filterScale; }
+
     ImageBuffer* sourceImage() { return m_sourceImage.get(); }
-
-    FloatSize filterResolution() const { return m_filterResolution; }
-    void setFilterResolution(const FloatSize& filterResolution) { m_filterResolution = filterResolution; }
-
-    float filterScale() const { return m_filterScale; }
-    void setFilterScale(float scale) { m_filterScale = scale; }
-
-    const AffineTransform& absoluteTransform() const { return m_absoluteTransform; }
+    void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
     RenderingMode renderingMode() const { return m_renderingMode; }
     void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
 
-    virtual bool isSVGFilter() const { return false; }
-    virtual bool isCSSFilter() const { return false; }
-
-    virtual FloatSize scaledByFilterResolution(FloatSize size) const { return size * m_filterResolution; }
-    
-    virtual FloatRect sourceImageRect() const = 0;
-    virtual FloatRect filterRegion() const = 0;
-    virtual FloatRect filterRegionInUserSpace() const = 0;
-
 protected:
-    Filter(Filter::Type filterType, const AffineTransform& absoluteTransform, float filterScale = 1)
+    Filter(Filter::Type filterType, const FloatSize& filterScale)
         : FilterFunction(filterType)
-        , m_absoluteTransform(absoluteTransform)
         , m_filterScale(filterScale)
     {
     }
 
-    Filter(Filter::Type filterType, const FloatSize& filterResolution)
+    Filter(Filter::Type filterType, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion)
         : FilterFunction(filterType)
-        , m_filterResolution(filterResolution)
+        , m_filterScale(filterScale)
+        , m_sourceImageRect(sourceImageRect)
+        , m_filterRegion(filterRegion)
     {
     }
 
 private:
+    FloatSize m_filterScale;
+    FloatRect m_sourceImageRect;
+    FloatRect m_filterRegion;
+
     RefPtr<ImageBuffer> m_sourceImage;
-    FloatSize m_filterResolution;
-    AffineTransform m_absoluteTransform;
     RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
-    float m_filterScale { 1 };
 };
 
 } // namespace WebCore

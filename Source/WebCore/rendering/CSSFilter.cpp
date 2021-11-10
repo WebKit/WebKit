@@ -54,18 +54,16 @@
 
 namespace WebCore {
 
-Ref<CSSFilter> CSSFilter::create()
+Ref<CSSFilter> CSSFilter::create(float scaleFactor)
 {
-    return adoptRef(*new CSSFilter);
+    return adoptRef(*new CSSFilter(scaleFactor));
 }
 
-CSSFilter::CSSFilter()
-    : Filter(Filter::Type::CSSFilter, FloatSize { 1, 1 })
+CSSFilter::CSSFilter(float scaleFactor)
+    : Filter(Filter::Type::CSSFilter, FloatSize { scaleFactor, scaleFactor })
     , m_sourceGraphic(SourceGraphic::create(*this))
 {
 }
-
-CSSFilter::~CSSFilter() = default;
 
 GraphicsContext* CSSFilter::inputContext()
 {
@@ -86,7 +84,6 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
     }
 
     auto builder = makeUnique<SVGFilterBuilder>(&previousEffect);
-    m_sourceAlpha = builder->getEffectById(SourceAlpha::effectName());
 
     RefPtr<FilterEffect> effect;
     Vector<Ref<FilterEffect>> referenceEffects;
@@ -302,7 +299,7 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
 
     m_effects.shrinkToFit();
 
-    setMaxEffectRects(m_sourceDrawingRegion);
+    setMaxEffectRects(sourceImageRect());
 #if USE(CORE_IMAGE)
     if (!m_filterRenderer)
         m_filterRenderer = FilterEffectRenderer::tryCreate(renderer.settings().coreImageAcceleratedFilterRenderEnabled(), m_effects.last().get());
@@ -331,14 +328,14 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
     if (m_graphicsBufferAttached)
         return;
 
-    auto logicalSize = m_sourceDrawingRegion.size();
+    auto logicalSize = sourceImageRect().size();
     if (!sourceImage() || sourceImage()->logicalSize() != logicalSize) {
 #if USE(DIRECT2D)
-        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 #else
         UNUSED_PARAM(targetContext);
         RenderingMode mode = m_filterRenderer ? RenderingMode::Accelerated : renderingMode();
-        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+        setSourceImage(ImageBuffer::create(logicalSize, mode, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 #endif
     }
     m_graphicsBufferAttached = true;
@@ -350,9 +347,9 @@ void CSSFilter::determineFilterPrimitiveSubregion()
     lastEffect.determineFilterPrimitiveSubregion();
     FloatRect subRegion = lastEffect.maxEffectRect();
     // At least one FilterEffect has a too big image size, recalculate the effect sizes with new scale factors.
-    FloatSize scale;
-    if (ImageBuffer::sizeNeedsClamping(subRegion.size(), scale)) {
-        setFilterResolution(scale);
+    FloatSize filterScale { 1, 1 };
+    if (ImageBuffer::sizeNeedsClamping(subRegion.size(), filterScale)) {
+        setFilterScale(filterScale);
         lastEffect.determineFilterPrimitiveSubregion();
     }
 }
@@ -360,8 +357,6 @@ void CSSFilter::determineFilterPrimitiveSubregion()
 void CSSFilter::clearIntermediateResults()
 {
     m_sourceGraphic->clearResult();
-    if (m_sourceAlpha)
-        m_sourceAlpha->clearResult();
     for (auto& effect : m_effects)
         effect->clearResult();
 }
@@ -400,9 +395,9 @@ ImageBuffer* CSSFilter::output() const
 
 void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)
 {
-    m_sourceDrawingRegion = sourceImageRect;
+    Filter::setFilterRegion(sourceImageRect);
+    Filter::setSourceImageRect(sourceImageRect);
     setMaxEffectRects(sourceImageRect);
-    setFilterRegion(sourceImageRect);
     m_graphicsBufferAttached = false;
 }
 
@@ -417,7 +412,7 @@ IntRect CSSFilter::outputRect() const
     auto& lastEffect = m_effects.last().get();
     
     if (lastEffect.hasResult() || (m_filterRenderer && m_filterRenderer->hasResult()))
-        return lastEffect.requestedRegionOfInputPixelBuffer(IntRect { m_filterRegion });
+        return lastEffect.requestedRegionOfInputPixelBuffer(IntRect { filterRegion() });
     
     return { };
 }

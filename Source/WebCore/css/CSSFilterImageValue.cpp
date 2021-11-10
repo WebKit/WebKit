@@ -126,7 +126,6 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement& renderer, const FloatSiz
     auto cssFilter = CSSFilter::create();
     cssFilter->setSourceImage(WTFMove(texture));
     cssFilter->setSourceImageRect(imageRect);
-    cssFilter->setFilterRegion(imageRect);
     if (!cssFilter->build(renderer, m_filterOperations, FilterConsumer::FilterFunction))
         return &Image::nullImage();
     cssFilter->apply();

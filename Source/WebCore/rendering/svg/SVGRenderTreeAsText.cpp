@@ -432,7 +432,8 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
         ts << "\n";
         // Creating a placeholder filter which is passed to the builder.
         FloatRect dummyRect;
-        auto dummyFilter = SVGFilter::create(AffineTransform(), dummyRect, dummyRect, dummyRect, true);
+        FloatSize dummyScale(1, 1);
+        auto dummyFilter = SVGFilter::create(dummyScale, dummyRect, dummyRect, dummyRect, true);
         if (auto builder = filter.buildPrimitives(dummyFilter.get())) {
             TextStream::IndentScope indentScope(ts);
 

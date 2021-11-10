@@ -35,7 +35,6 @@ void SourceGraphic::determineAbsolutePaintRect()
 {
     Filter& filter = this->filter();
     FloatRect paintRect = filter.sourceImageRect();
-    paintRect.scale(filter.filterResolution().width(), filter.filterResolution().height());
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 

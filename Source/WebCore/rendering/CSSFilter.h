@@ -38,7 +38,6 @@ class FilterOperations;
 class GraphicsContext;
 class ReferenceFilterOperation;
 class RenderElement;
-class SourceAlpha;
 class SourceGraphic;
 
 enum class FilterConsumer { FilterProperty, FilterFunction };
@@ -47,13 +46,11 @@ class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
     friend class RenderLayerFilters;
 public:
-    static Ref<CSSFilter> create();
-
-    void setSourceImageRect(const FloatRect&);
-    void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
+    static Ref<CSSFilter> create(float scaleFactor = 1);
 
     ImageBuffer* output() const;
 
+    void setSourceImageRect(const FloatRect&);
     bool build(RenderElement&, const FilterOperations&, FilterConsumer);
     void clearIntermediateResults();
     void apply();
@@ -65,15 +62,7 @@ public:
     IntOutsets outsets() const;
 
 private:
-    CSSFilter();
-    virtual ~CSSFilter();
-
-    bool isCSSFilter() const final { return true; }
-
-    FloatRect sourceImageRect() const final { return m_sourceDrawingRegion; }
-
-    FloatRect filterRegion() const final { return m_filterRegion; }
-    FloatRect filterRegionInUserSpace() const final { return m_filterRegion; }
+    CSSFilter(float scaleFactor);
 
     RefPtr<FilterEffect> buildReferenceFilter(RenderElement&, FilterEffect& previousEffect, ReferenceFilterOperation&);
 
@@ -88,12 +77,8 @@ private:
 
     LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
-    FloatRect m_sourceDrawingRegion;
-    FloatRect m_filterRegion;
-
     Vector<Ref<FilterEffect>> m_effects;
     Ref<SourceGraphic> m_sourceGraphic;
-    RefPtr<FilterEffect> m_sourceAlpha;
 
     mutable IntOutsets m_outsets;
 

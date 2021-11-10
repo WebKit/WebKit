@@ -65,7 +65,7 @@ void FEImage::determineAbsolutePaintRect()
         }
     );
 
-    imageRect = filter().absoluteTransform().mapRect(imageRect);
+    imageRect.scale(filter().filterScale());
 
     if (clipsToBounds())
         imageRect.intersect(maxEffectRect());
@@ -91,14 +91,14 @@ void FEImage::platformApplySoftware()
             auto imageRect = primitiveSubregion;
             auto srcRect = m_sourceImageRect;
             m_preserveAspectRatio.transformRect(imageRect, srcRect);
-            imageRect = filter().absoluteTransform().mapRect(imageRect);
+            imageRect.scale(filter().filterScale());
             imageRect = drawingRegionOfInputImage(IntRect(imageRect));
             context.drawImage(image, imageRect, srcRect);
         },
         [&] (const Ref<ImageBuffer>& imageBuffer) {
             auto imageRect = primitiveSubregion;
             imageRect.moveBy(m_sourceImageRect.location());
-            imageRect = filter().absoluteTransform().mapRect(imageRect);
+            imageRect.scale(filter().filterScale());
             imageRect = drawingRegionOfInputImage(IntRect(imageRect));
             context.drawImageBuffer(imageBuffer, imageRect.location());
         }

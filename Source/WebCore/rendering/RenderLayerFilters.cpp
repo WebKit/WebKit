@@ -118,18 +118,12 @@ void RenderLayerFilters::removeReferenceFilterClients()
 
 void RenderLayerFilters::buildFilter(RenderElement& renderer, float scaleFactor, RenderingMode renderingMode)
 {
-    if (!m_filter) {
-        m_filter = CSSFilter::create();
-        m_filter->setFilterScale(scaleFactor);
-        m_filter->setRenderingMode(renderingMode);
-    } else if (m_filter->filterScale() != scaleFactor) {
-        m_filter->setFilterScale(scaleFactor);
-        m_filter->clearIntermediateResults();
-    }
+    // FIXME: this rebuilds the entire effects chain even if the filter style didn't change.
+    m_filter = CSSFilter::create(scaleFactor);
+    m_filter->setRenderingMode(renderingMode);
 
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
-    // FIXME: this rebuilds the entire effects chain even if the filter style didn't change.
     if (!m_filter->build(renderer, renderer.style().filter(), FilterConsumer::FilterProperty))
         m_filter = nullptr;
 }
