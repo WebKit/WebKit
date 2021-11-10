@@ -229,10 +229,10 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     WebCore::FloatQuad paddingQuad = highlight.quads[offset + 2];
     WebCore::FloatQuad contentQuad = highlight.quads[offset + 3];
 
-    marginLayer.fillColor = cachedCGColor(highlight.marginColor);
-    borderLayer.fillColor = cachedCGColor(highlight.borderColor);
-    paddingLayer.fillColor = cachedCGColor(highlight.paddingColor);
-    contentLayer.fillColor = cachedCGColor(highlight.contentColor);
+    marginLayer.fillColor = cachedCGColor(highlight.marginColor).get();
+    borderLayer.fillColor = cachedCGColor(highlight.borderColor).get();
+    paddingLayer.fillColor = cachedCGColor(highlight.paddingColor).get();
+    contentLayer.fillColor = cachedCGColor(highlight.contentColor).get();
 
     layerPathWithHole(marginLayer, marginQuad, borderQuad);
     layerPathWithHole(borderLayer, borderQuad, paddingQuad);
@@ -260,10 +260,10 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
 
     [self _createLayers:numLayers];
 
-    CGColorRef contentColor = cachedCGColor(highlight.contentColor);
+    auto contentColor = cachedCGColor(highlight.contentColor);
     for (NSUInteger i = 0; i < numLayers; ++i) {
         CAShapeLayer *layer = [_layers objectAtIndex:i];
-        layer.fillColor = contentColor;
+        layer.fillColor = contentColor.get();
         layerPath(layer, highlight.quads[i]);
     }
 }
@@ -308,7 +308,7 @@ static CALayer * createLayoutHatchingLayer(WebCore::FloatQuad quad, WebCore::Col
         }
     }
     layer.path = hatchPath.get();
-    layer.strokeColor = cachedCGColor(strokeColor);
+    layer.strokeColor = cachedCGColor(strokeColor).get();
     layer.lineWidth = 0.5;
     layer.lineDashPattern = @[[NSNumber numberWithInt:2], [NSNumber numberWithInt:2]];
 
@@ -413,8 +413,8 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
 
     CAShapeLayer *labelPathLayer = [CAShapeLayer layer];
     labelPathLayer.path = platformLabelPath;
-    labelPathLayer.fillColor = cachedCGColor(backgroundColor);
-    labelPathLayer.strokeColor = cachedCGColor(strokeColor);
+    labelPathLayer.fillColor = cachedCGColor(backgroundColor).get();
+    labelPathLayer.strokeColor = cachedCGColor(strokeColor).get();
     labelPathLayer.position = CGPointMake(point.x(), point.y());
     [layer addSublayer:labelPathLayer];
 #endif
@@ -446,7 +446,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
     CAShapeLayer *gridLinesLayer = [CAShapeLayer layer];
     gridLinesLayer.path = gridLinesPath.get();
     gridLinesLayer.lineWidth = 1;
-    gridLinesLayer.strokeColor = cachedCGColor(overlay.color);
+    gridLinesLayer.strokeColor = cachedCGColor(overlay.color).get();
     [layer addSublayer:gridLinesLayer];
 
     for (auto gapQuad : overlay.gaps)
@@ -457,7 +457,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
         layerPath(areaLayer, area.quad);
         areaLayer.lineWidth = 3;
         areaLayer.fillColor = CGColorGetConstantColor(kCGColorClear);
-        areaLayer.strokeColor = cachedCGColor(overlay.color);
+        areaLayer.strokeColor = cachedCGColor(overlay.color).get();
         [layer addSublayer:areaLayer];
     }
 

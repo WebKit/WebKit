@@ -1020,9 +1020,9 @@ static NSURL *createUniqueWebDataURL();
     if (!color.isValid())
         return nil;
 #if !PLATFORM(IOS_FAMILY)
-    return nsColor(color);
+    return nsColor(color).autorelease();
 #else
-    return cachedCGColor(color);
+    return cachedCGColor(color).autorelease();
 #endif
 }
 
@@ -1408,7 +1408,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!renderer)
         return nil;
     auto color = WebCore::CaretBase::computeCaretColor(renderer->style(), renderer->element());
-    return color.isValid() ? cachedCGColor(color) : nil;
+    return color.isValid() ? cachedCGColor(color).autorelease() : nil;
 }
 
 - (NSView *)documentView

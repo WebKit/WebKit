@@ -322,7 +322,7 @@ private:
         unsigned int pad:26;
     } _flags;
     
-    PlatformColor *_colorForElement(Element&, CSSPropertyID);
+    RetainPtr<PlatformColor> _colorForElement(Element&, CSSPropertyID);
     
     void _traverseNode(Node&, unsigned depth, bool embedded);
     void _traverseFooterNode(Element&, unsigned depth);
@@ -400,8 +400,8 @@ AttributedString HTMLConverter::convert()
 
     Document& document = commonAncestorContainer->document();
     if (auto* body = document.bodyOrFrameset()) {
-        if (PlatformColor *backgroundColor = _colorForElement(*body, CSSPropertyBackgroundColor))
-            [_documentAttrs setObject:backgroundColor forKey:NSBackgroundColorDocumentAttribute];
+        if (auto backgroundColor = _colorForElement(*body, CSSPropertyBackgroundColor))
+            [_documentAttrs setObject:backgroundColor.get() forKey:NSBackgroundColorDocumentAttribute];
     }
 
     _domRangeStartIndex = 0;
@@ -905,13 +905,13 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     return Color();
 }
 
-PlatformColor *HTMLConverter::_colorForElement(Element& element, CSSPropertyID propertyId)
+RetainPtr<PlatformColor> HTMLConverter::_colorForElement(Element& element, CSSPropertyID propertyId)
 {
     Color result = _caches->colorPropertyValueForNode(element, propertyId);
     if (!result.isValid())
         return nil;
-    PlatformColor *platformResult = platformColor(result);
-    if ([[PlatformColorClass clearColor] isEqual:platformResult] || ([platformResult alphaComponent] == 0.0))
+    auto platformResult = platformColor(result);
+    if ([[PlatformColorClass clearColor] isEqual:platformResult.get()] || ([platformResult alphaComponent] == 0.0))
         return nil;
     return platformResult;
 }
@@ -933,9 +933,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 
     PlatformFont *font = nil;
     PlatformFont *actualFont = _font(element);
-    PlatformColor *foregroundColor = _colorForElement(element, CSSPropertyColor);
-    PlatformColor *backgroundColor = _colorForElement(element, CSSPropertyBackgroundColor);
-    PlatformColor *strokeColor = _colorForElement(element, CSSPropertyWebkitTextStrokeColor);
+    auto foregroundColor = _colorForElement(element, CSSPropertyColor);
+    auto backgroundColor = _colorForElement(element, CSSPropertyBackgroundColor);
+    auto strokeColor = _colorForElement(element, CSSPropertyWebkitTextStrokeColor);
 
     float fontSize = 0;
     if (!_caches->floatPropertyValueForNode(element, CSSPropertyFontSize, fontSize) || fontSize <= 0.0)
@@ -1001,9 +1001,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (font)
         [attrs setObject:font forKey:NSFontAttributeName];
     if (foregroundColor)
-        [attrs setObject:foregroundColor forKey:NSForegroundColorAttributeName];
+        [attrs setObject:foregroundColor.get() forKey:NSForegroundColorAttributeName];
     if (backgroundColor && !_caches->elementHasOwnBackgroundColor(element))
-        [attrs setObject:backgroundColor forKey:NSBackgroundColorAttributeName];
+        [attrs setObject:backgroundColor.get() forKey:NSBackgroundColorAttributeName];
 
     float strokeWidth = 0.0;
     if (_caches->floatPropertyValueForNode(element, CSSPropertyWebkitTextStrokeWidth, strokeWidth)) {
@@ -1011,7 +1011,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         [attrs setObject:@(textStrokeWidth) forKey:NSStrokeWidthAttributeName];
     }
     if (strokeColor)
-        [attrs setObject:strokeColor forKey:NSStrokeColorAttributeName];
+        [attrs setObject:strokeColor.get() forKey:NSStrokeColorAttributeName];
 
     String fontKerning = _caches->propertyValueForNode(element, CSSPropertyWebkitFontKerning);
     String letterSpacing = _caches->propertyValueForNode(element, CSSPropertyLetterSpacing);
@@ -1448,21 +1448,21 @@ void HTMLConverter::_fillInBlock(NSTextBlock *block, Element& element, PlatformC
     else
         [block setWidth:extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxYEdge];
     
-    PlatformColor *color = nil;
+    RetainPtr<PlatformColor> color;
     if ((color = _colorForElement(element, CSSPropertyBackgroundColor)))
-        [block setBackgroundColor:color];
+        [block setBackgroundColor:color.get()];
     if (!color && backgroundColor)
         [block setBackgroundColor:backgroundColor];
     
     if ((color = _colorForElement(element, CSSPropertyBorderLeftColor)))
-        [block setBorderColor:color forEdge:NSMinXEdge];
+        [block setBorderColor:color.get() forEdge:NSMinXEdge];
     
     if ((color = _colorForElement(element, CSSPropertyBorderTopColor)))
-        [block setBorderColor:color forEdge:NSMinYEdge];
+        [block setBorderColor:color.get() forEdge:NSMinYEdge];
     if ((color = _colorForElement(element, CSSPropertyBorderRightColor)))
-        [block setBorderColor:color forEdge:NSMaxXEdge];
+        [block setBorderColor:color.get() forEdge:NSMaxXEdge];
     if ((color = _colorForElement(element, CSSPropertyBorderBottomColor)))
-        [block setBorderColor:color forEdge:NSMaxYEdge];
+        [block setBorderColor:color.get() forEdge:NSMaxYEdge];
 }
 
 static inline BOOL read2DigitNumber(const char **pp, int8_t *outval)
@@ -1766,10 +1766,10 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         m_textTableFooters.add((__bridge CFTypeRef)[_textTables lastObject], &element);
         retval = NO;
     } else if (displayValue == "table-row" && [_textTables count] > 0) {
-        PlatformColor *color = _colorForElement(element, CSSPropertyBackgroundColor);
+        auto color = _colorForElement(element, CSSPropertyBackgroundColor);
         if (!color)
             color = (PlatformColor *)[PlatformColorClass clearColor];
-        [_textTableRowBackgroundColors addObject:color];
+        [_textTableRowBackgroundColors addObject:color.get()];
     } else if (displayValue == "table-cell") {
         while ([_textTables count] < [_textBlocks count] + 1)
             _addTableForElement(nil);
@@ -2426,13 +2426,13 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
 
         Color foregroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
         if (foregroundColor.isVisible())
-            [attrs setObject:nsColor(foregroundColor) forKey:NSForegroundColorAttributeName];
+            [attrs setObject:nsColor(foregroundColor).get() forKey:NSForegroundColorAttributeName];
         else
             [attrs removeObjectForKey:NSForegroundColorAttributeName];
 
         Color backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         if (backgroundColor.isVisible())
-            [attrs setObject:nsColor(backgroundColor) forKey:NSBackgroundColorAttributeName];
+            [attrs setObject:nsColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
         else
             [attrs removeObjectForKey:NSBackgroundColorAttributeName];
 

@@ -221,7 +221,7 @@ void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, UI
         return;
 
     auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-    auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)], nil);
+    auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor).get()], nil);
     for (auto& itemAndPreviewProvider : m_delayedItemPreviewProviders)
         itemAndPreviewProvider.provider(preview.get());
     m_delayedItemPreviewProviders.clear();
@@ -308,7 +308,7 @@ UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *
     if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
         auto indicator = source.indicatorData.value();
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)], nil).autorelease();
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor).get()], nil).autorelease();
     }
 
     return nil;

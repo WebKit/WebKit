@@ -1,5 +1,195 @@
 2021-11-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284453. rdar://problem/85034820
+
+    cachedCGColor() and nsColor() should return smart pointers
+    https://bugs.webkit.org/show_bug.cgi?id=231909
+    
+    Reviewed by Tim Horton.
+    
+    r276283 attempted to make cachedCGColor() and nsColor() thread-safe but the fix was incomplete
+    since those functions return unretained objects that can be released from the cache on any
+    other thread. This patch updates cachedCGColor() and nsColor() to return a RetainPtr to address
+    the issue.
+    
+    Source/WebCore:
+    
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (AXAttributeStringSetStyle):
+    * editing/cocoa/FontAttributesCocoa.mm:
+    (WebCore::FontAttributes::createDictionary const):
+    * editing/cocoa/FontShadowCocoa.mm:
+    (WebCore::FontShadow::createShadow const):
+    * editing/cocoa/HTMLConverter.mm:
+    (HTMLConverter::convert):
+    (HTMLConverter::_colorForElement):
+    (HTMLConverter::computedAttributesForElement):
+    (HTMLConverter::_fillInBlock):
+    (HTMLConverter::_processElement):
+    (WebCore::editingAttributedString):
+    * platform/graphics/Color.h:
+    * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+    (WebCore::LocalSampleBufferDisplayLayer::initialize):
+    * platform/graphics/ca/PlatformCALayer.cpp:
+    (WebCore::PlatformCALayer::drawTextAtPoint const):
+    * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+    (WebCore::PlatformCAFilters::setFiltersOnLayer):
+    * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+    (WebCore::PlatformCALayerCocoa::setBackgroundColor):
+    (WebCore::PlatformCALayerCocoa::setBorderColor):
+    * platform/graphics/cg/ColorCG.cpp:
+    (WebCore::cachedCGColor):
+    * platform/graphics/cg/GradientCG.cpp:
+    (WebCore::Gradient::createCGGradient):
+    * platform/graphics/cg/GraphicsContextCG.cpp:
+    (WebCore::setCGFillColor):
+    (WebCore::setCGShadow):
+    (WebCore::GraphicsContextCG::didUpdateState):
+    * platform/graphics/cocoa/ColorCocoa.h:
+    * platform/graphics/cocoa/ColorCocoa.mm:
+    (WebCore::platformColor):
+    * platform/graphics/cocoa/FontCacheCoreText.cpp:
+    (WebCore::addAttributesForCustomFontPalettes):
+    * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+    (WebCore::drawFocusRingAtTime):
+    (WebCore::colorForMarkerLineStyle):
+    (WebCore::GraphicsContextCG::drawDotsForDocumentMarker):
+    * platform/graphics/mac/ColorMac.h:
+    * platform/graphics/mac/ColorMac.mm:
+    (WTF::RetainPtr<NSColor>>::createValueForKey):
+    (WebCore::nsColor):
+    * platform/mac/LocalDefaultSystemAppearance.mm:
+    (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+    * platform/mac/PlatformPasteboardMac.mm:
+    (WebCore::PlatformPasteboard::setColor):
+    * platform/mac/ScrollbarThemeMac.mm:
+    (WebCore::ScrollbarThemeMac::setUpOverhangAreaBackground):
+    * platform/mac/ThemeMac.mm:
+    (WebCore::drawCellFocusRingWithFrameAtTime):
+    * rendering/RenderThemeMac.mm:
+    (WebCore::AttachmentLayout::layOutTitle):
+    (WebCore::AttachmentLayout::layOutSubtitle):
+    * testing/cocoa/WebViewVisualIdentificationOverlay.mm:
+    (-[WebViewVisualIdentificationOverlay initWithWebView:kind:deprecated:]):
+    (drawPattern):
+    
+    Source/WebKit:
+    
+    * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+    (WebKit::cgColorFromColor):
+    (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView themeColor]):
+    (-[WKWebView underPageBackgroundColor]):
+    (-[WKWebView _pageExtendedBackgroundColor]):
+    (-[WKWebView _sampledPageTopColor]):
+    * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+    (-[_WKApplicationManifest themeColor]):
+    * UIProcess/API/mac/WKView.mm:
+    (-[WKView underlayColor]):
+    (-[WKView _pageExtendedBackgroundColor]):
+    * UIProcess/API/mac/WKWebViewMac.mm:
+    (-[WKWebView _underlayColor]):
+    * UIProcess/Cocoa/WebViewImpl.h:
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (WebKit::WebViewImpl::updateTextTouchBar):
+    (WebKit::WebViewImpl::underlayColor const):
+    (WebKit::WebViewImpl::pageExtendedBackgroundColor const):
+    * UIProcess/PDF/WKPDFHUDView.mm:
+    (-[WKPDFHUDView _setupLayer:]):
+    * UIProcess/mac/WebColorPickerMac.mm:
+    (WebKit::WebColorPickerMac::setSelectedColor):
+    (WebKit::WebColorPickerMac::showColorPicker):
+    (-[WKColorPopoverMac setAndShowPicker:withColor:suggestions:]):
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::setAccentColor):
+    * WebProcess/cocoa/VideoFullscreenManager.mm:
+    (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+    
+    Source/WebKitLegacy/mac:
+    
+    * DOM/DOMRGBColor.mm:
+    (-[DOMRGBColor color]):
+    * WebView/WebFrame.mm:
+    (-[WebFrame _bodyBackgroundColor]):
+    * WebView/WebView.mm:
+    (-[WebView updateTextTouchBar]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284453 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-19  Chris Dumez  <cdumez@apple.com>
+
+            cachedCGColor() and nsColor() should return smart pointers
+            https://bugs.webkit.org/show_bug.cgi?id=231909
+
+            Reviewed by Tim Horton.
+
+            r276283 attempted to make cachedCGColor() and nsColor() thread-safe but the fix was incomplete
+            since those functions return unretained objects that can be released from the cache on any
+            other thread. This patch updates cachedCGColor() and nsColor() to return a RetainPtr to address
+            the issue.
+
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (AXAttributeStringSetStyle):
+            * editing/cocoa/FontAttributesCocoa.mm:
+            (WebCore::FontAttributes::createDictionary const):
+            * editing/cocoa/FontShadowCocoa.mm:
+            (WebCore::FontShadow::createShadow const):
+            * editing/cocoa/HTMLConverter.mm:
+            (HTMLConverter::convert):
+            (HTMLConverter::_colorForElement):
+            (HTMLConverter::computedAttributesForElement):
+            (HTMLConverter::_fillInBlock):
+            (HTMLConverter::_processElement):
+            (WebCore::editingAttributedString):
+            * platform/graphics/Color.h:
+            * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+            (WebCore::LocalSampleBufferDisplayLayer::initialize):
+            * platform/graphics/ca/PlatformCALayer.cpp:
+            (WebCore::PlatformCALayer::drawTextAtPoint const):
+            * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+            (WebCore::PlatformCAFilters::setFiltersOnLayer):
+            * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+            (WebCore::PlatformCALayerCocoa::setBackgroundColor):
+            (WebCore::PlatformCALayerCocoa::setBorderColor):
+            * platform/graphics/cg/ColorCG.cpp:
+            (WebCore::cachedCGColor):
+            * platform/graphics/cg/GradientCG.cpp:
+            (WebCore::Gradient::createCGGradient):
+            * platform/graphics/cg/GraphicsContextCG.cpp:
+            (WebCore::setCGFillColor):
+            (WebCore::setCGShadow):
+            (WebCore::GraphicsContextCG::didUpdateState):
+            * platform/graphics/cocoa/ColorCocoa.h:
+            * platform/graphics/cocoa/ColorCocoa.mm:
+            (WebCore::platformColor):
+            * platform/graphics/cocoa/FontCacheCoreText.cpp:
+            (WebCore::addAttributesForCustomFontPalettes):
+            * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+            (WebCore::drawFocusRingAtTime):
+            (WebCore::colorForMarkerLineStyle):
+            (WebCore::GraphicsContextCG::drawDotsForDocumentMarker):
+            * platform/graphics/mac/ColorMac.h:
+            * platform/graphics/mac/ColorMac.mm:
+            (WTF::RetainPtr<NSColor>>::createValueForKey):
+            (WebCore::nsColor):
+            * platform/mac/LocalDefaultSystemAppearance.mm:
+            (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+            * platform/mac/PlatformPasteboardMac.mm:
+            (WebCore::PlatformPasteboard::setColor):
+            * platform/mac/ScrollbarThemeMac.mm:
+            (WebCore::ScrollbarThemeMac::setUpOverhangAreaBackground):
+            * platform/mac/ThemeMac.mm:
+            (WebCore::drawCellFocusRingWithFrameAtTime):
+            * rendering/RenderThemeMac.mm:
+            (WebCore::AttachmentLayout::layOutTitle):
+            (WebCore::AttachmentLayout::layOutSubtitle):
+            * testing/cocoa/WebViewVisualIdentificationOverlay.mm:
+            (-[WebViewVisualIdentificationOverlay initWithWebView:kind:deprecated:]):
+            (drawPattern):
+
+2021-11-09  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/83971417
 
     2021-10-26  Russell Epstein  <repstein@apple.com>

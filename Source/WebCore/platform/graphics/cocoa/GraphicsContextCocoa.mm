@@ -84,7 +84,7 @@ static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset,
     // -1. According to CoreGraphics, the reasoning for this behavior has been
     // lost in time.
     focusRingStyle.accumulate = -1;
-    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color)));
+    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color).get()));
 
     CGContextStateSaver stateSaver(context);
 
@@ -159,7 +159,7 @@ static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phas
     CGContextSetPatternPhase(context, CGSizeMake(phase.x, phase.y));
 }
 
-static CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle::Mode style, bool useDarkMode)
+static RetainPtr<CGColorRef> colorForMarkerLineStyle(DocumentMarkerLineStyle::Mode style, bool useDarkMode)
 {
     switch (style) {
     // Red
@@ -198,7 +198,7 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
 
     CGContextRef platformContext = this->platformContext();
     CGContextStateSaver stateSaver { platformContext };
-    CGContextSetFillColorWithColor(platformContext, circleColor);
+    CGContextSetFillColorWithColor(platformContext, circleColor.get());
     for (unsigned i = 0; i < numberOfWholeDots; ++i) {
         auto location = rect.location();
         location.move(offset + i * (dotDiameter + dotGap), 0);

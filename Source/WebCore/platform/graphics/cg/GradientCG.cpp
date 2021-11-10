@@ -82,7 +82,7 @@ void Gradient::createCGGradient()
 
     auto colorsArray = adoptCF(CFArrayCreateMutable(0, m_stops.size(), &kCFTypeArrayCallBacks));
     for (const auto& stop : m_stops) {
-        CFArrayAppendValue(colorsArray.get(), cachedCGColor(stop.color));
+        CFArrayAppendValue(colorsArray.get(), cachedCGColor(stop.color).get());
         locations.uncheckedAppend(stop.offset);
     }
 

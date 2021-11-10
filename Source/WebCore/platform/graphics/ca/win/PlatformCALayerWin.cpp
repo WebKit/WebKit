@@ -577,7 +577,7 @@ Color PlatformCALayerWin::backgroundColor() const
 
 void PlatformCALayerWin::setBackgroundColor(const Color& value)
 {
-    CACFLayerSetBackgroundColor(m_layer.get(), cachedCGColor(value));
+    CACFLayerSetBackgroundColor(m_layer.get(), cachedCGColor(value).get());
     setNeedsCommit();
 }
 

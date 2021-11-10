@@ -826,7 +826,7 @@ Color PlatformCALayerCocoa::backgroundColor() const
 void PlatformCALayerCocoa::setBackgroundColor(const Color& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setBackgroundColor:cachedCGColor(value)];
+    [m_layer setBackgroundColor:cachedCGColor(value).get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -841,7 +841,7 @@ void PlatformCALayerCocoa::setBorderColor(const Color& value)
 {
     if (value.isValid()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [m_layer setBorderColor:cachedCGColor(value)];
+        [m_layer setBorderColor:cachedCGColor(value).get()];
         END_BLOCK_OBJC_EXCEPTIONS
     } else {
         BEGIN_BLOCK_OBJC_EXCEPTIONS

@@ -495,7 +495,7 @@ enum {
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::white));
+            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::white).get());
             WKRectFill(cgContext, rect);
 #endif
         }
@@ -507,7 +507,7 @@ enum {
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::cyan));
+            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::cyan).get());
             WKRectFill(cgContext, rect);
 #endif
         }

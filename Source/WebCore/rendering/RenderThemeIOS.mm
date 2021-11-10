@@ -355,7 +355,7 @@ static CGPoint shortened(CGPoint start, CGPoint end, float width)
 static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points, CGLineCap lineCap, float lineWidth, Color strokeColor)
 {
     CGContextSetLineWidth(context, lineWidth);
-    CGContextSetStrokeColorWithColor(context, cachedCGColor(strokeColor));
+    CGContextSetStrokeColorWithColor(context, cachedCGColor(strokeColor).get());
     CGContextSetShouldAntialias(context, true);
     CGContextBeginPath(context);
     CGContextSetLineCap(context, lineCap);
@@ -1488,7 +1488,7 @@ static RetainPtr<CTFontRef> attachmentActionFont()
 
 static UIColor *attachmentActionColor(const RenderAttachment& attachment)
 {
-    return [PAL::getUIColorClass() colorWithCGColor:cachedCGColor(attachment.style().visitedDependentColor(CSSPropertyColor))];
+    return [PAL::getUIColorClass() colorWithCGColor:cachedCGColor(attachment.style().visitedDependentColor(CSSPropertyColor)).get()];
 }
 
 static RetainPtr<CTFontRef> attachmentTitleFont()

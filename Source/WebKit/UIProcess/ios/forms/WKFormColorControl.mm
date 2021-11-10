@@ -79,7 +79,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     NSMutableArray<UIColor *> *colors = [NSMutableArray array];
     for (const WebCore::Color& color : _view.focusedElementInformation.suggestedColors)
-        [colors addObject:[UIColor colorWithCGColor:cachedCGColor(color)]];
+        [colors addObject:[UIColor colorWithCGColor:cachedCGColor(color).get()]];
 
     return colors;
 }
@@ -87,7 +87,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)updateColorPickerState
 {
-    [_colorPickerViewController setSelectedColor:[UIColor colorWithCGColor:cachedCGColor(_view.focusedElementInformation.colorValue)]];
+    [_colorPickerViewController setSelectedColor:[UIColor colorWithCGColor:cachedCGColor(_view.focusedElementInformation.colorValue).get()]];
 #if ENABLE(DATALIST_ELEMENT)
     if ([_colorPickerViewController respondsToSelector:@selector(_setSuggestedColors:)])
         [_colorPickerViewController _setSuggestedColors:[self focusedElementSuggestedColors]];

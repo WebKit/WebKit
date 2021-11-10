@@ -139,7 +139,7 @@ static NSString *nullableNSString(const WTF::String& string)
 
 - (CocoaColor *)themeColor
 {
-    return WebCore::platformColor(_applicationManifest->applicationManifest().themeColor);
+    return WebCore::platformColor(_applicationManifest->applicationManifest().themeColor).autorelease();
 }
 
 - (_WKApplicationManifestDisplayMode)displayMode

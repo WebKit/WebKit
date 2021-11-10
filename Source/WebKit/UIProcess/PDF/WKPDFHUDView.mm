@@ -269,7 +269,7 @@ static NSArray<NSString *> *controlArray()
     _layer = adoptNS([[CALayer alloc] init]);
     [_layer setCornerRadius:layerCornerRadius];
     
-    [_layer setBackgroundColor:WebCore::cachedCGColor({ WebCore::SRGBA<float>(layerGrayComponent, layerGrayComponent, layerGrayComponent) })];
+    [_layer setBackgroundColor:WebCore::cachedCGColor({ WebCore::SRGBA<float>(layerGrayComponent, layerGrayComponent, layerGrayComponent) }).get()];
     [self _setLayerOpacity:layerAlpha];
     
     [self _loadIconImages];

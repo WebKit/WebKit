@@ -102,7 +102,7 @@ static void configureSeparatedLayer(CALayer *) { }
 namespace WebKit {
 using namespace WebCore;
 
-static CGColorRef cgColorFromColor(const Color& color)
+static RetainPtr<CGColorRef> cgColorFromColor(const Color& color)
 {
     if (!color.isValid())
         return nil;
@@ -166,10 +166,10 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         layer.bounds = properties.bounds;
     
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
-        layer.backgroundColor = cgColorFromColor(properties.backgroundColor);
+        layer.backgroundColor = cgColorFromColor(properties.backgroundColor).get();
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged)
-        layer.borderColor = cgColorFromColor(properties.borderColor);
+        layer.borderColor = cgColorFromColor(properties.borderColor).get();
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
         layer.borderWidth = properties.borderWidth;

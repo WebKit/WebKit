@@ -1315,7 +1315,7 @@ void WebViewImpl::updateTextTouchBar()
             [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeBold)];
             [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeItalics)];
             [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeUnderline)];
-            [m_textTouchBarItemController setTextColor:nsColor(editorState.postLayoutData().textColor)];
+            [m_textTouchBarItemController setTextColor:nsColor(editorState.postLayoutData().textColor).get()];
             [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData().enclosingListType];
             [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData().textAlignment)];
         }
@@ -2625,7 +2625,7 @@ void WebViewImpl::setUnderlayColor(NSColor *underlayColor)
     m_page->setUnderlayColor(WebCore::colorFromNSColor(underlayColor));
 }
 
-NSColor *WebViewImpl::underlayColor() const
+RetainPtr<NSColor> WebViewImpl::underlayColor() const
 {
     WebCore::Color webColor = m_page->underlayColor();
     if (!webColor.isValid())
@@ -2634,7 +2634,7 @@ NSColor *WebViewImpl::underlayColor() const
     return WebCore::nsColor(webColor);
 }
 
-NSColor *WebViewImpl::pageExtendedBackgroundColor() const
+RetainPtr<NSColor> WebViewImpl::pageExtendedBackgroundColor() const
 {
     WebCore::Color color = m_page->pageExtendedBackgroundColor();
     if (!color.isValid())

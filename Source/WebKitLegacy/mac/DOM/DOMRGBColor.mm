@@ -85,13 +85,13 @@
 - (NSColor *)color
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::nsColor(IMPL->color());
+    return WebCore::nsColor(IMPL->color()).autorelease();
 }
 #else
 - (CGColorRef)color
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::cachedCGColor(IMPL->color());
+    return WebCore::cachedCGColor(IMPL->color()).autorelease();
 }
 #endif
 

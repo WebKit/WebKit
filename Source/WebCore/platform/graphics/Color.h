@@ -270,7 +270,7 @@ bool outOfLineComponentssEqual(const Color&, const Color&);
 bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
 
 #if USE(CG)
-WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
+WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColor(const Color&);
 WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpace, ColorComponents<float, 4>, const DestinationColorSpace&);
 WEBCORE_EXPORT std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef);
 #endif
