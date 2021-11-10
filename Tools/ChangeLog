@@ -1,3 +1,17 @@
+2021-11-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] apply-build-revision fails when git-svn is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=232929
+
+        Reviewed by Michael Catanzaro.
+
+        Attempt to get the build revision from the git log if the git-svn call failed, either
+        because git-svn is not installed or the metadata in .git/svn is incomplete.
+
+        * glib/apply-build-revision-to-files.py:
+        (get_revision_from_most_recent_git_commit):
+        (get_build_revision):
+
 2021-11-10  Antti Koivisto  <antti@apple.com>
 
         Hasher should be able to hash pointers

@@ -24,38 +24,51 @@ except ImportError:
     from urlparse import urlparse
 
 
+def get_revision_from_most_recent_git_commit():
+    with open(os.devnull, 'w') as devnull:
+        try:
+            commit_message = subprocess.check_output(("git", "log", "-1", "--pretty=%B", "origin/HEAD"), stderr=devnull)
+        except subprocess.CalledProcessError:
+            # This may happen with shallow checkouts whose HEAD has been
+            # modified; there is no origin reference anymore, and git
+            # will fail - let's pretend that this is not a repo at all
+            return None
+
+        # Commit messages tend to be huge and the metadata we're looking
+        # for is at the very end. Also a spoofed 'Canonical link' mention
+        # could appear early on. So make sure we get the right metadata by
+        # reversing the contents. And this is a micro-optimization as well.
+        for line in reversed(commit_message.splitlines()):
+            parsed = line.split(b':')
+            key = parsed[0]
+            contents = b':'.join(parsed[1:])
+            if key == b'Canonical link':
+                url = contents.decode('utf-8').strip()
+                revision = urlparse(url).path[1:]  # strip leading /
+                return revision
+    return None
+
 def get_build_revision():
     revision = "unknown"
     with open(os.devnull, 'w') as devnull:
         gitsvn = os.path.join('.git', 'svn')
         if os.path.isdir(gitsvn) and os.listdir(gitsvn):
-            for line in subprocess.check_output(("git", "svn", "info"), stderr=devnull).splitlines():
-                parsed = line.split(b':')
-                key = parsed[0]
-                contents = b':'.join(parsed[1:])
-                if key == b'Revision':
-                    revision = "r%s" % contents.decode('utf-8').strip()
-                    break
-        elif os.path.isdir('.git'):
             try:
-                commit_message = subprocess.check_output(("git", "log", "-1", "--pretty=%B", "origin/HEAD"), stderr=devnull)
+                for line in subprocess.check_output(("git", "svn", "info"), stderr=devnull).splitlines():
+                    parsed = line.split(b':')
+                    key = parsed[0]
+                    contents = b':'.join(parsed[1:])
+                    if key == b'Revision':
+                        revision = "r%s" % contents.decode('utf-8').strip()
+                        break
             except subprocess.CalledProcessError:
-                # This may happen with shallow checkouts whose HEAD has been
-                # modified; there is no origin reference anymore, and git
-                # will fail - let's pretend that this is not a repo at all
-                commit_message = ""
-            # Commit messages tend to be huge and the metadata we're looking
-            # for is at the very end. Also a spoofed 'Canonical link' mention
-            # could appear early on. So make sure we get the right metadata by
-            # reversing the contents. And this is a micro-optimization as well.
-            for line in reversed(commit_message.splitlines()):
-                parsed = line.split(b':')
-                key = parsed[0]
-                contents = b':'.join(parsed[1:])
-                if key == b'Canonical link':
-                    url = contents.decode('utf-8').strip()
-                    revision = urlparse(url).path[1:]  # strip leading /
-                    break
+                revision_from_git = get_revision_from_most_recent_git_commit()
+                if revision_from_git:
+                    revision = revision_from_git
+        elif os.path.isdir('.git'):
+            revision_from_git = get_revision_from_most_recent_git_commit()
+            if revision_from_git:
+                revision = revision_from_git
         else:
             revision = "r%s" % subprocess.check_output(("svnversion"), stderr=devnull).decode('utf-8').strip()
 
