@@ -23,6 +23,7 @@
             var fontHeight = 30;
 
             var selectionChangedCount = 0;
+            var lastSelectionChangeCount = 0;
             document.addEventListener("selectionchange", () => {
                 selectionChangedCount++;
             });
@@ -41,26 +42,28 @@
 
             await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y, grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 2));
 
-            if (selectionChangedCount == 2)
+            if (selectionChangedCount > lastSelectionChangeCount)
                 output += 'PASS: Selection Changed </br>';
             else
                 output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
 
+            lastSelectionChangeCount = selectionChangedCount;
             grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
-            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y, grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 2));
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y, grabberMidpoint.x, grabberMidpoint.y - (fontHeight));
 
-            if (selectionChangedCount == 3)
+            if (selectionChangedCount > lastSelectionChangeCount)
                 output += 'PASS: Selection Changed </br>';
             else
                 output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
 
+            lastSelectionChangeCount = selectionChangedCount;
             grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
             await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y, grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 4));
 
-            if (selectionChangedCount == 3)
-                output += 'PASS: Selection Did Not Change </br>';
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
             else
-                output += 'FAIL: Selection changed <br>' + selectionChangedCount;
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
 
             var editableElement = document.getElementById('editable');
             editableElement.parentNode.removeChild(editableElement);

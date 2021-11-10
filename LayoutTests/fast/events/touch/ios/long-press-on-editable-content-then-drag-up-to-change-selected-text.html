@@ -57,8 +57,8 @@
             grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
             await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 2));
 
-            if (selectionChangedCount == 5)
-                output += 'PASS: Selection Did Not Change </br>';
+            if (selectionChangedCount == 7)
+                output += 'PASS: Selection Changed </br>';
             else
                 output += 'FAIL: Selection changed <br>' + selectionChangedCount;
 

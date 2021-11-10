@@ -1,3 +1,17 @@
+2021-11-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on selection flipping by default.
+        https://bugs.webkit.org/show_bug.cgi?id=232853
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-right-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-down-to-change-selected-text-expected.txt:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-down-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text-expected.txt:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-then-drag-right-to-change-selected-text.html:
+
 2021-11-09  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION(r272201): Safari showed red distortion on webview after using Web Inspector, returning from another app
