@@ -1805,15 +1805,15 @@ bool RenderFlexibleBox::childHasIntrinsicMainAxisSize(const RenderBox& child)
 Overflow RenderFlexibleBox::mainAxisOverflowForChild(const RenderBox& child) const
 {
     if (isHorizontalFlow())
-        return child.style().overflowX();
-    return child.style().overflowY();
+        return child.effectiveOverflowX();
+    return child.effectiveOverflowY();
 }
 
 Overflow RenderFlexibleBox::crossAxisOverflowForChild(const RenderBox& child) const
 {
     if (isHorizontalFlow())
-        return child.style().overflowY();
-    return child.style().overflowX();
+        return child.effectiveOverflowY();
+    return child.effectiveOverflowX();
 }
 
 bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& renderer) const
