@@ -297,6 +297,11 @@ imported/mozilla/svg/as-image/border-image-simple-1.html [ Pass ]
 # Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
+# AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and
+# AccessibilityUIElement::isInCell().
+accessibility/ancestor-computation.html [ Skip ]
+
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 # Added in r263823. Both tests are timing out.

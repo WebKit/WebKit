@@ -516,6 +516,46 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return self.axBackingObject->popupValue();
 }
 
+- (BOOL)accessibilityHasDocumentRoleAncestor
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return self.axBackingObject->hasDocumentRoleAncestor();
+}
+
+- (BOOL)accessibilityHasWebApplicationAncestor
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return self.axBackingObject->hasWebApplicationAncestor();
+}
+
+- (BOOL)accessibilityIsInDescriptionListDefinition
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return self.axBackingObject->isInDescriptionListDetail();
+}
+
+- (BOOL)accessibilityIsInDescriptionListTerm
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return self.axBackingObject->isInDescriptionListTerm();
+}
+
+- (BOOL)_accessibilityIsInTableCell
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return self.axBackingObject->isInCell();
+}
+
 - (NSString *)accessibilityLanguage
 {
     if (![self _prepareAccessibilityCall])
@@ -615,13 +655,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         AccessibilityRole::Grid });
 }
 
-- (BOOL)_accessibilityIsInTableCell
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Cell }) != nullptr;
-}
-
 - (AccessibilityObjectWrapper *)_accessibilityFieldsetAncestor
 {
     if (![self _prepareAccessibilityCall])
@@ -641,6 +674,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::WebArea });
 }
 
+// FIXME: This traversal should be entirely replaced by AXAncestorFlags.
 - (uint64_t)_accessibilityTraitsFromAncestors
 {
     uint64_t traits = 0;
@@ -1241,7 +1275,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
 - (AccessibilityTable*)tableParent
 {
-    // Find if the parent table for the table cell.
+    // Find the parent table for the table cell.
     if (AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, true, [] (const AXCoreObject& object) {
         return is<AccessibilityTable>(object) && downcast<AccessibilityTable>(object).isExposable();
     }))
@@ -1555,26 +1589,6 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return NO;
 
     return self.axBackingObject->roleValue() == AccessibilityRole::ComboBox;
-}
-
-- (BOOL)accessibilityIsInDescriptionListTerm
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-
-    return !!Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::DescriptionListTerm;
-    });
-}
-
-- (BOOL)accessibilityIsInDescriptionListDefinition
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-
-    return !!Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::DescriptionListDetail;
-    });
 }
 
 - (NSString *)accessibilityHint

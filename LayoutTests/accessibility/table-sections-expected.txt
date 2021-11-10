@@ -17,6 +17,8 @@ Example #1: Nested Stubs
 THEAD, TFOOT table
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -55,6 +57,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -93,6 +97,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -135,6 +141,8 @@ AXRequired: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -173,6 +181,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -211,6 +221,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -253,6 +265,8 @@ AXRequired: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
@@ -288,6 +302,8 @@ AXVisibleRows: <array of size 4>
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
@@ -323,6 +339,8 @@ AXVisibleRows: <array of size 4>
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
@@ -362,6 +380,8 @@ AXElementBusy: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -394,6 +414,8 @@ AXIndex: 0
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -426,6 +448,8 @@ AXIndex: 1
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -458,6 +482,8 @@ AXIndex: 2
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -494,6 +520,8 @@ AXElementBusy: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -532,6 +560,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -570,6 +600,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -608,6 +640,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -646,6 +680,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -684,6 +720,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -722,6 +760,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -760,6 +800,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -798,6 +840,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -836,6 +880,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -874,6 +920,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -912,6 +960,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -954,6 +1004,8 @@ AXRequired: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -993,6 +1045,8 @@ AXElementBusy: 0
 Multi-TBODY table
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1031,6 +1085,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1069,6 +1125,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1111,6 +1169,8 @@ AXRequired: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1149,6 +1209,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1187,6 +1249,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1229,6 +1293,8 @@ AXRequired: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
@@ -1264,6 +1330,8 @@ AXVisibleRows: <array of size 4>
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
@@ -1299,6 +1367,8 @@ AXVisibleRows: <array of size 4>
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXColumn
 AXSubrole: (null)
 AXRoleDescription: column
@@ -1338,6 +1408,8 @@ AXElementBusy: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -1370,6 +1442,8 @@ AXIndex: 0
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -1402,6 +1476,8 @@ AXIndex: 1
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -1434,6 +1510,8 @@ AXIndex: 2
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
@@ -1470,6 +1548,8 @@ AXElementBusy: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1508,6 +1588,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1546,6 +1628,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1584,6 +1668,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1622,6 +1708,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1660,6 +1748,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1698,6 +1788,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1736,6 +1828,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1774,6 +1868,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1812,6 +1908,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1850,6 +1948,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1888,6 +1988,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -1930,6 +2032,8 @@ AXRequired: 0
 
 --------------------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group

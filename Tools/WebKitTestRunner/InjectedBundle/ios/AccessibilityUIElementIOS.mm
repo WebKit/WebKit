@@ -82,8 +82,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
 - (NSString *)accessibilityInvalidStatus;
-- (BOOL)accessibilityIsInDescriptionListDefinition;
-- (BOOL)accessibilityIsInDescriptionListTerm;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
@@ -100,6 +98,11 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)accessibilityHasPopup;
 - (NSString *)accessibilityPopupValue;
 - (NSString *)accessibilityColorStringValue;
+- (BOOL)accessibilityHasDocumentRoleAncestor;
+- (BOOL)accessibilityHasWebApplicationAncestor;
+- (BOOL)accessibilityIsInDescriptionListDefinition;
+- (BOOL)accessibilityIsInDescriptionListTerm;
+- (BOOL)_accessibilityIsInTableCell;
 - (id)_accessibilityTableAncestor;
 - (id)_accessibilityLandmarkAncestor;
 - (id)_accessibilityListAncestor;
@@ -121,7 +124,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)lineEndMarkerForMarker:(id)marker;
 - (NSArray *)misspellingTextMarkerRange:(NSArray *)startTextMarkerRange forward:(BOOL)forward;
 - (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text;
-- (BOOL)_accessibilityIsInTableCell;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -843,18 +845,6 @@ bool AccessibilityUIElement::isSearchField() const
     return ([m_element accessibilityTraits] & [m_element _axSearchFieldTrait]) == [m_element _axSearchFieldTrait];
 }
 
-bool AccessibilityUIElement::isInDescriptionListDetail() const
-{
-    // The names are inconsistent here (isInDescriptionListDetail vs. isInDescriptionListDefinition)
-    // because the iOS interface requires the latter form.
-    return [m_element accessibilityIsInDescriptionListDefinition];
-}
-
-bool AccessibilityUIElement::isInDescriptionListTerm() const
-{
-    return [m_element accessibilityIsInDescriptionListTerm];
-}
-    
 int AccessibilityUIElement::rowCount()
 {
     return [m_element accessibilityRowCount];
@@ -865,7 +855,7 @@ int AccessibilityUIElement::columnCount()
     return [m_element accessibilityColumnCount];
 }
 
-bool AccessibilityUIElement::isInTableCell() const
+bool AccessibilityUIElement::isInCell() const
 {
     return [m_element _accessibilityIsInTableCell];
 }
@@ -1155,6 +1145,28 @@ bool AccessibilityUIElement::hasPopup() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 {
     return [[m_element accessibilityPopupValue] createJSStringRef];
+}
+
+bool AccessibilityUIElement::hasDocumentRoleAncestor() const
+{
+    return [m_element accessibilityHasDocumentRoleAncestor];
+}
+
+bool AccessibilityUIElement::hasWebApplicationAncestor() const
+{
+    return [m_element accessibilityHasWebApplicationAncestor];
+}
+
+bool AccessibilityUIElement::isInDescriptionListDetail() const
+{
+    // The names are inconsistent here (isInDescriptionListDetail vs. isInDescriptionListDefinition)
+    // because the iOS interface requires the latter form.
+    return [m_element accessibilityIsInDescriptionListDefinition];
+}
+
+bool AccessibilityUIElement::isInDescriptionListTerm() const
+{
+    return [m_element accessibilityIsInDescriptionListTerm];
 }
 
 void AccessibilityUIElement::takeFocus()

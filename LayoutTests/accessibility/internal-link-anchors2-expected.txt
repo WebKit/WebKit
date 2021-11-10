@@ -1,5 +1,7 @@
 Anchor Tests
 ----------------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXHeading
 AXSubrole: (null)
 AXRoleDescription: heading
@@ -33,6 +35,8 @@ AXElementBusy: 0
 ------------
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -66,6 +70,8 @@ AXElementBusy: 0
 ------------
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group

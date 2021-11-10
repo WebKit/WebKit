@@ -5,6 +5,8 @@ asdf	asdf
 asdf	asdf
 
 ------------------------------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -48,6 +50,8 @@ AXARIARowCount: 0
 AXElementBusy: 0
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -91,6 +95,8 @@ AXARIARowCount: 0
 AXElementBusy: 0
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -134,6 +140,8 @@ AXARIARowCount: 0
 AXElementBusy: 0
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -166,6 +174,8 @@ AXTitleUIElement: (null)
 AXElementBusy: 0
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group

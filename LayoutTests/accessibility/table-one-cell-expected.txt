@@ -1,6 +1,8 @@
 Pick Your Location!
 Get specific content for your area.
 http://web.apple.com
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group

@@ -1764,6 +1764,61 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
     return [@"false" createJSStringRef];
 }
 
+bool AccessibilityUIElement::hasDocumentRoleAncestor() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(@"AXHasDocumentRoleAncestor");
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
+bool AccessibilityUIElement::hasWebApplicationAncestor() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(@"AXHasWebApplicationAncestor");
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
+bool AccessibilityUIElement::isInDescriptionListDetail() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(@"AXIsInDescriptionListDetail");
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
+bool AccessibilityUIElement::isInDescriptionListTerm() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(@"AXIsInDescriptionListTerm");
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
+bool AccessibilityUIElement::isInCell() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(@"AXIsInCell");
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
 void AccessibilityUIElement::takeFocus()
 {
     setAttributeValue(m_element.get(), NSAccessibilityFocusedAttribute, @YES);

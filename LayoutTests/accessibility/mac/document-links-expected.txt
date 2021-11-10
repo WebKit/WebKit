@@ -1,5 +1,7 @@
 
 ----------------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
@@ -35,6 +37,8 @@ AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
@@ -70,6 +74,8 @@ AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
@@ -104,6 +110,8 @@ AXLinkRelationshipType:
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link

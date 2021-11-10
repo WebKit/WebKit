@@ -219,7 +219,7 @@ public:
     JSRetainPtr<JSStringRef> attributesOfRows();
     JSRetainPtr<JSStringRef> attributesOfVisibleCells();
     JSRetainPtr<JSStringRef> attributesOfHeader();
-    bool isInTableCell() const;
+    bool isInCell() const;
     bool isInTable() const;
     bool isInList() const;
     bool isInLandmark() const;
@@ -381,15 +381,17 @@ public:
     void assistiveTechnologySimulatedFocus();
     bool isSearchField() const;
     bool isTextArea() const;
-    bool isInDescriptionListDetail() const;
-    bool isInDescriptionListTerm() const;
 
     bool scrollPageUp();
     bool scrollPageDown();
     bool scrollPageLeft();
     bool scrollPageRight();
     
-    // Fieldset
+    bool hasDocumentRoleAncestor() const;
+    bool hasWebApplicationAncestor() const;
+    bool isInDescriptionListDetail() const;
+    bool isInDescriptionListTerm() const;
+
     bool hasContainedByFieldsetTrait();
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
 

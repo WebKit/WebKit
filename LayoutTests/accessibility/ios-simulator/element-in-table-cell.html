@@ -30,10 +30,10 @@
     description("This tests the _accessibilityIsInTableCell method, used by VO to describe the element.");
 
     if (window.accessibilityController) {
-        shouldBeTrue("accessibilityController.accessibleElementById('button1').isInTableCell()")
-        shouldBeFalse("accessibilityController.accessibleElementById('button2').isInTableCell()")
-        shouldBeTrue("accessibilityController.accessibleElementById('link1').isInTableCell()")
-        shouldBeFalse("accessibilityController.accessibleElementById('link2').isInTableCell()")
+        shouldBeTrue("accessibilityController.accessibleElementById('button1').isInCell")
+        shouldBeFalse("accessibilityController.accessibleElementById('button2').isInCell")
+        shouldBeTrue("accessibilityController.accessibleElementById('link1').isInCell")
+        shouldBeFalse("accessibilityController.accessibleElementById('link2').isInCell")
     }
 </script>
 

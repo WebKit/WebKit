@@ -96,6 +96,19 @@ struct ScrollRectToVisibleOptions;
 using AXID = size_t;
 extern const AXID InvalidAXID;
 
+enum class AXAncestorFlag : uint8_t {
+    // When the flags aren't initialized, it means the object hasn't been inserted into the tree,
+    // and thus we haven't set any of these ancestry flags.
+    FlagsInitialized = 1 << 0,
+    HasDocumentRoleAncestor = 1 << 1,
+    HasWebApplicationAncestor = 1 << 2,
+    IsInDescriptionListDetail = 1 << 3,
+    IsInDescriptionListTerm = 1 << 4,
+    IsInCell = 1 << 5,
+
+    // Bits 6 and 7 are free.
+};
+
 enum class AccessibilityRole {
     Annotation = 1,
     Application,
@@ -124,8 +137,8 @@ enum class AccessibilityRole {
     Definition,
     Deletion,
     DescriptionList,
-    DescriptionListTerm,
     DescriptionListDetail,
+    DescriptionListTerm,
     Details,
     Directory,
     DisclosureTriangle,
@@ -1106,6 +1119,12 @@ public:
     virtual void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) = 0;
     virtual bool isDescendantOfBarrenParent() const = 0;
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
+
+    virtual bool hasDocumentRoleAncestor() const = 0;
+    virtual bool hasWebApplicationAncestor() const = 0;
+    virtual bool isInDescriptionListDetail() const = 0;
+    virtual bool isInDescriptionListTerm() const = 0;
+    virtual bool isInCell() const = 0;
 
     // Text selection
     virtual Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const = 0;

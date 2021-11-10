@@ -617,6 +617,15 @@ private:
     bool shouldFocusActiveDescendant() const override;
     AXCoreObject* activeDescendant() const override;
     void handleActiveDescendantChanged() override;
+
+    OptionSet<AXAncestorFlag> ancestorFlags() const;
+
+    bool hasDocumentRoleAncestor() const override { return ancestorFlags().contains(AXAncestorFlag::HasDocumentRoleAncestor); }
+    bool hasWebApplicationAncestor() const override { return ancestorFlags().contains(AXAncestorFlag::HasWebApplicationAncestor); }
+    bool isInDescriptionListDetail() const override { return ancestorFlags().contains(AXAncestorFlag::IsInDescriptionListDetail); }
+    bool isInDescriptionListTerm() const override { return ancestorFlags().contains(AXAncestorFlag::IsInDescriptionListTerm); }
+    bool isInCell() const override { return ancestorFlags().contains(AXAncestorFlag::IsInCell); }
+
     AXCoreObject* firstAnonymousBlockChild() const override;
     std::optional<String> attributeValue(const String&) const override;
     bool hasTagName(const QualifiedName&) const override;

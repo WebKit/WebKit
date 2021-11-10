@@ -1,3 +1,77 @@
+2021-11-10  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make ancestor computation cheaper by setting flags upon child insertion
+        https://bugs.webkit.org/show_bug.cgi?id=232466
+
+        Reviewed by Andres Gonzalez.
+
+        This patch adds bit-flags (named AXAncestorFlags) to our accessibility objects,
+        and sets these flags upon child insertion to enable cheap
+        determination of whether any object has ancestors of certain types
+        (e.g. a document role ancestor). Some AX clients need this
+        information, and WebKit can compute it more efficiently than they can.
+
+        The following flags are added in this patch:
+          - HasDocumentRoleAncestor
+          - HasWebApplicationAncestor
+          - IsInDescriptionListDetail
+          - IsInDescriptionListTerm
+          - IsInCell
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (hasDocumentRoleAncestorCallback):
+        (hasWebApplicationAncestorCallback):
+        (isInDescriptionListDetailCallback):
+        (isInDescriptionListTermCallback):
+        (isInCellCallback):
+        Added all of the above.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::hasDocumentRoleAncestor const):
+        (AccessibilityUIElement::hasWebApplicationAncestor const):
+        (AccessibilityUIElement::isInCell const):
+        Added all of the above.
+        (AccessibilityUIElement::isInDescriptionListDetail const): Added.
+        (AccessibilityUIElement::isInDescriptionListTerm const): Added.
+        (WTR::AccessibilityUIElement::isInDefinitionListDefinition const): Deleted.
+        (WTR::AccessibilityUIElement::isInDefinitionListTerm const): Deleted.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::hasDocumentRoleAncestor const):
+        (AccessibilityUIElement::hasWebApplicationAncestor const):
+        (AccessibilityUIElement::isInDescriptionListDetail const):
+        (AccessibilityUIElement::isInDescriptionListTerm const):
+        (AccessibilityUIElement::isInCell const):
+        Added all of the above.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::hasDocumentRoleAncestor const):
+        (WTR::AccessibilityUIElement::hasWebApplicationAncestor const):
+        (WTR::AccessibilityUIElement::isInCell const):
+        Added all of the above.
+        (WTR::AccessibilityUIElement::isInDefinitionListDefinition const): Deleted.
+        (WTR::AccessibilityUIElement::isInDefinitionListTerm const): Deleted.
+        (WTR::AccessibilityUIElement::isInDescriptionListDetail const): Added.
+        (WTR::AccessibilityUIElement::isInDescriptionListTerm const): Added.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        Add new attributes hasDocumentRoleAncestor, hasWebApplicationAncestor,
+        isInDescriptionListDetail, and isInDescriptionListTerm. Change
+        isInTableCell() to be an attribute named isInCell.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::hasDocumentRoleAncestor const): Added.
+        (WTR::AccessibilityUIElement::hasWebApplicationAncestor const): Added.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::hasDocumentRoleAncestor const):
+        (WTR::AccessibilityUIElement::hasWebApplicationAncestor const):
+        (WTR::AccessibilityUIElement::isInDescriptionListDetail const):
+        (WTR::AccessibilityUIElement::isInDescriptionListTerm const):
+        (WTR::AccessibilityUIElement::isInCell const):
+        Added all of the above.
+
 2021-11-10  Darin Adler  <darin@apple.com>
 
         [CF] Reduce duplication and unneeded buffer allocations and copying in URL code, also remove unused methods and functions

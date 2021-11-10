@@ -8,6 +8,8 @@ This tests the attributes of the children of a MathML mmultiscripts element.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
@@ -39,6 +41,8 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
@@ -70,6 +74,8 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
@@ -101,6 +107,8 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
@@ -132,6 +140,8 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group

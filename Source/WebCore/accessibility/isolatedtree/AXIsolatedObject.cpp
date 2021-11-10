@@ -67,12 +67,21 @@ void AXIsolatedObject::init()
     ASSERT_NOT_REACHED();
 }
 
-void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot)
+void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool isRoot)
 {
-    ASSERT(is<AccessibilityObject>(object));
+    ASSERT(is<AccessibilityObject>(coreObject));
+    auto& object = downcast<AccessibilityObject>(coreObject);
 
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
+
+    // For all objects besides the root, the ancestry flags should've been set by now.
+    ASSERT(isRoot ? true : object.ancestorFlagsAreInitialized());
+    auto ancestorFlags = object.ancestorFlags();
+    // Only store the object's ancestor flags if any are set (excluding the "is initialized" flag).
+    if (ancestorFlags ^ AXAncestorFlag::FlagsInitialized)
+        setProperty(AXPropertyName::AncestorFlags, object.ancestorFlags());
+
     setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
     setProperty(AXPropertyName::ElementRect, object.elementRect());
     setProperty(AXPropertyName::HasARIAValueNow, object.hasARIAValueNow());
@@ -2185,6 +2194,15 @@ AXCoreObject* AXIsolatedObject::activeDescendant() const
 void AXIsolatedObject::handleActiveDescendantChanged()
 {
     ASSERT_NOT_REACHED();
+}
+
+OptionSet<AXAncestorFlag> AXIsolatedObject::ancestorFlags() const
+{
+    auto value = m_propertyMap.get(AXPropertyName::AncestorFlags);
+    return WTF::switchOn(value,
+        [] (OptionSet<AXAncestorFlag>& typedValue) -> OptionSet<AXAncestorFlag> { return typedValue; },
+        [] (auto&) { return OptionSet<AXAncestorFlag>(); }
+    );
 }
 
 AXCoreObject* AXIsolatedObject::firstAnonymousBlockChild() const

@@ -82,12 +82,9 @@ bool AccessibilityUIElement::scrollPageRight() { return false; }
 bool AccessibilityUIElement::hasContainedByFieldsetTrait() { return false; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement() { return nullptr; }
 bool AccessibilityUIElement::isSearchField() const { return false; }
-bool AccessibilityUIElement::isInDescriptionListDetail() const { return false; }
-bool AccessibilityUIElement::isInDescriptionListTerm() const { return false; }
 bool AccessibilityUIElement::isTextArea() const { return false; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForElement() { return nullptr; }
-bool AccessibilityUIElement::isInTableCell() const { return false; }
 bool AccessibilityUIElement::isInTable() const { return false; }
 bool AccessibilityUIElement::isInLandmark() const { return false; }
 bool AccessibilityUIElement::isInList() const { return false; }
@@ -115,6 +112,13 @@ JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 
 #if !PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
+
+bool AccessibilityUIElement::hasDocumentRoleAncestor() const { return false; }
+bool AccessibilityUIElement::hasWebApplicationAncestor() const { return false; }
+bool AccessibilityUIElement::isInDescriptionListDetail() const { return false; }
+bool AccessibilityUIElement::isInDescriptionListTerm() const { return false; }
+bool AccessibilityUIElement::isInCell() const { return false; }
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const { return nullptr; }
@@ -136,7 +140,7 @@ JSValueRef AccessibilityUIElement::detailsElements() const { return { }; }
 JSValueRef AccessibilityUIElement::errorMessageElements() const { return { }; }
 JSValueRef AccessibilityUIElement::imageOverlayElements() const { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }
-#endif
+#endif // !PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
 
 } // namespace WTR
 #endif // ENABLE(ACCESSIBILITY)

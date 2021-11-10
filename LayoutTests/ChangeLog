@@ -1,3 +1,65 @@
+2021-11-10  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make ancestor computation cheaper by setting flags upon child insertion
+        https://bugs.webkit.org/show_bug.cgi?id=232466
+
+        Reviewed by Andres Gonzalez.
+
+        This patch adds bit-flags (named AXAncestorFlags) to our accessibility objects,
+        and sets these flags upon child insertion to enable cheap
+        determination of whether any object has ancestors of certain types
+        (e.g. a document role ancestor). Some AX clients need this
+        information, and WebKit can compute it more efficiently than they can.
+
+        The following flags are added in this patch:
+          - HasDocumentRoleAncestor
+          - HasWebApplicationAncestor
+          - IsInDescriptionListDetail
+          - IsInDescriptionListTerm
+          - IsInCell
+
+        * accessibility/ancestor-computation-expected.txt: Added.
+        * accessibility/ancestor-computation.html: Added.
+
+        * accessibility/ios-simulator/description-list-expected.txt:
+        * accessibility/ios-simulator/description-list.html:
+        Renamed from definition-list.html, because the term is "description
+        list" and not "definition list".
+
+        * accessibility/image-link-expected.txt:
+        * accessibility/image-map2-expected.txt:
+        * accessibility/internal-link-anchors2-expected.txt:
+        * accessibility/ios-simulator/element-in-table-cell-expected.txt:
+        * accessibility/ios-simulator/element-in-table-cell.html:
+        * accessibility/mac/aria-columnrowheaders-expected.txt:
+        * accessibility/mac/bounds-for-range-expected.txt:
+        * accessibility/mac/document-attributes-expected.txt:
+        * accessibility/mac/document-links-expected.txt:
+        * accessibility/mac/internal-link-anchors-expected.txt:
+        * accessibility/math-multiscript-attributes-expected.txt:
+        * accessibility/table-attributes-expected.txt:
+        * accessibility/table-cell-spans-expected.txt:
+        * accessibility/table-cells-expected.txt:
+        * accessibility/table-detection-expected.txt:
+        * accessibility/table-one-cell-expected.txt:
+        * accessibility/table-sections-expected.txt:
+        * accessibility/table-with-rules-expected.txt:
+        * accessibility/transformed-element-expected.txt:
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/accessibility/parent-delete-expected.txt:
+        * platform/mac/accessibility/plugin-expected.txt:
+        Add new AXHasDocumentRoleAncestor and AXHasWebApplicationAncestor
+        attributes to expected output (these tests dump all attributes for
+        some / all elements).
+
+        * platform/glib/TestExpectations:
+        * platform/win/TestExpectations:
+        Ignore new ancestor-computation.html test due to lack of
+        AccessibilityUIElement method implementations added to
+        Mac and iOS only with this patch.
+        * platform/ios/TestExpectations:
+        Enable new ancestor-computation.html test.
+
 2021-11-10  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Layout Test media/video-seek-with-negative-playback.html timeouts on the release bot.

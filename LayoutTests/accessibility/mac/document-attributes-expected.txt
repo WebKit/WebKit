@@ -1,3 +1,5 @@
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXWebArea
 AXRoleDescription: HTML content
 AXChildren: <array of size 0>

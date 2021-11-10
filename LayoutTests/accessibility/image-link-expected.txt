@@ -3,6 +3,8 @@ Image link in the presence of inline continuations
 This test checks that the right accessibility tree is generated for a link inside an image
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
@@ -38,6 +40,8 @@ AXElementBusy: 0
 
 
 Child 0:
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXImage
 AXSubrole: (null)
 AXRoleDescription: image

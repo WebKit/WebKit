@@ -6,6 +6,8 @@ This tests that ARIA rowheader and columnheader roles are identified correctly.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -44,6 +46,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -82,6 +86,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -121,6 +127,8 @@ AXRequired: 0
 
 ------------
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
@@ -159,6 +167,8 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell

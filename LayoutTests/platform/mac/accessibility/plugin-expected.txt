@@ -1,4 +1,6 @@
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXEmptyGroup
 AXRoleDescription: group

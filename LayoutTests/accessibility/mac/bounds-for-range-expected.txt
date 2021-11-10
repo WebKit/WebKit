@@ -1,4 +1,6 @@
 ----------------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXStaticText
 AXSubrole: (null)
 AXRoleDescription: text

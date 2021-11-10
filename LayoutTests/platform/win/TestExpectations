@@ -276,6 +276,11 @@ accessibility/listbox-clear-selection.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 accessibility/img-no-alt-not-ignored-with-title.html [ Skip ]
 
+# Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
+# AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and
+# AccessibilityUIElement::isInCell().
+accessibility/ancestor-computation.html [ Skip ]
+
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
 fast/gradients/conic-repeating.html [ Skip ]

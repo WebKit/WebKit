@@ -1,0 +1,132 @@
+This test ensures accessibility elements properly track their ancestor types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"true"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is true
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is true
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is true
+Finished verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"true"} for all descendants of outer-group.
+
+Verifying {"hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+Finished verifying {"hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+
+Verifying {"hasWebApplicationAncestor":"true","hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is true
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasWebApplicationAncestor is true
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasWebApplicationAncestor is true
+PASS element.hasDocumentRoleAncestor is false
+Finished verifying {"hasWebApplicationAncestor":"true","hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+
+Verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+Finished verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+
+Verifying {"hasWebApplicationAncestor":"true","hasDocumentRoleAncestor":"true"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is true
+PASS element.hasDocumentRoleAncestor is true
+PASS element.hasWebApplicationAncestor is true
+PASS element.hasDocumentRoleAncestor is true
+PASS element.hasWebApplicationAncestor is true
+PASS element.hasDocumentRoleAncestor is true
+Finished verifying {"hasWebApplicationAncestor":"true","hasDocumentRoleAncestor":"true"} for all descendants of outer-group.
+
+Verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+Finished verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false"} for all descendants of outer-group.
+
+Verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false","isInDescriptionListDetail":"true"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is true
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is true
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is true
+Finished verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false","isInDescriptionListDetail":"true"} for all descendants of outer-group.
+
+Verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false","isInDescriptionListDetail":"false","isInDescriptionListTerm":"true"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is false
+PASS element.isInDescriptionListTerm is true
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is false
+PASS element.isInDescriptionListTerm is true
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is false
+PASS element.isInDescriptionListTerm is true
+Finished verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false","isInDescriptionListDetail":"false","isInDescriptionListTerm":"true"} for all descendants of outer-group.
+
+Verifying {"isInDescriptionListTerm":"false","isInCell":"false"} for all descendants of outer-group.
+PASS element.isInDescriptionListTerm is false
+PASS element.isInCell is false
+PASS element.isInDescriptionListTerm is false
+PASS element.isInCell is false
+PASS element.isInDescriptionListTerm is false
+PASS element.isInCell is false
+Finished verifying {"isInDescriptionListTerm":"false","isInCell":"false"} for all descendants of outer-group.
+
+Verifying {"isInCell":"true"} for all descendants of outer-group.
+PASS element.isInCell is true
+PASS element.isInCell is true
+PASS element.isInCell is true
+Finished verifying {"isInCell":"true"} for all descendants of outer-group.
+
+Verifying {"isInCell":"false"} for all descendants of outer-group.
+PASS element.isInCell is false
+PASS element.isInCell is false
+PASS element.isInCell is false
+Finished verifying {"isInCell":"false"} for all descendants of outer-group.
+
+Verifying {"isInCell":"true"} for all descendants of outer-group.
+PASS element.isInCell is true
+PASS element.isInCell is true
+PASS element.isInCell is true
+Finished verifying {"isInCell":"true"} for all descendants of outer-group.
+
+Verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false","isInDescriptionListDetail":"false","isInDescriptionListTerm":"false","isInCell":"false"} for all descendants of outer-group.
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is false
+PASS element.isInDescriptionListTerm is false
+PASS element.isInCell is false
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is false
+PASS element.isInDescriptionListTerm is false
+PASS element.isInCell is false
+PASS element.hasWebApplicationAncestor is false
+PASS element.hasDocumentRoleAncestor is false
+PASS element.isInDescriptionListDetail is false
+PASS element.isInDescriptionListTerm is false
+PASS element.isInCell is false
+Finished verifying {"hasWebApplicationAncestor":"false","hasDocumentRoleAncestor":"false","isInDescriptionListDetail":"false","isInDescriptionListTerm":"false","isInCell":"false"} for all descendants of outer-group.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

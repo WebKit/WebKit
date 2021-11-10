@@ -87,6 +87,11 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityTextualContext;
 - (BOOL)accessibilityHasPopup;
 - (NSString *)accessibilityPopupValue;
+- (BOOL)accessibilityHasDocumentRoleAncestor;
+- (BOOL)accessibilityHasWebApplicationAncestor;
+- (BOOL)accessibilityIsInDescriptionListDefinition;
+- (BOOL)accessibilityIsInDescriptionListTerm;
+- (BOOL)_accessibilityIsInTableCell;
 - (NSString *)_accessibilityPhotoDescription;
 - (BOOL)accessibilityPerformEscape;
 
@@ -1132,6 +1137,31 @@ bool AccessibilityUIElement::hasPopup() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 {
     return [[m_element accessibilityPopupValue] createJSStringRef];
+}
+
+bool AccessibilityUIElement::hasDocumentRoleAncestor() const
+{
+    return [m_element accessibilityHasDocumentRoleAncestor];
+}
+
+bool AccessibilityUIElement::hasWebApplicationAncestor() const
+{
+    return [m_element accessibilityHasWebApplicationAncestor];
+}
+
+bool AccessibilityUIElement::isInDescriptionListDetail() const
+{
+    return [m_element accessibilityIsInDescriptionListDefinition];
+}
+
+bool AccessibilityUIElement::isInDescriptionListTerm() const
+{
+    return [m_element accessibilityIsInDescriptionListTerm];
+}
+
+bool AccessibilityUIElement::isInCell() const
+{
+    return [m_element _accessibilityIsInTableCell];
 }
 
 void AccessibilityUIElement::takeFocus()
