@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ElementRuleCollector.h"
+#include "MatchResult.h"
 #include "RenderStyle.h"
 #include "Timer.h"
 

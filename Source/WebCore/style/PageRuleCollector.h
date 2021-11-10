@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "ElementRuleCollector.h"
+#include "MatchResult.h"
 #include "StyleScopeRuleSets.h"
 #include <wtf/Forward.h>
 

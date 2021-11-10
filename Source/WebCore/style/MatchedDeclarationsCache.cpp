@@ -88,9 +88,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult)
     if (!matchResult.isCacheable)
         return 0;
 
-    return StringHasher::hashMemory(matchResult.userAgentDeclarations.data(), sizeof(MatchedProperties) * matchResult.userAgentDeclarations.size())
-        ^ StringHasher::hashMemory(matchResult.userDeclarations.data(), sizeof(MatchedProperties) * matchResult.userDeclarations.size())
-        ^ StringHasher::hashMemory(matchResult.authorDeclarations.data(), sizeof(MatchedProperties) * matchResult.authorDeclarations.size());
+    return WTF::computeHash(matchResult);
 }
 
 const MatchedDeclarationsCache::Entry* MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult)

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CascadeLevel.h"
-#include "ElementRuleCollector.h"
+#include "MatchResult.h"
 #include "StyleBuilderState.h"
 #include <bitset>
 

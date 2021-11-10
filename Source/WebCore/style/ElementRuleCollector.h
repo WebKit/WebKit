@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "MatchResult.h"
 #include "MediaQueryEvaluator.h"
 #include "PropertyAllowlist.h"
 #include "RuleSet.h"
@@ -64,31 +65,6 @@ struct MatchedRule {
     unsigned specificity;
     ScopeOrdinal styleScopeOrdinal;
     unsigned cascadeLayerPriority;
-};
-
-struct MatchedProperties {
-    RefPtr<const StyleProperties> properties;
-    uint16_t linkMatchType { SelectorChecker::MatchAll };
-    PropertyAllowlist allowlistType { PropertyAllowlist::None };
-    ScopeOrdinal styleScopeOrdinal { ScopeOrdinal::Element };
-};
-
-struct MatchResult {
-    bool isCacheable { true };
-    Vector<MatchedProperties> userAgentDeclarations;
-    Vector<MatchedProperties> userDeclarations;
-    Vector<MatchedProperties> authorDeclarations;
-
-    bool operator==(const MatchResult& other) const
-    {
-        return isCacheable == other.isCacheable
-            && userAgentDeclarations == other.userAgentDeclarations
-            && userDeclarations == other.userDeclarations
-            && authorDeclarations == other.authorDeclarations;
-    }
-    bool operator!=(const MatchResult& other) const { return !(*this == other); }
-
-    bool isEmpty() const { return userAgentDeclarations.isEmpty() && userDeclarations.isEmpty() && authorDeclarations.isEmpty(); }
 };
 
 class ElementRuleCollector {
@@ -173,16 +149,6 @@ private:
     Relations m_styleRelations;
     PseudoIdSet m_matchedPseudoElementIds;
 };
-
-inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
-{
-    return a.properties == b.properties && a.linkMatchType == b.linkMatchType;
-}
-
-inline bool operator!=(const MatchedProperties& a, const MatchedProperties& b)
-{
-    return !(a == b);
-}
 
 } // namespace Style
 } // namespace WebCore
