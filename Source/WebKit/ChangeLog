@@ -1,3 +1,16 @@
+2021-11-10  Per Arne Vollan <pvollan@apple.com>
+
+        [iOS][GPUP] Remove sandbox read access to files
+        https://bugs.webkit.org/show_bug.cgi?id=232389
+        <rdar://problem/84717349>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, remove read access to files in the GPU process' sandbox on iOS.
+        This patch also adds some new telemetry for rules related to reading of files.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2021-11-10  Darin Adler  <darin@apple.com>
 
         [CF] Reduce duplication and unneeded buffer allocations and copying in URL code, also remove unused methods and functions
