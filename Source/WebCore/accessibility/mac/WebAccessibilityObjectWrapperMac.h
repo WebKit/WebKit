@@ -37,6 +37,10 @@
 #define NSAccessibilityPrimaryScreenHeightAttribute @"_AXPrimaryScreenHeight"
 #endif
 
+#ifndef NSAccessibilityChildrenInNavigationOrderAttribute
+#define NSAccessibilityChildrenInNavigationOrderAttribute @"AXChildrenInNavigationOrder"
+#endif
+
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase
 
 // FIXME: Remove these methods since clients should not need to call them and hence should not be exposed in the public interface.
