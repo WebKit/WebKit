@@ -2341,7 +2341,6 @@ http/tests/media/video-preload.html [ Pass Slow ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
-webkit.org/b/135086 media/video-seek-with-negative-playback.html [ Timeout Pass ]
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash Timeout ]
 webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]

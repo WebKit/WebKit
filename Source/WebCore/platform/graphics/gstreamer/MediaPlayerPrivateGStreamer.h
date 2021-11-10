@@ -438,6 +438,7 @@ private:
 
     void syncOnClock(bool sync);
 
+    GstClockTime gstreamerPositionFromSinks() const;
     MediaTime playbackPosition() const;
 
     virtual void updateStates();

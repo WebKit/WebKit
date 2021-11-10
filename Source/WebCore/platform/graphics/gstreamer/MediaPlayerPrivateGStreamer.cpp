@@ -1276,6 +1276,31 @@ GstElement* MediaPlayerPrivateGStreamer::audioSink() const
     return sink;
 }
 
+GstClockTime MediaPlayerPrivateGStreamer::gstreamerPositionFromSinks() const
+{
+    gint64 gstreamerPosition = GST_CLOCK_TIME_NONE;
+    // Asking directly to the sinks and choosing the highest value is faster than asking to the pipeline.
+    GRefPtr<GstQuery> query = adoptGRef(gst_query_new_position(GST_FORMAT_TIME));
+    if (m_audioSink && gst_element_query(m_audioSink.get(), query.get())) {
+        gint64 audioPosition = GST_CLOCK_TIME_NONE;
+        gst_query_parse_position(query.get(), 0, &audioPosition);
+        if (GST_CLOCK_TIME_IS_VALID(audioPosition))
+            gstreamerPosition = audioPosition;
+        GST_TRACE_OBJECT(pipeline(), "Audio position %" GST_TIME_FORMAT, GST_TIME_ARGS(audioPosition));
+        query = adoptGRef(gst_query_new_position(GST_FORMAT_TIME));
+    }
+    if (m_videoSink && gst_element_query(m_videoSink.get(), query.get())) {
+        gint64 videoPosition = GST_CLOCK_TIME_NONE;
+        gst_query_parse_position(query.get(), 0, &videoPosition);
+        GST_TRACE_OBJECT(pipeline(), "Video position %" GST_TIME_FORMAT, GST_TIME_ARGS(videoPosition));
+        if (GST_CLOCK_TIME_IS_VALID(videoPosition) && (!GST_CLOCK_TIME_IS_VALID(gstreamerPosition)
+            || (m_playbackRate >= 0 && videoPosition > gstreamerPosition)
+            || (m_playbackRate < 0 && videoPosition < gstreamerPosition)))
+            gstreamerPosition = videoPosition;
+    }
+    return static_cast<GstClockTime>(gstreamerPosition);
+}
+
 MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
 {
     GST_TRACE_OBJECT(pipeline(), "isEndReached: %s, seeking: %s, seekTime: %s", boolForPrinting(m_isEndReached), boolForPrinting(m_isSeeking), m_seekTime.toString().utf8().data());
@@ -1295,28 +1320,7 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
         return m_cachedPosition.value();
     }
 
-    // Position is only available if no async state change is going on and the state is either paused or playing.
-    gint64 position = GST_CLOCK_TIME_NONE;
-
-    // Asking directly to the sinks and choosing the highest value is faster than asking to the pipeline.
-    GRefPtr<GstQuery> query = adoptGRef(gst_query_new_position(GST_FORMAT_TIME));
-    if (m_audioSink && gst_element_query(m_audioSink.get(), query.get())) {
-        gint64 audioPosition = GST_CLOCK_TIME_NONE;
-        gst_query_parse_position(query.get(), 0, &audioPosition);
-        if (GST_CLOCK_TIME_IS_VALID(audioPosition))
-            position = audioPosition;
-        query = adoptGRef(gst_query_new_position(GST_FORMAT_TIME));
-    }
-    if (m_videoSink && gst_element_query(m_videoSink.get(), query.get())) {
-        gint64 videoPosition = GST_CLOCK_TIME_NONE;
-        gst_query_parse_position(query.get(), 0, &videoPosition);
-        if (GST_CLOCK_TIME_IS_VALID(videoPosition) && (!GST_CLOCK_TIME_IS_VALID(position)
-            || (m_playbackRate >= 0 && videoPosition > position)
-            || (m_playbackRate < 0 && videoPosition < position)))
-            position = videoPosition;
-    }
-
-    GstClockTime gstreamerPosition = static_cast<GstClockTime>(position);
+    GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
     GST_TRACE_OBJECT(pipeline(), "Position %" GST_TIME_FORMAT ", canFallBackToLastFinishedSeekPosition: %s", GST_TIME_ARGS(gstreamerPosition), boolForPrinting(m_canFallBackToLastFinishedSeekPosition));
 
     MediaTime playbackPosition = MediaTime::zeroTime();
@@ -1762,9 +1766,32 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             }
         }
         break;
-    case GST_MESSAGE_EOS:
+    case GST_MESSAGE_EOS: {
+        // In some specific cases, an EOS GstEvent can happen right before a seek. The event is translated
+        // by playbin as an EOS GstMessage and posted to the bus, waiting to be forwarded to the main thread.
+        // The EOS message (now irrelevant after the seek) is received and processed right after the seek,
+        // causing the termination of the media at the player private and upper levels. This can even happen
+        // after the seek has completed (m_isSeeking already false).
+        // The code below detects that condition by ensuring that the playback is coherent with the EOS message,
+        // that is, if we're still playing somewhere inside the playable ranges, there should be no EOS at
+        // all. If that's the case, it's considered to be one of those spureous EOS and is ignored.
+        // Live streams (infinite duration) are special and we still have to detect legitimate EOS there, so
+        // this message bailout isn't done in those cases.
+        MediaTime playbackPosition = MediaTime::invalidTime();
+        MediaTime duration = durationMediaTime();
+        GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
+        if (GST_CLOCK_TIME_IS_VALID(gstreamerPosition))
+            playbackPosition = MediaTime(gstreamerPosition, GST_SECOND);
+        if (playbackPosition.isValid() && duration.isValid()
+            && ((m_playbackRate >= 0 && playbackPosition < duration && duration.isFinite())
+            || (m_playbackRate < 0 && playbackPosition > MediaTime::zeroTime()))) {
+            GST_DEBUG_OBJECT(pipeline(), "EOS received but position %s is still in the finite playable limits [%s, %s], ignoring it",
+                playbackPosition.toString().utf8().data(), MediaTime::zeroTime().toString().utf8().data(), duration.toString().utf8().data());
+            break;
+        }
         didEnd();
         break;
+    }
     case GST_MESSAGE_ASYNC_DONE:
         if (!messageSourceIsPlaybin || m_isDelayingLoad)
             break;
