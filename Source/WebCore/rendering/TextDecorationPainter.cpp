@@ -37,24 +37,6 @@
 
 namespace WebCore {
 
-static void adjustStepToDecorationLength(float& step, float& controlPointDistance, float length)
-{
-    ASSERT(step > 0);
-
-    if (length <= 0)
-        return;
-
-    unsigned stepCount = static_cast<unsigned>(length / step);
-
-    // Each Bezier curve starts at the same pixel that the previous one
-    // ended. We need to subtract (stepCount - 1) pixels when calculating the
-    // length covered to account for that.
-    float uncoveredLength = length - (stepCount * step - (stepCount - 1));
-    float adjustment = uncoveredLength / stepCount;
-    step += adjustment;
-    controlPointDistance += adjustment;
-}
-
 /*
  * Draw one cubic Bezier curve and repeat the same pattern long the the decoration's axis.
  * The start point (p1), controlPoint1, controlPoint2 and end point (p2) of the Bezier curve
@@ -84,14 +66,27 @@ static void adjustStepToDecorationLength(float& step, float& controlPointDistanc
  */
 static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& rect, float fontSize)
 {
+    auto wavyStrokeParameters = getWavyStrokeParameters(fontSize);
+
     FloatPoint p1 = rect.minXMinYCorner();
     FloatPoint p2 = rect.maxXMinYCorner();
+
+    // Extent the wavy line before and after the text so it can cover the whole length.
+    p1.setX(p1.x() - 2 * wavyStrokeParameters.step);
+    p2.setX(p2.x() + 2 * wavyStrokeParameters.step);
+
+    auto bounds = rect;
+    // Offset the bounds and set extra height to ensure the whole wavy line is covered.
+    bounds.setY(bounds.y() - wavyStrokeParameters.controlPointDistance);
+    bounds.setHeight(bounds.height() + 2 * wavyStrokeParameters.controlPointDistance);
+    // Clip the extra wavy line added before
+    GraphicsContextStateSaver stateSaver(context);
+    context.clip(bounds);
+
     context.adjustLineToPixelBoundaries(p1, p2, rect.height(), context.strokeStyle());
 
     Path path;
     path.moveTo(p1);
-
-    auto wavyStrokeParameters = getWavyStrokeParameters(fontSize);
 
     ASSERT(p1.y() == p2.y());
 
@@ -99,7 +94,6 @@ static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& 
     float x1 = std::min(p1.x(), p2.x());
     float x2 = std::max(p1.x(), p2.x());
 
-    adjustStepToDecorationLength(wavyStrokeParameters.step, wavyStrokeParameters.controlPointDistance, x2 - x1);
     FloatPoint controlPoint1(0, yAxis + wavyStrokeParameters.controlPointDistance);
     FloatPoint controlPoint2(0, yAxis - wavyStrokeParameters.controlPointDistance);
 
@@ -111,10 +105,8 @@ static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& 
     }
 
     context.setShouldAntialias(true);
-    auto strokeThickness = context.strokeThickness();
     context.setStrokeThickness(rect.height());
     context.strokePath(path);
-    context.setStrokeThickness(strokeThickness);
 }
 
 static bool compareTuples(std::pair<float, float> l, std::pair<float, float> r)

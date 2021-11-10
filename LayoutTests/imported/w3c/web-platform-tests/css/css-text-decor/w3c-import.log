@@ -38,7 +38,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-through-wavy-covers-whole-line-length-001-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-through-wavy-covers-whole-line-length-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-overline-wavy-covers-whole-line-length-001-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-overline-wavy-covers-whole-line-length-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-serialization.tentative.html
@@ -119,6 +123,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-wavy-covers-whole-line-length-001-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-wavy-covers-whole-line-length-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-003.xht

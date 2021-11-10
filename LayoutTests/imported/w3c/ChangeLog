@@ -1,3 +1,20 @@
+2021-11-10  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Wavy decorations don't cover the whole line length
+        https://bugs.webkit.org/show_bug.cgi?id=232663
+
+        Reviewed by Myles C. Maxfield.
+
+        Import WPT tests from https://github.com/web-platform-tests/wpt/pull/31540.
+
+        * web-platform-tests/css/css-text-decor/text-decoration-line-through-wavy-covers-whole-line-length-001-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-line-through-wavy-covers-whole-line-length-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-overline-wavy-covers-whole-line-length-001-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-overline-wavy-covers-whole-line-length-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-wavy-covers-whole-line-length-001-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-wavy-covers-whole-line-length-001.html: Added.
+        * web-platform-tests/css/css-text-decor/w3c-import.log:
+
 2021-11-09  Ben Nham  <nham@apple.com>
 
         Add support for PushSubscriptionChangeEvent
