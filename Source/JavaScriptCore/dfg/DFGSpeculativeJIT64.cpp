@@ -2246,7 +2246,7 @@ void SpeculativeJIT::emitBranch(Node* node)
     }
 }
 
-void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     switch (node->arrayMode().type()) {
     case Array::AnyTypedArray:
@@ -2261,7 +2261,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         GPRReg indexGPR = index.gpr();
 
         JSValueRegs resultRegs;
-        std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+        std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
 
         speculationCheck(OutOfBounds, JSValueRegs(), node,
             m_jit.branch32(MacroAssembler::LessThan, indexGPR, MacroAssembler::TrustedImm32(0)));
@@ -2293,10 +2293,16 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             GPRReg propertyGPR = property.gpr();
 
             JSValueRegs resultRegs;
-            std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+            CanUseFlush canUseFlush = CanUseFlush::Yes;
+            std::tie(resultRegs, std::ignore, canUseFlush) = prefix(DataFormatJS);
 
-            flushRegisters();
+            if (canUseFlush == CanUseFlush::No)
+                silentSpillAllRegisters(resultRegs);
+            else
+                flushRegisters();
             callOperation(operationGetByVal, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR);
+            if (canUseFlush == CanUseFlush::No)
+                silentFillAllRegisters();
             m_jit.exceptionCheck();
 
             jsValueResult(resultRegs, node);
@@ -2319,7 +2325,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         speculate(node, m_graph.varArgChild(node, 1));
 
         JSValueRegs resultRegs;
-        std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+        std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
         GPRReg resultGPR = resultRegs.gpr();
 
         CodeOrigin codeOrigin = node->origin.semantic;
@@ -2377,7 +2383,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
 
             JSValueRegs resultRegs;
             DataFormat format;
-            std::tie(resultRegs, format) = prefix(node->arrayMode().type() == Array::Int32 ? DataFormatJSInt32 : DataFormatJS);
+            std::tie(resultRegs, format, std::ignore) = prefix(node->arrayMode().type() == Array::Int32 ? DataFormatJSInt32 : DataFormatJS);
             GPRReg result = resultRegs.gpr();
 
             speculationCheck(OutOfBounds, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
@@ -2409,7 +2415,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             return;
 
         JSValueRegs resultRegs;
-        std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+        std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
         GPRReg resultReg = resultRegs.gpr();
 
         MacroAssembler::JumpList slowCases;
@@ -2453,7 +2459,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
 
             JSValueRegs resultRegs;
             DataFormat format;
-            std::tie(resultRegs, format) = prefix(DataFormatDouble);
+            std::tie(resultRegs, format, std::ignore) = prefix(DataFormatDouble);
 
             speculationCheck(OutOfBounds, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
 
@@ -2488,7 +2494,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
 
         JSValueRegs resultRegs;
         DataFormat format;
-        std::tie(resultRegs, format) = prefix(resultIsUnboxed ? DataFormatDouble : DataFormatJS);
+        std::tie(resultRegs, format, std::ignore) = prefix(resultIsUnboxed ? DataFormatDouble : DataFormatJS);
 
         MacroAssembler::JumpList slowCases;
 
@@ -2541,7 +2547,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
                 return;
 
             JSValueRegs resultRegs;
-            std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+            std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
             GPRReg resultGPR = resultRegs.gpr();
 
             speculationCheck(OutOfBounds, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, ArrayStorage::vectorLengthOffset())));
@@ -2566,7 +2572,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             return;
 
         JSValueRegs resultRegs;
-        std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+        std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
         GPRReg resultReg = resultRegs.gpr();
 
         MacroAssembler::JumpList slowCases;
@@ -3158,10 +3164,10 @@ void SpeculativeJIT::compile(Node* node)
     case StringCharAt: {
         // Relies on StringCharAt node having same basic layout as GetByVal
         JSValueRegsTemporary result;
-        compileGetByValOnString(node, scopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>([&] (DataFormat preferredFormat) {
+        compileGetByValOnString(node, scopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>([&] (DataFormat preferredFormat) {
             result = JSValueRegsTemporary(this);
             ASSERT(preferredFormat == DataFormatJS || preferredFormat == DataFormatCell);
-            return std::make_pair(result.regs(), preferredFormat);
+            return std::tuple { result.regs(), preferredFormat, CanUseFlush::Yes };
         }));
         break;
     }
@@ -3200,7 +3206,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetByVal: {
         JSValueRegsTemporary result;
-        compileGetByVal(node, scopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>([&] (DataFormat preferredFormat) {
+        compileGetByVal(node, scopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>([&] (DataFormat preferredFormat) {
             JSValueRegs resultRegs;
             switch (preferredFormat) {
             case DataFormatDouble:
@@ -3211,7 +3217,7 @@ void SpeculativeJIT::compile(Node* node)
                 break;
             }
             };
-            return std::make_pair(resultRegs, preferredFormat);
+            return std::tuple { resultRegs, preferredFormat, CanUseFlush::Yes };
         }));
         break;
     }
