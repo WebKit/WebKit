@@ -1,3 +1,16 @@
+2021-11-10  Xan Lopez  <xan@igalia.com>
+
+        [JSC][32bit] Unskip JSTests/stress/json-stringify-string-builder-overflow.js
+        https://bugs.webkit.org/show_bug.cgi?id=232944
+
+        Unreviewed gardening.
+
+        This seems to survive 1000 iterations on both armv7 and mips
+        hw. Remove the arch-specific skips leaving the memory limited
+        ones.
+
+        * stress/json-stringify-string-builder-overflow.js:
+
 2021-11-09  Saam Barati  <sbarati@apple.com>
 
         When inlining NewSymbol in the DFG don't universally call ToString on the input
