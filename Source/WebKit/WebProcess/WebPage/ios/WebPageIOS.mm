@@ -2916,7 +2916,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
     auto* renderer = hitNode->renderer();
 
     info.selectability = ([&] {
-        if (renderer->style().userSelectIncludingInert() == UserSelect::None)
+        if (renderer->style().userSelect() == UserSelect::None)
             return InteractionInformationAtPosition::Selectability::UnselectableDueToUserSelectNone;
 
         if (is<Element>(*hitNode)) {
