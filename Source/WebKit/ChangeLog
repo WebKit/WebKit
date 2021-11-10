@@ -1,3 +1,12 @@
+2021-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        [macOS] Unable to build WebKit with multiple users in the same machine, webpushd uses /tmp/WebKit.dst
+        https://bugs.webkit.org/show_bug.cgi?id=232940
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-11-10  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Adopt -[AVAudioSession setAuditTokensForProcessAssertion:]
