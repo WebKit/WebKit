@@ -194,7 +194,7 @@ static RetainPtr<NSURLCredential> credentialWithIdentity()
 
 @implementation ChallengeDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     navigationFinished = true;
 }
@@ -267,7 +267,7 @@ TEST(Challenge, DeallocateDuringChallenge)
 
 @implementation ClientCertificateDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     navigationFinished = true;
 }
@@ -319,7 +319,7 @@ static RetainPtr<NSURLCredential> persistentCredential;
 
 @implementation ProposedCredentialDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     navigationFinished = true;
 }
@@ -566,7 +566,7 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
     _navigationFinished = true;
 }
 
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     _provisionalNavigationFailedError = error;
 }
@@ -588,7 +588,7 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
     return _authenticationChallengeCount;
 }
 
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
     _authenticationChallengeCount++;
     SecTrustRef trust = challenge.protectionSpace.serverTrust;

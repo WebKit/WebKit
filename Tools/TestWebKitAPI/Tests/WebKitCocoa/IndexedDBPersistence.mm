@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestURLSchemeHandler.h"
@@ -37,10 +38,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
-
-static bool readyToContinue;
-static bool receivedScriptMessage;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface IndexedDBMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -182,7 +179,7 @@ TEST(IndexedDB, IndexedDBDataRemoval)
     TestWebKitAPI::Util::run(&readyToContinue);
 }
 
-static NSString *mainFrameString = @"<script> \
+static NSString *mainFrameStringPersistence = @"<script> \
     function postResult(event) { \
         window.webkit.messageHandlers.testHandler.postMessage(event.data); \
     } \
@@ -190,7 +187,7 @@ static NSString *mainFrameString = @"<script> \
     </script> \
     <iframe src='iframe://'>";
 
-static const char* iframeBytes = R"TESTRESOURCE(
+static const char* iframeBytesPersistence = R"TESTRESOURCE(
 <script>
 function postResult(result) {
     if (window.parent != window.top) {
@@ -240,7 +237,7 @@ try {
 
 static void loadTestPageInWebView(WKWebView *webView, NSString *expectedResult)
 {
-    [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView loadHTMLString:mainFrameStringPersistence baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(expectedResult, (NSString *)[lastScriptMessage body]);
@@ -255,7 +252,7 @@ TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
         [task didReceiveResponse:response.get()];
-        [task didReceiveData:[NSData dataWithBytes:iframeBytes length:strlen(iframeBytes)]];
+        [task didReceiveData:[NSData dataWithBytes:iframeBytesPersistence length:strlen(iframeBytesPersistence)]];
         [task didFinish];
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
@@ -293,7 +290,7 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
         [task didReceiveResponse:response.get()];
-        [task didReceiveData:[NSData dataWithBytes:iframeBytes length:strlen(iframeBytes)]];
+        [task didReceiveData:[NSData dataWithBytes:iframeBytesPersistence length:strlen(iframeBytesPersistence)]];
         [task didFinish];
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];

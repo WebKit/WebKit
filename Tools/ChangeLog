@@ -1,3 +1,208 @@
+2021-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        Unify build of TestWebKitAPI/Tests/WebKitCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=232768
+
+        Reviewed by Tim Horton.
+
+        I found that the Fullscreen.LayoutConstraints was not being built because FullscreenLayoutConstraints.mm was not being built.
+        Now that it is being built it times out, so I disabled it.
+
+        * TestWebKitAPI/DeprecatedGlobalValues.cpp: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm.
+        (resetGlobalState):
+        * TestWebKitAPI/DeprecatedGlobalValues.h: Copied from Tools/TestWebKitAPI/Tests/WebKit/AboutBlankLoad.cpp.
+        * TestWebKitAPI/DeprecatedGlobalValues.mm: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm.
+        * TestWebKitAPI/Scripts/generate-unified-sources.sh:
+        * TestWebKitAPI/Sources.txt:
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/AVFoundationPreference.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/AdditionalReadAccessAllowedURLs.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplePay.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncPolicyForNavigationResponse.mm:
+        (-[TestAsyncNavigationDelegate webView:didFinishNavigation:]):
+        (-[TestAsyncNavigationDelegate webView:didFailNavigation:withError:]):
+        (-[TestAsyncNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleParameters.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (-[ChallengeDelegate webView:didFinishNavigation:]):
+        (-[ClientCertificateDelegate webView:didFinishNavigation:]):
+        (-[ProposedCredentialDelegate webView:didFinishNavigation:]):
+        (-[ServerTrustDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[ServerTrustDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        (WebKit2_CommandBackForwardTestWKView::SetUp):
+        (WebKit2_CommandBackForwardTestWKView::loadFiles):
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (-[TestContextMenuUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuAPIBeforeSPIUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuAPIBeforeSPIUIDelegate _webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuImageUIDelegate _webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuSuggestedActionsUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/CookieAcceptPolicy.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+        (createWebViewWithCustomPasteboardDataEnabled): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyURL.mm:
+        (createWebViewWithCustomPasteboardDataEnabled): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/CustomUserAgent.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm:
+        (-[DecidePolicyForNavigationActionController webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DoubleDefersLoading.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DuplicateCompletionHandlerCalls.mm:
+        (-[DuplicateCompletionHandlerCallsDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FileSystemAccess.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenLayoutConstraints.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMedia.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBDeleteRecovery.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        (-[IPCTestingAPIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/IconLoadingDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[AppBoundDomainDelegate webView:didFailProvisionalNavigation:withError:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBDatabaseProcessKill.mm:
+        (-[DatabaseProcessKillMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBFileName.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBInPageCache.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBMultiProcess.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBSuspendImminently.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBUserDelete.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/JavaScriptDuringNavigation.mm:
+        (-[JSNavigationDelegate webView:didFinishNavigation:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadAlternateHTMLString.mm:
+        (-[LoadAlternateHTMLStringFromProvisionalLoadErrorController webView:didStartProvisionalNavigation:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadFileThenReload.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageClear.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageNullEntries.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (-[LocalStorageNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageQuirkTest.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaSession.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalAlerts.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (-[BroadcastChannelMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/NotificationAPI.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/OpenAndCloseWindow.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFLinkReferrer.mm:
+        (emptyReleaseInfoCallback):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteRTFD.mm:
+        (createWebViewWithCustomPasteboardDataEnabled): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteWebArchive.mm:
+        (createWebViewWithCustomPasteboardDataEnabled): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteboardUtilities.h: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm.
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteboardUtilities.mm: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm.
+        (createWebViewWithCustomPasteboardDataEnabled):
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PrepareForMoveToWindow.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[PSONNavigationDelegate webView:didStartProvisionalNavigation:]):
+        (-[PSONNavigationDelegate webView:didCommitNavigation:]):
+        (-[PSONUIDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProvisionalURLNotChange.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (-[ProxyDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        (-[QuickLookDelegate navigationError]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RequiresUserActionForPlayback.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResponsivenessTimer.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResponsivenessTimerDoesntFireEarly.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/RunOpenPanel.mm:
+        (-[RunOpenPanelUIDelegate webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (-[SafeBrowsingNavigationDelegate webView:didCommitNavigation:]):
+        (-[WKWebViewGoBackNavigationDelegate webView:didFinishNavigation:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SchemeRegistry.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[TestSWAsyncNavigationDelegate webView:didFinishNavigation:]):
+        (-[TestSWAsyncNavigationDelegate webView:didFailNavigation:withError:]):
+        (-[TestSWAsyncNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ShouldOpenExternalURLsInNewWindowActions.mm:
+        (-[ShouldOpenExternalURLsInNewWindowActionsController webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+        (-[SpeechRecognitionNavigationDelegate webView:didFinishNavigation:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/StoreBlobThenDelete.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TopContentInset.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[UITestDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (-[ModalDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UploadDirectory.mm:
+        (-[UploadDelegate webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserInitiatedActionInNavigationAction.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (resetInspectorGlobalState):
+        (-[UIDelegateForTesting _webView:configurationForLocalInspector:]):
+        (TEST):
+        (resetGlobalState): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm:
+        (resetGlobalState): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm:
+        (resetGlobalState): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionHost.mm:
+        (resetGlobalState): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKNavigationResponse.mm:
+        (-[NavigationResponseTestDelegate webView:didFinishNavigation:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[RedirectSchemeHandler webView:didReceiveServerRedirectForProvisionalNavigation:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDiagnosticLogging.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewFindString.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewSnapshot.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (-[BasicNavigationDelegateWithoutCrashHandler webView:didStartProvisionalNavigation:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSQLBasics.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[PopUpPoliciesDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKInputDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/DateTimeInputsAccessoryViewTests.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/PreemptVideoFullscreen.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/WebGLPrepareDisplayOnWebThread.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/AccessingPastedImage.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/ClosingWebView.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/DownloadThread.mm:
+        * TestWebKitAPI/Tests/WebKitObjC/CustomProtocolsTest.mm:
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (-[AsyncPolicyDelegateForInsetTest webView:didFinishNavigation:]):
+        * TestWebKitAPI/Tests/mac/ContentFiltering.mm:
+
 2021-11-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r285246.

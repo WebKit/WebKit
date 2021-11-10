@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,33 +24,23 @@
  */
 
 #import "config.h"
-
-#if PLATFORM(MAC)
-
 #import "DeprecatedGlobalValues.h"
-#import "InstanceMethodSwizzler.h"
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import <WebKit/WKWebView.h>
 
-static NSString *nonHTTPURLString = @"notreal:/hello";
+#import "Utilities.h"
 
-static void newOpenURL(id self, SEL _cmd, NSURL* value)
+RetainPtr<NSString> sharedExtensionTabIdentifier;
+RetainPtr<WKScriptMessage> lastScriptMessage;
+RetainPtr<TestInspectorURLSchemeHandler> sharedURLSchemeHandler;
+RetainPtr<_WKInspectorExtension> sharedInspectorExtension;
+RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
+Deque<RetainPtr<WKScriptMessage>> scriptMessages;
+
+WKScriptMessage *getNextMessage()
 {
-    EXPECT_WK_STREQ(nonHTTPURLString, [value absoluteString]);
-    isDone = true;
+    if (scriptMessages.isEmpty()) {
+        receivedScriptMessage = false;
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
+    }
+
+    return scriptMessages.takeFirst().autorelease();
 }
-
-TEST(WKWebView, DefaultNavigationDelegate)
-{
-    InstanceMethodSwizzler swizzle([NSWorkspace class], @selector(openURL:), reinterpret_cast<IMP>(newOpenURL));
-
-    WKWebView *webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"notreal:/hello"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDone);
-}
-
-#endif

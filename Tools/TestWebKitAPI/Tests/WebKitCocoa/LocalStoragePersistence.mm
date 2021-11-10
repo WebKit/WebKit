@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -41,10 +42,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-static bool readyToContinue;
-static bool receivedScriptMessage;
-static bool didFinishNavigation;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 static RetainPtr<WKWebView> createdWebView;
 
 @interface LocalStorageMessageHandler : NSObject <WKScriptMessageHandler>
@@ -84,7 +81,7 @@ static RetainPtr<WKWebView> createdWebView;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    didFinishNavigation = true;
+    didFinishNavigationBoolean = true;
 }
 
 @end
@@ -276,8 +273,8 @@ TEST(WKWebView, PrivateBrowsingAffectsLocalStorage)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
     
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
     
     bool finishedRunningScript = false;
     [webView evaluateJavaScript:@"localStorage.setItem('testItem', 'Persistent item!');" completionHandler: [&] (id result, NSError *error) {
@@ -301,8 +298,8 @@ TEST(WKWebView, PrivateBrowsingAffectsLocalStorage)
     };
     
     [webView reload];
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
     
     [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE([result isEqual:NSNull.null]);
@@ -346,8 +343,8 @@ TEST(WKWebView, PrivateBrowsingAffectsLocalStorage)
     };
     
     [webView reload];
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
     
     [webView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
         NSString *value = (NSString *)result;
@@ -372,8 +369,8 @@ TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
     
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
     
     bool finishedRunningScript = false;
     [webView evaluateJavaScript:@"localStorage.setItem('testItem', 'Persistent item!');" completionHandler: [&] (id result, NSError *error) {
@@ -389,8 +386,8 @@ TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
     TestWebKitAPI::Util::run(&finishedRunningScript);
     finishedRunningScript = false;
         
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
     
     EXPECT_TRUE(!!createdWebView);
     

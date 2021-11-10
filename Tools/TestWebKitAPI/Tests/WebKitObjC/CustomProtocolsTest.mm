@@ -27,9 +27,9 @@
 
 #if WK_HAVE_C_SPI && PLATFORM(MAC)
 
-#import "Test.h"
-
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
 #import <WebKit/WKContextPrivate.h>
@@ -111,7 +111,6 @@ static RetainPtr<WKView> wkView;
 -(void)finishTheLoad;
 @end
 
-static bool isDone;
 static RetainPtr<ProcessPoolDestroyedDuringLoadingProtocol> processPoolProtocolInstance;
 
 @implementation ProcessPoolDestroyedDuringLoadingProtocol

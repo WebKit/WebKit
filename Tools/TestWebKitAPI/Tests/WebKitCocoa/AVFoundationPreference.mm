@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -34,9 +35,6 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-
-static bool receivedScriptMessage = false;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface PreferenceTestMessageHandler : NSObject <WKScriptMessageHandler>
 @end

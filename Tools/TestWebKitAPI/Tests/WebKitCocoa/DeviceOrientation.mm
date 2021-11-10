@@ -27,6 +27,7 @@
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -41,7 +42,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 static bool didReceiveMessage;
 static bool askedClientForPermission;
 

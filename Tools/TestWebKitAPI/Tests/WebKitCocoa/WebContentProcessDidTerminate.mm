@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -43,7 +44,6 @@ static _WKProcessTerminationReason expectedCrashReason;
 static bool startedLoad;
 static bool finishedLoad;
 static bool shouldLoadAgainOnCrash;
-static bool receivedScriptMessage;
 static bool calledAllCallbacks;
 static unsigned callbackCount;
 static unsigned crashHandlerCount;
@@ -81,7 +81,7 @@ static NSString *testHTML = @"<script>window.webkit.messageHandlers.testHandler.
 
 @implementation BasicNavigationDelegateWithoutCrashHandler
 
-- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     startedLoad = true;
 }

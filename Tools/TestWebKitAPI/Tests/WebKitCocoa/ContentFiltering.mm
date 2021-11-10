@@ -27,6 +27,7 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
+#import "DeprecatedGlobalValues.h"
 #import "ContentFiltering.h"
 #import "MockContentFilterSettings.h"
 #import "PlatformUtilities.h"
@@ -53,8 +54,6 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
 using Decision = WebCore::MockContentFilterSettings::Decision;
 using DecisionPoint = WebCore::MockContentFilterSettings::DecisionPoint;
-
-static bool isDone;
 
 @interface MockContentFilterEnabler : NSObject <NSCopying, NSSecureCoding>
 - (instancetype)initWithDecision:(Decision)decision decisionPoint:(DecisionPoint)decisionPoint;

@@ -25,13 +25,12 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <wtf/RetainPtr.h>
-
-static bool isDone;
 
 TEST(WebKit, BundleParameters)
 {

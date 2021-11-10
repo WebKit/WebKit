@@ -25,16 +25,13 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
-
-static bool readyToContinue;
-static bool receivedScriptMessage;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface IndexedDBFileNameMessageHandler : NSObject <WKScriptMessageHandler>
 @end

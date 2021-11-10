@@ -69,7 +69,7 @@ SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteOptionPlaybackPosition, CFStringRe
 @interface MRCommandInfo : NSObject
 @property (nonatomic, readonly) MRMediaRemoteCommand command;
 @property (nonatomic, readonly, getter=isEnabled) BOOL enabled;
-@property (nonatomic, readonly, nullable, copy) NSDictionary *options;
+@property (nonatomic, readonly, copy) NSDictionary *options;
 @end
 #endif
 

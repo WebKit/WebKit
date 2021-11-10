@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebCore/SQLiteFileSystem.h>
@@ -35,9 +36,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
-
-static bool readyToContinue;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface StoreBlobMessageHandler : NSObject <WKScriptMessageHandler>
 @end

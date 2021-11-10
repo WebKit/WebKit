@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "ServiceWorkerPageProtocol.h"
@@ -58,8 +59,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-static bool done;
-static bool didFinishNavigation;
 static bool serviceWorkerGlobalObjectIsAvailable;
 
 static String expectedMessage;
@@ -132,18 +131,18 @@ static bool navigationFailed = false;
 
 @implementation TestSWAsyncNavigationDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     navigationComplete = true;
 }
 
-- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     navigationFailed = true;
     navigationComplete = true;
 }
 
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     navigationFailed = true;
     navigationComplete = true;
@@ -1678,14 +1677,14 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, b
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
-        didFinishNavigation = true;
+        didFinishNavigationBoolean = true;
     }];
     [webView setNavigationDelegate:navigationDelegate.get()];
 
     if (loadAboutBlankBeforePage) {
-        didFinishNavigation = false;
+        didFinishNavigationBoolean = false;
         [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-        TestWebKitAPI::Util::run(&didFinishNavigation);
+        TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
     }
 
     [webView loadRequest:server.request()];
@@ -1824,7 +1823,7 @@ TEST(ServiceWorkers, ThrottleCrash)
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
-        didFinishNavigation = true;
+        didFinishNavigationBoolean = true;
     }];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1846,8 +1845,8 @@ TEST(ServiceWorkers, ThrottleCrash)
 
     [webView1 loadRequest:server.request()];
 
-    didFinishNavigation = false;
-    TestWebKitAPI::Util::run(&didFinishNavigation);
+    didFinishNavigationBoolean = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -1864,8 +1863,8 @@ TEST(ServiceWorkers, ThrottleCrash)
 
     [webView2 loadRequest:server.request()];
 
-    didFinishNavigation = false;
-    TestWebKitAPI::Util::run(&didFinishNavigation);
+    didFinishNavigationBoolean = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
 }
 
 TEST(ServiceWorkers, LoadData)

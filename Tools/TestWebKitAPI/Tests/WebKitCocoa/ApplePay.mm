@@ -36,7 +36,6 @@
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WebKit.h>
 
-static bool isDone;
 static NSString * const userScriptSource = @"window.wkUserScriptInjected = true";
 
 @interface TestApplePayAvailableScriptMessageHandler : NSObject <WKScriptMessageHandler>

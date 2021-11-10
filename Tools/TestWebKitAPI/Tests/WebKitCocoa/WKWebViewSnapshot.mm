@@ -25,14 +25,13 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import <WebKit/WKSnapshotConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
-
-static bool isDone;
 
 #if PLATFORM(MAC)
 typedef NSImage *PlatformImage;

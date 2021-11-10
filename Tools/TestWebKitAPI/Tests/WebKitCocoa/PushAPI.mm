@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -33,7 +34,6 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
-static bool done;
 static String expectedMessage;
 
 @interface PushAPIMessageHandlerWithExpectedMessage : NSObject <WKScriptMessageHandler>

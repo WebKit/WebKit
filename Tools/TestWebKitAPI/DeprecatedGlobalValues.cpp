@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#include "config.h"
+#include "DeprecatedGlobalValues.h"
 
-#if PLATFORM(MAC)
+bool receivedScriptMessage { false };
+bool isDone { false };
+bool done { false };
+bool didAttachLocalInspectorCalled { false };
+bool didShowExtensionTabWasCalled { false };
+bool pendingCallbackWasCalled { false };
+bool didHideExtensionTabWasCalled { false };
+bool inspectedPageDidNavigateWasCalled { false };
+bool didEnterPiP { false };
+bool didExitPiP { false };
+bool readyToContinue { false };
+bool didFinishLoad { false };
+bool didBecomeUnresponsive { false };
+bool wasPrompted { false };
+bool didFinishNavigationBoolean { false };
+bool didCreateWebView { false };
+bool receivedLoadedMessage { false };
+bool receivedFullscreenChangeMessage { false };
 
-#import "DeprecatedGlobalValues.h"
-#import "InstanceMethodSwizzler.h"
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import <WebKit/WKWebView.h>
-
-static NSString *nonHTTPURLString = @"notreal:/hello";
-
-static void newOpenURL(id self, SEL _cmd, NSURL* value)
+void resetGlobalState()
 {
-    EXPECT_WK_STREQ(nonHTTPURLString, [value absoluteString]);
-    isDone = true;
+    didAttachLocalInspectorCalled = false;
+    didShowExtensionTabWasCalled = false;
+    didHideExtensionTabWasCalled = false;
+    inspectedPageDidNavigateWasCalled = false;
+    pendingCallbackWasCalled = false;
 }
-
-TEST(WKWebView, DefaultNavigationDelegate)
-{
-    InstanceMethodSwizzler swizzle([NSWorkspace class], @selector(openURL:), reinterpret_cast<IMP>(newOpenURL));
-
-    WKWebView *webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"notreal:/hello"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDone);
-}
-
-#endif

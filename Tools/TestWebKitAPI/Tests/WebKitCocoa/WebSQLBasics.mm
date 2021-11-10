@@ -25,18 +25,15 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
-
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
-
-static bool receivedScriptMessage;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface WebSQLBasicsMessageHandler : NSObject <WKScriptMessageHandler>
 @end

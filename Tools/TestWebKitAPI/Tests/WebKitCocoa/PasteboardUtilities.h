@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#pragma once
 
-#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS TestWKWebView;
 
-#import "DeprecatedGlobalValues.h"
-#import "InstanceMethodSwizzler.h"
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import <WebKit/WKWebView.h>
-
-static NSString *nonHTTPURLString = @"notreal:/hello";
-
-static void newOpenURL(id self, SEL _cmd, NSURL* value)
-{
-    EXPECT_WK_STREQ(nonHTTPURLString, [value absoluteString]);
-    isDone = true;
-}
-
-TEST(WKWebView, DefaultNavigationDelegate)
-{
-    InstanceMethodSwizzler swizzle([NSWorkspace class], @selector(openURL:), reinterpret_cast<IMP>(newOpenURL));
-
-    WKWebView *webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"notreal:/hello"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDone);
-}
-
-#endif
+RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled(bool colorFilterEnabled = false);

@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "RemoteObjectRegistry.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -37,7 +38,6 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RetainPtr.h>
 
-static bool done = false;
 static bool didCrash = false;
 static RetainPtr<NSString> alertMessage;
 static RetainPtr<NSString> promptDefault;
@@ -58,7 +58,7 @@ static RetainPtr<NSString> promptResult;
     completionHandler();
 }
 
-- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable))completionHandler
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *))completionHandler
 {
     promptDefault = defaultText;
     done = true;

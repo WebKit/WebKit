@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -48,7 +49,6 @@
 #import <Carbon/Carbon.h>
 #endif
 
-static bool done;
 static bool didReceiveMessage;
 
 @interface AudioObserver : NSObject
@@ -402,7 +402,7 @@ static RetainPtr<UITestDelegate> delegate;
 
 @implementation UITestDelegate
 
-- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
     [createdWebView setUIDelegate:delegate.get()];
@@ -490,7 +490,7 @@ static bool resizableSet;
     resizableSet = true;
 }
 
-- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     createdWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
     [createdWebView setUIDelegate:self];

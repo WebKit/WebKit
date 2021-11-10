@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -65,10 +66,8 @@
 - (WKContextRef)_contextForTesting;
 @end
 
-static bool done;
 static bool didStartProvisionalLoad;
 static bool failed;
-static bool didCreateWebView;
 static int numberOfDecidePolicyCalls;
 static bool didRepondToPolicyDecisionCall;
 
@@ -78,7 +77,6 @@ static bool didStartQuickLookLoad;
 static bool didFinishQuickLookLoad;
 #endif
 
-static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 bool didReceiveAlert;
 static bool receivedMessage;
 static bool serverRedirected;
@@ -143,20 +141,20 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
     done = true;
 }
 
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
     EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
     completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 }
 
-- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     didStartProvisionalLoad = true;
     if (didStartProvisionalNavigationHandler)
         didStartProvisionalNavigationHandler();
 }
 
-- (void)webView:(WKWebView *)webView didCommitNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
     if (didCommitNavigationHandler)
         didCommitNavigationHandler();
@@ -238,7 +236,7 @@ static RetainPtr<WKWebView> createdWebView;
     return self;
 }
 
-- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
     [createdWebView setNavigationDelegate:_navigationDelegate.get()];

@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "OffscreenWindow.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -86,8 +87,6 @@ public:
     }
 };
 
-static bool didFinishNavigation;
-
 class WebKit2_CommandBackForwardTestWKView : public WebKit2_CommandBackForwardTest {
 public:
     RetainPtr<WKView> webView;
@@ -109,7 +108,7 @@ public:
 
         loaderClient.base.version = 0;
         loaderClient.didFinishNavigation = [] (WKPageRef, WKNavigationRef, WKTypeRef, const void* clientInfo) {
-            didFinishNavigation = true;
+            didFinishNavigationBoolean = true;
         };
 
         WKPageSetPageNavigationClient([webView pageRef], &loaderClient.base);
@@ -122,12 +121,12 @@ public:
     void loadFiles()
     {
         WKPageLoadFile([webView pageRef], file1.get(), nullptr);
-        TestWebKitAPI::Util::run(&didFinishNavigation);
-        didFinishNavigation = false;
+        TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+        didFinishNavigationBoolean = false;
 
         WKPageLoadFile([webView pageRef], file2.get(), nullptr);
-        TestWebKitAPI::Util::run(&didFinishNavigation);
-        didFinishNavigation = false;
+        TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+        didFinishNavigationBoolean = false;
     }
 };
 
@@ -209,16 +208,16 @@ TEST_F(WebKit2_CommandBackForwardTestWKView, LTR)
 
     // Attempt to go back (using command-left).
     simulateCommandArrow(webView.get(), Left);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
 
     auto currentURL2 = adoptWK(WKPageCopyActiveURL([webView pageRef]));
     EXPECT_TRUE(WKURLIsEqual(file1.get(), currentURL2.get()));
 
     // Attempt to go back (using command-right).
     simulateCommandArrow(webView.get(), Right);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
 
     auto currentURL3 = adoptWK(WKPageCopyActiveURL([webView pageRef]));
     EXPECT_TRUE(WKURLIsEqual(file2.get(), currentURL3.get()));
@@ -236,16 +235,16 @@ TEST_F(WebKit2_CommandBackForwardTestWKView, RTL)
 
     // Attempt to go back (using command-right)
     simulateCommandArrow(webView.get(), Right);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
 
     auto currentURL2 = adoptWK(WKPageCopyActiveURL([webView pageRef]));
     EXPECT_TRUE(WKURLIsEqual(file1.get(), currentURL2.get()));
 
     // Attempt to go back (using command-left).
     simulateCommandArrow(webView.get(), Left);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigationBoolean = false;
 
     auto currentURL3 = adoptWK(WKPageCopyActiveURL([webView pageRef]));
     EXPECT_TRUE(WKURLIsEqual(file2.get(), currentURL3.get()));

@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "Test.h"
 #import "Utilities.h"
@@ -32,8 +33,6 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
-
-static bool isDone;
 
 @interface WKNavigationResponseTestNavigationDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic) BOOL expectation;
@@ -181,7 +180,7 @@ TEST(WebKit, WKNavigationResponsePDFType)
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     _hasReceivedNavigationFinishedCallback = true;
 }

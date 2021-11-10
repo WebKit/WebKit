@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
@@ -47,8 +48,6 @@
 
 #if ENABLE(APP_BOUND_DOMAINS)
 
-static bool isDone;
-
 @interface AppBoundDomainDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForDidFinishNavigation;
 - (NSError *)waitForDidFailProvisionalNavigationError;
@@ -64,7 +63,7 @@ static bool isDone;
     _navigationFinished = true;
 }
 
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     _provisionalNavigationFailedError = error;
 }
@@ -159,7 +158,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
     [webView _test_waitForDidFinishNavigation];
 
     // Check that request to read this variable is rejected.
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
@@ -171,7 +170,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
 
     // Disable script injection blocking to check that original attempt to set this variable was rejected.
     [[[webView configuration] preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(NO, [result boolValue]);
         EXPECT_FALSE(!!error);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -199,7 +198,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtEnd)
     [webView _test_waitForDidFinishNavigation];
 
     // Check that request to read this variable is rejected.
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
@@ -211,7 +210,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtEnd)
 
     // Disable script injection blocking to check that original attempt to set this variable was rejected.
     [[[webView configuration] preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(NO, [result boolValue]);
         EXPECT_FALSE(!!error);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -238,7 +237,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(YES, [result boolValue]);
         isDone = true;
     }];
@@ -254,7 +253,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
     [webView2 loadRequest:request];
     [webView2 _test_waitForDidFinishNavigation];
 
-    [webView2 evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView2 evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
@@ -1158,7 +1157,7 @@ TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
     // Navigation should be successful, but this WebView should not get app-bound domain
     // privileges like script injection.
     isDone = false;
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
         isDone = true;
@@ -1221,7 +1220,7 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
     [webView setNavigationDelegate:delegate.get()];
 
     isDone = false;
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(!!error);
         isDone = true;
     }];

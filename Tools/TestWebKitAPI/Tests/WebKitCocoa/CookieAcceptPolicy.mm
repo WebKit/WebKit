@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -32,9 +33,6 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
-
-static bool receivedScriptMessage = false;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface CookieAcceptPolicyMessageHandler : NSObject <WKScriptMessageHandler>
 @end

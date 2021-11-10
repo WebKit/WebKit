@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "WTFStringUtilities.h"
 
@@ -35,7 +36,6 @@ extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
 #if JSC_OBJC_API_ENABLED
 
-static bool didFinishLoad = false;
 static bool didClose = false;
 static RetainPtr<WebView> webView;
 

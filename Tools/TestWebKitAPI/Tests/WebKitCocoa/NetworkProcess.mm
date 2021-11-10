@@ -197,7 +197,7 @@ TEST(NetworkProcess, CORSPreflightCachePartitioned)
 }
 
 
-static Vector<RetainPtr<WKScriptMessage>> receivedMessages;
+static Vector<RetainPtr<WKScriptMessage>> receivedMessagesVector;
 static bool receivedMessage = false;
 
 @interface BroadcastChannelMessageHandler : NSObject <WKScriptMessageHandler>
@@ -206,7 +206,7 @@ static bool receivedMessage = false;
 @implementation BroadcastChannelMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    receivedMessages.append(message);
+    receivedMessagesVector.append(message);
     receivedMessage = true;
 }
 @end
@@ -242,7 +242,7 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
     receivedMessage = false;
-    receivedMessages.clear();
+    receivedMessagesVector.clear();
 
     NSString *html = [NSString stringWithFormat:@"<script>let bc = new BroadcastChannel('test'); bc.onmessage = (msg) => { webkit.messageHandlers.test.postMessage(msg.data); };</script>"];
     NSURL *baseURL = [NSURL URLWithString:@"http://example.com/"];
@@ -260,11 +260,11 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     EXPECT_NE(networkPID, 0);
 
     EXPECT_FALSE(receivedMessage);
-    EXPECT_TRUE(receivedMessages.isEmpty());
+    EXPECT_TRUE(receivedMessagesVector.isEmpty());
 
     // Test that initial communication from webView1 to webView2 works.
     receivedMessage = false;
-    receivedMessages.clear();
+    receivedMessagesVector.clear();
     bool finishedRunningScript = false;
     [webView1 evaluateJavaScript:@"bc.postMessage('foo')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -275,13 +275,13 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     TestWebKitAPI::Util::run(&receivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessages.size(), 1U);
-    EXPECT_EQ([receivedMessages[0] webView], webView2);
-    EXPECT_WK_STREQ([receivedMessages[0] body], @"foo");
+    EXPECT_EQ(receivedMessagesVector.size(), 1U);
+    EXPECT_EQ([receivedMessagesVector[0] webView], webView2);
+    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"foo");
 
     // Test that initial communication from webView2 to webView1 works.
     receivedMessage = false;
-    receivedMessages.clear();
+    receivedMessagesVector.clear();
     finishedRunningScript = false;
     [webView2 evaluateJavaScript:@"bc.postMessage('bar')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -292,9 +292,9 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     TestWebKitAPI::Util::run(&receivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessages.size(), 1U);
-    EXPECT_EQ([receivedMessages[0] webView], webView1);
-    EXPECT_WK_STREQ([receivedMessages[0] body], @"bar");
+    EXPECT_EQ(receivedMessagesVector.size(), 1U);
+    EXPECT_EQ([receivedMessagesVector[0] webView], webView1);
+    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"bar");
 
     // Kill the network process.
     kill(networkPID, 9);
@@ -305,7 +305,7 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
 
     // Test that initial communication from webView1 to webView2 works.
     receivedMessage = false;
-    receivedMessages.clear();
+    receivedMessagesVector.clear();
     finishedRunningScript = false;
     [webView1 evaluateJavaScript:@"bc.postMessage('foo2')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -316,13 +316,13 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     TestWebKitAPI::Util::run(&receivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessages.size(), 1U);
-    EXPECT_EQ([receivedMessages[0] webView], webView2);
-    EXPECT_WK_STREQ([receivedMessages[0] body], @"foo2");
+    EXPECT_EQ(receivedMessagesVector.size(), 1U);
+    EXPECT_EQ([receivedMessagesVector[0] webView], webView2);
+    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"foo2");
 
     // Test that initial communication from webView2 to webView1 works.
     receivedMessage = false;
-    receivedMessages.clear();
+    receivedMessagesVector.clear();
     finishedRunningScript = false;
     [webView2 evaluateJavaScript:@"bc.postMessage('bar2')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -333,9 +333,9 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     TestWebKitAPI::Util::run(&receivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessages.size(), 1U);
-    EXPECT_EQ([receivedMessages[0] webView], webView1);
-    EXPECT_WK_STREQ([receivedMessages[0] body], @"bar2");
+    EXPECT_EQ(receivedMessagesVector.size(), 1U);
+    EXPECT_EQ([receivedMessagesVector[0] webView], webView1);
+    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"bar2");
 
     auto networkPID2 = [[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier];
     EXPECT_NE(networkPID2, 0);

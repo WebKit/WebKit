@@ -25,13 +25,12 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/text/WTFString.h>
-
-static bool readyToContinue;
 
 @interface LocalStorageUIDelegate : NSObject <WKUIDelegate>
 @end

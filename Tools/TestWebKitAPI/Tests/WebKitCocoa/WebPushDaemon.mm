@@ -28,6 +28,7 @@
 #import "DaemonTestUtilities.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 

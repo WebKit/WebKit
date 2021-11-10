@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WebKit.h>
@@ -38,9 +39,6 @@
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
 
-static bool receivedScriptMessage;
-static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
-
 @interface IndexedDBMPMessageHandler : NSObject <WKScriptMessageHandler>
 @end
 
@@ -53,16 +51,6 @@ static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 }
 
 @end
-
-static WKScriptMessage *getNextMessage()
-{
-    if (scriptMessages.isEmpty()) {
-        receivedScriptMessage = false;
-        TestWebKitAPI::Util::run(&receivedScriptMessage);
-    }
-
-    return scriptMessages.takeFirst().autorelease();
-}
 
 TEST(IndexedDB, IndexedDBMultiProcess)
 {

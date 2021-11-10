@@ -48,7 +48,7 @@ static bool didCloseCalled;
 
 @implementation SafeBrowsingNavigationDelegate
 
-- (void)webView:(WKWebView *)webView didCommitNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
     committedNavigation = true;
 }
@@ -434,7 +434,7 @@ static bool navigationFinished;
 
 @implementation WKWebViewGoBackNavigationDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     navigationFinished = true;
 }

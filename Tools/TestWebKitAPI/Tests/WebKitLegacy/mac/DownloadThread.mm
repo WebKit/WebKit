@@ -25,13 +25,13 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WebView.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
 
-static bool done;
 static RetainPtr<NSString> destination;
 
 @interface DownloadThreadChecker : NSObject <WebDownloadDelegate, WebPolicyDelegate>

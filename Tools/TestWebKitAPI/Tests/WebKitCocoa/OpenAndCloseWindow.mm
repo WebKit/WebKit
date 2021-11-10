@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
@@ -38,7 +39,6 @@
 @class OpenAndCloseWindowUIDelegateAsync;
 @class CheckWindowFeaturesUIDelegate;
 
-static bool isDone;
 static RetainPtr<WKWebView> openedWebView;
 static RetainPtr<WKWindowFeatures> openWindowFeatures;
 static RetainPtr<OpenAndCloseWindowUIDelegate> sharedUIDelegate;
@@ -209,9 +209,9 @@ TEST(WebKit, OpenAsyncWithNil)
 
 @interface CheckWindowFeaturesUIDelegate : NSObject <WKUIDelegate>
 
-@property (nullable, nonatomic, readonly) NSNumber *menuBarVisibility;
-@property (nullable, nonatomic, readonly) NSNumber *statusBarVisibility;
-@property (nullable, nonatomic, readonly) NSNumber *toolbarsVisibility;
+@property (nonatomic, readonly) NSNumber *menuBarVisibility;
+@property (nonatomic, readonly) NSNumber *statusBarVisibility;
+@property (nonatomic, readonly) NSNumber *toolbarsVisibility;
 
 @end
 

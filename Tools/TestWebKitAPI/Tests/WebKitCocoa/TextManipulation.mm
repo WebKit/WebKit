@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -38,8 +39,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenate.h>
 #import <wtf/text/StringConcatenateNumbers.h>
-
-static bool done = false;
 
 typedef void(^ItemCallback)(_WKTextManipulationItem *);
 typedef void(^ItemListCallback)(NSArray<_WKTextManipulationItem *> *);

@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -83,8 +84,6 @@ static RetainPtr<NSURL> lastEchoedURL;
 @end
 
 #if WK_HAVE_C_SPI
-
-static bool didFinishLoad = false;
 
 @interface WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequestLoadDelegate : NSObject <WKBrowsingContextLoadDelegate>
 @end

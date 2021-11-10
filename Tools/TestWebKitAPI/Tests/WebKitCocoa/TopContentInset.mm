@@ -27,15 +27,13 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
-
-static bool receivedLoadedMessage;
-static bool receivedFullscreenChangeMessage;
 
 @interface FullscreenChangeMessageHandler : NSObject <WKScriptMessageHandler>
 @end

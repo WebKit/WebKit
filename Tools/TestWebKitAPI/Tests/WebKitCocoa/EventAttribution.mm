@@ -46,6 +46,7 @@
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 #if HAVE(RSA_BSSA)
 

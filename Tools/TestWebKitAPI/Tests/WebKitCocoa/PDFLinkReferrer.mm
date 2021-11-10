@@ -40,7 +40,7 @@ static size_t putPDFBytesCallback(void* info, void* buffer, size_t count)
     return count;
 }
 
-static void emptyReleaseInfoCallback(void* __nullable)
+static void emptyReleaseInfoCallback(void*)
 {
 }
 

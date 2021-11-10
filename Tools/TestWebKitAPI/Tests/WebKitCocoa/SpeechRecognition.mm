@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -36,11 +37,8 @@
 
 static bool shouldGrantPermissionRequest = true;
 static bool permissionRequested = false;
-static bool receivedScriptMessage;
-static bool didFinishNavigation;
 static bool captureStateDidChange;
 static bool isCapturing;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 static RetainPtr<WKWebView> createdWebView;
 
 @interface SpeechRecognitionUIDelegate : NSObject<WKUIDelegatePrivate>
@@ -106,7 +104,7 @@ static RetainPtr<WKWebView> createdWebView;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    didFinishNavigation = true;
+    didFinishNavigationBoolean = true;
 }
 @end
 
@@ -261,9 +259,9 @@ TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
         [webView setUIDelegate:delegate.get()];
         [webView setNavigationDelegate:navigationDelegate.get()];
 
-        didFinishNavigation = false;
+        didFinishNavigationBoolean = false;
         [webView loadHTMLString:@"<script>speechRecognition = new webkitSpeechRecognition(); speechRecognition.start(); speechRecognition = null;</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-        TestWebKitAPI::Util::run(&didFinishNavigation);
+        TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
         [configuration.get().processPool _garbageCollectJavaScriptObjectsForTesting];
 
         bool finishedRunningScript = false;

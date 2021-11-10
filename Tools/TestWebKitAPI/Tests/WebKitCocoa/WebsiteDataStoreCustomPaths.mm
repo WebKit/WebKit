@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -49,9 +50,6 @@
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
 
-static bool receivedScriptMessage;
-static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
-
 @interface WebsiteDataStoreCustomPathsMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
 @end
 
@@ -69,16 +67,6 @@ static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 }
 
 @end
-
-static WKScriptMessage *getNextMessage()
-{
-    if (scriptMessages.isEmpty()) {
-        receivedScriptMessage = false;
-        TestWebKitAPI::Util::run(&receivedScriptMessage);
-    }
-
-    return scriptMessages.takeFirst().autorelease();
-}
 
 enum class ShouldEnableProcessPrewarming { No, Yes };
 

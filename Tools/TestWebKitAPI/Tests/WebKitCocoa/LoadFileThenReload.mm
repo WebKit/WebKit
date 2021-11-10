@@ -25,12 +25,11 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
-
-static bool done;
 
 @interface LoadFileThenReloadDelegate : NSObject <WKNavigationDelegate>
 @end

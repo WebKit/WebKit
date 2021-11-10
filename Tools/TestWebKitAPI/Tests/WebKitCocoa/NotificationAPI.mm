@@ -26,13 +26,13 @@
 #import "config.h"
 
 #if ENABLE(NOTIFICATIONS) && !PLATFORM(IOS)
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 
-static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 static unsigned clientPermissionRequestCount;
 static bool didReceiveMessage;
 

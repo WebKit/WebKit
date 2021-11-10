@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -37,8 +38,6 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
-
-static bool readyToContinue;
 
 static RetainPtr<NSURLCredential> persistentCredential;
 static bool usePersistentCredentialStorage = false;

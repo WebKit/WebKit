@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WKPagePrivateMac.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -37,7 +38,6 @@
 #import <WebKit/_WKFullscreenDelegate.h>
 #import <wtf/RetainPtr.h>
 
-static bool receivedLoadedMessage;
 static bool receivedWillEnterFullscreenMessage;
 static bool receivedDidEnterFullscreenMessage;
 static bool receivedWillExitFullscreenMessage;

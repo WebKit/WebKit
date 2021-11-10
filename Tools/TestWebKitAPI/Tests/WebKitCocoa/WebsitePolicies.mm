@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -1575,7 +1576,7 @@ TEST(WebpagePreferences, WebsitePoliciesDeviceOrientationAskAccess)
     decisionHandler(WKNavigationActionPolicyAllow, websitePolicies.get());
 }
 
-- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     return [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
 }
@@ -1608,8 +1609,6 @@ TEST(WebpagePreferences, WebsitePoliciesPopUp)
     [webView loadRequest:request];
     [webView waitForMessage:@"pop-up-allowed"];
 }
-
-static bool done;
 
 @interface WebsitePoliciesWebsiteDataStoreDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler, WKUIDelegate>
 @end

@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -40,7 +41,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
 static RetainPtr<NSURL> redirectURL;
 static NSTimeInterval redirectDelay;

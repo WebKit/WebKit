@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -35,9 +36,6 @@
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #endif
-
-static bool receivedScriptMessage;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface RequiresUserActionForPlaybackMessageHandler : NSObject <WKScriptMessageHandler>
 @end

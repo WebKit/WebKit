@@ -27,14 +27,12 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
-
-static bool receivedLoadedMessage;
-static bool receivedFullscreenChangeMessage;
 
 @interface FullscreenStateChangeMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -52,7 +50,8 @@ static bool receivedFullscreenChangeMessage;
 
 namespace TestWebKitAPI {
 
-TEST(Fullscreen, LayoutConstraints)
+// FIXME: Fix and enable this test.
+TEST(Fullscreen, DISABLED_LayoutConstraints)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
@@ -78,7 +77,7 @@ TEST(Fullscreen, LayoutConstraints)
     [webView mouseDown:event];
 
     TestWebKitAPI::Util::run(&receivedFullscreenChangeMessage);
-    
+
     receivedFullscreenChangeMessage = false;
     
     NSEvent *exitFSEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];

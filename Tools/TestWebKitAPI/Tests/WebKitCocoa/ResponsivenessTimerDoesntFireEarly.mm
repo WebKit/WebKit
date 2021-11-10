@@ -27,13 +27,12 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "TestWKWebView.h"
 #import <wtf/RetainPtr.h>
 
-static bool didFinishLoad;
-static bool didBecomeUnresponsive;
 static bool didBrieflyPause;
 
 static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef, const void*)

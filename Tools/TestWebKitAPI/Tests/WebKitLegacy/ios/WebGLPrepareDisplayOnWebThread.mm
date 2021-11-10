@@ -27,6 +27,7 @@
 
 #if HAVE(UIWEBVIEW)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import <JavaScriptCore/JSVirtualMachine.h>
 #import <JavaScriptCore/JSVirtualMachineInternal.h>
@@ -35,7 +36,6 @@
 #import <stdlib.h>
 #import <wtf/RetainPtr.h>
 
-static bool didFinishLoad = false;
 static bool didFinishPainting = false;
 static bool isReady = false;
 

@@ -69,7 +69,7 @@ static RetainPtr<TestContextMenuDriver> contextMenuWebViewDriver(Class delegateC
 
 @implementation TestContextMenuUIDelegate
 
-- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
+- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration *))completionHandler
 {
     EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[linkURL absoluteString]]);
     contextMenuRequested = true;
@@ -137,7 +137,7 @@ TEST(ContextMenu, DISABLED_End)
 
 @implementation TestContextMenuAPIBeforeSPIUIDelegate
 
-- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
+- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration *))completionHandler
 {
     contextMenuRequested = true;
     UIContextMenuContentPreviewProvider previewProvider = ^UIViewController * ()
@@ -151,7 +151,7 @@ TEST(ContextMenu, DISABLED_End)
     completionHandler([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:previewProvider actionProvider:actionProvider]);
 }
 
-- (void)_webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
+- (void)_webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration *))completionHandler
 {
     contextMenuSPIRequested = true;
     completionHandler(nil);
@@ -183,7 +183,7 @@ TEST(ContextMenu, DISABLED_APIBeforeSPI)
 
 @implementation TestContextMenuImageUIDelegate
 
-- (void)_webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
+- (void)_webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration *))completionHandler
 {
     contextMenuRequested = true;
     completionHandler(nil);
@@ -304,7 +304,7 @@ TEST(ContextMenu, DISABLED_Legacy)
 
 @implementation TestContextMenuSuggestedActionsUIDelegate
 
-- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
+- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration *))completionHandler
 {
     EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[linkURL absoluteString]]);
     contextMenuRequested = true;

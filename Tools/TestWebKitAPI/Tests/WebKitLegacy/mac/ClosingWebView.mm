@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "WTFStringUtilities.h"
-
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSExport.h>
@@ -36,7 +36,6 @@
 
 #if JSC_OBJC_API_ENABLED
 
-static bool didFinishLoad = false;
 static RetainPtr<WebView> webView;
 
 @interface ClosingWebViewThenSendingItAKeyDownEventLoadDelegate : NSObject <WebFrameLoadDelegate>

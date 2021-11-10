@@ -26,6 +26,7 @@
 #import "config.h"
 #import <WebKit/WebKit.h>
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "ServiceWorkerTCPServer.h"
 #import "Test.h"
@@ -48,8 +49,6 @@
 #import <wtf/text/WTFString.h>
 
 using namespace TestWebKitAPI;
-
-static bool didFinishNavigation;
 
 @interface QuotaDelegate : NSObject <WKUIDelegate>
 -(bool)quotaDelegateCalled;
@@ -234,8 +233,6 @@ test();
 </script>
 )SWRESOURCE";
 #endif
-
-static bool done;
 
 static inline void setVisible(TestWKWebView *webView)
 {
@@ -495,13 +492,13 @@ TEST(WebKit, DefaultQuota)
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
-        didFinishNavigation = true;
+        didFinishNavigationBoolean = true;
     }];
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    didFinishNavigation = false;
+    didFinishNavigationBoolean = false;
     [webView loadRequest:server.request()];
-    Util::run(&didFinishNavigation);
+    Util::run(&didFinishNavigationBoolean);
 
     receivedQuotaDelegateCalled = false;
 

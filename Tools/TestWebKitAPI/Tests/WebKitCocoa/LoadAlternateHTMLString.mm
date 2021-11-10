@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -34,7 +35,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
-static bool isDone;
 static int provisionalLoadCount;
 
 @interface LoadAlternateHTMLStringFromProvisionalLoadErrorController : NSObject <WKNavigationDelegate>
@@ -53,7 +53,7 @@ static int provisionalLoadCount;
     isDone = true;
 }
 
-- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     provisionalLoadCount++;
 }

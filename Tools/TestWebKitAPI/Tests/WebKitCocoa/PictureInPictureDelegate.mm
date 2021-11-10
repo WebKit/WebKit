@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "Test.h"
@@ -43,8 +44,6 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
-
-static bool receivedLoadedMessage;
 
 static bool hasVideoInPictureInPictureValue;
 static bool hasVideoInPictureInPictureCalled;

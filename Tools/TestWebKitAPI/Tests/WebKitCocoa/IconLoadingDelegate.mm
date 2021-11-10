@@ -152,7 +152,7 @@ static bool alreadyProvidedIconData;
 
 @end
 
-static const char mainBytes[] =
+static const char mainBytes1[] =
 "<head>" \
 "<link rel=\"apple-touch-icon\" sizes=\"57x57\" non-standard-attribute href=\"http://example.com/my-apple-touch-icon.png\">" \
 "<link rel=\"apple-touch-icon-precomposed\" sizes=\"57x57\" href=\"http://example.com/my-apple-touch-icon-precomposed.png\">" \
@@ -162,7 +162,7 @@ TEST(IconLoading, DefaultFavicon)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:[NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO]]);
+    RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:[NSData dataWithBytesNoCopy:(void*)mainBytes1 length:sizeof(mainBytes1) freeWhenDone:NO]]);
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -236,7 +236,7 @@ TEST(IconLoading, IconLoadCancelledCallback)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    NSData *mainData = [NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO];
+    NSData *mainData = [NSData dataWithBytesNoCopy:(void*)mainBytes1 length:sizeof(mainBytes1) freeWhenDone:NO];
     RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:mainData]);
     handler.get()->shouldIgnoreFaviconTask = true;
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
@@ -266,7 +266,7 @@ TEST(IconLoading, IconLoadCancelledCallback2)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    NSData *mainData = [NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO];
+    NSData *mainData = [NSData dataWithBytesNoCopy:(void*)mainBytes1 length:sizeof(mainBytes1) freeWhenDone:NO];
     RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:mainData]);
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
 

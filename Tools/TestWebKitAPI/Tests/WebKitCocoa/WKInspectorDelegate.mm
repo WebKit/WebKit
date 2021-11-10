@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "Test.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -45,7 +46,6 @@
 @class InspectorDelegate;
 @class SimpleURLSchemeHandler;
 
-static bool didAttachLocalInspectorCalled = false;
 static bool inspectorFrontendLoadedCalled = false;
 static bool willCloseLocalInspectorCalled = false;
 static bool browserDomainEnabledForInspectorCalled = false;
@@ -55,11 +55,11 @@ static bool openURLExternallyCalled = false;
 static bool configurationForLocalInspectorCalled = false;
 static bool startURLSchemeTaskCalled = false;
 
-static RetainPtr<SimpleURLSchemeHandler> sharedURLSchemeHandler;
+static RetainPtr<SimpleURLSchemeHandler> sharedSimpleURLSchemeHandler;
 static RetainPtr<id <_WKInspectorDelegate>> sharedInspectorDelegate;
 static RetainPtr<NSURL> urlToOpen;
 
-static void resetGlobalState()
+static void resetInspectorGlobalState()
 {
     didAttachLocalInspectorCalled = false;
     inspectorFrontendLoadedCalled = false;
@@ -71,7 +71,7 @@ static void resetGlobalState()
     configurationForLocalInspectorCalled = false;
     startURLSchemeTaskCalled = false;
 
-    sharedURLSchemeHandler.clear();
+    sharedSimpleURLSchemeHandler.clear();
     sharedInspectorDelegate.clear();
     urlToOpen.clear();
 }
@@ -131,9 +131,9 @@ static void resetGlobalState()
     sharedInspectorDelegate = [InspectorDelegate new];
     [inspector setDelegate:sharedInspectorDelegate.get()];
 
-    sharedURLSchemeHandler = adoptNS([[SimpleURLSchemeHandler alloc] init]);
+    sharedSimpleURLSchemeHandler = adoptNS([[SimpleURLSchemeHandler alloc] init]);
     auto inspectorConfiguration = adoptNS([[_WKInspectorConfiguration alloc] init]);
-    [inspectorConfiguration setURLSchemeHandler:sharedURLSchemeHandler.get() forURLScheme:@"testing"];
+    [inspectorConfiguration setURLSchemeHandler:sharedSimpleURLSchemeHandler.get() forURLScheme:@"testing"];
     return inspectorConfiguration.autorelease();
 }
 
@@ -167,7 +167,7 @@ static void resetGlobalState()
 
 TEST(WKInspectorDelegate, InspectorLifecycleCallbacks)
 {
-    resetGlobalState();
+    resetInspectorGlobalState();
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
@@ -191,7 +191,7 @@ TEST(WKInspectorDelegate, InspectorLifecycleCallbacks)
 
 TEST(WKInspectorDelegate, InspectorCloseCalledReentrantly)
 {
-    resetGlobalState();
+    resetInspectorGlobalState();
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
@@ -215,7 +215,7 @@ TEST(WKInspectorDelegate, InspectorCloseCalledReentrantly)
 
 TEST(WKInspectorDelegate, ShowURLExternally)
 {
-    resetGlobalState();
+    resetInspectorGlobalState();
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
@@ -242,7 +242,7 @@ TEST(WKInspectorDelegate, ShowURLExternally)
 
 TEST(WKInspectorDelegate, InspectorConfiguration)
 {
-    resetGlobalState();
+    resetInspectorGlobalState();
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
@@ -260,7 +260,7 @@ TEST(WKInspectorDelegate, InspectorConfiguration)
     TestWebKitAPI::Util::run(&inspectorFrontendLoadedCalled);
 
     urlToOpen = [NSURL URLWithString:@"testing:main1"];
-    sharedURLSchemeHandler.get().expectedURL = urlToOpen.get();
+    sharedSimpleURLSchemeHandler.get().expectedURL = urlToOpen.get();
     [[webView _inspector] _fetchURLForTesting:urlToOpen.get()];
     TestWebKitAPI::Util::run(&startURLSchemeTaskCalled);
 

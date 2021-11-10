@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -53,8 +54,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
-
-static bool done;
 
 @interface SchemeHandler : NSObject <WKURLSchemeHandler>
 @property (readonly) NSMutableArray<NSURL *> *startedURLs;
@@ -307,7 +306,7 @@ static bool responsePolicyDecided;
     ASSERT_TRUE(false);
 }
 
-- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
 {
     ASSERT_FALSE(receivedRedirect);
     receivedRedirect = true;
@@ -500,7 +499,6 @@ static bool receivedStop;
 
 @end
 
-static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 static bool receivedMessage;
 
 @interface SyncMessageHandler : NSObject <WKScriptMessageHandler>
@@ -1496,9 +1494,6 @@ TEST(URLSchemeHandler, Origin)
     EXPECT_WK_STREQ([delegate waitForAlert], "registered://host:123, null");
 }
 
-
-static bool receivedScriptMessage = false;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 @interface URLSchemeHandlerMessageHandler : NSObject <WKScriptMessageHandler>
 @end
 

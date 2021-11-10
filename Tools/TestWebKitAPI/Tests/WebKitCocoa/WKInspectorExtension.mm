@@ -27,6 +27,7 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+#import "DeprecatedGlobalValues.h"
 #import "TestCocoa.h"
 #import "TestInspectorURLSchemeHandler.h"
 #import "Utilities.h"
@@ -39,22 +40,7 @@
 #import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
-static bool didAttachLocalInspectorCalled = false;
-static bool didShowExtensionTabWasCalled = false;
-static bool didHideExtensionTabWasCalled = false;
-static bool pendingCallbackWasCalled = false;
-static RetainPtr<TestInspectorURLSchemeHandler> sharedURLSchemeHandler;
-static RetainPtr<_WKInspectorExtension> sharedInspectorExtension;
-static RetainPtr<NSString> sharedExtensionTabIdentifier;
 static RetainPtr<NSObject> evaluationResult;
-
-static void resetGlobalState()
-{
-    didAttachLocalInspectorCalled = false;
-    didShowExtensionTabWasCalled = false;
-    didHideExtensionTabWasCalled = false;
-    pendingCallbackWasCalled = false;
-}
 
 @interface UIDelegateForTestingInspectorExtension : NSObject <WKUIDelegate>
 @end

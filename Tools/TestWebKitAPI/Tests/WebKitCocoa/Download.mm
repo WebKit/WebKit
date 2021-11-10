@@ -26,6 +26,7 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -57,7 +58,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
-static bool isDone;
 static unsigned redirectCount = 0;
 static bool hasReceivedResponse;
 static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];

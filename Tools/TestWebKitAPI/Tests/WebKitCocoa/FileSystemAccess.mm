@@ -27,15 +27,13 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-
-static bool receivedScriptMessage;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface FileSystemAccessMessageHandler : NSObject <WKScriptMessageHandler>
 @end

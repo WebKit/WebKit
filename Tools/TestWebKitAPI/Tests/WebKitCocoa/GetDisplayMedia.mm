@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -36,11 +37,8 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 
-static bool wasPrompted = false;
 static bool shouldDeny = false;
 static _WKCaptureDevices requestedDevices = 0;
-static bool receivedScriptMessage = false;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface GetDisplayMediaMessageHandler : NSObject <WKScriptMessageHandler>
 @end

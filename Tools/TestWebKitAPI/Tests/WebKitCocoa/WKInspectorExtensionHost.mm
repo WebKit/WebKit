@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "Test.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -34,15 +35,6 @@
 #import <wtf/RetainPtr.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-
-static bool didAttachLocalInspectorCalled = false;
-static bool pendingCallbackWasCalled = false;
-
-static void resetGlobalState()
-{
-    didAttachLocalInspectorCalled = false;
-    pendingCallbackWasCalled = false;
-}
 
 @interface UIDelegateForTestingInspectorExtensionHost : NSObject <WKUIDelegate>
 @end
