@@ -270,7 +270,7 @@
         (iokit-property "MetalPluginName")
     )
 
-    (allow sysctl-read (with telemetry)
+    (allow sysctl-read
         (sysctl-name #"kern.bootsessionuuid"))
 
     (allow mach-lookup (with telemetry)
@@ -526,7 +526,7 @@
           "sysctl.proc_native"))
 
 (with-filter (system-attribute apple-internal)
-    (allow sysctl-read sysctl-write (with telemetry)
+    (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend"))
     (allow nvram-get (with telemetry) (nvram-variable "emu")) ;; <rdar://problem/78363040>
 )
@@ -653,54 +653,23 @@
 ;;; End UIKit-apps.sb content
 ;;;
 
-(deny sysctl*)
+(deny sysctl* (with telemetry))
 (allow sysctl-read (with telemetry)
     (sysctl-name
         "hw.activecpu"
-        "hw.availcpu"
-        "hw.cacheconfig" ;; <rdar://problem/78213563>
         "hw.cachelinesize"
-        "hw.cachesize" ;; <rdar://problem/78213563>
-        "hw.cpufamily" ;; <rdar://problem/15721872>
-        "hw.cpusubfamily"
-        "hw.cputhreadtype"
-        "hw.cputype"
-        "hw.l1dcachesize" ;; <rdar://problem/15721872>
-        "hw.l1icachesize" ;; <rdar://problem/15721872>
         "hw.l2cachesize"
-        "hw.l3cachesize" ;; <rdar://problem/15721872>
-        "hw.logicalcpu"
         "hw.logicalcpu_max"
-        "hw.ncpu"
-        "hw.nperflevels" ;; <rdar://problem/76782530>
-        "hw.pagesize" ;; <rdar://problem/76782530>
         "hw.machine"
         "hw.memsize"
         "hw.model"
-        "hw.ncpu"
-        "hw.nperflevels"
-        "hw.pagesize" ;; <rdar://problem/76782530>
         "hw.pagesize_compat"
-        "hw.physicalcpu"
         "hw.physicalcpu_max"
-        "hw.physmem" ;; <rdar://problem/76782530>
         "hw.product" ;; <rdar://problem/81334849>
-        "hw.vectorunit" ;; <rdar://problem/76782530>
-        "kern.bootargs"
-        "kern.hostname"
-        "kern.hv_vmm_present"
-        "kern.memorystatus_level"
         "kern.osproductversion"
-        "kern.osrelease"
         "kern.osvariant_status"
-        "kern.osversion"
         "kern.secure_kernel"
-        "kern.version"
-        "sysctl.name2oid"
-        "vm.footprint_suspend")
-    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/70973527>
-    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
-)
+        "vm.footprint_suspend"))
 
 (allow iokit-get-properties
     (iokit-property "AAPL,DisplayPipe")

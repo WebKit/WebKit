@@ -1,5 +1,17 @@
 2021-11-10  Per Arne Vollan <pvollan@apple.com>
 
+        [iOS][GPUP] Remove access to sysctl properties
+        https://bugs.webkit.org/show_bug.cgi?id=232821
+        <rdar://problem/85162088>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, remove access to unused sysctl properties in the GPU process' sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
+2021-11-10  Per Arne Vollan <pvollan@apple.com>
+
         [iOS][GPUP] Remove access to mach-register
         https://bugs.webkit.org/show_bug.cgi?id=232442
         <rdar://problem/84763289>
