@@ -1,3 +1,27 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Enable NSURLSession partitioning based on first-party domain at CFNetwork level
+        https://bugs.webkit.org/show_bug.cgi?id=230750
+        <rdar://problem/83159358>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (overrideAttributionContext): Deleted.
+        Stop disabling CFNetwork NSURLSession partitioning based on first-party domain on
+        macOS.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        (WebKit::NetworkSessionCocoa::hasIsolatedSession const):
+        (WebKit::NetworkSessionCocoa::clearIsolatedSessions):
+        (WebKit::NetworkSessionCocoa::invalidateAndCancelSessionSet):
+        Disable ITP session partitioning of certain prevalent domains on platforms where
+        CFNetwork already does full partitioning of all domains (now that it is enabled
+        on macOS 12+ and iOS15+).
+
 2021-11-09  Per Arne Vollan <pvollan@apple.com>
 
         [iOS][GPUP] Remove shared memory access

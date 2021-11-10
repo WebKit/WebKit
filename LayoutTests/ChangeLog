@@ -1,3 +1,17 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Enable NSURLSession partitioning based on first-party domain at CFNetwork level
+        https://bugs.webkit.org/show_bug.cgi?id=230750
+        <rdar://problem/83159358>
+
+        Reviewed by Alex Christensen.
+
+        Skip a few ITP session partitioning tests on newer OSes now that session partitioning
+        happens for all first-party domains at CFNetwork level on these OSes.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-09  Ben Nham  <nham@apple.com>
 
         Add support for PushSubscriptionChangeEvent

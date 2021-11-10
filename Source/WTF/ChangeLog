@@ -1,3 +1,17 @@
+2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Enable NSURLSession partitioning based on first-party domain at CFNetwork level
+        https://bugs.webkit.org/show_bug.cgi?id=230750
+        <rdar://problem/83159358>
+
+        Reviewed by Alex Christensen.
+
+        Add HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN) build time flag that is true
+        on newer Apple OSes where CFNetwork does NSURLSession partitioning based on first-party domain for
+        us.
+
+        * wtf/PlatformHave.h:
+
 2021-11-09  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on selection flipping by default.
