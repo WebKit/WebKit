@@ -949,8 +949,12 @@
         SYS_connect
         SYS_csops
         SYS_csops_audittoken
+        SYS_dup
+        SYS_dup2
         SYS_exit
         SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_fileport_makefd
         SYS_flock
         SYS_fsetattrlist
         SYS_fsetxattr
@@ -996,6 +1000,7 @@
         SYS_pathconf
         SYS_pread
         SYS_proc_info
+        SYS_proc_info_extended_id
         SYS_psynch_cvbroad
         SYS_psynch_cvclrprepost
         SYS_psynch_cvsignal

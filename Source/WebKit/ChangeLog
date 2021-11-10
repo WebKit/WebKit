@@ -1,5 +1,17 @@
 2021-11-09  Per Arne  <pvollan@apple.com>
 
+        [iOS][GPUP] Add syscalls to sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=232211
+        <rdar://problem/84584880>
+
+        Reviewed by Darin Adler.
+
+        Based on telemetry, add syscalls to the GPU process' sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
+2021-11-09  Per Arne  <pvollan@apple.com>
+
         [iOS][GPUP] Remove sandbox access to mach services
         https://bugs.webkit.org/show_bug.cgi?id=232209
         <rdar://problem/84584739>
