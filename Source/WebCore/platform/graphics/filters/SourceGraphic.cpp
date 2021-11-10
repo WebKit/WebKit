@@ -22,22 +22,13 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 Ref<SourceGraphic> SourceGraphic::create(Filter& filter)
 {
     return adoptRef(*new SourceGraphic(filter));
-}
-
-const AtomString& SourceGraphic::effectName()
-{
-    static MainThreadNeverDestroyed<const AtomString> s_effectName("SourceGraphic", AtomString::ConstructFromLiteral);
-    return s_effectName;
 }
 
 void SourceGraphic::determineAbsolutePaintRect()

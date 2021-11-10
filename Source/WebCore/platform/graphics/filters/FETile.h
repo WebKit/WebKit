@@ -33,10 +33,6 @@ public:
 private:
     FETile(Filter&);
 
-    const char* filterName() const final { return "FETile"; }
-
-    FilterEffectType filterEffectType() const override { return FilterEffectTypeTile; }
-
     void platformApplySoftware() override;
 
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
@@ -46,3 +42,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FETile)

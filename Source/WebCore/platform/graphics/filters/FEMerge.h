@@ -33,8 +33,6 @@ public:
 private:
     FEMerge(Filter&);
 
-    const char* filterName() const final { return "FEMerge"; }
-
     void platformApplySoftware() override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
@@ -42,3 +40,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEMerge)

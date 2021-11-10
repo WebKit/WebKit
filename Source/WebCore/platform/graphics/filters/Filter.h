@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,23 +22,17 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "FilterFunction.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class FilterEffect;
 
-class Filter : public RefCounted<Filter> {
+class Filter : public FilterFunction {
 public:
-    Filter(const AffineTransform& absoluteTransform, float filterScale = 1)
-        : m_absoluteTransform(absoluteTransform)
-        , m_filterScale(filterScale)
-    { }
-    virtual ~Filter() = default;
-
     void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
     ImageBuffer* sourceImage() { return m_sourceImage.get(); }
 
@@ -62,8 +57,16 @@ public:
     virtual FloatRect filterRegionInUserSpace() const = 0;
 
 protected:
-    explicit Filter(const FloatSize& filterResolution)
-        : m_filterResolution(filterResolution)
+    Filter(Filter::Type filterType, const AffineTransform& absoluteTransform, float filterScale = 1)
+        : FilterFunction(filterType)
+        , m_absoluteTransform(absoluteTransform)
+        , m_filterScale(filterScale)
+    {
+    }
+
+    Filter(Filter::Type filterType, const FloatSize& filterResolution)
+        : FilterFunction(filterType)
+        , m_filterResolution(filterResolution)
     {
     }
 

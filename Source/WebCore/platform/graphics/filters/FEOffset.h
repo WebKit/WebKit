@@ -39,8 +39,6 @@ public:
 private:
     FEOffset(Filter&, float dx, float dy);
 
-    const char* filterName() const final { return "FEOffset"; }
-
     void platformApplySoftware() override;
     
     void determineAbsolutePaintRect() override;
@@ -53,3 +51,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEOffset)

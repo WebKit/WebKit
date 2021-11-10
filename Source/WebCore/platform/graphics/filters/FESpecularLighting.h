@@ -28,7 +28,6 @@ namespace WebCore {
 class FESpecularLighting : public FELighting {
 public:
     static Ref<FESpecularLighting> create(Filter&, const Color&, float, float, float, float, float, Ref<LightSource>&&);
-    virtual ~FESpecularLighting();
 
     float specularConstant() const { return m_specularConstant; }
     bool setSpecularConstant(float);
@@ -44,3 +43,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FESpecularLighting)

@@ -57,4 +57,5 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGFilter)
     static bool isType(const WebCore::Filter& filter) { return filter.isSVGFilter(); }
+    static bool isType(const WebCore::FilterFunction& function) { return function.isSVGFilter(); }
 SPECIALIZE_TYPE_TRAITS_END()

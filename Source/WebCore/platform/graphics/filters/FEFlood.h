@@ -47,8 +47,6 @@ public:
 private:
     FEFlood(Filter&, const Color&, float);
 
-    const char* filterName() const final { return "FEFlood"; }
-
     void platformApplySoftware() override;
 
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
@@ -61,3 +59,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEFlood)

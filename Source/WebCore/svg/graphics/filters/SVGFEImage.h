@@ -24,7 +24,6 @@
 #pragma once
 
 #include "FilterEffect.h"
-#include "RenderingResourceIdentifier.h"
 #include "SVGPreserveAspectRatioValue.h"
 
 namespace WebCore {
@@ -34,10 +33,7 @@ class ImageBuffer;
 
 class FEImage final : public FilterEffect {
 public:
-    using SourceImage = std::variant<
-        Ref<Image>,
-        Ref<ImageBuffer>
-    >;
+    using SourceImage = std::variant<Ref<Image>, Ref<ImageBuffer>>;
 
     static Ref<FEImage> create(Filter&, Ref<Image>&&, const SVGPreserveAspectRatioValue&);
     static Ref<FEImage> create(Filter&, SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
@@ -47,8 +43,6 @@ public:
 
 private:
     FEImage(Filter&, SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
-
-    const char* filterName() const final { return "FEImage"; }
 
     void platformApplySoftware() final;
     void determineAbsolutePaintRect() final;
@@ -60,3 +54,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEImage)

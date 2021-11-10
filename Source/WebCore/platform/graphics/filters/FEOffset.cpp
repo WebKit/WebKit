@@ -31,7 +31,7 @@
 namespace WebCore {
 
 FEOffset::FEOffset(Filter& filter, float dx, float dy)
-    : FilterEffect(filter, Type::Offset)
+    : FilterEffect(filter, FilterEffect::Type::FEOffset)
     , m_dx(dx)
     , m_dy(dy)
 {

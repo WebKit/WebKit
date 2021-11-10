@@ -60,7 +60,7 @@ Ref<CSSFilter> CSSFilter::create()
 }
 
 CSSFilter::CSSFilter()
-    : Filter(FloatSize { 1, 1 })
+    : Filter(Filter::Type::CSSFilter, FloatSize { 1, 1 })
     , m_sourceGraphic(SourceGraphic::create(*this))
 {
 }

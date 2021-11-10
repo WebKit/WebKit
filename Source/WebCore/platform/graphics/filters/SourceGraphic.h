@@ -18,11 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SourceGraphic_h
-#define SourceGraphic_h
+#pragma once
 
 #include "FilterEffect.h"
-#include "Filter.h"
 
 namespace WebCore {
 
@@ -30,29 +28,20 @@ class SourceGraphic : public FilterEffect {
 public:        
     static Ref<SourceGraphic> create(Filter&);
 
-    static const AtomString& effectName();
+    static AtomString effectName() { return FilterEffect::sourceGraphicName(); }
 
 private:
     SourceGraphic(Filter& filter)
-        : FilterEffect(filter, Type::SourceGraphic)
+        : FilterEffect(filter, FilterEffect::Type::SourceGraphic)
     {
         setOperatingColorSpace(DestinationColorSpace::SRGB());
     }
 
-    const char* filterName() const final { return "SourceGraphic"; }
-
     void determineAbsolutePaintRect() override;
     void platformApplySoftware() override;
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
-
-    FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
 };
 
 } //namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceGraphic)
-    static bool isType(const WebCore::FilterEffect& effect) { return effect.filterEffectClassType() == WebCore::FilterEffect::Type::SourceGraphic; }
-SPECIALIZE_TYPE_TRAITS_END()
-
-
-#endif // SourceGraphic_h
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(SourceGraphic)

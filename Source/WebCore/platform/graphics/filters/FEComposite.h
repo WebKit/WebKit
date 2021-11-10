@@ -64,8 +64,6 @@ protected:
 private:
     FEComposite(Filter&, const CompositeOperationType&, float, float, float, float);
 
-    const char* filterName() const final { return "FEComposite"; }
-
     void correctFilterResultIfNeeded() override;
     void determineAbsolutePaintRect() override;
 
@@ -90,3 +88,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEComposite)

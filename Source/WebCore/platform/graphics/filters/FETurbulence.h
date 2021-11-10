@@ -105,8 +105,6 @@ private:
 
     FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
 
-    const char* filterName() const final { return "FETurbulence"; }
-
     void platformApplySoftware() override;
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
@@ -129,3 +127,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FETurbulence)

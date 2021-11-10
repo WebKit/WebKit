@@ -30,7 +30,6 @@ class LightSource;
 class FEDiffuseLighting : public FELighting {
 public:
     static Ref<FEDiffuseLighting> create(Filter&, const Color&, float, float, float, float, Ref<LightSource>&&);
-    virtual ~FEDiffuseLighting();
 
     float diffuseConstant() const { return m_diffuseConstant; }
     bool setDiffuseConstant(float);
@@ -43,3 +42,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEDiffuseLighting)

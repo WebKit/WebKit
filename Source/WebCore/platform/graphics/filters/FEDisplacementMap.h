@@ -54,8 +54,6 @@ public:
 private:
     FEDisplacementMap(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    const char* filterName() const final { return "FEDisplacementMap"; }
-
     void platformApplySoftware() override;
 
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
@@ -72,3 +70,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEDisplacementMap)

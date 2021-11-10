@@ -72,11 +72,11 @@ static bool isNullOrLinearComponentTransferFunction(const FEComponentTransfer& e
 bool FilterEffectRendererCoreImage::supportsCoreImageRendering(FilterEffect& effect)
 {
     // FIXME: change return value to true once they are implemented
-    switch (effect.filterEffectClassType()) {
+    switch (effect.filterType()) {
     case FilterEffect::Type::SourceGraphic:
         return true;
             
-    case FilterEffect::Type::ColorMatrix: {
+    case FilterEffect::Type::FEColorMatrix: {
         switch (downcast<FEColorMatrix>(effect).type()) {
         case FECOLORMATRIX_TYPE_UNKNOWN:
         case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
@@ -88,26 +88,10 @@ bool FilterEffectRendererCoreImage::supportsCoreImageRendering(FilterEffect& eff
         }
     }
 
-    case FilterEffect::Type::ComponentTransfer:
+    case FilterEffect::Type::FEComponentTransfer:
         return isNullOrLinearComponentTransferFunction(downcast<FEComponentTransfer>(effect));
 
-    case FilterEffect::Type::Blend:
-    case FilterEffect::Type::Composite:
-    case FilterEffect::Type::ConvolveMatrix:
-    case FilterEffect::Type::DiffuseLighting:
-    case FilterEffect::Type::DisplacementMap:
-    case FilterEffect::Type::DropShadow:
-    case FilterEffect::Type::Flood:
-    case FilterEffect::Type::GaussianBlur:
-    case FilterEffect::Type::Image:
-    case FilterEffect::Type::Lighting:
-    case FilterEffect::Type::Merge:
-    case FilterEffect::Type::Morphology:
-    case FilterEffect::Type::Offset:
-    case FilterEffect::Type::SpecularLighting:
-    case FilterEffect::Type::Tile:
-    case FilterEffect::Type::Turbulence:
-    case FilterEffect::Type::SourceAlpha:
+    default:
         return false;
     }
     return false;
@@ -137,32 +121,14 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::connectCIFilters(FilterEffect&
     if (effect.absolutePaintRect().isEmpty() || ImageBuffer::sizeNeedsClamping(effect.absolutePaintRect().size()))
         return nullptr;
     
-    switch (effect.filterEffectClassType()) {
+    switch (effect.filterType()) {
     case FilterEffect::Type::SourceGraphic:
         return imageForSourceGraphic(downcast<SourceGraphic>(effect));
-    case FilterEffect::Type::ColorMatrix:
+    case FilterEffect::Type::FEColorMatrix:
         return imageForFEColorMatrix(downcast<FEColorMatrix>(effect), inputImages);
-    case FilterEffect::Type::ComponentTransfer:
+    case FilterEffect::Type::FEComponentTransfer:
         return imageForFEComponentTransfer(downcast<FEComponentTransfer>(effect), inputImages);
 
-    // FIXME: Implement those filters using CIFilter so that the function returns a valid CIImage
-    case FilterEffect::Type::Blend:
-    case FilterEffect::Type::Composite:
-    case FilterEffect::Type::ConvolveMatrix:
-    case FilterEffect::Type::DiffuseLighting:
-    case FilterEffect::Type::DisplacementMap:
-    case FilterEffect::Type::DropShadow:
-    case FilterEffect::Type::Flood:
-    case FilterEffect::Type::GaussianBlur:
-    case FilterEffect::Type::Image:
-    case FilterEffect::Type::Lighting:
-    case FilterEffect::Type::Merge:
-    case FilterEffect::Type::Morphology:
-    case FilterEffect::Type::Offset:
-    case FilterEffect::Type::SpecularLighting:
-    case FilterEffect::Type::Tile:
-    case FilterEffect::Type::Turbulence:
-    case FilterEffect::Type::SourceAlpha:
     default:
         return nullptr;
     }

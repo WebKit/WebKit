@@ -33,6 +33,7 @@
 #include "AudioStreamDescription.h"
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioFormat.h"
+#include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/FastMalloc.h>

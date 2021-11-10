@@ -45,13 +45,11 @@
 
 namespace WebCore {
 
-FilterEffect::FilterEffect(Filter& filter, Type type)
-    : m_filter(filter)
-    , m_filterEffectClassType(type)
+FilterEffect::FilterEffect(Filter& filter, FilterEffect::Type type)
+    : FilterFunction(type)
+    , m_filter(filter)
 {
 }
-
-FilterEffect::~FilterEffect() = default;
 
 void FilterEffect::determineAbsolutePaintRect()
 {
@@ -110,7 +108,7 @@ FloatRect FilterEffect::determineFilterPrimitiveSubregion()
         subregion = m_filter.filterRegionInUserSpace();
 
     // After calling determineFilterPrimitiveSubregion on the target effect, reset the subregion again for <feTile>.
-    if (filterEffectType() == FilterEffectTypeTile)
+    if (filterType() == FilterEffect::Type::FETile)
         subregion = m_filter.filterRegionInUserSpace();
 
     auto boundaries = effectBoundaries();
@@ -572,7 +570,7 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
 
 ImageBuffer* FilterEffect::createImageBufferResult()
 {
-    LOG(Filters, "FilterEffect %s %p createImageBufferResult %dx%d", filterName(), this, m_absolutePaintRect.size().width(), m_absolutePaintRect.size().height());
+    LOG(Filters, "FilterEffect %s %p createImageBufferResult %dx%d", filterName().characters8(), this, m_absolutePaintRect.size().width(), m_absolutePaintRect.size().height());
 
     // Only one result type is allowed.
     ASSERT(!hasResult());
@@ -586,7 +584,7 @@ ImageBuffer* FilterEffect::createImageBufferResult()
 
 std::optional<PixelBuffer>& FilterEffect::createUnmultipliedImageResult()
 {
-    LOG(Filters, "FilterEffect %s %p createUnmultipliedImageResult", filterName(), this);
+    LOG(Filters, "FilterEffect %s %p createUnmultipliedImageResult", filterName().characters8(), this);
 
     // Only one result type is allowed.
     ASSERT(!hasResult());
@@ -605,7 +603,7 @@ std::optional<PixelBuffer>& FilterEffect::createUnmultipliedImageResult()
 
 std::optional<PixelBuffer>& FilterEffect::createPremultipliedImageResult()
 {
-    LOG(Filters, "FilterEffect %s %p createPremultipliedImageResult", filterName(), this);
+    LOG(Filters, "FilterEffect %s %p createPremultipliedImageResult", filterName().characters8(), this);
 
     // Only one result type is allowed.
     ASSERT(!hasResult());

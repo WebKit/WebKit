@@ -130,8 +130,6 @@ protected:
 
     FELighting(Filter&, LightingType, const Color&, float, float, float, float, float, float, Ref<LightSource>&&, Type);
 
-    const char* filterName() const final { return "FELighting"; }
-
     bool drawLighting(Uint8ClampedArray&, int, int);
 
     void setPixel(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normalVector);

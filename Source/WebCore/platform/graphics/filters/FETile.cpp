@@ -32,7 +32,7 @@
 namespace WebCore {
 
 FETile::FETile(Filter& filter)
-    : FilterEffect(filter, Type::Tile)
+    : FilterEffect(filter, FilterEffect::Type::FETile)
 {
 }
 
@@ -58,7 +58,7 @@ void FETile::platformApplySoftware()
     FloatRect tileRect = in->maxEffectRect();
     FloatPoint inMaxEffectLocation = tileRect.location();
     FloatPoint maxEffectLocation = maxEffectRect().location();
-    if (in->filterEffectType() == FilterEffectTypeSourceInput) {
+    if (in->filterType() == FilterEffect::Type::SourceGraphic || in->filterType() == FilterEffect::Type::SourceAlpha) {
         Filter& filter = this->filter();
         tileRect = filter.filterRegion();
         tileRect.scale(filter.filterResolution().width(), filter.filterResolution().height());

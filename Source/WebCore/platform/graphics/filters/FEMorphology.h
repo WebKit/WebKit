@@ -48,8 +48,6 @@ public:
 private:
     FEMorphology(Filter&, MorphologyOperatorType, float radiusX, float radiusY);
 
-    const char* filterName() const final { return "FEMorphology"; }
-
     void platformApplySoftware() override;
 
     void determineAbsolutePaintRect() override;
@@ -86,3 +84,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEMorphology)

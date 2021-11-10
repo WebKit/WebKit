@@ -33,9 +33,8 @@
 
 namespace WebCore {
 
-FEComponentTransfer::FEComponentTransfer(Filter& filter, const ComponentTransferFunction& redFunction,
-    const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
-    : FilterEffect(filter, Type::ComponentTransfer)
+FEComponentTransfer::FEComponentTransfer(Filter& filter, const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
+    : FilterEffect(filter, FilterEffect::Type::FEComponentTransfer)
     , m_redFunction(redFunction)
     , m_greenFunction(greenFunction)
     , m_blueFunction(blueFunction)

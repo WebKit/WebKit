@@ -36,7 +36,7 @@
 namespace WebCore {
 
 FEColorMatrix::FEColorMatrix(Filter& filter, ColorMatrixType type, Vector<float>&& values)
-    : FilterEffect(filter, Type::ColorMatrix)
+    : FilterEffect(filter, FilterEffect::Type::FEColorMatrix)
     , m_type(type)
     , m_values(WTFMove(values))
 {

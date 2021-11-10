@@ -32,10 +32,8 @@
 
 namespace WebCore {
 
-FEConvolveMatrix::FEConvolveMatrix(Filter& filter, const IntSize& kernelSize,
-    float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
-    const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
-    : FilterEffect(filter, Type::ConvolveMatrix)
+FEConvolveMatrix::FEConvolveMatrix(Filter& filter, const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
+    : FilterEffect(filter, FilterEffect::Type::FEConvolveMatrix)
     , m_kernelSize(kernelSize)
     , m_divisor(divisor)
     , m_bias(bias)

@@ -25,7 +25,7 @@
 namespace WebCore {
 
 SVGFilter::SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)
-    : Filter(absoluteTransform)
+    : Filter(Filter::Type::CSSFilter, absoluteTransform)
     , m_absoluteSourceDrawingRegion(absoluteSourceDrawingRegion)
     , m_targetBoundingBox(targetBoundingBox)
     , m_filterRegion(filterRegion)

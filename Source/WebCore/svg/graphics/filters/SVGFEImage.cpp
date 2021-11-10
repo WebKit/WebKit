@@ -42,7 +42,7 @@ Ref<FEImage> FEImage::create(Filter& filter, SourceImage&& sourceImage, const Fl
 }
 
 FEImage::FEImage(Filter& filter, SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
-    : FilterEffect(filter, Type::Image)
+    : FilterEffect(filter, Type::FEImage)
     , m_sourceImage(WTFMove(sourceImage))
     , m_sourceImageRect(sourceImageRect)
     , m_preserveAspectRatio(preserveAspectRatio)

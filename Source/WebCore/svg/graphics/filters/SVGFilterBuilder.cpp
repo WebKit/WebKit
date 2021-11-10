@@ -21,6 +21,7 @@
 #include "SVGFilterBuilder.h"
 
 #include "FilterEffect.h"
+#include "ImageBuffer.h"
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
 #include <wtf/text/StringConcatenateNumbers.h>

@@ -28,7 +28,7 @@
 namespace WebCore {
 
 FEDiffuseLighting::FEDiffuseLighting(Filter& filter, const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource)
-    : FELighting(filter, DiffuseLighting, lightingColor, surfaceScale, diffuseConstant, 0, 0, kernelUnitLengthX, kernelUnitLengthY, WTFMove(lightSource), Type::DiffuseLighting)
+    : FELighting(filter, DiffuseLighting, lightingColor, surfaceScale, diffuseConstant, 0, 0, kernelUnitLengthX, kernelUnitLengthY, WTFMove(lightSource), FilterEffect::Type::FEDiffuseLighting)
 {
 }
 
@@ -36,8 +36,6 @@ Ref<FEDiffuseLighting> FEDiffuseLighting::create(Filter& filter, const Color& li
 {
     return adoptRef(*new FEDiffuseLighting(filter, lightingColor, surfaceScale, diffuseConstant, kernelUnitLengthX, kernelUnitLengthY, WTFMove(lightSource)));
 }
-
-FEDiffuseLighting::~FEDiffuseLighting() = default;
 
 bool FEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
 {
