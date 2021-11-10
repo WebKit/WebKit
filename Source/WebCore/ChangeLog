@@ -1,5 +1,90 @@
 2021-11-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r285389. rdar://problem/84380291
+
+    Integrator's note: excluded changes to Source/WebCore/accessibility/mac/WebAccessibilityObjectWrapperMac.mm.
+    
+    AX: WebKit1 PluginViewBase objects with an associated widget()->platformWidget() should be considered attachments
+    https://bugs.webkit.org/show_bug.cgi?id=232759
+    
+    Patch by Tyler Wilcock <tyler_w@apple.com> on 2021-11-06
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    In https://bugs.webkit.org/show_bug.cgi?id=229556 (AX: Make PDFs
+    loaded via <embed> accessible), we changed AccessibilityRenderObject::isAttachment
+    to return false if the underlying object represented a PluginViewBase
+    under the assumption that if a PluginViewBase existed, the object must
+    be a WebKit2 plugin. That assumption is wrong, because in certain
+    scenarios an object can be a WebKit1 PluginViewBase (e.g. attachments
+    inserted by WebKit1 webviews).
+    
+    This patch changes isAttachment to only return false if the
+    PluginViewBase doesn't also have an associated platformWidget, which
+    should be present in WebKit1 only.
+    
+    This patch also fixes a bug in the Mac -[WebAccessibilityObjectWrapper
+    subrole]. For objects with a role of group and no children, we
+    returned a subrole of AXEmptyGroup. However, we didn't check for the
+    presence of renderWidgetChildren that a group may have.
+    
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::AccessibilityRenderObject::isAttachment const):
+    Consider PluginViewBase objects with an associated platformWidget to
+    be attachments.
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper subrole]):
+    Don't return AXEmptyGroup subrole for objects with
+    renderWidgetChildren.
+    
+    LayoutTests:
+    
+    This patch changes the Mac WebAccessibilityObjectWrapper to not return
+    an AXEmptyGroup subrole for objects with renderWidgetChildren.
+    
+    * accessibility/mac/basic-embed-pdf-accessibility-expected.txt:
+    * accessibility/mac/basic-embed-pdf-accessibility.html:
+    Add expectation that the embed container doesn't have an AXEmptyGroup
+    subrole.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285389 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-06  Tyler Wilcock  <tyler_w@apple.com>
+
+            AX: WebKit1 PluginViewBase objects with an associated widget()->platformWidget() should be considered attachments
+            https://bugs.webkit.org/show_bug.cgi?id=232759
+
+            Reviewed by Chris Fleizach.
+
+            In https://bugs.webkit.org/show_bug.cgi?id=229556 (AX: Make PDFs
+            loaded via <embed> accessible), we changed AccessibilityRenderObject::isAttachment
+            to return false if the underlying object represented a PluginViewBase
+            under the assumption that if a PluginViewBase existed, the object must
+            be a WebKit2 plugin. That assumption is wrong, because in certain
+            scenarios an object can be a WebKit1 PluginViewBase (e.g. attachments
+            inserted by WebKit1 webviews).
+
+            This patch changes isAttachment to only return false if the
+            PluginViewBase doesn't also have an associated platformWidget, which
+            should be present in WebKit1 only.
+
+            This patch also fixes a bug in the Mac -[WebAccessibilityObjectWrapper
+            subrole]. For objects with a role of group and no children, we
+            returned a subrole of AXEmptyGroup. However, we didn't check for the
+            presence of renderWidgetChildren that a group may have.
+
+            * accessibility/AccessibilityRenderObject.cpp:
+            (WebCore::AccessibilityRenderObject::isAttachment const):
+            Consider PluginViewBase objects with an associated platformWidget to
+            be attachments.
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (-[WebAccessibilityObjectWrapper subrole]):
+            Don't return AXEmptyGroup subrole for objects with
+            renderWidgetChildren.
+
+2021-11-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r285318. rdar://problem/85168068
 
     [Cocoa] Migrate from CTFontCopyVariationAxes() to CTFontCopyVariationAxesInternal() if possible

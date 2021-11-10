@@ -51,6 +51,8 @@
 
             shouldBe("pdfEmbedElement.domIdentifier", "'pdfEmbed'");
             shouldBe("pdfEmbedElement.role", "'AXRole: AXGroup'");
+            // Verify the group that contains the PDF AX object isn't considered empty via an AXEmptyGroup subrole.
+            shouldBe("pdfEmbedElement.subrole", "'AXSubrole: '");
             shouldBe("pdfEmbedElement.childrenCount", "1");
 
             shouldBe("pdfAxObject.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");

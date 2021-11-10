@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS pdfEmbedElement.domIdentifier is 'pdfEmbed'
 PASS pdfEmbedElement.role is 'AXRole: AXGroup'
+PASS pdfEmbedElement.subrole is 'AXSubrole: '
 PASS pdfEmbedElement.childrenCount is 1
 PASS pdfAxObject.stringAttributeValue('AXSubrole') is 'AXPDFPluginSubrole'
 PASS pdfAxObject.childrenCount is 1
