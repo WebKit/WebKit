@@ -105,7 +105,7 @@ async function test() {
                 testError =  "Moved file back to dirHandle1 unexpectedly";
             }, (error) => {
                 moveFileError = error;
-                shouldBeEqualToString("moveFileError.toString()", "InvalidStateError: The object is in an invalid state.");
+                shouldBeEqualToString("moveFileError.toString()", "InvalidStateError: Some AccessHandle is active");
             });
 
             if (testError) {

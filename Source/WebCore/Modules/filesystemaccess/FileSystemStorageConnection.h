@@ -46,7 +46,6 @@ public:
     using ResolveCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
     using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&)>;
     using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
-    using IntegerCallback = CompletionHandler<void(ExceptionOr<uint64_t>&&)>;
     using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
     using GetHandleWithTypeCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemHandleIdentifier, bool>>&&)>;
 
@@ -58,9 +57,6 @@ public:
     virtual void removeEntry(FileSystemHandleIdentifier, const String& name, bool deleteRecursively, VoidCallback&&) = 0;
     virtual void resolve(FileSystemHandleIdentifier, FileSystemHandleIdentifier, ResolveCallback&&) = 0;
     virtual void createSyncAccessHandle(FileSystemHandleIdentifier, GetAccessHandleCallback&&) = 0;
-    virtual void getSize(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, IntegerCallback&&) = 0;
-    virtual void truncate(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, uint64_t size, VoidCallback&&) = 0;
-    virtual void flush(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) = 0;
     virtual void close(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) = 0;
     virtual void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) = 0;
     virtual void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleWithTypeCallback&&) = 0;

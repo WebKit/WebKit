@@ -1,3 +1,42 @@
+2021-11-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Perform FileSystemSyncAccessHandle operations in web process
+        https://bugs.webkit.org/show_bug.cgi?id=232146
+        <rdar://problem/84809428>
+
+        Reviewed by Youenn Fablet.
+
+        Network process no longer needs to hold open file handle for FileSystemSyncAccessHandle. Now it creates an open 
+        file handle, pass it to web process and close it.
+
+        * NetworkProcess/storage/FileSystemStorageError.h:
+        (WebKit::convertToException):
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+        (WebKit::FileSystemStorageHandle::close):
+        (WebKit::FileSystemStorageHandle::move):
+        (WebKit::FileSystemStorageHandle::~FileSystemStorageHandle): Deleted.
+        (WebKit::FileSystemStorageHandle::getSize): Deleted.
+        (WebKit::FileSystemStorageHandle::truncate): Deleted.
+        (WebKit::FileSystemStorageHandle::flush): Deleted.
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        (): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::createSyncAccessHandle):
+        (WebKit::NetworkStorageManager::getSizeForAccessHandle): Deleted.
+        (WebKit::NetworkStorageManager::truncateForAccessHandle): Deleted.
+        (WebKit::NetworkStorageManager::flushForAccessHandle): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * Platform/IPC/SharedFileHandle.cpp:
+        (IPC::SharedFileHandle::close):
+        * Platform/IPC/SharedFileHandle.h:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::getSize): Deleted.
+        (WebKit::WebFileSystemStorageConnection::truncate): Deleted.
+        (WebKit::WebFileSystemStorageConnection::flush): Deleted.
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+
 2021-11-09  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Enable NSURLSession partitioning based on first-party domain at CFNetwork level

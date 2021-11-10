@@ -63,12 +63,6 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
     }
 }
 
-FileSystemStorageHandle::~FileSystemStorageHandle()
-{
-    if (m_handle != FileSystem::invalidPlatformFileHandle)
-        FileSystem::closeFile(m_handle);
-}
-
 void FileSystemStorageHandle::close()
 {
     if (!m_manager)
@@ -172,13 +166,13 @@ Expected<FileSystemStorageHandle::AccessHandleInfo, FileSystemStorageError> File
     if (!acquired)
         return makeUnexpected(FileSystemStorageError::InvalidState);
 
-    m_handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::ReadWrite);
-    if (m_handle == FileSystem::invalidPlatformFileHandle)
+    auto handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::ReadWrite);
+    if (handle == FileSystem::invalidPlatformFileHandle)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    auto ipcHandle = IPC::SharedFileHandle::create(m_handle);
+    auto ipcHandle = IPC::SharedFileHandle::create(handle);
     if (!ipcHandle) {
-        FileSystem::closeFile(m_handle);
+        FileSystem::closeFile(handle);
         return makeUnexpected(FileSystemStorageError::BackendNotSupported);
     }
 
@@ -187,60 +181,10 @@ Expected<FileSystemStorageHandle::AccessHandleInfo, FileSystemStorageError> File
     return std::pair { *m_activeSyncAccessHandle, WTFMove(*ipcHandle) };
 }
 
-Expected<uint64_t, FileSystemStorageError> FileSystemStorageHandle::getSize(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
-{
-    if (!m_manager)
-        return makeUnexpected(FileSystemStorageError::Unknown);
-
-    if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
-        return makeUnexpected(FileSystemStorageError::Unknown);
-
-    auto size = FileSystem::fileSize(m_path);
-    if (!size)
-        return makeUnexpected(FileSystemStorageError::Unknown);
-
-    return size.value();
-}
-
-std::optional<FileSystemStorageError> FileSystemStorageHandle::truncate(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t size)
-{
-    if (!m_manager)
-        return FileSystemStorageError::Unknown;
-
-    if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
-        return FileSystemStorageError::Unknown;
-
-    ASSERT(m_handle != FileSystem::invalidPlatformFileHandle);
-    auto result = FileSystem::truncateFile(m_handle, size);
-    if (!result)
-        return FileSystemStorageError::Unknown;
-
-    return std::nullopt;
-}
-
-std::optional<FileSystemStorageError> FileSystemStorageHandle::flush(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
-{
-    if (!m_manager)
-        return FileSystemStorageError::Unknown;
-
-    if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
-        return FileSystemStorageError::Unknown;
-
-    ASSERT(m_handle != FileSystem::invalidPlatformFileHandle);
-    auto result = FileSystem::flushFile(m_handle);
-    if (!result)
-        return FileSystemStorageError::Unknown;
-
-    return std::nullopt;
-}
-
 std::optional<FileSystemStorageError> FileSystemStorageHandle::close(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
 {
     if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
         return FileSystemStorageError::Unknown;
-
-    ASSERT(m_handle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(m_handle);
 
     if (!m_manager)
         return FileSystemStorageError::Unknown;
@@ -278,7 +222,7 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::move(WebCore::Fil
 
     // Do not move file if there is ongoing operation.
     if (m_activeSyncAccessHandle)
-        return FileSystemStorageError::InvalidState;
+        return FileSystemStorageError::AccessHandleActive;
 
     if (m_manager->getType(destinationIdentifier) != Type::Directory)
         return FileSystemStorageError::TypeMismatch;

@@ -88,6 +88,7 @@ public:
     using WeakValueType = EventTarget::WeakValueType;
     using EventTarget::weakPtrFactory;
     WorkerStorageConnection& storageConnection();
+    static void postFileSystemStorageTask(Function<void()>&&);
     WorkerFileSystemStorageConnection& getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&&);
     WorkerFileSystemStorageConnection* fileSystemStorageConnection();
     WorkerCacheStorageConnection& cacheStorageConnection();

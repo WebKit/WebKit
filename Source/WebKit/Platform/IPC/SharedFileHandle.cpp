@@ -28,6 +28,11 @@
 
 namespace IPC {
 
+void SharedFileHandle::close()
+{
+    FileSystem::closeFile(m_handle);
+}
+
 #if !PLATFORM(COCOA)
 
 std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::PlatformFileHandle)

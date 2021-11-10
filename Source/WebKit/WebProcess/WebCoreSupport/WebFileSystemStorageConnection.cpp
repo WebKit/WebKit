@@ -134,39 +134,6 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
     });
 }
 
-void WebFileSystemStorageConnection::getSize(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, IntegerCallback&& completionHandler)
-{
-    if (!m_connection)
-        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
-
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetSizeForAccessHandle(identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
-        if (!result)
-            return completionHandler(convertToException(result.error()));
-
-        completionHandler(result.value());
-    });
-}
-
-void WebFileSystemStorageConnection::truncate(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t size, VoidCallback&& completionHandler)
-{
-    if (!m_connection)
-        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
-
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::TruncateForAccessHandle(identifier, accessHandleIdentifier, size), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
-        completionHandler(convertToExceptionOr(error));
-    });
-}
-
-void WebFileSystemStorageConnection::flush(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, VoidCallback&& completionHandler)
-{
-    if (!m_connection)
-        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
-
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::FlushForAccessHandle(identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
-        completionHandler(convertToExceptionOr(error));
-    });
-}
-
 void WebFileSystemStorageConnection::close(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, VoidCallback&& completionHandler)
 {
     if (!m_connection)

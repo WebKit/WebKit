@@ -31,6 +31,7 @@
 namespace WebKit {
 
 enum class FileSystemStorageError : uint8_t {
+    AccessHandleActive,
     BackendNotSupported,
     FileNotFound,
     InvalidModification,
@@ -43,14 +44,16 @@ enum class FileSystemStorageError : uint8_t {
 inline WebCore::Exception convertToException(FileSystemStorageError error)
 {
     switch (error) {
+    case FileSystemStorageError::AccessHandleActive:
+        return WebCore::Exception { WebCore::InvalidStateError, "Some AccessHandle is active"_s };
     case FileSystemStorageError::BackendNotSupported:
-        return WebCore::Exception { WebCore::NotSupportedError, "Backend does not support this operation" };
+        return WebCore::Exception { WebCore::NotSupportedError, "Backend does not support this operation"_s };
     case FileSystemStorageError::FileNotFound:
         return WebCore::Exception { WebCore::NotFoundError };
     case FileSystemStorageError::InvalidModification:
         return WebCore::Exception { WebCore::InvalidModificationError };
     case FileSystemStorageError::InvalidName:
-        return WebCore::Exception { WebCore::UnknownError, "Name is invalid" };
+        return WebCore::Exception { WebCore::UnknownError, "Name is invalid"_s };
     case FileSystemStorageError::InvalidState:
         return WebCore::Exception { WebCore::InvalidStateError };
     case FileSystemStorageError::TypeMismatch:
@@ -77,6 +80,7 @@ namespace WTF {
 template<> struct EnumTraits<WebKit::FileSystemStorageError> {
     using values = EnumValues<
         WebKit::FileSystemStorageError,
+        WebKit::FileSystemStorageError::AccessHandleActive,
         WebKit::FileSystemStorageError::BackendNotSupported,
         WebKit::FileSystemStorageError::FileNotFound,
         WebKit::FileSystemStorageError::InvalidModification,

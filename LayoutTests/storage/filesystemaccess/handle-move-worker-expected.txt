@@ -18,7 +18,7 @@ PASS [Worker] moveFileError.toString() is "UnknownError: The operation failed fo
 PASS [Worker] moveFileError.toString() is "UnknownError: Name is invalid"
 PASS [Worker] moveFileError.toString() is "UnknownError: Name is invalid"
 [Worker] Test move with open access handle:
-PASS [Worker] moveFileError.toString() is "InvalidStateError: The object is in an invalid state."
+PASS [Worker] moveFileError.toString() is "InvalidStateError: Some AccessHandle is active"
 PASS successfullyParsed is true
 
 TEST COMPLETE

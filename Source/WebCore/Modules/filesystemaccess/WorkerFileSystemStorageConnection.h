@@ -49,7 +49,6 @@ public:
     void didResolve(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
     void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);
-    void completeIntegerCallback(CallbackIdentifier, ExceptionOr<uint64_t>&& result);
     void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
     void didGetHandleWithType(CallbackIdentifier, ExceptionOr<std::pair<FileSystemHandleIdentifier, bool>>&&);
 
@@ -68,9 +67,6 @@ private:
     void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleWithTypeCallback&&) final;
 
     void createSyncAccessHandle(FileSystemHandleIdentifier, FileSystemStorageConnection::GetAccessHandleCallback&&) final;
-    void getSize(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, FileSystemStorageConnection::IntegerCallback&&) final;
-    void truncate(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, uint64_t size, FileSystemStorageConnection::VoidCallback&&) final;
-    void flush(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, FileSystemStorageConnection::VoidCallback&&) final;
     void close(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, FileSystemStorageConnection::VoidCallback&&) final;
 
     WeakPtr<WorkerGlobalScope> m_scope;
@@ -80,7 +76,6 @@ private:
     HashMap<CallbackIdentifier, FileSystemStorageConnection::ResolveCallback> m_resolveCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetAccessHandleCallback> m_getAccessHandlCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::VoidCallback> m_voidCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::IntegerCallback> m_integerCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleNamesCallback> m_getHandleNamesCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleWithTypeCallback> m_getHandleWithTypeCallbacks;
 };

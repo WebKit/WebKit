@@ -44,7 +44,6 @@ class FileSystemStorageHandle : public CanMakeWeakPtr<FileSystemStorageHandle, W
 public:
     enum class Type : uint8_t { File, Directory, Any };
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
-    ~FileSystemStorageHandle();
 
     WebCore::FileSystemHandleIdentifier identifier() const { return m_identifier; }
     const String& path() const { return m_path; }
@@ -62,9 +61,6 @@ public:
 
     using AccessHandleInfo = std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>;
     Expected<AccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
-    Expected<uint64_t, FileSystemStorageError> getSize(WebCore::FileSystemSyncAccessHandleIdentifier);
-    std::optional<FileSystemStorageError> truncate(WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t size);
-    std::optional<FileSystemStorageError> flush(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<FileSystemStorageError> close(WebCore::FileSystemSyncAccessHandleIdentifier);
 
 private:
@@ -76,7 +72,6 @@ private:
     String m_path;
     String m_name;
     std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> m_activeSyncAccessHandle;
-    FileSystem::PlatformFileHandle m_handle { FileSystem::invalidPlatformFileHandle };
 };
 
 } // namespace WebKit

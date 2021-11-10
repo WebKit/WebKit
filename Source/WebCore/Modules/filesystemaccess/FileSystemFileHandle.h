@@ -41,9 +41,6 @@ public:
     void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);
 
     void createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&&);
-    void getSize(FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(ExceptionOr<uint64_t>&&)>&&);
-    void truncate(FileSystemSyncAccessHandleIdentifier, unsigned long long size, CompletionHandler<void(ExceptionOr<void>&&)>&&);
-    void flush(FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&);
     void close(FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&);
 
 private:

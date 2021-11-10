@@ -39,9 +39,9 @@ public:
 
     SharedFileHandle() = default;
     FileSystem::PlatformFileHandle handle() { return m_handle; }
+    void close();
 
     void encode(Encoder&) const;
-
     static std::optional<SharedFileHandle> decode(Decoder&);
     
 private:

@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
 #include "IDLTypes.h"
+#include <wtf/Deque.h>
 #include <wtf/FileSystem.h>
 #include <wtf/WeakPtr.h>
 
@@ -54,12 +55,16 @@ public:
     void didClose(ExceptionOr<void>&&);
     ExceptionOr<unsigned long long> read(BufferSource&&, FilesystemReadWriteOptions);
     ExceptionOr<unsigned long long> write(BufferSource&&, FilesystemReadWriteOptions);
+    using Result = std::variant<ExceptionOr<void>, ExceptionOr<uint64_t>>;
+    void completePromise(Result&&);
 
 private:
     FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     bool isClosingOrClosed() const;
     using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     void closeInternal(CloseCallback&&);
+    enum class CloseMode : bool { Async, Sync };
+    void closeBackend(CloseMode);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -67,10 +72,11 @@ private:
 
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
-    uint64_t m_pendingOperationCount { 0 };
     FileSystem::PlatformFileHandle m_file;
     std::optional<ExceptionOr<void>> m_closeResult;
     Vector<CloseCallback> m_closeCallbacks;
+    using Promise = std::variant<DOMPromiseDeferred<void>, DOMPromiseDeferred<IDLUnsignedLongLong>>;
+    Deque<Promise> m_pendingPromises;
 };
 
 } // namespace WebCore

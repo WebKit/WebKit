@@ -253,40 +253,12 @@ void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIden
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
-    completionHandler(handle->createSyncAccessHandle());
-}
+    auto result = handle->createSyncAccessHandle();
+    auto fileHandle = result ? result.value().second : IPC::SharedFileHandle();
+    completionHandler(WTFMove(result));
 
-void NetworkStorageManager::getSizeForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(Expected<uint64_t, FileSystemStorageError>)>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
-    if (!handle)
-        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
-
-    completionHandler(handle->getSize(accessHandleIdentifier));
-}
-
-void NetworkStorageManager::truncateForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t size, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
-    if (!handle)
-        return completionHandler(FileSystemStorageError::Unknown);
-
-    completionHandler(handle->truncate(accessHandleIdentifier, size));
-}
-
-void NetworkStorageManager::flushForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
-    if (!handle)
-        return completionHandler(FileSystemStorageError::Unknown);
-
-    completionHandler(handle->flush(accessHandleIdentifier));
+    // Close the file handle in network process.
+    fileHandle.close();
 }
 
 void NetworkStorageManager::closeAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)

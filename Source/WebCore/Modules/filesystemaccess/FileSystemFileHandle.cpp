@@ -75,30 +75,6 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
     });
 }
 
-void FileSystemFileHandle::getSize(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<uint64_t>&&)>&& completionHandler)
-{
-    if (isClosed())
-        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
-
-    connection().getSize(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
-}
-
-void FileSystemFileHandle::truncate(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, unsigned long long size, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
-{
-    if (isClosed())
-        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
-
-    connection().truncate(identifier(), accessHandleIdentifier, size, WTFMove(completionHandler));
-}
-
-void FileSystemFileHandle::flush(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
-{
-    if (isClosed())
-        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
-
-    connection().flush(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
-}
-
 void FileSystemFileHandle::close(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
     if (isClosed())
