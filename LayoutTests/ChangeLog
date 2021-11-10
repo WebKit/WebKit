@@ -1,3 +1,16 @@
+2021-11-10  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [Media] Make currentTime compliant with the spec when readyState is HAVE_NOTHING
+        https://bugs.webkit.org/show_bug.cgi?id=229605
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        New test that checks that changes in currentTime done while on readyState=HAVE_NOTHING
+        are recorded and trigger a seek as soon as readyState increases to HAVE_METADATA or above.
+
+        * media/video-seek-have-nothing-expected.txt: Added.
+        * media/video-seek-have-nothing.html: Added.
+
 2021-11-10  Tim Nguyen  <ntim@apple.com>
 
         Fix crash in GraphicsContextCG::endTransparencyLayer

@@ -1067,6 +1067,7 @@ private:
     unsigned m_droppedVideoFrames { 0 };
 #endif
 
+    MediaTime m_defaultPlaybackStartPosition = MediaTime::zeroTime();
     mutable MediaTime m_cachedTime;
     mutable MonotonicTime m_clockTimeAtLastCachedTimeUpdate;
     mutable MonotonicTime m_minimumClockTimeToUpdateCachedTime;

@@ -2505,6 +2505,15 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             scheduleEvent(eventNames().durationchangeEvent);
             scheduleResizeEvent();
             scheduleEvent(eventNames().loadedmetadataEvent);
+
+            if (m_defaultPlaybackStartPosition > MediaTime::zeroTime()) {
+                // We reset it before to cause currentMediaTime() to return the actual current time (not
+                // defaultPlaybackPosition) and avoid the seek code to think that the seek was already done.
+                MediaTime seekTarget = m_defaultPlaybackStartPosition;
+                m_defaultPlaybackStartPosition = MediaTime::zeroTime();
+                seekInternal(seekTarget);
+            }
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
             if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
                 enqueuePlaybackTargetAvailabilityChangedEvent();
@@ -3335,6 +3344,9 @@ MediaTime HTMLMediaElement::currentMediaTime() const
     if (!m_player)
         return MediaTime::zeroTime();
 
+    if (m_defaultPlaybackStartPosition != MediaTime::zeroTime())
+        return m_defaultPlaybackStartPosition;
+
     if (m_seeking) {
         ALWAYS_LOG(LOGIDENTIFIER, "seeking, returning", m_lastSeekTime);
         return m_lastSeekTime;
@@ -3407,6 +3419,12 @@ ExceptionOr<void> HTMLMediaElement::setCurrentTimeForBindings(double time)
 {
     if (m_mediaController)
         return Exception { InvalidStateError };
+
+    if (m_readyState == HAVE_NOTHING || !m_player) {
+        m_defaultPlaybackStartPosition = MediaTime::createWithDouble(time);
+        return { };
+    }
+
     seek(MediaTime::createWithDouble(time));
     return { };
 }
