@@ -97,7 +97,7 @@ class TextureMapperGCGLPlatformLayer;
 
 typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
-class WEBCORE_EXPORT GraphicsContextGLOpenGL : public GraphicsContextGL
+class WEBCORE_EXPORT GraphicsContextGLOpenGL final : public GraphicsContextGL
 {
 public:
     static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*);
@@ -542,20 +542,10 @@ public:
 #endif
 #endif
 
-#if USE(ANGLE)
-    constexpr static EGLNativeDisplayType defaultDisplay = EGL_DEFAULT_DISPLAY;
-#if PLATFORM(COCOA)
-    constexpr static EGLNativeDisplayType lowPowerDisplay = EGL_CAST(EGLNativeDisplayType, -1);
-    constexpr static EGLNativeDisplayType highPerformanceDisplay = EGL_CAST(EGLNativeDisplayType, -2);
-#endif
-#endif
-
-protected:
+private:
 #if PLATFORM(COCOA)
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
-#endif
-private:
-#if !PLATFORM(COCOA)
+#else
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*);
 #endif
 
@@ -805,7 +795,7 @@ private:
     void* m_displayBufferPbuffer { nullptr };
 #endif
 #if PLATFORM(MAC)
-    bool m_switchesGPUOnDisplayReconfiguration { false };
+    bool m_supportsPowerPreference { false };
     ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
 #endif
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
