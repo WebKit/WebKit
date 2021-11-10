@@ -125,6 +125,9 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScript() const { return m_allowsContentJavaScript; }
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_allowsContentJavaScript = allows; }
 
+    bool captivePortalModeEnabled() const;
+    void setCaptivePortalModeEnabled(std::optional<bool> captivePortalModeEnabled) { m_captivePortalModeEnabled = captivePortalModeEnabled; }
+
     WebCore::MouseEventPolicy mouseEventPolicy() const { return m_mouseEventPolicy; }
     void setMouseEventPolicy(WebCore::MouseEventPolicy policy) { m_mouseEventPolicy = policy; }
 
@@ -157,6 +160,7 @@ private:
     WebCore::AllowsContentJavaScript m_allowsContentJavaScript { WebCore::AllowsContentJavaScript::Yes };
     WebCore::MouseEventPolicy m_mouseEventPolicy { WebCore::MouseEventPolicy::Default };
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
+    std::optional<bool> m_captivePortalModeEnabled;
 };
 
 } // namespace API

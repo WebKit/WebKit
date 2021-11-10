@@ -134,8 +134,9 @@ public:
     };
 
     enum class ShouldLaunchProcess : bool { No, Yes };
+    enum class CaptivePortalMode : bool { Disabled, Enabled };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, CaptivePortalMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     static Ref<WebProcessProxy> createForServiceWorkers(WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
 
     ~WebProcessProxy();
@@ -427,9 +428,10 @@ public:
 #endif
 
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
+    CaptivePortalMode captivePortalMode() const { return m_captivePortalMode; }
 
 protected:
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, CaptivePortalMode);
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -440,16 +442,16 @@ protected:
     void processWillShutDown(IPC::Connection&) override;
     bool shouldSendPendingMessage(const PendingMessage&) final;
     
-    // ProcessLauncher::Client
-    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
-
 #if PLATFORM(COCOA)
     void cacheMediaMIMETypesInternal(const Vector<String>&);
 #endif
 
+    // ProcessLauncher::Client
+    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
     bool shouldConfigureJSCForTesting() const final;
     bool isJITEnabled() const final;
     bool shouldEnableSharedArrayBuffer() const final { return m_crossOriginMode == WebCore::CrossOriginMode::Isolated; }
+    bool shouldEnableCaptivePortalMode() const final { return m_captivePortalMode == CaptivePortalMode::Enabled; }
 
     void validateFreezerStatus();
 
@@ -622,6 +624,7 @@ private:
 
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
+    CaptivePortalMode m_captivePortalMode { CaptivePortalMode::Disabled };
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_hasIssuedAttachmentElementRelatedSandboxExtensions { false };

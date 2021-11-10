@@ -26,6 +26,7 @@
 #include "config.h"
 #include "APIWebsitePolicies.h"
 
+#include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
@@ -72,6 +73,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
     policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
+    policies->setCaptivePortalModeEnabled(m_captivePortalModeEnabled);
     policies->setMouseEventPolicy(m_mouseEventPolicy);
     return policies;
 }
@@ -121,6 +123,11 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_mouseEventPolicy,
         m_idempotentModeAutosizingOnlyHonorsPercentages
     };
+}
+
+bool WebsitePolicies::captivePortalModeEnabled() const
+{
+    return m_captivePortalModeEnabled ? *m_captivePortalModeEnabled : WebKit::captivePortalModeEnabledBySystem();
 }
 
 }

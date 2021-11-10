@@ -71,4 +71,9 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 */
 @property (nonatomic) BOOL allowsContentJavaScript WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+/*! @abstract A boolean indicating whether Captive Portal mode is enabled.
+ @discussion The default value is NO on macOS. On iOS, the default value depends on the system setting.
+ */
+@property (nonatomic) BOOL captivePortalModeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end

@@ -861,7 +861,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     if (relatedPage && !relatedPage->isClosed())
         m_process = relatedPage->ensureRunningProcess();
     else
-        m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), this, registrableDomain);
+        m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), registrableDomain, shouldEnableCaptivePortalMode() ? WebProcessProxy::CaptivePortalMode::Enabled : WebProcessProxy::CaptivePortalMode::Disabled);
     m_hasRunningProcess = true;
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::Yes);
@@ -3436,7 +3436,8 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         }
     }
 
-    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, frameInfo, WTFMove(websiteDataStore), [this, protectedThis = Ref { *this }, policyAction, navigation = Ref { *navigation }, navigationAction = WTFMove(navigationAction), sourceProcess = sourceProcess.copyRef(),
+    auto captivePortalMode = (policies ? policies->captivePortalModeEnabled() : shouldEnableCaptivePortalMode()) ? WebProcessProxy::CaptivePortalMode::Enabled : WebProcessProxy::CaptivePortalMode::Disabled;
+    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, captivePortalMode, frameInfo, WTFMove(websiteDataStore), [this, protectedThis = Ref { *this }, policyAction, navigation = Ref { *navigation }, navigationAction = WTFMove(navigationAction), sourceProcess = sourceProcess.copyRef(),
         policies = WTFMove(policies), sender = WTFMove(sender), processSwapRequestedByClient] (Ref<WebProcessProxy>&& processForNavigation, SuspendedPageProxy* destinationSuspendedPage, const String& reason) mutable {
         // If the navigation has been destroyed, then no need to proceed.
         if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
@@ -5639,9 +5640,9 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
 
     RefPtr<WebProcessProxy> processForNavigation;
     if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup)
-        processForNavigation = m_process->processPool().createNewWebProcess(&websiteDataStore(), WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
+        processForNavigation = m_process->processPool().createNewWebProcess(&websiteDataStore(), m_process->captivePortalMode(), WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
     else
-        processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
+        processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), responseDomain, m_process->captivePortalMode());
 
     continueNavigationInNewProcess(*navigation, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, nullptr, existingNetworkResourceLoadIdentifierToResume);
     completionHandler(true);
@@ -8322,6 +8323,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 void WebPageProxy::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
 {
+    launchInitialProcessIfNecessary();
     sendWithAsyncReply(Messages::WebProcess::IsJITEnabled(), WTFMove(completionHandler), 0);
 }
 
@@ -10868,6 +10870,11 @@ void WebPageProxy::requestScrollToRect(const FloatRect& targetRect, const FloatP
 void WebPageProxy::scrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
 {
     send(Messages::WebPage::ScrollToRect(targetRect, origin));
+}
+
+bool WebPageProxy::shouldEnableCaptivePortalMode() const
+{
+    return m_configuration->captivePortalModeEnabled();
 }
 
 #if PLATFORM(COCOA)

@@ -494,6 +494,8 @@ public:
 
     void addPreviouslyVisitedPath(const String&);
 
+    bool shouldEnableCaptivePortalMode() const;
+
 #if ENABLE(DATA_DETECTION)
     NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
     void detectDataInAllFrames(OptionSet<WebCore::DataDetectorType>, CompletionHandler<void(const DataDetectionResult&)>&&);

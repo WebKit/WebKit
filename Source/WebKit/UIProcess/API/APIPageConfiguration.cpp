@@ -197,6 +197,13 @@ void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLScheme
     m_urlSchemeHandlers.set(scheme, WTFMove(handler));
 }
 
+bool PageConfiguration::captivePortalModeEnabled() const
+{
+    if (m_defaultWebsitePolicies)
+        return m_defaultWebsitePolicies->captivePortalModeEnabled();
+    return captivePortalModeEnabledBySystem();
+}
+
 #if ENABLE(APPLICATION_MANIFEST)
 ApplicationManifest* PageConfiguration::applicationManifest() const
 {

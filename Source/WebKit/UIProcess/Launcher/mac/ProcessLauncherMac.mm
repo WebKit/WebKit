@@ -203,6 +203,8 @@ void ProcessLauncher::launchProcess()
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
         if (m_client->shouldEnableSharedArrayBuffer())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-shared-array-buffer", true);
+        if (m_client->shouldEnableCaptivePortalMode())
+            xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-captive-portal-mode", true);
     }
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");

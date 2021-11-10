@@ -1,3 +1,77 @@
+2021-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Add basic support for launching CaptivePortalMode WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=232737
+        <rdar://84473037>
+
+        Reviewed by Brent Fulgham.
+
+        Add new `WKWebpagePreferences.captivePortalModeEnabled` API to allow clients apps to opt in or
+        out of captive portal mode for each navigation (WKWebpagePreferences is passed with the navigation
+        policy decision). For setting the default state of this setting, the client can set
+        `WebWebViewConfiguration.defaultWebpagePreferences.captivePortalModeEnabled` (will impact all views
+        using this configuration).
+
+        Note that both this property can only be set by apps with the browser entitlement on iOS (no
+        restriction on macOS). On iOS, the default value of WKWebpagePreferences.captivePortalModeEnabled
+        depends on the corresponding system setting. For now, this is simulated by a NSUserDefault but it
+        will eventually come from somewhere else (TCC?).
+
+        Whenever transitioning in or out of captive portal mode, we process-swap on navigation policy
+        decision. Whenever captive portal mode is enabled, we turn off JIT, generational and concurrent GC
+        in the WebProcess, as soon as it launches.
+
+        Covered by new API tests.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::captivePortalModeEnabled const):
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        (API::WebsitePolicies::captivePortalModeEnabled const):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences setCaptivePortalModeEnabled:]):
+        (-[WKWebpagePreferences captivePortalModeEnabled]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::captivePortalModeEnabledBySystem):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (WebKit::ProcessLauncher::Client::shouldEnableCaptivePortalMode const):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::findReusableSuspendedPageProcess):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcess):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation):
+        (WebKit::WebPageProxy::isJITEnabled):
+        (WebKit::WebPageProxy::shouldEnableCaptivePortalMode const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::takeProcess):
+        * UIProcess/WebProcessCache.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::prewarmProcess):
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        (WebKit::captivePortalModeEnabledBySystem):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::create):
+        (WebKit::WebProcessProxy::createForServiceWorkers):
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::captivePortalMode const):
+
 2021-11-10  Per Arne Vollan <pvollan@apple.com>
 
         [iOS][GPUP] Remove sandbox read access to files

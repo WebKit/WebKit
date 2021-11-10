@@ -29,7 +29,6 @@
 #include "LegacyGlobalSettings.h"
 #include "Logging.h"
 #include "WebProcessPool.h"
-#include "WebProcessProxy.h"
 #include <wtf/RAMSize.h>
 #include <wtf/StdLibExtras.h>
 
@@ -148,13 +147,16 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     return true;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::CaptivePortalMode captivePortalMode)
 {
     auto it = m_processesPerRegistrableDomain.find(registrableDomain);
     if (it == m_processesPerRegistrableDomain.end())
         return nullptr;
 
     if (&it->value->process().websiteDataStore() != &dataStore)
+        return nullptr;
+
+    if (it->value->process().captivePortalMode() != captivePortalMode)
         return nullptr;
 
     auto process = it->value->takeProcess();

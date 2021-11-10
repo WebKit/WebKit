@@ -36,6 +36,10 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <wtf/cocoa/Entitlements.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
@@ -385,6 +389,20 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     case WebCore::AllowsContentJavaScript::No:
         return NO;
     }
+}
+
+- (void)setCaptivePortalModeEnabled:(BOOL)captivePortalModeEnabled
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!WTF::processHasEntitlement("com.apple.developer.web-browser"))
+        return;
+#endif
+    _websitePolicies->setCaptivePortalModeEnabled(!!captivePortalModeEnabled);
+}
+
+- (BOOL)captivePortalModeEnabled
+{
+    return _websitePolicies->captivePortalModeEnabled();
 }
 
 #if PLATFORM(IOS_FAMILY)

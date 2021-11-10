@@ -89,6 +89,13 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (initializerMessage) {
         if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
             JSC::Config::configureForTesting();
+        if (xpc_dictionary_get_bool(initializerMessage, "enable-captive-portal-mode")) {
+            JSC::ExecutableAllocator::setJITEnabled(false);
+            JSC::Options::initialize();
+            JSC::Options::AllowUnfinalizedAccessScope scope;
+            JSC::Options::useGenerationalGC() = false;
+            JSC::Options::useConcurrentGC() = false;
+        }
         if (xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
             JSC::ExecutableAllocator::setJITEnabled(false);
         if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {

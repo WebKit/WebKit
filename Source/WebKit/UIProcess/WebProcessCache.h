@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "WebProcessProxy.h"
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
@@ -35,7 +36,6 @@
 namespace WebKit {
 
 class WebProcessPool;
-class WebProcessProxy;
 class WebsiteDataStore;
 
 class WebProcessCache {
@@ -44,7 +44,7 @@ public:
     explicit WebProcessCache(WebProcessPool&);
 
     bool addProcessIfPossible(Ref<WebProcessProxy>&&);
-    RefPtr<WebProcessProxy> takeProcess(const WebCore::RegistrableDomain&, WebsiteDataStore&);
+    RefPtr<WebProcessProxy> takeProcess(const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::CaptivePortalMode);
 
     void updateCapacity(WebProcessPool&);
     unsigned capacity() const { return m_capacity; }

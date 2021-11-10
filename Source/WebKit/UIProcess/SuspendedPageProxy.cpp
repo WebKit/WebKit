@@ -34,7 +34,6 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
-#include "WebProcessProxy.h"
 #include <wtf/DebugUtilities.h>
 #include <wtf/HexNumber.h>
 #include <wtf/URL.h>
@@ -50,11 +49,11 @@ static HashSet<SuspendedPageProxy*>& allSuspendedPages()
     return map;
 }
 
-RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore)
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::CaptivePortalMode captivePortalMode)
 {
     for (auto* suspendedPage : allSuspendedPages()) {
         auto& process = suspendedPage->process();
-        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && &process.websiteDataStore() == &dataStore && process.crossOriginMode() != CrossOriginMode::Isolated)
+        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && &process.websiteDataStore() == &dataStore && process.crossOriginMode() != CrossOriginMode::Isolated && process.captivePortalMode() == captivePortalMode)
             return &process;
     }
     return nullptr;

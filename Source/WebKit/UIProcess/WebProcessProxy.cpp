@@ -164,9 +164,9 @@ void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const Secu
     }
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, CaptivePortalMode captivePortalMode, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, captivePortalMode));
     if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
         if (liveProcessesLRU().size() >= s_maxProcessCount) {
             for (auto& processPool : WebProcessPool::allProcessPools())
@@ -184,7 +184,7 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
 #if ENABLE(SERVICE_WORKER)
 Ref<WebProcessProxy> WebProcessProxy::createForServiceWorkers(WebProcessPool& processPool, RegistrableDomain&& registrableDomain, WebsiteDataStore& websiteDataStore)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared, CaptivePortalMode::Disabled));
     proxy->m_registrableDomain = WTFMove(registrableDomain);
     proxy->enableServiceWorkers(processPool.userContentControllerIdentifierForServiceWorkers());
     proxy->connect();
@@ -220,7 +220,7 @@ private:
 };
 #endif
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, CaptivePortalMode captivePortalMode)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_backgroundResponsivenessTimer(*this)
     , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
@@ -237,6 +237,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_userMediaCaptureManagerProxy(makeUnique<UserMediaCaptureManagerProxy>(makeUniqueRef<UIProxyForCapture>(*this)))
 #endif
     , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
+    , m_captivePortalMode(captivePortalMode)
     , m_crossOriginMode(crossOriginMode)
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
 {

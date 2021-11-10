@@ -961,6 +961,18 @@ int webProcessThroughputQOS()
 }
 
 #if PLATFORM(IOS_FAMILY)
+
+bool captivePortalModeEnabledBySystem()
+{
+    static std::optional<bool> cachedCaptivePortalModeEnabledGlobally;
+    // FIXME: We should invalidate the cached value when the NSUserDefault changes.
+    if (!cachedCaptivePortalModeEnabledGlobally) {
+        // FIXME: Using NSUserDefaults is a temporary workaround. This setting should be stored elsewhere (TCC?).
+        cachedCaptivePortalModeEnabledGlobally = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitCaptivePortalModeEnabled"];
+    }
+    return *cachedCaptivePortalModeEnabledGlobally;
+}
+
 void WebProcessPool::applicationIsAboutToSuspend()
 {
     WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "applicationIsAboutToSuspend: Terminating non-critical processes");
