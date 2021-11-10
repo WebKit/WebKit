@@ -729,6 +729,11 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
     BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(forwardedCapabilities, [NSDictionary class]);
 
     Client::SessionCapabilities sessionCapabilities;
+    if (NSNumber *value = forwardedCapabilities[WIRAcceptInsecureCertificatesKey]) {
+        if ([value isKindOfClass:[NSNumber class]])
+            sessionCapabilities.acceptInsecureCertificates = value.boolValue;
+    }
+
     if (NSNumber *value = forwardedCapabilities[WIRAllowInsecureMediaCaptureCapabilityKey]) {
         if ([value isKindOfClass:[NSNumber class]])
             sessionCapabilities.allowInsecureMediaCapture = value.boolValue;

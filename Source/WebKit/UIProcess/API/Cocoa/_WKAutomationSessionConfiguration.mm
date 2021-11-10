@@ -33,6 +33,7 @@
     if (!(self = [super init]))
         return nil;
 
+    _acceptInsecureCertificates = NO;
     _allowsInsecureMediaCapture = YES;
     _suppressesICECandidateFiltering = NO;
 
@@ -43,6 +44,7 @@
 {
     _WKAutomationSessionConfiguration *configuration = [(_WKAutomationSessionConfiguration *)[[self class] allocWithZone:zone] init];
 
+    configuration.acceptInsecureCertificates = self.acceptInsecureCertificates;
     configuration.allowsInsecureMediaCapture = self.allowsInsecureMediaCapture;
     configuration.suppressesICECandidateFiltering = self.suppressesICECandidateFiltering;
 

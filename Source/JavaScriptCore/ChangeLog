@@ -1,3 +1,45 @@
+2021-11-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285164. rdar://problem/85227922
+
+    WebDriver: [Cocoa] support `acceptInsecureCerts` capability
+    https://bugs.webkit.org/show_bug.cgi?id=231789
+    
+    Reviewed by BJ Burg.
+    
+    Add necessary plumbing to support the `acceptInsecureCerts` WebDriver capability.
+    
+    Source/JavaScriptCore:
+    
+    * inspector/remote/RemoteInspectorConstants.h:
+    * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+    (Inspector::RemoteInspector::receivedAutomationSessionRequestMessage):
+    
+    Source/WebKit:
+    
+    * UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.h:
+    * UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm:
+    (-[_WKAutomationSessionConfiguration init]):
+    (-[_WKAutomationSessionConfiguration copyWithZone:]):
+    * UIProcess/Cocoa/AutomationClient.mm:
+    (WebKit::AutomationClient::requestAutomationSession):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285164 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-02  Patrick Angle  <pangle@apple.com>
+
+            WebDriver: [Cocoa] support `acceptInsecureCerts` capability
+            https://bugs.webkit.org/show_bug.cgi?id=231789
+
+            Reviewed by BJ Burg.
+
+            Add necessary plumbing to support the `acceptInsecureCerts` WebDriver capability.
+
+            * inspector/remote/RemoteInspectorConstants.h:
+            * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+            (Inspector::RemoteInspector::receivedAutomationSessionRequestMessage):
+
 2021-10-31  Cameron McCormack  <heycam@apple.com>
 
         Update Web IDL links to new URL
