@@ -97,7 +97,7 @@ public:
     bool didMatchUncommonAttributeSelector() const { return m_didMatchUncommonAttributeSelector; }
 
 private:
-    void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
+    void addElementStyleProperties(const StyleProperties*, bool isCacheable = true, FromStyleAttribute = FromStyleAttribute::No);
 
     void matchUARules(const RuleSet&);
 

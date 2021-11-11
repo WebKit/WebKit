@@ -25,6 +25,7 @@
 #pragma once
 
 #include "PropertyAllowlist.h"
+#include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleProperties.h"
 #include "StyleScopeOrdinal.h"
@@ -32,11 +33,15 @@
 
 namespace WebCore::Style {
 
+enum class FromStyleAttribute : bool { No, Yes };
+
 struct MatchedProperties {
     RefPtr<const StyleProperties> properties;
-    uint16_t linkMatchType { SelectorChecker::MatchAll };
+    uint8_t linkMatchType { SelectorChecker::MatchAll };
     PropertyAllowlist allowlistType { PropertyAllowlist::None };
     ScopeOrdinal styleScopeOrdinal { ScopeOrdinal::Element };
+    FromStyleAttribute fromStyleAttribute { FromStyleAttribute::No };
+    CascadeLayerPriority cascadeLayerPriority { RuleSet::cascadeLayerPriorityForUnlayered };
 };
 
 struct MatchResult {
@@ -66,7 +71,9 @@ inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
     return a.properties == b.properties
         && a.linkMatchType == b.linkMatchType
         && a.allowlistType == b.allowlistType
-        && a.styleScopeOrdinal == b.styleScopeOrdinal;
+        && a.styleScopeOrdinal == b.styleScopeOrdinal
+        && a.fromStyleAttribute == b.fromStyleAttribute
+        && a.cascadeLayerPriority == b.cascadeLayerPriority;
 }
 
 inline bool operator!=(const MatchedProperties& a, const MatchedProperties& b)
@@ -76,7 +83,14 @@ inline bool operator!=(const MatchedProperties& a, const MatchedProperties& b)
 
 inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
 {
-    add(hasher, matchedProperties.properties.get(), matchedProperties.linkMatchType, matchedProperties.allowlistType, matchedProperties.styleScopeOrdinal);
+    add(hasher,
+        matchedProperties.properties.get(),
+        matchedProperties.linkMatchType,
+        matchedProperties.allowlistType,
+        matchedProperties.styleScopeOrdinal,
+        matchedProperties.fromStyleAttribute,
+        matchedProperties.cascadeLayerPriority
+    );
 }
 
 inline void add(Hasher& hasher, const MatchResult& matchResult)

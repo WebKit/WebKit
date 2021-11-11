@@ -60,12 +60,21 @@ bool isNameCodePoint(CharacterType c)
 
 bool isValueAllowedInMode(unsigned short, CSSParserMode);
 
-static inline bool isCSSWideKeyword(CSSValueID valueID)
+inline bool isCSSWideKeyword(CSSValueID valueID)
 {
-    return valueID == CSSValueInitial || valueID == CSSValueInherit || valueID == CSSValueUnset || valueID == CSSValueRevert;
+    switch (valueID) {
+    case CSSValueInitial:
+    case CSSValueInherit:
+    case CSSValueUnset:
+    case CSSValueRevert:
+    case CSSValueRevertLayer:
+        return true;
+    default:
+        return false;
+    };
 }
 
-static inline bool isValidCustomIdentifier(CSSValueID valueID)
+inline bool isValidCustomIdentifier(CSSValueID valueID)
 {
     // "default" is obsolete as a CSS-wide keyword but is still not allowed as a custom identifier.
     return !isCSSWideKeyword(valueID) && valueID != CSSValueDefault;
