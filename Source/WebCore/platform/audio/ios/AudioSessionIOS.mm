@@ -169,7 +169,7 @@ void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
 
 void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens)
 {
-#if !PLATFORM(MACCATALYST)
+#if HAVE(AUDIOSESSION_PROCESSASSERTION)
     auto session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (![session respondsToSelector:@selector(setAuditTokensForProcessAssertion:error:)])
         return;
@@ -184,6 +184,8 @@ void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens
     [session setAuditTokensForProcessAssertion:nsAuditTokens.get() error:&error];
     if (error)
         RELEASE_LOG_ERROR(Media, "Failed to set audit tokens for process assertion with error: %@", error.localizedDescription);
+#else
+    UNUSED_PARAM(auditTokens);
 #endif
 }
 
