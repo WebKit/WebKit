@@ -143,6 +143,13 @@ if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-nonnull)
     endif ()
 
+    # This triggers warnings in wtf/Packed.h, a header that is included in many places. It does not
+    # respect ignore warning pragmas and we cannot easily suppress it for all affected files.
+    # https://bugs.webkit.org/show_bug.cgi?id=226557
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overread)
+    endif ()
+
     # -Wexpansion-to-defined produces false positives with GCC but not Clang
     # https://bugs.webkit.org/show_bug.cgi?id=167643#c13
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")

@@ -1,3 +1,21 @@
+2021-11-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Warray-bounds, -Wstringop-truncation, -Wstringop-overread warnings in Packed.h
+        https://bugs.webkit.org/show_bug.cgi?id=226557
+        <rdar://problem/79103658>
+
+        Reviewed by Darin Adler.
+
+        Suppress -Wstringop-overread for all of WebKit when building with GCC 11 or newer. This is
+        an unfortunate way to deal with false positives that we ought to be able to silence in just
+        a few places, but when warnings do not respect pragmas we have few alternatives, and trying
+        to remove derived sources from the unified build in order to build them with special flags
+        is just not worth the effort.
+
+        This is part of a larger trend of oversensitive warnings from GCC 11.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2021-11-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Coding style for inner namespaces is should be simplified to not indented
