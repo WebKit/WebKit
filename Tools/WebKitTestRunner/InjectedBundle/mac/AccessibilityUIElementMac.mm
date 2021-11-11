@@ -578,8 +578,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
             || [attribute isEqualToString:@"AXRelativeFrame"])
             continue;
 
-        NSString *value = descriptionOfValue(attributeValue(attribute).get());
-        [values appendFormat:@"%@: %@\n", attribute, value];
+        RetainPtr<NSString> value = descriptionOfValue(attributeValue(attribute).get());
+        [values appendFormat:@"%@: %@\n", attribute, value.get()];
     }
 
     return [values createJSStringRef];
