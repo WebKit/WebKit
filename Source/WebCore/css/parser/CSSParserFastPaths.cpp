@@ -841,8 +841,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValuePre || valueID == CSSValuePreWrap || valueID == CSSValuePreLine || valueID == CSSValueNowrap || valueID == CSSValueBreakSpaces;
     case CSSPropertyWordBreak: // normal | break-all | keep-all | break-word (this is a custom extension)
         return valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueKeepAll || valueID == CSSValueBreakWord;
-    case CSSPropertyWebkitBorderFit:
-        return valueID == CSSValueBorder || valueID == CSSValueLines;
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord: // auto | -apple-partially-balanced
         return valueID == CSSValueAuto || valueID == CSSValueWebkitPartiallyBalanced;
@@ -964,7 +962,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyVisibility:
     case CSSPropertyAppearance:
     case CSSPropertyBackfaceVisibility:
-    case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBoxAlign:
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitBoxLines:

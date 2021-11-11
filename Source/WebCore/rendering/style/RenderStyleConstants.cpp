@@ -127,15 +127,6 @@ TextStream& operator<<(TextStream& ts, BorderCollapse collapse)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, BorderFit borderFit)
-{
-    switch (borderFit) {
-    case BorderFit::Border: ts << "border"; break;
-    case BorderFit::Lines: ts << "lines"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, BorderStyle borderStyle)
 {
     switch (borderStyle) {

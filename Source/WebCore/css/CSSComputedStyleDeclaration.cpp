@@ -3103,10 +3103,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (style.hyphenationLimitLines() < 0)
                 return CSSPrimitiveValue::createIdentifier(CSSValueNoLimit);
             return CSSPrimitiveValue::create(style.hyphenationLimitLines(), CSSUnitType::CSS_NUMBER);
-        case CSSPropertyWebkitBorderFit:
-            if (style.borderFit() == BorderFit::Border)
-                return cssValuePool.createIdentifierValue(CSSValueBorder);
-            return cssValuePool.createIdentifierValue(CSSValueLines);
         case CSSPropertyImageOrientation:
             if (style.imageOrientation() == ImageOrientation::FromImage)
                 return cssValuePool.createIdentifierValue(CSSValueFromImage);

@@ -1042,7 +1042,6 @@ static bool requiresPainting(const RenderStyle& style)
 static bool rareNonInheritedDataChangeRequiresRepaint(const StyleRareNonInheritedData& first, const StyleRareNonInheritedData& second, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
 {
     if (first.userDrag != second.userDrag
-        || first.borderFit != second.borderFit
         || first.objectFit != second.objectFit
         || first.objectPosition != second.objectPosition)
         return true;

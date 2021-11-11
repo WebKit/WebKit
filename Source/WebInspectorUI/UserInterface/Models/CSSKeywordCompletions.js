@@ -1006,9 +1006,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-border-end-width": [
         "medium", "thick", "thin", "calc()",
     ],
-    "-webkit-border-fit": [
-        "border", "lines",
-    ],
     "-webkit-border-start-width": [
         "medium", "thick", "thin", "calc()",
     ],

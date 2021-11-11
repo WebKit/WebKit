@@ -5103,13 +5103,6 @@
                 "comment": "Differs from background-size only in the interpretation of a single value: '-webkit-background-size: l;' is equivalent to 'background-size: l l;' whereas 'background-size: l;' is equivalent to 'background-size: l auto;'"
             }
         },
-        "-webkit-border-fit": {
-            "values": [
-                "border",
-                "lines"
-            ],
-            "status": "non-standard"
-        },
         "-webkit-border-horizontal-spacing": {
             "inherited": true,
             "codegen-properties": {

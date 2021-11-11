@@ -690,11 +690,6 @@ enum class QuoteType : uint8_t {
     NoCloseQuote
 };
 
-enum class BorderFit : uint8_t {
-    Border,
-    Lines
-};
-
 enum class AnimationFillMode : uint8_t {
     None,
     Forwards,
@@ -1258,7 +1253,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, AspectRatioType);
 WTF::TextStream& operator<<(WTF::TextStream&, AutoRepeatType);
 WTF::TextStream& operator<<(WTF::TextStream&, BackfaceVisibility);
 WTF::TextStream& operator<<(WTF::TextStream&, BorderCollapse);
-WTF::TextStream& operator<<(WTF::TextStream&, BorderFit);
 WTF::TextStream& operator<<(WTF::TextStream&, BorderStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, BoxAlignment);
 WTF::TextStream& operator<<(WTF::TextStream&, BoxDecorationBreak);

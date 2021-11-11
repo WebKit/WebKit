@@ -1,3 +1,13 @@
+2021-11-10  Tim Nguyen  <ntim@apple.com>
+
+        Remove non-standard -webkit-border-fit CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=229564
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-11-10  Antoine Quint  <graouts@webkit.org>
 
         The cssText property for a computed style should return an empty string

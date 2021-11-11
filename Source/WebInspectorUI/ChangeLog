@@ -1,3 +1,12 @@
+2021-11-10  Tim Nguyen  <ntim@apple.com>
+
+        Remove non-standard -webkit-border-fit CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=229564
+
+        Reviewed by Simon Fraser.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2021-11-10  Alexey Proskuryakov  <ap@apple.com>
 
         WebInspectorUI needs to support InstallAPI
