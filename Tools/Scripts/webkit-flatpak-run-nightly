@@ -29,7 +29,7 @@ import urllib.request
 from html.parser import HTMLParser
 
 REPO = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
-SDK_BRANCH = "0.3"
+SDK_BRANCH = "21.08"
 USER_DIR = os.path.expanduser("~/.cache/wk-nightly")
 
 def spinning_cursor():
@@ -58,12 +58,12 @@ def ensure_sdk(build_type):
     branch = SDK_BRANCH
     if not os.path.isdir(USER_DIR):
         flatpak("remote-add", "--user", "webkit-nightly", REPO)
-        flatpak("install", "--user", "-y", f"org.webkit.Platform//{branch}")
+        flatpak("install", "--user", "-y", "webkit-nightly", f"org.webkit.Platform//{branch}")
     else:
         flatpak("update", "--user", "-y")
     if (build_type == "Debug") and (flatpak("info", "org.webkit.Sdk.Debug", stdout=subprocess.DEVNULL) >= 1):
-        flatpak("install", "--user", "-y", f"org.webkit.Sdk//{branch}")
-        flatpak("install", "--user", "-y", f"org.webkit.Sdk.Debug//{branch}")
+        flatpak("install", "--user", "-y", "webkit-nightly", f"org.webkit.Sdk//{branch}")
+        flatpak("install", "--user", "-y", "webkit-nightly", f"org.webkit.Sdk.Debug//{branch}")
 
 def get_build_path(platform, build_type, revision_number):
     dirname = f"{platform}-{build_type}-r{revision_number}"
@@ -137,7 +137,7 @@ def run(path, build_type, args):
             "--talk-name=org.freedesktop.Flatpak",
             "--talk-name=org.gtk.vfs",
             "--talk-name=org.gtk.vfs.*",
-            f"--command={args[0]}", "org.webkit.Platform", *args[1:], env=env)
+            f"--command={args[0]}", f"org.webkit.Platform//{SDK_BRANCH}", *args[1:], env=env)
 
 def main(args):
     parser = argparse.ArgumentParser()
@@ -171,12 +171,42 @@ def main(args):
     if parsed.path:
         run(parsed.path, parsed.build_type, parsed.command)
 
+def read_lines(fd: int):
+    new_fd = os.dup(fd)
+    pos = os.lseek(fd, 0, os.SEEK_CUR)
+    try:
+        with os.fdopen(new_fd, 'r') as handle:
+            data = handle.read()
+            lines = data.split('\x00')
+            for line in lines:
+                yield line
+    except Exception as e:
+        print("Error reading bwrap arguments", file=sys.stderr)
+        print(e, file=sys.stderr)
+    finally:
+        os.lseek(fd, pos, os.SEEK_SET)
+
 def bwrap_main(args):
     bind_mounts = {
         "/run/shm": "/dev/shm",
     }
 
-    build_path = os.environ.get("WEBKIT_BUILD_DIR_BIND_MOUNT")
+    args_idx = args.index('--args')
+    arg_fd = int(args[args_idx + 1])
+    lines = read_lines(arg_fd)
+
+    environ = os.environ.copy()
+    while True:
+        try:
+            arg = next(lines)
+            if arg == '--setenv':
+                key = next(lines)
+                value = next(lines)
+                environ[key] = value
+        except StopIteration:
+            break
+
+    build_path = environ.get("WEBKIT_BUILD_DIR_BIND_MOUNT")
     if build_path:
         dest, src = build_path.split(":")
         bind_mounts[dest] = src
@@ -189,7 +219,7 @@ def bwrap_main(args):
 
 if __name__ == "__main__":
     ld_library_path = os.environ.get("LD_LIBRARY_PATH", "")
-    if ld_library_path.startswith("/app") or "WEBKIT_BUILD_DIR_BIND_MOUNT" in os.environ:
+    if '--args' in sys.argv:
         bwrap_main(sys.argv[1:])
     else:
         main(sys.argv[1:])
