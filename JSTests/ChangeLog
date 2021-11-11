@@ -1,3 +1,35 @@
+2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r283300. rdar://problem/85259264
+
+    DFG strength reduction on % operator should handle an INT_MIN divisor.
+    https://bugs.webkit.org/show_bug.cgi?id=230391
+    <rdar://problem/83229740>
+    
+    Reviewed by Robin Morisset.
+    
+    JSTests:
+    
+    * stress/dfg-strength-reduction-on-mod-should-handle-INT_MIN.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    * dfg/DFGStrengthReductionPhase.cpp:
+    (JSC::DFG::StrengthReductionPhase::handleNode):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283300 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-29  Mark Lam  <mark.lam@apple.com>
+
+            DFG strength reduction on % operator should handle an INT_MIN divisor.
+            https://bugs.webkit.org/show_bug.cgi?id=230391
+            <rdar://problem/83229740>
+
+            Reviewed by Robin Morisset.
+
+            * stress/dfg-strength-reduction-on-mod-should-handle-INT_MIN.js: Added.
+
 2021-10-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Don't branch around register allocation in DFG enumerator get by val
