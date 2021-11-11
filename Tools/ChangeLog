@@ -1,3 +1,21 @@
+2021-11-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (iOS 15, GPU Process): Fails to load texture map
+        https://bugs.webkit.org/show_bug.cgi?id=231471
+        <rdar://problem/84328146>
+
+        Reviewed by Tim Horton.
+
+        Add a test that tries to assert that GraphicsContext::drawImageBuffer() does not increase
+        memory footprint of the process. However, leave the test disabled as currently
+        it seems that the WTF::memoryFootprint() measurement does not see all the
+        memory releases the CG does.
+
+        * TestWebKitAPI/Tests/WebCore/ImageBufferTests.cpp:
+        (TestWebKitAPI::memoryFootprintChangedBy):
+        (TestWebKitAPI::imageBufferPixelIs):
+        (TestWebKitAPI::TEST):
+
 2021-11-11  Jer Noble  <jer.noble@apple.com>
 
         Infinite recursion under InjectedBundlePage::exitFullScreenForElement()

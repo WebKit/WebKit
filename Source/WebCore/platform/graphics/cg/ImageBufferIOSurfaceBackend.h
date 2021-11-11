@@ -58,6 +58,7 @@ public:
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 
+    void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
     void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
 
     std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;

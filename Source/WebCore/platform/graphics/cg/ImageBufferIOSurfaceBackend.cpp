@@ -175,6 +175,14 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
     return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface)));
 }
 
+void ImageBufferIOSurfaceBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    ImageBufferCGBackend::draw(destContext, destRect, srcRect, options);
+    // Accelerated to/from unaccelerated image buffers need complex caching. We trust that
+    // this is a one-off draw, and as such we clear the caches of the source image after each draw.
+    if (destContext.renderingMode() != context().renderingMode())
+        invalidateCachedNativeImage();
+}
 void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     prepareToDrawIntoContext(destContext);

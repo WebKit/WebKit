@@ -1,3 +1,20 @@
+2021-11-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (iOS 15, GPU Process): Fails to load texture map
+        https://bugs.webkit.org/show_bug.cgi?id=231471
+        <rdar://problem/84328146>
+
+        Reviewed by Tim Horton.
+
+        Add a test that sometimes jetsams on device.
+        Jetsam is not deterministic as it is only
+        triggerd during memory pressure.
+        macOS does not trigger jetsam due to platform
+        rules.
+
+        * fast/canvas/webgl/gl-teximage-imagebitmap-memory.html: Added.
+        * fast/canvas/webgl/resources/green-4000x4000.png: Added.
+
 2021-11-11  Alexey Shvayka  <ashvayka@apple.com>
 
         JSCallbackData should use lexical global object for errors and lifecycle

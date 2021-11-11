@@ -1,3 +1,22 @@
+2021-11-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (iOS 15, GPU Process): Fails to load texture map
+        https://bugs.webkit.org/show_bug.cgi?id=231471
+        <rdar://problem/84328146>
+
+        Reviewed by Tim Horton.
+
+        Use the normal "draw image buffer" call to draw the image buffer
+        to the shareable bitmap. Before, it was manually re-implementing this
+        API call via the lower level calls.
+        The drawImageBuffer call now fixes up the IOSurface -backed source
+        ImageBuffers to not keep referencing to the CGImage that provided
+        the data to the draw. Otherwise GPU process jetsams as the CGImage
+        inside IOSurface is counted against GPU process memory limit.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+
 2021-11-11  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         [RemoteInspector][Socket] Can't find the target since r277787

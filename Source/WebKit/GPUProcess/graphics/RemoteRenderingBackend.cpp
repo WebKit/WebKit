@@ -304,9 +304,6 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier);
         if (!imageBuffer)
             return;
-        auto image = imageBuffer->copyNativeImage(WebCore::BackingStoreCopy::DontCopyBackingStore);
-        if (!image)
-            return;
         auto backendSize = imageBuffer->backendSize();
         auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : imageBuffer->truncatedLogicalSize();
         auto bitmap = ShareableBitmap::createShareable(resultSize, { imageBuffer->colorSpace() });
@@ -315,7 +312,7 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return;
-        context->drawNativeImage(*image, resultSize, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { WebCore::CompositeOperator::Copy });
+        context->drawImageBuffer(*imageBuffer, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { WebCore::CompositeOperator::Copy });
         bitmap->createHandle(handle);
     }();
     completionHandler(WTFMove(handle));
