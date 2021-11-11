@@ -230,10 +230,19 @@ static inline void dumpResourceURL(uint64_t identifier, StringBuilder& stringBui
         stringBuilder.append("<unknown>");
 }
 
+static HashMap<WKBundlePageRef, InjectedBundlePage*>& bundlePageMap()
+{
+    static NeverDestroyed<HashMap<WKBundlePageRef, InjectedBundlePage*>> map;
+    return map.get();
+}
+
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
     , m_world(adoptWK(WKBundleScriptWorldCreateWorld()))
 {
+    ASSERT(!bundlePageMap().contains(page));
+    bundlePageMap().set(page, this);
+
     WKBundlePageLoaderClientV9 loaderClient = {
         { 9, this },
         didStartProvisionalLoadForFrame,
@@ -361,6 +370,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 InjectedBundlePage::~InjectedBundlePage()
 {
+    ASSERT(bundlePageMap().contains(m_page));
+    bundlePageMap().remove(m_page);
 }
 
 void InjectedBundlePage::stopLoading()
@@ -1643,28 +1654,65 @@ bool InjectedBundlePage::supportsFullScreen(WKBundlePageRef pageRef, WKFullScree
 
 void InjectedBundlePage::enterFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
 {
+    ASSERT(bundlePageMap().contains(pageRef));
+    if (auto* injectedBundlePage = bundlePageMap().get(pageRef))
+        injectedBundlePage->enterFullScreenForElement(elementRef);
+}
+
+void InjectedBundlePage::enterFullScreenForElement(WKBundleNodeHandleRef elementRef)
+{
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
         injectedBundle.outputText("enterFullScreenForElement()\n");
 
+    if (m_fullscreenState == EnteringFullscreen)
+        return;
+    m_fullscreenState = EnteringFullscreen;
+
     if (!injectedBundle.testRunner()->hasCustomFullScreenBehavior()) {
-        WKBundlePageWillEnterFullScreen(pageRef);
-        WKBundlePageDidEnterFullScreen(pageRef);
+        WKBundlePageWillEnterFullScreen(m_page);
+        if (m_fullscreenState != EnteringFullscreen)
+            return;
+
+        WKBundlePageDidEnterFullScreen(m_page);
+        if (m_fullscreenState != EnteringFullscreen)
+            return;
+
     } else
         injectedBundle.testRunner()->callEnterFullscreenForElementCallback();
+
+    m_fullscreenState = InFullscreen;
 }
 
 void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
+{
+    ASSERT(bundlePageMap().contains(pageRef));
+    if (auto* injectedBundlePage = bundlePageMap().get(pageRef))
+        injectedBundlePage->exitFullScreenForElement(elementRef);
+}
+
+void InjectedBundlePage::exitFullScreenForElement(WKBundleNodeHandleRef elementRef)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
         injectedBundle.outputText("exitFullScreenForElement()\n");
 
+    if (m_fullscreenState == ExitingFullscreen)
+        return;
+    m_fullscreenState = ExitingFullscreen;
+
     if (!injectedBundle.testRunner()->hasCustomFullScreenBehavior()) {
-        WKBundlePageWillExitFullScreen(pageRef);
-        WKBundlePageDidExitFullScreen(pageRef);
+        WKBundlePageWillExitFullScreen(m_page);
+        if (m_fullscreenState != ExitingFullscreen)
+            return;
+
+        WKBundlePageDidExitFullScreen(m_page);
+        if (m_fullscreenState != ExitingFullscreen)
+            return;
     } else
         injectedBundle.testRunner()->callExitFullscreenForElementCallback();
+
+    m_fullscreenState = NotInFullscreen;
 }
 
 void InjectedBundlePage::beganEnterFullScreen(WKBundlePageRef, WKRect, WKRect)

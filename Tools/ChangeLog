@@ -1,3 +1,31 @@
+2021-11-11  Jer Noble  <jer.noble@apple.com>
+
+        Infinite recursion under InjectedBundlePage::exitFullScreenForElement()
+        https://bugs.webkit.org/show_bug.cgi?id=232948
+        <rdar://80588375>
+
+        Reviewed by Eric Carlson.
+
+        When WebCore indicates an error in exiting fullscreen, WebKit will respond by attempting to
+        close any outstanding fullscreen sessions by calling WebFullScreenManager::close(). If this
+        occurs in the InjectedBundlePage client during a call into WKBundlePageWillExitFullScreen()
+        or WKBundlePageWillDidFullScreen(), this call will recurse into
+        InjectedBundlePage::exitFullScreenForElement(), and cause a stack overflow.
+
+        Track the current state of fullscreen on a per-InjectedBundlePage basis, and bail out if
+        the state has been modified due to recursion.
+
+        Add a HashMap to map WKBundlePageRef onto InjectedBundlePages. Use that map to find the
+        particular InjectedBundlePage being requested to enter fullscreen. Add an enumerated
+        set of Fullscreen states and a private ivar for tracking that state.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::~InjectedBundlePage):
+        (WTR::InjectedBundlePage::enterFullScreenForElement):
+        (WTR::InjectedBundlePage::exitFullScreenForElement):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2021-11-11  Chris Dumez  <cdumez@apple.com>
 
         Turn off various preferences when in captive portal mode
