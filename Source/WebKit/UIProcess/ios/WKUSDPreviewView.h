@@ -31,7 +31,7 @@
 #import <UIKit/UIKit.h>
 #import <pal/spi/ios/QuickLookSPI.h>
 
-@interface WKSystemPreviewView : WKApplicationStateTrackingView <WKWebViewContentProvider, QLPreviewItemDataProvider>
+@interface WKUSDPreviewView : WKApplicationStateTrackingView <WKWebViewContentProvider, QLPreviewItemDataProvider>
 
 @end
 

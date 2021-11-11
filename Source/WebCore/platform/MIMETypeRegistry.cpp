@@ -670,22 +670,22 @@ const String& defaultMIMEType()
     return defaultMIMEType;
 }
 
-constexpr ComparableLettersLiteral systemPreviewMIMETypeArray[] = {
+constexpr ComparableLettersLiteral usdMIMETypeArray[] = {
     "model/usd", // Unofficial, but supported because we documented this.
     "model/vnd.pixar.usd", // Unofficial, but supported because we documented this.
     "model/vnd.reality",
     "model/vnd.usdz+zip", // The official type: https://www.iana.org/assignments/media-types/model/vnd.usdz+zip
 };
 
-FixedVector<const char*> MIMETypeRegistry::systemPreviewMIMETypes()
+FixedVector<const char*> MIMETypeRegistry::usdMIMETypes()
 {
-    return makeFixedVector(systemPreviewMIMETypeArray);
+    return makeFixedVector(usdMIMETypeArray);
 }
 
-bool MIMETypeRegistry::isSystemPreviewMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isUSDMIMEType(const String& mimeType)
 {
-    static constexpr SortedArraySet systemPreviewMIMETypeSet { systemPreviewMIMETypeArray };
-    return systemPreviewMIMETypeSet.contains(mimeType);
+    static constexpr SortedArraySet usdMIMETypeSet { usdMIMETypeArray };
+    return usdMIMETypeSet.contains(mimeType);
 }
 
 // FIXME: Not great that CURL needs this concept; other platforms do not.

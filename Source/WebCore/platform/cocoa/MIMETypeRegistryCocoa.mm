@@ -103,9 +103,9 @@ Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& type)
 
 String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
 {
-    // System Previews accept some non-standard MIMETypes, so we can't rely on
+    // We accept some non-standard USD MIMETypes, so we can't rely on
     // the file type mappings.
-    if (isSystemPreviewMIMEType(type))
+    if (isUSDMIMEType(type))
         return "usdz"_s;
 
     return [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:(NSString *)type];

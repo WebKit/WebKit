@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKSystemPreviewView.h"
+#import "WKUSDPreviewView.h"
 
 #if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS)
 
@@ -37,27 +37,28 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/UTIUtilities.h>
-#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/ios/SystemPreviewSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
+#import <pal/ios/QuickLookSoftLink.h>
+
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
 
-static NSString *getUTIForSystemPreviewMIMEType(const String& mimeType)
+static NSString *getUTIForUSDMIMEType(const String& mimeType)
 {
-    if (!WebCore::MIMETypeRegistry::isSystemPreviewMIMEType(mimeType))
+    if (!WebCore::MIMETypeRegistry::isUSDMIMEType(mimeType))
         return nil;
 
     return WebCore::UTIFromMIMEType(mimeType);
 }
 
-@interface WKSystemPreviewView () <ASVThumbnailViewDelegate>
+@interface WKUSDPreviewView () <ASVThumbnailViewDelegate>
 @end
 
-@implementation WKSystemPreviewView {
+@implementation WKUSDPreviewView {
     RetainPtr<NSItemProvider> _itemProvider;
     RetainPtr<NSData> _data;
     RetainPtr<NSString> _suggestedFilename;
@@ -91,7 +92,7 @@ static NSString *getUTIForSystemPreviewMIMEType(const String& mimeType)
     _suggestedFilename = adoptNS([filename copy]);
     _data = adoptNS([data copy]);
 
-    NSString *contentType = getUTIForSystemPreviewMIMEType(_mimeType.get());
+    NSString *contentType = getUTIForUSDMIMEType(_mimeType.get());
 
     _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:contentType previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];

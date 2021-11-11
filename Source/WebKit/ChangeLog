@@ -1,3 +1,39 @@
+2021-11-11  Dean Jackson  <dino@apple.com>
+
+        WKSystemPreviewView should be called WKUSDPreviewView
+        https://bugs.webkit.org/show_bug.cgi?id=232961
+        <rdar://problem/85265415>
+
+        Reviewed by Sam Weinig.
+
+        WKSystemPreviewView is a uninformative name. WKUSDPreviewView is more accurate.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+        * UIProcess/SystemPreviewController.cpp:
+        (WebKit::SystemPreviewController::canPreview const):
+        * UIProcess/ios/WKUSDPreviewView.h: Renamed from Source/WebKit/UIProcess/ios/WKSystemPreviewView.h.
+        * UIProcess/ios/WKUSDPreviewView.mm: Renamed from Source/WebKit/UIProcess/ios/WKSystemPreviewView.mm.
+        (getUTIForSystemPreviewMIMEType):
+        (-[WKUSDPreviewView web_initWithFrame:webView:mimeType:]):
+        (-[WKUSDPreviewView web_setContentProviderData:suggestedFilename:]):
+        (-[WKUSDPreviewView _layoutThumbnailView]):
+        (-[WKUSDPreviewView thumbnailView:wantsToPresentPreviewController:forItem:]):
+        (-[WKUSDPreviewView web_contentView]):
+        (+[WKUSDPreviewView web_requiresCustomSnapshotting]):
+        (-[WKUSDPreviewView web_setMinimumSize:]):
+        (-[WKUSDPreviewView web_setOverlaidAccessoryViewsInset:]):
+        (-[WKUSDPreviewView web_computedContentInsetDidChange]):
+        (-[WKUSDPreviewView web_setFixedOverlayView:]):
+        (-[WKUSDPreviewView web_didSameDocumentNavigation:]):
+        (-[WKUSDPreviewView web_isBackground]):
+        (-[WKUSDPreviewView web_countStringMatches:options:maxCount:]):
+        (-[WKUSDPreviewView web_findString:options:maxCount:]):
+        (-[WKUSDPreviewView web_hideFindUI]):
+        (-[WKUSDPreviewView provideDataForItem:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-11-11  Chris Dumez  <cdumez@apple.com>
 
         Turn off various preferences when in captive portal mode

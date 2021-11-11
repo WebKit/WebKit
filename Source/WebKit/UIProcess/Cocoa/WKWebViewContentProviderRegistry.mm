@@ -29,7 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WKPDFView.h"
-#import "WKSystemPreviewView.h"
+#import "WKUSDPreviewView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -56,8 +56,8 @@
 
 #if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS)
     if (configuration._systemPreviewEnabled) {
-        for (auto& type : WebCore::MIMETypeRegistry::systemPreviewMIMETypes())
-            [self registerProvider:[WKSystemPreviewView class] forMIMEType:@(type)];
+        for (auto& type : WebCore::MIMETypeRegistry::usdMIMETypes())
+            [self registerProvider:[WKUSDPreviewView class] forMIMEType:@(type)];
     }
 #endif
 
