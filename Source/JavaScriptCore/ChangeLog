@@ -1,3 +1,13 @@
+2021-11-11  Mark Lam  <mark.lam@apple.com>
+
+        Disable JIT runs of the ExecutionTimeLimitTest when !ENABLE(JIT).
+        https://bugs.webkit.org/show_bug.cgi?id=233003
+
+        Reviewed by Yusuke Suzuki.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+
 2021-11-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early November 2021 edition, bis
