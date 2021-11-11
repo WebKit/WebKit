@@ -43,7 +43,7 @@ ObjectInitializationScope::ObjectInitializationScope(VM& vm)
 
 ObjectInitializationScope::~ObjectInitializationScope()
 {
-    m_vm.heap.mutatorFence();
+    m_vm.mutatorFence();
     if (!m_object)
         return;
     verifyPropertiesAreInitialized(m_object);

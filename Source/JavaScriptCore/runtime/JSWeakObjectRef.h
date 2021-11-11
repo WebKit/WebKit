@@ -52,7 +52,7 @@ public:
         if (m_value && vm.currentWeakRefVersion() != m_lastAccessVersion) {
             m_lastAccessVersion = vm.currentWeakRefVersion();
             // Perform a GC barrier here so we rescan this object and keep the object alive if we wouldn't otherwise.
-            vm.heap.writeBarrier(this);
+            vm.writeBarrier(this);
         }
 
         return m_value.get();

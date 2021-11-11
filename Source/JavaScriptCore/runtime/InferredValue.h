@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -209,7 +209,7 @@ void InferredValue<JSCellType>::InferredValueWatchpointSet::notifyWriteSlow(VM& 
     switch (state()) {
     case ClearWatchpoint:
         m_value = value;
-        vm.heap.writeBarrier(owner, value);
+        vm.writeBarrier(owner, value);
         startWatching();
         return;
 
@@ -241,7 +241,7 @@ void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellTyp
     case ClearWatchpoint:
         ASSERT(decodeState(m_data) != IsInvalidated);
         m_data = (bitwise_cast<uintptr_t>(value) & ValueMask) | encodeState(IsWatched);
-        vm.heap.writeBarrier(owner, value);
+        vm.writeBarrier(owner, value);
         return;
 
     case IsWatched:

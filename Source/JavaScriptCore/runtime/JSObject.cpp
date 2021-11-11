@@ -987,7 +987,7 @@ bool JSObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned p
         butterfly->contiguous().at(thisObject, propertyName).setWithoutWriteBarrier(value);
         if (propertyName >= butterfly->publicLength())
             butterfly->setPublicLength(propertyName + 1);
-        vm.heap.writeBarrier(thisObject, value);
+        vm.writeBarrier(thisObject, value);
         return true;
     }
         

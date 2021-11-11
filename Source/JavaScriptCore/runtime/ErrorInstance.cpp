@@ -129,7 +129,7 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
         Locker locker { cellLock() };
         m_stackTrace = WTFMove(stackTrace);
     }
-    vm.heap.writeBarrier(this);
+    vm.writeBarrier(this);
 
     String messageWithSource = message;
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {

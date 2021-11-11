@@ -208,7 +208,7 @@ void JSFinalizationRegistry::registerTarget(VM& vm, JSObject* target, JSValue ho
         auto result = m_liveRegistrations.add(jsSecureCast<JSObject*>(vm, token), LiveRegistrations());
         result.iterator->value.append(WTFMove(registration));
     }
-    vm.heap.writeBarrier(this);
+    vm.writeBarrier(this);
 }
 
 bool JSFinalizationRegistry::unregister(VM&, JSObject* token)

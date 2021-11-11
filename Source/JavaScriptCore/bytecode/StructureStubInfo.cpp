@@ -50,7 +50,7 @@ void StructureStubInfo::initGetByIdSelf(const ConcurrentJSLockerBase& locker, Co
     setCacheType(locker, CacheType::GetByIdSelf);
     m_identifier = identifier;
     m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
-    codeBlock->vm().heap.writeBarrier(codeBlock);
+    codeBlock->vm().writeBarrier(codeBlock);
     byIdSelfOffset = offset;
 }
 
@@ -72,7 +72,7 @@ void StructureStubInfo::initPutByIdReplace(const ConcurrentJSLockerBase& locker,
     setCacheType(locker, CacheType::PutByIdReplace);
     m_identifier = identifier;
     m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
-    codeBlock->vm().heap.writeBarrier(codeBlock);
+    codeBlock->vm().writeBarrier(codeBlock);
     byIdSelfOffset = offset;
 }
 
@@ -82,7 +82,7 @@ void StructureStubInfo::initInByIdSelf(const ConcurrentJSLockerBase& locker, Cod
     setCacheType(locker, CacheType::InByIdSelf);
     m_identifier = identifier;
     m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
-    codeBlock->vm().heap.writeBarrier(codeBlock);
+    codeBlock->vm().writeBarrier(codeBlock);
     byIdSelfOffset = offset;
 }
 
@@ -227,7 +227,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         bufferingCountdown = Options::repatchBufferingCountdown();
         return result;
     })();
-    vm.heap.writeBarrier(codeBlock);
+    vm.writeBarrier(codeBlock);
     return result;
 }
 

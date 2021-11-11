@@ -63,7 +63,7 @@ public:
     {
         uintptr_t result = (m_regExpAndFlags & flagsMask) | bitwise_cast<uintptr_t>(regExp);
         m_regExpAndFlags = result;
-        vm.heap.writeBarrier(this, regExp);
+        vm.writeBarrier(this, regExp);
     }
 
     RegExp* regExp() const

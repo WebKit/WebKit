@@ -113,7 +113,7 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
             m_jsFunction = JSC::Weak<JSC::JSObject>(function);
             // When JSFunction is initialized, initializeJSFunction must ensure that m_wrapper should be initialized too.
             ASSERT(m_wrapper);
-            vm.heap.writeBarrier(m_wrapper.get(), function);
+            vm.writeBarrier(m_wrapper.get(), function);
             m_isInitialized = true;
         }
     }

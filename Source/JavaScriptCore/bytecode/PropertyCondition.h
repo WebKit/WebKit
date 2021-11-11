@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,7 @@ public:
         VM& vm, JSCell* owner, UniquedStringImpl* uid, JSObject* prototype)
     {
         if (owner)
-            vm.heap.writeBarrier(owner);
+            vm.writeBarrier(owner);
         return absenceWithoutBarrier(uid, prototype);
     }
     
@@ -103,7 +103,7 @@ public:
         VM& vm, JSCell* owner, UniquedStringImpl* uid, JSObject* prototype)
     {
         if (owner)
-            vm.heap.writeBarrier(owner);
+            vm.writeBarrier(owner);
         return absenceOfSetEffectWithoutBarrier(uid, prototype);
     }
     
@@ -120,7 +120,7 @@ public:
         VM& vm, JSCell* owner, UniquedStringImpl* uid, JSValue value)
     {
         if (value.isCell() && owner)
-            vm.heap.writeBarrier(owner);
+            vm.writeBarrier(owner);
         return equivalenceWithoutBarrier(uid, value);
     }
 
@@ -142,7 +142,7 @@ public:
     static PropertyCondition hasPrototype(VM& vm, JSCell* owner, JSObject* prototype)
     {
         if (owner)
-            vm.heap.writeBarrier(owner);
+            vm.writeBarrier(owner);
         return hasPrototypeWithoutBarrier(prototype);
     }
     

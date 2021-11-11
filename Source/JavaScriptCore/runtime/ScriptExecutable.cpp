@@ -210,7 +210,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     if (oldCodeBlock)
         oldCodeBlock->unlinkIncomingCalls();
 
-    vm.heap.writeBarrier(this);
+    vm.writeBarrier(this);
 }
 
 bool ScriptExecutable::hasClearableCode(VM& vm) const

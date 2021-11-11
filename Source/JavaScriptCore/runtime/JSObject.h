@@ -440,7 +440,7 @@ public:
             butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
             if (i >= butterfly->publicLength())
                 butterfly->setPublicLength(i + 1);
-            vm.heap.writeBarrier(this, v);
+            vm.writeBarrier(this, v);
             return true;
         }
         case ALL_WRITABLE_DOUBLE_INDEXING_TYPES: {
@@ -496,7 +496,7 @@ public:
             butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
             if (i >= butterfly->publicLength())
                 butterfly->setPublicLength(i + 1);
-            vm.heap.writeBarrier(this, v);
+            vm.writeBarrier(this, v);
             break;
         }
         case ALL_DOUBLE_INDEXING_TYPES: {

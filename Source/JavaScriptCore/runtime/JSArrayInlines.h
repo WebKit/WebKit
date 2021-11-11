@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -160,7 +160,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
         if (length < butterfly->vectorLength()) {
             butterfly->contiguous().at(this, length).setWithoutWriteBarrier(value);
             butterfly->setPublicLength(length + 1);
-            vm.heap.writeBarrier(this, value);
+            vm.writeBarrier(this, value);
             return;
         }
 

@@ -156,7 +156,7 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<InstructionStream> ins
         if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing()))
             m_codeBlock->initializeLoopHintExecutionCounter();
     }
-    m_vm.heap.writeBarrier(m_codeBlock.get());
+    m_vm.writeBarrier(m_codeBlock.get());
     m_vm.heap.reportExtraMemoryAllocated(m_codeBlock->m_instructions->sizeInBytes() + m_codeBlock->m_metadata->sizeInBytes());
 }
 

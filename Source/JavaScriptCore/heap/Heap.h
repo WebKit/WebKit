@@ -127,9 +127,7 @@ public:
     void writeBarrier(const JSCell* from);
     void writeBarrier(const JSCell* from, JSValue to);
     void writeBarrier(const JSCell* from, JSCell* to);
-    
-    void writeBarrierWithoutFence(const JSCell* from);
-    
+
     void mutatorFence();
     
     // Take this if you know that from->cellState() < barrierThreshold.

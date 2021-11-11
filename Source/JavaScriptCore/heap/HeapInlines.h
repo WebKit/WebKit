@@ -125,15 +125,6 @@ inline void Heap::writeBarrier(const JSCell* from)
         writeBarrierSlowPath(from);
 }
 
-inline void Heap::writeBarrierWithoutFence(const JSCell* from)
-{
-    ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
-    if (!from)
-        return;
-    if (UNLIKELY(isWithinThreshold(from->cellState(), blackThreshold)))
-        addToRememberedSet(from);
-}
-
 inline void Heap::mutatorFence()
 {
     if (isX86() || UNLIKELY(mutatorShouldBeFenced()))

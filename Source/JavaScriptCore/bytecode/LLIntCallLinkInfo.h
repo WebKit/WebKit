@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ public:
         if (isOnList())
             remove();
         m_calleeOrLastSeenCalleeWithLinkBit = bitwise_cast<uintptr_t>(callee);
-        vm.heap.writeBarrier(owner, callee);
+        vm.writeBarrier(owner, callee);
         m_machineCodeTarget = codePtr;
     }
 

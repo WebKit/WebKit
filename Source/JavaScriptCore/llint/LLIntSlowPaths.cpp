@@ -696,7 +696,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
                     metadata.m_structureID = structure->id();
                     metadata.m_offset = slot.cachedOffset();
                 }
-                vm.heap.writeBarrier(codeBlock);
+                vm.writeBarrier(codeBlock);
             }
         }
     }
@@ -771,7 +771,7 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
             metadata.setProtoLoadMode(structure, offset, slot.slotBase());
         }
     }
-    vm.heap.writeBarrier(codeBlock);
+    vm.writeBarrier(codeBlock);
 }
 
 static JSValue performLLIntGetByID(const Instruction* pc, CodeBlock* codeBlock, JSGlobalObject* globalObject, JSValue baseValue, const Identifier& ident, GetByIdModeMetadata& metadata)
@@ -826,7 +826,7 @@ static JSValue performLLIntGetByID(const Instruction* pc, CodeBlock* codeBlock, 
             if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
                 metadata.defaultMode.structureID = structure->id();
                 metadata.defaultMode.cachedOffset = slot.cachedOffset();
-                vm.heap.writeBarrier(codeBlock);
+                vm.writeBarrier(codeBlock);
             }
         } else if (UNLIKELY(metadata.hitCountForLLIntCaching && slot.isValue())) {
             ASSERT(slot.slotBase() != baseValue);
@@ -840,7 +840,7 @@ static JSValue performLLIntGetByID(const Instruction* pc, CodeBlock* codeBlock, 
             metadata.setArrayLengthMode();
             metadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
         }
-        vm.heap.writeBarrier(codeBlock);
+        vm.writeBarrier(codeBlock);
     }
 
     return result;
@@ -979,7 +979,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                                 ASSERT(chain);
                                 metadata.m_structureChain.set(vm, codeBlock, chain);
                             }
-                            vm.heap.writeBarrier(codeBlock);
+                            vm.writeBarrier(codeBlock);
                         }
                     }
                 }
@@ -997,7 +997,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     metadata.m_oldStructureID = newStructure->id();
                     metadata.m_offset = slot.cachedOffset();
                 }
-                vm.heap.writeBarrier(codeBlock);
+                vm.writeBarrier(codeBlock);
             }
         }
     }
@@ -1153,7 +1153,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
                     //  Update the cached private symbol
                     metadata.m_property.set(vm, codeBlock, subscript.asCell());
                 }
-                vm.heap.writeBarrier(codeBlock);
+                vm.writeBarrier(codeBlock);
             }
         }
     }
@@ -1297,7 +1297,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
                             metadata.m_offset = slot.cachedOffset();
                             metadata.m_newStructureID = newStructure->id();
                             metadata.m_property.set(vm, codeBlock, subscript.asCell());
-                            vm.heap.writeBarrier(codeBlock);
+                            vm.writeBarrier(codeBlock);
                         }
                     }
                 }
@@ -1316,7 +1316,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
                     metadata.m_offset = slot.cachedOffset();
                     metadata.m_property.set(vm, codeBlock, subscript.asCell());
                 }
-                vm.heap.writeBarrier(codeBlock);
+                vm.writeBarrier(codeBlock);
             }
         }
     }
@@ -1358,7 +1358,7 @@ LLINT_SLOW_PATH_DECL(slow_path_set_private_brand)
             metadata.m_newStructureID = newStructure->id();
             metadata.m_brand.set(vm, codeBlock, brand.asCell());
         }
-        vm.heap.writeBarrier(codeBlock);
+        vm.writeBarrier(codeBlock);
     }
 
     LLINT_END();    
@@ -1389,7 +1389,7 @@ LLINT_SLOW_PATH_DECL(slow_path_check_private_brand)
 
         metadata.m_structureID = structure->id();
         metadata.m_brand.set(vm, codeBlock, brand.asCell());
-        vm.heap.writeBarrier(codeBlock);
+        vm.writeBarrier(codeBlock);
     }
 
     LLINT_END();    
@@ -2551,7 +2551,7 @@ extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM* vm, Register* ne
 extern "C" void llint_write_barrier_slow(CallFrame* callFrame, JSCell* cell)
 {
     VM& vm = callFrame->codeBlock()->vm();
-    vm.heap.writeBarrier(cell);
+    vm.writeBarrier(cell);
 }
 
 extern "C" SlowPathReturnType llint_check_vm_entry_permission(VM* vm, ProtoCallFrame*)

@@ -67,7 +67,7 @@ JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* 
         m_reifiedLeftContext.clear();
         m_reifiedRightContext.clear();
         m_reified = true;
-        vm.heap.writeBarrier(owner);
+        vm.writeBarrier(owner);
     }
     return m_reifiedResult.get();
 }

@@ -62,7 +62,7 @@ void StructureChain::finishCreation(VM& vm, JSObject* head)
     for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current)) {
         Structure* structure = current->structure(vm);
         m_vector.get()[i++] = structure->id();
-        vm.heap.writeBarrier(this);
+        vm.writeBarrier(this);
     }
 }
 

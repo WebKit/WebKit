@@ -94,7 +94,7 @@ public:
     {
         ASSERT(value == value->global()->owner<JSWebAssemblyGlobal>());
         instance().linkGlobal(index, *value->global());
-        vm.heap.writeBarrier(this, value);
+        vm.writeBarrier(this, value);
     }
 
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }

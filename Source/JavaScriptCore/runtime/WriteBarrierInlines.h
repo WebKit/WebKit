@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,14 +51,14 @@ template <typename T, typename Traits>
 inline void WriteBarrierBase<T, Traits>::setEarlyValue(VM& vm, const JSCell* owner, T* value)
 {
     Traits::exchange(this->m_cell, value);
-    vm.heap.writeBarrier(owner, static_cast<JSCell*>(value));
+    vm.writeBarrier(owner, static_cast<JSCell*>(value));
 }
 
 inline void WriteBarrierBase<Unknown, RawValueTraits<Unknown>>::set(VM& vm, const JSCell* owner, JSValue value)
 {
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
     m_value = JSValue::encode(value);
-    vm.heap.writeBarrier(owner, value);
+    vm.writeBarrier(owner, value);
 }
 
 } // namespace JSC 

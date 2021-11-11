@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ template<typename U>
 AuxiliaryBarrier<T>::AuxiliaryBarrier(VM& vm, JSCell* owner, U&& value)
 {
     m_value = std::forward<U>(value);
-    vm.heap.writeBarrier(owner);
+    vm.writeBarrier(owner);
 }
 
 template<typename T>
@@ -44,7 +44,7 @@ template<typename U>
 void AuxiliaryBarrier<T>::set(VM& vm, JSCell* owner, U&& value)
 {
     m_value = std::forward<U>(value);
-    vm.heap.writeBarrier(owner);
+    vm.writeBarrier(owner);
 }
 
 } // namespace JSC

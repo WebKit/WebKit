@@ -277,7 +277,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks(VM& vm)
 
     WTF::storeStoreFence();
     m_isCached = false;
-    vm.heap.writeBarrier(this);
+    vm.writeBarrier(this);
 }
 
 UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareDataSlow()

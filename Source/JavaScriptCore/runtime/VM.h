@@ -1204,6 +1204,13 @@ public:
     uintptr_t* getLoopHintExecutionCounter(const Instruction*);
     void removeLoopHintExecutionCounter(const Instruction*);
 
+    ALWAYS_INLINE void writeBarrier(const JSCell* from) { heap.writeBarrier(from); }
+    ALWAYS_INLINE void writeBarrier(const JSCell* from, JSValue to) { heap.writeBarrier(from, to); }
+    ALWAYS_INLINE void writeBarrier(const JSCell* from, JSCell* to) { heap.writeBarrier(from, to); }
+    ALWAYS_INLINE void writeBarrierSlowPath(const JSCell* from) { heap.writeBarrierSlowPath(from); }
+
+    ALWAYS_INLINE void mutatorFence() { heap.mutatorFence(); }
+
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck* addressOfDoesGC() { return &m_doesGC; }
     void setDoesGCExpectation(bool expectDoesGC, unsigned nodeIndex, unsigned nodeOp) { m_doesGC.set(expectDoesGC, nodeIndex, nodeOp); }

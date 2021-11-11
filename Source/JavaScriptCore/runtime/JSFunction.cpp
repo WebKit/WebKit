@@ -143,7 +143,7 @@ FunctionRareData* JSFunction::allocateRareData(VM& vm)
     WTF::storeStoreFence();
 
     m_executableOrRareData = executableOrRareData;
-    vm.heap.writeBarrier(this, rareData);
+    vm.writeBarrier(this, rareData);
 
     return rareData;
 }
@@ -188,7 +188,7 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(JSGlobalObject* glob
     WTF::storeStoreFence();
 
     m_executableOrRareData = executableOrRareData;
-    vm.heap.writeBarrier(this, rareData);
+    vm.writeBarrier(this, rareData);
 
     return rareData;
 }

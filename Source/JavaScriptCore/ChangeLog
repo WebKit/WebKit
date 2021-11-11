@@ -1,5 +1,128 @@
 2021-11-11  Mark Lam  <mark.lam@apple.com>
 
+        Add VM::writeBarrier() and VM::mutatorFence().
+        https://bugs.webkit.org/show_bug.cgi?id=233019
+        rdar://85318693
+
+        Reviewed by Saam Barati.
+
+        These are ALWAYS_INLINE functions that will forward the call to the Heap versions.
+        Adding these allows us to make all the client code more terse, and also makes it
+        easier to redirect the underlying writeBarrier implementation later for global GC
+        work.  Additionally, this will help make the global GC patch less of a mega patch
+        and easier to review later.
+
+        Also remove unused Heap::writeBarrierWithoutFence().
+
+        This is a refactoring patch.  There is no behavior change.
+
+        * bytecode/LLIntCallLinkInfo.h:
+        (JSC::LLIntCallLinkInfo::link):
+        * bytecode/ObjectPropertyCondition.h:
+        (JSC::ObjectPropertyCondition::presence):
+        (JSC::ObjectPropertyCondition::absence):
+        (JSC::ObjectPropertyCondition::absenceOfSetEffect):
+        (JSC::ObjectPropertyCondition::equivalence):
+        (JSC::ObjectPropertyCondition::hasStaticProperty):
+        (JSC::ObjectPropertyCondition::hasPrototype):
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::absence):
+        (JSC::PropertyCondition::absenceOfSetEffect):
+        (JSC::PropertyCondition::equivalence):
+        (JSC::PropertyCondition::hasPrototype):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::decodeCachedCodeBlocks):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalize):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalize):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::writeBarrierWithoutFence): Deleted.
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        (JSC::LLInt::performLLIntGetByID):
+        (JSC::LLInt::llint_write_barrier_slow):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/AuxiliaryBarrierInlines.h:
+        (JSC::AuxiliaryBarrier<T>::AuxiliaryBarrier):
+        (JSC::AuxiliaryBarrier<T>::set):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/InferredValue.h:
+        (JSC::InferredValue<JSCellType>::InferredValueWatchpointSet::notifyWriteSlow):
+        (JSC::InferredValue<JSCellType>::notifyWriteSlow):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::finishCreation):
+        (JSC::JSCell::setStructure):
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::registerTarget):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::allocateRareData):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        * runtime/JSObject.h:
+        (JSC::JSObject::trySetIndexQuickly):
+        (JSC::JSObject::setIndexQuickly):
+        * runtime/JSWeakObjectRef.h:
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::setMayBeNull):
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::~ObjectInitializationScope):
+        * runtime/ObjectInitializationScope.h:
+        (JSC::ObjectInitializationScope::~ObjectInitializationScope):
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::lastResult):
+        * runtime/RegExpCachedResult.h:
+        (JSC::RegExpCachedResult::record):
+        * runtime/RegExpObject.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::finishCreation):
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setCachedPropertyNameEnumerator):
+        * runtime/VM.h:
+        (JSC::VM::writeBarrier):
+        (JSC::VM::writeBarrierSlowPath):
+        (JSC::VM::mutatorFence):
+        * runtime/WriteBarrierInlines.h:
+        (JSC::Traits>::setEarlyValue):
+        (JSC::RawValueTraits<Unknown>>::set):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/js/JSWebAssemblyInstance.h:
+
+2021-11-11  Mark Lam  <mark.lam@apple.com>
+
         Disable JIT runs of the ExecutionTimeLimitTest when !ENABLE(JIT).
         https://bugs.webkit.org/show_bug.cgi?id=233003
 
