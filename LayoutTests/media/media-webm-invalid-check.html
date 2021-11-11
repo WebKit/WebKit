@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-webm-no-duration</title>
+    <script src="../media/video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        try {
+            window.video = document.querySelector('video');
+            run('video.src = "content/invalid-size.webm"');
+            waitFor(video, 'error').then(e => {
+                passTest('Properly failed to load media');
+                endTest();
+            });
+        } catch(e) {
+            failTest(e);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
