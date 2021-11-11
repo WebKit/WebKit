@@ -4276,9 +4276,6 @@ webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a.html [ ImageOnlyFailure ]
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a.html [ ImageOnlyFailure ]
 
-# flex-basis with %.
-webkit.org/b/ imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-011.html [ ImageOnlyFailure ]
-
 # Flex item's min|max content contributions
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-max-content-001.html [ ImageOnlyFailure ]
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-001.html [ ImageOnlyFailure ]
@@ -4290,7 +4287,6 @@ webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-brea
 webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-vert-001b.html [ ImageOnlyFailure ]
 
 # min-size:auto in flexbox.
-webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-026.html [ ImageOnlyFailure ]
 webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-029.html [ ImageOnlyFailure ]
 webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-015.html [ ImageOnlyFailure ]
 

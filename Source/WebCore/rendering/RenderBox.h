@@ -344,6 +344,18 @@ public:
     void clearOverridingContainingBlockContentSize();
     void clearOverridingContainingBlockContentLogicalHeight();
 
+    // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
+    // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
+    // the initial main size of the flex item before the free space is distributed.
+    Length overridingLogicalHeightLength() const;
+    Length overridingLogicalWidthLength() const;
+    void setOverridingLogicalHeightLength(const Length&);
+    void setOverridingLogicalWidthLength(const Length&);
+    bool hasOverridingLogicalHeightLength() const;
+    bool hasOverridingLogicalWidthLength() const;
+    void clearOverridingLogicalHeightLength();
+    void clearOverridingLogicalWidthLength();
+
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const;

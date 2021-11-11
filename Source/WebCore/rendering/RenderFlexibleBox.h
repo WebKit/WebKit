@@ -150,7 +150,8 @@ private:
     void computeChildIntrinsicLogicalWidths(RenderObject&, LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const;
     void setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint&);
-    LayoutUnit computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding);
+    LayoutUnit computeFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding, bool relayoutChildren);
+    void maybeCacheChildMainIntrinsicSize(RenderBox& child, bool relayoutChildren);
     void adjustAlignmentForChild(RenderBox& child, LayoutUnit);
     ItemPosition alignmentForChild(const RenderBox& child) const;
     bool canComputePercentageFlexBasis(const RenderBox& child, const Length& flexBasis, UpdatePercentageHeightDescendants);

@@ -2256,9 +2256,10 @@ void RenderBlock::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth = 0;
 
     const RenderStyle& styleToUse = style();
-    if (!isTableCell() && styleToUse.logicalWidth().isFixed() && styleToUse.logicalWidth().value() >= 0
-        && !(isDeprecatedFlexItem() && !styleToUse.logicalWidth().intValue()))
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalWidth());
+    auto& lengthToUse = hasOverridingLogicalWidthLength() ? overridingLogicalWidthLength() : styleToUse.logicalWidth();
+    if (!isTableCell() && lengthToUse.isFixed() && lengthToUse.value() >= 0
+        && !(isDeprecatedFlexItem() && !lengthToUse.intValue()))
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(lengthToUse);
     else if (shouldComputeLogicalWidthFromAspectRatio())
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeLogicalWidthFromAspectRatio();
     else
