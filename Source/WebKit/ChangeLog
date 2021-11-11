@@ -1,3 +1,16 @@
+2021-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Drop support for <object usemap> making <object> interactive
+        https://bugs.webkit.org/show_bug.cgi?id=222642
+
+        Reviewed by Antti Koivisto.
+
+        Remove support for usemap attribute in GTK DOM API adding a warning message instead.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElement.cpp:
+        (webkit_dom_html_object_element_get_use_map):
+        (webkit_dom_html_object_element_set_use_map):
+
 2021-11-11  Sam Weinig  <weinig@apple.com>
 
         Factor platform specific code out of HTMLModelElement

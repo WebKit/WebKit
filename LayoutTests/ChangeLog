@@ -1,3 +1,17 @@
+2021-11-11  Tim Nguyen  <ntim@apple.com>
+
+        Drop support for <object usemap> making <object> interactive
+        https://bugs.webkit.org/show_bug.cgi?id=222642
+
+        Reviewed by Antti Koivisto.
+
+        As per https://github.com/whatwg/html/pull/6283, <object usemap> should no longer be supported.
+
+        IDL support is kept per spec like other obsolete attributes.
+
+        * imported/blink/fast/forms/label/label-contains-other-interactive-content-expected.txt:
+        * imported/blink/fast/forms/label/label-contains-other-interactive-content.html:
+
 2021-11-11  Sam Weinig  <weinig@apple.com>
 
         Factor platform specific code out of HTMLModelElement
