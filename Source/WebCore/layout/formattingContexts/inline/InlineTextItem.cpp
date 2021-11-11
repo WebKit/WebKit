@@ -77,6 +77,8 @@ InlineTextItem InlineTextItem::split(size_t leftSideLength)
     RELEASE_ASSERT(leftSideLength && leftSideLength < length());
     auto rightSide = right(length() - leftSideLength, { });
     m_length = length() - rightSide.length();
+    m_hasWidth = false;
+    m_width = { };
     return rightSide;
 }
 
