@@ -1,3 +1,16 @@
+2021-11-10  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Unify _WKWebAuthenticationPanel SPI and AuthenticatorCoordinator's ClientDataJson generation 
+        https://bugs.webkit.org/show_bug.cgi?id=232965
+        <rdar://problem/85268216>
+
+        Reviewed by Brent Fulgham.
+
+        Update api tests to reflect different clientDataJson format from WebAuthenticationUtils
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-11-10  Tim Nguyen  <ntim@apple.com>
 
         Remove non-standard -webkit-border-fit CSS property

@@ -1,3 +1,19 @@
+2021-11-10  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Unify _WKWebAuthenticationPanel SPI and AuthenticatorCoordinator's ClientDataJson generation 
+        https://bugs.webkit.org/show_bug.cgi?id=232965
+        <rdar://problem/85268216>
+
+        Reviewed by Brent Fulgham.
+
+        The _WKWebAuthenticationPanel SPI and AuthenticatorCoordinator use different methods of generating 
+        clientDataJson, which results in strings with the keys in a different order. This causes problems
+        because when generating asserts via ASC ui, the hash signed and the client data json used to generate
+        that hash are different from the client data json returned to js. 
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (produceClientDataJson):
+
 2021-11-10  Per Arne Vollan <pvollan@apple.com>
 
         Block sandbox access to consume mach extensions

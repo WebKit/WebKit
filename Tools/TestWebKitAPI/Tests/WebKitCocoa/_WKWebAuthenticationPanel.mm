@@ -1891,7 +1891,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
         EXPECT_NULL(error);
 
         EXPECT_NOT_NULL(response);
-        EXPECT_WK_STREQ([[NSString alloc] initWithData:response.clientDataJSON encoding:NSUTF8StringEncoding], "{\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"https://example.com\",\"type\":\"webauthn.create\"}");
+        EXPECT_WK_STREQ([[NSString alloc] initWithData:response.clientDataJSON encoding:NSUTF8StringEncoding], "{\"type\":\"webauthn.create\",\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"https://example.com\"}");
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
         EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
@@ -2024,7 +2024,7 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
         EXPECT_NULL(error);
 
         EXPECT_NOT_NULL(response);
-        EXPECT_WK_STREQ([[NSString alloc] initWithData:response.clientDataJSON encoding:NSUTF8StringEncoding], "{\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"https://example.com\",\"type\":\"webauthn.get\"}");
+        EXPECT_WK_STREQ([[NSString alloc] initWithData:response.clientDataJSON encoding:NSUTF8StringEncoding], "{\"type\":\"webauthn.get\",\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"https://example.com\"}");
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
 

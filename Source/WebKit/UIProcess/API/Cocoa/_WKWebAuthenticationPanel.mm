@@ -45,6 +45,7 @@
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponse.h>
 #import <WebCore/AuthenticatorResponseData.h>
+#import <WebCore/BufferSource.h>
 #import <WebCore/CBORReader.h>
 #import <WebCore/CBORWriter.h>
 #import <WebCore/FidoConstants.h>
@@ -52,7 +53,7 @@
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebCore/WebAuthenticationConstants.h>
-#import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/WebAuthenticationUtils.h>
 #import <objc/runtime.h>
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
@@ -73,19 +74,20 @@ static void updateQueryIfNecessary(NSMutableDictionary *)
 
 static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NSData *challenge, NSString *origin)
 {
-    auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
+    WebCore::ClientDataType clientDataType;
     switch (type) {
     case _WKWebAuthenticationTypeCreate:
-        [dictionary setObject:@"webauthn.create" forKey:@"type"];
+        clientDataType = WebCore::ClientDataType::Create;
         break;
     case _WKWebAuthenticationTypeGet:
-        [dictionary setObject:@"webauthn.get" forKey:@"type"];
+        clientDataType = WebCore::ClientDataType::Get;
         break;
     }
-    [dictionary setObject:base64URLEncodeToString(challenge.bytes, challenge.length) forKey:@"challenge"];
-    [dictionary setObject:origin forKey:@"origin"];
+    auto challengeBuffer = ArrayBuffer::tryCreate(reinterpret_cast<const uint8_t*>(challenge.bytes), challenge.length);
+    auto securityOrigin = WebCore::SecurityOrigin::createFromString(origin);
 
-    return [NSJSONSerialization dataWithJSONObject:dictionary.get() options:(NSJSONWritingSortedKeys | NSJSONWritingWithoutEscapingSlashes) error:nil];
+    auto clientDataJson = buildClientDataJson(clientDataType, WebCore::BufferSource(challengeBuffer), securityOrigin);
+    return adoptNS([[NSData alloc] initWithBytes:clientDataJson->data() length:clientDataJson->byteLength()]);
 }
 
 static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
