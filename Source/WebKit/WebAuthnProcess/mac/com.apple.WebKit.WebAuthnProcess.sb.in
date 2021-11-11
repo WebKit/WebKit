@@ -321,7 +321,6 @@
     (apply-write-and-issue-extension allow path-filter))
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
-(allow mach-lookup (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
 
 (allow mach-lookup
 #if PLATFORM(MAC)

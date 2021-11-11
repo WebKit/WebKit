@@ -185,7 +185,6 @@
         (allow user-preference-read
             (preference-domain "com.apple.coremedia"))
         (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-        (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
         (allow device-camera))
 )
 

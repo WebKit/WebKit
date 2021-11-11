@@ -617,7 +617,6 @@
     (apply-write-and-issue-extension allow path-filter))
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
-(allow mach-lookup (with telemetry) (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
 
 ;; Allow the OpenGL Profiler to attach.
 (allow mach-register (with telemetry) (global-name-regex #"^_oglprof_attach_<[0-9]+>$"))
@@ -842,7 +841,6 @@
     (shared-preferences-read "com.apple.cmio")
     (shared-preferences-read "com.apple.coremedia")
     (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-    (allow mach-lookup (with telemetry) (extension "com.apple.app-sandbox.mach"))
     (allow mach-lookup (with telemetry)
         (global-name "com.apple.cmio.AppleCameraAssistant")
         (global-name "com.apple.cmio.registerassistantservice")

@@ -177,7 +177,6 @@
         (allow user-preference-read
             (preference-domain "com.apple.coremedia"))
         (allow file-read* (with telemetry) (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-        (allow mach-lookup (with telemetry) (extension "com.apple.app-sandbox.mach"))
         (allow device-camera))
 
     ;; Support incoming video connections
