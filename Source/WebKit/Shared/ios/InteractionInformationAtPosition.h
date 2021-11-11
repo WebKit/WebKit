@@ -59,6 +59,7 @@ struct InteractionInformationAtPosition {
         UnselectableDueToFocusableElement,
         UnselectableDueToLargeElementBounds,
         UnselectableDueToUserSelectNone,
+        UnselectableDueToMediaControls,
     };
     Selectability selectability { Selectability::Selectable };
 
@@ -132,7 +133,8 @@ template<> struct EnumTraits<WebKit::InteractionInformationAtPosition::Selectabi
         WebKit::InteractionInformationAtPosition::Selectability::Selectable,
         WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToFocusableElement,
         WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToLargeElementBounds,
-        WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToUserSelectNone
+        WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToUserSelectNone,
+        WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToMediaControls
     >;
 };
 

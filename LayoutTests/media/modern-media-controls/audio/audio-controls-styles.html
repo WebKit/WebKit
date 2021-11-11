@@ -8,7 +8,6 @@ description("Testing media elements disable built-in browser UI features to copy
 const audio = document.body.appendChild(document.createElement("audio"));
 audio.controls = true;
 
-shouldBeEqualToString("getComputedStyle(audio).WebkitUserSelect", "none");
 shouldBeEqualToString("getComputedStyle(audio).WebkitTouchCallout", "none");
 
 debug("");

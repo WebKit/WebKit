@@ -1,3 +1,20 @@
+2021-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor some image overlay logic to work with built-in media controls
+        https://bugs.webkit.org/show_bug.cgi?id=232899
+        rdar://83173597
+
+        Reviewed by Antoine Quint and Tim Horton.
+
+        Adjust a modern media controls test, such that it no longer verifies that the `-webkit-user-select` CSS property
+        is none on an audio element; in lieu of this, we add a new layout test in `editing/selection` to verify that
+        long pressing over the timestamp of an audio element does not trigger text selection.
+
+        * editing/selection/ios/do-not-allow-text-selection-in-audio-element-expected.txt: Added.
+        * editing/selection/ios/do-not-allow-text-selection-in-audio-element.html: Added.
+        * media/modern-media-controls/audio/audio-controls-styles-expected.txt:
+        * media/modern-media-controls/audio/audio-controls-styles.html:
+
 2021-11-10  Antoine Quint  <graouts@webkit.org>
 
         The cssText property for a computed style should return an empty string

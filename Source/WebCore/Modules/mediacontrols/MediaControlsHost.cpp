@@ -133,6 +133,12 @@ String MediaControlsHost::layoutTraitsClassName() const
 #endif
 }
 
+const AtomString& MediaControlsHost::mediaControlsContainerClassName() const
+{
+    static MainThreadNeverDestroyed<const AtomString> className("media-controls-container", AtomString::ConstructFromLiteral);
+    return className;
+}
+
 Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
     if (!m_mediaElement)

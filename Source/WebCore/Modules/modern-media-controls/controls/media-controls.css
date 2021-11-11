@@ -24,8 +24,7 @@
  */
 
 :host {
-    /* We always want to prevent iOS dialogs and the magnifier UI to be shown. */
-    -webkit-user-select: none !important;
+    /* We always want to avoid showing the context menu on iOS. */
     -webkit-touch-callout: none !important;
 }
 
@@ -82,7 +81,6 @@
 .media-controls {
     height: 100%;
     font-family: -apple-system;
-    -webkit-user-select: none;
     white-space: nowrap;
     text-align: initial;
     transform-origin: 0 0;
@@ -93,6 +91,8 @@
 }
 
 .media-controls > * {
+    /* We always want to avoid showing the text selection magnifier on iOS. */
+    -webkit-user-select: none;
     transition: opacity 0.1s linear;
 }
 

@@ -53,6 +53,7 @@
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
@@ -61,6 +62,7 @@
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
+#include "MediaControlsHost.h"
 #include "NodeTraversal.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
@@ -1250,6 +1252,9 @@ void HTMLElement::setEnterKeyHint(const String& value)
     setAttributeWithoutSynchronization(enterkeyhintAttr, value);
 }
 
+// FIXME: We should move all of this image overlay-specific logic out into a separate helper file (possibly as standalone functions)
+// to better compartmentalize this code.
+
 static const AtomString& imageOverlayElementIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay", AtomString::ConstructFromLiteral);
@@ -1323,10 +1328,8 @@ bool HTMLElement::isImageOverlayText(const Node& node)
     if (!host)
         return false;
 
-    for (auto& child : childrenOfType<HTMLDivElement>(*host->userAgentShadowRoot())) {
-        if (child.getIdAttribute() == imageOverlayElementIdentifier())
-            return node.isDescendantOf(child);
-    }
+    if (RefPtr overlay = static_cast<TreeScope&>(*host->userAgentShadowRoot()).getElementById(imageOverlayElementIdentifier()))
+        return node.isDescendantOf(*overlay);
 
     return false;
 }
@@ -1345,16 +1348,8 @@ void HTMLElement::removeImageOverlaySoonIfNeeded()
         if (!shadowRoot)
             return;
 
-        RefPtr<HTMLDivElement> containerToRemove;
-        for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
-            if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
-                containerToRemove = &child;
-                break;
-            }
-        }
-
-        if (containerToRemove)
-            containerToRemove->remove();
+        if (RefPtr overlay = static_cast<TreeScope&>(*shadowRoot).getElementById(imageOverlayElementIdentifier()))
+            overlay->remove();
 
 #if ENABLE(IMAGE_ANALYSIS)
         if (auto page = protectedThis->document().page())
@@ -1395,13 +1390,33 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
 
     bool hadExistingTextRecognitionElements = false;
     TextRecognitionElements textRecognitionElements;
-
-    if (hasImageOverlay()) {
-        for (auto& child : childrenOfType<HTMLDivElement>(*userAgentShadowRoot())) {
-            if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
-                textRecognitionElements.root = &child;
-                hadExistingTextRecognitionElements = true;
-                break;
+    RefPtr<HTMLElement> mediaControlsContainer;
+    if (RefPtr shadowRoot = this->shadowRoot()) {
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+        if (is<HTMLMediaElement>(*this)) {
+            if (RefPtr controlsHost = downcast<HTMLMediaElement>(*this).mediaControlsHost()) {
+                auto& containerClass = controlsHost->mediaControlsContainerClassName();
+                for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
+                    if (child.hasClass() && child.classNames().contains(containerClass)) {
+                        mediaControlsContainer = &child;
+                        break;
+                    }
+                }
+            }
+        }
+#endif
+        if (hasImageOverlay()) {
+            RefPtr<ContainerNode> containerForImageOverlay;
+            if (mediaControlsContainer)
+                containerForImageOverlay = mediaControlsContainer;
+            else
+                containerForImageOverlay = shadowRoot;
+            for (auto& child : childrenOfType<HTMLDivElement>(*containerForImageOverlay)) {
+                if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
+                    textRecognitionElements.root = &child;
+                    hadExistingTextRecognitionElements = true;
+                    continue;
+                }
             }
         }
     }
@@ -1457,7 +1472,11 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
         rootContainer->setIdAttribute(imageOverlayElementIdentifier());
         if (document().isImageDocument())
             rootContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
-        shadowRoot->appendChild(rootContainer);
+
+        if (mediaControlsContainer)
+            mediaControlsContainer->appendChild(rootContainer);
+        else
+            shadowRoot->appendChild(rootContainer);
         textRecognitionElements.root = rootContainer.copyRef();
         textRecognitionElements.lines.reserveInitialCapacity(result.lines.size());
         for (auto& line : result.lines) {

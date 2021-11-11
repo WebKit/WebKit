@@ -2940,6 +2940,9 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
                 // FIXME: Is this heuristic still needed, now that block selection has been removed?
                 return InteractionInformationAtPosition::Selectability::UnselectableDueToLargeElementBounds;
             }
+
+            if (hostVideoElementIgnoringImageOverlay(*hitNode))
+                return InteractionInformationAtPosition::Selectability::UnselectableDueToMediaControls;
         }
 
         return InteractionInformationAtPosition::Selectability::Selectable;

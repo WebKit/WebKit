@@ -55,6 +55,7 @@ public:
     static const AtomString& forcedOnlyKeyword();
 
     String layoutTraitsClassName() const;
+    const AtomString& mediaControlsContainerClassName() const;
 
     double brightness() const { return 1; }
     void setBrightness(double) { }

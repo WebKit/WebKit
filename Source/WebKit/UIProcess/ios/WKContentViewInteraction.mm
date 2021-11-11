@@ -226,6 +226,19 @@ static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContex
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
+#else
+
+#if ENABLE(IMAGE_ANALYSIS)
+static bool canAttemptTextRecognitionForNonImageElements(const WebKit::InteractionInformationAtPosition& information, const WebKit::WebPreferences&)
+{
+    return false;
+}
+#endif // ENABLE(IMAGE_ANALYSIS)
+
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 using namespace WebKit;
@@ -10187,7 +10200,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
             return;
 
         bool shouldAnalyzeImageAtLocation = ([&] {
-            if (!information.isImage)
+            if (!information.isImage && !canAttemptTextRecognitionForNonImageElements(information, strongSelf->_page->preferences()))
                 return false;
 
             if (!information.image)

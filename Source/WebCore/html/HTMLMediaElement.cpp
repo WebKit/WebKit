@@ -3139,6 +3139,8 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
 
     if (processingUserGestureForMedia())
         mediaSession().removeBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
+
+    removeImageOverlaySoonIfNeeded();
 }
 
 void HTMLMediaElement::seekTask()
@@ -3731,6 +3733,8 @@ void HTMLMediaElement::playInternal()
 
     m_autoplaying = false;
     updatePlayState();
+
+    removeImageOverlaySoonIfNeeded();
 }
 
 void HTMLMediaElement::pause()

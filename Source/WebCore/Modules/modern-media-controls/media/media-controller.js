@@ -37,12 +37,12 @@ class MediaController
         this.hasPlayed = false;
 
         this.container = shadowRoot.appendChild(document.createElement("div"));
-        this.container.className = "media-controls-container";
 
         this._updateControlsIfNeeded();
         this._usesLTRUserInterfaceLayoutDirection = false;
 
         if (host) {
+            this.container.className = host.mediaControlsContainerClassName;
             host.controlsDependOnPageScaleFactor = this.layoutTraits.controlsDependOnPageScaleFactor();
             this.container.insertBefore(host.textTrackContainer, this.controls.element);
             if (host.isInMediaDocument)
