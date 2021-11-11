@@ -982,6 +982,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         case CSSSelector::PseudoClassAutofill:
             return isAutofilled(element);
+        case CSSSelector::PseudoClassAutofillAndObscured:
+            return isAutofilledAndObscured(element);
         case CSSSelector::PseudoClassAutofillStrongPassword:
             return isAutofilledStrongPassword(element);
         case CSSSelector::PseudoClassAutofillStrongPasswordViewable:

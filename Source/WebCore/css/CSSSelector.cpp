@@ -422,6 +422,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassAutofill:
                 builder.append(":autofill");
                 break;
+            case CSSSelector::PseudoClassAutofillAndObscured:
+                builder.append(":-webkit-autofill-and-obscured");
+                break;
             case CSSSelector::PseudoClassAutofillStrongPassword:
                 builder.append(":-webkit-autofill-strong-password");
                 break;

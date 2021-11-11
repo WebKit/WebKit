@@ -1,3 +1,16 @@
+2021-11-10  Devin Rousso  <drousso@apple.com>
+
+        Add support for marking an `<input>` as being autofilled with obscured content
+        https://bugs.webkit.org/show_bug.cgi?id=232903
+        <rdar://problem/84276999>
+
+        Reviewed by Aditya Keerthi.
+
+        * fast/forms/auto-fill-button/input-auto-filled-and-obscured.html: Added.
+        * fast/forms/auto-fill-button/input-auto-filled-and-obscured-expected.html: Added.
+
+        * platform/win/TestExpectations:
+
 2021-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor some image overlay logic to work with built-in media controls

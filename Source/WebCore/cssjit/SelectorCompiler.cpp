@@ -77,6 +77,7 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeAllAni
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl*, const StringImpl*));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilled, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledAndObscured, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPassword, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPasswordViewable, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsChecked, bool, (const Element&));
@@ -600,6 +601,11 @@ JSC_DEFINE_JIT_OPERATION(operationIsAutofilled, bool, (const Element& element))
     return isAutofilled(element);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationIsAutofilledAndObscured, bool, (const Element& element))
+{
+    return isAutofilledAndObscured(element);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationIsAutofilledStrongPassword, bool, (const Element& element))
 {
     return isAutofilledStrongPassword(element);
@@ -815,6 +821,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     // Unoptimized pseudo selector. They are just function call to a simple testing function.
     case CSSSelector::PseudoClassAutofill:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationIsAutofilled));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassAutofillAndObscured:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationIsAutofilledAndObscured));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassAutofillStrongPassword:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationIsAutofilledStrongPassword));

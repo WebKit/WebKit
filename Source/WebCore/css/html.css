@@ -772,6 +772,13 @@ input[type="file"] {
     text-align: start !important;
 }
 
+input:-webkit-autofill-and-obscured {
+    -webkit-text-security: disc !important;
+    -webkit-user-select: none !important;
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
 input:-webkit-autofill-strong-password {
     -webkit-user-select: none !important;
 }
@@ -782,7 +789,7 @@ input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-v
     font-family: monospace;
 }
 
-input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
+input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable, input:-webkit-autofill-and-obscured {
     background-color: #FAFFBD !important;
     background-image: none !important;
     color: #000000 !important;

@@ -110,6 +110,7 @@ namespace WebCore {
             PseudoClassAnyLink,
             PseudoClassAnyLinkDeprecated,
             PseudoClassAutofill,
+            PseudoClassAutofillAndObscured,
             PseudoClassAutofillStrongPassword,
             PseudoClassAutofillStrongPasswordViewable,
             PseudoClassHover,

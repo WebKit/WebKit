@@ -1,3 +1,24 @@
+2021-11-10  Devin Rousso  <drousso@apple.com>
+
+        Add support for marking an `<input>` as being autofilled with obscured content
+        https://bugs.webkit.org/show_bug.cgi?id=232903
+        <rdar://problem/84276999>
+
+        Reviewed by Aditya Keerthi.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndObscured const): Added.
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndObscured): Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle HTMLInputElementIsAutoFilledAndObscured]): Added.
+        (-[WKWebProcessPlugInNodeHandle setHTMLInputElementIsAutoFilledAndObscured:]): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleSetHTMLInputElementAutoFilledAndObscured): Added.
+        Expose a way to get/set the CSS `-webkit-autofill-and-obscured` pseudo-class on an `<input>`.
+
 2021-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor some image overlay logic to work with built-in media controls

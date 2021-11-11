@@ -4,6 +4,7 @@
 -webkit-any
 -webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown
 -webkit-autofill
+-webkit-autofill-and-obscured
 -webkit-autofill-strong-password
 -webkit-autofill-strong-password-viewable
 -webkit-drag

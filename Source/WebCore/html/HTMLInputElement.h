@@ -242,6 +242,9 @@ public:
     bool isAutoFilledAndViewable() const { return m_isAutoFilledAndViewable; }
     WEBCORE_EXPORT void setAutoFilledAndViewable(bool = true);
 
+    bool isAutoFilledAndObscured() const { return m_isAutoFilledAndObscured; }
+    WEBCORE_EXPORT void setAutoFilledAndObscured(bool = true);
+
     AutoFillButtonType lastAutoFillButtonType() const { return static_cast<AutoFillButtonType>(m_lastAutoFillButtonType); }
     AutoFillButtonType autoFillButtonType() const { return static_cast<AutoFillButtonType>(m_autoFillButtonType); }
     WEBCORE_EXPORT void setShowAutoFillButton(AutoFillButtonType);
@@ -474,6 +477,7 @@ private:
     unsigned m_autocomplete : 2; // AutoCompleteSetting
     bool m_isAutoFilled : 1;
     bool m_isAutoFilledAndViewable : 1;
+    bool m_isAutoFilledAndObscured : 1;
     unsigned m_autoFillButtonType : 3; // AutoFillButtonType
     unsigned m_lastAutoFillButtonType : 3; // AutoFillButtonType
     bool m_isAutoFillAvailable : 1;
