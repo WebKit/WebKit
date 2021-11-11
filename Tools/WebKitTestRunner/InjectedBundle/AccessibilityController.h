@@ -35,7 +35,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 #include <wtf/Threading.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 #if USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"
@@ -105,6 +104,7 @@ private:
     void updateIsolatedTreeMode();
 
 #if PLATFORM(COCOA)
+    void spinMainRunLoop() const;
     // _AXUIElementUseSecondaryAXThread and _AXUIElementRequestServicedBySecondaryAXThread
     // do not work for WebKitTestRunner since this is calling directly into
     // WebCore/accessibility via JavaScript without going through HIServices.
@@ -112,7 +112,6 @@ private:
     bool m_useMockAXThread { false };
 #endif
     bool m_accessibilityIsolatedTreeMode { false };
-    BinarySemaphore m_semaphore;
 #endif
 };
 

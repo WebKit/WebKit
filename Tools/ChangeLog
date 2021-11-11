@@ -1,3 +1,30 @@
+2021-11-11  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for thread deadlocks during layout tests in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=232999
+        <rdar://problem/85300861>
+
+        Reviewed by Chris Fleizach.
+
+        In isolated tree mode, AccessibilityUIElement calls into the AX API are
+        dispatched to a secondary, mocked thread created by the
+        AccessibilityController to simulate AT requests off of the main thread.
+        The main thread, in which all AccessibilityUIElement methods are run,
+        is blocked to wait for the results from the AX thread, to then continue
+        execution of JS layout tests.
+        The deadlocks arise when the AX API call cannot be fulfilled on the
+        secondary thread and needs to be dispatched to the main thread that is
+        now blocked. The main thread is waitng for the AccessibilityController's
+        secondary mocked thread, and that thread is waitng for the main thread
+        to compute results for the AX API request.
+        This patch introduces a workaround by spinning the main thread run loop
+        right after the API calls are dispatched to the AX thread.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::executeOnAXThreadAndWait):
+        (WTR::AccessibilityController::spinMainRunLoop const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+
 2021-11-11 Rachel Ginsberg <rginsberg@apple.com>
 
         Add support in WebCore for web app manifest icons
