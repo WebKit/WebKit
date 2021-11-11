@@ -478,7 +478,7 @@
             "supportsConjunction": true
         },
         "SkipCallbackInvokeCheck": {
-            "contextsAllowed": ["operation", "callback-function"]
+            "contextsAllowed": ["interface", "callback-function"]
         },
         "SkipVTableValidation": {
             "contextsAllowed": ["interface"]

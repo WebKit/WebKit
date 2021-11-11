@@ -20,6 +20,7 @@
 
 [
     IsWeakCallback,
+    SkipCallbackInvokeCheck,
     Exposed=Window
 ] callback interface NodeFilter {
     // Constants for acceptNode().
@@ -42,5 +43,5 @@
     const unsigned long SHOW_DOCUMENT_FRAGMENT = 0x00000400;
     const unsigned long SHOW_NOTATION = 0x00000800; // Historical.
 
-    [SkipCallbackInvokeCheck, RethrowException] unsigned short acceptNode(Node node);
+    [RethrowException] unsigned short acceptNode(Node node);
 };

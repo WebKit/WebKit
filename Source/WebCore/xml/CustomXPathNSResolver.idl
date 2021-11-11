@@ -24,6 +24,8 @@
  */
 
 // Not using [IsWeakCallback] here as XPathNSResolver wrappers always temporary (no reference is kept)
-callback interface CustomXPathNSResolver {
-    [ImplementedAs=lookupNamespaceURIForBindings, SkipCallbackInvokeCheck] DOMString? lookupNamespaceURI(DOMString? prefix);
+[
+    SkipCallbackInvokeCheck,
+] callback interface CustomXPathNSResolver {
+    [ImplementedAs=lookupNamespaceURIForBindings] DOMString? lookupNamespaceURI(DOMString? prefix);
 };

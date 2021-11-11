@@ -47,11 +47,10 @@ class JSCallbackData {
 public:
     enum class CallbackType { Function, Object, FunctionOrObject };
 
-    JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
-
+    WEBCORE_EXPORT static JSC::JSValue invokeCallback(JSDOMGlobalObject&, JSDOMGlobalObject* incumbentGlobalObject, JSC::JSObject* callback, JSC::JSValue thisValue, JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException);
 protected:
-    explicit JSCallbackData(JSDOMGlobalObject* globalObject)
-        : m_globalObject(globalObject)
+    explicit JSCallbackData(JSDOMGlobalObject* incumbentGlobalObject)
+        : m_incumbentGlobalObject(incumbentGlobalObject)
     {
     }
     
@@ -61,11 +60,9 @@ protected:
         ASSERT(m_thread.ptr() == &Thread::current());
 #endif
     }
-    
-    WEBCORE_EXPORT static JSC::JSValue invokeCallback(JSDOMGlobalObject&, JSC::JSObject* callback, JSC::JSValue thisValue, JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException);
 
+    JSC::Weak<JSDOMGlobalObject> m_incumbentGlobalObject;
 private:
-    JSC::Weak<JSDOMGlobalObject> m_globalObject;
 #if ASSERT_ENABLED
     Ref<Thread> m_thread { Thread::current() };
 #endif
@@ -73,21 +70,17 @@ private:
 
 class JSCallbackDataStrong : public JSCallbackData {
 public:
-    JSCallbackDataStrong(JSC::JSObject* callback, JSDOMGlobalObject* globalObject, void* = nullptr)
-        : JSCallbackData(globalObject)
-        , m_callback(globalObject->vm(), callback)
+    JSCallbackDataStrong(JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject, void* = nullptr)
+        : JSCallbackData(incumbentGlobalObject)
+        , m_callback(incumbentGlobalObject->vm(), callback)
     {
     }
 
     JSC::JSObject* callback() { return m_callback.get(); }
 
-    JSC::JSValue invokeCallback(JSC::JSValue thisValue, JSC::MarkedArgumentBuffer& args, CallbackType callbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
+    JSC::JSValue invokeCallback(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSValue thisValue, JSC::MarkedArgumentBuffer& args, CallbackType callbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
     {
-        auto* globalObject = this->globalObject();
-        if (!globalObject)
-            return { };
-
-        return JSCallbackData::invokeCallback(*globalObject, callback(), thisValue, args, callbackType, functionName, returnedException);
+        return JSCallbackData::invokeCallback(lexicalGlobalObject, m_incumbentGlobalObject.get(), callback(), thisValue, args, callbackType, functionName, returnedException);
     }
 
 private:
@@ -96,21 +89,17 @@ private:
 
 class JSCallbackDataWeak : public JSCallbackData {
 public:
-    JSCallbackDataWeak(JSC::JSObject* callback, JSDOMGlobalObject* globalObject, void* owner)
-        : JSCallbackData(globalObject)
+    JSCallbackDataWeak(JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject, void* owner)
+        : JSCallbackData(incumbentGlobalObject)
         , m_callback(callback, &m_weakOwner, owner)
     {
     }
 
     JSC::JSObject* callback() { return m_callback.get(); }
 
-    JSC::JSValue invokeCallback(JSC::JSValue thisValue, JSC::MarkedArgumentBuffer& args, CallbackType callbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
+    JSC::JSValue invokeCallback(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSValue thisValue, JSC::MarkedArgumentBuffer& args, CallbackType callbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
     {
-        auto* globalObject = this->globalObject();
-        if (!globalObject)
-            return { };
-
-        return JSCallbackData::invokeCallback(*globalObject, callback(), thisValue, args, callbackType, functionName, returnedException);
+        return JSCallbackData::invokeCallback(lexicalGlobalObject, m_incumbentGlobalObject.get(), callback(), thisValue, args, callbackType, functionName, returnedException);
     }
 
     template<typename Visitor> void visitJSFunction(Visitor&);

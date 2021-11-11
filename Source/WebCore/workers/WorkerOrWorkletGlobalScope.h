@@ -78,6 +78,7 @@ protected:
     WorkerOrWorkletGlobalScope(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletThread*);
 
     // ScriptExecutionContext.
+    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
     bool isJSExecutionForbidden() const final;
 
     void markAsClosing() { m_isClosing = true; }
@@ -90,7 +91,6 @@ private:
     void derefScriptExecutionContext() final { deref(); }
 
     // EventTarget.
-    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

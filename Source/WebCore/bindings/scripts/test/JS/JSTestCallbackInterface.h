@@ -33,12 +33,10 @@ namespace WebCore {
 
 class JSTestCallbackInterface final : public TestCallbackInterface {
 public:
-    static Ref<JSTestCallbackInterface> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackInterface> create(JSDOMGlobalObject& globalObject, JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)
     {
-        return adoptRef(*new JSTestCallbackInterface(callback, globalObject));
+        return adoptRef(*new JSTestCallbackInterface(globalObject, callback, incumbentGlobalObject));
     }
-
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestCallbackInterface() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
@@ -54,11 +52,12 @@ public:
     CallbackResult<typename IDLUndefined::ImplementationType> callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
     CallbackResult<typename IDLDOMString::ImplementationType> callbackWithAReturnValue() override;
     CallbackResult<typename IDLDOMString::ImplementationType> callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam) override;
-    CallbackResult<typename IDLDOMString::ImplementationType> callbackThatSkipsInvokeCheck(typename IDLDictionary<TestCallbackInterface::Dictionary>::ParameterType dictionaryParam) override;
     CallbackResult<typename IDLDOMString::ImplementationType> callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam) override;
 
 private:
-    JSTestCallbackInterface(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackInterface(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSObject*, JSDOMGlobalObject* incumbentGlobalObject);
+
+    JSDOMGlobalObject& globalObject() const { return *JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()); }
 
     JSCallbackDataStrong* m_data;
 };

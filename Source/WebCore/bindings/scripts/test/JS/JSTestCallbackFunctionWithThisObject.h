@@ -29,12 +29,10 @@ namespace WebCore {
 
 class JSTestCallbackFunctionWithThisObject final : public TestCallbackFunctionWithThisObject {
 public:
-    static Ref<JSTestCallbackFunctionWithThisObject> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionWithThisObject> create(JSDOMGlobalObject& globalObject, JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)
     {
-        return adoptRef(*new JSTestCallbackFunctionWithThisObject(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionWithThisObject(globalObject, callback, incumbentGlobalObject));
     }
-
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestCallbackFunctionWithThisObject() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
@@ -43,7 +41,9 @@ public:
     CallbackResult<typename IDLUndefined::ImplementationType> handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
 
 private:
-    JSTestCallbackFunctionWithThisObject(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackFunctionWithThisObject(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSObject*, JSDOMGlobalObject* incumbentGlobalObject);
+
+    JSDOMGlobalObject& globalObject() const { return *JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()); }
 
     JSCallbackDataStrong* m_data;
 };

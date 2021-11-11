@@ -24,4 +24,5 @@
 
 [
     Conditional=GEOLOCATION,
+    SkipCallbackInvokeCheck,
 ] callback PositionErrorCallback = undefined (GeolocationPositionError error);

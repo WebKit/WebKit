@@ -29,12 +29,10 @@ namespace WebCore {
 
 class JSTestCallbackFunctionWithTypedefs final : public TestCallbackFunctionWithTypedefs {
 public:
-    static Ref<JSTestCallbackFunctionWithTypedefs> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionWithTypedefs> create(JSDOMGlobalObject& globalObject, JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)
     {
-        return adoptRef(*new JSTestCallbackFunctionWithTypedefs(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionWithTypedefs(globalObject, callback, incumbentGlobalObject));
     }
-
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestCallbackFunctionWithTypedefs() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
@@ -43,7 +41,9 @@ public:
     CallbackResult<typename IDLUndefined::ImplementationType> handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg) override;
 
 private:
-    JSTestCallbackFunctionWithTypedefs(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackFunctionWithTypedefs(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSObject*, JSDOMGlobalObject* incumbentGlobalObject);
+
+    JSDOMGlobalObject& globalObject() const { return *JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()); }
 
     JSCallbackDataStrong* m_data;
 };

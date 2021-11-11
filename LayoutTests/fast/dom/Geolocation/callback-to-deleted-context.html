@@ -5,7 +5,7 @@
 </head>
 <body>
 <script>
-description("Tests that when a Geolocation request is made from a remote frame, and that frame's script context goes away before the Geolocation callback is made, the callback is not made. If the callback is attempted, a crash will occur.");
+description("Tests that when a Geolocation request is made from a remote frame, callbacks are made as usual even if that frame's browsing context is already null.");
 
 function onFirstIframeLoaded() {
     iframe.src = 'resources/callback-to-deleted-context-inner2.html';
@@ -13,7 +13,7 @@ function onFirstIframeLoaded() {
 
 function onSecondIframeLoaded() {
     window.setTimeout(function() {
-        testPassed('No callbacks invoked');
+        testFailed('No callbacks invoked');
         finishJSTest();
     }, 500);
 }

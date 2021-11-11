@@ -34,9 +34,9 @@
 namespace WebCore {
 using namespace JSC;
 
-JSTestCallbackFunctionWithTypedefs::JSTestCallbackFunctionWithTypedefs(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunctionWithTypedefs(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
+JSTestCallbackFunctionWithTypedefs::JSTestCallbackFunctionWithTypedefs(JSDOMGlobalObject& globalObject, JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)
+    : TestCallbackFunctionWithTypedefs(globalObject.scriptExecutionContext())
+    , m_data(new JSCallbackDataStrong(callback, incumbentGlobalObject, this))
 {
 }
 
@@ -61,7 +61,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackFunction
 
     Ref<JSTestCallbackFunctionWithTypedefs> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = this->globalObject();
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -73,7 +73,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackFunction
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    m_data->invokeCallback(lexicalGlobalObject, thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;

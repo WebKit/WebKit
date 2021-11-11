@@ -29,12 +29,10 @@ namespace WebCore {
 
 class JSTestCallbackFunctionRethrow final : public TestCallbackFunctionRethrow {
 public:
-    static Ref<JSTestCallbackFunctionRethrow> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionRethrow> create(JSDOMGlobalObject& globalObject, JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)
     {
-        return adoptRef(*new JSTestCallbackFunctionRethrow(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionRethrow(globalObject, callback, incumbentGlobalObject));
     }
-
-    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestCallbackFunctionRethrow() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
@@ -43,7 +41,9 @@ public:
     CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(typename IDLSequence<IDLLong>::ParameterType argument) override;
 
 private:
-    JSTestCallbackFunctionRethrow(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackFunctionRethrow(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSObject*, JSDOMGlobalObject* incumbentGlobalObject);
+
+    JSDOMGlobalObject& globalObject() const { return *JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()); }
 
     JSCallbackDataStrong* m_data;
 };

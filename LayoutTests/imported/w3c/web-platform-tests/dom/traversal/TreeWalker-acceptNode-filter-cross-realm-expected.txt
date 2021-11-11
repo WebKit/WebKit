@@ -1,0 +1,7 @@
+
+
+PASS parent's |this|, parent's method, parent's filter, parent's root
+PASS parent's |this|, parent's method, parent's filter, iframe's root
+PASS parent's |this|, parent's method, iframe's filter, iframe's root
+PASS parent's |this|, iframes's method, iframe's filter, iframe's root
+

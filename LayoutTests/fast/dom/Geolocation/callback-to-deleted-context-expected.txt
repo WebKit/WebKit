@@ -1,10 +1,10 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
-Tests that when a Geolocation request is made from a remote frame, and that frame's script context goes away before the Geolocation callback is made, the callback is not made. If the callback is attempted, a crash will occur.
+Tests that when a Geolocation request is made from a remote frame, callbacks are made as usual even if that frame's browsing context is already null.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS No callbacks invoked
+PASS Success callback invoked
 PASS successfullyParsed is true
 
 TEST COMPLETE
