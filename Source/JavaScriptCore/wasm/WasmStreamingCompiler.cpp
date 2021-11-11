@@ -27,6 +27,7 @@
 #include "WasmStreamingCompiler.h"
 
 #include "DeferredWorkTimer.h"
+#include "JSBigInt.h"
 #include "JSWebAssembly.h"
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyHelpers.h"

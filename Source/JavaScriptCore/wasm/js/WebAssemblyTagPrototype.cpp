@@ -28,7 +28,11 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCellInlines.h"
+#include "JSObjectInlines.h"
+#include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
+#include "StructureInlines.h"
 #include "WasmFormat.h"
 
 namespace JSC {

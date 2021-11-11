@@ -24,6 +24,7 @@
 #include "AudioSession.h"
 #include "HTMLMediaElement.h"
 #include "MediaPlayer.h"
+#include "MediaSessionGLib.h"
 #include "MediaStrategy.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"

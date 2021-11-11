@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "RTCDataChannelRemoteHandler.h"
+#include "RTCDataChannelRemoteHandlerConnection.h"
 #include "RTCErrorEvent.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"

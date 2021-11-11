@@ -34,6 +34,10 @@
 #include "AudioMediaStreamTrackRendererCocoa.h"
 #endif
 
+#if USE(LIBWEBRTC)
+#include "LibWebRTCAudioModule.h"
+#endif
+
 namespace WTF {
 class MediaTime;
 }

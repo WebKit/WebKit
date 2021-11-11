@@ -28,6 +28,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AuxiliaryBarrierInlines.h"
+#include "JSBigInt.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSWebAssemblyHelpers.h"
 
 namespace JSC {

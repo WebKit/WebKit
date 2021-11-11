@@ -27,6 +27,7 @@
 #include "FragmentDirectiveParser.h"
 
 #include "Logging.h"
+#include <wtf/Deque.h>
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 

@@ -30,7 +30,6 @@
 #include "GPUIntegralTypes.h"
 #include <cstdint>
 #include <pal/graphics/WebGPU/WebGPUColorWrite.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

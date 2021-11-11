@@ -29,6 +29,7 @@
 #include "WebGPUBlendOperation.h"
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
+#include <wtf/RefCounted.h>
 
 namespace PAL {
 namespace WebGPU {

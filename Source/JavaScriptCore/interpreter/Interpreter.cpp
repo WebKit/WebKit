@@ -75,6 +75,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblyInstance.h"
 #include "WasmContextInlines.h"
 #include "WebAssemblyFunction.h"
 #endif

@@ -28,6 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCellInlines.h"
+#include "JSObjectInlines.h"
+#include "StructureInlines.h"
 #include "WasmTag.h"
 
 namespace JSC {

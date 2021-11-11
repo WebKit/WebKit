@@ -30,6 +30,8 @@
 
 #include "AuxiliaryBarrierInlines.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyException.h"
+#include "JSWebAssemblyTag.h"
 
 namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg);

@@ -23,7 +23,7 @@
 #if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AXObjectCache.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Frame.h"
 #include "RenderListItem.h"
 #include "WebKitAccessible.h"

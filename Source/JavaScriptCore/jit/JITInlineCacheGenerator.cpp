@@ -32,7 +32,6 @@
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "InlineAccess.h"
-#include "JIT.h"
 #include "JITInlines.h"
 #include "LinkBuffer.h"
 #include "StructureStubInfo.h"

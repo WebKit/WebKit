@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyTag.h"
 #include "WebAssemblyExceptionPrototype.h"
 
 #include "WebAssemblyExceptionConstructor.lut.h"

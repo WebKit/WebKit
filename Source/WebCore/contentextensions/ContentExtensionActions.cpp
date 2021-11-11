@@ -30,6 +30,7 @@
 
 #include "ContentExtensionError.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/URL.h>
 
 namespace WebCore::ContentExtensions {
 

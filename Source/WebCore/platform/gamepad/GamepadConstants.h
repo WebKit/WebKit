@@ -61,9 +61,9 @@ extern const size_t numberOfStandardGamepadButtonsWithoutHomeButton;
 extern const size_t numberOfStandardGamepadButtonsWithHomeButton;
 extern const GamepadButtonRole maximumGamepadButton;
 
-const String& standardGamepadMappingString();
+const WTF::String& standardGamepadMappingString();
 #if ENABLE(WEBXR)
-const String& xrStandardGamepadMappingString();
+const WTF::String& xrStandardGamepadMappingString();
 #endif
 
 } // namespace WebCore

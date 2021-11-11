@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSObject.h"
 #include "WasmTag.h"
 
 namespace JSC {

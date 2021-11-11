@@ -40,6 +40,7 @@
 #include "DateTimeChooser.h"
 #include "DocumentInlines.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "FileInputType.h"
 #include "FileList.h"

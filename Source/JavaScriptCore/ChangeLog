@@ -1,3 +1,27 @@
+2021-11-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early November 2021 edition, bis
+        https://bugs.webkit.org/show_bug.cgi?id=232998
+
+        Unreviewed non-unified build fixes.
+
+        * interpreter/Interpreter.cpp: Add missing JSWebAssemblyInstance.h header.
+        * jit/JITInlineCacheGenerator.cpp: Remove unneeded JIT.h, as it is already included
+        transitively by JITInlines.h instead.
+        * llint/LLIntExceptions.cpp: Replace inclusion of WasmContext.h with WasmContextInlines.h
+        * wasm/WasmStreamingCompiler.cpp: Add missing JSBigInt.h header.
+        * wasm/js/JSWebAssemblyException.cpp: Add missing AuxiliaryBarrierInlines.h, JSBigInt.h,
+        JSCJSValueInlines.h and JSCellInlines.h
+        * wasm/js/JSWebAssemblyException.h: Add missing JSObject.h header.
+        * wasm/js/JSWebAssemblyTag.cpp: Add missing JSCellInlines.h, JSObjectInlines.h, and
+        StructureInlines.h headers.
+        * wasm/js/JSWebAssemblyTag.h: Add missing JSObject.h header.
+        * wasm/js/WebAssemblyExceptionConstructor.cpp: Add missing JSWebAssemblyTag.h header.
+        * wasm/js/WebAssemblyExceptionPrototype.cpp: Add missing headers JSWebAssemblyException.h
+        and JSWebAssemblyTag.h
+        * wasm/js/WebAssemblyTagPrototype.cpp: Add missing headers JSCellInlines.h,
+        JSObjectInlines.h, JSWebAssemblyTag.h, and StructureInlines.h
+
 2021-11-11  Mark Lam  <mark.lam@apple.com>
 
         Rename Heap::isCurrentThreadBusy() to Heap::currentThreadIsDoingGCWork().

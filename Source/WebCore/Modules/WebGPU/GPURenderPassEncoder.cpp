@@ -28,7 +28,11 @@
 #include "config.h"
 #include "GPURenderPassEncoder.h"
 
+#include "GPUBindGroup.h"
 #include "GPUBuffer.h"
+#include "GPUQuerySet.h"
+#include "GPURenderBundle.h"
+#include "GPURenderPipeline.h"
 
 namespace WebCore {
 

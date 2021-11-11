@@ -1,3 +1,14 @@
+2021-11-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early November 2021 edition, bis
+        https://bugs.webkit.org/show_bug.cgi?id=232998
+
+        Unreviewed non-unified build fixes.
+
+        * pal/graphics/WebGPU/WebGPUColorWrite.h: Add missing wtf/RefCounted.h header.
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h: Add missing wtf/Ref.h header.
+        * pal/graphics/WebGPU/WebGPUValidationError.h: Add missing wtf/text/WTFString.h header.
+
 2021-11-10  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Adopt -[AVAudioSession setAuditTokensForProcessAssertion:]

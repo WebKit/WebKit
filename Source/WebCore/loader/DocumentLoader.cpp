@@ -42,7 +42,7 @@
 #include "CrossOriginOpenerPolicy.h"
 #include "CustomHeaderFields.h"
 #include "DOMWindow.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentParser.h"
 #include "DocumentWriter.h"
 #include "ElementChildIterator.h"
