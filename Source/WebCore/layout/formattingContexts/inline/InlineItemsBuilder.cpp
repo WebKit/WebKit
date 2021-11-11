@@ -232,6 +232,12 @@ static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBui
             default:
                 ASSERT_NOT_REACHED();
             }
+        } else if (inlineItem.isLineBreak()) {
+            inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
+            paragraphContentBuilder.append(newlineCharacter);
+        } else if (inlineItem.isWordBreakOpportunity()) {
+            // Soft wrap opportunity markers are opaque to bidi. 
+            inlineItemOffsetList.uncheckedAppend({ });            
         } else
             ASSERT_NOT_IMPLEMENTED_YET();
     }
