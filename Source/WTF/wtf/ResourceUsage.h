@@ -33,6 +33,7 @@ namespace WTF {
 
 struct TagInfo {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    size_t regionCount { 0 };
     size_t dirty { 0 };
     size_t reclaimable { 0 };
     size_t reserved { 0 };

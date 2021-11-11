@@ -1,3 +1,117 @@
+2021-11-11  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285648. rdar://problem/85171163
+
+    Log memory usage metadata when WebContent crosses critical or warning level memory thresholds
+    https://bugs.webkit.org/show_bug.cgi?id=232976
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    WebCore::logMemoryStatistics was changed to:
+    
+     - Emit VM tag names as public strings to the log. There isn't anything privacy sensitive
+       about our 256 fixed VM tags, and emitting them to the logs as as private string (as we
+       were doing before) made those log lines useless.
+     - Use WebCore::memoryUsageStatistics to gather memory metadata, since other WebCore
+       callsites were already using that and it reduces code duplication.
+     - Only log JS object type counts on internal OS builds. Previously we also logged those
+       counts on public OS builds, but that was useless since all the class names were redacted
+       in the log.
+    
+    * page/MemoryRelease.cpp:
+    (WebCore::logMemoryStatistics):
+    (WebCore::logMemoryStatisticsReasonDescription):
+    (WebCore::pageCount): Deleted.
+    (WebCore::logMemoryStatisticsAtTimeOfDeath): Deleted.
+    * page/MemoryRelease.h:
+    * page/PerformanceLogging.cpp:
+    (WebCore::PerformanceLogging::memoryUsageStatistics):
+    (WebCore::PerformanceLogging::didReachPointOfInterest):
+    * page/PerformanceLogging.h:
+    * page/cocoa/PerformanceLoggingCocoa.mm:
+    (WebCore::PerformanceLogging::getPlatformMemoryUsageStatistics):
+    
+    Source/WebKit:
+    
+    Added callbacks to log memory usage metadata the first time a process hits these milestones:
+    
+     - exceeded inactive memory limit while active (on Mac)
+     - exceeded warning process limit threshold (on other non-Mac Apple platforms)
+     - exceeded critical process limit threshold (on other non-Mac Apple platforms)
+    
+    The reason for this is we  receive a large number of out of memory reports with very little
+    info in the logs. We want to log more metadata about memory usage (similar to what we do on
+    Mac in `WebCore::logMemoryStatisticsAtTimeOfDeath`) to help us debug those reports.
+    
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::initializeWebProcess):
+    * WebProcess/WebProcess.h:
+    
+    Source/WTF:
+    
+    Fixed several issues with memory usage tracking:
+    
+     - pagesPerVMTag now properly accounts for swapped-out pages in its footprint calculation,
+       as footprint(1) already does.
+     - displayNamePerVMTag now includes all of the most common VM tags associated with WebKit.
+     - MemoryPressureHandler now knows the specific type of pressure event that occurred. This
+       allows it to differentiate between the entire system being at a warning pressure level
+       vs. just this process hitting its warning memory level limit.
+    
+    * wtf/MemoryPressureHandler.cpp:
+    (WTF::MemoryPressureHandler::setMemoryPressureStatus):
+    (WTF::MemoryPressureHandler::memoryPressureStatusChanged):
+    (WTF::MemoryPressureHandler::setUnderMemoryPressure): Deleted.
+    * wtf/MemoryPressureHandler.h:
+    (WTF::MemoryPressureHandler::setMemoryPressureStatusChangedCallback):
+    (WTF::MemoryPressureHandler::isUnderMemoryPressure const):
+    * wtf/ResourceUsage.h:
+    * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+    (WTF::MemoryPressureHandler::install):
+    * wtf/cocoa/ResourceUsageCocoa.cpp:
+    (WTF::displayNameForVMTag):
+    (WTF::pagesPerVMTag):
+    * wtf/unix/MemoryPressureHandlerUnix.cpp:
+    (WTF::MemoryPressureHandler::triggerMemoryPressureEvent):
+    * wtf/win/MemoryPressureHandlerWin.cpp:
+    (WTF::MemoryPressureHandler::windowsMeasurementTimerFired):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285648 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-11  Ben Nham  <nham@apple.com>
+
+            Log memory usage metadata when WebContent crosses critical or warning level memory thresholds
+            https://bugs.webkit.org/show_bug.cgi?id=232976
+
+            Reviewed by Darin Adler.
+
+            WebCore::logMemoryStatistics was changed to:
+
+             - Emit VM tag names as public strings to the log. There isn't anything privacy sensitive
+               about our 256 fixed VM tags, and emitting them to the logs as as private string (as we
+               were doing before) made those log lines useless.
+             - Use WebCore::memoryUsageStatistics to gather memory metadata, since other WebCore
+               callsites were already using that and it reduces code duplication.
+             - Only log JS object type counts on internal OS builds. Previously we also logged those
+               counts on public OS builds, but that was useless since all the class names were redacted
+               in the log.
+
+            * page/MemoryRelease.cpp:
+            (WebCore::logMemoryStatistics):
+            (WebCore::logMemoryStatisticsReasonDescription):
+            (WebCore::pageCount): Deleted.
+            (WebCore::logMemoryStatisticsAtTimeOfDeath): Deleted.
+            * page/MemoryRelease.h:
+            * page/PerformanceLogging.cpp:
+            (WebCore::PerformanceLogging::memoryUsageStatistics):
+            (WebCore::PerformanceLogging::didReachPointOfInterest):
+            * page/PerformanceLogging.h:
+            * page/cocoa/PerformanceLoggingCocoa.mm:
+            (WebCore::PerformanceLogging::getPlatformMemoryUsageStatistics):
+
 2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r285236. rdar://problem/83950623
