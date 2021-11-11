@@ -643,8 +643,8 @@ std::optional<Style::ElementStyle> SVGElement::resolveCustomStyle(const Style::R
     // If the element is in a <use> tree we get the style from the definition tree.
     if (RefPtr styleElement = this->correspondingElement()) {
         auto styleElementResolutionContext = resolutionContext;
-        // Can't use the selector filter since we are going to another part of the tree.
-        styleElementResolutionContext.selectorFilter = nullptr;
+        // Can't use the state since we are going to another part of the tree.
+        styleElementResolutionContext.selectorMatchingState = nullptr;
         auto style = styleElement->resolveStyle(styleElementResolutionContext);
         Style::Adjuster::adjustSVGElementStyle(*style.renderStyle, *this);
         return style;

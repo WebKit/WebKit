@@ -73,7 +73,7 @@ TreeResolver::~TreeResolver() = default;
 
 TreeResolver::Scope::Scope(Document& document)
     : resolver(document.styleScope().resolver())
-    , sharingResolver(document, resolver->ruleSets(), selectorFilter)
+    , sharingResolver(document, resolver->ruleSets(), selectorMatchingState)
 {
     document.setIsResolvingTreeStyle(true);
 
@@ -84,7 +84,7 @@ TreeResolver::Scope::Scope(Document& document)
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
     : resolver(shadowRoot.styleScope().resolver())
-    , sharingResolver(shadowRoot.documentScope(), resolver->ruleSets(), selectorFilter)
+    , sharingResolver(shadowRoot.documentScope(), resolver->ruleSets(), selectorMatchingState)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
@@ -303,7 +303,7 @@ ResolutionContext TreeResolver::makeResolutionContext()
         &parent().style,
         parentBoxStyle(),
         m_documentElementStyle.get(),
-        &scope().selectorFilter
+        &scope().selectorMatchingState
     };
 }
 
@@ -313,7 +313,7 @@ ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const Elem
         elementUpdate.style.get(),
         parentBoxStyleForPseudoElement(elementUpdate),
         m_documentElementStyle.get(),
-        &scope().selectorFilter
+        &scope().selectorMatchingState
     };
 }
 
@@ -398,7 +398,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 
 void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change, DescendantsToResolve descendantsToResolve)
 {
-    scope().selectorFilter.pushParent(&element);
+    scope().selectorMatchingState.selectorFilter.pushParent(&element);
 
     Parent parent(element, style, change, descendantsToResolve);
 
@@ -424,7 +424,7 @@ void TreeResolver::popParent()
     if (parent().didPushScope)
         popScope();
 
-    scope().selectorFilter.popParent();
+    scope().selectorMatchingState.selectorFilter.popParent();
 
     m_parentStack.removeLast();
 }

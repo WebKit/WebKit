@@ -33,7 +33,7 @@
 #include "HTMLSlotElement.h"
 #include "RuleSetBuilder.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SelectorFilter.h"
+#include "SelectorMatchingState.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
@@ -144,7 +144,7 @@ static void invalidateAssignedElements(HTMLSlotElement& slot)
     }
 }
 
-Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
+Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, SelectorMatchingState* selectorMatchingState)
 {
     invalidateInShadowTreeIfNeeded(element);
 
@@ -154,7 +154,7 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
     switch (element.styleValidity()) {
     case Style::Validity::Valid: {
         for (auto& ruleSet : m_ruleSets) {
-            ElementRuleCollector ruleCollector(element, *ruleSet, filter);
+            ElementRuleCollector ruleCollector(element, *ruleSet, selectorMatchingState);
             ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
             if (ruleCollector.matchesAnyAuthorRules()) {
@@ -175,14 +175,14 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
     return CheckDescendants::Yes;
 }
 
-void Invalidator::invalidateStyleForTree(Element& root, SelectorFilter* filter)
+void Invalidator::invalidateStyleForTree(Element& root, SelectorMatchingState* selectorMatchingState)
 {
-    if (invalidateIfNeeded(root, filter) == CheckDescendants::No)
+    if (invalidateIfNeeded(root, selectorMatchingState) == CheckDescendants::No)
         return;
-    invalidateStyleForDescendants(root, filter);
+    invalidateStyleForDescendants(root, selectorMatchingState);
 }
 
-void Invalidator::invalidateStyleForDescendants(Element& root, SelectorFilter* filter)
+void Invalidator::invalidateStyleForDescendants(Element& root, SelectorMatchingState* selectorMatchingState)
 {
     Vector<Element*, 20> parentStack;
     Element* previousElement = &root;
@@ -192,19 +192,19 @@ void Invalidator::invalidateStyleForDescendants(Element& root, SelectorFilter* f
         if (parentStack.isEmpty() || parentStack.last() != parent) {
             if (parent == previousElement) {
                 parentStack.append(parent);
-                if (filter)
-                    filter->pushParentInitializingIfNeeded(*parent);
+                if (selectorMatchingState)
+                    selectorMatchingState->selectorFilter.pushParentInitializingIfNeeded(*parent);
             } else {
                 while (parentStack.last() != parent) {
                     parentStack.removeLast();
-                    if (filter)
-                        filter->popParent();
+                    if (selectorMatchingState)
+                        selectorMatchingState->selectorFilter.popParent();
                 }
             }
         }
         previousElement = &descendant;
 
-        if (invalidateIfNeeded(descendant, filter) == CheckDescendants::Yes)
+        if (invalidateIfNeeded(descendant, selectorMatchingState) == CheckDescendants::Yes)
             it.traverseNext();
         else
             it.traverseNextSkippingChildren();
@@ -219,8 +219,8 @@ void Invalidator::invalidateStyle(Document& document)
     if (!documentElement)
         return;
 
-    SelectorFilter filter;
-    invalidateStyleForTree(*documentElement, &filter);
+    SelectorMatchingState selectorMatchingState;
+    invalidateStyleForTree(*documentElement, &selectorMatchingState);
 }
 
 void Invalidator::invalidateStyle(Scope& scope)
@@ -246,8 +246,8 @@ void Invalidator::invalidateStyle(ShadowRoot& shadowRoot)
         shadowRoot.host()->invalidateStyleInternal();
 
     for (auto& child : childrenOfType<Element>(shadowRoot)) {
-        SelectorFilter filter;
-        invalidateStyleForTree(child, &filter);
+        SelectorMatchingState selectorMatchingState;
+        invalidateStyleForTree(child, &selectorMatchingState);
     }
 }
 
@@ -273,8 +273,8 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         break;
     }
     case MatchElement::Ancestor: {
-        SelectorFilter filter;
-        invalidateStyleForDescendants(element, &filter);
+        SelectorMatchingState selectorMatchingState;
+        invalidateStyleForDescendants(element, &selectorMatchingState);
         break;
     }
     case MatchElement::DirectSibling:
@@ -297,10 +297,10 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     case MatchElement::AncestorSibling: {
-        SelectorFilter filter;
+        SelectorMatchingState selectorMatchingState;
         for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-            filter.popParentsUntil(element.parentElement());
-            invalidateStyleForDescendants(*sibling, &filter);
+            selectorMatchingState.selectorFilter.popParentsUntil(element.parentElement());
+            invalidateStyleForDescendants(*sibling, &selectorMatchingState);
         }
         break;
     }

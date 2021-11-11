@@ -31,14 +31,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-
-class SelectorFilter;
-
-namespace Style {
+namespace WebCore::Style {
 
 class MatchRequest;
 class ScopeRuleSets;
+struct SelectorMatchingState;
 
 class PseudoElementRequest {
 public:
@@ -69,8 +66,8 @@ struct MatchedRule {
 
 class ElementRuleCollector {
 public:
-    ElementRuleCollector(const Element&, const ScopeRuleSets&, const SelectorFilter*);
-    ElementRuleCollector(const Element&, const RuleSet& authorStyle, const SelectorFilter*);
+    ElementRuleCollector(const Element&, const ScopeRuleSets&, SelectorMatchingState*);
+    ElementRuleCollector(const Element&, const RuleSet& authorStyle, SelectorMatchingState*);
 
     void setIncludeEmptyRules(bool value) { m_shouldIncludeEmptyRules = value; }
 
@@ -132,7 +129,7 @@ private:
     Ref<const RuleSet> m_authorStyle;
     RefPtr<const RuleSet> m_userStyle;
     RefPtr<const RuleSet> m_userAgentMediaQueryStyle;
-    const SelectorFilter* m_selectorFilter;
+    SelectorMatchingState* m_selectorMatchingState;
 
     bool m_shouldIncludeEmptyRules { false };
     bool m_isPrintStyle { false };
@@ -150,5 +147,4 @@ private:
     PseudoIdSet m_matchedPseudoElementIds;
 };
 
-} // namespace Style
-} // namespace WebCore
+}

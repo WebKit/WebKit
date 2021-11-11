@@ -70,6 +70,8 @@ enum class RuleMatchingBehavior: uint8_t {
 
 namespace Style {
 
+struct SelectorMatchingState;
+
 struct ElementStyle {
     ElementStyle(std::unique_ptr<RenderStyle> renderStyle, std::unique_ptr<Relations> relations = { })
         : renderStyle(WTFMove(renderStyle))
@@ -85,7 +87,7 @@ struct ResolutionContext {
     const RenderStyle* parentBoxStyle { nullptr };
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const RenderStyle* documentElementStyle { nullptr };
-    const SelectorFilter* selectorFilter { nullptr };
+    SelectorMatchingState* selectorMatchingState { nullptr };
 };
 
 class Resolver : public RefCounted<Resolver> {

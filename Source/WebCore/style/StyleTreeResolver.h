@@ -26,7 +26,7 @@
 #pragma once
 
 #include "SelectorChecker.h"
-#include "SelectorFilter.h"
+#include "SelectorMatchingState.h"
 #include "StyleChange.h"
 #include "StyleSharingResolver.h"
 #include "StyleUpdate.h"
@@ -68,7 +68,7 @@ private:
     struct Scope : RefCounted<Scope> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TreeResolverScope);
         Ref<Resolver> resolver;
-        SelectorFilter selectorFilter;
+        SelectorMatchingState selectorMatchingState;
         SharingResolver sharingResolver;
         RefPtr<ShadowRoot> shadowRoot;
         RefPtr<Scope> enclosingScope;

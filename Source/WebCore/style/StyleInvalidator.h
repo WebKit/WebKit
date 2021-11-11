@@ -35,7 +35,6 @@ namespace WebCore {
 class Document;
 class Element;
 class MediaQueryEvaluator;
-class SelectorFilter;
 class ShadowRoot;
 class StyleSheetContents;
 
@@ -44,6 +43,7 @@ namespace Style {
 class Scope;
 
 struct InvalidationRuleSet;
+struct SelectorMatchingState;
 
 class Invalidator {
 public:
@@ -68,9 +68,9 @@ public:
 
 private:
     enum class CheckDescendants { Yes, No };
-    CheckDescendants invalidateIfNeeded(Element&, const SelectorFilter*);
-    void invalidateStyleForTree(Element&, SelectorFilter*);
-    void invalidateStyleForDescendants(Element&, SelectorFilter*);
+    CheckDescendants invalidateIfNeeded(Element&, SelectorMatchingState*);
+    void invalidateStyleForTree(Element&, SelectorMatchingState*);
+    void invalidateStyleForDescendants(Element&, SelectorMatchingState*);
     void invalidateInShadowTreeIfNeeded(Element&);
     void invalidateShadowPseudoElements(ShadowRoot&);
     void invalidateStyleWithMatchElement(Element&, MatchElement);

@@ -245,7 +245,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
 
     UserAgentStyle::ensureDefaultStyleSheetsForElement(element);
 
-    ElementRuleCollector collector(element, m_ruleSets, context.selectorFilter);
+    ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
     collector.setMedium(&m_mediaQueryEvaluator);
 
     if (matchingBehavior == RuleMatchingBehavior::MatchOnlyUserAgentRules)
@@ -392,7 +392,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
-    ElementRuleCollector collector(element, m_ruleSets, context.selectorFilter);
+    ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
     collector.setPseudoElementRequest(pseudoElementRequest);
     collector.setMedium(&m_mediaQueryEvaluator);
     collector.matchUARules();
