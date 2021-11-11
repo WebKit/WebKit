@@ -1,3 +1,24 @@
+2021-11-11  Ben Nham  <nham@apple.com>
+
+        Log memory usage metadata when WebContent crosses critical or warning level memory thresholds
+        https://bugs.webkit.org/show_bug.cgi?id=232976
+
+        Reviewed by Darin Adler.
+
+        Added callbacks to log memory usage metadata the first time a process hits these milestones:
+
+         - exceeded inactive memory limit while active (on Mac)
+         - exceeded warning process limit threshold (on other non-Mac Apple platforms)
+         - exceeded critical process limit threshold (on other non-Mac Apple platforms)
+
+        The reason for this is we  receive a large number of out of memory reports with very little
+        info in the logs. We want to log more metadata about memory usage (similar to what we do on
+        Mac in `WebCore::logMemoryStatisticsAtTimeOfDeath`) to help us debug those reports.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+
 2021-11-11  Rachel Ginsberg  <rginsberg@apple.com>
 
         Add support in WebCore for web app manifest icons

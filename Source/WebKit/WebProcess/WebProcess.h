@@ -709,6 +709,8 @@ private:
 #endif
 
     bool m_suppressMemoryPressureHandler { false };
+    bool m_loggedProcessLimitWarningMemoryStatistics { false };
+    bool m_loggedProcessLimitCriticalMemoryStatistics { false };
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     std::optional<double> m_cpuLimit;

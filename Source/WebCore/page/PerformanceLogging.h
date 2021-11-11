@@ -32,7 +32,7 @@ namespace WebCore {
 
 class Page;
 
-enum class ShouldIncludeExpensiveComputations { No, Yes };
+enum class ShouldIncludeExpensiveComputations : bool { No, Yes };
 
 class PerformanceLogging {
     WTF_MAKE_FAST_ALLOCATED;
