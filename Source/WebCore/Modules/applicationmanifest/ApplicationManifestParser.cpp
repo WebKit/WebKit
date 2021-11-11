@@ -78,6 +78,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     parsedManifest.shortName = parseShortName(*manifest);
     parsedManifest.scope = parseScope(*manifest, documentURL, parsedManifest.startURL);
     parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
+    parsedManifest.icons = parseIcons(*manifest);
 
     if (m_document)
         m_document->processApplicationManifest(parsedManifest);
@@ -172,6 +173,87 @@ String ApplicationManifestParser::parseDescription(const JSON::Object& manifest)
 String ApplicationManifestParser::parseShortName(const JSON::Object& manifest)
 {
     return parseGenericString(manifest, "short_name"_s);
+}
+
+Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JSON::Object& manifest)
+{
+    auto manifestIcons = manifest.getValue("icons"_s);
+
+    Vector<ApplicationManifest::Icon> imageResources;
+    if (!manifestIcons)
+        return imageResources;
+
+    auto manifestIconsArray = manifestIcons->asArray();
+    if (!manifestIconsArray) {
+        logDeveloperWarning("The value of icons is not a valid array."_s);
+        return imageResources;
+    }
+
+    for (const auto& iconValue : *manifestIconsArray) {
+        ApplicationManifest::Icon currentIcon;
+        auto iconObject = iconValue->asObject();
+        if (!iconObject)
+            continue;
+        const auto& iconJSON = *iconObject;
+
+        auto srcValue = iconJSON.getValue("src"_s);
+        if (!srcValue)
+            continue;
+        auto srcStringValue = srcValue->asString();
+        if (!srcStringValue) {
+            logManifestPropertyNotAString("src"_s);
+            continue;
+        }
+        URL srcURL(m_manifestURL, srcStringValue);
+        if (srcURL.isEmpty())
+            continue;
+        if (!srcURL.isValid()) {
+            logManifestPropertyInvalidURL("src"_s);
+            continue;
+        }
+        currentIcon.src = srcURL;
+
+        currentIcon.sizes = parseGenericString(iconJSON, "sizes"_s);
+
+        currentIcon.type = parseGenericString(iconJSON, "type"_s);
+
+        auto purposeValue = iconJSON.getValue("purpose"_s);
+        OptionSet<ApplicationManifest::Icon::Purpose> purposes;
+
+        if (!purposeValue) {
+            purposes.add(ApplicationManifest::Icon::Purpose::Any);
+            currentIcon.purposes = purposes;
+        } else {
+            auto purposeStringValue = purposeValue->asString();
+            if (!purposeStringValue) {
+                logManifestPropertyNotAString("purpose"_s);
+                purposes.add(ApplicationManifest::Icon::Purpose::Any);
+                currentIcon.purposes = purposes;
+            } else {
+                purposeStringValue = purposeStringValue.stripWhiteSpace().convertToASCIILowercase();
+                Vector<String> keywords = purposeStringValue.splitAllowingEmptyEntries(" ");
+
+                for (const auto& keyword : keywords) {
+                    if (keyword == "monochrome")
+                        purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
+                    else if (keyword == "maskable")
+                        purposes.add(ApplicationManifest::Icon::Purpose::Maskable);
+                    else if (keyword == "any")
+                        purposes.add(ApplicationManifest::Icon::Purpose::Any);
+                    else
+                        logDeveloperWarning(makeString("\""_s, purposeStringValue, "\" is not a valid purpose."_s));
+                }
+                if (purposes.isEmpty())
+                    continue;
+
+                currentIcon.purposes = purposes;
+            }
+        }
+
+        imageResources.append(WTFMove(currentIcon));
+    }
+
+    return imageResources;
 }
 
 static bool isInScope(const URL& scopeURL, const URL& targetURL)

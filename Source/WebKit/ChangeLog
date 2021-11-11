@@ -1,3 +1,29 @@
+2021-11-11  Rachel Ginsberg  <rginsberg@apple.com>
+
+        Add support in WebCore for web app manifest icons
+        https://bugs.webkit.org/show_bug.cgi?id=231339
+        rdar://84311306
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (makeVectorElement):
+        Used by makeVector in initWithCoder:. Takes a _WKApplicationManifestIcon and returns
+        a WebCore::ApplicationManifest::Icon.
+        (-[_WKApplicationManifest initWithCoder:]):
+        Added icons.
+        (-[_WKApplicationManifest encodeWithCoder:]):
+        Added icons.
+        (-[_WKApplicationManifest icons]):
+        Should appease build error before full support for icons is built into _WKApplicationManifest
+
+        (+[_WKApplicationManifestIcon supportsSecureCoding]):
+        (-[_WKApplicationManifestIcon initWithCoder:]):
+        (-[_WKApplicationManifestIcon encodeWithCoder:]):
+        (-[_WKApplicationManifestIcon dealloc]):
+        * UIProcess/API/Cocoa/_WKApplicationManifestInternal.h:
+
 2021-11-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (iOS 15, GPU Process): Fails to load texture map

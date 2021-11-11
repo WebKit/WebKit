@@ -1,3 +1,28 @@
+2021-11-11 Rachel Ginsberg <rginsberg@apple.com>
+
+        Add support in WebCore for web app manifest icons
+        https://bugs.webkit.org/show_bug.cgi?id=231339
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        (ApplicationManifestParserTest::parseIconFirstTopLevelProperty):
+        Function to create JSON for icon attributes. This is
+        necessary because icons are in a list, whereas all other
+        attributes in app manifest are not.
+        (ApplicationManifestParserTest::parseIconFirstTopLevelPropertyForSrc):
+        Needed to make a slightly different version to add a src URL, since
+        it is required for a given icon to be added to the vector.
+
+        (ApplicationManifestParserTest::testIconsSrc):
+        (ApplicationManifestParserTest::testIconsType):
+        (ApplicationManifestParserTest::testIconsSizes):
+        (ApplicationManifestParserTest::testIconsPurposes):
+        Functions for each of the icon attributes.
+
+        (TEST_F):
+        Calls the various icon test functions with different input
+
 2021-11-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (iOS 15, GPU Process): Fails to load texture map

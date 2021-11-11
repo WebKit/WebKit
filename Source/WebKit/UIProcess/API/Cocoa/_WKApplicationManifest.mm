@@ -41,6 +41,17 @@
 #import "AppKitSPI.h"
 #endif
 
+static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const WebCore::ApplicationManifest::Icon*, id arrayElement)
+{
+
+    if (![arrayElement isKindOfClass: _WKApplicationManifestIcon.class])
+        return std::nullopt;
+
+    return WebCore::ApplicationManifest::Icon {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
+    };
+}
+
 @implementation _WKApplicationManifest
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -59,6 +70,7 @@
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
     NSURL *startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
     CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[CocoaColor class] forKey:@"theme_color"];
+    NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTF::String(name),
@@ -68,6 +80,7 @@
         static_cast<WebCore::ApplicationManifest::Display>(display),
         URL(startURL),
         WebCore::roundAndClampToSRGBALossy(themeColor.CGColor),
+        Vector<WebCore::ApplicationManifest::Icon>(makeVector<WebCore::ApplicationManifest::Icon>(icons)),
     };
 
     API::Object::constructInWrapper<API::ApplicationManifest>(self, WTFMove(coreApplicationManifest));
@@ -94,6 +107,7 @@
     [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().display) forKey:@"display"];
     [aCoder encodeObject:self.startURL forKey:@"start_url"];
     [aCoder encodeObject:self.themeColor forKey:@"theme_color"];
+    [aCoder encodeObject:self.icons forKey:@"icons"];
 }
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
@@ -158,6 +172,12 @@ static NSString *nullableNSString(const WTF::String& string)
     ASSERT_NOT_REACHED();
 }
 
+- (NSArray<_WKApplicationManifestIcon *> *)icons
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
+    return nil;
+}
+
 #else // ENABLE(APPLICATION_MANIFEST)
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
@@ -215,6 +235,42 @@ static NSString *nullableNSString(const WTF::String& string)
     return _WKApplicationManifestDisplayModeBrowser;
 }
 
+- (NSArray<_WKApplicationManifestIcon *> *)icons
+{
+    return nil;
+}
+
 #endif // ENABLE(APPLICATION_MANIFEST)
+
+@end
+
+@implementation _WKApplicationManifestIcon
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
+    UNUSED_PARAM(aDecoder);
+    [self release];
+    return nil;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
+    UNUSED_PARAM(aCoder);
+}
+
+- (void)dealloc
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestIcon.class, self))
+        return;
+    [super dealloc];
+}
 
 @end

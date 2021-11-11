@@ -31,6 +31,7 @@
 #else
 @class NSColor;
 #endif
+@class _WKApplicationManifestIcon;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,6 +42,12 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
     _WKApplicationManifestDisplayModeFullScreen,
 } WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
+typedef NS_ENUM(NSInteger, _WKApplicationManifestIconPurpose) {
+    _WKApplicationManifestIconPurposeAny,
+    _WKApplicationManifestIconPurposeMonochrome,
+    _WKApplicationManifestIconPurposeMaskable,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @interface _WKApplicationManifest : NSObject <NSSecureCoding>
 
@@ -50,6 +57,7 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @property (nonatomic, readonly, nullable, copy) NSURL *scope;
 @property (nonatomic, readonly, copy) NSURL *startURL;
 @property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
+@property (nonatomic, readonly) NSArray<_WKApplicationManifestIcon *> *icons WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly, nullable, copy) UIColor *themeColor WK_API_AVAILABLE(ios(15.0));
@@ -59,6 +67,11 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(nullable NSURL *)manifestURL documentURL:(nullable NSURL *)documentURL;
 
+@end
+
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKApplicationManifestIcon : NSObject <NSSecureCoding>
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
 @end
 
 NS_ASSUME_NONNULL_END
