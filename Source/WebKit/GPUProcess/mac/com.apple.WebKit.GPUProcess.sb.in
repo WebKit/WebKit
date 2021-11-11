@@ -653,11 +653,13 @@
 )
 #endif
 
+(allow mach-lookup
+    (global-name "com.apple.powerlog.plxpclogger.xpc"))
+
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
         (global-name "com.apple.analyticsd")
-        (global-name "com.apple.diagnosticd")
-        (global-name "com.apple.powerlog.plxpclogger.xpc")))
+        (global-name "com.apple.diagnosticd")))
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
