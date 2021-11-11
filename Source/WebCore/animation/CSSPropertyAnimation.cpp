@@ -160,6 +160,16 @@ static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, cons
 
 static inline TransformOperations blendFunc(const TransformOperations& from, const TransformOperations& to, const CSSPropertyBlendingContext& context)
 {
+    if (context.compositeOperation == CompositeOperation::Add) {
+        ASSERT(context.progress == 1.0);
+        TransformOperations resultOperations;
+        for (auto operation : from.operations())
+            resultOperations.operations().append(operation);
+        for (auto operation : to.operations())
+            resultOperations.operations().append(operation);
+        return resultOperations;
+    }
+
     if (context.client->transformFunctionListsMatch())
         return to.blendByMatchingOperations(from, context);
     return to.blendByUsingMatrixInterpolation(from, context, is<RenderBox>(context.client->renderer()) ? downcast<RenderBox>(*context.client->renderer()).borderBoxRect().size() : LayoutSize());

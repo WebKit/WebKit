@@ -161,16 +161,16 @@ PASS transform (type: transformList) has testAddition function
 PASS transform: translate
 PASS transform: rotate
 PASS transform: scale
-FAIL transform: skew assert_approx_equals: expected matrix(1.064178, 0.540297, -0.401023, 0.898198, 0, 0) but got matrix(1, 0.57735, -0.36397, 1, 0, 0): The value should be matrix(1.064178, 0.540297, -0.401023, 0.898198, 0, 0) at 0ms but got matrix(1, 0.57735, -0.36397, 1, 0, 0) expected 1.064178 +/- 0.0001 but got 1
-FAIL transform: rotate on translate assert_approx_equals: expected matrix(0, 1, -1, 0, 100, 0) but got matrix(0, 1, -1, 0, 0, 0): The value should be matrix(0, 1, -1, 0, 100, 0) at 0ms but got matrix(0, 1, -1, 0, 0, 0) expected 100 +/- 0.0001 but got 0
-FAIL transform: translate on rotate assert_approx_equals: expected matrix(0, 1, -1, 0, 0, 100) but got matrix(1, 0, 0, 1, 100, 0): The value should be matrix(0, 1, -1, 0, 0, 100) at 0ms but got matrix(1, 0, 0, 1, 100, 0) expected 0 +/- 0.0001 but got 1
-FAIL transform: rotate on rotate and translate assert_approx_equals: expected matrix(0.707107, -0.707107, 0.707107, 0.707107, 70.710678, 70.710678) but got matrix(0.707107, -0.707107, 0.707107, 0.707107, 70.710678, -70.710678): The value should be matrix(0.707107, -0.707107, 0.707107, 0.707107, 70.710678, 70.710678) at 0ms but got matrix(0.707107, -0.707107, 0.707107, 0.707107, 70.710678, -70.710678) expected 70.710678 +/- 0.0001 but got -70.710678
-FAIL transform: matrix assert_approx_equals: expected matrix(0, 1, -1, 0, 0, 100) but got matrix(1, 0, 0, 1, 100, 0): The value should be matrix(0, 1, -1, 0, 0, 100) at 0ms but got matrix(1, 0, 0, 1, 100, 0) expected 0 +/- 0.0001 but got 1
+PASS transform: skew
+PASS transform: rotate on translate
+PASS transform: translate on rotate
+PASS transform: rotate on rotate and translate
+PASS transform: matrix
 PASS transform: rotate3d
-FAIL transform: matrix3d assert_approx_equals: expected matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1): The value should be matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) at 0ms but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1) expected 0.853553 +/- 0.0001 but got 0.5
-FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1, 0, 0, -1, 250, 0) but got matrix(-1, 0, 0, -1, 200, 0): The value should be matrix(-1, 0, 0, -1, 250, 0) at 0ms but got matrix(-1, 0, 0, -1, 200, 0) expected 250 +/- 0.0001 but got 200
-FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0, -1, 1, 0, 250, 0) but got matrix(0, -1, 1, 0, 200, 0): The value should be matrix(0, -1, 1, 0, 250, 0) at 0ms but got matrix(0, -1, 1, 0, 200, 0) expected 250 +/- 0.0001 but got 200
-FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2, 0, 0, -2, 250, 0) but got matrix(-2, 0, 0, -2, 200, 0): The value should be matrix(-2, 0, 0, -2, 250, 0) at 0ms but got matrix(-2, 0, 0, -2, 200, 0) expected 250 +/- 0.0001 but got 200
+PASS transform: matrix3d
+PASS transform: non-invertible matrices
+PASS transform: non-invertible matrices in matched transform lists
+PASS transform: non-invertible matrices in mismatched transform lists
 PASS transform-box (type: discrete) has testAddition function
 PASS transform-box: "border-box" onto "fill-box"
 PASS transform-box: "fill-box" onto "border-box"
