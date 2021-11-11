@@ -217,7 +217,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaY = -deltaY;
             }
-            scroll(ScrollbarOrientation::Vertical, ScrollByPixel, verticalScrollbar->pixelStep(), -deltaY, behavior);
+            scroll(ScrollbarOrientation::Vertical, ScrollGranularity::Pixel, verticalScrollbar->pixelStep(), -deltaY, behavior);
         }
 
         if (deltaX) {
@@ -227,7 +227,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaX = -deltaX;
             }
-            scroll(ScrollbarOrientation::Horizontal, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX, behavior);
+            scroll(ScrollbarOrientation::Horizontal, ScrollGranularity::Pixel, horizontalScrollbar->pixelStep(), -deltaX, behavior);
         }
     }
     return handled;

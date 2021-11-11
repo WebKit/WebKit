@@ -298,13 +298,13 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
 {
     switch (deltaMode) {
     case WheelEvent::DOM_DELTA_PAGE:
-        return ScrollByPage;
+        return ScrollGranularity::Page;
     case WheelEvent::DOM_DELTA_LINE:
-        return ScrollByLine;
+        return ScrollGranularity::Line;
     case WheelEvent::DOM_DELTA_PIXEL:
-        return ScrollByPixel;
+        return ScrollGranularity::Pixel;
     default:
-        return ScrollByPixel;
+        return ScrollGranularity::Pixel;
     }
 }
 
@@ -1287,7 +1287,7 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
     bool scrolled = false;
 #if PLATFORM(COCOA)
     // Mac also resets the scroll position in the inline direction.
-    if (granularity == ScrollByDocument && view && view->logicalScroll(ScrollInlineDirectionBackward, ScrollByDocument))
+    if (granularity == ScrollGranularity::Document && view && view->logicalScroll(ScrollInlineDirectionBackward, ScrollGranularity::Document))
         scrolled = true;
 #endif
     if (view && view->logicalScroll(direction, granularity))
@@ -4248,7 +4248,7 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
         return;
 
     ScrollLogicalDirection direction = event.shiftKey() ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward;
-    if (logicalScrollOverflow(direction, ScrollByPage)) {
+    if (logicalScrollOverflow(direction, ScrollGranularity::Page)) {
         event.setDefaultHandled();
         return;
     }
@@ -4257,7 +4257,7 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
     if (!view)
         return;
 
-    bool defaultHandled = m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() ? startKeyboardScrolling(event) : view->logicalScroll(direction, ScrollByPage);
+    bool defaultHandled = m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() ? startKeyboardScrolling(event) : view->logicalScroll(direction, ScrollGranularity::Page);
     if (defaultHandled)
         event.setDefaultHandled();
 }
@@ -4299,13 +4299,13 @@ float EventHandler::scrollDistance(ScrollDirection direction, ScrollGranularity 
     }();
 
     switch (granularity) {
-    case ScrollGranularity::ScrollByLine:
+    case ScrollGranularity::Line:
         return scrollbar->lineStep();
-    case ScrollGranularity::ScrollByPage:
+    case ScrollGranularity::Page:
         return scrollbar->pageStep();
-    case ScrollGranularity::ScrollByDocument:
+    case ScrollGranularity::Document:
         return scrollbar->totalSize();
-    case ScrollGranularity::ScrollByPixel:
+    case ScrollGranularity::Pixel:
         return scrollbar->pixelStep();
     }
 

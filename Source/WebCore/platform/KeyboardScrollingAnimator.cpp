@@ -155,13 +155,13 @@ float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, Scrol
 
     if (scrollbar) {
         switch (granularity) {
-        case ScrollGranularity::ScrollByLine:
+        case ScrollGranularity::Line:
             return scrollbar->lineStep();
-        case ScrollGranularity::ScrollByPage:
+        case ScrollGranularity::Page:
             return scrollbar->pageStep();
-        case ScrollGranularity::ScrollByDocument:
+        case ScrollGranularity::Document:
             return scrollbar->totalSize();
-        case ScrollGranularity::ScrollByPixel:
+        case ScrollGranularity::Pixel:
             return scrollbar->pixelStep();
         }
     }
@@ -202,18 +202,18 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
         switch (key.value()) {
         case KeyboardScrollingKey::LeftArrow:
         case KeyboardScrollingKey::RightArrow:
-            return event.altKey() ? ScrollGranularity::ScrollByPage : ScrollGranularity::ScrollByLine;
+            return event.altKey() ? ScrollGranularity::Page : ScrollGranularity::Line;
         case KeyboardScrollingKey::UpArrow:
         case KeyboardScrollingKey::DownArrow:
             if (event.metaKey())
-                return ScrollGranularity::ScrollByDocument;
+                return ScrollGranularity::Document;
             if (event.altKey())
-                return ScrollGranularity::ScrollByPage;
-            return ScrollGranularity::ScrollByLine;
+                return ScrollGranularity::Page;
+            return ScrollGranularity::Line;
         case KeyboardScrollingKey::Space:
         case KeyboardScrollingKey::PageUp:
         case KeyboardScrollingKey::PageDown:
-            return ScrollGranularity::ScrollByPage;
+            return ScrollGranularity::Page;
         };
         RELEASE_ASSERT_NOT_REACHED();
     }();
@@ -267,7 +267,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(const PlatformKeyboar
     if (m_scrollTriggeringKeyIsPressed)
         return false;
 
-    if (m_currentKeyboardScroll->granularity == ScrollGranularity::ScrollByDocument) {
+    if (m_currentKeyboardScroll->granularity == ScrollGranularity::Document) {
         m_velocity = { };
         stopKeyboardScrollAnimation();
         auto newPosition = IntPoint(m_scrollAnimator.currentPosition() + m_currentKeyboardScroll->offset);

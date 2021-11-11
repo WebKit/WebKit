@@ -113,16 +113,16 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
 
     float step = 0;
     switch (granularity) {
-    case ScrollByLine:
+    case ScrollGranularity::Line:
         step = scrollbar->lineStep();
         break;
-    case ScrollByPage:
+    case ScrollGranularity::Page:
         step = scrollbar->pageStep();
         break;
-    case ScrollByDocument:
+    case ScrollGranularity::Document:
         step = scrollbar->totalSize();
         break;
-    case ScrollByPixel:
+    case ScrollGranularity::Pixel:
         step = scrollbar->pixelStep();
         break;
     }

@@ -1060,7 +1060,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     --i;
             }
 
-            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
+            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, abs(i));
             break;
         }
 

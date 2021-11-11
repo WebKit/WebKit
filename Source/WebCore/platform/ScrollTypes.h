@@ -130,11 +130,11 @@ inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool 
     return ScrollUp;
 }
 
-enum ScrollGranularity : uint8_t {
-    ScrollByLine,
-    ScrollByPage,
-    ScrollByDocument,
-    ScrollByPixel
+enum class ScrollGranularity : uint8_t {
+    Line,
+    Page,
+    Document,
+    Pixel
 };
 
 enum class ScrollElasticity : uint8_t {
@@ -330,4 +330,13 @@ template<> struct EnumTraits<WebCore::ScrollPinningBehavior> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::ScrollGranularity> {
+    using values = EnumValues<
+        WebCore::ScrollGranularity,
+        WebCore::ScrollGranularity::Line,
+        WebCore::ScrollGranularity::Page,
+        WebCore::ScrollGranularity::Document,
+        WebCore::ScrollGranularity::Pixel
+    >;
+};
 } // namespace WTF

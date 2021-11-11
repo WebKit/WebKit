@@ -5932,17 +5932,17 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     BOOL directionIsHorizontal = direction == WebCore::ScrollDirection::ScrollLeft || direction == WebCore::ScrollDirection::ScrollRight;
 
     switch (increment) {
-    case WebCore::ScrollGranularity::ScrollByDocument: {
+    case WebCore::ScrollGranularity::Document: {
         CGSize documentSize = [self convertRect:self.bounds toView:self.webView].size;
         return directionIsHorizontal ? documentSize.width : documentSize.height;
     }
-    case WebCore::ScrollGranularity::ScrollByPage: {
+    case WebCore::ScrollGranularity::Page: {
         CGSize pageSize = [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height)) toView:self.webView];
         return directionIsHorizontal ? pageSize.width : pageSize.height;
     }
-    case WebCore::ScrollGranularity::ScrollByLine:
+    case WebCore::ScrollGranularity::Line:
         return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pixelsPerLineStep()) toView:self.webView].height;
-    case WebCore::ScrollGranularity::ScrollByPixel:
+    case WebCore::ScrollGranularity::Pixel:
         return 0;
     }
     ASSERT_NOT_REACHED();

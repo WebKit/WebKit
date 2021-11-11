@@ -139,13 +139,13 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
     // Horizontal
     if (m_touchScrollAxisLatch != AxisLatchVertical) {
         int delta = touchDelta.width();
-        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollLeft : ScrollRight, ScrollByPixel, abs(delta));
+        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollLeft : ScrollRight, ScrollGranularity::Pixel, abs(delta));
     }
     
     // Vertical
     if (m_touchScrollAxisLatch != AxisLatchHorizontal) {
         int delta = touchDelta.height();
-        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollUp : ScrollDown, ScrollByPixel, abs(delta));
+        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollUp : ScrollDown, ScrollGranularity::Pixel, abs(delta));
     }
     
     // Return false until we manage to scroll at all, and then keep returning true until the gesture ends.

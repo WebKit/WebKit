@@ -1,3 +1,15 @@
+2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Make scroll granularity an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=232641
+
+        Reviewed by Cameron McCormack.
+
+        * WebView.cpp:
+        (WebView::verticalScroll):
+        (WebView::horizontalScroll):
+        (WebView::keyDown):
+
 2021-11-11  Sam Weinig  <weinig@apple.com>
 
         Factor platform specific code out of HTMLModelElement

@@ -1,3 +1,34 @@
+2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Make scroll granularity an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=232641
+
+        Reviewed by Cameron McCormack.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView keyboardScrollViewAnimator:distanceForIncrement:inDirection:]):
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator keyboardScrollForEvent:]):
+        (-[WKKeyboardScrollingAnimator beginWithEvent:]):
+        (-[WKKeyboardScrollViewAnimator distanceForIncrement:inDirection:]):
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::onMouseWheel):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onHorizontalScroll):
+        (WebKit::WebView::onVerticalScroll):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scrollBy):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performNonEditingBehaviorForSelector):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2021-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Drop support for <object usemap> making <object> interactive

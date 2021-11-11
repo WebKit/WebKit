@@ -401,19 +401,19 @@ LRESULT WebView::onHorizontalScroll(HWND hWnd, UINT message, WPARAM wParam, LPAR
     ScrollGranularity granularity;
     switch (LOWORD(wParam)) {
     case SB_LINELEFT:
-        granularity = ScrollByLine;
+        granularity = ScrollGranularity::Line;
         direction = ScrollLeft;
         break;
     case SB_LINERIGHT:
-        granularity = ScrollByLine;
+        granularity = ScrollGranularity::Line;
         direction = ScrollRight;
         break;
     case SB_PAGELEFT:
-        granularity = ScrollByDocument;
+        granularity = ScrollGranularity::Document;
         direction = ScrollLeft;
         break;
     case SB_PAGERIGHT:
-        granularity = ScrollByDocument;
+        granularity = ScrollGranularity::Document;
         direction = ScrollRight;
         break;
     default:
@@ -433,19 +433,19 @@ LRESULT WebView::onVerticalScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM
     ScrollGranularity granularity;
     switch (LOWORD(wParam)) {
     case SB_LINEDOWN:
-        granularity = ScrollByLine;
+        granularity = ScrollGranularity::Line;
         direction = ScrollDown;
         break;
     case SB_LINEUP:
-        granularity = ScrollByLine;
+        granularity = ScrollGranularity::Line;
         direction = ScrollUp;
         break;
     case SB_PAGEDOWN:
-        granularity = ScrollByDocument;
+        granularity = ScrollGranularity::Document;
         direction = ScrollDown;
         break;
     case SB_PAGEUP:
-        granularity = ScrollByDocument;
+        granularity = ScrollGranularity::Document;
         direction = ScrollUp;
         break;
     default:

@@ -3305,7 +3305,7 @@ bool WebPage::logicalScroll(Page* page, ScrollLogicalDirection direction, Scroll
     return page->userInputBridge().logicalScrollRecursively(direction, granularity);
 }
 
-bool WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
+bool WebPage::scrollBy(uint32_t scrollDirection, WebCore::ScrollGranularity scrollGranularity)
 {
     return scroll(m_page.get(), static_cast<ScrollDirection>(scrollDirection), static_cast<ScrollGranularity>(scrollGranularity));
 }

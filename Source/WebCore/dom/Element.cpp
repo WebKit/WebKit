@@ -1128,12 +1128,12 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
 
 void Element::scrollByLines(int lines)
 {
-    scrollByUnits(lines, ScrollByLine);
+    scrollByUnits(lines, ScrollGranularity::Line);
 }
 
 void Element::scrollByPages(int pages)
 {
-    scrollByUnits(pages, ScrollByPage);
+    scrollByUnits(pages, ScrollGranularity::Page);
 }
 
 static double localZoomForRenderer(const RenderElement& renderer)
