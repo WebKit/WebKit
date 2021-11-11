@@ -1,5 +1,15 @@
 2021-11-10  Devin Rousso  <drousso@apple.com>
 
+        Unreviewed internal build fix after r285444
+
+        * Platform/spi/Cocoa/AppleMediaServicesUISPI.h:
+        Make sure that `AppleMediaServicesSPI.h` is always included.
+
+        * Platform/spi/Cocoa/AppleMediaServicesSPI.h:
+        Add missing `;`.
+
+2021-11-10  Devin Rousso  <drousso@apple.com>
+
         Add support for marking an `<input>` as being autofilled with obscured content
         https://bugs.webkit.org/show_bug.cgi?id=232903
         <rdar://problem/84276999>

@@ -27,13 +27,15 @@
 
 #if ENABLE(APPLE_PAY_AMS_UI)
 
+#include "AppleMediaServicesSPI.h"
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppleMediaServicesUI/AMSUIEngagementTask.h>
 
 #else // if !USE(APPLE_INTERNAL_SDK)
 
-#include "AppleMediaServicesSPI.h"
+NS_ASSUME_NONNULL_BEGIN
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIViewController;
@@ -48,6 +50,8 @@ typedef NSViewController AMSUIViewController;
 @property (NS_NONATOMIC_IOSONLY, assign) BOOL remotePresentation;
 - (AMSPromise<AMSEngagementResult *> *)presentEngagement;
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif // !USE(APPLE_INTERNAL_SDK)
 

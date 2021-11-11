@@ -39,6 +39,8 @@
 
 #else // if !USE(APPLE_INTERNAL_SDK)
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface AMSPromise<ResultType> : NSObject
 - (void)addFinishBlock:(void(^)(ResultType _Nullable result, NSError * _Nullable error))finishBlock;
 @end
@@ -64,11 +66,17 @@
 - (BOOL)cancel;
 @end
 
+NS_ASSUME_NONNULL_END
+
 #endif // !USE(APPLE_INTERNAL_SDK)
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface AMSEngagementRequest (Staging_84159382)
-- (instancetype)initWithRequestDictionary:(NSDictionary *)dictionary
+- (instancetype)initWithRequestDictionary:(NSDictionary *)dictionary;
 @property (NS_NONATOMIC_IOSONLY, strong, nullable) NSURL *originatingURL;
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
