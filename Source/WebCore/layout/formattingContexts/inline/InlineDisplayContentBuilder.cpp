@@ -75,10 +75,15 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
     ASSERT(!contentNeedsBidiReordering || lineContent.visualOrderList.size() == runs.size());
 
+    auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     auto contentRightInVisualOrder = lineBoxLogicalTopLeft.x();
     // First visual run's initial content position depends on the block's inline direction.
-    if (!root().style().isLeftToRightDirection())
-        contentRightInVisualOrder += lineContent.lineLogicalWidth - lineBox.logicalRectForRootInlineBox().width();
+    if (!root().style().isLeftToRightDirection()) {
+        // FIXME: This needs the block end position instead of the lineLogicalWidth.
+        contentRightInVisualOrder += lineContent.lineLogicalWidth - rootInlineBoxRect.width();
+    }
+    // Adjust the content start position with the (text)aligment offset (root inline box has the aligment offset and not the individual runs).
+    contentRightInVisualOrder += rootInlineBoxRect.left();
 
     for (size_t i = 0; i < runs.size(); ++i) {
         auto visualIndex = contentNeedsBidiReordering ? lineContent.visualOrderList[i] : i;
