@@ -1086,7 +1086,7 @@ public:
 #endif
     JS_EXPORT_PRIVATE void dumpRegExpTrace();
 
-    bool isCollectorBusyOnCurrentThread() { return heap.isCurrentThreadBusy(); }
+    bool isCollectorBusyOnCurrentThread() { return heap.currentThreadIsDoingGCWork(); }
 
 #if ENABLE(GC_VALIDATION)
     bool isInitializingObject() const; 

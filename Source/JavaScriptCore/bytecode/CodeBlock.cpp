@@ -2294,7 +2294,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         // This accomplishes (1), and does its own book-keeping about whether it has already happened.
         if (!jitCode()->dfgCommon()->invalidate()) {
             // We've already been invalidated.
-            RELEASE_ASSERT(this != replacement() || (vm.heap.isCurrentThreadBusy() && !vm.heap.isMarked(ownerExecutable())));
+            RELEASE_ASSERT(this != replacement() || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable())));
             return;
         }
     }
@@ -2326,7 +2326,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
     // Jettison can happen during GC. We don't want to install code to a dead executable
     // because that would add a dead object to the remembered set.
-    if (vm.heap.isCurrentThreadBusy() && !vm.heap.isMarked(ownerExecutable()))
+    if (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable()))
         return;
 
 #if ENABLE(JIT)

@@ -164,7 +164,7 @@ public:
 
     // We're always busy on the collection threads. On the main thread, this returns true if we're
     // helping heap.
-    JS_EXPORT_PRIVATE bool isCurrentThreadBusy();
+    JS_EXPORT_PRIVATE bool currentThreadIsDoingGCWork();
     
     typedef void (*CFinalizer)(JSCell*);
     JS_EXPORT_PRIVATE void addFinalizer(JSCell*, CFinalizer);
@@ -426,7 +426,6 @@ private:
         void finalize(Handle<Unknown>, void* context) final;
     };
 
-    JS_EXPORT_PRIVATE bool isValidAllocation(size_t);
     JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(size_t);
     JS_EXPORT_PRIVATE void deprecatedReportExtraMemorySlowCase(size_t);
     

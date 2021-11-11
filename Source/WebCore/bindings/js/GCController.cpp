@@ -92,7 +92,7 @@ void GCController::gcTimerFired()
 void GCController::garbageCollectNow()
 {
     JSLockHolder lock(commonVM());
-    if (!commonVM().heap.isCurrentThreadBusy()) {
+    if (!commonVM().heap.currentThreadIsDoingGCWork()) {
         commonVM().heap.collectNow(Sync, CollectionScope::Full);
         WTF::releaseFastMallocFreeMemory();
     }
@@ -102,7 +102,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 {
 #if USE(CF) || USE(GLIB)
     JSLockHolder lock(commonVM());
-    if (!commonVM().heap.isCurrentThreadBusy())
+    if (!commonVM().heap.currentThreadIsDoingGCWork())
         commonVM().heap.collectNowFullIfNotDoneRecently(Async);
 #else
     garbageCollectSoon();

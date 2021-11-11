@@ -1,3 +1,26 @@
+2021-11-11  Mark Lam  <mark.lam@apple.com>
+
+        Rename Heap::isCurrentThreadBusy() to Heap::currentThreadIsDoingGCWork().
+        https://bugs.webkit.org/show_bug.cgi?id=233005
+        rdar://85307204
+
+        Reviewed by Saam Barati.
+
+        This rename clarifies what the "busy" part is about.  Also remove some unused code:
+        Heap::isValidAllocation(), isValidThreadState(), and isValidSharedInstanceThreadState().
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * heap/Heap.cpp:
+        (JSC::Heap::currentThreadIsDoingGCWork):
+        (JSC::Heap::isValidAllocation): Deleted.
+        (JSC::Heap::isCurrentThreadBusy): Deleted.
+        * heap/Heap.h:
+        * jsc.cpp:
+        (jscmain):
+        * runtime/VM.h:
+        (JSC::VM::isCollectorBusyOnCurrentThread):
+
 2021-11-11  Michael Saboff  <msaboff@apple.com>
 
         Inline RegExp.test JIT code in DFG and FTL

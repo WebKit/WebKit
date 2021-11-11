@@ -3765,7 +3765,7 @@ int jscmain(int argc, char** argv)
         WTF::releaseFastMallocFreeMemory();
         vm.deleteAllCode(DeleteAllCodeIfNotCollecting);
 
-        if (!vm.heap.isCurrentThreadBusy()) {
+        if (!vm.heap.currentThreadIsDoingGCWork()) {
             if (isSynchronous) {
                 vm.heap.collectNow(Sync, CollectionScope::Full);
                 WTF::releaseFastMallocFreeMemory();

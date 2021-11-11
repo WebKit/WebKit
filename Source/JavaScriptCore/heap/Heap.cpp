@@ -138,22 +138,6 @@ size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
     return Options::largeHeapGrowthFactor() * heapSize;
 }
 
-bool isValidSharedInstanceThreadState(VM& vm)
-{
-    return vm.currentThreadIsHoldingAPILock();
-}
-
-bool isValidThreadState(VM& vm)
-{
-    if (vm.atomStringTable() != Thread::current().atomStringTable())
-        return false;
-
-    if (vm.isSharedInstance() && !isValidSharedInstanceThreadState(vm))
-        return false;
-
-    return true;
-}
-
 void recordType(VM& vm, TypeCountSet& set, JSCell* cell)
 {
     const char* typeName = "[unknown]";
@@ -2379,17 +2363,6 @@ void Heap::didAllocate(size_t bytes)
     performIncrement(bytes);
 }
 
-bool Heap::isValidAllocation(size_t)
-{
-    if (!isValidThreadState(vm()))
-        return false;
-
-    if (isCurrentThreadBusy())
-        return false;
-    
-    return true;
-}
-
 void Heap::addFinalizer(JSCell* cell, CFinalizer finalizer)
 {
     WeakSet::allocate(cell, &m_cFinalizerOwner, bitwise_cast<void*>(finalizer)); // Balanced by CFinalizerOwner::finalize().
@@ -2536,7 +2509,7 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
     addToRememberedSet(from);
 }
 
-bool Heap::isCurrentThreadBusy()
+bool Heap::currentThreadIsDoingGCWork()
 {
     return Thread::mayBeGCThread() || mutatorState() != MutatorState::Running;
 }

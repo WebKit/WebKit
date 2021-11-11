@@ -575,14 +575,14 @@ void WorkerGlobalScope::deleteJSCodeAndGC(Synchronous synchronous)
     vm().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
 
     if (synchronous == Synchronous::Yes) {
-        if (!vm().heap.isCurrentThreadBusy()) {
+        if (!vm().heap.currentThreadIsDoingGCWork()) {
             vm().heap.collectNow(JSC::Sync, JSC::CollectionScope::Full);
             WTF::releaseFastMallocFreeMemory();
             return;
         }
     }
 #if PLATFORM(IOS_FAMILY)
-    if (!vm().heap.isCurrentThreadBusy()) {
+    if (!vm().heap.currentThreadIsDoingGCWork()) {
         vm().heap.collectNowFullIfNotDoneRecently(JSC::Async);
         return;
     }
