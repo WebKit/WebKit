@@ -47,6 +47,7 @@
 #import <WebCore/HTMLOListElement.h>
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/ImageOverlay.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/PaymentCoordinator.h>
@@ -200,7 +201,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
 #endif // PLATFORM(MAC)
 
     OptionSet<TextIndicatorOption> indicatorOptions { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges };
-    if (HTMLElement::isInsideImageOverlay(range))
+    if (ImageOverlay::isInsideOverlay(range))
         indicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
 
     if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)

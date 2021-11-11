@@ -132,19 +132,6 @@ public:
     void setEnterKeyHint(const String& value);
 
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
-    WEBCORE_EXPORT bool hasImageOverlay() const;
-    WEBCORE_EXPORT bool isImageOverlayDataDetectorResult() const;
-    WEBCORE_EXPORT static bool isInsideImageOverlay(const SimpleRange&);
-    WEBCORE_EXPORT static bool isInsideImageOverlay(const Node&);
-    WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
-    WEBCORE_EXPORT static bool isImageOverlayText(const Node*);
-    void removeImageOverlaySoonIfNeeded();
-
-#if ENABLE(IMAGE_ANALYSIS)
-    IntRect containerRectForTextRecognition();
-    enum class CacheTextRecognitionResults : bool { No, Yes };
-    WEBCORE_EXPORT void updateWithTextRecognitionResult(const TextRecognitionResult&, CacheTextRecognitionResults = CacheTextRecognitionResults::Yes);
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);

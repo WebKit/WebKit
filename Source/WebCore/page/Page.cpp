@@ -76,6 +76,7 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "IDBConnectionToServer.h"
+#include "ImageOverlay.h"
 #include "ImageOverlayController.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
@@ -3723,7 +3724,7 @@ void Page::updateElementsWithTextRecognitionResults()
             continue;
 
         auto& [result, containerRect] = entry.value;
-        auto newContainerRect = protectedElement->containerRectForTextRecognition();
+        auto newContainerRect = ImageOverlay::containerRect(protectedElement.get());
         if (containerRect == newContainerRect)
             continue;
 
@@ -3733,11 +3734,8 @@ void Page::updateElementsWithTextRecognitionResults()
 
     for (auto& [element, result] : elementsToUpdate) {
         element->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [result = TextRecognitionResult { result }, weakElement = WeakPtr { element }] {
-            RefPtr element { weakElement.get() };
-            if (!element)
-                return;
-
-            element->updateWithTextRecognitionResult(result, HTMLElement::CacheTextRecognitionResults::No);
+            if (RefPtr element = weakElement.get())
+                ImageOverlay::updateWithTextRecognitionResult(*element, result, ImageOverlay::CacheTextRecognitionResults::No);
         });
     }
 }

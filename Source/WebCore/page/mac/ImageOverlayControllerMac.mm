@@ -35,6 +35,7 @@
 #import "FrameView.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
+#import "ImageOverlay.h"
 #import "ImageOverlayDataDetectionResultIdentifier.h"
 #import "IntRect.h"
 #import "Page.h"
@@ -50,7 +51,7 @@ namespace WebCore {
 
 void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& overlayHost)
 {
-    if (!overlayHost.hasImageOverlay()) {
+    if (!ImageOverlay::hasOverlay(overlayHost)) {
         ASSERT_NOT_REACHED();
         clearDataDetectorHighlights();
         return;
@@ -58,7 +59,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 
     Vector<Ref<HTMLElement>> dataDetectorResultElements;
     for (auto& child : descendantsOfType<HTMLElement>(*overlayHost.userAgentShadowRoot())) {
-        if (child.isImageOverlayDataDetectorResult() && child.renderer())
+        if (ImageOverlay::isDataDetectorResult(child) && child.renderer())
             dataDetectorResultElements.append(child);
     }
 
@@ -190,7 +191,7 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* e
     if (!elementUnderMouse && m_hostElementForDataDetectors && frame.document() != &m_hostElementForDataDetectors->document())
         return;
 
-    if (!elementUnderMouse || !HTMLElement::isInsideImageOverlay(*elementUnderMouse)) {
+    if (!elementUnderMouse || !ImageOverlay::isInsideOverlay(*elementUnderMouse)) {
         m_hostElementForDataDetectors = nullptr;
         uninstallPageOverlayIfNeeded();
         return;
@@ -205,7 +206,7 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* e
     }
 
     Ref imageOverlayHost = downcast<HTMLElement>(*shadowHost);
-    if (!imageOverlayHost->hasImageOverlay()) {
+    if (!ImageOverlay::hasOverlay(imageOverlayHost.get())) {
         ASSERT_NOT_REACHED();
         m_hostElementForDataDetectors = nullptr;
         uninstallPageOverlayIfNeeded();

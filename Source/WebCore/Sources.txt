@@ -964,6 +964,7 @@ dom/IdTargetObserver.cpp
 dom/IdTargetObserverRegistry.cpp
 dom/IdleCallbackController.cpp
 dom/IdleDeadline.cpp
+dom/ImageOverlay.cpp
 dom/InlineClassicScript.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp

@@ -61,6 +61,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLTrackElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageOverlay.h"
 #include "InbandGenericTextTrack.h"
 #include "InbandTextTrackPrivate.h"
 #include "InbandWebVTTTextTrack.h"
@@ -3140,7 +3141,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     if (processingUserGestureForMedia())
         mediaSession().removeBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
 
-    removeImageOverlaySoonIfNeeded();
+    ImageOverlay::removeOverlaySoonIfNeeded(*this);
 }
 
 void HTMLMediaElement::seekTask()
@@ -3734,7 +3735,7 @@ void HTMLMediaElement::playInternal()
     m_autoplaying = false;
     updatePlayState();
 
-    removeImageOverlaySoonIfNeeded();
+    ImageOverlay::removeOverlaySoonIfNeeded(*this);
 }
 
 void HTMLMediaElement::pause()

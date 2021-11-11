@@ -202,6 +202,7 @@
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/ImageOverlay.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSDOMWindow.h>
@@ -1213,7 +1214,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
 
     if (result.selectionIsRange) {
         auto selectionRange = selection.range();
-        result.selectionIsRangeInsideImageOverlay = selectionRange && HTMLElement::isInsideImageOverlay(*selectionRange);
+        result.selectionIsRangeInsideImageOverlay = selectionRange && ImageOverlay::isInsideOverlay(*selectionRange);
     }
 
     m_lastEditorStateWasContentEditable = result.isContentEditable ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
@@ -4121,7 +4122,7 @@ std::optional<std::pair<Ref<WebCore::HTMLElement>, WebCore::IntRect>> WebPage::f
 {
     Vector<Ref<HTMLElement>> dataDetectorElements;
     for (auto& child : descendantsOfType<HTMLElement>(*imageOverlayHost.shadowRoot())) {
-        if (child.isImageOverlayDataDetectorResult())
+        if (ImageOverlay::isDataDetectorResult(child))
             dataDetectorElements.append(child);
     }
 
@@ -7497,7 +7498,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
     if (corePage()->hasCachedTextRecognitionResult(htmlElement.get())) {
         if (completion) {
             RefPtr<Element> imageOverlayHost;
-            if (htmlElement->hasImageOverlay())
+            if (ImageOverlay::hasOverlay(htmlElement.get()))
                 imageOverlayHost = &element;
             completion(WTFMove(imageOverlayHost));
         }
@@ -7564,7 +7565,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
             return;
 
         auto& htmlElement = downcast<HTMLElement>(*protectedElement);
-        htmlElement.updateWithTextRecognitionResult(result);
+        ImageOverlay::updateWithTextRecognitionResult(htmlElement, result);
 
         auto matchIndex = protectedPage->m_elementsPendingTextRecognition.findMatching([&] (auto& elementAndCompletionHandlers) {
             return elementAndCompletionHandlers.first == &htmlElement;
@@ -7573,7 +7574,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
         if (matchIndex == notFound)
             return;
 
-        RefPtr imageOverlayHost = htmlElement.hasImageOverlay() ? &htmlElement : nullptr;
+        RefPtr imageOverlayHost = ImageOverlay::hasOverlay(htmlElement) ? &htmlElement : nullptr;
         for (auto& completionHandler : protectedPage->m_elementsPendingTextRecognition[matchIndex].second)
             completionHandler(imageOverlayHost.copyRef());
 
@@ -7589,7 +7590,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
         return;
     }
 
-    downcast<HTMLElement>(*elementToUpdate).updateWithTextRecognitionResult(result);
+    ImageOverlay::updateWithTextRecognitionResult(downcast<HTMLElement>(*elementToUpdate), result);
     auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
@@ -7598,7 +7599,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
 
     RefPtr nodeAtLocation = hitTestResult.innerNonSharedNode();
     auto updateResult = ([&] {
-        if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate || !HTMLElement::isInsideImageOverlay(*nodeAtLocation))
+        if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate || !ImageOverlay::isInsideOverlay(*nodeAtLocation))
             return TextRecognitionUpdateResult::NoText;
 
 #if ENABLE(DATA_DETECTION)
@@ -7606,7 +7607,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
             return TextRecognitionUpdateResult::DataDetector;
 #endif
 
-        if (HTMLElement::isImageOverlayText(*nodeAtLocation))
+        if (ImageOverlay::isOverlayText(*nodeAtLocation))
             return TextRecognitionUpdateResult::Text;
 
         return TextRecognitionUpdateResult::NoText;

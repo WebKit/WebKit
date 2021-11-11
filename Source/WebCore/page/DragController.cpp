@@ -67,6 +67,7 @@
 #include "HitTestResult.h"
 #include "Image.h"
 #include "ImageOrientation.h"
+#include "ImageOverlay.h"
 #include "Model.h"
 #include "MoveSelectionCommand.h"
 #include "Page.h"
@@ -799,7 +800,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 #endif
 
     auto selectionDragElement = state.type.contains(DragSourceAction::Selection) && m_dragSourceAction.contains(DragSourceAction::Selection) ? startElement : nullptr;
-    if (HTMLElement::isImageOverlayText(startElement))
+    if (ImageOverlay::isOverlayText(startElement))
         return selectionDragElement;
 
     for (auto* element = startElement; element; element = element->parentOrShadowHostElement()) {
@@ -1041,7 +1042,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
             src.editor().willWriteSelectionToPasteboard(*selectionRange);
             auto selection = src.selection().selection();
             bool shouldDragAsPlainText = enclosingTextFormControl(selection.start());
-            if (auto range = selection.range(); range && HTMLElement::isInsideImageOverlay(*range))
+            if (auto range = selection.range(); range && ImageOverlay::isInsideOverlay(*range))
                 shouldDragAsPlainText = true;
 
             if (shouldDragAsPlainText) {

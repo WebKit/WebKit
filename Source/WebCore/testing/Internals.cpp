@@ -111,6 +111,7 @@
 #include "HitTestResult.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
+#include "ImageOverlay.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorDebuggableType.h"
@@ -5807,7 +5808,7 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
         return;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    downcast<HTMLElement>(element).updateWithTextRecognitionResult(TextRecognitionResult {
+    ImageOverlay::updateWithTextRecognitionResult(downcast<HTMLElement>(element), TextRecognitionResult {
         lines.map([] (auto& line) -> TextRecognitionLineData {
             return makeDataForLine(line);
         })

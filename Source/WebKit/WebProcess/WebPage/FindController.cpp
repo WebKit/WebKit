@@ -40,6 +40,7 @@
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageOverlay.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PathUtilities.h>
@@ -374,7 +375,7 @@ void FindController::hideFindUI()
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
     OptionSet<TextIndicatorOption> textIndicatorOptions { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection };
-    if (auto selectedRange = selectedFrame.selection().selection().range(); selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange))
+    if (auto selectedRange = selectedFrame.selection().selection().range(); selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
         textIndicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
 
     auto indicator = TextIndicator::createWithSelectionInFrame(selectedFrame, textIndicatorOptions, shouldAnimate ? TextIndicatorPresentationTransition::Bounce : TextIndicatorPresentationTransition::None);

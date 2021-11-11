@@ -45,6 +45,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "ImageOverlay.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLine.h"
 #include "Page.h"
@@ -140,7 +141,7 @@ using namespace HTMLNames;
 RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(element, WTFMove(style), IntSize())
     , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
-    , m_hasImageOverlay(is<HTMLElement>(element) && downcast<HTMLElement>(element).hasImageOverlay())
+    , m_hasImageOverlay(is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element)))
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();

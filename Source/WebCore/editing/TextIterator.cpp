@@ -45,6 +45,7 @@
 #include "HTMLSlotElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
+#include "ImageOverlay.h"
 #include "LegacyInlineTextBox.h"
 #include "NodeTraversal.h"
 #include "Range.h"
@@ -737,7 +738,7 @@ bool TextIterator::handleReplacedElement()
         }
     }
 
-    if (m_behaviors.contains(TextIteratorBehavior::EntersImageOverlays) && is<HTMLElement>(m_node) && downcast<HTMLElement>(*m_node).hasImageOverlay()) {
+    if (m_behaviors.contains(TextIteratorBehavior::EntersImageOverlays) && is<HTMLElement>(m_node) && ImageOverlay::hasOverlay(downcast<HTMLElement>(*m_node))) {
         if (RefPtr shadowRoot = m_node->shadowRoot()) {
             m_node = shadowRoot.get();
             pushFullyClippedState(m_fullyClippedStack, *m_node);

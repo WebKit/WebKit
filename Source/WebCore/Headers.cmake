@@ -513,6 +513,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FragmentScriptingPermission.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h
+    dom/ImageOverlay.h
     dom/InlineStyleSheetOwner.h
     dom/KeyboardEvent.h
     dom/LiveNodeList.h

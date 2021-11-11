@@ -108,6 +108,7 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/ImageOverlay.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LibWebRTCProvider.h>
@@ -1349,7 +1350,7 @@ static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const 
 static bool insideImageOverlay(const VisiblePosition& position)
 {
     RefPtr container = position.deepEquivalent().containerNode();
-    return container && HTMLElement::isInsideImageOverlay(*container);
+    return container && ImageOverlay::isInsideOverlay(*container);
 }
 
 static std::optional<SimpleRange> expandForImageOverlay(const SimpleRange& range)
@@ -1586,7 +1587,7 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
             range = makeSimpleRange(result, selectionEnd);
     }
     
-    if (range && HTMLElement::isInsideImageOverlay(*range))
+    if (range && ImageOverlay::isInsideOverlay(*range))
         return { expandForImageOverlay(*range), SelectionWasFlipped::No };
 
     return { range, selectionFlipped };
@@ -2805,7 +2806,7 @@ static void videoPositionInformation(WebPage& page, HTMLVideoElement& element, c
 
 static RefPtr<HTMLVideoElement> hostVideoElementIgnoringImageOverlay(Node& node)
 {
-    if (HTMLElement::isInsideImageOverlay(node))
+    if (ImageOverlay::isInsideOverlay(node))
         return { };
 
     if (is<HTMLVideoElement>(node))
@@ -2858,7 +2859,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     info.isElement = true;
     info.idAttribute = element.getIdAttribute();
-    info.isImageOverlayText = HTMLElement::isImageOverlayText(innerNonSharedNode);
+    info.isImageOverlayText = ImageOverlay::isOverlayText(innerNonSharedNode);
 
     info.title = element.attributeWithoutSynchronization(HTMLNames::titleAttr).string();
     if (linkElement && info.title.isEmpty())
@@ -2907,7 +2908,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
 #if ENABLE(DATA_DETECTION)
     if (info.isImageOverlayText && innerNonSharedNode->shadowHost() == &element && is<HTMLElement>(element)) {
-        if (Ref htmlElement = downcast<HTMLElement>(element); htmlElement->hasImageOverlay())
+        if (Ref htmlElement = downcast<HTMLElement>(element); ImageOverlay::hasOverlay(htmlElement.get()))
             dataDetectorImageOverlayPositionInformation(htmlElement.get(), request, info);
     }
 #endif

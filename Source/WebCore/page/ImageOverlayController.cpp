@@ -34,6 +34,7 @@
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
+#include "ImageOverlay.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "Page.h"
@@ -71,7 +72,7 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
         if (!selectedRange)
             return nullptr;
 
-        if (!HTMLElement::isInsideImageOverlay(*selectedRange))
+        if (!ImageOverlay::isInsideOverlay(*selectedRange))
             return nullptr;
 
         if (RefPtr host = selectedRange->startContainer().shadowHost(); is<HTMLElement>(host))

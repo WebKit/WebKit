@@ -73,6 +73,7 @@
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/ImageOverlay.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
@@ -885,7 +886,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
     auto indicatorOptions = [&](const SimpleRange& range) {
         OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges };
-        if (HTMLElement::isInsideImageOverlay(range))
+        if (ImageOverlay::isInsideOverlay(range))
             options.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
         return options;
     };

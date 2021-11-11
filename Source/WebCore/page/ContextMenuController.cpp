@@ -51,6 +51,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HitTestResult.h"
+#include "ImageOverlay.h"
 #include "InspectorController.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
@@ -943,7 +944,7 @@ void ContextMenuController::populate()
         }
 
         auto selectedRange = frame->selection().selection().range();
-        bool selectionIsInsideImageOverlay = selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange);
+        bool selectionIsInsideImageOverlay = selectedRange && ImageOverlay::isInsideOverlay(*selectedRange);
         bool shouldShowItemsForNonEditableText = ([&] {
             if (!linkURL.isEmpty())
                 return false;

@@ -74,6 +74,7 @@
 #include "HTMLSpanElement.h"
 #include "HTMLUListElement.h"
 #include "HitTestResult.h"
+#include "ImageOverlay.h"
 #include "IndentOutdentCommand.h"
 #include "InputEvent.h"
 #include "InsertListCommand.h"
@@ -1426,7 +1427,7 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
         updateMarkersForWordsAffectedByEditing(true);
     }
 
-    if (enclosingTextFormControl(m_document.selection().selection().start()) || (selection && HTMLElement::isInsideImageOverlay(*selection)))
+    if (enclosingTextFormControl(m_document.selection().selection().start()) || (selection && ImageOverlay::isInsideOverlay(*selection)))
         Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(m_document.pageID()))->writePlainText(selectedTextForDataTransfer(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
     else {
         RefPtr<HTMLImageElement> imageElement;
@@ -3679,7 +3680,7 @@ static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
     if (Ref startNode = range.startContainer(); startNode->hasEditableStyle())
         return { };
 
-    if (HTMLElement::isInsideImageOverlay(range))
+    if (ImageOverlay::isInsideOverlay(range))
         return { };
 
     auto text = plainText(range);

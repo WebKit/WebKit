@@ -69,6 +69,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
+#include "ImageOverlay.h"
 #include "ImageOverlayController.h"
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
@@ -449,7 +450,7 @@ static inline bool dispatchSelectStart(Node* node)
 
 static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 {
-    if (HTMLElement::isInsideImageOverlay(targetNode))
+    if (ImageOverlay::isInsideOverlay(targetNode))
         return nullptr;
 
     if (RefPtr rootUserSelectAll = Position::rootUserSelectAllForNode(&targetNode))
@@ -720,7 +721,7 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
     if (!node || !node->renderer())
         return true;
 
-    if (HTMLElement::isImageOverlayText(*node))
+    if (ImageOverlay::isOverlayText(*node))
         return node->renderer()->style().userSelectIncludingInert() != UserSelect::None;
 
     return node->canStartSelection() || Position::nodeIsUserSelectAll(node.get());
@@ -766,7 +767,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     // Bug: https://bugs.webkit.org/show_bug.cgi?id=155390
 
     // Single mouse down on links or images can always trigger drag-n-drop.
-    bool isImageOverlayText = HTMLElement::isImageOverlayText(event.targetNode());
+    bool isImageOverlayText = ImageOverlay::isOverlayText(event.targetNode());
     bool isMouseDownOnLinkOrImage = event.isOverLink() || (event.hitTestResult().image() && !isImageOverlayText);
     m_mouseDownMayStartDrag = singleClick && (!event.event().shiftKey() || isMouseDownOnLinkOrImage) && shouldAllowMouseDownToStartDrag();
 #endif
@@ -1023,7 +1024,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     m_frame.selection().setSelectionByMouseIfDifferent(newSelection, m_frame.selection().granularity(),
         FrameSelection::EndPointsAdjustmentMode::AdjustAtBidiBoundary);
 
-    if (oldSelection != newSelection && HTMLElement::isImageOverlayText(newSelection.start().containerNode()) && HTMLElement::isImageOverlayText(newSelection.end().containerNode()))
+    if (oldSelection != newSelection && ImageOverlay::isOverlayText(newSelection.start().containerNode()) && ImageOverlay::isOverlayText(newSelection.end().containerNode()))
         invalidateClick();
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -1200,7 +1201,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, Optio
 
     RefPtr innerNode = result.innerNode();
     if (request.disallowsUserAgentShadowContent()
-        || (request.disallowsUserAgentShadowContentExceptForImageOverlays() && innerNode && !HTMLElement::isInsideImageOverlay(*innerNode)))
+        || (request.disallowsUserAgentShadowContentExceptForImageOverlays() && innerNode && !ImageOverlay::isInsideOverlay(*innerNode)))
         result.setToNonUserAgentShadowAncestor();
 
     return result;
@@ -1521,7 +1522,7 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
 
     switch (style ? style->cursor() : CursorType::Auto) {
     case CursorType::Auto: {
-        if (HTMLElement::isImageOverlayText(node.get())) {
+        if (ImageOverlay::isOverlayText(node.get())) {
             auto* renderer = node->renderer();
             if (renderer && renderer->style().userSelectIncludingInert() != UserSelect::None)
                 return iBeam;
