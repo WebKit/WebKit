@@ -7625,6 +7625,10 @@ TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOriginAllowPopup4)
     runCOOPProcessSwapTest("same-origin-allow-popup", "unsafe-none", "unsafe-none", "unsafe-none", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
+// On iOS, toggling the captive portal mode requires the browser entitlement, which TestWebKit API doesn't have.
+// Also, some API tests rely on the browser entitlement not being present.
+#if !PLATFORM(IOS)
+
 static bool isJITEnabled(WKWebView *webView)
 {
     __block bool gotResponse = false;
@@ -7781,3 +7785,5 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     checkSettingsControlledByCaptivePortalMode(webView2.get(), ShouldBeEnabled::Yes);
     EXPECT_EQ(pid2, [webView2 _webProcessIdentifier]);
 }
+
+#endif

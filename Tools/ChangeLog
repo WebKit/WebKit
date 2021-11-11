@@ -1,3 +1,18 @@
+2021-11-11  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: 26 InAppBrowserPrivacy API failures on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=233016
+        <rdar://problem/85315536>
+
+        Reviewed by Brent Fulgham.
+
+        In r285594, I have the browser entitlement to TestWebKit API to make my new API test work
+        on iOS. However, it turns out that 26 InAppBrowserPrivacy API tests rely on the browser
+        entitlement not being present. I am therefore reverting this part of my change.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI-iOS.entitlements:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-11-11  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for thread deadlocks during layout tests in isolated tree mode.

@@ -10,7 +10,5 @@
 	<true/>
 	<key>com.apple.Pasteboard.paste-unchecked</key>
 	<true/>
-	<key>com.apple.developer.web-browser</key>
-	<true/>
 </dict>
 </plist>
