@@ -40,6 +40,7 @@
 #include "SpillRegistersMode.h"
 #include "StructureChain.h"
 #include "SuperSampler.h"
+#include "YarrJITRegisters.h"
 
 namespace JSC { namespace DFG {
 
@@ -2700,6 +2701,197 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
     } }
 }
 
+#if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
+void SpeculativeJIT::compileRegExpTestInline(Node* node)
+{
+    RegExp* regExp = jsCast<RegExp*>(node->cellOperand2()->value());
+
+    ASSERT(!regExp->globalOrSticky());
+
+    SpeculateCellOperand globalObject(this, node->child1());
+    SpeculateCellOperand base(this, node->child2());
+    GPRReg globalObjectGPR = globalObject.gpr();
+    GPRReg baseGPR = base.gpr();
+    GPRReg argumentGPR;
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    GPRTemporary stringImpl(this);
+    GPRTemporary stringData(this);
+    GPRTemporary strLength(this);
+    GPRTemporary output(this);
+    GPRTemporary result2(this);
+    GPRTemporary temp0(this);
+    GPRTemporary temp1(this);
+    GPRTemporary temp2;
+    GPRReg stringImplGPR = stringImpl.gpr();
+    GPRReg stringDataGPR = stringData.gpr();
+    GPRReg outputGPR = output.gpr();
+    GPRReg strLengthGPR = strLength.gpr();
+    GPRReg result2GPR = result2.gpr();
+    GPRReg temp0GPR = temp0.gpr();
+    GPRReg temp1GPR = temp1.gpr();
+    GPRReg temp2GPR = InvalidGPRReg;
+    GPRReg swapReg = InvalidGPRReg;
+
+    auto jitCodeBlock = regExp->getRegExpJITCodeBlock();
+    ASSERT(jitCodeBlock);
+    auto inlineCodeStats8Bit = jitCodeBlock->get8BitInlineStats();
+
+#if !CPU(X86_64)
+    if (inlineCodeStats8Bit.needsTemp2()) {
+        GPRTemporary realTemp2(this);
+        temp2.adopt(realTemp2);
+        temp2GPR = temp2.gpr();
+    }
+#endif
+
+    speculateRegExpObject(node->child2(), baseGPR);
+
+    MacroAssembler::JumpList done;
+    MacroAssembler::JumpList operationCases;
+
+    auto swapRegIfNeeded = [&] {
+        if (globalObjectGPR == resultGPR) {
+            swapReg = allocate();
+            m_jit.move(globalObjectGPR, swapReg);
+            globalObjectGPR = swapReg;
+        } else if (baseGPR == resultGPR) {
+            swapReg = allocate();
+            m_jit.move(baseGPR, swapReg);
+            baseGPR = swapReg;
+        } else if (argumentGPR == resultGPR) {
+            swapReg = allocate();
+            m_jit.move(argumentGPR, swapReg);
+            argumentGPR = swapReg;
+        }
+    };
+
+    auto regExpTestInlineCase = [&] {
+        m_jit.loadPtr(MacroAssembler::Address(stringImplGPR, StringImpl::dataOffset()), stringDataGPR);
+        m_jit.load32(MacroAssembler::Address(stringImplGPR, StringImpl::lengthMemoryOffset()), strLengthGPR);
+
+        GPRReg indexGPR = stringImplGPR;
+
+        m_jit.move(TrustedImm32(0), indexGPR);
+
+        Yarr::YarrJITRegisters yarrRegisters;
+        yarrRegisters.input = stringDataGPR;
+        yarrRegisters.index = indexGPR;
+        yarrRegisters.length = strLengthGPR;
+        yarrRegisters.output = outputGPR;
+        yarrRegisters.regT0 = temp0GPR;
+        yarrRegisters.regT1 = temp1GPR;
+#if CPU(X86_64)
+        temp2GPR = globalObjectGPR;
+#endif
+        if (inlineCodeStats8Bit.needsTemp2())
+            yarrRegisters.regT2 = temp2GPR;
+
+        yarrRegisters.returnRegister = resultGPR;
+        yarrRegisters.returnRegister2 = result2GPR;
+
+        auto commonData = m_jit.jitCode()->dfgCommon();
+        Yarr::jitCompileInlinedTest(&m_graph.m_stackChecker, regExp->pattern(), regExp->flags(), Yarr::CharSize::Char8, &vm(), commonData->m_boyerMooreData, m_jit, yarrRegisters);
+
+        auto failedMatch = m_jit.branch32(MacroAssembler::LessThan, resultGPR, TrustedImm32(0));
+
+        //  Saved cached result
+#if CPU(X86_64)
+        if (inlineCodeStats8Bit.needsTemp2()) {
+            // Since we reused globalObjectGPR for temp2, let's restore the global object.
+            JSGlobalObject* globalObjectConst = jsCast<JSGlobalObject*>(node->cellOperand()->value());
+            m_jit.move(CCallHelpers::TrustedImmPtr(globalObjectConst), globalObjectGPR);
+        }
+#endif
+
+        ptrdiff_t offset = JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult();
+
+        m_jit.storePtr(TrustedImmPtr::weakPointer(m_graph, regExp), JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfLastRegExp()));
+        m_jit.storePtr(argumentGPR, JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfLastInput()));
+        m_jit.store32(resultGPR, JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, start)));
+        m_jit.store32(result2GPR, JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, end)));
+        m_jit.store8(TrustedImm32(0), JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfReified()));
+
+        if (swapReg != InvalidGPRReg)
+            unlock(swapReg);
+
+        m_jit.move(TrustedImm32(1), resultGPR);
+        done.append(m_jit.jump());
+
+        failedMatch.link(&m_jit);
+        m_jit.move(TrustedImm32(0), resultGPR);
+        done.append(m_jit.jump());
+    };
+
+    if (node->child3().useKind() == StringUse) {
+        SpeculateCellOperand argument(this, node->child3());
+        argumentGPR = argument.gpr();
+        speculateString(node->child3(), argumentGPR);
+
+        flushRegisters();
+
+        swapRegIfNeeded();
+
+        m_jit.loadPtr(MacroAssembler::Address(argumentGPR, JSString::offsetOfValue()), stringImplGPR);
+        // If the string is a rope or 16 bit, we call the operation.
+        operationCases.append(m_jit.branchIfRopeStringImpl(stringImplGPR));
+        operationCases.append(m_jit.branchTest32(
+            MacroAssembler::Zero,
+            MacroAssembler::Address(stringImplGPR, StringImpl::flagsOffset()),
+            TrustedImm32(StringImpl::flagIs8Bit())));
+
+        regExpTestInlineCase();
+
+        operationCases.link(&m_jit);
+
+        callOperation(operationRegExpTestString, resultGPR, globalObjectGPR, baseGPR, argumentGPR);
+
+        m_jit.exceptionCheck();
+
+        done.link(&m_jit);
+        unblessedBooleanResult(resultGPR, node);
+
+        return;
+    }
+
+    JSValueOperand argument(this, node->child3());
+    argumentGPR = argument.gpr();
+
+    flushRegisters();
+
+    swapRegIfNeeded();
+
+    operationCases.append(m_jit.branchIfNotCell(argumentGPR));
+    operationCases.append(m_jit.branchIfNotString(argumentGPR));
+
+    m_jit.loadPtr(MacroAssembler::Address(argumentGPR, JSString::offsetOfValue()), stringImplGPR);
+    // If the string is a rope or 16 bit, we call the operation.
+    operationCases.append(m_jit.branchIfRopeStringImpl(stringImplGPR));
+    operationCases.append(m_jit.branchTest32(
+        MacroAssembler::Zero,
+        MacroAssembler::Address(stringImplGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit())));
+
+    regExpTestInlineCase();
+
+    operationCases.link(&m_jit);
+
+    callOperation(operationRegExpTest, resultGPR, globalObjectGPR, baseGPR, argumentGPR);
+
+    done.link(&m_jit);
+    m_jit.exceptionCheck();
+
+    unblessedBooleanResult(resultGPR, node);
+}
+#else
+void SpeculativeJIT::compileRegExpTestInline(Node* node)
+{
+    UNUSED_PARAM(node);
+    ASSERT_NOT_REACHED();
+    return compileRegExpTest(node);
+}
+#endif
+
 #if USE(LARGE_TYPED_ARRAYS)
 void SpeculativeJIT::compileNewTypedArrayWithInt52Size(Node* node)
 {
@@ -3610,6 +3802,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case RegExpTest: {
         compileRegExpTest(node);
+        break;
+    }
+
+    case RegExpTestInline: {
+        compileRegExpTestInline(node);
         break;
     }
 

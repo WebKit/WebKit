@@ -1,3 +1,97 @@
+2021-11-11  Michael Saboff  <msaboff@apple.com>
+
+        Inline RegExp.test JIT code in DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=230469
+
+        Reviewed by Saam Barati.
+
+        Restructured YarrJIT from inheriting from MacroAssembler to having a MacroAssembler
+        member.  Added a new path to Yarr JIT code to compile inline code by changing how the
+        code is entered and exited.  Added statistic to the normal compilation path to record
+        the size of the matching code generated, the amount of stack space needed, and if
+        the code can be inlined.  This patch only inlines 8bit code, as this seems to cover
+        the most common performance sensitive cases.  Adding 16 bit, non-Unicode inlining
+        would be straightforward.  The code is structured to take the inlined path for the
+        case of non-rope string arguments.  For other cases, we fall back to calling out
+        to C++ paths.
+
+        Here are the perf results running the newly added regexp-test-inlined micro
+        benchmark (time in msec):
+                        Baseline       With this patch     Result
+            ARM64   137.3849+-3.0740   64.9282+-0.7348  2.12x faster
+            X86-64  220.2616+-19.2814 105.2034+-6.8722  2.09x faster
+
+        As part of this change, found that the strength reduction didn't work properly for the
+        existing cases for RegExpExec, RegExpTest and related since we added that checks for
+        overriding the RegExp object.  Clobberize for tryGetById was clobber top, but added
+        an exception for RegExp.lastIndex.  This fix allowed many of the strength reductions
+        cases to start working again, namely the costant folding cases.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToRegExpTestInline):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::hasCellOperand2):
+        (JSC::DFG::Node::cellOperand2):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpTestInline):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * runtime/OptionsList.h:
+        * runtime/RegExp.h:
+        * runtime/StackAlignment.h:
+        (JSC::argumentCountForStackSize):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::jitCompile):
+        (JSC::Yarr::jitCompileInlinedTest):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrBoyerMoyerData::saveMaps):
+        (JSC::Yarr::YarrBoyerMoyerData::clearMaps):
+        (JSC::Yarr::YarrBoyerMoyerData::tryReuseBoyerMooreBitmap const):
+        (JSC::Yarr::YarrCodeBlock::InlineStats::InlineStats):
+        (JSC::Yarr::YarrCodeBlock::InlineStats::set):
+        (JSC::Yarr::YarrCodeBlock::InlineStats::clear):
+        (JSC::Yarr::YarrCodeBlock::InlineStats::codeSize const):
+        (JSC::Yarr::YarrCodeBlock::InlineStats::stackSize const):
+        (JSC::Yarr::YarrCodeBlock::InlineStats::canInline const):
+        (JSC::Yarr::YarrCodeBlock::InlineStats::needsTemp2 const):
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::set8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set8BitInlineStats):
+        (JSC::Yarr::YarrCodeBlock::set16BitInlineStats):
+        (JSC::Yarr::YarrCodeBlock::get8BitInlineStats):
+        (JSC::Yarr::YarrCodeBlock::get16BitInlineStats):
+        (JSC::Yarr::YarrCodeBlock::clear):
+        (JSC::Yarr::YarrCodeBlock::tryReuseBoyerMooreBitmap const): Deleted.
+        * yarr/YarrJITRegisters.h: Added.
+        (JSC::Yarr::YarrJITRegisters::YarrJITRegisters):
+
 2021-11-10  Mark Lam  <mark.lam@apple.com>
 
         Move m_doesGC from Heap to VM.

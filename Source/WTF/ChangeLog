@@ -1,3 +1,14 @@
+2021-11-11  Michael Saboff  <msaboff@apple.com>
+
+        Inline RegExp.test JIT code in DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=230469
+
+        Reviewed by Saam Barati.
+
+        Added a new enablement: ENABLE_YARR_JIT_ALL_PARENS_EXPRESSIONS.
+
+        * wtf/PlatformEnable.h:
+
 2021-11-11  Ben Nham  <nham@apple.com>
 
         Log memory usage metadata when WebContent crosses critical or warning level memory thresholds

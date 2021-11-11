@@ -1509,6 +1509,7 @@ public:
     void compileRegExpMatchFast(Node*);
     void compileRegExpMatchFastGlobal(Node*);
     void compileRegExpTest(Node*);
+    void compileRegExpTestInline(Node*);
     void compileStringReplace(Node*);
     void compileIsObject(Node*);
     void compileTypeOfIsObject(Node*);

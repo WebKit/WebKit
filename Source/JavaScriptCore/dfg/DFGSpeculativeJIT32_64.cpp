@@ -2686,7 +2686,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case RegExpTest: {
+    case RegExpTest:
+    case RegExpTestInline: {
         compileRegExpTest(node);
         break;
     }

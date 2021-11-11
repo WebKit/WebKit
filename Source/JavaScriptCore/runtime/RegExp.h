@@ -141,6 +141,13 @@ public:
 
     String toSourceString() const;
 
+#if ENABLE(YARR_JIT)
+    Yarr::YarrCodeBlock* getRegExpJITCodeBlock()
+    {
+        return m_regExpJITCode.get();
+    }
+#endif
+
 private:
     friend class RegExpCache;
     RegExp(VM&, const String&, OptionSet<Yarr::Flags>);

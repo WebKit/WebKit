@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include "ProfilerCompilation.h"
 #include "RecordedStatuses.h"
 #include "StructureStubInfo.h"
+#include "YarrJIT.h"
 #include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
 
@@ -131,6 +132,7 @@ public:
     Vector<JumpReplacement> m_jumpReplacements;
     Bag<StructureStubInfo> m_stubInfos;
     Bag<CallLinkInfo> m_callLinkInfos;
+    Yarr::YarrBoyerMoyerData m_boyerMooreData;
     
     ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;

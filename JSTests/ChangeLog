@@ -1,3 +1,14 @@
+2021-11-11  Michael Saboff  <msaboff@apple.com>
+
+        Inline RegExp.test JIT code in DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=230469
+
+        Reviewed by Saam Barati.
+
+        New microbenchmark.
+
+        * microbenchmarks/regexp-test-inlined.js: Added.
+
 2021-11-10  Saam Barati  <sbarati@apple.com>
 
         in_by_val should not constant fold to in_by_id when the property is a property index
