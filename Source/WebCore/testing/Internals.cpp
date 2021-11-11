@@ -5815,6 +5815,7 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
 #if ENABLE(DATA_DETECTION)
         , Vector<TextRecognitionDataDetector>()
 #endif
+        , Vector<TextRecognitionBlockData>()
     });
 #else
     UNUSED_PARAM(lines);

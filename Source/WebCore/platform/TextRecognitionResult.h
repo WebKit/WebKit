@@ -131,12 +131,49 @@ template<class Decoder> std::optional<TextRecognitionLineData> TextRecognitionLi
     return {{ WTFMove(*normalizedQuad), WTFMove(*children) }};
 }
 
+struct TextRecognitionBlockData {
+    TextRecognitionBlockData(const String& theText, FloatQuad&& quad)
+        : text(theText)
+        , normalizedQuad(WTFMove(quad))
+    {
+    }
+
+    String text;
+    FloatQuad normalizedQuad;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<TextRecognitionBlockData> decode(Decoder&);
+};
+
+template<class Encoder> void TextRecognitionBlockData::encode(Encoder& encoder) const
+{
+    encoder << text;
+    encoder << normalizedQuad;
+}
+
+template<class Decoder> std::optional<TextRecognitionBlockData> TextRecognitionBlockData::decode(Decoder& decoder)
+{
+    std::optional<String> text;
+    decoder >> text;
+    if (!text)
+        return std::nullopt;
+
+    std::optional<FloatQuad> normalizedQuad;
+    decoder >> normalizedQuad;
+    if (!normalizedQuad)
+        return std::nullopt;
+
+    return { { WTFMove(*text), WTFMove(*normalizedQuad) } };
+}
+
 struct TextRecognitionResult {
     Vector<TextRecognitionLineData> lines;
 
 #if ENABLE(DATA_DETECTION)
     Vector<TextRecognitionDataDetector> dataDetectors;
 #endif
+
+    Vector<TextRecognitionBlockData> blocks;
 
     bool isEmpty() const
     {
@@ -147,6 +184,9 @@ struct TextRecognitionResult {
         if (!dataDetectors.isEmpty())
             return false;
 #endif
+
+        if (!blocks.isEmpty())
+            return false;
 
         return true;
     }
@@ -161,6 +201,7 @@ template<class Encoder> void TextRecognitionResult::encode(Encoder& encoder) con
 #if ENABLE(DATA_DETECTION)
     encoder << dataDetectors;
 #endif
+    encoder << blocks;
 }
 
 template<class Decoder> std::optional<TextRecognitionResult> TextRecognitionResult::decode(Decoder& decoder)
@@ -177,11 +218,17 @@ template<class Decoder> std::optional<TextRecognitionResult> TextRecognitionResu
         return std::nullopt;
 #endif
 
+    std::optional<Vector<TextRecognitionBlockData>> blocks;
+    decoder >> blocks;
+    if (!blocks)
+        return std::nullopt;
+
     return {{
         WTFMove(*lines),
 #if ENABLE(DATA_DETECTION)
         WTFMove(*dataDetectors),
 #endif
+        WTFMove(*blocks),
     }};
 }
 
