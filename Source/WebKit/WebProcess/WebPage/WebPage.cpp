@@ -4041,6 +4041,39 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     PlatformMediaSessionManager::setOpusDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().opusDecoderEnabled());
 #endif
 
+    if (WebProcess::singleton().isCaptivePortalModeEnabled()) {
+        settings.setWebGLEnabled(false);
+#if ENABLE(WEBGL2)
+        settings.setWebGL2Enabled(false);
+#endif
+#if ENABLE(GAMEPAD)
+        settings.setGamepadsEnabled(false);
+#endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+        settings.setRemotePlaybackEnabled(false);
+#endif
+        settings.setFileSystemAccessEnabled(false);
+        settings.setAllowsPictureInPictureMediaPlayback(false);
+#if ENABLE(PICTURE_IN_PICTURE_API)
+        settings.setPictureInPictureAPIEnabled(false);
+#endif
+        settings.setSpeechRecognitionEnabled(false);
+#if ENABLE(NOTIFICATIONS)
+        settings.setNotificationsEnabled(false);
+#endif
+#if ENABLE(WEBXR)
+        settings.setWebXREnabled(false);
+        settings.setWebXRAugmentedRealityModuleEnabled(false);
+#endif
+#if ENABLE(WEB_AUDIO)
+        settings.setWebAudioEnabled(false);
+#endif
+        settings.setDownloadableBinaryFontsEnabled(false);
+#if ENABLE(WEB_RTC)
+        settings.setPeerConnectionEnabled(false);
+#endif
+    }
+
     m_page->settingsDidChange();
 }
 

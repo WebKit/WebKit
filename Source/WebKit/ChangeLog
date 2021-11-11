@@ -1,3 +1,42 @@
+2021-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Turn off various preferences when in captive portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=232958
+        <rdar://84622396>
+
+        Reviewed by Brent Fulgham.
+
+        Disable the following settings when in captive portal mode:
+        - WebGL
+        - WebGL2
+        - Gamepads
+        - RemotePlayback
+        - FileSystemAccess
+        - AllowsPictureInPictureMediaPlayback
+        - PictureInPictureAPI
+        - SpeechRecognition
+        - Notifications
+        - WebXR
+        - WebXRAugmentedRealityModule
+        - WebAudio
+        - DownloadableBinaryFonts
+        - PeerConnection (WebRTC)
+
+        Covered by updated API tests.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::isCaptivePortalModeEnabled const):
+
 2021-11-11  Per Arne Vollan <pvollan@apple.com>
 
         [macOS][GPUP] Allow access to power logging service

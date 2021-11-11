@@ -7638,6 +7638,34 @@ static bool isJITEnabled(WKWebView *webView)
     return isJITEnabledResult;
 }
 
+enum class ShouldBeEnabled : bool { No, Yes };
+enum class IsShowingInitialEmptyDocument : bool { No, Yes };
+static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, ShouldBeEnabled shouldBeEnabled, IsShowingInitialEmptyDocument isShowingInitialEmptyDocument = IsShowingInitialEmptyDocument::No)
+{
+    auto checkWindowPropertyExists = [&](ASCIILiteral property) -> bool {
+        bool finishedRunningScript = false;
+        bool propertyExists = false;
+        [webView evaluateJavaScript:makeString("!!window.", property) completionHandler:[&] (id result, NSError *error) {
+            EXPECT_NULL(error);
+            propertyExists = [result boolValue];
+            finishedRunningScript = true;
+        }];
+        TestWebKitAPI::Util::run(&finishedRunningScript);
+        return propertyExists;
+    };
+
+    EXPECT_EQ(checkWindowPropertyExists("WebGL2RenderingContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebGL2.
+    EXPECT_EQ(checkWindowPropertyExists("Gamepad"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Gamepad API.
+    EXPECT_EQ(checkWindowPropertyExists("RemotePlayback"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Remote Playback.
+    EXPECT_EQ(checkWindowPropertyExists("FileSystemHandle"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access.
+    EXPECT_EQ(checkWindowPropertyExists("EnterPictureInPictureEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Picture in Picture API.
+    EXPECT_EQ(checkWindowPropertyExists("SpeechRecognitionEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Speech recognition.
+    EXPECT_EQ(checkWindowPropertyExists("Notification"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Notification API.
+    EXPECT_EQ(checkWindowPropertyExists("WebXRSystem"_s), false); // WebXR (currently always disabled).
+    EXPECT_EQ(checkWindowPropertyExists("AudioContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebAudio.
+    EXPECT_EQ(checkWindowPropertyExists("RTCPeerConnection"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
+}
+
 TEST(ProcessSwap, NavigatingToCaptivePortalMode)
 {
     auto webView = adoptNS([WKWebView new]);
@@ -7645,6 +7673,7 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     [webView setNavigationDelegate:delegate.get()];
 
     EXPECT_TRUE(isJITEnabled(webView.get()));
+    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes, IsShowingInitialEmptyDocument::Yes);
 
     __block bool finishedNavigation = false;
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
@@ -7659,6 +7688,7 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     EXPECT_NE(pid1, 0);
 
     EXPECT_TRUE(isJITEnabled(webView.get()));
+    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes);
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_FALSE(preferences.captivePortalModeEnabled);
@@ -7674,6 +7704,7 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     // We should have process-swap for transitioning to captive portal mode.
     EXPECT_NE(pid1, [webView _webProcessIdentifier]);
     EXPECT_FALSE(isJITEnabled(webView.get()));
+    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
 }
 
 TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
@@ -7687,6 +7718,7 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     [webView setNavigationDelegate:delegate.get()];
 
     EXPECT_FALSE(isJITEnabled(webView.get()));
+    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No, IsShowingInitialEmptyDocument::Yes);
     pid_t pid1 = [webView _webProcessIdentifier];
 
     __block bool finishedNavigation = false;
@@ -7704,6 +7736,7 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     TestWebKitAPI::Util::run(&finishedNavigation);
 
     EXPECT_FALSE(isJITEnabled(webView.get()));
+    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
     EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
 
     finishedNavigation = false;
@@ -7713,6 +7746,7 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
 
     EXPECT_EQ(pid1, [webView _webProcessIdentifier]); // Shouldn't have process-swapped since we're staying in captive portal mode.
     EXPECT_FALSE(isJITEnabled(webView.get()));
+    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_TRUE(preferences.captivePortalModeEnabled);
@@ -7728,11 +7762,13 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     // We should have process-swapped to get out of captive portal mode.
     EXPECT_NE(pid1, [webView _webProcessIdentifier]);
     EXPECT_TRUE(isJITEnabled(webView.get()));
+    checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes);
 
     // captive portal mode should be disabled in new WebViews since it is not enabled globally.
     auto webView2 = adoptNS([WKWebView new]);
     [webView2 setNavigationDelegate:delegate.get()];
     EXPECT_TRUE(isJITEnabled(webView2.get()));
+    checkSettingsControlledByCaptivePortalMode(webView2.get(), ShouldBeEnabled::Yes, IsShowingInitialEmptyDocument::Yes);
     pid_t pid2 = [webView2 _webProcessIdentifier];
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = nil;
@@ -7742,5 +7778,6 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     [webView2 loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&finishedNavigation);
     EXPECT_TRUE(isJITEnabled(webView2.get()));
+    checkSettingsControlledByCaptivePortalMode(webView2.get(), ShouldBeEnabled::Yes);
     EXPECT_EQ(pid2, [webView2 _webProcessIdentifier]);
 }

@@ -1,3 +1,15 @@
+2021-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Turn off various preferences when in captive portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=232958
+        <rdar://84622396>
+
+        Reviewed by Brent Fulgham.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-11-11  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] http server is not properly tear down

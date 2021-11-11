@@ -123,6 +123,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << attrStyleEnabled;
     encoder << shouldThrowExceptionForGlobalConstantRedeclaration;
     encoder << crossOriginMode;
+    encoder << isCaptivePortalModeEnabled;
 
 #if ENABLE(SERVICE_CONTROLS)
     encoder << hasImageServices;
@@ -399,6 +400,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.shouldThrowExceptionForGlobalConstantRedeclaration))
         return false;
     if (!decoder.decode(parameters.crossOriginMode))
+        return false;
+    if (!decoder.decode(parameters.isCaptivePortalModeEnabled))
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)

@@ -403,6 +403,8 @@ public:
     WebCore::AccessibilityAtspi& accessibilityAtspi() const { return *m_accessibility; }
 #endif
 
+    bool isCaptivePortalModeEnabled() const { return m_isCaptivePortalModeEnabled; }
+
 private:
     WebProcess();
     ~WebProcess();
@@ -732,6 +734,7 @@ private:
 
     bool m_hasSuspendedPageProxy { false };
     bool m_isSuspending { false };
+    bool m_isCaptivePortalModeEnabled { false };
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
