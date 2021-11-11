@@ -2147,12 +2147,20 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
 
 TEST(WebAuthenticationPanel, RecoverAfterAuthNProcessCrash)
 {
+    TestWebKitAPI::HTTPServer server({
+        { "/", { "FOO"_str } }
+    });
+
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
     [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationModernExperimentalFeature()];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
     EXPECT_EQ([WKProcessPool _webAuthnProcessIdentifier], 0);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%d/", server.port()]]]];
+    [webView focus];
+
     [webView objectByEvaluatingJavaScript:@"internals.setMockWebAuthenticationConfiguration({ })"];
     auto firstWebPID = [webView _webProcessIdentifier];
     auto firstWebAuthnPID = [WKProcessPool _webAuthnProcessIdentifier];
@@ -2160,15 +2168,32 @@ TEST(WebAuthenticationPanel, RecoverAfterAuthNProcessCrash)
     EXPECT_NE(firstWebAuthnPID, 0);
 
     kill(firstWebAuthnPID, SIGKILL);
-    while ([WKProcessPool _webAuthnProcessIdentifier] || [webView _webProcessIdentifier])
+    while ([WKProcessPool _webAuthnProcessIdentifier])
         Util::spinRunLoop();
-    [webView objectByEvaluatingJavaScript:@"internals.setMockWebAuthenticationConfiguration({ })"];
-    auto secondWebPID = [webView _webProcessIdentifier];
+
+    [webView objectByEvaluatingJavaScript:@"internals.setMockWebAuthenticationConfiguration({ hid: { stage: 'request', subStage: 'msg', error: 'success', isU2f: true, payloadBase64: ['AQAAADswRAIge94KUqwfTIsn4AOjcM1mpMcRjdItVEeDX0W5nGhCP/cCIDxRe0eHf4V4LeEAhqeD0effTjY553H19q+jWq1Tc4WOkAA='] } });"];
+
+    while (![WKProcessPool _webAuthnProcessIdentifier])
+        Util::spinRunLoop();
+
     auto secondWebAuthnPID = [WKProcessPool _webAuthnProcessIdentifier];
-    EXPECT_NE(secondWebAuthnPID, 0);
     EXPECT_NE(secondWebAuthnPID, firstWebAuthnPID);
-    EXPECT_NE(secondWebPID, 0);
-    EXPECT_NE(secondWebPID, firstWebPID);
+    EXPECT_EQ([webView _webProcessIdentifier], firstWebPID);
+
+    __block bool gotMessage = false;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        EXPECT_WK_STREQ(@"public-key", message);
+        gotMessage = true;
+    }];
+
+    __block bool executedScript = false;
+    [webView evaluateJavaScript:@"navigator.credentials.get({ publicKey: { challenge: new Uint8Array([49, 50, 51, 52, 53, 54]), allowCredentials: [{ type: 'public-key', id: new Uint8Array(Array.prototype.map.call(atob('Pr2Jv3fsUJdV7pwmNe+qrHsrnFzvFzbDcX2khTTIxrZU1/+UX1C1zE54BVvdOWtk942ixfliAMzUFc0I/kIAOA'), function (c) { return c.charCodeAt(0) })) }], timeout: 100 } }).then(credential => { webkit.messageHandlers.testHandler.postMessage(credential.type); }, e => { webkit.messageHandlers.testHandler.postMessage('' + e); }) && true" completionHandler:^(id result, NSError *error) {
+        ASSERT_FALSE(error);
+        executedScript = true;
+    }];
+    Util::run(&executedScript);
+
+    Util::run(&gotMessage);
 }
 
 } // namespace TestWebKitAPI

@@ -48,6 +48,7 @@ WebAuthnProcessConnection::~WebAuthnProcessConnection()
 
 void WebAuthnProcessConnection::didClose(IPC::Connection&)
 {
+    WebProcess::singleton().webAuthnProcessConnectionClosed(this);
 }
 
 void WebAuthnProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)

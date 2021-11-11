@@ -1,3 +1,28 @@
+2021-11-10  Chris Dumez  <cdumez@apple.com>
+
+        We should not kill all WebContent processes whenever the WebAuthn process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=232970
+        <rdar://83941760>
+
+        Reviewed by Geoff Garen.
+
+        We should not kill all WebContent processes whenever the WebAuthn process crashes. This is overly aggressive. We should
+        instead do like for the network process and have the WebProcess re-initiate the connection to the WebAuthn process when
+        it's gone.
+
+        No new tests, updated existing API test.
+
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+        (WebKit::WebAuthnProcessProxy::webAuthnProcessCrashed):
+        Do not terminate all WebProcesses when the WebAuthn process crashes.
+
+        * WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp:
+        (WebKit::WebAuthnProcessConnection::didClose):
+        Make sure we call WebProcess::webAuthnProcessConnectionClosed() when the WebProcess
+        loses its connection to the WebAuthn process. This makes sure we clear m_webAuthnProcessConnection
+        and properly re-initiate a new WebAuthn process connection the next time WebProcess::ensureWebAuthnProcessConnection()
+        is called.
+
 2021-11-10  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Unify _WKWebAuthenticationPanel SPI and AuthenticatorCoordinator's ClientDataJson generation 
