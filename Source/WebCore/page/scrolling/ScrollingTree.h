@@ -234,6 +234,7 @@ public:
 
     void addPendingScrollUpdate(ScrollUpdate&&);
     Vector<ScrollUpdate> takePendingScrollUpdates();
+    virtual void removePendingScrollAnimationForNode(ScrollingNodeID) { }
 
 protected:
     WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);

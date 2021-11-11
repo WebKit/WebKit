@@ -1,3 +1,12 @@
+2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        REGRESSION: (r283871) [ macOS wk2 Release ] 2 css/cssom-view/scroll-behavior-main-frame tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=231600
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r285618): [mac-wk1] ASSERTION FAILED: cgContext == [currentContext CGContext]

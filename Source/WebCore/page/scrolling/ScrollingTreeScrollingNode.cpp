@@ -251,8 +251,10 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
 
     stopAnimatedScroll();
 
-    if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll)
+    if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll) {
+        scrollingTree().removePendingScrollAnimationForNode(scrollingNodeID());
         return;
+    }
 
     if (scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
         return;

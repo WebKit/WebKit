@@ -64,6 +64,7 @@ public:
     Lock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
     bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
+    void removePendingScrollAnimationForNode(ScrollingNodeID) WTF_REQUIRES_LOCK(m_treeLock) final;
 
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator&);
