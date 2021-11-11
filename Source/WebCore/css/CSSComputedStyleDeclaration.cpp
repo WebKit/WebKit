@@ -1817,6 +1817,10 @@ static Ref<CSSValueList> contentToCSSValue(const RenderStyle& style)
         else if (is<TextContentData>(*contentData))
             list->append(cssValuePool.createValue(downcast<TextContentData>(*contentData).text(), CSSUnitType::CSS_STRING));
     }
+    if (!list->length()) {
+        auto isBeforeOrAfter = style.styleType() == PseudoId::Before || style.styleType() == PseudoId::After;
+        list->append(cssValuePool.createIdentifierValue(isBeforeOrAfter ? CSSValueNone : CSSValueNormal));
+    }
     return list;
 }
 

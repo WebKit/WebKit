@@ -21,7 +21,7 @@ FAIL Animation of color in ::marker assert_equals: expected "rgb(50, 150, 100)" 
 FAIL Animation of text-combine-upright in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
 PASS Animation of unicode-bidi in ::marker
 PASS Animation of direction in ::marker
-FAIL Animation of content in ::marker assert_equals: expected "\"bar\"" but got ""
+FAIL Animation of content in ::marker assert_equals: expected "\"bar\"" but got "normal"
 FAIL Animation of hyphens in ::marker assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
 FAIL Animation of letter-spacing in ::marker assert_equals: expected "10px" but got "normal"
 FAIL Animation of line-break in ::marker assert_equals: expected "anywhere" but got "auto"
