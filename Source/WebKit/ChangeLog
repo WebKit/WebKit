@@ -1,3 +1,15 @@
+2021-11-11  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [RemoteInspector][Socket] Can't find the target since r277787
+        https://bugs.webkit.org/show_bug.cgi?id=232986
+
+        Reviewed by Don Olmstead.
+
+        Remote Inspector has the same issue as bug 226908.
+        RemoteInspectorProtocolHandler needs the same fix as r278748.
+
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp: Copy WebURLSchemeTask.request().url() to avoid obtaining the temporary object.
+
 2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Make scroll granularity an enum class

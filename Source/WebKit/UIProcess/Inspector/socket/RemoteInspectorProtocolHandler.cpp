@@ -162,7 +162,7 @@ void RemoteInspectorProtocolHandler::updateTargetList()
 
 void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, WebURLSchemeTask& task)
 {
-    auto& requestURL = task.request().url();
+    auto requestURL = task.request().url();
 
     // Destroy the client before creating a new connection so it can connect to the same port
     m_inspectorClient = nullptr;
