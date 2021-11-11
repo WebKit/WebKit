@@ -151,7 +151,7 @@ inline bool symbolTablePut(SymbolTableObjectType* object, JSGlobalObject* global
         SymbolTable& symbolTable = *object->symbolTable();
         // FIXME: This is very suspicious. We shouldn't need a GC-safe lock here.
         // https://bugs.webkit.org/show_bug.cgi?id=134601
-        GCSafeConcurrentJSLocker locker(symbolTable.m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(symbolTable.m_lock, vm);
         SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
         if (iter == symbolTable.end(locker))
             return false;

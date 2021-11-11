@@ -237,7 +237,7 @@ inline void Heap::deprecatedReportExtraMemory(size_t size)
 inline void Heap::acquireAccess()
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     if (m_worldState.compareExchangeWeak(0, hasAccessBit))
         return;
@@ -264,7 +264,7 @@ inline bool Heap::mayNeedToStop()
 inline void Heap::stopIfNecessary()
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     if (mayNeedToStop())
         stopIfNecessarySlow();

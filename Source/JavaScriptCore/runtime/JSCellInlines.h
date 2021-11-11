@@ -30,7 +30,7 @@
 #include "CompleteSubspaceInlines.h"
 #include "CPU.h"
 #include "CallFrameInlines.h"
-#include "DeferGC.h"
+#include "DeferGCInlines.h"
 #include "FreeListInlines.h"
 #include "Handle.h"
 #include "HeapInlines.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -468,7 +468,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
 {
     PropertyTable* table = ensurePropertyTable(vm);
 
-    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm);
 
     switch (shouldPin) {
     case ShouldPin::Yes:
@@ -511,7 +511,7 @@ template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const Func& func)
 {
     PropertyTable* table = ensurePropertyTable(vm);
-    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm);
 
     switch (shouldPin) {
     case ShouldPin::Yes:
@@ -555,7 +555,7 @@ inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyNa
 {
     PropertyTable* table = ensurePropertyTable(vm);
 
-    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm);
 
     switch (shouldPin) {
     case ShouldPin::Yes:

@@ -1,3 +1,196 @@
+2021-11-10  Mark Lam  <mark.lam@apple.com>
+
+        Move m_doesGC from Heap to VM.
+        https://bugs.webkit.org/show_bug.cgi?id=232975
+        rdar://85277492
+
+        Reviewed by Filip Pizlo.
+
+        m_doesGC is only needed for ENABLE(DFG_DOES_GC_VALIDATION), and is used for checking
+        if the VM thread's execution is in a state that can allow GC to run.  Hence, it is
+        more related to VM thread execution as opposed to the state of the Heap.  This patch
+        moves m_doesGC from Heap to VM to get it out of the way of upcoming Global GC work.
+
+        Also change DeferGC, DeferGCForAWhile, and GCDeferralContext to take a VM& instead
+        of a Heap&.  DeferGC and GCDeferralContext need to access VM& in order to call
+        VM::verifyCanGC().  DeferGCForAWhile does not need VM&, but we're changing it to be
+        consistent with DeferGC.  There should be no perf impact for this change.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::decodeCachedCodeBlocks):
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::fireAllWatchpoints):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generate):
+        * dfg/DFGDoesGCCheck.cpp:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLoopHint):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        (JSC::CompleteSubspace::reallocatePreciseAllocationNonVirtual):
+        * heap/CompleteSubspaceInlines.h:
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        * heap/DeferGC.h:
+        (JSC::DeferGC::DeferGC): Deleted.
+        (JSC::DeferGC::~DeferGC): Deleted.
+        (JSC::DeferGCForAWhile::DeferGCForAWhile): Deleted.
+        (JSC::DeferGCForAWhile::~DeferGCForAWhile): Deleted.
+        * heap/DeferGCInlines.h: Added.
+        (JSC::DeferGC::DeferGC):
+        (JSC::DeferGC::~DeferGC):
+        (JSC::DeferGCForAWhile::DeferGCForAWhile):
+        (JSC::DeferGCForAWhile::~DeferGCForAWhile):
+        * heap/GCDeferralContext.h:
+        * heap/GCDeferralContextInlines.h:
+        (JSC::GCDeferralContext::GCDeferralContext):
+        (JSC::GCDeferralContext::~GCDeferralContext):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectNow):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::stopIfNecessarySlow):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/Heap.h:
+        (JSC::Heap::addressOfDoesGC): Deleted.
+        (JSC::Heap::setDoesGCExpectation): Deleted.
+        (JSC::Heap::verifyCanGC): Deleted.
+        * heap/HeapInlines.h:
+        (JSC::Heap::acquireAccess):
+        (JSC::Heap::stopIfNecessary):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::sweepNextBlock):
+        * heap/LocalAllocatorInlines.h:
+        (JSC::LocalAllocator::allocate):
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::tryCreate):
+        (JSC::PreciseAllocation::createForLowerTier):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::queryHolders):
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::getPreview):
+        (Inspector::InspectorHeapAgent::getRemoteObject):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * interpreter/ShadowChickenInlines.h:
+        (JSC::ShadowChicken::iterate):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::completeAllReadyPlansForVM):
+        (JSC::JITWorklist::waitUntilAllPlansForVMAreReady):
+        (JSC::JITWorklist::completeAllPlansForVM):
+        (JSC::JITWorklist::removeAllReadyPlansForVM):
+        * jit/Repatch.cpp:
+        (JSC::fireWatchpointsAndClearStubIfNeeded):
+        (JSC::tryCacheGetBy):
+        (JSC::tryCacheArrayGetByVal):
+        (JSC::tryCachePutBy):
+        (JSC::tryCacheArrayPutByVal):
+        (JSC::tryCacheDeleteBy):
+        (JSC::tryCacheInBy):
+        (JSC::tryCacheHasPrivateBrand):
+        (JSC::tryCacheCheckPrivateBrand):
+        (JSC::tryCacheSetPrivateBrand):
+        (JSC::tryCacheInstanceOf):
+        (JSC::linkPolymorphicCall):
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CachedTypes.cpp:
+        (JSC::decodeCodeBlockImpl):
+        * runtime/ConcurrentJSLock.h:
+        (JSC::GCSafeConcurrentJSLocker::GCSafeConcurrentJSLocker):
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        * runtime/JSCellInlines.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterString):
+        (JSC::JSString::toAtomString const):
+        (JSC::JSString::toExistingAtomString const):
+        (JSC::JSString::value const):
+        (JSC::JSString::tryGetValue const):
+        (JSC::JSRopeString::unsafeView const):
+        (JSC::JSRopeString::viewWithUnderlyingString const):
+        (JSC::JSString::unsafeView const):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePut):
+        * runtime/RegExpKey.h:
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createEmptyRegExpMatchesArray):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::flattenDictionaryStructure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::attributeChange):
+        * runtime/VM.h:
+        (JSC::VM::addressOfDoesGC):
+        (JSC::VM::setDoesGCExpectation):
+        (JSC::VM::verifyCanGC):
+
 2021-11-10  Saam Barati  <sbarati@apple.com>
 
         in_by_val should not constant fold to in_by_id when the property is a property index

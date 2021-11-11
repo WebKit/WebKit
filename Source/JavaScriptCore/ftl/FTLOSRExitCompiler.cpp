@@ -218,7 +218,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
             // to set it here because compileFTLOSRExit() is only called on the first time
             // we exit from this site, but all subsequent exits will take this compiled
             // ramp without calling compileFTLOSRExit() first.
-            jit.store64(CCallHelpers::TrustedImm64(DoesGCCheck::encode(true, DoesGCCheck::Special::FTLOSRExit)), vm.heap.addressOfDoesGC());
+            jit.store64(CCallHelpers::TrustedImm64(DoesGCCheck::encode(true, DoesGCCheck::Special::FTLOSRExit)), vm.addressOfDoesGC());
         }
     }
 
@@ -504,7 +504,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame* callFram
     if constexpr (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized
         // code running that expects no GC.
-        vm.heap.setDoesGCExpectation(true, DoesGCCheck::Special::FTLOSRExit);
+        vm.setDoesGCExpectation(true, DoesGCCheck::Special::FTLOSRExit);
     }
 
     if (vm.callFrameForCatch)
@@ -517,7 +517,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame* callFram
     
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
 
     JITCode* jitCode = codeBlock->jitCode()->ftl();
     OSRExit& exit = jitCode->m_osrExit[exitID];

@@ -265,7 +265,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks(VM& vm)
     int32_t cachedCodeBlockForCallOffset = m_cachedCodeBlockForCallOffset;
     int32_t cachedCodeBlockForConstructOffset = m_cachedCodeBlockForConstructOffset;
 
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
 
     // No need to clear m_unlinkedCodeBlockForCall here, since we moved the decoder out of the same slot
     if (cachedCodeBlockForCallOffset)

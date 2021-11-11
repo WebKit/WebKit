@@ -29,7 +29,7 @@
 #include "ArrayPrototype.h"
 #include "Completion.h"
 #include "DateInstance.h"
-#include "DeferGC.h"
+#include "DeferGCInlines.h"
 #include "DirectArguments.h"
 #include "FunctionPrototype.h"
 #include "HeapAnalyzer.h"
@@ -854,7 +854,7 @@ JSValue JSInjectedScriptHost::queryHolders(JSGlobalObject* globalObject, CallFra
     RETURN_IF_EXCEPTION(scope, { });
 
     {
-        DeferGC deferGC(vm.heap);
+        DeferGC deferGC(vm);
         PreventCollectionScope preventCollectionScope(vm.heap);
         sanitizeStackForVM(vm);
 

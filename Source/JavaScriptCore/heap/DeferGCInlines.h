@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,28 +20,38 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "JSCInlines.h"
-#include "ShadowChicken.h"
+#include "DeferGC.h"
+#include "VM.h"
 
 namespace JSC {
 
-template<typename Functor>
-void ShadowChicken::iterate(VM& vm, CallFrame* callFrame, const Functor& functor)
+inline DeferGC::DeferGC(VM& vm)
+    : m_vm(vm)
 {
-    DeferGC deferGC(vm);
+    m_vm.heap.incrementDeferralDepth();
+}
 
-    update(vm, callFrame);
-    
-    for (unsigned i = m_stack.size(); i--;) {
-        if (!functor(m_stack[i]))
-            break;
-    }
+inline DeferGC::~DeferGC()
+{
+    if constexpr (validateDFGDoesGC)
+        m_vm.verifyCanGC();
+    m_vm.heap.decrementDeferralDepthAndGCIfNeeded();
+}
+
+inline DeferGCForAWhile::DeferGCForAWhile(VM& vm)
+    : m_heap(vm.heap)
+{
+    m_heap.incrementDeferralDepth();
+}
+
+inline DeferGCForAWhile::~DeferGCForAWhile()
+{
+    m_heap.decrementDeferralDepth();
 }
 
 } // namespace JSC
-

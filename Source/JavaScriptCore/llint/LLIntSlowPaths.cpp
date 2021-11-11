@@ -366,7 +366,7 @@ inline bool shouldJIT(CodeBlock* codeBlock)
 // Returns true if we should try to OSR.
 inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0))
 {
-    DeferGCForAWhile deferGC(vm.heap); // My callers don't set top callframe, so we don't want to GC here at all.
+    DeferGCForAWhile deferGC(vm); // My callers don't set top callframe, so we don't want to GC here at all.
     ASSERT(Options::useJIT());
     
     codeBlock->updateAllValueProfilePredictions();
@@ -961,7 +961,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         
         if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
-                GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+                GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
                 if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
                     ASSERT(oldStructure == newStructure->previousID());
                     if (oldStructure == newStructure->previousID()) {
@@ -1283,7 +1283,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         
         if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
-                GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+                GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
                 if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
                     ASSERT(oldStructure == newStructure->previousID());
                     if (oldStructure == newStructure->previousID()) {
@@ -1342,7 +1342,7 @@ LLINT_SLOW_PATH_DECL(slow_path_set_private_brand)
     LLINT_CHECK_EXCEPTION();
 
     if (!LLINT_ALWAYS_ACCESS_SLOW && !oldStructure->isDictionary()) {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
         Structure* newStructure = baseObject->structure(vm);
 
         ASSERT(oldStructure == newStructure->previousID());
@@ -1385,7 +1385,7 @@ LLINT_SLOW_PATH_DECL(slow_path_check_private_brand)
     // rely on StructureID even if it's an uncacheable dictionary.
     Structure* structure = baseObject->structure(vm);
     if (!LLINT_ALWAYS_ACCESS_SLOW) {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
 
         metadata.m_structureID = structure->id();
         metadata.m_brand.set(vm, codeBlock, brand.asCell());

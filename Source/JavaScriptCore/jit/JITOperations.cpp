@@ -1943,7 +1943,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
     // Note that jettisoning won't happen if we already initiated OSR, because in
     // that case we would have already planted the optimized code block into the JS
     // stack.
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
     
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (UNLIKELY(codeBlock->jitType() != JITType::BaselineJIT)) {

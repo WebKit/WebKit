@@ -387,7 +387,7 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
     ASSERT(structure(vm)->classInfo() == info());
     ASSERT(!protectPropertyTableWhileTransitioning());
     
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     
     Vector<Structure*, 8> structures;
     Structure* structure;
@@ -405,7 +405,7 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
     // Must hold the lock on this structure, since we will be modifying this structure's
     // property map. We don't want getConcurrently() to see the property map in a half-baked
     // state.
-    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm);
     if (setPropertyTable)
         this->setPropertyTable(vm, table);
 
@@ -547,7 +547,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
 
     checkOffset(transition->transitionOffset(), transition->inlineCapacity());
     if (!structure->hasBeenDictionary()) {
-        GCSafeConcurrentJSLocker locker(structure->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
         structure->m_transitionTable.add(vm, transition);
     }
     transition->checkOffsetConsistency();
@@ -644,7 +644,7 @@ Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, 
 
     checkOffset(transition->transitionOffset(), transition->inlineCapacity());
     if (!structure->hasBeenDictionary()) {
-        GCSafeConcurrentJSLocker locker(structure->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
         structure->m_transitionTable.add(vm, transition);
     }
     transition->checkOffsetConsistency();
@@ -656,7 +656,7 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
 {
     ASSERT(isValidPrototype(prototype));
 
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     Structure* transition = create(vm, structure, &deferred);
 
     transition->m_prototype.set(vm, transition, prototype);
@@ -738,7 +738,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
 
     checkOffset(transition->transitionOffset(), transition->inlineCapacity());
     if (!structure->hasBeenDictionary()) {
-        GCSafeConcurrentJSLocker locker(structure->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
         structure->m_transitionTable.add(vm, transition);
     }
     transition->checkOffsetConsistency();
@@ -749,7 +749,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
 Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, DictionaryKind kind, DeferredStructureTransitionWatchpointFire* deferred)
 {
     ASSERT(!structure->isUncacheableDictionary());
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     
     Structure* transition = create(vm, structure, deferred);
 
@@ -815,7 +815,7 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
         }
     }
     
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     
     Structure* transition = create(vm, structure);
     transition->setTransitionKind(transitionKind);
@@ -908,7 +908,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     ASSERT(isDictionary());
     ASSERT(object->structure(vm) == this);
     
-    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
+    GCSafeConcurrentJSLocker locker(m_lock, vm);
     
     object->setStructureIDDirectly(nuke(id()));
     WTF::storeStoreFence();

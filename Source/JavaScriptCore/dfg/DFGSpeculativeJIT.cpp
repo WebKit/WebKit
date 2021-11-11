@@ -2113,10 +2113,10 @@ void SpeculativeJIT::compileLoopHint(Node* node)
                     DoesGCCheck check;
                     check.u.encoded = DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized);
 #if USE(JSVALUE64)
-                    m_jit.store64(CCallHelpers::TrustedImm64(check.u.encoded), vm().heap.addressOfDoesGC());
+                    m_jit.store64(CCallHelpers::TrustedImm64(check.u.encoded), vm().addressOfDoesGC());
 #else
-                    m_jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm().heap.addressOfDoesGC()->u.other);
-                    m_jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm().heap.addressOfDoesGC()->u.nodeIndex);
+                    m_jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm().addressOfDoesGC()->u.other);
+                    m_jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm().addressOfDoesGC()->u.nodeIndex);
 #endif
                 }
             }

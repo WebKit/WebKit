@@ -2544,7 +2544,7 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<Cac
     Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode), &key.source().provider());
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
-        DeferGC deferGC(vm.heap);
+        DeferGC deferGC(vm);
         if (!cachedEntry->decode(decoder.get(), entry))
             return nullptr;
     }

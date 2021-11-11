@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HeapSnapshotBuilder.h"
 
-#include "DeferGC.h"
+#include "DeferGCInlines.h"
 #include "Heap.h"
 #include "HeapProfiler.h"
 #include "HeapSnapshot.h"
@@ -332,7 +332,7 @@ String HeapSnapshotBuilder::descriptionForCell(JSCell *cell) const
 String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback)
 {
     VM& vm = m_profiler.vm();
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
 
     // Build a node to identifier map of allowed nodes to use when serializing edges.
     HashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;

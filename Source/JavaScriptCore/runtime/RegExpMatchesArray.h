@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2020 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -65,7 +65,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     RegExp* regExp, unsigned startOffset, MatchResult& result)
 {
     if constexpr (validateDFGDoesGC)
-        vm.heap.verifyCanGC();
+        vm.verifyCanGC();
 
     Vector<int, 32> subpatternResults;
     int position = regExp->matchInline(globalObject, vm, inputValue, startOffset, subpatternResults);
@@ -126,7 +126,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     };
 
     if (UNLIKELY(globalObject->isHavingABadTime())) {
-        GCDeferralContext deferralContext(vm.heap);
+        GCDeferralContext deferralContext(vm);
         ObjectInitializationScope matchesArrayScope(vm);
         ObjectInitializationScope indicesArrayScope(vm);
         array = JSArray::tryCreateUninitializedRestricted(matchesArrayScope, &deferralContext, matchStructure, numSubpatterns + 1);
@@ -165,7 +165,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
             }
         }
     } else {
-        GCDeferralContext deferralContext(vm.heap);
+        GCDeferralContext deferralContext(vm);
         ObjectInitializationScope matchesArrayScope(vm);
         ObjectInitializationScope indicesArrayScope(vm);
         array = tryCreateUninitializedRegExpMatchesArray(matchesArrayScope, &deferralContext, matchStructure, numSubpatterns + 1);

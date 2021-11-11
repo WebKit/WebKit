@@ -165,7 +165,7 @@ ALWAYS_INLINE static void fireWatchpointsAndClearStubIfNeeded(VM& vm, StructureS
         result.fireWatchpoints(vm);
 
         {
-            GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+            GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
             stubInfo.reset(locker, codeBlock);
         }
     }
@@ -219,7 +219,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
     AccessGenerationResult result;
 
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm().heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
 
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
@@ -489,7 +489,7 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
     AccessGenerationResult result;
 
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm().heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
 
         JSCell* base = baseValue.asCell();
 
@@ -675,7 +675,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
     AccessGenerationResult result;
     Identifier ident = Identifier::fromUid(vm, propertyName.uid());
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm().heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
 
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
@@ -970,7 +970,7 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
             }
         }
 
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm().heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
 
         if (result.generatedSomeCode()) {
@@ -997,7 +997,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
     AccessGenerationResult result;
 
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm().heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
 
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
@@ -1105,7 +1105,7 @@ static InlineCacheAction tryCacheInBy(
     Identifier ident = Identifier::fromUid(vm, propertyName.uid());
 
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
         
@@ -1222,7 +1222,7 @@ static InlineCacheAction tryCacheHasPrivateBrand(JSGlobalObject* globalObject, C
     Identifier ident = Identifier::fromUid(vm, brandID.uid());
 
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
 
@@ -1269,7 +1269,7 @@ static InlineCacheAction tryCacheCheckPrivateBrand(
     Identifier ident = Identifier::fromUid(vm, brandID.uid());
 
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
 
@@ -1316,7 +1316,7 @@ static InlineCacheAction tryCacheSetPrivateBrand(
     Identifier ident = Identifier::fromUid(vm, brandID.uid());
 
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
         
@@ -1379,7 +1379,7 @@ static InlineCacheAction tryCacheInstanceOf(
         return GiveUpOnCache;
     
     {
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
         
         JSCell* value = valueValue.asCell();
         Structure* structure = value->structure(vm);
@@ -1587,7 +1587,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
 
     // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
     // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
-    DeferGCForAWhile deferGCForAWhile(vm.heap);
+    DeferGCForAWhile deferGCForAWhile(vm);
     
     if (!newVariant) {
         linkVirtualFor(vm, callFrame, callLinkInfo);

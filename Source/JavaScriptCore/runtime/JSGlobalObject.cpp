@@ -2004,7 +2004,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
     // W_SC, W_BT, R_BT, R_SC: No watchpoint is installed, but we could not see old structures from the cache.
     vm.structureCache.clear(); // We may be caching array structures in here.
 
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
 
     // Consider the following objects and prototype chains:
     //    O (of global G1) -> A (of global G1)

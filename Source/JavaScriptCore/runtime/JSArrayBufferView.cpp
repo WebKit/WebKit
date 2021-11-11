@@ -268,7 +268,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     // that you *had* done those allocations and it will GC appropriately.
     Heap* heap = Heap::heap(this);
     VM& vm = heap->vm();
-    DeferGCForAWhile deferGC(*heap);
+    DeferGCForAWhile deferGC(vm);
 
     RELEASE_ASSERT(!hasIndexingHeader(vm));
     Structure* structure = this->structure(vm);

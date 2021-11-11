@@ -2275,7 +2275,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     }
 #endif // ENABLE(DFG_JIT)
 
-    DeferGCForAWhile deferGC(*heap());
+    DeferGCForAWhile deferGC(vm);
     
     // We want to accomplish two things here:
     // 1) Make sure that if this CodeBlock is on the stack right now, then if we return to it

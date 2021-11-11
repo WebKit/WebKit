@@ -730,6 +730,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/ConstraintParallelism.h
     heap/ConstraintVolatility.h
     heap/DeferGC.h
+    heap/DeferGCInlines.h
     heap/DeleteAllCodeEffort.h
     heap/DestructionMode.h
     heap/FastMallocAlignedMemoryAllocator.h

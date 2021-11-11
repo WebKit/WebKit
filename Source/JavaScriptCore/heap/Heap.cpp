@@ -1064,7 +1064,7 @@ void Heap::collect(Synchronousness synchronousness, GCRequest request)
 void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     switch (synchronousness) {
     case Async: {
@@ -1076,7 +1076,7 @@ void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
     case Sync: {
         collectSync(request);
         
-        DeferGCForAWhile deferGC(*this);
+        DeferGCForAWhile deferGC(vm());
         if (UNLIKELY(Options::useImmortalObjects()))
             sweeper().stopSweeping();
         
@@ -1097,7 +1097,7 @@ void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
 void Heap::collectAsync(GCRequest request)
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     if (!m_isSafeToCollect)
         return;
@@ -1121,7 +1121,7 @@ void Heap::collectAsync(GCRequest request)
 void Heap::collectSync(GCRequest request)
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     if (!m_isSafeToCollect)
         return;
@@ -1784,7 +1784,7 @@ NEVER_INLINE void Heap::resumeTheMutator()
 void Heap::stopIfNecessarySlow()
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     while (stopIfNecessarySlow(m_worldState.load())) { }
     
@@ -1798,7 +1798,7 @@ void Heap::stopIfNecessarySlow()
 bool Heap::stopIfNecessarySlow(unsigned oldState)
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     RELEASE_ASSERT(oldState & hasAccessBit);
     RELEASE_ASSERT(!(oldState & stoppedBit));
@@ -2574,7 +2574,7 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
 {
     ASSERT(deferralContext || isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     if (!m_isSafeToCollect)
         return;

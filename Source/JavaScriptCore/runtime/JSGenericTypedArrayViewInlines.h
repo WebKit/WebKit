@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ArrayBufferView.h"
-#include "DeferGC.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArrayBuffer.h"

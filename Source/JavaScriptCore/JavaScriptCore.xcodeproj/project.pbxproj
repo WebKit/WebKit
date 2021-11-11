@@ -2051,6 +2051,7 @@
 		FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE99B2481C24B6D300C82159 /* JITNegGenerator.h */; };
 		FE9F3FB92613C7890069E89F /* ResourceExhaustion.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9F3FB82613C7880069E89F /* ResourceExhaustion.h */; };
 		FE9F3FC826163CA90069E89F /* DeferTermination.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9F3FC626163CA90069E89F /* DeferTermination.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE9FA7C5273C8B26005D9E70 /* DeferGCInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9FA7C4273C8B26005D9E70 /* DeferGCInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08621182B7A0400F6D851 /* DebuggerPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA3BBA8212B655900E93AD1 /* CallFrameInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA3BBA7212B655800E93AD1 /* CallFrameInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5514,6 +5515,7 @@
 		FE9F3FB82613C7880069E89F /* ResourceExhaustion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceExhaustion.h; sourceTree = "<group>"; };
 		FE9F3FBA2613C87C0069E89F /* ResourceExhaustion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceExhaustion.cpp; sourceTree = "<group>"; };
 		FE9F3FC626163CA90069E89F /* DeferTermination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferTermination.h; sourceTree = "<group>"; };
+		FE9FA7C4273C8B26005D9E70 /* DeferGCInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferGCInlines.h; sourceTree = "<group>"; };
 		FEA0861E182B7A0400F6D851 /* Breakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoint.h; sourceTree = "<group>"; };
 		FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPrimitives.h; sourceTree = "<group>"; };
 		FEA3BBA7212B655800E93AD1 /* CallFrameInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameInlines.h; sourceTree = "<group>"; };
@@ -6523,6 +6525,7 @@
 				0F7DF12F1E2970D50095951B /* ConstraintVolatility.h */,
 				2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */,
 				0F136D4B174AD69B0075B354 /* DeferGC.h */,
+				FE9FA7C4273C8B26005D9E70 /* DeferGCInlines.h */,
 				0FBB73BA1DEF8644002C009E /* DeleteAllCodeEffort.h */,
 				0F9630371D4192C3005609D9 /* DestructionMode.cpp */,
 				0F9630381D4192C3005609D9 /* DestructionMode.h */,
@@ -10776,6 +10779,7 @@
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
+				FE9FA7C5273C8B26005D9E70 /* DeferGCInlines.h in Headers */,
 				0FDE87FC1DFE6E510064C390 /* SpaceTimeMutatorScheduler.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,

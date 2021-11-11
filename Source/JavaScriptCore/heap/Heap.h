@@ -25,7 +25,6 @@
 #include "CellState.h"
 #include "CollectionScope.h"
 #include "CollectorPhase.h"
-#include "DFGDoesGCCheck.h"
 #include "DeleteAllCodeEffort.h"
 #include "GCConductor.h"
 #include "GCIncomingRefCountedSet.h"
@@ -98,14 +97,6 @@ class JSCGLibWrapperObject;
 namespace DFG {
 class SpeculativeJIT;
 }
-
-#if ENABLE(DFG_JIT) && ASSERT_ENABLED
-#define ENABLE_DFG_DOES_GC_VALIDATION 1
-#else
-#define ENABLE_DFG_DOES_GC_VALIDATION 0
-#endif
-
-constexpr bool validateDFGDoesGC = ENABLE_DFG_DOES_GC_VALIDATION;
 
 typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<const char*> TypeCountSet;
@@ -306,18 +297,6 @@ public:
     
     unsigned barrierThreshold() const { return m_barrierThreshold; }
     const unsigned* addressOfBarrierThreshold() const { return &m_barrierThreshold; }
-
-#if ENABLE(DFG_DOES_GC_VALIDATION)
-    DoesGCCheck* addressOfDoesGC() { return &m_doesGC; }
-    void setDoesGCExpectation(bool expectDoesGC, unsigned nodeIndex, unsigned nodeOp) { m_doesGC.set(expectDoesGC, nodeIndex, nodeOp); }
-    void setDoesGCExpectation(bool expectDoesGC, DoesGCCheck::Special special) { m_doesGC.set(expectDoesGC, special); }
-    void verifyCanGC() { m_doesGC.verifyCanGC(vm()); }
-#else
-    DoesGCCheck* addressOfDoesGC() { UNREACHABLE_FOR_PLATFORM(); return nullptr; }
-    void setDoesGCExpectation(bool, unsigned, unsigned) { }
-    void setDoesGCExpectation(bool, DoesGCCheck::Special) { }
-    void verifyCanGC() { }
-#endif
 
     // If true, the GC believes that the mutator is currently messing with the heap. We call this
     // "having heap access". The GC may block if the mutator is in this state. If false, the GC may
@@ -611,9 +590,6 @@ private:
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_collectionScope;
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
     Lock m_raceMarkStackLock;
-#if ENABLE(DFG_DOES_GC_VALIDATION)
-    DoesGCCheck m_doesGC;
-#endif
 
     StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,7 +135,7 @@ void WatchpointSet::fireAllWatchpoints(VM& vm, const FireDetail& detail)
     // for most Watchpoints to be destructed while they're in the middle of firing.
     // This GC could also destroy us, and we're not in a safe state to be destroyed.
     // The safest thing to do is to DeferGCForAWhile to prevent this GC from happening.
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
     
     while (!m_set.isEmpty()) {
         Watchpoint* watchpoint = m_set.begin();

@@ -975,7 +975,7 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces()
 
 String SamplingProfiler::stackTracesAsJSON()
 {
-    DeferGC deferGC(m_vm.heap);
+    DeferGC deferGC(m_vm);
     Locker locker { m_lock };
 
     {
@@ -1053,7 +1053,7 @@ void SamplingProfiler::reportTopFunctions()
 void SamplingProfiler::reportTopFunctions(PrintStream& out)
 {
     Locker locker { m_lock };
-    DeferGCForAWhile deferGC(m_vm.heap);
+    DeferGCForAWhile deferGC(m_vm);
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
@@ -1119,7 +1119,7 @@ void SamplingProfiler::reportTopBytecodes()
 void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 {
     Locker locker { m_lock };
-    DeferGCForAWhile deferGC(m_vm.heap);
+    DeferGCForAWhile deferGC(m_vm);
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);

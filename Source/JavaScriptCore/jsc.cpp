@@ -2708,7 +2708,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGenerateHeapSnapshotForGCDebugging, (JSGlobalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
     String jsonString;
     {
-        DeferGCForAWhile deferGC(vm.heap); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
+        DeferGCForAWhile deferGC(vm); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
 
         HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot);
         snapshotBuilder.buildSnapshot();

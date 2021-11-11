@@ -150,7 +150,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
     if constexpr (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized
         // code running that expects no GC.
-        vm.heap.setDoesGCExpectation(true, DoesGCCheck::Special::DFGOSRExit);
+        vm.setDoesGCExpectation(true, DoesGCCheck::Special::DFGOSRExit);
     }
 
     if (vm.callFrameForCatch)
@@ -162,7 +162,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
 
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
 
     uint32_t exitIndex = vm.osrExitIndex;
     OSRExit& exit = codeBlock->jitCode()->dfg()->m_osrExit[exitIndex];
@@ -757,10 +757,10 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             DoesGCCheck check;
             check.u.encoded = DoesGCCheck::encode(true, DoesGCCheck::Special::DFGOSRExit);
 #if USE(JSVALUE64)
-            jit.store64(CCallHelpers::TrustedImm64(check.u.encoded), vm.heap.addressOfDoesGC());
+            jit.store64(CCallHelpers::TrustedImm64(check.u.encoded), vm.addressOfDoesGC());
 #else
-            jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm.heap.addressOfDoesGC()->u.other);
-            jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm.heap.addressOfDoesGC()->u.nodeIndex);
+            jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm.addressOfDoesGC()->u.other);
+            jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm.addressOfDoesGC()->u.nodeIndex);
 #endif
         }
     }

@@ -2117,7 +2117,7 @@ JSC_DEFINE_JIT_OPERATION(operationCreateDirectArgumentsDuringExit, JSCell*, (VM*
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
     
     CodeBlock* codeBlock;
     if (inlineCallFrame)
@@ -2147,7 +2147,7 @@ JSC_DEFINE_JIT_OPERATION(operationCreateClonedArgumentsDuringExit, JSCell*, (VM*
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
     
     CodeBlock* codeBlock;
     if (inlineCallFrame)
@@ -3735,7 +3735,7 @@ JSC_DEFINE_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* co
 {
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
-    DeferGCForAWhile deferGC(codeBlock->vm().heap);
+    DeferGCForAWhile deferGC(codeBlock->vm());
     
     sanitizeStackForVM(codeBlock->vm());
 
@@ -3855,7 +3855,7 @@ JSC_DEFINE_JIT_OPERATION(operationTriggerTierUpNow, void, (VM* vmPointer))
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
     CodeBlock* codeBlock = callFrame->codeBlock();
     
     sanitizeStackForVM(vm);
@@ -4121,7 +4121,7 @@ JSC_DEFINE_JIT_OPERATION(operationTriggerTierUpNowInLoop, void, (VM* vmPointer, 
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
     CodeBlock* codeBlock = callFrame->codeBlock();
     BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 
@@ -4153,7 +4153,7 @@ JSC_DEFINE_JIT_OPERATION(operationTriggerOSREntryNow, char*, (VM* vmPointer, uns
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    DeferGCForAWhile deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm);
     CodeBlock* codeBlock = callFrame->codeBlock();
     BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 

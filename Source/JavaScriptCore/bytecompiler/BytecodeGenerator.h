@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -382,7 +382,7 @@ namespace JSC {
             if (UNLIKELY(Options::reportBytecodeCompileTimes()))
                 before = MonotonicTime::now();
 
-            DeferGC deferGC(vm.heap);
+            DeferGC deferGC(vm);
             auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, parentScopeTDZVariables, privateNameEnvironment);
             unsigned size;
             auto result = bytecodeGenerator->generate(size);

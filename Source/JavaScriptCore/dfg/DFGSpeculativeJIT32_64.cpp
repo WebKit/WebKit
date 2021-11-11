@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2115,8 +2115,8 @@ void SpeculativeJIT::compile(Node* node)
             bool expectDoesGC = doesGC(m_jit.graph(), node);
             DoesGCCheck check;
             check.u.encoded = DoesGCCheck::encode(expectDoesGC, node->index(), node->op());
-            m_jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm().heap.addressOfDoesGC()->u.other);
-            m_jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm().heap.addressOfDoesGC()->u.nodeIndex);
+            m_jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm().addressOfDoesGC()->u.other);
+            m_jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm().addressOfDoesGC()->u.nodeIndex);
         }
     }
 
