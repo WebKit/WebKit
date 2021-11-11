@@ -1143,7 +1143,7 @@ public:
     virtual bool inheritsPresentationalRole() const = 0;
 
     using AXValue = std::variant<bool, unsigned, float, String, AccessibilityButtonState, AXCoreObject*>;
-    virtual AXValue value() = 0;
+    AXValue value();
 
     // Accessibility Text
     virtual void accessibilityText(Vector<AccessibilityText>&) const = 0;
@@ -1545,6 +1545,38 @@ private:
 #endif
     virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;
 };
+
+inline AXCoreObject::AXValue AXCoreObject::value()
+{
+    if (supportsRangeValue())
+        return valueForRange();
+
+    if (roleValue() == AccessibilityRole::SliderThumb)
+        return parentObject()->valueForRange();
+
+    if (isHeading())
+        return headingLevel();
+
+    if (supportsCheckedState())
+        return checkboxOrRadioValue();
+
+    // Radio groups return the selected radio button as the AXValue.
+    if (isRadioGroup())
+        return selectedRadioButton();
+
+    if (isTabList())
+        return selectedTabItem();
+
+    if (isTabItem())
+        return isSelected();
+
+    if (isColorWell()) {
+        auto color = convertColor<SRGBA<float>>(colorValue());
+        return makeString("rgb ", String::numberToStringFixedPrecision(color.red, 6, KeepTrailingZeros), " ", String::numberToStringFixedPrecision(color.green, 6, KeepTrailingZeros), " ", String::numberToStringFixedPrecision(color.blue, 6, KeepTrailingZeros), " 1");
+    }
+
+    return stringValue();
+}
 
 inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
 {

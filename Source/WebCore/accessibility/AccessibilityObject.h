@@ -391,8 +391,6 @@ public:
     bool ariaRoleHasPresentationalChildren() const override { return false; }
     bool inheritsPresentationalRole() const override { return false; }
 
-    AXValue value() override;
-
     // Accessibility Text
     void accessibilityText(Vector<AccessibilityText>&) const override { };
     // A single method for getting a computed label for an AXObject. It condenses the nuances of accessibilityText. Used by Inspector.
