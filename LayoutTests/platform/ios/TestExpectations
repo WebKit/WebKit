@@ -2411,6 +2411,7 @@ media/video-seek-to-current-time.html [ Failure ]
 
 imported/w3c/web-platform-tests/dom/events/scrolling [ Pass ]
 
+fast/attachment/attachment-truncated-action.html [ Pass ]
 fast/attachment/attachment-wrapping-action.html [ Pass ]
 fast/attachment/attachment-borderless.html [ Pass ]
 fast/attachment/attachment-dynamic-type.html [ Pass ]

@@ -1,3 +1,17 @@
+2021-11-10  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r283863): `<attachment>` with a long `action` do not render correctly
+        https://bugs.webkit.org/show_bug.cgi?id=232645
+        <rdar://problem/84558377>
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/attachment/attachment-truncated-action.html: Added.
+        * fast/attachment/attachment-truncated-action-expected-mismatch.html: Added.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-11-10  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make CSSFilter be a composite of FilterFunctions
