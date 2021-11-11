@@ -21,11 +21,11 @@
 
 #pragma once
 
-#include "AffineTransform.h"
 #include "FilterFunction.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"
+#include "RenderingMode.h"
 
 namespace WebCore {
 

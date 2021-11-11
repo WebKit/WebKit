@@ -1,3 +1,15 @@
+2021-11-10  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make CSSFilter be a composite of FilterFunctions
+        https://bugs.webkit.org/show_bug.cgi?id=232469
+        rdar://85047148
+
+        Reviewed by Simon Fraser.
+
+        Unskip filter hidpi layout tests.
+
+        * TestExpectations:
+
 2021-11-10  Tim Nguyen  <ntim@apple.com>
 
         Remove non-standard -webkit-border-fit CSS property

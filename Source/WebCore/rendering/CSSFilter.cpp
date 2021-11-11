@@ -27,9 +27,6 @@
 #include "config.h"
 #include "CSSFilter.h"
 
-#include "CachedSVGDocument.h"
-#include "CachedSVGDocumentReference.h"
-#include "ElementIterator.h"
 #include "FEColorMatrix.h"
 #include "FEComponentTransfer.h"
 #include "FEDropShadow.h"
@@ -38,15 +35,10 @@
 #include "FilterEffectRenderer.h"
 #include "Logging.h"
 #include "ReferencedSVGResources.h"
-#include "RenderLayer.h"
-#include "SVGElement.h"
+#include "SVGFilter.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
-#include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SourceAlpha.h"
 #include "SourceGraphic.h"
-#include <algorithm>
-#include <wtf/MathExtras.h>
 
 #if USE(DIRECT2D)
 #include <d2d1.h>
@@ -54,257 +46,291 @@
 
 namespace WebCore {
 
-Ref<CSSFilter> CSSFilter::create(float scaleFactor)
+RefPtr<CSSFilter> CSSFilter::create(const FilterOperations& operations, RenderingMode renderingMode, float scaleFactor)
 {
-    return adoptRef(*new CSSFilter(scaleFactor));
+    bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
+    bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
+
+    auto filter = adoptRef(*new CSSFilter(hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin, scaleFactor));
+
+    filter->setRenderingMode(renderingMode);
+    return filter;
 }
 
-CSSFilter::CSSFilter(float scaleFactor)
+CSSFilter::CSSFilter(bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin, float scaleFactor)
     : Filter(Filter::Type::CSSFilter, FloatSize { scaleFactor, scaleFactor })
-    , m_sourceGraphic(SourceGraphic::create(*this))
+    , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
+    , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
 {
 }
 
-GraphicsContext* CSSFilter::inputContext()
+static RefPtr<FilterEffect> createBlurEffect(CSSFilter& filter, const BlurFilterOperation& blurOperation, FilterConsumer consumer)
 {
-    return sourceImage() ? &sourceImage()->context() : nullptr;
+    float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
+    return FEGaussianBlur::create(filter, stdDeviation, stdDeviation, consumer == FilterConsumer::FilterProperty ? EDGEMODE_NONE : EDGEMODE_DUPLICATE);
 }
 
-RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, FilterEffect& previousEffect, ReferenceFilterOperation& filterOperation)
+static RefPtr<FilterEffect> createBrightnessEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
-    auto* filterElement = renderer.ensureReferencedSVGResources().referencedFilterElement(renderer.document(), filterOperation);
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.intercept = 0;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(filter, transferFunction, transferFunction, transferFunction, nullFunction);
+}
+
+static RefPtr<FilterEffect> createContrastEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
+{
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.slope = amount;
+    transferFunction.intercept = -0.5 * amount + 0.5;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(filter, transferFunction, transferFunction, transferFunction, nullFunction);
+}
+
+static RefPtr<FilterEffect> createDropShadowEffect(CSSFilter& filter, const DropShadowFilterOperation& dropShadowOperation)
+{
+    float std = dropShadowOperation.stdDeviation();
+    return FEDropShadow::create(filter, std, std, dropShadowOperation.x(), dropShadowOperation.y(), dropShadowOperation.color(), 1);
+}
+
+static RefPtr<FilterEffect> createGrayScaleEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
+
+    // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#grayscaleEquivalent
+    // for information on parameters.
+
+    Vector<float> inputParameters {
+        narrowPrecisionToFloat(0.2126 + 0.7874 * oneMinusAmount),
+        narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount),
+        narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount),
+        narrowPrecisionToFloat(0.7152 + 0.2848 * oneMinusAmount),
+        narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount),
+        narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount),
+        narrowPrecisionToFloat(0.0722 + 0.9278 * oneMinusAmount),
+        0,
+        0,
+
+        0,
+        0,
+        0,
+        1,
+        0,
+    };
+
+    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+}
+
+static RefPtr<FilterEffect> createHueRotateEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
+    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_HUEROTATE, WTFMove(inputParameters));
+}
+
+static RefPtr<FilterEffect> createInvertEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
+{
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.slope = 1 - 2 * amount;
+    transferFunction.intercept = amount;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(filter, transferFunction, transferFunction, transferFunction, nullFunction);
+}
+
+static RefPtr<FilterEffect> createOpacityEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
+{
+    ComponentTransferFunction transferFunction;
+    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+    transferFunction.slope = amount;
+    transferFunction.intercept = 0;
+
+    ComponentTransferFunction nullFunction;
+    return FEComponentTransfer::create(filter, nullFunction, nullFunction, nullFunction, transferFunction);
+}
+
+static RefPtr<FilterEffect> createSaturateEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
+    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_SATURATE, WTFMove(inputParameters));
+}
+
+static RefPtr<FilterEffect> createSepiaEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+{
+    double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
+
+    // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#sepiaEquivalent
+    // for information on parameters.
+
+    Vector<float> inputParameters {
+        narrowPrecisionToFloat(0.393 + 0.607 * oneMinusAmount),
+        narrowPrecisionToFloat(0.769 - 0.769 * oneMinusAmount),
+        narrowPrecisionToFloat(0.189 - 0.189 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.349 - 0.349 * oneMinusAmount),
+        narrowPrecisionToFloat(0.686 + 0.314 * oneMinusAmount),
+        narrowPrecisionToFloat(0.168 - 0.168 * oneMinusAmount),
+        0,
+        0,
+
+        narrowPrecisionToFloat(0.272 - 0.272 * oneMinusAmount),
+        narrowPrecisionToFloat(0.534 - 0.534 * oneMinusAmount),
+        narrowPrecisionToFloat(0.131 + 0.869 * oneMinusAmount),
+        0,
+        0,
+
+        0,
+        0,
+        0,
+        1,
+        0,
+    };
+
+    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+}
+
+static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, FilterEffect& previousEffect)
+{
+    auto& referencedSVGResources = renderer.ensureReferencedSVGResources();
+    auto* filterElement = referencedSVGResources.referencedFilterElement(renderer.document(), filterOperation);
+
     if (!filterElement) {
-        LOG_WITH_STREAM(Filters, stream << "CSSFilter " << this << " buildReferenceFilter: failed to find filter renderer, adding pending resource " << filterOperation.fragment());
+        LOG_WITH_STREAM(Filters, stream << " buildReferenceFilter: failed to find filter renderer, adding pending resource " << filterOperation.fragment());
         // Although we did not find the referenced filter, it might exist later in the document.
         // FIXME: This skips anonymous RenderObjects. <https://webkit.org/b/131085>
         // FIXME: Unclear if this does anything.
-        if (auto* element = renderer.element())
-            renderer.document().accessSVGExtensions().addPendingResource(filterOperation.fragment(), *element);
         return nullptr;
     }
 
-    auto builder = makeUnique<SVGFilterBuilder>(&previousEffect);
-
-    RefPtr<FilterEffect> effect;
-    Vector<Ref<FilterEffect>> referenceEffects;
-
-    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filterElement)) {
-        effect = effectElement.build(builder.get(), *this);
-        if (!effect) {
-            LOG_WITH_STREAM(Filters, stream << "CSSFilter " << this << " buildReferenceFilter: failed to build effect from " << effectElement);
-            return nullptr;
-        }
-
-        effectElement.setStandardAttributes(effect.get());
-        if (effectElement.renderer()) {
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB() : DestinationColorSpace::SRGB());
-#else
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
-#endif
-        }
-        builder->add(effectElement.result(), effect);
-        referenceEffects.append(*effect);
-    }
-    
-    m_effects.appendVector(WTFMove(referenceEffects));
-    return effect;
+    SVGFilterBuilder builder;
+    return SVGFilter::create(*filterElement, builder, filter.filterScale(), filter.sourceImageRect(), filter.filterRegion(), previousEffect);
 }
 
-bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operations, FilterConsumer consumer)
+static void setupLastEffectProperties(FilterEffect& effect, FilterConsumer consumer)
 {
-    m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
-    m_hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
+    // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
+    // property applied here should not clip to their primitive subregions.
+    effect.setClipsToBounds(consumer == FilterConsumer::FilterFunction);
+    effect.setOperatingColorSpace(DestinationColorSpace::SRGB());
+}
 
-    m_effects.clear();
+bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, FilterConsumer consumer)
+{
+    m_functions.clear();
     m_outsets = { };
 
-    RefPtr<FilterEffect> previousEffect = m_sourceGraphic.ptr();
+    RefPtr<FilterEffect> previousEffect = SourceGraphic::create(*this);
+    m_functions.append({ *previousEffect });
+
+    RefPtr<SVGFilter> filter;
+    
     for (auto& operation : operations.operations()) {
         RefPtr<FilterEffect> effect;
-        auto& filterOperation = *operation;
-        switch (filterOperation.type()) {
-        case FilterOperation::REFERENCE: {
-            auto& referenceOperation = downcast<ReferenceFilterOperation>(filterOperation);
-            effect = buildReferenceFilter(renderer, *previousEffect, referenceOperation);
-            break;
-        }
-        case FilterOperation::GRAYSCALE: {
-            auto& colorMatrixOperation = downcast<BasicColorMatrixFilterOperation>(filterOperation);
-            double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
 
-            // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#grayscaleEquivalent
-            // for information on parameters.
-
-            Vector<float> inputParameters {
-                narrowPrecisionToFloat(0.2126 + 0.7874 * oneMinusAmount),
-                narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount),
-                narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount),
-                0,
-                0,
-
-                narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount),
-                narrowPrecisionToFloat(0.7152 + 0.2848 * oneMinusAmount),
-                narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount),
-                0,
-                0,
-
-                narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount),
-                narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount),
-                narrowPrecisionToFloat(0.0722 + 0.9278 * oneMinusAmount),
-                0,
-                0,
-
-                0,
-                0,
-                0,
-                1,
-                0,
-            };
-
-            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
-            break;
-        }
-        case FilterOperation::SEPIA: {
-            auto& colorMatrixOperation = downcast<BasicColorMatrixFilterOperation>(filterOperation);
-            double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
-
-            // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#sepiaEquivalent
-            // for information on parameters.
-
-            Vector<float> inputParameters {
-                narrowPrecisionToFloat(0.393 + 0.607 * oneMinusAmount),
-                narrowPrecisionToFloat(0.769 - 0.769 * oneMinusAmount),
-                narrowPrecisionToFloat(0.189 - 0.189 * oneMinusAmount),
-                0,
-                0,
-
-                narrowPrecisionToFloat(0.349 - 0.349 * oneMinusAmount),
-                narrowPrecisionToFloat(0.686 + 0.314 * oneMinusAmount),
-                narrowPrecisionToFloat(0.168 - 0.168 * oneMinusAmount),
-                0,
-                0,
-
-                narrowPrecisionToFloat(0.272 - 0.272 * oneMinusAmount),
-                narrowPrecisionToFloat(0.534 - 0.534 * oneMinusAmount),
-                narrowPrecisionToFloat(0.131 + 0.869 * oneMinusAmount),
-                0,
-                0,
-
-                0,
-                0,
-                0,
-                1,
-                0,
-            };
-
-            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
-            break;
-        }
-        case FilterOperation::SATURATE: {
-            auto& colorMatrixOperation = downcast<BasicColorMatrixFilterOperation>(filterOperation);
-            Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
-            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_SATURATE, WTFMove(inputParameters));
-            break;
-        }
-        case FilterOperation::HUE_ROTATE: {
-            auto& colorMatrixOperation = downcast<BasicColorMatrixFilterOperation>(filterOperation);
-            Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
-            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_HUEROTATE, WTFMove(inputParameters));
-            break;
-        }
-        case FilterOperation::INVERT: {
-            auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
-            ComponentTransferFunction transferFunction;
-            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-            float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
-            transferFunction.slope = 1 - 2 * amount;
-            transferFunction.intercept = amount;
-
-            ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
-            break;
-        }
+        switch (operation->type()) {
         case FilterOperation::APPLE_INVERT_LIGHTNESS:
             ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
             break;
-        case FilterOperation::OPACITY: {
-            auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
-            ComponentTransferFunction transferFunction;
-            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-            float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
-            transferFunction.slope = amount;
-            transferFunction.intercept = 0;
 
-            ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(*this, nullFunction, nullFunction, nullFunction, transferFunction);
+        case FilterOperation::BLUR:
+            effect = createBlurEffect(*this, downcast<BlurFilterOperation>(*operation), consumer);
             break;
-        }
-        case FilterOperation::BRIGHTNESS: {
-            auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
-            ComponentTransferFunction transferFunction;
-            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-            transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation.amount());
-            transferFunction.intercept = 0;
 
-            ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
+        case FilterOperation::BRIGHTNESS:
+            effect = createBrightnessEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
-        }
-        case FilterOperation::CONTRAST: {
-            auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
-            ComponentTransferFunction transferFunction;
-            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-            float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
-            transferFunction.slope = amount;
-            transferFunction.intercept = -0.5 * amount + 0.5;
-            
-            ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
+
+        case FilterOperation::CONTRAST:
+            effect = createContrastEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
-        }
-        case FilterOperation::BLUR: {
-            auto& blurOperation = downcast<BlurFilterOperation>(filterOperation);
-            float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-            effect = FEGaussianBlur::create(*this, stdDeviation, stdDeviation, consumer == FilterConsumer::FilterProperty ? EDGEMODE_NONE : EDGEMODE_DUPLICATE);
+
+        case FilterOperation::DROP_SHADOW:
+            effect = createDropShadowEffect(*this, downcast<DropShadowFilterOperation>(*operation));
             break;
-        }
-        case FilterOperation::DROP_SHADOW: {
-            auto& dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
-            effect = FEDropShadow::create(*this, dropShadowOperation.stdDeviation(), dropShadowOperation.stdDeviation(),
-                dropShadowOperation.x(), dropShadowOperation.y(), dropShadowOperation.color(), 1);
+
+        case FilterOperation::GRAYSCALE:
+            effect = createGrayScaleEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
-        }
+
+        case FilterOperation::HUE_ROTATE:
+            effect = createHueRotateEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
+            break;
+
+        case FilterOperation::INVERT:
+            effect = createInvertEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
+            break;
+
+        case FilterOperation::OPACITY:
+            effect = createOpacityEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
+            break;
+
+        case FilterOperation::SATURATE:
+            effect = createSaturateEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
+            break;
+
+        case FilterOperation::SEPIA:
+            effect = createSepiaEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
+            break;
+
+        case FilterOperation::REFERENCE:
+            filter = createSVGFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, *previousEffect);
+            effect = nullptr;
+            break;
+
         default:
             break;
         }
 
+        if (filter) {
+            effect = filter->lastEffect();
+            setupLastEffectProperties(*effect, consumer);
+            m_functions.append(filter.releaseNonNull());
+            previousEffect = WTFMove(effect);
+            continue;
+        }
+
         if (effect) {
-            // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
-            // property applied here should not clip to their primitive subregions.
-            effect->setClipsToBounds(consumer == FilterConsumer::FilterFunction);
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
-            
-            if (filterOperation.type() != FilterOperation::REFERENCE) {
-                effect->inputEffects() = { WTFMove(previousEffect) };
-                m_effects.append(*effect);
-            }
+            setupLastEffectProperties(*effect, consumer);
+            effect->inputEffects() = { WTFMove(previousEffect) };
+            m_functions.append({ *effect });
             previousEffect = WTFMove(effect);
         }
     }
 
     // If we didn't make any effects, tell our caller we are not valid.
-    if (m_effects.isEmpty())
+    if (m_functions.isEmpty())
         return false;
 
-    m_effects.shrinkToFit();
+    m_functions.shrinkToFit();
 
-    setMaxEffectRects(sourceImageRect());
 #if USE(CORE_IMAGE)
     if (!m_filterRenderer)
-        m_filterRenderer = FilterEffectRenderer::tryCreate(renderer.settings().coreImageAcceleratedFilterRenderEnabled(), m_effects.last().get());
+        m_filterRenderer = FilterEffectRenderer::tryCreate(renderer.settings().coreImageAcceleratedFilterRenderEnabled(), *lastEffect());
 #endif
     return true;
+}
+
+GraphicsContext* CSSFilter::inputContext()
+{
+    return sourceImage() ? &sourceImage()->context() : nullptr;
 }
 
 bool CSSFilter::updateBackingStoreRect(const FloatRect& filterRect)
@@ -337,42 +363,56 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
         RenderingMode mode = m_filterRenderer ? RenderingMode::Accelerated : renderingMode();
         setSourceImage(ImageBuffer::create(logicalSize, mode, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 #endif
+        if (auto context = inputContext())
+            context->scale(filterScale());
     }
+
     m_graphicsBufferAttached = true;
+}
+
+RefPtr<FilterEffect> CSSFilter::lastEffect()
+{
+    if (m_functions.isEmpty())
+        return nullptr;
+
+    auto& function = m_functions.last();
+    if (function->isSVGFilter())
+        return downcast<SVGFilter>(function.ptr())->lastEffect();
+
+    return downcast<FilterEffect>(function.ptr());
 }
 
 void CSSFilter::determineFilterPrimitiveSubregion()
 {
-    auto& lastEffect = m_effects.last().get();
-    lastEffect.determineFilterPrimitiveSubregion();
-    FloatRect subRegion = lastEffect.maxEffectRect();
+    auto effect = lastEffect();
+    effect->determineFilterPrimitiveSubregion();
+    FloatRect subRegion = effect->maxEffectRect();
     // At least one FilterEffect has a too big image size, recalculate the effect sizes with new scale factors.
     FloatSize filterScale { 1, 1 };
     if (ImageBuffer::sizeNeedsClamping(subRegion.size(), filterScale)) {
         setFilterScale(filterScale);
-        lastEffect.determineFilterPrimitiveSubregion();
+        effect->determineFilterPrimitiveSubregion();
     }
 }
 
 void CSSFilter::clearIntermediateResults()
 {
-    m_sourceGraphic->clearResult();
-    for (auto& effect : m_effects)
-        effect->clearResult();
+    for (auto& function : m_functions)
+        function->clearResult();
 }
 
 void CSSFilter::apply()
 {
-    auto& effect = m_effects.last().get();
+    auto effect = lastEffect();
     if (m_filterRenderer) {
-        m_filterRenderer->applyEffects(effect);
+        m_filterRenderer->applyEffects(*effect);
         if (m_filterRenderer->hasResult()) {
-            effect.transformResultColorSpace(DestinationColorSpace::SRGB());
+            effect->transformResultColorSpace(DestinationColorSpace::SRGB());
             return;
         }
     }
-    effect.apply();
-    effect.transformResultColorSpace(DestinationColorSpace::SRGB());
+    effect->apply();
+    effect->transformResultColorSpace(DestinationColorSpace::SRGB());
 }
 
 LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)
@@ -385,35 +425,39 @@ LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filte
     return rectForRepaint;
 }
 
-ImageBuffer* CSSFilter::output() const
+ImageBuffer* CSSFilter::output()
 {
     if (m_filterRenderer && m_filterRenderer->hasResult())
         return m_filterRenderer->output();
     
-    return m_effects.last()->imageBufferResult();
+    return lastEffect()->imageBufferResult();
 }
 
 void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)
 {
+    auto scaledSourceImageRect = sourceImageRect;
+    scaledSourceImageRect.scale(filterScale());
+
     Filter::setFilterRegion(sourceImageRect);
-    Filter::setSourceImageRect(sourceImageRect);
-    setMaxEffectRects(sourceImageRect);
+    Filter::setSourceImageRect(scaledSourceImageRect);
+
+    for (auto& function : m_functions) {
+        if (function->isSVGFilter()) {
+            downcast<SVGFilter>(function.ptr())->setFilterRegion(sourceImageRect);
+            downcast<SVGFilter>(function.ptr())->setSourceImageRect(scaledSourceImageRect);
+        }
+    }
+
     m_graphicsBufferAttached = false;
 }
 
-void CSSFilter::setMaxEffectRects(const FloatRect& effectRect)
+IntRect CSSFilter::outputRect()
 {
-    for (auto& effect : m_effects)
-        effect->setMaxEffectRect(effectRect);
-}
+    auto effect = lastEffect();
 
-IntRect CSSFilter::outputRect() const
-{
-    auto& lastEffect = m_effects.last().get();
-    
-    if (lastEffect.hasResult() || (m_filterRenderer && m_filterRenderer->hasResult()))
-        return lastEffect.requestedRegionOfInputPixelBuffer(IntRect { filterRegion() });
-    
+    if (effect->hasResult() || (m_filterRenderer && m_filterRenderer->hasResult()))
+        return effect->requestedRegionOfInputPixelBuffer(IntRect { filterRegion() });
+
     return { };
 }
 
@@ -425,8 +469,8 @@ IntOutsets CSSFilter::outsets() const
     if (!m_outsets.isZero())
         return m_outsets;
 
-    for (auto& effect : m_effects)
-        m_outsets += effect->outsets();
+    for (auto& function : m_functions)
+        m_outsets += function->outsets();
     return m_outsets;
 }
 

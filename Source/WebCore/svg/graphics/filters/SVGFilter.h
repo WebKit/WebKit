@@ -27,19 +27,32 @@
 
 namespace WebCore {
 
+class SVGFilterBuilder;
+class SVGFilterElement;
+
 class SVGFilter final : public Filter {
 public:
-    static Ref<SVGFilter> create(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect);
 
     FloatSize scaledByFilterScale(FloatSize) const final;
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
+    RefPtr<FilterEffect> lastEffect() { return m_lastEffect; }
+    void setLastEffect(RefPtr<FilterEffect>&& lastEffect) { m_lastEffect = WTFMove(lastEffect); }
+
 private:
     SVGFilter(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
 
+    IntOutsets outsets() const override;
+    void clearResult() override;
+
     FloatRect m_targetBoundingBox;
     bool m_effectBBoxMode;
+
+    RefPtr<FilterEffect> m_lastEffect;
 };
 
 } // namespace WebCore

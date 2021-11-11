@@ -433,11 +433,12 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
         // Creating a placeholder filter which is passed to the builder.
         FloatRect dummyRect;
         FloatSize dummyScale(1, 1);
-        auto dummyFilter = SVGFilter::create(dummyScale, dummyRect, dummyRect, dummyRect, true);
-        if (auto builder = filter.buildPrimitives(dummyFilter.get())) {
+        SVGFilterBuilder builder;
+        auto dummyFilter = SVGFilter::create(filter.filterElement(), builder, dummyScale, dummyRect, dummyRect, dummyRect);
+        if (dummyFilter) {
             TextStream::IndentScope indentScope(ts);
 
-            if (FilterEffect* lastEffect = builder->lastEffect())
+            if (auto lastEffect = dummyFilter->lastEffect())
                 lastEffect->externalRepresentation(ts);
         }
     } else if (resource.resourceType() == ClipperResourceType) {

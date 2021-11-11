@@ -37,7 +37,7 @@ class SVGFilterBuilder {
 public:
     typedef HashSet<FilterEffect*> FilterEffectSet;
 
-    SVGFilterBuilder(RefPtr<FilterEffect> sourceGraphic);
+    SVGFilterBuilder() = default;
 
     void setTargetBoundingBox(const FloatRect& r) { m_targetBoundingBox = r; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
@@ -64,6 +64,9 @@ public:
 
     void clearEffects();
     void clearResultsRecursive(FilterEffect*);
+
+    void setupBuiltinEffects(Ref<FilterEffect> sourceGraphic);
+    RefPtr<FilterEffect> buildFilterEffects(Filter&, SVGFilterElement&);
 
 private:
     inline void addBuiltinEffects()

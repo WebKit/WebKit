@@ -48,7 +48,7 @@ typedef Vector<RefPtr<FilterEffect>> FilterEffectVector;
 
 class FilterEffect : public FilterFunction {
 public:
-    void clearResult();
+    void clearResult() override;
     void clearResultsRecursive();
 
     ImageBuffer* imageBufferResult();
@@ -59,7 +59,6 @@ public:
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
-    unsigned totalNumberOfEffectInputs() const;
     
     inline bool hasResult() const
     {
@@ -83,7 +82,7 @@ public:
     void setAbsolutePaintRect(const IntRect& absolutePaintRect) { m_absolutePaintRect = absolutePaintRect; }
 
     FloatRect maxEffectRect() const { return m_maxEffectRect; }
-    void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
+    void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; }
 
     void apply();
 
@@ -93,8 +92,6 @@ public:
     virtual void correctFilterResultIfNeeded() { }
 
     virtual void determineAbsolutePaintRect();
-
-    virtual IntOutsets outsets() const { return IntOutsets(); }
 
     enum class RepresentationType { TestOutput, Debugging };
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType = RepresentationType::TestOutput) const;

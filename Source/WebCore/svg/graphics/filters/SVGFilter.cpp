@@ -22,7 +22,43 @@
 #include "config.h"
 #include "SVGFilter.h"
 
+#include "SVGFilterBuilder.h"
+#include "SVGFilterElement.h"
+#include "SourceGraphic.h"
+
 namespace WebCore {
+
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect)
+{
+    return create(filterElement, builder, filterScale, sourceImageRect, filterRegion, filterRegion, &previousEffect);
+}
+
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox)
+{
+    return create(filterElement, builder, filterScale, sourceImageRect, filterRegion, targetBoundingBox, nullptr);
+}
+
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect)
+{
+    bool primitiveBoundingBoxMode = filterElement.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+
+    auto filter = adoptRef(*new SVGFilter(filterScale, sourceImageRect, filterRegion, targetBoundingBox, primitiveBoundingBoxMode));
+
+    if (!previousEffect)
+        builder.setupBuiltinEffects(SourceGraphic::create(filter));
+    else
+        builder.setupBuiltinEffects({ *previousEffect });
+
+    builder.setTargetBoundingBox(targetBoundingBox);
+    builder.setPrimitiveUnits(filterElement.primitiveUnits());
+
+    auto lastEffect = builder.buildFilterEffects(filter, filterElement);
+    if (!lastEffect)
+        return nullptr;
+
+    filter->setLastEffect(WTFMove(lastEffect));
+    return filter;
+}
 
 SVGFilter::SVGFilter(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, bool effectBBoxMode)
     : Filter(Filter::Type::SVGFilter, filterScale, sourceImageRect, filterRegion)
@@ -39,9 +75,14 @@ FloatSize SVGFilter::scaledByFilterScale(FloatSize size) const
     return Filter::scaledByFilterScale(size);
 }
 
-Ref<SVGFilter> SVGFilter::create(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, bool effectBBoxMode)
+IntOutsets SVGFilter::outsets() const
 {
-    return adoptRef(*new SVGFilter(filterScale, sourceImageRect, filterRegion, targetBoundingBox, effectBBoxMode));
+    return m_lastEffect->outsets();
+}
+
+void SVGFilter::clearResult()
+{
+    m_lastEffect->clearResultsRecursive();
 }
 
 } // namespace WebCore

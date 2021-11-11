@@ -82,40 +82,6 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter& filter) const
-{
-    static const unsigned maxCountChildNodes = 200;
-    if (filterElement().countChildNodes() > maxCountChildNodes)
-        return nullptr;
-
-    FloatRect targetBoundingBox = filter.targetBoundingBox();
-
-    // Add effects to the builder
-    auto builder = makeUnique<SVGFilterBuilder>(SourceGraphic::create(filter));
-    builder->setPrimitiveUnits(filterElement().primitiveUnits());
-    builder->setTargetBoundingBox(targetBoundingBox);
-    
-    for (auto& element : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement())) {
-        auto effect = element.build(builder.get(), filter);
-        if (!effect) {
-            builder->clearEffects();
-            return nullptr;
-        }
-        builder->appendEffectToEffectReferences(effect.copyRef(), element.renderer());
-        element.setStandardAttributes(effect.get());
-        effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&element, filterElement().primitiveUnits(), targetBoundingBox));
-        if (element.renderer()) {
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-            effect->setOperatingColorSpace(element.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB() : DestinationColorSpace::SRGB());
-#else
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
-#endif
-        }
-        builder->add(element.result(), WTFMove(effect));
-    }
-    return builder;
-}
-
 bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
@@ -155,18 +121,13 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     ImageBuffer::sizeNeedsClamping(absoluteDrawingRegion.size(), filterScale);
 
     // Create the SVGFilter object.
-    bool primitiveBoundingBoxMode = filterElement().primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
-    filterData->filter = SVGFilter::create(filterScale, absoluteDrawingRegion, filterData->boundaries, targetBoundingBox, primitiveBoundingBoxMode);
-
-    // Create all relevant filter primitives.
-    filterData->builder = buildPrimitives(*filterData->filter);
-    if (!filterData->builder)
+    filterData->builder = makeUnique<SVGFilterBuilder>();
+    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, filterScale, absoluteDrawingRegion, filterData->boundaries, targetBoundingBox);
+    if (!filterData->filter)
         return false;
 
-    static const unsigned maxTotalOfEffectInputs = 100;
-    FilterEffect* lastEffect = filterData->builder->lastEffect();
-    if (!lastEffect || lastEffect->totalNumberOfEffectInputs() > maxTotalOfEffectInputs)
-        return false;
+    auto lastEffect = filterData->builder->lastEffect();
+    ASSERT(lastEffect);
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter::applyResource\n" << *filterData->builder->lastEffect());
 

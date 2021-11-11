@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "FloatRect.h"
+#include "IntRectExtent.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomString.h>
 
@@ -79,6 +81,9 @@ public:
     static AtomString sourceAlphaName() { return filterName(Type::SourceAlpha); }
     static AtomString sourceGraphicName() { return filterName(Type::SourceGraphic); }
     AtomString filterName() const { return filterName(m_filterType); }
+
+    virtual IntOutsets outsets() const { return { }; }
+    virtual void clearResult() { }
 
 private:
     Type m_filterType;
