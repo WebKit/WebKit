@@ -42,6 +42,7 @@
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#import <WebCore/ResourceError.h>
 #import <pal/spi/mac/SystemPreviewSPI.h>
 #import <wtf/MainThread.h>
 #endif
@@ -124,10 +125,12 @@ void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
-void ModelElementController::modelElementDidCreatePreview(const WebCore::ElementContext& context, const URL& fileURL, const String& uuid, const WebCore::FloatSize& size)
+void ModelElementController::modelElementDidCreatePreview(URL fileURL, String uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&& completionHandler)
 {
-    if (!m_webPageProxy.preferences().modelElementEnabled())
+    if (!m_webPageProxy.preferences().modelElementEnabled()) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Model element disabled"_s }));
         return;
+    }
 
     auto nsUUID = adoptNS([[NSUUID alloc] initWithUUIDString:uuid]);
     auto preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, size.width(), size.height()) UUID:nsUUID.get()]);
@@ -140,32 +143,49 @@ void ModelElementController::modelElementDidCreatePreview(const WebCore::Element
     else
         iterator->value = preview;
 
+    // FIXME: Why is this not just using normal URL -> NSURL conversion?
+    auto url = adoptNS([[NSURL alloc] initFileURLWithPath:fileURL.fileSystemPath()]);
+
     RELEASE_ASSERT(isMainRunLoop());
-    WeakPtr weakThis { *this };
-    auto elementContextCopy = context;
-    auto uuidCopy = uuid;
-    NSURL *url = [NSURL fileURLWithPath:fileURL.fileSystemPath()];
-    [preview setupRemoteConnectionWithCompletionHandler:^(NSError * _Nullable contextError) {
+    [preview setupRemoteConnectionWithCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, preview, uuid = WTFMove(uuid), url = WTFMove(url), completionHandler = WTFMove(completionHandler)] (NSError * _Nullable contextError) mutable {
         if (contextError) {
-            LOG(ModelElement, "Unable to create remote connection for uuid %s: %@.", uuidCopy.utf8().data(), [contextError localizedDescription]);
+            LOG(ModelElement, "Unable to create remote connection for uuid %s: %@.", uuid.utf8().data(), contextError.localizedDescription);
+
+            callOnMainRunLoop([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { contextError }] () mutable {
+                if (!weakThis)
+                    return;
+
+                completionHandler(makeUnexpected(error));
+            });
             return;
         }
 
-        LOG(ModelElement, "Established remote connection with UUID %s.", uuidCopy.utf8().data());
+        LOG(ModelElement, "Established remote connection with UUID %s.", uuid.utf8().data());
 
-        [preview preparePreviewOfFileAtURL:url completionHandler:^(NSError * _Nullable loadError) {
+        [preview preparePreviewOfFileAtURL:url.get() completionHandler:makeBlockPtr([weakThis = WTFMove(weakThis), preview, uuid = WTFMove(uuid), url = WTFMove(url), completionHandler = WTFMove(completionHandler)] (NSError * _Nullable loadError) mutable {
             if (loadError) {
-                LOG(ModelElement, "Unable to load file for uuid %s: %@.", uuidCopy.utf8().data(), [loadError localizedDescription]);
+                LOG(ModelElement, "Unable to load file for uuid %s: %@.", uuid.utf8().data(), loadError.localizedDescription);
+
+                callOnMainRunLoop([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { loadError }] () mutable {
+                    if (!weakThis)
+                        return;
+
+                    completionHandler(makeUnexpected(error));
+                });
                 return;
             }
 
-            LOG(ModelElement, "Loaded file with UUID %s.", uuidCopy.utf8().data());
+            LOG(ModelElement, "Loaded file with UUID %s.", uuid.utf8().data());
 
-            callOnMainRunLoop([weakThis, elementContextCopy, uuidCopy, contextId = [preview contextId]]() mutable {
-                weakThis->m_webPageProxy.modelElementPreviewDidObtainContextId(elementContextCopy, uuidCopy, contextId);
+            auto contextId = [preview contextId];
+            callOnMainRunLoop([weakThis = WTFMove(weakThis), uuid = WTFMove(uuid), completionHandler = WTFMove(completionHandler), contextId] () mutable {
+                if (!weakThis)
+                    return;
+
+                completionHandler(std::make_pair(uuid, contextId));
             });
-        }];
-    }];
+        }).get()];
+    }).get()];
 }
 
 #endif

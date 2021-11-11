@@ -26,8 +26,6 @@
 #include "config.h"
 #include "Model.h"
 
-#if ENABLE(MODEL_ELEMENT)
-
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -58,5 +56,3 @@ TextStream& operator<<(TextStream& ts, const Model& model)
 }
 
 }
-
-#endif // ENABLE(MODEL_ELEMENT)

@@ -608,9 +608,6 @@ public:
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     virtual void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const { }
 #endif
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    virtual void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const { };
-#endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
     virtual void startApplePayAMSUISession(const URL&, const ApplePayAMSUIRequest&, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler) { completionHandler(std::nullopt); }

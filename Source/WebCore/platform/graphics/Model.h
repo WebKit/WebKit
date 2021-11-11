@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(MODEL_ELEMENT)
-
 #include "SharedBuffer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
@@ -101,5 +99,3 @@ RefPtr<Model> Model::decode(Decoder& decoder)
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Model&);
 
 } // namespace WebCore
-
-#endif // ENABLE(MODEL_ELEMENT)

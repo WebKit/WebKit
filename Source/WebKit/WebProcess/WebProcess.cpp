@@ -144,8 +144,8 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-#include <WebCore/HTMLModelElement.h>
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#include "ARKitInlinePreviewModelPlayer.h"
 #endif
 
 #if !OS(WINDOWS)
@@ -577,9 +577,9 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     if (!parameters.modelElementCacheDirectory.isEmpty())
-        WebCore::HTMLModelElement::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
+        ARKitInlinePreviewModelPlayer::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
 #endif
 
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);

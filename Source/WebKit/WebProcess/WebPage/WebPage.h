@@ -220,10 +220,6 @@ class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
 
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-class HTMLModelElement;
-#endif
-
 enum SyntheticClickType : int8_t;
 enum class COEPDisposition : bool;
 enum class CreateNewGroupForHighlight : bool;
@@ -1495,10 +1491,6 @@ public:
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
-#endif
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&);
-    void modelElementPreviewDidObtainContextId(const WebCore::ElementContext&, const String&, uint32_t);
 #endif
 
     void prepareToRunModalJavaScriptDialog();

@@ -234,6 +234,11 @@ Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformableFrame.cpp
 Modules/mediastream/libwebrtc/LibWebRTCSctpTransportBackend.cpp
 Modules/model-element/HTMLModelElement.cpp
+Modules/model-element/ModelPlayer.cpp
+Modules/model-element/ModelPlayerClient.cpp
+Modules/model-element/ModelPlayerProvider.cpp
+Modules/model-element/dummy/DummyModelPlayer.cpp
+Modules/model-element/dummy/DummyModelPlayerProvider.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
 Modules/paymentrequest/MerchantValidationEvent.cpp

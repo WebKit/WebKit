@@ -1097,13 +1097,13 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 #if ENABLE(MODEL_ELEMENT)
     else if (is<RenderModel>(renderer())) {
         auto element = downcast<HTMLModelElement>(renderer().element());
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-        if (auto* platformLayer = element->platformLayer())
-            m_graphicsLayer->setContentsToPlatformLayer(platformLayer, GraphicsLayer::ContentsLayerPurpose::Model);
-#else
-        if (auto model = element->model())
+
+        // Some ModelPlayers use a platformLayer() and some pass the Model to the layer as contents,
+        // but this is a runtime decision.
+        if (element->usesPlatformLayer()) {
+            m_graphicsLayer->setContentsToPlatformLayer(element->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Model);
+        } else if (auto model = element->model())
             m_graphicsLayer->setContentsToModel(WTFMove(model));
-#endif
 
         layerConfigChanged = true;
     }

@@ -32,21 +32,19 @@
 #include "CachedResourceHandle.h"
 #include "HTMLElement.h"
 #include "IDLTypes.h"
+#include "ModelPlayerClient.h"
+#include "PlatformLayer.h"
 #include "SharedBuffer.h"
 #include <wtf/UniqueRef.h>
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-#include "PlatformLayer.h"
-OBJC_CLASS ASVInlinePreview;
-#endif
 
 namespace WebCore {
 
 class Model;
+class ModelPlayer;
 
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
-class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient {
+class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLModelElement);
 public:
     static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
@@ -55,21 +53,16 @@ public:
     void sourcesChanged();
     const URL& currentSrc() const { return m_sourceURL; }
 
+    // MARK: DOM Functions and Attributes
+
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<HTMLModelElement>>;
     ReadyPromise& ready() { return m_readyPromise.get(); }
 
     RefPtr<SharedBuffer> modelData() const;
     RefPtr<Model> model() const;
 
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-    WEBCORE_EXPORT static void setModelElementCacheDirectory(const String&);
-    WEBCORE_EXPORT static const String& modelElementCacheDirectory();
-#endif
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+    bool usesPlatformLayer() const;
     PlatformLayer* platformLayer() const;
-    WEBCORE_EXPORT void inlinePreviewDidObtainContextId(const String& uuid, uint32_t contextId);
-#endif
 
     void enterFullscreen();
 
@@ -79,13 +72,9 @@ private:
     HTMLModelElement(const QualifiedName&, Document&);
 
     void setSourceURL(const URL&);
-    HTMLModelElement& readyPromiseResolve();
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    void clearFile();
-    void createFile();
     void modelDidChange();
-#endif
+
+    HTMLModelElement& readyPromiseResolve();
 
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
@@ -97,6 +86,10 @@ private:
     void dataReceived(CachedResource&, const uint8_t* data, int dataLength) final;
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
+    // ModelPlayerClient overrides.
+    void didFinishLoading(ModelPlayer&) final;
+    void didFailLoading(ModelPlayer&, const ResourceError&) final;
+
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
     RefPtr<SharedBuffer> m_data;
@@ -104,10 +97,7 @@ private:
     UniqueRef<ReadyPromise> m_readyPromise;
     bool m_dataComplete { false };
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    String m_filePath;
-    RetainPtr<ASVInlinePreview> m_inlinePreview;
-#endif
+    RefPtr<ModelPlayer> m_modelPlayer;
 };
 
 } // namespace WebCore

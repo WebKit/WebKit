@@ -89,6 +89,7 @@
 #include "LowPowerModeNotifier.h"
 #include "MediaCanStartListener.h"
 #include "MediaRecorderProvider.h"
+#include "ModelPlayerProvider.h"
 #include "Navigator.h"
 #include "PageColorSampler.h"
 #include "PageConfiguration.h"
@@ -337,6 +338,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_permissionController(WTFMove(pageConfiguration.permissionController))
     , m_reportingEndpointsCache(WTFMove(pageConfiguration.reportingEndpointsCache))
     , m_storageProvider(WTFMove(pageConfiguration.storageProvider))
+    , m_modelPlayerProvider(WTFMove(pageConfiguration.modelPlayerProvider))
 {
     updateTimerThrottlingState();
 
@@ -3793,6 +3795,11 @@ PermissionController& Page::permissionController()
 StorageConnection& Page::storageConnection()
 {
     return m_storageProvider->storageConnection();
+}
+
+ModelPlayerProvider& Page::modelPlayerProvider()
+{
+    return m_modelPlayerProvider.get();
 }
 
 } // namespace WebCore

@@ -592,6 +592,8 @@ WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp
 WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
+WebProcess/Model/WebModelPlayerProvider.cpp
+
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/graphics/DisplayListWriterHandle.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp

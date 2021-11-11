@@ -125,6 +125,7 @@ class MediaCanStartListener;
 class MediaPlaybackTarget;
 class MediaRecorderProvider;
 class MediaSessionCoordinatorPrivate;
+class ModelPlayerProvider;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
@@ -904,6 +905,8 @@ public:
     WEBCORE_EXPORT PermissionController& permissionController();
     WEBCORE_EXPORT StorageConnection& storageConnection();
 
+    ModelPlayerProvider& modelPlayerProvider();
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1240,6 +1243,7 @@ private:
     Ref<PermissionController> m_permissionController;
     RefPtr<ReportingEndpointsCache> m_reportingEndpointsCache;
     UniqueRef<StorageProvider> m_storageProvider;
+    UniqueRef<ModelPlayerProvider> m_modelPlayerProvider;
 
 #if ENABLE(IMAGE_ANALYSIS)
     using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;

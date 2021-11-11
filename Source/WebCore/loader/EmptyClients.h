@@ -222,10 +222,6 @@ class EmptyChromeClient : public ChromeClient {
 #endif
 
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const final;
-#endif
 };
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();

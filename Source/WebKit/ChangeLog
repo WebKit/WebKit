@@ -1,3 +1,56 @@
+2021-11-11  Sam Weinig  <weinig@apple.com>
+
+        Factor platform specific code out of HTMLModelElement
+        https://bugs.webkit.org/show_bug.cgi?id=232848
+
+        Reviewed by Dean Jackson.
+
+        Move implementation details of the macOS ARKit <model> implementation
+        into an ARKit model player implementation.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementDidCreatePreview):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Make modelElementDidCreatePreview() an async callback rather than
+        using a ElementContext to reconnect on the way back.
+
+        * WebProcess/Model: Added.
+        * WebProcess/Model/WebModelPlayerProvider.cpp: Added.
+        * WebProcess/Model/WebModelPlayerProvider.h: Added.
+        Add ModelPlayerProvider implementation for WebKit.
+
+        * WebProcess/Model/mac: Added.
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayer.h: Added.
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayer.mm: Added.
+        Move code from HTMLModelElementCocoa here, and implement the ModelPlayer
+        interface using it. Rather than using the ChromeClient, we can now directly
+        use an async IPC message to set up the link.
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest):
+        Fix build issue caused by adding new files.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        Update call to setModelElementCacheDirectory to be on the ARKitInlinePreviewModelPlayer.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::modelElementDidCreatePreview const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Remove no longer needed modelElementDidCreatePreview client function.
+
 2021-11-11  Dean Jackson  <dino@apple.com>
 
         WKSystemPreviewView should be called WKUSDPreviewView

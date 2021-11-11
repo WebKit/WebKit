@@ -1,3 +1,16 @@
+2021-11-11  Sam Weinig  <weinig@apple.com>
+
+        Factor platform specific code out of HTMLModelElement
+        https://bugs.webkit.org/show_bug.cgi?id=232848
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        Use DummyModelPlayerProvider for the DummyModelPlayerProvider since the feature
+        is not supported for WebKitLegacy at the moment.
+
 2021-11-10  Darin Adler  <darin@apple.com>
 
         [CF] Reduce duplication and unneeded buffer allocations and copying in URL code, also remove unused methods and functions

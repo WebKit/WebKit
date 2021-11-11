@@ -44,6 +44,7 @@
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DragClient.h"
+#include "DummyModelPlayerProvider.h"
 #include "DummySpeechRecognitionProvider.h"
 #include "DummyStorageProvider.h"
 #include "EditorClient.h"
@@ -584,12 +585,6 @@ void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandle
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 void EmptyChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const
-{
-}
-#endif
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-void EmptyChromeClient::modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const
 {
 }
 #endif
@@ -1198,7 +1193,8 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         makeUniqueRef<EmptyMediaRecorderProvider>(),
         EmptyBroadcastChannelRegistry::create(),
         DummyPermissionController::create(),
-        makeUniqueRef<DummyStorageProvider>()
+        makeUniqueRef<DummyStorageProvider>(),
+        makeUniqueRef<DummyModelPlayerProvider>()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

@@ -38,6 +38,8 @@
 #include "JSEventTarget.h"
 #include "JSHTMLModelElement.h"
 #include "Model.h"
+#include "ModelPlayer.h"
+#include "ModelPlayerProvider.h"
 #include "RenderLayerModelObject.h"
 #include "RenderModel.h"
 #include <wtf/IsoMallocInlines.h>
@@ -70,10 +72,6 @@ HTMLModelElement::~HTMLModelElement()
         m_resource->removeClient(*this);
         m_resource = nullptr;
     }
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    clearFile();
-#endif
 }
 
 Ref<HTMLModelElement> HTMLModelElement::create(const QualifiedName& tagName, Document& document)
@@ -131,17 +129,16 @@ void HTMLModelElement::setSourceURL(const URL& url)
         m_resource = nullptr;
     }
 
+    if (m_modelPlayer)
+        m_modelPlayer = nullptr;
+
     if (!m_readyPromise->isFulfilled())
         m_readyPromise->reject(Exception { AbortError });
 
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve);
 
-    if (m_sourceURL.isEmpty()) {
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-        clearFile();
-#endif
+    if (m_sourceURL.isEmpty())
         return;
-    }
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.destination = FetchOptions::Destination::Model;
@@ -167,24 +164,6 @@ HTMLModelElement& HTMLModelElement::readyPromiseResolve()
 {
     return *this;
 }
-
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-static String& sharedModelElementCacheDirectory()
-{
-    static NeverDestroyed<String> sharedModelElementCacheDirectory;
-    return sharedModelElementCacheDirectory;
-}
-
-void HTMLModelElement::setModelElementCacheDirectory(const String& path)
-{
-    sharedModelElementCacheDirectory() = path;
-}
-
-const String& HTMLModelElement::modelElementCacheDirectory()
-{
-    return sharedModelElementCacheDirectory();
-}
-#endif
 
 // MARK: - DOM overrides.
 
@@ -236,13 +215,67 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
 
     m_readyPromise->resolve(*this);
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     modelDidChange();
-#endif
 }
+
+// MARK: - ModelPlayer support
+
+void HTMLModelElement::modelDidChange()
+{
+    // FIXME: For the early returns here, we should probably inform the page that things have
+    // failed to render. For the case of no-renderer, we should probably also build the model
+    // when/if a renderer is created.
+
+    auto page = document().page();
+    if (!page)
+        return;
+
+    auto* renderer = this->renderer();
+    if (!renderer)
+        return;
+
+    // NOTE: For now, createModelPlayer returning nullptr means that the GraphicsLayer::setContentsToModel() path
+    // is being used, but that needs to be phased out to allow bidirectional communication between the model player
+    // and the HTMLModelElement. Once that is phased out, createModelPlayer() should be updated to return a Ref<>.
+    m_modelPlayer = page->modelPlayerProvider().createModelPlayer(*this);
+    if (!m_modelPlayer)
+        return;
+
+    // FIXME: We need to tell the player if the size changes as well, so passing this
+    // in with load probably doesn't make sense.
+    auto size = renderer->absoluteBoundingBoxRect(false).size();
+
+    m_modelPlayer->load(*m_model, size);
+}
+
+bool HTMLModelElement::usesPlatformLayer() const
+{
+    return m_modelPlayer != nullptr;
+}
+
+PlatformLayer* HTMLModelElement::platformLayer() const
+{
+    return m_modelPlayer->layer();
+}
+
+void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
+{
+    ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
+
+    if (auto* renderer = this->renderer())
+        renderer->updateFromElement();
+}
+
+void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceError&)
+{
+    ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
+}
+
+// MARK: - Fullscreen support.
 
 void HTMLModelElement::enterFullscreen()
 {
+// FIXME: Add a new method to ModelPlayer for entering fullscreen and move this into the iOS ARKit inline preview ModelPlayer implementation.
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     auto* page = document().page();
     if (!page)

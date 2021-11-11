@@ -95,6 +95,7 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
+#include <WebCore/DummyModelPlayerProvider.h>
 #include <WebCore/DummySpeechRecognitionProvider.h>
 #include <WebCore/DummyStorageProvider.h>
 #include <WebCore/Editor.h>
@@ -3065,7 +3066,8 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate(false),
         WebCore::DummyPermissionController::create(),
-        makeUniqueRef<WebCore::DummyStorageProvider>()
+        makeUniqueRef<WebCore::DummyStorageProvider>(),
+        makeUniqueRef<WebCore::DummyModelPlayerProvider>()
     );
     configuration.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)

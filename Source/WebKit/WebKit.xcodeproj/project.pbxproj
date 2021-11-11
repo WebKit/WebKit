@@ -5220,6 +5220,10 @@
 		BC20528011C94284008F3375 /* WKBundlePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePage.cpp; sourceTree = "<group>"; };
 		BC2652121182608100243E12 /* DrawingAreaProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxy.cpp; sourceTree = "<group>"; };
 		BC2652131182608100243E12 /* DrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxy.h; sourceTree = "<group>"; };
+		BC2B410C2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitInlinePreviewModelPlayer.h; sourceTree = "<group>"; };
+		BC2B410D2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitInlinePreviewModelPlayer.mm; sourceTree = "<group>"; };
+		BC2B411A2732F66E00A2D191 /* WebModelPlayerProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebModelPlayerProvider.h; sourceTree = "<group>"; };
+		BC2B411B2732F66E00A2D191 /* WebModelPlayerProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebModelPlayerProvider.cpp; sourceTree = "<group>"; };
 		BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SameDocumentNavigationType.h; sourceTree = "<group>"; };
 		BC2D021812AC426C00E732A3 /* WKPageLoadTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypes.h; sourceTree = "<group>"; };
 		BC3065F91259344E00E71278 /* CacheModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheModel.h; sourceTree = "<group>"; };
@@ -9774,6 +9778,7 @@
 				33D3A3BD1339609800709BE4 /* MediaCache */,
 				0736B752260D039F00E06994 /* MediaSession */,
 				4A410F4119AF7B27002EBAB5 /* MediaStream */,
+				BC2B410A2732EF6500A2D191 /* Model */,
 				5105B0D2162F7A5E00E27709 /* Network */,
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
@@ -10601,6 +10606,25 @@
 				BC14DF9D120B635F00826C0C /* WKBundleScriptWorld.h */,
 			);
 			path = c;
+			sourceTree = "<group>";
+		};
+		BC2B410A2732EF6500A2D191 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				BC2B410B2732EF7500A2D191 /* mac */,
+				BC2B411B2732F66E00A2D191 /* WebModelPlayerProvider.cpp */,
+				BC2B411A2732F66E00A2D191 /* WebModelPlayerProvider.h */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		BC2B410B2732EF7500A2D191 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				BC2B410C2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.h */,
+				BC2B410D2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		BC2E6E74114196F000A63B1E /* Platform */ = {

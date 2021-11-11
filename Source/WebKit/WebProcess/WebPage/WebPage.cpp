@@ -107,6 +107,7 @@
 #include "WebMediaKeyStorageManager.h"
 #include "WebMediaKeySystemClient.h"
 #include "WebMediaStrategy.h"
+#include "WebModelPlayerProvider.h"
 #include "WebMouseEvent.h"
 #include "WebNotificationClient.h"
 #include "WebOpenPanelResultListener.h"
@@ -271,10 +272,6 @@
 
 #if ENABLE(APP_HIGHLIGHTS)
 #include <WebCore/AppHighlightStorage.h>
-#endif
-
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-#include <WebCore/HTMLModelElement.h>
 #endif
 
 #if ENABLE(DATA_DETECTION)
@@ -575,7 +572,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
         WebPermissionController::create(*this),
-        makeUniqueRef<WebStorageProvider>()
+        makeUniqueRef<WebStorageProvider>(),
+        makeUniqueRef<WebModelPlayerProvider>(*this)
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)
@@ -7769,21 +7767,6 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 void WebPage::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
     send(Messages::WebPageProxy::TakeModelElementFullscreen(contentLayerId));
-}
-#endif
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-void WebPage::modelElementDidCreatePreview(WebCore::HTMLModelElement& element, const URL& url, const String& uuid, const WebCore::FloatSize& size)
-{
-    if (auto elementContext = contextForElement(element))
-        send(Messages::WebPageProxy::ModelElementDidCreatePreview(*elementContext, url, uuid, size));
-}
-
-void WebPage::modelElementPreviewDidObtainContextId(const WebCore::ElementContext& elementContext, const String& uuid, uint32_t contextId)
-{
-    auto element = elementForContext(elementContext);
-    if (is<WebCore::HTMLModelElement>(element))
-        downcast<WebCore::HTMLModelElement>(*element).inlinePreviewDidObtainContextId(uuid, contextId);
 }
 #endif
 

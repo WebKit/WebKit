@@ -1,3 +1,13 @@
+2021-11-11  Sam Weinig  <weinig@apple.com>
+
+        Factor platform specific code out of HTMLModelElement
+        https://bugs.webkit.org/show_bug.cgi?id=232848
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-wk1/TestExpectations:
+        Skip model tests for WebKitLegacy as it is not supported there currently.
+
 2021-11-11  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Support 'revert-layer' value
