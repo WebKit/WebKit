@@ -25,6 +25,7 @@
 
 [
     Conditional=MATHML,
+    EnabledBySetting=MathMLEnabled,
     Exposed=Window
 ] interface MathMLMathElement : MathMLElement {
 };

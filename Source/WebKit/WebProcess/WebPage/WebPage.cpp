@@ -4074,6 +4074,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(WEB_RTC)
         settings.setPeerConnectionEnabled(false);
 #endif
+#if ENABLE(MATHML)
+        settings.setMathMLEnabled(false);
+#endif
     }
 
     m_page->settingsDidChange();

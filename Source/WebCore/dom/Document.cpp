@@ -1256,7 +1256,7 @@ Ref<Element> Document::createElement(const QualifiedName& name, bool createdByPa
     } else if (name.namespaceURI() == SVGNames::svgNamespaceURI)
         element = SVGElementFactory::createElement(name, *this, createdByParser);
 #if ENABLE(MATHML)
-    else if (name.namespaceURI() == MathMLNames::mathmlNamespaceURI)
+    else if (settings().mathMLEnabled() && name.namespaceURI() == MathMLNames::mathmlNamespaceURI)
         element = MathMLElementFactory::createElement(name, *this, createdByParser);
 #endif
 

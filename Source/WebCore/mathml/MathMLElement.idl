@@ -25,6 +25,7 @@
 
 [
     Conditional=MATHML,
+    EnabledBySetting=MathMLEnabled,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface MathMLElement : Element {

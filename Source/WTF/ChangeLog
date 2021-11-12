@@ -1,5 +1,17 @@
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
+        Disable MathML when in Captive Portal Mode
+        https://bugs.webkit.org/show_bug.cgi?id=233013
+        <rdar://84567129>
+
+        Reviewed by Brent Fulgham.
+
+        Add runtime feature flag for MathML.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, partial revert of r285565 to resolve a PLT5 regression.
         <rdar://85269156>
 
