@@ -179,7 +179,7 @@ void ThreadedScrollingTree::didCommitTreeOnScrollingThread()
 bool ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)
 {
     if (request.animated == ScrollIsAnimated::Yes) {
-        m_nodesWithPendingScrollAnimations.add(nodeID, request);
+        m_nodesWithPendingScrollAnimations.set(nodeID, request);
         return true;
     }
     return false;
@@ -496,6 +496,11 @@ void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
     ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
         protectedThis->displayDidRefreshOnScrollingThread();
     });
+}
+
+void ThreadedScrollingTree::removePendingScrollAnimationForNode(ScrollingNodeID nodeID)
+{
+    m_nodesWithPendingScrollAnimations.remove(nodeID);
 }
 
 } // namespace WebCore

@@ -1,5 +1,50 @@
 2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r285669. rdar://problem/84158655
+
+    REGRESSION: (r283871) [ macOS wk2 Release ] 2 css/cssom-view/scroll-behavior-main-frame tests are failing
+    https://bugs.webkit.org/show_bug.cgi?id=231600
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Fix for issue where a scroll animation is not properly cancelled by a second scroll request.
+    This occurs when the first scroll animation has not been fully started by the time the second
+    request has been received by the scrolling thread (first animation still in
+    m_nodesWithPendingScrollAnimations). For the scenario where the second scroll request is animated,
+    we change ThreadedScrollingTree::scrollingTreeNodeRequestsScroll to use set (add is ignored if
+    key exists in the hash map which caused the second request to be ignored). For the scenario
+    where the second scroll request is not animated, we clear the pending request for that
+    scrolling node (if one exists).
+    
+    * page/scrolling/ScrollingTree.h:
+    (WebCore::ScrollingTree::removePendingScrollAnimationForNode):
+    * page/scrolling/ScrollingTreeScrollingNode.cpp:
+    (WebCore::ScrollingTreeScrollingNode::handleScrollPositionRequest):
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::scrollingTreeNodeRequestsScroll):
+    (WebCore::ThreadedScrollingTree::removePendingScrollAnimationForNode):
+    * page/scrolling/ThreadedScrollingTree.h:
+    
+    LayoutTests:
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285669 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+            REGRESSION: (r283871) [ macOS wk2 Release ] 2 css/cssom-view/scroll-behavior-main-frame tests are failing
+            https://bugs.webkit.org/show_bug.cgi?id=231600
+
+            Reviewed by Simon Fraser.
+
+            * platform/mac-wk2/TestExpectations:
+
+2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r285620. rdar://problem/84558377
 
     REGRESSION(r283863): `<attachment>` with a long `action` do not render correctly
