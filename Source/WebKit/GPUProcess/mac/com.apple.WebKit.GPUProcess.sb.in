@@ -37,9 +37,6 @@
 ;;; remove unneeded sandbox extensions.
 ;;;
 
-;;; Allow registration of per-pid services.
-(allow mach-register (with telemetry) (local-name-prefix ""))
-
 ;;; Allow read access to standard system paths.
 (allow file-read*
     (require-all
@@ -602,7 +599,8 @@
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
 ;; Allow the OpenGL Profiler to attach.
-(allow mach-register (with telemetry) (global-name-regex #"^_oglprof_attach_<[0-9]+>$"))
+(with-filter (system-attribute apple-internal)
+    (allow mach-register (with telemetry) (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))

@@ -1,3 +1,15 @@
+2021-11-12  Per Arne  <pvollan@apple.com>
+
+        [macOS][GPUP] Block access to mach register
+        https://bugs.webkit.org/show_bug.cgi?id=232259
+        <rdar://problem/84624488>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, block access to mach register in the GPU process on macOS.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
         Disable MathML when in Captive Portal Mode
