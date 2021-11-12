@@ -67,6 +67,14 @@ public:
     bool blocksReturnToFullscreenFromPictureInPicture() const;
     void close();
 
+    enum class FullscreenState : uint8_t {
+        NotInFullscreen,
+        EnteringFullscreen,
+        InFullscreen,
+        ExitingFullscreen,
+    };
+    FullscreenState fullscreenState() const { return m_fullscreenState; }
+
     void willEnterFullScreen();
     void didEnterFullScreen();
     void willExitFullScreen();
@@ -94,6 +102,7 @@ private:
 
     WebPageProxy& m_page;
     WebFullScreenManagerProxyClient& m_client;
+    FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
 };

@@ -1,3 +1,14 @@
+2021-11-12  Peng Liu  <peng.liu6@apple.com>
+
+        Promote WKPreferences._fullScreenEnabled to API
+        https://bugs.webkit.org/show_bug.cgi?id=230784
+        <rdar://83255308>
+
+        Reviewed by Jer Noble.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate defaultConfiguration]):
+
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
         Demote WKWebpagePreferences.captivePortalModeEnabled API to SPI

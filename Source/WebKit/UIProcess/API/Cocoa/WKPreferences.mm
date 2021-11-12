@@ -163,6 +163,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _preferences->setNeedsSiteSpecificQuirks(enabled);
 }
 
+- (BOOL)isElementFullscreenEnabled
+{
+    return _preferences->fullScreenEnabled();
+}
+
+- (void)setElementFullscreenEnabled:(BOOL)elementFullscreenEnabled
+{
+    _preferences->setFullScreenEnabled(elementFullscreenEnabled);
+}
+
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC)

@@ -74,6 +74,13 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureState) {
     WKMediaCaptureStateMuted,
 } WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
+typedef NS_ENUM(NSInteger, WKFullscreenState) {
+    WKFullscreenStateNotInFullscreen,
+    WKFullscreenStateEnteringFullscreen,
+    WKFullscreenStateInFullscreen,
+    WKFullscreenStateExitingFullscreen,
+} NS_SWIFT_NAME(WKWebView.FullscreenState) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 /*! @abstract A copy of the configuration with which the web view was
  initialized. */
 @property (nonatomic, readonly, copy) WKWebViewConfiguration *configuration;
@@ -603,6 +610,16 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 #else
 @property (nonatomic, null_resettable, copy) NSColor *underPageBackgroundColor WK_API_AVAILABLE(macos(12.0));
 #endif
+
+/*! @abstract A WKWebView's fullscreen state.
+ @discussion @link WKWebView @link is key-value observing (KVO) compliant for this property. When an element
+ in the WKWebView enters fullscreen, WebKit will replace the WKWebView in the application view hierarchy with
+ a "placeholder" view, and move the WKWebView into a fullscreen window. When the element exits fullscreen later,
+ the WKWebView will be moved back into the application view hierarchy. An application may need to adjust/restore
+ its native UI components when the fullscreen state changes. The application should observe the fullscreenState
+ property of WKWebView in order to receive notifications regarding the fullscreen state change.
+ */
+@property (nonatomic, readonly) WKFullscreenState fullscreenState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

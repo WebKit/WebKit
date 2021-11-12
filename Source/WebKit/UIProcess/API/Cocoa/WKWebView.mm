@@ -70,7 +70,7 @@
 #import "WKLayoutMode.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
-#import <WebKit/WKNavigationDelegate.h>
+#import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPDFConfiguration.h"
 #import "WKPreferencesInternal.h"
@@ -78,8 +78,8 @@
 #import "WKSafeBrowsingWarning.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfiguration.h"
-#import <WebKit/WKUIDelegate.h>
-#import <WebKit/WKUIDelegatePrivate.h>
+#import "WKUIDelegate.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
@@ -1789,6 +1789,35 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 + (BOOL)automaticallyNotifiesObserversOfUnderPageBackgroundColor
 {
     return NO;
+}
+
+- (WKFullscreenState)fullscreenState
+{
+#if ENABLE(FULLSCREEN_API)
+    auto* fullscreenManager = _page->fullScreenManager();
+    if (!fullscreenManager)
+        return WKFullscreenStateNotInFullscreen;
+
+    WKFullscreenState state = WKFullscreenStateNotInFullscreen;
+    switch (fullscreenManager->fullscreenState()) {
+    case WebKit::WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
+        state = WKFullscreenStateEnteringFullscreen;
+        break;
+    case WebKit::WebFullScreenManagerProxy::FullscreenState::InFullscreen:
+        state = WKFullscreenStateInFullscreen;
+        break;
+    case WebKit::WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen:
+        state = WKFullscreenStateExitingFullscreen;
+        break;
+    default:
+        state = WKFullscreenStateNotInFullscreen;
+        break;
+    }
+
+    return state;
+#else
+    return WKFullscreenStateNotInFullscreen;
+#endif
 }
 
 @end
@@ -3565,6 +3594,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #endif
 }
 
+// FIXME: Remove this after Safari adopts the new API
 - (void)_setFullscreenDelegate:(id<_WKFullscreenDelegate>)delegate
 {
 #if ENABLE(FULLSCREEN_API)
@@ -3573,6 +3603,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #endif
 }
 
+// FIXME: Remove this after Safari adopts the new API
 - (id<_WKFullscreenDelegate>)_fullscreenDelegate
 {
 #if ENABLE(FULLSCREEN_API)
@@ -3582,6 +3613,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     return nil;
 }
 
+// FIXME: Remove this after Safari adopts the new API
 - (BOOL)_isInFullscreen
 {
 #if ENABLE(FULLSCREEN_API)

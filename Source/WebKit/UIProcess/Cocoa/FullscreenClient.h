@@ -31,13 +31,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if PLATFORM(MAC)
-@class NSView;
-using WKFullscreenClientView = NSView;
-#else
 @class WKWebView;
 using WKFullscreenClientView = WKWebView;
-#endif
 
 @protocol _WKFullscreenDelegate;
 
