@@ -1,3 +1,21 @@
+2021-11-12  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Accelerated animations with a single keyframe don't account for prior forward-filling animations
+        https://bugs.webkit.org/show_bug.cgi?id=233041
+        <rdar://problem/85236241>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that runs a forward-filling animation for `transform`, waits for its completion,
+        then runs another `transform` animation with an implicit initial keyframe, ensuring that the
+        result of the first forward-filling animation is accounted for when computing the initial
+        keyframe.
+
+        This test would fail prior to this patch.
+
+        * webanimations/accelerated-animation-after-forward-filling-animation-expected.html: Added.
+        * webanimations/accelerated-animation-after-forward-filling-animation.html: Added.
+
 2021-11-12  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Mark inspector/page/setShowPaintRects.html as flakey in test expectations for Mac
