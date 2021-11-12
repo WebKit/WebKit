@@ -4064,6 +4064,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         settings.setWebXREnabled(false);
         settings.setWebXRAugmentedRealityModuleEnabled(false);
 #endif
+#if ENABLE(MEDIA_STREAM)
+        settings.setMediaDevicesEnabled(false);
+#endif
 #if ENABLE(WEB_AUDIO)
         settings.setWebAudioEnabled(false);
 #endif

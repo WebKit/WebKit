@@ -1,3 +1,14 @@
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Disable getUserMedia() when in Captive Portal Mode
+        https://bugs.webkit.org/show_bug.cgi?id=233021
+
+        Reviewed by Brent Fulgham.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-11-11  Brent Fulgham  <bfulgham@apple.com>
 
         [WebAuthn] Stop serializing BufferSource and Vector<uint8_t> duplicates of identifiers

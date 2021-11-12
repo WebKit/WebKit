@@ -7646,33 +7646,40 @@ enum class ShouldBeEnabled : bool { No, Yes };
 enum class IsShowingInitialEmptyDocument : bool { No, Yes };
 static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, ShouldBeEnabled shouldBeEnabled, IsShowingInitialEmptyDocument isShowingInitialEmptyDocument = IsShowingInitialEmptyDocument::No)
 {
-    auto checkWindowPropertyExists = [&](ASCIILiteral property) -> bool {
+    auto runJSCheck = [&](const String& js) -> bool {
         bool finishedRunningScript = false;
-        bool propertyExists = false;
-        [webView evaluateJavaScript:makeString("!!window.", property) completionHandler:[&] (id result, NSError *error) {
+        bool checkResult = false;
+        [webView evaluateJavaScript:js completionHandler:[&] (id result, NSError *error) {
             EXPECT_NULL(error);
-            propertyExists = [result boolValue];
+            checkResult = [result boolValue];
             finishedRunningScript = true;
         }];
         TestWebKitAPI::Util::run(&finishedRunningScript);
-        return propertyExists;
+        return checkResult;
     };
 
-    EXPECT_EQ(checkWindowPropertyExists("WebGL2RenderingContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebGL2.
-    EXPECT_EQ(checkWindowPropertyExists("Gamepad"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Gamepad API.
-    EXPECT_EQ(checkWindowPropertyExists("RemotePlayback"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Remote Playback.
-    EXPECT_EQ(checkWindowPropertyExists("FileSystemHandle"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access.
-    EXPECT_EQ(checkWindowPropertyExists("EnterPictureInPictureEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Picture in Picture API.
-    EXPECT_EQ(checkWindowPropertyExists("SpeechRecognitionEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Speech recognition.
-    EXPECT_EQ(checkWindowPropertyExists("Notification"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Notification API.
-    EXPECT_EQ(checkWindowPropertyExists("WebXRSystem"_s), false); // WebXR (currently always disabled).
-    EXPECT_EQ(checkWindowPropertyExists("AudioContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebAudio.
-    EXPECT_EQ(checkWindowPropertyExists("RTCPeerConnection"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
+    EXPECT_EQ(runJSCheck("!!window.WebGL2RenderingContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebGL2.
+    EXPECT_EQ(runJSCheck("!!window.Gamepad"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Gamepad API.
+    EXPECT_EQ(runJSCheck("!!window.RemotePlayback"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Remote Playback.
+    EXPECT_EQ(runJSCheck("!!window.FileSystemHandle"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access.
+    EXPECT_EQ(runJSCheck("!!window.EnterPictureInPictureEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Picture in Picture API.
+    EXPECT_EQ(runJSCheck("!!window.SpeechRecognitionEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Speech recognition.
+    EXPECT_EQ(runJSCheck("!!window.Notification"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Notification API.
+    EXPECT_EQ(runJSCheck("!!window.WebXRSystem"_s), false); // WebXR (currently always disabled).
+    EXPECT_EQ(runJSCheck("!!window.AudioContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebAudio.
+    EXPECT_EQ(runJSCheck("!!window.RTCPeerConnection"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
+    EXPECT_EQ(runJSCheck("!!navigator.mediaDevices"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // GetUserMedia (Media Capture).
+    EXPECT_EQ(runJSCheck("!!navigator.getUserMedia"_s), false); // Legacy GetUserMedia (currently always disabled).
 }
 
 TEST(ProcessSwap, NavigatingToCaptivePortalMode)
 {
-    auto webView = adoptNS([WKWebView new]);
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.captivePortalModeEnabled);
+    [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
+    webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
 
@@ -7716,6 +7723,8 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.captivePortalModeEnabled);
     webViewConfiguration.get().defaultWebpagePreferences.captivePortalModeEnabled = YES;
+    [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
+    webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -7769,7 +7778,10 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes);
 
     // captive portal mode should be disabled in new WebViews since it is not enabled globally.
-    auto webView2 = adoptNS([WKWebView new]);
+    auto webViewConfiguration2 = adoptNS([WKWebViewConfiguration new]);
+    [webViewConfiguration2.get().preferences _setMediaDevicesEnabled:YES];
+    webViewConfiguration2.get().preferences._mediaCaptureRequiresSecureConnection = NO;
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration2.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
     EXPECT_TRUE(isJITEnabled(webView2.get()));
     checkSettingsControlledByCaptivePortalMode(webView2.get(), ShouldBeEnabled::Yes, IsShowingInitialEmptyDocument::Yes);
