@@ -135,7 +135,7 @@ private:
     Bitmap<numCSSProperties> m_inProgressProperties;
     HashSet<String> m_inProgressPropertiesCustom;
 
-    CascadeLevel m_cascadeLevel { };
+    CascadeLevel m_cascadeLevel { CascadeLevel::Author };
     ScopeOrdinal m_styleScopeOrdinal { };
     CascadeLayerPriority m_cascadeLayerPriority { };
     SelectorChecker::LinkMatchMask m_linkMatch { };
