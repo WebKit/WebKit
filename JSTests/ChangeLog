@@ -1,3 +1,18 @@
+2021-11-12  Xan Lopez  <xan@igalia.com>
+
+        [JSC][32bit] Unskip JSTests/microbenchmarks/redefine-property-accessor-dictionary.js
+        https://bugs.webkit.org/show_bug.cgi?id=233034
+
+        Unreviewed gardening.
+
+        This is skipped for memoryLimited *and* mips|arm systems, but a)
+        seems to run fine on both setups and b) is almost identical to the
+        other tests/benchmarks that landed in the same patch, that do not
+        have that limitation. Optimistically remove the skip and let's see
+        if it sticks.
+
+        * microbenchmarks/redefine-property-accessor-dictionary.js:
+
 2021-11-11  Michael Saboff  <msaboff@apple.com>
 
         Inline RegExp.test JIT code in DFG and FTL
