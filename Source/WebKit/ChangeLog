@@ -1,3 +1,24 @@
+2021-11-11  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/83673859
+
+    2021-11-10  Youenn Fablet  <youenn@apple.com>
+
+            [iOS] Add audio gain in case category switches to PlayAndRecord
+            https://bugs.webkit.org/show_bug.cgi?id=232941
+            <rdar://85250248>
+
+            Reviewed by Eric Carlson.
+
+            In case of PlayAndRecord, apply a static gain of 5 to audio rendered from MediaStreamTracks.
+            For that purpose, observe changes to the AudioSession category and react upon it.
+
+            * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+            (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::Unit):
+            (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start):
+            (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::render):
+            (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::categoryDidChange):
+
 2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r285550. rdar://problem/85075538

@@ -45,7 +45,7 @@ public:
 
     static inline size_t audioBufferListSizeForStream(const CAAudioStreamDescription&);
 
-    static void applyGain(AudioBufferList&, float, AudioStreamDescription::PCMFormat);
+    WEBCORE_EXPORT static void applyGain(AudioBufferList&, float, AudioStreamDescription::PCMFormat);
     void applyGain(float);
 
     OSStatus copyFrom(const AudioSampleBufferList&, size_t count = SIZE_MAX);
