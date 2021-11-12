@@ -73,6 +73,9 @@ RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustom
     m_constructorMap.add(elementInterface->constructor(), elementInterface.ptr());
     m_nameMap.add(localName, elementInterface.copyRef());
 
+    if (elementInterface->isShadowDisabled())
+        m_disabledShadowSet.add(localName);
+
     if (auto* document = m_window.document())
         enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
 

@@ -50,6 +50,7 @@ JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JS
     , m_name(name)
     , m_constructor(constructor)
     , m_isolatedWorld(globalObject->world())
+    , m_isShadowDisabled(false)
 {
 }
 
@@ -206,6 +207,12 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     element.setIsFailedCustomElementWithoutClearingReactionQueue();
 
     m_constructionStack.append(&element);
+
+    if (m_isShadowDisabled && element.shadowRoot()) {
+        element.clearReactionQueueFromFailedCustomElement();
+        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, NotSupportedError, "Failed to upgrade an element with shadow root: the custom element definition disallows shadow roots."));
+        return;
+    }
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());

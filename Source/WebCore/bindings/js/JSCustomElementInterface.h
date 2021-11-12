@@ -78,6 +78,9 @@ public:
     bool observesAttribute(const AtomString& name) const { return m_observedAttributes.contains(name); }
     void invokeAttributeChangedCallback(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
 
+    void disableShadow() { m_isShadowDisabled = true; }
+    bool isShadowDisabled() const { return m_isShadowDisabled; }
+
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
     JSC::JSObject* constructor() { return m_constructor.get(); }
 
@@ -105,6 +108,7 @@ private:
     Ref<DOMWrapperWorld> m_isolatedWorld;
     Vector<RefPtr<Element>, 1> m_constructionStack;
     HashSet<AtomString> m_observedAttributes;
+    bool m_isShadowDisabled : 1;
 };
 
 } // namespace WebCore

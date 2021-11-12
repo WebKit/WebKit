@@ -2485,7 +2485,20 @@ static bool canAttachAuthorShadowRoot(const Element& element)
         return false;
 
     const auto& localName = element.localName();
-    return tagNames.get().contains(localName) || Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid;
+    if (tagNames.get().contains(localName))
+        return true;
+
+    if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
+        if (auto* window = element.document().domWindow()) {
+            auto* registry = window->customElementRegistry();
+            if (registry && registry->isShadowDisabled(localName))
+                return false;
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)

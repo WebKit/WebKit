@@ -28,6 +28,7 @@
 #include "ContextDestructionObserver.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -67,6 +68,7 @@ public:
     void upgrade(Node& root);
 
     HashMap<AtomString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
+    bool isShadowDisabled(const AtomString& name) const { return m_disabledShadowSet.contains(name); }
 
 private:
     CustomElementRegistry(DOMWindow&, ScriptExecutionContext*);
@@ -75,6 +77,7 @@ private:
     HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
     HashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;
+    HashSet<AtomString> m_disabledShadowSet;
 
     bool m_elementDefinitionIsRunning { false };
 
