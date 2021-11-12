@@ -1,3 +1,12 @@
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
+        fast/dom/Geolocation/cached-position-iframe.html is frequently crashing on Mac-wk1
+        https://bugs.webkit.org/show_bug.cgi?id=233043
+
+        Unreviewed, skip test to make EWS happy while the issue is being investigated.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-11-12  Antti Koivisto  <antti@apple.com>
 
         Stack overflow with revert and revert-layer
