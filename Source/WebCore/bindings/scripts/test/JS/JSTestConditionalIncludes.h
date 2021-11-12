@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestConditionalIncludes>;
     static JSTestConditionalIncludes* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestConditionalIncludes>&& impl)
     {
-        JSTestConditionalIncludes* ptr = new (NotNull, JSC::allocateCell<JSTestConditionalIncludes>(globalObject->vm().heap)) JSTestConditionalIncludes(structure, *globalObject, WTFMove(impl));
+        JSTestConditionalIncludes* ptr = new (NotNull, JSC::allocateCell<JSTestConditionalIncludes>(globalObject->vm())) JSTestConditionalIncludes(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

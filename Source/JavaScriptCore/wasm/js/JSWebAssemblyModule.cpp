@@ -50,7 +50,7 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* glo
         return nullptr;
     }
 
-    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, result.value().releaseNonNull());
+    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm)) JSWebAssemblyModule(vm, structure, result.value().releaseNonNull());
     module->finishCreation(vm);
     return module;
 }

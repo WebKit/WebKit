@@ -59,7 +59,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestStringifierAnonymousOperationPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestStringifierAnonymousOperationPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierAnonymousOperationPrototype>(vm.heap)) JSTestStringifierAnonymousOperationPrototype(vm, globalObject, structure);
+        JSTestStringifierAnonymousOperationPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierAnonymousOperationPrototype>(vm)) JSTestStringifierAnonymousOperationPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

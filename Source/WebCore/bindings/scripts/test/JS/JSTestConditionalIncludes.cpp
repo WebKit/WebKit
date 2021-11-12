@@ -117,7 +117,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestConditionalIncludesPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestConditionalIncludesPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestConditionalIncludesPrototype>(vm.heap)) JSTestConditionalIncludesPrototype(vm, globalObject, structure);
+        JSTestConditionalIncludesPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestConditionalIncludesPrototype>(vm)) JSTestConditionalIncludesPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

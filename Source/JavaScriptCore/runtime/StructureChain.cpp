@@ -50,7 +50,7 @@ StructureChain* StructureChain::create(VM& vm, JSObject* head)
     size_t bytes = Checked<size_t>(size) * sizeof(StructureID);
     StructureID* vector = static_cast<StructureID*>(vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, bytes, nullptr, AllocationFailureMode::Assert));
     memset(vector, 0, bytes);
-    StructureChain* chain = new (NotNull, allocateCell<StructureChain>(vm.heap)) StructureChain(vm, vm.structureChainStructure.get(), vector);
+    StructureChain* chain = new (NotNull, allocateCell<StructureChain>(vm)) StructureChain(vm, vm.structureChainStructure.get(), vector);
     chain->finishCreation(vm, head);
     return chain;
 }

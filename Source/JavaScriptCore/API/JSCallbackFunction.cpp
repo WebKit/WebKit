@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ void JSCallbackFunction::finishCreation(VM& vm, const String& name)
 JSCallbackFunction* JSCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const String& name)
 {
     Structure* structure = globalObject->callbackFunctionStructure();
-    JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(vm.heap)) JSCallbackFunction(vm, structure, callback);
+    JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(vm)) JSCallbackFunction(vm, structure, callback);
     function->finishCreation(vm, name);
     return function;
 }

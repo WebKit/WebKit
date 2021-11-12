@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ public:
 
     static JSModuleLoader* create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
     {
-        JSModuleLoader* object = new (NotNull, allocateCell<JSModuleLoader>(vm.heap)) JSModuleLoader(vm, structure);
+        JSModuleLoader* object = new (NotNull, allocateCell<JSModuleLoader>(vm)) JSModuleLoader(vm, structure);
         object->finishCreation(globalObject, vm);
         return object;
     }

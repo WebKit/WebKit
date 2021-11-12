@@ -102,7 +102,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSExposedToWorkerAndWindowPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSExposedToWorkerAndWindowPrototype* ptr = new (NotNull, JSC::allocateCell<JSExposedToWorkerAndWindowPrototype>(vm.heap)) JSExposedToWorkerAndWindowPrototype(vm, globalObject, structure);
+        JSExposedToWorkerAndWindowPrototype* ptr = new (NotNull, JSC::allocateCell<JSExposedToWorkerAndWindowPrototype>(vm)) JSExposedToWorkerAndWindowPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

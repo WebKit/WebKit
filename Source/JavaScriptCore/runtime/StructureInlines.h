@@ -60,7 +60,7 @@ inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValu
         object->didBecomePrototype();
     }
 
-    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingModeIncludingHistory, inlineCapacity);
+    Structure* structure = new (NotNull, allocateCell<Structure>(vm)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingModeIncludingHistory, inlineCapacity);
     structure->finishCreation(vm);
     ASSERT(structure->type() == StructureType);
     return structure;
@@ -69,7 +69,7 @@ inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValu
 inline Structure* Structure::createStructure(VM& vm)
 {
     ASSERT(!vm.structureStructure);
-    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, CreatingEarlyCell);
+    Structure* structure = new (NotNull, allocateCell<Structure>(vm)) Structure(vm, CreatingEarlyCell);
     structure->finishCreation(vm, CreatingEarlyCell);
     return structure;
 }
@@ -79,9 +79,9 @@ inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructu
     ASSERT(vm.structureStructure);
     Structure* newStructure;
     if (previous->isBrandedStructure())
-        newStructure = new (NotNull, allocateCell<BrandedStructure>(vm.heap)) BrandedStructure(vm, jsCast<BrandedStructure*>(previous), deferred);
+        newStructure = new (NotNull, allocateCell<BrandedStructure>(vm)) BrandedStructure(vm, jsCast<BrandedStructure*>(previous), deferred);
     else
-        newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, previous, deferred);
+        newStructure = new (NotNull, allocateCell<Structure>(vm)) Structure(vm, previous, deferred);
 
     newStructure->finishCreation(vm, previous);
     return newStructure;

@@ -60,7 +60,7 @@ ScopedArguments* ScopedArguments::createUninitialized(VM& vm, Structure* structu
 
     ScopedArguments* result = new (
         NotNull,
-        allocateCell<ScopedArguments>(vm.heap))
+        allocateCell<ScopedArguments>(vm))
         ScopedArguments(vm, structure, storage, totalLength);
     result->finishCreation(vm, callee, table, scope);
     return result;

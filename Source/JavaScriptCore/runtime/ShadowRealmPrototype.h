@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +44,7 @@ public:
 
     static ShadowRealmPrototype* create(VM& vm, Structure* structure)
     {
-        ShadowRealmPrototype* prototype = new (NotNull, allocateCell<ShadowRealmPrototype>(vm.heap)) ShadowRealmPrototype(vm, structure);
+        ShadowRealmPrototype* prototype = new (NotNull, allocateCell<ShadowRealmPrototype>(vm)) ShadowRealmPrototype(vm, structure);
         prototype->finishCreation(vm);
         return prototype;
     }

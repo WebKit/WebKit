@@ -1990,7 +1990,7 @@ public:
 
     UnlinkedProgramCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(decoder.vm().heap)) UnlinkedProgramCodeBlock(decoder, *this);
+        UnlinkedProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(decoder.vm())) UnlinkedProgramCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         m_varDeclarations.decode(decoder, codeBlock->m_varDeclarations);
@@ -2015,7 +2015,7 @@ public:
 
     UnlinkedModuleProgramCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedModuleProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(decoder.vm().heap)) UnlinkedModuleProgramCodeBlock(decoder, *this);
+        UnlinkedModuleProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(decoder.vm())) UnlinkedModuleProgramCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         codeBlock->m_moduleEnvironmentSymbolTableConstantRegisterOffset = m_moduleEnvironmentSymbolTableConstantRegisterOffset;
@@ -2039,7 +2039,7 @@ public:
 
     UnlinkedEvalCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedEvalCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedEvalCodeBlock>(decoder.vm().heap)) UnlinkedEvalCodeBlock(decoder, *this);
+        UnlinkedEvalCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedEvalCodeBlock>(decoder.vm())) UnlinkedEvalCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         m_variables.decode(decoder, codeBlock->m_variables);
@@ -2063,7 +2063,7 @@ public:
 
     UnlinkedFunctionCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedFunctionCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(decoder.vm().heap)) UnlinkedFunctionCodeBlock(decoder, *this);
+        UnlinkedFunctionCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(decoder.vm())) UnlinkedFunctionCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         return codeBlock;
@@ -2243,7 +2243,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
 
 ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decoder& decoder) const
 {
-    UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm().heap)) UnlinkedFunctionExecutable(decoder, *this);
+    UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm())) UnlinkedFunctionExecutable(decoder, *this);
     executable->finishCreation(decoder.vm());
     return executable;
 }

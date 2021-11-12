@@ -72,7 +72,7 @@ void ObjectPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    ObjectPrototype* prototype = new (NotNull, allocateCell<ObjectPrototype>(vm.heap)) ObjectPrototype(vm, structure);
+    ObjectPrototype* prototype = new (NotNull, allocateCell<ObjectPrototype>(vm)) ObjectPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject);
     return prototype;
 }

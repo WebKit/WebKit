@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ const ClassInfo WebAssemblyRuntimeErrorPrototype::s_info = { "WebAssembly.Runtim
 
 WebAssemblyRuntimeErrorPrototype* WebAssemblyRuntimeErrorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<WebAssemblyRuntimeErrorPrototype>(vm.heap)) WebAssemblyRuntimeErrorPrototype(vm, structure);
+    auto* object = new (NotNull, allocateCell<WebAssemblyRuntimeErrorPrototype>(vm)) WebAssemblyRuntimeErrorPrototype(vm, structure);
     object->finishCreation(vm);
     return object;
 }

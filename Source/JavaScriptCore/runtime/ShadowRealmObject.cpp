@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +59,7 @@ DEFINE_VISIT_CHILDREN(ShadowRealmObject);
 
 ShadowRealmObject* ShadowRealmObject::create(VM& vm, Structure* structure, const GlobalObjectMethodTable* methodTable)
 {
-    ShadowRealmObject* object = new (NotNull, allocateCell<ShadowRealmObject>(vm.heap)) ShadowRealmObject(vm, structure);
+    ShadowRealmObject* object = new (NotNull, allocateCell<ShadowRealmObject>(vm)) ShadowRealmObject(vm, structure);
     object->finishCreation(vm);
     JSGlobalObject* globalObject = JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, jsNull()), methodTable);
     object->m_globalObject.set(vm, object, globalObject);

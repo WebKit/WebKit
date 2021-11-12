@@ -75,7 +75,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestLegacyNoInterfaceObjectPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestLegacyNoInterfaceObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyNoInterfaceObjectPrototype>(vm.heap)) JSTestLegacyNoInterfaceObjectPrototype(vm, globalObject, structure);
+        JSTestLegacyNoInterfaceObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyNoInterfaceObjectPrototype>(vm)) JSTestLegacyNoInterfaceObjectPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

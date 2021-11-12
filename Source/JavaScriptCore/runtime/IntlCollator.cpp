@@ -44,7 +44,7 @@ constexpr bool verbose = false;
 
 IntlCollator* IntlCollator::create(VM& vm, Structure* structure)
 {
-    IntlCollator* format = new (NotNull, allocateCell<IntlCollator>(vm.heap)) IntlCollator(vm, structure);
+    IntlCollator* format = new (NotNull, allocateCell<IntlCollator>(vm)) IntlCollator(vm, structure);
     format->finishCreation(vm);
     return format;
 }

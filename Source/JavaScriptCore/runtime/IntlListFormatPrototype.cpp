@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ const ClassInfo IntlListFormatPrototype::s_info = { "Intl.ListFormat", &Base::s_
 
 IntlListFormatPrototype* IntlListFormatPrototype::create(VM& vm, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<IntlListFormatPrototype>(vm.heap)) IntlListFormatPrototype(vm, structure);
+    auto* object = new (NotNull, allocateCell<IntlListFormatPrototype>(vm)) IntlListFormatPrototype(vm, structure);
     object->finishCreation(vm);
     return object;
 }

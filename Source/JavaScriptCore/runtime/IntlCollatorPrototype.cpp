@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,7 @@ const ClassInfo IntlCollatorPrototype::s_info = { "Intl.Collator", &Base::s_info
 
 IntlCollatorPrototype* IntlCollatorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
-    IntlCollatorPrototype* object = new (NotNull, allocateCell<IntlCollatorPrototype>(vm.heap)) IntlCollatorPrototype(vm, structure);
+    IntlCollatorPrototype* object = new (NotNull, allocateCell<IntlCollatorPrototype>(vm)) IntlCollatorPrototype(vm, structure);
     object->finishCreation(vm);
     return object;
 }

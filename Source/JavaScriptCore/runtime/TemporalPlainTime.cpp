@@ -42,7 +42,7 @@ const ClassInfo TemporalPlainTime::s_info = { "Object", &Base::s_info, nullptr, 
 
 TemporalPlainTime* TemporalPlainTime::create(VM& vm, Structure* structure, ISO8601::PlainTime&& plainTime)
 {
-    auto* object = new (NotNull, allocateCell<TemporalPlainTime>(vm.heap)) TemporalPlainTime(vm, structure, WTFMove(plainTime));
+    auto* object = new (NotNull, allocateCell<TemporalPlainTime>(vm)) TemporalPlainTime(vm, structure, WTFMove(plainTime));
     object->finishCreation(vm);
     return object;
 }

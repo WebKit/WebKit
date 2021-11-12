@@ -54,7 +54,7 @@ public:
     static JSDOMAsyncIteratorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSDOMAsyncIteratorPrototype, JSDOMAsyncIteratorPrototype::Base);
-        JSDOMAsyncIteratorPrototype* prototype = new (NotNull, JSC::allocateCell<JSDOMAsyncIteratorPrototype>(vm.heap)) JSDOMAsyncIteratorPrototype(vm, structure);
+        JSDOMAsyncIteratorPrototype* prototype = new (NotNull, JSC::allocateCell<JSDOMAsyncIteratorPrototype>(vm)) JSDOMAsyncIteratorPrototype(vm, structure);
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }

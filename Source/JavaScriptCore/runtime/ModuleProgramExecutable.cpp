@@ -46,7 +46,7 @@ ModuleProgramExecutable* ModuleProgramExecutable::create(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ModuleProgramExecutable* executable = new (NotNull, allocateCell<ModuleProgramExecutable>(vm.heap)) ModuleProgramExecutable(globalObject, source);
+    ModuleProgramExecutable* executable = new (NotNull, allocateCell<ModuleProgramExecutable>(vm)) ModuleProgramExecutable(globalObject, source);
     executable->finishCreation(globalObject->vm());
 
     ParserError error;

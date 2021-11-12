@@ -61,7 +61,7 @@ public:
 
     static JSFileSystemDirectoryHandleIterator* create(JSC::VM& vm, JSC::Structure* structure, JSFileSystemDirectoryHandle& iteratedObject, IterationKind kind)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<JSFileSystemDirectoryHandleIterator>(vm.heap)) JSFileSystemDirectoryHandleIterator(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<JSFileSystemDirectoryHandleIterator>(vm)) JSFileSystemDirectoryHandleIterator(structure, iteratedObject, kind);
         instance->finishCreation(vm);
         return instance;
     }

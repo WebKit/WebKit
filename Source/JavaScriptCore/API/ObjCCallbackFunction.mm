@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -559,7 +559,7 @@ ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::Structure* structur
 ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
 {
     Structure* structure = globalObject->objcCallbackFunctionStructure();
-    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm.heap)) ObjCCallbackFunction(vm, structure, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTFMove(impl));
+    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm)) ObjCCallbackFunction(vm, structure, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTFMove(impl));
     function->finishCreation(vm, 0, name);
     return function;
 }

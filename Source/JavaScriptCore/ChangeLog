@@ -1,3 +1,483 @@
+2021-11-11  Mark Lam  <mark.lam@apple.com>
+
+        Refactor allocateCell() and tryAllocateCell() to take VM& instead of Heap&.
+        https://bugs.webkit.org/show_bug.cgi?id=233028
+        rdar://85329680
+
+        Reviewed by Yusuke Suzuki.
+
+        allocateCell() and tryAllocateCell() can fetch Heap& from VM& themselves.  This
+        allows us to make all the client code more terse, and also makes it easier to
+        redirect the underlying heap to allocate from later for global GC work.
+        Additionally, this will help make the global GC patch less of a mega patch and
+        easier to review later.
+
+        * API/JSAPIGlobalObject.h:
+        * API/JSAPIValueWrapper.h:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::create):
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObject<JSGlobalObject>::create):
+        * API/JSCallbackObject.h:
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunction::create):
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        (JSC::JSCallbackObject<JSAPIWrapperGlobalObject>::create):
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::create):
+        * bytecode/EvalCodeBlock.h:
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        (JSC::ExecutableToCodeBlockEdge::create):
+        * bytecode/FunctionCodeBlock.h:
+        * bytecode/ModuleProgramCodeBlock.h:
+        * bytecode/ProgramCodeBlock.h:
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecode/UnlinkedFunctionCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::create):
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * jsc.cpp:
+        (JSCMemoryFootprint::create):
+        (JSFileDescriptor::create):
+        * runtime/AggregateErrorConstructor.h:
+        * runtime/AggregateErrorPrototype.h:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::create):
+        * runtime/AsyncFromSyncIteratorPrototype.cpp:
+        (JSC::AsyncFromSyncIteratorPrototype::create):
+        * runtime/AsyncFunctionConstructor.h:
+        * runtime/AsyncFunctionPrototype.h:
+        * runtime/AsyncGeneratorFunctionConstructor.h:
+        * runtime/AsyncGeneratorFunctionPrototype.h:
+        * runtime/AsyncGeneratorPrototype.h:
+        * runtime/AsyncIteratorPrototype.h:
+        * runtime/AtomicsObject.cpp:
+        (JSC::AtomicsObject::create):
+        * runtime/BigIntConstructor.h:
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::create):
+        * runtime/BigIntPrototype.h:
+        * runtime/BooleanConstructor.h:
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::create):
+        * runtime/BooleanPrototype.h:
+        * runtime/BrandedStructure.cpp:
+        (JSC::BrandedStructure::create):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedProgramCodeBlock::decode const):
+        (JSC::CachedModuleCodeBlock::decode const):
+        (JSC::CachedEvalCodeBlock::decode const):
+        (JSC::CachedFunctionCodeBlock::decode const):
+        (JSC::CachedFunctionExecutable::decode const):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        * runtime/ConsoleObject.h:
+        * runtime/CustomGetterSetter.h:
+        (JSC::CustomGetterSetter::create):
+        * runtime/DOMAttributeGetterSetter.h:
+        * runtime/DateConstructor.h:
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.h:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::createUninitialized):
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorPrototype.h:
+        * runtime/Exception.cpp:
+        (JSC::Exception::create):
+        * runtime/FinalizationRegistryConstructor.h:
+        * runtime/FinalizationRegistryPrototype.h:
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionPrototype.h:
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::create):
+        * runtime/GeneratorFunctionConstructor.h:
+        * runtime/GeneratorFunctionPrototype.h:
+        * runtime/GeneratorPrototype.h:
+        * runtime/GetterSetter.h:
+        * runtime/HashMapImpl.h:
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::createImpl):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createFunctionThatMasqueradesAsUndefined):
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::create):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::create):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototype::create):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::create):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::create):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::create):
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::create):
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        (JSC::IntlDisplayNamesConstructor::create):
+        * runtime/IntlDisplayNamesPrototype.cpp:
+        (JSC::IntlDisplayNamesPrototype::create):
+        * runtime/IntlListFormat.cpp:
+        (JSC::IntlListFormat::create):
+        * runtime/IntlListFormatConstructor.cpp:
+        (JSC::IntlListFormatConstructor::create):
+        * runtime/IntlListFormatPrototype.cpp:
+        (JSC::IntlListFormatPrototype::create):
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::create):
+        * runtime/IntlLocaleConstructor.cpp:
+        (JSC::IntlLocaleConstructor::create):
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::IntlLocalePrototype::create):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::create):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::create):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::create):
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::create):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::create):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::IntlPluralRulesConstructor::create):
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::IntlPluralRulesPrototype::create):
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::create):
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::IntlRelativeTimeFormatConstructor::create):
+        * runtime/IntlRelativeTimeFormatPrototype.cpp:
+        (JSC::IntlRelativeTimeFormatPrototype::create):
+        * runtime/IntlSegmentIterator.cpp:
+        (JSC::IntlSegmentIterator::create):
+        * runtime/IntlSegmentIteratorPrototype.cpp:
+        (JSC::IntlSegmentIteratorPrototype::create):
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::create):
+        * runtime/IntlSegmenterConstructor.cpp:
+        (JSC::IntlSegmenterConstructor::create):
+        * runtime/IntlSegmenterPrototype.cpp:
+        (JSC::IntlSegmenterPrototype::create):
+        * runtime/IntlSegments.cpp:
+        (JSC::IntlSegments::create):
+        * runtime/IntlSegmentsPrototype.cpp:
+        (JSC::IntlSegmentsPrototype::create):
+        * runtime/IteratorPrototype.h:
+        * runtime/JSArray.h:
+        (JSC::JSArray::createWithButterfly):
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::create):
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::create):
+        * runtime/JSArrayIterator.cpp:
+        (JSC::JSArrayIterator::create):
+        (JSC::JSArrayIterator::createWithInitialValues):
+        * runtime/JSAsyncFunction.cpp:
+        (JSC::JSAsyncFunction::createImpl):
+        * runtime/JSAsyncGenerator.cpp:
+        (JSC::JSAsyncGenerator::create):
+        * runtime/JSAsyncGeneratorFunction.cpp:
+        (JSC::JSAsyncGeneratorFunction::createImpl):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createWithLength):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        * runtime/JSCallee.h:
+        (JSC::JSCallee::create):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::allocateCell):
+        (JSC::tryAllocateCell):
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSCustomGetterFunction::create):
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::create):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::create):
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::create):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createImpl):
+        * runtime/JSGenerator.cpp:
+        (JSC::JSGenerator::create):
+        * runtime/JSGeneratorFunction.cpp:
+        (JSC::JSGeneratorFunction::createImpl):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::create):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::create):
+        (JSC::JSGenericTypedArrayView<Adaptor>::createWithFastVector):
+        (JSC::JSGenericTypedArrayView<Adaptor>::createUninitialized):
+        * runtime/JSGenericTypedArrayViewPrototypeInlines.h:
+        (JSC::JSGenericTypedArrayViewPrototype<ViewClass>::create):
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::create):
+        (JSC::JSGlobalObject::createWithCustomMethodTable):
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::tryCreate):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::create):
+        * runtime/JSInternalPromiseConstructor.cpp:
+        (JSC::JSInternalPromiseConstructor::create):
+        * runtime/JSInternalPromisePrototype.cpp:
+        (JSC::JSInternalPromisePrototype::create):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::create):
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::clone):
+        * runtime/JSMap.h:
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::createWithInitialValues):
+        * runtime/JSMapIterator.h:
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::create):
+        * runtime/JSModuleLoader.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::create):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::create):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::createWithButterfly):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::create):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::create):
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::create):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::create):
+        * runtime/JSScriptFetchParameters.h:
+        * runtime/JSScriptFetcher.h:
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::clone):
+        * runtime/JSSet.h:
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::createWithInitialValues):
+        * runtime/JSSetIterator.h:
+        * runtime/JSSourceCode.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::createEmptyString):
+        (JSC::StringObject::create):
+        * runtime/JSString.h:
+        (JSC::JSString::create):
+        (JSC::JSString::createHasOtherOwner):
+        * runtime/JSStringIterator.h:
+        * runtime/JSTemplateObjectDescriptor.cpp:
+        (JSC::JSTemplateObjectDescriptor::create):
+        * runtime/JSTypedArrayViewConstructor.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::create):
+        * runtime/JSWeakMap.h:
+        * runtime/JSWeakObjectRef.h:
+        * runtime/JSWeakSet.h:
+        * runtime/JSWithScope.cpp:
+        (JSC::JSWithScope::create):
+        * runtime/MapConstructor.h:
+        * runtime/MapIteratorPrototype.h:
+        * runtime/MapPrototype.h:
+        * runtime/MathObject.h:
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::create):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NativeErrorPrototype.h:
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::create):
+        * runtime/NullGetterFunction.h:
+        * runtime/NullSetterFunction.h:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::create):
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::create):
+        * runtime/ProgramExecutable.h:
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::create):
+        (JSC::PropertyTable::clone):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::create):
+        * runtime/ProxyObject.h:
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::create):
+        * runtime/ReflectObject.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::createWithoutCaching):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/RegExpStringIteratorPrototype.h:
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::createUninitialized):
+        * runtime/ScopedArgumentsTable.cpp:
+        (JSC::ScopedArgumentsTable::create):
+        (JSC::ScopedArgumentsTable::tryCreate):
+        * runtime/SetConstructor.h:
+        * runtime/SetIteratorPrototype.h:
+        * runtime/SetPrototype.h:
+        * runtime/ShadowRealmConstructor.h:
+        * runtime/ShadowRealmObject.cpp:
+        (JSC::ShadowRealmObject::create):
+        * runtime/ShadowRealmPrototype.h:
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::create):
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringConstructor.h:
+        * runtime/StringIteratorPrototype.h:
+        * runtime/StringObject.h:
+        (JSC::StringObject::create):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::create):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::create):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::create):
+        (JSC::Structure::createStructure):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::create):
+        * runtime/Symbol.cpp:
+        (JSC::SymbolObject::create):
+        (JSC::Symbol::create):
+        (JSC::Symbol::createWithDescription):
+        * runtime/SymbolConstructor.h:
+        * runtime/SymbolObject.h:
+        * runtime/SymbolPrototype.h:
+        * runtime/SymbolTable.h:
+        * runtime/TemporalCalendar.cpp:
+        (JSC::TemporalCalendar::create):
+        * runtime/TemporalCalendarConstructor.cpp:
+        (JSC::TemporalCalendarConstructor::create):
+        * runtime/TemporalCalendarPrototype.cpp:
+        (JSC::TemporalCalendarPrototype::create):
+        * runtime/TemporalDuration.cpp:
+        (JSC::TemporalDuration::create):
+        * runtime/TemporalDurationConstructor.cpp:
+        (JSC::TemporalDurationConstructor::create):
+        * runtime/TemporalDurationPrototype.cpp:
+        (JSC::TemporalDurationPrototype::create):
+        * runtime/TemporalInstant.cpp:
+        (JSC::TemporalInstant::create):
+        * runtime/TemporalInstantConstructor.cpp:
+        (JSC::TemporalInstantConstructor::create):
+        * runtime/TemporalInstantPrototype.cpp:
+        (JSC::TemporalInstantPrototype::create):
+        * runtime/TemporalNow.cpp:
+        (JSC::TemporalNow::create):
+        * runtime/TemporalObject.cpp:
+        (JSC::TemporalObject::create):
+        * runtime/TemporalPlainTime.cpp:
+        (JSC::TemporalPlainTime::create):
+        * runtime/TemporalPlainTimeConstructor.cpp:
+        (JSC::TemporalPlainTimeConstructor::create):
+        * runtime/TemporalPlainTimePrototype.cpp:
+        (JSC::TemporalPlainTimePrototype::create):
+        * runtime/TemporalTimeZone.cpp:
+        (JSC::TemporalTimeZone::createFromID):
+        (JSC::TemporalTimeZone::createFromUTCOffset):
+        * runtime/TemporalTimeZoneConstructor.cpp:
+        (JSC::TemporalTimeZoneConstructor::create):
+        * runtime/TemporalTimeZonePrototype.cpp:
+        (JSC::TemporalTimeZonePrototype::create):
+        * runtime/WeakMapConstructor.h:
+        * runtime/WeakMapPrototype.h:
+        * runtime/WeakObjectRefConstructor.h:
+        * runtime/WeakObjectRefPrototype.h:
+        * runtime/WeakSetConstructor.h:
+        * runtime/WeakSetPrototype.h:
+        * testRegExp.cpp:
+        * tools/JSDollarVM.cpp:
+        * tools/JSDollarVM.h:
+        * wasm/js/JSToWasmICCallee.cpp:
+        (JSC::JSToWasmICCallee::create):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::create):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::create):
+        * wasm/js/JSWebAssemblyException.h:
+        * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::tryCreate):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::tryCreate):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::tryCreate):
+        * wasm/js/JSWebAssemblyTag.cpp:
+        (JSC::JSWebAssemblyTag::create):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::WebAssemblyCompileErrorConstructor::create):
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        (JSC::WebAssemblyCompileErrorPrototype::create):
+        * wasm/js/WebAssemblyExceptionConstructor.cpp:
+        (JSC::WebAssemblyExceptionConstructor::create):
+        * wasm/js/WebAssemblyExceptionPrototype.cpp:
+        (JSC::WebAssemblyExceptionPrototype::create):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::create):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::WebAssemblyGlobalConstructor::create):
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        (JSC::WebAssemblyGlobalPrototype::create):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::create):
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        (JSC::WebAssemblyInstancePrototype::create):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::WebAssemblyLinkErrorConstructor::create):
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp:
+        (JSC::WebAssemblyLinkErrorPrototype::create):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::WebAssemblyMemoryConstructor::create):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::WebAssemblyMemoryPrototype::create):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::create):
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        (JSC::WebAssemblyModulePrototype::create):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::create):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::WebAssemblyRuntimeErrorConstructor::create):
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+        (JSC::WebAssemblyRuntimeErrorPrototype::create):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::WebAssemblyTableConstructor::create):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::WebAssemblyTablePrototype::create):
+        * wasm/js/WebAssemblyTagConstructor.cpp:
+        (JSC::WebAssemblyTagConstructor::create):
+        * wasm/js/WebAssemblyTagPrototype.cpp:
+        (JSC::WebAssemblyTagPrototype::create):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+
 2021-11-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early November 2021 edition, bis x2

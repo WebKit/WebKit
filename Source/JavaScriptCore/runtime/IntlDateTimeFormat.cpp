@@ -68,7 +68,7 @@ static constexpr bool verbose = false;
 
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, Structure* structure)
 {
-    IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm.heap)) IntlDateTimeFormat(vm, structure);
+    IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm)) IntlDateTimeFormat(vm, structure);
     format->finishCreation(vm);
     return format;
 }

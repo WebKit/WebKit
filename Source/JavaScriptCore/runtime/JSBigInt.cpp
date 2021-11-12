@@ -125,7 +125,7 @@ inline JSBigInt* JSBigInt::createWithLength(JSGlobalObject* nullOrGlobalObjectFo
         }
         return nullptr;
     }
-    JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm.heap)) JSBigInt(vm, vm.bigIntStructure.get(), reinterpret_cast<Digit*>(data), length);
+    JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm)) JSBigInt(vm, vm.bigIntStructure.get(), reinterpret_cast<Digit*>(data), length);
     bigInt->finishCreation(vm);
     return bigInt;
 }

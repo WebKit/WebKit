@@ -89,7 +89,7 @@ JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned le
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, signature, name);
     Structure* structure = globalObject->hostFunctionStructure();
-    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, globalObject, structure);
+    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm)) JSFunction(vm, executable, globalObject, structure);
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, length, name);
     return function;

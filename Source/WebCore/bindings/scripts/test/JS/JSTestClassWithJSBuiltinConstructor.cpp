@@ -54,7 +54,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestClassWithJSBuiltinConstructorPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestClassWithJSBuiltinConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructorPrototype>(vm.heap)) JSTestClassWithJSBuiltinConstructorPrototype(vm, globalObject, structure);
+        JSTestClassWithJSBuiltinConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructorPrototype>(vm)) JSTestClassWithJSBuiltinConstructorPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

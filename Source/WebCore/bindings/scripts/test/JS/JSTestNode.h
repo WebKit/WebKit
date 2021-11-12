@@ -32,7 +32,7 @@ public:
     using DOMWrapped = TestNode;
     static JSTestNode* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
     {
-        JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(globalObject->vm().heap)) JSTestNode(structure, *globalObject, WTFMove(impl));
+        JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(globalObject->vm())) JSTestNode(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

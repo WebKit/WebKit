@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestStringifierReadWriteAttribute>;
     static JSTestStringifierReadWriteAttribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierReadWriteAttribute>&& impl)
     {
-        JSTestStringifierReadWriteAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierReadWriteAttribute>(globalObject->vm().heap)) JSTestStringifierReadWriteAttribute(structure, *globalObject, WTFMove(impl));
+        JSTestStringifierReadWriteAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierReadWriteAttribute>(globalObject->vm())) JSTestStringifierReadWriteAttribute(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

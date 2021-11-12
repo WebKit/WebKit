@@ -56,7 +56,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestEnabledForContextPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestEnabledForContextPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledForContextPrototype>(vm.heap)) JSTestEnabledForContextPrototype(vm, globalObject, structure);
+        JSTestEnabledForContextPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledForContextPrototype>(vm)) JSTestEnabledForContextPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

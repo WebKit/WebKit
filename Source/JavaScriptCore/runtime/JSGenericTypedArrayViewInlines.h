@@ -57,7 +57,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
         return nullptr;
     }
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm))
         JSGenericTypedArrayView(vm, context);
     result->finishCreation(vm);
     return result;
@@ -71,7 +71,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createWithFa
     ConstructionContext context(structure, length, vector);
     RELEASE_ASSERT(context);
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm))
         JSGenericTypedArrayView(vm, context);
     result->finishCreation(vm);
     return result;
@@ -90,7 +90,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninit
         return nullptr;
     }
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm))
         JSGenericTypedArrayView(vm, context);
     result->finishCreation(vm);
     return result;
@@ -116,7 +116,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     ConstructionContext context(vm, structure, WTFMove(buffer), byteOffset, length);
     ASSERT(context);
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm))
         JSGenericTypedArrayView(vm, context);
     result->finishCreation(vm);
     return result;
@@ -129,7 +129,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     ConstructionContext context(vm, structure, impl->possiblySharedBuffer(), impl->byteOffset(), impl->length());
     ASSERT(context);
     JSGenericTypedArrayView* result =
-        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
+        new (NotNull, allocateCell<JSGenericTypedArrayView>(vm))
         JSGenericTypedArrayView(vm, context);
     result->finishCreation(vm);
     return result;

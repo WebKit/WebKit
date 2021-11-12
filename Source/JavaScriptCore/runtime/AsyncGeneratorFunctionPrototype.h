@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017-2019 Oleksandr Skachkov <gskachkov@gmail.com>.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +45,7 @@ public:
 
     static AsyncGeneratorFunctionPrototype* create(VM& vm, Structure* structure)
     {
-        AsyncGeneratorFunctionPrototype* prototype = new (NotNull, allocateCell<AsyncGeneratorFunctionPrototype>(vm.heap)) AsyncGeneratorFunctionPrototype(vm, structure);
+        AsyncGeneratorFunctionPrototype* prototype = new (NotNull, allocateCell<AsyncGeneratorFunctionPrototype>(vm)) AsyncGeneratorFunctionPrototype(vm, structure);
         prototype->finishCreation(vm);
         return prototype;
     }

@@ -32,7 +32,7 @@ public:
     using DOMWrapped = TestDefaultToJSONIndirectInheritance;
     static JSTestDefaultToJSONIndirectInheritance* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONIndirectInheritance>&& impl)
     {
-        JSTestDefaultToJSONIndirectInheritance* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONIndirectInheritance>(globalObject->vm().heap)) JSTestDefaultToJSONIndirectInheritance(structure, *globalObject, WTFMove(impl));
+        JSTestDefaultToJSONIndirectInheritance* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONIndirectInheritance>(globalObject->vm())) JSTestDefaultToJSONIndirectInheritance(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

@@ -138,7 +138,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestPromiseRejectionEventPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestPromiseRejectionEventPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestPromiseRejectionEventPrototype>(vm.heap)) JSTestPromiseRejectionEventPrototype(vm, globalObject, structure);
+        JSTestPromiseRejectionEventPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestPromiseRejectionEventPrototype>(vm)) JSTestPromiseRejectionEventPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

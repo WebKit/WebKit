@@ -71,7 +71,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSetLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestSetLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSetLikePrototype>(vm.heap)) JSTestSetLikePrototype(vm, globalObject, structure);
+        JSTestSetLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSetLikePrototype>(vm)) JSTestSetLikePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

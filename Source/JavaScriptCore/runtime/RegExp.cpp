@@ -192,7 +192,7 @@ size_t RegExp::estimatedSize(JSCell* cell, VM& vm)
 
 RegExp* RegExp::createWithoutCaching(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
 {
-    RegExp* regExp = new (NotNull, allocateCell<RegExp>(vm.heap)) RegExp(vm, patternString, flags);
+    RegExp* regExp = new (NotNull, allocateCell<RegExp>(vm)) RegExp(vm, patternString, flags);
     regExp->finishCreation(vm);
     return regExp;
 }

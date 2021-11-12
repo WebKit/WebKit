@@ -52,7 +52,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDefaultToJSONIndirectInheritancePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDefaultToJSONIndirectInheritancePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONIndirectInheritancePrototype>(vm.heap)) JSTestDefaultToJSONIndirectInheritancePrototype(vm, globalObject, structure);
+        JSTestDefaultToJSONIndirectInheritancePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONIndirectInheritancePrototype>(vm)) JSTestDefaultToJSONIndirectInheritancePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

@@ -168,14 +168,14 @@ private:
         unsigned length = value->length();
         ASSERT(length > 0);
         size_t cost = value->cost();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, WTFMove(value));
+        JSString* newString = new (NotNull, allocateCell<JSString>(vm)) JSString(vm, WTFMove(value));
         newString->finishCreation(vm, length, cost);
         return newString;
     }
     static JSString* createHasOtherOwner(VM& vm, Ref<StringImpl>&& value)
     {
         unsigned length = value->length();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, WTFMove(value));
+        JSString* newString = new (NotNull, allocateCell<JSString>(vm)) JSString(vm, WTFMove(value));
         newString->finishCreation(vm, length);
         return newString;
     }
@@ -557,7 +557,7 @@ public:
     // operations in JS fail to handle this string correctly.
     static JSRopeString* createNullForTesting(VM& vm)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm)) JSRopeString(vm);
         newString->finishCreation(vm);
         ASSERT(!newString->length());
         ASSERT(newString->isRope());
@@ -568,7 +568,7 @@ public:
 private:
     static JSRopeString* create(VM& vm, JSString* s1, JSString* s2)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm, s1, s2);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm)) JSRopeString(vm, s1, s2);
         newString->finishCreation(vm);
         ASSERT(newString->length());
         ASSERT(newString->isRope());
@@ -576,7 +576,7 @@ private:
     }
     static JSRopeString* create(VM& vm, JSString* s1, JSString* s2, JSString* s3)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm, s1, s2, s3);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm)) JSRopeString(vm, s1, s2, s3);
         newString->finishCreation(vm);
         ASSERT(newString->length());
         ASSERT(newString->isRope());
@@ -585,7 +585,7 @@ private:
 
     ALWAYS_INLINE static JSRopeString* createSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* base, unsigned offset, unsigned length)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap, deferralContext)) JSRopeString(vm, base, offset, length);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm, deferralContext)) JSRopeString(vm, base, offset, length);
         newString->finishCreationSubstringOfResolved(vm);
         ASSERT(newString->length());
         ASSERT(newString->isRope());

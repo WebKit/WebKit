@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestSetLike>;
     static JSTestSetLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLike>&& impl)
     {
-        JSTestSetLike* ptr = new (NotNull, JSC::allocateCell<JSTestSetLike>(globalObject->vm().heap)) JSTestSetLike(structure, *globalObject, WTFMove(impl));
+        JSTestSetLike* ptr = new (NotNull, JSC::allocateCell<JSTestSetLike>(globalObject->vm())) JSTestSetLike(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

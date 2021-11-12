@@ -52,7 +52,7 @@ const ClassInfo TemporalTimeZoneConstructor::s_info = { "Function", &InternalFun
 
 TemporalTimeZoneConstructor* TemporalTimeZoneConstructor::create(VM& vm, Structure* structure, TemporalTimeZonePrototype* temporalTimeZonePrototype)
 {
-    TemporalTimeZoneConstructor* constructor = new (NotNull, allocateCell<TemporalTimeZoneConstructor>(vm.heap)) TemporalTimeZoneConstructor(vm, structure);
+    TemporalTimeZoneConstructor* constructor = new (NotNull, allocateCell<TemporalTimeZoneConstructor>(vm)) TemporalTimeZoneConstructor(vm, structure);
     constructor->finishCreation(vm, temporalTimeZonePrototype);
     return constructor;
 }

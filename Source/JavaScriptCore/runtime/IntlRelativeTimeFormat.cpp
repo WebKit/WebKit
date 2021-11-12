@@ -42,7 +42,7 @@ namespace IntlRelativeTimeFormatInternal {
 
 IntlRelativeTimeFormat* IntlRelativeTimeFormat::create(VM& vm, Structure* structure)
 {
-    auto* format = new (NotNull, allocateCell<IntlRelativeTimeFormat>(vm.heap)) IntlRelativeTimeFormat(vm, structure);
+    auto* format = new (NotNull, allocateCell<IntlRelativeTimeFormat>(vm)) IntlRelativeTimeFormat(vm, structure);
     format->finishCreation(vm);
     return format;
 }

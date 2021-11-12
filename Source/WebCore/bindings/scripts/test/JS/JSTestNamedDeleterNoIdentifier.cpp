@@ -55,7 +55,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedDeleterNoIdentifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedDeleterNoIdentifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterNoIdentifierPrototype>(vm.heap)) JSTestNamedDeleterNoIdentifierPrototype(vm, globalObject, structure);
+        JSTestNamedDeleterNoIdentifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterNoIdentifierPrototype>(vm)) JSTestNamedDeleterNoIdentifierPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

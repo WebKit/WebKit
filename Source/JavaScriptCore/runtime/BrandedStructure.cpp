@@ -51,7 +51,7 @@ BrandedStructure::BrandedStructure(VM& vm, BrandedStructure* previous, DeferredS
 Structure* BrandedStructure::create(VM& vm, Structure* previous, UniquedStringImpl* brandUid, DeferredStructureTransitionWatchpointFire* deferred)
 {
     ASSERT(vm.structureStructure);
-    BrandedStructure* newStructure = new (NotNull, allocateCell<BrandedStructure>(vm.heap)) BrandedStructure(vm, previous, brandUid, deferred);
+    BrandedStructure* newStructure = new (NotNull, allocateCell<BrandedStructure>(vm)) BrandedStructure(vm, previous, brandUid, deferred);
     newStructure->finishCreation(vm, previous);
     ASSERT(newStructure->type() == StructureType);
     return newStructure;

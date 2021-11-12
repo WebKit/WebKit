@@ -65,7 +65,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDefaultToJSONFilteredByExposedPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDefaultToJSONFilteredByExposedPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONFilteredByExposedPrototype>(vm.heap)) JSTestDefaultToJSONFilteredByExposedPrototype(vm, globalObject, structure);
+        JSTestDefaultToJSONFilteredByExposedPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONFilteredByExposedPrototype>(vm)) JSTestDefaultToJSONFilteredByExposedPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

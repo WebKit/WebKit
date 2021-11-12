@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ public:
 
     static MapPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        MapPrototype* prototype = new (NotNull, allocateCell<MapPrototype>(vm.heap)) MapPrototype(vm, structure);
+        MapPrototype* prototype = new (NotNull, allocateCell<MapPrototype>(vm)) MapPrototype(vm, structure);
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }

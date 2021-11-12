@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ public:
 
     static NumberConstructor* create(VM& vm, Structure* structure, NumberPrototype* numberPrototype, GetterSetter*)
     {
-        NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(vm.heap)) NumberConstructor(vm, structure);
+        NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(vm)) NumberConstructor(vm, structure);
         constructor->finishCreation(vm, numberPrototype);
         return constructor;
     }

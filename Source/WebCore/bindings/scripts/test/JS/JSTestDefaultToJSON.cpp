@@ -114,7 +114,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDefaultToJSONPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDefaultToJSONPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONPrototype>(vm.heap)) JSTestDefaultToJSONPrototype(vm, globalObject, structure);
+        JSTestDefaultToJSONPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONPrototype>(vm)) JSTestDefaultToJSONPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

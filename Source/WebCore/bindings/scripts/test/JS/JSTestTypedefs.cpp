@@ -106,7 +106,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestTypedefsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestTypedefsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestTypedefsPrototype>(vm.heap)) JSTestTypedefsPrototype(vm, globalObject, structure);
+        JSTestTypedefsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestTypedefsPrototype>(vm)) JSTestTypedefsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

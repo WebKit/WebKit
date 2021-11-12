@@ -59,10 +59,10 @@ enum class GCDeferralContextArgPresense {
     DoesNotHaveArg
 };
 
-template<typename T> void* allocateCell(Heap&, size_t = sizeof(T));
-template<typename T> void* tryAllocateCell(Heap&, size_t = sizeof(T));
-template<typename T> void* allocateCell(Heap&, GCDeferralContext*, size_t = sizeof(T));
-template<typename T> void* tryAllocateCell(Heap&, GCDeferralContext*, size_t = sizeof(T));
+template<typename T> void* allocateCell(VM&, size_t = sizeof(T));
+template<typename T> void* tryAllocateCell(VM&, size_t = sizeof(T));
+template<typename T> void* allocateCell(VM&, GCDeferralContext*, size_t = sizeof(T));
+template<typename T> void* tryAllocateCell(VM&, GCDeferralContext*, size_t = sizeof(T));
 
 #define DECLARE_EXPORT_INFO                                                  \
     protected:                                                               \

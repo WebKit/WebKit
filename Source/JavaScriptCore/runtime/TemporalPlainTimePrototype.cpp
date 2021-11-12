@@ -87,7 +87,7 @@ const ClassInfo TemporalPlainTimePrototype::s_info = { "Temporal.PlainTime", &Ba
 
 TemporalPlainTimePrototype* TemporalPlainTimePrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    auto* prototype = new (NotNull, allocateCell<TemporalPlainTimePrototype>(vm.heap)) TemporalPlainTimePrototype(vm, structure);
+    auto* prototype = new (NotNull, allocateCell<TemporalPlainTimePrototype>(vm)) TemporalPlainTimePrototype(vm, structure);
     prototype->finishCreation(vm, globalObject);
     return prototype;
 }

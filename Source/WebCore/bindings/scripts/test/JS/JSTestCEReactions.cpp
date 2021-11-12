@@ -81,7 +81,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestCEReactionsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestCEReactionsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsPrototype>(vm.heap)) JSTestCEReactionsPrototype(vm, globalObject, structure);
+        JSTestCEReactionsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsPrototype>(vm)) JSTestCEReactionsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

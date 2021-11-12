@@ -88,7 +88,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestConditionallyReadWritePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestConditionallyReadWritePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestConditionallyReadWritePrototype>(vm.heap)) JSTestConditionallyReadWritePrototype(vm, globalObject, structure);
+        JSTestConditionallyReadWritePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestConditionallyReadWritePrototype>(vm)) JSTestConditionallyReadWritePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

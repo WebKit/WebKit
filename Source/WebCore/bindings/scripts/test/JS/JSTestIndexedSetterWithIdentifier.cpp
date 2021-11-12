@@ -63,7 +63,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestIndexedSetterWithIdentifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestIndexedSetterWithIdentifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestIndexedSetterWithIdentifierPrototype>(vm.heap)) JSTestIndexedSetterWithIdentifierPrototype(vm, globalObject, structure);
+        JSTestIndexedSetterWithIdentifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestIndexedSetterWithIdentifierPrototype>(vm)) JSTestIndexedSetterWithIdentifierPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

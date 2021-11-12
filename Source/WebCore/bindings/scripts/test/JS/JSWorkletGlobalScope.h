@@ -33,7 +33,7 @@ public:
     using DOMWrapped = WorkletGlobalScope;
     static JSWorkletGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<WorkletGlobalScope>&& impl, JSC::JSProxy* proxy)
     {
-        JSWorkletGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSWorkletGlobalScope>(vm.heap)) JSWorkletGlobalScope(vm, structure, WTFMove(impl));
+        JSWorkletGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSWorkletGlobalScope>(vm)) JSWorkletGlobalScope(vm, structure, WTFMove(impl));
         ptr->finishCreation(vm, proxy);
         return ptr;
     }
@@ -75,7 +75,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSWorkletGlobalScopePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSWorkletGlobalScopePrototype* ptr = new (NotNull, JSC::allocateCell<JSWorkletGlobalScopePrototype>(vm.heap)) JSWorkletGlobalScopePrototype(vm, globalObject, structure);
+        JSWorkletGlobalScopePrototype* ptr = new (NotNull, JSC::allocateCell<JSWorkletGlobalScopePrototype>(vm)) JSWorkletGlobalScopePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

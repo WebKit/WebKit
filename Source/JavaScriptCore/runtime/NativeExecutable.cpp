@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase
 NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, TaggedNativeFunction function, Ref<JITCode>&& constructThunk, TaggedNativeFunction constructor, const String& name)
 {
     NativeExecutable* executable;
-    executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
+    executable = new (NotNull, allocateCell<NativeExecutable>(vm)) NativeExecutable(vm, function, constructor);
     executable->finishCreation(vm, WTFMove(callThunk), WTFMove(constructThunk), name);
     return executable;
 }

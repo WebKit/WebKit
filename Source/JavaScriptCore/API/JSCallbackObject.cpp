@@ -102,7 +102,7 @@ PropertySlot::GetValueFunc JSCallbackObject<JSGlobalObject>::getStaticFunctionGe
 template<>
 JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& vm, JSClassRef classRef, Structure* structure)
 {
-    JSCallbackObject<JSGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSGlobalObject>>(vm.heap)) JSCallbackObject(vm, classRef, structure);
+    JSCallbackObject<JSGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSGlobalObject>>(vm)) JSCallbackObject(vm, classRef, structure);
     callbackObject->finishCreation(vm);
     return callbackObject;
 }

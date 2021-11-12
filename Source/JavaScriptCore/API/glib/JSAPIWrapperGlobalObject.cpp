@@ -110,7 +110,7 @@ Structure* JSCallbackObject<JSAPIWrapperGlobalObject>::createStructure(VM& vm, J
 template<>
 JSCallbackObject<JSAPIWrapperGlobalObject>* JSCallbackObject<JSAPIWrapperGlobalObject>::create(VM& vm, JSClassRef classRef, Structure* structure)
 {
-    JSCallbackObject<JSAPIWrapperGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSAPIWrapperGlobalObject>>(vm.heap)) JSCallbackObject(vm, classRef, structure);
+    JSCallbackObject<JSAPIWrapperGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSAPIWrapperGlobalObject>>(vm)) JSCallbackObject(vm, classRef, structure);
     callbackObject->finishCreation(vm);
     return callbackObject;
 }

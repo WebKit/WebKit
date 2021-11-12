@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestDomainSecurity>;
     static JSTestDomainSecurity* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDomainSecurity>&& impl)
     {
-        JSTestDomainSecurity* ptr = new (NotNull, JSC::allocateCell<JSTestDomainSecurity>(globalObject->vm().heap)) JSTestDomainSecurity(structure, *globalObject, WTFMove(impl));
+        JSTestDomainSecurity* ptr = new (NotNull, JSC::allocateCell<JSTestDomainSecurity>(globalObject->vm())) JSTestDomainSecurity(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

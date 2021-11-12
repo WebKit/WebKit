@@ -42,7 +42,7 @@ Structure* ExecutableToCodeBlockEdge::createStructure(VM& vm, JSGlobalObject* gl
 
 ExecutableToCodeBlockEdge* ExecutableToCodeBlockEdge::create(VM& vm, CodeBlock* codeBlock)
 {
-    ExecutableToCodeBlockEdge* result = new (NotNull, allocateCell<ExecutableToCodeBlockEdge>(vm.heap)) ExecutableToCodeBlockEdge(vm, codeBlock);
+    ExecutableToCodeBlockEdge* result = new (NotNull, allocateCell<ExecutableToCodeBlockEdge>(vm)) ExecutableToCodeBlockEdge(vm, codeBlock);
     result->finishCreation(vm);
     return result;
 }

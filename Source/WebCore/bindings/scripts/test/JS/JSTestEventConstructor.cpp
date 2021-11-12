@@ -137,7 +137,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestEventConstructorPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestEventConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructorPrototype>(vm.heap)) JSTestEventConstructorPrototype(vm, globalObject, structure);
+        JSTestEventConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructorPrototype>(vm)) JSTestEventConstructorPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

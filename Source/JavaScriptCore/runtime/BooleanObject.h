@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ public:
 
     static BooleanObject* create(VM& vm, Structure* structure)
     {
-        BooleanObject* boolean = new (NotNull, allocateCell<BooleanObject>(vm.heap)) BooleanObject(vm, structure);
+        BooleanObject* boolean = new (NotNull, allocateCell<BooleanObject>(vm)) BooleanObject(vm, structure);
         boolean->finishCreation(vm);
         return boolean;
     }

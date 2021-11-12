@@ -106,7 +106,7 @@ JSDataViewPrototype::JSDataViewPrototype(VM& vm, Structure* structure)
 JSDataViewPrototype* JSDataViewPrototype::create(VM& vm, Structure* structure)
 {
     JSDataViewPrototype* prototype =
-        new (NotNull, allocateCell<JSDataViewPrototype>(vm.heap))
+        new (NotNull, allocateCell<JSDataViewPrototype>(vm))
         JSDataViewPrototype(vm, structure);
     prototype->finishCreation(vm);
     return prototype;

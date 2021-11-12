@@ -65,7 +65,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestIterablePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestIterablePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestIterablePrototype>(vm.heap)) JSTestIterablePrototype(vm, globalObject, structure);
+        JSTestIterablePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestIterablePrototype>(vm)) JSTestIterablePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -223,7 +223,7 @@ IGNORE_WARNINGS_END
 
     static TestIterableIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestIterable& iteratedObject, IterationKind kind)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<TestIterableIterator>(vm.heap)) TestIterableIterator(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<TestIterableIterator>(vm)) TestIterableIterator(structure, iteratedObject, kind);
         instance->finishCreation(vm);
         return instance;
     }

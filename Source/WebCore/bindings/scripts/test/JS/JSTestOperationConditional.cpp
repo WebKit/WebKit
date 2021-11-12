@@ -71,7 +71,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestOperationConditionalPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestOperationConditionalPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOperationConditionalPrototype>(vm.heap)) JSTestOperationConditionalPrototype(vm, globalObject, structure);
+        JSTestOperationConditionalPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOperationConditionalPrototype>(vm)) JSTestOperationConditionalPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

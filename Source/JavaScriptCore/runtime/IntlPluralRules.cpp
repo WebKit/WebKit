@@ -58,7 +58,7 @@ using UEnumerationDeleter = ICUDeleter<uenum_close>;
 
 IntlPluralRules* IntlPluralRules::create(VM& vm, Structure* structure)
 {
-    IntlPluralRules* format = new (NotNull, allocateCell<IntlPluralRules>(vm.heap)) IntlPluralRules(vm, structure);
+    IntlPluralRules* format = new (NotNull, allocateCell<IntlPluralRules>(vm)) IntlPluralRules(vm, structure);
     format->finishCreation(vm);
     return format;
 }

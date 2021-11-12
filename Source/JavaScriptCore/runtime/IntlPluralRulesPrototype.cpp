@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ const ClassInfo IntlPluralRulesPrototype::s_info = { "Intl.PluralRules", &Base::
 
 IntlPluralRulesPrototype* IntlPluralRulesPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    IntlPluralRulesPrototype* object = new (NotNull, allocateCell<IntlPluralRulesPrototype>(vm.heap)) IntlPluralRulesPrototype(vm, structure);
+    IntlPluralRulesPrototype* object = new (NotNull, allocateCell<IntlPluralRulesPrototype>(vm)) IntlPluralRulesPrototype(vm, structure);
     object->finishCreation(vm, globalObject);
     return object;
 }

@@ -55,7 +55,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype>(vm.heap)) JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype(vm, globalObject, structure);
+        JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype>(vm)) JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

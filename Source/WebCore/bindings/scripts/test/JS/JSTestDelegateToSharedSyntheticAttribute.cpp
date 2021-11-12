@@ -60,7 +60,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDelegateToSharedSyntheticAttributePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDelegateToSharedSyntheticAttributePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDelegateToSharedSyntheticAttributePrototype>(vm.heap)) JSTestDelegateToSharedSyntheticAttributePrototype(vm, globalObject, structure);
+        JSTestDelegateToSharedSyntheticAttributePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDelegateToSharedSyntheticAttributePrototype>(vm)) JSTestDelegateToSharedSyntheticAttributePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

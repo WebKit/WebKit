@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ public:
 
     static ObjectConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
     {
-        ObjectConstructor* constructor = new (NotNull, allocateCell<ObjectConstructor>(vm.heap)) ObjectConstructor(vm, structure);
+        ObjectConstructor* constructor = new (NotNull, allocateCell<ObjectConstructor>(vm)) ObjectConstructor(vm, structure);
         constructor->finishCreation(vm, globalObject, objectPrototype);
         return constructor;
     }

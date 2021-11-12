@@ -54,7 +54,7 @@ public:
 
     static JSWebAssemblyException* create(VM& vm, Structure* structure, const Wasm::Tag& tag, FixedVector<uint64_t>&& payload)
     {
-        JSWebAssemblyException* exception = new (NotNull, allocateCell<JSWebAssemblyException>(vm.heap)) JSWebAssemblyException(vm, structure, tag, WTFMove(payload));
+        JSWebAssemblyException* exception = new (NotNull, allocateCell<JSWebAssemblyException>(vm)) JSWebAssemblyException(vm, structure, tag, WTFMove(payload));
         exception->finishCreation(vm);
         return exception;
     }

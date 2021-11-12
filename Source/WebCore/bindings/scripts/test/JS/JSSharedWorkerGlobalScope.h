@@ -33,7 +33,7 @@ public:
     using DOMWrapped = SharedWorkerGlobalScope;
     static JSSharedWorkerGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<SharedWorkerGlobalScope>&& impl, JSC::JSProxy* proxy)
     {
-        JSSharedWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSSharedWorkerGlobalScope>(vm.heap)) JSSharedWorkerGlobalScope(vm, structure, WTFMove(impl));
+        JSSharedWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSSharedWorkerGlobalScope>(vm)) JSSharedWorkerGlobalScope(vm, structure, WTFMove(impl));
         ptr->finishCreation(vm, proxy);
         return ptr;
     }
@@ -72,7 +72,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSSharedWorkerGlobalScopePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSSharedWorkerGlobalScopePrototype* ptr = new (NotNull, JSC::allocateCell<JSSharedWorkerGlobalScopePrototype>(vm.heap)) JSSharedWorkerGlobalScopePrototype(vm, globalObject, structure);
+        JSSharedWorkerGlobalScopePrototype* ptr = new (NotNull, JSC::allocateCell<JSSharedWorkerGlobalScopePrototype>(vm)) JSSharedWorkerGlobalScopePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

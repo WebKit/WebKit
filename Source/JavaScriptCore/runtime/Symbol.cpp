@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,7 @@ void Symbol::finishCreation(VM& vm)
 
 inline SymbolObject* SymbolObject::create(VM& vm, JSGlobalObject* globalObject, Symbol* symbol)
 {
-    SymbolObject* object = new (NotNull, allocateCell<SymbolObject>(vm.heap)) SymbolObject(vm, globalObject->symbolObjectStructure());
+    SymbolObject* object = new (NotNull, allocateCell<SymbolObject>(vm)) SymbolObject(vm, globalObject->symbolObjectStructure());
     object->finishCreation(vm, symbol);
     return object;
 }
@@ -103,14 +103,14 @@ String Symbol::description() const
 
 Symbol* Symbol::create(VM& vm)
 {
-    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm);
+    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm)) Symbol(vm);
     symbol->finishCreation(vm);
     return symbol;
 }
 
 Symbol* Symbol::createWithDescription(VM& vm, const String& description)
 {
-    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm, description);
+    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm)) Symbol(vm, description);
     symbol->finishCreation(vm);
     return symbol;
 }
@@ -120,7 +120,7 @@ Symbol* Symbol::create(VM& vm, SymbolImpl& uid)
     if (Symbol* symbol = vm.symbolImplToSymbolMap.get(&uid))
         return symbol;
 
-    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm, uid);
+    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm)) Symbol(vm, uid);
     symbol->finishCreation(vm);
     return symbol;
 }

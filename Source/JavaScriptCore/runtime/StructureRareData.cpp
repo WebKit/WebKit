@@ -48,7 +48,7 @@ Structure* StructureRareData::createStructure(VM& vm, JSGlobalObject* globalObje
 
 StructureRareData* StructureRareData::create(VM& vm, Structure* previous)
 {
-    StructureRareData* rareData = new (NotNull, allocateCell<StructureRareData>(vm.heap)) StructureRareData(vm, previous);
+    StructureRareData* rareData = new (NotNull, allocateCell<StructureRareData>(vm)) StructureRareData(vm, previous);
     rareData->finishCreation(vm);
     return rareData;
 }

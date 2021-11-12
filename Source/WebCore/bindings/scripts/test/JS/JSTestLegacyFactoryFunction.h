@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestLegacyFactoryFunction>;
     static JSTestLegacyFactoryFunction* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyFactoryFunction>&& impl)
     {
-        JSTestLegacyFactoryFunction* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyFactoryFunction>(globalObject->vm().heap)) JSTestLegacyFactoryFunction(structure, *globalObject, WTFMove(impl));
+        JSTestLegacyFactoryFunction* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyFactoryFunction>(globalObject->vm())) JSTestLegacyFactoryFunction(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

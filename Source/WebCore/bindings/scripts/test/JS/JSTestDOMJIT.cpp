@@ -471,7 +471,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDOMJITPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDOMJITPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDOMJITPrototype>(vm.heap)) JSTestDOMJITPrototype(vm, globalObject, structure);
+        JSTestDOMJITPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDOMJITPrototype>(vm)) JSTestDOMJITPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

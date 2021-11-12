@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ const ClassInfo ProxyConstructor::s_info = { "Proxy", &Base::s_info, nullptr, nu
 
 ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
 {
-    ProxyConstructor* constructor = new (NotNull, allocateCell<ProxyConstructor>(vm.heap)) ProxyConstructor(vm, structure);
+    ProxyConstructor* constructor = new (NotNull, allocateCell<ProxyConstructor>(vm)) ProxyConstructor(vm, structure);
     constructor->finishCreation(vm, structure->globalObject());
     return constructor;
 }

@@ -139,7 +139,7 @@ public:
     {
         VM& vm = getVM(globalObject);
         ASSERT_UNUSED(globalObject, !structure->globalObject() || structure->globalObject() == globalObject);
-        JSCallbackObject* callbackObject = new (NotNull, allocateCell<JSCallbackObject>(vm.heap)) JSCallbackObject(globalObject, structure, classRef, data);
+        JSCallbackObject* callbackObject = new (NotNull, allocateCell<JSCallbackObject>(vm)) JSCallbackObject(globalObject, structure, classRef, data);
         callbackObject->finishCreation(globalObject);
         return callbackObject;
     }

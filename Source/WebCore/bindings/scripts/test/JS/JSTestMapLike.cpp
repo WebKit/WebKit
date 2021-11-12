@@ -72,7 +72,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestMapLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestMapLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestMapLikePrototype>(vm.heap)) JSTestMapLikePrototype(vm, globalObject, structure);
+        JSTestMapLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestMapLikePrototype>(vm)) JSTestMapLikePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

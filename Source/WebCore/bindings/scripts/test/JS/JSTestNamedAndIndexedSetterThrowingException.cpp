@@ -56,7 +56,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedAndIndexedSetterThrowingExceptionPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedAndIndexedSetterThrowingExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedAndIndexedSetterThrowingExceptionPrototype>(vm.heap)) JSTestNamedAndIndexedSetterThrowingExceptionPrototype(vm, globalObject, structure);
+        JSTestNamedAndIndexedSetterThrowingExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedAndIndexedSetterThrowingExceptionPrototype>(vm)) JSTestNamedAndIndexedSetterThrowingExceptionPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

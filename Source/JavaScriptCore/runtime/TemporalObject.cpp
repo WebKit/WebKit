@@ -115,7 +115,7 @@ TemporalObject::TemporalObject(VM& vm, Structure* structure)
 
 TemporalObject* TemporalObject::create(VM& vm, Structure* structure)
 {
-    TemporalObject* object = new (NotNull, allocateCell<TemporalObject>(vm.heap)) TemporalObject(vm, structure);
+    TemporalObject* object = new (NotNull, allocateCell<TemporalObject>(vm)) TemporalObject(vm, structure);
     object->finishCreation(vm);
     return object;
 }

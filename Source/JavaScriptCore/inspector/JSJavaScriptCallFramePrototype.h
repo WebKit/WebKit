@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ public:
 
     static JSJavaScriptCallFramePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSJavaScriptCallFramePrototype* ptr = new (NotNull, JSC::allocateCell<JSJavaScriptCallFramePrototype>(vm.heap)) JSJavaScriptCallFramePrototype(vm, globalObject, structure);
+        JSJavaScriptCallFramePrototype* ptr = new (NotNull, JSC::allocateCell<JSJavaScriptCallFramePrototype>(vm)) JSJavaScriptCallFramePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm, globalObject);
         return ptr;
     }

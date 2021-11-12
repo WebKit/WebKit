@@ -1856,7 +1856,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestObjPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestObjPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestObjPrototype>(vm.heap)) JSTestObjPrototype(vm, globalObject, structure);
+        JSTestObjPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestObjPrototype>(vm)) JSTestObjPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

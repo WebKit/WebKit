@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ inline IndirectEvalExecutable* IndirectEvalExecutable::createImpl(JSGlobalObject
         return nullptr;
     }
 
-    auto* executable = new (NotNull, allocateCell<IndirectEvalExecutable>(vm.heap)) IndirectEvalExecutable(globalObject, source, derivedContextType, isArrowFunctionContext, evalContextType);
+    auto* executable = new (NotNull, allocateCell<IndirectEvalExecutable>(vm)) IndirectEvalExecutable(globalObject, source, derivedContextType, isArrowFunctionContext, evalContextType);
     executable->finishCreation(vm);
 
     ParserError error;

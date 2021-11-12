@@ -56,7 +56,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestGenerateAddOpaqueRootPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestGenerateAddOpaqueRootPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateAddOpaqueRootPrototype>(vm.heap)) JSTestGenerateAddOpaqueRootPrototype(vm, globalObject, structure);
+        JSTestGenerateAddOpaqueRootPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateAddOpaqueRootPrototype>(vm)) JSTestGenerateAddOpaqueRootPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

@@ -56,7 +56,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestExceptionPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestExceptionPrototype>(vm.heap)) JSTestExceptionPrototype(vm, globalObject, structure);
+        JSTestExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestExceptionPrototype>(vm)) JSTestExceptionPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -282,7 +282,7 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
 JSArrayBufferPrototype* JSArrayBufferPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ArrayBufferSharingMode sharingMode)
 {
     JSArrayBufferPrototype* prototype =
-        new (NotNull, allocateCell<JSArrayBufferPrototype>(vm.heap))
+        new (NotNull, allocateCell<JSArrayBufferPrototype>(vm))
         JSArrayBufferPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject, sharingMode);
     return prototype;

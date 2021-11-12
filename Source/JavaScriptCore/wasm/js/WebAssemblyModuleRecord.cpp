@@ -53,7 +53,7 @@ Structure* WebAssemblyModuleRecord::createStructure(VM& vm, JSGlobalObject* glob
 
 WebAssemblyModuleRecord* WebAssemblyModuleRecord::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const Identifier& moduleKey, const Wasm::ModuleInformation& moduleInformation)
 {
-    WebAssemblyModuleRecord* instance = new (NotNull, allocateCell<WebAssemblyModuleRecord>(vm.heap)) WebAssemblyModuleRecord(vm, structure, moduleKey);
+    WebAssemblyModuleRecord* instance = new (NotNull, allocateCell<WebAssemblyModuleRecord>(vm)) WebAssemblyModuleRecord(vm, structure, moduleKey);
     instance->finishCreation(globalObject, vm, moduleInformation);
     return instance;
 }

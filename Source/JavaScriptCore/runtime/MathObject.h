@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ public:
 
     static MathObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        MathObject* object = new (NotNull, allocateCell<MathObject>(vm.heap)) MathObject(vm, structure);
+        MathObject* object = new (NotNull, allocateCell<MathObject>(vm)) MathObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }

@@ -492,7 +492,7 @@ JSTypedArrayViewPrototype* JSTypedArrayViewPrototype::create(
     VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     JSTypedArrayViewPrototype* prototype =
-        new (NotNull, allocateCell<JSTypedArrayViewPrototype>(vm.heap))
+        new (NotNull, allocateCell<JSTypedArrayViewPrototype>(vm))
         JSTypedArrayViewPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject);
     return prototype;

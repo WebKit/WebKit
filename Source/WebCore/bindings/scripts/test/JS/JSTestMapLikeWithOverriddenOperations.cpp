@@ -76,7 +76,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestMapLikeWithOverriddenOperationsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestMapLikeWithOverriddenOperationsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestMapLikeWithOverriddenOperationsPrototype>(vm.heap)) JSTestMapLikeWithOverriddenOperationsPrototype(vm, globalObject, structure);
+        JSTestMapLikeWithOverriddenOperationsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestMapLikeWithOverriddenOperationsPrototype>(vm)) JSTestMapLikeWithOverriddenOperationsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

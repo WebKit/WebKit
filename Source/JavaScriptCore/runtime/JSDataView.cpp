@@ -65,7 +65,7 @@ JSDataView* JSDataView::create(
         structure, buffer.copyRef(), byteOffset, byteLength, ConstructionContext::DataView);
     ASSERT(context);
     JSDataView* result =
-        new (NotNull, allocateCell<JSDataView>(vm.heap)) JSDataView(vm, context, buffer.get());
+        new (NotNull, allocateCell<JSDataView>(vm)) JSDataView(vm, context, buffer.get());
     result->finishCreation(vm);
     return result;
 }

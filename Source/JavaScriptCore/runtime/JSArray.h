@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -286,7 +286,7 @@ inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLe
 
 inline JSArray* JSArray::createWithButterfly(VM& vm, GCDeferralContext* deferralContext, Structure* structure, Butterfly* butterfly)
 {
-    JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap, deferralContext)) JSArray(vm, structure, butterfly);
+    JSArray* array = new (NotNull, allocateCell<JSArray>(vm, deferralContext)) JSArray(vm, structure, butterfly);
     array->finishCreation(vm);
     return array;
 }

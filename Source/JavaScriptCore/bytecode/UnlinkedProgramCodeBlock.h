@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ public:
 
     static UnlinkedProgramCodeBlock* create(VM& vm, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
     {
-        UnlinkedProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(vm.heap)) UnlinkedProgramCodeBlock(vm, vm.unlinkedProgramCodeBlockStructure.get(), info, codeGenerationMode);
+        UnlinkedProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(vm)) UnlinkedProgramCodeBlock(vm, vm.unlinkedProgramCodeBlockStructure.get(), info, codeGenerationMode);
         instance->finishCreation(vm);
         return instance;
     }

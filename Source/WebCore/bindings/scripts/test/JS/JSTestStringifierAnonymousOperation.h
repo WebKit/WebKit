@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestStringifierAnonymousOperation>;
     static JSTestStringifierAnonymousOperation* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierAnonymousOperation>&& impl)
     {
-        JSTestStringifierAnonymousOperation* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierAnonymousOperation>(globalObject->vm().heap)) JSTestStringifierAnonymousOperation(structure, *globalObject, WTFMove(impl));
+        JSTestStringifierAnonymousOperation* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierAnonymousOperation>(globalObject->vm())) JSTestStringifierAnonymousOperation(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

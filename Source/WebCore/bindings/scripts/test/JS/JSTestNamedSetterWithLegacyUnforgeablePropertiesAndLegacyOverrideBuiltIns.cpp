@@ -64,7 +64,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype>(vm.heap)) JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype(vm, globalObject, structure);
+        JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype>(vm)) JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

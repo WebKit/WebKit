@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ public:
     static JSGlobalLexicalEnvironment* create(VM& vm, Structure* structure, JSScope* parentScope)
     {
         JSGlobalLexicalEnvironment* result =
-            new (NotNull, allocateCell<JSGlobalLexicalEnvironment>(vm.heap)) JSGlobalLexicalEnvironment(vm, structure, parentScope);
+            new (NotNull, allocateCell<JSGlobalLexicalEnvironment>(vm)) JSGlobalLexicalEnvironment(vm, structure, parentScope);
         result->finishCreation(vm);
         result->symbolTable()->setScopeType(SymbolTable::ScopeType::GlobalLexicalScope);
         return result;

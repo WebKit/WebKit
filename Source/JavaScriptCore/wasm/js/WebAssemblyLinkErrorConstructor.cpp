@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyLinkError, (JSGlobalObject* globalObje
 
 WebAssemblyLinkErrorConstructor* WebAssemblyLinkErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyLinkErrorPrototype* thisPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<WebAssemblyLinkErrorConstructor>(vm.heap)) WebAssemblyLinkErrorConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<WebAssemblyLinkErrorConstructor>(vm)) WebAssemblyLinkErrorConstructor(vm, structure);
     constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }

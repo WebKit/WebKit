@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ private:
 
 template<typename JSClass> inline JSDOMLegacyFactoryFunction<JSClass>* JSDOMLegacyFactoryFunction<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMLegacyFactoryFunction* constructor = new (NotNull, JSC::allocateCell<JSDOMLegacyFactoryFunction>(vm.heap)) JSDOMLegacyFactoryFunction(vm, structure);
+    JSDOMLegacyFactoryFunction* constructor = new (NotNull, JSC::allocateCell<JSDOMLegacyFactoryFunction>(vm)) JSDOMLegacyFactoryFunction(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }

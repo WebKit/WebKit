@@ -60,7 +60,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestStringifierOperationImplementedAsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestStringifierOperationImplementedAsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierOperationImplementedAsPrototype>(vm.heap)) JSTestStringifierOperationImplementedAsPrototype(vm, globalObject, structure);
+        JSTestStringifierOperationImplementedAsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierOperationImplementedAsPrototype>(vm)) JSTestStringifierOperationImplementedAsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

@@ -58,7 +58,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestOverloadedConstructorsWithSequencePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestOverloadedConstructorsWithSequencePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsWithSequencePrototype>(vm.heap)) JSTestOverloadedConstructorsWithSequencePrototype(vm, globalObject, structure);
+        JSTestOverloadedConstructorsWithSequencePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsWithSequencePrototype>(vm)) JSTestOverloadedConstructorsWithSequencePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

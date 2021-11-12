@@ -39,7 +39,7 @@ const ClassInfo JSPromise::s_info = { "Promise", &Base::s_info, nullptr, nullptr
 
 JSPromise* JSPromise::create(VM& vm, Structure* structure)
 {
-    JSPromise* promise = new (NotNull, allocateCell<JSPromise>(vm.heap)) JSPromise(vm, structure);
+    JSPromise* promise = new (NotNull, allocateCell<JSPromise>(vm)) JSPromise(vm, structure);
     promise->finishCreation(vm);
     return promise;
 }

@@ -72,7 +72,7 @@ public:
 
     static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isBuiltinDefaultClassConstructor = false)
     {
-        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm.heap))
+        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm))
             UnlinkedFunctionExecutable(vm, vm.unlinkedFunctionExecutableStructure.get(), source, node, unlinkedFunctionKind, constructAbility, scriptMode, WTFMove(parentScopeTDZVariables), WTFMove(parentPrivateNameEnvironment), derivedContextType, needsClassFieldInitializer, privateBrandRequirement, isBuiltinDefaultClassConstructor);
         instance->finishCreation(vm);
         return instance;

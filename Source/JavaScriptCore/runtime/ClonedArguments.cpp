@@ -64,7 +64,7 @@ ClonedArguments* ClonedArguments::createEmpty(
     }
     
     ClonedArguments* result =
-        new (NotNull, allocateCell<ClonedArguments>(vm.heap))
+        new (NotNull, allocateCell<ClonedArguments>(vm))
         ClonedArguments(vm, structure, butterfly);
     result->finishCreation(vm);
 

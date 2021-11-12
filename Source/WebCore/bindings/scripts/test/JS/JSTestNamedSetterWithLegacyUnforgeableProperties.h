@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestNamedSetterWithLegacyUnforgeableProperties>;
     static JSTestNamedSetterWithLegacyUnforgeableProperties* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&& impl)
     {
-        JSTestNamedSetterWithLegacyUnforgeableProperties* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeableProperties>(globalObject->vm().heap)) JSTestNamedSetterWithLegacyUnforgeableProperties(structure, *globalObject, WTFMove(impl));
+        JSTestNamedSetterWithLegacyUnforgeableProperties* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeableProperties>(globalObject->vm())) JSTestNamedSetterWithLegacyUnforgeableProperties(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

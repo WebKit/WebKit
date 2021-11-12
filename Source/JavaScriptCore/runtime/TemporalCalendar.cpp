@@ -39,7 +39,7 @@ static constexpr bool verbose = false;
 
 TemporalCalendar* TemporalCalendar::create(VM& vm, Structure* structure, CalendarID identifier)
 {
-    TemporalCalendar* format = new (NotNull, allocateCell<TemporalCalendar>(vm.heap)) TemporalCalendar(vm, structure, identifier);
+    TemporalCalendar* format = new (NotNull, allocateCell<TemporalCalendar>(vm)) TemporalCalendar(vm, structure, identifier);
     format->finishCreation(vm);
     return format;
 }

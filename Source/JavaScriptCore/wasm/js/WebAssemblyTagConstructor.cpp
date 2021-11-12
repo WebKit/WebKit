@@ -98,7 +98,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyTag, (JSGlobalObject* globalObject, Ca
 
 WebAssemblyTagConstructor* WebAssemblyTagConstructor::create(VM& vm, Structure* structure, WebAssemblyTagPrototype* thisPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<WebAssemblyTagConstructor>(vm.heap)) WebAssemblyTagConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<WebAssemblyTagConstructor>(vm)) WebAssemblyTagConstructor(vm, structure);
     constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }

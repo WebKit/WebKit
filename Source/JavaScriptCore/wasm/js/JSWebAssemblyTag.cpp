@@ -40,7 +40,7 @@ const ClassInfo JSWebAssemblyTag::s_info = { "WebAssembly.Tag", &Base::s_info, n
 JSWebAssemblyTag* JSWebAssemblyTag::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Wasm::Tag& tag)
 {
     UNUSED_PARAM(globalObject);
-    auto* jsTag = new (NotNull, allocateCell<JSWebAssemblyTag>(vm.heap)) JSWebAssemblyTag(vm, structure, tag);
+    auto* jsTag = new (NotNull, allocateCell<JSWebAssemblyTag>(vm)) JSWebAssemblyTag(vm, structure, tag);
     jsTag->finishCreation(vm);
     return jsTag;
 }

@@ -49,7 +49,7 @@ public:
 
     static JSMap* create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
     {
-        JSMap* instance = new (NotNull, allocateCell<JSMap>(vm.heap)) JSMap(vm, structure);
+        JSMap* instance = new (NotNull, allocateCell<JSMap>(vm)) JSMap(vm, structure);
         instance->finishCreation(globalObject, vm);
         return instance;
     }

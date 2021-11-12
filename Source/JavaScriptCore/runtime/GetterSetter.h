@@ -64,7 +64,7 @@ public:
 
     static GetterSetter* create(VM& vm, JSGlobalObject* globalObject, JSObject* getter, JSObject* setter)
     {
-        GetterSetter* getterSetter = new (NotNull, allocateCell<GetterSetter>(vm.heap)) GetterSetter(vm, globalObject, getter, setter);
+        GetterSetter* getterSetter = new (NotNull, allocateCell<GetterSetter>(vm)) GetterSetter(vm, globalObject, getter, setter);
         getterSetter->finishCreation(vm);
         return getterSetter;
     }

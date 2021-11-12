@@ -38,7 +38,7 @@ const ClassInfo JSToWasmICCallee::s_info = { "JSToWasmICCallee", &Base::s_info, 
 JSToWasmICCallee* JSToWasmICCallee::create(VM& vm, JSGlobalObject* globalObject, WebAssemblyFunction* function)
 {
     auto* structure = globalObject->jsToWasmICCalleeStructure();
-    JSToWasmICCallee* result = new (NotNull, allocateCell<JSToWasmICCallee>(vm.heap)) JSToWasmICCallee(vm, globalObject, structure);
+    JSToWasmICCallee* result = new (NotNull, allocateCell<JSToWasmICCallee>(vm)) JSToWasmICCallee(vm, globalObject, structure);
     result->finishCreation(vm);
     result->m_function.set(vm, result, function);
     return result;

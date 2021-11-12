@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ public:
 
     static UnlinkedFunctionCodeBlock* create(VM& vm, CodeType codeType, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
     {
-        UnlinkedFunctionCodeBlock* instance = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(vm.heap)) UnlinkedFunctionCodeBlock(vm, vm.unlinkedFunctionCodeBlockStructure.get(), codeType, info, codeGenerationMode);
+        UnlinkedFunctionCodeBlock* instance = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(vm)) UnlinkedFunctionCodeBlock(vm, vm.unlinkedFunctionCodeBlockStructure.get(), codeType, info, codeGenerationMode);
         instance->finishCreation(vm);
         return instance;
     }

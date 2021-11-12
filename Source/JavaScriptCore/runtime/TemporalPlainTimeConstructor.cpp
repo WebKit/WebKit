@@ -55,7 +55,7 @@ const ClassInfo TemporalPlainTimeConstructor::s_info = { "Function", &Base::s_in
 
 TemporalPlainTimeConstructor* TemporalPlainTimeConstructor::create(VM& vm, Structure* structure, TemporalPlainTimePrototype* plainTimePrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<TemporalPlainTimeConstructor>(vm.heap)) TemporalPlainTimeConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<TemporalPlainTimeConstructor>(vm)) TemporalPlainTimeConstructor(vm, structure);
     constructor->finishCreation(vm, plainTimePrototype);
     return constructor;
 }

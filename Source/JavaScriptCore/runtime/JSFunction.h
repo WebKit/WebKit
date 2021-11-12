@@ -188,7 +188,7 @@ protected:
 private:
     static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     {
-        JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope, structure);
+        JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm)) JSFunction(vm, executable, scope, structure);
         ASSERT(function->structure(vm)->globalObject());
         function->finishCreation(vm);
         return function;

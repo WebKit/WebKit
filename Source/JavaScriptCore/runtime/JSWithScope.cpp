@@ -36,7 +36,7 @@ JSWithScope* JSWithScope::create(
     VM& vm, JSGlobalObject* globalObject, JSScope* next, JSObject* object)
 {
     Structure* structure = globalObject->withScopeStructure();
-    JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(vm.heap)) JSWithScope(vm, structure, object, next);
+    JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(vm)) JSWithScope(vm, structure, object, next);
     withScope->finishCreation(vm);
     return withScope;
 }

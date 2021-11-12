@@ -32,7 +32,7 @@ public:
     using Base = JSDOMWrapper<ExposedToWorkerAndWindow>;
     static JSExposedToWorkerAndWindow* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
     {
-        JSExposedToWorkerAndWindow* ptr = new (NotNull, JSC::allocateCell<JSExposedToWorkerAndWindow>(globalObject->vm().heap)) JSExposedToWorkerAndWindow(structure, *globalObject, WTFMove(impl));
+        JSExposedToWorkerAndWindow* ptr = new (NotNull, JSC::allocateCell<JSExposedToWorkerAndWindow>(globalObject->vm())) JSExposedToWorkerAndWindow(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

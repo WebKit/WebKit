@@ -2867,14 +2867,14 @@ sub GenerateHeader
     if ($interfaceName eq "DOMWindow" || $interfaceName eq "RemoteDOMWindow") {
         push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSWindowProxy* proxy)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm.heap)) ${className}(vm, structure, WTFMove(impl), proxy);\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) ${className}(vm, structure, WTFMove(impl), proxy);\n");
         push(@headerContent, "        ptr->finishCreation(vm, proxy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $codeGenerator->InheritsInterface($interface, "WorkletGlobalScope")) {
         push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSC::JSProxy* proxy)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm.heap)) ${className}(vm, structure, WTFMove(impl));\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) ${className}(vm, structure, WTFMove(impl));\n");
         push(@headerContent, "        ptr->finishCreation(vm, proxy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
@@ -2883,14 +2883,14 @@ sub GenerateHeader
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), \"Allocated masquerading object\");\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject, WTFMove(impl));\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm())) $className(structure, *globalObject, WTFMove(impl));\n");
         push(@headerContent, "        ptr->finishCreation(globalObject->vm());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif (!NeedsImplementationClass($interface)) {
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject);\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm())) $className(structure, *globalObject);\n");
         push(@headerContent, "        ptr->finishCreation(globalObject->vm());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");  
@@ -2900,7 +2900,7 @@ sub GenerateHeader
         }
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject, WTFMove(impl));\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm())) $className(structure, *globalObject, WTFMove(impl));\n");
         push(@headerContent, "        ptr->finishCreation(globalObject->vm());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
@@ -6759,7 +6759,7 @@ IGNORE_WARNINGS_END
 
     static ${iteratorName}* create(JSC::VM& vm, JSC::Structure* structure, ${className}& iteratedObject, IterationKind kind)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<${iteratorName}>(vm.heap)) ${iteratorName}(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<${iteratorName}>(vm)) ${iteratorName}(structure, iteratedObject, kind);
         instance->finishCreation(vm);
         return instance;
     }
@@ -7522,7 +7522,7 @@ sub GeneratePrototypeDeclaration
 
     push(@$outputArray, "    static ${prototypeClassName}* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        ${className}Prototype* ptr = new (NotNull, JSC::allocateCell<${className}Prototype>(vm.heap)) ${className}Prototype(vm, globalObject, structure);\n");
+    push(@$outputArray, "        ${className}Prototype* ptr = new (NotNull, JSC::allocateCell<${className}Prototype>(vm)) ${className}Prototype(vm, globalObject, structure);\n");
     push(@$outputArray, "        ptr->finishCreation(vm);\n");
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");

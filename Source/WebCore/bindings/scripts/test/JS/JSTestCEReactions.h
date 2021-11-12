@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestCEReactions>;
     static JSTestCEReactions* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCEReactions>&& impl)
     {
-        JSTestCEReactions* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactions>(globalObject->vm().heap)) JSTestCEReactions(structure, *globalObject, WTFMove(impl));
+        JSTestCEReactions* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactions>(globalObject->vm())) JSTestCEReactions(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

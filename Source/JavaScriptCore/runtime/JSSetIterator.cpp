@@ -36,7 +36,7 @@ const ClassInfo JSSetIterator::s_info = { "Set Iterator", &Base::s_info, nullptr
 
 JSSetIterator* JSSetIterator::createWithInitialValues(VM& vm, Structure* structure)
 {
-    JSSetIterator* iterator = new (NotNull, allocateCell<JSSetIterator>(vm.heap)) JSSetIterator(vm, structure);
+    JSSetIterator* iterator = new (NotNull, allocateCell<JSSetIterator>(vm)) JSSetIterator(vm, structure);
     iterator->finishCreation(vm);
     return iterator;
 }

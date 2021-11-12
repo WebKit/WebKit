@@ -96,7 +96,7 @@ public:
 
     static HashMapBucket* create(VM& vm)
     {
-        HashMapBucket* bucket = new (NotNull, allocateCell<HashMapBucket<Data>>(vm.heap)) HashMapBucket(vm, selectStructure(vm));
+        HashMapBucket* bucket = new (NotNull, allocateCell<HashMapBucket<Data>>(vm)) HashMapBucket(vm, selectStructure(vm));
         bucket->finishCreation(vm);
         ASSERT(!bucket->next());
         ASSERT(!bucket->prev());

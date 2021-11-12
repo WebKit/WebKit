@@ -64,7 +64,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype>(vm.heap)) JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype(vm, globalObject, structure);
+        JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype>(vm)) JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

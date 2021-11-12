@@ -56,7 +56,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestGenerateIsReachablePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestGenerateIsReachablePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachablePrototype>(vm.heap)) JSTestGenerateIsReachablePrototype(vm, globalObject, structure);
+        JSTestGenerateIsReachablePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachablePrototype>(vm)) JSTestGenerateIsReachablePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

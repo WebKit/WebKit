@@ -68,7 +68,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSCCallbackFunction, (JSGlobalObject* globalOb
 JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     Structure* structure = globalObject->glibCallbackFunctionStructure();
-    JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm.heap)) JSCCallbackFunction(vm, structure, type, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
+    JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm)) JSCCallbackFunction(vm, structure, type, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
     function->finishCreation(vm, 0, name);
     return function;
 }

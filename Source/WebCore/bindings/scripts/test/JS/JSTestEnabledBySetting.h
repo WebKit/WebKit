@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestEnabledBySetting>;
     static JSTestEnabledBySetting* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEnabledBySetting>&& impl)
     {
-        JSTestEnabledBySetting* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledBySetting>(globalObject->vm().heap)) JSTestEnabledBySetting(structure, *globalObject, WTFMove(impl));
+        JSTestEnabledBySetting* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledBySetting>(globalObject->vm())) JSTestEnabledBySetting(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

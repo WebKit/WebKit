@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Intl.DateTimeFormat", &
 
 IntlDateTimeFormatPrototype* IntlDateTimeFormatPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    IntlDateTimeFormatPrototype* object = new (NotNull, allocateCell<IntlDateTimeFormatPrototype>(vm.heap)) IntlDateTimeFormatPrototype(vm, structure);
+    IntlDateTimeFormatPrototype* object = new (NotNull, allocateCell<IntlDateTimeFormatPrototype>(vm)) IntlDateTimeFormatPrototype(vm, structure);
     object->finishCreation(vm, globalObject);
     return object;
 }

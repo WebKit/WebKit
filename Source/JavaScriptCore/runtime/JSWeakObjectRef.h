@@ -42,7 +42,7 @@ public:
 
     static JSWeakObjectRef* create(VM& vm, Structure* structure, JSObject* target)
     {
-        JSWeakObjectRef* instance = new (NotNull, allocateCell<JSWeakObjectRef>(vm.heap)) JSWeakObjectRef(vm, structure);
+        JSWeakObjectRef* instance = new (NotNull, allocateCell<JSWeakObjectRef>(vm)) JSWeakObjectRef(vm, structure);
         instance->finishCreation(vm, target);
         return instance;
     }

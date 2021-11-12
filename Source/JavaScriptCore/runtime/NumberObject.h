@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ public:
 
     static NumberObject* create(VM& vm, Structure* structure)
     {
-        NumberObject* number = new (NotNull, allocateCell<NumberObject>(vm.heap)) NumberObject(vm, structure);
+        NumberObject* number = new (NotNull, allocateCell<NumberObject>(vm)) NumberObject(vm, structure);
         number->finishCreation(vm);
         return number;
     }

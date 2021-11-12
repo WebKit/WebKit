@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ JSInternalPromiseConstructor* JSInternalPromiseConstructor::create(VM& vm, Struc
 {
     JSGlobalObject* globalObject = structure->globalObject();
     FunctionExecutable* executable = promiseConstructorInternalPromiseConstructorCodeGenerator(vm);
-    JSInternalPromiseConstructor* constructor = new (NotNull, allocateCell<JSInternalPromiseConstructor>(vm.heap)) JSInternalPromiseConstructor(vm, executable, globalObject, structure);
+    JSInternalPromiseConstructor* constructor = new (NotNull, allocateCell<JSInternalPromiseConstructor>(vm)) JSInternalPromiseConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, promisePrototype, speciesSymbol);
     return constructor;
 }

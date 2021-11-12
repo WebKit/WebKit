@@ -63,7 +63,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestLegacyOverrideBuiltInsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestLegacyOverrideBuiltInsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyOverrideBuiltInsPrototype>(vm.heap)) JSTestLegacyOverrideBuiltInsPrototype(vm, globalObject, structure);
+        JSTestLegacyOverrideBuiltInsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyOverrideBuiltInsPrototype>(vm)) JSTestLegacyOverrideBuiltInsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

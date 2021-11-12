@@ -1290,10 +1290,7 @@ inline JSFinalObject* JSFinalObject::createWithButterfly(VM& vm, Structure* stru
 {
     JSFinalObject* finalObject = new (
         NotNull,
-        allocateCell<JSFinalObject>(
-            vm.heap,
-            allocationSize(structure->inlineCapacity())
-        )
+        allocateCell<JSFinalObject>(vm, allocationSize(structure->inlineCapacity()))
     ) JSFinalObject(vm, structure, butterfly);
     finalObject->finishCreation(vm);
     return finalObject;

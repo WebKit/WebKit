@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ public:
 
     static FunctionCodeBlock* create(VM& vm, CopyParsedBlockTag, FunctionCodeBlock& other)
     {
-        FunctionCodeBlock* instance = new (NotNull, allocateCell<FunctionCodeBlock>(vm.heap))
+        FunctionCodeBlock* instance = new (NotNull, allocateCell<FunctionCodeBlock>(vm))
             FunctionCodeBlock(vm, vm.functionCodeBlockStructure.get(), CopyParsedBlock, other);
         instance->finishCreation(vm, CopyParsedBlock, other);
         return instance;
@@ -55,7 +55,7 @@ public:
 
     static FunctionCodeBlock* create(VM& vm, FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSScope* scope)
     {
-        FunctionCodeBlock* instance = new (NotNull, allocateCell<FunctionCodeBlock>(vm.heap))
+        FunctionCodeBlock* instance = new (NotNull, allocateCell<FunctionCodeBlock>(vm))
             FunctionCodeBlock(vm, vm.functionCodeBlockStructure.get(), ownerExecutable, unlinkedCodeBlock, scope);
         if (!instance->finishCreation(vm, ownerExecutable, unlinkedCodeBlock, scope))
             return nullptr;

@@ -85,7 +85,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNodePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNodePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNodePrototype>(vm.heap)) JSTestNodePrototype(vm, globalObject, structure);
+        JSTestNodePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNodePrototype>(vm)) JSTestNodePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -427,7 +427,7 @@ IGNORE_WARNINGS_END
 
     static TestNodeIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<TestNodeIterator>(vm.heap)) TestNodeIterator(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<TestNodeIterator>(vm)) TestNodeIterator(structure, iteratedObject, kind);
         instance->finishCreation(vm);
         return instance;
     }

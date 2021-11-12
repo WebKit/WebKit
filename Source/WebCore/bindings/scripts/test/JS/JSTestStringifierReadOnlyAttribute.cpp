@@ -61,7 +61,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestStringifierReadOnlyAttributePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestStringifierReadOnlyAttributePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierReadOnlyAttributePrototype>(vm.heap)) JSTestStringifierReadOnlyAttributePrototype(vm, globalObject, structure);
+        JSTestStringifierReadOnlyAttributePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierReadOnlyAttributePrototype>(vm)) JSTestStringifierReadOnlyAttributePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

@@ -61,7 +61,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSExposedStarPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSExposedStarPrototype* ptr = new (NotNull, JSC::allocateCell<JSExposedStarPrototype>(vm.heap)) JSExposedStarPrototype(vm, globalObject, structure);
+        JSExposedStarPrototype* ptr = new (NotNull, JSC::allocateCell<JSExposedStarPrototype>(vm)) JSExposedStarPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

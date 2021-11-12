@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestMapLike>;
     static JSTestMapLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMapLike>&& impl)
     {
-        JSTestMapLike* ptr = new (NotNull, JSC::allocateCell<JSTestMapLike>(globalObject->vm().heap)) JSTestMapLike(structure, *globalObject, WTFMove(impl));
+        JSTestMapLike* ptr = new (NotNull, JSC::allocateCell<JSTestMapLike>(globalObject->vm())) JSTestMapLike(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

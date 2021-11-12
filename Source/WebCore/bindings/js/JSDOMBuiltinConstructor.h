@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -57,7 +57,7 @@ private:
 
 template<typename JSClass> inline JSDOMBuiltinConstructor<JSClass>* JSDOMBuiltinConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMBuiltinConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMBuiltinConstructor>(vm.heap)) JSDOMBuiltinConstructor(vm, structure);
+    JSDOMBuiltinConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMBuiltinConstructor>(vm)) JSDOMBuiltinConstructor(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }

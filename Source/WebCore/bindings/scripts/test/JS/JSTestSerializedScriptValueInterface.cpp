@@ -79,7 +79,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSerializedScriptValueInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestSerializedScriptValueInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(vm.heap)) JSTestSerializedScriptValueInterfacePrototype(vm, globalObject, structure);
+        JSTestSerializedScriptValueInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(vm)) JSTestSerializedScriptValueInterfacePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

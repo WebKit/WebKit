@@ -39,7 +39,7 @@ const ClassInfo JSWebAssemblyCodeBlock::s_info = { "WebAssemblyCodeBlock", nullp
 
 JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, const Wasm::ModuleInformation& moduleInformation)
 {
-    auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap)) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
+    auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm)) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
     result->finishCreation(vm);
     return result;
 }

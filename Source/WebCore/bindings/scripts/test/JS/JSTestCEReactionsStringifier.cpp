@@ -65,7 +65,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestCEReactionsStringifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestCEReactionsStringifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifierPrototype>(vm.heap)) JSTestCEReactionsStringifierPrototype(vm, globalObject, structure);
+        JSTestCEReactionsStringifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifierPrototype>(vm)) JSTestCEReactionsStringifierPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

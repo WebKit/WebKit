@@ -45,7 +45,7 @@ public:
     static ProgramExecutable* create(JSGlobalObject* globalObject, const SourceCode& source)
     {
         VM& vm = getVM(globalObject);
-        ProgramExecutable* executable = new (NotNull, allocateCell<ProgramExecutable>(vm.heap)) ProgramExecutable(globalObject, source);
+        ProgramExecutable* executable = new (NotNull, allocateCell<ProgramExecutable>(vm)) ProgramExecutable(globalObject, source);
         executable->finishCreation(vm);
         return executable;
     }

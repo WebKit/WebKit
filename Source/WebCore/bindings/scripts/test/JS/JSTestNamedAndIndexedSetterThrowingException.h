@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestNamedAndIndexedSetterThrowingException>;
     static JSTestNamedAndIndexedSetterThrowingException* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedAndIndexedSetterThrowingException>&& impl)
     {
-        JSTestNamedAndIndexedSetterThrowingException* ptr = new (NotNull, JSC::allocateCell<JSTestNamedAndIndexedSetterThrowingException>(globalObject->vm().heap)) JSTestNamedAndIndexedSetterThrowingException(structure, *globalObject, WTFMove(impl));
+        JSTestNamedAndIndexedSetterThrowingException* ptr = new (NotNull, JSC::allocateCell<JSTestNamedAndIndexedSetterThrowingException>(globalObject->vm())) JSTestNamedAndIndexedSetterThrowingException(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

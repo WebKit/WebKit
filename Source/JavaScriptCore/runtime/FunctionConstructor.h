@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,7 @@ public:
 
     static FunctionConstructor* create(VM& vm, Structure* structure, FunctionPrototype* functionPrototype)
     {
-        FunctionConstructor* constructor = new (NotNull, allocateCell<FunctionConstructor>(vm.heap)) FunctionConstructor(vm, structure);
+        FunctionConstructor* constructor = new (NotNull, allocateCell<FunctionConstructor>(vm)) FunctionConstructor(vm, structure);
         constructor->finishCreation(vm, functionPrototype);
         return constructor;
     }

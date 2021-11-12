@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +41,7 @@ const ClassInfo TemporalDuration::s_info = { "Object", &Base::s_info, nullptr, n
 
 TemporalDuration* TemporalDuration::create(VM& vm, Structure* structure, ISO8601::Duration&& duration)
 {
-    auto* object = new (NotNull, allocateCell<TemporalDuration>(vm.heap)) TemporalDuration(vm, structure, WTFMove(duration));
+    auto* object = new (NotNull, allocateCell<TemporalDuration>(vm)) TemporalDuration(vm, structure, WTFMove(duration));
     object->finishCreation(vm);
     return object;
 }

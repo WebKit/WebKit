@@ -49,7 +49,7 @@ DirectArguments* DirectArguments::createUninitialized(
     VM& vm, Structure* structure, unsigned length, unsigned capacity)
 {
     DirectArguments* result =
-        new (NotNull, allocateCell<DirectArguments>(vm.heap, allocationSize(capacity)))
+        new (NotNull, allocateCell<DirectArguments>(vm, allocationSize(capacity)))
         DirectArguments(vm, structure, length, capacity);
     result->finishCreation(vm);
     return result;

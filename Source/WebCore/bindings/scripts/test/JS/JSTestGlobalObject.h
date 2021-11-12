@@ -33,7 +33,7 @@ public:
     using Base = JSDOMWrapper<TestGlobalObject>;
     static JSTestGlobalObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGlobalObject>&& impl)
     {
-        JSTestGlobalObject* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObject>(globalObject->vm().heap)) JSTestGlobalObject(structure, *globalObject, WTFMove(impl));
+        JSTestGlobalObject* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObject>(globalObject->vm())) JSTestGlobalObject(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -88,7 +88,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestGlobalObjectPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestGlobalObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObjectPrototype>(vm.heap)) JSTestGlobalObjectPrototype(vm, globalObject, structure);
+        JSTestGlobalObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObjectPrototype>(vm)) JSTestGlobalObjectPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

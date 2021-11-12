@@ -48,7 +48,7 @@ static constexpr bool verbose = false;
 
 IntlLocale* IntlLocale::create(VM& vm, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<IntlLocale>(vm.heap)) IntlLocale(vm, structure);
+    auto* object = new (NotNull, allocateCell<IntlLocale>(vm)) IntlLocale(vm, structure);
     object->finishCreation(vm);
     return object;
 }

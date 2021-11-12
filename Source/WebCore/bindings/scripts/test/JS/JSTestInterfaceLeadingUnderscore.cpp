@@ -56,7 +56,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestInterfaceLeadingUnderscorePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestInterfaceLeadingUnderscorePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscorePrototype>(vm.heap)) JSTestInterfaceLeadingUnderscorePrototype(vm, globalObject, structure);
+        JSTestInterfaceLeadingUnderscorePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscorePrototype>(vm)) JSTestInterfaceLeadingUnderscorePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

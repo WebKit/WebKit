@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ public:
     static RuntimeMethod* create(JSGlobalObject*, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::Method* method)
     {
         VM& vm = globalObject->vm();
-        RuntimeMethod* runtimeMethod = new (NotNull, allocateCell<RuntimeMethod>(vm.heap)) RuntimeMethod(vm, structure, method);
+        RuntimeMethod* runtimeMethod = new (NotNull, allocateCell<RuntimeMethod>(vm)) RuntimeMethod(vm, structure, method);
         runtimeMethod->finishCreation(vm, name);
         return runtimeMethod;
     }

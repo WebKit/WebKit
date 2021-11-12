@@ -53,7 +53,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestReportExtraMemoryCostPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestReportExtraMemoryCostPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestReportExtraMemoryCostPrototype>(vm.heap)) JSTestReportExtraMemoryCostPrototype(vm, globalObject, structure);
+        JSTestReportExtraMemoryCostPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestReportExtraMemoryCostPrototype>(vm)) JSTestReportExtraMemoryCostPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

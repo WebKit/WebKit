@@ -87,7 +87,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestCallTracerPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestCallTracerPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCallTracerPrototype>(vm.heap)) JSTestCallTracerPrototype(vm, globalObject, structure);
+        JSTestCallTracerPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCallTracerPrototype>(vm)) JSTestCallTracerPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

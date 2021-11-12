@@ -63,7 +63,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestEventTargetPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestEventTargetPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventTargetPrototype>(vm.heap)) JSTestEventTargetPrototype(vm, globalObject, structure);
+        JSTestEventTargetPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventTargetPrototype>(vm)) JSTestEventTargetPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

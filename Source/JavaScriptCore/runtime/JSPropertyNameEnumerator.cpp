@@ -42,7 +42,7 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* st
         for (unsigned i = 0; i < propertyNamesSize; ++i)
             propertyNamesBuffer[i].clear();
     }
-    JSPropertyNameEnumerator* enumerator = new (NotNull, allocateCell<JSPropertyNameEnumerator>(vm.heap)) JSPropertyNameEnumerator(vm, structure, indexedLength, numberStructureProperties, propertyNamesBuffer, propertyNamesSize);
+    JSPropertyNameEnumerator* enumerator = new (NotNull, allocateCell<JSPropertyNameEnumerator>(vm)) JSPropertyNameEnumerator(vm, structure, indexedLength, numberStructureProperties, propertyNamesBuffer, propertyNamesSize);
     enumerator->finishCreation(vm, propertyNames.releaseData());
     return enumerator;
 }

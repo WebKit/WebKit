@@ -71,7 +71,7 @@ public:
 
     static JSStringIterator* create(VM& vm, Structure* structure, JSString* iteratedString)
     {
-        JSStringIterator* instance = new (NotNull, allocateCell<JSStringIterator>(vm.heap)) JSStringIterator(vm, structure);
+        JSStringIterator* instance = new (NotNull, allocateCell<JSStringIterator>(vm)) JSStringIterator(vm, structure);
         instance->finishCreation(vm, iteratedString);
         return instance;
     }

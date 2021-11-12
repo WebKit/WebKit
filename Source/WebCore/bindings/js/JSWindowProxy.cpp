@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ void JSWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
 JSWindowProxy& JSWindowProxy::create(VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
 {
     auto& structure = *Structure::create(vm, 0, jsNull(), TypeInfo(PureForwardingProxyType, StructureFlags), info());
-    auto& proxy = *new (NotNull, allocateCell<JSWindowProxy>(vm.heap)) JSWindowProxy(vm, structure, world);
+    auto& proxy = *new (NotNull, allocateCell<JSWindowProxy>(vm)) JSWindowProxy(vm, structure, world);
     proxy.finishCreation(vm, window);
     return proxy;
 }

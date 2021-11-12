@@ -49,7 +49,7 @@ void SparseArrayValueMap::finishCreation(VM& vm)
 
 SparseArrayValueMap* SparseArrayValueMap::create(VM& vm)
 {
-    SparseArrayValueMap* result = new (NotNull, allocateCell<SparseArrayValueMap>(vm.heap)) SparseArrayValueMap(vm);
+    SparseArrayValueMap* result = new (NotNull, allocateCell<SparseArrayValueMap>(vm)) SparseArrayValueMap(vm);
     result->finishCreation(vm);
     return result;
 }

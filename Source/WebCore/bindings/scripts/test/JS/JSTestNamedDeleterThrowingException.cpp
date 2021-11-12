@@ -55,7 +55,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedDeleterThrowingExceptionPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedDeleterThrowingExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterThrowingExceptionPrototype>(vm.heap)) JSTestNamedDeleterThrowingExceptionPrototype(vm, globalObject, structure);
+        JSTestNamedDeleterThrowingExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterThrowingExceptionPrototype>(vm)) JSTestNamedDeleterThrowingExceptionPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

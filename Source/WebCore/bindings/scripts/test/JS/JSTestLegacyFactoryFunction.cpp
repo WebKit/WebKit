@@ -57,7 +57,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestLegacyFactoryFunctionPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestLegacyFactoryFunctionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyFactoryFunctionPrototype>(vm.heap)) JSTestLegacyFactoryFunctionPrototype(vm, globalObject, structure);
+        JSTestLegacyFactoryFunctionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyFactoryFunctionPrototype>(vm)) JSTestLegacyFactoryFunctionPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

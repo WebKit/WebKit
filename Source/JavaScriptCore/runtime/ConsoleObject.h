@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ public:
 
     static ConsoleObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        ConsoleObject* object = new (NotNull, allocateCell<ConsoleObject>(vm.heap)) ConsoleObject(vm, structure);
+        ConsoleObject* object = new (NotNull, allocateCell<ConsoleObject>(vm)) ConsoleObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }

@@ -461,7 +461,7 @@ public:
 
     static SymbolTable* create(VM& vm)
     {
-        SymbolTable* symbolTable = new (NotNull, allocateCell<SymbolTable>(vm.heap)) SymbolTable(vm);
+        SymbolTable* symbolTable = new (NotNull, allocateCell<SymbolTable>(vm)) SymbolTable(vm);
         symbolTable->finishCreation(vm);
         return symbolTable;
     }

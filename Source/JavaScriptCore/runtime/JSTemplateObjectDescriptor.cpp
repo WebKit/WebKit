@@ -45,7 +45,7 @@ JSTemplateObjectDescriptor::JSTemplateObjectDescriptor(VM& vm, Ref<TemplateObjec
 
 JSTemplateObjectDescriptor* JSTemplateObjectDescriptor::create(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor, int endOffset)
 {
-    JSTemplateObjectDescriptor* result = new (NotNull, allocateCell<JSTemplateObjectDescriptor>(vm.heap)) JSTemplateObjectDescriptor(vm, WTFMove(descriptor), endOffset);
+    JSTemplateObjectDescriptor* result = new (NotNull, allocateCell<JSTemplateObjectDescriptor>(vm)) JSTemplateObjectDescriptor(vm, WTFMove(descriptor), endOffset);
     result->finishCreation(vm);
     return result;
 }

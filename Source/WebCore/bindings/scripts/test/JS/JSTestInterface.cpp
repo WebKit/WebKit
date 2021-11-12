@@ -171,7 +171,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfacePrototype>(vm.heap)) JSTestInterfacePrototype(vm, globalObject, structure);
+        JSTestInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfacePrototype>(vm)) JSTestInterfacePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -1126,7 +1126,7 @@ IGNORE_WARNINGS_END
 
     static TestInterfaceIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<TestInterfaceIterator>(vm.heap)) TestInterfaceIterator(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<TestInterfaceIterator>(vm)) TestInterfaceIterator(structure, iteratedObject, kind);
         instance->finishCreation(vm);
         return instance;
     }

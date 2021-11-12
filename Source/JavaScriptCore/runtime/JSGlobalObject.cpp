@@ -2604,14 +2604,14 @@ WatchpointSet& JSGlobalObject::ensureReferencedPropertyWatchpointSet(UniquedStri
 
 JSGlobalObject* JSGlobalObject::create(VM& vm, Structure* structure)
 {
-    JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure);
+    JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm)) JSGlobalObject(vm, structure);
     globalObject->finishCreation(vm);
     return globalObject;
 }
 
 JSGlobalObject* JSGlobalObject::createWithCustomMethodTable(VM& vm, Structure* structure, const GlobalObjectMethodTable* methodTable)
 {
-    JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure, methodTable);
+    JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm)) JSGlobalObject(vm, structure, methodTable);
     globalObject->finishCreation(vm);
     return globalObject;
 }

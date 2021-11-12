@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,7 @@ public:
 
     static ErrorInstance* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, ErrorType errorType = ErrorType::Error, bool useCurrentFrame = true)
     {
-        ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure, errorType);
+        ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
         instance->finishCreation(vm, globalObject, message, cause, appender, type, useCurrentFrame);
         return instance;
     }

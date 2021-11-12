@@ -32,7 +32,7 @@ public:
     using DOMWrapped = TestDefaultToJSONInherit;
     static JSTestDefaultToJSONInherit* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInherit>&& impl)
     {
-        JSTestDefaultToJSONInherit* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInherit>(globalObject->vm().heap)) JSTestDefaultToJSONInherit(structure, *globalObject, WTFMove(impl));
+        JSTestDefaultToJSONInherit* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInherit>(globalObject->vm())) JSTestDefaultToJSONInherit(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ public:
 
     static SymbolPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        SymbolPrototype* prototype = new (NotNull, allocateCell<SymbolPrototype>(vm.heap)) SymbolPrototype(vm, structure);
+        SymbolPrototype* prototype = new (NotNull, allocateCell<SymbolPrototype>(vm)) SymbolPrototype(vm, structure);
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ public:
 
     static BooleanPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        BooleanPrototype* prototype = new (NotNull, allocateCell<BooleanPrototype>(vm.heap)) BooleanPrototype(vm, structure);
+        BooleanPrototype* prototype = new (NotNull, allocateCell<BooleanPrototype>(vm)) BooleanPrototype(vm, structure);
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }

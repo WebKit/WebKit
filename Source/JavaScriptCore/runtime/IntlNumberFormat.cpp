@@ -80,7 +80,7 @@ struct IntlNumberFormatField {
 
 IntlNumberFormat* IntlNumberFormat::create(VM& vm, Structure* structure)
 {
-    IntlNumberFormat* format = new (NotNull, allocateCell<IntlNumberFormat>(vm.heap)) IntlNumberFormat(vm, structure);
+    IntlNumberFormat* format = new (NotNull, allocateCell<IntlNumberFormat>(vm)) IntlNumberFormat(vm, structure);
     format->finishCreation(vm);
     return format;
 }

@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestInterfaceLeadingUnderscore>;
     static JSTestInterfaceLeadingUnderscore* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterfaceLeadingUnderscore>&& impl)
     {
-        JSTestInterfaceLeadingUnderscore* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscore>(globalObject->vm().heap)) JSTestInterfaceLeadingUnderscore(structure, *globalObject, WTFMove(impl));
+        JSTestInterfaceLeadingUnderscore* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscore>(globalObject->vm())) JSTestInterfaceLeadingUnderscore(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

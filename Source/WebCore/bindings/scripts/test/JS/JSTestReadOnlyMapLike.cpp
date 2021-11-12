@@ -69,7 +69,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestReadOnlyMapLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestReadOnlyMapLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlyMapLikePrototype>(vm.heap)) JSTestReadOnlyMapLikePrototype(vm, globalObject, structure);
+        JSTestReadOnlyMapLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlyMapLikePrototype>(vm)) JSTestReadOnlyMapLikePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

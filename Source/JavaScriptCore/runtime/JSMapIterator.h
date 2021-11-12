@@ -70,7 +70,7 @@ public:
 
     static JSMapIterator* create(VM& vm, Structure* structure, JSMap* iteratedObject, IterationKind kind)
     {
-        JSMapIterator* instance = new (NotNull, allocateCell<JSMapIterator>(vm.heap)) JSMapIterator(vm, structure);
+        JSMapIterator* instance = new (NotNull, allocateCell<JSMapIterator>(vm)) JSMapIterator(vm, structure);
         instance->finishCreation(vm, iteratedObject, kind);
         return instance;
     }

@@ -56,7 +56,7 @@ public:
     static JSDollarVM* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm.heap)) JSDollarVM(vm, structure);
+        JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm)) JSDollarVM(vm, structure);
         instance->finishCreation(vm);
         return instance;
     }

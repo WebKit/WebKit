@@ -51,7 +51,7 @@ const ClassInfo TemporalCalendarConstructor::s_info = { "Function", &InternalFun
 
 TemporalCalendarConstructor* TemporalCalendarConstructor::create(VM& vm, Structure* structure, TemporalCalendarPrototype* temporalCalendarPrototype)
 {
-    TemporalCalendarConstructor* constructor = new (NotNull, allocateCell<TemporalCalendarConstructor>(vm.heap)) TemporalCalendarConstructor(vm, structure);
+    TemporalCalendarConstructor* constructor = new (NotNull, allocateCell<TemporalCalendarConstructor>(vm)) TemporalCalendarConstructor(vm, structure);
     constructor->finishCreation(vm, temporalCalendarPrototype);
     return constructor;
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Caitlin Potter <caitp@igalia.com>.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +45,7 @@ public:
 
     static AsyncFunctionPrototype* create(VM& vm, Structure* structure)
     {
-        AsyncFunctionPrototype* prototype = new (NotNull, allocateCell<AsyncFunctionPrototype>(vm.heap)) AsyncFunctionPrototype(vm, structure);
+        AsyncFunctionPrototype* prototype = new (NotNull, allocateCell<AsyncFunctionPrototype>(vm)) AsyncFunctionPrototype(vm, structure);
         prototype->finishCreation(vm);
         return prototype;
     }

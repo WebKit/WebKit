@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestCEReactionsStringifier>;
     static JSTestCEReactionsStringifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
     {
-        JSTestCEReactionsStringifier* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifier>(globalObject->vm().heap)) JSTestCEReactionsStringifier(structure, *globalObject, WTFMove(impl));
+        JSTestCEReactionsStringifier* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifier>(globalObject->vm())) JSTestCEReactionsStringifier(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

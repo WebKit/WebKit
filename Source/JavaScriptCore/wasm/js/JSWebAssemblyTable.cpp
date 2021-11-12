@@ -45,7 +45,7 @@ JSWebAssemblyTable* JSWebAssemblyTable::tryCreate(JSGlobalObject* globalObject, 
         return nullptr;
     }
 
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyTable>(vm.heap)) JSWebAssemblyTable(vm, structure, WTFMove(table));
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyTable>(vm)) JSWebAssemblyTable(vm, structure, WTFMove(table));
     instance->table()->setOwner(instance);
     instance->finishCreation(vm);
     return instance;

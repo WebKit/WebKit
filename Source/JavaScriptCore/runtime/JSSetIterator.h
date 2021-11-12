@@ -70,7 +70,7 @@ public:
 
     static JSSetIterator* create(VM& vm, Structure* structure, JSSet* iteratedObject, IterationKind kind)
     {
-        JSSetIterator* instance = new (NotNull, allocateCell<JSSetIterator>(vm.heap)) JSSetIterator(vm, structure);
+        JSSetIterator* instance = new (NotNull, allocateCell<JSSetIterator>(vm)) JSSetIterator(vm, structure);
         instance->finishCreation(vm, iteratedObject, kind);
         return instance;
     }

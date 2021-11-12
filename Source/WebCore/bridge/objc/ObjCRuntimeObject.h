@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ public:
 
     static ObjCRuntimeObject* create(VM& vm, Structure* structure, RefPtr<ObjcInstance>&& inst)
     {
-        ObjCRuntimeObject* object = new (NotNull, allocateCell<ObjCRuntimeObject>(vm.heap)) ObjCRuntimeObject(vm, structure, WTFMove(inst));
+        ObjCRuntimeObject* object = new (NotNull, allocateCell<ObjCRuntimeObject>(vm)) ObjCRuntimeObject(vm, structure, WTFMove(inst));
         object->finishCreation(vm);
         return object;
     }

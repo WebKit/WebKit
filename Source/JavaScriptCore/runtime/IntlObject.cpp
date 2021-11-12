@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -229,7 +229,7 @@ IntlObject::IntlObject(VM& vm, Structure* structure)
 
 IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    IntlObject* object = new (NotNull, allocateCell<IntlObject>(vm.heap)) IntlObject(vm, structure);
+    IntlObject* object = new (NotNull, allocateCell<IntlObject>(vm)) IntlObject(vm, structure);
     object->finishCreation(vm, globalObject);
     return object;
 }

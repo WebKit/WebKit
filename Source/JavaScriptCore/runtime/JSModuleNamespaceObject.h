@@ -48,7 +48,7 @@ public:
     static JSModuleNamespaceObject* create(JSGlobalObject* globalObject, Structure* structure, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions)
     {
         VM& vm = getVM(globalObject);
-        JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(vm.heap)) JSModuleNamespaceObject(vm, structure);
+        JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(vm)) JSModuleNamespaceObject(vm, structure);
         object->finishCreation(globalObject, moduleRecord, WTFMove(resolutions));
         return object;
     }

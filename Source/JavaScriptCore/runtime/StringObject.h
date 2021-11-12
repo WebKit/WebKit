@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,13 +39,13 @@ public:
     static StringObject* create(VM& vm, Structure* structure)
     {
         JSString* string = jsEmptyString(vm);
-        StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
+        StringObject* object = new (NotNull, allocateCell<StringObject>(vm)) StringObject(vm, structure);
         object->finishCreation(vm, string);
         return object;
     }
     static StringObject* create(VM& vm, Structure* structure, JSString* string)
     {
-        StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
+        StringObject* object = new (NotNull, allocateCell<StringObject>(vm)) StringObject(vm, structure);
         object->finishCreation(vm, string);
         return object;
     }

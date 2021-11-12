@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 Alexey Shvayka <shvaikalesh@gmail.com>.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ public:
 
     static RegExpStringIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        auto prototype = new (NotNull, allocateCell<RegExpStringIteratorPrototype>(vm.heap)) RegExpStringIteratorPrototype(vm, structure);
+        auto prototype = new (NotNull, allocateCell<RegExpStringIteratorPrototype>(vm)) RegExpStringIteratorPrototype(vm, structure);
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }

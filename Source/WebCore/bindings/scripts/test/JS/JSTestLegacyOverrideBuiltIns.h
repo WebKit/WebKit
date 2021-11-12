@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestLegacyOverrideBuiltIns>;
     static JSTestLegacyOverrideBuiltIns* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl)
     {
-        JSTestLegacyOverrideBuiltIns* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyOverrideBuiltIns>(globalObject->vm().heap)) JSTestLegacyOverrideBuiltIns(structure, *globalObject, WTFMove(impl));
+        JSTestLegacyOverrideBuiltIns* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyOverrideBuiltIns>(globalObject->vm())) JSTestLegacyOverrideBuiltIns(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

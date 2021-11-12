@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,7 +145,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyTable, (JSGlobalObject* globalObject, 
 
 WebAssemblyTableConstructor* WebAssemblyTableConstructor::create(VM& vm, Structure* structure, WebAssemblyTablePrototype* thisPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<WebAssemblyTableConstructor>(vm.heap)) WebAssemblyTableConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<WebAssemblyTableConstructor>(vm)) WebAssemblyTableConstructor(vm, structure);
     constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }

@@ -169,7 +169,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(vm.heap)) StringPrototype(vm, structure);
+    StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(vm)) StringPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject);
     return prototype;
 }

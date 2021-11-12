@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,14 +53,14 @@ void ScopedArgumentsTable::destroy(JSCell* cell)
 ScopedArgumentsTable* ScopedArgumentsTable::create(VM& vm)
 {
     ScopedArgumentsTable* result =
-        new (NotNull, allocateCell<ScopedArgumentsTable>(vm.heap)) ScopedArgumentsTable(vm);
+        new (NotNull, allocateCell<ScopedArgumentsTable>(vm)) ScopedArgumentsTable(vm);
     result->finishCreation(vm);
     return result;
 }
 
 ScopedArgumentsTable* ScopedArgumentsTable::tryCreate(VM& vm, uint32_t length)
 {
-    void* buffer = tryAllocateCell<ScopedArgumentsTable>(vm.heap);
+    void* buffer = tryAllocateCell<ScopedArgumentsTable>(vm);
     if (UNLIKELY(!buffer))
         return nullptr;
     ScopedArgumentsTable* result = new (NotNull, buffer) ScopedArgumentsTable(vm);

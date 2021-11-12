@@ -79,7 +79,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDefaultToJSONInheritPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDefaultToJSONInheritPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInheritPrototype>(vm.heap)) JSTestDefaultToJSONInheritPrototype(vm, globalObject, structure);
+        JSTestDefaultToJSONInheritPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInheritPrototype>(vm)) JSTestDefaultToJSONInheritPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

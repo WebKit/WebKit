@@ -35,7 +35,7 @@ public:
     using DOMWrapped = DOMWindow;
     static JSDOMWindow* create(JSC::VM& vm, JSC::Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
     {
-        JSDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSDOMWindow>(vm.heap)) JSDOMWindow(vm, structure, WTFMove(impl), proxy);
+        JSDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSDOMWindow>(vm)) JSDOMWindow(vm, structure, WTFMove(impl), proxy);
         ptr->finishCreation(vm, proxy);
         return ptr;
     }
@@ -75,7 +75,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSDOMWindowPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSDOMWindowPrototype* ptr = new (NotNull, JSC::allocateCell<JSDOMWindowPrototype>(vm.heap)) JSDOMWindowPrototype(vm, globalObject, structure);
+        JSDOMWindowPrototype* ptr = new (NotNull, JSC::allocateCell<JSDOMWindowPrototype>(vm)) JSDOMWindowPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

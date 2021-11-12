@@ -54,7 +54,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestPluginInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestPluginInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestPluginInterfacePrototype>(vm.heap)) JSTestPluginInterfacePrototype(vm, globalObject, structure);
+        JSTestPluginInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestPluginInterfacePrototype>(vm)) JSTestPluginInterfacePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

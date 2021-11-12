@@ -43,14 +43,14 @@ public:
 
     static JSProxy* create(VM& vm, Structure* structure, JSObject* target)
     {
-        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm.heap)) JSProxy(vm, structure);
+        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm)) JSProxy(vm, structure);
         proxy->finishCreation(vm, target);
         return proxy;
     }
 
     static JSProxy* create(VM& vm, Structure* structure)
     {
-        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm.heap)) JSProxy(vm, structure);
+        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm)) JSProxy(vm, structure);
         proxy->finishCreation(vm);
         return proxy;
     }

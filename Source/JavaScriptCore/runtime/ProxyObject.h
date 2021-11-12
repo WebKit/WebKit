@@ -46,7 +46,7 @@ public:
     {
         VM& vm = getVM(globalObject);
         Structure* structure = ProxyObject::structureForTarget(globalObject, target);
-        ProxyObject* proxy = new (NotNull, allocateCell<ProxyObject>(vm.heap)) ProxyObject(vm, structure);
+        ProxyObject* proxy = new (NotNull, allocateCell<ProxyObject>(vm)) ProxyObject(vm, structure);
         proxy->finishCreation(vm, globalObject, target, handler);
         return proxy;
     }

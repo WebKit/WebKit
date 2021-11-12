@@ -68,7 +68,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestReadOnlySetLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestReadOnlySetLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlySetLikePrototype>(vm.heap)) JSTestReadOnlySetLikePrototype(vm, globalObject, structure);
+        JSTestReadOnlySetLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlySetLikePrototype>(vm)) JSTestReadOnlySetLikePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

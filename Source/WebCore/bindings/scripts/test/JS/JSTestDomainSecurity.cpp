@@ -70,7 +70,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDomainSecurityPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDomainSecurityPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDomainSecurityPrototype>(vm.heap)) JSTestDomainSecurityPrototype(vm, globalObject, structure);
+        JSTestDomainSecurityPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDomainSecurityPrototype>(vm)) JSTestDomainSecurityPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

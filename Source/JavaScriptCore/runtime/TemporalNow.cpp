@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2021 Igalia S.L. All rights reserved.
+ *  Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -53,7 +54,7 @@ TemporalNow::TemporalNow(VM& vm, Structure* structure)
 
 TemporalNow* TemporalNow::create(VM& vm, Structure* structure)
 {
-    TemporalNow* object = new (NotNull, allocateCell<TemporalNow>(vm.heap)) TemporalNow(vm, structure);
+    TemporalNow* object = new (NotNull, allocateCell<TemporalNow>(vm)) TemporalNow(vm, structure);
     object->finishCreation(vm);
     return object;
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +63,7 @@ const ClassInfo TemporalInstantConstructor::s_info = { "Function", &Base::s_info
 
 TemporalInstantConstructor* TemporalInstantConstructor::create(VM& vm, Structure* structure, TemporalInstantPrototype* instantPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<TemporalInstantConstructor>(vm.heap)) TemporalInstantConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<TemporalInstantConstructor>(vm)) TemporalInstantConstructor(vm, structure);
     constructor->finishCreation(vm, instantPrototype);
     return constructor;
 }

@@ -35,7 +35,7 @@ const ClassInfo JSInternalPromise::s_info = { "InternalPromise", &Base::s_info, 
 
 JSInternalPromise* JSInternalPromise::create(VM& vm, Structure* structure)
 {
-    JSInternalPromise* promise = new (NotNull, allocateCell<JSInternalPromise>(vm.heap)) JSInternalPromise(vm, structure);
+    JSInternalPromise* promise = new (NotNull, allocateCell<JSInternalPromise>(vm)) JSInternalPromise(vm, structure);
     promise->finishCreation(vm);
     return promise;
 }

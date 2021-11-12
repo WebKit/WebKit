@@ -55,7 +55,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedGetterNoIdentifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedGetterNoIdentifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedGetterNoIdentifierPrototype>(vm.heap)) JSTestNamedGetterNoIdentifierPrototype(vm, globalObject, structure);
+        JSTestNamedGetterNoIdentifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedGetterNoIdentifierPrototype>(vm)) JSTestNamedGetterNoIdentifierPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

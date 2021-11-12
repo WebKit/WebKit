@@ -82,7 +82,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestEnabledBySettingPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestEnabledBySettingPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledBySettingPrototype>(vm.heap)) JSTestEnabledBySettingPrototype(vm, globalObject, structure);
+        JSTestEnabledBySettingPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledBySettingPrototype>(vm)) JSTestEnabledBySettingPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

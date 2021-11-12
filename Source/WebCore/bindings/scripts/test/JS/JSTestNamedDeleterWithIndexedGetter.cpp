@@ -56,7 +56,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedDeleterWithIndexedGetterPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestNamedDeleterWithIndexedGetterPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterWithIndexedGetterPrototype>(vm.heap)) JSTestNamedDeleterWithIndexedGetterPrototype(vm, globalObject, structure);
+        JSTestNamedDeleterWithIndexedGetterPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterWithIndexedGetterPrototype>(vm)) JSTestNamedDeleterWithIndexedGetterPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

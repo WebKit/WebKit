@@ -92,7 +92,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyException, (JSGlobalObject* globalObje
 
 WebAssemblyExceptionConstructor* WebAssemblyExceptionConstructor::create(VM& vm, Structure* structure, WebAssemblyExceptionPrototype* thisPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<WebAssemblyExceptionConstructor>(vm.heap)) WebAssemblyExceptionConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<WebAssemblyExceptionConstructor>(vm)) WebAssemblyExceptionConstructor(vm, structure);
     constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ const ClassInfo IntlNumberFormatPrototype::s_info = { "Intl.NumberFormat", &Base
 
 IntlNumberFormatPrototype* IntlNumberFormatPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    IntlNumberFormatPrototype* object = new (NotNull, allocateCell<IntlNumberFormatPrototype>(vm.heap)) IntlNumberFormatPrototype(vm, structure);
+    IntlNumberFormatPrototype* object = new (NotNull, allocateCell<IntlNumberFormatPrototype>(vm)) IntlNumberFormatPrototype(vm, structure);
     object->finishCreation(vm, globalObject);
     return object;
 }

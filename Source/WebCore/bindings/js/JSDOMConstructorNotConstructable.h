@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -49,7 +49,7 @@ private:
 
 template<typename JSClass> inline JSDOMConstructorNotConstructable<JSClass>* JSDOMConstructorNotConstructable<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMConstructorNotConstructable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotConstructable>(vm.heap)) JSDOMConstructorNotConstructable(vm, structure);
+    JSDOMConstructorNotConstructable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotConstructable>(vm)) JSDOMConstructorNotConstructable(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }

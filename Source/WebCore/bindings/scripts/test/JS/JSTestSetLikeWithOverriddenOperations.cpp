@@ -75,7 +75,7 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSetLikeWithOverriddenOperationsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestSetLikeWithOverriddenOperationsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSetLikeWithOverriddenOperationsPrototype>(vm.heap)) JSTestSetLikeWithOverriddenOperationsPrototype(vm, globalObject, structure);
+        JSTestSetLikeWithOverriddenOperationsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSetLikeWithOverriddenOperationsPrototype>(vm)) JSTestSetLikeWithOverriddenOperationsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }

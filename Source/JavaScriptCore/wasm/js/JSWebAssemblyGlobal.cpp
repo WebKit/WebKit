@@ -44,7 +44,7 @@ JSWebAssemblyGlobal* JSWebAssemblyGlobal::tryCreate(JSGlobalObject* globalObject
         return nullptr;
     }
 
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyGlobal>(vm.heap)) JSWebAssemblyGlobal(vm, structure, WTFMove(global));
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyGlobal>(vm)) JSWebAssemblyGlobal(vm, structure, WTFMove(global));
     instance->global()->setOwner(instance);
     instance->finishCreation(vm);
     return instance;

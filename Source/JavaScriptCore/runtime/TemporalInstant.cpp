@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +58,7 @@ TemporalInstant::TemporalInstant(VM& vm, Structure* structure, ISO8601::ExactTim
 TemporalInstant* TemporalInstant::create(VM& vm, Structure* structure, ISO8601::ExactTime exactTime)
 {
     ASSERT(exactTime.isValid());
-    auto* object = new (NotNull, allocateCell<TemporalInstant>(vm.heap)) TemporalInstant(vm, structure, exactTime);
+    auto* object = new (NotNull, allocateCell<TemporalInstant>(vm)) TemporalInstant(vm, structure, exactTime);
     object->finishCreation(vm);
     return object;
 }
