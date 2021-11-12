@@ -1,5 +1,23 @@
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
+        Demote WKWebpagePreferences.captivePortalModeEnabled API to SPI
+        https://bugs.webkit.org/show_bug.cgi?id=233059
+
+        Reviewed by Geoffrey Garen.
+
+        Demote WKWebpagePreferences.captivePortalModeEnabled API to SPI until we reach
+        agreement on a suitable API name.
+
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _setCaptivePortalModeEnabled:]):
+        (-[WKWebpagePreferences _captivePortalModeEnabled]):
+        (-[WKWebpagePreferences setCaptivePortalModeEnabled:]): Deleted.
+        (-[WKWebpagePreferences captivePortalModeEnabled]): Deleted.
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
         Rename ProcessLauncherMac.mm to ProcessLauncherCocoa.mm
         https://bugs.webkit.org/show_bug.cgi?id=233045
         <rdar://problem/85347107>

@@ -391,7 +391,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     }
 }
 
-- (void)setCaptivePortalModeEnabled:(BOOL)captivePortalModeEnabled
+- (void)_setCaptivePortalModeEnabled:(BOOL)captivePortalModeEnabled
 {
 #if PLATFORM(IOS_FAMILY)
     if (!WTF::processHasEntitlement("com.apple.developer.web-browser"))
@@ -400,7 +400,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     _websitePolicies->setCaptivePortalModeEnabled(!!captivePortalModeEnabled);
 }
 
-- (BOOL)captivePortalModeEnabled
+- (BOOL)_captivePortalModeEnabled
 {
     return _websitePolicies->captivePortalModeEnabled();
 }

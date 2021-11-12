@@ -45,6 +45,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferences.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
@@ -7679,7 +7680,7 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
 TEST(ProcessSwap, NavigatingToCaptivePortalMode)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.captivePortalModeEnabled);
+    EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences._captivePortalModeEnabled);
     [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
     webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
 
@@ -7706,8 +7707,8 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes);
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        EXPECT_FALSE(preferences.captivePortalModeEnabled);
-        preferences.captivePortalModeEnabled = YES;
+        EXPECT_FALSE(preferences._captivePortalModeEnabled);
+        [preferences _setCaptivePortalModeEnabled:YES];
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
@@ -7725,8 +7726,8 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
 TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences.captivePortalModeEnabled);
-    webViewConfiguration.get().defaultWebpagePreferences.captivePortalModeEnabled = YES;
+    EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences._captivePortalModeEnabled);
+    [webViewConfiguration.get().defaultWebpagePreferences _setCaptivePortalModeEnabled:YES];
     [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
     webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
 
@@ -7744,7 +7745,7 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     };
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        EXPECT_TRUE(preferences.captivePortalModeEnabled);
+        EXPECT_TRUE(preferences._captivePortalModeEnabled);
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
@@ -7766,8 +7767,8 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
     checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
 
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        EXPECT_TRUE(preferences.captivePortalModeEnabled);
-        preferences.captivePortalModeEnabled = NO; // Opt out of captive portal mode for this load.
+        EXPECT_TRUE(preferences._captivePortalModeEnabled);
+        [preferences _setCaptivePortalModeEnabled:NO]; // Opt out of captive portal mode for this load.
         completionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
