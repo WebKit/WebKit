@@ -309,6 +309,10 @@ webkit.org/b/96438 fast/spatial-navigation
 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure Timeout ]
 [ Monterey+ ] http/wpt/mediarecorder/video-rotation.html [ Pass Failure Timeout ]
 
+# On Monterey+, CFNetwork does full NSURLSession partitioning based on first-party domains and ITP session partitioning is thus disabled.
+[ Monterey+ ] http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py [ Skip ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Skip ]
+
 # rdar://76909385
 [ Monterey+ ] http/tests/websocket/tests/hybi/interleaved-fragments.html [ Pass Failure Timeout ]
 [ Monterey+ ] http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure Timeout ]

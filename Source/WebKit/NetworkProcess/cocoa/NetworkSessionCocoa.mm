@@ -1438,13 +1438,16 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifie
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
     if (isParentProcessAFullWebBrowser(networkProcess()))
         shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    // This ITP partitioning is unnecessary on newer platforms since CFNetwork already has full partioning based on first-party domains.
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN)
     if (auto* storageSession = networkStorageSession()) {
         auto firstParty = WebCore::RegistrableDomain(request.firstPartyForCookies());
         if (storageSession->shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(firstParty))
             return sessionSetForPage(webPageProxyID).isolatedSession(storedCredentialsPolicy, firstParty, shouldBeConsideredAppBound, *this);
     } else
         ASSERT_NOT_REACHED();
+#else
+    UNUSED_PARAM(request);
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -1509,11 +1512,14 @@ void NetworkSessionCocoa::clearAppBoundSession()
 }
 #endif
 
+#if !HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN)
 SessionWrapper& NetworkSessionCocoa::isolatedSession(WebPageProxyIdentifier webPageProxyID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::RegistrableDomain firstPartyDomain, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     return sessionSetForPage(webPageProxyID).isolatedSession(storedCredentialsPolicy, firstPartyDomain, isNavigatingToAppBoundDomain, *this);
 }
+#endif
 
+#if !HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN)
 SessionWrapper& SessionSet::isolatedSession(WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::RegistrableDomain firstPartyDomain, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
 {
     auto& entry = isolatedSessions.ensure(firstPartyDomain, [this, &session, isNavigatingToAppBoundDomain] {
@@ -1556,9 +1562,15 @@ SessionWrapper& SessionSet::isolatedSession(WebCore::StoredCredentialsPolicy sto
 
     return sessionWrapper;
 }
+#endif
+
 
 bool NetworkSessionCocoa::hasIsolatedSession(const WebCore::RegistrableDomain domain) const
 {
+#if HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN)
+    UNUSED_PARAM(domain);
+    return true;
+#else
     if (m_defaultSessionSet->isolatedSessions.contains(domain))
         return true;
     for (auto& sessionSet : m_perPageSessionSets.values()) {
@@ -1567,13 +1579,16 @@ bool NetworkSessionCocoa::hasIsolatedSession(const WebCore::RegistrableDomain do
     }
     
     return false;
+#endif
 }
 
 void NetworkSessionCocoa::clearIsolatedSessions()
 {
+#if !HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN)
     m_defaultSessionSet->isolatedSessions.clear();
     for (auto& sessionSet : m_perPageSessionSets.values())
         sessionSet->isolatedSessions.clear();
+#endif
 }
 
 void NetworkSessionCocoa::invalidateAndCancelSessionSet(SessionSet& sessionSet)
@@ -1585,6 +1600,7 @@ void NetworkSessionCocoa::invalidateAndCancelSessionSet(SessionSet& sessionSet)
     [sessionSet.sessionWithoutCredentialStorage.delegate sessionInvalidated];
     [sessionSet.ephemeralStatelessSession.delegate sessionInvalidated];
 
+#if !HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN)
     for (auto& session : sessionSet.isolatedSessions.values()) {
         [session->sessionWithCredentialStorage.session invalidateAndCancel];
         [session->sessionWithCredentialStorage.delegate sessionInvalidated];
@@ -1592,6 +1608,7 @@ void NetworkSessionCocoa::invalidateAndCancelSessionSet(SessionSet& sessionSet)
         [session->sessionWithoutCredentialStorage.delegate sessionInvalidated];
     }
     sessionSet.isolatedSessions.clear();
+#endif
 
     if (sessionSet.appBoundSession) {
         [sessionSet.appBoundSession->sessionWithCredentialStorage.session invalidateAndCancel];
