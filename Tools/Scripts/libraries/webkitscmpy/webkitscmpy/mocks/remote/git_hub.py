@@ -408,6 +408,7 @@ class GitHub(mocks.Requests):
         # Create specifically
         if method == 'POST' and auth and stripped_url == pr_base:
             pr['number'] = 1 + max([0] + [pr.get('number', 0) for pr in self.pull_requests])
+            pr['state'] = 'open'
             pr['user'] = dict(login=auth.username)
             pr['_links'] = dict(issue=dict(href='https://{}/issues/{}'.format(self.api_remote, pr['number'])))
             self.pull_requests.append(pr)

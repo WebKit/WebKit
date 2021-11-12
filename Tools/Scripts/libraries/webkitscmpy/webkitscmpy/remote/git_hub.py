@@ -127,8 +127,9 @@ class GitHub(Scm):
             updates = dict(
                 title=title or pull_request.title,
                 base=base or pull_request.base,
-                head='{}:{}'.format(user, head) if head else pull_request.head,
             )
+            if head:
+                updates['head'] = '{}:{}'.format(user, head)
             if body or commits:
                 updates['body'] = PullRequest.create_body(body, commits)
             if opened is not None:

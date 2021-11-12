@@ -221,8 +221,8 @@ class BitBucket(mocks.Requests):
             json['author'] = dict(user=dict(displayName='Tim Committer', emailAddress='committer@webkit.org'))
             json['participants'] = [json['author']]
             json['id'] = 1 + max([0] + [pr.get('id', 0) for pr in self.pull_requests])
-            json['fromRef']['displayId'] = json['fromRef']['id'].split('/')[-2:]
-            json['toRef']['displayId'] = json['toRef']['id'].split('/')[-2:]
+            json['fromRef']['displayId'] = '/'.join(json['fromRef']['id'].split('/')[-2:])
+            json['toRef']['displayId'] = '/'.join(json['toRef']['id'].split('/')[-2:])
             json['state'] = 'OPEN'
             json['activities'] = []
             self.pull_requests.append(json)
@@ -240,6 +240,8 @@ class BitBucket(mocks.Requests):
                 return mocks.Response.create404(url)
             if method == 'PUT':
                 self.pull_requests[existing].update(json)
+                self.pull_requests[existing]['fromRef']['displayId'] = '/'.join(json['fromRef']['id'].split('/')[-2:])
+                self.pull_requests[existing]['toRef']['displayId'] = '/'.join(json['toRef']['id'].split('/')[-2:])
             if len(split_url) < 11:
                 return mocks.Response.fromJson({key: value for key, value in self.pull_requests[existing].items() if key != 'activities'})
 

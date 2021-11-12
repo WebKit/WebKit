@@ -1,3 +1,23 @@
+2021-11-05  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Open closed pull-request when running pr
+        https://bugs.webkit.org/show_bug.cgi?id=232765
+        <rdar://problem/85084318>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/bitbucket.py:
+        (BitBucket.request): Ensure displayId is set when updating PR.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub.request): Make sure that new pull-requests are open.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): Open closed pull-requests.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.update): Only set head if user specifies head.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
         Disable MathML when in Captive Portal Mode

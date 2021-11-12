@@ -25,7 +25,8 @@ import sys
 import unittest
 
 from webkitcorepy import OutputCapture, testing
-from webkitscmpy import Contributor, Commit, PullRequest, program, mocks, remote
+from webkitcorepy.mocks import Terminal as MockTerminal
+from webkitscmpy import Contributor, Commit, PullRequest, local, program, mocks, remote
 
 
 class TestPullRequest(unittest.TestCase):
@@ -145,7 +146,6 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[1].message, '[scoping] Bug to fix (Part 1)\n\nReviewed by Tim Contributor.')
 
     def test_parse_html_body_multiple(self):
-        self.maxDiff = None
         body, commits = PullRequest.parse_body('''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 <pre>
 [scoping] Bug to fix (Part 2)
@@ -358,7 +358,42 @@ Rebased 'eng/pr-branch' on 'main!'
 
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
-        self.maxDiff = None
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Amending commit...",
+                '    Found 1 commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Updating pull-request for 'eng/pr-branch'...",
+                "Updated 'PR 1 | Amended commit'!",
+            ],
+        )
+
+    def test_github_reopen(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            local.Git(self.path).remote().pull_requests.get(1).close()
+            self.assertFalse(local.Git(self.path).remote().pull_requests.get(1).opened)
+
+            with OutputCapture() as captured, MockTerminal.input('n'):
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request',),
+                    path=self.path,
+                ))
+
+            self.assertTrue(local.Git(self.path).remote().pull_requests.get(1).opened)
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Amending commit...",
@@ -416,6 +451,44 @@ Rebased 'eng/pr-branch' on 'main!'
                     args=('pull-request',),
                     path=self.path,
                 ))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Amending commit...",
+                '    Found 1 commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
+                "Pushing 'eng/pr-branch' to 'origin'...",
+                "Updating pull-request for 'eng/pr-branch'...",
+                "Updated 'PR 1 | Amended commit'!",
+            ],
+        )
+
+    def test_bitbucket_reopen(self):
+        with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+            remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
+        )) as repo, mocks.local.Svn():
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            local.Git(self.path).remote().pull_requests.get(1).close()
+            self.assertFalse(local.Git(self.path).remote().pull_requests.get(1).opened)
+
+            with OutputCapture() as captured, MockTerminal.input('n'):
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request',),
+                    path=self.path,
+                ))
+
+            self.assertTrue(local.Git(self.path).remote().pull_requests.get(1).opened)
 
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
