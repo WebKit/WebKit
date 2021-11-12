@@ -1,5 +1,91 @@
 2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r285620. rdar://problem/84558377
+
+    REGRESSION(r283863): `<attachment>` with a long `action` do not render correctly
+    https://bugs.webkit.org/show_bug.cgi?id=232645
+    <rdar://problem/84558377>
+    
+    Reviewed by Myles C. Maxfield.
+    
+    Source/WebCore:
+    
+    Unlike the `DisplayList` concept in WebCore, when using `CGContextDelegateRef` (which is
+    what `DrawGlyphsRecorder` uses on Cocoa platforms) the callbacks for each action are only
+    told about the current state of all-the-things at the time of that action, not each of the
+    corresponding API-level calls that resulted in that final state (e.g. where `DisplayList`
+    would see separate `scale` and `rotate` calls, `CGContextDelegateRef` would only be able to
+    get the final calculated CTM). In order for `DrawGlyphsRecorder` to (re)generate WebCore
+    calls, it needs to have information about the starting state of the `CGContext` before any
+    actions are performed so it can at least derive some diff/idea of what happened.
+    
+    This is further complicated by the fact that when drawing text CG separates the state of
+    all-the-things into two: the CTM and the text matrix. WebKit does not have this separation,
+    however, so it needs to combine the two into a single CTM, but only when dealing with text.
+    
+    A new path (`drawNativeText`) was added in r283863 that allows `DrawGlyphsRecorder` to be
+    used directly with native text-related objects (e.g. `CTLineRef`) instead of objects/data
+    derived in WebCore. A result of this on Cocoa platforms is that now a single `drawNativeText`
+    can result in multiple `recordDrawGlyphs` invocations if the `CTLineRef` contains multiple
+    "groupings" of glyphs to draw (e.g. if a line is truncated with a "..." in the middle then
+    the three groups will be the remaining text before, the "..." and the remaining text after).
+    
+    AFAICT before this new path it was never the case that the text matrix had a translate, only
+    rotate/skew/etc., meaning that when `DrawGlyphsRecorder` needed to convert from the CG's
+    computed glyph positions back into WebCore's glyph advances it could use the text matrix
+    since there would be no translation. With this new path, however, if a `drawNativeText` call
+    results in multiple `recordDrawGlyphs` then there will be a translation in the text matrix
+    to account for that. As such, we end up double counting the text matrix: once when we
+    (re)generate the CTM to give to WebCore and _again_ when we (re)compute the WebCore advances.
+    
+    Since we've already counted the text matrix once, we don't need to do it again. Also, by
+    this point we've already modified WebCore's CTM, so we only really need to account for the
+    difference from the original position when we first called `drawNativeText`. As such, we
+    just need invert what was used to generate CG positions from WebCore advances.
+    
+    Note that in the name of expediently fixing a regression, this change only considers
+    horizontal text as `<attachment>` are never drawn vertically. Fixing vertical text will be
+    done in a followup <https://webkit.org/b/232917>.
+    
+    Test: fast/attachment/attachment-truncated-action.html
+    
+    * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+    (WebCore::DrawGlyphsRecorder::recordDrawGlyphs):
+    
+    * platform/graphics/FontCascade.h:
+    * platform/graphics/coretext/FontCascadeCoreText.cpp:
+    (WebCore::fillVectorWithHorizontalGlyphPositions):
+    (WebCore::fillVectorWithVerticalGlyphPositions):
+    Add a comment indicating the related nature of these functions with `DrawGlyphsRecorder::recordDrawGlyphs`.
+    Drive-by: `fillVectorWithHorizontalGlyphPositions` is only called by this class, so don't export it.
+    
+    LayoutTests:
+    
+    * fast/attachment/attachment-truncated-action.html: Added.
+    * fast/attachment/attachment-truncated-action-expected-mismatch.html: Added.
+    
+    * TestExpectations:
+    * platform/ios/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285620 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-10  Devin Rousso  <drousso@apple.com>
+
+            REGRESSION(r283863): `<attachment>` with a long `action` do not render correctly
+            https://bugs.webkit.org/show_bug.cgi?id=232645
+            <rdar://problem/84558377>
+
+            Reviewed by Myles C. Maxfield.
+
+            * fast/attachment/attachment-truncated-action.html: Added.
+            * fast/attachment/attachment-truncated-action-expected-mismatch.html: Added.
+
+            * TestExpectations:
+            * platform/ios/TestExpectations:
+
+2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r285554. rdar://problem/83770133
 
     Unreviewed test gardening, skip failing test.

@@ -226,6 +226,7 @@ webrtc/peerConnection-rvfc.html [ Skip ]
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
 
 # This test only makes sense on iOS
+fast/attachment/attachment-truncated-action.html [ Skip ]
 fast/attachment/attachment-wrapping-action.html [ Skip ]
 fast/attachment/attachment-borderless.html [ Skip ]
 fast/attachment/attachment-dynamic-type.html [ Skip ]

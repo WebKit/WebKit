@@ -118,8 +118,9 @@ bool FontCascade::isSubpixelAntialiasingAvailable()
 #endif
 }
 
-void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count, const FloatPoint& point)
+static void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count, const FloatPoint& point)
 {
+    // Keep this in sync as the inverse of `DrawGlyphsRecorder::recordDrawGlyphs`.
     // The input positions are in the context's coordinate system, without the text matrix.
     // However, the positions that CT/CG accept are in the text matrix's coordinate system.
     // CGContextGetTextMatrix() gives us the matrix that maps from text's coordinate system to the context's (non-text) coordinate system.
@@ -139,6 +140,7 @@ void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGC
 
 static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* translations, const CGSize* advances, unsigned count, const FloatPoint& point, float ascentDelta)
 {
+    // Keep this in sync as the inverse of `DrawGlyphsRecorder::recordDrawGlyphs`.
     CGAffineTransform transform = CGAffineTransformInvert(CGContextGetTextMatrix(context));
 
     auto position = CGPointMake(point.x(), point.y() + ascentDelta);

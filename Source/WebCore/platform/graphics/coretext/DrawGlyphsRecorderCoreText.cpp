@@ -333,7 +333,18 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
 
     auto fontSize = CGGStateGetFontSize(gstate);
     Ref font = m_deriveFontFromContext == DeriveFontFromContext::No ? *m_originalFont : Font::create(FontPlatformData(adoptCF(CTFontCreateWithGraphicsFont(usedFont, fontSize, nullptr, nullptr)), fontSize));
-    m_owner.drawGlyphsAndCacheFont(font, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
+
+    // The above does the work of ensuring the right CTM (which is the combination of CG's CTM and
+    // CG's text matrix) is set for the replayer, but in order to provide the right values to
+    // `FontCascade::drawGlyphs` we need to recalculate the original advances from the resulting
+    // positions by inverting the operations applied to the original advances.
+    auto textMatrix = m_originalTextMatrix;
+    if (font->platformData().orientation() == FontOrientation::Vertical) {
+        // Keep this in sync as the inverse of `fillVectorWithVerticalGlyphPositions`.
+        // FIXME: <https://webkit.org/b/232917> (`DrawGlyphsRecorder` should be able to record+replay vertical text)
+    }
+
+    m_owner.drawGlyphsAndCacheFont(font, glyphs, computeAdvancesFromPositions(positions, count, textMatrix).data(), count, textMatrix.mapPoint(positions[0]), m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }
