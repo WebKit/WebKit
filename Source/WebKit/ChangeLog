@@ -1,3 +1,14 @@
+2021-11-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Some C++ source files use #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=233040
+
+        Remove spurious usage of "#pragma once" in implementation files.
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp:
+
 2021-11-12  Per Arne Vollan <pvollan@apple.com>
 
         [macOS][GPUP] Remove sandbox write access to files
