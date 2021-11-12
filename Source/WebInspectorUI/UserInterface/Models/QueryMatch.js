@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ResourceQueryMatch = class ResourceQueryMatch
+WI.QueryMatch = class QueryMatch
 {
     constructor(type, index, queryIndex)
     {
+        console.assert(Object.values(WI.QueryMatch.Type).includes(type), type);
+        console.assert(index >= 0, index);
+        console.assert(queryIndex >= 0, queryIndex);
         this._type = type;
         this._index = index;
         this._queryIndex = queryIndex;
@@ -39,7 +42,7 @@ WI.ResourceQueryMatch = class ResourceQueryMatch
     get queryIndex() { return this._queryIndex; }
 };
 
-WI.ResourceQueryMatch.Type = {
+WI.QueryMatch.Type = {
     Normal: Symbol("normal"),
-    Special: Symbol("special")
+    Special: Symbol("special"),
 };

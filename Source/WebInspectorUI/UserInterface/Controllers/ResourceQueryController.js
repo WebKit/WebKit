@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ResourceQueryController = class ResourceQueryController extends WI.Object
+WI.ResourceQueryController = class ResourceQueryController extends WI.QueryController
 {
     constructor()
     {
@@ -73,7 +73,7 @@ WI.ResourceQueryController = class ResourceQueryController extends WI.Object
                 cachedData.specialCharacterIndices = this._findSpecialCharacterIndices(displayName);
             }
 
-            let matches = this._findQueryMatches(query, cachedData.searchString, cachedData.specialCharacterIndices);
+            let matches = this.findQueryMatches(query, cachedData.searchString, cachedData.specialCharacterIndices);
             if (matches.length)
                 results.push(new WI.ResourceQueryResult(resource, matches, cookie));
         }
@@ -88,86 +88,6 @@ WI.ResourceQueryController = class ResourceQueryController extends WI.Object
     }
 
     // Private
-
-    _findQueryMatches(query, searchString, specialCharacterIndices)
-    {
-        if (query.length > searchString.length)
-            return [];
-
-        let matches = [];
-        let queryIndex = 0;
-        let searchIndex = 0;
-        let specialIndex = 0;
-        let deadBranches = new Array(query.length).fill(Infinity);
-        let type = WI.ResourceQueryMatch.Type.Special;
-
-        function pushMatch(index)
-        {
-            matches.push(new WI.ResourceQueryMatch(type, index, queryIndex));
-            searchIndex = index + 1;
-            queryIndex++;
-        }
-
-        function matchNextSpecialCharacter()
-        {
-            if (specialIndex >= specialCharacterIndices.length)
-                return false;
-
-            let originalSpecialIndex = specialIndex;
-            while (specialIndex < specialCharacterIndices.length) {
-                // Normal character matching can move past special characters,
-                // so advance the special character index if it's before the
-                // current search string position.
-                let index = specialCharacterIndices[specialIndex++];
-                if (index < searchIndex)
-                    continue;
-
-                if (query[queryIndex] === searchString[index]) {
-                    pushMatch(index);
-                    return true;
-                }
-            }
-
-            specialIndex = originalSpecialIndex;
-            return false;
-        }
-
-        function backtrack()
-        {
-            while (matches.length) {
-                queryIndex--;
-
-                let lastMatch = matches.pop();
-                if (lastMatch.type !== WI.ResourceQueryMatch.Type.Special)
-                    continue;
-
-                deadBranches[lastMatch.queryIndex] = lastMatch.index;
-                searchIndex = matches.lastValue ? matches.lastValue.index + 1 : 0;
-                return true;
-            }
-
-            return false;
-        }
-
-        while (queryIndex < query.length && searchIndex <= searchString.length) {
-            if (type === WI.ResourceQueryMatch.Type.Special && !matchNextSpecialCharacter())
-                type = WI.ResourceQueryMatch.Type.Normal;
-
-            if (type === WI.ResourceQueryMatch.Type.Normal) {
-                let index = searchString.indexOf(query[queryIndex], searchIndex);
-                if (index >= 0 && index < deadBranches[queryIndex]) {
-                    pushMatch(index);
-                    type = WI.ResourceQueryMatch.Type.Special;
-                } else if (!backtrack())
-                    return [];
-            }
-        }
-
-        if (queryIndex < query.length)
-            return [];
-
-        return matches;
-    }
 
     _findSpecialCharacterIndices(string)
     {

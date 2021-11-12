@@ -1,3 +1,67 @@
+2021-11-12  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Extract reusable logic from ResourceQueryController, ResourceQueryResult and ResourceQueryMatch
+        https://bugs.webkit.org/show_bug.cgi?id=231604
+        <rdar://problem/84160281>
+
+        Reviewed by Devin Rousso.
+
+        Extract reusable logic from `ResourceQueryController` into a generic `QueryController`
+        to enable subclassing for other specialized use cases.
+
+        * UserInterface/Controllers/QueryController.js: Added.
+        (WI.QueryController.prototype.executeQuery):
+        (WI.QueryController.prototype.findQueryMatches.pushMatch):
+        (WI.QueryController.prototype.findQueryMatches.matchNextSpecialCharacter):
+        (WI.QueryController.prototype.findQueryMatches.backtrack):
+        (WI.QueryController.prototype.findQueryMatches):
+        (WI.QueryController):
+
+        Keep only the reusable matching logic in `QueryController`.
+        Subclasses like `ResourceQueryController` are responsible for agregating
+        the data to be queried, customization for special characters and sorting results.
+
+        * UserInterface/Controllers/ResourceQueryController.js:
+        (WI.ResourceQueryController.prototype.executeQuery):
+        (WI.ResourceQueryController.prototype._findQueryMatches.pushMatch): Deleted.
+        (WI.ResourceQueryController.prototype._findQueryMatches.matchNextSpecialCharacter): Deleted.
+        (WI.ResourceQueryController.prototype._findQueryMatches.backtrack): Deleted.
+        (WI.ResourceQueryController.prototype._findQueryMatches): Deleted.
+
+        * UserInterface/Main.html:
+
+        * UserInterface/Models/QueryMatch.js: Renamed from Source/WebInspectorUI/UserInterface/Models/ResourceQueryMatch.js.
+
+        `ResourceQueryMatch` doesn't contain any resource-specific logic. It can be generalized to `QueryMatch`.
+
+        * UserInterface/Models/QueryResult.js: Copied from Source/WebInspectorUI/UserInterface/Models/ResourceQueryResult.js.
+        (WI.QueryResult):
+        (WI.QueryResult.prototype.get value):
+        (WI.QueryResult.prototype.get rank):
+        (WI.QueryResult.prototype.get matchingTextRanges):
+        (WI.QueryResult.prototype._calculateRank.getMultiplier):
+        (WI.QueryResult.prototype._calculateRank):
+        (WI.QueryResult.prototype._createMatchingTextRanges):
+
+        A generic `QueryResult` can be extracted from `ResourceQueryResult` containing
+        the reusable logic for ranking results and identifing matching text ranges.
+
+        * UserInterface/Models/ResourceQueryResult.js:
+        (WI.ResourceQueryResult):
+        (WI.ResourceQueryResult.prototype.get resource):
+        (WI.ResourceQueryResult.prototype.__test_createMatchesMask):
+        (WI.ResourceQueryResult.prototype.get rank): Deleted.
+        (WI.ResourceQueryResult.prototype.get matchingTextRanges): Deleted.
+        (WI.ResourceQueryResult.prototype._calculateRank.getMultiplier): Deleted.
+        (WI.ResourceQueryResult.prototype._calculateRank): Deleted.
+        (WI.ResourceQueryResult.prototype._createMatchingTextRanges): Deleted.
+
+        `ResourceQueryResult` extends `QueryResult` with resource-specifc members:
+        - the `cookie` property which holds the optional line and column info used when jumping to matched files
+        - the `resource` property which maps to the generic `QueryResult.value`; this is used in tests and when sorting in `ResourceQueryController`
+
+        * UserInterface/Test.html:
+
 2021-11-10  Tim Nguyen  <ntim@apple.com>
 
         Remove non-standard -webkit-border-fit CSS property
