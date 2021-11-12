@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSCustomPropertyValue.h"
 
+#include "CSSParserIdioms.h"
 #include "CSSTokenizer.h"
 
 namespace WebCore {
@@ -33,6 +34,12 @@ namespace WebCore {
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(const AtomString& name)
 {
     return adoptRef(*new CSSCustomPropertyValue(name, std::monostate { }));
+}
+
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithID(const AtomString& name, CSSValueID id)
+{
+    ASSERT(WebCore::isCSSWideKeyword(id) || id == CSSValueInvalid);
+    return adoptRef(*new CSSCustomPropertyValue(name, { id }));
 }
 
 bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const

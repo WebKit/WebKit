@@ -52,17 +52,13 @@ public:
         return adoptRef(*new CSSCustomPropertyValue(name, { value }));
     }
 
-    static Ref<CSSCustomPropertyValue> createWithID(const AtomString& name, CSSValueID id)
-    {
-        ASSERT(id == CSSValueInherit || id == CSSValueInitial || id == CSSValueUnset || id == CSSValueRevert || id == CSSValueInvalid);
-        return adoptRef(*new CSSCustomPropertyValue(name, { id }));
-    }
+    static Ref<CSSCustomPropertyValue> createWithID(const AtomString& name, CSSValueID);
 
     static Ref<CSSCustomPropertyValue> createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&& value)
     {
         return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
     }
-    
+
     static Ref<CSSCustomPropertyValue> createSyntaxLength(const AtomString& name, Length value)
     {
         ASSERT(!value.isUndefined());
