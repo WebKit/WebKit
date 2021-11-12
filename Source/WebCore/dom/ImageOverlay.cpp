@@ -69,6 +69,22 @@ static const AtomString& imageOverlayDataDetectorClassName()
     return className;
 }
 
+#if ENABLE(IMAGE_ANALYSIS)
+
+static const AtomString& imageOverlayLineClass()
+{
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-line", AtomString::ConstructFromLiteral);
+    return className;
+}
+
+static const AtomString& imageOverlayTextClass()
+{
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-text", AtomString::ConstructFromLiteral);
+    return className;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
 bool hasOverlay(const HTMLElement& element)
 {
     auto shadowRoot = element.shadowRoot();
@@ -166,24 +182,21 @@ IntRect containerRect(HTMLElement& element)
     return enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
 }
 
-void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognitionResult& result, CacheTextRecognitionResults cacheTextRecognitionResults)
+struct LineElements {
+    Ref<HTMLDivElement> line;
+    Vector<Ref<HTMLElement>> children;
+};
+
+struct Elements {
+    RefPtr<HTMLDivElement> root;
+    Vector<LineElements> lines;
+    Vector<Ref<HTMLDivElement>> dataDetectors;
+};
+
+static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult& result)
 {
-    static MainThreadNeverDestroyed<const AtomString> imageOverlayLineClass("image-overlay-line", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
-
-    struct TextRecognitionLineElements {
-        Ref<HTMLDivElement> line;
-        Vector<Ref<HTMLElement>> children;
-    };
-
-    struct TextRecognitionElements {
-        RefPtr<HTMLDivElement> root;
-        Vector<TextRecognitionLineElements> lines;
-        Vector<Ref<HTMLDivElement>> dataDetectors;
-    };
-
-    bool hadExistingTextRecognitionElements = false;
-    TextRecognitionElements textRecognitionElements;
+    bool hadExistingElements = false;
+    Elements elements;
     RefPtr<HTMLElement> mediaControlsContainer;
     if (RefPtr shadowRoot = element.shadowRoot()) {
 #if ENABLE(MODERN_MEDIA_CONTROLS)
@@ -207,38 +220,38 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
                 containerForImageOverlay = shadowRoot;
             for (auto& child : childrenOfType<HTMLDivElement>(*containerForImageOverlay)) {
                 if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
-                    textRecognitionElements.root = &child;
-                    hadExistingTextRecognitionElements = true;
+                    elements.root = &child;
+                    hadExistingElements = true;
                     continue;
                 }
             }
         }
     }
 
-    if (textRecognitionElements.root) {
-        for (auto& lineOrDataDetector : childrenOfType<HTMLDivElement>(*textRecognitionElements.root)) {
+    if (elements.root) {
+        for (auto& lineOrDataDetector : childrenOfType<HTMLDivElement>(*elements.root)) {
             if (!lineOrDataDetector.hasClass())
                 continue;
 
-            if (lineOrDataDetector.classList().contains(imageOverlayLineClass)) {
-                TextRecognitionLineElements lineElements { lineOrDataDetector, { } };
+            if (lineOrDataDetector.classList().contains(imageOverlayLineClass())) {
+                LineElements lineElements { lineOrDataDetector, { } };
                 for (auto& text : childrenOfType<HTMLDivElement>(lineOrDataDetector))
                     lineElements.children.append(text);
-                textRecognitionElements.lines.append(WTFMove(lineElements));
+                elements.lines.append(WTFMove(lineElements));
             } else if (lineOrDataDetector.classList().contains(imageOverlayDataDetectorClassName()))
-                textRecognitionElements.dataDetectors.append(lineOrDataDetector);
+                elements.dataDetectors.append(lineOrDataDetector);
         }
 
-        bool canUseExistingTextRecognitionElements = ([&] {
-            if (result.dataDetectors.size() != textRecognitionElements.dataDetectors.size())
+        bool canUseExistingElements = ([&] {
+            if (result.dataDetectors.size() != elements.dataDetectors.size())
                 return false;
 
-            if (result.lines.size() != textRecognitionElements.lines.size())
+            if (result.lines.size() != elements.lines.size())
                 return false;
 
             for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
                 auto& childResults = result.lines[lineIndex].children;
-                auto& childTextElements = textRecognitionElements.lines[lineIndex].children;
+                auto& childTextElements = elements.lines[lineIndex].children;
                 if (childResults.size() != childTextElements.size())
                     return false;
 
@@ -251,18 +264,18 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             return true;
         })();
 
-        if (!canUseExistingTextRecognitionElements) {
-            textRecognitionElements.root->remove();
-            textRecognitionElements = { };
+        if (!canUseExistingElements) {
+            elements.root->remove();
+            elements = { };
         }
     }
 
     if (result.isEmpty())
-        return;
+        return { };
 
     Ref document = element.document();
     Ref shadowRoot = element.ensureUserAgentShadowRoot();
-    if (!textRecognitionElements.root) {
+    if (!elements.root) {
         auto rootContainer = HTMLDivElement::create(document.get());
         rootContainer->setIdAttribute(imageOverlayElementIdentifier());
         if (document->isImageDocument())
@@ -272,34 +285,34 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             mediaControlsContainer->appendChild(rootContainer);
         else
             shadowRoot->appendChild(rootContainer);
-        textRecognitionElements.root = rootContainer.copyRef();
-        textRecognitionElements.lines.reserveInitialCapacity(result.lines.size());
+        elements.root = rootContainer.copyRef();
+        elements.lines.reserveInitialCapacity(result.lines.size());
         for (auto& line : result.lines) {
             auto lineContainer = HTMLDivElement::create(document.get());
-            lineContainer->classList().add(imageOverlayLineClass);
+            lineContainer->classList().add(imageOverlayLineClass());
             rootContainer->appendChild(lineContainer);
-            TextRecognitionLineElements lineElements { lineContainer, { } };
+            LineElements lineElements { lineContainer, { } };
             lineElements.children.reserveInitialCapacity(line.children.size());
             for (size_t childIndex = 0; childIndex < line.children.size(); ++childIndex) {
                 auto& child = line.children[childIndex];
                 auto textContainer = HTMLDivElement::create(document.get());
-                textContainer->classList().add(imageOverlayTextClass);
+                textContainer->classList().add(imageOverlayTextClass());
                 lineContainer->appendChild(textContainer);
                 textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : child.text));
                 lineElements.children.uncheckedAppend(WTFMove(textContainer));
             }
 
             lineContainer->appendChild(HTMLBRElement::create(document.get()));
-            textRecognitionElements.lines.uncheckedAppend(WTFMove(lineElements));
+            elements.lines.uncheckedAppend(WTFMove(lineElements));
         }
 
 #if ENABLE(DATA_DETECTION)
-        textRecognitionElements.dataDetectors.reserveInitialCapacity(result.dataDetectors.size());
+        elements.dataDetectors.reserveInitialCapacity(result.dataDetectors.size());
         for (auto& dataDetector : result.dataDetectors) {
             auto dataDetectorContainer = DataDetection::createElementForImageOverlay(document.get(), dataDetector);
             dataDetectorContainer->classList().add(imageOverlayDataDetectorClassName());
             rootContainer->appendChild(dataDetectorContainer);
-            textRecognitionElements.dataDetectors.uncheckedAppend(WTFMove(dataDetectorContainer));
+            elements.dataDetectors.uncheckedAppend(WTFMove(dataDetectorContainer));
         }
 #endif // ENABLE(DATA_DETECTION)
 
@@ -307,13 +320,23 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             element.setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
     }
 
-    if (!hadExistingTextRecognitionElements) {
+    if (!hadExistingElements) {
         static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
         auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
         style->setTextContent(shadowStyle);
         shadowRoot->appendChild(WTFMove(style));
     }
 
+    return elements;
+}
+
+void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognitionResult& result, CacheTextRecognitionResults cacheTextRecognitionResults)
+{
+    auto elements = updateSubtree(element, result);
+    if (!elements.root)
+        return;
+
+    Ref document = element.document();
     document->updateLayoutIgnorePendingStylesheets();
 
     auto* renderer = element.renderer();
@@ -332,7 +355,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
     bool applyUserSelectAll = document->isImageDocument() || renderer->style().userSelect() != UserSelect::None;
     for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
-        auto& lineElements = textRecognitionElements.lines[lineIndex];
+        auto& lineElements = elements.lines[lineIndex];
         auto& lineContainer = lineElements.line;
         auto& line = result.lines[lineIndex];
         auto lineQuad = convertToContainerCoordinates(line.normalizedQuad);
@@ -423,7 +446,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
 #if ENABLE(DATA_DETECTION)
     for (size_t index = 0; index < result.dataDetectors.size(); ++index) {
-        auto dataDetectorContainer = textRecognitionElements.dataDetectors[index];
+        auto dataDetectorContainer = elements.dataDetectors[index];
         auto& dataDetector = result.dataDetectors[index];
         if (dataDetector.normalizedQuads.isEmpty())
             continue;
