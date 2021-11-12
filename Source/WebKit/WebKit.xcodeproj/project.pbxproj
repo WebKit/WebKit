@@ -3788,7 +3788,7 @@
 		46809A7B23D9225300C297D0 /* WebCookieCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieCache.cpp; sourceTree = "<group>"; };
 		4683569A21E81CC7006E27A3 /* ProvisionalPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProvisionalPageProxy.h; sourceTree = "<group>"; };
 		4683569B21E81CC7006E27A3 /* ProvisionalPageProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProvisionalPageProxy.cpp; sourceTree = "<group>"; };
-		469DE802273ECC5D00930276 /* ProcessLauncherDarwin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessLauncherDarwin.mm; sourceTree = "<group>"; };
+		469DE802273ECC5D00930276 /* ProcessLauncherCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessLauncherCocoa.mm; sourceTree = "<group>"; };
 		46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundProcessResponsivenessTimer.cpp; sourceTree = "<group>"; };
 		46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundProcessResponsivenessTimer.h; sourceTree = "<group>"; };
 		46AC532425DED81E003B57EC /* GPUProcessConnectionParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessConnectionParameters.h; sourceTree = "<group>"; };
@@ -8417,12 +8417,12 @@
 			path = cocoa;
 			sourceTree = "<group>";
 		};
-		469DE801273ECC5D00930276 /* darwin */ = {
+		469DE801273ECC5D00930276 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				469DE802273ECC5D00930276 /* ProcessLauncherDarwin.mm */,
+				469DE802273ECC5D00930276 /* ProcessLauncherCocoa.mm */,
 			);
-			path = darwin;
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		4A410F4119AF7B27002EBAB5 /* MediaStream */ = {
@@ -10434,7 +10434,7 @@
 		BC111B18112F5FB400337BAB /* Launcher */ = {
 			isa = PBXGroup;
 			children = (
-				469DE801273ECC5D00930276 /* darwin */,
+				469DE801273ECC5D00930276 /* cocoa */,
 				1AE117F511DBB30900981615 /* ProcessLauncher.cpp */,
 				BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */,
 			);

@@ -1,3 +1,26 @@
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Rename ProcessLauncherMac.mm to ProcessLauncherCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=233045
+        <rdar://problem/85347107>
+
+        Reviewed by Brent Fulgham.
+
+        Follow-up to r285729 to rename to ProcessLauncherCocoa.mm instead of ProcessLauncherDarwin.mm
+        given that the implementation is using NSBundle.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm: Renamed from Source/WebKit/UIProcess/Launcher/darwin/ProcessLauncherDarwin.mm.
+        (WebKit::serviceName):
+        (WebKit::shouldLeakBoost):
+        (WebKit::systemDirectoryPath):
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::terminateProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+        (WebKit::ProcessLauncher::terminateXPCConnection):
+        (WebKit::terminateWithReason):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-11-12  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r285698): Build correction after refactoring id handling
