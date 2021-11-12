@@ -95,6 +95,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
 
         auto displayBoxRect = [&] {
             auto logicalRect = InlineRect { };
+            auto marginStart = std::optional<LayoutUnit> { };
 
             if (lineRun.isText() || lineRun.isSoftLineBreak())
                 logicalRect = lineBox.logicalRectForTextRun(lineRun);
@@ -102,6 +103,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                 logicalRect = lineBox.logicalRectForLineBreakBox(layoutBox);
             else {
                 auto& boxGeometry = formattingState.boxGeometry(layoutBox);
+                marginStart = boxGeometry.marginStart();
                 if (lineRun.isBox())
                     logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
                 else if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
@@ -119,13 +121,13 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             // Certain css properties (e.g. word-spacing) may introduce a gap between runs.
             auto distanceFromLogicalPreviousRun = logicalPreviousRun ? lineRun.logicalLeft() - logicalPreviousRun->logicalRight() : lineRun.logicalLeft();
             auto visualOrderRect = logicalRect;
-            auto contentLeft = contentRightInVisualOrder + distanceFromLogicalPreviousRun;
+            auto contentLeft = contentRightInVisualOrder + distanceFromLogicalPreviousRun + marginStart.value_or(0);
             visualOrderRect.setLeft(contentLeft);
             // The inline box right edge includes its content as well as the inline box end (padding-right etc).
             // What we need here is the inline box start run's width.
-            contentRightInVisualOrder = lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()
-                ? visualOrderRect.left() + lineRun.logicalWidth()
-                : visualOrderRect.right();
+            // Note that content width does not refer to content _box_ here (it does include padding and border for inline level boxes).
+            auto contentWidth = lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart() ? lineRun.logicalWidth() - *marginStart : logicalRect.width();
+            contentRightInVisualOrder = visualOrderRect.left() + contentWidth;
             return visualOrderRect;
         };
 
