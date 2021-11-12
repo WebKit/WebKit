@@ -322,7 +322,7 @@ void ProcessLauncher::launchProcess()
 void ProcessLauncher::terminateProcess()
 {
     if (m_isLaunching) {
-        invalidate();
+        terminateXPCConnection();
         return;
     }
 
@@ -334,6 +334,11 @@ void ProcessLauncher::terminateProcess()
 }
     
 void ProcessLauncher::platformInvalidate()
+{
+    terminateXPCConnection();
+}
+
+void ProcessLauncher::terminateXPCConnection()
 {
     if (!m_xpcConnection)
         return;

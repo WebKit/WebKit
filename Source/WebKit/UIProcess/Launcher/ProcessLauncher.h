@@ -122,6 +122,10 @@ private:
 
     void platformInvalidate();
 
+#if PLATFORM(COCOA)
+    void terminateXPCConnection();
+#endif
+
     Client* m_client;
 
 #if PLATFORM(COCOA)

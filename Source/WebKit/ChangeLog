@@ -1,5 +1,38 @@
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
+        WebKit is unable to recover if a WebProcess gets terminated while it is launching
+        https://bugs.webkit.org/show_bug.cgi?id=233001
+        <rdar://85302938>
+
+        Reviewed by Brent Fulgham.
+
+        While investigating <rdar://83941760>, I found that the WebAuthn Process would get
+        jetsammed, which would cause us to call WebProcessPool::terminateAllWebContentProcesses().
+        I also noticed that if one of these WebProcesses was still launching at the time
+        of the termination, then the WebProcessProxy / WebPageProxy would keep thinking the
+        WebProcess is still launching and would never attempt to relaunch it. This would result
+        in a blank and unresponsive WKWebView which wouldn't be able to do any loads.
+
+        The issue was due to ProcessLauncher::terminateProcess() calling invalidate(), which
+        it would not only terminate the XPC connection, it would also null out m_client. As a
+        result, we wouldn't notify the client that the process failed to launch. To address
+        the issue, I move the XPC connection termination logic out of invalidate() and into
+        its own terminateXPCConnection() function. I then called terminateXPCConnection()
+        instead of invalidate() inside ProcessLauncher::terminateProcess().
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateAllWebContentProcesses]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::invalidate):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::terminateProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+        (WebKit::ProcessLauncher::terminateXPCConnection):
+
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
         Disable getUserMedia() when in Captive Portal Mode
         https://bugs.webkit.org/show_bug.cgi?id=233021
 

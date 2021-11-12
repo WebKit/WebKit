@@ -61,7 +61,7 @@ void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC
 
 void ProcessLauncher::invalidate()
 {
-    m_client = 0;
+    m_client = nullptr;
     platformInvalidate();
 }
 

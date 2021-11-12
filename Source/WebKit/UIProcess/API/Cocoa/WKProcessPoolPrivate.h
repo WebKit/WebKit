@@ -98,6 +98,8 @@
 // Test only.
 - (pid_t)_prewarmedProcessIdentifier WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
+- (void)_terminateAllWebContentProcesses;
+
 // Test only.
 - (size_t)_webProcessCount WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (BOOL)_hasPrewarmedWebProcess WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
