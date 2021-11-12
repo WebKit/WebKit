@@ -57,6 +57,7 @@ AbortSignal::AbortSignal(ScriptExecutionContext& context, Aborted aborted, JSC::
     , m_aborted(aborted == Aborted::Yes)
     , m_reason(reason)
 {
+    ASSERT(reason);
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-signal-abort

@@ -64,7 +64,7 @@ public:
 
 private:
     enum class Aborted : bool { No, Yes };
-    explicit AbortSignal(ScriptExecutionContext&, Aborted = Aborted::No, JSC::JSValue reason = { });
+    explicit AbortSignal(ScriptExecutionContext&, Aborted = Aborted::No, JSC::JSValue reason = JSC::jsUndefined());
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return AbortSignalEventTargetInterfaceType; }

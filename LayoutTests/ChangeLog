@@ -1,3 +1,16 @@
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Crash when accessing reason property of a newly created AbortSignal
+        https://bugs.webkit.org/show_bug.cgi?id=233066
+        <rdar://problem/85249306>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/dom/AbortSignal-reason-crash-expected.txt: Added.
+        * fast/dom/AbortSignal-reason-crash.html: Added.
+
 2021-11-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r285583.
