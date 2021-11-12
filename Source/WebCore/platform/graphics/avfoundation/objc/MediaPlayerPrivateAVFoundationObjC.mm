@@ -2563,31 +2563,21 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
 {
     if (m_waitForVideoOutputMediaDataWillChangeTimedOut)
         return;
+    [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
 
     // Wait for 1 second.
     MonotonicTime start = MonotonicTime::now();
 
-    std::optional<RunLoop::Timer<MediaPlayerPrivateAVFoundationObjC>> timeoutTimer;
-
-    if (!m_runLoopNestingLevel) {
-        [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
-
-        timeoutTimer.emplace(RunLoop::main(), [&] {
-            RunLoop::main().stop();
-        });
-        timeoutTimer->startOneShot(1_s);
-    }
-
-    ++m_runLoopNestingLevel;
-    RunLoop::run();
-    --m_runLoopNestingLevel;
-
-    if (m_runLoopNestingLevel) {
+    RunLoop::Timer<MediaPlayerPrivateAVFoundationObjC> timeoutTimer { RunLoop::main(), [] {
         RunLoop::main().stop();
-        return;
-    }
+    } };
+    timeoutTimer.startOneShot(1_s);
 
-    bool satisfied = timeoutTimer->isActive();
+    m_runningModalPaint = true;
+    RunLoop::run();
+    m_runningModalPaint = false;
+
+    bool satisfied = timeoutTimer.isActive();
     if (!satisfied) {
         ERROR_LOG(LOGIDENTIFIER, "timed out");
         m_waitForVideoOutputMediaDataWillChangeTimedOut = true;
@@ -2597,7 +2587,7 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
 
 void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()
 {
-    if (m_runLoopNestingLevel)
+    if (m_runningModalPaint)
         RunLoop::main().stop();
 }
 
