@@ -360,7 +360,7 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform, co
         action.queryTransform = *parsedQueryTransform;
     } else
         action.queryTransform = transform.getString("query");
-    return WTFMove(action);
+    return action;
 }
 
 auto RedirectAction::URLTransformAction::isolatedCopy() const -> URLTransformAction
@@ -553,7 +553,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
         parsedQueryTransform.addOrReplaceParams = WTFMove(keyValues);
     }
 
-    return WTFMove(parsedQueryTransform);
+    return parsedQueryTransform;
 }
 
 auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() const -> QueryTransform

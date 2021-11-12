@@ -47,6 +47,7 @@ static double blendScaleComponent(double from, double to, const BlendingContext&
         ASSERT(context.progress == 1.0);
         return from + to - 1;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 Ref<TransformOperation> ScaleTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)

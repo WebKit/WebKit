@@ -47,6 +47,7 @@ inline CascadeLevel& operator--(CascadeLevel& level)
         ASSERT_NOT_REACHED();
         return level;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 }
