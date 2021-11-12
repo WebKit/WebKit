@@ -1518,7 +1518,5 @@ webkit.org/b/232585 [ Catalina Debug ] media/track/track-element-load-event.html
 
 webkit.org/b/233008 [ Debug ] http/tests/css/filters-on-iframes-transform.html [ Skip ]
 
-webkit.org/b/233043 fast/dom/Geolocation/cached-position-iframe.html [ Skip ]
-
 # DumpRenderTree doesn't invoke inspector instrumentation when repainting.
 webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]
