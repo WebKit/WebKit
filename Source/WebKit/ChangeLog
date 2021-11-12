@@ -1,5 +1,17 @@
 2021-11-12  Per Arne Vollan <pvollan@apple.com>
 
+        [macOS][GPUP] Remove sandbox write access to files
+        https://bugs.webkit.org/show_bug.cgi?id=232247
+        <rdar://problem/84620023>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, remove sandbox write access to files in the GPU process on macOS.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
+2021-11-12  Per Arne Vollan <pvollan@apple.com>
+
         [iOS][GPU] Remove access to IOKit classes
         https://bugs.webkit.org/show_bug.cgi?id=232344
         <rdar://problem/84684751>
