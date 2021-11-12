@@ -21,6 +21,11 @@ if (ENABLE_XSLT)
 endif ()
 
 # Optional packages
+find_package(LCMS2)
+if (LCMS2_FOUND)
+    SET_AND_EXPOSE_TO_BUILD(USE_LCMS ON)
+endif ()
+
 find_package(OpenJPEG 2.3.1)
 if (OpenJPEG_FOUND)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENJPEG ON)

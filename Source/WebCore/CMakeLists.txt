@@ -1936,6 +1936,10 @@ if (ENABLE_USER_MESSAGE_HANDLERS)
     )
 endif ()
 
+if (USE_LCMS)
+    list(APPEND WebCore_LIBRARIES LCMS2::LCMS2)
+endif ()
+
 if (USE_WOFF2)
   list(APPEND WebCore_LIBRARIES WOFF2::dec)
 endif ()

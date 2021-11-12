@@ -103,12 +103,6 @@ list(APPEND WebCore_LIBRARIES
     GTK::GTK
 )
 
-if (USE_LCMS)
-    list(APPEND WebCore_LIBRARIES
-        LCMS2::LCMS2
-    )
-endif ()
-
 if (USE_WPE_RENDERER)
     list(APPEND WebCore_LIBRARIES
         WPE::libwpe
