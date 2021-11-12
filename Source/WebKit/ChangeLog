@@ -1,3 +1,16 @@
+2021-11-11  Per Arne Vollan <pvollan@apple.com>
+
+        [macOS][GPUP] Remove access to mach services in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=232208
+        <rdar://problem/84584565>
+
+        Reviewed by Darin Adler.
+
+        Remove access to mach services in the GPU process on macOS based on telemetry
+        and similar changes previously made in the WebContent process' sandbox.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-11  Brent Fulgham  <bfulgham@apple.com>
 
         [WebAuthn] Stop serializing BufferSource and Vector<uint8_t> duplicates of identifiers

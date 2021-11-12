@@ -102,9 +102,6 @@
     (allow user-preference-read
         (preference-domain "com.apple.opengl")
         (preference-domain "com.nvidia.OpenGL"))
-    ;; CVMS
-    (allow mach-lookup (with telemetry)
-        (global-name "com.apple.cvmsServ"))
     (allow file-read* (with telemetry)
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
     ;; OpenCL
@@ -494,11 +491,9 @@
 
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup (with telemetry)
-    (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
     (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.coremedia.videodecoder")
     (xpc-service-name "com.apple.coremedia.videoencoder")
-    (xpc-service-name "com.apple.hiservices-xpcservice")
 )
 
 (allow mach-lookup (with telemetry)
@@ -674,20 +669,13 @@
        (global-name "com.apple.logd.events"))
 
 (allow mach-lookup (with telemetry)
-       (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.assertiond.processassertionconnection")
-       (global-name "com.apple.audio.toolbox.reporting.service")
-       (global-name "com.apple.audio.SystemSoundServer-OSX")
 #if !ENABLE(CFPREFS_DIRECT_MODE)
        (global-name "com.apple.cfprefsd.daemon")
 #endif
-       (global-name "com.apple.coreservices.launchservicesd")
        (global-name "com.apple.mediaremoted.xpc")
        (global-name "com.apple.logd")
        (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>
-       (global-name "com.apple.tccd")
-       (global-name "com.apple.tccd.system")
-)
+       (global-name "com.apple.tccd"))
 
 ;; <rdar://problem/47268166>
 (allow mach-lookup (with telemetry) (xpc-service-name "com.apple.MTLCompilerService"))
@@ -700,8 +688,7 @@
 
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
 (allow mach-lookup (with telemetry)
-    (global-name "com.apple.SecurityServer")
-    (global-name "com.apple.ocspd"))
+    (global-name "com.apple.SecurityServer"))
 
 (allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
@@ -716,12 +703,10 @@
     (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
-(allow mach-lookup (with telemetry)
-    (global-name-prefix "com.apple.distributed_notifications")
 #if !HAVE(CSCHECKFIXDISABLE)
-    (global-name "com.apple.CoreServices.coreservicesd")
+(allow mach-lookup (with telemetry)
+    (global-name "com.apple.CoreServices.coreservicesd"))
 #endif
-)
 
 (allow system-fsctl (with telemetry) (fsctl-command (_IO "h" 47)))
 
@@ -747,9 +732,6 @@
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 
 #if PLATFORM(MAC)
-;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
-(allow mach-lookup
-       (global-name "com.apple.system.logger"))
 (allow mach-lookup (with telemetry)
        (global-name "com.apple.system.notification_center"))
 #endif
