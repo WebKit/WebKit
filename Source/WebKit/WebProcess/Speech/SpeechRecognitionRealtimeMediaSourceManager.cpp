@@ -63,7 +63,7 @@ public:
         , m_source(WTFMove(source))
         , m_connection(WTFMove(connection))
 #if PLATFORM(COCOA)
-        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&Source::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
+        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&Source::storageChanged, this, std::placeholders::_1)))
 #endif
     {
         m_source->addObserver(*this);
@@ -113,7 +113,9 @@ private:
         if (m_description != description) {
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
             m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
-            m_ringBuffer.allocate(m_description.streamDescription(), m_description.sampleRate() * 2);
+
+            m_numberOfFrames = m_description.sampleRate() * 2;
+            m_ringBuffer.allocate(m_description.streamDescription(), m_numberOfFrames);
         }
 
         ASSERT(is<WebAudioBufferList>(audioData));
@@ -129,7 +131,7 @@ private:
 
 #if PLATFORM(COCOA)
 
-    void storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& description, size_t numberOfFrames)
+    void storageChanged(SharedMemory* storage)
     {
         DisableMallocRestrictionsForCurrentThreadScope scope;
         SharedMemory::Handle handle;
@@ -140,7 +142,7 @@ private:
 #else
         uint64_t dataSize = 0;
 #endif
-        m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, description, numberOfFrames), 0);
+        m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, m_description, m_numberOfFrames), 0);
     }
 
 #endif
@@ -160,6 +162,7 @@ private:
     Ref<IPC::Connection> m_connection;
 
 #if PLATFORM(COCOA)
+    uint64_t m_numberOfFrames { 0 };
     CARingBuffer m_ringBuffer;
     CAAudioStreamDescription m_description { };
 #endif
