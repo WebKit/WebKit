@@ -1,3 +1,39 @@
+2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r285554. rdar://problem/83770133
+
+    Unreviewed test gardening, skip failing test.
+    https://bugs.webkit.org/show_bug.cgi?id=231084
+    rdar://problem/83770133
+    
+    Bug 230210 caused a progression on how we would detect stall during playback.
+    This exposed an issue with the existing test where it could fail differently
+    if a temporary stall occurred.
+    This test can't pass as we do not support change of resolution mid-stream
+    in plain mp4 playback (see bug 232916)
+    
+    Patch by Jean-Yves Avenard <jyavenard@gmail.com> on 2021-11-09
+    
+    * platform/ios-simulator-wk2/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285554 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-09  Jean-Yves Avenard  <jyavenard@gmail.com>
+
+            Unreviewed test gardening, skip failing test.
+            https://bugs.webkit.org/show_bug.cgi?id=231084
+            rdar://problem/83770133
+
+            Bug 230210 caused a progression on how we would detect stall during playback.
+            This exposed an issue with the existing test where it could fail differently
+            if a temporary stall occurred.
+            This test can't pass as we do not support change of resolution mid-stream
+            in plain mp4 playback (see bug 232916)
+
+            * platform/ios-simulator-wk2/TestExpectations:
+            * platform/mac/TestExpectations:
+
 2021-11-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r285417. rdar://problem/85181578

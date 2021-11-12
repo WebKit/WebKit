@@ -101,7 +101,8 @@ webkit.org/b/214739 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/ge
 
 webkit.org/b/214751 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
 
-webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Pass Failure ]
+# See bug 232916; this test can't pass as we do not support mid-stream resolution change.
+webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Skip ]
 
 webkit.org/b/214755 http/tests/navigation/subframe-pagehide-handler-starts-load2.html [ Pass Timeout ]
 
