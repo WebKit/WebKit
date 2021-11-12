@@ -1,3 +1,36 @@
+2021-11-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebAuthn] Stop serializing BufferSource and Vector<uint8_t> duplicates of identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=233011
+        <rdar://problem/85313807>
+
+        Reviewed by Chris Dumez.
+
+        The original WebAuthn logic converted WebCore::BufferSource objects to Vector<uint8_t>
+        during serialization, which created a weird design where some code dealt with BufferSource
+        objects, and other with Vectors, and lots of converting to and from these types. It also caused
+        WebAuthn data structures to have two places where this information might live, with the
+        UIProcess using one representation, and the WebContent process using another.
+
+        This patch revises the code as follows:
+
+        1. The identifiers are always stored as BufferSource, and the same member is used in UIProcess
+           and WebContent process when accessing this information.
+        2. We now serialize BufferSource directly.
+
+        Tested by existing WebAuthn test cases (API and Layout tests)
+
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::getTestCredentialRawIdBytes):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/U2fCommandConstructorTest.cpp:
+        (TestWebKitAPI::constructMakeCredentialRequest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-11-11  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crash in LayoutTests in isolated tree mode.

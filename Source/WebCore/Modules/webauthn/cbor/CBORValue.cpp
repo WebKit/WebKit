@@ -1,5 +1,5 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -32,6 +32,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "BufferSource.h"
 #include <new>
 #include <utility>
 
@@ -97,6 +98,12 @@ CBORValue::CBORValue(const BinaryValue& inBytes)
 CBORValue::CBORValue(BinaryValue&& inBytes)
     : m_type(Type::ByteString)
     , m_byteStringValue(WTFMove(inBytes))
+{
+}
+
+CBORValue::CBORValue(const WebCore::BufferSource& bufferSource)
+    : m_type(Type::ByteString)
+    , m_byteStringValue(bufferSource.data(), bufferSource.length())
 {
 }
 

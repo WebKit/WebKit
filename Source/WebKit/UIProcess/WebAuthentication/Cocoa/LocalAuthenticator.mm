@@ -84,8 +84,8 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
 {
     HashSet<String> result;
     for (auto& credentialDescriptor : credentialDescriptors) {
-        if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal) && credentialDescriptor.type == PublicKeyCredentialType::PublicKey && credentialDescriptor.idVector.size() == credentialIdLength)
-            result.add(base64EncodeToString(credentialDescriptor.idVector.data(), credentialDescriptor.idVector.size()));
+        if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal) && credentialDescriptor.type == PublicKeyCredentialType::PublicKey && credentialDescriptor.id.length() == credentialIdLength)
+            result.add(base64EncodeToString(credentialDescriptor.id.data(), credentialDescriptor.id.length()));
     }
     return result;
 }
@@ -353,7 +353,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     const auto& secAttrLabel = creationOptions.rp.id;
 
     cbor::CBORValue::MapValue userEntityMap;
-    userEntityMap[cbor::CBORValue(fido::kEntityIdMapKey)] = cbor::CBORValue(creationOptions.user.idVector);
+    userEntityMap[cbor::CBORValue(fido::kEntityIdMapKey)] = cbor::CBORValue(creationOptions.user.id);
     userEntityMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(creationOptions.user.name);
     auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(userEntityMap)));
     ASSERT(userEntity);
@@ -686,9 +686,9 @@ void LocalAuthenticator::deleteDuplicateCredential() const
     m_existingCredentials.findMatching([creationOptions] (auto& credential) {
         auto* userHandle = credential->userHandle();
         ASSERT(userHandle);
-        if (userHandle->byteLength() != creationOptions.user.idVector.size())
+        if (userHandle->byteLength() != creationOptions.user.id.length())
             return false;
-        if (memcmp(userHandle->data(), creationOptions.user.idVector.data(), userHandle->byteLength()))
+        if (memcmp(userHandle->data(), creationOptions.user.id.data(), userHandle->byteLength()))
             return false;
 
         auto query = adoptNS([[NSMutableDictionary alloc] init]);

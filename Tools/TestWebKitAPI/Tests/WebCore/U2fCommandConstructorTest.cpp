@@ -1,5 +1,5 @@
 // Copyright 2018 The Chromium Authors. All rights reserved.
-// Copyright (C) 2019 Apple Inc. All rights reserved.
+// Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -50,7 +50,7 @@ PublicKeyCredentialCreationOptions constructMakeCredentialRequest()
     rp.name = "acme.com";
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.idVector = convertBytesToVector(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
     user.name = "johnpsmith@example.com";
     user.displayName = "John P. Smith";
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
@@ -112,7 +112,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySign)
     auto makeCredentialParam = constructMakeCredentialRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.idVector = convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
     Vector<PublicKeyCredentialDescriptor> excludeList;
     excludeList.append(credentialDescriptor);
     makeCredentialParam.excludeCredentials = WTFMove(excludeList);
@@ -128,7 +128,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySignW
     auto makeCredentialParam = constructMakeCredentialRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = static_cast<PublicKeyCredentialType>(-1);
-    credentialDescriptor.idVector = convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
     Vector<PublicKeyCredentialDescriptor> excludeList;
     excludeList.append(credentialDescriptor);
     makeCredentialParam.excludeCredentials = WTFMove(excludeList);
@@ -145,7 +145,7 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterCredentialAlgorithmRequirement)
     rp.name = "acme.com";
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.idVector = convertBytesToVector(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
     user.name = "johnpsmith@example.com";
     user.displayName = "John P. Smith";
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
@@ -187,13 +187,13 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionToU2fSignRequest)
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.idVector = convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
     EXPECT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
 
-    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)));
+    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)));
     ASSERT_TRUE(u2fSignCommand);
     EXPECT_EQ(*u2fSignCommand, convertBytesToVector(TestData::kU2fSignCommandApdu, sizeof(TestData::kU2fSignCommandApdu)));
 }
@@ -203,7 +203,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignReq
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.idVector = convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
@@ -214,7 +214,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignReq
     extensions.appid = "https://www.example.com/appid";
     getAssertionReq.extensions = WTFMove(extensions);
 
-    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), true);
+    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), true);
     ASSERT_TRUE(u2fSignCommand);
     EXPECT_EQ(*u2fSignCommand, convertBytesToVector(TestData::kU2fAppIDSignCommandApdu, sizeof(TestData::kU2fAppIDSignCommandApdu)));
 }
@@ -230,7 +230,7 @@ TEST(U2fCommandConstructorTest, TestU2fSignUserVerificationRequirement)
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.idVector = convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
@@ -244,18 +244,18 @@ TEST(U2fCommandConstructorTest, TestCreateSignWithIncorrectKeyHandle)
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.idVector = convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
     ASSERT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
 
     Vector<uint8_t> keyHandle(kMaxKeyHandleLength, 0xff);
-    const auto validSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, keyHandle);
+    const auto validSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(keyHandle.data(), keyHandle.size()));
     EXPECT_TRUE(validSignCommand);
 
     keyHandle.append(0xff);
-    const auto invalidSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, keyHandle);
+    const auto invalidSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(keyHandle.data(), keyHandle.size()));
     EXPECT_FALSE(invalidSignCommand);
 }
 

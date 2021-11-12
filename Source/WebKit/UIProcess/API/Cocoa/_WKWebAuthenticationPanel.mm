@@ -389,7 +389,7 @@ static WebCore::PublicKeyCredentialCreationOptions::UserEntity publicKeyCredenti
     WebCore::PublicKeyCredentialCreationOptions::UserEntity result;
     result.name = userEntity.name;
     result.icon = userEntity.icon;
-    result.idVector = vectorFromNSData(userEntity.identifier);
+    result.id = WebCore::toBufferSource(userEntity.identifier);
     result.displayName = userEntity.displayName;
 
     return result;
@@ -438,7 +438,7 @@ static Vector<WebCore::PublicKeyCredentialDescriptor> publicKeyCredentialDescrip
     result.reserveInitialCapacity(credentials.count);
 
     for (_WKPublicKeyCredentialDescriptor *credential : credentials)
-        result.uncheckedAppend({ WebCore::PublicKeyCredentialType::PublicKey, { }, vectorFromNSData(credential.identifier), authenticatorTransports(credential.transports) });
+        result.uncheckedAppend({ WebCore::PublicKeyCredentialType::PublicKey, WebCore::toBufferSource(credential.identifier), authenticatorTransports(credential.transports) });
 
     return result;
 }

@@ -104,7 +104,7 @@ void U2fAuthenticator::issueSignCommand(size_t index)
         receiveRespond(ExceptionData { NotAllowedError, "No credentials from the allowCredentials list is found in the authenticator."_s });
         return;
     }
-    auto u2fCmd = convertToU2fSignCommand(requestData().hash, requestOptions, requestOptions.allowCredentials[index].idVector, m_isAppId);
+    auto u2fCmd = convertToU2fSignCommand(requestData().hash, requestOptions, requestOptions.allowCredentials[index].id, m_isAppId);
     ASSERT(u2fCmd);
     issueNewCommand(WTFMove(*u2fCmd), CommandType::SignCommand);
 }
@@ -209,9 +209,9 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
         RefPtr<AuthenticatorAssertionResponse> response;
         if (m_isAppId) {
             ASSERT(requestOptions.extensions && !requestOptions.extensions->appid.isNull());
-            response = readU2fSignResponse(requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
+            response = readU2fSignResponse(requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         } else
-            response = readU2fSignResponse(requestOptions.rpId, requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
+            response = readU2fSignResponse(requestOptions.rpId, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         if (!response) {
             receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F sign response."_s });
             return;

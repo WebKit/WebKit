@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,15 +38,13 @@ namespace WebCore {
 
 struct PublicKeyCredentialRequestOptions {
 #if ENABLE(WEB_AUTHN)
-    BufferSource challenge; // challenge becomes challengeVector once it is passed to UIProcess.
+    BufferSource challenge;
     std::optional<unsigned> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
     std::optional<AuthenticatorAttachment> authenticatorAttachment;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
-
-    Vector<uint8_t> challengeVector;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
@@ -91,7 +89,7 @@ std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptio
         return std::nullopt;
     result.extensions = WTFMove(*extensions);
 
-    if (!decoder.decode(result.challengeVector))
+    if (!decoder.decode(result.challenge))
         return std::nullopt;
 
     return result;

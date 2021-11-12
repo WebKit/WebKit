@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1623,8 +1623,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimun)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
-    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 1lu);
@@ -1667,8 +1667,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
-    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
@@ -1681,8 +1681,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
     EXPECT_EQ(result.excludeCredentials.size(), 1lu);
     EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.excludeCredentials[0].idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.excludeCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
 
     EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, std::nullopt);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, false);
@@ -1734,8 +1734,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
@@ -1748,8 +1748,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 
     EXPECT_EQ(result.excludeCredentials.size(), 2lu);
     EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.excludeCredentials[0].idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.excludeCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_EQ(result.excludeCredentials[0].transports.size(), 3lu);
     EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
     EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
@@ -1804,8 +1804,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
@@ -1818,8 +1818,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
 
     EXPECT_EQ(result.excludeCredentials.size(), 2lu);
     EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.excludeCredentials[0].idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.excludeCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_EQ(result.excludeCredentials[0].transports.size(), 3lu);
     EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
     EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
@@ -1931,8 +1931,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)
 
     EXPECT_EQ(result.allowCredentials.size(), 1lu);
     EXPECT_EQ(result.allowCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.allowCredentials[0].idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.allowCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.allowCredentials[0].id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.allowCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
 
     EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
     EXPECT_TRUE(result.extensions->appid.isNull());
@@ -1965,8 +1965,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
 
     EXPECT_EQ(result.allowCredentials.size(), 2lu);
     EXPECT_EQ(result.allowCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.allowCredentials[0].idVector.size(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.allowCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.allowCredentials[0].id.length(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.allowCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_EQ(result.allowCredentials[0].transports.size(), 3lu);
     EXPECT_EQ(result.allowCredentials[0].transports[0], AuthenticatorTransport::Usb);
     EXPECT_EQ(result.allowCredentials[0].transports[1], AuthenticatorTransport::Nfc);

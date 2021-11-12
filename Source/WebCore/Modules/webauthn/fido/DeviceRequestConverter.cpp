@@ -1,5 +1,5 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -61,7 +61,7 @@ static CBORValue convertUserEntityToCBOR(const PublicKeyCredentialCreationOption
     userMap.emplace(CBORValue(kEntityNameMapKey), CBORValue(userEntity.name));
     if (!userEntity.icon.isEmpty())
         userMap.emplace(CBORValue(kIconUrlMapKey), CBORValue(userEntity.icon));
-    userMap.emplace(CBORValue(kEntityIdMapKey), CBORValue(userEntity.idVector));
+    userMap.emplace(CBORValue(kEntityIdMapKey), CBORValue(userEntity.id));
     userMap.emplace(CBORValue(kDisplayNameMapKey), CBORValue(userEntity.displayName));
     return CBORValue(WTFMove(userMap));
 }
@@ -83,7 +83,7 @@ static CBORValue convertDescriptorToCBOR(const PublicKeyCredentialDescriptor& de
 {
     CBORValue::MapValue cborDescriptorMap;
     cborDescriptorMap[CBORValue(kCredentialTypeKey)] = CBORValue(publicKeyCredentialTypeToString(descriptor.type));
-    cborDescriptorMap[CBORValue(kCredentialIdKey)] = CBORValue(descriptor.idVector);
+    cborDescriptorMap[CBORValue(kCredentialIdKey)] = CBORValue(descriptor.id);
     return CBORValue(WTFMove(cborDescriptorMap));
 }
 
