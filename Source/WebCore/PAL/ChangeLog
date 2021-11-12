@@ -1,3 +1,32 @@
+2021-11-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r285744. rdar://problem/85341122
+
+    Stop statically declaring various UIFoundation constants in NSAttributedStringSPI.h
+    https://bugs.webkit.org/show_bug.cgi?id=233064
+    rdar://85341122
+    
+    Reviewed by Tim Horton.
+    
+    Replace these static NSString definitions with soft-linked constants instead.
+    
+    * pal/spi/cocoa/NSAttributedStringSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285744 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Stop statically declaring various UIFoundation constants in NSAttributedStringSPI.h
+            https://bugs.webkit.org/show_bug.cgi?id=233064
+            rdar://85341122
+
+            Reviewed by Tim Horton.
+
+            Replace these static NSString definitions with soft-linked constants instead.
+
+            * pal/spi/cocoa/NSAttributedStringSPI.h:
+
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r284917.
