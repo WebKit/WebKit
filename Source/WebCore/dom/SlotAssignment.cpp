@@ -356,12 +356,13 @@ void SlotAssignment::assignSlots(ShadowRoot& shadowRoot)
     for (auto& entry : m_slots)
         entry.value->assignedNodes.shrink(0);
 
-    auto& host = *shadowRoot.host();
-    for (auto* child = host.firstChild(); child; child = child->nextSibling()) {
-        if (!is<Text>(*child) && !is<Element>(*child))
-            continue;
-        auto slotName = slotNameForHostChild(*child);
-        assignToSlot(*child, slotName);
+    if (auto* host = shadowRoot.host()) {
+        for (auto* child = host->firstChild(); child; child = child->nextSibling()) {
+            if (!is<Text>(*child) && !is<Element>(*child))
+                continue;
+            auto slotName = slotNameForHostChild(*child);
+            assignToSlot(*child, slotName);
+        }
     }
 
     for (auto& entry : m_slots)

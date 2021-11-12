@@ -1,0 +1,15 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    let div0 = document.createElement('div');
+    div0.appendChild(document.createElement('slot'));
+    div0.appendChild(document.createElement('slot'));
+    let div1 = document.createElement('div');
+    div1.attachShadow({mode: 'open'}).appendChild(div0);
+    div1.appendChild(document.createElement('div'));
+    div0.appendChild(document.createElement('div'));
+    window.GCController?.collect();
+    document.write("PASS");
+  };
+</script>
