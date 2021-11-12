@@ -35,6 +35,7 @@
 #import <AuthenticationServices/ASCOSEConstants.h>
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponseData.h>
+#import <WebCore/BufferSource.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <wtf/BlockPtr.h>
@@ -47,11 +48,6 @@ using namespace WebCore;
 static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
 {
     return ArrayBuffer::create(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
-}
-
-static inline RetainPtr<NSData> toNSData(const Vector<uint8_t> vector)
-{
-    return adoptNS([[NSData alloc] initWithBytes:vector.data() length:vector.size()]);
 }
 
 static inline RetainPtr<NSString> toNSString(UserVerificationRequirement userVerificationRequirement)
@@ -146,7 +142,7 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
         }
     }
 
-    return adoptNS([allocASCPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(descriptor.id).get() transports:transports.get()]);
+    return adoptNS([allocASCPublicKeyCredentialDescriptorInstance() initWithCredentialID:WebCore::toNSData(descriptor.id).get() transports:transports.get()]);
 }
 
 static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options)
@@ -173,10 +169,10 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
 
     auto credentialCreationOptions = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
 
-    [credentialCreationOptions setChallenge:toNSData(options.challenge).get()];
+    [credentialCreationOptions setChallenge:WebCore::toNSData(options.challenge).get()];
     [credentialCreationOptions setRelyingPartyIdentifier:options.rp.id];
     [credentialCreationOptions setUserName:options.user.name];
-    [credentialCreationOptions setUserIdentifier:toNSData(options.user.id.data()).get()];
+    [credentialCreationOptions setUserIdentifier:WebCore::toNSData(options.user.id).get()];
     [credentialCreationOptions setUserDisplayName:options.user.displayName];
     [credentialCreationOptions setUserVerificationPreference:userVerification.get()];
     [credentialCreationOptions setShouldRequireResidentKey:shouldRequireResidentKey];
@@ -231,7 +227,7 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
     [requestContext setRelyingPartyIdentifier:options.rpId];
 
-    auto challenge = toNSData(options.challenge);
+    auto challenge = WebCore::toNSData(options.challenge);
 
     if (requestTypes & ASCCredentialRequestTypePlatformPublicKeyAssertion)
         [requestContext setPlatformKeyCredentialAssertionOptions:[allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]];
