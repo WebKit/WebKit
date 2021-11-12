@@ -1,5 +1,27 @@
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
+        Rename ProcessLauncherMac.mm to ProcessLauncherDarwin.mm
+        https://bugs.webkit.org/show_bug.cgi?id=233045
+
+        Reviewed by Brent Fulgham.
+
+        Rename ProcessLauncherMac.mm to ProcessLauncherDarwin.mm since this implementation is used by both macOS and iOS.
+        I chose the Darwin naming (as opposed to the Cocoa one) because the implementation only relies on libXPC and mach.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Launcher/darwin/ProcessLauncherDarwin.mm: Renamed from Source/WebKit/UIProcess/Launcher/mac/ProcessLauncherMac.mm.
+        (WebKit::serviceName):
+        (WebKit::shouldLeakBoost):
+        (WebKit::systemDirectoryPath):
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::terminateProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+        (WebKit::ProcessLauncher::terminateXPCConnection):
+        (WebKit::terminateWithReason):
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, partial revert of r285565 to resolve a PLT5 regression.
         <rdar://85269156>
 

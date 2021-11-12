@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -165,7 +165,7 @@ void ProcessLauncher::launchProcess()
         xpc_dictionary_set_string(preBootstrapMessage.get(), "message-name", "pre-bootstrap");
         xpc_connection_send_message(m_xpcConnection.get(), preBootstrapMessage.get());
     }
-    
+
     // Create the listening port.
     mach_port_t listeningPort = MACH_PORT_NULL;
     auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -195,7 +195,7 @@ void ProcessLauncher::launchProcess()
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-    
+
     if (m_client) {
         if (m_client->shouldConfigureJSCForTesting())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "configure-jsc-for-testing", true);
@@ -233,7 +233,7 @@ void ProcessLauncher::launchProcess()
 
     auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
-        
+
         auto processLauncher = weakProcessLauncher.get();
         if (!processLauncher)
             return;
@@ -328,11 +328,11 @@ void ProcessLauncher::terminateProcess()
 
     if (!m_processIdentifier)
         return;
-    
+
     kill(m_processIdentifier, SIGKILL);
     m_processIdentifier = 0;
 }
-    
+
 void ProcessLauncher::platformInvalidate()
 {
     terminateXPCConnection();
