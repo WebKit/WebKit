@@ -846,7 +846,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
         return minContentForChild(child);
 
     const Length& childMinSize = isRowAxis ? child.style().logicalMinWidth() : child.style().logicalMinHeight();
-    bool overflowIsVisible = isRowAxis ? child.effectiveOverflowInlineDirection() == Overflow::Visible : child.effectiveOverflowBlockDirection() == Overflow::Visible;
+    bool overflowIsVisible = isRowAxis ? child.style().overflowInlineDirection() == Overflow::Visible : child.style().overflowBlockDirection() == Overflow::Visible;
     LayoutUnit baselineShim = m_algorithm.baselineOffsetForChild(child, gridAxisForDirection(direction()));
 
     if (childMinSize.isAuto() && overflowIsVisible) {

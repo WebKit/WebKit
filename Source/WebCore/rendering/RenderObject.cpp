@@ -1919,12 +1919,6 @@ void RenderObject::setHasOutlineAutoAncestor(bool hasOutlineAutoAncestor)
         ensureRareData().setHasOutlineAutoAncestor(hasOutlineAutoAncestor);
 }
 
-void RenderObject::setPaintContainmentApplies(bool paintContainmentApplies)
-{
-    if (paintContainmentApplies || hasRareData())
-        ensureRareData().setPaintContainmentApplies(paintContainmentApplies);
-}
-
 RenderObject::RareDataMap& RenderObject::rareDataMap()
 {
     static NeverDestroyed<RareDataMap> map;
@@ -2552,9 +2546,3 @@ bool WebCore::shouldApplyStyleContainment(const WebCore::RenderObject& renderer)
         return false;
     return (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
 }
-
-bool WebCore::shouldApplyPaintContainment(const WebCore::RenderObject& renderer)
-{
-    return renderer.style().containsPaint() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow());
-}
-

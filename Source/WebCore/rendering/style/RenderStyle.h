@@ -331,6 +331,8 @@ public:
     
     Overflow overflowX() const { return static_cast<Overflow>(m_nonInheritedFlags.overflowX); }
     Overflow overflowY() const { return static_cast<Overflow>(m_nonInheritedFlags.overflowY); }
+    Overflow overflowInlineDirection() const { return isHorizontalWritingMode() ? overflowX() : overflowY(); }
+    Overflow overflowBlockDirection() const { return isHorizontalWritingMode() ? overflowY() : overflowX(); }
     bool isOverflowVisible() const { return overflowX() == Overflow::Visible || overflowY() == Overflow::Visible; }
 
     OverscrollBehavior overscrollBehaviorX() const { return static_cast<OverscrollBehavior>(m_rareNonInheritedData->overscrollBehaviorX); }
@@ -530,7 +532,6 @@ public:
     bool containsLayout() const { return m_rareNonInheritedData->contain.contains(Containment::Layout); }
     bool containsSize() const { return m_rareNonInheritedData->contain.contains(Containment::Size); }
     bool containsStyle() const { return m_rareNonInheritedData->contain.contains(Containment::Style); }
-    bool containsPaint() const { return m_rareNonInheritedData->contain.contains(Containment::Paint); }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }
     BoxDirection boxDirection() const { return static_cast<BoxDirection>(m_inheritedFlags.boxDirection); }
     float boxFlex() const { return m_rareNonInheritedData->deprecatedFlexibleBox->flex; }

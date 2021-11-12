@@ -268,11 +268,6 @@ public:
 
     ReferencedSVGResources& ensureReferencedSVGResources();
 
-    Overflow effectiveOverflowX() const;
-    Overflow effectiveOverflowY() const;
-    Overflow effectiveOverflowInlineDirection() const { return style().isHorizontalWritingMode() ? effectiveOverflowX() : effectiveOverflowY(); }
-    Overflow effectiveOverflowBlockDirection() const { return style().isHorizontalWritingMode() ? effectiveOverflowY() : effectiveOverflowX(); }
-
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -461,8 +456,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
         || isSVGForeignObject()
-        || shouldApplyLayoutContainment(*this)
-        || shouldApplyPaintContainment(*this);
+        || shouldApplyLayoutContainment(*this);
 }
 
 inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
@@ -473,7 +467,6 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned())
         || isSVGForeignObject()
         || shouldApplyLayoutContainment(*this)
-        || shouldApplyPaintContainment(*this)
         || isRenderView();
 }
 

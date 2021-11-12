@@ -408,7 +408,6 @@ public:
     bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
     bool isRenderFragmentedFlow() const { return m_bitfields.hasRareData() && rareData().isRenderFragmentedFlow(); }
     bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
-    bool paintContainmentApplies() const { return m_bitfields.hasRareData() && rareData().paintContainmentApplies(); }
 
     bool isExcludedFromNormalLayout() const { return m_bitfields.isExcludedFromNormalLayout(); }
     void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setIsExcludedFromNormalLayout(excluded); }
@@ -506,7 +505,6 @@ public:
     void setHasReflection(bool = true);
     void setIsRenderFragmentedFlow(bool = true);
     void setHasOutlineAutoAncestor(bool = true);
-    void setPaintContainmentApplies(bool = true);
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
     // For other renderers, the value is the same as lineHeight(false).
@@ -937,7 +935,6 @@ private:
         ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
         ADD_BOOLEAN_BITFIELD(isRenderFragmentedFlow, IsRenderFragmentedFlow);
         ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
-        ADD_BOOLEAN_BITFIELD(paintContainmentApplies, PaintContainmentApplies);
 
         // From RenderElement
         std::unique_ptr<RenderStyle> cachedFirstLineStyle;
@@ -1212,7 +1209,6 @@ void printGraphicsLayerTreeForLiveDocuments();
 bool shouldApplyLayoutContainment(const RenderObject&);
 bool shouldApplySizeContainment(const RenderObject&);
 bool shouldApplyStyleContainment(const RenderObject&);
-bool shouldApplyPaintContainment(const RenderObject&);
 
 } // namespace WebCore
 
