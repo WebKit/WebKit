@@ -729,6 +729,7 @@
         SYS_getgid
         SYS_getpid
         SYS_getrlimit
+        SYS_getrusage
         SYS_gettid
         SYS_gettimeofday
         SYS_getuid
@@ -779,6 +780,7 @@
         SYS_sigaction
         SYS_socket
         SYS_stat64
+        SYS_statfs64
         SYS_sysctl
         SYS_sysctlbyname
         SYS_thread_selfid
