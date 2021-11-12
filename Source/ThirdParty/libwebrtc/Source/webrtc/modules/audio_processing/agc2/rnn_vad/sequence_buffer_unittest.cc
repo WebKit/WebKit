@@ -50,7 +50,7 @@ void TestSequenceBufferPushOp() {
     for (int i = 0; i < N; ++i)
       chunk[i] = static_cast<T>(i + 1);
     seq_buf.Push(chunk);
-    // With the next Push(), |last| will be moved left by N positions.
+    // With the next Push(), `last` will be moved left by N positions.
     const T last = chunk[N - 1];
     for (int i = 0; i < N; ++i)
       chunk[i] = static_cast<T>(last + i + 1);

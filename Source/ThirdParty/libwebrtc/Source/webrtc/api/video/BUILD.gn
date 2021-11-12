@@ -71,7 +71,7 @@ rtc_library("video_frame") {
 
 if (is_android) {
   java_cpp_enum("video_frame_enums") {
-    sources = [ "video_codec_type.h" ]
+    sources = [ "video_frame_buffer.h" ]
   }
 }
 
@@ -112,6 +112,11 @@ rtc_source_set("video_frame_type") {
   sources = [ "video_frame_type.h" ]
 }
 
+rtc_source_set("render_resolution") {
+  visibility = [ "*" ]
+  public = [ "render_resolution.h" ]
+}
+
 rtc_library("encoded_image") {
   visibility = [ "*" ]
   sources = [
@@ -141,6 +146,42 @@ rtc_library("encoded_frame") {
   ]
 
   deps = [ "../../modules/video_coding:encoded_frame" ]
+}
+
+rtc_library("rtp_video_frame_assembler") {
+  visibility = [ "*" ]
+  sources = [
+    "rtp_video_frame_assembler.cc",
+    "rtp_video_frame_assembler.h",
+  ]
+
+  deps = [
+    ":encoded_frame",
+    "../../modules/rtp_rtcp:rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../modules/video_coding:packet_buffer",
+    "../../modules/video_coding:video_coding",
+    "../../rtc_base:logging",
+  ]
+
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("rtp_video_frame_assembler_unittests") {
+  testonly = true
+  sources = [ "rtp_video_frame_assembler_unittests.cc" ]
+
+  deps = [
+    ":rtp_video_frame_assembler",
+    "..:array_view",
+    "../../modules/rtp_rtcp:rtp_packetizer_av1_test_helper",
+    "../../modules/rtp_rtcp:rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../test:test_support",
+  ]
 }
 
 rtc_source_set("video_codec_constants") {

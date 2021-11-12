@@ -148,7 +148,7 @@ TEST(DecoderDatabase, CheckPayloadTypes) {
   }
   PacketList packet_list;
   for (int i = 0; i < kNumPayloads + 1; ++i) {
-    // Create packet with payload type |i|. The last packet will have a payload
+    // Create packet with payload type `i`. The last packet will have a payload
     // type that is not registered in the decoder database.
     Packet packet;
     packet.payload_type = i;

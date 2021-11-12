@@ -45,12 +45,13 @@ class VCMTiming;
 
 namespace internal {
 
-class VideoReceiveStream : public webrtc::DEPRECATED_VideoReceiveStream,
-                           public rtc::VideoSinkInterface<VideoFrame>,
-                           public NackSender,
-                           public OnCompleteFrameCallback,
-                           public Syncable,
-                           public CallStatsObserver {
+class VideoReceiveStream
+    : public webrtc::DEPRECATED_VideoReceiveStream,
+      public rtc::VideoSinkInterface<VideoFrame>,
+      public NackSender,
+      public RtpVideoStreamReceiver::OnCompleteFrameCallback,
+      public Syncable,
+      public CallStatsObserver {
  public:
   // The default number of milliseconds to pass before re-requesting a key frame
   // to be sent.
@@ -86,10 +87,13 @@ class VideoReceiveStream : public webrtc::DEPRECATED_VideoReceiveStream,
   void Start() override;
   void Stop() override;
 
+  const RtpConfig& rtp_config() const override { return config_.rtp; }
+
   webrtc::VideoReceiveStream::Stats GetStats() const override;
 
   void AddSecondarySink(RtpPacketSinkInterface* sink) override;
   void RemoveSecondarySink(const RtpPacketSinkInterface* sink) override;
+  void SetRtpExtensions(std::vector<RtpExtension> extensions) override;
 
   // SetBaseMinimumPlayoutDelayMs and GetBaseMinimumPlayoutDelayMs are called
   // from webrtc/api level and requested by user code. For e.g. blink/js layer
@@ -111,7 +115,7 @@ class VideoReceiveStream : public webrtc::DEPRECATED_VideoReceiveStream,
   void SendNack(const std::vector<uint16_t>& sequence_numbers,
                 bool buffering_allowed) override;
 
-  // Implements OnCompleteFrameCallback.
+  // Implements RtpVideoStreamReceiver::OnCompleteFrameCallback.
   void OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) override;
 
   // Implements CallStatsObserver::OnRttUpdate
@@ -207,9 +211,9 @@ class VideoReceiveStream : public webrtc::DEPRECATED_VideoReceiveStream,
 
   mutable Mutex playout_delay_lock_;
 
-  // All of them tries to change current min_playout_delay on |timing_| but
+  // All of them tries to change current min_playout_delay on `timing_` but
   // source of the change request is different in each case. Among them the
-  // biggest delay is used. -1 means use default value from the |timing_|.
+  // biggest delay is used. -1 means use default value from the `timing_`.
   //
   // Minimum delay as decided by the RTP playout delay extension.
   int frame_minimum_playout_delay_ms_ RTC_GUARDED_BY(playout_delay_lock_) = -1;

@@ -36,8 +36,13 @@ suppported configuration however.
 
 ## macOS
 
-Xcode 9 or higher is required. Latest Xcode is recommended to be able to build
-all code.
+Xcode 12 or higher is required. Latest Xcode is recommended to be able to build
+all code. You may use `xcode-select --install` to install it.
+
+Absence of Xcode will cause errors like: 
+```
+xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
+```
 
 ## Android
 
@@ -54,7 +59,7 @@ need to install the NDK/SDK separately.
 [depot-tools]: https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up
 [git]: http://git-scm.com
 [install-build-deps]: https://cs.chromium.org/chromium/src/build/install-build-deps.sh
-[chromium-linux-build-instructions]: https://chromium.googlesource.com/chromium/src/+/master/docs/linux/build_instructions.md
-[chromium-win-build-instructions]: https://chromium.googlesource.com/chromium/src/+/master/docs/windows_build_instructions.md
-[chromium-linux-prerequisites]: https://chromium.googlesource.com/chromium/src/+/master/docs/linux/build_instructions.md#notes
-[chromium-android-build-build-instructions]: https://chromium.googlesource.com/chromium/src/+/master/docs/android_build_instructions.md
+[chromium-linux-build-instructions]: https://chromium.googlesource.com/chromium/src/+/main/docs/linux/build_instructions.md
+[chromium-win-build-instructions]: https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md
+[chromium-linux-prerequisites]: https://chromium.googlesource.com/chromium/src/+/main/docs/linux/build_instructions.md#notes
+[chromium-android-build-build-instructions]: https://chromium.googlesource.com/chromium/src/+/main/docs/android_build_instructions.md

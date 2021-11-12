@@ -38,7 +38,7 @@ class RTC_EXPORT AdaptedVideoTrackSource
   ~AdaptedVideoTrackSource() override;
 
  protected:
-  // Allows derived classes to initialize |video_adapter_| with a custom
+  // Allows derived classes to initialize `video_adapter_` with a custom
   // alignment.
   explicit AdaptedVideoTrackSource(int required_alignment);
   // Checks the apply_rotation() flag. If the frame needs rotation, and it is a

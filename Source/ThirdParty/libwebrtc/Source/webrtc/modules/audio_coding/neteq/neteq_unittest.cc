@@ -34,7 +34,6 @@
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/string_encode.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/arch.h"
 #include "test/field_trial.h"
@@ -83,17 +82,17 @@ TEST_F(NetEqDecodingTest, MAYBE_TestBitExactness) {
   const std::string input_rtp_file =
       webrtc::test::ResourcePath("audio_coding/neteq_universal_new", "rtp");
 
-  const std::string output_checksum =
-      PlatformChecksum("6c35140ce4d75874bdd60aa1872400b05fd05ca2",
-                       "ab451bb8301d9a92fbf4de91556b56f1ea38b4ce", "not used",
-                       "6c35140ce4d75874bdd60aa1872400b05fd05ca2",
-                       "64b46bb3c1165537a880ae8404afce2efba456c0");
+  const std::string output_checksum = PlatformChecksum(
+      "6c35140ce4d75874bdd60aa1872400b05fd05ca2",
+      "ab451bb8301d9a92fbf4de91556b56f1ea38b4ce", "not used",
+      "6c35140ce4d75874bdd60aa1872400b05fd05ca2",
+      "64b46bb3c1165537a880ae8404afce2efba456c0");
 
-  const std::string network_stats_checksum =
-      PlatformChecksum("90594d85fa31d3d9584d79293bf7aa4ee55ed751",
-                       "77b9c3640b81aff6a38d69d07dd782d39c15321d", "not used",
-                       "90594d85fa31d3d9584d79293bf7aa4ee55ed751",
-                       "90594d85fa31d3d9584d79293bf7aa4ee55ed751");
+  const std::string network_stats_checksum = PlatformChecksum(
+      "90594d85fa31d3d9584d79293bf7aa4ee55ed751",
+      "77b9c3640b81aff6a38d69d07dd782d39c15321d", "not used",
+      "90594d85fa31d3d9584d79293bf7aa4ee55ed751",
+      "90594d85fa31d3d9584d79293bf7aa4ee55ed751");
 
   DecodeAndCompare(input_rtp_file, output_checksum, network_stats_checksum,
                    absl::GetFlag(FLAGS_gen_ref));
@@ -294,7 +293,7 @@ TEST_F(NetEqDecodingTest, MAYBE_DecoderError) {
   PopulateRtpInfo(0, 0, &rtp_info);
   rtp_info.payloadType = 103;  // iSAC, but the payload is invalid.
   EXPECT_EQ(0, neteq_->InsertPacket(rtp_info, payload));
-  // Set all of |out_data_| to 1, and verify that it was set to 0 by the call
+  // Set all of `out_data_` to 1, and verify that it was set to 0 by the call
   // to GetAudio.
   int16_t* out_frame_data = out_frame_.mutable_data();
   for (size_t i = 0; i < AudioFrame::kMaxDataSizeSamples; ++i) {
@@ -316,7 +315,7 @@ TEST_F(NetEqDecodingTest, MAYBE_DecoderError) {
 }
 
 TEST_F(NetEqDecodingTest, GetAudioBeforeInsertPacket) {
-  // Set all of |out_data_| to 1, and verify that it was set to 0 by the call
+  // Set all of `out_data_` to 1, and verify that it was set to 0 by the call
   // to GetAudio.
   int16_t* out_frame_data = out_frame_.mutable_data();
   for (size_t i = 0; i < AudioFrame::kMaxDataSizeSamples; ++i) {
@@ -360,7 +359,7 @@ class NetEqBgnTest : public NetEqDecodingTest {
     AudioFrame output;
     test::AudioLoop input;
     // We are using the same 32 kHz input file for all tests, regardless of
-    // |sampling_rate_hz|. The output may sound weird, but the test is still
+    // `sampling_rate_hz`. The output may sound weird, but the test is still
     // valid.
     ASSERT_TRUE(input.Init(
         webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"),
@@ -523,7 +522,7 @@ TEST_F(NetEqDecodingTest, DiscardDuplicateCng) {
   ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, rtc::ArrayView<const uint8_t>(
                                                   payload, payload_len)));
 
-  // Pull audio until we have played |kCngPeriodMs| of CNG. Start at 10 ms since
+  // Pull audio until we have played `kCngPeriodMs` of CNG. Start at 10 ms since
   // we have already pulled out CNG once.
   for (int cng_time_ms = 10; cng_time_ms < kCngPeriodMs; cng_time_ms += 10) {
     ASSERT_EQ(0, neteq_->GetAudio(&out_frame_, &muted));
@@ -1066,7 +1065,7 @@ TEST_F(NetEqDecodingTestFaxMode, TestJitterBufferDelayWithAcceleration) {
   expected_target_delay += neteq_->TargetDelayMs() * 2 * kSamples;
   // We have two packets in the buffer and kAccelerate operation will
   // extract 20 ms of data.
-  neteq_->GetAudio(&out_frame_, &muted, NetEq::Operation::kAccelerate);
+  neteq_->GetAudio(&out_frame_, &muted, nullptr, NetEq::Operation::kAccelerate);
 
   // Check jitter buffer delay.
   NetEqLifetimeStatistics stats = neteq_->GetLifetimeStatistics();

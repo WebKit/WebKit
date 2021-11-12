@@ -25,6 +25,7 @@
 #include "modules/video_coding/jitter_estimator.h"
 #include "modules/video_coding/utility/decoded_frames_history.h"
 #include "rtc_base/event.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/experiments/rtt_mult_experiment.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -61,7 +62,7 @@ class FrameBuffer {
   int64_t InsertFrame(std::unique_ptr<EncodedFrame> frame);
 
   // Get the next frame for decoding. Will return at latest after
-  // |max_wait_time_ms|.
+  // `max_wait_time_ms`.
   void NextFrame(
       int64_t max_wait_time_ms,
       bool keyframe_required,
@@ -116,7 +117,7 @@ class FrameBuffer {
 
   using FrameMap = std::map<int64_t, FrameInfo>;
 
-  // Check that the references of |frame| are valid.
+  // Check that the references of `frame` are valid.
   bool ValidReferences(const EncodedFrame& frame) const;
 
   int64_t FindNextFrame(int64_t now_ms) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
@@ -134,9 +135,9 @@ class FrameBuffer {
   void PropagateDecodability(const FrameInfo& info)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Update the corresponding FrameInfo of |frame| and all FrameInfos that
-  // |frame| references.
-  // Return false if |frame| will never be decodable, true otherwise.
+  // Update the corresponding FrameInfo of `frame` and all FrameInfos that
+  // `frame` references.
+  // Return false if `frame` will never be decodable, true otherwise.
   bool UpdateFrameInfoWithIncomingFrame(const EncodedFrame& frame,
                                         FrameMap::iterator info)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
@@ -188,6 +189,13 @@ class FrameBuffer {
 
   // rtt_mult experiment settings.
   const absl::optional<RttMultExperiment::Settings> rtt_mult_settings_;
+
+  // Maximum number of frames in the decode queue to allow pacing. If the
+  // queue grows beyond the max limit, pacing will be disabled and frames will
+  // be pushed to the decoder as soon as possible. This only has an effect
+  // when the low-latency rendering path is active, which is indicated by
+  // the frame's render time == 0.
+  FieldTrialParameter<unsigned> zero_playout_delay_max_decode_queue_size_;
 };
 
 }  // namespace video_coding

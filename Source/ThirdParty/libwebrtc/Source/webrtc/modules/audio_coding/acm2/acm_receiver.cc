@@ -131,7 +131,7 @@ int AcmReceiver::InsertPacket(const RTPHeader& rtp_header,
                                   /*num_channels=*/format->num_channels,
                                   /*sdp_format=*/std::move(format->sdp_format)};
     }
-  }  // |mutex_| is released.
+  }  // `mutex_` is released.
 
   if (neteq_->InsertPacket(rtp_header, incoming_payload) < 0) {
     RTC_LOG(LERROR) << "AcmReceiver::InsertPacket "
@@ -146,20 +146,22 @@ int AcmReceiver::GetAudio(int desired_freq_hz,
                           AudioFrame* audio_frame,
                           bool* muted) {
   RTC_DCHECK(muted);
-  // Accessing members, take the lock.
-  MutexLock lock(&mutex_);
 
-  if (neteq_->GetAudio(audio_frame, muted) != NetEq::kOK) {
+  int current_sample_rate_hz = 0;
+  if (neteq_->GetAudio(audio_frame, muted, &current_sample_rate_hz) !=
+      NetEq::kOK) {
     RTC_LOG(LERROR) << "AcmReceiver::GetAudio - NetEq Failed.";
     return -1;
   }
 
-  const int current_sample_rate_hz = neteq_->last_output_sample_rate_hz();
+  RTC_DCHECK_NE(current_sample_rate_hz, 0);
 
   // Update if resampling is required.
   const bool need_resampling =
       (desired_freq_hz != -1) && (current_sample_rate_hz != desired_freq_hz);
 
+  // Accessing members, take the lock.
+  MutexLock lock(&mutex_);
   if (need_resampling && !resampled_last_output_frame_) {
     // Prime the resampler with the last frame.
     int16_t temp_output[AudioFrame::kMaxDataSizeSamples];
@@ -174,8 +176,8 @@ int AcmReceiver::GetAudio(int desired_freq_hz,
     }
   }
 
-  // TODO(henrik.lundin) Glitches in the output may appear if the output rate
-  // from NetEq changes. See WebRTC issue 3923.
+  // TODO(bugs.webrtc.org/3923) Glitches in the output may appear if the output
+  // rate from NetEq changes.
   if (need_resampling) {
     // TODO(yujo): handle this more efficiently for muted frames.
     int samples_per_channel_int = resampler_.Resample10Msec(
@@ -199,7 +201,7 @@ int AcmReceiver::GetAudio(int desired_freq_hz,
     // We might end up here ONLY if codec is changed.
   }
 
-  // Store current audio in |last_audio_buffer_| for next time.
+  // Store current audio in `last_audio_buffer_` for next time.
   memcpy(last_audio_buffer_.get(), audio_frame->data(),
          sizeof(int16_t) * audio_frame->samples_per_channel_ *
              audio_frame->num_channels_);
@@ -305,6 +307,8 @@ void AcmReceiver::GetNetworkStatistics(
       neteq_->GetOperationsAndState();
   acm_stat->packetBufferFlushes =
       neteq_operations_and_state.packet_buffer_flushes;
+  acm_stat->packetsDiscarded =
+      neteq_operations_and_state.discarded_primary_packets;
 }
 
 int AcmReceiver::EnableNack(size_t max_nack_list_size) {

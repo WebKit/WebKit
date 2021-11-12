@@ -120,7 +120,7 @@
     didReceiveRemoteVideoTrack:(RTC_OBJC_TYPE(RTCVideoTrack) *)remoteVideoTrack {
 }
 
-- (void)appClient:(ARDAppClient *)client didGetStats:(NSArray *)stats {
+- (void)appClient:(ARDAppClient *)client didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats {
 }
 
 - (void)appClient:(ARDAppClient *)client didError:(NSError *)error {

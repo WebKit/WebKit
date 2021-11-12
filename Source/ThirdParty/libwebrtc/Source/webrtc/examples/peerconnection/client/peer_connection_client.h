@@ -73,8 +73,8 @@ class PeerConnectionClient : public sigslot::has_slots<>,
   void Close();
   void InitSocketSignals();
   bool ConnectControlSocket();
-  void OnConnect(rtc::AsyncSocket* socket);
-  void OnHangingGetConnect(rtc::AsyncSocket* socket);
+  void OnConnect(rtc::Socket* socket);
+  void OnHangingGetConnect(rtc::Socket* socket);
   void OnMessageFromPeer(int peer_id, const std::string& message);
 
   // Quick and dirty support for parsing HTTP header values.
@@ -89,13 +89,13 @@ class PeerConnectionClient : public sigslot::has_slots<>,
                       std::string* value);
 
   // Returns true if the whole response has been read.
-  bool ReadIntoBuffer(rtc::AsyncSocket* socket,
+  bool ReadIntoBuffer(rtc::Socket* socket,
                       std::string* data,
                       size_t* content_length);
 
-  void OnRead(rtc::AsyncSocket* socket);
+  void OnRead(rtc::Socket* socket);
 
-  void OnHangingGetRead(rtc::AsyncSocket* socket);
+  void OnHangingGetRead(rtc::Socket* socket);
 
   // Parses a single line entry in the form "<name>,<id>,<connected>"
   bool ParseEntry(const std::string& entry,
@@ -110,15 +110,15 @@ class PeerConnectionClient : public sigslot::has_slots<>,
                            size_t* peer_id,
                            size_t* eoh);
 
-  void OnClose(rtc::AsyncSocket* socket, int err);
+  void OnClose(rtc::Socket* socket, int err);
 
   void OnResolveResult(rtc::AsyncResolverInterface* resolver);
 
   PeerConnectionClientObserver* callback_;
   rtc::SocketAddress server_address_;
   rtc::AsyncResolver* resolver_;
-  std::unique_ptr<rtc::AsyncSocket> control_socket_;
-  std::unique_ptr<rtc::AsyncSocket> hanging_get_;
+  std::unique_ptr<rtc::Socket> control_socket_;
+  std::unique_ptr<rtc::Socket> hanging_get_;
   std::string onconnect_data_;
   std::string control_data_;
   std::string notification_data_;

@@ -37,20 +37,19 @@ inline bool IsStunMessage(uint16_t msg_type) {
 }
 
 // AsyncStunTCPSocket
-// Binds and connects |socket| and creates AsyncTCPSocket for
-// it. Takes ownership of |socket|. Returns NULL if bind() or
-// connect() fail (|socket| is destroyed in that case).
+// Binds and connects `socket` and creates AsyncTCPSocket for
+// it. Takes ownership of `socket`. Returns NULL if bind() or
+// connect() fail (`socket` is destroyed in that case).
 AsyncStunTCPSocket* AsyncStunTCPSocket::Create(
-    rtc::AsyncSocket* socket,
+    rtc::Socket* socket,
     const rtc::SocketAddress& bind_address,
     const rtc::SocketAddress& remote_address) {
   return new AsyncStunTCPSocket(
-      AsyncTCPSocketBase::ConnectSocket(socket, bind_address, remote_address),
-      false);
+      AsyncTCPSocketBase::ConnectSocket(socket, bind_address, remote_address));
 }
 
-AsyncStunTCPSocket::AsyncStunTCPSocket(rtc::AsyncSocket* socket, bool listen)
-    : rtc::AsyncTCPSocketBase(socket, listen, kBufSize) {}
+AsyncStunTCPSocket::AsyncStunTCPSocket(rtc::Socket* socket)
+    : rtc::AsyncTCPSocketBase(socket, /*listen=*/false, kBufSize) {}
 
 int AsyncStunTCPSocket::Send(const void* pv,
                              size_t cb,
@@ -126,8 +125,8 @@ void AsyncStunTCPSocket::ProcessInput(char* data, size_t* len) {
   }
 }
 
-void AsyncStunTCPSocket::HandleIncomingConnection(rtc::AsyncSocket* socket) {
-  SignalNewConnection(this, new AsyncStunTCPSocket(socket, false));
+void AsyncStunTCPSocket::HandleIncomingConnection(rtc::Socket* socket) {
+  SignalNewConnection(this, new AsyncStunTCPSocket(socket));
 }
 
 size_t AsyncStunTCPSocket::GetExpectedLength(const void* data,

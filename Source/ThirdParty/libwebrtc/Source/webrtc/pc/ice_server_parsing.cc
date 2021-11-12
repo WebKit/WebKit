@@ -59,7 +59,7 @@ static_assert(INVALID == arraysize(kValidIceServiceTypes),
               "kValidIceServiceTypes must have as many strings as ServiceType "
               "has values.");
 
-// |in_str| should follow of RFC 7064/7065 syntax, but with an optional
+// `in_str` should follow of RFC 7064/7065 syntax, but with an optional
 // "?transport=" already stripped. I.e.,
 // stunURI       = scheme ":" host [ ":" port ]
 // scheme        = "stun" / "stuns" / "turn" / "turns"
@@ -104,8 +104,8 @@ static bool ParsePort(const std::string& in_str, int* port) {
 // This method parses IPv6 and IPv4 literal strings, along with hostnames in
 // standard hostname:port format.
 // Consider following formats as correct.
-// |hostname:port|, |[IPV6 address]:port|, |IPv4 address|:port,
-// |hostname|, |[IPv6 address]|, |IPv4 address|.
+// `hostname:port`, |[IPV6 address]:port|, |IPv4 address|:port,
+// `hostname`, |[IPv6 address]|, |IPv4 address|.
 static bool ParseHostnameAndPortFromString(const std::string& in_str,
                                            std::string* host,
                                            int* port) {
@@ -145,7 +145,7 @@ static bool ParseHostnameAndPortFromString(const std::string& in_str,
 }
 
 // Adds a STUN or TURN server to the appropriate list,
-// by parsing |url| and using the username/password in |server|.
+// by parsing `url` and using the username/password in `server`.
 static RTCErrorType ParseIceServerUrl(
     const PeerConnectionInterface::IceServer& server,
     const std::string& url,
@@ -171,12 +171,12 @@ static RTCErrorType ParseIceServerUrl(
   std::vector<std::string> tokens;
   cricket::ProtocolType turn_transport_type = cricket::PROTO_UDP;
   RTC_DCHECK(!url.empty());
-  rtc::tokenize_with_empty_tokens(url, '?', &tokens);
+  rtc::split(url, '?', &tokens);
   std::string uri_without_transport = tokens[0];
   // Let's look into transport= param, if it exists.
   if (tokens.size() == kTurnTransportTokensNum) {  // ?transport= is present.
     std::string uri_transport_param = tokens[1];
-    rtc::tokenize_with_empty_tokens(uri_transport_param, '=', &tokens);
+    rtc::split(uri_transport_param, '=', &tokens);
     if (tokens[0] != kTransport) {
       RTC_LOG(LS_WARNING) << "Invalid transport parameter key.";
       return RTCErrorType::SYNTAX_ERROR;

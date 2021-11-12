@@ -264,7 +264,7 @@ class ApmModuleSimulator(object):
 
     The file name is parsed to extract input signal creator and params. If a
     creator is matched and the parameters are valid, a new signal is generated
-    and written in |input_signal_filepath|.
+    and written in `input_signal_filepath`.
 
     Args:
       input_signal_filepath: Path to the input signal audio file to write.

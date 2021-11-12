@@ -174,7 +174,7 @@ class PpsParserTest : public ::testing::Test {
     WritePps(pps, slice_group_map_type, num_slice_groups, pic_size_in_map_units,
              &buffer_);
     parsed_pps_ = PpsParser::ParsePps(buffer_.data(), buffer_.size());
-    EXPECT_TRUE(static_cast<bool>(parsed_pps_));
+    ASSERT_TRUE(parsed_pps_);
     EXPECT_EQ(pps.bottom_field_pic_order_in_frame_present_flag,
               parsed_pps_->bottom_field_pic_order_in_frame_present_flag);
     EXPECT_EQ(pps.weighted_pred_flag, parsed_pps_->weighted_pred_flag);

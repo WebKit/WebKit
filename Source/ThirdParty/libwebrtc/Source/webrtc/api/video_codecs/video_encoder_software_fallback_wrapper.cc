@@ -25,6 +25,7 @@
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
+#include "media/base/video_common.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
@@ -38,8 +39,8 @@ namespace {
 // If forced fallback is allowed, either:
 //
 // 1) The forced fallback is requested if the resolution is less than or equal
-//    to |max_pixels_|. The resolution is allowed to be scaled down to
-//    |min_pixels_|.
+//    to `max_pixels_`. The resolution is allowed to be scaled down to
+//    `min_pixels_`.
 //
 // 2) The forced fallback is requested if temporal support is preferred and the
 //    SW fallback supports temporal layers while the HW encoder does not.
@@ -273,8 +274,8 @@ bool VideoEncoderSoftwareFallbackWrapper::InitFallbackEncoder(bool is_forced) {
 void VideoEncoderSoftwareFallbackWrapper::SetFecControllerOverride(
     FecControllerOverride* fec_controller_override) {
   // It is important that only one of those would ever interact with the
-  // |fec_controller_override| at a given time. This is the responsibility
-  // of |this| to maintain.
+  // `fec_controller_override` at a given time. This is the responsibility
+  // of `this` to maintain.
 
   fec_controller_override_ = fec_controller_override;
   current_encoder()->SetFecControllerOverride(fec_controller_override);
@@ -416,6 +417,13 @@ VideoEncoder::EncoderInfo VideoEncoderSoftwareFallbackWrapper::GetEncoderInfo()
 
   EncoderInfo info =
       IsFallbackActive() ? fallback_encoder_info : default_encoder_info;
+
+  info.requested_resolution_alignment = cricket::LeastCommonMultiple(
+      fallback_encoder_info.requested_resolution_alignment,
+      default_encoder_info.requested_resolution_alignment);
+  info.apply_alignment_to_all_simulcast_layers =
+      fallback_encoder_info.apply_alignment_to_all_simulcast_layers ||
+      default_encoder_info.apply_alignment_to_all_simulcast_layers;
 
   if (fallback_params_.has_value()) {
     const auto settings = (encoder_state_ == EncoderState::kForcedFallback)

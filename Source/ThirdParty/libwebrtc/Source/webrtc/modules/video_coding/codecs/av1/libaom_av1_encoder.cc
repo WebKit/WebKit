@@ -214,6 +214,11 @@ int LibaomAv1Encoder::InitEncode(const VideoCodec* codec_settings,
   cfg_.kf_mode = AOM_KF_DISABLED;
   cfg_.rc_min_quantizer = kQpMin;
   cfg_.rc_max_quantizer = encoder_settings_.qpMax;
+  cfg_.rc_undershoot_pct = 50;
+  cfg_.rc_overshoot_pct = 50;
+  cfg_.rc_buf_initial_sz = 600;
+  cfg_.rc_buf_optimal_sz = 600;
+  cfg_.rc_buf_sz = 1000;
   cfg_.g_usage = kUsageProfile;
   cfg_.g_error_resilient = 0;
   // Low-latency settings.
@@ -583,17 +588,15 @@ int32_t LibaomAv1Encoder::Encode(
           VideoFrameBuffer::Type::kI420A) {
     rtc::scoped_refptr<I420BufferInterface> converted_buffer(
         prepped_input_frame.video_frame_buffer()->ToI420());
-    // The buffer should now be a mapped I420 or I420A format, but some buffer
-    // implementations incorrectly return the wrong buffer format, such as
-    // kNative. As a workaround to this, we perform ToI420() a second time.
-    // TODO(https://crbug.com/webrtc/12602): When Android buffers have a correct
-    // ToI420() implementaion, remove his workaround.
-    if (converted_buffer->type() != VideoFrameBuffer::Type::kI420 &&
-        converted_buffer->type() != VideoFrameBuffer::Type::kI420A) {
-      converted_buffer = converted_buffer->ToI420();
-      RTC_CHECK(converted_buffer->type() == VideoFrameBuffer::Type::kI420 ||
-                converted_buffer->type() == VideoFrameBuffer::Type::kI420A);
+    if (!converted_buffer) {
+      RTC_LOG(LS_ERROR) << "Failed to convert "
+                        << VideoFrameBufferTypeToString(
+                               prepped_input_frame.video_frame_buffer()->type())
+                        << " image to I420. Can't encode frame.";
+      return WEBRTC_VIDEO_CODEC_ENCODER_FAILURE;
     }
+    RTC_CHECK(converted_buffer->type() == VideoFrameBuffer::Type::kI420 ||
+              converted_buffer->type() == VideoFrameBuffer::Type::kI420A);
     prepped_input_frame = VideoFrame(converted_buffer, frame.timestamp(),
                                      frame.render_time_ms(), frame.rotation());
   }
@@ -671,8 +674,15 @@ int32_t LibaomAv1Encoder::Encode(
         encoded_image.content_type_ = VideoContentType::UNSPECIFIED;
         // If encoded image width/height info are added to aom_codec_cx_pkt_t,
         // use those values in lieu of the values in frame.
-        encoded_image._encodedHeight = frame.height();
-        encoded_image._encodedWidth = frame.width();
+        if (svc_params_) {
+          int n = svc_params_->scaling_factor_num[layer_frame.SpatialId()];
+          int d = svc_params_->scaling_factor_den[layer_frame.SpatialId()];
+          encoded_image._encodedWidth = cfg_.g_w * n / d;
+          encoded_image._encodedHeight = cfg_.g_h * n / d;
+        } else {
+          encoded_image._encodedWidth = cfg_.g_w;
+          encoded_image._encodedHeight = cfg_.g_h;
+        }
         encoded_image.timing_.flags = VideoSendTiming::kInvalid;
         int qp = -1;
         ret = aom_codec_control(&ctx_, AOME_GET_LAST_QUANTIZER, &qp);
@@ -794,6 +804,13 @@ const bool kIsLibaomAv1EncoderSupported = true;
 
 std::unique_ptr<VideoEncoder> CreateLibaomAv1Encoder() {
   return std::make_unique<LibaomAv1Encoder>();
+}
+
+bool LibaomAv1EncoderSupportsScalabilityMode(
+    absl::string_view scalability_mode) {
+  // For AV1, the scalability mode is supported if we can create the scalability
+  // structure.
+  return ScalabilityStructureConfig(scalability_mode) != absl::nullopt;
 }
 
 }  // namespace webrtc

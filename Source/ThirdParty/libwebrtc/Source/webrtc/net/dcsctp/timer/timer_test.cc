@@ -386,5 +386,42 @@ TEST_F(TimerTest, TimerCanBeStartedFromWithinExpirationHandler) {
   AdvanceTimeAndRunTimers(DurationMs(1));
 }
 
+TEST_F(TimerTest, DurationStaysWithinMaxTimerBackOffDuration) {
+  std::unique_ptr<Timer> t1 = manager_.CreateTimer(
+      "t1", on_expired_.AsStdFunction(),
+      TimerOptions(DurationMs(1000), TimerBackoffAlgorithm::kExponential,
+                   /*max_restarts=*/absl::nullopt, DurationMs(5000)));
+
+  t1->Start();
+
+  // Initial timeout, 1000 ms
+  EXPECT_CALL(on_expired_, Call).Times(1);
+  AdvanceTimeAndRunTimers(DurationMs(1000));
+
+  // Exponential backoff -> 2000 ms
+  EXPECT_CALL(on_expired_, Call).Times(0);
+  AdvanceTimeAndRunTimers(DurationMs(1999));
+  EXPECT_CALL(on_expired_, Call).Times(1);
+  AdvanceTimeAndRunTimers(DurationMs(1));
+
+  // Exponential backoff -> 4000 ms
+  EXPECT_CALL(on_expired_, Call).Times(0);
+  AdvanceTimeAndRunTimers(DurationMs(3999));
+  EXPECT_CALL(on_expired_, Call).Times(1);
+  AdvanceTimeAndRunTimers(DurationMs(1));
+
+  // Limited backoff -> 5000ms
+  EXPECT_CALL(on_expired_, Call).Times(0);
+  AdvanceTimeAndRunTimers(DurationMs(4999));
+  EXPECT_CALL(on_expired_, Call).Times(1);
+  AdvanceTimeAndRunTimers(DurationMs(1));
+
+  // ... where it plateaus
+  EXPECT_CALL(on_expired_, Call).Times(0);
+  AdvanceTimeAndRunTimers(DurationMs(4999));
+  EXPECT_CALL(on_expired_, Call).Times(1);
+  AdvanceTimeAndRunTimers(DurationMs(1));
+}
+
 }  // namespace
 }  // namespace dcsctp

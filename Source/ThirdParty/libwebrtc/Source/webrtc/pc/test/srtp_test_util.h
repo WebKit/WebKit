@@ -15,25 +15,25 @@
 
 namespace rtc {
 
-extern const char CS_AES_CM_128_HMAC_SHA1_32[];
-extern const char CS_AEAD_AES_128_GCM[];
-extern const char CS_AEAD_AES_256_GCM[];
+extern const char kCsAesCm128HmacSha1_32[];
+extern const char kCsAeadAes128Gcm[];
+extern const char kCsAeadAes256Gcm[];
 
 static const uint8_t kTestKey1[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234";
 static const uint8_t kTestKey2[] = "4321ZYXWVUTSRQPONMLKJIHGFEDCBA";
 static const int kTestKeyLen = 30;
 
 static int rtp_auth_tag_len(const std::string& cs) {
-  if (cs == CS_AES_CM_128_HMAC_SHA1_32) {
+  if (cs == kCsAesCm128HmacSha1_32) {
     return 4;
-  } else if (cs == CS_AEAD_AES_128_GCM || cs == CS_AEAD_AES_256_GCM) {
+  } else if (cs == kCsAeadAes128Gcm || cs == kCsAeadAes256Gcm) {
     return 16;
   } else {
     return 10;
   }
 }
 static int rtcp_auth_tag_len(const std::string& cs) {
-  if (cs == CS_AEAD_AES_128_GCM || cs == CS_AEAD_AES_256_GCM) {
+  if (cs == kCsAeadAes128Gcm || cs == kCsAeadAes256Gcm) {
     return 16;
   } else {
     return 10;

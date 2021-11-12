@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #  Copyright 2016 The WebRTC project authors. All Rights Reserved.
 #
@@ -23,12 +23,16 @@ Libraries are mapped to licenses via LIB_TO_LICENSES_DICT dictionary.
 import sys
 
 import argparse
-import cgi
 import json
 import logging
 import os
 import re
 import subprocess
+try:
+    # python 3.2+
+    from html import escape
+except ImportError:
+    from cgi import escape
 
 # Third_party library to licences mapping. Keys are names of the libraries
 # (right after the `third_party/` prefix)
@@ -182,7 +186,7 @@ class LicenseBuilder(object):
             target,
         ]
         logging.debug('Running: %r', cmd)
-        output_json = subprocess.check_output(cmd, cwd=WEBRTC_ROOT)
+        output_json = subprocess.check_output(cmd, cwd=WEBRTC_ROOT).decode('UTF-8')
         logging.debug('Output: %s', output_json)
         return output_json
 
@@ -209,7 +213,7 @@ class LicenseBuilder(object):
             self.common_licenses_dict.keys())
         if missing_licenses:
             error_msg = 'Missing licenses for following third_party targets: %s' % \
-                        ', '.join(missing_licenses)
+                        ', '.join(sorted(missing_licenses))
             logging.error(error_msg)
             raise Exception(error_msg)
 
@@ -234,7 +238,7 @@ class LicenseBuilder(object):
             for path in self.common_licenses_dict[license_lib]:
                 license_path = os.path.join(WEBRTC_ROOT, path)
                 with open(license_path, 'r') as license_file:
-                    license_text = cgi.escape(license_file.read(), quote=True)
+                    license_text = escape(license_file.read(), quote=True)
                     output_license_file.write(license_text)
                     output_license_file.write('\n')
             output_license_file.write('```\n\n')

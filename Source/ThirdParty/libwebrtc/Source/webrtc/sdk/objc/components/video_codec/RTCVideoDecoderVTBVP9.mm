@@ -48,16 +48,19 @@
 
 extern const CFStringRef kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms;
 
-static uint8_t convertSubsampling(webrtc::vp9::YuvSubsampling value)
+static uint8_t convertSubsampling(absl::optional<webrtc::Vp9YuvSubsampling> value)
 {
-    switch (value) {
-    case webrtc::vp9::YuvSubsampling::k444:
-        return 3;
-    case webrtc::vp9::YuvSubsampling::k440:
+    if (!value)
         return 1;
-    case webrtc::vp9::YuvSubsampling::k422:
+
+    switch (*value) {
+    case webrtc::Vp9YuvSubsampling::k444:
+        return 3;
+    case webrtc::Vp9YuvSubsampling::k440:
+        return 1;
+    case webrtc::Vp9YuvSubsampling::k422:
         return 2;
-    case webrtc::vp9::YuvSubsampling::k420:
+    case webrtc::Vp9YuvSubsampling::k420:
         return 1;
     }
 }
@@ -66,12 +69,12 @@ rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> computeInputFormat(const uint8
 {
   constexpr size_t VPCodecConfigurationContentsSize = 12;
 
-  auto result = webrtc::vp9::ParseIntraFrameInfo(data, size);
+  auto result = webrtc::ParseUncompressedVp9Header(rtc::MakeArrayView(data, size));
 
   if (!result)
       return { };
   auto chromaSubsampling = convertSubsampling(result->sub_sampling);
-  uint8_t bitDepthChromaAndRange = (0xF & (uint8_t)result->bit_detph) << 4 | (0x7 & chromaSubsampling) << 1 | (0x1 & (uint8_t)result->color_range);
+  uint8_t bitDepthChromaAndRange = (0xF & (uint8_t)result->bit_detph) << 4 | (0x7 & chromaSubsampling) << 1 | (0x1 & (uint8_t)result->color_range.value_or(webrtc::Vp9ColorRange::kStudio));
 
   uint8_t record[VPCodecConfigurationContentsSize];
   memset((void*)record, 0, VPCodecConfigurationContentsSize);

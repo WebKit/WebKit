@@ -149,6 +149,35 @@ TEST(RtpPacketInfoTest, AbsoluteCaptureTime) {
   EXPECT_EQ(rhs.absolute_capture_time(), value);
 }
 
+TEST(RtpPacketInfoTest, LocalCaptureClockOffset) {
+  RtpPacketInfo lhs;
+  RtpPacketInfo rhs;
+
+  EXPECT_TRUE(lhs == rhs);
+  EXPECT_FALSE(lhs != rhs);
+
+  const absl::optional<int64_t> value = 10;
+  rhs.set_local_capture_clock_offset(value);
+  EXPECT_EQ(rhs.local_capture_clock_offset(), value);
+
+  EXPECT_FALSE(lhs == rhs);
+  EXPECT_TRUE(lhs != rhs);
+
+  lhs = rhs;
+
+  EXPECT_TRUE(lhs == rhs);
+  EXPECT_FALSE(lhs != rhs);
+
+  // Default local capture clock offset is null.
+  rhs = RtpPacketInfo();
+  EXPECT_EQ(rhs.local_capture_clock_offset(), absl::nullopt);
+
+  // Default local capture clock offset is null.
+  rhs = RtpPacketInfo({}, {}, {}, {}, AbsoluteCaptureTime{12, 34},
+                      Timestamp::Millis(0));
+  EXPECT_EQ(rhs.local_capture_clock_offset(), absl::nullopt);
+}
+
 TEST(RtpPacketInfoTest, ReceiveTimeMs) {
   const Timestamp timestamp = Timestamp::Micros(8868963877546349045LL);
 

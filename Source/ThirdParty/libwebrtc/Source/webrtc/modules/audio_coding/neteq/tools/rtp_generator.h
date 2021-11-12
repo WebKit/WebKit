@@ -34,9 +34,9 @@ class RtpGenerator {
 
   virtual ~RtpGenerator() {}
 
-  // Writes the next RTP header to |rtp_header|, which will be of type
-  // |payload_type|. Returns the send time for this packet (in ms). The value of
-  // |payload_length_samples| determines the send time for the next packet.
+  // Writes the next RTP header to `rtp_header`, which will be of type
+  // `payload_type`. Returns the send time for this packet (in ms). The value of
+  // `payload_length_samples` determines the send time for the next packet.
   virtual uint32_t GetRtpHeader(uint8_t payload_type,
                                 size_t payload_length_samples,
                                 RTPHeader* rtp_header);

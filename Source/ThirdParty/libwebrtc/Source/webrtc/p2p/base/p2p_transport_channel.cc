@@ -43,6 +43,7 @@
 #include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/time_utils.h"
+#include "rtc_base/trace_event.h"
 #include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -193,6 +194,7 @@ P2PTransportChannel::P2PTransportChannel(
               true /* presume_writable_when_fully_relayed */,
               REGATHER_ON_FAILED_NETWORKS_INTERVAL,
               RECEIVING_SWITCHING_DELAY) {
+  TRACE_EVENT0("webrtc", "P2PTransportChannel::P2PTransportChannel");
   RTC_DCHECK(allocator_ != nullptr);
   weak_ping_interval_ = GetWeakPingIntervalInFieldTrial();
   // Validate IceConfig even for mostly built-in constant default values in case
@@ -247,6 +249,7 @@ P2PTransportChannel::P2PTransportChannel(
           ice_controller_factory) {}
 
 P2PTransportChannel::~P2PTransportChannel() {
+  TRACE_EVENT0("webrtc", "P2PTransportChannel::~P2PTransportChannel");
   RTC_DCHECK_RUN_ON(network_thread_);
   std::vector<Connection*> copy(connections().begin(), connections().end());
   for (Connection* con : copy) {
@@ -792,6 +795,9 @@ void P2PTransportChannel::SetIceConfig(const IceConfig& config) {
   regathering_config.regather_on_failed_networks_interval =
       config_.regather_on_failed_networks_interval_or_default();
   regathering_controller_->SetConfig(regathering_config);
+
+  config_.vpn_preference = config.vpn_preference;
+  allocator_->SetVpnPreference(config_.vpn_preference);
 
   ice_controller_->SetIceConfig(config_);
 
@@ -1736,7 +1742,7 @@ void P2PTransportChannel::SortConnectionsAndUpdateState(
   // Any changes after this point will require a re-sort.
   sort_dirty_ = false;
 
-  // If necessary, switch to the new choice. Note that |top_connection| doesn't
+  // If necessary, switch to the new choice. Note that `top_connection` doesn't
   // have to be writable to become the selected connection although it will
   // have higher priority if it is writable.
   MaybeSwitchSelectedConnection(
@@ -1792,7 +1798,7 @@ void P2PTransportChannel::PruneConnections() {
 void P2PTransportChannel::SwitchSelectedConnection(Connection* conn,
                                                    IceControllerEvent reason) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  // Note: if conn is NULL, the previous |selected_connection_| has been
+  // Note: if conn is NULL, the previous `selected_connection_` has been
   // destroyed, so don't use it.
   Connection* old_selected_connection = selected_connection_;
   selected_connection_ = conn;
@@ -2037,9 +2043,9 @@ void P2PTransportChannel::MarkConnectionPinged(Connection* conn) {
   ice_controller_->MarkConnectionPinged(conn);
 }
 
-// Apart from sending ping from |conn| this method also updates
-// |use_candidate_attr| and |nomination| flags. One of the flags is set to
-// nominate |conn| if this channel is in CONTROLLING.
+// Apart from sending ping from `conn` this method also updates
+// `use_candidate_attr` and `nomination` flags. One of the flags is set to
+// nominate `conn` if this channel is in CONTROLLING.
 void P2PTransportChannel::PingConnection(Connection* conn) {
   RTC_DCHECK_RUN_ON(network_thread_);
   bool use_candidate_attr = false;

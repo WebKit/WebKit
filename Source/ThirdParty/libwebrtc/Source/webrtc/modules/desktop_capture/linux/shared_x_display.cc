@@ -65,7 +65,7 @@ void SharedXDisplay::RemoveEventHandler(int type, XEventHandler* handler) {
 }
 
 void SharedXDisplay::ProcessPendingXEvents() {
-  // Hold reference to |this| to prevent it from being destroyed while
+  // Hold reference to `this` to prevent it from being destroyed while
   // processing events.
   rtc::scoped_refptr<SharedXDisplay> self(this);
 

@@ -22,7 +22,7 @@ namespace test {
 
 class OutputWavFile : public AudioSink {
  public:
-  // Creates an OutputWavFile, opening a file named |file_name| for writing.
+  // Creates an OutputWavFile, opening a file named `file_name` for writing.
   // The output file is a PCM encoded wav file.
   OutputWavFile(const std::string& file_name,
                 int sample_rate_hz,

@@ -35,7 +35,7 @@ class LevelEstimator {
   // The computation follows: https://tools.ietf.org/html/rfc6465
   // with the intent that it can provide the RTP audio level indication.
   //
-  // Frames passed to ProcessStream() with an |_energy| of zero are considered
+  // Frames passed to ProcessStream() with an `_energy` of zero are considered
   // to have been muted. The RMS of the frame will be interpreted as -127.
   int RMS() { return rms_.Average(); }
 

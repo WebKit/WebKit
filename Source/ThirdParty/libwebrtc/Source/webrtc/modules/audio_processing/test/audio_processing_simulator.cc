@@ -206,7 +206,7 @@ void AudioProcessingSimulator::ProcessStream(bool fixed_interface) {
   if (settings_.simulate_mic_gain) {
     if (settings_.aec_dump_input_filename) {
       // When the analog gain is simulated and an AEC dump is used as input, set
-      // the undo level to |aec_dump_mic_level_| to virtually restore the
+      // the undo level to `aec_dump_mic_level_` to virtually restore the
       // unmodified microphone signal level.
       fake_recording_device_.SetUndoMicLevel(aec_dump_mic_level_);
     }
@@ -261,7 +261,7 @@ void AudioProcessingSimulator::ProcessStream(bool fixed_interface) {
 
   // Store the mic level suggested by AGC.
   // Note that when the analog gain is simulated and an AEC dump is used as
-  // input, |analog_mic_level_| will not be used with set_stream_analog_level().
+  // input, `analog_mic_level_` will not be used with set_stream_analog_level().
   analog_mic_level_ = ap_->recommended_stream_analog_level();
   if (settings_.simulate_mic_gain) {
     fake_recording_device_.SetMicLevel(analog_mic_level_);
@@ -487,8 +487,6 @@ void AudioProcessingSimulator::ConfigureAudioProcessor() {
     if (settings_.agc2_use_adaptive_gain) {
       apm_config.gain_controller2.adaptive_digital.enabled =
           *settings_.agc2_use_adaptive_gain;
-      apm_config.gain_controller2.adaptive_digital.level_estimator =
-          settings_.agc2_adaptive_level_estimator;
     }
   }
   if (settings_.use_pre_amplifier) {

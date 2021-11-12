@@ -12,10 +12,7 @@
 
 #import "sdk/objc/base/RTCVideoRenderer.h"
 #import "sdk/objc/components/capturer/RTCCameraVideoCapturer.h"
-#if defined(RTC_SUPPORTS_METAL)
-#import "sdk/objc/components/renderer/metal/RTCMTLVideoView.h"  // nogncheck
-#endif
-#import "sdk/objc/components/renderer/opengl/RTCEAGLVideoView.h"
+#import "sdk/objc/components/renderer/metal/RTCMTLVideoView.h"
 #import "sdk/objc/helpers/RTCCameraPreviewView.h"
 
 #include <memory>
@@ -49,11 +46,7 @@
 - (void)loadView {
   _view = [[UIView alloc] initWithFrame:CGRectZero];
 
-#if defined(RTC_SUPPORTS_METAL)
   _remoteVideoView = [[RTC_OBJC_TYPE(RTCMTLVideoView) alloc] initWithFrame:CGRectZero];
-#else
-  _remoteVideoView = [[RTC_OBJC_TYPE(RTCEAGLVideoView) alloc] initWithFrame:CGRectZero];
-#endif
   _remoteVideoView.translatesAutoresizingMaskIntoConstraints = NO;
   [_view addSubview:_remoteVideoView];
 

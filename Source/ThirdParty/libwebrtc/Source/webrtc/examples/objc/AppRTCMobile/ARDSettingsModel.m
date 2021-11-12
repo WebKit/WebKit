@@ -77,14 +77,37 @@ NS_ASSUME_NONNULL_BEGIN
 - (RTC_OBJC_TYPE(RTCVideoCodecInfo) *)currentVideoCodecSettingFromStore {
   [self registerStoreDefaults];
   NSData *codecData = [[self settingsStore] videoCodec];
+#if defined(WEBRTC_IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_13
+  Class expectedClass = [RTC_OBJC_TYPE(RTCVideoCodecInfo) class];
+  NSError *error;
+  RTC_OBJC_TYPE(RTCVideoCodecInfo) *videoCodecSetting =
+      [NSKeyedUnarchiver unarchivedObjectOfClass:expectedClass fromData:codecData error:&error];
+  if (!error) {
+    return videoCodecSetting;
+  }
+  return nil;
+#else
   return [NSKeyedUnarchiver unarchiveObjectWithData:codecData];
+#endif
 }
 
 - (BOOL)storeVideoCodecSetting:(RTC_OBJC_TYPE(RTCVideoCodecInfo) *)videoCodec {
   if (![[self availableVideoCodecs] containsObject:videoCodec]) {
     return NO;
   }
+
+#if defined(WEBRTC_IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_13
+  NSError *error;
+  NSData *codecData = [NSKeyedArchiver archivedDataWithRootObject:videoCodec
+                                            requiringSecureCoding:NO
+                                                            error:&error];
+  if (error) {
+    return NO;
+  }
+#else
   NSData *codecData = [NSKeyedArchiver archivedDataWithRootObject:videoCodec];
+#endif
+
   [[self settingsStore] setVideoCodec:codecData];
   return YES;
 }
@@ -165,7 +188,18 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)registerStoreDefaults {
+#if defined(WEBRTC_IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_13
+  NSError *error;
+  NSData *codecData = [NSKeyedArchiver archivedDataWithRootObject:[self defaultVideoCodecSetting]
+                                            requiringSecureCoding:NO
+                                                            error:&error];
+  if (error) {
+    return;
+  }
+#else
   NSData *codecData = [NSKeyedArchiver archivedDataWithRootObject:[self defaultVideoCodecSetting]];
+#endif
+
   [ARDSettingsStore setDefaultsForVideoResolution:[self defaultVideoResolutionSetting]
                                        videoCodec:codecData
                                           bitrate:nil
@@ -173,6 +207,5 @@ NS_ASSUME_NONNULL_BEGIN
                                     createAecDump:NO
                              useManualAudioConfig:YES];
 }
-
 @end
 NS_ASSUME_NONNULL_END

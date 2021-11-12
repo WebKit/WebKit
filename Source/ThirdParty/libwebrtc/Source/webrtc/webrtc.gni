@@ -8,9 +8,9 @@
 import("//build/config/arm.gni")
 import("//build/config/features.gni")
 import("//build/config/mips.gni")
+import("//build/config/ozone.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build/config/sysroot.gni")
-import("//build/config/ui.gni")
 import("//build_overrides/build.gni")
 
 if (!build_with_chromium && is_component_build) {
@@ -23,7 +23,7 @@ if (!build_with_chromium && is_component_build) {
         "WebRTC static library, so there is no difference between " +
         "`is_component_build=true` and `is_component_build=false`.")
   print(
-      "More info about component builds at: " + "https://chromium.googlesource.com/chromium/src/+/master/docs/component_build.md")
+      "More info about component builds at: " + "https://chromium.googlesource.com/chromium/src/+/main/docs/component_build.md")
   assert(!is_component_build, "Component builds are not supported in WebRTC.")
 }
 
@@ -35,10 +35,22 @@ if (is_mac) {
   import("//build/config/mac/rules.gni")
 }
 
+# This declare_args is separated from the next one because args declared
+# in this one, can be read from the next one (args defined in the same
+# declare_args cannot be referenced in that scope).
 declare_args() {
   # Setting this to true will make RTC_EXPORT (see rtc_base/system/rtc_export.h)
   # expand to code that will manage symbols visibility.
   rtc_enable_symbol_export = false
+}
+
+declare_args() {
+  # Setting this to true will make RTC_OBJC_EXPORT expand to code that will
+  # manage symbols visibility. By default, Obj-C/Obj-C++ symbols are exported
+  # if C++ symbols are but setting this arg to true while keeping
+  # rtc_enable_symbol_export=false will only export RTC_OBJC_EXPORT
+  # annotated symbols.
+  rtc_enable_objc_symbol_export = rtc_enable_symbol_export
 
   # Setting this to true will define WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT which
   # will tell the pre-processor to remove the default definition of symbols
@@ -112,7 +124,7 @@ declare_args() {
   rtc_build_tools = true
 
   # Set this to false to skip building code that requires X11.
-  rtc_use_x11 = use_x11
+  rtc_use_x11 = ozone_platform_x11
 
   # Set this to use PipeWire on the Wayland display server.
   # By default it's only enabled on desktop Linux (excludes ChromeOS) and
@@ -120,12 +132,8 @@ declare_args() {
   # supported Ubuntu and Debian distributions.
   rtc_use_pipewire = is_linux && use_sysroot
 
-  # Set this to link PipeWire directly instead of using the dlopen.
+  # Set this to link PipeWire and required libraries directly instead of using the dlopen.
   rtc_link_pipewire = false
-
-  # Set this to use certain PipeWire version
-  # Currently WebRTC supports PipeWire 0.2 and PipeWire 0.3 (default)
-  rtc_pipewire_version = "0.3"
 
   # Enable to use the Mozilla internal settings.
   build_with_mozilla = false
@@ -153,9 +161,9 @@ declare_args() {
 
   # Enable this to build OpenH264 encoder/FFmpeg decoder. This is supported on
   # all platforms except Android and iOS. Because FFmpeg can be built
-  # with/without H.264 support, |ffmpeg_branding| has to separately be set to a
+  # with/without H.264 support, `ffmpeg_branding` has to separately be set to a
   # value that includes H.264, for example "Chrome". If FFmpeg is built without
-  # H.264, compilation succeeds but |H264DecoderImpl| fails to initialize.
+  # H.264, compilation succeeds but `H264DecoderImpl` fails to initialize.
   # CHECK THE OPENH264, FFMPEG AND H.264 LICENSES/PATENTS BEFORE BUILDING.
   # http://www.openh264.org, https://www.ffmpeg.org/
   #
@@ -183,8 +191,9 @@ declare_args() {
     rtc_apprtcmobile_broadcast_extension = false
   }
 
-  # Determines whether Metal is available on iOS/macOS.
-  rtc_use_metal_rendering = is_mac || (is_ios && current_cpu == "arm64")
+  # Determines whether OpenGL is available on iOS/macOS.
+  rtc_ios_macos_use_opengl_rendering =
+      !(is_ios && target_environment == "catalyst")
 
   # When set to false, builtin audio encoder/decoder factories and all the
   # audio codecs they depend on will not be included in libwebrtc.{a|lib}
@@ -319,10 +328,7 @@ webrtc_root = get_path_info(".", "abspath")
 # It sets defines, include paths and compilation warnings accordingly,
 # both for WebRTC stand-alone builds and for the scenario when WebRTC
 # native code is built as part of Chromium.
-rtc_common_configs = [
-  webrtc_root + ":common_config",
-  "//build/config/compiler:no_size_t_to_int_warning",
-]
+rtc_common_configs = [ webrtc_root + ":common_config" ]
 
 if (is_mac || is_ios) {
   rtc_common_configs += [ "//build/config/compiler:enable_arc" ]
@@ -995,10 +1001,16 @@ if (is_ios) {
       deps = [ ":create_bracket_include_headers_$this_target_name" ]
     }
 
+    if (target_environment == "catalyst") {
+      # Catalyst frameworks use the same layout as regular Mac frameworks.
+      headers_dir = "Versions/A/Headers"
+    } else {
+      headers_dir = "Headers"
+    }
     copy("copy_umbrella_header_$target_name") {
       sources = [ umbrella_header_path ]
       outputs =
-          [ "$root_out_dir/$output_name.framework/Headers/$output_name.h" ]
+          [ "$root_out_dir/$output_name.framework/$headers_dir/$output_name.h" ]
 
       deps = [ ":umbrella_header_$target_name" ]
     }

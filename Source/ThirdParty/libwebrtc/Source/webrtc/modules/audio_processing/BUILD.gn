@@ -19,15 +19,6 @@ config("apm_debug_dump") {
   }
 }
 
-rtc_library("config") {
-  visibility = [ ":*" ]
-  sources = [
-    "include/config.cc",
-    "include/config.h",
-  ]
-  deps = [ "../../rtc_base/system:rtc_export" ]
-}
-
 rtc_library("api") {
   visibility = [ "*" ]
   sources = [
@@ -37,7 +28,6 @@ rtc_library("api") {
   deps = [
     ":audio_frame_view",
     ":audio_processing_statistics",
-    ":config",
     "../../api:array_view",
     "../../api:scoped_refptr",
     "../../api/audio:aec3_config",
@@ -162,7 +152,6 @@ rtc_library("audio_processing") {
     ":audio_frame_proxies",
     ":audio_frame_view",
     ":audio_processing_statistics",
-    ":config",
     ":high_pass_filter",
     ":optionally_built_submodule_creators",
     ":rms_level",
@@ -184,6 +173,7 @@ rtc_library("audio_processing") {
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:rtc_export",
     "../../system_wrappers",
+    "../../system_wrappers:denormal_disabler",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",
     "aec3",
@@ -334,7 +324,6 @@ if (rtc_include_tests) {
       sources = [
         "audio_buffer_unittest.cc",
         "audio_frame_view_unittest.cc",
-        "config_unittest.cc",
         "echo_control_mobile_unittest.cc",
         "gain_controller2_unittest.cc",
         "splitting_filter_unittest.cc",
@@ -349,7 +338,6 @@ if (rtc_include_tests) {
         ":audio_frame_view",
         ":audio_processing",
         ":audioproc_test_utils",
-        ":config",
         ":high_pass_filter",
         ":mocks",
         ":voice_detection",
@@ -373,6 +361,7 @@ if (rtc_include_tests) {
         "../../rtc_base/system:arch",
         "../../rtc_base/system:file_wrapper",
         "../../system_wrappers",
+        "../../system_wrappers:denormal_disabler",
         "../../test:fileutils",
         "../../test:rtc_expect_death",
         "../../test:test_support",

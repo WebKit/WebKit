@@ -64,7 +64,7 @@ void AlphaBlend(uint8_t* dest,
 // content before releasing the underlying frame.
 class DesktopFrameWithCursor : public DesktopFrame {
  public:
-  // Takes ownership of |frame|.
+  // Takes ownership of `frame`.
   DesktopFrameWithCursor(std::unique_ptr<DesktopFrame> frame,
                          const MouseCursor& cursor,
                          const DesktopVector& position,
@@ -113,7 +113,7 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
   if (cursor_rect_.is_empty())
     return;
 
-  // Copy original screen content under cursor to |restore_frame_|.
+  // Copy original screen content under cursor to `restore_frame_`.
   restore_position_ = cursor_rect_.top_left();
   restore_frame_.reset(new BasicDesktopFrame(cursor_rect_.size()));
   restore_frame_->CopyPixelsFrom(*this, cursor_rect_.top_left(),
@@ -218,7 +218,7 @@ void DesktopAndCursorComposer::OnCaptureResult(
       // and location in logical(DIP) pixels on Retina monitor. This will cause
       // problem when the desktop is mixed with Retina and non-Retina monitors.
       // So we use DIP pixel for all location info and compensate with the scale
-      // factor of current frame to the |relative_position|.
+      // factor of current frame to the `relative_position`.
       const float scale = frame->scale_factor();
       relative_position.set(relative_position.x() * scale,
                             relative_position.y() * scale);

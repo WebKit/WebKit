@@ -178,14 +178,13 @@ void DebugDumpReplayer::OnRuntimeSettingEvent(
 
 void DebugDumpReplayer::MaybeRecreateApm(const audioproc::Config& msg) {
   // These configurations cannot be changed on the fly.
-  Config config;
   RTC_CHECK(msg.has_aec_delay_agnostic_enabled());
   RTC_CHECK(msg.has_aec_extended_filter_enabled());
 
   // We only create APM once, since changes on these fields should not
   // happen in current implementation.
   if (!apm_.get()) {
-    apm_.reset(AudioProcessingBuilderForTesting().Create(config));
+    apm_ = AudioProcessingBuilderForTesting().Create();
   }
 }
 

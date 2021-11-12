@@ -167,6 +167,11 @@ TEST_F(IvfFileWriterTest, WritesBasicH264FileMsTimestamp) {
   RunBasicFileStructureTest(kVideoCodecH264, fourcc, true);
 }
 
+TEST_F(IvfFileWriterTest, WritesBasicUnknownCodecFileMsTimestamp) {
+  const uint8_t fourcc[4] = {'*', '*', '*', '*'};
+  RunBasicFileStructureTest(kVideoCodecGeneric, fourcc, true);
+}
+
 TEST_F(IvfFileWriterTest, ClosesWhenReachesLimit) {
   const uint8_t fourcc[4] = {'V', 'P', '8', '0'};
   const int kWidth = 320;

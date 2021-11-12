@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
   std::unique_ptr<Vad> vad = CreateVad(Vad::Aggressiveness::kVadNormal);
   std::array<int16_t, kMaxFrameLen> samples;
   char buff = 0;     // Buffer to write one bit per frame.
-  uint8_t next = 0;  // Points to the next bit to write in |buff|.
+  uint8_t next = 0;  // Points to the next bit to write in `buff`.
   while (true) {
     // Process frame.
     const auto read_samples =

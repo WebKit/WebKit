@@ -509,8 +509,8 @@ void TestStereo::Run(TestPackStereo* channel,
   in_file_mono_->FastForward(100);
 
   while (1) {
-    // Simulate packet loss by setting |packet_loss_| to "true" in
-    // |percent_loss| percent of the loops.
+    // Simulate packet loss by setting `packet_loss_` to "true" in
+    // `percent_loss` percent of the loops.
     if (percent_loss > 0) {
       if (counter_ == floor((100 / percent_loss) + 0.5)) {
         counter_ = 0;

@@ -47,7 +47,7 @@ class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
   // as provided by CreateGraphs.
   void CreateMatlabScript(const std::string& script_name) const;
 
-  // Creates a python script with file name |script_name|. When executed in
+  // Creates a python script with file name `script_name`. When executed in
   // Python, the script will generate graphs with the same timing information
   // as provided by CreateGraphs.
   void CreatePythonScript(const std::string& script_name) const;

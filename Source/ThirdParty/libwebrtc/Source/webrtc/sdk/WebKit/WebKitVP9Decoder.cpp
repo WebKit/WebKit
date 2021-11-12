@@ -172,12 +172,15 @@ OSStatus startVP9DecoderSession(VTVideoDecoderRef instance, VTVideoDecoderSessio
 
     decoder->m_instance->RegisterDecodeCompleteCallback(decoder->m_receiver.get());
 
-    VideoCodec codec;
-    auto dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
-    codec.width = dimensions.width;
-    codec.height = dimensions.height;
+    VideoDecoder::Settings settings;
+    settings.set_number_of_cores(CpuInfo::DetectNumberOfCores());
 
-    decoder->m_instance->InitDecode(&codec, CpuInfo::DetectNumberOfCores());
+    auto dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    RenderResolution frame_resolution { dimensions.width, dimensions.height };
+    if (frame_resolution.Valid())
+        settings.set_max_render_resolution(frame_resolution);
+
+    decoder->m_instance->Configure(settings);
 
     return noErr;
 }

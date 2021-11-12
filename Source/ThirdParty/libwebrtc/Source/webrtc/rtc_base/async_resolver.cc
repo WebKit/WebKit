@@ -57,7 +57,7 @@ int ResolveHostname(const std::string& hostname,
   struct addrinfo* result = nullptr;
   struct addrinfo hints = {0};
   hints.ai_family = family;
-  // |family| here will almost always be AF_UNSPEC, because |family| comes from
+  // `family` here will almost always be AF_UNSPEC, because `family` comes from
   // AsyncResolver::addr_.family(), which comes from a SocketAddress constructed
   // with a hostname. When a SocketAddress is constructed with a hostname, its
   // family is AF_UNSPEC. However, if someday in the future we construct
@@ -174,7 +174,7 @@ int AsyncResolver::GetError() const {
 
 void AsyncResolver::Destroy(bool wait) {
   // Some callers have trouble guaranteeing that Destroy is called on the
-  // sequence guarded by |sequence_checker_|.
+  // sequence guarded by `sequence_checker_`.
   // RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DCHECK(!destroy_called_);
   destroy_called_ = true;

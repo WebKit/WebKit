@@ -1365,7 +1365,7 @@ int32_t AudioDeviceMac::StopRecording() {
   } else {
     // We signal a stop for a shared device even when rendering has
     // not yet ended. This is to ensure the IOProc will return early as
-    // intended (by checking |_recording|) before accessing
+    // intended (by checking `_recording`) before accessing
     // resources we free below (e.g. the capture converter).
     //
     // In the case of a shared devcie, the IOProc will verify
@@ -1476,7 +1476,7 @@ int32_t AudioDeviceMac::StopPlayout() {
   if (_playing && renderDeviceIsAlive == 1) {
     // We signal a stop for a shared device even when capturing has not
     // yet ended. This is to ensure the IOProc will return early as
-    // intended (by checking |_playing|) before accessing resources we
+    // intended (by checking `_playing`) before accessing resources we
     // free below (e.g. the render converter).
     //
     // In the case of a shared device, the IOProc will verify capturing

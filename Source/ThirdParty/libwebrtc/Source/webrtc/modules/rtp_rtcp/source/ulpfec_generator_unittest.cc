@@ -103,12 +103,12 @@ TEST_F(UlpfecGeneratorTest, NoEmptyFecWithSeqNumGaps) {
 }
 
 TEST_F(UlpfecGeneratorTest, OneFrameFec) {
-  // The number of media packets (|kNumPackets|), number of frames (one for
+  // The number of media packets (`kNumPackets`), number of frames (one for
   // this test), and the protection factor (|params->fec_rate|) are set to make
   // sure the conditions for generating FEC are satisfied. This means:
   // (1) protection factor is high enough so that actual overhead over 1 frame
-  // of packets is within |kMaxExcessOverhead|, and (2) the total number of
-  // media packets for 1 frame is at least |minimum_media_packets_fec_|.
+  // of packets is within `kMaxExcessOverhead`, and (2) the total number of
+  // media packets for 1 frame is at least `minimum_media_packets_fec_`.
   constexpr size_t kNumPackets = 4;
   FecProtectionParams params = {15, 3, kFecMaskRandom};
   packet_generator_.NewFrame(kNumPackets);
@@ -137,13 +137,13 @@ TEST_F(UlpfecGeneratorTest, OneFrameFec) {
 }
 
 TEST_F(UlpfecGeneratorTest, TwoFrameFec) {
-  // The number of media packets/frame (|kNumPackets|), the number of frames
-  // (|kNumFrames|), and the protection factor (|params->fec_rate|) are set to
+  // The number of media packets/frame (`kNumPackets`), the number of frames
+  // (`kNumFrames`), and the protection factor (|params->fec_rate|) are set to
   // make sure the conditions for generating FEC are satisfied. This means:
   // (1) protection factor is high enough so that actual overhead over
-  // |kNumFrames| is within |kMaxExcessOverhead|, and (2) the total number of
-  // media packets for |kNumFrames| frames is at least
-  // |minimum_media_packets_fec_|.
+  // `kNumFrames` is within `kMaxExcessOverhead`, and (2) the total number of
+  // media packets for `kNumFrames` frames is at least
+  // `minimum_media_packets_fec_`.
   constexpr size_t kNumPackets = 2;
   constexpr size_t kNumFrames = 2;
 

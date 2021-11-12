@@ -16,7 +16,11 @@
 namespace webrtc {
 namespace {
 
-using ::testing::_;
+using ::testing::AllOf;
+using ::testing::ElementsAre;
+using ::testing::Field;
+using PacketInfo = StreamFeedbackObserver::StreamPacketInfo;
+
 static constexpr uint32_t kSsrc = 8492;
 
 class MockStreamFeedbackObserver : public webrtc::StreamFeedbackObserver {
@@ -28,41 +32,65 @@ class MockStreamFeedbackObserver : public webrtc::StreamFeedbackObserver {
 };
 
 RtpPacketSendInfo CreatePacket(uint32_t ssrc,
-                               int16_t rtp_sequence_number,
-                               int64_t transport_sequence_number) {
+                               uint16_t rtp_sequence_number,
+                               int64_t transport_sequence_number,
+                               bool is_retransmission) {
   RtpPacketSendInfo res;
-  res.ssrc = ssrc;
+  res.media_ssrc = ssrc;
   res.transport_sequence_number = transport_sequence_number;
   res.rtp_sequence_number = rtp_sequence_number;
+  res.packet_type = is_retransmission ? RtpPacketMediaType::kRetransmission
+                                      : RtpPacketMediaType::kVideo;
   return res;
 }
 }  // namespace
+
 TEST(TransportFeedbackDemuxerTest, ObserverSanity) {
   TransportFeedbackDemuxer demuxer;
   MockStreamFeedbackObserver mock;
   demuxer.RegisterStreamFeedbackObserver({kSsrc}, &mock);
 
-  demuxer.AddPacket(CreatePacket(kSsrc, 55, 1));
-  demuxer.AddPacket(CreatePacket(kSsrc, 56, 2));
-  demuxer.AddPacket(CreatePacket(kSsrc, 57, 3));
+  const uint16_t kRtpStartSeq = 55;
+  const int64_t kTransportStartSeq = 1;
+  demuxer.AddPacket(CreatePacket(kSsrc, kRtpStartSeq, kTransportStartSeq,
+                                 /*is_retransmit=*/false));
+  demuxer.AddPacket(CreatePacket(kSsrc, kRtpStartSeq + 1,
+                                 kTransportStartSeq + 1,
+                                 /*is_retransmit=*/false));
+  demuxer.AddPacket(CreatePacket(
+      kSsrc, kRtpStartSeq + 2, kTransportStartSeq + 2, /*is_retransmit=*/true));
 
   rtcp::TransportFeedback feedback;
-  feedback.SetBase(1, 1000);
-  ASSERT_TRUE(feedback.AddReceivedPacket(1, 1000));
-  ASSERT_TRUE(feedback.AddReceivedPacket(2, 2000));
-  ASSERT_TRUE(feedback.AddReceivedPacket(3, 3000));
+  feedback.SetBase(kTransportStartSeq, 1000);
+  ASSERT_TRUE(feedback.AddReceivedPacket(kTransportStartSeq, 1000));
+  // Drop middle packet.
+  ASSERT_TRUE(feedback.AddReceivedPacket(kTransportStartSeq + 2, 3000));
 
-  EXPECT_CALL(mock, OnPacketFeedbackVector(_)).Times(1);
+  EXPECT_CALL(
+      mock, OnPacketFeedbackVector(ElementsAre(
+                AllOf(Field(&PacketInfo::received, true),
+                      Field(&PacketInfo::ssrc, kSsrc),
+                      Field(&PacketInfo::rtp_sequence_number, kRtpStartSeq),
+                      Field(&PacketInfo::is_retransmission, false)),
+                AllOf(Field(&PacketInfo::received, false),
+                      Field(&PacketInfo::ssrc, kSsrc),
+                      Field(&PacketInfo::rtp_sequence_number, kRtpStartSeq + 1),
+                      Field(&PacketInfo::is_retransmission, false)),
+                AllOf(Field(&PacketInfo::received, true),
+                      Field(&PacketInfo::ssrc, kSsrc),
+                      Field(&PacketInfo::rtp_sequence_number, kRtpStartSeq + 2),
+                      Field(&PacketInfo::is_retransmission, true)))));
   demuxer.OnTransportFeedback(feedback);
 
   demuxer.DeRegisterStreamFeedbackObserver(&mock);
 
-  demuxer.AddPacket(CreatePacket(kSsrc, 58, 4));
+  demuxer.AddPacket(
+      CreatePacket(kSsrc, kRtpStartSeq + 3, kTransportStartSeq + 3, false));
   rtcp::TransportFeedback second_feedback;
-  second_feedback.SetBase(4, 4000);
-  ASSERT_TRUE(second_feedback.AddReceivedPacket(4, 4000));
+  second_feedback.SetBase(kTransportStartSeq + 3, 4000);
+  ASSERT_TRUE(second_feedback.AddReceivedPacket(kTransportStartSeq + 3, 4000));
 
-  EXPECT_CALL(mock, OnPacketFeedbackVector(_)).Times(0);
+  EXPECT_CALL(mock, OnPacketFeedbackVector).Times(0);
   demuxer.OnTransportFeedback(second_feedback);
 }
 }  // namespace webrtc

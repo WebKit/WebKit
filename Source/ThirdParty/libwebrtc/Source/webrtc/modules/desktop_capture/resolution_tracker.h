@@ -17,8 +17,8 @@ namespace webrtc {
 
 class ResolutionTracker final {
  public:
-  // Sets the resolution to |size|. Returns true if a previous size was recorded
-  // and differs from |size|.
+  // Sets the resolution to `size`. Returns true if a previous size was recorded
+  // and differs from `size`.
   bool SetResolution(DesktopSize size);
 
   // Resets to the initial state.

@@ -64,7 +64,7 @@ void TestScreenDrawerLock(
       // SleepMs() may return early. See
       // https://cs.chromium.org/chromium/src/third_party/webrtc/system_wrappers/include/sleep.h?rcl=4a604c80cecce18aff6fc5e16296d04675312d83&l=20
       // But we need to ensure at least 100 ms has been passed before unlocking
-      // |lock|.
+      // `lock`.
       while (rtc::TimeMillis() - current_ms < kLockDurationMs) {
         SleepMs(kLockDurationMs - (rtc::TimeMillis() - current_ms));
       }

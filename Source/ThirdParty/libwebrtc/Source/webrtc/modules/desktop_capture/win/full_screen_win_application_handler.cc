@@ -24,7 +24,7 @@
 namespace webrtc {
 namespace {
 
-// Utility function to verify that |window| has class name equal to |class_name|
+// Utility function to verify that `window` has class name equal to `class_name`
 bool CheckWindowClassName(HWND window, const wchar_t* class_name) {
   const size_t classNameLength = wcslen(class_name);
 
@@ -69,9 +69,9 @@ std::wstring FileNameFromPath(const std::wstring& path) {
 }
 
 // Returns windows which belong to given process id
-// |sources| is a full list of available windows
-// |processId| is a process identifier (window owner)
-// |window_to_exclude| is a window to be exluded from result
+// `sources` is a full list of available windows
+// `processId` is a process identifier (window owner)
+// `window_to_exclude` is a window to be exluded from result
 DesktopCapturer::SourceList GetProcessWindows(
     const DesktopCapturer::SourceList& sources,
     DWORD processId,

@@ -25,7 +25,7 @@ namespace webrtc {
 
 typedef std::unique_ptr<ChannelBuffer<float>> ScopedBuffer;
 
-// Sets the signal value to increase by |data| with every sample.
+// Sets the signal value to increase by `data` with every sample.
 ScopedBuffer CreateBuffer(const std::vector<float>& data, size_t frames) {
   const size_t num_channels = data.size();
   ScopedBuffer sb(new ChannelBuffer<float>(frames, num_channels));
@@ -41,8 +41,8 @@ void VerifyParams(const ChannelBuffer<float>& ref,
   EXPECT_EQ(ref.num_frames(), test.num_frames());
 }
 
-// Computes the best SNR based on the error between |ref_frame| and
-// |test_frame|. It searches around |expected_delay| in samples between the
+// Computes the best SNR based on the error between `ref_frame` and
+// `test_frame`. It searches around `expected_delay` in samples between the
 // signals to compensate for the resampling delay.
 float ComputeSNR(const ChannelBuffer<float>& ref,
                  const ChannelBuffer<float>& test,

@@ -92,7 +92,7 @@ class DEPRECATED_AsyncInvoker : public MessageHandlerAutoCleanup {
   DEPRECATED_AsyncInvoker();
   ~DEPRECATED_AsyncInvoker() override;
 
-  // Call |functor| asynchronously on |thread|, with no callback upon
+  // Call `functor` asynchronously on `thread`, with no callback upon
   // completion. Returns immediately.
   template <class ReturnT, class FunctorT>
   void AsyncInvoke(const Location& posted_from,
@@ -105,7 +105,7 @@ class DEPRECATED_AsyncInvoker : public MessageHandlerAutoCleanup {
     DoInvoke(posted_from, thread, std::move(closure), id);
   }
 
-  // Call |functor| asynchronously on |thread| with |delay_ms|, with no callback
+  // Call `functor` asynchronously on `thread` with `delay_ms`, with no callback
   // upon completion. Returns immediately.
   template <class ReturnT, class FunctorT>
   void AsyncInvokeDelayed(const Location& posted_from,
@@ -119,8 +119,8 @@ class DEPRECATED_AsyncInvoker : public MessageHandlerAutoCleanup {
     DoInvokeDelayed(posted_from, thread, std::move(closure), delay_ms, id);
   }
 
-  // Synchronously execute on |thread| all outstanding calls we own
-  // that are pending on |thread|, and wait for calls to complete
+  // Synchronously execute on `thread` all outstanding calls we own
+  // that are pending on `thread`, and wait for calls to complete
   // before returning. Optionally filter by message id.
   // The destructor will not wait for outstanding calls, so if that
   // behavior is desired, call Flush() before destroying this object.

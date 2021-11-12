@@ -132,7 +132,7 @@ class PeerConnectionEndToEndBaseTest : public sigslot::has_slots<>,
     callee_signaled_data_channels_.push_back(dc);
   }
 
-  // Tests that |dc1| and |dc2| can send to and receive from each other.
+  // Tests that `dc1` and `dc2` can send to and receive from each other.
   void TestDataChannelSendAndReceive(DataChannelInterface* dc1,
                                      DataChannelInterface* dc2,
                                      size_t size = 6) {

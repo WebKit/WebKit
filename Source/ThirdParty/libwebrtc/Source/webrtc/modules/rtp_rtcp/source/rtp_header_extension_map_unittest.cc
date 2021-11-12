@@ -31,7 +31,7 @@ TEST(RtpHeaderExtensionTest, RegisterByType) {
 TEST(RtpHeaderExtensionTest, RegisterByUri) {
   RtpHeaderExtensionMap map;
 
-  EXPECT_TRUE(map.RegisterByUri(3, TransmissionOffset::kUri));
+  EXPECT_TRUE(map.RegisterByUri(3, TransmissionOffset::Uri()));
 
   EXPECT_TRUE(map.IsRegistered(TransmissionOffset::kId));
   EXPECT_EQ(3, map.GetId(TransmissionOffset::kId));
@@ -49,8 +49,8 @@ TEST(RtpHeaderExtensionTest, RegisterWithTrait) {
 }
 
 TEST(RtpHeaderExtensionTest, RegisterDuringContruction) {
-  const std::vector<RtpExtension> config = {{TransmissionOffset::kUri, 1},
-                                            {AbsoluteSendTime::kUri, 3}};
+  const std::vector<RtpExtension> config = {{TransmissionOffset::Uri(), 1},
+                                            {AbsoluteSendTime::Uri(), 3}};
   const RtpHeaderExtensionMap map(config);
 
   EXPECT_EQ(1, map.GetId(TransmissionOffset::kId));

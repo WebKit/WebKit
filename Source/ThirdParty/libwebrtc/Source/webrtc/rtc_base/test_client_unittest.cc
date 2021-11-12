@@ -13,11 +13,11 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
-#include "rtc_base/async_socket.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/socket.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/test_echo_server.h"
 #include "rtc_base/thread.h"
@@ -40,8 +40,8 @@ namespace {
 
 void TestUdpInternal(const SocketAddress& loopback) {
   Thread* main = Thread::Current();
-  AsyncSocket* socket =
-      main->socketserver()->CreateAsyncSocket(loopback.family(), SOCK_DGRAM);
+  Socket* socket =
+      main->socketserver()->CreateSocket(loopback.family(), SOCK_DGRAM);
   socket->Bind(loopback);
 
   TestClient client(std::make_unique<AsyncUDPSocket>(socket));
@@ -56,8 +56,8 @@ void TestTcpInternal(const SocketAddress& loopback) {
   Thread* main = Thread::Current();
   TestEchoServer server(main, loopback);
 
-  AsyncSocket* socket =
-      main->socketserver()->CreateAsyncSocket(loopback.family(), SOCK_STREAM);
+  Socket* socket =
+      main->socketserver()->CreateSocket(loopback.family(), SOCK_STREAM);
   std::unique_ptr<AsyncTCPSocket> tcp_socket = absl::WrapUnique(
       AsyncTCPSocket::Create(socket, loopback, server.address()));
   ASSERT_TRUE(tcp_socket != nullptr);

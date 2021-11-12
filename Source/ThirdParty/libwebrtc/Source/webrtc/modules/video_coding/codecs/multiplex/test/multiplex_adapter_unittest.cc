@@ -201,7 +201,7 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
 };
 
 // TODO(emircan): Currently VideoCodecUnitTest tests do a complete setup
-// step that goes beyond constructing |decoder_|. Simplify these tests to do
+// step that goes beyond constructing `decoder_`. Simplify these tests to do
 // less.
 TEST_P(TestMultiplexAdapter, ConstructAndDestructDecoder) {
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Release());

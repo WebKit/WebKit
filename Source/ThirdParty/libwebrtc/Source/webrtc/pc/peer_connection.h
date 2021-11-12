@@ -167,7 +167,7 @@ class PeerConnection : public PeerConnectionInternal,
   std::vector<rtc::scoped_refptr<RtpTransceiverInterface>> GetTransceivers()
       const override;
 
-  rtc::scoped_refptr<DataChannelInterface> CreateDataChannel(
+  RTCErrorOr<rtc::scoped_refptr<DataChannelInterface>> CreateDataChannelOrError(
       const std::string& label,
       const DataChannelInit* config) override;
   // WARNING: LEGACY. See peerconnectioninterface.h
@@ -404,7 +404,7 @@ class PeerConnection : public PeerConnectionInternal,
   void ResetSctpDataMid();
 
   // Asynchronously calls SctpTransport::Start() on the network thread for
-  // |sctp_mid()| if set. Called as part of setting the local description.
+  // `sctp_mid()` if set. Called as part of setting the local description.
   void StartSctpTransport(int local_port,
                           int remote_port,
                           int max_message_size);
@@ -415,7 +415,7 @@ class PeerConnection : public PeerConnectionInternal,
   CryptoOptions GetCryptoOptions();
 
   // Internal implementation for AddTransceiver family of methods. If
-  // |fire_callback| is set, fires OnRenegotiationNeeded callback if successful.
+  // `fire_callback` is set, fires OnRenegotiationNeeded callback if successful.
   RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>> AddTransceiver(
       cricket::MediaType media_type,
       rtc::scoped_refptr<MediaStreamTrackInterface> track,
@@ -531,8 +531,8 @@ class PeerConnection : public PeerConnectionInternal,
   // This function should only be called from the worker thread.
   void StopRtcEventLog_w();
 
-  // Returns true and the TransportInfo of the given |content_name|
-  // from |description|. Returns false if it's not available.
+  // Returns true and the TransportInfo of the given `content_name`
+  // from `description`. Returns false if it's not available.
   static bool GetTransportDescription(
       const cricket::SessionDescription* description,
       const std::string& content_name,
@@ -540,7 +540,7 @@ class PeerConnection : public PeerConnectionInternal,
 
   // Returns the media index for a local ice candidate given the content name.
   // Returns false if the local session description does not have a media
-  // content called  |content_name|.
+  // content called  `content_name`.
   bool GetLocalCandidateMediaIndex(const std::string& content_name,
                                    int* sdp_mline_index)
       RTC_RUN_ON(signaling_thread());
@@ -585,7 +585,7 @@ class PeerConnection : public PeerConnectionInternal,
 
   // JsepTransportController::Observer override.
   //
-  // Called by |transport_controller_| when processing transport information
+  // Called by `transport_controller_` when processing transport information
   // from a session description, and the mapping from m= sections to transports
   // changed (as a result of BUNDLE negotiation, or m= sections being
   // rejected).
@@ -606,7 +606,7 @@ class PeerConnection : public PeerConnectionInternal,
 
   const bool is_unified_plan_;
 
-  // The EventLog needs to outlive |call_| (and any other object that uses it).
+  // The EventLog needs to outlive `call_` (and any other object that uses it).
   std::unique_ptr<RtcEventLog> event_log_ RTC_GUARDED_BY(worker_thread());
 
   // Points to the same thing as `event_log_`. Since it's const, we may read the
@@ -634,7 +634,7 @@ class PeerConnection : public PeerConnectionInternal,
       ice_transport_factory_;  // TODO(bugs.webrtc.org/9987): Accessed on the
                                // signaling thread but the underlying raw
                                // pointer is given to
-                               // |jsep_transport_controller_| and used on the
+                               // `jsep_transport_controller_` and used on the
                                // network thread.
   const std::unique_ptr<rtc::SSLCertificateVerifier> tls_cert_verifier_
       RTC_GUARDED_BY(network_thread());
@@ -663,7 +663,7 @@ class PeerConnection : public PeerConnectionInternal,
       transport_controller_;  // TODO(bugs.webrtc.org/9987): Accessed on both
                               // signaling and network thread.
 
-  // |sctp_mid_| is the content name (MID) in SDP.
+  // `sctp_mid_` is the content name (MID) in SDP.
   // Note: this is used as the data channel MID by both SCTP and data channel
   // transports.  It is set when either transport is initialized and unset when
   // both transports are deleted.

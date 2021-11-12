@@ -135,7 +135,7 @@ void FrameEncodeMetadataWriter::FillTimingInfo(size_t simulcast_svc_idx,
   int64_t encode_done_ms = rtc::TimeMillis();
 
   // Encoders with internal sources do not call OnEncodeStarted
-  // |timing_frames_info_| may be not filled here.
+  // `timing_frames_info_` may be not filled here.
   if (!internal_source_) {
     encode_start_ms =
         ExtractEncodeStartTimeAndFillMetadata(simulcast_svc_idx, encoded_image);
@@ -174,7 +174,7 @@ void FrameEncodeMetadataWriter::FillTimingInfo(size_t simulcast_svc_idx,
   }
 
   // Workaround for chromoting encoder: it passes encode start and finished
-  // timestamps in |timing_| field, but they (together with capture timestamp)
+  // timestamps in `timing_` field, but they (together with capture timestamp)
   // are not in the WebRTC clock.
   if (internal_source_ && encoded_image->timing_.encode_finish_ms > 0 &&
       encoded_image->timing_.encode_start_ms > 0) {

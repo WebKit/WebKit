@@ -10,7 +10,12 @@
 #  be found in the AUTHORS file in the root of the source tree.
 
 import unittest
-import mock
+try:
+    # python 3.3+
+    from unittest.mock import patch
+except ImportError:
+    # From site-package
+    from mock import patch
 
 from generate_licenses import LicenseBuilder
 
@@ -32,21 +37,21 @@ class TestLicenseBuilder(unittest.TestCase):
     """
 
     def testParseLibraryName(self):
-        self.assertEquals(
+        self.assertEqual(
             LicenseBuilder._ParseLibraryName('//a/b/third_party/libname1:c'),
             'libname1')
-        self.assertEquals(
+        self.assertEqual(
             LicenseBuilder._ParseLibraryName(
                 '//a/b/third_party/libname2:c(d)'), 'libname2')
-        self.assertEquals(
+        self.assertEqual(
             LicenseBuilder._ParseLibraryName(
                 '//a/b/third_party/libname3/c:d(e)'), 'libname3')
-        self.assertEquals(
+        self.assertEqual(
             LicenseBuilder._ParseLibraryName('//a/b/not_third_party/c'), None)
 
     def testParseLibrarySimpleMatch(self):
         builder = LicenseBuilder([], [], {}, {})
-        self.assertEquals(builder._ParseLibrary('//a/b/third_party/libname:c'),
+        self.assertEqual(builder._ParseLibrary('//a/b/third_party/libname:c'),
                           'libname')
 
     def testParseLibraryRegExNoMatchFallbacksToDefaultLibname(self):
@@ -54,7 +59,7 @@ class TestLicenseBuilder(unittest.TestCase):
             'libname:foo.*': ['path/to/LICENSE'],
         }
         builder = LicenseBuilder([], [], lib_dict, {})
-        self.assertEquals(
+        self.assertEqual(
             builder._ParseLibrary('//a/b/third_party/libname:bar_java'),
             'libname')
 
@@ -63,7 +68,7 @@ class TestLicenseBuilder(unittest.TestCase):
             'libname:foo.*': ['path/to/LICENSE'],
         }
         builder = LicenseBuilder([], [], {}, lib_regex_dict)
-        self.assertEquals(
+        self.assertEqual(
             builder._ParseLibrary('//a/b/third_party/libname:foo_bar_java'),
             'libname:foo.*')
 
@@ -72,7 +77,7 @@ class TestLicenseBuilder(unittest.TestCase):
             'libname/foo:bar.*': ['path/to/LICENSE'],
         }
         builder = LicenseBuilder([], [], {}, lib_regex_dict)
-        self.assertEquals(
+        self.assertEqual(
             builder._ParseLibrary('//a/b/third_party/libname/foo:bar_java'),
             'libname/foo:bar.*')
 
@@ -81,29 +86,29 @@ class TestLicenseBuilder(unittest.TestCase):
             'libname/foo.*bar.*': ['path/to/LICENSE'],
         }
         builder = LicenseBuilder([], [], {}, lib_regex_dict)
-        self.assertEquals(
+        self.assertEqual(
             builder._ParseLibrary(
                 '//a/b/third_party/libname/fooHAHA:bar_java'),
             'libname/foo.*bar.*')
 
-    @mock.patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
+    @patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
     def testGetThirdPartyLibrariesWithoutRegex(self):
         builder = LicenseBuilder([], [], {}, {})
-        self.assertEquals(
+        self.assertEqual(
             builder._GetThirdPartyLibraries('out/arm', 'target1'),
             set(['libname1', 'libname2', 'libname3']))
 
-    @mock.patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
+    @patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
     def testGetThirdPartyLibrariesWithRegex(self):
         lib_regex_dict = {
             'libname2:c.*': ['path/to/LICENSE'],
         }
         builder = LicenseBuilder([], [], {}, lib_regex_dict)
-        self.assertEquals(
+        self.assertEqual(
             builder._GetThirdPartyLibraries('out/arm', 'target1'),
             set(['libname1', 'libname2:c.*', 'libname3']))
 
-    @mock.patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
+    @patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
     def testGenerateLicenseTextFailIfUnknownLibrary(self):
         lib_dict = {
             'simple_library': ['path/to/LICENSE'],
@@ -113,8 +118,8 @@ class TestLicenseBuilder(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             builder.GenerateLicenseText('dummy/dir')
 
-        self.assertEquals(
-            context.exception.message,
+        self.assertEqual(
+            context.exception.args[0],
             'Missing licenses for following third_party targets: '
             'libname1, libname2, libname3')
 

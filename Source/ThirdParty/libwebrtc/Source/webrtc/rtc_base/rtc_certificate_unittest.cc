@@ -62,7 +62,7 @@ class RTCCertificateTest : public ::testing::Test {
     return cert->HasExpired(now_s * kNumMillisecsPerSec);
   }
 
-  // An RTC_CHECK ensures that |expires_s| this is in valid range of time_t as
+  // An RTC_CHECK ensures that `expires_s` this is in valid range of time_t as
   // is required by SSLIdentityParams. On some 32-bit systems time_t is limited
   // to < 2^31. On such systems this will fail for expiration times of year 2038
   // or later.

@@ -29,17 +29,17 @@ class AudioLoop {
 
   virtual ~AudioLoop() {}
 
-  // Initializes the AudioLoop by reading from |file_name|. The loop will be no
-  // longer than |max_loop_length_samples|, if the length of the file is
+  // Initializes the AudioLoop by reading from `file_name`. The loop will be no
+  // longer than `max_loop_length_samples`, if the length of the file is
   // greater. Otherwise, the loop length is the same as the file length.
-  // The audio will be delivered in blocks of |block_length_samples|.
+  // The audio will be delivered in blocks of `block_length_samples`.
   // Returns false if the initialization failed, otherwise true.
   bool Init(const std::string file_name,
             size_t max_loop_length_samples,
             size_t block_length_samples);
 
   // Returns a (pointer,size) pair for the next block of audio. The size is
-  // equal to the |block_length_samples| Init() argument.
+  // equal to the `block_length_samples` Init() argument.
   rtc::ArrayView<const int16_t> GetNextBlock();
 
  private:

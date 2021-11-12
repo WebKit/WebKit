@@ -24,7 +24,7 @@ TEST(DspHelper, RampSignalArray) {
     input[i] = 1000;
   }
   int start_factor = 0;
-  // Ramp from 0 to 1 (in Q14) over the array. Note that |increment| is in Q20,
+  // Ramp from 0 to 1 (in Q14) over the array. Note that `increment` is in Q20,
   // while the factor is in Q14, hence the shift by 6.
   int increment = (16384 << 6) / kLen;
 
@@ -36,7 +36,7 @@ TEST(DspHelper, RampSignalArray) {
     EXPECT_EQ(1000 * i / kLen, output[i]);
   }
 
-  // Test second method. (Note that this modifies |input|.)
+  // Test second method. (Note that this modifies `input`.)
   stop_factor = DspHelper::RampSignal(input, kLen, start_factor, increment);
   EXPECT_EQ(16383, stop_factor);  // Almost reach 1 in Q14.
   for (int i = 0; i < kLen; ++i) {
@@ -54,31 +54,31 @@ TEST(DspHelper, RampSignalAudioMultiVector) {
       input[channel][i] = 1000;
     }
   }
-  // We want to start ramping at |start_index| and keep ramping for |kLen|
+  // We want to start ramping at `start_index` and keep ramping for `kLen`
   // samples.
   int start_index = kLen;
   int start_factor = 0;
-  // Ramp from 0 to 1 (in Q14) in |kLen| samples. Note that |increment| is in
+  // Ramp from 0 to 1 (in Q14) in `kLen` samples. Note that `increment` is in
   // Q20, while the factor is in Q14, hence the shift by 6.
   int increment = (16384 << 6) / kLen;
 
   int stop_factor =
       DspHelper::RampSignal(&input, start_index, kLen, start_factor, increment);
   EXPECT_EQ(16383, stop_factor);  // Almost reach 1 in Q14.
-  // Verify that the first |kLen| samples are left untouched.
+  // Verify that the first `kLen` samples are left untouched.
   int i;
   for (i = 0; i < kLen; ++i) {
     for (int channel = 0; channel < kChannels; ++channel) {
       EXPECT_EQ(1000, input[channel][i]);
     }
   }
-  // Verify that the next block of |kLen| samples are ramped.
+  // Verify that the next block of `kLen` samples are ramped.
   for (; i < 2 * kLen; ++i) {
     for (int channel = 0; channel < kChannels; ++channel) {
       EXPECT_EQ(1000 * (i - kLen) / kLen, input[channel][i]);
     }
   }
-  // Verify the last |kLen| samples are left untouched.
+  // Verify the last `kLen` samples are left untouched.
   for (; i < 3 * kLen; ++i) {
     for (int channel = 0; channel < kChannels; ++channel) {
       EXPECT_EQ(1000, input[channel][i]);

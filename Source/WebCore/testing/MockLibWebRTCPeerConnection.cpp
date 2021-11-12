@@ -351,12 +351,13 @@ void MockLibWebRTCPeerConnection::SetRemoteDescription(std::unique_ptr<webrtc::S
     }
 }
 
-rtc::scoped_refptr<webrtc::DataChannelInterface> MockLibWebRTCPeerConnection::CreateDataChannel(const std::string& label, const webrtc::DataChannelInit* init)
+webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::DataChannelInterface>> MockLibWebRTCPeerConnection::CreateDataChannelOrError(const std::string& label, const webrtc::DataChannelInit* init)
 {
     webrtc::DataChannelInit parameters;
     if (init)
         parameters = *init;
-    return new rtc::RefCountedObject<MockLibWebRTCDataChannel>(std::string(label), parameters.ordered, parameters.reliable, parameters.id);
+    rtc::scoped_refptr<webrtc::DataChannelInterface> channel = new rtc::RefCountedObject<MockLibWebRTCDataChannel>(std::string(label), parameters.ordered, parameters.reliable, parameters.id);
+    return channel;
 }
 
 webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> MockLibWebRTCPeerConnection::AddTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track, const std::vector<std::string>& streamIds)

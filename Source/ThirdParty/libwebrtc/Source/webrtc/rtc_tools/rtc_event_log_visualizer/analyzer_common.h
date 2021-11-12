@@ -39,8 +39,8 @@ class AnalyzerConfig {
   float CallEndTimeSec() const { return GetCallTimeSec(end_time_); }
 
   // Window and step size used for calculating moving averages, e.g. bitrate.
-  // The generated data points will be |step_| microseconds apart.
-  // Only events occurring at most |window_duration_| microseconds before the
+  // The generated data points will be `step_` microseconds apart.
+  // Only events occurring at most `window_duration_` microseconds before the
   // current data point will be part of the average.
   int64_t window_duration_;
   int64_t step_;
@@ -83,7 +83,7 @@ std::string GetStreamName(const ParsedRtcEventLog& parsed_log,
                           uint32_t ssrc);
 std::string GetLayerName(LayerDescription layer);
 
-// For each element in data_view, use |f()| to extract a y-coordinate and
+// For each element in data_view, use `f()` to extract a y-coordinate and
 // store the result in a TimeSeries.
 template <typename DataType, typename IterableType>
 void ProcessPoints(rtc::FunctionView<float(const DataType&)> fx,
@@ -99,7 +99,7 @@ void ProcessPoints(rtc::FunctionView<float(const DataType&)> fx,
   }
 }
 
-// For each pair of adjacent elements in |data|, use |f()| to extract a
+// For each pair of adjacent elements in `data`, use `f()` to extract a
 // y-coordinate and store the result in a TimeSeries. Note that the x-coordinate
 // will be the time of the second element in the pair.
 template <typename DataType, typename ResultType, typename IterableType>
@@ -117,7 +117,7 @@ void ProcessPairs(
   }
 }
 
-// For each pair of adjacent elements in |data|, use |f()| to extract a
+// For each pair of adjacent elements in `data`, use `f()` to extract a
 // y-coordinate and store the result in a TimeSeries. Note that the x-coordinate
 // will be the time of the second element in the pair.
 template <typename DataType, typename ResultType, typename IterableType>
@@ -138,10 +138,10 @@ void AccumulatePairs(
   }
 }
 
-// Calculates a moving average of |data| and stores the result in a TimeSeries.
-// A data point is generated every |step| microseconds from |begin_time|
-// to |end_time|. The value of each data point is the average of the data
-// during the preceding |window_duration_us| microseconds.
+// Calculates a moving average of `data` and stores the result in a TimeSeries.
+// A data point is generated every `step` microseconds from `begin_time`
+// to `end_time`. The value of each data point is the average of the data
+// during the preceding `window_duration_us` microseconds.
 template <typename DataType, typename ResultType, typename IterableType>
 void MovingAverage(
     rtc::FunctionView<absl::optional<ResultType>(const DataType&)> fy,

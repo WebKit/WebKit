@@ -126,8 +126,8 @@ class CustomRateCalculator : public OutputRateCalculator {
   const int rate_;
 };
 
-// Creates participants from |frames| and |frame_info| and adds them
-// to the mixer. Compares mixed status with |expected_status|
+// Creates participants from `frames` and `frame_info` and adds them
+// to the mixer. Compares mixed status with `expected_status`
 void MixAndCompare(
     const std::vector<AudioFrame>& frames,
     const std::vector<AudioMixer::Source::AudioFrameInfo>& frame_info,
@@ -343,7 +343,7 @@ TEST(AudioMixer, RampedOutSourcesShouldNotBeMarkedMixed) {
   for (int i = 0; i < kAudioSources; ++i) {
     ResetFrame(participants[i].fake_frame());
     // Set the participant audio energy to increase with the index
-    // |i|.
+    // `i`.
     participants[i].fake_frame()->mutable_data()[0] = 100 * i;
   }
 

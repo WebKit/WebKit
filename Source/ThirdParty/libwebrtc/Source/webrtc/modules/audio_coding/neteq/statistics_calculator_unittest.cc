@@ -179,4 +179,37 @@ TEST(StatisticsCalculator, InterruptionCounterDoNotLogBeforeDecoding) {
   EXPECT_EQ(1, lts.interruption_count);
 }
 
+// Test that |discarded_primary_packets| as reported from
+// |GetOperationsAndState| always matches the arguments to |PacketsDiscarded|
+// accumulated.
+TEST(StatisticsCalculator, DiscardedPackets) {
+  StatisticsCalculator statistics_calculator;
+  EXPECT_EQ(
+      0u,
+      statistics_calculator.GetOperationsAndState().discarded_primary_packets);
+
+  statistics_calculator.PacketsDiscarded(1);
+  EXPECT_EQ(
+      1u,
+      statistics_calculator.GetOperationsAndState().discarded_primary_packets);
+
+  statistics_calculator.PacketsDiscarded(10);
+  EXPECT_EQ(
+      11u,
+      statistics_calculator.GetOperationsAndState().discarded_primary_packets);
+
+  // Calling |SecondaryPacketsDiscarded| does not modify
+  // |discarded_primary_packets|.
+  statistics_calculator.SecondaryPacketsDiscarded(1);
+  EXPECT_EQ(
+      11u,
+      statistics_calculator.GetOperationsAndState().discarded_primary_packets);
+
+  // Calling |FlushedPacketBuffer| does not modify |discarded_primary_packets|.
+  statistics_calculator.FlushedPacketBuffer();
+  EXPECT_EQ(
+      11u,
+      statistics_calculator.GetOperationsAndState().discarded_primary_packets);
+}
+
 }  // namespace webrtc

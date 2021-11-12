@@ -50,7 +50,7 @@ class CallStats {
   void RegisterStatsObserver(CallStatsObserver* observer);
   void DeregisterStatsObserver(CallStatsObserver* observer);
 
-  // Expose |LastProcessedRtt()| from RtcpRttStats to the public interface, as
+  // Expose `LastProcessedRtt()` from RtcpRttStats to the public interface, as
   // it is the part of the API that is needed by direct users of CallStats.
   int64_t LastProcessedRtt() const;
 

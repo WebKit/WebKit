@@ -22,10 +22,10 @@
 namespace webrtc {
 namespace {
 // If no calls to MaybeProcessPackets() happen, make sure we update stats
-// at least every |kMaxTimeBetweenStatsUpdates| as long as the pacer isn't
+// at least every `kMaxTimeBetweenStatsUpdates` as long as the pacer isn't
 // completely drained.
 constexpr TimeDelta kMaxTimeBetweenStatsUpdates = TimeDelta::Millis(33);
-// Don't call UpdateStats() more than |kMinTimeBetweenStatsUpdates| apart,
+// Don't call UpdateStats() more than `kMinTimeBetweenStatsUpdates` apart,
 // for performance reasons.
 constexpr TimeDelta kMinTimeBetweenStatsUpdates = TimeDelta::Millis(1);
 }  // namespace
@@ -243,7 +243,7 @@ void TaskQueuePacedSender::MaybeProcessPackets(
   } else if (next_process_time_.IsMinusInfinity() ||
              next_process_time <= next_process_time_ - hold_back_window_) {
     // Schedule a new task since there is none currently scheduled
-    // (|next_process_time_| is infinite), or the new process time is at least
+    // (`next_process_time_` is infinite), or the new process time is at least
     // one holdback window earlier than whatever is currently scheduled.
     time_to_next_process = std::max(next_process_time - now, hold_back_window_);
   }

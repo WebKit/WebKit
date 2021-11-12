@@ -184,8 +184,8 @@ TEST(FrameLengthControllerTest,
 
 TEST(FrameLengthControllerTest, IncreaseTo40MsOnMultipleConditions) {
   // Increase to 40ms frame length if
-  // 1. |uplink_bandwidth_bps| is known to be smaller than a threshold AND
-  // 2. |uplink_packet_loss_fraction| is known to be smaller than a threshold
+  // 1. `uplink_bandwidth_bps` is known to be smaller than a threshold AND
+  // 2. `uplink_packet_loss_fraction` is known to be smaller than a threshold
   //    AND
   // 3. FEC is not decided or OFF.
   auto controller = CreateController(CreateChangeCriteriaFor20msAnd40ms(),
@@ -206,8 +206,8 @@ TEST(FrameLengthControllerTest, DecreaseTo40MsOnHighUplinkBandwidth) {
 
 TEST(FrameLengthControllerTest, Maintain60MsOnMultipleConditions) {
   // Maintain 60ms frame length if
-  // 1. |uplink_bandwidth_bps| is at medium level,
-  // 2. |uplink_packet_loss_fraction| is at medium,
+  // 1. `uplink_bandwidth_bps` is at medium level,
+  // 2. `uplink_packet_loss_fraction` is at medium,
   // 3. FEC is not decided ON.
   auto controller = CreateController(CreateChangeCriteriaFor20msAnd60ms(),
                                      kDefaultEncoderFrameLengthsMs, 60);
@@ -218,8 +218,8 @@ TEST(FrameLengthControllerTest, Maintain60MsOnMultipleConditions) {
 
 TEST(FrameLengthControllerTest, IncreaseTo60MsOnMultipleConditions) {
   // Increase to 60ms frame length if
-  // 1. |uplink_bandwidth_bps| is known to be smaller than a threshold AND
-  // 2. |uplink_packet_loss_fraction| is known to be smaller than a threshold
+  // 1. `uplink_bandwidth_bps` is known to be smaller than a threshold AND
+  // 2. `uplink_packet_loss_fraction` is known to be smaller than a threshold
   //    AND
   // 3. FEC is not decided or OFF.
   auto controller = CreateController(CreateChangeCriteriaFor20msAnd60ms(),
@@ -365,8 +365,8 @@ TEST(FrameLengthControllerTest, From60MsTo120MsOnVeryLowUplinkBandwidth) {
 
 TEST(FrameLengthControllerTest, From20MsTo120MsOnMultipleConditions) {
   // Increase to 120ms frame length if
-  // 1. |uplink_bandwidth_bps| is known to be smaller than a threshold AND
-  // 2. |uplink_packet_loss_fraction| is known to be smaller than a threshold.
+  // 1. `uplink_bandwidth_bps` is known to be smaller than a threshold AND
+  // 2. `uplink_packet_loss_fraction` is known to be smaller than a threshold.
   auto controller = CreateController(CreateChangeCriteriaFor20ms60msAnd120ms(),
                                      kDefaultEncoderFrameLengthsMs, 20);
   // It takes two steps for frame length to go from 20ms to 120ms.

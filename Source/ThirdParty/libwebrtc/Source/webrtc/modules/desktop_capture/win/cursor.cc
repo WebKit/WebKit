@@ -88,7 +88,7 @@ void AlphaMul(uint32_t* data, int width, int height) {
 }
 
 // Scans a 32bpp bitmap looking for any pixels with non-zero alpha component.
-// Returns true if non-zero alpha is found. |stride| is expressed in pixels.
+// Returns true if non-zero alpha is found. `stride` is expressed in pixels.
 bool HasAlphaChannel(const uint32_t* data, int stride, int width, int height) {
   const RGBQUAD* plane = reinterpret_cast<const RGBQUAD*>(data);
   for (int y = 0; y < height; ++y) {
@@ -121,7 +121,7 @@ MouseCursor* CreateMouseCursorFromHCursor(HDC dc, HCURSOR cursor) {
   win::ScopedBitmap scoped_color(iinfo.hbmColor);
   bool is_color = iinfo.hbmColor != NULL;
 
-  // Get |scoped_mask| dimensions.
+  // Get `scoped_mask` dimensions.
   BITMAP bitmap_info;
   if (!GetObject(scoped_mask, sizeof(bitmap_info), &bitmap_info)) {
     RTC_LOG_F(LS_ERROR) << "Unable to get bitmap info. Error = "
@@ -133,7 +133,7 @@ MouseCursor* CreateMouseCursorFromHCursor(HDC dc, HCURSOR cursor) {
   int height = bitmap_info.bmHeight;
   std::unique_ptr<uint32_t[]> mask_data(new uint32_t[width * height]);
 
-  // Get pixel data from |scoped_mask| converting it to 32bpp along the way.
+  // Get pixel data from `scoped_mask` converting it to 32bpp along the way.
   // GetDIBits() sets the alpha component of every pixel to 0.
   BITMAPV5HEADER bmi = {0};
   bmi.bV5Size = sizeof(bmi);

@@ -174,7 +174,7 @@ class SignalProcessingUtils(object):
         """Detects hard clipping.
 
     Hard clipping is simply detected by counting samples that touch either the
-    lower or upper bound too many times in a row (according to |threshold|).
+    lower or upper bound too many times in a row (according to `threshold`).
     The presence of a single sequence of samples meeting such property is enough
     to label the signal as hard clipped.
 
@@ -295,16 +295,16 @@ class SignalProcessingUtils(object):
                    noise,
                    target_snr=0.0,
                    pad_noise=MixPadding.NO_PADDING):
-        """Mixes |signal| and |noise| with a target SNR.
+        """Mixes `signal` and `noise` with a target SNR.
 
-    Mix |signal| and |noise| with a desired SNR by scaling |noise|.
+    Mix `signal` and `noise` with a desired SNR by scaling `noise`.
     If the target SNR is +/- infinite, a copy of signal/noise is returned.
-    If |signal| is shorter than |noise|, the length of the mix equals that of
-    |signal|. Otherwise, the mix length depends on whether padding is applied.
-    When padding is not applied, that is |pad_noise| is set to NO_PADDING
-    (default), the mix length equals that of |noise| - i.e., |signal| is
-    truncated. Otherwise, |noise| is extended and the resulting mix has the same
-    length of |signal|.
+    If `signal` is shorter than `noise`, the length of the mix equals that of
+    `signal`. Otherwise, the mix length depends on whether padding is applied.
+    When padding is not applied, that is `pad_noise` is set to NO_PADDING
+    (default), the mix length equals that of `noise` - i.e., `signal` is
+    truncated. Otherwise, `noise` is extended and the resulting mix has the same
+    length of `signal`.
 
     Args:
       signal: AudioSegment instance (signal).
@@ -342,18 +342,18 @@ class SignalProcessingUtils(object):
         signal_duration = len(signal)
         noise_duration = len(noise)
         if signal_duration <= noise_duration:
-            # Ignore |pad_noise|, |noise| is truncated if longer that |signal|, the
-            # mix will have the same length of |signal|.
+            # Ignore `pad_noise`, `noise` is truncated if longer that `signal`, the
+            # mix will have the same length of `signal`.
             return signal.overlay(noise.apply_gain(gain_db))
         elif pad_noise == cls.MixPadding.NO_PADDING:
-            # |signal| is longer than |noise|, but no padding is applied to |noise|.
-            # Truncate |signal|.
+            # `signal` is longer than `noise`, but no padding is applied to `noise`.
+            # Truncate `signal`.
             return noise.overlay(signal, gain_during_overlay=gain_db)
         elif pad_noise == cls.MixPadding.ZERO_PADDING:
             # TODO(alessiob): Check that this works as expected.
             return signal.overlay(noise.apply_gain(gain_db))
         elif pad_noise == cls.MixPadding.LOOP:
-            # |signal| is longer than |noise|, extend |noise| by looping.
+            # `signal` is longer than `noise`, extend `noise` by looping.
             return signal.overlay(noise.apply_gain(gain_db), loop=True)
         else:
             raise exceptions.SignalProcessingException('invalid padding type')

@@ -78,6 +78,15 @@ class Subtractor {
             refined_impulse_responses_[0].data(),
             GetTimeDomainLength(
                 refined_filters_[0]->max_filter_size_partitions())));
+    if (ApmDataDumper::IsAvailable()) {
+      RTC_DCHECK_GT(coarse_impulse_responses_.size(), 0);
+      data_dumper_->DumpRaw(
+          "aec3_subtractor_h_coarse",
+          rtc::ArrayView<const float>(
+              coarse_impulse_responses_[0].data(),
+              GetTimeDomainLength(
+                  coarse_filter_[0]->max_filter_size_partitions())));
+    }
 
     refined_filters_[0]->DumpFilter("aec3_subtractor_H_refined");
     coarse_filter_[0]->DumpFilter("aec3_subtractor_H_coarse");
@@ -132,6 +141,7 @@ class Subtractor {
   std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>>
       refined_frequency_responses_;
   std::vector<std::vector<float>> refined_impulse_responses_;
+  std::vector<std::vector<float>> coarse_impulse_responses_;
 };
 
 }  // namespace webrtc

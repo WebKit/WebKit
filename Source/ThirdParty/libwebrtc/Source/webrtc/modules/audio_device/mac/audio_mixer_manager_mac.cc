@@ -225,7 +225,7 @@ int32_t AudioMixerManagerMac::SetSpeakerVolume(uint32_t volume) {
   // volume range is 0.0 - 1.0, convert from 0 -255
   const Float32 vol = (Float32)(volume / 255.0);
 
-  assert(vol <= 1.0 && vol >= 0.0);
+  RTC_DCHECK(vol <= 1.0 && vol >= 0.0);
 
   // Does the capture device have a master volume control?
   // If so, use it exclusively.
@@ -311,7 +311,7 @@ int32_t AudioMixerManagerMac::SpeakerVolume(uint32_t& volume) const {
       return -1;
     }
 
-    assert(channels > 0);
+    RTC_DCHECK_GT(channels, 0);
     // vol 0.0 to 1.0 -> convert to 0 - 255
     volume = static_cast<uint32_t>(255 * vol / channels + 0.5);
   }
@@ -522,7 +522,7 @@ int32_t AudioMixerManagerMac::SpeakerMute(bool& enabled) const {
       return -1;
     }
 
-    assert(channels > 0);
+    RTC_DCHECK_GT(channels, 0);
     // 1 means muted
     enabled = static_cast<bool>(muted);
   }
@@ -690,7 +690,7 @@ int32_t AudioMixerManagerMac::MicrophoneMute(bool& enabled) const {
       return -1;
     }
 
-    assert(channels > 0);
+    RTC_DCHECK_GT(channels, 0);
     // 1 means muted
     enabled = static_cast<bool>(muted);
   }
@@ -757,7 +757,7 @@ int32_t AudioMixerManagerMac::SetMicrophoneVolume(uint32_t volume) {
   // volume range is 0.0 - 1.0, convert from 0 - 255
   const Float32 vol = (Float32)(volume / 255.0);
 
-  assert(vol <= 1.0 && vol >= 0.0);
+  RTC_DCHECK(vol <= 1.0 && vol >= 0.0);
 
   // Does the capture device have a master volume control?
   // If so, use it exclusively.
@@ -843,7 +843,7 @@ int32_t AudioMixerManagerMac::MicrophoneVolume(uint32_t& volume) const {
       return -1;
     }
 
-    assert(channels > 0);
+    RTC_DCHECK_GT(channels, 0);
     // vol 0.0 to 1.0 -> convert to 0 - 255
     volume = static_cast<uint32_t>(255 * volFloat32 / channels + 0.5);
   }

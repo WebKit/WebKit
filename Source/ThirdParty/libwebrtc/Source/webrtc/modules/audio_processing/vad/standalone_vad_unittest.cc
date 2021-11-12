@@ -31,7 +31,7 @@ TEST(StandaloneVadTest, Api) {
   for (size_t n = 0; n < kMaxNumFrames; n++)
     EXPECT_EQ(0, vad->AddAudio(data, kLength10Ms));
 
-  // Pretend |p| is shorter that it should be.
+  // Pretend `p` is shorter that it should be.
   EXPECT_EQ(-1, vad->GetActivity(p, kMaxNumFrames - 1));
 
   EXPECT_EQ(0, vad->GetActivity(p, kMaxNumFrames));

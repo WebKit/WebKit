@@ -47,16 +47,16 @@ class MouseCursorMonitor {
   class Callback {
    public:
     // Called in response to Capture() when the cursor shape has changed. Must
-    // take ownership of |cursor|.
+    // take ownership of `cursor`.
     virtual void OnMouseCursor(MouseCursor* cursor) = 0;
 
-    // Called in response to Capture(). |position| indicates cursor position
-    // relative to the |window| specified in the constructor.
+    // Called in response to Capture(). `position` indicates cursor position
+    // relative to the `window` specified in the constructor.
     // Deprecated: use the following overload instead.
     virtual void OnMouseCursorPosition(CursorState state,
                                        const DesktopVector& position) {}
 
-    // Called in response to Capture(). |position| indicates cursor absolute
+    // Called in response to Capture(). `position` indicates cursor absolute
     // position on the system in fullscreen coordinate, i.e. the top-left
     // monitor always starts from (0, 0).
     // The coordinates of the position is controlled by OS, but it's always
@@ -94,11 +94,11 @@ class MouseCursorMonitor {
   static std::unique_ptr<MouseCursorMonitor> Create(
       const DesktopCaptureOptions& options);
 
-  // Initializes the monitor with the |callback|, which must remain valid until
+  // Initializes the monitor with the `callback`, which must remain valid until
   // capturer is destroyed.
   virtual void Init(Callback* callback, Mode mode) = 0;
 
-  // Captures current cursor shape and position (depending on the |mode| passed
+  // Captures current cursor shape and position (depending on the `mode` passed
   // to Init()). Calls Callback::OnMouseCursor() if cursor shape has
   // changed since the last call (or when Capture() is called for the first
   // time) and then Callback::OnMouseCursorPosition() if mode is set to

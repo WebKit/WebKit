@@ -42,16 +42,15 @@ void MakeRtpHeader(int payload_type,
 
 TEST(TestPacket, RegularPacket) {
   const size_t kPacketLengthBytes = 100;
-  uint8_t* packet_memory = new uint8_t[kPacketLengthBytes];
+  rtc::CopyOnWriteBuffer packet_memory(kPacketLengthBytes);
   const uint8_t kPayloadType = 17;
   const uint16_t kSequenceNumber = 4711;
   const uint32_t kTimestamp = 47114711;
   const uint32_t kSsrc = 0x12345678;
   MakeRtpHeader(kPayloadType, kSequenceNumber, kTimestamp, kSsrc,
-                packet_memory);
+                packet_memory.MutableData());
   const double kPacketTime = 1.0;
-  // Hand over ownership of |packet_memory| to |packet|.
-  Packet packet(packet_memory, kPacketLengthBytes, kPacketTime);
+  Packet packet(std::move(packet_memory), kPacketTime);
   ASSERT_TRUE(packet.valid_header());
   EXPECT_EQ(kPayloadType, packet.header().payloadType);
   EXPECT_EQ(kSequenceNumber, packet.header().sequenceNumber);
@@ -70,16 +69,44 @@ TEST(TestPacket, RegularPacket) {
 TEST(TestPacket, DummyPacket) {
   const size_t kPacketLengthBytes = kHeaderLengthBytes;  // Only RTP header.
   const size_t kVirtualPacketLengthBytes = 100;
-  uint8_t* packet_memory = new uint8_t[kPacketLengthBytes];
+  rtc::CopyOnWriteBuffer packet_memory(kPacketLengthBytes);
   const uint8_t kPayloadType = 17;
   const uint16_t kSequenceNumber = 4711;
   const uint32_t kTimestamp = 47114711;
   const uint32_t kSsrc = 0x12345678;
   MakeRtpHeader(kPayloadType, kSequenceNumber, kTimestamp, kSsrc,
-                packet_memory);
+                packet_memory.MutableData());
   const double kPacketTime = 1.0;
-  // Hand over ownership of |packet_memory| to |packet|.
-  Packet packet(packet_memory, kPacketLengthBytes, kVirtualPacketLengthBytes,
+  Packet packet(std::move(packet_memory), kVirtualPacketLengthBytes,
+                kPacketTime);
+  ASSERT_TRUE(packet.valid_header());
+  EXPECT_EQ(kPayloadType, packet.header().payloadType);
+  EXPECT_EQ(kSequenceNumber, packet.header().sequenceNumber);
+  EXPECT_EQ(kTimestamp, packet.header().timestamp);
+  EXPECT_EQ(kSsrc, packet.header().ssrc);
+  EXPECT_EQ(0, packet.header().numCSRCs);
+  EXPECT_EQ(kPacketLengthBytes, packet.packet_length_bytes());
+  EXPECT_EQ(kPacketLengthBytes - kHeaderLengthBytes,
+            packet.payload_length_bytes());
+  EXPECT_EQ(kVirtualPacketLengthBytes, packet.virtual_packet_length_bytes());
+  EXPECT_EQ(kVirtualPacketLengthBytes - kHeaderLengthBytes,
+            packet.virtual_payload_length_bytes());
+  EXPECT_EQ(kPacketTime, packet.time_ms());
+}
+
+TEST(TestPacket, DummyPaddingPacket) {
+  const size_t kPacketLengthBytes = kHeaderLengthBytes;  // Only RTP header.
+  const size_t kVirtualPacketLengthBytes = 100;
+  rtc::CopyOnWriteBuffer packet_memory(kPacketLengthBytes);
+  const uint8_t kPayloadType = 17;
+  const uint16_t kSequenceNumber = 4711;
+  const uint32_t kTimestamp = 47114711;
+  const uint32_t kSsrc = 0x12345678;
+  MakeRtpHeader(kPayloadType, kSequenceNumber, kTimestamp, kSsrc,
+                packet_memory.MutableData());
+  packet_memory.MutableData()[0] |= 0b0010'0000;  // Set the padding bit.
+  const double kPacketTime = 1.0;
+  Packet packet(std::move(packet_memory), kVirtualPacketLengthBytes,
                 kPacketTime);
   ASSERT_TRUE(packet.valid_header());
   EXPECT_EQ(kPayloadType, packet.header().payloadType);
@@ -97,17 +124,17 @@ TEST(TestPacket, DummyPacket) {
 }
 
 namespace {
-// Writes one RED block header starting at |rtp_data|, according to RFC 2198.
+// Writes one RED block header starting at `rtp_data`, according to RFC 2198.
 // returns the number of bytes written (1 or 4).
 //
-// Format if |last_payoad| is false:
+// Format if `last_payoad` is false:
 // 0                   1                    2                   3
 // 0 1 2 3 4 5 6 7 8 9 0 1 2 3  4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // |1|   block PT  |  timestamp offset         |   block length    |
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //
-// Format if |last_payoad| is true:
+// Format if `last_payoad` is true:
 // 0 1 2 3 4 5 6 7
 // +-+-+-+-+-+-+-+-+
 // |0|   Block PT  |
@@ -133,19 +160,19 @@ int MakeRedHeader(int payload_type,
 
 TEST(TestPacket, RED) {
   const size_t kPacketLengthBytes = 100;
-  uint8_t* packet_memory = new uint8_t[kPacketLengthBytes];
+  rtc::CopyOnWriteBuffer packet_memory(kPacketLengthBytes);
   const uint8_t kRedPayloadType = 17;
   const uint16_t kSequenceNumber = 4711;
   const uint32_t kTimestamp = 47114711;
   const uint32_t kSsrc = 0x12345678;
   MakeRtpHeader(kRedPayloadType, kSequenceNumber, kTimestamp, kSsrc,
-                packet_memory);
+                packet_memory.MutableData());
   // Create four RED headers.
   // Payload types are just the same as the block index the offset is 100 times
   // the block index.
   const int kRedBlocks = 4;
-  uint8_t* payload_ptr =
-      &packet_memory[kHeaderLengthBytes];  // First byte after header.
+  uint8_t* payload_ptr = packet_memory.MutableData() +
+                         kHeaderLengthBytes;  // First byte after header.
   for (int i = 0; i < kRedBlocks; ++i) {
     int payload_type = i;
     // Offset value is not used for the last block.
@@ -156,7 +183,7 @@ TEST(TestPacket, RED) {
                                  last_block, payload_ptr);
   }
   const double kPacketTime = 1.0;
-  // Hand over ownership of |packet_memory| to |packet|.
+  // Hand over ownership of `packet_memory` to `packet`.
   Packet packet(packet_memory, kPacketLengthBytes, kPacketTime);
   ASSERT_TRUE(packet.valid_header());
   EXPECT_EQ(kRedPayloadType, packet.header().payloadType);

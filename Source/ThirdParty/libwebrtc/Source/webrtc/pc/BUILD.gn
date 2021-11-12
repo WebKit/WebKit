@@ -23,6 +23,20 @@ config("rtc_pc_config") {
   }
 }
 
+rtc_library("proxy") {
+  sources = [
+    "proxy.cc",
+    "proxy.h",
+  ]
+  deps = [
+    "../api:scoped_refptr",
+    "../api/task_queue",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:threading",
+    "../rtc_base/system:rtc_export",
+  ]
+}
+
 rtc_library("rtc_pc_base") {
   visibility = [ "*" ]
   defines = []
@@ -42,14 +56,22 @@ rtc_library("rtc_pc_base") {
     "ice_transport.h",
     "jsep_transport.cc",
     "jsep_transport.h",
+    "jsep_transport_collection.cc",
+    "jsep_transport_collection.h",
     "jsep_transport_controller.cc",
     "jsep_transport_controller.h",
     "media_session.cc",
     "media_session.h",
+    "media_stream_proxy.h",
+    "media_stream_track_proxy.h",
+    "peer_connection_factory_proxy.h",
+    "peer_connection_proxy.h",
     "rtcp_mux_filter.cc",
     "rtcp_mux_filter.h",
     "rtp_media_utils.cc",
     "rtp_media_utils.h",
+    "rtp_receiver_proxy.h",
+    "rtp_sender_proxy.h",
     "rtp_transport.cc",
     "rtp_transport.h",
     "rtp_transport_internal.h",
@@ -59,10 +81,6 @@ rtc_library("rtc_pc_base") {
     "sctp_transport.h",
     "sctp_utils.cc",
     "sctp_utils.h",
-    "session_description.cc",
-    "session_description.h",
-    "simulcast_description.cc",
-    "simulcast_description.h",
     "srtp_filter.cc",
     "srtp_filter.h",
     "srtp_session.cc",
@@ -72,10 +90,15 @@ rtc_library("rtc_pc_base") {
     "transport_stats.cc",
     "transport_stats.h",
     "used_ids.h",
+    "video_track_source_proxy.cc",
+    "video_track_source_proxy.h",
   ]
 
   deps = [
     ":media_protocol_names",
+    ":proxy",
+    ":session_description",
+    ":simulcast_description",
     "../api:array_view",
     "../api:async_dns_resolver",
     "../api:audio_options_api",
@@ -83,6 +106,7 @@ rtc_library("rtc_pc_base") {
     "../api:function_view",
     "../api:ice_transport_factory",
     "../api:libjingle_peerconnection_api",
+    "../api:media_stream_interface",
     "../api:packet_socket_factory",
     "../api:priority",
     "../api:rtc_error",
@@ -127,6 +151,7 @@ rtc_library("rtc_pc_base") {
     "../rtc_base/network:sent_packet",
     "../rtc_base/synchronization:mutex",
     "../rtc_base/system:file_wrapper",
+    "../rtc_base/system:no_unique_address",
     "../rtc_base/system:rtc_export",
     "../rtc_base/task_utils:pending_task_safety_flag",
     "../rtc_base/task_utils:to_queued_task",
@@ -150,6 +175,43 @@ rtc_library("rtc_pc_base") {
   public_configs = [ ":rtc_pc_config" ]
 }
 
+rtc_source_set("session_description") {
+  visibility = [ "*" ]
+  sources = [
+    "session_description.cc",
+    "session_description.h",
+  ]
+  deps = [
+    ":media_protocol_names",
+    ":simulcast_description",
+    "../api:libjingle_peerconnection_api",
+    "../api:rtp_parameters",
+    "../api:rtp_transceiver_direction",
+    "../media:rtc_media_base",
+    "../p2p:rtc_p2p",
+    "../rtc_base:checks",
+    "../rtc_base:socket_address",
+    "../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/memory:memory",
+  ]
+}
+
+rtc_source_set("simulcast_description") {
+  visibility = [ "*" ]
+  sources = [
+    "simulcast_description.cc",
+    "simulcast_description.h",
+  ]
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base:socket_address",
+    "../rtc_base/system:rtc_export",
+  ]
+}
+
 rtc_source_set("rtc_pc") {
   visibility = [ "*" ]
   allow_poison = [ "audio_codecs" ]  # TODO(bugs.webrtc.org/8396): Remove.
@@ -164,6 +226,7 @@ rtc_library("media_protocol_names") {
     "media_protocol_names.cc",
     "media_protocol_names.h",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("peerconnection") {
@@ -219,6 +282,7 @@ rtc_library("peerconnection") {
     ":media_protocol_names",
     ":media_stream",
     ":peer_connection_message_handler",
+    ":proxy",
     ":remote_audio_source",
     ":rtc_pc_base",
     ":rtp_parameters_conversion",
@@ -227,6 +291,8 @@ rtc_library("peerconnection") {
     ":rtp_transceiver",
     ":rtp_transmission_manager",
     ":sdp_state_provider",
+    ":session_description",
+    ":simulcast_description",
     ":stats_collector_interface",
     ":transceiver_list",
     ":usage_pattern",
@@ -276,6 +342,8 @@ rtc_library("peerconnection") {
     "../api/video:video_rtp_headers",
     "../api/video_codecs:video_codecs_api",
     "../call:call_interfaces",
+    "../call:rtp_interfaces",
+    "../call:rtp_sender",
     "../common_video",
     "../logging:ice_log",
     "../media:rtc_data_sctp_transport_internal",
@@ -301,6 +369,7 @@ rtc_library("peerconnection") {
     "../rtc_base/system:file_wrapper",
     "../rtc_base/system:no_unique_address",
     "../rtc_base/system:rtc_export",
+    "../rtc_base/system:unused",
     "../rtc_base/task_utils:pending_task_safety_flag",
     "../rtc_base/task_utils:to_queued_task",
     "../rtc_base/third_party/base64",
@@ -380,10 +449,12 @@ rtc_library("rtp_transceiver") {
     "rtp_transceiver.h",
   ]
   deps = [
+    ":proxy",
     ":rtc_pc_base",
     ":rtp_parameters_conversion",
     ":rtp_receiver",
     ":rtp_sender",
+    ":session_description",
     "../api:array_view",
     "../api:libjingle_peerconnection_api",
     "../api:rtc_error",
@@ -471,6 +542,7 @@ rtc_library("rtp_receiver") {
   ]
   deps = [
     ":media_stream",
+    ":rtc_pc_base",
     ":video_track_source",
     "../api:libjingle_peerconnection_api",
     "../api:media_stream_interface",
@@ -502,6 +574,7 @@ rtc_library("audio_rtp_receiver") {
     ":jitter_buffer_delay",
     ":media_stream",
     ":remote_audio_source",
+    ":rtc_pc_base",
     ":rtp_receiver",
     "../api:frame_transformer_interface",
     "../api:libjingle_peerconnection_api",
@@ -535,6 +608,7 @@ rtc_library("video_rtp_receiver") {
   deps = [
     ":jitter_buffer_delay",
     ":media_stream",
+    ":rtc_pc_base",
     ":rtp_receiver",
     ":video_rtp_track_source",
     ":video_track",
@@ -702,6 +776,7 @@ rtc_library("rtp_parameters_conversion") {
   ]
   deps = [
     ":rtc_pc_base",
+    ":session_description",
     "../api:array_view",
     "../api:libjingle_peerconnection_api",
     "../api:rtc_error",
@@ -723,6 +798,7 @@ rtc_library("dtmf_sender") {
     "dtmf_sender.h",
   ]
   deps = [
+    ":proxy",
     "../api:libjingle_peerconnection_api",
     "../api:scoped_refptr",
     "../rtc_base:checks",
@@ -831,6 +907,7 @@ if (rtc_include_tests && !build_with_chromium) {
       ":peerconnection",
       ":rtc_pc",
       ":rtc_pc_base",
+      ":session_description",
       ":video_rtp_receiver",
       "../api:array_view",
       "../api:audio_options_api",
@@ -977,6 +1054,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "rtp_sender_receiver_unittest.cc",
       "rtp_transceiver_unittest.cc",
       "sctp_utils_unittest.cc",
+      "sdp_offer_answer_unittest.cc",
       "sdp_serializer_unittest.cc",
       "stats_collector_unittest.cc",
       "test/fake_audio_capture_module_unittest.cc",
@@ -995,12 +1073,14 @@ if (rtc_include_tests && !build_with_chromium) {
       ":jitter_buffer_delay",
       ":media_stream",
       ":peerconnection",
+      ":proxy",
       ":remote_audio_source",
       ":rtc_pc_base",
       ":rtp_parameters_conversion",
       ":rtp_receiver",
       ":rtp_sender",
       ":rtp_transceiver",
+      ":session_description",
       ":usage_pattern",
       ":video_rtp_receiver",
       ":video_rtp_track_source",
@@ -1016,6 +1096,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../api:libjingle_peerconnection_api",
       "../api:media_stream_interface",
       "../api:mock_rtp",
+      "../api:mock_video_track",
       "../api:packet_socket_factory",
       "../api:rtc_error",
       "../api:rtp_transceiver_direction",
@@ -1056,6 +1137,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../rtc_base/synchronization:mutex",
       "../rtc_base/third_party/base64",
       "../rtc_base/third_party/sigslot",
+      "../system_wrappers:field_trial",
       "../system_wrappers:metrics",
       "../test:field_trial",
       "../test:fileutils",
@@ -1159,6 +1241,7 @@ if (rtc_include_tests && !build_with_chromium) {
       ":rtp_receiver",
       ":rtp_sender",
       ":rtp_transceiver",
+      ":session_description",
       ":usage_pattern",
       ":video_rtp_receiver",
       ":video_rtp_track_source",

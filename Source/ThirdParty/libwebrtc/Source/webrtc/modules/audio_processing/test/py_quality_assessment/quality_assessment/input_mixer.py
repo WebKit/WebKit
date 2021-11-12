@@ -47,7 +47,7 @@ class ApmInputMixer(object):
 
     Hard-clipping may occur in the mix; a warning is raised when this happens.
 
-    If |echo_filepath| is None, nothing is done and |capture_input_filepath| is
+    If `echo_filepath` is None, nothing is done and `capture_input_filepath` is
     returned.
 
     Args:

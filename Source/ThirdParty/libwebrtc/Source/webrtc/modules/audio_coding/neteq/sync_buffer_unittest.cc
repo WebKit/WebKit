@@ -55,18 +55,18 @@ TEST(SyncBuffer, PushBackAndFlush) {
   SyncBuffer sync_buffer(kChannels, kLen);
   static const size_t kNewLen = 10;
   AudioMultiVector new_data(kChannels, kNewLen);
-  // Populate |new_data|.
+  // Populate `new_data`.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
       new_data[channel][i] = rtc::checked_cast<int16_t>(i);
     }
   }
-  // Push back |new_data| into |sync_buffer|. This operation should pop out
-  // data from the front of |sync_buffer|, so that the size of the buffer
-  // remains the same. The |next_index_| should also move with the same length.
+  // Push back `new_data` into `sync_buffer`. This operation should pop out
+  // data from the front of `sync_buffer`, so that the size of the buffer
+  // remains the same. The `next_index_` should also move with the same length.
   sync_buffer.PushBack(new_data);
   ASSERT_EQ(kLen, sync_buffer.Size());
-  // Verify that |next_index_| moved accordingly.
+  // Verify that `next_index_` moved accordingly.
   EXPECT_EQ(kLen - kNewLen, sync_buffer.next_index());
   // Verify the new contents.
   for (size_t channel = 0; channel < kChannels; ++channel) {
@@ -95,7 +95,7 @@ TEST(SyncBuffer, PushFrontZeros) {
   SyncBuffer sync_buffer(kChannels, kLen);
   static const size_t kNewLen = 10;
   AudioMultiVector new_data(kChannels, kNewLen);
-  // Populate |new_data|.
+  // Populate `new_data`.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
       new_data[channel][i] = rtc::checked_cast<int16_t>(1000 + i);
@@ -104,10 +104,10 @@ TEST(SyncBuffer, PushFrontZeros) {
   sync_buffer.PushBack(new_data);
   EXPECT_EQ(kLen, sync_buffer.Size());
 
-  // Push |kNewLen| - 1 zeros into each channel in the front of the SyncBuffer.
+  // Push `kNewLen` - 1 zeros into each channel in the front of the SyncBuffer.
   sync_buffer.PushFrontZeros(kNewLen - 1);
   EXPECT_EQ(kLen, sync_buffer.Size());  // Size should remain the same.
-  // Verify that |next_index_| moved accordingly. Should be at the end - 1.
+  // Verify that `next_index_` moved accordingly. Should be at the end - 1.
   EXPECT_EQ(kLen - 1, sync_buffer.next_index());
   // Verify the zeros.
   for (size_t channel = 0; channel < kChannels; ++channel) {
@@ -128,22 +128,22 @@ TEST(SyncBuffer, GetNextAudioInterleaved) {
   SyncBuffer sync_buffer(kChannels, kLen);
   static const size_t kNewLen = 10;
   AudioMultiVector new_data(kChannels, kNewLen);
-  // Populate |new_data|.
+  // Populate `new_data`.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
       new_data[channel][i] = rtc::checked_cast<int16_t>(i);
     }
   }
-  // Push back |new_data| into |sync_buffer|. This operation should pop out
-  // data from the front of |sync_buffer|, so that the size of the buffer
-  // remains the same. The |next_index_| should also move with the same length.
+  // Push back `new_data` into `sync_buffer`. This operation should pop out
+  // data from the front of `sync_buffer`, so that the size of the buffer
+  // remains the same. The `next_index_` should also move with the same length.
   sync_buffer.PushBack(new_data);
 
   // Read to interleaved output. Read in two batches, where each read operation
-  // should automatically update the |net_index_| in the SyncBuffer.
-  // Note that |samples_read| is the number of samples read from each channel.
-  // That is, the number of samples written to |output| is
-  // |samples_read| * |kChannels|.
+  // should automatically update the `net_index_` in the SyncBuffer.
+  // Note that `samples_read` is the number of samples read from each channel.
+  // That is, the number of samples written to `output` is
+  // `samples_read` * `kChannels`.
   AudioFrame output1;
   sync_buffer.GetNextAudioInterleaved(kNewLen / 2, &output1);
   EXPECT_EQ(kChannels, output1.num_channels_);

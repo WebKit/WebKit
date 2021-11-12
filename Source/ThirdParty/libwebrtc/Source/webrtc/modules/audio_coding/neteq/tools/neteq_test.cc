@@ -172,7 +172,7 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
       }
       AudioFrame out_frame;
       bool muted;
-      int error = neteq_->GetAudio(&out_frame, &muted,
+      int error = neteq_->GetAudio(&out_frame, &muted, nullptr,
                                    ActionToOperations(next_action_));
       next_action_ = absl::nullopt;
       RTC_CHECK(!muted) << "The code does not handle enable_muted_state";

@@ -32,7 +32,7 @@ constexpr uint32_t kFlexfecSsrc = 43245;
 
 constexpr size_t kMaxMediaPackets = 48;
 
-// Deep copies |src| to |dst|, but only keeps every Nth packet.
+// Deep copies `src` to `dst`, but only keeps every Nth packet.
 void DeepCopyEveryNthPacket(const ForwardErrorCorrection::PacketList& src,
                             int n,
                             ForwardErrorCorrection::PacketList* dst) {
@@ -62,7 +62,7 @@ class RtpFecTest : public ::testing::Test {
             kMediaSsrc,
             &random_) {}
 
-  // Construct |received_packets_|: a subset of the media and FEC packets.
+  // Construct `received_packets_`: a subset of the media and FEC packets.
   //
   // Media packet "i" is lost if media_loss_mask_[i] = 1, received if
   // media_loss_mask_[i] = 0.
@@ -70,9 +70,9 @@ class RtpFecTest : public ::testing::Test {
   // fec_loss_mask_[i] = 0.
   void NetworkReceivedPackets(int* media_loss_mask, int* fec_loss_mask);
 
-  // Add packet from |packet_list| to list of received packets, using the
-  // |loss_mask|.
-  // The |packet_list| may be a media packet list (is_fec = false), or a
+  // Add packet from `packet_list` to list of received packets, using the
+  // `loss_mask`.
+  // The `packet_list` may be a media packet list (is_fec = false), or a
   // FEC packet list (is_fec = true).
   template <typename T>
   void ReceivedPackets(const T& packet_list, int* loss_mask, bool is_fec);
@@ -168,7 +168,7 @@ bool RtpFecTest<ForwardErrorCorrectionType>::IsRecoveryComplete() {
 
 // Define gTest typed test to loop over both ULPFEC and FlexFEC.
 // Since the tests now are parameterized, we need to access
-// member variables using |this|, thereby enforcing runtime
+// member variables using `this`, thereby enforcing runtime
 // resolution.
 
 class FlexfecForwardErrorCorrection : public ForwardErrorCorrection {
@@ -244,7 +244,7 @@ TYPED_TEST(RtpFecTest,
   this->media_packets_ =
       this->media_packet_generator_.ConstructMediaPackets(kNumMediaPackets);
 
-  // Create |kMaxMediaPackets| sequence number difference.
+  // Create `kMaxMediaPackets` sequence number difference.
   ByteWriter<uint16_t>::WriteBigEndian(
       this->media_packets_.front()->data.MutableData() + 2, 1);
   ByteWriter<uint16_t>::WriteBigEndian(

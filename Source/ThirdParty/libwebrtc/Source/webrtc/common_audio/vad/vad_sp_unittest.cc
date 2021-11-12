@@ -29,7 +29,7 @@ TEST_F(VadTest, vad_sp) {
   int16_t data_in[kMaxFrameLenSp];
   int16_t data_out[kMaxFrameLenSp];
 
-  // We expect the first value to be 1600 as long as |frame_counter| is zero,
+  // We expect the first value to be 1600 as long as `frame_counter` is zero,
   // which is true for the first iteration.
   static const int16_t kReferenceMin[32] = {
       1600, 720, 509, 512, 532, 552,  570, 588, 606, 624, 642,

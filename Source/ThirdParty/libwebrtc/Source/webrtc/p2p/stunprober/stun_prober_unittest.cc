@@ -80,8 +80,8 @@ class StunProberTest : public ::testing::Test {
     rtc::NetworkManager::NetworkList networks;
     networks.push_back(&ipv4_network1);
 
-    std::unique_ptr<rtc::BasicPacketSocketFactory> socket_factory(
-        new rtc::BasicPacketSocketFactory());
+    auto socket_factory =
+        std::make_unique<rtc::BasicPacketSocketFactory>(ss_.get());
 
     // Set up the expected results for verification.
     std::set<std::string> srflx_addresses;

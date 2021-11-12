@@ -64,7 +64,7 @@ static CGFloat const kCallControlMargin = 8;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
   // There is no other control that can take focus, so manually resign focus
-  // when return (Join) is pressed to trigger |textFieldDidEndEditing|.
+  // when return (Join) is pressed to trigger `textFieldDidEndEditing`.
   [textField resignFirstResponder];
   return YES;
 }

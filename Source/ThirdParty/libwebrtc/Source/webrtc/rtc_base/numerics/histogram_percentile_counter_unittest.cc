@@ -23,7 +23,7 @@ TEST(HistogramPercentileCounterTest, ReturnsCorrectPercentiles) {
 
   EXPECT_FALSE(counter.GetPercentile(0.5f));
   // Pairs of {fraction, percentile value} computed by hand
-  // for |kTestValues|.
+  // for `kTestValues`.
   const std::vector<std::pair<float, uint32_t>> kTestPercentiles = {
       {0.0f, 1},   {0.01f, 1},  {0.5f, 10}, {0.9f, 18},
       {0.95f, 19}, {0.99f, 20}, {1.0f, 20}};

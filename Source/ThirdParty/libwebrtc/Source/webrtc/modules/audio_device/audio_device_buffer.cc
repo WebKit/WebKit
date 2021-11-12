@@ -160,10 +160,10 @@ void AudioDeviceBuffer::StopRecording() {
   // recorded. Measurements (max of absolute level) are taken twice per second,
   // which means that if e.g 10 seconds of audio has been recorded, a total of
   // 20 level estimates must all be identical to zero to trigger the histogram.
-  // |only_silence_recorded_| can only be cleared on the native audio thread
+  // `only_silence_recorded_` can only be cleared on the native audio thread
   // that drives audio capture but we know by design that the audio has stopped
   // when this method is called, hence there should not be aby conflicts. Also,
-  // the fact that |only_silence_recorded_| can be affected during the complete
+  // the fact that `only_silence_recorded_` can be affected during the complete
   // call makes chances of conflicts with potentially one last callback very
   // small.
   const size_t time_since_start = rtc::TimeSince(rec_start_time_);
@@ -245,7 +245,7 @@ int32_t AudioDeviceBuffer::SetRecordedBuffer(const void* audio_buffer,
     // Returns the largest absolute value in a signed 16-bit vector.
     max_abs = WebRtcSpl_MaxAbsValueW16(rec_buffer_.data(), rec_buffer_.size());
     rec_stat_count_ = 0;
-    // Set |only_silence_recorded_| to false as soon as at least one detection
+    // Set `only_silence_recorded_` to false as soon as at least one detection
     // of a non-zero audio packet is found. It can only be restored to true
     // again by restarting the call.
     if (max_abs > 0) {

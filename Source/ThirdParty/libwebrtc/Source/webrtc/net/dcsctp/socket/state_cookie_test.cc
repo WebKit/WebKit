@@ -36,5 +36,18 @@ TEST(StateCookieTest, SerializeAndDeserialize) {
   EXPECT_TRUE(deserialized.capabilities().reconfig);
 }
 
+TEST(StateCookieTest, ValidateMagicValue) {
+  Capabilities capabilities = {/*partial_reliability=*/true,
+                               /*message_interleaving=*/false,
+                               /*reconfig=*/true};
+  StateCookie cookie(VerificationTag(123), TSN(456),
+                     /*a_rwnd=*/789, TieTag(101112), capabilities);
+  std::vector<uint8_t> serialized = cookie.Serialize();
+  ASSERT_THAT(serialized, SizeIs(StateCookie::kCookieSize));
+
+  absl::string_view magic(reinterpret_cast<const char*>(serialized.data()), 8);
+  EXPECT_EQ(magic, "dcSCTP00");
+}
+
 }  // namespace
 }  // namespace dcsctp

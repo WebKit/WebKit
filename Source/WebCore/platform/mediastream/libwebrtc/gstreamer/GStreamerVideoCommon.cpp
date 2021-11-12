@@ -24,14 +24,14 @@
 #include "GStreamerVideoCommon.h"
 
 #include "absl/types/optional.h"
+#include "webrtc/api/video_codecs/h264_profile_level_id.h"
 #include "webrtc/media/base/codec.h"
-#include "webrtc/media/base/h264_profile_level_id.h"
 
 namespace WebCore {
 
-static webrtc::SdpVideoFormat createH264Format(webrtc::H264::Profile profile, webrtc::H264::Level level, const std::string& packetizationMode)
+static webrtc::SdpVideoFormat createH264Format(webrtc::H264Profile profile, webrtc::H264Level level, const std::string& packetizationMode)
 {
-    const auto profileString = webrtc::H264::ProfileLevelIdToString(webrtc::H264::ProfileLevelId(profile, level));
+    const auto profileString = webrtc::H264ProfileLevelIdToString(webrtc::H264ProfileLevelId(profile, level));
 
     return webrtc::SdpVideoFormat(cricket::kH264CodecName,
         { { cricket::kH264FmtpProfileLevelId, *profileString },
@@ -50,10 +50,12 @@ std::vector<webrtc::SdpVideoFormat> supportedH264Formats()
     // profile. See the H264 spec for more information.
     //
     // We support both packetization modes 0 (mandatory) and 1 (optional, preferred).
-    return { createH264Format(webrtc::H264::kProfileBaseline, webrtc::H264::kLevel3_1, "1"),
-        createH264Format(webrtc::H264::kProfileBaseline, webrtc::H264::kLevel3_1, "0"),
-        createH264Format(webrtc::H264::kProfileConstrainedBaseline, webrtc::H264::kLevel3_1, "1"),
-        createH264Format(webrtc::H264::kProfileConstrainedBaseline, webrtc::H264::kLevel3_1, "0"), };
+    return {
+        createH264Format(webrtc::H264Profile::kProfileBaseline, webrtc::H264Level::kLevel3_1, "1"),
+        createH264Format(webrtc::H264Profile::kProfileBaseline, webrtc::H264Level::kLevel3_1, "0"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedBaseline, webrtc::H264Level::kLevel3_1, "1"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedBaseline, webrtc::H264Level::kLevel3_1, "0"),
+    };
 }
 
 } // namespace WebCore

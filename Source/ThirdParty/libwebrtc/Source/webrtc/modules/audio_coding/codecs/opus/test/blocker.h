@@ -39,7 +39,7 @@ class BlockerCallback {
 // of audio, which is not a power of 2. Blocker allows us to specify the
 // transform and all other necessary processing via the Process() callback
 // function without any constraints on the transform-size
-// (read: |block_size_|) or received-audio-size (read: |chunk_size_|).
+// (read: `block_size_`) or received-audio-size (read: `chunk_size_`).
 // We handle this for the multichannel audio case, allowing for different
 // numbers of input and output channels (for example, beamforming takes 2 or
 // more input channels and returns 1 output channel). Audio signals are
@@ -53,8 +53,8 @@ class BlockerCallback {
 //   sending back a processed chunk
 //
 // To use blocker:
-// 1. Impelment a BlockerCallback object |bc|.
-// 2. Instantiate a Blocker object |b|, passing in |bc|.
+// 1. Impelment a BlockerCallback object `bc`.
+// 2. Instantiate a Blocker object `b`, passing in `bc`.
 // 3. As you receive audio, call b.ProcessChunk() to get processed audio.
 //
 // A small amount of delay is added to the first received chunk to deal with
@@ -101,7 +101,7 @@ class Blocker {
   // input and output buffers are responsible for saving those frames between
   // calls to ProcessChunk().
   //
-  // Both contain |initial delay| + |chunk_size| frames. The input is a fairly
+  // Both contain |initial delay| + `chunk_size` frames. The input is a fairly
   // standard FIFO, but due to the overlap-add it's harder to use an
   // AudioRingBuffer for the output.
   AudioRingBuffer input_buffer_;
@@ -116,7 +116,7 @@ class Blocker {
   std::unique_ptr<float[]> window_;
 
   // The amount of frames between the start of contiguous blocks. For example,
-  // |shift_amount_| = |block_size_| / 2 for a Hann window.
+  // `shift_amount_` = `block_size_` / 2 for a Hann window.
   size_t shift_amount_;
 
   BlockerCallback* callback_;

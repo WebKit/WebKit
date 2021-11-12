@@ -29,19 +29,19 @@ Contact <kron@google.com> or <sprang@google.com> for more info.
 Data layout of transport-wide sequence number
      1-byte header + 2 bytes of data:
 
-      0                   1                   2
+      0                   1                   2
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |  ID   | L=1   |transport-wide sequence number |
+     |  ID   | L=1   |transport-wide sequence number |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 Data layout of transport-wide sequence number and optional feedback request
      1-byte header + 4 bytes of data:
 
-      0                   1                   2                   3
+      0                   1                   2                   3
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |  ID   | L=3   |transport-wide sequence number |T|  seq count  |
+     |  ID   | L=3   |transport-wide sequence number |T|  seq count  |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      |seq count cont.|
      +-+-+-+-+-+-+-+-+

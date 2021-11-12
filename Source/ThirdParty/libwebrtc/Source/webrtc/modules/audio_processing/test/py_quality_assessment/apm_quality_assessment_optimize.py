@@ -133,7 +133,7 @@ def _FindOptimalParameter(configs_and_scores, score_weighting):
                                 {score1: value1, ...}}] into a numeric
                      value
   Returns:
-    the config that has the largest values of |score_weighting| applied
+    the config that has the largest values of `score_weighting` applied
     to its scores.
   """
 

@@ -24,7 +24,10 @@ rtc_source_set("dependency_descriptor") {
     "dependency_descriptor.cc",
     "dependency_descriptor.h",
   ]
-  deps = [ "../../../rtc_base:checks" ]
+  deps = [
+    "../../../rtc_base:checks",
+    "../../video:render_resolution",
+  ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/strings",

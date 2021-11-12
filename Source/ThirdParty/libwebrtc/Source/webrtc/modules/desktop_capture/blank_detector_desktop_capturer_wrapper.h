@@ -31,8 +31,8 @@ class BlankDetectorDesktopCapturerWrapper final
       public DesktopCapturer::Callback {
  public:
   // Creates BlankDetectorDesktopCapturerWrapper. BlankDesktopCapturerWrapper
-  // takes ownership of |capturer|. The |blank_pixel| is the unmodified color
-  // returned by the |capturer|.
+  // takes ownership of `capturer`. The `blank_pixel` is the unmodified color
+  // returned by the `capturer`.
   BlankDetectorDesktopCapturerWrapper(std::unique_ptr<DesktopCapturer> capturer,
                                       RgbaColor blank_pixel);
   ~BlankDetectorDesktopCapturerWrapper() override;
@@ -55,7 +55,7 @@ class BlankDetectorDesktopCapturerWrapper final
 
   bool IsBlankFrame(const DesktopFrame& frame) const;
 
-  // Detects whether pixel at (x, y) equals to |blank_pixel_|.
+  // Detects whether pixel at (x, y) equals to `blank_pixel_`.
   bool IsBlankPixel(const DesktopFrame& frame, int x, int y) const;
 
   const std::unique_ptr<DesktopCapturer> capturer_;

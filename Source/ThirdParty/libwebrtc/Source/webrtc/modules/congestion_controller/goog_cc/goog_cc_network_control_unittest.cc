@@ -124,6 +124,35 @@ void UpdatesTargetRateBasedOnLinkCapacity(std::string test_name = "") {
   truth->PrintRow();
   EXPECT_NEAR(client->target_rate().kbps(), 90, 25);
 }
+
+DataRate RunRembDipScenario(std::string test_name) {
+  Scenario s(test_name);
+  NetworkSimulationConfig net_conf;
+  net_conf.bandwidth = DataRate::KilobitsPerSec(2000);
+  net_conf.delay = TimeDelta::Millis(50);
+  auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
+    c->transport.rates.start_rate = DataRate::KilobitsPerSec(1000);
+  });
+  auto send_net = {s.CreateSimulationNode(net_conf)};
+  auto ret_net = {s.CreateSimulationNode(net_conf)};
+  auto* route = s.CreateRoutes(
+      client, send_net, s.CreateClient("return", CallClientConfig()), ret_net);
+  s.CreateVideoStream(route->forward(), VideoStreamConfig());
+
+  s.RunFor(TimeDelta::Seconds(10));
+  EXPECT_GT(client->send_bandwidth().kbps(), 1500);
+
+  DataRate RembLimit = DataRate::KilobitsPerSec(250);
+  client->SetRemoteBitrate(RembLimit);
+  s.RunFor(TimeDelta::Seconds(1));
+  EXPECT_EQ(client->send_bandwidth(), RembLimit);
+
+  DataRate RembLimitLifted = DataRate::KilobitsPerSec(10000);
+  client->SetRemoteBitrate(RembLimitLifted);
+  s.RunFor(TimeDelta::Seconds(10));
+
+  return client->send_bandwidth();
+}
 }  // namespace
 
 class GoogCcNetworkControllerTest : public ::testing::Test {
@@ -850,33 +879,17 @@ TEST_F(GoogCcNetworkControllerTest, IsFairToTCP) {
   EXPECT_LT(client->send_bandwidth().kbps(), 750);
 }
 
-TEST(GoogCcScenario, RampupOnRembCapLifted) {
-  ScopedFieldTrials trial("WebRTC-Bwe-ReceiverLimitCapsOnly/Enabled/");
-  Scenario s("googcc_unit/rampup_ramb_cap_lifted");
-  NetworkSimulationConfig net_conf;
-  net_conf.bandwidth = DataRate::KilobitsPerSec(2000);
-  net_conf.delay = TimeDelta::Millis(50);
-  auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
-    c->transport.rates.start_rate = DataRate::KilobitsPerSec(1000);
-  });
-  auto send_net = {s.CreateSimulationNode(net_conf)};
-  auto ret_net = {s.CreateSimulationNode(net_conf)};
-  auto* route = s.CreateRoutes(
-      client, send_net, s.CreateClient("return", CallClientConfig()), ret_net);
-  s.CreateVideoStream(route->forward(), VideoStreamConfig());
+TEST(GoogCcScenario, FastRampupOnRembCapLifted) {
+  DataRate final_estimate =
+      RunRembDipScenario("googcc_unit/default_fast_rampup_on_remb_cap_lifted");
+  EXPECT_GT(final_estimate.kbps(), 1500);
+}
 
-  s.RunFor(TimeDelta::Seconds(10));
-  EXPECT_GT(client->send_bandwidth().kbps(), 1500);
-
-  DataRate RembLimit = DataRate::KilobitsPerSec(250);
-  client->SetRemoteBitrate(RembLimit);
-  s.RunFor(TimeDelta::Seconds(1));
-  EXPECT_EQ(client->send_bandwidth(), RembLimit);
-
-  DataRate RembLimitLifted = DataRate::KilobitsPerSec(10000);
-  client->SetRemoteBitrate(RembLimitLifted);
-  s.RunFor(TimeDelta::Seconds(10));
-  EXPECT_GT(client->send_bandwidth().kbps(), 1500);
+TEST(GoogCcScenario, SlowRampupOnRembCapLiftedWithFieldTrial) {
+  ScopedFieldTrials trial("WebRTC-Bwe-ReceiverLimitCapsOnly/Disabled/");
+  DataRate final_estimate =
+      RunRembDipScenario("googcc_unit/legacy_slow_rampup_on_remb_cap_lifted");
+  EXPECT_LT(final_estimate.kbps(), 1000);
 }
 
 }  // namespace test

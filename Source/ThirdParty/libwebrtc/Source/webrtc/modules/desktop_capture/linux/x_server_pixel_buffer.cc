@@ -27,9 +27,9 @@ namespace webrtc {
 
 namespace {
 
-// Returns the number of bits |mask| has to be shifted left so its last
+// Returns the number of bits `mask` has to be shifted left so its last
 // (most-significant) bit set becomes the most-significant bit of the word.
-// When |mask| is 0 the function returns 31.
+// When `mask` is 0 the function returns 31.
 uint32_t MaskToShift(uint32_t mask) {
   int shift = 0;
   if ((mask & 0xffff0000u) == 0) {
@@ -54,7 +54,7 @@ uint32_t MaskToShift(uint32_t mask) {
   return shift;
 }
 
-// Returns true if |image| is in RGB format.
+// Returns true if `image` is in RGB format.
 bool IsXImageRGBFormat(XImage* image) {
   return image->bits_per_pixel == 32 && image->red_mask == 0xff0000 &&
          image->green_mask == 0xff00 && image->blue_mask == 0xff;
@@ -191,7 +191,7 @@ bool XServerPixelBuffer::Init(XAtomCache* cache, Window window) {
   }
 
   if (cache->IccProfile() != None) {
-    // |window| is the root window when doing screen capture.
+    // `window` is the root window when doing screen capture.
     XWindowProperty<uint8_t> icc_profile_property(cache->display(), window,
                                                   cache->IccProfile());
     if (icc_profile_property.is_valid() && icc_profile_property.size() > 0) {
@@ -283,7 +283,7 @@ bool XServerPixelBuffer::InitPixmaps(int depth) {
         window_rect_.width(), window_rect_.height(), depth);
     XSync(display_, False);
     if (error_trap.GetLastErrorAndDisable() != 0) {
-      // |shm_pixmap_| is not not valid because the request was not processed
+      // `shm_pixmap_` is not not valid because the request was not processed
       // by the X Server, so zero it.
       shm_pixmap_ = 0;
       return false;

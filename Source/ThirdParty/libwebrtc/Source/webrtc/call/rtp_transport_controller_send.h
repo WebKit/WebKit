@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "api/network_state_predictor.h"
+#include "api/sequence_checker.h"
 #include "api/transport/network_control.h"
 #include "api/units/data_rate.h"
 #include "call/rtp_bitrate_configurator.h"
@@ -62,6 +63,7 @@ class RtpTransportControllerSend final
       const WebRtcKeyValueConfig* trials);
   ~RtpTransportControllerSend() override;
 
+  // TODO(tommi): Change to std::unique_ptr<>.
   RtpVideoSenderInterface* CreateRtpVideoSender(
       std::map<uint32_t, RtpState> suspended_ssrcs,
       const std::map<uint32_t, RtpPayloadState>&
@@ -148,8 +150,10 @@ class RtpTransportControllerSend final
 
   Clock* const clock_;
   RtcEventLog* const event_log_;
+  SequenceChecker main_thread_;
   PacketRouter packet_router_;
-  std::vector<std::unique_ptr<RtpVideoSenderInterface>> video_rtp_senders_;
+  std::vector<std::unique_ptr<RtpVideoSenderInterface>> video_rtp_senders_
+      RTC_GUARDED_BY(&main_thread_);
   RtpBitrateConfigurator bitrate_configurator_;
   std::map<std::string, rtc::NetworkRoute> network_routes_;
   bool pacer_started_;
@@ -197,8 +201,8 @@ class RtpTransportControllerSend final
   // Protected by internal locks.
   RateLimiter retransmission_rate_limiter_;
 
-  // TODO(perkj): |task_queue_| is supposed to replace |process_thread_|.
-  // |task_queue_| is defined last to ensure all pending tasks are cancelled
+  // TODO(perkj): `task_queue_` is supposed to replace `process_thread_`.
+  // `task_queue_` is defined last to ensure all pending tasks are cancelled
   // and deleted before any other members.
   rtc::TaskQueue task_queue_;
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpTransportControllerSend);

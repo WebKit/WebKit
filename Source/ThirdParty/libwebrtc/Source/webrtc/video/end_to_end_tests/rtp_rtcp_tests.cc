@@ -537,12 +537,13 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
         receive_transport.get());
     flexfec_receive_config.payload_type =
         GetVideoSendConfig()->rtp.flexfec.payload_type;
-    flexfec_receive_config.remote_ssrc = GetVideoSendConfig()->rtp.flexfec.ssrc;
+    flexfec_receive_config.rtp.remote_ssrc =
+        GetVideoSendConfig()->rtp.flexfec.ssrc;
     flexfec_receive_config.protected_media_ssrcs =
         GetVideoSendConfig()->rtp.flexfec.protected_media_ssrcs;
-    flexfec_receive_config.local_ssrc = kReceiverLocalVideoSsrc;
-    flexfec_receive_config.transport_cc = true;
-    flexfec_receive_config.rtp_header_extensions.emplace_back(
+    flexfec_receive_config.rtp.local_ssrc = kReceiverLocalVideoSsrc;
+    flexfec_receive_config.rtp.transport_cc = true;
+    flexfec_receive_config.rtp.extensions.emplace_back(
         RtpExtension::kTransportSequenceNumberUri,
         kTransportSequenceNumberExtensionId);
     flexfec_receive_configs_.push_back(flexfec_receive_config);

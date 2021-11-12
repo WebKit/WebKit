@@ -201,7 +201,7 @@ class DesktopAndCursorComposerTest : public ::testing::Test,
   }
 
  protected:
-  // Owned by |blender_|.
+  // Owned by `blender_`.
   FakeScreenCapturer* fake_screen_;
   FakeMouseMonitor* fake_cursor_;
 
@@ -280,7 +280,7 @@ TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfFrameMayContainIt) {
     fake_cursor_->SetState(MouseCursorMonitor::INSIDE, abs_pos);
     blender_.CaptureFrame();
 
-    // If the frame may already have contained the cursor, then |CaptureFrame()|
+    // If the frame may already have contained the cursor, then `CaptureFrame()`
     // should not have modified it, so it should be the same as the control.
     EXPECT_TRUE(frame_);
     const DesktopVector rel_pos(abs_pos.subtract(control_frame->top_left()));
@@ -291,7 +291,7 @@ TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfFrameMayContainIt) {
               control_frame->GetFrameDataAtPos(rel_pos)));
 
     } else {
-      // |CaptureFrame()| should have modified the frame to have the cursor.
+      // `CaptureFrame()` should have modified the frame to have the cursor.
       EXPECT_NE(
           *reinterpret_cast<uint32_t*>(frame_->GetFrameDataAtPos(rel_pos)),
           *reinterpret_cast<uint32_t*>(

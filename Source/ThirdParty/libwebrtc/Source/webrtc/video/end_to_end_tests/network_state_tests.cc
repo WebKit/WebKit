@@ -10,13 +10,19 @@
 
 #include <memory>
 
+#include "api/media_types.h"
+#include "api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/test/simulated_network.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "rtc_base/location.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/task_utils/to_queued_task.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_test.h"
 #include "test/fake_encoder.h"
@@ -166,7 +172,10 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
     explicit NetworkStateTest(TaskQueueBase* task_queue)
         : EndToEndTest(kDefaultTimeoutMs),
           FakeEncoder(Clock::GetRealTimeClock()),
-          task_queue_(task_queue),
+          e2e_test_task_queue_(task_queue),
+          task_queue_(CreateDefaultTaskQueueFactory()->CreateTaskQueue(
+              "NetworkStateTest",
+              TaskQueueFactory::Priority::NORMAL)),
           sender_call_(nullptr),
           receiver_call_(nullptr),
           encoder_factory_(this),
@@ -219,26 +228,36 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
     }
 
+    void SignalChannelNetworkState(Call* call,
+                                   MediaType media_type,
+                                   NetworkState network_state) {
+      SendTask(RTC_FROM_HERE, e2e_test_task_queue_,
+               [call, media_type, network_state] {
+                 call->SignalChannelNetworkState(media_type, network_state);
+               });
+    }
+
     void PerformTest() override {
       EXPECT_TRUE(encoded_frames_.Wait(kDefaultTimeoutMs))
           << "No frames received by the encoder.";
 
-      SendTask(RTC_FROM_HERE, task_queue_, [this]() {
+      SendTask(RTC_FROM_HERE, task_queue_.get(), [this]() {
         // Wait for packets from both sender/receiver.
         WaitForPacketsOrSilence(false, false);
 
         // Sender-side network down for audio; there should be no effect on
         // video
-        sender_call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkDown);
+        SignalChannelNetworkState(sender_call_, MediaType::AUDIO, kNetworkDown);
+
         WaitForPacketsOrSilence(false, false);
 
         // Receiver-side network down for audio; no change expected
-        receiver_call_->SignalChannelNetworkState(MediaType::AUDIO,
-                                                  kNetworkDown);
+        SignalChannelNetworkState(receiver_call_, MediaType::AUDIO,
+                                  kNetworkDown);
         WaitForPacketsOrSilence(false, false);
 
         // Sender-side network down.
-        sender_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkDown);
+        SignalChannelNetworkState(sender_call_, MediaType::VIDEO, kNetworkDown);
         {
           MutexLock lock(&test_mutex_);
           // After network goes down we shouldn't be encoding more frames.
@@ -248,14 +267,14 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
         WaitForPacketsOrSilence(true, false);
 
         // Receiver-side network down.
-        receiver_call_->SignalChannelNetworkState(MediaType::VIDEO,
-                                                  kNetworkDown);
+        SignalChannelNetworkState(receiver_call_, MediaType::VIDEO,
+                                  kNetworkDown);
         WaitForPacketsOrSilence(true, true);
 
         // Network up for audio for both sides; video is still not expected to
         // start
-        sender_call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
-        receiver_call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
+        SignalChannelNetworkState(sender_call_, MediaType::AUDIO, kNetworkUp);
+        SignalChannelNetworkState(receiver_call_, MediaType::AUDIO, kNetworkUp);
         WaitForPacketsOrSilence(true, true);
 
         // Network back up again for both.
@@ -265,8 +284,8 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
           // network.
           sender_state_ = kNetworkUp;
         }
-        sender_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
-        receiver_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
+        SignalChannelNetworkState(sender_call_, MediaType::VIDEO, kNetworkUp);
+        SignalChannelNetworkState(receiver_call_, MediaType::VIDEO, kNetworkUp);
         WaitForPacketsOrSilence(false, false);
 
         // TODO(skvlad): add tests to verify that the audio streams are stopped
@@ -340,7 +359,8 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
       }
     }
 
-    TaskQueueBase* const task_queue_;
+    TaskQueueBase* const e2e_test_task_queue_;
+    std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
     Mutex test_mutex_;
     rtc::Event encoded_frames_;
     rtc::Event packet_event_;

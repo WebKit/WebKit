@@ -45,9 +45,13 @@ class ReverbModelEstimator {
       const std::vector<bool>& usable_linear_estimates,
       bool stationary_block);
 
-  // Returns the exponential decay of the reverberant echo.
+  // Returns the exponential decay of the reverberant echo. The parameter `mild`
+  // indicates which exponential decay to return, the default one or a milder
+  // one.
   // TODO(peah): Correct to properly support multiple channels.
-  float ReverbDecay() const { return reverb_decay_estimators_[0]->Decay(); }
+  float ReverbDecay(bool mild) const {
+    return reverb_decay_estimators_[0]->Decay(mild);
+  }
 
   // Return the frequency response of the reverberant echo.
   // TODO(peah): Correct to properly support multiple channels.

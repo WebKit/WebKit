@@ -15,15 +15,15 @@ deps = {
       Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' + 'b9ae2ca9a55d9b754c313f4c9e9f0f3b804a5e44',
 
   # Entry that's also a CIPD entry in the Chromium DEPS file.
-  'src/third_party/xstream': {
-      'packages': [
-          {
-              'package': 'chromium/third_party/xstream',
-              'version': 'version:1.4.8-cr0',
-          },
-      ],
-      'condition': 'checkout_android',
-      'dep_type': 'cipd',
+  'src/buildtools/linux64': {
+    'packages': [
+      {
+        'package': 'gn/gn/linux-amd64',
+        'version': 'git_revision:69ec4fca1fa69ddadae13f9e6b7507efa0675263',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_linux',
   },
 
   # Script expects to find these markers.

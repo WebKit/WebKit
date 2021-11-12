@@ -17,6 +17,7 @@ rtc_library("data_tracker") {
     "../common:sequence_numbers",
     "../packet:chunk",
     "../packet:data",
+    "../public:socket",
     "../timer",
   ]
   sources = [
@@ -24,6 +25,7 @@ rtc_library("data_tracker") {
     "data_tracker.h",
   ]
   absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -35,6 +37,7 @@ rtc_source_set("reassembly_streams") {
     "../common:sequence_numbers",
     "../packet:chunk",
     "../packet:data",
+    "../public:socket",
     "../public:types",
   ]
   sources = [ "reassembly_streams.h" ]
@@ -78,6 +81,7 @@ rtc_library("reassembly_queue") {
     "../packet:chunk",
     "../packet:data",
     "../packet:parameter",
+    "../public:socket",
     "../public:types",
   ]
   sources = [
@@ -104,6 +108,7 @@ if (rtc_include_tests) {
       "../../../rtc_base:gunit_helpers",
       "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
+      "../common:handover_testing",
       "../common:sequence_numbers",
       "../packet:chunk",
       "../packet:data",

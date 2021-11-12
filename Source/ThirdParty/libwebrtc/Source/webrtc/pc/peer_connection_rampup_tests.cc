@@ -298,7 +298,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     if (ice_candidate_pair_stats.available_outgoing_bitrate.is_defined()) {
       return *ice_candidate_pair_stats.available_outgoing_bitrate;
     }
-    // We couldn't get the |available_outgoing_bitrate| for the active candidate
+    // We couldn't get the `available_outgoing_bitrate` for the active candidate
     // pair.
     return 0;
   }
@@ -307,7 +307,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
   // The turn servers should be accessed & deleted on the network thread to
   // avoid a race with the socket read/write which occurs on the network thread.
   std::vector<std::unique_ptr<cricket::TestTurnServer>> turn_servers_;
-  // |virtual_socket_server_| is used by |network_thread_| so it must be
+  // `virtual_socket_server_` is used by `network_thread_` so it must be
   // destroyed later.
   // TODO(bugs.webrtc.org/7668): We would like to update the virtual network we
   // use for this test. VirtualSocketServer isn't ideal because:
@@ -325,7 +325,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
   std::unique_ptr<rtc::FirewallSocketServer> firewall_socket_server_;
   std::unique_ptr<rtc::Thread> network_thread_;
   std::unique_ptr<rtc::Thread> worker_thread_;
-  // The |pc_factory| uses |network_thread_| & |worker_thread_|, so it must be
+  // The `pc_factory` uses `network_thread_` & `worker_thread_`, so it must be
   // destroyed first.
   std::vector<std::unique_ptr<rtc::FakeNetworkManager>> fake_network_managers_;
   rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;

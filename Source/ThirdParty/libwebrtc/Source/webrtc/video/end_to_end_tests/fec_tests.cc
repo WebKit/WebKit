@@ -314,7 +314,7 @@ class FlexfecRenderObserver : public test::EndToEndTest,
 
   void ModifyFlexfecConfigs(
       std::vector<FlexfecReceiveStream::Config>* receive_configs) override {
-    (*receive_configs)[0].local_ssrc = kFlexfecLocalSsrc;
+    (*receive_configs)[0].rtp.local_ssrc = kFlexfecLocalSsrc;
   }
 
   void PerformTest() override {
@@ -406,13 +406,12 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
             return DROP_PACKET;
           state_ = kPassOneMediaPacket;
           return DROP_PACKET;
-          break;
         case kPassOneMediaPacket:
           if (ulpfec_packet)
             return DROP_PACKET;
           // Pass one media packet after dropped packet after last FEC,
           // otherwise receiver might never see a seq_no after
-          // |ulpfec_sequence_number_|
+          // `ulpfec_sequence_number_`
           state_ = kVerifyUlpfecPacketNotInNackList;
           break;
         case kVerifyUlpfecPacketNotInNackList:

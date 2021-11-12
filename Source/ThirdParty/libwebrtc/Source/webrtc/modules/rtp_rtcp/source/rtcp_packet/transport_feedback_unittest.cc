@@ -138,7 +138,7 @@ class FeedbackTester {
 };
 
 // The following tests use FeedbackTester that simulates received packets as
-// specified by the parameters |received_seq[]| and |received_ts[]| (optional).
+// specified by the parameters `received_seq[]` and `received_ts[]` (optional).
 // The following is verified in these tests:
 // - Expected size of serialized packet.
 // - Expected sequence numbers and receive deltas.
@@ -230,6 +230,15 @@ TEST(RtcpPacketTest, TransportFeedbackTwoBitVectorFull) {
   test.WithDefaultDelta(kDeltaLimit + TransportFeedback::kDeltaScaleFactor);
   test.WithInput(kReceived, nullptr, kLength);
   test.VerifyPacket();
+}
+
+TEST(RtcpPacketTest, TransportFeedbackWithLargeBaseTimeIsConsistent) {
+  TransportFeedback tb;
+  constexpr int64_t kTimestampUs =
+      int64_t{0x7fff'ffff} * TransportFeedback::kDeltaScaleFactor;
+  tb.SetBase(/*base_sequence=*/0, /*ref_timestamp_us=*/kTimestampUs);
+  tb.AddReceivedPacket(/*base_sequence=*/0, /*ref_timestamp_us=*/kTimestampUs);
+  EXPECT_TRUE(tb.IsConsistent());
 }
 
 TEST(RtcpPacketTest, TransportFeedbackLargeAndNegativeDeltas) {

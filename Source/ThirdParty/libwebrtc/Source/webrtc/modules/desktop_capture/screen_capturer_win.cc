@@ -38,7 +38,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     const DesktopCaptureOptions& options) {
   std::unique_ptr<DesktopCapturer> capturer(new ScreenCapturerWinGdi(options));
   if (options.allow_directx_capturer()) {
-    // |dxgi_duplicator_controller| should be alive in this scope to ensure it
+    // `dxgi_duplicator_controller` should be alive in this scope to ensure it
     // won't unload DxgiDuplicatorController.
     auto dxgi_duplicator_controller = DxgiDuplicatorController::Instance();
     if (ScreenCapturerWinDirectx::IsSupported()) {

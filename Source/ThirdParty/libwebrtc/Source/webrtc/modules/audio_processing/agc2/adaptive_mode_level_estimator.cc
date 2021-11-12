@@ -19,11 +19,15 @@
 namespace webrtc {
 namespace {
 
-using LevelEstimatorType =
-    AudioProcessing::Config::GainController2::LevelEstimator;
-
 float ClampLevelEstimateDbfs(float level_estimate_dbfs) {
-  return rtc::SafeClamp<float>(level_estimate_dbfs, -90.f, 30.f);
+  return rtc::SafeClamp<float>(level_estimate_dbfs, -90.0f, 30.0f);
+}
+
+// Returns the initial speech level estimate needed to apply the initial gain.
+float GetInitialSpeechLevelEstimateDbfs(
+    const AudioProcessing::Config::GainController2::AdaptiveDigital& config) {
+  return ClampLevelEstimateDbfs(-kSaturationProtectorInitialHeadroomDb -
+                                config.initial_gain_db - config.headroom_db);
 }
 
 }  // namespace
@@ -41,17 +45,13 @@ float AdaptiveModeLevelEstimator::LevelEstimatorState::Ratio::GetRatio() const {
 }
 
 AdaptiveModeLevelEstimator::AdaptiveModeLevelEstimator(
-    ApmDataDumper* apm_data_dumper)
-    : AdaptiveModeLevelEstimator(
-          apm_data_dumper,
-          kDefaultLevelEstimatorAdjacentSpeechFramesThreshold) {}
-
-AdaptiveModeLevelEstimator::AdaptiveModeLevelEstimator(
     ApmDataDumper* apm_data_dumper,
-    int adjacent_speech_frames_threshold)
+    const AudioProcessing::Config::GainController2::AdaptiveDigital& config)
     : apm_data_dumper_(apm_data_dumper),
-      adjacent_speech_frames_threshold_(adjacent_speech_frames_threshold),
-      level_dbfs_(ClampLevelEstimateDbfs(kInitialSpeechLevelEstimateDbfs)) {
+      initial_speech_level_dbfs_(GetInitialSpeechLevelEstimateDbfs(config)),
+      adjacent_speech_frames_threshold_(
+          config.adjacent_speech_frames_threshold),
+      level_dbfs_(initial_speech_level_dbfs_) {
   RTC_DCHECK(apm_data_dumper_);
   RTC_DCHECK_GE(adjacent_speech_frames_threshold_, 1);
   Reset();
@@ -131,14 +131,14 @@ bool AdaptiveModeLevelEstimator::IsConfident() const {
 void AdaptiveModeLevelEstimator::Reset() {
   ResetLevelEstimatorState(preliminary_state_);
   ResetLevelEstimatorState(reliable_state_);
-  level_dbfs_ = ClampLevelEstimateDbfs(kInitialSpeechLevelEstimateDbfs);
+  level_dbfs_ = initial_speech_level_dbfs_;
   num_adjacent_speech_frames_ = 0;
 }
 
 void AdaptiveModeLevelEstimator::ResetLevelEstimatorState(
     LevelEstimatorState& state) const {
   state.time_to_confidence_ms = kLevelEstimatorTimeToConfidenceMs;
-  state.level_dbfs.numerator = kInitialSpeechLevelEstimateDbfs;
+  state.level_dbfs.numerator = initial_speech_level_dbfs_;
   state.level_dbfs.denominator = 1.0f;
 }
 

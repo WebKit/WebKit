@@ -404,7 +404,7 @@ TEST(RtpPacketizerH264Test, LastFragmentFitsInSingleButNotLastPacket) {
             limits.max_payload_len - limits.last_packet_reduction_len);
 }
 
-// Splits frame with payload size |frame_payload_size| without fragmentation,
+// Splits frame with payload size `frame_payload_size` without fragmentation,
 // Returns sizes of the payloads excluding fua headers.
 std::vector<int> TestFua(size_t frame_payload_size,
                          const RtpPacketizer::PayloadSizeLimits& limits) {

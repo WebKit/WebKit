@@ -222,21 +222,6 @@ TEST(VideoCodecTestLibvpx, HighBitrateVP8) {
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
 
-// The tests below are currently disabled for Android. For ARM, the encoder
-// uses |cpu_speed| = 12, as opposed to default |cpu_speed| <= 6 for x86,
-// which leads to significantly different quality. The quality and rate control
-// settings in the tests below are defined for encoder speed setting
-// |cpu_speed| <= ~6. A number of settings would need to be significantly
-// modified for the |cpu_speed| = 12 case. For now, keep the tests below
-// disabled on Android. Some quality parameter in the above test has been
-// adjusted to also pass for |cpu_speed| <= 12.
-
-// TODO(webrtc:9267): Fails on iOS
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-#define MAYBE_ChangeBitrateVP8 DISABLED_ChangeBitrateVP8
-#else
-#define MAYBE_ChangeBitrateVP8 ChangeBitrateVP8
-#endif
 TEST(VideoCodecTestLibvpx, MAYBE_ChangeBitrateVP8) {
   auto config = CreateConfig();
   config.SetCodecSettings(cricket::kVp8CodecName, 1, 1, 1, true, true, false,
@@ -265,12 +250,6 @@ TEST(VideoCodecTestLibvpx, MAYBE_ChangeBitrateVP8) {
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
 
-// TODO(webrtc:9267): Fails on iOS
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-#define MAYBE_ChangeFramerateVP8 DISABLED_ChangeFramerateVP8
-#else
-#define MAYBE_ChangeFramerateVP8 ChangeFramerateVP8
-#endif
 TEST(VideoCodecTestLibvpx, MAYBE_ChangeFramerateVP8) {
   auto config = CreateConfig();
   config.SetCodecSettings(cricket::kVp8CodecName, 1, 1, 1, true, true, false,
@@ -286,7 +265,7 @@ TEST(VideoCodecTestLibvpx, MAYBE_ChangeFramerateVP8) {
 
 #if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<RateControlThresholds> rc_thresholds = {
-      {10, 2, 60, 1, 0.3, 0.3, 0, 1},
+      {10, 2.42, 60, 1, 0.3, 0.3, 0, 1},
       {10, 2, 30, 1, 0.3, 0.3, 0, 0},
       {10, 2, 10, 1, 0.3, 0.2, 0, 0}};
 #else
@@ -298,7 +277,7 @@ TEST(VideoCodecTestLibvpx, MAYBE_ChangeFramerateVP8) {
 
 #if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<QualityThresholds> quality_thresholds = {
-      {31, 30, 0.85, 0.84}, {31.5, 30.5, 0.86, 0.84}, {30.5, 29, 0.83, 0.78}};
+      {31, 30, 0.85, 0.84}, {31.4, 30.5, 0.86, 0.84}, {30.5, 29, 0.83, 0.78}};
 #else
   std::vector<QualityThresholds> quality_thresholds = {
       {31, 30, 0.87, 0.85}, {32, 31, 0.88, 0.85}, {32, 30, 0.87, 0.82}};

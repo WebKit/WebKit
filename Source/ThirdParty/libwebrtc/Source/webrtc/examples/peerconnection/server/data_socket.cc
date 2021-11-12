@@ -10,7 +10,6 @@
 
 #include "examples/peerconnection/server/data_socket.h"
 
-#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +19,7 @@
 #endif
 
 #include "examples/peerconnection/server/utils.h"
+#include "rtc_base/checks.h"
 
 static const char kHeaderTerminator[] = "\r\n\r\n";
 static const int kHeaderTerminatorLength = sizeof(kHeaderTerminator) - 1;
@@ -53,7 +53,7 @@ WinsockInitializer WinsockInitializer::singleton;
 //
 
 bool SocketBase::Create() {
-  assert(!valid());
+  RTC_DCHECK(!valid());
   socket_ = ::socket(AF_INET, SOCK_STREAM, 0);
   return valid();
 }
@@ -77,7 +77,7 @@ std::string DataSocket::request_arguments() const {
 }
 
 bool DataSocket::PathEquals(const char* path) const {
-  assert(path);
+  RTC_DCHECK(path);
   size_t args = request_path_.find('?');
   if (args != std::string::npos)
     return request_path_.substr(0, args).compare(path) == 0;
@@ -85,7 +85,7 @@ bool DataSocket::PathEquals(const char* path) const {
 }
 
 bool DataSocket::OnDataAvailable(bool* close_socket) {
-  assert(valid());
+  RTC_DCHECK(valid());
   char buffer[0xfff] = {0};
   int bytes = recv(socket_, buffer, sizeof(buffer), 0);
   if (bytes == SOCKET_ERROR || bytes == 0) {
@@ -125,8 +125,8 @@ bool DataSocket::Send(const std::string& status,
                       const std::string& content_type,
                       const std::string& extra_headers,
                       const std::string& data) const {
-  assert(valid());
-  assert(!status.empty());
+  RTC_DCHECK(valid());
+  RTC_DCHECK(!status.empty());
   std::string buffer("HTTP/1.1 " + status + "\r\n");
 
   buffer +=
@@ -165,8 +165,8 @@ void DataSocket::Clear() {
 }
 
 bool DataSocket::ParseHeaders() {
-  assert(!request_headers_.empty());
-  assert(method_ == INVALID);
+  RTC_DCHECK(!request_headers_.empty());
+  RTC_DCHECK_EQ(method_, INVALID);
   size_t i = request_headers_.find("\r\n");
   if (i == std::string::npos)
     return false;
@@ -174,8 +174,8 @@ bool DataSocket::ParseHeaders() {
   if (!ParseMethodAndPath(request_headers_.data(), i))
     return false;
 
-  assert(method_ != INVALID);
-  assert(!request_path_.empty());
+  RTC_DCHECK_NE(method_, INVALID);
+  RTC_DCHECK(!request_path_.empty());
 
   if (method_ == POST) {
     const char* headers = request_headers_.data() + i + 2;
@@ -225,8 +225,8 @@ bool DataSocket::ParseMethodAndPath(const char* begin, size_t len) {
 }
 
 bool DataSocket::ParseContentLengthAndType(const char* headers, size_t length) {
-  assert(content_length_ == 0);
-  assert(content_type_.empty());
+  RTC_DCHECK_EQ(content_length_, 0);
+  RTC_DCHECK(content_type_.empty());
 
   const char* end = headers + length;
   while (headers && headers < end) {
@@ -267,10 +267,14 @@ bool DataSocket::ParseContentLengthAndType(const char* headers, size_t length) {
 //
 
 bool ListeningSocket::Listen(unsigned short port) {
-  assert(valid());
+  RTC_DCHECK(valid());
   int enabled = 1;
-  setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR,
-             reinterpret_cast<const char*>(&enabled), sizeof(enabled));
+  if (setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR,
+                 reinterpret_cast<const char*>(&enabled),
+                 sizeof(enabled)) != 0) {
+    printf("setsockopt failed\n");
+    return false;
+  }
   struct sockaddr_in addr = {0};
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -284,7 +288,7 @@ bool ListeningSocket::Listen(unsigned short port) {
 }
 
 DataSocket* ListeningSocket::Accept() const {
-  assert(valid());
+  RTC_DCHECK(valid());
   struct sockaddr_in addr = {0};
   socklen_t size = sizeof(addr);
   NativeSocket client =

@@ -23,10 +23,9 @@ using ::testing::Exactly;
 using ::testing::StrictMock;
 
 namespace {
-std::unique_ptr<webrtc::AudioProcessing> CreateAudioProcessing() {
-  webrtc::Config config;
-  std::unique_ptr<webrtc::AudioProcessing> apm(
-      webrtc::AudioProcessingBuilderForTesting().Create(config));
+rtc::scoped_refptr<webrtc::AudioProcessing> CreateAudioProcessing() {
+  rtc::scoped_refptr<webrtc::AudioProcessing> apm(
+      webrtc::AudioProcessingBuilderForTesting().Create());
   RTC_DCHECK(apm);
   return apm;
 }

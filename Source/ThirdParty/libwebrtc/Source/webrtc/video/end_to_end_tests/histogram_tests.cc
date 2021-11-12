@@ -54,9 +54,9 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
 
    private:
     void OnFrame(const VideoFrame& video_frame) override {
-      // The RTT is needed to estimate |ntp_time_ms| which is used by
+      // The RTT is needed to estimate `ntp_time_ms` which is used by
       // end-to-end delay stats. Therefore, start counting received frames once
-      // |ntp_time_ms| is valid.
+      // `ntp_time_ms` is valid.
       if (video_frame.ntp_time_ms() > 0 &&
           Clock::GetRealTimeClock()->CurrentNtpInMilliseconds() >=
               video_frame.ntp_time_ms()) {

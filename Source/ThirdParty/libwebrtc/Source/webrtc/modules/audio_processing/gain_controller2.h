@@ -45,8 +45,8 @@ class GainController2 {
   static int instance_count_;
   ApmDataDumper data_dumper_;
   AudioProcessing::Config::GainController2 config_;
-  GainApplier gain_applier_;
-  std::unique_ptr<AdaptiveAgc> adaptive_agc_;
+  GainApplier fixed_gain_applier_;
+  std::unique_ptr<AdaptiveAgc> adaptive_digital_controller_;
   Limiter limiter_;
   int calls_since_last_limiter_log_;
   int analog_level_ = -1;

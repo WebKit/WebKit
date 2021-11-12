@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 
+#include "absl/strings/string_view.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -23,17 +24,18 @@ namespace {
 
 struct ExtensionInfo {
   RTPExtensionType type;
-  const char* uri;
+  absl::string_view uri;
 };
 
 template <typename Extension>
 constexpr ExtensionInfo CreateExtensionInfo() {
-  return {Extension::kId, Extension::kUri};
+  return {Extension::kId, Extension::Uri()};
 }
 
 constexpr ExtensionInfo kExtensions[] = {
     CreateExtensionInfo<TransmissionOffset>(),
     CreateExtensionInfo<AudioLevel>(),
+    CreateExtensionInfo<CsrcAudioLevel>(),
     CreateExtensionInfo<AbsoluteSendTime>(),
     CreateExtensionInfo<AbsoluteCaptureTimeExtension>(),
     CreateExtensionInfo<VideoOrientation>(),
@@ -75,6 +77,14 @@ RtpHeaderExtensionMap::RtpHeaderExtensionMap(bool extmap_allow_mixed)
 RtpHeaderExtensionMap::RtpHeaderExtensionMap(
     rtc::ArrayView<const RtpExtension> extensions)
     : RtpHeaderExtensionMap(false) {
+  for (const RtpExtension& extension : extensions)
+    RegisterByUri(extension.id, extension.uri);
+}
+
+void RtpHeaderExtensionMap::Reset(
+    rtc::ArrayView<const RtpExtension> extensions) {
+  for (auto& id : ids_)
+    id = kInvalidId;
   for (const RtpExtension& extension : extensions)
     RegisterByUri(extension.id, extension.uri);
 }
@@ -126,7 +136,7 @@ void RtpHeaderExtensionMap::Deregister(absl::string_view uri) {
 
 bool RtpHeaderExtensionMap::Register(int id,
                                      RTPExtensionType type,
-                                     const char* uri) {
+                                     absl::string_view uri) {
   RTC_DCHECK_GT(type, kRtpExtensionNone);
   RTC_DCHECK_LT(type, kRtpExtensionNumberOfExtensions);
 
@@ -144,7 +154,7 @@ bool RtpHeaderExtensionMap::Register(int id,
   }
 
   if (registered_type !=
-      kInvalidType) {  // |id| used by another extension type.
+      kInvalidType) {  // `id` used by another extension type.
     RTC_LOG(LS_WARNING) << "Failed to register extension uri:'" << uri
                         << "', id:" << id
                         << ". Id already in use by extension type "

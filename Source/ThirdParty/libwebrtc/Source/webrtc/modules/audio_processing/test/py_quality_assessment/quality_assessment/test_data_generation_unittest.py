@@ -116,7 +116,7 @@ class TestTestDataGenerators(unittest.TestCase):
             key = noisy_signal_filepaths.keys()[0]
             return noisy_signal_filepaths[key], reference_signal_filepaths[key]
 
-        # Test the |copy_with_identity| flag.
+        # Test the `copy_with_identity` flag.
         for copy_with_identity in [False, True]:
             # Instance the generator through the factory.
             factory = test_data_generation_factory.TestDataGeneratorFactory(
@@ -126,7 +126,7 @@ class TestTestDataGenerators(unittest.TestCase):
             factory.SetOutputDirectoryPrefix('datagen-')
             generator = factory.GetInstance(
                 test_data_generation.IdentityTestDataGenerator)
-            # Check |copy_with_identity| is set correctly.
+            # Check `copy_with_identity` is set correctly.
             self.assertEqual(copy_with_identity, generator.copy_with_identity)
 
             # Generate test data and extract the paths to the noise and the reference
@@ -137,7 +137,7 @@ class TestTestDataGenerators(unittest.TestCase):
             noisy_signal_filepath, reference_signal_filepath = (
                 GetNoiseReferenceFilePaths(generator))
 
-            # Check that a copy is made if and only if |copy_with_identity| is True.
+            # Check that a copy is made if and only if `copy_with_identity` is True.
             if copy_with_identity:
                 self.assertNotEqual(noisy_signal_filepath,
                                     input_signal_filepath)

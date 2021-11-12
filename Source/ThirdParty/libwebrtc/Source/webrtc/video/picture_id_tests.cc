@@ -65,7 +65,7 @@ class PictureIdObserver : public test::RtpRtcpObserver {
   void SetMaxExpectedPictureIdGap(int max_expected_picture_id_gap) {
     MutexLock lock(&mutex_);
     max_expected_picture_id_gap_ = max_expected_picture_id_gap;
-    // Expect smaller gap for |tl0_pic_idx| (running index for temporal_idx 0).
+    // Expect smaller gap for `tl0_pic_idx` (running index for temporal_idx 0).
     max_expected_tl0_idx_gap_ = max_expected_picture_id_gap_ / 2;
   }
 
@@ -155,8 +155,8 @@ class PictureIdObserver : public test::RtpRtcpObserver {
       return;
     }
 
-    // New frame with |temporal_idx| 0.
-    // |tl0_pic_idx| should be increasing.
+    // New frame with `temporal_idx` 0.
+    // `tl0_pic_idx` should be increasing.
     EXPECT_TRUE(AheadOf<uint8_t>(current.tl0_pic_idx, last.tl0_pic_idx));
 
     // Expect continuously increasing idx.

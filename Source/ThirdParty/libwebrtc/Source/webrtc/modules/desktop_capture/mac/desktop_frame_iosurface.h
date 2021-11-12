@@ -31,7 +31,7 @@ class DesktopFrameIOSurface final : public DesktopFrame {
   ~DesktopFrameIOSurface() override;
 
  private:
-  // This constructor expects |io_surface| to hold a non-null IOSurfaceRef.
+  // This constructor expects `io_surface` to hold a non-null IOSurfaceRef.
   explicit DesktopFrameIOSurface(rtc::ScopedCFTypeRef<IOSurfaceRef> io_surface);
 
   const rtc::ScopedCFTypeRef<IOSurfaceRef> io_surface_;

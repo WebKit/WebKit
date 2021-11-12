@@ -200,7 +200,7 @@ class AudioTrackSinkInterface {
     RTC_NOTREACHED() << "This method must be overridden, or not used.";
   }
 
-  // In this method, |absolute_capture_timestamp_ms|, when available, is
+  // In this method, `absolute_capture_timestamp_ms`, when available, is
   // supposed to deliver the timestamp when this audio frame was originally
   // captured. This timestamp MUST be based on the same clock as
   // rtc::TimeMillis().
@@ -240,7 +240,7 @@ class RTC_EXPORT AudioSourceInterface : public MediaSourceInterface {
   // TODO(deadbeef): Makes all the interfaces pure virtual after they're
   // implemented in chromium.
 
-  // Sets the volume of the source. |volume| is in  the range of [0, 10].
+  // Sets the volume of the source. `volume` is in  the range of [0, 10].
   // TODO(tommi): This method should be on the track and ideally volume should
   // be applied in the track in a way that does not affect clones of the track.
   virtual void SetVolume(double volume) {}
@@ -268,7 +268,7 @@ class AudioProcessorInterface : public rtc::RefCountInterface {
     AudioProcessingStats apm_statistics;
   };
 
-  // Get audio processor statistics. The |has_remote_tracks| argument should be
+  // Get audio processor statistics. The `has_remote_tracks` argument should be
   // set if there are active remote tracks (this would usually be true during
   // a call). If there are no remote tracks some of the stats will not be set by
   // the AudioProcessor, because they only make sense if there is at least one

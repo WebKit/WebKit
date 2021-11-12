@@ -93,6 +93,12 @@ class RealTimeClock : public Clock {
                                             : SystemDependentNtpTime();
   }
 
+  NtpTime ConvertTimestampToNtpTime(Timestamp timestamp) override {
+    // This method does not check `use_system_independent_ntp_time_` because
+    // all callers never used the old behavior of `CurrentNtpTime`.
+    return TimeMicrosToNtp(timestamp.us());
+  }
+
  protected:
   virtual timeval CurrentTimeVal() = 0;
 
@@ -276,11 +282,11 @@ Timestamp SimulatedClock::CurrentTime() {
   return Timestamp::Micros(time_us_.load(std::memory_order_relaxed));
 }
 
-NtpTime SimulatedClock::CurrentNtpTime() {
-  int64_t now_ms = TimeInMilliseconds();
-  uint32_t seconds = (now_ms / 1000) + kNtpJan1970;
-  uint32_t fractions =
-      static_cast<uint32_t>((now_ms % 1000) * kMagicNtpFractionalUnit / 1000);
+NtpTime SimulatedClock::ConvertTimestampToNtpTime(Timestamp timestamp) {
+  int64_t now_us = timestamp.us();
+  uint32_t seconds = (now_us / 1'000'000) + kNtpJan1970;
+  uint32_t fractions = static_cast<uint32_t>(
+      (now_us % 1'000'000) * kMagicNtpFractionalUnit / 1'000'000);
   return NtpTime(seconds, fractions);
 }
 

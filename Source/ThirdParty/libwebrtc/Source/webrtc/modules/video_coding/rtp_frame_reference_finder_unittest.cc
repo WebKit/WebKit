@@ -60,28 +60,29 @@ std::unique_ptr<RtpFrameObject> CreateFrame(
 }
 }  // namespace
 
-class TestRtpFrameReferenceFinder : public ::testing::Test,
-                                    public OnCompleteFrameCallback {
+class TestRtpFrameReferenceFinder : public ::testing::Test {
  protected:
   TestRtpFrameReferenceFinder()
       : rand_(0x8739211),
-        reference_finder_(new RtpFrameReferenceFinder(this)),
+        reference_finder_(std::make_unique<RtpFrameReferenceFinder>()),
         frames_from_callback_(FrameComp()) {}
 
   uint16_t Rand() { return rand_.Rand<uint16_t>(); }
 
-  void OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) override {
-    int64_t pid = frame->Id();
-    uint16_t sidx = *frame->SpatialIndex();
-    auto frame_it = frames_from_callback_.find(std::make_pair(pid, sidx));
-    if (frame_it != frames_from_callback_.end()) {
-      ADD_FAILURE() << "Already received frame with (pid:sidx): (" << pid << ":"
-                    << sidx << ")";
-      return;
-    }
+  void OnCompleteFrames(RtpFrameReferenceFinder::ReturnVector frames) {
+    for (auto& frame : frames) {
+      int64_t pid = frame->Id();
+      uint16_t sidx = *frame->SpatialIndex();
+      auto frame_it = frames_from_callback_.find(std::make_pair(pid, sidx));
+      if (frame_it != frames_from_callback_.end()) {
+        ADD_FAILURE() << "Already received frame with (pid:sidx): (" << pid
+                      << ":" << sidx << ")";
+        return;
+      }
 
-    frames_from_callback_.insert(
-        std::make_pair(std::make_pair(pid, sidx), std::move(frame)));
+      frames_from_callback_.insert(
+          std::make_pair(std::make_pair(pid, sidx), std::move(frame)));
+    }
   }
 
   void InsertGeneric(uint16_t seq_num_start,
@@ -91,19 +92,23 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
         CreateFrame(seq_num_start, seq_num_end, keyframe, kVideoCodecGeneric,
                     RTPVideoTypeHeader());
 
-    reference_finder_->ManageFrame(std::move(frame));
+    OnCompleteFrames(reference_finder_->ManageFrame(std::move(frame)));
   }
 
   void InsertH264(uint16_t seq_num_start, uint16_t seq_num_end, bool keyframe) {
     std::unique_ptr<RtpFrameObject> frame =
         CreateFrame(seq_num_start, seq_num_end, keyframe, kVideoCodecH264,
                     RTPVideoTypeHeader());
-    reference_finder_->ManageFrame(std::move(frame));
+    OnCompleteFrames(reference_finder_->ManageFrame(std::move(frame)));
   }
 
-  // Check if a frame with picture id |pid| and spatial index |sidx| has been
+  void InsertPadding(uint16_t seq_num) {
+    OnCompleteFrames(reference_finder_->PaddingReceived(seq_num));
+  }
+
+  // Check if a frame with picture id `pid` and spatial index `sidx` has been
   // delivered from the packet buffer, and if so, if it has the references
-  // specified by |refs|.
+  // specified by `refs`.
   template <typename... T>
   void CheckReferences(int64_t picture_id_offset,
                        uint16_t sidx,
@@ -165,7 +170,7 @@ TEST_F(TestRtpFrameReferenceFinder, PaddingPackets) {
   InsertGeneric(sn, sn, true);
   InsertGeneric(sn + 2, sn + 2, false);
   EXPECT_EQ(1UL, frames_from_callback_.size());
-  reference_finder_->PaddingReceived(sn + 1);
+  InsertPadding(sn + 1);
   EXPECT_EQ(2UL, frames_from_callback_.size());
 }
 
@@ -173,8 +178,8 @@ TEST_F(TestRtpFrameReferenceFinder, PaddingPacketsReordered) {
   uint16_t sn = Rand();
 
   InsertGeneric(sn, sn, true);
-  reference_finder_->PaddingReceived(sn + 1);
-  reference_finder_->PaddingReceived(sn + 4);
+  InsertPadding(sn + 1);
+  InsertPadding(sn + 4);
   InsertGeneric(sn + 2, sn + 3, false);
 
   EXPECT_EQ(2UL, frames_from_callback_.size());
@@ -186,12 +191,12 @@ TEST_F(TestRtpFrameReferenceFinder, PaddingPacketsReorderedMultipleKeyframes) {
   uint16_t sn = Rand();
 
   InsertGeneric(sn, sn, true);
-  reference_finder_->PaddingReceived(sn + 1);
-  reference_finder_->PaddingReceived(sn + 4);
+  InsertPadding(sn + 1);
+  InsertPadding(sn + 4);
   InsertGeneric(sn + 2, sn + 3, false);
   InsertGeneric(sn + 5, sn + 5, true);
-  reference_finder_->PaddingReceived(sn + 6);
-  reference_finder_->PaddingReceived(sn + 9);
+  InsertPadding(sn + 6);
+  InsertPadding(sn + 9);
   InsertGeneric(sn + 7, sn + 8, false);
 
   EXPECT_EQ(4UL, frames_from_callback_.size());
@@ -308,7 +313,7 @@ TEST_F(TestRtpFrameReferenceFinder, Av1FrameNoDependencyDescriptor) {
       CreateFrame(/*seq_num_start=*/sn, /*seq_num_end=*/sn, /*keyframe=*/true,
                   kVideoCodecAV1, RTPVideoTypeHeader());
 
-  reference_finder_->ManageFrame(std::move(frame));
+  OnCompleteFrames(reference_finder_->ManageFrame(std::move(frame)));
 
   ASSERT_EQ(1UL, frames_from_callback_.size());
   CheckReferencesGeneric(sn);

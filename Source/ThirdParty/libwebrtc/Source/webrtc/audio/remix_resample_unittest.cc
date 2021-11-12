@@ -43,7 +43,7 @@ class UtilityTest : public ::testing::Test {
   AudioFrame golden_frame_;
 };
 
-// Sets the signal value to increase by |data| with every sample. Floats are
+// Sets the signal value to increase by `data` with every sample. Floats are
 // used so non-integer values result in rounding error, but not an accumulating
 // error.
 void SetMonoFrame(float data, int sample_rate_hz, AudioFrame* frame) {
@@ -62,7 +62,7 @@ void SetMonoFrame(float data, AudioFrame* frame) {
   SetMonoFrame(data, frame->sample_rate_hz_, frame);
 }
 
-// Sets the signal value to increase by |left| and |right| with every sample in
+// Sets the signal value to increase by `left` and `right` with every sample in
 // each channel respectively.
 void SetStereoFrame(float left,
                     float right,
@@ -84,7 +84,7 @@ void SetStereoFrame(float left, float right, AudioFrame* frame) {
   SetStereoFrame(left, right, frame->sample_rate_hz_, frame);
 }
 
-// Sets the signal value to increase by |ch1|, |ch2|, |ch3|, |ch4| with every
+// Sets the signal value to increase by `ch1`, `ch2`, `ch3`, `ch4` with every
 // sample in each channel respectively.
 void SetQuadFrame(float ch1,
                   float ch2,
@@ -111,8 +111,8 @@ void VerifyParams(const AudioFrame& ref_frame, const AudioFrame& test_frame) {
   EXPECT_EQ(ref_frame.sample_rate_hz_, test_frame.sample_rate_hz_);
 }
 
-// Computes the best SNR based on the error between |ref_frame| and
-// |test_frame|. It allows for up to a |max_delay| in samples between the
+// Computes the best SNR based on the error between `ref_frame` and
+// `test_frame`. It allows for up to a `max_delay` in samples between the
 // signals to compensate for the resampling delay.
 float ComputeSNR(const AudioFrame& ref_frame,
                  const AudioFrame& test_frame,

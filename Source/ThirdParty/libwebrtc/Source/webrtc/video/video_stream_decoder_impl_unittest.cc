@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "api/video/i420_buffer.h"
+#include "api/video_codecs/video_decoder.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -39,10 +40,9 @@ class MockVideoStreamDecoderCallbacks
 
 class StubVideoDecoder : public VideoDecoder {
  public:
-  MOCK_METHOD(int32_t,
-              InitDecode,
-              (const VideoCodec*, int32_t number_of_cores),
-              (override));
+  StubVideoDecoder() { ON_CALL(*this, Configure).WillByDefault(Return(true)); }
+
+  MOCK_METHOD(bool, Configure, (const Settings&), (override));
 
   int32_t Decode(const EncodedImage& input_image,
                  bool missing_frames,
@@ -81,9 +81,8 @@ class WrappedVideoDecoder : public VideoDecoder {
  public:
   explicit WrappedVideoDecoder(StubVideoDecoder* decoder) : decoder_(decoder) {}
 
-  int32_t InitDecode(const VideoCodec* codec_settings,
-                     int32_t number_of_cores) override {
-    return decoder_->InitDecode(codec_settings, number_of_cores);
+  bool Configure(const Settings& settings) override {
+    return decoder_->Configure(settings);
   }
   int32_t Decode(const EncodedImage& input_image,
                  bool missing_frames,
@@ -165,6 +164,9 @@ class VideoStreamDecoderImplTest : public ::testing::Test {
                               time_controller_.GetTaskQueueFactory(),
                               {{1, std::make_pair(SdpVideoFormat("VP8"), 1)},
                                {2, std::make_pair(SdpVideoFormat("AV1"), 1)}}) {
+    // Set the min playout delay to a value greater than zero to not activate
+    // the low-latency renderer.
+    video_stream_decoder_.SetMinPlayoutDelay(TimeDelta::Millis(10));
   }
 
   NiceMock<MockVideoStreamDecoderCallbacks> callbacks_;
@@ -203,8 +205,8 @@ TEST_F(VideoStreamDecoderImplTest, InsertAndDecodeFrameWithKeyframeRequest) {
 
 TEST_F(VideoStreamDecoderImplTest, FailToInitDecoder) {
   video_stream_decoder_.OnFrame(FrameBuilder().WithPayloadType(1).Build());
-  ON_CALL(decoder_factory_.Vp8Decoder(), InitDecode)
-      .WillByDefault(Return(WEBRTC_VIDEO_CODEC_ERROR));
+  ON_CALL(decoder_factory_.Vp8Decoder(), Configure)
+      .WillByDefault(Return(false));
   EXPECT_CALL(callbacks_, OnNonDecodableState);
   time_controller_.AdvanceTime(TimeDelta::Millis(1));
 }
@@ -218,17 +220,18 @@ TEST_F(VideoStreamDecoderImplTest, FailToDecodeFrame) {
 }
 
 TEST_F(VideoStreamDecoderImplTest, ChangeFramePayloadType) {
+  constexpr TimeDelta kFrameInterval = TimeDelta::Millis(1000 / 60);
   video_stream_decoder_.OnFrame(
       FrameBuilder().WithPayloadType(1).WithPictureId(0).Build());
   EXPECT_CALL(decoder_factory_.Vp8Decoder(), DecodeCall);
   EXPECT_CALL(callbacks_, OnDecodedFrame);
-  time_controller_.AdvanceTime(TimeDelta::Millis(1));
+  time_controller_.AdvanceTime(kFrameInterval);
 
   video_stream_decoder_.OnFrame(
       FrameBuilder().WithPayloadType(2).WithPictureId(1).Build());
   EXPECT_CALL(decoder_factory_.Av1Decoder(), DecodeCall);
   EXPECT_CALL(callbacks_, OnDecodedFrame);
-  time_controller_.AdvanceTime(TimeDelta::Millis(1));
+  time_controller_.AdvanceTime(kFrameInterval);
 }
 
 }  // namespace

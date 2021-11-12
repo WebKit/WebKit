@@ -102,7 +102,6 @@ AudioSendStream::AudioSendStream(
     const webrtc::AudioSendStream::Config& config,
     const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
     TaskQueueFactory* task_queue_factory,
-    ProcessThread* module_process_thread,
     RtpTransportControllerSendInterface* rtp_transport,
     BitrateAllocatorInterface* bitrate_allocator,
     RtcEventLog* event_log,
@@ -119,7 +118,6 @@ AudioSendStream::AudioSendStream(
                       voe::CreateChannelSend(
                           clock,
                           task_queue_factory,
-                          module_process_thread,
                           config.send_transport,
                           rtcp_rtt_stats,
                           event_log,
@@ -142,7 +140,7 @@ AudioSendStream::AudioSendStream(
     const absl::optional<RtpState>& suspended_rtp_state,
     std::unique_ptr<voe::ChannelSendInterface> channel_send)
     : clock_(clock),
-      worker_queue_(rtp_transport->GetWorkerQueue()),
+      rtp_transport_queue_(rtp_transport->GetWorkerQueue()),
       allocate_audio_without_feedback_(
           field_trial::IsEnabled("WebRTC-Audio-ABWENoTWCC")),
       enable_audio_alr_probing_(
@@ -160,7 +158,7 @@ AudioSendStream::AudioSendStream(
       rtp_rtcp_module_(channel_send_->GetRtpRtcp()),
       suspended_rtp_state_(suspended_rtp_state) {
   RTC_LOG(LS_INFO) << "AudioSendStream: " << config.rtp.ssrc;
-  RTC_DCHECK(worker_queue_);
+  RTC_DCHECK(rtp_transport_queue_);
   RTC_DCHECK(audio_state_);
   RTC_DCHECK(channel_send_);
   RTC_DCHECK(bitrate_allocator_);
@@ -182,7 +180,7 @@ AudioSendStream::~AudioSendStream() {
   // Blocking call to synchronize state with worker queue to ensure that there
   // are no pending tasks left that keeps references to audio.
   rtc::Event thread_sync_event;
-  worker_queue_->PostTask([&] { thread_sync_event.Set(); });
+  rtp_transport_queue_->PostTask([&] { thread_sync_event.Set(); });
   thread_sync_event.Wait(rtc::Event::kForever);
 }
 
@@ -274,7 +272,7 @@ void AudioSendStream::ConfigureStream(
     rtp_rtcp_module_->DeregisterSendRtpHeaderExtension(
         kRtpExtensionAbsoluteSendTime);
     if (new_ids.abs_send_time) {
-      rtp_rtcp_module_->RegisterRtpHeaderExtension(AbsoluteSendTime::kUri,
+      rtp_rtcp_module_->RegisterRtpHeaderExtension(AbsoluteSendTime::Uri(),
                                                    new_ids.abs_send_time);
     }
   }
@@ -292,7 +290,7 @@ void AudioSendStream::ConfigureStream(
     if (!allocate_audio_without_feedback_ &&
         new_ids.transport_sequence_number != 0) {
       rtp_rtcp_module_->RegisterRtpHeaderExtension(
-          TransportSequenceNumber::kUri, new_ids.transport_sequence_number);
+          TransportSequenceNumber::Uri(), new_ids.transport_sequence_number);
       // Probing in application limited region is only used in combination with
       // send side congestion control, wich depends on feedback packets which
       // requires transport sequence numbers to be enabled.
@@ -310,7 +308,7 @@ void AudioSendStream::ConfigureStream(
   if ((first_time || new_ids.mid != old_ids.mid ||
        new_config.rtp.mid != old_config.rtp.mid) &&
       new_ids.mid != 0 && !new_config.rtp.mid.empty()) {
-    rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpMid::kUri, new_ids.mid);
+    rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpMid::Uri(), new_ids.mid);
     rtp_rtcp_module_->SetMid(new_config.rtp.mid);
   }
 
@@ -320,12 +318,12 @@ void AudioSendStream::ConfigureStream(
        new_config.rtp.rid != old_config.rtp.rid)) {
     if (new_ids.rid != 0 || new_ids.repaired_rid != 0) {
       if (new_config.rtp.rid.empty()) {
-        rtp_rtcp_module_->DeregisterSendRtpHeaderExtension(RtpStreamId::kUri);
+        rtp_rtcp_module_->DeregisterSendRtpHeaderExtension(RtpStreamId::Uri());
       } else if (new_ids.repaired_rid != 0) {
-        rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpStreamId::kUri,
+        rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpStreamId::Uri(),
                                                      new_ids.repaired_rid);
       } else {
-        rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpStreamId::kUri,
+        rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpStreamId::Uri(),
                                                      new_ids.rid);
       }
     }
@@ -337,7 +335,7 @@ void AudioSendStream::ConfigureStream(
         kRtpExtensionAbsoluteCaptureTime);
     if (new_ids.abs_capture_time) {
       rtp_rtcp_module_->RegisterRtpHeaderExtension(
-          AbsoluteCaptureTimeExtension::kUri, new_ids.abs_capture_time);
+          AbsoluteCaptureTimeExtension::Uri(), new_ids.abs_capture_time);
     }
   }
 
@@ -500,6 +498,8 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats(
 
   stats.report_block_datas = std::move(call_stats.report_block_datas);
 
+  stats.nacks_rcvd = call_stats.nacks_rcvd;
+
   return stats;
 }
 
@@ -517,7 +517,7 @@ void AudioSendStream::DeliverRtcp(const uint8_t* packet, size_t length) {
 }
 
 uint32_t AudioSendStream::OnBitrateUpdated(BitrateAllocationUpdate update) {
-  RTC_DCHECK_RUN_ON(worker_queue_);
+  RTC_DCHECK_RUN_ON(rtp_transport_queue_);
 
   // Pick a target bitrate between the constraints. Overrules the allocator if
   // it 1) allocated a bitrate of zero to disable the stream or 2) allocated a
@@ -701,7 +701,9 @@ bool AudioSendStream::ReconfigureSendCodec(const Config& new_config) {
       new_config.send_codec_spec->format !=
           old_config.send_codec_spec->format ||
       new_config.send_codec_spec->payload_type !=
-          old_config.send_codec_spec->payload_type) {
+          old_config.send_codec_spec->payload_type ||
+      new_config.send_codec_spec->red_payload_type !=
+          old_config.send_codec_spec->red_payload_type) {
     return SetupSendCodec(new_config);
   }
 
@@ -855,9 +857,10 @@ void AudioSendStream::ConfigureBitrateObserver() {
   if (allocation_settings_.priority_bitrate_raw)
     priority_bitrate = *allocation_settings_.priority_bitrate_raw;
 
-  worker_queue_->PostTask([this, constraints, priority_bitrate,
-                           config_bitrate_priority = config_.bitrate_priority] {
-    RTC_DCHECK_RUN_ON(worker_queue_);
+  rtp_transport_queue_->PostTask([this, constraints, priority_bitrate,
+                                  config_bitrate_priority =
+                                      config_.bitrate_priority] {
+    RTC_DCHECK_RUN_ON(rtp_transport_queue_);
     bitrate_allocator_->AddObserver(
         this,
         MediaStreamAllocationConfig{
@@ -872,8 +875,8 @@ void AudioSendStream::ConfigureBitrateObserver() {
 void AudioSendStream::RemoveBitrateObserver() {
   registered_with_allocator_ = false;
   rtc::Event thread_sync_event;
-  worker_queue_->PostTask([this, &thread_sync_event] {
-    RTC_DCHECK_RUN_ON(worker_queue_);
+  rtp_transport_queue_->PostTask([this, &thread_sync_event] {
+    RTC_DCHECK_RUN_ON(rtp_transport_queue_);
     bitrate_allocator_->RemoveObserver(this);
     thread_sync_event.Set();
   });
@@ -940,8 +943,8 @@ void AudioSendStream::UpdateCachedTargetAudioBitrateConstraints() {
   if (!new_constraints.has_value()) {
     return;
   }
-  worker_queue_->PostTask([this, new_constraints]() {
-    RTC_DCHECK_RUN_ON(worker_queue_);
+  rtp_transport_queue_->PostTask([this, new_constraints]() {
+    RTC_DCHECK_RUN_ON(rtp_transport_queue_);
     cached_constraints_ = new_constraints;
   });
 }

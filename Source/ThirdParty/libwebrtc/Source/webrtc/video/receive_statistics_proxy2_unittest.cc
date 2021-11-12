@@ -34,7 +34,6 @@ namespace webrtc {
 namespace internal {
 namespace {
 const int64_t kFreqOffsetProcessIntervalInMs = 40000;
-const uint32_t kLocalSsrc = 123;
 const uint32_t kRemoteSsrc = 456;
 const int kMinRequiredSamples = 200;
 const int kWidth = 1280;
@@ -44,10 +43,10 @@ const int kHeight = 720;
 // TODO(sakal): ReceiveStatisticsProxy is lacking unittesting.
 class ReceiveStatisticsProxy2Test : public ::testing::Test {
  public:
-  ReceiveStatisticsProxy2Test() : fake_clock_(1234), config_(GetTestConfig()) {
+  ReceiveStatisticsProxy2Test() : fake_clock_(1234) {
     metrics::Reset();
-    statistics_proxy_.reset(
-        new ReceiveStatisticsProxy(&config_, &fake_clock_, loop_.task_queue()));
+    statistics_proxy_.reset(new ReceiveStatisticsProxy(
+        kRemoteSsrc, &fake_clock_, loop_.task_queue()));
   }
 
   ~ReceiveStatisticsProxy2Test() override { statistics_proxy_.reset(); }
@@ -64,13 +63,6 @@ class ReceiveStatisticsProxy2Test : public ::testing::Test {
                                 const StreamDataCounters* rtx_stats) {
     loop_.Flush();
     statistics_proxy_->UpdateHistograms(fraction_lost, rtp_stats, rtx_stats);
-  }
-
-  VideoReceiveStream::Config GetTestConfig() {
-    VideoReceiveStream::Config config(nullptr);
-    config.rtp.local_ssrc = kLocalSsrc;
-    config.rtp.remote_ssrc = kRemoteSsrc;
-    return config;
   }
 
   VideoFrame CreateFrame(int width, int height) {
@@ -111,7 +103,6 @@ class ReceiveStatisticsProxy2Test : public ::testing::Test {
   }
 
   SimulatedClock fake_clock_;
-  const VideoReceiveStream::Config config_;
   std::unique_ptr<ReceiveStatisticsProxy> statistics_proxy_;
   test::RunLoop loop_;
 };
@@ -1290,7 +1281,7 @@ TEST_P(ReceiveStatisticsProxy2TestWithContent,
     fake_clock_.AdvanceTimeMilliseconds(kInterFrameDelayMs);
   }
 
-  // |kMinRequiredSamples| samples, and thereby intervals, is required. That
+  // `kMinRequiredSamples` samples, and thereby intervals, is required. That
   // means we're one frame short of having a valid data set.
   statistics_proxy_->UpdateHistograms(absl::nullopt, StreamDataCounters(),
                                       nullptr);

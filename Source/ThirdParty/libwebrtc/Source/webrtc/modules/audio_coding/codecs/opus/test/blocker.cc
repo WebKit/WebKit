@@ -16,7 +16,7 @@
 
 namespace {
 
-// Adds |a| and |b| frame by frame into |result| (basically matrix addition).
+// Adds `a` and `b` frame by frame into `result` (basically matrix addition).
 void AddFrames(const float* const* a,
                size_t a_start_index,
                const float* const* b,
@@ -33,7 +33,7 @@ void AddFrames(const float* const* a,
   }
 }
 
-// Copies |src| into |dst| channel by channel.
+// Copies `src` into `dst` channel by channel.
 void CopyFrames(const float* const* src,
                 size_t src_start_index,
                 size_t num_frames,
@@ -46,7 +46,7 @@ void CopyFrames(const float* const* src,
   }
 }
 
-// Moves |src| into |dst| channel by channel.
+// Moves `src` into `dst` channel by channel.
 void MoveFrames(const float* const* src,
                 size_t src_start_index,
                 size_t num_frames,
@@ -69,8 +69,8 @@ void ZeroOut(float* const* buffer,
   }
 }
 
-// Pointwise multiplies each channel of |frames| with |window|. Results are
-// stored in |frames|.
+// Pointwise multiplies each channel of `frames` with `window`. Results are
+// stored in `frames`.
 void ApplyWindow(const float* window,
                  size_t num_frames,
                  size_t num_channels,
@@ -134,7 +134,7 @@ Blocker::~Blocker() = default;
 // On each call to ProcessChunk():
 // 1. New input gets read into sections _b_ and _c_ of the input buffer.
 // 2. We block starting from frame_offset.
-// 3. We block until we reach a block |bl| that doesn't contain any frames
+// 3. We block until we reach a block `bl` that doesn't contain any frames
 //    from sections _a_ or _b_ of the input buffer.
 // 4. We window the current block, fire the callback for processing, window
 //    again, and overlap/add to the output buffer.
@@ -142,7 +142,7 @@ Blocker::~Blocker() = default;
 // 6. For both the input and the output buffers, we copy section _c_ into
 //    section _a_.
 // 7. We set the new frame_offset to be the difference between the first frame
-//    of |bl| and the border between sections _b_ and _c_.
+//    of `bl` and the border between sections _b_ and _c_.
 //
 // When block_size > chunk_size the input and output buffers look like this:
 //
@@ -153,13 +153,13 @@ Blocker::~Blocker() = default;
 // On each call to ProcessChunk():
 // The procedure is the same as above, except for:
 // 1. New input gets read into section _c_ of the input buffer.
-// 3. We block until we reach a block |bl| that doesn't contain any frames
+// 3. We block until we reach a block `bl` that doesn't contain any frames
 //    from section _a_ of the input buffer.
 // 5. We copy section _a_ of the output buffer into output.
 // 6. For both the input and the output buffers, we copy sections _b_ and _c_
 //    into section _a_ and _b_.
 // 7. We set the new frame_offset to be the difference between the first frame
-//    of |bl| and the border between sections _a_ and _b_.
+//    of `bl` and the border between sections _a_ and _b_.
 //
 // * delay here refers to inintial_delay_
 //

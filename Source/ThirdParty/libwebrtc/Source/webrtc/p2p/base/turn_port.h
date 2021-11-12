@@ -21,10 +21,10 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "api/async_dns_resolver.h"
 #include "p2p/base/port.h"
 #include "p2p/client/basic_port_allocator.h"
 #include "rtc_base/async_packet_socket.h"
-#include "rtc_base/async_resolver_interface.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/task_utils/pending_task_safety_flag.h"
 
@@ -51,7 +51,7 @@ class TurnPort : public Port {
     STATE_DISCONNECTED,  // TCP connection died, cannot send/receive any
                          // packets.
   };
-  // Create a TURN port using the shared UDP socket, |socket|.
+  // Create a TURN port using the shared UDP socket, `socket`.
   static std::unique_ptr<TurnPort> Create(
       rtc::Thread* thread,
       rtc::PacketSocketFactory* factory,
@@ -81,7 +81,7 @@ class TurnPort : public Port {
         thread, factory, network, socket, username, password, server_address,
         credentials, server_priority, origin, customizer));
   }
-  // TODO(steveanton): Remove once downstream clients have moved to |Create|.
+  // TODO(steveanton): Remove once downstream clients have moved to `Create`.
   static std::unique_ptr<TurnPort> CreateUnique(
       rtc::Thread* thread,
       rtc::PacketSocketFactory* factory,
@@ -99,8 +99,8 @@ class TurnPort : public Port {
                   customizer);
   }
 
-  // Create a TURN port that will use a new socket, bound to |network| and
-  // using a port in the range between |min_port| and |max_port|.
+  // Create a TURN port that will use a new socket, bound to `network` and
+  // using a port in the range between `min_port` and `max_port`.
   static std::unique_ptr<TurnPort> Create(
       rtc::Thread* thread,
       rtc::PacketSocketFactory* factory,
@@ -136,7 +136,7 @@ class TurnPort : public Port {
                      origin, tls_alpn_protocols, tls_elliptic_curves,
                      customizer, tls_cert_verifier));
   }
-  // TODO(steveanton): Remove once downstream clients have moved to |Create|.
+  // TODO(steveanton): Remove once downstream clients have moved to `Create`.
   static std::unique_ptr<TurnPort> CreateUnique(
       rtc::Thread* thread,
       rtc::PacketSocketFactory* factory,
@@ -248,7 +248,7 @@ class TurnPort : public Port {
   void set_credentials(const RelayCredentials& credentials) {
     credentials_ = credentials;
   }
-  // Finds the turn entry with |address| and sets its channel id.
+  // Finds the turn entry with `address` and sets its channel id.
   // Returns true if the entry is found.
   bool SetEntryChannelId(const rtc::SocketAddress& address, int channel_id);
   // Visible for testing.
@@ -363,12 +363,12 @@ class TurnPort : public Port {
   TurnEntry* FindEntry(int channel_id) const;
   bool EntryExists(TurnEntry* e);
   void DestroyEntry(TurnEntry* entry);
-  // Destroys the entry only if |timestamp| matches the destruction timestamp
-  // in |entry|.
+  // Destroys the entry only if `timestamp` matches the destruction timestamp
+  // in `entry`.
   void DestroyEntryIfNotCancelled(TurnEntry* entry, int64_t timestamp);
   void ScheduleEntryDestruction(TurnEntry* entry);
 
-  // Marks the connection with remote address |address| failed and
+  // Marks the connection with remote address `address` failed and
   // pruned (a.k.a. write-timed-out). Returns true if a connection is found.
   bool FailAndPruneConnection(const rtc::SocketAddress& address);
 
@@ -392,7 +392,7 @@ class TurnPort : public Port {
 
   rtc::AsyncPacketSocket* socket_;
   SocketOptionsMap socket_options_;
-  rtc::AsyncResolverInterface* resolver_;
+  std::unique_ptr<webrtc::AsyncDnsResolverInterface> resolver_;
   int error_;
   rtc::DiffServCodePoint stun_dscp_value_;
 

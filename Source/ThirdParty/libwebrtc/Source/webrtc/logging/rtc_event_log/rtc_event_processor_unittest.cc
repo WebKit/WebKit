@@ -29,7 +29,7 @@ std::vector<LoggedStartEvent> CreateEventList(
     std::initializer_list<int64_t> timestamp_list) {
   std::vector<LoggedStartEvent> v;
   for (int64_t timestamp_ms : timestamp_list) {
-    v.emplace_back(timestamp_ms * 1000);  // Convert ms to us.
+    v.emplace_back(Timestamp::Millis(timestamp_ms));
   }
   return v;
 }
@@ -41,7 +41,7 @@ CreateRandomEventLists(size_t num_lists, size_t num_elements, uint64_t seed) {
   for (size_t elem = 0; elem < num_elements; elem++) {
     uint32_t i = prng.Rand(0u, num_lists - 1);
     int64_t timestamp_ms = elem;
-    lists[i].emplace_back(timestamp_ms * 1000);
+    lists[i].emplace_back(Timestamp::Millis(timestamp_ms));
   }
   return lists;
 }
@@ -146,8 +146,8 @@ TEST(RtcEventProcessor, DifferentTypes) {
     result.push_back(elem.log_time_ms());
   };
 
-  std::vector<LoggedStartEvent> events1{LoggedStartEvent(2000)};
-  std::vector<LoggedStopEvent> events2{LoggedStopEvent(1000)};
+  std::vector<LoggedStartEvent> events1{LoggedStartEvent(Timestamp::Millis(2))};
+  std::vector<LoggedStopEvent> events2{LoggedStopEvent(Timestamp::Millis(1))};
   RtcEventProcessor processor;
   processor.AddEvents(events1, f1);
   processor.AddEvents(events2, f2);

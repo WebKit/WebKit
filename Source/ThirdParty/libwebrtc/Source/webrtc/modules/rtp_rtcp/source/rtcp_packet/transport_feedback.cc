@@ -12,8 +12,10 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <numeric>
 #include <utility>
 
+#include "absl/algorithm/container.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
@@ -129,7 +131,7 @@ uint16_t TransportFeedback::LastChunk::Emit() {
   }
   RTC_DCHECK_GE(size_, kMaxTwoBitCapacity);
   uint16_t chunk = EncodeTwoBit(kMaxTwoBitCapacity);
-  // Remove |kMaxTwoBitCapacity| encoded delta sizes:
+  // Remove `kMaxTwoBitCapacity` encoded delta sizes:
   // Shift remaining delta sizes and recalculate all_same_ && has_large_delta_.
   size_ -= kMaxTwoBitCapacity;
   all_same_ = true;
@@ -153,7 +155,7 @@ uint16_t TransportFeedback::LastChunk::EncodeLast() const {
   return EncodeOneBit();
 }
 
-// Appends content of the Lastchunk to |deltas|.
+// Appends content of the Lastchunk to `deltas`.
 void TransportFeedback::LastChunk::AppendTo(
     std::vector<DeltaSize>* deltas) const {
   if (all_same_) {
@@ -256,7 +258,7 @@ void TransportFeedback::LastChunk::DecodeRunLength(uint16_t chunk,
   DeltaSize delta_size = (chunk >> 13) & 0x03;
   has_large_delta_ = delta_size >= kLarge;
   all_same_ = true;
-  // To make it consistent with Add function, populate delta_sizes_ beyound 1st.
+  // To make it consistent with Add function, populate delta_sizes_ beyond 1st.
   for (size_t i = 0; i < std::min<size_t>(size_, kMaxVectorCapacity); ++i)
     delta_sizes_[i] = delta_size;
 }
@@ -441,16 +443,13 @@ bool TransportFeedback::Parse(const CommonHeader& packet) {
     last_chunk_.Decode(chunk, status_count - delta_sizes.size());
     last_chunk_.AppendTo(&delta_sizes);
   }
-  // Last chunk is stored in the |last_chunk_|.
+  // Last chunk is stored in the `last_chunk_`.
   encoded_chunks_.pop_back();
   RTC_DCHECK_EQ(delta_sizes.size(), status_count);
   num_seq_no_ = status_count;
 
   uint16_t seq_no = base_seq_no_;
-  size_t recv_delta_size = 0;
-  for (size_t delta_size : delta_sizes) {
-    recv_delta_size += delta_size;
-  }
+  size_t recv_delta_size = absl::c_accumulate(delta_sizes, 0);
 
   // Determine if timestamps, that is, recv_delta are included in the packet.
   if (end_index >= index + recv_delta_size) {
@@ -549,7 +548,7 @@ bool TransportFeedback::IsConsistent() const {
                       << num_seq_no_;
     return false;
   }
-  int64_t timestamp_us = base_time_ticks_ * kBaseScaleFactor;
+  int64_t timestamp_us = GetBaseTimeUs();
   auto packet_it = received_packets_.begin();
   uint16_t seq_no = base_seq_no_;
   for (DeltaSize delta_size : delta_sizes) {

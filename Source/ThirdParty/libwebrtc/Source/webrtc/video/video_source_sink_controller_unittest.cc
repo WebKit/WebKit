@@ -80,11 +80,11 @@ TEST(VideoSourceSinkControllerTest, VideoRestrictionsToSinkWants) {
   VideoSourceSinkController controller(&sink, &source);
 
   VideoSourceRestrictions restrictions = controller.restrictions();
-  // max_pixels_per_frame() maps to |max_pixel_count|.
+  // max_pixels_per_frame() maps to `max_pixel_count`.
   restrictions.set_max_pixels_per_frame(42u);
-  // target_pixels_per_frame() maps to |target_pixel_count|.
+  // target_pixels_per_frame() maps to `target_pixel_count`.
   restrictions.set_target_pixels_per_frame(200u);
-  // max_frame_rate() maps to |max_framerate_fps|.
+  // max_frame_rate() maps to `max_framerate_fps`.
   restrictions.set_max_frame_rate(30.0);
   controller.SetRestrictions(restrictions);
   EXPECT_CALL(source, AddOrUpdateSink(_, _))
@@ -96,9 +96,9 @@ TEST(VideoSourceSinkControllerTest, VideoRestrictionsToSinkWants) {
       });
   controller.PushSourceSinkSettings();
 
-  // pixels_per_frame_upper_limit() caps |max_pixel_count|.
+  // pixels_per_frame_upper_limit() caps `max_pixel_count`.
   controller.SetPixelsPerFrameUpperLimit(24);
-  // frame_rate_upper_limit() caps |max_framerate_fps|.
+  // frame_rate_upper_limit() caps `max_framerate_fps`.
   controller.SetFrameRateUpperLimit(10.0);
 
   EXPECT_CALL(source, AddOrUpdateSink(_, _))

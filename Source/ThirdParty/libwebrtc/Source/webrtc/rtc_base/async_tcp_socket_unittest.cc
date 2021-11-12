@@ -22,7 +22,7 @@ class AsyncTCPSocketTest : public ::testing::Test, public sigslot::has_slots<> {
  public:
   AsyncTCPSocketTest()
       : vss_(new rtc::VirtualSocketServer()),
-        socket_(vss_->CreateAsyncSocket(SOCK_STREAM)),
+        socket_(vss_->CreateSocket(SOCK_STREAM)),
         tcp_socket_(new AsyncTCPSocket(socket_, true)),
         ready_to_send_(false) {
     tcp_socket_->SignalReadyToSend.connect(this,
@@ -33,7 +33,7 @@ class AsyncTCPSocketTest : public ::testing::Test, public sigslot::has_slots<> {
 
  protected:
   std::unique_ptr<VirtualSocketServer> vss_;
-  AsyncSocket* socket_;
+  Socket* socket_;
   std::unique_ptr<AsyncTCPSocket> tcp_socket_;
   bool ready_to_send_;
 };

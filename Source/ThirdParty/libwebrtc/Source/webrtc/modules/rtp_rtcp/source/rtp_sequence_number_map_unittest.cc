@@ -438,7 +438,7 @@ TEST_F(RtpSequenceNumberMapTest, MaxEntriesObserved) {
   uut.InsertPacket(new_association.sequence_number, new_association.info);
   associations.push_back(new_association);
 
-  // The +1 is for |new_association|.
+  // The +1 is for `new_association`.
   const size_t kExpectedAssociationCount = 3 * kMaxEntries / 4 + 1;
   const auto expected_begin =
       std::prev(associations.end(), kExpectedAssociationCount);
@@ -466,7 +466,7 @@ void RtpSequenceNumberMapTest::MaxEntriesReachedAtSameTimeAsObsoletionOfItem(
   uut.InsertPacket(new_association.sequence_number, new_association.info);
   associations.push_back(new_association);
 
-  // The +1 is for |new_association|.
+  // The +1 is for `new_association`.
   const size_t kExpectedAssociationCount =
       std::min(3 * max_entries / 4, max_entries - obsoleted_count) + 1;
   const auto expected_begin =

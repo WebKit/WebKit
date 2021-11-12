@@ -27,9 +27,9 @@ using ::testing::_;
 using ::testing::Invoke;
 
 namespace webrtc {
-namespace webrtc_cc {
 
 namespace {
+constexpr uint32_t kSsrc = 8492;
 const PacedPacketInfo kPacingInfo0(0, 5, 2000);
 const PacedPacketInfo kPacingInfo1(1, 8, 4000);
 const PacedPacketInfo kPacingInfo2(2, 14, 7000);
@@ -49,8 +49,8 @@ void ComparePacketFeedbackVectors(const std::vector<PacketResult>& truth,
   // equal. However, the difference must be the same for all x.
   TimeDelta arrival_time_delta = truth[0].receive_time - input[0].receive_time;
   for (size_t i = 0; i < len; ++i) {
-    RTC_CHECK(truth[i].receive_time.IsFinite());
-    if (input[i].receive_time.IsFinite()) {
+    RTC_CHECK(truth[i].IsReceived());
+    if (input[i].IsReceived()) {
       EXPECT_EQ(truth[i].receive_time - input[i].receive_time,
                 arrival_time_delta);
     }
@@ -77,10 +77,6 @@ PacketResult CreatePacket(int64_t receive_time_ms,
   return res;
 }
 
-}  // namespace
-
-namespace test {
-
 class MockStreamFeedbackObserver : public webrtc::StreamFeedbackObserver {
  public:
   MOCK_METHOD(void,
@@ -88,6 +84,8 @@ class MockStreamFeedbackObserver : public webrtc::StreamFeedbackObserver {
               (std::vector<StreamPacketInfo> packet_feedback_vector),
               (override));
 };
+
+}  // namespace
 
 class TransportFeedbackAdapterTest : public ::testing::Test {
  public:
@@ -108,7 +106,7 @@ class TransportFeedbackAdapterTest : public ::testing::Test {
 
   void OnSentPacket(const PacketResult& packet_feedback) {
     RtpPacketSendInfo packet_info;
-    packet_info.ssrc = kSsrc;
+    packet_info.media_ssrc = kSsrc;
     packet_info.transport_sequence_number =
         packet_feedback.sent_packet.sequence_number;
     packet_info.rtp_sequence_number = 0;
@@ -121,8 +119,6 @@ class TransportFeedbackAdapterTest : public ::testing::Test {
         packet_feedback.sent_packet.sequence_number,
         packet_feedback.sent_packet.send_time.ms(), rtc::PacketInfo()));
   }
-
-  static constexpr uint32_t kSsrc = 8492;
 
   SimulatedClock clock_;
   std::unique_ptr<TransportFeedbackAdapter> adapter_;
@@ -393,7 +389,7 @@ TEST_F(TransportFeedbackAdapterTest, IgnoreDuplicatePacketSentCalls) {
 
   // Add a packet and then mark it as sent.
   RtpPacketSendInfo packet_info;
-  packet_info.ssrc = kSsrc;
+  packet_info.media_ssrc = kSsrc;
   packet_info.transport_sequence_number = packet.sent_packet.sequence_number;
   packet_info.length = packet.sent_packet.size.bytes();
   packet_info.pacing_info = packet.sent_packet.pacing_info;
@@ -412,6 +408,4 @@ TEST_F(TransportFeedbackAdapterTest, IgnoreDuplicatePacketSentCalls) {
   EXPECT_FALSE(duplicate_packet.has_value());
 }
 
-}  // namespace test
-}  // namespace webrtc_cc
 }  // namespace webrtc

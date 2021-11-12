@@ -38,9 +38,9 @@ using core_audio_utility::ErrorToString;
 // Converts from channel mask to list of included channels.
 // Each audio data format contains channels for one or more of the positions
 // listed below. The number of channels simply equals the number of nonzero
-// flag bits in the |channel_mask|. The relative positions of the channels
+// flag bits in the `channel_mask`. The relative positions of the channels
 // within each block of audio data always follow the same relative ordering
-// as the flag bits in the table below. For example, if |channel_mask| contains
+// as the flag bits in the table below. For example, if `channel_mask` contains
 // the value 0x00000033, the format defines four audio channels that are
 // assigned for playback to the front-left, front-right, back-left,
 // and back-right speakers, respectively. The channel data should be interleaved
@@ -278,8 +278,8 @@ bool IsDeviceActive(IMMDevice* device) {
   return SUCCEEDED(device->GetState(&state)) && (state & DEVICE_STATE_ACTIVE);
 }
 
-// Retrieve an audio device specified by |device_id| or a default device
-// specified by data-flow direction and role if |device_id| is default.
+// Retrieve an audio device specified by `device_id` or a default device
+// specified by data-flow direction and role if `device_id` is default.
 ComPtr<IMMDevice> CreateDeviceInternal(const std::string& device_id,
                                        EDataFlow data_flow,
                                        ERole role) {
@@ -500,7 +500,7 @@ bool GetDeviceNamesInternal(EDataFlow data_flow,
   }
 
   // Loop over all active devices and add friendly name and unique id to the
-  // |device_names| queue. For now, devices are added at indexes 0, 1, ..., N-1
+  // `device_names` queue. For now, devices are added at indexes 0, 1, ..., N-1
   // but they will be moved to 2,3,..., N+1 at the next stage when default and
   // default communication devices are added at index 0 and 1.
   ComPtr<IMMDevice> audio_device;
@@ -611,7 +611,7 @@ HRESULT GetPreferredAudioParametersInternal(IAudioClient* client,
     return hr;
 
   int sample_rate = mix_format.Format.nSamplesPerSec;
-  // Override default sample rate if |fixed_sample_rate| is set and different
+  // Override default sample rate if `fixed_sample_rate` is set and different
   // from the default rate.
   if (fixed_sample_rate > 0 && fixed_sample_rate != sample_rate) {
     RTC_DLOG(INFO) << "Using fixed sample rate instead of the preferred: "
@@ -909,7 +909,7 @@ HRESULT SetClientProperties(IAudioClient2* client) {
   props.eCategory = AudioCategory_Communications;
   // Hardware-offloaded audio processing allows the main audio processing tasks
   // to be performed outside the computer's main CPU. Check support and log the
-  // result but hard-code |bIsOffload| to FALSE for now.
+  // result but hard-code `bIsOffload` to FALSE for now.
   // TODO(henrika): evaluate hardware-offloading. Might complicate usage of
   // IAudioClient::GetMixFormat().
   BOOL supports_offload = FALSE;
@@ -989,7 +989,7 @@ HRESULT GetSharedModeMixFormat(IAudioClient* client,
   // The GetMixFormat method retrieves the stream format that the audio engine
   // uses for its internal processing of shared-mode streams. The method
   // allocates the storage for the structure and this memory will be released
-  // when |mix_format| goes out of scope. The GetMixFormat method retrieves a
+  // when `mix_format` goes out of scope. The GetMixFormat method retrieves a
   // format descriptor that is in the form of a WAVEFORMATEXTENSIBLE structure
   // instead of a standalone WAVEFORMATEX structure. The method outputs a
   // pointer to the WAVEFORMATEX structure that is embedded at the start of
@@ -1017,7 +1017,7 @@ HRESULT GetSharedModeMixFormat(IAudioClient* client,
     return AUDCLNT_E_UNSUPPORTED_FORMAT;
   }
 
-  // Log a warning for the rare case where |mix_format| only contains a
+  // Log a warning for the rare case where `mix_format` only contains a
   // stand-alone WAVEFORMATEX structure but don't return.
   if (!wrapped_format.IsExtensible()) {
     RTC_DLOG(WARNING)
@@ -1079,8 +1079,8 @@ HRESULT GetDevicePeriod(IAudioClient* client,
                         REFERENCE_TIME* device_period) {
   RTC_DLOG(INFO) << "GetDevicePeriod";
   RTC_DCHECK(client);
-  // The |default_period| parameter specifies the default scheduling period
-  // for a shared-mode stream. The |minimum_period| parameter specifies the
+  // The `default_period` parameter specifies the default scheduling period
+  // for a shared-mode stream. The `minimum_period` parameter specifies the
   // minimum scheduling period for an exclusive-mode stream.
   // The time is expressed in 100-nanosecond units.
   REFERENCE_TIME default_period = 0;
@@ -1203,8 +1203,8 @@ HRESULT SharedModeInitialize(IAudioClient* client,
   }
   RTC_DLOG(INFO) << "stream_flags: 0x" << rtc::ToHex(stream_flags);
 
-  // Initialize the shared mode client for minimal delay if |buffer_duration|
-  // is 0 or possibly a higher delay (more robust) if |buffer_duration| is
+  // Initialize the shared mode client for minimal delay if `buffer_duration`
+  // is 0 or possibly a higher delay (more robust) if `buffer_duration` is
   // larger than 0. The actual size is given by IAudioClient::GetBufferSize().
   _com_error error = client->Initialize(
       AUDCLNT_SHAREMODE_SHARED, stream_flags, buffer_duration, 0,
@@ -1294,7 +1294,7 @@ HRESULT SharedModeInitializeLowLatency(IAudioClient3* client,
 
   // Initialize the shared mode client for lowest possible latency.
   // It is assumed that GetSharedModeEnginePeriod() has been used to query the
-  // smallest possible engine period and that it is given by |period_in_frames|.
+  // smallest possible engine period and that it is given by `period_in_frames`.
   _com_error error = client->InitializeSharedAudioStream(
       stream_flags, period_in_frames,
       reinterpret_cast<const WAVEFORMATEX*>(format), nullptr);

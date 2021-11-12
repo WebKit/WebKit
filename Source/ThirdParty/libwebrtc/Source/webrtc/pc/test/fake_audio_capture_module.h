@@ -170,12 +170,12 @@ class FakeAudioCaptureModule : public webrtc::AudioDeviceModule,
   // Initializes the state of the FakeAudioCaptureModule. This API is called on
   // creation by the Create() API.
   bool Initialize();
-  // SetBuffer() sets all samples in send_buffer_ to |value|.
+  // SetBuffer() sets all samples in send_buffer_ to `value`.
   void SetSendBuffer(int value);
   // Resets rec_buffer_. I.e., sets all rec_buffer_ samples to 0.
   void ResetRecBuffer();
   // Returns true if rec_buffer_ contains one or more sample greater than or
-  // equal to |value|.
+  // equal to `value`.
   bool CheckRecBuffer(int value);
 
   // Returns true/false depending on if recording or playback has been

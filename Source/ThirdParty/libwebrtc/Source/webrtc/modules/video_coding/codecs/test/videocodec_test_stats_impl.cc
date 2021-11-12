@@ -202,7 +202,8 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
   const size_t target_bitrate_kbps =
       CalcLayerTargetBitrateKbps(first_frame_num, last_frame_num, spatial_idx,
                                  temporal_idx, aggregate_independent_layers);
-  RTC_CHECK_GT(target_bitrate_kbps, 0);  // We divide by |target_bitrate_kbps|.
+  const size_t target_bitrate_bps = 1000 * target_bitrate_kbps;
+  RTC_CHECK_GT(target_bitrate_kbps, 0);  // We divide by `target_bitrate_kbps`.
 
   for (size_t frame_num = first_frame_num; frame_num <= last_frame_num;
        ++frame_num) {
@@ -313,8 +314,8 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
   video_stat.temporal_idx = temporal_idx;
 
   RTC_CHECK_GT(duration_sec, 0);
-  video_stat.bitrate_kbps =
-      static_cast<size_t>(8 * video_stat.length_bytes / 1000 / duration_sec);
+  const float bitrate_bps = 8 * video_stat.length_bytes / duration_sec;
+  video_stat.bitrate_kbps = static_cast<size_t>((bitrate_bps + 500) / 1000);
   video_stat.framerate_fps = video_stat.num_encoded_frames / duration_sec;
 
   // http://bugs.webrtc.org/10400: On Windows, we only get millisecond
@@ -339,6 +340,12 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
   video_stat.avg_delay_sec = buffer_level_sec.GetMean().value_or(0);
   video_stat.max_key_frame_delay_sec = MaxDelaySec(key_frame_size_bytes);
   video_stat.max_delta_frame_delay_sec = MaxDelaySec(key_frame_size_bytes);
+
+  video_stat.avg_bitrate_mismatch_pct =
+      100 * (bitrate_bps - target_bitrate_bps) / target_bitrate_bps;
+  video_stat.avg_framerate_mismatch_pct =
+      100 * (video_stat.framerate_fps - input_framerate_fps) /
+      input_framerate_fps;
 
   video_stat.avg_key_frame_size_bytes =
       key_frame_size_bytes.GetMean().value_or(0);

@@ -8,10 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <assert.h>
-
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
@@ -49,8 +48,8 @@ bool WindowCapturerNull::SelectSource(SourceId id) {
 }
 
 void WindowCapturerNull::Start(Callback* callback) {
-  assert(!callback_);
-  assert(callback);
+  RTC_DCHECK(!callback_);
+  RTC_DCHECK(callback);
 
   callback_ = callback;
 }

@@ -58,7 +58,7 @@
 #include "test/gtest.h"
 
 // This file contains tests for RTP Media API-related behavior of
-// |webrtc::PeerConnection|, see https://w3c.github.io/webrtc-pc/#rtp-media-api.
+// `webrtc::PeerConnection`, see https://w3c.github.io/webrtc-pc/#rtp-media-api.
 
 namespace webrtc {
 
@@ -188,7 +188,7 @@ class PeerConnectionRtpTestUnifiedPlan : public PeerConnectionRtpBaseTest {
   }
 };
 
-// These tests cover |webrtc::PeerConnectionObserver| callbacks firing upon
+// These tests cover `webrtc::PeerConnectionObserver` callbacks firing upon
 // setting the remote description.
 
 TEST_P(PeerConnectionRtpTest, AddTrackWithoutStreamFiresOnAddTrack) {
@@ -1994,7 +1994,7 @@ TEST_P(PeerConnectionRtpTest, CreateTwoSendersWithSameTrack) {
 
   if (sdp_semantics_ == SdpSemantics::kPlanB) {
     // TODO(hbos): When https://crbug.com/webrtc/8734 is resolved, this should
-    // return true, and doing |callee->SetRemoteDescription()| should work.
+    // return true, and doing `callee->SetRemoteDescription()` should work.
     EXPECT_FALSE(caller->CreateOfferAndSetAsLocal());
   } else {
     EXPECT_TRUE(caller->CreateOfferAndSetAsLocal());

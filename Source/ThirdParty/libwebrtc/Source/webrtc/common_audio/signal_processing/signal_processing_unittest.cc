@@ -482,13 +482,13 @@ TEST(SplTest, FilterTest) {
   }
 
   // MA filters.
-  // Note that the input data has |kFilterOrder| states before the actual
+  // Note that the input data has `kFilterOrder` states before the actual
   // data (one sample).
   WebRtcSpl_FilterMAFastQ12(&data_in[kFilterOrder], data_out, B,
                             kFilterOrder + 1, 1);
   EXPECT_EQ(0, data_out[0]);
   // AR filters.
-  // Note that the output data has |kFilterOrder| states before the actual
+  // Note that the output data has `kFilterOrder` states before the actual
   // data (one sample).
   WebRtcSpl_FilterARFastQ12(data_in, &data_out[kFilterOrder], A,
                             kFilterOrder + 1, 1);
@@ -639,11 +639,11 @@ TEST(SplTest, Resample48WithSaturationTest) {
       32767,  32767,  32767,  32767,  32767,  32767,  32767,  32767,
       32767,  32767,  32767,  32767,  32767,  32767,  32767};
 
-  // All values in |out_vector| should be |kRefValue32kHz|.
+  // All values in `out_vector` should be `kRefValue32kHz`.
   const int32_t kRefValue32kHz1 = -1077493760;
   const int32_t kRefValue32kHz2 = 1077493645;
 
-  // After bit shift with saturation, |out_vector_w16| is saturated.
+  // After bit shift with saturation, `out_vector_w16` is saturated.
 
   const int16_t kRefValue16kHz1 = -32768;
   const int16_t kRefValue16kHz2 = 32767;

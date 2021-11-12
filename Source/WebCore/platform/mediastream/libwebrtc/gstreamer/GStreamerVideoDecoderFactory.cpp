@@ -88,7 +88,7 @@ public:
         m_needsKeyframe = true;
     }
 
-    int32_t InitDecode(const webrtc::VideoCodec* codecSettings, int32_t) override
+    bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) override
     {
         m_src = makeElement("appsrc");
 
@@ -96,10 +96,8 @@ public:
         auto capsfilter = CreateFilter();
         auto decoder = makeElement("decodebin");
 
-        if (codecSettings) {
-            m_width = codecSettings->width;
-            m_height = codecSettings->height;
-        }
+        m_width = codecSettings.max_render_resolution().Width();
+        m_height = codecSettings.max_render_resolution().Height();
 
         m_pipeline = makeElement("pipeline");
         connectSimpleBusMessageCallback(m_pipeline.get());
@@ -330,12 +328,12 @@ class H264Decoder : public GStreamerVideoDecoder {
 public:
     H264Decoder() { m_requireParse = true; }
 
-    int32_t InitDecode(const webrtc::VideoCodec* codecInfo, int32_t nCores) final
+    bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) final
     {
-        if (codecInfo && codecInfo->codecType != webrtc::kVideoCodecH264)
+        if (codecSettings.codec_type() != webrtc::kVideoCodecH264)
             return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
 
-        return GStreamerVideoDecoder::InitDecode(codecInfo, nCores);
+        return GStreamerVideoDecoder::Configure(codecSettings);
     }
 
     GstCaps* GetCapsForFrame(const webrtc::EncodedImage& image) final

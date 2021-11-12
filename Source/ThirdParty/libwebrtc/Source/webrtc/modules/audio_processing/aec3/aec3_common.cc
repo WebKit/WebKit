@@ -29,9 +29,9 @@ Aec3Optimization DetectOptimization() {
 
 #if defined(WEBRTC_HAS_NEON)
   return Aec3Optimization::kNeon;
-#endif
-
+#else
   return Aec3Optimization::kNone;
+#endif
 }
 
 float FastApproxLog2f(const float in) {

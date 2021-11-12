@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "api/dtls_transport_interface.h"
 #include "p2p/base/fake_dtls_transport.h"
 #include "pc/dtls_transport.h"
 #include "rtc_base/gunit.h"
@@ -204,7 +205,7 @@ TEST_F(SctpTransportTest, CloseWhenTransportCloses) {
   ASSERT_EQ_WAIT(SctpTransportState::kConnected, observer_.State(),
                  kDefaultTimeout);
   static_cast<cricket::FakeDtlsTransport*>(dtls_transport_->internal())
-      ->SetDtlsState(cricket::DTLS_TRANSPORT_CLOSED);
+      ->SetDtlsState(DtlsTransportState::kClosed);
   ASSERT_EQ_WAIT(SctpTransportState::kClosed, observer_.State(),
                  kDefaultTimeout);
 }

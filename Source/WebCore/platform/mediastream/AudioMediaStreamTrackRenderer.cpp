@@ -45,6 +45,7 @@ std::unique_ptr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::cr
 #if PLATFORM(COCOA)
     return makeUnique<AudioMediaStreamTrackRendererCocoa>(WTFMove(init));
 #else
+    UNUSED_PARAM(init);
     return nullptr;
 #endif
 }

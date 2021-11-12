@@ -134,7 +134,7 @@ class NetEqTestFactory {
     bool enable_fast_accelerate = false;
     // Dumps events that describes the simulation on a step-by-step basis.
     bool textlog = false;
-    // If specified and |textlog| is true, the output of |textlog| is written to
+    // If specified and `textlog` is true, the output of `textlog` is written to
     // the specified file name.
     absl::optional<std::string> textlog_filename;
     // Base name for the output script files for plotting the delay profile.

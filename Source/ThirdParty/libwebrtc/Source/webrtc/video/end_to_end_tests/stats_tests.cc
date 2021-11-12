@@ -17,7 +17,7 @@
 #include "api/test/video/function_video_encoder_factory.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
-#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -71,12 +71,11 @@ TEST_F(StatsEndToEndTest, GetStats) {
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
       // Drop every 25th packet => 4% loss.
       static const int kPacketLossFrac = 25;
-      RTPHeader header;
-      RtpUtility::RtpHeaderParser parser(packet, length);
-      if (parser.Parse(&header) &&
-          expected_send_ssrcs_.find(header.ssrc) !=
+      RtpPacket header;
+      if (header.Parse(packet, length) &&
+          expected_send_ssrcs_.find(header.Ssrc()) !=
               expected_send_ssrcs_.end() &&
-          header.sequenceNumber % kPacketLossFrac == 0) {
+          header.SequenceNumber() % kPacketLossFrac == 0) {
         return DROP_PACKET;
       }
       check_stats_event_.Set();
@@ -143,8 +142,8 @@ TEST_F(StatsEndToEndTest, GetStats) {
             stats.rtcp_packet_type_counts.nack_requests != 0 ||
             stats.rtcp_packet_type_counts.unique_nack_requests != 0;
 
-        assert(stats.current_payload_type == -1 ||
-               stats.current_payload_type == kFakeVideoSendPayloadType);
+        RTC_DCHECK(stats.current_payload_type == -1 ||
+                   stats.current_payload_type == kFakeVideoSendPayloadType);
         receive_stats_filled_["IncomingPayloadType"] |=
             stats.current_payload_type == kFakeVideoSendPayloadType;
       }
@@ -475,9 +474,9 @@ TEST_F(StatsEndToEndTest, MAYBE_ContentTypeSwitches) {
     bool ShouldCreateReceivers() const override { return true; }
 
     void OnFrame(const VideoFrame& video_frame) override {
-      // The RTT is needed to estimate |ntp_time_ms| which is used by
+      // The RTT is needed to estimate `ntp_time_ms` which is used by
       // end-to-end delay stats. Therefore, start counting received frames once
-      // |ntp_time_ms| is valid.
+      // `ntp_time_ms` is valid.
       if (video_frame.ntp_time_ms() > 0 &&
           Clock::GetRealTimeClock()->CurrentNtpInMilliseconds() >=
               video_frame.ntp_time_ms()) {
@@ -613,11 +612,9 @@ TEST_F(StatsEndToEndTest, VerifyNackStats) {
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
       MutexLock lock(&mutex_);
       if (++sent_rtp_packets_ == kPacketNumberToDrop) {
-        std::unique_ptr<RtpHeaderParser> parser(
-            RtpHeaderParser::CreateForTest());
-        RTPHeader header;
-        EXPECT_TRUE(parser->Parse(packet, length, &header));
-        dropped_rtp_packet_ = header.sequenceNumber;
+        RtpPacket header;
+        EXPECT_TRUE(header.Parse(packet, length));
+        dropped_rtp_packet_ = header.SequenceNumber();
         return DROP_PACKET;
       }
       task_queue_->PostTask(std::unique_ptr<QueuedTask>(this));

@@ -13,7 +13,7 @@
 
 #include "common_video/h265/h265_common.h"
 #include "common_video/h265/h265_vps_parser.h"
-#include "rtc_base/bit_buffer.h"
+#include "rtc_base/bitstream_reader.h"
 #include "rtc_base/logging.h"
 
 namespace {
@@ -38,12 +38,11 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseVps(
     const uint8_t* data,
     size_t length) {
   std::vector<uint8_t> unpacked_buffer = H265::ParseRbsp(data, length);
-  rtc::BitBuffer bit_buffer(unpacked_buffer.data(), unpacked_buffer.size());
+  BitstreamReader bit_buffer(unpacked_buffer);
   return ParseInternal(&bit_buffer);
 }
 
-absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
-    rtc::BitBuffer* buffer) {
+absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(BitstreamReader* buffer) {
   // Now, we need to use a bit buffer to parse through the actual HEVC VPS
   // format. See Section 7.3.2.1 ("Video parameter set RBSP syntax") of the
   // H.265 standard for a complete description.
@@ -51,8 +50,7 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
   VpsState vps;
 
   // vps_video_parameter_set_id: u(4)
-  uint32_t vps_video_parameter_set_id = 0;
-  RETURN_EMPTY_ON_FAIL(buffer->ReadBits(&vps_video_parameter_set_id, 4));
+  uint32_t vps_video_parameter_set_id = buffer->ReadBits(4);
 
   vps.id = vps_video_parameter_set_id;
   vps.id = 0;

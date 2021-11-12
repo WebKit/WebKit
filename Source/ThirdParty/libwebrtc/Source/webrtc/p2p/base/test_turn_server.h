@@ -58,8 +58,11 @@ class TestTurnServer : public TurnAuthInterface {
                  const std::string& common_name = "test turn server")
       : server_(thread), thread_(thread) {
     AddInternalSocket(int_addr, int_protocol, ignore_bad_cert, common_name);
-    server_.SetExternalSocketFactory(new rtc::BasicPacketSocketFactory(thread),
-                                     udp_ext_addr);
+    // TODO(bugs.webrtc.org/13145): Take a SocketFactory as argument, so we
+    // don't need thread_->socketserver().
+    server_.SetExternalSocketFactory(
+        new rtc::BasicPacketSocketFactory(thread_->socketserver()),
+        udp_ext_addr);
     server_.set_realm(kTestRealm);
     server_.set_software(kTestSoftware);
     server_.set_auth_hook(this);
@@ -99,8 +102,8 @@ class TestTurnServer : public TurnAuthInterface {
     } else if (proto == cricket::PROTO_TCP || proto == cricket::PROTO_TLS) {
       // For TCP we need to create a server socket which can listen for incoming
       // new connections.
-      rtc::AsyncSocket* socket =
-          thread_->socketserver()->CreateAsyncSocket(AF_INET, SOCK_STREAM);
+      rtc::Socket* socket =
+          thread_->socketserver()->CreateSocket(AF_INET, SOCK_STREAM);
       if (proto == cricket::PROTO_TLS) {
         // For TLS, wrap the TCP socket with an SSL adapter. The adapter must
         // be configured with a self-signed certificate for testing.

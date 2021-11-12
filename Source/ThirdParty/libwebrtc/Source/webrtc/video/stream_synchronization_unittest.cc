@@ -32,9 +32,9 @@ class StreamSynchronizationTest : public ::testing::Test {
  protected:
   // Generates the necessary RTCP measurements and RTP timestamps and computes
   // the audio and video delays needed to get the two streams in sync.
-  // |audio_delay_ms| and |video_delay_ms| are the number of milliseconds after
+  // `audio_delay_ms` and `video_delay_ms` are the number of milliseconds after
   // capture which the frames are received.
-  // |current_audio_delay_ms| is the number of milliseconds which audio is
+  // `current_audio_delay_ms` is the number of milliseconds which audio is
   // currently being delayed by the receiver.
   bool DelayedStreams(int audio_delay_ms,
                       int video_delay_ms,

@@ -1,3 +1,77 @@
+2021-11-11  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r285577. rdar://problem/85196125
+
+    Update libwebrtc to M96
+    https://bugs.webkit.org/show_bug.cgi?id=232873
+    
+    LayoutTests/imported/w3c:
+    
+    Reviewed by Alex Christensen.
+    
+    * web-platform-tests/webrtc/RTCPeerConnection-addTrack.https-expected.txt:
+    * web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https-expected.txt:
+    * web-platform-tests/webrtc/RTCRtpTransceiver.https-expected.txt:
+    * web-platform-tests/webrtc/protocol/dtls-setup.https-expected.txt:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    Reviewed by Alex Christensen.
+    
+    Updated libwebrtc code according M96 upstream branch.
+    
+    * CMakeLists.txt:
+    * Configurations/libwebrtc.iOS.exp:
+    * Configurations/libwebrtc.iOSsim.exp:
+    * Configurations/libwebrtc.mac.exp:
+    * Source/webrtc: resynced.
+    * libwebrtc.xcodeproj/project.pbxproj:
+    
+    Source/WebCore:
+    
+    Reviewed by Alex Christensen.
+    
+    Update WebCore code according updated libwebrtc API, in particular moving from deprecated CreateDataChannel to CreateDataChannelOrError.
+    Covered by existing tests.
+    
+    * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp:
+    * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+    (WebCore::LibWebRTCMediaEndpoint::createDataChannel):
+    * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+    (WebCore::BasicPacketSocketFactory::BasicPacketSocketFactory):
+    * platform/mediastream/AudioMediaStreamTrackRenderer.cpp:
+    (WebCore::AudioMediaStreamTrackRenderer::create):
+    * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+    * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoCommon.cpp:
+    (WebCore::createH264Format):
+    (WebCore::supportedH264Formats):
+    * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.cpp:
+    * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.cpp:
+    * testing/MockLibWebRTCPeerConnection.cpp:
+    (WebCore::MockLibWebRTCPeerConnection::CreateDataChannelOrError):
+    (WebCore::MockLibWebRTCPeerConnection::CreateDataChannel): Deleted.
+    * testing/MockLibWebRTCPeerConnection.h:
+    
+    Source/WebKit:
+    
+    Reviewed by Alex Christensen.
+    
+    * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+    (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285577 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-10  Youenn Fablet  <youenn@apple.com>
+
+            Update libwebrtc to M96
+            https://bugs.webkit.org/show_bug.cgi?id=232873
+
+            Reviewed by Alex Christensen.
+
+            * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+            (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+
 2021-11-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Make scroll bar mode an enum class

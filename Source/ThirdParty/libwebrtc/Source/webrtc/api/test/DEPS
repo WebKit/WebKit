@@ -8,9 +8,6 @@ specific_include_rules = {
   "dummy_peer_connection\.h": [
     "+rtc_base/ref_counted_object.h",
   ],
-  "fake_constraints\.h": [
-    "+rtc_base/string_encode.h",
-  ],
   "neteq_factory_with_codecs\.h": [
     "+system_wrappers/include/clock.h",
   ],

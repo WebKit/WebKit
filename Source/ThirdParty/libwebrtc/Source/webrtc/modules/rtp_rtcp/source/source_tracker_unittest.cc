@@ -37,7 +37,7 @@ using ::testing::Values;
 
 constexpr size_t kPacketInfosCountMax = 5;
 
-// Simple "guaranteed to be correct" re-implementation of |SourceTracker| for
+// Simple "guaranteed to be correct" re-implementation of `SourceTracker` for
 // dual-implementation testing purposes.
 class ExpectedSourceTracker {
  public:

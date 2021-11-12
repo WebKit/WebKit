@@ -42,7 +42,7 @@ TEST(DyadicDecimatorTest, DyadicDecimateErrorValues) {
                                static_cast<int16_t*>(NULL), kOutBufferLength);
   EXPECT_EQ(0u, out_samples);
 
-  // Less than required |out_length|.
+  // Less than required `out_length`.
   out_samples = DyadicDecimate(test_buffer_even_len, kEvenBufferLength,
                                false,  // Even sequence.
                                test_buffer_out, 2);

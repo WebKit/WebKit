@@ -222,7 +222,6 @@ void NetEqDecodingTest::WrapTest(uint16_t start_seq_no,
   const int kSamples = kBlockSize16kHz * kBlocksPerFrame;
   const size_t kPayloadBytes = kSamples * sizeof(int16_t);
   double next_input_time_ms = 0.0;
-  uint32_t receive_timestamp = 0;
 
   // Insert speech for 2 seconds.
   const int kSpeechDurationMs = 2000;
@@ -260,7 +259,6 @@ void NetEqDecodingTest::WrapTest(uint16_t start_seq_no,
 
       ++seq_no;
       timestamp += kSamples;
-      receive_timestamp += kSamples;
       next_input_time_ms += static_cast<double>(kFrameSizeMs);
 
       seq_no_wrapped |= seq_no < last_seq_no;
@@ -348,8 +346,8 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
   EXPECT_EQ(AudioFrame::kCNG, out_frame_.speech_type_);
 
   if (network_freeze_ms > 0) {
-    // First keep pulling audio for |network_freeze_ms| without inserting
-    // any data, then insert CNG data corresponding to |network_freeze_ms|
+    // First keep pulling audio for `network_freeze_ms` without inserting
+    // any data, then insert CNG data corresponding to `network_freeze_ms`
     // without pulling any output audio.
     const double loop_end_time = t_ms + network_freeze_ms;
     for (; t_ms < loop_end_time; t_ms += 10) {
@@ -359,7 +357,7 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
       EXPECT_EQ(AudioFrame::kCNG, out_frame_.speech_type_);
     }
     bool pull_once = pull_audio_during_freeze;
-    // If |pull_once| is true, GetAudio will be called once half-way through
+    // If `pull_once` is true, GetAudio will be called once half-way through
     // the network recovery period.
     double pull_time_ms = (t_ms + next_input_time_ms) / 2;
     while (next_input_time_ms <= t_ms) {

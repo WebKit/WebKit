@@ -50,8 +50,8 @@ class RTC_EXPORT DesktopCapturer {
   // Interface that must be implemented by the DesktopCapturer consumers.
   class Callback {
    public:
-    // Called after a frame has been captured. |frame| is not nullptr if and
-    // only if |result| is SUCCESS.
+    // Called after a frame has been captured. `frame` is not nullptr if and
+    // only if `result` is SUCCESS.
     virtual void OnCaptureResult(Result result,
                                  std::unique_ptr<DesktopFrame> frame) = 0;
 
@@ -77,7 +77,7 @@ class RTC_EXPORT DesktopCapturer {
 
   virtual ~DesktopCapturer();
 
-  // Called at the beginning of a capturing session. |callback| must remain
+  // Called at the beginning of a capturing session. `callback` must remain
   // valid until capturer is destroyed.
   virtual void Start(Callback* callback) = 0;
 
@@ -120,11 +120,11 @@ class RTC_EXPORT DesktopCapturer {
   // implementation does not support this functionality.
   virtual bool FocusOnSelectedSource();
 
-  // Returns true if the |pos| on the selected source is covered by other
+  // Returns true if the `pos` on the selected source is covered by other
   // elements on the display, and is not visible to the users.
-  // |pos| is in full desktop coordinates, i.e. the top-left monitor always
+  // `pos` is in full desktop coordinates, i.e. the top-left monitor always
   // starts from (0, 0).
-  // The return value if |pos| is out of the scope of the source is undefined.
+  // The return value if `pos` is out of the scope of the source is undefined.
   virtual bool IsOccluded(const DesktopVector& pos);
 
   // Creates a DesktopCapturer instance which targets to capture windows.

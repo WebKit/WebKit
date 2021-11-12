@@ -140,7 +140,14 @@ rtc::scoped_refptr<webrtc::DataChannelInterface>
 PeerConnectionTestWrapper::CreateDataChannel(
     const std::string& label,
     const webrtc::DataChannelInit& init) {
-  return peer_connection_->CreateDataChannel(label, &init);
+  auto result = peer_connection_->CreateDataChannelOrError(label, &init);
+  if (!result.ok()) {
+    RTC_LOG(LS_ERROR) << "CreateDataChannel failed: "
+                      << ToString(result.error().type()) << " "
+                      << result.error().message();
+    return nullptr;
+  }
+  return result.MoveValue();
 }
 
 void PeerConnectionTestWrapper::WaitForNegotiation() {
@@ -181,7 +188,7 @@ void PeerConnectionTestWrapper::OnDataChannel(
 }
 
 void PeerConnectionTestWrapper::OnSuccess(SessionDescriptionInterface* desc) {
-  // This callback should take the ownership of |desc|.
+  // This callback should take the ownership of `desc`.
   std::unique_ptr<SessionDescriptionInterface> owned_desc(desc);
   std::string sdp;
   EXPECT_TRUE(desc->ToString(&sdp));

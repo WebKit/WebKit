@@ -1,7 +1,7 @@
 #############################################################################
-# UBSan blacklist.
+# UBSan ignorelist.
 #
-# This is a WebRTC-specific replacement of Chromium's blacklist.txt.
+# This is a WebRTC-specific replacement of Chromium's ignorelist.txt.
 # Only exceptions for third party libraries go here. WebRTC's code should use
 # the RTC_NO_SANITIZE macro. Please think twice before adding new exceptions.
 

@@ -18,7 +18,6 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
-#include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
@@ -26,7 +25,6 @@ namespace webrtc {
 
 namespace {
 
-using RtpUtility::Word32Align;
 using test::fec::AugmentedPacket;
 using test::fec::AugmentedPacketGenerator;
 
@@ -45,6 +43,14 @@ constexpr int64_t kInitialSimulatedClockTime = 1;
 // They should be updated if the PRNG implementation changes.
 constexpr uint16_t kDeterministicSequenceNumber = 28732;
 constexpr uint32_t kDeterministicTimestamp = 2305613085;
+
+// Round up to the nearest size that is a multiple of 4.
+size_t Word32Align(size_t size) {
+  uint32_t remainder = size % 4;
+  if (remainder != 0)
+    return size + 4 - remainder;
+  return size;
+}
 
 std::unique_ptr<RtpPacketToSend> GenerateSingleFlexfecPacket(
     FlexfecSender* sender) {

@@ -36,6 +36,23 @@ rtc_source_set("protobuf_utils") {
   }
 }
 
+rtc_source_set("bitstream_reader") {
+  sources = [
+    "bitstream_reader.cc",
+    "bitstream_reader.h",
+  ]
+  deps = [
+    ":checks",
+    ":safe_conversions",
+    "../api:array_view",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/numeric:bits",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
 rtc_source_set("compile_assert_c") {
   sources = [ "compile_assert_c.h" ]
 }
@@ -84,6 +101,7 @@ rtc_library("rtc_base_approved") {
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/numeric:bits",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
   public_deps = []  # no-presubmit-check TODO(webrtc:8603)
@@ -101,7 +119,6 @@ rtc_library("rtc_base_approved") {
     "copy_on_write_buffer.h",
     "event_tracer.cc",
     "event_tracer.h",
-    "hash.h",
     "location.cc",
     "location.h",
     "numerics/histogram_percentile_counter.cc",
@@ -119,6 +136,7 @@ rtc_library("rtc_base_approved") {
     "rate_statistics.h",
     "rate_tracker.cc",
     "rate_tracker.h",
+    "strong_alias.h",
     "swap_queue.h",
     "timestamp_aligner.cc",
     "timestamp_aligner.h",
@@ -160,7 +178,6 @@ rtc_library("rtc_base_approved") {
 
   public_deps += [  # no-presubmit-check TODO(webrtc:8603)
     ":atomicops",
-    ":criticalsection",
     ":logging",
     ":macromagic",
     ":platform_thread",
@@ -279,7 +296,6 @@ rtc_library("logging") {
   libs = []
   deps = [
     ":checks",
-    ":criticalsection",
     ":macromagic",
     ":platform_thread_types",
     ":stringutils",
@@ -505,7 +521,6 @@ if (rtc_enable_libevent) {
     ]
     deps = [
       ":checks",
-      ":criticalsection",
       ":logging",
       ":macromagic",
       ":platform_thread",
@@ -552,7 +567,6 @@ if (is_win) {
     ]
     deps = [
       ":checks",
-      ":criticalsection",
       ":logging",
       ":macromagic",
       ":platform_thread",
@@ -576,7 +590,6 @@ rtc_library("rtc_task_queue_stdlib") {
   ]
   deps = [
     ":checks",
-    ":criticalsection",
     ":logging",
     ":macromagic",
     ":platform_thread",
@@ -642,10 +655,6 @@ rtc_library("rtc_stats_counters") {
 config("rtc_json_suppressions") {
   if (!is_win || is_clang) {
     cflags_cc = [
-      # TODO(bugs.webrtc.org/10770): Update jsoncpp API usage and remove
-      # -Wno-deprecated-declarations.
-      "-Wno-deprecated-declarations",
-
       # TODO(bugs.webrtc.org/10814): Remove -Wno-undef as soon as it get
       # removed upstream.
       "-Wno-undef",
@@ -685,7 +694,10 @@ rtc_library("net_helpers") {
     deps += [ ":ifaddrs_android" ]
   }
   if (is_win) {
-    deps += [ ":win32" ]
+    deps += [
+      ":rtc_base_approved",
+      ":win32",
+    ]
   }
 }
 
@@ -746,7 +758,6 @@ rtc_library("null_socket_server") {
     "null_socket_server.h",
   ]
   deps = [
-    ":async_socket",
     ":checks",
     ":rtc_event",
     ":socket",
@@ -827,10 +838,7 @@ rtc_library("threading") {
 
 rtc_source_set("socket_factory") {
   sources = [ "socket_factory.h" ]
-  deps = [
-    ":async_socket",
-    ":socket",
-  ]
+  deps = [ ":socket" ]
 }
 
 rtc_library("async_socket") {
@@ -844,6 +852,7 @@ rtc_library("async_socket") {
     ":socket_address",
     "third_party/sigslot",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
 }
 
 rtc_library("socket") {
@@ -854,6 +863,7 @@ rtc_library("socket") {
   deps = [
     ":macromagic",
     ":socket_address",
+    "third_party/sigslot",
   ]
   if (is_win) {
     deps += [ ":win32" ]
@@ -1147,7 +1157,6 @@ rtc_library("testclient") {
     "test_client.h",
   ]
   deps = [
-    ":criticalsection",
     ":gunit_helpers",
     ":rtc_base",
     ":rtc_base_tests_utils",
@@ -1303,7 +1312,6 @@ if (rtc_include_tests) {
         "socket_unittest.h",
       ]
       deps = [
-        ":async_socket",
         ":checks",
         ":gunit_helpers",
         ":ip_address",
@@ -1335,6 +1343,7 @@ if (rtc_include_tests) {
         "atomic_ops_unittest.cc",
         "base64_unittest.cc",
         "bit_buffer_unittest.cc",
+        "bitstream_reader_unittest.cc",
         "bounded_inline_vector_unittest.cc",
         "buffer_queue_unittest.cc",
         "buffer_unittest.cc",
@@ -1345,7 +1354,6 @@ if (rtc_include_tests) {
         "deprecated/recursive_critical_section_unittest.cc",
         "event_tracer_unittest.cc",
         "event_unittest.cc",
-        "hash_unittest.cc",
         "logging_unittest.cc",
         "numerics/divide_round_unittest.cc",
         "numerics/histogram_percentile_counter_unittest.cc",
@@ -1367,6 +1375,7 @@ if (rtc_include_tests) {
         "string_utils_unittest.cc",
         "strings/string_builder_unittest.cc",
         "strings/string_format_unittest.cc",
+        "strong_alias_unittest.cc",
         "swap_queue_unittest.cc",
         "thread_annotations_unittest.cc",
         "time_utils_unittest.cc",
@@ -1378,9 +1387,10 @@ if (rtc_include_tests) {
         sources += [ "win/windows_version_unittest.cc" ]
       }
       deps = [
-        ":async_socket",
+        ":bitstream_reader",
         ":bounded_inline_vector",
         ":checks",
+        ":criticalsection",
         ":divide_round",
         ":gunit_helpers",
         ":ip_address",
@@ -1408,6 +1418,8 @@ if (rtc_include_tests) {
         "../test:fileutils",
         "../test:test_main",
         "../test:test_support",
+        "containers:flat_map",
+        "containers:unittests",
         "memory:unittests",
         "synchronization:mutex",
         "task_utils:to_queued_task",
@@ -1417,6 +1429,7 @@ if (rtc_include_tests) {
       absl_deps = [
         "//third_party/abseil-cpp/absl/base:core_headers",
         "//third_party/abseil-cpp/absl/memory",
+        "//third_party/abseil-cpp/absl/numeric:bits",
         "//third_party/abseil-cpp/absl/types:optional",
       ]
     }
@@ -1512,13 +1525,13 @@ if (rtc_include_tests) {
         "unique_id_generator_unittest.cc",
       ]
       deps = [
-        ":async_socket",
         ":checks",
         ":gunit_helpers",
         ":ip_address",
         ":net_helpers",
         ":null_socket_server",
         ":rtc_base_tests_utils",
+        ":socket",
         ":socket_address",
         ":socket_factory",
         ":socket_server",
@@ -1588,9 +1601,7 @@ if (is_android) {
       "java/src/org/webrtc/Size.java",
       "java/src/org/webrtc/ThreadUtils.java",
     ]
-    deps = [
-      "//third_party/android_deps:com_android_support_support_annotations_java",
-    ]
+    deps = [ "//third_party/androidx:androidx_annotation_annotation_java" ]
   }
   java_cpp_enum("network_monitor_enums") {
     sources = [ "network_monitor.h" ]

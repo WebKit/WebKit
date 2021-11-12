@@ -14,6 +14,7 @@
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "modules/rtp_rtcp/source/rtp_util.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
@@ -60,7 +61,7 @@ TEST_F(SsrcEndToEndTest, UnknownRtpPacketGivesUnknownSsrcReturnCode) {
     DeliveryStatus DeliverPacket(MediaType media_type,
                                  rtc::CopyOnWriteBuffer packet,
                                  int64_t packet_time_us) override {
-      if (RtpHeaderParser::IsRtcp(packet.cdata(), packet.size())) {
+      if (IsRtcpPacket(packet)) {
         return receiver_->DeliverPacket(media_type, std::move(packet),
                                         packet_time_us);
       }

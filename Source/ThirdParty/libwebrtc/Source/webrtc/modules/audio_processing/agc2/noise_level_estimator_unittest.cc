@@ -50,45 +50,6 @@ class NoiseEstimatorParametrization : public ::testing::TestWithParam<int> {
   int sample_rate_hz() const { return GetParam(); }
 };
 
-// White random noise is stationary, but does not trigger the detector
-// every frame due to the randomness.
-TEST_P(NoiseEstimatorParametrization, StationaryNoiseEstimatorWithRandomNoise) {
-  ApmDataDumper data_dumper(0);
-  auto estimator = CreateStationaryNoiseEstimator(&data_dumper);
-
-  test::WhiteNoiseGenerator gen(/*min_amplitude=*/test::kMinS16,
-                                /*max_amplitude=*/test::kMaxS16);
-  const float noise_level_dbfs =
-      RunEstimator(gen, *estimator, sample_rate_hz());
-  EXPECT_NEAR(noise_level_dbfs, -5.5f, 1.0f);
-}
-
-// Sine curves are (very) stationary. They trigger the detector all
-// the time. Except for a few initial frames.
-TEST_P(NoiseEstimatorParametrization, StationaryNoiseEstimatorWithSineTone) {
-  ApmDataDumper data_dumper(0);
-  auto estimator = CreateStationaryNoiseEstimator(&data_dumper);
-
-  test::SineGenerator gen(/*amplitude=*/test::kMaxS16, /*frequency_hz=*/600.0f,
-                          sample_rate_hz());
-  const float noise_level_dbfs =
-      RunEstimator(gen, *estimator, sample_rate_hz());
-  EXPECT_NEAR(noise_level_dbfs, -3.0f, 1.0f);
-}
-
-// Pulses are transient if they are far enough apart. They shouldn't
-// trigger the noise detector.
-TEST_P(NoiseEstimatorParametrization, StationaryNoiseEstimatorWithPulseTone) {
-  ApmDataDumper data_dumper(0);
-  auto estimator = CreateStationaryNoiseEstimator(&data_dumper);
-
-  test::PulseGenerator gen(/*pulse_amplitude=*/test::kMaxS16,
-                           /*no_pulse_amplitude=*/10.0f, /*frequency_hz=*/20.0f,
-                           sample_rate_hz());
-  const int noise_level_dbfs = RunEstimator(gen, *estimator, sample_rate_hz());
-  EXPECT_NEAR(noise_level_dbfs, -79.0f, 1.0f);
-}
-
 // Checks that full scale white noise maps to about -5.5 dBFS.
 TEST_P(NoiseEstimatorParametrization, NoiseFloorEstimatorWithRandomNoise) {
   ApmDataDumper data_dumper(0);
@@ -122,7 +83,8 @@ TEST_P(NoiseEstimatorParametrization, NoiseFloorEstimatorWithPulseTone) {
   constexpr float kNoPulseAmplitude = 10.0f;
   test::PulseGenerator gen(/*pulse_amplitude=*/test::kMaxS16, kNoPulseAmplitude,
                            /*frequency_hz=*/20.0f, sample_rate_hz());
-  const int noise_level_dbfs = RunEstimator(gen, *estimator, sample_rate_hz());
+  const float noise_level_dbfs =
+      RunEstimator(gen, *estimator, sample_rate_hz());
   const float expected_noise_floor_dbfs =
       20.0f * std::log10f(kNoPulseAmplitude / test::kMaxS16);
   EXPECT_NEAR(noise_level_dbfs, expected_noise_floor_dbfs, 0.5f);

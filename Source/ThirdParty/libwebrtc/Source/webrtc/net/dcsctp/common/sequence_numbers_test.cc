@@ -14,7 +14,7 @@
 namespace dcsctp {
 namespace {
 
-using Wrapped = StrongAlias<class WrappedTag, uint16_t>;
+using Wrapped = webrtc::StrongAlias<class WrappedTag, uint16_t>;
 using TestSequence = UnwrappedSequenceNumber<Wrapped>;
 
 TEST(SequenceNumbersTest, SimpleUnwrapping) {

@@ -17,7 +17,7 @@ namespace webrtc {
 
 class MouseCursor;
 
-// Converts an HCURSOR into a |MouseCursor| instance.
+// Converts an HCURSOR into a `MouseCursor` instance.
 MouseCursor* CreateMouseCursorFromHCursor(HDC dc, HCURSOR cursor);
 
 }  // namespace webrtc

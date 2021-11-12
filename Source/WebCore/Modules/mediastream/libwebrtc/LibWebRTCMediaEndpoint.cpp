@@ -476,8 +476,9 @@ void LibWebRTCMediaEndpoint::OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceive
 std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel(const String& label, const RTCDataChannelInit& options)
 {
     auto init = LibWebRTCDataChannelHandler::fromRTCDataChannelInit(options);
-    auto channel = m_backend->CreateDataChannel(label.utf8().data(), &init);
-    return channel ? makeUnique<LibWebRTCDataChannelHandler>(WTFMove(channel)) : nullptr;
+    // FIXME: Forward or log error  if there is one.
+    auto channel = m_backend->CreateDataChannelOrError(label.utf8().data(), &init);
+    return channel.ok() ? makeUnique<LibWebRTCDataChannelHandler>(channel.MoveValue()) : nullptr;
 }
 
 void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel)

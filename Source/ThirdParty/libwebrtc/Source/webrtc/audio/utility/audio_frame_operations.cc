@@ -222,14 +222,14 @@ void AudioFrameOperations::Mute(AudioFrame* frame,
     size_t end = count;
     float start_g = 0.0f;
     if (current_frame_muted) {
-      // Fade out the last |count| samples of frame.
+      // Fade out the last `count` samples of frame.
       RTC_DCHECK(!previous_frame_muted);
       start = frame->samples_per_channel_ - count;
       end = frame->samples_per_channel_;
       start_g = 1.0f;
       inc = -inc;
     } else {
-      // Fade in the first |count| samples of frame.
+      // Fade in the first `count` samples of frame.
       RTC_DCHECK(previous_frame_muted);
     }
 
