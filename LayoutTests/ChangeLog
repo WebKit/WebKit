@@ -1,5 +1,16 @@
 2021-11-12  Antti Koivisto  <antti@apple.com>
 
+        Stack overflow with revert and revert-layer
+        https://bugs.webkit.org/show_bug.cgi?id=233033
+        rdar://85336439
+
+        Reviewed by Antoine Quint.
+
+        * fast/css/revert-layer-stack-overflow-expected.txt: Added.
+        * fast/css/revert-layer-stack-overflow.html: Added.
+
+2021-11-12  Antti Koivisto  <antti@apple.com>
+
         REGRESSION(r285624) Using revert keyword with a css variable hits assert
         https://bugs.webkit.org/show_bug.cgi?id=233031
         rdar://85332271

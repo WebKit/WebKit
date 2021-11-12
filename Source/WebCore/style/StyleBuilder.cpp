@@ -375,9 +375,11 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevert(CascadeLevel roll
     if (rollbackCascadeLevel == CascadeLevel::UserAgent)
         return nullptr;
 
+    --rollbackCascadeLevel;
+
     auto key = makeRollbackCascadeKey(rollbackCascadeLevel, RuleSet::cascadeLayerPriorityForUnlayered);
     return m_rollbackCascades.ensure(key, [&] {
-        return makeUnique<const PropertyCascade>(m_cascade, --rollbackCascadeLevel, RuleSet::cascadeLayerPriorityForUnlayered);
+        return makeUnique<const PropertyCascade>(m_cascade, rollbackCascadeLevel, RuleSet::cascadeLayerPriorityForUnlayered);
     }).iterator->value.get();
 }
 
@@ -386,9 +388,11 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer(CascadeLevel
     if (!rollbackLayerPriority)
         return nullptr;
 
+    --rollbackLayerPriority;
+
     auto key = makeRollbackCascadeKey(cascadeLevel, rollbackLayerPriority);
     return m_rollbackCascades.ensure(key, [&] {
-        return makeUnique<const PropertyCascade>(m_cascade, cascadeLevel, rollbackLayerPriority - 1);
+        return makeUnique<const PropertyCascade>(m_cascade, cascadeLevel, rollbackLayerPriority);
     }).iterator->value.get();
 }
 
