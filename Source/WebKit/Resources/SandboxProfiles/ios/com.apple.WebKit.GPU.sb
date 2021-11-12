@@ -65,21 +65,6 @@
                 (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
         domains))
 
-(define-once (framebuffer-access)
-    (allow iokit-open (with telemetry)
-           (iokit-user-client-class "IOMobileFramebufferUserClient")
-           (when (defined? 'iokit-external-method)
-               (apply-message-filter
-                   (deny (with telemetry)
-                       iokit-async-external-method
-                       iokit-external-trap)
-                   (allow
-                       iokit-external-method)
-               )
-           )
-    )
-    (mobile-preferences-read "com.apple.iokit.IOMobileGraphicsFamily"))
-
 (define-once (asset-access . options)
     (let ((asset-access-filter
             (require-all
@@ -207,21 +192,6 @@
 ;;; Declare that the application uses the OpenGL, Metal, and CoreML hardware & frameworks.
 ;;;
 (define-once (opengl)
-    ;; Items not seen in testing
-    (deny iokit-open (with telemetry)
-           (iokit-connection "IOGPU")
-           (iokit-user-client-class
-                "AGXCommandQueue"
-                "AGXDevice"
-                "AGXSharedUserClient"
-                "IOAccelContext"
-                "IOAccelDevice"
-                "IOAccelSharedUserClient"
-                "IOAccelSubmitter2"
-                "IOAccelContext2"
-                "IOAccelDevice2"
-                "IOAccelSharedUserClient2"))
-
     (allow iokit-open (with telemetry)
            (iokit-connection "IOGPU")
            (iokit-user-client-class
@@ -305,7 +275,6 @@
     ; UIKit-required IOKit nodes.
     (allow iokit-open (with telemetry)
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
-        (iokit-user-client-class "IOSurfaceSendRight")
         ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
         (iokit-user-client-class "IOSurfaceRootUserClient"))
 
@@ -535,8 +504,6 @@
     (home-literal "/Library/Caches/DateFormats.plist")
     (with no-log))
 
-(framebuffer-access)
-
 ; <rdar://problem/7595408> , <rdar://problem/7643881>
 (opengl)
 
@@ -688,24 +655,6 @@
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
-
-(allow iokit-open (with telemetry)
-    (require-all
-        (extension "com.apple.webkit.extension.iokit")
-        (iokit-user-client-class
-            "AGXCommandQueue"
-            "AGXDevice"
-            "AGXSharedUserClient"
-            "IOAccelContext"
-            "IOAccelDevice"
-            "IOAccelSharedUserClient"
-            "IOAccelSubmitter2"
-            "IOAccelContext2"
-            "IOAccelDevice2"
-            "IOAccelSharedUserClient2"
-        )
-    )
-)
 
 (deny mach-lookup (with no-log)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
