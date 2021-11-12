@@ -1,3 +1,17 @@
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, partial revert of r285565 to resolve a PLT5 regression.
+        <rdar://85269156>
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        (WebKit::NetworkSessionCocoa::isolatedSession):
+        (WebKit::SessionSet::isolatedSession):
+        (WebKit::NetworkSessionCocoa::hasIsolatedSession const):
+        (WebKit::NetworkSessionCocoa::clearIsolatedSessions):
+        (WebKit::NetworkSessionCocoa::invalidateAndCancelSessionSet):
+
 2021-11-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         Some C++ source files use #pragma once

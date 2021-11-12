@@ -1,3 +1,10 @@
+2021-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, partial revert of r285565 to resolve a PLT5 regression.
+        <rdar://85269156>
+
+        * wtf/PlatformHave.h:
+
 2021-11-11  Michael Saboff  <msaboff@apple.com>
 
         Inline RegExp.test JIT code in DFG and FTL
