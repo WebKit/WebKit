@@ -31,10 +31,12 @@ namespace WebCore {
 
 class JSTestVoidCallbackFunction final : public TestVoidCallbackFunction {
 public:
-    static Ref<JSTestVoidCallbackFunction> create(JSDOMGlobalObject& globalObject, JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)
+    static Ref<JSTestVoidCallbackFunction> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestVoidCallbackFunction(globalObject, callback, incumbentGlobalObject));
+        return adoptRef(*new JSTestVoidCallbackFunction(callback, globalObject));
     }
+
+    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestVoidCallbackFunction() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
@@ -43,9 +45,7 @@ public:
     CallbackResult<typename IDLUndefined::ImplementationType> handleEvent(typename IDLFloat32Array::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
 
 private:
-    JSTestVoidCallbackFunction(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSObject*, JSDOMGlobalObject* incumbentGlobalObject);
-
-    JSDOMGlobalObject& globalObject() const { return *JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()); }
+    JSTestVoidCallbackFunction(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };

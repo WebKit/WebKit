@@ -195,7 +195,7 @@ JSC_DEFINE_HOST_FUNCTION(whenSignalAborted, (JSGlobalObject* globalObject, CallF
         return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 
     auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
-    Ref<AbortAlgorithm> abortAlgorithm = JSAbortAlgorithm::create(*jsDOMGlobalObject, callFrame->uncheckedArgument(1).getObject(), jsDOMGlobalObject);
+    Ref<AbortAlgorithm> abortAlgorithm = JSAbortAlgorithm::create(callFrame->uncheckedArgument(1).getObject(), jsDOMGlobalObject);
 
     bool result = AbortSignal::whenSignalAborted(abortSignal->wrapped(), WTFMove(abortAlgorithm));
     return JSValue::encode(result ? JSValue(JSC::JSValue::JSTrue) : JSValue(JSC::JSValue::JSFalse));

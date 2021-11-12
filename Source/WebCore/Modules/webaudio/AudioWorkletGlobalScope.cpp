@@ -77,7 +77,7 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
         return Exception { NotSupportedError, "A processor was already registered with this name"_s };
 
     JSC::JSObject* jsConstructor = processorContructor->callbackData()->callback();
-    auto* globalObject = scriptExecutionContext()->globalObject();
+    auto* globalObject = jsConstructor->globalObject();
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -133,7 +133,7 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
         return nullptr;
 
     JSC::JSObject* jsConstructor = constructor->callbackData()->callback();
-    auto* globalObject = scriptExecutionContext()->globalObject();
+    auto* globalObject = constructor->callbackData()->globalObject();
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::JSLockHolder lock { globalObject };
@@ -154,7 +154,7 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     if (!jsProcessor)
         return nullptr;
 
-    jsProcessor->wrapped().setProcessCallback(jsProcessor);
+    jsProcessor->wrapped().setProcessCallback(makeUnique<JSCallbackDataStrong>(jsProcessor, globalObject));
 
     return &jsProcessor->wrapped();
 }

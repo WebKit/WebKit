@@ -6344,10 +6344,12 @@ sub GenerateCallbackHeaderContent
     push(@$contentRef, "public:\n");
 
     # The static create() method.
-    push(@$contentRef, "    static Ref<$className> create(JSDOMGlobalObject& globalObject, JSC::JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)\n");
+    push(@$contentRef, "    static Ref<$className> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)\n");
     push(@$contentRef, "    {\n");
-    push(@$contentRef, "        return adoptRef(*new ${className}(globalObject, callback, incumbentGlobalObject));\n");
+    push(@$contentRef, "        return adoptRef(*new ${className}(callback, globalObject));\n");
     push(@$contentRef, "    }\n\n");
+
+    push(@$contentRef, "    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }\n\n");
 
     push(@$contentRef, "    ~$className() final;\n");
 
@@ -6385,7 +6387,7 @@ sub GenerateCallbackHeaderContent
 
     push(@$contentRef, "\nprivate:\n");
 
-    push(@$contentRef, "    ${className}(JSDOMGlobalObject& lexicalGlobalObject, JSC::JSObject*, JSDOMGlobalObject* incumbentGlobalObject);\n\n");
+    push(@$contentRef, "    ${className}(JSC::JSObject*, JSDOMGlobalObject*);\n\n");
 
     if ($interfaceOrCallback->extendedAttributes->{IsWeakCallback}) {
         push(@$contentRef, "    bool hasCallback() const final { return m_data && m_data->callback(); }\n\n");
@@ -6394,13 +6396,6 @@ sub GenerateCallbackHeaderContent
     push(@$contentRef, "    void visitJSFunction(JSC::AbstractSlotVisitor&) override;\n\n") if $interfaceOrCallback->extendedAttributes->{IsWeakCallback};
     push(@$contentRef, "    void visitJSFunction(JSC::SlotVisitor&) override;\n\n") if $interfaceOrCallback->extendedAttributes->{IsWeakCallback};
 
-    if ($interfaceOrCallback->extendedAttributes->{SkipCallbackInvokeCheck}) {
-        push(@$contentRef, "    JSDOMGlobalObject& globalObject() const { return *m_globalObject.get(); }\n\n");
-    } else {
-        push(@$contentRef, "    JSDOMGlobalObject& globalObject() const { return *JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()); }\n\n");
-    }
-
-    push(@$contentRef, "    JSC::Strong<JSDOMGlobalObject> m_globalObject;\n") if $interfaceOrCallback->extendedAttributes->{SkipCallbackInvokeCheck};
     push(@$contentRef, "    ${callbackDataType}* m_data;\n");
     push(@$contentRef, "};\n\n");
 
@@ -6421,10 +6416,9 @@ sub GenerateCallbackImplementationContent
     $includesRef->{"ScriptExecutionContext.h"} = 1;
 
     # Constructor
-    push(@$contentRef, "${className}::${className}(JSDOMGlobalObject& globalObject, JSObject* callback, JSDOMGlobalObject* incumbentGlobalObject)\n");
-    push(@$contentRef, "    : ${name}(globalObject.scriptExecutionContext())\n");
-    push(@$contentRef, "    , m_globalObject(globalObject.vm(), &globalObject)\n") if $interfaceOrCallback->extendedAttributes->{SkipCallbackInvokeCheck};
-    push(@$contentRef, "    , m_data(new ${callbackDataType}(callback, incumbentGlobalObject, this))\n");
+    push(@$contentRef, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
+    push(@$contentRef, "    : ${name}(globalObject->scriptExecutionContext())\n");
+    push(@$contentRef, "    , m_data(new ${callbackDataType}(callback, globalObject, this))\n");
     push(@$contentRef, "{\n");
     push(@$contentRef, "}\n\n");
 
@@ -6529,13 +6523,13 @@ sub GenerateCallbackImplementationContent
 
             # FIXME: This is needed for NodeFilter, which works even for disconnected iframes. We should investigate
             # if that behavior is needed for other callbacks.
-            if (!$interfaceOrCallback->extendedAttributes->{SkipCallbackInvokeCheck}) {
+            if (!$operation->extendedAttributes->{SkipCallbackInvokeCheck}) {
                 push(@$contentRef, "    if (!canInvokeCallback())\n");
                 push(@$contentRef, "        return CallbackResultType::UnableToExecute;\n\n");
             }
 
             push(@$contentRef, "    Ref<$className> protectedThis(*this);\n\n");
-            push(@$contentRef, "    auto& globalObject = this->globalObject();\n");
+            push(@$contentRef, "    auto& globalObject = *m_data->globalObject();\n");
             push(@$contentRef, "    auto& vm = globalObject.vm();\n\n");
             push(@$contentRef, "    JSLockHolder lock(vm);\n");
 
@@ -6553,10 +6547,10 @@ sub GenerateCallbackImplementationContent
 
             my $callbackInvocation;
             if (ref($interfaceOrCallback) eq "IDLCallbackFunction") {
-                $callbackInvocation = "m_data->invokeCallback(lexicalGlobalObject, thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
+                $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
             } else {
                 my $callbackType = $numOperations > 1 ? "Object" : "FunctionOrObject";
-                $callbackInvocation = "m_data->invokeCallback(lexicalGlobalObject, thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(vm, \"${functionName}\"), returnedException)";
+                $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(vm, \"${functionName}\"), returnedException)";
             }
 
             if ($operation->type->name eq "undefined") {
@@ -7007,6 +7001,8 @@ sub JSValueToNativeDOMConvertNeedsGlobalObject
 {
     my $type = shift;
 
+    return 1 if $codeGenerator->IsCallbackInterface($type);
+    return 1 if $codeGenerator->IsCallbackFunction($type);
     return JSValueToNativeDOMConvertNeedsGlobalObject(@{$type->subtypes}[1]) if $codeGenerator->IsRecordType($type);
     return 1 if $type->name eq "ScheduledAction";
     return 0;

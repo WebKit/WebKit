@@ -35,7 +35,7 @@ template<typename T> struct Converter<IDLCallbackFunction<T>> : DefaultConverter
     static constexpr bool conversionHasSideEffects = false;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -45,8 +45,7 @@ template<typename T> struct Converter<IDLCallbackFunction<T>> : DefaultConverter
             return nullptr;
         }
 
-        auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
-        return T::create(jsDOMGlobalObject, JSC::asObject(value), &callerGlobalObject(jsDOMGlobalObject, vm.topCallFrame));
+        return T::create(JSC::asObject(value), &callerGlobalObject(globalObject, vm.topCallFrame));
     }
 };
 
@@ -70,7 +69,7 @@ template<typename T> struct JSConverter<IDLCallbackFunction<T>> {
 
 template<typename T> struct Converter<IDLCallbackInterface<T>> : DefaultConverter<IDLCallbackInterface<T>> {
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -80,8 +79,7 @@ template<typename T> struct Converter<IDLCallbackInterface<T>> : DefaultConverte
             return nullptr;
         }
 
-        auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
-        return T::create(jsDOMGlobalObject, JSC::asObject(value), &callerGlobalObject(jsDOMGlobalObject, vm.topCallFrame));
+        return T::create(JSC::asObject(value), &callerGlobalObject(globalObject, vm.topCallFrame));
     }
 };
 

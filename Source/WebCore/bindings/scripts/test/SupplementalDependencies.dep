@@ -40,9 +40,6 @@ WebDOMTestCallbackFunction.h:
 JSTestCallbackFunctionRethrow.h: 
 DOMTestCallbackFunctionRethrow.h: 
 WebDOMTestCallbackFunctionRethrow.h: 
-JSTestCallbackFunctionSkipCallbackInvokeCheck.h: 
-DOMTestCallbackFunctionSkipCallbackInvokeCheck.h: 
-WebDOMTestCallbackFunctionSkipCallbackInvokeCheck.h: 
 JSTestCallbackFunctionWithThisObject.h: 
 DOMTestCallbackFunctionWithThisObject.h: 
 WebDOMTestCallbackFunctionWithThisObject.h: 
