@@ -1,3 +1,11 @@
+2021-11-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early November 2021 edition, bis x2
+
+        Unreviewed non-unified build fixes.
+
+        * jit/JITWorklist.cpp: Add missing DeferGCInlines.h header.
+
 2021-11-11  Mark Lam  <mark.lam@apple.com>
 
         Add VM::writeBarrier() and VM::mutatorFence().

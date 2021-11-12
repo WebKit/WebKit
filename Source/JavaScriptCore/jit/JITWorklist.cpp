@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "DeferGCInlines.h"
 #include "HeapInlines.h"
 #include "JITSafepoint.h"
 #include "JITWorklistThread.h"
