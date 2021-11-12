@@ -972,6 +972,12 @@ webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
 
 webkit.org/b/229740 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure Crash ]
 
+# Failures due to LFC not being used on GTK.
+webkit.org/b/232910 fast/inline/no-soft-wrap-opportunity-at-inline-box.html [ ImageOnlyFailure ]
+webkit.org/b/232910 fast/inline/wordbreak-at-inline-box-boundary.html [ ImageOnlyFailure ]
+webkit.org/b/232910 fast/text/apply-start-width-after-skipped-text.html [ Failure ]
+webkit.org/b/232910 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-ic-003.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////

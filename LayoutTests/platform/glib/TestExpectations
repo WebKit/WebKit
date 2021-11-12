@@ -1847,6 +1847,7 @@ http/tests/webshare [ Skip ]
 
 # privateClickMeasurement is disabled on glib
 http/tests/privateClickMeasurement [ Skip ]
+inspector/page/overrideSetting-PrivateClickMeasurementDebugModeEnabled.html [ Skip ]
 
 # The attachment element is not stadandard and not currently supported on glib
 fast/attachment [ Skip ]
