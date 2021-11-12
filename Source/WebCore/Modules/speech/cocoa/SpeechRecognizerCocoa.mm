@@ -28,7 +28,6 @@
 
 #if HAVE(SPEECHRECOGNIZER)
 
-#import "AudioStreamDescription.h"
 #import "MediaUtilities.h"
 #import "SpeechRecognitionUpdate.h"
 #import "WebSpeechRecognizerTaskMock.h"
