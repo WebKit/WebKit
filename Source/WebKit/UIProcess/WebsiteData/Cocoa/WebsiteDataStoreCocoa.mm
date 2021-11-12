@@ -278,7 +278,28 @@ String WebsiteDataStore::defaultCacheStorageDirectory()
 
 String WebsiteDataStore::defaultGeneralStorageDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation("Storage");
+    auto directory = websiteDataDirectoryFileSystemRepresentation("Default");
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // This is the old storage directory, and there might be files left here.
+        auto oldDirectory = cacheDirectoryFileSystemRepresentation("Storage", ShouldCreateDirectory::No);
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *files = [fileManager contentsOfDirectoryAtPath:oldDirectory error:0];
+        if (files) {
+            for (NSString *fileName in files) {
+                if (![fileName length])
+                    continue;
+
+                NSString *path = [directory stringByAppendingPathComponent:fileName];
+                NSString *oldPath = [oldDirectory stringByAppendingPathComponent:fileName];
+                [fileManager moveItemAtPath:oldPath toPath:path error:nil];
+            }
+        }
+        [fileManager removeItemAtPath:oldDirectory error:nil];
+    });
+
+    return directory;
 }
 
 String WebsiteDataStore::defaultNetworkCacheDirectory()

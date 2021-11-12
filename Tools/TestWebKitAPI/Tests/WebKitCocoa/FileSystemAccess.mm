@@ -99,7 +99,6 @@ TEST(FileSystemAccess, ProcessCrashDuringWrite)
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webkit"];
 
-    // load first web view & start test
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
@@ -129,6 +128,72 @@ TEST(FileSystemAccess, ProcessCrashDuringWrite)
     [secondWebView evaluateJavaScript:@"start()" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
+}
+
+static NSString *basicString = @"<script> \
+    async function open() \
+    { \
+        try { \
+            var rootHandle = await navigator.storage.getDirectory(); \
+            var fileHandle = await rootHandle.getFileHandle('file-system-access.txt', { 'create' : false }); \
+            window.webkit.messageHandlers.testHandler.postMessage('file is opened'); \
+        } catch (err) { \
+            window.webkit.messageHandlers.testHandler.postMessage('error: ' + err.name + ' - ' + err.message); \
+        } \
+    } \
+    open(); \
+    </script>";
+
+TEST(FileSystemAccess, MigrateToNewStorageDirectory)
+{
+    NSString *hashedOrigin = @"Rpva_lVGHjojRmxI7eh92UpdZVvdH0OCis2MNCM-nDo";
+    NSString *storageType = @"FileSystem";
+    NSString *fileName = @"file-system-access.txt";
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    // This is old value returned by WebsiteDataStore::defaultGeneralStorageDirectory().
+    NSString *oldStorageDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/Storage/"];
+    [fileManager removeItemAtPath:oldStorageDirectory error:nil];
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:oldStorageDirectory]);
+    
+    // Copy baked files to old directory.
+    NSString *oldFileSystemDirectory = [NSString pathWithComponents:@[oldStorageDirectory, hashedOrigin, hashedOrigin, storageType]];
+    [fileManager createDirectoryAtURL:[NSURL fileURLWithPath:oldFileSystemDirectory] withIntermediateDirectories:YES attributes:nil error:nil];
+    NSString *oldFilePath = [oldFileSystemDirectory stringByAppendingPathComponent:fileName];
+    [fileManager createFileAtPath:oldFilePath contents:nil attributes:nil];
+    EXPECT_TRUE([fileManager fileExistsAtPath:oldFilePath]);
+
+    NSString *resourceSaltPath = [[NSBundle mainBundle] URLForResource:@"file-system-access" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"].path;
+    NSString *oldSaltPath = [oldStorageDirectory stringByAppendingPathComponent:@"salt"];
+    [fileManager copyItemAtPath:resourceSaltPath toPath:oldSaltPath error:nil];
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:oldSaltPath]);
+
+    // This is current value returned by WebsiteDataStore::defaultGeneralStorageDirectory().
+    NSString *newStorageDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/Default/"];
+    [fileManager removeItemAtPath:newStorageDirectory error:nil];
+    NSString *newFilePath = [NSString pathWithComponents:@[newStorageDirectory, hashedOrigin, hashedOrigin, storageType, fileName]];
+    EXPECT_FALSE([fileManager fileExistsAtPath:newFilePath]);
+
+    // Invoke WebsiteDataStore::defaultGeneralStorageDirectory() to trigger migration.
+    NSString *currentStorageDirectory = [[[WKWebsiteDataStore defaultDataStore] _configuration] generalStorageDirectory].path;
+    EXPECT_WK_STREQ(newStorageDirectory, currentStorageDirectory);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:oldFilePath]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:newFilePath]);
+
+    // Ensure file can be opened after migration: test page only opens the file if it exists.
+    auto handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto preferences = [configuration preferences];
+    preferences._fileSystemAccessEnabled = YES;
+    preferences._storageAPIEnabled = YES;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:basicString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"file is opened", [lastScriptMessage body]);
 }
 
 #endif // USE(APPLE_INTERNAL_SDK)
