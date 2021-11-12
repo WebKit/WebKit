@@ -921,7 +921,7 @@ bool RenderFlexibleBox::canComputePercentageFlexBasis(const RenderBox& child, co
 
 bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Length& flexBasis)
 {
-    if (flexBasis.isAuto())
+    if (flexBasis.isAuto() || flexBasis.isContent())
         return false;
     if (isColumnFlow() && (flexBasis.isIntrinsic() || flexBasis.type() == LengthType::Intrinsic))
         return false;
@@ -1029,7 +1029,7 @@ private:
 LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding, bool relayoutChildren)
 {
     Length flexBasis = flexBasisForChild(child);
-    ScopedFlexBasisAsChildMainSize scoped(child, flexBasisForChild(child), mainAxisIsChildInlineAxis(child));
+    ScopedFlexBasisAsChildMainSize scoped(child, flexBasis.isContent() ? Length(LengthType::MaxContent) : flexBasis, mainAxisIsChildInlineAxis(child));
 
     maybeCacheChildMainIntrinsicSize(child, relayoutChildren);
 

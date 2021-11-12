@@ -264,6 +264,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const Rende
     case LengthType::Calculated:
         return createCSS(length.calculationValue().expression(), style);
     case LengthType::Auto:
+    case LengthType::Content:
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
     case LengthType::MinContent:

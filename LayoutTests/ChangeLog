@@ -1,3 +1,12 @@
+2021-11-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add flex-basis: content support
+        https://bugs.webkit.org/show_bug.cgi?id=221479
+
+        Reviewed by Javier Fernandez.
+
+        * TestExpectations: Unskipped all the flexbox-flex-basis-content tests that work fine now.
+
 2021-11-12  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.

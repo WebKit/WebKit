@@ -1,3 +1,15 @@
+2021-11-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add flex-basis: content support
+        https://bugs.webkit.org/show_bug.cgi?id=221479
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed-expected.txt: Replaced FAIL
+        by PASS expectations.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-valid-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shorthand-expected.txt: Ditto.
+
 2021-11-11  Alexey Shvayka  <ashvayka@apple.com>
 
         JSCallbackData should use lexical global object for errors and lifecycle

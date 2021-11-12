@@ -1,3 +1,14 @@
+2021-11-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add flex-basis: content support
+        https://bugs.webkit.org/show_bug.cgi?id=221479
+
+        Reviewed by Javier Fernandez.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Length>::encode): Handle content in switch.
+        (IPC::ArgumentCoder<Length>::decode): Ditto.
+
 2021-11-11  Per Arne Vollan <pvollan@apple.com>
 
         [macOS][GPUP] Remove access to mach services in sandbox
