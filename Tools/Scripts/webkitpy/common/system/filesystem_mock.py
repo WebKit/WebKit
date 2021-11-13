@@ -436,6 +436,9 @@ class MockFileSystem(object):
     def copy_from_base_host(self, source, destination):
         self.move(source, destination)
 
+    def symlink(self, src, dst):
+        self.move(src, dst)
+
 
 class WritableBinaryFileObject(object):
     def __init__(self, fs, path):

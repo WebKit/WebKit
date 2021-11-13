@@ -168,35 +168,40 @@ simctl_json_output = """{
      "availability" : "(available)",
      "name" : "iOS 9.3",
      "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-9-3",
-     "version" : "9.3"
+     "version" : "9.3",
+     "runtimeRoot" : "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot"
    },
    {
      "buildversion" : "15A8401",
      "availability" : "(available)",
      "name" : "iOS 11.0",
      "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-11-0",
-     "version" : "11.0.1"
+     "version" : "11.0.1",
+     "runtimeRoot" : "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 11.0.1.simruntime/Contents/Resources/RuntimeRoot"
    },
    {
      "buildversion" : "15J380",
      "availability" : "(available)",
      "name" : "tvOS 11.0",
      "identifier" : "com.apple.CoreSimulator.SimRuntime.tvOS-11-0",
-     "version" : "11.0"
+     "version" : "11.0",
+     "runtimeRoot" : "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/tvOS 11.simruntime/Contents/Resources/RuntimeRoot"
    },
    {
      "buildversion" : "15R372",
      "availability" : "(available)",
      "name" : "watchOS 4.0",
      "identifier" : "com.apple.CoreSimulator.SimRuntime.watchOS-4-0",
-     "version" : "4.0"
+     "version" : "4.0",
+     "runtimeRoot" : "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/watchOS 4.simruntime/Contents/Resources/RuntimeRoot"
    },
    {
      "buildversion" : "16A367",
      "isAvailable" : "YES",
      "name" : "iOS 12.0",
      "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-12-0",
-     "version" : "12.0"
+     "version" : "12.0",
+     "runtimeRoot" : "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 12.simruntime/Contents/Resources/RuntimeRoot"
    }
  ],
  "devices" : {

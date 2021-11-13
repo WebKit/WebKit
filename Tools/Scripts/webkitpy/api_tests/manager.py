@@ -152,6 +152,22 @@ class Manager(object):
     def _initialize_devices(self):
         if 'simulator' in self._port.port_name:
             SimulatedDeviceManager.initialize_devices(DeviceRequest(self._port.DEVICE_TYPE, allow_incomplete_match=True), self.host, simulator_ui=False)
+
+            # A Daemons executable path must be located within the runtime root.
+            roots = {
+                device.platform_device.runtime.root for device in SimulatedDeviceManager.INITIALIZED_DEVICES
+                if device.platform_device.runtime and device.platform_device.runtime.root
+            }
+            fs = self._port.host.filesystem
+            for root in roots:
+                _log.debug("Linking Daemons into runtime root '{}'".format(root))
+                for file in fs.files_under(self._port.path_to_daemons()):
+                    target = fs.join(root, 'usr', 'local', 'bin', 'webkit-testing', fs.basename(file))
+                    fs.maybe_make_directory(fs.dirname(target))
+                    if fs.isfile(target):
+                        fs.remove(target)
+                    fs.symlink(file, target)
+
         elif 'device' in self._port.port_name:
             raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
 
