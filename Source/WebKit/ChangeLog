@@ -1,5 +1,17 @@
 2021-11-13  Per Arne Vollan <pvollan@apple.com>
 
+        [macOS][GPUP] Remove logging of used syscalls
+        https://bugs.webkit.org/show_bug.cgi?id=232839
+        <rdar://problem/85168823>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, remove logging of used unix syscalls in the GPU process on macOS.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
+2021-11-13  Per Arne Vollan <pvollan@apple.com>
+
         [macOS][GPUP] Add telemetry for syscalls
         https://bugs.webkit.org/show_bug.cgi?id=232888
         <rdar://problem/85207011>

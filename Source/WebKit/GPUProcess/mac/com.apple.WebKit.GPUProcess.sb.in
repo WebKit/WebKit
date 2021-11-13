@@ -900,11 +900,13 @@
         SYS___pthread_kill
         SYS___pthread_sigmask
         SYS___semwait_signal
+        SYS___semwait_signal_nocancel
         SYS_access
         SYS_bsdthread_create
         SYS_bsdthread_ctl
         SYS_bsdthread_terminate
         SYS_change_fdguard_np
+        SYS_close_nocancel
         SYS_csrctl
         SYS_dup
         SYS_exit
@@ -944,6 +946,7 @@
         SYS_kevent_id
         SYS_kevent_qos
         SYS_kqueue_workloop_ctl
+        SYS_listxattr
         SYS_lseek
         SYS_lstat
         SYS_lstat64
@@ -951,6 +954,7 @@
         SYS_memorystatus_control
         SYS_mincore
         SYS_mkdir
+        SYS_mkdirat
         SYS_mlock
         SYS_mmap
         SYS_mprotect
@@ -959,6 +963,7 @@
         SYS_munmap
         SYS_necp_client_action
         SYS_necp_open
+        SYS_open_nocancel
         SYS_pathconf
         SYS_pread
         SYS_proc_rlimit_control
