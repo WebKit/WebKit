@@ -1,3 +1,28 @@
+2021-11-13  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make accessibility/mac/header.html test async to fix it for isolated tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=233017
+
+        Reviewed by Andres Gonzalez.
+
+        This patch implements the `domIdentifier` attribute for DumpRenderTree
+        elements. When making this test async, I wanted to use this attribute,
+        hence the implementation in this patch.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (domIdentifierCallback): Added.
+        (AccessibilityUIElement::getJSClass):
+        Add "domIdentifer" entry to `staticValues[]`.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        Add AccessibilityUIElement::domIdentifier const definition.
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::domIdentifier const): Added.
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::domIdentifier const): Added.
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::domIdentifier const):Added.
+
 2021-11-12  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Symlink daemons into simulator runtime root

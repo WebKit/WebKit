@@ -94,6 +94,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)_accessibilityIsInTableCell;
 - (NSString *)_accessibilityPhotoDescription;
 - (BOOL)accessibilityPerformEscape;
+- (NSString *)accessibilityDOMIdentifier;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -1224,6 +1225,11 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
 {
     return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+{
+    return [[m_element accessibilityDOMIdentifier] createJSStringRef];
 }
 
 void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef, Vector<AccessibilityUIElement>&) const

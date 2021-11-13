@@ -1,3 +1,20 @@
+2021-11-13  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make accessibility/mac/header.html test async to fix it for isolated tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=233017
+
+        Reviewed by Andres Gonzalez.
+
+        This test needs to be made async, as we need to wait for
+        accessibilityController.focusedElement to be synced with the DOM
+        focused element before running our expectations. This fixes the
+        test in isolated tree mode.
+
+        * accessibility/mac/header-expected.txt:
+        Remove extra newline at end of the file.
+        * accessibility/mac/header.html:
+        Make test async.
+
 2021-11-12  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION(r285481): Infinite recursion with cyclic filter reference

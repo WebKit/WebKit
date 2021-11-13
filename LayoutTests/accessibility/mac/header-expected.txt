@@ -10,4 +10,3 @@ TEST COMPLETE
 Header outside section and article elements.
 Header inside an article.
 Header inside a section.
-

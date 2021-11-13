@@ -38,6 +38,10 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#ifndef NSAccessibilityDOMIdentifierAttribute
+#define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
+#endif
+
 #ifndef NSAccessibilityOwnsAttribute
 #define NSAccessibilityOwnsAttribute @"AXOwns"
 #endif
@@ -655,6 +659,17 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
     BEGIN_AX_OBJC_EXCEPTIONS
     id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityDescriptionAttribute], m_element.get());
     return concatenateAttributeAndValue(@"AXDescription", description);
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityDOMIdentifierAttribute];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

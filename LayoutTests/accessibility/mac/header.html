@@ -1,36 +1,45 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src='../../resources/js-test-pre.js'></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
-<body id='body'>
-    <header tabindex='0' id='header01'>Header outside section and article elements.</header>
-    <article>
-        <header tabindex='0' id='header02'>Header inside an article.</header>
-    </article>
-    <section>
-        <header tabindex='0' id='header03'>Header inside a section.</header>
-    </section>
-    <pre id='result'></pre>
-    <script>
-        function log(str) {
-            var result = document.querySelector('#result');
-            result.appendChild(document.createTextNode(str));
-        }
+<body>
 
-        function expectRole(expectedRole, expectedDescription, id) {
-            if (!window.accessibilityController)
-                return;
-            var el = document.querySelector(id);
-            el.focus();
-            shouldBeEqualToString('accessibilityController.focusedElement.role', "AXRole: " + expectedRole);
-            shouldBeEqualToString('accessibilityController.focusedElement.roleDescription', "AXRoleDescription: " + expectedDescription);
-        }
+<header tabindex="0" id="header01">Header outside section and article elements.</header>
+<article>
+    <header tabindex="0" id="header02">Header inside an article.</header>
+</article>
+<section>
+    <header tabindex="0" id="header03">Header inside a section.</header>
+</section>
 
-        expectRole('AXGroup', 'banner', '#header01');
-        expectRole('AXGroup', 'group', '#header02');
-        expectRole('AXGroup', 'group', '#header03');
-    </script>
-<script src='../../resources/js-test-post.js'></script>
+<script>
+    async function expectRole(expectedRole, expectedDescription, id) {
+        document.getElementById(id).focus();
+
+        await waitFor(() => {
+            const focusedElement = accessibilityController.focusedElement;
+            return focusedElement && focusedElement.domIdentifier === id;
+        });
+
+        shouldBeEqualToString("accessibilityController.focusedElement.role", "AXRole: " + expectedRole);
+        shouldBeEqualToString("accessibilityController.focusedElement.roleDescription", "AXRoleDescription: " + expectedDescription);
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async function() {
+            await expectRole("AXGroup", "banner", "header01");
+            await expectRole("AXGroup", "group", "header02");
+            await expectRole("AXGroup", "group", "header03");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+
 </body>
 </html>
+

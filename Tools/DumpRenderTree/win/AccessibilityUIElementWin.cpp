@@ -990,6 +990,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
     return 0;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+{
+    // FIXME: implement
+    return 0;
+}
+
 unsigned AccessibilityUIElement::selectedChildrenCount() const
 {
     // FIXME: implement
