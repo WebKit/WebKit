@@ -1,3 +1,15 @@
+2021-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add WebGPU.xcodeproj to WebKit.xcworkspace
+        https://bugs.webkit.org/show_bug.cgi?id=233078
+
+        Reviewed by Dean Jackson.
+
+        Mechanical change. When building WebGPU becomes required,
+        people using this workspace will need it.
+
+        * WebKit.xcworkspace/contents.xcworkspacedata:
+
 2021-11-12  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Add Little-CMS support
