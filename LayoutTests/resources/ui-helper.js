@@ -110,11 +110,6 @@ window.UIHelper = class UIHelper {
 
     static async mouseWheelSequence(eventStream, { waitForCompletion = true } = {})
     {
-        if (!this.isWebKit2()) {
-            console.log('UIHelper.mouseWheelSequence() does not work in DumpRenderTree')
-            return Promise.resolve();
-        }
-
         if (waitForCompletion)
             eventSender.monitorWheelEvents();
         const eventStreamAsString = JSON.stringify(eventStream);

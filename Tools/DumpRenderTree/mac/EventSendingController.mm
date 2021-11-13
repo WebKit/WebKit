@@ -841,51 +841,62 @@ static NSUInteger swizzledEventPressedMouseButtons()
     [self mouseScrollByX:x andY:y continuously:NO];
 }
 
-- (void)mouseScrollByX:(int)x andY:(int)y withWheel:(NSString*)phaseName andMomentumPhases:(NSString*)momentumName
+- (void)mouseScrollByX:(int)x andY:(int)y withWheel:(NSString*)wheelPhase andMomentumPhases:(NSString*)momentumPhase
 {
 #if PLATFORM(MAC)
     [[[mainFrame frameView] documentView] layout];
 
-    uint32_t phase = 0;
-    if ([phaseName isEqualToString: @"none"])
-        phase = 0;
-    else if ([phaseName isEqualToString: @"began"])
-        phase = kCGScrollPhaseBegan;
-    else if ([phaseName isEqualToString: @"changed"])
-        phase = kCGScrollPhaseChanged;
-    else if ([phaseName isEqualToString: @"ended"])
-        phase = kCGScrollPhaseEnded;
-    else if ([phaseName isEqualToString: @"cancelled"])
-        phase = kCGScrollPhaseCancelled;
-    else if ([phaseName isEqualToString: @"maybegin"])
-        phase = kCGScrollPhaseMayBegin;
+    CGGesturePhase phase = kCGGesturePhaseNone;
+    if ([wheelPhase isEqualToString: @"none"])
+        phase = kCGGesturePhaseNone;
+    else if ([wheelPhase isEqualToString: @"began"])
+        phase = kCGGesturePhaseBegan;
+    else if ([wheelPhase isEqualToString: @"changed"])
+        phase = kCGGesturePhaseChanged;
+    else if ([wheelPhase isEqualToString: @"ended"])
+        phase = kCGGesturePhaseEnded;
+    else if ([wheelPhase isEqualToString: @"cancelled"])
+        phase = kCGGesturePhaseCancelled;
+    else if ([wheelPhase isEqualToString: @"maybegin"])
+        phase = kCGGesturePhaseMayBegin;
 
-    uint32_t momentum = 0;
-    if ([momentumName isEqualToString: @"none"])
+    CGMomentumScrollPhase momentum = kCGMomentumScrollPhaseNone;
+    if ([momentumPhase isEqualToString: @"none"])
         momentum = kCGMomentumScrollPhaseNone;
-    else if ([momentumName isEqualToString:@"begin"])
+    else if ([momentumPhase isEqualToString:@"begin"])
         momentum = kCGMomentumScrollPhaseBegin;
-    else if ([momentumName isEqualToString:@"continue"])
+    else if ([momentumPhase isEqualToString:@"continue"])
         momentum = kCGMomentumScrollPhaseContinue;
-    else if ([momentumName isEqualToString:@"end"])
+    else if ([momentumPhase isEqualToString:@"end"])
         momentum = kCGMomentumScrollPhaseEnd;
 
-    if (phase == kCGScrollPhaseEnded || phase == kCGScrollPhaseCancelled)
+    // FIXME: Maybe use a valid timestamp: webkit.org/b/232791.
+    [self sendScrollEventAt:lastMousePosition deltaX:x deltaY:y units:kCGScrollEventUnitLine wheelPhase:phase momentumPhase:momentum timestamp:0];
+#endif
+}
+
+#if PLATFORM(MAC)
+- (void)sendScrollEventAt:(NSPoint)mouseLocation deltaX:(double)deltaX deltaY:(double)deltaY units:(CGScrollEventUnit)units wheelPhase:(CGGesturePhase)wheelPhase momentumPhase:(CGMomentumScrollPhase)momentumPhase timestamp:(uint64_t)timestamp
+{
+    if (wheelPhase == kCGGesturePhaseEnded || wheelPhase == kCGGesturePhaseCancelled)
         _sentWheelPhaseEndOrCancel = YES;
 
-    if (momentum == kCGMomentumScrollPhaseEnd)
+    if (momentumPhase == kCGMomentumScrollPhaseEnd)
         _sentMomentumPhaseEnd = YES;
 
-    auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(NULL, kCGScrollEventUnitLine, 2, y, x, 0));
+    constexpr uint32_t wheelCount = 2;
+    // Note that the delta get converted to integral values here. NSEvent has float deltas, CGEvent has integral deltas.
+    auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(NULL, units, wheelCount, deltaY, deltaX, 0));
+    CGEventSetTimestamp(cgScrollEvent.get(), timestamp);
 
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - lastMousePosition.y);
-    CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
+    CGPoint globalMousePosition = CGPointMake(mouseLocation.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - mouseLocation.y);
+    CGEventSetLocation(cgScrollEvent.get(), globalMousePosition);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
-    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, phase);
-    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentum);
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, wheelPhase);
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentumPhase);
     
     NSEvent* scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
 
@@ -895,8 +906,8 @@ static NSUInteger swizzledEventPressedMouseButtons()
         [NSApp _setCurrentEvent:nil];
     } else
         printf("mouseScrollByX...andMomentumPhases: Unable to locate target view for current mouse location.");
-#endif
 }
+#endif
 
 - (NSArray *)contextClick
 {

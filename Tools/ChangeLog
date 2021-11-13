@@ -1,3 +1,24 @@
+2021-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement UIScriptController.sendEventStream() for DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=233090
+
+        Reviewed by Wenson Hsieh.
+        
+        Implement UIScriptControllerMac::sendEventStream(), sharing some event dispatching code from
+        EventSendingController.
+
+        * DumpRenderTree/mac/EventSendingController.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        (-[EventSendingController sendScrollEventAt:deltaX:deltaY:units:wheelPhase:momentumPhase:timestamp:]):
+        * DumpRenderTree/mac/UIScriptControllerMac.h:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::gesturePhaseFromString):
+        (WTR::momentumPhaseFromString):
+        (WTR::eventSenderFromView):
+        (WTR::UIScriptControllerMac::sendEventStream):
+
 2021-11-13  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, reverting r285772.

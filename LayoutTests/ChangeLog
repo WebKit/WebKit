@@ -1,3 +1,15 @@
+2021-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement UIScriptController.sendEventStream() for DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=233090
+
+        Reviewed by Wenson Hsieh.
+
+        Convert one test that runs in WK1 to use sendEventStream().
+
+        * fast/scrolling/overflow-scroll-past-max.html:
+        * resources/ui-helper.js:
+
 2021-11-13  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make 7 more layout tests async so that they pass in --release --accessibility-isolated-tree mode

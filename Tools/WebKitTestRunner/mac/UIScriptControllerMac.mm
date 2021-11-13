@@ -308,14 +308,14 @@ void UIScriptControllerMac::setSpellCheckerResults(JSValueRef results)
     [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
 }
 
-static NSString* const TopLevelEventInfoKey = @"events";
-static NSString* const EventTypeKey = @"type";
-static NSString* const ViewRelativeXPositionKey = @"viewX";
-static NSString* const ViewRelativeYPositionKey = @"viewY";
-static NSString* const DeltaXKey = @"deltaX";
-static NSString* const DeltaYKey = @"deltaY";
-static NSString* const PhaseKey = @"phase";
-static NSString* const MomentumPhaseKey = @"momentumPhase";
+static NSString *const TopLevelEventInfoKey = @"events";
+static NSString *const EventTypeKey = @"type";
+static NSString *const ViewRelativeXPositionKey = @"viewX";
+static NSString *const ViewRelativeYPositionKey = @"viewY";
+static NSString *const DeltaXKey = @"deltaX";
+static NSString *const DeltaYKey = @"deltaY";
+static NSString *const PhaseKey = @"phase";
+static NSString *const MomentumPhaseKey = @"momentumPhase";
 
 static EventSenderProxy::WheelEventPhase eventPhaseFromString(NSString *phaseStr)
 {
