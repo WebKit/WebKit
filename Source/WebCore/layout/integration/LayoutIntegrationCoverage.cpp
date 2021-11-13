@@ -45,6 +45,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#define ALLOW_BIDI_CONTENT 0
+#define ALLOW_BIDI_CONTENT_WITH_INLINE_BOX 0
+
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
         reasons.add(AvoidanceReason::reason); \
@@ -388,7 +391,8 @@ static OptionSet<AvoidanceReason> canUseForText(StringView text, IncludeReasons 
     return { };
 }
 
-static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, IncludeReasons includeReasons)
+enum class CheckForBidiCharacters { Yes, No };
+static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, CheckForBidiCharacters checkForBidiCharacters, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
     // We assume that all lines have metrics based purely on the primary font.
@@ -418,9 +422,10 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
         }
 
-        auto textReasons = canUseForText(textRenderer.stringView(), includeReasons);
-        if (textReasons)
-            ADD_REASONS_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
+        if (checkForBidiCharacters == CheckForBidiCharacters::Yes) {
+            if (auto textReasons = canUseForText(textRenderer.stringView(), includeReasons))
+                ADD_REASONS_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
+        }
     }
     return reasons;
 }
@@ -484,9 +489,14 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
         SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
     if (renderInline.containingBlock()->style().lineBoxContain() != RenderStyle::initialLineBoxContain())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
-    auto fontAndTextReasons = canUseForFontAndText(renderInline, includeReasons);
+    auto checkForBidiCharacters = CheckForBidiCharacters::Yes;
+#if ALLOW_BIDI_CONTENT_WITH_INLINE_BOX
+    checkForBidiCharacters = CheckForBidiCharacters::No;
+#endif
+    auto fontAndTextReasons = canUseForFontAndText(renderInline, checkForBidiCharacters, includeReasons);
     if (fontAndTextReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
+
     auto styleReasons = canUseForStyle(style, includeReasons);
     if (styleReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
@@ -632,9 +642,11 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
+    auto hasSeenInlineBox = false;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         if (auto childReasons = canUseForChild(flow, *walker.current(), includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
+        hasSeenInlineBox = hasSeenInlineBox || is<RenderInline>(*walker.current());
     }
     auto styleReasons = canUseForStyle(flow.style(), includeReasons);
     if (styleReasons)
@@ -649,7 +661,15 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
         }
     }
-    auto fontAndTextReasons = canUseForFontAndText(flow, includeReasons);
+    auto checkForBidiCharacters = CheckForBidiCharacters::Yes;
+#if ALLOW_BIDI_CONTENT
+    if (!hasSeenInlineBox)
+        checkForBidiCharacters = CheckForBidiCharacters::No;
+#endif
+#if ALLOW_BIDI_CONTENT_WITH_INLINE_BOX
+    checkForBidiCharacters = CheckForBidiCharacters::No;
+#endif
+    auto fontAndTextReasons = canUseForFontAndText(flow, checkForBidiCharacters, includeReasons);
     if (fontAndTextReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
     return reasons;
