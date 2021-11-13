@@ -1,3 +1,15 @@
+2021-11-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][GPUP] Add system call logging
+        https://bugs.webkit.org/show_bug.cgi?id=233079
+        <rdar://problem/85362041>
+
+        Reviewed by Brent Fulgham.
+
+        Add telemetry for system calls in the GPU process' sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2021-11-12  Darin Adler  <darin@apple.com>
 
         Make sort-Xcode-project-file idempotent
