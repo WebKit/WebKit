@@ -1,3 +1,15 @@
+2021-11-12  Guillaume Emont  <guijemont@igalia.com>
+
+        Unskip typeProfiler/getter-richards.js on armv7
+        https://bugs.webkit.org/show_bug.cgi?id=233050
+
+        Unreviewed gardening.
+
+        Our arm bots are now fast enough to run this, it does still timeout on
+        some of our test mips devices though.
+
+        * typeProfiler/getter-richards.js:
+
 2021-11-12  Xan Lopez  <xan@igalia.com>
 
         [JSC][32bit] Unskip JSTests/microbenchmarks/redefine-property-accessor-dictionary.js
