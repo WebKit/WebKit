@@ -1,3 +1,15 @@
+2021-11-13  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, reverting r285772.
+
+        Ownership issues in some XCode installs
+
+        Reverted changeset:
+
+        "[webkitpy] Symlink daemons into simulator runtime root"
+        https://bugs.webkit.org/show_bug.cgi?id=233080
+        https://commits.webkit.org/r285772
+
 2021-11-13  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make accessibility/mac/header.html test async to fix it for isolated tree mode

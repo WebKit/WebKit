@@ -60,7 +60,6 @@ class SimulatedDeviceManager(object):
             self.version = Version.from_string(runtime_dict['version'])
             self.identifier = runtime_dict['identifier']
             self.name = runtime_dict['name']
-            self.root = runtime_dict.get('runtimeRoot')
 
     AVAILABLE_RUNTIMES = []
     AVAILABLE_DEVICES = []
@@ -124,7 +123,6 @@ class SimulatedDeviceManager(object):
             host=host,
             device_type=device_type,
             build_version=runtime.build_version,
-            runtime=runtime,
         ))
         SimulatedDeviceManager.AVAILABLE_DEVICES.append(result)
         return result
@@ -546,14 +544,13 @@ class SimulatedDevice(object):
         'watchOS': 'com.apple.carousel.sessionservice',
     }
 
-    def __init__(self, name, udid, host, device_type, build_version, runtime):
+    def __init__(self, name, udid, host, device_type, build_version):
         assert device_type.software_version
 
         self.name = name
         self.udid = udid
         self.device_type = device_type
         self.build_version = build_version
-        self.runtime = runtime
         self._state = SimulatedDevice.DeviceState.SHUTTING_DOWN
 
         self.executive = host.executive

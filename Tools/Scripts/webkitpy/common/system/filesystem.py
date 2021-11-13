@@ -339,6 +339,3 @@ class FileSystem(object):
             self.copytree(source, destination)
         else:
             self.copyfile(source, destination)
-
-    def symlink(self, *args, **kwargs):
-        os.symlink(*args, **kwargs)
