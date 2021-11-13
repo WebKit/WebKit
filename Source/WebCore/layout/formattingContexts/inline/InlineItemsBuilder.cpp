@@ -324,10 +324,28 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         // Opaque items (inline items with no paragraph content) get their bidi level values from their adjacent items.
         auto lastBidiLevel = rootBidiLevel;
         for (auto index = inlineItems.size(); index--;) {
-            if (!inlineItemOffsets[index])
-                inlineItems[index].setBidiLevel(lastBidiLevel);
-            else
+            if (inlineItemOffsets[index]) {
                 lastBidiLevel = inlineItems[index].bidiLevel();
+                continue;
+            }
+            if (inlineItems[index].isInlineBoxStart()) {
+                // Inline box start (e.g <span>) uses its content bidi level (next inline item).
+                inlineItems[index].setBidiLevel(lastBidiLevel);
+                continue;
+            }
+            if (inlineItems[index].isInlineBoxEnd()) {
+                // Inline box end (e.g. </span>) also uses the content bidi level, but in this case it's the previous content.
+                auto previousBidiLevel = [&]() -> std::optional<UBiDiLevel> {
+                    for (auto i = index; i--;) {
+                        if (inlineItemOffsets[i])
+                            return inlineItems[i].bidiLevel();
+                    }
+                    return { };
+                }();
+                inlineItems[index].setBidiLevel(previousBidiLevel.value_or(rootBidiLevel));
+                continue;
+            }
+            ASSERT_NOT_REACHED();
         }
     };
     setBidiLevelForOpaqueInlineItems();
