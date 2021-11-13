@@ -103,10 +103,13 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                 logicalRect = lineBox.logicalRectForLineBreakBox(layoutBox);
             else {
                 auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                marginStart = boxGeometry.marginStart();
-                if (lineRun.isBox())
+                if (lineRun.isBox()) {
+                    marginStart = boxGeometry.marginStart();
                     logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
-                else if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
+                } else if (lineRun.isInlineBoxStart()) {
+                    marginStart = boxGeometry.marginStart();
+                    logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
+                } else if (lineRun.isLineSpanningInlineBoxStart())
                     logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
                 else
                     ASSERT_NOT_REACHED();
@@ -123,16 +126,13 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             auto visualOrderRect = logicalRect;
             auto contentLeft = contentRightInVisualOrder + distanceFromLogicalPreviousRun + marginStart.value_or(0);
             visualOrderRect.setLeft(contentLeft);
-            // The inline box right edge includes its content as well as the inline box end (padding-right etc).
-            // What we need here is the inline box start run's width.
-            // Note that content width does not refer to content _box_ here (it does include padding and border for inline level boxes).
-            auto contentWidth = lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart() ? lineRun.logicalWidth() - *marginStart : logicalRect.width();
-            contentRightInVisualOrder = visualOrderRect.left() + contentWidth;
             return visualOrderRect;
         };
 
         if (lineRun.isText()) {
             auto textRunRect = displayBoxRect();
+            contentRightInVisualOrder = textRunRect.right();
+
             auto inkOverflow = [&] {
                 auto initialContaingBlockSize = RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()
                     ? formattingState.layoutState().viewportSize()
@@ -190,6 +190,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
         if (lineRun.isBox()) {
             ASSERT(layoutBox.isAtomicInlineLevelBox());
             auto borderBoxRect = displayBoxRect();
+            contentRightInVisualOrder = borderBoxRect.right();
             // FIXME: Add ink overflow support for atomic inline level boxes (e.g. box shadow).
             boxes.append({ lineIndex, InlineDisplay::Box::Type::AtomicInlineLevelBox, layoutBox, lineRun.bidiLevel(), borderBoxRect, borderBoxRect, lineRun.expansion(), { } });
 
@@ -210,8 +211,10 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             continue;
         }
         if (lineRun.isInlineBoxStart()) {
+            auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             // This inline box showed up first on this line.
             auto inlineBoxBorderBox = displayBoxRect();
+            contentRightInVisualOrder += lineRun.logicalWidth();
             if (lineBox.hasContent()) {
                 // FIXME: It's expected to not have any boxes on empty lines. We should reconsider this.
                 m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
@@ -222,7 +225,6 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                 boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, lineRun.bidiLevel(), inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineBox.hasContent(), isFirstLastBox(inlineBox) });
             }
 
-            auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
             auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };
             boxGeometry.setLogicalTopLeft(logicalRect.topLeft());
@@ -243,6 +245,8 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
 
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             auto inlineBoxBorderBox = displayBoxRect();
+            // The content right edge should not include the entire inline box here (including its content and right edge).
+            contentRightInVisualOrder += lineRun.logicalWidth();
             ASSERT(!inlineBox.isFirstBox());
             boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, lineRun.bidiLevel(), inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineBox.hasContent(), isFirstLastBox(inlineBox) });
 
@@ -258,7 +262,11 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu)));
             continue;
         }
-        ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
+        if (lineRun.isInlineBoxEnd()) {
+            contentRightInVisualOrder += lineRun.logicalWidth();
+            continue;
+        }
+        ASSERT(lineRun.isWordBreakOpportunity());
     }
 }
 
