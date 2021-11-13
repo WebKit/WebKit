@@ -2,7 +2,7 @@
 // - src/dynamic-import/eval-script-code-host-resolves-module-code.case
 // - src/dynamic-import/default/nested-async-generator-return-await.template
 /*---
-description: import() from a ascript code can load a file with module code (nested in async generator, returns awaited)
+description: import() from a script code can load a file with module code (nested in async generator, returns awaited)
 esid: sec-import-call-runtime-semantics-evaluation
 features: [dynamic-import, async-iteration]
 flags: [generated, async]

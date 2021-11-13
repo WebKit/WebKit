@@ -37,4 +37,4 @@ const datetime = new Temporal.ZonedDateTime(1001n, tz);
 
 const isoString = datetime.toString();
 
-assert.sameValue(isoString, "1970-01-01T00:00:00.000000999-00:00:00.000000002[-00:00:00.000000002]");
+assert.sameValue(isoString, "1970-01-01T00:00:00.000000999+00:00[-00:00:00.000000002]");

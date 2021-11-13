@@ -37,4 +37,4 @@ const datetime = new Temporal.ZonedDateTime(1001n, tz);
 
 const jsonString = datetime.toJSON();
 
-assert.sameValue(jsonString, "1970-01-01T00:00:00.000000999-00:00:00.000000002[-00:00:00.000000002]");
+assert.sameValue(jsonString, "1970-01-01T00:00:00.000000999+00:00[-00:00:00.000000002]");

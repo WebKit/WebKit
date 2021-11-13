@@ -17,8 +17,14 @@ features: [Temporal]
 
 const expected = [
   "day",
+  "hour",
+  "microsecond",
+  "millisecond",
+  "minute",
   "month",
   "monthCode",
+  "nanosecond",
+  "second",
   "year",
 ];
 

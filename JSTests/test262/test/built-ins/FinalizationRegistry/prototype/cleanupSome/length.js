@@ -21,7 +21,7 @@ info: |
   function object has the attributes { [[Writable]]: false,
   [[Enumerable]]: false, [[Configurable]]: true }.
 includes: [propertyHelper.js]
-features: [FinalizationRegistry.prototype.cleanupSome, cleanupSome, FinalizationRegistry]
+features: [FinalizationRegistry.prototype.cleanupSome, FinalizationRegistry]
 ---*/
 
 verifyProperty(FinalizationRegistry.prototype.cleanupSome, 'length', {

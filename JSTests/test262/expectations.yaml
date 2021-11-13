@@ -1140,6 +1140,12 @@ test/built-ins/RegExp/quantifier-integer-limit.js:
 test/built-ins/ShadowRealm/prototype/evaluate/wrapped-function-proto-from-caller-realm.js:
   default: 'Test262Error: callable arguments passed into WrappedFunction should be wrapped in target realm Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262Error: callable arguments passed into WrappedFunction should be wrapped in target realm Expected SameValue(«false», «true») to be true'
+test/built-ins/Temporal/Instant/prototype/toString/timezone-offset.js:
+  default: 'Test262Error: offset of UTC is +00:00 Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T00:00:00+00:00») to be true'
+  strict mode: 'Test262Error: offset of UTC is +00:00 Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T00:00:00+00:00») to be true'
+test/built-ins/Temporal/PlainTime/compare/plaintime-propertybag-no-time-units.js:
+  default: 'TypeError: "hour" field is missing'
+  strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/PlainTime/from/argument-string-with-calendar.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
@@ -1152,15 +1158,27 @@ test/built-ins/Temporal/PlainTime/from/overflow-undefined.js:
 test/built-ins/Temporal/PlainTime/from/overflow-wrong-type.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
+test/built-ins/Temporal/PlainTime/from/plaintime-propertybag-no-time-units.js:
+  default: 'TypeError: "hour" field is missing'
+  strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-wrong-type.js:
+  default: 'TypeError: "hour" field is missing'
+  strict mode: 'TypeError: "hour" field is missing'
+test/built-ins/Temporal/PlainTime/prototype/equals/plaintime-propertybag-no-time-units.js:
+  default: 'TypeError: "hour" field is missing'
+  strict mode: 'TypeError: "hour" field is missing'
+test/built-ins/Temporal/PlainTime/prototype/since/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/toLocaleString/options-conflict.js:
   default: 'Test262Error: time.toLocaleString("en", { hour: "numeric",  timeStyle: "short" }) throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: time.toLocaleString("en", { hour: "numeric",  timeStyle: "short" }) throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainTime/prototype/until/plaintime-propertybag-no-time-units.js:
+  default: 'TypeError: "hour" field is missing'
+  strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/getOwnPropertyNames.js:
-  default: 'Test262Error: length Expected SameValue(«5», «11») to be true'
-  strict mode: 'Test262Error: length Expected SameValue(«5», «11») to be true'
+  default: 'Test262Error: PlainDate'
+  strict mode: 'Test262Error: PlainDate'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
@@ -1194,6 +1212,75 @@ test/intl402/Locale/likely-subtags-grandfathered.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+test/intl402/NumberFormat/prototype/format/format-rounding-mode-half-ceil.js:
+  default: 'Test262Error: Formatted value for -1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfCeil","maximumSignificantDigits":2} is ؜-١٫٢; expected ؜-١٫١.'
+  strict mode: 'Test262Error: Formatted value for -1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfCeil","maximumSignificantDigits":2} is ؜-١٫٢; expected ؜-١٫١.'
+test/intl402/NumberFormat/prototype/format/format-rounding-mode-half-floor.js:
+  default: 'Test262Error: Formatted value for 1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfFloor","maximumSignificantDigits":2} is ١٫٢; expected ١٫١.'
+  strict mode: 'Test262Error: Formatted value for 1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfFloor","maximumSignificantDigits":2} is ١٫٢; expected ١٫١.'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-de-DE.js:
+  default: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-en-US.js:
+  default: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-ja-JP.js:
+  default: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-ko-KR.js:
+  default: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-zh-TW.js:
+  default: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-de-DE.js:
+  default: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-en-US.js:
+  default: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-ja-JP.js:
+  default: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-ko-KR.js:
+  default: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-negative-zh-TW.js:
+  default: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0 Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-de-DE.js:
+  default: 'Test262Error: negativeZero: length Expected SameValue(«6», «5») to be true'
+  strict mode: 'Test262Error: negativeZero: length Expected SameValue(«6», «5») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-en-US.js:
+  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-ja-JP.js:
+  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-ko-KR.js:
+  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-zh-TW.js:
+  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-de-DE.js:
+  default: "ReferenceError: Can't find variable: signDisplay"
+  strict mode: "ReferenceError: Can't find variable: signDisplay"
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-en-US.js:
+  default: "ReferenceError: Can't find variable: signDisplay"
+  strict mode: "ReferenceError: Can't find variable: signDisplay"
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-ja-JP.js:
+  default: "ReferenceError: Can't find variable: signDisplay"
+  strict mode: "ReferenceError: Can't find variable: signDisplay"
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-ko-KR.js:
+  default: "ReferenceError: Can't find variable: signDisplay"
+  strict mode: "ReferenceError: Can't find variable: signDisplay"
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-zh-TW.js:
+  default: "ReferenceError: Can't find variable: signDisplay"
+  strict mode: "ReferenceError: Can't find variable: signDisplay"
+test/intl402/NumberFormat/prototype/resolvedOptions/roundingMode.js:
+  default: 'Test262Error: Expected SameValue(«halfExpand», «halfExpand (default)») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«halfExpand», «halfExpand (default)») to be true'
 test/intl402/Temporal/PlainTime/prototype/toLocaleString/locales-undefined.js:
   default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
   strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'

@@ -21,3 +21,4 @@ assert.sameValue(typeof r.evaluate('(async function() {})'), 'function', 'async 
 assert.sameValue(typeof r.evaluate('(function*() {})'), 'function', 'generator expression');
 assert.sameValue(typeof r.evaluate('(async function*() {})'), 'function', 'async generator expression');
 assert.sameValue(typeof r.evaluate('() => {}'), 'function', 'arrow function');
+assert.sameValue(typeof r.evaluate('new Proxy(() => {}, { apply() {} })'), 'function', 'callable proxy');

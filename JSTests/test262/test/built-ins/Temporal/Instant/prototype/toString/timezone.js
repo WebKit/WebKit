@@ -49,5 +49,5 @@ Object.defineProperty(Temporal.TimeZone, "from", {
   },
 });
 
-assert.sameValue(instant.toString({ timeZone }), "1975-02-02T12:00:00.987654321-02:25:35.135801679");
+assert.sameValue(instant.toString({ timeZone }), "1975-02-02T12:00:00.987654321-02:26");
 assert.compareArray(actual, expected);
