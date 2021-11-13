@@ -48,6 +48,7 @@
 #import <WebCore/BufferSource.h>
 #import <WebCore/CBORReader.h>
 #import <WebCore/CBORWriter.h>
+#import <WebCore/DeviceRequestConverter.h>
 #import <WebCore/FidoConstants.h>
 #import <WebCore/MockWebAuthenticationConfiguration.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
@@ -192,6 +193,21 @@ static _WKWebAuthenticationType wkWebAuthenticationType(WebCore::ClientDataType 
         ASSERT_NOT_REACHED();
         return _WKWebAuthenticationTypeCreate;
     }
+}
+
+static fido::AuthenticatorSupportedOptions::UserVerificationAvailability coreUserVerificationAvailability(_WKWebAuthenticationUserVerificationAvailability wkAvailability)
+{
+    switch (wkAvailability) {
+    case _WKWebAuthenticationUserVerificationAvailabilitySupportedAndConfigured:
+        return fido::AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured;
+    case _WKWebAuthenticationUserVerificationAvailabilitySupportedButNotConfigured:
+        return fido::AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedButNotConfigured;
+    case _WKWebAuthenticationUserVerificationAvailabilityNotSupported:
+        return fido::AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported;
+    }
+
+    ASSERT_NOT_REACHED();
+    return fido::AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported;
 }
 
 - (_WKWebAuthenticationType)type
@@ -621,6 +637,43 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 #else
     return NO;
 #endif
+}
+
++ (NSData *)getClientDataJSONForAuthenticationType:(_WKWebAuthenticationType)type challenge:(NSData *)challenge origin:(NSString *)origin
+{
+    RetainPtr<NSData> clientDataJSON;
+
+#if ENABLE(WEB_AUTHN)
+    clientDataJSON = produceClientDataJson(type, challenge, origin);
+#endif
+
+    return clientDataJSON.autorelease();
+}
+
++ (NSData *)encodeMakeCredentialCommandWithClientDataJSON:(NSData *)clientDataJSON options:(_WKPublicKeyCredentialCreationOptions *)options userVerificationAvailability:(_WKWebAuthenticationUserVerificationAvailability)userVerificationAvailability
+{
+    RetainPtr<NSData> encodedCommand;
+#if ENABLE(WEB_AUTHN)
+    auto hash = produceClientDataJsonHash(clientDataJSON);
+
+    auto encodedVector = fido::encodeMakeCredenitalRequestAsCBOR(hash, [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), std::nullopt);
+    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+#endif
+
+    return encodedCommand.autorelease();
+}
+
++ (NSData *)encodeGetAssertionCommandWithClientDataJSON:(NSData *)clientDataJSON options:(_WKPublicKeyCredentialRequestOptions *)options userVerificationAvailability:(_WKWebAuthenticationUserVerificationAvailability)userVerificationAvailability
+{
+    RetainPtr<NSData> encodedCommand;
+#if ENABLE(WEB_AUTHN)
+    auto hash = produceClientDataJsonHash(clientDataJSON);
+
+    auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(hash, [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), std::nullopt);
+    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+#endif
+
+    return encodedCommand.autorelease();
 }
 
 - (void)setMockConfiguration:(NSDictionary *)configuration

@@ -80,6 +80,12 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationSource) {
     _WKWebAuthenticationSourceExternal,
 } WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+typedef NS_ENUM(NSInteger, _WKWebAuthenticationUserVerificationAvailability) {
+    _WKWebAuthenticationUserVerificationAvailabilitySupportedAndConfigured,
+    _WKWebAuthenticationUserVerificationAvailabilitySupportedButNotConfigured,
+    _WKWebAuthenticationUserVerificationAvailabilityNotSupported,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialNameKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialIDKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey;
@@ -111,6 +117,10 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 + (void)setUsernameForLocalCredentialWithID:(NSData *)credentialID username: (NSString *)username WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 + (BOOL)isUserVerifyingPlatformAuthenticatorAvailable WK_API_AVAILABLE(macos(12.0), ios(15.0));
+
++ (NSData *)getClientDataJSONForAuthenticationType:(_WKWebAuthenticationType)type challenge:(NSData *)challenge origin:(NSString *)origin WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (NSData *)encodeMakeCredentialCommandWithClientDataJSON:(NSData *)clientDataJSON options:(_WKPublicKeyCredentialCreationOptions *)options userVerificationAvailability:(_WKWebAuthenticationUserVerificationAvailability)userVerificationAvailability WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (NSData *)encodeGetAssertionCommandWithClientDataJSON:(NSData *)clientDataJSON options:(_WKPublicKeyCredentialRequestOptions *)options userVerificationAvailability:(_WKWebAuthenticationUserVerificationAvailability)userVerificationAvailability WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (instancetype)init;
 
