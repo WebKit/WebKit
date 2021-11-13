@@ -96,17 +96,23 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
     }
 
-    auto filterData = makeUnique<FilterData>();
+    auto addResult = m_rendererFilterDataMap.set(&renderer, makeUnique<FilterData>());
+    auto filterData = addResult.iterator->value.get();
+    
     FloatRect targetBoundingBox = renderer.objectBoundingBox();
 
     filterData->boundaries = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);
-    if (filterData->boundaries.isEmpty())
+    if (filterData->boundaries.isEmpty()) {
+        m_rendererFilterDataMap.remove(&renderer);
         return false;
+    }
 
     // Determine absolute transformation matrix for filter. 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
-    if (!absoluteTransform.isInvertible())
+    if (!absoluteTransform.isInvertible()) {
+        m_rendererFilterDataMap.remove(&renderer);
         return false;
+    }
 
     // Eliminate shear of the absolute transformation matrix, to be able to produce unsheared tile images for feTile.
     FloatSize filterScale(absoluteTransform.xScale(), absoluteTransform.yScale());
@@ -123,8 +129,10 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // Create the SVGFilter object.
     filterData->builder = makeUnique<SVGFilterBuilder>();
     filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, filterScale, absoluteDrawingRegion, filterData->boundaries, targetBoundingBox);
-    if (!filterData->filter)
+    if (!filterData->filter) {
+        m_rendererFilterDataMap.remove(&renderer);
         return false;
+    }
 
     auto lastEffect = filterData->builder->lastEffect();
     ASSERT(lastEffect);
@@ -144,9 +152,8 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
     // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
     if (filterData->drawingRegion.isEmpty()) {
-        ASSERT(!m_rendererFilterDataMap.contains(&renderer));
+        ASSERT(m_rendererFilterDataMap.contains(&renderer));
         filterData->savedContext = context;
-        m_rendererFilterDataMap.set(&renderer, WTFMove(filterData));
         return false;
     }
 
@@ -161,9 +168,8 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 #endif
     auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, colorSpace, renderingMode, context);
     if (!sourceGraphic) {
-        ASSERT(!m_rendererFilterDataMap.contains(&renderer));
+        ASSERT(m_rendererFilterDataMap.contains(&renderer));
         filterData->savedContext = context;
-        m_rendererFilterDataMap.set(&renderer, WTFMove(filterData));
         return false;
     }
     
@@ -177,9 +183,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     context = &sourceGraphicContext;
 
-    ASSERT(!m_rendererFilterDataMap.contains(&renderer));
-    m_rendererFilterDataMap.set(&renderer, WTFMove(filterData));
-
+    ASSERT(m_rendererFilterDataMap.contains(&renderer));
     return true;
 }
 

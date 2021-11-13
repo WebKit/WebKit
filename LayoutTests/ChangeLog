@@ -1,3 +1,14 @@
+2021-11-12  Said Abou-Hallawa  <said@apple.com>
+
+        REGRESSION(r285481): Infinite recursion with cyclic filter reference
+        https://bugs.webkit.org/show_bug.cgi?id=232972
+        rdar://85264240
+
+        Reviewed by Wenson Hsieh.
+
+        * svg/filters/feImage-cyclic-reference-expected.txt: Added.
+        * svg/filters/feImage-cyclic-reference.svg: Added.
+
 2021-11-12  Rob Buis  <rbuis@igalia.com>
 
         Null check m_spanElement

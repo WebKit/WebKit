@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <filter id="filter">
+        <feImage href="#rect"/>
+    </filter>
+    <rect x="10" y="10" width="100" height="100" filter="url(#filter)"/>
+    <text x="10" y="120">This test passes if it does not crash.</text>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+    </script>
+</svg>
