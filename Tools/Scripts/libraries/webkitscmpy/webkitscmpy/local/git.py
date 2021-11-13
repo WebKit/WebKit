@@ -299,6 +299,7 @@ class Git(Scm):
     SSH_REMOTE = re.compile('(ssh://)?git@(?P<host>[^:/]+)[:/](?P<path>.+).git')
     HTTP_REMOTE = re.compile(r'(?P<protocol>https?)://(?P<host>[^\/]+)/(?P<path>.+).git')
     REMOTE_BRANCH = re.compile(r'remotes\/(?P<remote>[^\/]+)\/(?P<branch>.+)')
+    USER_REMOTE = re.compile(r'(?P<username>[^:/]+):(?P<branch>.+)')
 
     @classmethod
     @decorators.Memoize()
@@ -819,6 +820,40 @@ class Git(Scm):
             log_arg = ['--progress']
         else:
             log_arg = []
+
+        match = self.USER_REMOTE.match(argument)
+        rmt = self.remote()
+        if match and isinstance(rmt, remote.GitHub):
+            username = match.group('username')
+            if not self.url(match.group('username')):
+                url = self.url()
+                if '://' in url:
+                    rmt = '{}://{}/{}/{}.git'.format(url.split(':')[0], url.split('/')[2], username, rmt.name)
+                elif ':' in url:
+                    rmt = '{}:{}/{}.git'.format(url.split(':')[0], username, rmt.name)
+                else:
+                    sys.stderr.write("Failed to convert '{}' to '{}' remote\n".format(url, username))
+                    return None
+                if run(
+                    [self.executable(), 'remote', 'add', username, rmt],
+                    capture_output=True, cwd=self.root_path,
+                ).returncode:
+                    sys.stderr.write("Failed to add remote '{}' as '{}'\n".format(rmt, username))
+                    return None
+                self.url.clear()
+            branch = match.group('branch')
+            rc = run(
+                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(username, branch)] + log_arg,
+                cwd=self.root_path,
+            ).returncode
+            if not rc:
+                return self.commit()
+            if rc == 128:
+                run([self.executable(), 'fetch', username], cwd=self.root_path)
+            return None if run(
+                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(username, branch)] + log_arg,
+                cwd=self.root_path,
+            ).returncode else self.commit()
 
         return None if run(
             [self.executable(), 'checkout'] + [self._to_git_ref(argument)] + log_arg,

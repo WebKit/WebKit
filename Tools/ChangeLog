@@ -1,3 +1,35 @@
+2021-11-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Checkout pull-requests
+        https://bugs.webkit.org/show_bug.cgi?id=233042
+        <rdar://problem/85343364>
+
+        Reviewed by Dewei Zhu.
+
+        In GitHub, pull-requests are somewhat difficult to checkout because they're
+        attached to a specific user's mirror of WebKit. Automate this process.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init.py__: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git): Add username:branch regex.
+        (Git.checkout): Allow checking out of branches by username:branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add `git checkout -B`.
+        (Git.checkout): `-B` will force checkout a branch, even if one already exists.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub): Embed error message in 404 response.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/checkout.py:
+        (Checkout.main): Allow direct checkout of pull-request instead of relying
+        exclusively on branches.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/clean.py:
+        (Clean.main): Add newline.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py:
+        (TestCheckout.test_no_pr_github):
+        (TestCheckout.test_no_pr_bitbucket):
+        (TestCheckout.test_pr_github):
+        (TestCheckout.test_pr_bitbucket):
+
 2021-11-12  Sihui Liu  <sihui_liu@apple.com>
 
         Set default general storage directory to websiteDataDirectory

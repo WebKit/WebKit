@@ -352,6 +352,11 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=True) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
+                self.executable, 'checkout', '-B', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=True, force=True) else mocks.ProcessCompletion(returncode=1)
+            ), mocks.Subprocess.Route(
                 self.executable, 'checkout', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
@@ -588,10 +593,14 @@ nothing to commit, working tree clean
                     result.add(branch)
         return result
 
-    def checkout(self, something, create=False):
+    def checkout(self, something, create=False, force=False):
         commit = self.find(something)
         if create:
             if commit:
+                if force:
+                    self.head = commit
+                    self.detached = something not in self.commits.keys()
+                    return True
                 return False
             if self.head.branch == self.default_branch:
                 self.commits[something] = [self.head]

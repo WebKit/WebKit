@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import json
 import time
 
+import json as jsonlib
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
 
@@ -50,7 +50,7 @@ class GitHub(mocks.Requests):
         super(GitHub, self).__init__(hostname, 'api.{}'.format(hostname))
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
-            self.commits = json.load(file)
+            self.commits = jsonlib.load(file)
         for key, commits in self.commits.items():
             self.commits[key] = [Commit(**kwargs) for kwargs in commits]
             if not git_svn:
@@ -145,7 +145,7 @@ class GitHub(mocks.Requests):
             return mocks.Response(
                 status_code=404,
                 url=url,
-                text=json.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
+                text=jsonlib.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
             )
 
         response = []
@@ -191,7 +191,7 @@ class GitHub(mocks.Requests):
             return mocks.Response(
                 status_code=404,
                 url=url,
-                text=json.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
+                text=jsonlib.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
             )
         return mocks.Response.fromJson({
             'sha': commit.hash,
@@ -219,7 +219,7 @@ class GitHub(mocks.Requests):
             return mocks.Response(
                 status_code=404,
                 url=url,
-                text=json.dumps(dict(message='Not found')),
+                text=jsonlib.dumps(dict(message='Not found')),
             )
 
         if commit_a.branch != self.default_branch or commit_b.branch == self.default_branch:
@@ -331,7 +331,7 @@ class GitHub(mocks.Requests):
         if stripped_url.startswith('{}/tree/'.format(self.remote)):
             return self._parents_of_request(url=url, ref=stripped_url.split('/')[-1])
 
-        # Check for existance of forked repo
+        # Check for existence of forked repo
         if stripped_url.startswith('{}/repos'.format(self.api_remote.split('/')[0])) and stripped_url.split('/')[-1] == self.remote.split('/')[-1]:
             username = stripped_url.split('/')[-2]
             if username in self.forks or username == self.remote.split('/')[-2]:
@@ -381,7 +381,11 @@ class GitHub(mocks.Requests):
                     return mocks.Response.fromJson({
                         key: value for key, value in candidate.items() if key not in ('requested_reviews', 'reviews')
                     }, url=url)
-            return mocks.Response.create404(url)
+            return mocks.Response(
+                status_code=404,
+                text=jsonlib.dumps(dict(message='Not found')),
+                url=url,
+            )
 
         # Create/update pull-request
         pr = dict()

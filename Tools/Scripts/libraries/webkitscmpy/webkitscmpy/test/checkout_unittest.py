@@ -21,10 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import time
 
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
-from webkitscmpy import program, mocks, local
+from webkitscmpy import program, mocks, local, Contributor, Commit
 
 
 class TestCheckout(testing.PathTestCase):
@@ -57,6 +58,132 @@ class TestCheckout(testing.PathTestCase):
 
             self.assertEqual('621652add7fc416099bd2063366cc38ff61afe36', local.Git(self.path).commit().hash)
 
+    def test_no_pr_github(self):
+        with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
+                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('checkout', 'PR-1'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            "Request to 'https://api.github.example.com/repos/WebKit/WebKit/pulls/1' returned status code '404'\n"
+            "Message: Not found\n"
+            "Failed to find 'PR-1' associated with this repository\n",
+            captured.stderr.getvalue(),
+        )
+
+    def test_no_pr_bitbucket(self):
+        with OutputCapture() as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+            remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
+        )), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('checkout', 'PR-1'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            "Request to 'https://bitbucket.example.com/rest/api/1.0/projects/WEBKIT/repos/webkit/pull-requests/1' returned status code '404'\n"
+            "Failed to find 'PR-1' associated with this repository\n",
+            captured.stderr.getvalue(),
+        )
+
+    def test_pr_github(self):
+        with OutputCapture(), mocks.remote.GitHub() as remote, \
+                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            remote.users = dict(
+                rreviewer=Contributor('Ricky Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
+                tcontributor=Contributor('Tim Contributor', ['tcontributor@webkit.org'], github='tcontributor'),
+            )
+            remote.issues = {
+                1: dict(
+                    comments=[],
+                    assignees=[],
+                )
+            }
+            remote.pull_requests = [dict(
+                number=1,
+                state='open',
+                title='Example Change',
+                user=dict(login='tcontributor'),
+                body='''#### a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd
+<pre>
+To Be Committed
+
+Reviewed by NOBODY (OOPS!).
+</pre>
+''',
+                head=dict(ref='tcontributor:eng/example'),
+                base=dict(ref='main'),
+                requested_reviews=[dict(login='rreviewer')],
+                reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
+            )]
+            repo.commits['eng/example'] = [Commit(
+                hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                identifier='3.1@eng/example',
+                timestamp=int(time.time()) - 60,
+                author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
+            )]
+
+            self.assertEqual(0, program.main(
+                args=('checkout', 'PR-1'),
+                path=self.path,
+            ))
+
+            self.assertEqual('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', local.Git(self.path).commit().hash)
+
+    def test_pr_bitbucket(self):
+        with OutputCapture(), mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+            remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
+        )) as repo, mocks.local.Svn():
+            remote.pull_requests = [dict(
+                id=1,
+                state='OPEN',
+                open=True,
+                closed=False,
+                activities=[],
+                title='Example Change',
+                author=dict(
+                    user=dict(
+                        name='tcontributor',
+                        emailAddress='tcontributor@apple.com',
+                        displayName='Tim Contributor',
+                    ),
+                ), body='''#### a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd
+```
+To Be Committed
+
+Reviewed by NOBODY (OOPS!).
+```
+''',
+                fromRef=dict(displayId='eng/example', id='refs/heads/eng/example'),
+                toRef=dict(displayId='main', id='refs/heads/main'),
+                reviewers=[
+                    dict(
+                        user=dict(
+                            displayName='Ricky Reviewer',
+                            emailAddress='rreviewer@webkit.org',
+                        ), approved=False,
+                        status='NEEDS_WORK',
+                    ),
+                ],
+            )]
+            repo.commits['eng/example'] = [Commit(
+                hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                identifier='3.1@eng/example',
+                timestamp=int(time.time()) - 60,
+                author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
+            )]
+
+            self.assertEqual(0, program.main(
+                args=('checkout', 'PR-1'),
+                path=self.path,
+            ))
+
+            self.assertEqual('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', local.Git(self.path).commit().hash)
+
     def test_checkout_svn(self):
         with OutputCapture(), mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(6, local.Svn(self.path).commit().revision)
@@ -67,6 +194,18 @@ class TestCheckout(testing.PathTestCase):
             ))
 
             self.assertEqual(4, local.Svn(self.path).commit().revision)
+
+    def test_svn_pr(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
+            self.assertEqual(1, program.main(
+                args=('checkout', 'PR-1'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                'No pull-requests associated with repository\n',
+                captured.stderr.getvalue(),
+            )
 
     def test_checkout_remote(self):
         with OutputCapture(), mocks.remote.Svn():
