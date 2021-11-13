@@ -74,6 +74,10 @@ private:
     WorkerAgentContext workerAgentContext();
     void createLazyAgents();
 
+#if ENABLE(SERVICE_WORKER)
+    void updateServiceWorkerPageFrontendCount();
+#endif
+
     Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
