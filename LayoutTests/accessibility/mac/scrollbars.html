@@ -1,44 +1,43 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-var successfullyParsed = false;
-</script>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
-<body id="body" tabindex="0">
-
-<p id="description"></p>
-<div id="console"></div>
-
-<div role="textbox" id="iframeGroup"></div>
+<body id="body" role="group">
 
 <script>
-
     description("This tests that a scroll area will return scroll bars when asked.");
-
-   if (window.accessibilityController) {
-        document.getElementById("body").focus();
-        var body = accessibilityController.focusedElement;
-    }
 
     // Cause the web page to gain scrollbars.
     for (var k = 0; k < 100; k++) {
        document.getElementById("body").innerHTML += "<br><br><br>";
     }
 
-     if (window.accessibilityController) {
-          document.getElementById("body").focus();
-          var body = accessibilityController.focusedElement;
+    var scrollArea;
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-          var scrollArea = body.parentElement();
-          shouldBe("scrollArea.role", "'AXRole: AXScrollArea'");
-          shouldBe("scrollArea.verticalScrollbar.role", "'AXRole: AXScrollBar'");
+        setTimeout(async function() {
+            // Iterate up from the body AX element to the scrollarea AX element.
+            let maybeScrollArea = (await waitForElementById("body")).parentElement();
+            await waitFor(() => {
+                if (maybeScrollArea && maybeScrollArea.role === "AXRole: AXScrollArea") {
+                    scrollArea = maybeScrollArea;
+                    return true;
+                }
+
+                maybeScrollArea = maybeScrollArea.parentElement();
+                return false;
+            });
+
+            shouldBe("scrollArea.role", "'AXRole: AXScrollArea'");
+            shouldBe("scrollArea.verticalScrollbar.role", "'AXRole: AXScrollBar'");
+
+            finishJSTest();
+        }, 0);
     }
-
-    successfullyParsed = true;
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

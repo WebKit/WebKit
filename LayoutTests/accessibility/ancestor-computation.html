@@ -53,19 +53,10 @@
     description("This test ensures accessibility elements properly track their ancestor types.");
     var element;
 
-    async function waitForElement(id) {
-        let returnElement;
-        await waitFor(() => {
-            returnElement = accessibilityController.accessibleElementById(id);
-            return returnElement;
-        });
-        return returnElement;
-    }
-
     async function shouldBeForAllDescendants(startElementId, expectedPropertyValues) {
         debug(`Verifying ${JSON.stringify(expectedPropertyValues)} for all descendants of ${startElementId}.`);
 
-        let elementsToCheck = [await waitForElement(startElementId)];
+        let elementsToCheck = [await waitForElementById(startElementId)];
         while (elementsToCheck.length) {
             element = elementsToCheck.pop();
             if (!element)

@@ -1,5 +1,43 @@
 2021-11-13  Tyler Wilcock  <tyler_w@apple.com>
 
+        AX: Make 7 more layout tests async so that they pass in --release --accessibility-isolated-tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=233085
+
+        Reviewed by Chris Fleizach.
+
+        This patch makes 7 more tests async so that they pass in --release
+        --accessibility-isolated-tree mode. This patch also adds some helper
+        functions to accessibility-helper.js.
+
+        * accessibility/ancestor-computation.html:
+        Move `waitForElement` to accessibility-helpers.js and rename to
+        `waitForElementById`.
+
+        * accessibility/color-well-expected.txt:
+        * accessibility/color-well.html:
+        * accessibility/mac/scrollbars.html:
+        * accessibility/placeholder-expected.txt:
+        * accessibility/placeholder.html:
+        * accessibility/progressbar-expected.txt:
+        * accessibility/progressbar.html:
+        * accessibility/range-alter-by-percent-expected.txt:
+        * accessibility/range-alter-by-percent.html:
+        * accessibility/range-alter-by-step-expected.txt:
+        * accessibility/range-alter-by-step.html:
+        * accessibility/spinbutton-value-expected.txt:
+        * accessibility/spinbutton-value.html:
+        Make tests async so they pass in isolated tree mode.
+        Minor updates to expectations:
+          - Some variables renamed for better readability
+          - Sometimes there is one more or one less newline after the test rewrites
+
+        * resources/accessibility-helper.js:
+        (async waitForElementById): Added. Originally defined in
+        accessibility/ancestor-computation.html.
+        (async waitForExpression): Added.
+
+2021-11-13  Tyler Wilcock  <tyler_w@apple.com>
+
         AX: Make accessibility/mac/header.html test async to fix it for isolated tree mode
         https://bugs.webkit.org/show_bug.cgi?id=233017
 

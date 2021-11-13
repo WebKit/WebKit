@@ -1,11 +1,14 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<body>
+<head>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
 
-<button id="untitled"></button>
+<button id="untitledButton"></button>
 
-<div id="spin"
+<div id="spinbutton"
      tabindex="0"
      role="spinbutton"
      aria-valuetext="5 of 9"
@@ -13,35 +16,37 @@
      aria-valuemax="9"
      aria-valuenow="5">42</div>
 
-<div id="console"></div>
 <script>
-description("This tests that a spin button supports range value attributes.")
+    description("This tests that a spin button supports range value attributes.");
 
-if (window.testRunner && window.accessibilityController) {
     function endsWith(str, suffix) {
-        str = '' + str;
+        str = "" + str;
         return str.substr(str.length - suffix.length) == suffix;
     }
 
-    var untitled = document.getElementById('untitled');
-    untitled.focus();
-    window.axUntitled = accessibilityController.focusedElement;
+    var spinbutton, untitledButton;
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-    var spin = document.getElementById('spin');
-    spin.focus();
-    window.axSpin = accessibilityController.focusedElement;
+        setTimeout(async function() {
+            untitledButton = await waitForElementById("untitledButton");
+            spinbutton = await waitForElementById("spinbutton");
+            await waitForExpression(spinbutton, "intValue", 5);
 
-    // Test range value attributes.
-    shouldBe("endsWith(axSpin.intValue, '5')", "true");
-    shouldBe("endsWith(axSpin.minValue, '1')", "true");
-    shouldBe("endsWith(axSpin.maxValue, '9')", "true");
-    shouldBe("endsWith(axSpin.valueDescription, '5 of 9')", "true");
+            // Test range value attributes.
+            shouldBe("endsWith(spinbutton.intValue, '5')", "true");
+            shouldBe("endsWith(spinbutton.minValue, '1')", "true");
+            shouldBe("endsWith(spinbutton.maxValue, '9')", "true");
+            shouldBe("endsWith(spinbutton.valueDescription, '5 of 9')", "true");
 
-    // Make sure the title doesn't come from the inner text. It should just be empty if
-    // not otherwise specified.
-    shouldBe("axSpin.title", "axUntitled.title");
-}
+            // Make sure the title doesn't come from the inner text. It should just be empty if
+            // not otherwise specified.
+            shouldBe("spinbutton.title", "untitledButton.title");
 
+            finishJSTest();
+        }, 0);
+    }
 </script>
 </body>
 </html>
+

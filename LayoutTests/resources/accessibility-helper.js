@@ -110,3 +110,22 @@ function waitFor(condition)
         }, 0);
     });
 }
+
+async function waitForElementById(id) {
+    let element;
+    await waitFor(() => {
+        element = accessibilityController.accessibleElementById(id);
+        return element;
+    });
+    return element;
+}
+
+async function waitForExpression(element, expression, expectedValue) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in waitForExpression() should be a string.");
+
+    await waitFor(() => {
+        return eval(`element.${expression} === ${expectedValue}`);
+    });
+}
+
