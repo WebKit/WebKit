@@ -248,6 +248,77 @@ const RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box) const
     return const_cast<BoxTree&>(*this).rendererForLayoutBox(box);
 }
 
+#if ENABLE(TREE_DEBUGGING)
+void showInlineContent(TextStream& stream, const InlineContent& inlineContent, size_t depth)
+{
+    auto& lines = inlineContent.lines;
+    auto& boxes = inlineContent.boxes;
+
+    for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
+        auto addSpacing = [&] {
+            size_t printedCharacters = 0;
+            stream << "-------- --";
+            while (++printedCharacters <= depth * 2)
+                stream << " ";
+
+        };
+        addSpacing();
+        auto& line = lines[lineIndex];
+        stream << "line at (" << line.lineBoxLeft() << "," << line.lineBoxTop() << ") size (" << line.lineBoxRight() - line.lineBoxLeft() << "x" << line.lineBoxBottom() - line.lineBoxTop() << ") baseline (" << line.baseline() << ") enclosing top (" << line.enclosingContentTop() << ") bottom (" << line.enclosingContentBottom() << ")";
+        stream.nextLine();
+
+        addSpacing();
+        stream << "  Inline level boxes:";
+        stream.nextLine();
+
+        auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
+            addSpacing();
+            stream << "    ";
+            auto logicalRect = inlineLevelBox.logicalRect();
+            auto& layoutBox = inlineLevelBox.layoutBox();
+            if (layoutBox.isAtomicInlineLevelBox())
+                stream << "Atomic inline level box";
+            else if (layoutBox.isLineBreakBox())
+                stream << "Line break box";
+            else if (layoutBox.isInlineBox())
+                stream << "Inline box";
+            else
+                stream << "Generic inline level box";
+            stream
+                << " at (" << logicalRect.left() << "," << logicalRect.top() << ")"
+                << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")";
+            stream.nextLine();
+        };
+        for (auto& box : boxes) {
+            if (box.lineIndex() != lineIndex)
+                continue;
+            if (!box.layoutBox().isInlineLevelBox())
+                continue;
+            outputInlineLevelBox(box);
+        }
+
+        addSpacing();
+        stream << "  Runs:";
+        stream.nextLine();
+        for (auto& box : boxes) {
+            if (box.lineIndex() != lineIndex)
+                continue;
+            addSpacing();
+            stream << "    ";
+            if (box.text())
+                stream << "text box";
+            else
+                stream << "box box";
+            stream << " at (" << box.logicalLeft() << "," << box.logicalTop() << ") size " << box.logicalWidth() << "x" << box.logicalHeight();
+            if (box.text())
+                stream << " box(" << box.text()->start() << ", " << box.text()->end() << ")";
+            stream.nextLine();
+        }
+
+    }
+}
+#endif
+
 }
 }
 

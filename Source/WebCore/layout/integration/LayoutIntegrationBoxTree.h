@@ -77,6 +77,9 @@ private:
     HashMap<CheckedRef<const Layout::Box>, RenderObject*> m_boxToRendererMap;
 };
 
+#if ENABLE(TREE_DEBUGGING)
+void showInlineContent(TextStream&, const InlineContent&, size_t depth);
+#endif
 }
 }
 

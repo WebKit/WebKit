@@ -634,7 +634,7 @@ Layout::InlineDamage& LineLayout::ensureLineDamage()
 #if ENABLE(TREE_DEBUGGING)
 void LineLayout::outputLineTree(WTF::TextStream& stream, size_t depth) const
 {
-    showInlineTreeAndRuns(stream, m_layoutState, rootLayoutBox(), depth);
+    showInlineContent(stream, *m_inlineContent, depth);
 }
 #endif
 
