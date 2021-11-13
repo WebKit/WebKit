@@ -1,3 +1,17 @@
+2021-11-13  Per Arne Vollan <pvollan@apple.com>
+
+        [macOS][GPUP] Add telemetry for syscalls
+        https://bugs.webkit.org/show_bug.cgi?id=232888
+        <rdar://problem/85207011>
+
+        Reviewed by Brent Fulgham.
+
+        Add more telemetry for syscalls in the GPU process' sandbox on macOS. Also add entitlement for the GPU
+        process to use message filtering.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Scripts/process-entitlements.sh:
+
 2021-11-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][GPUP] Add system call logging
