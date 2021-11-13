@@ -1,3 +1,12 @@
+2021-11-12  Darin Adler  <darin@apple.com>
+
+        Make sort-Xcode-project-file idempotent
+        https://bugs.webkit.org/show_bug.cgi?id=233077
+
+        Reviewed by Wenson Hsieh.
+
+        * libpas/libpas.xcodeproj/project.pbxproj: Sorted.
+
 2021-11-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, keep enabling mac libpas on OSS build

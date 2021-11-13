@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
+# Copyright (C) 2007-2021 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,13 +39,10 @@ use Getopt::Long;
 sub sortChildrenByFileName($$);
 sub sortFilesByFileName($$);
 
-# Files (or products) without extensions
+# Some files without extensions, so they can sort with the other files.
+# Otherwise, names without extensions are assumed to be groups or directories and sorted last.
 my %isFile = map { $_ => 1 } qw(
     create_hash_table
-    jsc
-    minidom
-    testapi
-    testjsglue
 );
 
 my $printWarnings = 1;
@@ -158,15 +155,16 @@ sub sortChildrenByFileName($$)
     my $bFileName = $1 if $b =~ /^\s*[A-Z0-9]{24} \/\* (.+) \*\/,$/;
     my $aSuffix = $1 if $aFileName =~ m/\.([^.]+)$/;
     my $bSuffix = $1 if $bFileName =~ m/\.([^.]+)$/;
-    if ((!$aSuffix && !$isFile{$aFileName} && $bSuffix) || ($aSuffix && !$bSuffix && !$isFile{$bFileName})) {
-        return !$aSuffix ? -1 : 1;
-    }
+    my $aIsDirectory = !$aSuffix && !$isFile{$aFileName};
+    my $bIsDirectory = !$bSuffix && !$isFile{$bFileName};
+    return $bIsDirectory <=> $aIsDirectory if $aIsDirectory != $bIsDirectory;
     if ($aFileName =~ /^UnifiedSource\d+/ && $bFileName =~ /^UnifiedSource\d+/) {
         my $aNumber = $1 if $aFileName =~ /^UnifiedSource(\d+)/;
         my $bNumber = $1 if $bFileName =~ /^UnifiedSource(\d+)/;
-        return $aNumber <=> $bNumber;
+        return $aNumber <=> $bNumber if $aNumber != $bNumber;
     }
-    return lc($aFileName) cmp lc($bFileName);
+    return lc($aFileName) cmp lc($bFileName) if lc($aFileName) ne lc($bFileName);
+    return $aFileName cmp $bFileName;
 }
 
 sub sortFilesByFileName($$)
@@ -177,7 +175,8 @@ sub sortFilesByFileName($$)
     if ($aFileName =~ /^UnifiedSource\d+/ && $bFileName =~ /^UnifiedSource\d+/) {
         my $aNumber = $1 if $aFileName =~ /^UnifiedSource(\d+)/;
         my $bNumber = $1 if $bFileName =~ /^UnifiedSource(\d+)/;
-        return $aNumber <=> $bNumber;
+        return $aNumber <=> $bNumber if $aNumber != $bNumber;
     }
-    return lc($aFileName) cmp lc($bFileName);
+    return lc($aFileName) cmp lc($bFileName) if lc($aFileName) ne lc($bFileName);
+    return $aFileName cmp $bFileName;
 }
