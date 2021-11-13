@@ -68,7 +68,7 @@ void ReplaceNodeWithSpanCommand::doApply()
 
 void ReplaceNodeWithSpanCommand::doUnapply()
 {
-    if (!m_spanElement->isConnected())
+    if (!m_spanElement || !m_spanElement->isConnected())
         return;
     swapInNodePreservingAttributesAndChildren(m_elementToReplace, *m_spanElement);
 }
