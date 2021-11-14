@@ -108,6 +108,7 @@ TextStream& operator<<(TextStream& ts, const PlatformWheelEvent& event)
 #if ENABLE(KINETIC_SCROLLING)
     ts << " phase \"" << event.phase() << "\" momentum phase \"" << event.momentumPhase() << "\"";
 #endif
+    ts << " velocity " << event.scrollingVelocity();
 
     return ts;
 }

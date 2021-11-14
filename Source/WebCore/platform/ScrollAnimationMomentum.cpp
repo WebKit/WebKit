@@ -55,6 +55,9 @@ bool ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity(const Float
         }
     }
 
+    LOG(ScrollAnimations, "ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity: velocity %.2f,%.2f from %.2f,%.2f to %.2f,%.2f",
+        initialVelocity.width(), initialVelocity.height(), initialOffset.x(), initialOffset.y(), destinationScrollOffset.x(), destinationScrollOffset.y());
+
     if (destinationScrollOffset == initialOffset) {
         m_momentumCalculator = nullptr;
         return false;
@@ -81,6 +84,8 @@ bool ScrollAnimationMomentum::retargetActiveAnimation(const FloatPoint& newDesti
 
 void ScrollAnimationMomentum::stop()
 {
+    LOG(ScrollAnimations, "ScrollAnimationMomentum::stop: offset %.2f,%.2f", m_currentOffset.x(), m_currentOffset.y());
+
     m_momentumCalculator = nullptr;
     ScrollAnimation::stop();
 }
@@ -97,6 +102,8 @@ void ScrollAnimationMomentum::serviceAnimation(MonotonicTime currentTime)
     m_currentOffset = m_momentumCalculator->scrollOffsetAfterElapsedTime(elapsedTime);
 
     m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
+
+    LOG(ScrollAnimations, "ScrollAnimationMomentum::serviceAnimation: offset %.2f,%.2f complete %d", m_currentOffset.x(), m_currentOffset.y(), animationComplete);
 
     if (animationComplete)
         didEnd();

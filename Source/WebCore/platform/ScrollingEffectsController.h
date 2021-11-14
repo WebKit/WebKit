@@ -138,7 +138,9 @@ public:
     bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset);
     bool retargetAnimatedScroll(FloatPoint newDestinationOffset);
     bool retargetAnimatedScrollBy(FloatSize);
+
     void stopAnimatedScroll();
+    void stopAnimatedNonRubberbandingScroll();
 
     void stopKeyboardScrolling();
 
@@ -221,6 +223,8 @@ private:
 
     void startOrStopAnimationCallbacks();
 
+    bool momentumScrollingAnimatorEnabled() const { return m_momentumScrollingAnimatorEnabled; }
+
     // ScrollAnimationClient
     void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& /* currentOffset */) final;
     void scrollAnimationWillStart(ScrollAnimation&) final;
@@ -248,6 +252,7 @@ private:
     bool m_isAnimatingScrollSnap { false };
     bool m_isAnimatingKeyboardScrolling { false };
     bool m_inScrollGesture { false };
+    bool m_momentumScrollingAnimatorEnabled { false };
 
 #if PLATFORM(MAC)
     WallTime m_lastMomentumScrollTimestamp;
@@ -255,11 +260,16 @@ private:
     FloatSize m_stretchScrollForce;
     FloatSize m_momentumVelocity;
 
+    FloatSize m_scrollingVelocityForMomentumAnimation; // Do we need both this, m_scrollingVelocityForScrollSnap and m_momentumVelocity?
+    FloatSize m_scrollingVelocityForScrollSnap;
+#if !LOG_DISABLED
+    FloatPoint m_eventDrivenScrollOffset;
+#endif
+
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };
     bool m_isRubberBanding { false };
 
-    FloatSize m_dragEndedScrollingVelocity;
     std::unique_ptr<ScrollingEffectsControllerTimer> m_statelessSnapTransitionTimer;
 
 #if HAVE(RUBBER_BANDING)

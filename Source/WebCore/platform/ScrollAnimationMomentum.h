@@ -42,6 +42,7 @@ public:
     void updateScrollExtents() final;
 
 private:
+    ScrollClamping clamping() const final { return ScrollClamping::Unclamped; }
     String debugDescription() const final;
 
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;

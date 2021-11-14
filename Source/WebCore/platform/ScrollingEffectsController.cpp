@@ -49,6 +49,7 @@ namespace WebCore {
 
 ScrollingEffectsController::ScrollingEffectsController(ScrollingEffectsControllerClient& client)
     : m_client(client)
+    , m_momentumScrollingAnimatorEnabled(client.momentumScrollingAnimatorEnabled())
 {
 }
 
@@ -131,6 +132,30 @@ bool ScrollingEffectsController::retargetAnimatedScrollBy(FloatSize offset)
     return false;
 }
 
+void ScrollingEffectsController::stopAnimatedNonRubberbandingScroll()
+{
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " stopAnimatedNonRubberbandingScroll");
+
+    if (!m_currentAnimation)
+        return;
+
+#if HAVE(RUBBER_BANDING)
+    if (is<ScrollAnimationRubberBand>(m_currentAnimation))
+        return;
+#endif
+
+    if (is<ScrollAnimationMomentum>(m_currentAnimation)) {
+        // If the animation is currently triggering rubberbanding, let it run. Ideally we'd check if the animation will cause rubberbanding at any time in the future.
+        auto currentOffset = m_currentAnimation->currentOffset();
+        auto extents = m_client.scrollExtents();
+        auto constrainedOffset = currentOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
+        if (currentOffset != constrainedOffset)
+            return;
+    }
+
+    m_currentAnimation->stop();
+}
+
 void ScrollingEffectsController::stopAnimatedScroll()
 {
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " stopAnimatedScroll");
@@ -151,7 +176,7 @@ bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const Fl
         m_currentAnimation = makeUnique<ScrollAnimationMomentum>(*this);
 
     bool started = downcast<ScrollAnimationMomentum>(*m_currentAnimation).startAnimatedScrollWithInitialVelocity(initialOffset, initialVelocity, initialDelta, destinationModifier);
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startMomentumScrollWithInitialVelocity() - animation " << *m_currentAnimation << " started " << started);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startMomentumScrollWithInitialVelocity() - animation " << *m_currentAnimation << " initialVelocity " << initialVelocity << " initialDelta " << initialDelta << " started " << started);
     return started;
 }
 

@@ -54,6 +54,7 @@ bool WheelEventDeltaFilter::shouldApplyFilteringForEvent(const PlatformWheelEven
 {
 #if ENABLE(KINETIC_SCROLLING)
     // Maybe it's a per-platform decision about which event phases get filtered. Ideally we'd filter momentum events too (but that breaks some diagonal scrolling cases).
+    // Also, ScrollingEffectsController should ask WheelEventDeltaFilter directly for the filtered velocity, rather than sending the velocity via PlatformWheelEvent.
     auto phase = event.phase();
     return phase == PlatformWheelEventPhase::Began || phase == PlatformWheelEventPhase::Changed;
 #else

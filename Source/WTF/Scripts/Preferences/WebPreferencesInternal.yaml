@@ -542,13 +542,10 @@ MomentumScrollingAnimatorEnabled:
   humanReadableDescription: "Drive momentum scrolling via an internal animator instead of using momentum events"
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(MAC)": true
       default: false
     WebKit:
-      "PLATFORM(MAC)": true
       default: false
     WebCore:
-      "PLATFORM(MAC)": true
       default: false
 
 MouseEventsSimulationEnabled:

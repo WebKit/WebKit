@@ -30,6 +30,7 @@
 #import "PlatformWheelEvent.h"
 #import "ScrollAnimationRubberBand.h"
 #import "ScrollExtents.h"
+#import "WheelEventDeltaFilter.h"
 #import "WheelEventTestMonitor.h"
 #import <pal/spi/mac/NSScrollViewSPI.h>
 #import <sys/sysctl.h>
@@ -110,15 +111,44 @@ static std::optional<BoxSide> affectedSideOnDominantAxis(FloatSize delta)
     return ScrollableArea::targetSideForScrollDelta(delta, dominantAxis);
 }
 
+#if !LOG_DISABLED
+static const char* phaseToString(PlatformWheelEventPhase phase)
+{
+    switch (phase) {
+    case PlatformWheelEventPhase::None: return "none";
+    case PlatformWheelEventPhase::Began: return "began";
+    case PlatformWheelEventPhase::Stationary: return "stationary";
+    case PlatformWheelEventPhase::Changed: return "changed";
+    case PlatformWheelEventPhase::Ended: return "ended";
+    case PlatformWheelEventPhase::Cancelled: return "cancelled";
+    case PlatformWheelEventPhase::MayBegin: return "mayBegin";
+    }
+    return "";
+}
+#endif
+
 bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+    if (WheelEventDeltaFilter::shouldApplyFilteringForEvent(wheelEvent))
+        m_scrollingVelocityForMomentumAnimation = -wheelEvent.scrollingVelocity(); // Note that event delta is reversed from scroll direction.
+
     if (processWheelEventForScrollSnap(wheelEvent))
         return true;
 
-    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled) {
+        if (momentumScrollingAnimatorEnabled()) {
+            LOG(ScrollAnimations, "Event (%s, %s): stopping animated scroll", phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()));
+            stopAnimatedScroll();
+        }
         return false;
+    }
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
+        if (momentumScrollingAnimatorEnabled()) {
+            LOG(ScrollAnimations, "Event (%s, %s): stopping animated scroll", phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()));
+            stopAnimatedScroll();
+        }
+
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
         auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
         if (horizontalSide && m_client.isPinnedOnSide(*horizontalSide) && !shouldRubberBandOnSide(*horizontalSide))
@@ -177,8 +207,24 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     delta = deltaAlignedToDominantAxis(delta);
 
     auto momentumPhase = wheelEvent.momentumPhase();
-    if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
+    if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed)) {
         m_momentumScrollInProgress = true;
+        if (momentumScrollingAnimatorEnabled()) {
+            startMomentumScrollWithInitialVelocity(m_client.scrollOffset(), m_scrollingVelocityForMomentumAnimation, -wheelEvent.delta(), [](const FloatPoint& targetOffset) { return targetOffset; });
+#if !LOG_DISABLED
+            m_eventDrivenScrollOffset = m_client.scrollOffset();
+#endif
+        }
+    }
+
+    if (momentumPhase == PlatformWheelEventPhase::Changed && momentumScrollingAnimatorEnabled()) {
+#if !LOG_DISABLED
+        m_eventDrivenScrollOffset -= wheelEvent.delta();
+#endif
+        LOG(ScrollAnimations, "Event (%s, %s): ignoring - would have scrolled to %.2f,%.2f", phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()),
+            m_eventDrivenScrollOffset.x(), m_eventDrivenScrollOffset.y());
+        return true;
+    }
 
     bool shouldStretch = false;
     auto timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
@@ -393,6 +439,11 @@ void ScrollingEffectsController::stopRubberBanding()
 
 bool ScrollingEffectsController::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
 {
+    if (is<ScrollAnimationMomentum>(m_currentAnimation) && m_currentAnimation->isActive()) {
+        LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimation() - momentum animation is present");
+        return false;
+    }
+
     if (m_currentAnimation)
         m_currentAnimation->stop();
 
@@ -439,9 +490,6 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
     bool willOverscroll = targetOffset != contrainedOffset;
 
     auto stretchAmount = m_client.stretchAmount();
-
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimationIfNecessary() - rubberBandAnimationRunning " << m_isAnimatingRubberBand << " stretchAmount " << stretchAmount << " targetOffset " << targetOffset);
-
     if (stretchAmount.isZero() && !willOverscroll)
         return;
 
@@ -459,6 +507,7 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
     if (!m_client.allowsVerticalScrolling())
         initialVelocity.setHeight(0);
 
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimationIfNecessary() - rubberBandAnimationRunning " << m_isAnimatingRubberBand << " stretchAmount " << stretchAmount << " contrainedOffset " << contrainedOffset << " initialVelocity " << initialVelocity);
     startRubberBandAnimation(contrainedOffset, initialVelocity, stretchAmount);
 }
 
@@ -635,18 +684,18 @@ bool ScrollingEffectsController::processWheelEventForScrollSnap(const PlatformWh
     case WheelEventStatus::UserScrolling:
         stopScrollSnapAnimation();
         m_scrollSnapState->transitionToUserInteractionState();
-        m_dragEndedScrollingVelocity = -wheelEvent.scrollingVelocity();
+        m_scrollingVelocityForScrollSnap = -wheelEvent.scrollingVelocity();
         break;
     case WheelEventStatus::UserScrollEnd:
         if (m_scrollSnapState->transitionToSnapAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset()))
             startScrollSnapAnimation();
         break;
     case WheelEventStatus::MomentumScrollBegin:
-        if (m_scrollSnapState->transitionToGlideAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset(), m_dragEndedScrollingVelocity, FloatSize(-wheelEvent.deltaX(), -wheelEvent.deltaY()))) {
+        if (m_scrollSnapState->transitionToGlideAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset(), m_scrollingVelocityForScrollSnap, -wheelEvent.delta())) {
             startScrollSnapAnimation();
             isMomentumScrolling = true;
         }
-        m_dragEndedScrollingVelocity = { };
+        m_scrollingVelocityForScrollSnap = { };
         break;
     case WheelEventStatus::MomentumScrolling:
     case WheelEventStatus::MomentumScrollEnd:

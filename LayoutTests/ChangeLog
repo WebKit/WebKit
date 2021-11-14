@@ -1,3 +1,17 @@
+2021-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Run a ScrollAnimationMomentum for the momentum phase of a scroll
+        https://bugs.webkit.org/show_bug.cgi?id=232897
+
+        Reviewed by Tim Horton.
+
+        Some tests that enable the momentum animator.
+
+        * fast/scrolling/mac/momentum-animator-expected.txt: Added.
+        * fast/scrolling/mac/momentum-animator-in-overflow-expected.txt: Added.
+        * fast/scrolling/mac/momentum-animator-in-overflow.html: Added.
+        * fast/scrolling/mac/momentum-animator.html: Added.
+
 2021-11-13  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION (r285618): [mac-wk1] ASSERTION FAILED: cgContext == [currentContext CGContext]

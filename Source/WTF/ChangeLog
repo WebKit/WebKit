@@ -1,3 +1,15 @@
+2021-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Run a ScrollAnimationMomentum for the momentum phase of a scroll
+        https://bugs.webkit.org/show_bug.cgi?id=232897
+
+        Reviewed by Tim Horton.
+
+        Set the MomentumScrollingAnimatorEnabled internal setting to off by default
+        while we bring up tests.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-11-12  Chris Dumez  <cdumez@apple.com>
 
         Disable MathML when in Captive Portal Mode

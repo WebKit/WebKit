@@ -62,7 +62,7 @@ public:
 
 private:
     std::optional<ScrollEventAxis> dominantAxis() const;
-    
+
     void reset();
     void updateWithDelta(FloatSize);
 
