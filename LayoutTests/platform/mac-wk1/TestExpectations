@@ -1516,7 +1516,5 @@ webkit.org/b/232446 [ Catalina Debug ] media/track/track-element-dom-change-cras
 
 webkit.org/b/232585 [ Catalina Debug ] media/track/track-element-load-event.html [ Pass Crash ]
 
-webkit.org/b/233008 [ Debug ] http/tests/css/filters-on-iframes-transform.html [ Skip ]
-
 # DumpRenderTree doesn't invoke inspector instrumentation when repainting.
 webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]

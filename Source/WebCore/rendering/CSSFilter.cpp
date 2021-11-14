@@ -242,8 +242,6 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
     m_outsets = { };
 
     RefPtr<FilterEffect> previousEffect = SourceGraphic::create(*this);
-    m_functions.append({ *previousEffect });
-
     RefPtr<SVGFilter> filter;
     
     for (auto& operation : operations.operations()) {
@@ -303,6 +301,11 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
         }
 
+        if ((filter || effect) && m_functions.isEmpty()) {
+            ASSERT(previousEffect->filterType() == FilterEffect::Type::SourceGraphic);
+            m_functions.append({ *previousEffect });
+        }
+        
         if (filter) {
             effect = filter->lastEffect();
             setupLastEffectProperties(*effect, consumer);
