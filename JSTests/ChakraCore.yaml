@@ -696,12 +696,7 @@
       end
 - path: ChakraCore/test/GlobalFunctions/ParseInt1.js
   # Currently fails on the Loongson 3A4000 (in 32-bits mode).
-  cmd: |
-    if $architecture == "mips"
-      skip
-    else
-      runChakra :baseline, "NoException", "ParseInt1.baseline", []
-    end
+  cmd: runChakra :baseline, "NoException", "ParseInt1.baseline", []
 - path: ChakraCore/test/GlobalFunctions/toString.js
   cmd: runChakra :baseline, "NoException", "toString.baseline", []
 - path: ChakraCore/test/InlineCaches/t0.js

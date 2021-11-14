@@ -1,3 +1,31 @@
+2021-11-14  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Prevent fused multiply add during ParseInt
+        https://bugs.webkit.org/show_bug.cgi?id=232951
+
+        Reviewed by Yusuke Suzuki.
+
+        When parsing the string in parseInt, gcc can wrongfully generate
+        a fused multiply-add instruction, causing the conversion to be wrong
+        for some high values. An add followed by a multiply gives the correct
+        result and it is the code generated most of the times.
+
+        This patch adds a volatile qualifier to the number variable, so the
+        compiler doesn't try to optimize it, and enables a failing test on
+        mips.
+
+        Alternative solutions that I tried but gcc seems to ignore: #pragma
+        STDC FP_CONTRACT OFF, compiling with -ffp-contract=off, and setting function
+        attributes __attribute__((optimize("fp-contract=off"))) and
+        __attribute__((optimize("-ffp-contract=off"))), so volative seems to be
+        a good compromise.
+
+        The issue was found when cross compiling to mips with gcc 8.4.0 and
+        options -ffp-contract=off -mmadd4.
+
+        * runtime/ParseInt.h:
+        (JSC::parseInt):
+
 2021-11-12  Darin Adler  <darin@apple.com>
 
         Make sort-Xcode-project-file idempotent
