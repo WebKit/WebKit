@@ -75,6 +75,7 @@ PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEv
 #endif // ENABLE(KINETIC_SCROLLING)
 
 #if PLATFORM(COCOA)
+    platformWheelEvent.m_ioHIDEventTimestamp = platformWheelEvent.m_timestamp;
     platformWheelEvent.m_unacceleratedScrollingDeltaY = deltaY;
 #endif // PLATFORM(COCOA)
 

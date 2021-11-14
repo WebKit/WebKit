@@ -53,7 +53,7 @@ public:
 
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, OptionSet<Modifier>, WallTime timestamp);
 #if PLATFORM(COCOA)
-    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, OptionSet<Modifier>, WallTime timestamp);
+    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, OptionSet<Modifier>, WallTime timestamp, WallTime ioHIDEventTimestamp);
 #elif PLATFORM(GTK) || USE(LIBWPE)
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Phase, Phase momentumPhase, Granularity, bool hasPreciseScrollingDeltas, OptionSet<Modifier>, WallTime timestamp);
 #endif
@@ -70,6 +70,7 @@ public:
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
 #endif
 #if PLATFORM(COCOA)
+    WallTime ioHIDEventTimestamp() const { return m_ioHIDEventTimestamp; }
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
@@ -87,11 +88,13 @@ private:
     uint32_t m_granularity { ScrollByPageWheelEvent };
     uint32_t m_phase { Phase::PhaseNone };
     uint32_t m_momentumPhase { Phase::PhaseNone };
+
     bool m_directionInvertedFromDevice { false };
 #if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
     bool m_hasPreciseScrollingDeltas { false };
 #endif
 #if PLATFORM(COCOA)
+    WallTime m_ioHIDEventTimestamp;
     uint32_t m_scrollCount { 0 };
     WebCore::FloatSize m_unacceleratedScrollingDelta;
 #endif
