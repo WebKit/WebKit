@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class VertexStepMode : uint8_t {
     Vertex,
-    Instance
+    Instance,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

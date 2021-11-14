@@ -35,5 +35,5 @@ struct BlendState {
     BlendComponent alpha;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

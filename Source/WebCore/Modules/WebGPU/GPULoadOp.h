@@ -31,7 +31,7 @@
 namespace WebCore {
 
 enum class GPULoadOp : uint8_t {
-    Load
+    Load,
 };
 
 inline PAL::WebGPU::LoadOp convertToBacking(GPULoadOp loadOp)

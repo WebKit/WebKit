@@ -38,7 +38,7 @@ enum class GPUCompareFunction : uint8_t {
     Greater,
     NotEqual,
     GreaterEqual,
-    Always
+    Always,
 };
 
 inline PAL::WebGPU::CompareFunction convertToBacking(GPUCompareFunction compareFunction)

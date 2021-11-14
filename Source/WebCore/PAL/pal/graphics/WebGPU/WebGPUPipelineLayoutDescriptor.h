@@ -37,5 +37,5 @@ struct PipelineLayoutDescriptor : public ObjectDescriptorBase {
     Vector<std::reference_wrapper<BindGroupLayout>> bindGroupLayouts;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

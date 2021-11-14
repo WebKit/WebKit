@@ -42,5 +42,5 @@ public:
     static constexpr FlagsConstant RENDER_ATTACHMENT = 0x10;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

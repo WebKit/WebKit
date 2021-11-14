@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class CompilationMessageType : uint8_t {
     Error,
     Warning,
-    Info
+    Info,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

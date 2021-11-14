@@ -31,8 +31,8 @@ namespace PAL {
 namespace WebGPU {
 
 enum class StorageTextureAccess : uint8_t {
-    WriteOnly
+    WriteOnly,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

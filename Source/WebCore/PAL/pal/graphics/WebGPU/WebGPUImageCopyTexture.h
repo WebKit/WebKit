@@ -42,5 +42,5 @@ struct ImageCopyTexture {
     TextureAspect aspect;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -35,5 +35,5 @@ struct ComputePassDescriptor : public ObjectDescriptorBase {
     ComputePassTimestampWrites timestampWrites;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

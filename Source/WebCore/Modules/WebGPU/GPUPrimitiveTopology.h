@@ -35,7 +35,7 @@ enum class GPUPrimitiveTopology : uint8_t {
     LineList,
     LineStrip,
     TriangleList,
-    TriangleStrip
+    TriangleStrip,
 };
 
 inline PAL::WebGPU::PrimitiveTopology convertToBacking(GPUPrimitiveTopology primitiveTopology)

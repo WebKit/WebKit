@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class PowerPreference : uint8_t {
     LowPower,
-    HighPerformance
+    HighPerformance,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

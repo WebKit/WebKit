@@ -35,8 +35,8 @@ enum class PrimitiveTopology : uint8_t {
     LineList,
     LineStrip,
     TriangleList,
-    TriangleStrip
+    TriangleStrip,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

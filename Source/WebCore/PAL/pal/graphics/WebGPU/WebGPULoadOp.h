@@ -31,8 +31,8 @@ namespace PAL {
 namespace WebGPU {
 
 enum class LoadOp : uint8_t {
-    Load
+    Load,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -33,5 +33,5 @@ namespace WebGPU {
 struct RenderBundleDescriptor : public ObjectDescriptorBase {
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

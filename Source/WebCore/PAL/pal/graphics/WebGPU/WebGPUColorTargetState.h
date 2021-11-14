@@ -40,5 +40,5 @@ struct ColorTargetState {
     ColorWriteFlags writeMask;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

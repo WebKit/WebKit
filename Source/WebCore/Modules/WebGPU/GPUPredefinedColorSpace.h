@@ -31,7 +31,7 @@
 namespace WebCore {
 
 enum class GPUPredefinedColorSpace : uint8_t {
-    SRGB
+    SRGB,
 };
 
 inline PAL::WebGPU::PredefinedColorSpace convertToBacking(GPUPredefinedColorSpace predefinedColorSpace)

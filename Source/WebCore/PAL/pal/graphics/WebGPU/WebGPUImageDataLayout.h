@@ -37,5 +37,5 @@ struct ImageDataLayout {
     std::optional<Size32> rowsPerImage;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

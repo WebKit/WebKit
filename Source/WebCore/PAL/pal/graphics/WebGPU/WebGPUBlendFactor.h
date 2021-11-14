@@ -43,8 +43,8 @@ enum class BlendFactor : uint8_t {
     OneMinusDstAlpha,
     SrcAlphaSaturated,
     Constant,
-    OneMinusConstant
+    OneMinusConstant,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

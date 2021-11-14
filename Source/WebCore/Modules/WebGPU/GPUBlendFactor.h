@@ -43,7 +43,7 @@ enum class GPUBlendFactor : uint8_t {
     OneMinusDstAlpha,
     SrcAlphaSaturated,
     Constant,
-    OneMinusConstant
+    OneMinusConstant,
 };
 
 inline PAL::WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)

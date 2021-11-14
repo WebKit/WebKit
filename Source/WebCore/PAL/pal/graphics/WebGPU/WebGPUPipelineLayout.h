@@ -48,10 +48,15 @@ protected:
     PipelineLayout() = default;
 
 private:
+    PipelineLayout(const PipelineLayout&) = delete;
+    PipelineLayout(PipelineLayout&&) = delete;
+    PipelineLayout& operator=(const PipelineLayout&) = delete;
+    PipelineLayout& operator=(PipelineLayout&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

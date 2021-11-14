@@ -69,25 +69,30 @@ public:
         std::optional<Size64>) = 0;
 
     virtual void writeTexture(
-        ImageCopyTexture destination,
+        const ImageCopyTexture& destination,
         const void* source,
         size_t byteLength,
-        ImageDataLayout,
-        Extent3D size) = 0;
+        const ImageDataLayout&,
+        const Extent3D& size) = 0;
 
     virtual void copyExternalImageToTexture(
-        ImageCopyExternalImage source,
-        ImageCopyTextureTagged destination,
-        Extent3D copySize) = 0;
+        const ImageCopyExternalImage& source,
+        const ImageCopyTextureTagged& destination,
+        const Extent3D& copySize) = 0;
 
 protected:
     Queue() = default;
 
 private:
+    Queue(const Queue&) = delete;
+    Queue(Queue&&) = delete;
+    Queue& operator=(const Queue&) = delete;
+    Queue& operator=(Queue&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

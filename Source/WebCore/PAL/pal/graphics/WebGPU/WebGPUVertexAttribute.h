@@ -38,5 +38,5 @@ struct VertexAttribute {
     Index32 shaderLocation;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

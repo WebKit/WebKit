@@ -56,10 +56,15 @@ protected:
     Texture() = default;
 
 private:
+    Texture(const Texture&) = delete;
+    Texture(Texture&&) = delete;
+    Texture& operator=(const Texture&) = delete;
+    Texture& operator=(Texture&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

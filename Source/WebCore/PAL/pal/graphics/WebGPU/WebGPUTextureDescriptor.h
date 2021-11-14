@@ -44,5 +44,5 @@ struct TextureDescriptor : public ObjectDescriptorBase {
     TextureUsageFlags usage;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

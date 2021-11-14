@@ -37,5 +37,5 @@ struct ImageCopyExternalImage {
     std::optional<Origin2D> origin;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

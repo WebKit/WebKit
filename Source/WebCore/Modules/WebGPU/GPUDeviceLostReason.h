@@ -31,7 +31,7 @@
 namespace WebCore {
 
 enum class GPUDeviceLostReason : uint8_t {
-    Destroyed
+    Destroyed,
 };
 
 inline PAL::WebGPU::DeviceLostReason convertToBacking(GPUDeviceLostReason deviceLostReason)

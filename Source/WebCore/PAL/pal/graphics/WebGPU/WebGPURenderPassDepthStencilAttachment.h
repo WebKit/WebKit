@@ -47,5 +47,5 @@ struct RenderPassDepthStencilAttachment {
     bool stencilReadOnly;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

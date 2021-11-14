@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class ComputePassTimestampLocation : uint8_t {
     Beginning,
-    End
+    End,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

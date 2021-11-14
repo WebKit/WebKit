@@ -53,8 +53,13 @@ protected:
     }
 
 private:
+    SupportedFeatures(const SupportedFeatures&) = delete;
+    SupportedFeatures(SupportedFeatures&&) = delete;
+    SupportedFeatures& operator=(const SupportedFeatures&) = delete;
+    SupportedFeatures& operator=(SupportedFeatures&&) = delete;
+
     Vector<String> m_features;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

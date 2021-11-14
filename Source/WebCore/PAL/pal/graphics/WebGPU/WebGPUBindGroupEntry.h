@@ -43,5 +43,5 @@ struct BindGroupEntry {
     BindingResource resource;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

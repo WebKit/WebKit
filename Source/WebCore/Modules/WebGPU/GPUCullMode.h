@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUCullMode : uint8_t {
     None,
     Front,
-    Back
+    Back,
 };
 
 inline PAL::WebGPU::CullMode convertToBacking(GPUCullMode cullMode)

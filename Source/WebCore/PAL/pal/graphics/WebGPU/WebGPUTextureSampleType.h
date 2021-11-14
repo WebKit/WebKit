@@ -35,8 +35,8 @@ enum class TextureSampleType : uint8_t {
     UnfilterableFloat,
     Depth,
     Sint,
-    Uint
+    Uint,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

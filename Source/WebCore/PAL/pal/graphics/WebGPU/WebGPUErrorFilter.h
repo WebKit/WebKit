@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class ErrorFilter : uint8_t {
     OutOfMemory,
-    Validation
+    Validation,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

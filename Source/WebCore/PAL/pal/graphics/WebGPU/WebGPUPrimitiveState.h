@@ -45,5 +45,5 @@ struct PrimitiveState {
     bool unclippedDepth;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

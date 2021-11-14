@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class CullMode : uint8_t {
     None,
     Front,
-    Back
+    Back,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

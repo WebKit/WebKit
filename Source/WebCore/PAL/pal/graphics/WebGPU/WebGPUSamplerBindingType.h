@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class SamplerBindingType : uint8_t {
     Filtering,
     NonFiltering,
-    Comparison
+    Comparison,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

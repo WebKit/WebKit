@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class CanvasCompositingAlphaMode : uint8_t {
     Opaque,
-    Premultiplied
+    Premultiplied,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

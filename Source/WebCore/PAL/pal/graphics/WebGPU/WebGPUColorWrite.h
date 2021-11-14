@@ -44,5 +44,5 @@ public:
     static constexpr FlagsConstant ALL   = 0xF;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

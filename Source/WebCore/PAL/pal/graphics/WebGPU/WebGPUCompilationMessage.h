@@ -60,6 +60,11 @@ protected:
     }
 
 private:
+    CompilationMessage(const CompilationMessage&) = delete;
+    CompilationMessage(CompilationMessage&&) = delete;
+    CompilationMessage& operator=(const CompilationMessage&) = delete;
+    CompilationMessage& operator=(CompilationMessage&&) = delete;
+
     String m_message;
     CompilationMessageType m_type;
     uint64_t m_lineNum;
@@ -68,5 +73,5 @@ private:
     uint64_t m_length;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

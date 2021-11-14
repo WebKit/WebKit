@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUPowerPreference : uint8_t {
     LowPower,
-    HighPerformance
+    HighPerformance,
 };
 
 inline PAL::WebGPU::PowerPreference convertToBacking(GPUPowerPreference powerPreference)

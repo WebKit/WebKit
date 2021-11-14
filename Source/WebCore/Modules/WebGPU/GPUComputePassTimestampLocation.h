@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUComputePassTimestampLocation : uint8_t {
     Beginning,
-    End
+    End,
 };
 
 inline PAL::WebGPU::ComputePassTimestampLocation convertToBacking(GPUComputePassTimestampLocation computePassTimestampLocation)

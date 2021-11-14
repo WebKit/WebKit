@@ -69,19 +69,19 @@ public:
         Size64) = 0;
 
     virtual void copyBufferToTexture(
-        ImageCopyBuffer source,
-        ImageCopyTexture destination,
-        Extent3D copySize) = 0;
+        const ImageCopyBuffer& source,
+        const ImageCopyTexture& destination,
+        const Extent3D& copySize) = 0;
 
     virtual void copyTextureToBuffer(
-        ImageCopyTexture source,
-        ImageCopyBuffer destination,
-        Extent3D copySize) = 0;
+        const ImageCopyTexture& source,
+        const ImageCopyBuffer& destination,
+        const Extent3D& copySize) = 0;
 
     virtual void copyTextureToTexture(
-        ImageCopyTexture source,
-        ImageCopyTexture destination,
-        Extent3D copySize) = 0;
+        const ImageCopyTexture& source,
+        const ImageCopyTexture& destination,
+        const Extent3D& copySize) = 0;
 
     virtual void fillBuffer(
         const Buffer& destination,
@@ -107,10 +107,15 @@ protected:
     CommandEncoder() = default;
 
 private:
+    CommandEncoder(const CommandEncoder&) = delete;
+    CommandEncoder(CommandEncoder&&) = delete;
+    CommandEncoder& operator=(const CommandEncoder&) = delete;
+    CommandEncoder& operator=(CommandEncoder&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

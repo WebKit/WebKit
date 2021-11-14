@@ -39,5 +39,5 @@ struct VertexBufferLayout {
     Vector<VertexAttribute> attributes;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

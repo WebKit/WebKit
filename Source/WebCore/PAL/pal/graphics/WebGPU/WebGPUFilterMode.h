@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class FilterMode : uint8_t {
     Nearest,
-    Linear
+    Linear,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

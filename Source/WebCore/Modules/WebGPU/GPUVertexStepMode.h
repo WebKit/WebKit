@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUVertexStepMode : uint8_t {
     Vertex,
-    Instance
+    Instance,
 };
 
 inline PAL::WebGPU::VertexStepMode convertToBacking(GPUVertexStepMode vertexStepMode)

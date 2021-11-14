@@ -60,8 +60,8 @@ enum class VertexFormat : uint8_t {
     Sint32,
     Sint32x2,
     Sint32x3,
-    Sint32x4
+    Sint32x4,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

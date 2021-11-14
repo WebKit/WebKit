@@ -37,5 +37,5 @@ struct BlendComponent {
     BlendFactor dstFactor;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

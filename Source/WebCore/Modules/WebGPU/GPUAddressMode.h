@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUAddressMode : uint8_t {
     ClampToEdge,
     Repeat,
-    MirrorRepeat
+    MirrorRepeat,
 };
 
 inline PAL::WebGPU::AddressMode convertToBacking(GPUAddressMode addressMode)

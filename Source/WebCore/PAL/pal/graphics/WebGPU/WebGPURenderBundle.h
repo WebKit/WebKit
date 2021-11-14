@@ -48,10 +48,15 @@ protected:
     RenderBundle() = default;
 
 private:
+    RenderBundle(const RenderBundle&) = delete;
+    RenderBundle(RenderBundle&&) = delete;
+    RenderBundle& operator=(const RenderBundle&) = delete;
+    RenderBundle& operator=(RenderBundle&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

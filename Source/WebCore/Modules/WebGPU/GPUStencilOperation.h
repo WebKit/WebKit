@@ -38,7 +38,7 @@ enum class GPUStencilOperation : uint8_t {
     IncrementClamp,
     DecrementClamp,
     IncrementWrap,
-    DecrementWrap
+    DecrementWrap,
 };
 
 inline PAL::WebGPU::StencilOperation convertToBacking(GPUStencilOperation stencilOperation)

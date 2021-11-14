@@ -1,3 +1,139 @@
+2021-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Various mechanical cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=233104
+
+        Reviewed by Dean Jackson.
+
+        - Explicitly delete some constructors and operators that we don't want
+        - Tweak const methods
+        - Add "// namespace WebCore" around closing namespace braces
+        - Trailing commas on enums
+
+        * pal/graphics/WebGPU/WebGPU.h:
+        * pal/graphics/WebGPU/WebGPUAdapter.h:
+        (PAL::WebGPU::Adapter::features const):
+        (PAL::WebGPU::Adapter::limits const):
+        * pal/graphics/WebGPU/WebGPUAddressMode.h:
+        * pal/graphics/WebGPU/WebGPUBindGroup.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayout.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h:
+        * pal/graphics/WebGPU/WebGPUBlendComponent.h:
+        * pal/graphics/WebGPU/WebGPUBlendFactor.h:
+        * pal/graphics/WebGPU/WebGPUBlendOperation.h:
+        * pal/graphics/WebGPU/WebGPUBlendState.h:
+        * pal/graphics/WebGPU/WebGPUBuffer.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingType.h:
+        * pal/graphics/WebGPU/WebGPUBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h:
+        * pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUColorTargetState.h:
+        * pal/graphics/WebGPU/WebGPUColorWrite.h:
+        * pal/graphics/WebGPU/WebGPUCommandBuffer.h:
+        * pal/graphics/WebGPU/WebGPUCommandBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCompareFunction.h:
+        * pal/graphics/WebGPU/WebGPUCompilationInfo.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessageType.h:
+        * pal/graphics/WebGPU/WebGPUComputePassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPUComputePipeline.h:
+        * pal/graphics/WebGPU/WebGPUComputePipelineDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCullMode.h:
+        * pal/graphics/WebGPU/WebGPUDepthStencilState.h:
+        * pal/graphics/WebGPU/WebGPUDevice.h:
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostInfo.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostReason.h:
+        * pal/graphics/WebGPU/WebGPUErrorFilter.h:
+        * pal/graphics/WebGPU/WebGPUExternalTexture.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUFeatureName.h:
+        * pal/graphics/WebGPU/WebGPUFilterMode.h:
+        * pal/graphics/WebGPU/WebGPUFragmentState.h:
+        * pal/graphics/WebGPU/WebGPUFrontFace.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h:
+        * pal/graphics/WebGPU/WebGPUImageDataLayout.h:
+        * pal/graphics/WebGPU/WebGPUIndexFormat.h:
+        * pal/graphics/WebGPU/WebGPULoadOp.h:
+        * pal/graphics/WebGPU/WebGPUMapMode.h:
+        * pal/graphics/WebGPU/WebGPUMultisampleState.h:
+        * pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUOutOfMemoryError.h:
+        (PAL::WebGPU::OutOfMemoryError::create):
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayout.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h:
+        * pal/graphics/WebGPU/WebGPUPowerPreference.h:
+        * pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveState.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveTopology.h:
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h:
+        * pal/graphics/WebGPU/WebGPUQuerySet.h:
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUQueryType.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderBundle.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPURenderPipeline.h:
+        * pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURequestAdapterOptions.h:
+        * pal/graphics/WebGPU/WebGPUSampler.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingType.h:
+        * pal/graphics/WebGPU/WebGPUSamplerDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUShaderModule.h:
+        * pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUShaderStage.h:
+        * pal/graphics/WebGPU/WebGPUStencilFaceState.h:
+        * pal/graphics/WebGPU/WebGPUStencilOperation.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureAccess.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUStoreOp.h:
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h:
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h:
+        * pal/graphics/WebGPU/WebGPUTexture.h:
+        * pal/graphics/WebGPU/WebGPUTextureAspect.h:
+        * pal/graphics/WebGPU/WebGPUTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureDimension.h:
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h:
+        * pal/graphics/WebGPU/WebGPUTextureSampleType.h:
+        * pal/graphics/WebGPU/WebGPUTextureUsage.h:
+        * pal/graphics/WebGPU/WebGPUTextureView.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDimension.h:
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEvent.h:
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEventInit.h:
+        * pal/graphics/WebGPU/WebGPUValidationError.h:
+        * pal/graphics/WebGPU/WebGPUVertexAttribute.h:
+        * pal/graphics/WebGPU/WebGPUVertexBufferLayout.h:
+        * pal/graphics/WebGPU/WebGPUVertexFormat.h:
+        * pal/graphics/WebGPU/WebGPUVertexState.h:
+        * pal/graphics/WebGPU/WebGPUVertexStepMode.h:
+
 2021-11-14  Simon Fraser  <simon.fraser@apple.com>
 
         Attach IOHIDEvent timestamps to wheel events

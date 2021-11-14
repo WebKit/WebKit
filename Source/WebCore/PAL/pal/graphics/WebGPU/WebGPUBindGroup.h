@@ -48,10 +48,15 @@ protected:
     BindGroup() = default;
 
 private:
+    BindGroup(const BindGroup&) = delete;
+    BindGroup(BindGroup&&) = delete;
+    BindGroup& operator=(const BindGroup&) = delete;
+    BindGroup& operator=(BindGroup&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

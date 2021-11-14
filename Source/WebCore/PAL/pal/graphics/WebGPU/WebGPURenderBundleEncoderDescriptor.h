@@ -35,5 +35,5 @@ struct RenderBundleEncoderDescriptor : public RenderPassLayout {
     bool stencilReadOnly;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

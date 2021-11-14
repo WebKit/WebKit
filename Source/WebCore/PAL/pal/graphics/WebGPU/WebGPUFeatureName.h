@@ -31,15 +31,16 @@ namespace PAL {
 namespace WebGPU {
 
 enum class FeatureName : uint8_t {
-    DepthClamping,
+    DepthClipControl,
     Depth24unormStencil8,
     Depth32floatStencil8,
     PipelineStatisticsQuery,
     TextureCompressionBc,
     TextureCompressionEtc2,
     TextureCompressionAstc,
-    TimestampQuery
+    TimestampQuery,
+    IndirectFirstInstance,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

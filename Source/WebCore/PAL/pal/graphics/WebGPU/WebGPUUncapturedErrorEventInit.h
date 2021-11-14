@@ -34,5 +34,5 @@ struct UncapturedErrorEventInit {
     Error error;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -44,5 +44,5 @@ struct RenderPassColorAttachment {
     StoreOp storeOp;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

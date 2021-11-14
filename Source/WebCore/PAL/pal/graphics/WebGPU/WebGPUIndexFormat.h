@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class IndexFormat : uint8_t {
     Uint16,
-    Uint32
+    Uint32,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

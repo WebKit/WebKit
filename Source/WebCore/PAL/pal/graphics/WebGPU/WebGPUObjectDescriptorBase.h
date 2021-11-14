@@ -34,5 +34,5 @@ struct ObjectDescriptorBase {
     String label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

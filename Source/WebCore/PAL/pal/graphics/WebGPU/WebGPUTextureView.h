@@ -48,10 +48,15 @@ protected:
     TextureView() = default;
 
 private:
+    TextureView(const TextureView&) = delete;
+    TextureView(TextureView&&) = delete;
+    TextureView& operator=(const TextureView&) = delete;
+    TextureView& operator=(TextureView&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

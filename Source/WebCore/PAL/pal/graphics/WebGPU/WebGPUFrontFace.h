@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class FrontFace : uint8_t {
     CCW,
-    CW
+    CW,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

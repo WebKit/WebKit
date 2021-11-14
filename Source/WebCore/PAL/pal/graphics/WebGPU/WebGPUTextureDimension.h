@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class TextureDimension : uint8_t {
     _1d,
     _2d,
-    _3d
+    _3d,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

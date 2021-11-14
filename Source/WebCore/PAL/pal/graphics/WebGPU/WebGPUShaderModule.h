@@ -54,10 +54,15 @@ protected:
     ShaderModule() = default;
 
 private:
+    ShaderModule(const ShaderModule&) = delete;
+    ShaderModule(ShaderModule&&) = delete;
+    ShaderModule& operator=(const ShaderModule&) = delete;
+    ShaderModule& operator=(ShaderModule&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

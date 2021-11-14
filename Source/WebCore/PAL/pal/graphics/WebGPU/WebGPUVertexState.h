@@ -37,5 +37,5 @@ struct VertexState : public ProgrammableStage {
     Vector<std::optional<VertexBufferLayout>> buffers;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

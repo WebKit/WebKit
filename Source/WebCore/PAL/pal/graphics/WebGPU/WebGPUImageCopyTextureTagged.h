@@ -36,5 +36,5 @@ struct ImageCopyTextureTagged : public ImageCopyTexture {
     bool premultipliedAlpha;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

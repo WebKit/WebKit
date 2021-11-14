@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class TextureAspect : uint8_t {
     All,
     StencilOnly,
-    DepthOnly
+    DepthOnly,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

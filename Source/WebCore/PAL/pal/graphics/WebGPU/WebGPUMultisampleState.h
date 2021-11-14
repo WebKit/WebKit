@@ -36,5 +36,5 @@ struct MultisampleState {
     bool alphaToCoverageEnabled;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

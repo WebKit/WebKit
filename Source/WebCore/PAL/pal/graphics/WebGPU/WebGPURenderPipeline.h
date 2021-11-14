@@ -53,10 +53,15 @@ protected:
     RenderPipeline() = default;
 
 private:
+    RenderPipeline(const RenderPipeline&) = delete;
+    RenderPipeline(RenderPipeline&&) = delete;
+    RenderPipeline& operator=(const RenderPipeline&) = delete;
+    RenderPipeline& operator=(RenderPipeline&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

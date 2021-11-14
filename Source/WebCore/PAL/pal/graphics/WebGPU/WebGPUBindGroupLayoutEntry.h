@@ -48,5 +48,5 @@ struct BindGroupLayoutEntry {
     std::optional<ExternalTextureBindingLayout> externalTexture;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

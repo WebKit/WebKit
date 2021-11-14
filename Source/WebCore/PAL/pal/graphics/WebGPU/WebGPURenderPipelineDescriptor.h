@@ -44,5 +44,5 @@ struct RenderPipelineDescriptor : public PipelineDescriptorBase {
     std::optional<FragmentState> fragment;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

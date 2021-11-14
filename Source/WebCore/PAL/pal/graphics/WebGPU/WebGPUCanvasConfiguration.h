@@ -49,5 +49,5 @@ struct CanvasConfiguration {
     std::optional<Extent3D> size;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

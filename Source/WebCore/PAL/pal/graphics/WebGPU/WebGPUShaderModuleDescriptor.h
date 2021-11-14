@@ -36,5 +36,5 @@ struct ShaderModuleDescriptor : public ObjectDescriptorBase {
     // JSC::Strong<JSC::JSObject> sourceMap;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

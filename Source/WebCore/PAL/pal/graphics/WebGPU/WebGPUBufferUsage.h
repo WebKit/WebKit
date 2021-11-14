@@ -48,5 +48,5 @@ public:
     static constexpr FlagsConstant QUERY_RESOLVE = 0x0200;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

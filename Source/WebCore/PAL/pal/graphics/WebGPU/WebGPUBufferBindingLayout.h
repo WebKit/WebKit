@@ -37,5 +37,5 @@ struct BufferBindingLayout {
     Size64 minBindingSize;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

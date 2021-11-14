@@ -31,21 +31,22 @@
 namespace WebCore {
 
 enum class GPUFeatureName : uint8_t {
-    DepthClamping,
+    DepthClipControl,
     Depth24unormStencil8,
     Depth32floatStencil8,
     PipelineStatisticsQuery,
     TextureCompressionBc,
     TextureCompressionEtc2,
     TextureCompressionAstc,
-    TimestampQuery
+    TimestampQuery,
+    IndirectFirstInstance,
 };
 
 inline PAL::WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
 {
     switch (featureName) {
-    case GPUFeatureName::DepthClamping:
-        return PAL::WebGPU::FeatureName::DepthClamping;
+    case GPUFeatureName::DepthClipControl:
+        return PAL::WebGPU::FeatureName::DepthClipControl;
     case GPUFeatureName::Depth24unormStencil8:
         return PAL::WebGPU::FeatureName::Depth24unormStencil8;
     case GPUFeatureName::Depth32floatStencil8:
@@ -60,6 +61,8 @@ inline PAL::WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return PAL::WebGPU::FeatureName::TextureCompressionAstc;
     case GPUFeatureName::TimestampQuery:
         return PAL::WebGPU::FeatureName::TimestampQuery;
+    case GPUFeatureName::IndirectFirstInstance:
+        return PAL::WebGPU::FeatureName::IndirectFirstInstance;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

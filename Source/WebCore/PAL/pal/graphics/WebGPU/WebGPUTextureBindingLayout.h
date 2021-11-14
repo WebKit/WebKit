@@ -37,5 +37,5 @@ struct TextureBindingLayout {
     bool multisampled;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

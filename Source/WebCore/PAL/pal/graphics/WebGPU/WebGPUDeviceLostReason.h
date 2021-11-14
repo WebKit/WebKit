@@ -31,8 +31,8 @@ namespace PAL {
 namespace WebGPU {
 
 enum class DeviceLostReason : uint8_t {
-    Destroyed
+    Destroyed,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

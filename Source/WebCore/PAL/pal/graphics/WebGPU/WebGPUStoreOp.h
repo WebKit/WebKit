@@ -32,8 +32,8 @@ namespace WebGPU {
 
 enum class StoreOp : uint8_t {
     Store,
-    Discard
+    Discard,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

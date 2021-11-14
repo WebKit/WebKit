@@ -31,7 +31,7 @@
 namespace WebCore {
 
 enum class GPUStorageTextureAccess : uint8_t {
-    WriteOnly
+    WriteOnly,
 };
 
 inline PAL::WebGPU::StorageTextureAccess convertToBacking(GPUStorageTextureAccess storageTextureAccess)

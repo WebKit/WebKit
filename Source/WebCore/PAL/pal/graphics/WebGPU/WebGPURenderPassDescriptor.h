@@ -43,5 +43,5 @@ struct RenderPassDescriptor : public ObjectDescriptorBase {
     RenderPassTimestampWrites timestampWrites;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

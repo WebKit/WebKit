@@ -40,5 +40,5 @@ public:
     static constexpr FlagsConstant WRITE = 0x0002;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

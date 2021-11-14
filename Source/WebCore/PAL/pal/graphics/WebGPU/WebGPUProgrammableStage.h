@@ -41,5 +41,5 @@ struct ProgrammableStage {
     Vector<KeyValuePair<String, PipelineConstantValue>> constants;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

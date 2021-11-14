@@ -54,9 +54,14 @@ protected:
     }
 
 private:
+    DeviceLostInfo(const DeviceLostInfo&) = delete;
+    DeviceLostInfo(DeviceLostInfo&&) = delete;
+    DeviceLostInfo& operator=(const DeviceLostInfo&) = delete;
+    DeviceLostInfo& operator=(DeviceLostInfo&&) = delete;
+
     Reason m_reason;
     String m_message;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -35,7 +35,7 @@ enum class GPUPipelineStatisticName : uint8_t {
     ClipperInvocations,
     ClipperPrimitivesOut,
     FragmentShaderInvocations,
-    ComputeShaderInvocations
+    ComputeShaderInvocations,
 };
 
 inline PAL::WebGPU::PipelineStatisticName convertToBacking(GPUPipelineStatisticName pipelineStatisticName)

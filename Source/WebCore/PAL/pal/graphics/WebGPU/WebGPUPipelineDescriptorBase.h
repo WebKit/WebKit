@@ -35,5 +35,5 @@ struct PipelineDescriptorBase : public ObjectDescriptorBase {
     PipelineLayout* layout;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

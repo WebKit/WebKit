@@ -150,8 +150,8 @@ enum class TextureFormat : uint8_t {
     Depth24unormStencil8,
 
     // depth32float-stencil8 feature
-    Depth32floatStencil8
+    Depth32floatStencil8,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

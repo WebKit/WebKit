@@ -53,10 +53,15 @@ protected:
     ComputePipeline() = default;
 
 private:
+    ComputePipeline(const ComputePipeline&) = delete;
+    ComputePipeline(ComputePipeline&&) = delete;
+    ComputePipeline& operator=(const ComputePipeline&) = delete;
+    ComputePipeline& operator=(ComputePipeline&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

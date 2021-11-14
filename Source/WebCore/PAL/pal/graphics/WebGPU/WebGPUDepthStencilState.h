@@ -51,5 +51,5 @@ struct DepthStencilState {
     float depthBiasClamp;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

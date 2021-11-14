@@ -36,8 +36,8 @@ enum class TextureViewDimension : uint8_t {
     _2dArray,
     Cube,
     CubeArray,
-    _3d
+    _3d,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

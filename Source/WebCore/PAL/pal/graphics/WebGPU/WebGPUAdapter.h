@@ -44,8 +44,8 @@ public:
     virtual ~Adapter() = default;
 
     const String& name() const { return m_name; }
-    const SupportedFeatures& features() const { return m_features; }
-    const SupportedLimits& limits() const { return m_limits; }
+    SupportedFeatures& features() const { return m_features; }
+    SupportedLimits& limits() const { return m_limits; }
     bool isFallbackAdapter() const { return m_isFallbackAdapter; }
 
     virtual void requestDevice(const DeviceDescriptor&, std::function<void(Ref<Device>)>&&) = 0;
@@ -60,11 +60,16 @@ protected:
     }
 
 private:
+    Adapter(const Adapter&) = delete;
+    Adapter(Adapter&&) = delete;
+    Adapter& operator=(const Adapter&) = delete;
+    Adapter& operator=(Adapter&&) = delete;
+
     String m_name;
     Ref<SupportedFeatures> m_features;
     Ref<SupportedLimits> m_limits;
     bool m_isFallbackAdapter;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

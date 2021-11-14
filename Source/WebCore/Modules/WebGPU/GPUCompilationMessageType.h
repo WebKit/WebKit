@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUCompilationMessageType : uint8_t {
     Error,
     Warning,
-    Info
+    Info,
 };
 
 inline PAL::WebGPU::CompilationMessageType convertToBacking(GPUCompilationMessageType compilationMessageType)

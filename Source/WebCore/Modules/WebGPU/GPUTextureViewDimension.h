@@ -36,7 +36,7 @@ enum class GPUTextureViewDimension : uint8_t {
     _2dArray,
     Cube,
     CubeArray,
-    _3d
+    _3d,
 };
 
 inline PAL::WebGPU::TextureViewDimension convertToBacking(GPUTextureViewDimension textureViewDimension)

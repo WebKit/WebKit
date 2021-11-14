@@ -34,5 +34,5 @@ struct SamplerBindingLayout {
     SamplerBindingType type;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

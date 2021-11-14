@@ -35,7 +35,7 @@ enum class GPUBlendOperation : uint8_t {
     Subtract,
     ReverseSubtract,
     Min,
-    Max
+    Max,
 };
 
 inline PAL::WebGPU::BlendOperation convertToBacking(GPUBlendOperation blendOperation)

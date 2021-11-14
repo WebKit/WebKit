@@ -38,8 +38,8 @@ enum class CompareFunction : uint8_t {
     Greater,
     NotEqual,
     GreaterEqual,
-    Always
+    Always,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

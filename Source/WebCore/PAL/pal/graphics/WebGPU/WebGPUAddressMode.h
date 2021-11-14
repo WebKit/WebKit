@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class AddressMode : uint8_t {
     ClampToEdge,
     Repeat,
-    MirrorRepeat
+    MirrorRepeat,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

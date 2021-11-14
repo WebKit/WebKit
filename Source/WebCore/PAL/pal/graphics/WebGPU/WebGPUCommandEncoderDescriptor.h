@@ -33,5 +33,5 @@ namespace WebGPU {
 struct CommandEncoderDescriptor : public ObjectDescriptorBase {
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

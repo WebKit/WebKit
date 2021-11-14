@@ -88,10 +88,15 @@ protected:
     RenderBundleEncoder() = default;
 
 private:
+    RenderBundleEncoder(const RenderBundleEncoder&) = delete;
+    RenderBundleEncoder(RenderBundleEncoder&&) = delete;
+    RenderBundleEncoder& operator=(const RenderBundleEncoder&) = delete;
+    RenderBundleEncoder& operator=(RenderBundleEncoder&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

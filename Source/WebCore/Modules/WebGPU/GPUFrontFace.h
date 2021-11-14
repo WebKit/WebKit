@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUFrontFace : uint8_t {
     Ccw,
-    Cw
+    Cw,
 };
 
 inline PAL::WebGPU::FrontFace convertToBacking(GPUFrontFace frontFace)

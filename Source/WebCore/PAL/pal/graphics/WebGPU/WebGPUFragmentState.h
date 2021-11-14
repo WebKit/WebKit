@@ -36,5 +36,5 @@ struct FragmentState : public ProgrammableStage {
     Vector<ColorTargetState> targets;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

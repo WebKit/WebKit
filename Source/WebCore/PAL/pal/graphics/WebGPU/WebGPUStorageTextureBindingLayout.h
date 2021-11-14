@@ -38,5 +38,5 @@ struct StorageTextureBindingLayout {
     TextureViewDimension viewDimension;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -36,5 +36,5 @@ struct ImageCopyBuffer : public ImageDataLayout {
     Buffer& buffer;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUCanvasCompositingAlphaMode : uint8_t {
     Opaque,
-    Premultiplied
+    Premultiplied,
 };
 
 inline PAL::WebGPU::CanvasCompositingAlphaMode convertToBacking(GPUCanvasCompositingAlphaMode canvasCompositingAlphaMode)

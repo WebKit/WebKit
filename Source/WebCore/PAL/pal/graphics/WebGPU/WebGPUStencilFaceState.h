@@ -38,5 +38,5 @@ struct StencilFaceState {
     StencilOperation passOp;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -40,5 +40,5 @@ struct QuerySetDescriptor : public ObjectDescriptorBase {
     Vector<PipelineStatisticName> pipelineStatistics;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

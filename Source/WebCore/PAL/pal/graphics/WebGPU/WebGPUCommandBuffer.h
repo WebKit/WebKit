@@ -48,10 +48,15 @@ protected:
     CommandBuffer() = default;
 
 private:
+    CommandBuffer(const CommandBuffer&) = delete;
+    CommandBuffer(CommandBuffer&&) = delete;
+    CommandBuffer& operator=(const CommandBuffer&) = delete;
+    CommandBuffer& operator=(CommandBuffer&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

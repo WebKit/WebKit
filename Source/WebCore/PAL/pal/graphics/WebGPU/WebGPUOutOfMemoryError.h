@@ -33,10 +33,19 @@ namespace WebGPU {
 
 class OutOfMemoryError : public RefCounted<OutOfMemoryError> {
 public:
+    static Ref<OutOfMemoryError> create()
+    {
+        return adoptRef(*new OutOfMemoryError());
+    }
 
-protected:
+private:
     OutOfMemoryError() = default;
+
+    OutOfMemoryError(const OutOfMemoryError&) = delete;
+    OutOfMemoryError(OutOfMemoryError&&) = delete;
+    OutOfMemoryError& operator=(const OutOfMemoryError&) = delete;
+    OutOfMemoryError& operator=(OutOfMemoryError&&) = delete;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

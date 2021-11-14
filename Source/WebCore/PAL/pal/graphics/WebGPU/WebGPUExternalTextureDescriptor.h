@@ -35,5 +35,5 @@ struct ExternalTextureDescriptor : public ObjectDescriptorBase {
     PredefinedColorSpace colorSpace;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

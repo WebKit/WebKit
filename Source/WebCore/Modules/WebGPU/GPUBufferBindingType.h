@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUBufferBindingType : uint8_t {
     Uniform,
     Storage,
-    ReadOnlyStorage
+    ReadOnlyStorage,
 };
 
 inline PAL::WebGPU::BufferBindingType convertToBacking(GPUBufferBindingType bufferBindingType)

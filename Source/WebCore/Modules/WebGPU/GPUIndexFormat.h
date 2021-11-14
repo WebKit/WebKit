@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUIndexFormat : uint8_t {
     Uint16,
-    Uint32
+    Uint32,
 };
 
 inline PAL::WebGPU::IndexFormat convertToBacking(GPUIndexFormat indexFormat)

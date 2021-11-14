@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class BufferBindingType : uint8_t {
     Uniform,
     Storage,
-    ReadOnlyStorage
+    ReadOnlyStorage,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

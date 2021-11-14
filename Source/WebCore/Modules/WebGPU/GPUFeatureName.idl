@@ -29,12 +29,13 @@
     EnabledBySetting=WebGPU
 ]
 enum GPUFeatureName {
-    "depth-clamping",
+    "depth-clip-control",
     "depth24unorm-stencil8",
     "depth32float-stencil8",
     "pipeline-statistics-query",
     "texture-compression-bc",
     "texture-compression-etc2",
     "texture-compression-astc",
-    "timestamp-query"
+    "timestamp-query",
+    "indirect-first-instance"
 };

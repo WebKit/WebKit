@@ -107,10 +107,15 @@ protected:
     RenderPassEncoder() = default;
 
 private:
+    RenderPassEncoder(const RenderPassEncoder&) = delete;
+    RenderPassEncoder(RenderPassEncoder&&) = delete;
+    RenderPassEncoder& operator=(const RenderPassEncoder&) = delete;
+    RenderPassEncoder& operator=(RenderPassEncoder&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

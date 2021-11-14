@@ -41,14 +41,19 @@ public:
 
     const String& message() const { return m_message; }
 
-protected:
+private:
     ValidationError(String&& message)
         : m_message(WTFMove(message))
     {
     }
 
+    ValidationError(const ValidationError&) = delete;
+    ValidationError(ValidationError&&) = delete;
+    ValidationError& operator=(const ValidationError&) = delete;
+    ValidationError& operator=(ValidationError&&) = delete;
+
     String m_message;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

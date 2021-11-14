@@ -45,5 +45,5 @@ struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<IntegerCoordinate> arrayLayerCount;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

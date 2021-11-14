@@ -79,10 +79,15 @@ protected:
     ComputePassEncoder() = default;
 
 private:
+    ComputePassEncoder(const ComputePassEncoder&) = delete;
+    ComputePassEncoder(ComputePassEncoder&&) = delete;
+    ComputePassEncoder& operator=(const ComputePassEncoder&) = delete;
+    ComputePassEncoder& operator=(ComputePassEncoder&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

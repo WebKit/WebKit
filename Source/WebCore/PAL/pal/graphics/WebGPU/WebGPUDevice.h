@@ -127,6 +127,11 @@ protected:
     }
 
 private:
+    Device(const Device&) = delete;
+    Device(Device&&) = delete;
+    Device& operator=(const Device&) = delete;
+    Device& operator=(Device&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
@@ -135,5 +140,5 @@ private:
     Ref<SupportedLimits> m_limits;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

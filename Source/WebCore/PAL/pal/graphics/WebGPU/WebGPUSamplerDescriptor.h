@@ -48,5 +48,5 @@ struct SamplerDescriptor : public ObjectDescriptorBase {
     uint16_t maxAnisotropy;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

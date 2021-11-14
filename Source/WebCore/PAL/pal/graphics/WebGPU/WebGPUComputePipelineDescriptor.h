@@ -35,5 +35,5 @@ struct ComputePipelineDescriptor : public PipelineDescriptorBase {
     ProgrammableStage compute;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

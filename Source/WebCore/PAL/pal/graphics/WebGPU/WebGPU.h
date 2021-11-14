@@ -44,7 +44,13 @@ public:
 
 protected:
     GPU() = default;
+
+private:
+    GPU(const GPU&) = delete;
+    GPU(GPU&&) = delete;
+    GPU& operator=(const GPU&) = delete;
+    GPU& operator=(GPU&&) = delete;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

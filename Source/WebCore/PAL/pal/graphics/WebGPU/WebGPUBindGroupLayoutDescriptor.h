@@ -36,5 +36,5 @@ struct BindGroupLayoutDescriptor : public ObjectDescriptorBase {
     Vector<BindGroupLayoutEntry> entries;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

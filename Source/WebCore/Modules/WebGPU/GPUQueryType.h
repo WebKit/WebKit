@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUQueryType : uint8_t {
     Occlusion,
     PipelineStatistics,
-    Timestamp
+    Timestamp,
 };
 
 inline PAL::WebGPU::QueryType convertToBacking(GPUQueryType queryType)

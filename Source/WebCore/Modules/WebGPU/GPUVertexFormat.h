@@ -60,7 +60,7 @@ enum class GPUVertexFormat : uint8_t {
     Sint32,
     Sint32x2,
     Sint32x3,
-    Sint32x4
+    Sint32x4,
 };
 
 inline PAL::WebGPU::VertexFormat convertToBacking(GPUVertexFormat vertexFormat)

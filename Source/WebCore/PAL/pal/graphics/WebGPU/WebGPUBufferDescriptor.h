@@ -38,5 +38,5 @@ struct BufferDescriptor : public ObjectDescriptorBase {
     bool mappedAtCreation;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

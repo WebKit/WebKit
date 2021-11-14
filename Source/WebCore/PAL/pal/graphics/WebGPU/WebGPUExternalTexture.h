@@ -48,10 +48,15 @@ protected:
     ExternalTexture() = default;
 
 private:
+    ExternalTexture(const ExternalTexture&) = delete;
+    ExternalTexture(ExternalTexture&&) = delete;
+    ExternalTexture& operator=(const ExternalTexture&) = delete;
+    ExternalTexture& operator=(ExternalTexture&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

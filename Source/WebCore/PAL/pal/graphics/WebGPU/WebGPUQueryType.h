@@ -33,8 +33,8 @@ namespace WebGPU {
 enum class QueryType : uint8_t {
     Occlusion,
     PipelineStatistics,
-    Timestamp
+    Timestamp,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

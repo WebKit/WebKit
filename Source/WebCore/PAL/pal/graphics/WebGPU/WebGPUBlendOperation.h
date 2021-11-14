@@ -35,8 +35,8 @@ enum class BlendOperation : uint8_t {
     Subtract,
     ReverseSubtract,
     Min,
-    Max
+    Max,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

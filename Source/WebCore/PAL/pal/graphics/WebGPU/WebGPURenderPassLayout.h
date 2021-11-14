@@ -40,5 +40,5 @@ struct RenderPassLayout : public ObjectDescriptorBase {
     Size32 sampleCount;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

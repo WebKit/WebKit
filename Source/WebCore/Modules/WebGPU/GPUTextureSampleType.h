@@ -35,7 +35,7 @@ enum class GPUTextureSampleType : uint8_t {
     UnfilterableFloat,
     Depth,
     Sint,
-    Uint
+    Uint,
 };
 
 inline PAL::WebGPU::TextureSampleType convertToBacking(GPUTextureSampleType textureSampleType)

@@ -48,8 +48,13 @@ protected:
     }
 
 private:
+    CompilationInfo(const CompilationInfo&) = delete;
+    CompilationInfo(CompilationInfo&&) = delete;
+    CompilationInfo& operator=(const CompilationInfo&) = delete;
+    CompilationInfo& operator=(CompilationInfo&&) = delete;
+
     Vector<Ref<CompilationMessage>> m_messages;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

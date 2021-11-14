@@ -48,10 +48,15 @@ protected:
     Sampler() = default;
 
 private:
+    Sampler(const Sampler&) = delete;
+    Sampler(Sampler&&) = delete;
+    Sampler& operator=(const Sampler&) = delete;
+    Sampler& operator=(Sampler&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

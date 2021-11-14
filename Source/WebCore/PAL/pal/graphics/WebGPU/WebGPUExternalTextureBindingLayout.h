@@ -31,5 +31,5 @@ namespace WebGPU {
 struct ExternalTextureBindingLayout {
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

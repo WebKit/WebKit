@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUStoreOp : uint8_t {
     Store,
-    Discard
+    Discard,
 };
 
 inline PAL::WebGPU::StoreOp convertToBacking(GPUStoreOp storeOp)

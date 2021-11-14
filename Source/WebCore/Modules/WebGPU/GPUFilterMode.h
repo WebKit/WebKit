@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class GPUFilterMode : uint8_t {
     Nearest,
-    Linear
+    Linear,
 };
 
 inline PAL::WebGPU::FilterMode convertToBacking(GPUFilterMode filterMode)

@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUTextureDimension : uint8_t {
     _1d,
     _2d,
-    _3d
+    _3d,
 };
 
 inline PAL::WebGPU::TextureDimension convertToBacking(GPUTextureDimension textureDimension)

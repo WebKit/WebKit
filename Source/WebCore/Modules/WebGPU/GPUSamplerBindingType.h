@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUSamplerBindingType : uint8_t {
     Filtering,
     NonFiltering,
-    Comparison
+    Comparison,
 };
 
 inline PAL::WebGPU::SamplerBindingType convertToBacking(GPUSamplerBindingType samplerBindingType)

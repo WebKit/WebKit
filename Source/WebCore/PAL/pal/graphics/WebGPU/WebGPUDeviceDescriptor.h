@@ -40,5 +40,5 @@ struct DeviceDescriptor : public ObjectDescriptorBase {
     // Vector<KeyValuePair<String, uint64_t>> requiredLimits;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

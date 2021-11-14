@@ -38,8 +38,8 @@ enum class StencilOperation : uint8_t {
     IncrementClamp,
     DecrementClamp,
     IncrementWrap,
-    DecrementWrap
+    DecrementWrap,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

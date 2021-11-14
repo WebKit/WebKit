@@ -39,5 +39,5 @@ struct BufferBinding {
     std::optional<Size64> size;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

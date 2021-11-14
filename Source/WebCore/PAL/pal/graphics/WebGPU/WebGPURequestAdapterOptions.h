@@ -36,5 +36,5 @@ struct RequestAdapterOptions {
     bool forceFallbackAdapter;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

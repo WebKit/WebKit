@@ -207,6 +207,11 @@ protected:
     }
 
 private:
+    SupportedLimits(const SupportedLimits&) = delete;
+    SupportedLimits(SupportedLimits&&) = delete;
+    SupportedLimits& operator=(const SupportedLimits&) = delete;
+    SupportedLimits& operator=(SupportedLimits&&) = delete;
+
     uint32_t m_maxTextureDimension1D { 0 };
     uint32_t m_maxTextureDimension2D { 0 };
     uint32_t m_maxTextureDimension3D { 0 };
@@ -235,5 +240,5 @@ private:
     uint32_t m_maxComputeWorkgroupsPerDimension { 0 };
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

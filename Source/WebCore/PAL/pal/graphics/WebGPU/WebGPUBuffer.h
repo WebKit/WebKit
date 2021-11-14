@@ -49,7 +49,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64> sizeForMap, std::function<void()>&&) = 0;
+    virtual void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64>, std::function<void()>&&) = 0;
     struct MappedRange {
         const void* source;
         size_t byteLength;
@@ -63,10 +63,15 @@ protected:
     Buffer() = default;
 
 private:
+    Buffer(const Buffer&) = delete;
+    Buffer(Buffer&&) = delete;
+    Buffer& operator=(const Buffer&) = delete;
+    Buffer& operator=(Buffer&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

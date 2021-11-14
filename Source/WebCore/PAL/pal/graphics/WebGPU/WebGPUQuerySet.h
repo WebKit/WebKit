@@ -50,10 +50,15 @@ protected:
     QuerySet() = default;
 
 private:
+    QuerySet(const QuerySet&) = delete;
+    QuerySet(QuerySet&&) = delete;
+    QuerySet& operator=(const QuerySet&) = delete;
+    QuerySet& operator=(QuerySet&&) = delete;
+
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

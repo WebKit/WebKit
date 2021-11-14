@@ -50,9 +50,15 @@ protected:
     {
     }
 
+private:
+    UncapturedErrorEvent(const UncapturedErrorEvent&) = delete;
+    UncapturedErrorEvent(UncapturedErrorEvent&&) = delete;
+    UncapturedErrorEvent& operator=(const UncapturedErrorEvent&) = delete;
+    UncapturedErrorEvent& operator=(UncapturedErrorEvent&&) = delete;
+
     String m_type;
     UncapturedErrorEventInit m_uncapturedErrorEventInit;
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

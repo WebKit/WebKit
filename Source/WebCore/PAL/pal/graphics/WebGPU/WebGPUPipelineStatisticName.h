@@ -35,8 +35,8 @@ enum class PipelineStatisticName : uint8_t {
     ClipperInvocations,
     ClipperPrimitivesOut,
     FragmentShaderInvocations,
-    ComputeShaderInvocations
+    ComputeShaderInvocations,
 };
 
-}
-}
+} // namespace PAL
+} // namespace WebGPU

@@ -33,7 +33,7 @@ namespace WebCore {
 enum class GPUTextureAspect : uint8_t {
     All,
     StencilOnly,
-    DepthOnly
+    DepthOnly,
 };
 
 inline PAL::WebGPU::TextureAspect convertToBacking(GPUTextureAspect textureAspect)
