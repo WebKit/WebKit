@@ -4093,7 +4093,6 @@ public:
         , m_unicodeIgnoreCase(m_pattern.unicode() && m_pattern.ignoreCase())
         , m_canonicalMode(m_pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-        , m_containsNestedSubpatterns(false)
         , m_parenContextSizes(compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numSubpatterns : 0, m_pattern.m_body->m_callFrameSize)
 #endif
     {
@@ -4114,7 +4113,6 @@ public:
         , m_unicodeIgnoreCase(m_pattern.unicode() && m_pattern.ignoreCase())
         , m_canonicalMode(m_pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-        , m_containsNestedSubpatterns(false)
         , m_parenContextSizes(compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numSubpatterns : 0, m_pattern.m_body->m_callFrameSize)
 #endif
     {
@@ -4633,10 +4631,10 @@ private:
 
     bool m_decodeSurrogatePairs;
     bool m_unicodeIgnoreCase;
-    bool m_usesT2;
+    bool m_usesT2 { false };
     CanonicalMode m_canonicalMode;
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    bool m_containsNestedSubpatterns;
+    bool m_containsNestedSubpatterns { false };
     ParenContextSizes m_parenContextSizes;
 #endif
     MacroAssembler::JumpList m_abortExecution;

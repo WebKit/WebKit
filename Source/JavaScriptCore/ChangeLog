@@ -1,3 +1,14 @@
+2021-11-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Initialize m_usesT2
+        https://bugs.webkit.org/show_bug.cgi?id=233095
+
+        Reviewed by Alexey Shvayka.
+
+        m_usesT2 is not initialized as "false" correctly.
+
+        * yarr/YarrJIT.cpp:
+
 2021-11-14  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Prevent fused multiply add during ParseInt
