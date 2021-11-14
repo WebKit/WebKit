@@ -2628,7 +2628,7 @@ bool Node::deprecatedIsInert() const
     if (!isConnected())
         return true;
 
-    if (this != &document() && this != document().documentElement()) {
+    if (this != &document()) {
         Node* activeModalDialog = document().activeModalDialog();
         if (activeModalDialog && !activeModalDialog->containsIncludingShadowDOM(this))
             return true;

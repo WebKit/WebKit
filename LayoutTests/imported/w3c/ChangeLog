@@ -1,3 +1,29 @@
+2021-11-14  Tim Nguyen  <ntim@apple.com>
+
+        Modal dialogs should make the root element unfocusable
+        https://bugs.webkit.org/show_bug.cgi?id=233099
+
+        Reviewed by Simon Fraser.
+
+        From https://html.spec.whatwg.org/multipage/interaction.html#inert,
+
+        > A Document document is blocked by a modal dialog subject if subject is
+        > the topmost dialog element in document's top layer. While document is
+        > so blocked, every node that is connected to document, with the
+        > exception of the subject element and its shadow-including descendants,
+        > must be marked inert.
+
+        RenderStyle::effectiveInert() already matches this definition, Node::deprecatedIsInert() does not.
+
+        Main reason the removed check was there is to prevent the whole document from being inert to hit-testing, but with the RenderStyle
+        approach, we instead override effectiveInert to false for the modal dialog. Removing this check for focus is absolutely fine
+        however, since focusability isn't inherited (Node::deprecatedIsInert is only used for focus).
+
+        Tests added by this Chromium WPT: https://github.com/web-platform-tests/wpt/commit/0457111e7109ec3d9e575aa421b96d8c36ce2ae8
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-unfocusable-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-unfocusable.html:
+
 2021-11-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r285583.
