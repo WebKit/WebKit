@@ -30,7 +30,8 @@
 namespace WebGPU {
 
 class PipelineLayout {
-
+public:
+    void setLabel(const char*);
 };
 
 }

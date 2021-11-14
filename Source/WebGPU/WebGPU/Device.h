@@ -70,6 +70,7 @@ public:
     void pushErrorScope(WGPUErrorFilter);
     void setDeviceLostCallback(std::function<void(WGPUDeviceLostReason, const char*)>&&);
     void setUncapturedErrorCallback(std::function<void(WGPUErrorType, const char*)>&&);
+    void setLabel(const char*);
 };
 
 } // namespace WebGPU

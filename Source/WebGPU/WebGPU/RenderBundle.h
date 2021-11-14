@@ -30,7 +30,8 @@
 namespace WebGPU {
 
 class RenderBundle {
-
+public:
+    void setLabel(const char*);
 };
 
 }

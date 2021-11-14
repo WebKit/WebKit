@@ -41,6 +41,11 @@ void Texture::destroy()
 {
 }
 
+void Texture::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 } // namespace WebGPU
 
 void wgpuTextureRelease(WGPUTexture texture)
@@ -58,3 +63,7 @@ void wgpuTextureDestroy(WGPUTexture texture)
     texture->texture.destroy();
 }
 
+void wgpuTextureSetLabel(WGPUTexture texture, const char* label)
+{
+    texture->texture.setLabel(label);
+}

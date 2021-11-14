@@ -30,7 +30,8 @@
 namespace WebGPU {
 
 class Sampler {
-
+public:
+    void setLabel(const char*);
 };
 
 }

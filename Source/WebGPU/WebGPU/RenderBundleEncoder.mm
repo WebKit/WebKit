@@ -112,6 +112,11 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, u
     UNUSED_PARAM(size);
 }
 
+void RenderBundleEncoder::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 } // namespace WebGPU
 
 void wgpuRenderBundleEncoderRelease(WGPURenderBundleEncoder renderBundleEncoder)
@@ -179,3 +184,7 @@ void wgpuRenderBundleEncoderSetVertexBuffer(WGPURenderBundleEncoder renderBundle
     renderBundleEncoder->renderBundleEncoder.setVertexBuffer(slot, buffer->buffer, offset, size);
 }
 
+void wgpuRenderBundleEncoderSetLabel(WGPURenderBundleEncoder renderBundleEncoder, const char* label)
+{
+    renderBundleEncoder->renderBundleEncoder.setLabel(label);
+}

@@ -30,9 +30,19 @@
 
 namespace WebGPU {
 
+void PipelineLayout::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 }
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {
     delete pipelineLayout;
+}
+
+void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, const char* label)
+{
+    pipelineLayout->pipelineLayout.setLabel(label);
 }

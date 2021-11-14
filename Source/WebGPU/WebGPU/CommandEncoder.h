@@ -43,12 +43,14 @@ public:
     void copyBufferToTexture(const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
     void copyTextureToBuffer(const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize);
     void copyTextureToTexture(const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
+    void fillBuffer(const Buffer& destination, uint64_t destinationOffset, uint64_t size);
     CommandBuffer finish(const WGPUCommandBufferDescriptor*);
     void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
     void pushDebugGroup(const char* groupLabel);
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
+    void setLabel(const char*);
 };
 
 }

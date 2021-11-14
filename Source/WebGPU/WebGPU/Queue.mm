@@ -60,6 +60,11 @@ void Queue::writeTexture(const WGPUImageCopyTexture* destination, const void* da
     UNUSED_PARAM(writeSize);
 }
 
+void Queue::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 } // namespace WebGPU
 
 void wgpuQueueRelease(WGPUQueue queue)
@@ -90,5 +95,10 @@ void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOff
 void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUImageCopyTexture* destination, const void* data, size_t dataSize, const WGPUTextureDataLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
     queue->queue.writeTexture(destination, data, dataSize, dataLayout, writeSize);
+}
+
+void wgpuQueueSetLabel(WGPUQueue queue, const char* label)
+{
+    queue->queue.setLabel(label);
 }
 

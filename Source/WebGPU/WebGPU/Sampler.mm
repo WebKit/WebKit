@@ -30,9 +30,19 @@
 
 namespace WebGPU {
 
+void Sampler::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 }
 
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
     delete sampler;
+}
+
+void wgpuSamplerSetLabel(WGPUSampler sampler, const char* label)
+{
+    sampler->sampler.setLabel(label);
 }

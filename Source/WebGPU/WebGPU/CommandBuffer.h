@@ -30,7 +30,8 @@
 namespace WebGPU {
 
 class CommandBuffer {
-
+public:
+    void setLabel(const char*);
 };
 
 }

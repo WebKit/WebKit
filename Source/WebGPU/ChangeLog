@@ -1,3 +1,89 @@
+2021-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add necessary additions to WebGPU.framework
+        https://bugs.webkit.org/show_bug.cgi?id=233091
+
+        Reviewed by Dean Jackson.
+
+        WebGPU.framework's header file is lagging a bit behind the official WebGPU API.
+        This updates a companion header, WebGPUExt.h, with the necessary additions.
+        I don't want to modify the primary header, WebGPU.h, because it's shared among
+        multiple projects, so coordination is necessary to modify it.
+
+        * WebGPU/Adapter.h:
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::getFeatureAtIndex):
+        (wgpuAdapterGetFeatureAtIndex):
+        * WebGPU/BindGroup.h:
+        * WebGPU/BindGroup.mm:
+        (WebGPU::BindGroup::setLabel):
+        (wgpuBindGroupSetLabel):
+        * WebGPU/BindGroupLayout.h:
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::BindGroupLayout::setLabel):
+        (wgpuBindGroupLayoutSetLabel):
+        * WebGPU/Buffer.h:
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::setLabel):
+        (wgpuBufferSetLabel):
+        * WebGPU/CommandBuffer.h:
+        * WebGPU/CommandBuffer.mm:
+        (WebGPU::CommandBuffer::setLabel):
+        (wgpuCommandBufferSetLabel):
+        * WebGPU/CommandEncoder.h:
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::fillBuffer):
+        (WebGPU::CommandEncoder::setLabel):
+        (wgpuCommandEncoderFillBuffer):
+        (wgpuCommandEncoderSetLabel):
+        * WebGPU/ComputePassEncoder.h:
+        * WebGPU/ComputePassEncoder.mm:
+        (WebGPU::ComputePassEncoder::setLabel):
+        (wgpuComputePassEncoderSetLabel):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::setLabel):
+        (wgpuDeviceSetLabel):
+        * WebGPU/Instance.mm:
+        (wgpuGetProcAddress):
+        * WebGPU/PipelineLayout.h:
+        * WebGPU/PipelineLayout.mm:
+        (WebGPU::PipelineLayout::setLabel):
+        (wgpuPipelineLayoutSetLabel):
+        * WebGPU/QuerySet.h:
+        * WebGPU/QuerySet.mm:
+        (WebGPU::QuerySet::setLabel):
+        (wgpuQuerySetSetLabel):
+        * WebGPU/Queue.h:
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::setLabel):
+        (wgpuQueueSetLabel):
+        * WebGPU/RenderBundle.h:
+        * WebGPU/RenderBundle.mm:
+        (WebGPU::RenderBundle::setLabel):
+        (wgpuRenderBundleSetLabel):
+        * WebGPU/RenderBundleEncoder.h:
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::RenderBundleEncoder::setLabel):
+        (wgpuRenderBundleEncoderSetLabel):
+        * WebGPU/RenderPassEncoder.h:
+        * WebGPU/RenderPassEncoder.mm:
+        (WebGPU::RenderPassEncoder::setLabel):
+        (wgpuRenderPassEncoderSetLabel):
+        * WebGPU/Sampler.h:
+        * WebGPU/Sampler.mm:
+        (WebGPU::Sampler::setLabel):
+        (wgpuSamplerSetLabel):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::setLabel):
+        (wgpuTextureSetLabel):
+        * WebGPU/TextureView.h:
+        * WebGPU/TextureView.mm:
+        (WebGPU::TextureView::setLabel):
+        (wgpuTextureViewSetLabel):
+        * WebGPU/WebGPUExt.h:
+
 2021-11-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Stub out methods in WebGPU.framework

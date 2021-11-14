@@ -77,6 +77,13 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture* source, co
     UNUSED_PARAM(copySize);
 }
 
+void CommandEncoder::fillBuffer(const Buffer& destination, uint64_t destinationOffset, uint64_t size)
+{
+    UNUSED_PARAM(destination);
+    UNUSED_PARAM(destinationOffset);
+    UNUSED_PARAM(size);
+}
+
 CommandBuffer CommandEncoder::finish(const WGPUCommandBufferDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
@@ -110,6 +117,11 @@ void CommandEncoder::writeTimestamp(const QuerySet& querySet, uint32_t queryInde
 {
     UNUSED_PARAM(querySet);
     UNUSED_PARAM(queryIndex);
+}
+
+void CommandEncoder::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
 }
 
 } // namespace WebGPU
@@ -149,6 +161,11 @@ void wgpuCommandEncoderCopyTextureToTexture(WGPUCommandEncoder commandEncoder, c
     commandEncoder->commandEncoder.copyTextureToTexture(source, destination, copySize);
 }
 
+void wgpuCommandEncoderFillBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size)
+{
+    commandEncoder->commandEncoder.fillBuffer(destination->buffer, destinationOffset, size);
+}
+
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
     return new WGPUCommandBufferImpl { commandEncoder->commandEncoder.finish(descriptor) };
@@ -177,5 +194,10 @@ void wgpuCommandEncoderResolveQuerySet(WGPUCommandEncoder commandEncoder, WGPUQu
 void wgpuCommandEncoderWriteTimestamp(WGPUCommandEncoder commandEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
     commandEncoder->commandEncoder.writeTimestamp(querySet->querySet, queryIndex);
+}
+
+void wgpuCommandEncoderSetLabel(WGPUCommandEncoder commandEncoder, const char* label)
+{
+    commandEncoder->commandEncoder.setLabel(label);
 }
 

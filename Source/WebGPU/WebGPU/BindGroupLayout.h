@@ -30,7 +30,8 @@
 namespace WebGPU {
 
 class BindGroupLayout {
-
+public:
+    void setLabel(const char*);
 };
 
 }

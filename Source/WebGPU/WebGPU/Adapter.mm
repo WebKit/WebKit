@@ -49,6 +49,12 @@ bool Adapter::hasFeature(WGPUFeatureName feature)
     return false;
 }
 
+WGPUFeatureName Adapter::getFeatureAtIndex(size_t index)
+{
+    UNUSED_PARAM(index);
+    return WGPUFeatureName_Undefined;
+}
+
 void Adapter::requestDevice(const WGPUDeviceDescriptor* descriptor, std::function<void(WGPURequestDeviceStatus, Device&&, const char*)>&& callback)
 {
     UNUSED_PARAM(descriptor);
@@ -75,6 +81,11 @@ void wgpuAdapterGetProperties(WGPUAdapter adapter, WGPUAdapterProperties* proper
 bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
     return adapter->adapter.hasFeature(feature);
+}
+
+WGPUFeatureName wgpuAdapterGetFeatureAtIndex(WGPUAdapter adapter, size_t index)
+{
+    return adapter->adapter.getFeatureAtIndex(index);
 }
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)

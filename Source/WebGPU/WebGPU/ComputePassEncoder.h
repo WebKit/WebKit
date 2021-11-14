@@ -47,6 +47,7 @@ public:
     void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
     void setPipeline(const ComputePipeline&);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
+    void setLabel(const char*);
 };
 
 }

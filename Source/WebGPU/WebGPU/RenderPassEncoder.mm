@@ -173,6 +173,11 @@ void RenderPassEncoder::writeTimestamp(const QuerySet& querySet, uint32_t queryI
     UNUSED_PARAM(queryIndex);
 }
 
+void RenderPassEncoder::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 } // namespace WebGPU
 
 void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
@@ -293,3 +298,7 @@ void wgpuRenderPassEncoderWriteTimestamp(WGPURenderPassEncoder renderPassEncoder
     renderPassEncoder->renderPassEncoder.writeTimestamp(querySet->querySet, queryIndex);
 }
 
+void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, const char* label)
+{
+    renderPassEncoder->renderPassEncoder.setLabel(label);
+}

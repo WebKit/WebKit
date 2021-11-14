@@ -30,9 +30,19 @@
 
 namespace WebGPU {
 
+void TextureView::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 }
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
     UNUSED_PARAM(textureView);
+}
+
+void wgpuTextureViewSetLabel(WGPUTextureView textureView, const char* label)
+{
+    textureView->textureView.setLabel(label);
 }

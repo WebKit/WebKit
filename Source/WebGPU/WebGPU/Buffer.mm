@@ -60,6 +60,11 @@ void Buffer::unmap()
 {
 }
 
+void Buffer::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 } // namespace WebGPU
 
 void wgpuBufferRelease(WGPUBuffer buffer)
@@ -92,4 +97,9 @@ void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset,
 void wgpuBufferUnmap(WGPUBuffer buffer)
 {
     buffer->buffer.unmap();
+}
+
+void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
+{
+    buffer->buffer.setLabel(label);
 }

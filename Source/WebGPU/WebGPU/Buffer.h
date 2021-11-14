@@ -37,6 +37,7 @@ public:
     void* getMappedRange(size_t offset, size_t);
     void mapAsync(WGPUMapModeFlags, size_t offset, size_t, std::function<void(WGPUBufferMapAsyncStatus)>&& callback);
     void unmap();
+    void setLabel(const char*);
 };
 
 }

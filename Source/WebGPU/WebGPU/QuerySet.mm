@@ -34,6 +34,11 @@ void QuerySet::destroy()
 {
 }
 
+void QuerySet::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 } // namespace WebGPU
 
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
@@ -46,3 +51,7 @@ void wgpuQuerySetDestroy(WGPUQuerySet querySet)
     querySet->querySet.destroy();
 }
 
+void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
+{
+    querySet->querySet.setLabel(label);
+}

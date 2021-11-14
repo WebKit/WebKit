@@ -32,6 +32,7 @@ namespace WebGPU {
 class QuerySet {
 public:
     void destroy();
+    void setLabel(const char*);
 };
 
 }

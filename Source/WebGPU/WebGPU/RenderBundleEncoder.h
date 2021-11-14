@@ -48,6 +48,7 @@ public:
     void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
+    void setLabel(const char*);
 };
 
 }

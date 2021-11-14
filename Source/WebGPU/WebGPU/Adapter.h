@@ -37,6 +37,7 @@ public:
     bool getLimits(WGPUSupportedLimits*);
     void getProperties(WGPUAdapterProperties*);
     bool hasFeature(WGPUFeatureName);
+    WGPUFeatureName getFeatureAtIndex(size_t);
     void requestDevice(const WGPUDeviceDescriptor*, std::function<void(WGPURequestDeviceStatus, Device&&, const char*)>&& callback);
 };
 

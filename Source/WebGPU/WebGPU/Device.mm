@@ -173,6 +173,11 @@ void Device::setUncapturedErrorCallback(std::function<void(WGPUErrorType, const 
     UNUSED_PARAM(callback);
 }
 
+void Device::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
+}
+
 } // namespace WebGPU
 
 void wgpuDeviceRelease(WGPUDevice device)
@@ -302,3 +307,7 @@ void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback c
     });
 }
 
+void wgpuDeviceSetLabel(WGPUDevice device, const char* label)
+{
+    device->device.setLabel(label);
+}

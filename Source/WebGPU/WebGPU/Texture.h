@@ -35,6 +35,7 @@ class Texture {
 public:
     TextureView createView(const WGPUTextureViewDescriptor*);
     void destroy();
+    void setLabel(const char*);
 };
 
 }

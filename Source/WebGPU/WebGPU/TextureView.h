@@ -30,7 +30,8 @@
 namespace WebGPU {
 
 class TextureView {
-
+public:
+    void setLabel(const char*);
 };
 
 }
