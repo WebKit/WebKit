@@ -98,6 +98,7 @@ PAS_API void pas_scavenger_resume(void);
 PAS_API void pas_scavenger_clear_all_non_tlc_caches(void);
 PAS_API void pas_scavenger_clear_all_caches_except_remote_tlcs(void);
 PAS_API void pas_scavenger_clear_all_caches(void);
+PAS_API void pas_scavenger_decommit_expendable_memory(void);
 PAS_API size_t pas_scavenger_decommit_free_memory(void);
 
 PAS_API void pas_scavenger_run_synchronously_now(void);
@@ -107,6 +108,7 @@ typedef enum {
     pas_scavenger_clear_all_non_tlc_caches_kind,
     pas_scavenger_clear_all_caches_except_remote_tlcs_kind,
     pas_scavenger_clear_all_caches_kind,
+    pas_scavenger_decommit_expendable_memory_kind,
     pas_scavenger_decommit_free_memory_kind,
     pas_scavenger_run_synchronously_now_kind
 } pas_scavenger_synchronous_operation_kind;

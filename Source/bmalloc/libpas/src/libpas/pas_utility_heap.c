@@ -76,7 +76,7 @@ void* pas_utility_heap_try_allocate_with_alignment(
 
     aligned_size = pas_round_up_to_power_of_2(size, alignment);
 
-    index = pas_segregated_heap_index_for_primitive_count(aligned_size, PAS_UTILITY_HEAP_CONFIG);
+    index = pas_segregated_heap_index_for_size(aligned_size, PAS_UTILITY_HEAP_CONFIG);
 
     if (index >= PAS_NUM_UTILITY_SIZE_CLASSES) {
         pas_log("Cannot allocate size = %zu (alignment = %zu, aligned_size = %zu, index = %zu) "
@@ -107,9 +107,9 @@ void* pas_utility_heap_try_allocate_with_alignment(
         
         pas_utility_heap_support_instance.slow_path_count++;
 
-        directory = pas_segregated_heap_ensure_size_directory_for_count(
+        directory = pas_segregated_heap_ensure_size_directory_for_size(
             &pas_utility_segregated_heap, aligned_size, alignment,
-            pas_force_count_lookup, &pas_utility_heap_config, NULL,
+            pas_force_size_lookup, &pas_utility_heap_config, NULL,
             pas_segregated_size_directory_full_creation_mode);
 
         PAS_ASSERT(directory);
@@ -119,8 +119,7 @@ void* pas_utility_heap_try_allocate_with_alignment(
 
     result = (void*)pas_local_allocator_try_allocate(
         allocator,
-        pas_trivial_size_thunk,
-        (void*)aligned_size,
+        aligned_size,
         alignment,
         PAS_UTILITY_HEAP_CONFIG,
         &pas_utility_allocator_counts,

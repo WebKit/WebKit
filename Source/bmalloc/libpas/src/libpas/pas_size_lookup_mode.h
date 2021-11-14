@@ -23,27 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_COUNT_LOOKUP_MODE_H
-#define PAS_COUNT_LOOKUP_MODE_H
+#ifndef PAS_SIZE_LOOKUP_MODE_H
+#define PAS_SIZE_LOOKUP_MODE_H
 
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
-enum pas_count_lookup_mode {
-    pas_avoid_count_lookup,
-    pas_force_count_lookup
+enum pas_size_lookup_mode {
+    pas_avoid_size_lookup,
+    pas_force_size_lookup
 };
 
-typedef enum pas_count_lookup_mode pas_count_lookup_mode;
+typedef enum pas_size_lookup_mode pas_size_lookup_mode;
 
-static inline const char* pas_count_lookup_mode_get_string(pas_count_lookup_mode mode)
+static inline const char* pas_size_lookup_mode_get_string(pas_size_lookup_mode mode)
 {
     switch (mode) {
-    case pas_avoid_count_lookup:
-        return "avoid_count_lookup";
-    case pas_force_count_lookup:
-        return "force_count_lookup";
+    case pas_avoid_size_lookup:
+        return "avoid_size_lookup";
+    case pas_force_size_lookup:
+        return "force_size_lookup";
     }
     PAS_ASSERT(!"Should not be reached");
     return NULL;
@@ -51,5 +51,5 @@ static inline const char* pas_count_lookup_mode_get_string(pas_count_lookup_mode
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_COUNT_LOOKUP_MODE_H */
+#endif /* PAS_SIZE_LOOKUP_MODE_H */
 

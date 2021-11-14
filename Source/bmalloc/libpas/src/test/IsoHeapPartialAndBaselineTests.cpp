@@ -831,7 +831,7 @@ void addScavengerDependentTests()
             ADD_TEST(testSimplePartialAllocations(3072, 8, pas_medium_segregated_page_config_variant, 1, 100, 1, 1, 4, 3, FreeInOrder()));
             ADD_TEST(testSimplePartialAllocations(4096, 8, pas_medium_segregated_page_config_variant, 1, 1, 1, 1, 1, 1, FreeInOrder()));
             ADD_TEST(testSimplePartialAllocations(10752, 8, pas_medium_segregated_page_config_variant, 1, 1, 1, 1, 1, 1, FreeInOrder()));
-            ADD_TEST(testSimplePartialAllocations(20480, 8, pas_medium_segregated_page_config_variant, 1, 1, 1, 1, 1, 1, FreeInOrder()));
+            ADD_TEST(testSimplePartialAllocations(21504, 8, pas_medium_segregated_page_config_variant, 1, 1, 1, 1, 1, 1, FreeInOrder()));
     
             // Test that we can allocate objects with interesting alignment.
             ADD_TEST(testSimplePartialAllocations(32, 32, pas_small_segregated_page_config_variant, 1, 1, 1, 1, 1, 1, FreeInOrder()));

@@ -30,8 +30,8 @@
 
 #if PAS_ENABLE_BMALLOC
 
+#include "bmalloc_type.h"
 #include "pas_heap_config_utils.h"
-#include "pas_simple_type.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -43,8 +43,9 @@ PAS_API void bmalloc_heap_config_activate(void);
 #define BMALLOC_HEAP_CONFIG PAS_BASIC_HEAP_CONFIG( \
     bmalloc, \
     .activate = bmalloc_heap_config_activate, \
-    .get_type_size = pas_simple_type_as_heap_type_get_type_size, \
-    .get_type_alignment = pas_simple_type_as_heap_type_get_type_alignment, \
+    .get_type_size = bmalloc_type_as_heap_type_get_type_size, \
+    .get_type_alignment = bmalloc_type_as_heap_type_get_type_alignment, \
+    .dump_type = bmalloc_type_as_heap_type_dump, \
     .check_deallocation = false, \
     .small_segregated_min_align_shift = BMALLOC_MINALIGN_SHIFT, \
     .small_segregated_sharing_shift = PAS_SMALL_SHARING_SHIFT, \

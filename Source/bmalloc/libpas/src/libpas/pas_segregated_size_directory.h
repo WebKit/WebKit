@@ -60,16 +60,25 @@ struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_segregated_size_directory {
     unsigned object_size : 27;
     unsigned alignment_shift : 5;
 
-    /* This has a funny encoding (let N = PAS_NUM_BASELINE_ALLOCATORS):
+    /* This holds two fields that need to be CASable, so we don't want use a bitfield:
        
-       index in [0, N)     => attached to index
-       index in [N, 2N)    => attaching to index - N
-       2N                  => detached
-       
-       In the detached state, the only way to change this is to CAS it.
-       
-       In the attached and attaching states, the corresponding index's lock protects this field. */
-    uint16_t baseline_allocator_index;
+       - baseline_allocator_index
+             => This has a funny encoding (let N = PAS_NUM_BASELINE_ALLOCATORS):
+                
+                index in [0, N)     => attached to index
+                index in [N, 2N)    => attaching to index - N
+                2N                  => detached
+                
+                In the detached state, the only way to change this is to CAS it.
+                
+                In the attached and attaching states, the corresponding index's lock protects this field.
+    
+       - min_index
+             => This is the first index at which this directory is installed in its heap. It's used to enable
+                rematerialization of the size class lookup tables. This field can be all-ones (UINT_MAX chopped
+                to whatever size the field has) to indicate that the directory is not currently participating in
+                size lookup. */
+    unsigned encoded_stuff;
 
     pas_allocator_index view_cache_index; /* This could be in the size_directory_data but we put it here
                                              because it takes less space to put it here. */
@@ -98,16 +107,62 @@ struct pas_extended_segregated_size_directory_data {
     pas_compact_tagged_page_granule_use_count_ptr full_use_counts;
 };
 
+#define PAS_SEGREGATED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_BITS 7u
+#define PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_BITS                25u
+
+_Static_assert(PAS_SEGREGATED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_BITS
+               + PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_BITS
+               == 32u,
+               "encoded_stuff field should use exactly 32 bits");
+
+#define PAS_SEGREAGTED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_SHIFT 0u
+#define PAS_SEGREGATED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_MASK \
+    ((1u << PAS_SEGREGATED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_BITS) - 1u)
+#define PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_SHIFT \
+    PAS_SEGREGATED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_BITS
+#define PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_MASK \
+    ((1u << PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_BITS) - 1u)
+
+static inline unsigned pas_segregated_size_directory_decode_baseline_allocator_index(unsigned encoded_stuff)
+{
+    return (encoded_stuff >> PAS_SEGREAGTED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_SHIFT)
+        & PAS_SEGREGATED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_MASK;
+}
+
+static inline unsigned pas_segregated_size_directory_decode_min_index(unsigned encoded_stuff)
+{
+    unsigned result;
+
+    result = (encoded_stuff >> PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_SHIFT)
+        & PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_MASK;
+
+    if (result == PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_MASK)
+        return UINT_MAX;
+
+    return result;
+}
+
+static inline unsigned pas_segregated_size_directory_encode_stuff(unsigned baseline_allocator_index,
+                                                                  unsigned min_index)
+{
+    unsigned result;
+
+    result =
+        (baseline_allocator_index << PAS_SEGREAGTED_SIZE_DIRECTORY_BASELINE_ALLOCATOR_INDEX_SHIFT) |
+        ((min_index & PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_MASK)
+         << PAS_SEGREGATED_SIZE_DIRECTORY_MIN_INDEX_SHIFT);
+
+    PAS_ASSERT(
+        pas_segregated_size_directory_decode_baseline_allocator_index(result) == baseline_allocator_index);
+    PAS_ASSERT(pas_segregated_size_directory_decode_min_index(result) == min_index);
+
+    return result;
+}
+
 static inline pas_segregated_view
 pas_segregated_size_directory_as_view(pas_segregated_size_directory* directory)
 {
     return pas_segregated_view_create(directory, pas_segregated_size_directory_view_kind);
-}
-
-static inline size_t
-pas_segregated_size_directory_alignment(pas_segregated_size_directory* directory)
-{
-    return (size_t)1 << (size_t)directory->alignment_shift;
 }
 
 PAS_API pas_segregated_size_directory* pas_segregated_size_directory_create(
@@ -119,6 +174,85 @@ PAS_API pas_segregated_size_directory* pas_segregated_size_directory_create(
     pas_segregated_size_directory_creation_mode creation_mode);
 
 PAS_API void pas_segregated_size_directory_finish_creation(pas_segregated_size_directory* directory);
+
+static inline size_t
+pas_segregated_size_directory_alignment(pas_segregated_size_directory* directory)
+{
+    return (size_t)1 << (size_t)directory->alignment_shift;
+}
+
+static inline unsigned pas_segregated_size_directory_baseline_allocator_index(
+    pas_segregated_size_directory* directory)
+{
+    return pas_segregated_size_directory_decode_baseline_allocator_index(directory->encoded_stuff);
+}
+
+static inline unsigned pas_segregated_size_directory_min_index(pas_segregated_size_directory* directory)
+{
+    return pas_segregated_size_directory_decode_min_index(directory->encoded_stuff);
+}
+
+static inline void pas_segregated_size_directory_set_baseline_allocator_index(
+    pas_segregated_size_directory* directory, unsigned new_baseline_allocator_index)
+{
+    for (;;) {
+        unsigned old_stuff;
+        unsigned new_stuff;
+
+        old_stuff = directory->encoded_stuff;
+        new_stuff = pas_segregated_size_directory_encode_stuff(
+            new_baseline_allocator_index,
+            pas_segregated_size_directory_decode_min_index(old_stuff));
+
+        if (pas_compare_and_swap_uint32_weak(&directory->encoded_stuff, old_stuff, new_stuff))
+            return;
+    }
+}
+
+static inline bool pas_segregated_size_directory_compare_and_swap_baseline_allocator_index_weak(
+    pas_segregated_size_directory* directory,
+    unsigned expected_baseline_allocator_index,
+    unsigned new_baseline_allocator_index)
+{
+    /* We have an early return here, so use this to make sure that the compiler doesn't get any funny ideas. */
+    pas_compiler_fence();
+    
+    for (;;) {
+        unsigned old_stuff;
+        unsigned new_stuff;
+
+        old_stuff = directory->encoded_stuff;
+        if (pas_segregated_size_directory_decode_baseline_allocator_index(old_stuff)
+            != expected_baseline_allocator_index) {
+            pas_compiler_fence(); /* Put the compiler in its place. */
+            return false;
+        }
+        
+        new_stuff = pas_segregated_size_directory_encode_stuff(
+            new_baseline_allocator_index,
+            pas_segregated_size_directory_decode_min_index(old_stuff));
+
+        if (pas_compare_and_swap_uint32_weak(&directory->encoded_stuff, old_stuff, new_stuff))
+            return true;
+    }
+}
+
+static inline void pas_segregated_size_directory_set_min_index(pas_segregated_size_directory* directory,
+                                                                   unsigned new_min_index)
+{
+    for (;;) {
+        unsigned old_stuff;
+        unsigned new_stuff;
+
+        old_stuff = directory->encoded_stuff;
+        new_stuff = pas_segregated_size_directory_encode_stuff(
+            pas_segregated_size_directory_decode_baseline_allocator_index(old_stuff),
+            new_min_index);
+
+        if (pas_compare_and_swap_uint32_weak(&directory->encoded_stuff, old_stuff, new_stuff))
+            return;
+    }
+}
 
 static inline bool pas_segregated_size_directory_did_try_to_create_view_cache(
     pas_segregated_size_directory* directory)
@@ -150,7 +284,7 @@ static inline bool pas_segregated_size_directory_has_tlc_allocator(
 {
     pas_segregated_size_directory_data* data;
     data = pas_segregated_size_directory_data_ptr_load(&directory->data);
-    return data && data->allocator_index != (pas_allocator_index)UINT_MAX;
+    return data && data->allocator_index;
 }
 
 /* Call with heap lock held. */

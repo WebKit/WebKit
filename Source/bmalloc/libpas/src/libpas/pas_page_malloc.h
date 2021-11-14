@@ -35,7 +35,6 @@ PAS_BEGIN_EXTERN_C;
 PAS_API extern size_t pas_page_malloc_num_allocated_bytes;
 PAS_API extern size_t pas_page_malloc_cached_alignment;
 PAS_API extern size_t pas_page_malloc_cached_alignment_shift;
-PAS_API extern bool pas_page_malloc_mprotect_decommitted;
 
 PAS_API size_t pas_page_malloc_alignment_slow(void);
 
@@ -65,6 +64,8 @@ PAS_API void pas_page_malloc_deallocate(void* base, size_t size);
    entirely within a page according to pas_page_malloc_alignment. */
 PAS_API void pas_page_malloc_commit(void* base, size_t size);
 PAS_API void pas_page_malloc_decommit(void* base, size_t size);
+
+PAS_API void pas_page_malloc_decommit_asymmetric(void* base, size_t size);
 
 PAS_END_EXTERN_C;
 

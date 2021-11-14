@@ -59,6 +59,12 @@ __PAS_BEGIN_EXTERN_C;
 #define __PAS_API
 #endif
 
+#if defined(PAS_BMALLOC) && PAS_BMALLOC
+#define __PAS_BAPI __attribute__((visibility("default")))
+#else
+#define __PAS_BAPI __PAS_API
+#endif
+
 #define __PAS_UNUSED_PARAM(variable) (void)variable
 
 #define __PAS_OFFSETOF(type, field) __builtin_offsetof(type, field)

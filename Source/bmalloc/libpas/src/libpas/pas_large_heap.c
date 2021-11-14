@@ -130,6 +130,9 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
     
     if (!result.did_succeed)
         return pas_allocation_result_create_failure();
+
+    if (verbose)
+        pas_log("Committing the memory we allocated starting at %p.\n", (void*)result.begin);
     
     if (heap_config->aligned_allocator_talks_to_sharing_pool &&
         !pas_large_sharing_pool_allocate_and_commit(

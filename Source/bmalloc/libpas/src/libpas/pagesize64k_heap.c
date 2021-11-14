@@ -80,12 +80,12 @@ void* pagesize64k_allocate_common_primitive(size_t size)
 
 void* pagesize64k_allocate(pas_heap_ref* heap_ref)
 {
-    return test_allocate_impl(heap_ref).ptr;
+    return (void*)test_allocate_impl(heap_ref).begin;
 }
 
-void* pagesize64k_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* pagesize64k_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return test_allocate_array_impl(heap_ref, count, alignment).ptr;
+    return (void*)test_allocate_array_impl_by_count(heap_ref, count, alignment).begin;
 }
 
 void pagesize64k_deallocate(void* ptr)

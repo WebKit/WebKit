@@ -173,22 +173,17 @@ void pas_page_malloc_commit(void* ptr, size_t size)
     if (end_as_int == base_as_int)
         return;
 
-    if (pas_page_malloc_mprotect_decommitted) {
+    if (PAS_MPROTECT_DECOMMITTED) {
         result = mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_READ | PROT_WRITE);
         if (result) {
             pas_log("Could not mprotect on commit: error code %d\n", result);
             PAS_ASSERT(!result);
         }
     }
-
-    if (!PAS_MADVISE_SYMMETRIC)
-        return;
-
-    result = madvise((void*)base_as_int, end_as_int - base_as_int, MADV_FREE_REUSE);
-    PAS_ASSERT(!result);
 }
 
-void pas_page_malloc_decommit(void* ptr, size_t size)
+static void decommit_impl(void* ptr, size_t size,
+                          bool is_asymmetric)
 {
     static const bool verbose = false;
     
@@ -211,10 +206,22 @@ void pas_page_malloc_decommit(void* ptr, size_t size)
     result = madvise((void*)base_as_int, end_as_int - base_as_int, MADV_FREE_REUSABLE);
     PAS_ASSERT(!result);
 
-    if (pas_page_malloc_mprotect_decommitted) {
+    if (PAS_MPROTECT_DECOMMITTED && !is_asymmetric) {
         result = mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_NONE);
         PAS_ASSERT(!result);
     }
+}
+
+void pas_page_malloc_decommit(void* ptr, size_t size)
+{
+    static const bool is_asymmetric = false;
+    decommit_impl(ptr, size, is_asymmetric);
+}
+
+void pas_page_malloc_decommit_asymmetric(void* ptr, size_t size)
+{
+    static const bool is_asymmetric = true;
+    decommit_impl(ptr, size, is_asymmetric);
 }
 
 void pas_page_malloc_deallocate(void* ptr, size_t size)

@@ -28,7 +28,7 @@
 
 #include "pas_baseline_allocator_result.h"
 #include "pas_baseline_allocator_table.h"
-#include "pas_count_lookup_mode.h"
+#include "pas_size_lookup_mode.h"
 #include "pas_local_allocator.h"
 #include "pas_segregated_directory_inlines.h"
 #include "pas_segregated_heap.h"
@@ -40,8 +40,8 @@ PAS_BEGIN_EXTERN_C;
 PAS_API pas_baseline_allocator_result
 pas_segregated_size_directory_get_allocator_from_tlc(
     pas_segregated_size_directory* directory,
-    size_t count,
-    pas_count_lookup_mode count_lookup_mode,
+    size_t size,
+    pas_size_lookup_mode size_lookup_mode,
     pas_heap_config* config,
     unsigned* cached_index);
 
@@ -52,22 +52,22 @@ pas_segregated_size_directory_select_allocator_slow(
 static PAS_ALWAYS_INLINE pas_baseline_allocator_result
 pas_segregated_size_directory_select_allocator(
     pas_segregated_size_directory* directory,
-    size_t count,
-    pas_count_lookup_mode count_lookup_mode,
+    size_t size,
+    pas_size_lookup_mode size_lookup_mode,
     pas_heap_config* config,
     unsigned* cached_index)
 {
     if (pas_segregated_size_directory_has_tlc_allocator(directory)
         && (pas_thread_local_cache_try_get() || pas_thread_local_cache_can_set())) {
         return pas_segregated_size_directory_get_allocator_from_tlc(
-            directory, count, count_lookup_mode, config, cached_index);
+            directory, size, size_lookup_mode, config, cached_index);
     }
 
     for (;;) {
         unsigned index;
         pas_baseline_allocator* allocator;
 
-        index = directory->baseline_allocator_index;
+        index = pas_segregated_size_directory_baseline_allocator_index(directory);
         if (index >= PAS_NUM_BASELINE_ALLOCATORS)
             allocator = pas_segregated_size_directory_select_allocator_slow(directory);
         else {
@@ -75,7 +75,7 @@ pas_segregated_size_directory_select_allocator(
             
             pas_lock_lock(&allocator->lock);
             
-            if (directory->baseline_allocator_index != index) {
+            if (pas_segregated_size_directory_baseline_allocator_index(directory) != index) {
                 pas_lock_unlock(&allocator->lock);
                 continue;
             }

@@ -50,9 +50,9 @@ void destructor(void* value)
     iso_deallocate(iso_reallocate_common_primitive(
                        iso_allocate_common_primitive(666), 1337, pas_reallocate_free_if_successful));
     iso_deallocate(iso_allocate(&isoHeap));
-    iso_deallocate(iso_allocate_array(&isoHeap, 100, 1));
-    iso_deallocate(iso_allocate_array(&isoHeap, 100, 64));
-    iso_deallocate(iso_reallocate_array(
+    iso_deallocate(iso_allocate_array_by_count(&isoHeap, 100, 1));
+    iso_deallocate(iso_allocate_array_by_count(&isoHeap, 100, 64));
+    iso_deallocate(iso_reallocate_array_by_count(
                        iso_allocate(&isoHeap), &isoHeap, 200, pas_reallocate_free_if_successful));
     iso_deallocate(iso_allocate_primitive(&isoPrimitiveHeap, 666));
     iso_deallocate(iso_allocate_primitive_with_alignment(&isoPrimitiveHeap, 128, 64));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,8 @@
 PAS_BEGIN_EXTERN_C;
 
 enum pas_local_allocator_config_kind {
+    pas_local_allocator_config_kind_null,
+    pas_local_allocator_config_kind_unselected,
 #define PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(name, value) \
     pas_local_allocator_config_kind_normal_ ## name, \
     pas_local_allocator_config_kind_primordial_partial_ ## name,
@@ -151,6 +153,10 @@ static inline const char*
 pas_local_allocator_config_kind_get_string(pas_local_allocator_config_kind kind)
 {
     switch (kind) {
+    case pas_local_allocator_config_kind_null:
+        return "null";
+    case pas_local_allocator_config_kind_unselected:
+        return "unselected";
 #define PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(name, value) \
     case pas_local_allocator_config_kind_normal_ ## name: \
         return "normal_" #name; \

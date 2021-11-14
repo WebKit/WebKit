@@ -75,6 +75,8 @@ PAS_API void pas_status_reporter_dump_tier_up_rates(pas_stream* stream);
 PAS_API void pas_status_reporter_dump_baseline_allocators(pas_stream* stream);
 PAS_API void pas_status_reporter_dump_thread_local_caches(pas_stream* stream);
 PAS_API void pas_status_reporter_dump_configuration(pas_stream* stream);
+PAS_API void pas_status_reporter_dump_physical_page_sharing_pool(pas_stream* stream);
+PAS_API void pas_status_reporter_dump_expendable_memories(pas_stream* stream);
 PAS_API void pas_status_reporter_dump_everything(pas_stream* stream);
 
 PAS_API void pas_status_reporter_start_if_necessary(void);

@@ -110,12 +110,13 @@ PAS_CREATE_TRY_ALLOCATE(
 __attribute__((malloc))
 void* thingy_try_allocate(pas_heap_ref* heap_ref)
 {
-    return try_allocate(heap_ref).ptr;
+    return (void*)try_allocate(heap_ref).begin;
 }
 
 void* thingy_try_allocate_zeroed(pas_heap_ref* heap_ref)
 {
-    return pas_typed_allocation_result_zero(try_allocate(heap_ref)).ptr;
+    return (void*)pas_allocation_result_zero(
+        try_allocate(heap_ref), THINGY_HEAP_CONFIG.get_type_size(heap_ref->type)).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE_ARRAY(
@@ -128,12 +129,18 @@ PAS_CREATE_TRY_ALLOCATE_ARRAY(
 __attribute__((malloc))
 void* thingy_try_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return try_allocate_array(heap_ref, count, alignment).ptr;
+    return (void*)try_allocate_array_by_count(heap_ref, count, alignment).begin;
 }
 
 void* thingy_try_allocate_zeroed_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return pas_typed_allocation_result_zero(try_allocate_array(heap_ref, count, alignment)).ptr;
+    size_t size;
+
+    if (__builtin_mul_overflow(count, THINGY_HEAP_CONFIG.get_type_size(heap_ref->type), &size))
+        return NULL;
+    
+    return (void*)pas_allocation_result_zero(
+        try_allocate_array_by_size(heap_ref, size, alignment), size).begin;
 }
 
 size_t thingy_get_allocation_size(void* ptr)
@@ -144,14 +151,14 @@ size_t thingy_get_allocation_size(void* ptr)
 void* thingy_try_reallocate_array(
     void* old_ptr, pas_heap_ref* heap_ref, size_t new_count)
 {
-    return pas_try_reallocate_array(old_ptr,
-                                    heap_ref,
-                                    new_count,
-                                    THINGY_HEAP_CONFIG,
-                                    try_allocate_array_for_realloc,
-                                    &thingy_typed_runtime_config.base,
-                                    pas_reallocate_disallow_heap_teleport,
-                                    pas_reallocate_free_if_successful).ptr;
+    return (void*)pas_try_reallocate_array_by_count(old_ptr,
+                                                    heap_ref,
+                                                    new_count,
+                                                    THINGY_HEAP_CONFIG,
+                                                    try_allocate_array_for_realloc,
+                                                    &thingy_typed_runtime_config.base,
+                                                    pas_reallocate_disallow_heap_teleport,
+                                                    pas_reallocate_free_if_successful).begin;
 }
 
 void thingy_deallocate(void* ptr)

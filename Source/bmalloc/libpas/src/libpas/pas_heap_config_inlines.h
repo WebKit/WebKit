@@ -74,16 +74,15 @@ PAS_BEGIN_EXTERN_C;
     lower_case_heap_config_name ## _specialized_try_allocate_common_impl_slow( \
         pas_heap_ref* heap_ref, \
         pas_heap_ref_kind heap_ref_kind, \
-        size_t aligned_count, \
         size_t size, \
         size_t alignment, \
         pas_heap_runtime_config* runtime_config, \
         pas_allocator_counts* allocator_counts, \
-        pas_count_lookup_mode count_lookup_mode) \
+        pas_size_lookup_mode size_lookup_mode) \
     { \
         return pas_try_allocate_common_impl_slow( \
-            heap_ref, heap_ref_kind, aligned_count, size, alignment, (heap_config_value), \
-            runtime_config, allocator_counts, count_lookup_mode); \
+            heap_ref, heap_ref_kind, size, alignment, (heap_config_value), \
+            runtime_config, allocator_counts, size_lookup_mode); \
     } \
     \
     bool lower_case_heap_config_name ## _specialized_try_deallocate_not_small( \

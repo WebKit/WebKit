@@ -285,6 +285,16 @@ public:
     BootJITHeap();
 };
 
+class EnablePageBalancing : public TestScope {
+public:
+    EnablePageBalancing();
+};
+
+class DisablePageBalancing : public TestScope {
+public:
+    DisablePageBalancing();
+};
+
 bool hasScope(const std::string& filter);
 
 void dumpObjectSet(const std::set<void*>& objects);

@@ -48,6 +48,7 @@ PAS_API void hotbit_heap_config_activate(void);
     .activate = hotbit_heap_config_activate, \
     .get_type_size = pas_simple_type_as_heap_type_get_type_size, \
     .get_type_alignment = pas_simple_type_as_heap_type_get_type_alignment, \
+    .dump_type = pas_simple_type_as_heap_type_dump, \
     .check_deallocation = false, \
     .small_segregated_min_align_shift = HOTBIT_MINALIGN_SHIFT, \
     .small_segregated_sharing_shift = PAS_SMALL_SHARING_SHIFT, \

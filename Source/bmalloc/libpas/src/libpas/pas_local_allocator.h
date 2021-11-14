@@ -90,7 +90,10 @@ struct pas_local_allocator {
         .current_offset = 0, \
         .end_offset = 0, \
         .view = NULL, \
-        .config_kind = pas_local_allocator_config_kind_normal_null \
+        .alignment_shift = 0, \
+        .current_word_is_valid = false, \
+        .current_word = 0, \
+        .config_kind = pas_local_allocator_config_kind_null \
     })
 
 #define PAS_LOCAL_ALLOCATOR_SIZE(num_alloc_bits) \
@@ -98,6 +101,10 @@ struct pas_local_allocator {
      PAS_MAX_CONST( \
          sizeof(uint64_t) * PAS_BITVECTOR_NUM_WORDS64(num_alloc_bits), \
          PAS_ROUND_UP_TO_POWER_OF_2(sizeof(pas_bitfit_allocator), sizeof(uint64_t))))
+
+#define PAS_LOCAL_ALLOCATOR_UNSELECTED_SIZE PAS_OFFSETOF(pas_local_allocator, bits)
+#define PAS_LOCAL_ALLOCATOR_UNSELECTED_INDEX 0u
+#define PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES (PAS_LOCAL_ALLOCATOR_UNSELECTED_SIZE / 8)
 
 #define PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY 0
 
@@ -139,6 +146,8 @@ static inline uintptr_t pas_local_allocator_page_boundary(pas_local_allocator* a
 
 PAS_API void pas_local_allocator_construct(pas_local_allocator* allocator,
                                            pas_segregated_size_directory* directory);
+
+PAS_API void pas_local_allocator_construct_unselected(pas_local_allocator* allocator);
 
 PAS_API void pas_local_allocator_reset(pas_local_allocator* allocator);
 

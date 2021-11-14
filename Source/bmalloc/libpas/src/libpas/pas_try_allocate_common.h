@@ -36,6 +36,21 @@
 
 PAS_BEGIN_EXTERN_C;
 
+static PAS_ALWAYS_INLINE size_t pas_try_allocate_compute_aligned_size(size_t size,
+                                                                      size_t alignment)
+{
+    /* In the non-memalign case, we can happily handle zero-sized allocations with aligned_size
+       being 0. This works because the heap's 0 size class is just a copy of the minalign size
+       class. But we cannot do this properly if the 0 size class has to have some alignment. That's
+       because we expect that for a size class to satisfy some alignment, that size must itself
+       be aligned to that alignment. */
+    if (alignment == 1)
+        return size;
+    if (size < alignment)
+        return alignment;
+    return pas_round_up_to_power_of_2(size, alignment);
+}
+
 static PAS_ALWAYS_INLINE bool
 pas_try_allocate_common_can_go_fast(pas_local_allocator_result allocator_result)
 {
@@ -59,16 +74,14 @@ pas_try_allocate_common_impl_fast(
     pas_allocator_counts* allocator_counts,
     pas_allocation_result_filter result_filter,
     pas_local_allocator* allocator,
-    pas_size_thunk size_thunk,
-    void* size_thunk_arg,
+    size_t size,
     size_t alignment)
 {
     static const bool verbose = false;
     
     pas_allocation_result result;
     result = pas_local_allocator_try_allocate(allocator,
-                                              size_thunk,
-                                              size_thunk_arg,
+                                              size,
                                               alignment,
                                               config,
                                               allocator_counts,
@@ -82,13 +95,12 @@ static PAS_ALWAYS_INLINE pas_allocation_result
 pas_try_allocate_common_impl_slow(
     pas_heap_ref* heap_ref,
     pas_heap_ref_kind heap_ref_kind,
-    size_t aligned_count, /* Must be = round_up(count * type_size, alignment) / type_size */
     size_t size, /* Must be = round_up(size, alignment) */
     size_t alignment,
     pas_heap_config config,
     pas_heap_runtime_config* runtime_config,
     pas_allocator_counts* allocator_counts,
-    pas_count_lookup_mode count_lookup_mode)
+    pas_size_lookup_mode size_lookup_mode)
 {
     static const bool verbose = false;
     
@@ -134,25 +146,18 @@ pas_try_allocate_common_impl_slow(
     if (verbose)
         pas_log("Asking heap for a directory.\n");
     
-    directory = pas_heap_ensure_size_directory_for_count(
-        heap, aligned_count, alignment, count_lookup_mode, config, cached_index,
+    directory = pas_heap_ensure_size_directory_for_size(
+        heap, size, alignment, size_lookup_mode, config, cached_index,
         allocator_counts);
     
     if (!directory) {
         /* This means we're really doing a large allocation! */
         
         pas_physical_memory_transaction transaction;
-        size_t my_size; /* Just for asserting. */
-        bool did_overflow;
         
         if (verbose)
             pas_log("Did not get a directory.\n");
 
-        did_overflow = __builtin_umull_overflow(aligned_count, config.get_type_size(type), &my_size);
-        PAS_ASSERT(!did_overflow);
-        my_size = pas_round_up_to_power_of_2(my_size, alignment);
-        PAS_ASSERT(my_size == size);
-        
         pas_physical_memory_transaction_construct(&transaction);
         do {
             PAS_ASSERT(!result.did_succeed);
@@ -177,11 +182,10 @@ pas_try_allocate_common_impl_slow(
     PAS_ASSERT(directory);
     
     baseline_allocator_result = pas_segregated_size_directory_select_allocator(
-        directory, aligned_count, count_lookup_mode, config.config_ptr, cached_index);
+        directory, size, size_lookup_mode, config.config_ptr, cached_index);
     
     result = pas_local_allocator_try_allocate(baseline_allocator_result.allocator,
-                                              pas_trivial_size_thunk,
-                                              (void*)size,
+                                              size,
                                               alignment,
                                               config,
                                               allocator_counts,
@@ -197,33 +201,31 @@ pas_try_allocate_common_impl_slow(
 static PAS_ALWAYS_INLINE pas_allocation_result
 pas_try_allocate_common_impl(
     pas_heap_ref* heap_ref,
-    size_t aligned_count, /* Must be = round_up(count * type_size, alignment) / type_size */
     size_t size,
     size_t alignment,
     pas_heap_config config,
     pas_allocator_counts* allocator_counts,
     pas_allocation_result (*result_filter)(pas_allocation_result result),
-    pas_allocation_result (*slow)(
-        pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment),
+    pas_allocation_result (*slow)(pas_heap_ref* heap_ref, size_t size, size_t alignment),
     pas_local_allocator_result allocator_result)
 {
     static const bool verbose = false;
     
     if (verbose) {
-        pas_log("heap_ref = %p allocating aligned_count = %zu, alignment = %zu.\n",
-                heap_ref, aligned_count, alignment);
+        pas_log("heap_ref = %p allocating size = %zu, alignment = %zu.\n",
+                heap_ref, size, alignment);
     }
 
     if (PAS_LIKELY(pas_try_allocate_common_can_go_fast(allocator_result))) {
         return pas_try_allocate_common_impl_fast(
             config, allocator_counts, result_filter, (pas_local_allocator*)allocator_result.allocator,
-            pas_trivial_size_thunk, (void*)size, alignment);
+            size, alignment);
     }
 
-    return slow(heap_ref, aligned_count, size, alignment);
+    return slow(heap_ref, size, alignment);
 }
 
-#define PAS_CREATE_TRY_ALLOCATE_COMMON(name, heap_ref_kind, heap_config, runtime_config, allocator_counts, count_lookup_mode, result_filter) \
+#define PAS_CREATE_TRY_ALLOCATE_COMMON(name, heap_ref_kind, heap_config, runtime_config, allocator_counts, size_lookup_mode, result_filter) \
     static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
     name ## _fast_inline_only(pas_local_allocator* allocator) \
     { \
@@ -232,29 +234,28 @@ pas_try_allocate_common_impl(
     } \
     \
     static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
-    name ## _fast(pas_local_allocator* allocator, pas_size_thunk size_thunk, void* size_thunk_arg, \
-                  size_t alignment) \
+    name ## _fast(pas_local_allocator* allocator, size_t size, size_t alignment) \
     { \
         return pas_try_allocate_common_impl_fast( \
             (heap_config), (allocator_counts), (result_filter), allocator, \
-            size_thunk, size_thunk_arg, alignment); \
+            size, alignment); \
     } \
     \
     static PAS_NEVER_INLINE pas_allocation_result \
-    name ## _slow(pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment) \
+    name ## _slow(pas_heap_ref* heap_ref, size_t size, size_t alignment) \
     { \
         return (result_filter)( \
             (heap_config).specialized_try_allocate_common_impl_slow( \
-                heap_ref, (heap_ref_kind), aligned_count, size, alignment, (runtime_config), \
-                (allocator_counts), (count_lookup_mode))); \
+                heap_ref, (heap_ref_kind), size, alignment, (runtime_config), \
+                (allocator_counts), (size_lookup_mode))); \
     } \
     \
     static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
-    name(pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment, \
+    name(pas_heap_ref* heap_ref, size_t size, size_t alignment, \
          pas_local_allocator_result allocator_result) \
     { \
         return pas_try_allocate_common_impl( \
-            heap_ref, aligned_count, size, alignment, (heap_config), \
+            heap_ref, size, alignment, (heap_config), \
             (allocator_counts), (result_filter), name ## _slow, allocator_result); \
     } \
     \
@@ -264,13 +265,13 @@ typedef pas_allocation_result (*pas_try_allocate_common_fast_inline_only)(
     pas_local_allocator* allocator);
 
 typedef pas_allocation_result (*pas_try_allocate_common_fast)(
-    pas_local_allocator* allocator, pas_size_thunk size_thunk, void* size_thunk_arg, size_t alignment);
+    pas_local_allocator* allocator, size_t size, size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_common_slow)(
-    pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment);
+    pas_heap_ref* heap_ref, size_t size, size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_common)(
-    pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment,
+    pas_heap_ref* heap_ref, size_t size, size_t alignment,
     pas_local_allocator_result allocator_result);
 
 PAS_END_EXTERN_C;

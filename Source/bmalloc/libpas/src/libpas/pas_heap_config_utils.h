@@ -64,6 +64,7 @@ typedef struct {
     pas_heap_config_activate_callback activate;
     pas_heap_config_get_type_size get_type_size;
     pas_heap_config_get_type_alignment get_type_alignment;
+    pas_heap_config_dump_type dump_type;
     bool check_deallocation;
     uint8_t small_segregated_min_align_shift;
     uint8_t small_segregated_sharing_shift;
@@ -319,6 +320,7 @@ typedef struct {
         .activate_callback = ((pas_basic_heap_config_arguments){__VA_ARGS__}).activate, \
         .get_type_size = ((pas_basic_heap_config_arguments){__VA_ARGS__}).get_type_size, \
         .get_type_alignment = ((pas_basic_heap_config_arguments){__VA_ARGS__}).get_type_alignment, \
+        .dump_type = ((pas_basic_heap_config_arguments){__VA_ARGS__}).dump_type, \
         .large_alignment = \
             (size_t)1 << ((pas_basic_heap_config_arguments){__VA_ARGS__}).small_segregated_min_align_shift, \
         PAS_BASIC_HEAP_CONFIG_SEGREGATED_HEAP_FIELDS(name, __VA_ARGS__) \
@@ -331,6 +333,7 @@ typedef struct {
             pas_heap_config_utils_for_each_shared_page_directory, \
         .for_each_shared_page_directory_remote = \
             pas_heap_config_utils_for_each_shared_page_directory_remote, \
+        .dump_shared_page_directory_arg = pas_shared_page_directory_by_size_dump_directory_arg, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(name ## _heap_config) \
     })
 

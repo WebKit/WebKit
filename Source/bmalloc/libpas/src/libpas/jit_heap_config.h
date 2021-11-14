@@ -62,6 +62,8 @@ static PAS_ALWAYS_INLINE size_t jit_type_alignment(pas_heap_type* type)
     return 1;
 }
 
+PAS_API void jit_type_dump(pas_heap_type* type, pas_stream* stream);
+
 PAS_API pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enumerator, void* boundary);
 
 static PAS_ALWAYS_INLINE pas_page_base* jit_small_bitfit_page_header_for_boundary(void* boundary);
@@ -102,7 +104,6 @@ PAS_API bool jit_heap_config_for_each_shared_page_directory(
     bool (*callback)(pas_segregated_shared_page_directory* directory,
                      void* arg),
     void* arg);
-
 PAS_API bool jit_heap_config_for_each_shared_page_directory_remote(
     pas_enumerator* enumerator,
     pas_segregated_heap* heap,
@@ -110,6 +111,8 @@ PAS_API bool jit_heap_config_for_each_shared_page_directory_remote(
                      pas_segregated_shared_page_directory* directory,
                      void* arg),
     void* arg);
+PAS_API PAS_NO_RETURN void jit_heap_config_dump_shared_page_directory_arg(
+    pas_stream* stream, pas_segregated_shared_page_directory* directory);
 
 PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
 
@@ -148,6 +151,7 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
         .activate_callback = jit_heap_config_activate, \
         .get_type_size = jit_type_size, \
         .get_type_alignment = jit_type_alignment, \
+        .dump_type = jit_type_dump, \
         .large_alignment = JIT_SMALL_MIN_ALIGN, \
         .small_segregated_config = { \
             .base = { \
@@ -179,6 +183,7 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
         .for_each_shared_page_directory = jit_heap_config_for_each_shared_page_directory, \
         .for_each_shared_page_directory_remote = \
             jit_heap_config_for_each_shared_page_directory_remote, \
+        .dump_shared_page_directory_arg = jit_heap_config_dump_shared_page_directory_arg, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(jit_heap_config) \
     })
 

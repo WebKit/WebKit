@@ -135,8 +135,11 @@
 
 #define PAS_MAX_OBJECTS_PER_PAGE         2048
 
-#define PAS_MADVISE_SYMMETRIC            0
+#define PAS_MPROTECT_DECOMMITTED         PAS_ENABLE_TESTING
 
+/* Currently, enabling page balancing is likely to be super bad for performance. I've done a bunch of
+   optimizations that make the !page_balancing case work much better and those optimizations have likely
+   made !!page_balancing a lot worse in terms of time performance. */
 #ifdef PAS_LIBMALLOC
 #define PAS_PAGE_BALANCING_ENABLED            true
 #else

@@ -90,12 +90,16 @@ PAS_API bool pas_utility_heap_config_for_each_shared_page_directory(
                      void* arg),
     void* arg);
 
+PAS_API void pas_utility_heap_config_dump_shared_page_directory_arg(
+    pas_stream* stream, pas_segregated_shared_page_directory* directory);
+
 #define PAS_UTILITY_HEAP_CONFIG ((pas_heap_config){ \
         .config_ptr = &pas_utility_heap_config, \
         .kind = pas_heap_config_kind_pas_utility, \
         .activate_callback = NULL, \
         .get_type_size = NULL, \
         .get_type_alignment = NULL, \
+        .dump_type = NULL, \
         .large_alignment = PAS_INTERNAL_MIN_ALIGN, \
         .small_segregated_config = { \
             .base = { \
@@ -163,6 +167,7 @@ PAS_API bool pas_utility_heap_config_for_each_shared_page_directory(
         .prepare_to_enumerate = NULL, \
         .for_each_shared_page_directory = pas_utility_heap_config_for_each_shared_page_directory, \
         .for_each_shared_page_directory_remote = NULL, \
+        .dump_shared_page_directory_arg = pas_utility_heap_config_dump_shared_page_directory_arg, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(pas_utility_heap_config) \
     })
 

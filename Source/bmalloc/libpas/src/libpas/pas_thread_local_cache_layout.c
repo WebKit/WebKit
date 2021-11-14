@@ -38,7 +38,8 @@
 
 pas_thread_local_cache_layout_node pas_thread_local_cache_layout_first_node = NULL;
 pas_thread_local_cache_layout_node pas_thread_local_cache_layout_last_node = NULL;
-pas_allocator_index pas_thread_local_cache_layout_next_allocator_index = 0;
+pas_allocator_index pas_thread_local_cache_layout_next_allocator_index =
+    PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES;
 
 pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cache_layout_node node)
 {
@@ -49,9 +50,17 @@ pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cach
 
     pas_heap_lock_assert_held();
 
-    PAS_ASSERT(
-        pas_thread_local_cache_layout_node_get_allocator_index_generic(node)
-        == (pas_allocator_index)UINT_MAX);
+    switch (pas_thread_local_cache_layout_node_get_kind(node)) {
+    case pas_thread_local_cache_layout_segregated_size_directory_node_kind:
+    case pas_thread_local_cache_layout_redundant_local_allocator_node_kind:
+        PAS_ASSERT(!pas_thread_local_cache_layout_node_get_allocator_index_generic(node));
+        break;
+    case pas_thread_local_cache_layout_local_view_cache_node_kind:
+        PAS_ASSERT(
+            pas_thread_local_cache_layout_node_get_allocator_index_generic(node)
+            == (pas_allocator_index)UINT_MAX);
+        break;
+    }
 
     PAS_ASSERT(!pas_thread_local_cache_layout_node_get_next(node));
     
@@ -76,12 +85,12 @@ pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cach
     
     if (!pas_thread_local_cache_layout_first_node) {
         PAS_ASSERT(!pas_thread_local_cache_layout_last_node);
-        PAS_ASSERT(!result);
+        PAS_ASSERT(result == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
         pas_thread_local_cache_layout_first_node = node;
         pas_thread_local_cache_layout_last_node = node;
     } else {
         PAS_ASSERT(pas_thread_local_cache_layout_last_node);
-        PAS_ASSERT(result);
+        PAS_ASSERT(result > PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
         pas_thread_local_cache_layout_node_set_next(pas_thread_local_cache_layout_last_node, node);
         pas_thread_local_cache_layout_last_node = node;
     }

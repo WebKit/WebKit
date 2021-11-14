@@ -31,12 +31,14 @@
 
 #include "pas_compact_bootstrap_free_heap.h"
 #include "pas_heap_config_utils_inlines.h"
+#include "pas_stream.h"
 #include "pas_utility_heap.h"
 
 pas_segregated_shared_page_directory pas_utility_heap_shared_page_directory =
     PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_INITIALIZER(
         PAS_UTILITY_HEAP_CONFIG.small_segregated_config,
-        pas_share_pages);
+        pas_share_pages,
+        NULL);
 
 pas_heap_config pas_utility_heap_config = PAS_UTILITY_HEAP_CONFIG;
 
@@ -65,6 +67,13 @@ bool pas_utility_heap_config_for_each_shared_page_directory(
 {
     PAS_ASSERT(heap == &pas_utility_segregated_heap);
     return callback(&pas_utility_heap_shared_page_directory, arg);
+}
+
+void pas_utility_heap_config_dump_shared_page_directory_arg(
+    pas_stream* stream, pas_segregated_shared_page_directory* directory)
+{
+    PAS_UNUSED_PARAM(directory);
+    pas_stream_printf(stream, "Utility");
 }
 
 #endif /* LIBPAS_ENABLED */

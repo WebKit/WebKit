@@ -37,12 +37,14 @@
 #include "pas_bitfit_size_class.h"
 #include "pas_bitfit_view.h"
 #include "pas_compact_bootstrap_free_heap.h"
+#include "pas_compact_expendable_memory.h"
 #include "pas_compact_large_utility_free_heap.h"
 #include "pas_fd_stream.h"
 #include "pas_heap.h"
 #include "pas_heap_lock.h"
 #include "pas_heap_summary.h"
 #include "pas_heap_table.h"
+#include "pas_large_expendable_memory.h"
 #include "pas_large_heap.h"
 #include "pas_large_map.h"
 #include "pas_large_sharing_pool.h"
@@ -386,9 +388,16 @@ void pas_status_reporter_dump_segregated_shared_page_directory(
     
     pas_stream_printf(
         stream,
-        "        Shared Page Dir %p(%s): Num Views: %zu, ",
+        "        Shared Page Dir %p(%s, ",
         directory,
-        pas_segregated_page_config_kind_get_string(directory->base.page_config_kind),
+        pas_segregated_page_config_kind_get_string(directory->base.page_config_kind));
+
+    pas_segregated_page_config_kind_get_config(directory->base.page_config_kind)->base.heap_config_ptr
+        ->dump_shared_page_directory_arg(stream, directory);
+
+    pas_stream_printf(
+        stream,
+        "): Num Views: %zu, ",
         pas_segregated_directory_size(&directory->base));
 
     summary = pas_segregated_directory_compute_summary(&directory->base);
@@ -561,18 +570,10 @@ void pas_status_reporter_dump_heap(pas_stream* stream, pas_heap* heap)
     config = pas_heap_config_kind_get_config(heap->config_kind);
     
     pas_stream_printf(stream, "    Heap %p:\n", heap);
-    pas_stream_printf(stream, "        Size = %zu, Alignment = %zu\n",
-                      config->get_type_size(heap->type),
-                      config->get_type_alignment(heap->type));
-#if PAS_ENABLE_ISO
-    if (config->kind == pas_heap_config_kind_iso) {
-        pas_simple_type type;
 
-        type = (pas_simple_type)heap->type;
-        if (pas_simple_type_has_key(type))
-            pas_stream_printf(stream, "        Key = %p\n", pas_simple_type_key(type));
-    }
-#endif
+    pas_stream_printf(stream, "        %s, ", pas_heap_config_kind_get_string(heap->config_kind));
+    config->dump_type(heap->type, stream);
+    pas_stream_printf(stream, "\n");
     
     summary = pas_heap_compute_summary(heap, pas_lock_is_held);
     pas_stream_printf(stream, "        Total Summary: ");
@@ -973,7 +974,7 @@ void pas_status_reporter_dump_thread_local_caches(pas_stream* stream)
             if (allocator_index >= cache->allocator_index_upper_bound)
                 break;
             
-            allocator = pas_thread_local_cache_get_local_allocator_impl(cache, allocator_index);
+            allocator = pas_thread_local_cache_get_local_allocator_direct(cache, allocator_index);
             pas_stream_printf(stream,
                               "            %u: directory = %p, %s\n",
                               allocator_index,
@@ -986,11 +987,72 @@ void pas_status_reporter_dump_thread_local_caches(pas_stream* stream)
 void pas_status_reporter_dump_configuration(pas_stream* stream)
 {
     pas_stream_printf(stream, "    Mprotect Decommitted: %s\n",
-                      pas_page_malloc_mprotect_decommitted ? "yes" : "no");
+                      PAS_MPROTECT_DECOMMITTED ? "yes" : "no");
+}
+
+void pas_status_reporter_dump_physical_page_sharing_pool(pas_stream* stream)
+{
+    pas_stream_printf(stream, "    Physical Page Sharing Pool Balance: %ld\n",
+                      pas_physical_page_sharing_pool_balance);
+}
+
+static void dump_expendable_memory(pas_stream* stream,
+                                   pas_expendable_memory* header,
+                                   void* payload)
+{
+    size_t index;
+    size_t index_end;
+
+    pas_stream_printf(stream, "Header = %p, Payload = %p...%p, Page States: ",
+                      header, payload, (char*)payload + header->size);
+
+    index_end = pas_expendable_memory_num_pages_in_use(header);
+
+    for (index = 0; index < index_end; ++index) {
+        pas_expendable_memory_state_kind kind;
+
+        kind = pas_expendable_memory_state_get_kind(header->states[index]);
+
+        switch (kind) {
+        case PAS_EXPENDABLE_MEMORY_STATE_KIND_DECOMMITTED:
+            pas_stream_printf(stream, "D");
+            break;
+        case PAS_EXPENDABLE_MEMORY_STATE_KIND_INTERIOR:
+            pas_stream_printf(stream, "I");
+            break;
+        default:
+            PAS_ASSERT(kind >= PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED);
+            PAS_ASSERT(kind <= PAS_EXPENDABLE_MEMORY_STATE_KIND_MAX_JUST_USED);
+            PAS_ASSERT(kind - PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED < 10);
+            pas_stream_printf(stream, "%u", kind - PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED);
+            break;
+        }
+    }
+}
+
+void pas_status_reporter_dump_expendable_memories(pas_stream* stream)
+{
+    pas_large_expendable_memory* large_memory;
+
+    pas_heap_lock_assert_held();
+
+    pas_stream_printf(stream, "    Compact Expendable Memory: ");
+    dump_expendable_memory(
+        stream, &pas_compact_expendable_memory_header.header, pas_compact_expendable_memory_payload);
+    pas_stream_printf(stream, "\n");
+
+    for (large_memory = pas_large_expendable_memory_head; large_memory; large_memory = large_memory->next) {
+        pas_stream_printf(stream, "    Large Expendable Memory: ");
+        dump_expendable_memory(
+            stream, &large_memory->header, pas_large_expendable_memory_payload(large_memory));
+        pas_stream_printf(stream, "\n");
+    }
 }
 
 void pas_status_reporter_dump_everything(pas_stream* stream)
 {
+    pas_heap_lock_assert_held();
+    
     pas_stream_printf(stream, "%d: Heap Status:\n", getpid());
     pas_status_reporter_dump_all_heaps(stream);
     pas_status_reporter_dump_all_shared_page_directories(stream);
@@ -1037,6 +1099,8 @@ void pas_status_reporter_dump_everything(pas_stream* stream)
     pas_stream_printf(stream, "\n");
 
     pas_status_reporter_dump_configuration(stream);
+    pas_status_reporter_dump_physical_page_sharing_pool(stream);
+    pas_status_reporter_dump_expendable_memories(stream);
 }
 
 static void* status_reporter_thread_main(void* arg)

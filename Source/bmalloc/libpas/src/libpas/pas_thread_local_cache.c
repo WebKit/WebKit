@@ -101,6 +101,8 @@ static pas_thread_local_cache* allocate_cache(unsigned allocator_index_capacity)
     size_t size;
     pas_thread_local_cache* result;
 
+    PAS_ASSERT(allocator_index_capacity >= PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
+
     size = pas_thread_local_cache_size_for_allocator_index_capacity(allocator_index_capacity);
     
     if (verbose)
@@ -157,6 +159,10 @@ pas_thread_local_cache* pas_thread_local_cache_create(void)
     thread_local_cache->thread = pthread_self();
     
     thread_local_cache->allocator_index_upper_bound = allocator_index_upper_bound;
+
+    pas_local_allocator_construct_unselected(
+        pas_thread_local_cache_get_local_allocator_direct_unchecked(
+            thread_local_cache, PAS_LOCAL_ALLOCATOR_UNSELECTED_INDEX));
 
     for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node))
         pas_thread_local_cache_layout_node_construct(layout_node, thread_local_cache);
@@ -220,7 +226,8 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     unsigned desired_index_upper_bound;
 
     old_index_upper_bound = thread_local_cache->allocator_index_upper_bound;
-    
+
+    PAS_ASSERT(desired_allocator_index);
     PAS_ASSERT(desired_allocator_index >= old_index_upper_bound);
     PAS_ASSERT(desired_allocator_index < (pas_allocator_index)UINT_MAX);
     
@@ -252,6 +259,10 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
         new_thread_local_cache->allocator_index_upper_bound =
             thread_local_cache->allocator_index_upper_bound;
 
+        pas_local_allocator_construct_unselected(
+            pas_thread_local_cache_get_local_allocator_direct_unchecked(
+                new_thread_local_cache, PAS_LOCAL_ALLOCATOR_UNSELECTED_INDEX));
+        
         for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
             pas_allocator_index allocator_index;
             
@@ -298,18 +309,19 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     
     PAS_ASSERT(desired_allocator_index < new_thread_local_cache->allocator_index_upper_bound);
     return pas_local_allocator_result_create_success(
-        pas_thread_local_cache_get_local_allocator_impl(new_thread_local_cache,
-                                                        desired_allocator_index));
+        pas_thread_local_cache_get_local_allocator_direct(new_thread_local_cache,
+                                                          desired_allocator_index));
 }
 
 pas_local_allocator_result
-pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow(unsigned allocator_index,
-                                                                 pas_heap_config* heap_config)
+pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index_slow(
+    unsigned allocator_index,
+    pas_heap_config* heap_config)
 {
     if (!pas_thread_local_cache_can_set() || pas_debug_heap_is_enabled(heap_config->kind))
         return pas_local_allocator_result_create_failure();
 
-    return pas_thread_local_cache_get_local_allocator(
+    return pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_index(
         pas_thread_local_cache_get(heap_config),
         allocator_index,
         pas_lock_is_not_held);
@@ -371,13 +383,14 @@ static bool stop_local_allocators_if_necessary_set_bit_callback(
 
     data = arg;
 
-    allocator_index = index.index;
+    allocator_index = (pas_allocator_index)index.index;
+    PAS_ASSERT(allocator_index == index.index);
 
     PAS_TESTING_ASSERT(pas_bitvector_get(data->should_stop_bitvector, allocator_index));
     
     pas_bitvector_set(data->should_stop_bitvector, allocator_index, false);
     
-    scavenger_data = pas_thread_local_cache_get_local_allocator_impl(
+    scavenger_data = pas_thread_local_cache_get_local_allocator_direct(
         data->thread_local_cache, allocator_index);
 
     if ((pas_local_allocator*)scavenger_data == data->requesting_allocator)
@@ -644,7 +657,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                 if (allocator_index >= cache->allocator_index_upper_bound)
                     break;
 
-                scavenger_data = pas_thread_local_cache_get_local_allocator_impl(cache, allocator_index);
+                scavenger_data = pas_thread_local_cache_get_local_allocator_direct(cache, allocator_index);
 
                 if (allocator_action == pas_allocator_scavenge_request_stop_action) {
                     uint8_t should_stop_count;

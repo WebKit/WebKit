@@ -71,18 +71,18 @@ PAS_API void iso_heap_ref_construct(pas_heap_ref* heap_ref,
 PAS_API void* iso_try_allocate(pas_heap_ref* heap_ref);
 PAS_API void* iso_allocate(pas_heap_ref* heap_ref);
 
-PAS_API void* iso_try_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment);
-PAS_API void* iso_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* iso_try_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment);
 
-PAS_API void* iso_try_allocate_array_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment);
-PAS_API void* iso_allocate_array_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* iso_try_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* iso_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment);
 
-PAS_API void* iso_try_reallocate_array(void* old_ptr, pas_heap_ref* heap_ref,
-                                       size_t new_count,
-                                       pas_reallocate_free_mode free_mode);
-PAS_API void* iso_reallocate_array(void* old_ptr, pas_heap_ref* heap_ref,
-                                   size_t new_count,
-                                   pas_reallocate_free_mode free_mode);
+PAS_API void* iso_try_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
+                                                size_t new_count,
+                                                pas_reallocate_free_mode free_mode);
+PAS_API void* iso_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
+                                            size_t new_count,
+                                            pas_reallocate_free_mode free_mode);
 
 PAS_API pas_heap* iso_heap_ref_get_heap(pas_heap_ref* heap_ref);
 

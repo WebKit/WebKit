@@ -56,12 +56,12 @@ PAS_BEGIN_EXTERN_C;
    still keeping these entrypoints. It's just a different large heap reuse policy. */
 
 static PAS_ALWAYS_INLINE pas_allocation_result
-pas_try_allocate_primitive_impl(pas_primitive_heap_ref* heap_ref,
-                                size_t size,
-                                size_t alignment,
-                                pas_heap_config config,
-                                pas_heap_runtime_config* runtime_config,
-                                pas_try_allocate_common try_allocate_common)
+pas_try_allocate_primitive_impl_casual_case(pas_primitive_heap_ref* heap_ref,
+                                            size_t size,
+                                            size_t alignment,
+                                            pas_heap_config config,
+                                            pas_heap_runtime_config* runtime_config,
+                                            pas_try_allocate_common try_allocate_common)
 {
     static const bool verbose = false;
     
@@ -73,9 +73,9 @@ pas_try_allocate_primitive_impl(pas_primitive_heap_ref* heap_ref,
     if (!pas_is_power_of_2(alignment))
         return pas_allocation_result_create_failure();
     
-    aligned_size = pas_round_up_to_power_of_2(size, alignment);
+    aligned_size = pas_try_allocate_compute_aligned_size(size, alignment);
     
-    index = pas_segregated_heap_index_for_primitive_count(aligned_size, config);
+    index = pas_segregated_heap_index_for_size(aligned_size, config);
     
     /* Have a fast path for when you allocate some size all the time or
        most of the time. This saves both time and space. The space savings are
@@ -104,7 +104,7 @@ pas_try_allocate_primitive_impl(pas_primitive_heap_ref* heap_ref,
     if (verbose)
         printf("allocator_index = %u\n", allocator_index);
     
-    allocator = pas_thread_local_cache_get_local_allocator_if_can_set_cache(
+    allocator = pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index(
         allocator_index, config.config_ptr);
     
     /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
@@ -113,7 +113,77 @@ pas_try_allocate_primitive_impl(pas_primitive_heap_ref* heap_ref,
         && alignment > pas_local_allocator_alignment((pas_local_allocator*)allocator.allocator))
         allocator.did_succeed = false;
 
-    return try_allocate_common(&heap_ref->base, aligned_size, aligned_size, alignment, allocator);
+    return try_allocate_common(&heap_ref->base, aligned_size, alignment, allocator);
+}
+
+static PAS_ALWAYS_INLINE pas_allocation_result
+pas_try_allocate_primitive_impl_inline_only(
+    pas_primitive_heap_ref* heap_ref,
+    size_t size,
+    size_t alignment,
+    pas_heap_config config,
+    pas_try_allocate_common_fast_inline_only try_allocate_common_fast_inline_only)
+{
+    static const bool verbose = false;
+    
+    size_t aligned_size;
+    unsigned allocator_index;
+    pas_local_allocator_result allocator;
+    size_t index;
+    pas_thread_local_cache* cache;
+    
+    if (!pas_is_power_of_2(alignment))
+        return pas_allocation_result_create_failure();
+    
+    aligned_size = pas_try_allocate_compute_aligned_size(size, alignment);
+    
+    index = pas_segregated_heap_index_for_size(aligned_size, config);
+    
+    /* Have a fast path for when you allocate some size all the time or
+       most of the time. This saves both time and space. The space savings are
+       the more interesting part, since */
+    
+    if (index == heap_ref->cached_index) {
+        if (verbose)
+            printf("Found cached index.\n");
+        allocator_index = heap_ref->base.allocator_index;
+    } else {
+        pas_heap* heap;
+        pas_segregated_heap* segregated_heap;
+        
+        if (verbose)
+            printf("Using full lookup.\n");
+
+        heap = heap_ref->base.heap;
+        if (!heap)
+            return pas_allocation_result_create_failure();
+        segregated_heap = &heap->segregated_heap;
+        
+        allocator_index = pas_segregated_heap_allocator_index_for_index_inline_only(segregated_heap,
+                                                                                    index);
+    }
+    
+    if (verbose)
+        printf("allocator_index = %u\n", allocator_index);
+
+    cache = pas_thread_local_cache_try_get();
+    if (PAS_UNLIKELY(!cache))
+        return pas_allocation_result_create_failure();
+    
+    allocator =
+        pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index(
+            cache, allocator_index);
+    if (PAS_UNLIKELY(!allocator.did_succeed))
+        return pas_allocation_result_create_failure();
+    
+    /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
+       alignment being the constant 1. */
+    if (PAS_UNLIKELY(
+            alignment != 1
+            && alignment > pas_local_allocator_alignment((pas_local_allocator*)allocator.allocator)))
+        return pas_allocation_result_create_failure();
+
+    return try_allocate_common_fast_inline_only((pas_local_allocator*)allocator.allocator);
 }
 
 #define PAS_CREATE_TRY_ALLOCATE_PRIMITIVE(name, heap_config, runtime_config, allocator_counts, result_filter) \
@@ -123,16 +193,37 @@ pas_try_allocate_primitive_impl(pas_primitive_heap_ref* heap_ref,
         (heap_config), \
         (runtime_config), \
         (allocator_counts), \
-        pas_avoid_count_lookup, \
+        pas_avoid_size_lookup, \
         (result_filter)); \
+    \
+    static PAS_NEVER_INLINE pas_allocation_result name ## _casual_case( \
+        pas_primitive_heap_ref* heap_ref, \
+        size_t size, \
+        size_t alignment) \
+    { \
+        return pas_try_allocate_primitive_impl_casual_case( \
+            heap_ref, size, alignment, (heap_config), (runtime_config), name ## _impl); \
+    } \
+    \
+    static PAS_ALWAYS_INLINE pas_allocation_result name ## _inline_only( \
+        pas_primitive_heap_ref* heap_ref, \
+        size_t size, \
+        size_t alignment) \
+    { \
+        return pas_try_allocate_primitive_impl_inline_only( \
+            heap_ref, size, alignment, (heap_config), name ## _impl_fast_inline_only); \
+    } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name( \
         pas_primitive_heap_ref* heap_ref, \
         size_t size, \
         size_t alignment) \
     { \
-        return pas_try_allocate_primitive_impl( \
-            heap_ref, size, alignment, (heap_config), (runtime_config), name ## _impl); \
+        pas_allocation_result result; \
+        result = name ## _inline_only(heap_ref, size, alignment); \
+        if (PAS_LIKELY(result.did_succeed)) \
+            return result; \
+        return name ## _casual_case(heap_ref, size, alignment); \
     } \
     \
     static PAS_UNUSED PAS_NEVER_INLINE pas_allocation_result name ## _for_realloc( \

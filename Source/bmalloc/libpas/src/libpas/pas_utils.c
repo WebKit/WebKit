@@ -72,22 +72,22 @@ static void (*reallocation_did_fail_callback)(const char* reason,
                                               void* target_heap,
                                               void* old_ptr,
                                               size_t old_size,
-                                              size_t new_count);
+                                              size_t new_size);
 
 PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char *reason,
                                                               void* source_heap,
                                                               void* target_heap,
                                                               void* old_ptr,
                                                               size_t old_size,
-                                                              size_t new_count)
+                                                              size_t new_size)
 {
     if (reallocation_did_fail_callback) {
         reallocation_did_fail_callback(
-            reason, source_heap, target_heap, old_ptr, old_size, new_count);
+            reason, source_heap, target_heap, old_ptr, old_size, new_size);
     }
     pas_panic("reallocation did fail with source_heap = %p, target_heap = %p, "
-              "old_ptr = %p, old_size = %zu, new_count = %zu: %s\n",
-              source_heap, target_heap, old_ptr, old_size, new_count,
+              "old_ptr = %p, old_size = %zu, new_size = %zu: %s\n",
+              source_heap, target_heap, old_ptr, old_size, new_size,
               reason);
 }
 

@@ -136,14 +136,14 @@ void pas_thread_local_cache_layout_node_construct(pas_thread_local_cache_layout_
 {
     if (pas_thread_local_cache_layout_node_represents_allocator(node)) {
         pas_local_allocator_construct(
-            pas_thread_local_cache_get_local_allocator_impl(
+            pas_thread_local_cache_get_local_allocator_direct_for_initialization(
                 cache, pas_thread_local_cache_layout_node_get_allocator_index_for_allocator(node)),
             pas_thread_local_cache_layout_node_get_directory(node));
         return;
     }
 
     pas_local_view_cache_construct(
-        pas_thread_local_cache_get_local_allocator_impl(
+        pas_thread_local_cache_get_local_allocator_direct_for_initialization(
             cache, pas_thread_local_cache_layout_node_get_allocator_index_for_view_cache(node)),
         pas_segregated_size_directory_view_cache_capacity(
             pas_thread_local_cache_layout_node_get_directory(node)));
@@ -159,14 +159,14 @@ void pas_thread_local_cache_layout_node_move(pas_thread_local_cache_layout_node 
     
     if (pas_thread_local_cache_layout_node_represents_allocator(node)) {
         pas_local_allocator_move(
-            pas_thread_local_cache_get_local_allocator_impl(to_cache, allocator_index),
-            pas_thread_local_cache_get_local_allocator_impl(from_cache, allocator_index));
+            pas_thread_local_cache_get_local_allocator_direct_for_initialization(to_cache, allocator_index),
+            pas_thread_local_cache_get_local_allocator_direct(from_cache, allocator_index));
         return;
     }
 
     pas_local_view_cache_move(
-        pas_thread_local_cache_get_local_allocator_impl(to_cache, allocator_index),
-        pas_thread_local_cache_get_local_allocator_impl(from_cache, allocator_index));
+        pas_thread_local_cache_get_local_allocator_direct_for_initialization(to_cache, allocator_index),
+        pas_thread_local_cache_get_local_allocator_direct(from_cache, allocator_index));
 }
 
 void pas_thread_local_cache_layout_node_stop(pas_thread_local_cache_layout_node node,
@@ -180,7 +180,7 @@ void pas_thread_local_cache_layout_node_stop(pas_thread_local_cache_layout_node 
     void* allocator;
 
     allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(node);
-    allocator = pas_thread_local_cache_get_local_allocator_impl(cache, allocator_index);
+    allocator = pas_thread_local_cache_get_local_allocator_direct(cache, allocator_index);
     
     if (verbose)
         pas_log("Stopping allocator %p because pas_thread_local_cache_stop_local_allocators\n", allocator);

@@ -81,12 +81,12 @@ void* iso_test_allocate_common_primitive(size_t size)
 
 void* iso_test_allocate(pas_heap_ref* heap_ref)
 {
-    return test_allocate_impl(heap_ref).ptr;
+    return (void*)test_allocate_impl(heap_ref).begin;
 }
 
-void* iso_test_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_test_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return test_allocate_array_impl(heap_ref, count, alignment).ptr;
+    return (void*)test_allocate_array_impl_by_count(heap_ref, count, alignment).begin;
 }
 
 void iso_test_deallocate(void* ptr)

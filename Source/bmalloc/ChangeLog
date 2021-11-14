@@ -1,3 +1,529 @@
+2021-11-13  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] update to 48d608bf31ba92f8059d2c76488f00c52aaca15a: changes to support universal isoheaps
+        https://bugs.webkit.org/show_bug.cgi?id=233094
+
+        Reviewed by Yusuke Suzuki.
+
+        This includes a bunch of changes to make it possible to use isoheaps universally:
+
+        - The bmalloc_heap API now supports isoheaped array allocations and isoheaped objects with flexible
+          array members (i.e. flex).
+
+        - Array allocations are now byte-based, not count-based, by default. When I first wrote libpas, I was
+          sure that it would be easier for everyone if array allocation was engineered to take the array length,
+          and the allocator worked things out from there. But this doesn't work well when the rubber hits the
+          road:
+
+          -> Array allocation sites already know the size in bytes, and often don't even have a convenient way
+             of passing the length to the allocator.
+
+          -> Performing the multiplication at the allocation site means we are multiplying by a constant rather
+             than multiplying by a variable (as the by-count array allocation sites were doing before).
+
+          -> C++ operator new[] takes the size, not the count (though this matters less, since operator new[]
+             isn't useful for isoheaps anyway).
+
+        - All allocation sites now have the fast path hacks that the intrinsic allocation fast path had.
+          Specifically, they all now compile to something that has no stack frame and doesn't require PAC. The
+          "slow" path is a tail call. Note that because that path isn't actually all that slow, it's called the
+          "casual" path.
+
+        - Size class lookup tables can now be decommitted. This is accomplished using a thing called
+          pas_expendable_memory.
+
+        - The status reporter can now report the type name of isoheaps. This relies on bmalloc_heap now using
+          its own kind of type, rather than the generic libpas pas_simple_type, so that it can have a string.
+          This change required corresponding changes in IsoHeap.h and bmalloc.cpp.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/IsoHeap.h:
+        (bmalloc::api::IsoHeap::allocate):
+        (bmalloc::api::IsoHeap::tryAllocate):
+        (bmalloc::api::IsoHeap::provideHeap):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::mallocOutOfLine):
+        * libpas/.gitignore:
+        * libpas/CMakeLists.txt: Added.
+        * libpas/README: Added.
+        * libpas/clean.sh: Added.
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/bmalloc_heap.c:
+        (bmalloc_try_allocate_casual):
+        (bmalloc_allocate_casual):
+        (bmalloc_try_iso_allocate_casual):
+        (bmalloc_iso_allocate_casual):
+        (bmalloc_try_allocate_array_by_size_with_alignment_casual):
+        (bmalloc_allocate_array_by_size_with_alignment_casual):
+        (bmalloc_try_iso_allocate_array_by_size):
+        (bmalloc_iso_allocate_array_by_size):
+        (bmalloc_try_iso_allocate_zeroed_array_by_size):
+        (bmalloc_iso_allocate_zeroed_array_by_size):
+        (bmalloc_try_iso_allocate_array_by_size_with_alignment):
+        (bmalloc_iso_allocate_array_by_size_with_alignment):
+        (bmalloc_try_iso_reallocate_array_by_size):
+        (bmalloc_iso_reallocate_array_by_size):
+        (bmalloc_try_iso_allocate_array_by_count):
+        (bmalloc_iso_allocate_array_by_count):
+        (bmalloc_try_iso_allocate_array_by_count_with_alignment):
+        (bmalloc_iso_allocate_array_by_count_with_alignment):
+        (bmalloc_try_iso_reallocate_array_by_count):
+        (bmalloc_iso_reallocate_array_by_count):
+        (bmalloc_try_allocate_flex_with_alignment_casual):
+        (bmalloc_allocate_flex_with_alignment_casual):
+        (bmalloc_try_allocate_flex):
+        (bmalloc_allocate_flex):
+        (bmalloc_try_allocate_zeroed_flex):
+        (bmalloc_allocate_zeroed_flex):
+        (bmalloc_try_allocate_flex_with_alignment):
+        (bmalloc_allocate_flex_with_alignment):
+        (bmalloc_try_reallocate_flex):
+        (bmalloc_reallocate_flex):
+        (bmalloc_try_allocate_auxiliary_with_alignment_casual):
+        (bmalloc_allocate_auxiliary_with_alignment_casual):
+        (bmalloc_heap_ref_get_type_size):
+        (bmalloc_get_allocation_size):
+        (bmalloc_allocate_slow): Deleted.
+        (bmalloc_try_iso_allocate_array): Deleted.
+        (bmalloc_iso_allocate_array): Deleted.
+        (bmalloc_try_iso_allocate_array_with_alignment): Deleted.
+        (bmalloc_iso_allocate_array_with_alignment): Deleted.
+        * libpas/src/libpas/bmalloc_heap.h:
+        * libpas/src/libpas/bmalloc_heap_config.h:
+        * libpas/src/libpas/bmalloc_heap_inlines.h:
+        (bmalloc_try_allocate_inline):
+        (bmalloc_allocate_inline):
+        (bmalloc_try_iso_allocate_inline):
+        (bmalloc_iso_allocate_inline):
+        (bmalloc_try_iso_allocate_array_by_size_inline):
+        (bmalloc_try_iso_allocate_zeroed_array_by_size_inline):
+        (bmalloc_try_iso_allocate_array_by_size_with_alignment_inline):
+        (bmalloc_try_iso_allocate_array_by_count_inline):
+        (bmalloc_try_iso_allocate_array_by_count_with_alignment_inline):
+        (bmalloc_iso_allocate_array_by_size_inline):
+        (bmalloc_iso_allocate_zeroed_array_by_size_inline):
+        (bmalloc_iso_allocate_array_by_size_with_alignment_inline):
+        (bmalloc_iso_allocate_array_by_count_inline):
+        (bmalloc_iso_allocate_array_by_count_with_alignment_inline):
+        (bmalloc_try_iso_reallocate_array_by_size_inline):
+        (bmalloc_iso_reallocate_array_by_size_inline):
+        (bmalloc_try_iso_reallocate_array_by_count_inline):
+        (bmalloc_iso_reallocate_array_by_count_inline):
+        (bmalloc_try_allocate_flex_inline):
+        (bmalloc_allocate_flex_inline):
+        (bmalloc_try_allocate_zeroed_flex_inline):
+        (bmalloc_allocate_zeroed_flex_inline):
+        (bmalloc_try_allocate_flex_with_alignment_inline):
+        (bmalloc_allocate_flex_with_alignment_inline):
+        (bmalloc_try_reallocate_flex_inline):
+        (bmalloc_reallocate_flex_inline):
+        (bmalloc_try_allocate_auxiliary_inline):
+        (bmalloc_allocate_auxiliary_inline):
+        (bmalloc_try_allocate_auxiliary_with_alignment_inline):
+        (bmalloc_allocate_auxiliary_with_alignment_inline):
+        (bmalloc_try_iso_allocate_array_inline): Deleted.
+        (bmalloc_try_iso_allocate_array_with_alignment_inline): Deleted.
+        (bmalloc_iso_allocate_array_inline): Deleted.
+        (bmalloc_iso_allocate_array_with_alignment_inline): Deleted.
+        * libpas/src/libpas/bmalloc_heap_innards.h:
+        * libpas/src/libpas/bmalloc_heap_ref.h:
+        * libpas/src/libpas/bmalloc_type.c: Added.
+        (bmalloc_type_create):
+        (bmalloc_type_try_name_dump):
+        (bmalloc_type_name_dump):
+        (bmalloc_type_dump):
+        (bmalloc_type_as_heap_type_dump):
+        * libpas/src/libpas/bmalloc_type.h: Added.
+        (bmalloc_type_size):
+        (bmalloc_type_alignment):
+        (bmalloc_type_name):
+        (bmalloc_type_as_heap_type_get_type_size):
+        (bmalloc_type_as_heap_type_get_type_alignment):
+        * libpas/src/libpas/hotbit_heap_config.h:
+        * libpas/src/libpas/iso_heap.c:
+        (iso_heap_ref_construct):
+        (iso_try_allocate_array_by_count):
+        (iso_allocate_array_by_count):
+        (iso_try_allocate_array_by_count_zeroed):
+        (iso_allocate_array_by_count_zeroed):
+        (iso_try_reallocate_array_by_count):
+        (iso_reallocate_array_by_count):
+        (iso_primitive_heap_ref_construct):
+        (iso_try_allocate_array): Deleted.
+        (iso_allocate_array): Deleted.
+        (iso_try_allocate_array_zeroed): Deleted.
+        (iso_allocate_array_zeroed): Deleted.
+        (iso_try_reallocate_array): Deleted.
+        (iso_reallocate_array): Deleted.
+        * libpas/src/libpas/iso_heap.h:
+        * libpas/src/libpas/iso_heap_config.h:
+        * libpas/src/libpas/iso_heap_inlines.h:
+        (iso_try_allocate_inline):
+        (iso_allocate_inline):
+        (iso_try_allocate_array_by_count_inline):
+        (iso_allocate_array_by_count_inline):
+        (iso_try_allocate_array_by_count_zeroed_inline):
+        (iso_allocate_array_by_count_zeroed_inline):
+        (iso_try_reallocate_array_by_count_inline):
+        (iso_reallocate_array_by_count_inline):
+        (iso_try_allocate_array_inline): Deleted.
+        (iso_allocate_array_inline): Deleted.
+        (iso_try_allocate_array_zeroed_inline): Deleted.
+        (iso_allocate_array_zeroed_inline): Deleted.
+        (iso_try_reallocate_array_inline): Deleted.
+        (iso_reallocate_array_inline): Deleted.
+        * libpas/src/libpas/iso_heap_ref.h:
+        * libpas/src/libpas/iso_test_heap.c:
+        (iso_test_allocate):
+        (iso_test_allocate_array_by_count):
+        (iso_test_allocate_array): Deleted.
+        * libpas/src/libpas/iso_test_heap.h:
+        * libpas/src/libpas/iso_test_heap_config.h:
+        * libpas/src/libpas/jit_heap_config.c:
+        (jit_type_dump):
+        (jit_heap_config_dump_shared_page_directory_arg):
+        * libpas/src/libpas/jit_heap_config.h:
+        * libpas/src/libpas/minalign32_heap.c:
+        (minalign32_allocate):
+        (minalign32_allocate_array_by_count):
+        (minalign32_allocate_array): Deleted.
+        * libpas/src/libpas/minalign32_heap.h:
+        * libpas/src/libpas/minalign32_heap_config.h:
+        * libpas/src/libpas/pagesize64k_heap.c:
+        (pagesize64k_allocate):
+        (pagesize64k_allocate_array_by_count):
+        (pagesize64k_allocate_array): Deleted.
+        * libpas/src/libpas/pagesize64k_heap.h:
+        * libpas/src/libpas/pagesize64k_heap_config.h:
+        * libpas/src/libpas/pas_baseline_allocator_table.c:
+        (initialize):
+        * libpas/src/libpas/pas_basic_segregated_page_caches.h: Removed.
+        * libpas/src/libpas/pas_compact_expendable_memory.c: Added.
+        (pas_compact_expendable_memory_allocate):
+        (pas_compact_expendable_memory_commit_if_necessary):
+        (pas_compact_expendable_memory_scavenge):
+        * libpas/src/libpas/pas_compact_expendable_memory.h: Added.
+        (pas_compact_expendable_memory_note_use):
+        (pas_compact_expendable_memory_touch):
+        * libpas/src/libpas/pas_compact_skip_list_node_ptr.h: Removed.
+        * libpas/src/libpas/pas_compact_skip_list_node_ptr_ptr.h: Removed.
+        * libpas/src/libpas/pas_config.h:
+        * libpas/src/libpas/pas_count_lookup_mode.h: Removed.
+        * libpas/src/libpas/pas_designated_intrinsic_heap.c:
+        (set_up_range):
+        (pas_designated_intrinsic_heap_initialize):
+        * libpas/src/libpas/pas_designated_intrinsic_heap_inlines.h:
+        (pas_designated_index_result_get_allocator_index):
+        * libpas/src/libpas/pas_ensure_heap_with_page_caches.c:
+        (pas_ensure_heap_with_page_caches):
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (pas_enumerate_segregated_heaps):
+        * libpas/src/libpas/pas_expendable_memory.c: Added.
+        (pas_expendable_memory_construct):
+        (pas_expendable_memory_try_allocate):
+        (pas_expendable_memory_allocate):
+        (pas_expendable_memory_commit_if_necessary):
+        (scavenge_impl):
+        (pas_expendable_memory_scavenge):
+        * libpas/src/libpas/pas_expendable_memory.h: Added.
+        (pas_expendable_memory_state_get_kind):
+        (pas_expendable_memory_state_get_version):
+        (pas_expendable_memory_state_create):
+        (pas_expendable_memory_state_with_kind):
+        (pas_expendable_memory_state_with_version):
+        (pas_expendable_memory_note_use_impl):
+        (pas_expendable_memory_note_use):
+        (pas_expendable_memory_num_pages):
+        (pas_expendable_memory_num_pages_in_use):
+        * libpas/src/libpas/pas_heap.c:
+        (pas_heap_reset_heap_ref):
+        (pas_heap_ensure_size_directory_for_size_slow):
+        (pas_heap_ensure_size_directory_for_count_slow): Deleted.
+        * libpas/src/libpas/pas_heap.h:
+        * libpas/src/libpas/pas_heap_config.h:
+        * libpas/src/libpas/pas_heap_config_inlines.h:
+        * libpas/src/libpas/pas_heap_config_utils.h:
+        * libpas/src/libpas/pas_heap_inlines.h:
+        (pas_heap_ensure_size_directory_for_size):
+        (pas_heap_ensure_size_directory_for_count): Deleted.
+        * libpas/src/libpas/pas_heap_kind.h:
+        (pas_heap_kind_get_string):
+        * libpas/src/libpas/pas_heap_ref_prefix.h:
+        * libpas/src/libpas/pas_internal_config.h:
+        * libpas/src/libpas/pas_intrinsic_heap_support.h:
+        * libpas/src/libpas/pas_large_expendable_memory.c: Added.
+        (allocate_new_large_expendable_memory):
+        (pas_large_expendable_memory_allocate):
+        (pas_large_expendable_memory_commit_if_necessary):
+        (pas_large_expendable_memory_scavenge):
+        * libpas/src/libpas/pas_large_expendable_memory.h: Added.
+        (pas_large_expendable_memory_payload):
+        (pas_large_expendable_memory_header_for_object):
+        (pas_large_expendable_memory_note_use):
+        (pas_large_expendable_memory_touch):
+        * libpas/src/libpas/pas_large_heap.c:
+        (allocate_impl):
+        * libpas/src/libpas/pas_local_allocator.c:
+        (pas_local_allocator_construct_unselected):
+        * libpas/src/libpas/pas_local_allocator.h:
+        * libpas/src/libpas/pas_local_allocator_config_kind.h:
+        (pas_local_allocator_config_kind_get_string):
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_start_allocating_in_primordial_partial_view):
+        (pas_local_allocator_refill_with_known_config):
+        (pas_local_allocator_try_allocate_slow_impl):
+        (pas_local_allocator_try_allocate):
+        * libpas/src/libpas/pas_lock_free_read_hashtable.h: Removed.
+        * libpas/src/libpas/pas_object_size_mode.h: Removed.
+        * libpas/src/libpas/pas_page_malloc.c:
+        (pas_page_malloc_commit):
+        (decommit_impl):
+        (pas_page_malloc_decommit):
+        (pas_page_malloc_decommit_asymmetric):
+        * libpas/src/libpas/pas_page_malloc.h:
+        * libpas/src/libpas/pas_page_sharing_pool.c:
+        (pas_physical_page_sharing_pool_take_for_page_config):
+        * libpas/src/libpas/pas_redundant_local_allocator_node.c:
+        (pas_redundant_local_allocator_node_create):
+        * libpas/src/libpas/pas_scavenger.c:
+        (scavenger_thread_main):
+        (pas_scavenger_decommit_expendable_memory):
+        (pas_scavenger_run_synchronously_now):
+        (pas_scavenger_perform_synchronous_operation):
+        * libpas/src/libpas/pas_scavenger.h:
+        * libpas/src/libpas/pas_segregated_exclusive_view_inlines.h:
+        (pas_segregated_exclusive_view_note_eligibility):
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (max_object_size_for_page_config):
+        (max_bitfit_object_size_for_heap_config):
+        (pas_segregated_heap_construct):
+        (pas_segregated_heap_get_cached_index_for_heap_type):
+        (pas_segregated_heap_cached_index_is_set):
+        (pas_segregated_heap_get_cached_index):
+        (pas_segregated_heap_index_is_cached_index_and_cached_index_is_set):
+        (pas_segregated_heap_index_is_cached_index_or_cached_index_is_unset):
+        (pas_segregated_heap_index_is_not_cached_index_and_cached_index_is_set):
+        (pas_segregated_heap_index_is_greater_than_cached_index_and_cached_index_is_set):
+        (pas_segregated_heap_index_is_greater_equal_cached_index_and_cached_index_is_set):
+        (pas_segregated_heap_size_directory_for_index_slow):
+        (pas_segregated_heap_medium_allocator_index_for_index):
+        (compute_small_index_upper_bound):
+        (ensure_size_lookup):
+        (size_directory_min_heap_compare):
+        (size_directory_min_heap_get_index):
+        (size_directory_min_heap_set_index):
+        (recompute_size_lookup):
+        (rematerialize_size_lookup_set_index_to_small_allocator_index):
+        (rematerialize_size_lookup_set_index_to_small_size_directory):
+        (rematerialize_size_lookup_set_medium_directory_tuple):
+        (rematerialize_size_lookup_if_necessary):
+        (pas_segregated_heap_ensure_allocator_index):
+        (compute_ideal_object_size):
+        (ensure_size_lookup_if_necessary):
+        (check_size_lookup_recomputation_did_become_not_all_good):
+        (check_size_lookup_recomputation_set_index_to_small_allocator_index):
+        (check_size_lookup_recomputation_set_index_to_small_size_directory):
+        (check_size_lookup_recomputation_set_medium_directory_tuple):
+        (check_size_lookup_recomputation):
+        (pas_segregated_heap_ensure_size_directory_for_size):
+        (max_count_for_page_config): Deleted.
+        (max_small_count_for_heap_config): Deleted.
+        (ensure_count_lookup): Deleted.
+        (ensure_count_lookup_if_necessary): Deleted.
+        (pas_segregated_heap_ensure_size_directory_for_count): Deleted.
+        * libpas/src/libpas/pas_segregated_heap.h:
+        (pas_segregated_heap_index_for_size):
+        (pas_segregated_heap_size_for_index):
+        (pas_segregated_heap_allocator_index_for_index_inline_only):
+        (pas_segregated_heap_allocator_index_for_index):
+        (pas_segregated_heap_allocator_index_for_size_inline_only):
+        (pas_segregated_heap_allocator_index_for_size):
+        (pas_segregated_heap_index_for_primitive_count): Deleted.
+        (pas_segregated_heap_primitive_count_for_index): Deleted.
+        (pas_segregated_heap_index_for_count): Deleted.
+        (pas_segregated_heap_count_for_index): Deleted.
+        (pas_segregated_heap_allocator_index_for_count_not_primitive): Deleted.
+        * libpas/src/libpas/pas_segregated_heap_inlines.h:
+        (pas_segregated_heap_size_directory_for_index):
+        (pas_segregated_heap_size_directory_for_size):
+        (pas_segregated_heap_touch_lookup_tables):
+        (pas_segregated_heap_size_directory_for_count): Deleted.
+        * libpas/src/libpas/pas_segregated_heap_page_sharing_mode.h: Removed.
+        * libpas/src/libpas/pas_segregated_page.c:
+        (pas_segregated_page_construct):
+        * libpas/src/libpas/pas_segregated_page_granule_use_count.h: Removed.
+        * libpas/src/libpas/pas_segregated_page_header_placement_mode.h: Removed.
+        * libpas/src/libpas/pas_segregated_shared_page_directory.c:
+        (take_last_empty_consider_view):
+        * libpas/src/libpas/pas_segregated_shared_page_directory.h:
+        * libpas/src/libpas/pas_segregated_size_directory.c:
+        (pas_segregated_size_directory_create):
+        (pas_segregated_size_directory_ensure_data):
+        (pas_segregated_size_directory_create_tlc_allocator):
+        (pas_segregated_size_directory_create_tlc_view_cache):
+        (pas_segregated_size_directory_select_allocator_slow):
+        (pas_segregated_size_directory_get_allocator_from_tlc):
+        (pas_segregated_size_directory_dump_reference):
+        * libpas/src/libpas/pas_segregated_size_directory.h:
+        (pas_segregated_size_directory_decode_baseline_allocator_index):
+        (pas_segregated_size_directory_decode_min_index):
+        (pas_segregated_size_directory_encode_stuff):
+        (pas_segregated_size_directory_as_view):
+        (pas_segregated_size_directory_alignment):
+        (pas_segregated_size_directory_baseline_allocator_index):
+        (pas_segregated_size_directory_min_index):
+        (pas_segregated_size_directory_set_baseline_allocator_index):
+        (pas_segregated_size_directory_compare_and_swap_baseline_allocator_index_weak):
+        (pas_segregated_size_directory_set_min_index):
+        (pas_segregated_size_directory_has_tlc_allocator):
+        * libpas/src/libpas/pas_segregated_size_directory_inlines.h:
+        (pas_segregated_size_directory_select_allocator):
+        * libpas/src/libpas/pas_shared_handle_or_page.h: Removed.
+        * libpas/src/libpas/pas_shared_handle_or_page_inlines.h: Removed.
+        * libpas/src/libpas/pas_shared_page_directory_by_size.c:
+        (pas_shared_page_directory_by_size_get):
+        (pas_shared_page_directory_by_size_dump_directory_arg):
+        * libpas/src/libpas/pas_shared_page_directory_by_size.h:
+        * libpas/src/libpas/pas_simple_type.c: Added.
+        (pas_simple_type_dump):
+        (pas_simple_type_as_heap_type_dump):
+        * libpas/src/libpas/pas_simple_type.h:
+        * libpas/src/libpas/pas_size_lookup_mode.h: Added.
+        (pas_size_lookup_mode_get_string):
+        * libpas/src/libpas/pas_size_thunk.h: Removed.
+        * libpas/src/libpas/pas_skip_list.c: Removed.
+        * libpas/src/libpas/pas_skip_list.h: Removed.
+        * libpas/src/libpas/pas_skip_list_inlines.h: Removed.
+        * libpas/src/libpas/pas_status_reporter.c:
+        (pas_status_reporter_dump_segregated_shared_page_directory):
+        (pas_status_reporter_dump_heap):
+        (pas_status_reporter_dump_thread_local_caches):
+        (pas_status_reporter_dump_configuration):
+        (pas_status_reporter_dump_physical_page_sharing_pool):
+        (dump_expendable_memory):
+        (pas_status_reporter_dump_expendable_memories):
+        (pas_status_reporter_dump_everything):
+        * libpas/src/libpas/pas_status_reporter.h:
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (allocate_cache):
+        (pas_thread_local_cache_create):
+        (pas_thread_local_cache_get_local_allocator_slow):
+        (pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index_slow):
+        (stop_local_allocators_if_necessary_set_bit_callback):
+        (pas_thread_local_cache_for_all):
+        (pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow): Deleted.
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        (pas_thread_local_cache_get_local_allocator_direct_without_any_checks_whatsoever):
+        (pas_thread_local_cache_get_local_allocator_direct_for_initialization):
+        (pas_thread_local_cache_get_local_allocator_direct_unchecked):
+        (pas_thread_local_cache_get_local_allocator_direct):
+        (pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_but_not_unselected_index):
+        (pas_thread_local_cache_get_local_allocator_for_initialized_index):
+        (pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_index):
+        (pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index):
+        (pas_thread_local_cache_try_get_local_allocator_for_possibly_uninitialized_but_not_unselected_index):
+        (pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index):
+        (pas_thread_local_cache_get_local_allocator_impl): Deleted.
+        (pas_thread_local_cache_get_local_allocator): Deleted.
+        (pas_thread_local_cache_try_get_local_allocator): Deleted.
+        (pas_thread_local_cache_get_local_allocator_if_can_set_cache): Deleted.
+        * libpas/src/libpas/pas_thread_local_cache_layout.c:
+        (pas_thread_local_cache_layout_add_node):
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.c:
+        (pas_thread_local_cache_layout_node_construct):
+        (pas_thread_local_cache_layout_node_move):
+        (pas_thread_local_cache_layout_node_stop):
+        * libpas/src/libpas/pas_try_allocate.h:
+        (pas_try_allocate_impl_casual_case):
+        (pas_try_allocate_impl_inline_only):
+        (pas_try_allocate_impl_size_thunk): Deleted.
+        (pas_try_allocate_impl): Deleted.
+        * libpas/src/libpas/pas_try_allocate_array.h:
+        (pas_try_allocate_array_impl_casual_case_with_heap):
+        (pas_try_allocate_array_impl_inline_only_with_heap):
+        (pas_try_allocate_array_impl_inline_only):
+        (pas_try_allocate_array_impl): Deleted.
+        * libpas/src/libpas/pas_try_allocate_common.h:
+        (pas_try_allocate_compute_aligned_size):
+        (pas_try_allocate_common_impl_fast):
+        (pas_try_allocate_common_impl_slow):
+        (pas_try_allocate_common_impl):
+        * libpas/src/libpas/pas_try_allocate_intrinsic.h:
+        (pas_try_allocate_intrinsic_impl_casual_case):
+        (pas_try_allocate_intrinsic_impl_inline_only):
+        (pas_try_allocate_intrinsic_impl_medium_slow_case): Deleted.
+        * libpas/src/libpas/pas_try_allocate_primitive.h:
+        (pas_try_allocate_primitive_impl_casual_case):
+        (pas_try_allocate_primitive_impl_inline_only):
+        (pas_try_allocate_primitive_impl): Deleted.
+        * libpas/src/libpas/pas_try_reallocate.h:
+        (pas_try_allocate_for_reallocate_and_copy):
+        (pas_try_reallocate_table_segregated_case):
+        (pas_try_reallocate_table_bitfit_case):
+        (pas_try_reallocate):
+        (pas_try_reallocate_intrinsic_allocate_callback):
+        (pas_try_reallocate_intrinsic):
+        (pas_try_reallocate_single_allocate_callback):
+        (pas_try_reallocate_single):
+        (pas_try_reallocate_array_allocate_callback):
+        (pas_try_reallocate_array_by_size):
+        (pas_try_reallocate_array_by_count):
+        (pas_try_reallocate_primitive_allocate_callback):
+        (pas_try_reallocate_primitive):
+        (pas_try_reallocate_array): Deleted.
+        * libpas/src/libpas/pas_typed_allocation_result.h: Removed.
+        * libpas/src/libpas/pas_utility_heap.c:
+        * libpas/src/libpas/pas_utility_heap_config.c:
+        (pas_utility_heap_config_dump_shared_page_directory_arg):
+        * libpas/src/libpas/pas_utility_heap_config.h:
+        * libpas/src/libpas/pas_utils.c:
+        (pas_reallocation_did_fail):
+        * libpas/src/libpas/pas_utils.h:
+        (pas_compare_and_swap_uint8_weak):
+        * libpas/src/libpas/pas_utils_prefix.h:
+        * libpas/src/libpas/thingy_heap.c:
+        (thingy_try_allocate):
+        (thingy_try_allocate_zeroed):
+        (thingy_try_allocate_array):
+        (thingy_try_allocate_zeroed_array):
+        (thingy_try_reallocate_array):
+        * libpas/src/libpas/thingy_heap_config.h:
+        * libpas/src/test/ExpendableMemoryTests.cpp: Added.
+        (std::testPayloadImpl):
+        (std::forEachExpendableMemory):
+        (std::checkAllDecommitted):
+        (std::checkAllInUseCommitted):
+        (std::testSynchronousScavengingExpendsExpendableMemory):
+        (std::scavengerWillShutDown):
+        (std::testScavengerExpendsExpendableMemory):
+        (std::testSoManyHeaps):
+        (addExpendableMemoryTests):
+        * libpas/src/test/HeapRefAllocatorIndexTests.cpp: Added.
+        (addHeapRefAllocatorIndexTests):
+        * libpas/src/test/IsoHeapChaosTests.cpp:
+        (std::createIsoHeapRefForSize):
+        (std::createBmallocHeapRefForSize):
+        (std::testAllocationChaos):
+        (std::addIsoTests):
+        (std::addAllTests):
+        (addIsoHeapChaosTests):
+        * libpas/src/test/IsoHeapPageSharingTests.cpp:
+        (std::testLargeHeapTakesPagesFromCorrectLargeHeapWithFancyOrder):
+        (std::addAllTests):
+        * libpas/src/test/IsoHeapPartialAndBaselineTests.cpp:
+        (std::addScavengerDependentTests):
+        * libpas/src/test/TSDTests.cpp:
+        (std::destructor):
+        * libpas/src/test/TestHarness.cpp:
+        (EnablePageBalancing::EnablePageBalancing):
+        (DisablePageBalancing::DisablePageBalancing):
+        (main):
+        * libpas/src/test/TestHarness.h:
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+        (std::verifyHeapEmpty):
+        (std::createIsolatedHeapRef):
+        (std::addSmallHeapTests):
+
 2021-11-12  Darin Adler  <darin@apple.com>
 
         Make sort-Xcode-project-file idempotent

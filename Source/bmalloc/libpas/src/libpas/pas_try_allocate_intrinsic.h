@@ -74,7 +74,7 @@ PAS_BEGIN_EXTERN_C;
     }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
-pas_try_allocate_intrinsic_impl_medium_slow_case(
+pas_try_allocate_intrinsic_impl_casual_case(
     pas_heap* heap,
     size_t size,
     size_t alignment,
@@ -95,7 +95,7 @@ pas_try_allocate_intrinsic_impl_medium_slow_case(
     PAS_ASSERT(alignment == 1 || !designation_mode);
 
     if (verbose)
-        pas_log("in impl_medium_slow_case for %s\n", pas_heap_config_kind_get_string(config.kind));
+        pas_log("in impl_casual_case for %s\n", pas_heap_config_kind_get_string(config.kind));
 
     if (!pas_is_power_of_2(alignment))
         return pas_allocation_result_create_failure();
@@ -104,22 +104,11 @@ pas_try_allocate_intrinsic_impl_medium_slow_case(
         return pas_debug_heap_allocate(size, alignment);
 
     if (verbose)
-        pas_log("not doing debug heap in impl_medium_slow_case for %s\n", pas_heap_config_kind_get_string(config.kind));
+        pas_log("not doing debug heap in impl_casual_case for %s\n", pas_heap_config_kind_get_string(config.kind));
 
-    /* In the non-memalign case, we can happily handle zero-sized allocations with aligned_size
-       being 0. This works because the heap's 0 size class is just a copy of the minalign size
-       class. But we cannot do this properly if the 0 size class has to have some alignment. That's
-       because we expect that for a size class to satisfy some alignment, that size must itself
-       be aligned to that alignment. */
-    if (alignment == 1)
-        aligned_size = size;
-    else if (size < alignment)
-        aligned_size = alignment;
-    else
-        aligned_size = pas_round_up_to_power_of_2(size, alignment);
+    aligned_size = pas_try_allocate_compute_aligned_size(size, alignment);
     
-    index = pas_segregated_heap_index_for_primitive_count(aligned_size,
-                                                          config);
+    index = pas_segregated_heap_index_for_size(aligned_size, config);
 
     if (verbose) {
         pas_log("aligned_size = %zu, index = %zu, alignment = %zu.\n",
@@ -136,9 +125,9 @@ pas_try_allocate_intrinsic_impl_medium_slow_case(
             index, designation_mode, config);
         if (PAS_LIKELY(designated_index.did_succeed)) {
             allocator_result = pas_local_allocator_result_create_success(
-                pas_thread_local_cache_get_local_allocator_impl(
+                pas_thread_local_cache_get_local_allocator_direct(
                     cache,
-                    designated_index.index * pas_designated_intrinsic_heap_num_allocator_indices(config)));
+                    pas_designated_index_result_get_allocator_index(designated_index, config)));
         } else {
             if (PAS_UNLIKELY(index >= PAS_NUM_INTRINSIC_SIZE_CLASSES)) {
                 allocator_index =
@@ -153,7 +142,7 @@ pas_try_allocate_intrinsic_impl_medium_slow_case(
             if (verbose)
                 pas_log("allocator_index = %u.\n", allocator_index);
         
-            allocator_result = pas_thread_local_cache_get_local_allocator(
+            allocator_result = pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_index(
                 cache, allocator_index, pas_lock_is_not_held);
         }
 
@@ -173,17 +162,15 @@ pas_try_allocate_intrinsic_impl_medium_slow_case(
             allocator_result.did_succeed = false;
         }
 
-        if (PAS_LIKELY(allocator_result.did_succeed)) {
-            return try_allocate_common_fast(
-                allocator, pas_trivial_size_thunk, (void*)aligned_size, alignment);
-        }
+        if (PAS_LIKELY(allocator_result.did_succeed))
+            return try_allocate_common_fast(allocator, aligned_size, alignment);
     }
 
     fake_heap_ref.type = heap->type;
     fake_heap_ref.heap = heap;
-    fake_heap_ref.allocator_index = UINT_MAX;
+    fake_heap_ref.allocator_index = 0;
 
-    return try_allocate_common_slow(&fake_heap_ref, aligned_size, aligned_size, alignment);
+    return try_allocate_common_slow(&fake_heap_ref, aligned_size, alignment);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
@@ -213,20 +200,9 @@ pas_try_allocate_intrinsic_impl_inline_only(
     if (!pas_is_power_of_2(alignment))
         return pas_allocation_result_create_failure();
 
-    /* In the non-memalign case, we can happily handle zero-sized allocations with aligned_size
-       being 0. This works because the heap's 0 size class is just a copy of the minalign size
-       class. But we cannot do this properly if the 0 size class has to have some alignment. That's
-       because we expect that for a size class to satisfy some alignment, that size must itself
-       be aligned to that alignment. */
-    if (alignment == 1)
-        aligned_size = size;
-    else if (size < alignment)
-        aligned_size = alignment;
-    else
-        aligned_size = pas_round_up_to_power_of_2(size, alignment);
+    aligned_size = pas_try_allocate_compute_aligned_size(size, alignment);
     
-    index = pas_segregated_heap_index_for_primitive_count(aligned_size,
-                                                          config);
+    index = pas_segregated_heap_index_for_size(aligned_size, config);
 
     if (verbose) {
         pas_log("aligned_size = %zu, index = %zu, alignment = %zu.\n",
@@ -241,9 +217,9 @@ pas_try_allocate_intrinsic_impl_inline_only(
         index, designation_mode, config);
     if (PAS_LIKELY(designated_index.did_succeed)) {
         allocator_result = pas_local_allocator_result_create_success(
-            pas_thread_local_cache_get_local_allocator_impl(
+            pas_thread_local_cache_get_local_allocator_direct_unchecked(
                 cache,
-                designated_index.index * pas_designated_intrinsic_heap_num_allocator_indices(config)));
+                pas_designated_index_result_get_allocator_index(designated_index, config)));
     } else {
         if (PAS_UNLIKELY(index >= PAS_NUM_INTRINSIC_SIZE_CLASSES))
             return pas_allocation_result_create_failure();
@@ -253,15 +229,22 @@ pas_try_allocate_intrinsic_impl_inline_only(
         if (verbose)
             pas_log("allocator_index = %u.\n", allocator_index);
         
-        allocator_result = pas_thread_local_cache_try_get_local_allocator(cache, allocator_index);
+        allocator_result =
+            pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index(
+                cache, allocator_index);
+
+        if (PAS_UNLIKELY(!allocator_result.did_succeed))
+            return pas_allocation_result_create_failure();
     }
-    
-    if (PAS_UNLIKELY(!allocator_result.did_succeed))
-        return pas_allocation_result_create_failure();
+
+    PAS_TESTING_ASSERT(allocator_result.did_succeed);
     
     allocator = (pas_local_allocator*)allocator_result.allocator;
     
-    PAS_TESTING_ASSERT(!allocator_result.did_succeed || allocator->object_size >= aligned_size);
+    PAS_TESTING_ASSERT(
+        !allocator_result.did_succeed
+        || allocator->object_size >= aligned_size
+        || allocator->config_kind == pas_local_allocator_config_kind_unselected);
     
     /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
        alignment being the constant 1. */
@@ -284,13 +267,13 @@ pas_try_allocate_intrinsic_impl_inline_only(
         (heap_config), \
         (runtime_config), \
         (allocator_counts), \
-        pas_force_count_lookup, \
+        pas_force_size_lookup, \
         (result_filter)); \
     \
     static PAS_NEVER_INLINE pas_allocation_result \
-    name ## _medium_slow_case(size_t size, size_t alignment) \
+    name ## _casual_case(size_t size, size_t alignment) \
     { \
-        return pas_try_allocate_intrinsic_impl_medium_slow_case( \
+        return pas_try_allocate_intrinsic_impl_casual_case( \
             (heap), size, alignment, (heap_support), (heap_config), \
             name ## _impl_fast, name ## _impl_slow, (designation_mode)); \
     } \
@@ -312,7 +295,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
                 pas_log("Returning successful result (begin = %p)\n", (void*)result.begin); \
             return result; \
         } \
-        return name ## _medium_slow_case(size, alignment); \
+        return name ## _casual_case(size, alignment); \
     } \
     \
     static PAS_UNUSED PAS_NEVER_INLINE pas_allocation_result \
@@ -328,7 +311,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     struct pas_dummy
 
 typedef pas_allocation_result (*pas_try_allocate_intrinsic)(size_t size,
-                                                                      size_t alignment);
+                                                            size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_intrinsic_for_realloc)(size_t size);
 

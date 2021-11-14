@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_SEGREGATED_PAGE_HEADER_PLACEMENT_MODE_H
-#define PAS_SEGREGATED_PAGE_HEADER_PLACEMENT_MODE_H
+#include "pas_config.h"
 
-#include "pas_utils.h"
+#if LIBPAS_ENABLED
 
-PAS_BEGIN_EXTERN_C;
+#include "pas_simple_type.h"
 
-enum pas_segregated_page_header_placement_mode {
-    pas_segregated_page_header_at_head_of_page,
-    pas_segregated_page_header_at_head_of_megapage
-};
+#include "pas_stream.h"
 
-typedef enum pas_segregated_page_header_placement_mode pas_segregated_page_header_placement_mode;
-
-static inline const char*
-pas_segregated_page_header_placement_mode_get_string(
-    pas_segregated_page_header_placement_mode mode)
+void pas_simple_type_dump(pas_simple_type type, pas_stream* stream)
 {
-    switch (mode) {
-    case pas_segregated_page_header_at_head_of_page:
-        return "at_head_of_page";
-    case pas_segregated_page_header_at_head_of_megapage:
-        return "at_head_of_megapage";
-    }
-    PAS_ASSERT(!"Should not be reached");
-    return NULL;
+    pas_stream_printf(
+        stream, "Size = %zu, Alignment = %zu",
+        pas_simple_type_size(type), pas_simple_type_alignment(type));
+
+    if (pas_simple_type_has_key(type))
+        pas_stream_printf(stream, ", Key = %p", pas_simple_type_key(type));
 }
 
-PAS_END_EXTERN_C;
+void pas_simple_type_as_heap_type_dump(pas_heap_type* type, pas_stream* stream)
+{
+    pas_simple_type_dump((pas_simple_type)type, stream);
+}
 
-#endif /* PAS_SEGREGATED_PAGE_HEADER_PLACEMENT_MODE_H */
+#endif /* LIBPAS_ENABLED */
 

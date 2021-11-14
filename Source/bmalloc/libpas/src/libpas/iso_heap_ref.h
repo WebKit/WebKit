@@ -32,7 +32,7 @@
 PAS_BEGIN_EXTERN_C;
 
 #define ISO_HEAP_REF_INITIALIZER_TLC_PART \
-    .allocator_index = UINT_MAX
+    .allocator_index = 0
 
 #define ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(type_size, alignment) \
     ((pas_heap_ref){ \

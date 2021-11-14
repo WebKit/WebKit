@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #ifndef PAS_DESIGNATED_INTRINSIC_HEAP_INLINES_H
 #define PAS_DESIGNATED_INTRINSIC_HEAP_INLINES_H
 
+#include "pas_allocator_index.h"
 #include "pas_designated_intrinsic_heap.h"
+#include "pas_local_allocator.h"
 #include "pas_segregated_size_directory_inlines.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -60,6 +62,16 @@ pas_designated_index_result_create_success(size_t index)
     result.index = index;
     result.did_succeed = true;
     return result;
+}
+
+static PAS_ALWAYS_INLINE size_t
+pas_designated_index_result_get_allocator_index(pas_designated_index_result result,
+                                                pas_heap_config config)
+{
+    PAS_TESTING_ASSERT(result.did_succeed);
+
+    return PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES +
+        result.index * pas_designated_intrinsic_heap_num_allocator_indices(config);
 }
 
 static PAS_ALWAYS_INLINE size_t

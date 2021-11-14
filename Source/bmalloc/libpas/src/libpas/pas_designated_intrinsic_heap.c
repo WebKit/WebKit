@@ -80,6 +80,9 @@ static void set_up_range(initialize_data* data,
         result = __builtin_mul_overflow(
             designated_index, data->num_allocator_indices, &target_allocator_index);
         PAS_ASSERT(!result);
+        result = __builtin_add_overflow(
+            target_allocator_index, PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES, &target_allocator_index);
+        PAS_ASSERT(!result);
         
         PAS_ASSERT(target_allocator_index >= pas_thread_local_cache_layout_next_allocator_index);
         pas_thread_local_cache_layout_next_allocator_index = target_allocator_index;
@@ -87,8 +90,8 @@ static void set_up_range(initialize_data* data,
         if (designated_index == designated_begin) {
             PAS_ASSERT(!directory);
             
-            directory = pas_segregated_heap_ensure_size_directory_for_count(
-                data->heap, size, 1, pas_force_count_lookup, data->config_ptr, NULL,
+            directory = pas_segregated_heap_ensure_size_directory_for_size(
+                data->heap, size, 1, pas_force_size_lookup, data->config_ptr, NULL,
                 pas_segregated_size_directory_initial_creation_mode);
 
             PAS_ASSERT(directory);
@@ -120,7 +123,7 @@ static void set_up_range(initialize_data* data,
                            pas_thread_local_cache_layout_last_node) == target_allocator_index);
             PAS_ASSERT(
                 pas_segregated_size_directory_data_ptr_load(&directory->data)->allocator_index
-                == designated_begin * data->num_allocator_indices);
+                == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES + designated_begin * data->num_allocator_indices);
         }
     }
 
@@ -139,7 +142,8 @@ void pas_designated_intrinsic_heap_initialize(pas_segregated_heap* heap,
     /* This only works if it's called before anything else happens. */
     pas_heap_lock_assert_held();
     PAS_ASSERT(!pas_thread_local_cache_node_first);
-    PAS_ASSERT(!pas_thread_local_cache_layout_next_allocator_index);
+    PAS_ASSERT(
+        pas_thread_local_cache_layout_next_allocator_index == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
     PAS_ASSERT(pas_compact_atomic_segregated_size_directory_ptr_is_null(
                    &heap->basic_size_directory_and_head));
 

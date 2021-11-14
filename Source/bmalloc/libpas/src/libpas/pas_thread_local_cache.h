@@ -183,19 +183,50 @@ PAS_API pas_local_allocator_result pas_thread_local_cache_get_local_allocator_sl
     pas_lock_hold_mode heap_lock_hold_mode);
 
 static PAS_ALWAYS_INLINE void*
-pas_thread_local_cache_get_local_allocator_impl(
+pas_thread_local_cache_get_local_allocator_direct_without_any_checks_whatsoever(
     pas_thread_local_cache* thread_local_cache,
     uintptr_t allocator_index)
 {
     return (void*)(thread_local_cache->local_allocators + allocator_index);
 }
 
+static PAS_ALWAYS_INLINE void*
+pas_thread_local_cache_get_local_allocator_direct_for_initialization(
+    pas_thread_local_cache* thread_local_cache,
+    uintptr_t allocator_index)
+{
+    PAS_ASSERT(allocator_index < thread_local_cache->allocator_index_capacity);
+    return pas_thread_local_cache_get_local_allocator_direct_without_any_checks_whatsoever(
+        thread_local_cache, allocator_index);
+}
+
+static PAS_ALWAYS_INLINE void*
+pas_thread_local_cache_get_local_allocator_direct_unchecked(
+    pas_thread_local_cache* thread_local_cache,
+    uintptr_t allocator_index)
+{
+    PAS_TESTING_ASSERT(allocator_index < thread_local_cache->allocator_index_upper_bound);
+    return pas_thread_local_cache_get_local_allocator_direct_without_any_checks_whatsoever(
+        thread_local_cache, allocator_index);
+}
+
+static PAS_ALWAYS_INLINE void*
+pas_thread_local_cache_get_local_allocator_direct(
+    pas_thread_local_cache* thread_local_cache,
+    uintptr_t allocator_index)
+{
+    PAS_ASSERT(allocator_index < thread_local_cache->allocator_index_upper_bound);
+    return pas_thread_local_cache_get_local_allocator_direct_unchecked(thread_local_cache, allocator_index);
+}
+
 static PAS_ALWAYS_INLINE pas_local_allocator_result
-pas_thread_local_cache_get_local_allocator(
+pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_but_not_unselected_index(
     pas_thread_local_cache* thread_local_cache,
     unsigned allocator_index,
     pas_lock_hold_mode heap_lock_hold_mode)
 {
+    PAS_TESTING_ASSERT(allocator_index);
+    
     if (PAS_UNLIKELY(allocator_index >= thread_local_cache->allocator_index_upper_bound)) {
         /* It could be that we just don't have an allocator index yet. */
         if (allocator_index >= (pas_allocator_index)UINT_MAX)
@@ -206,11 +237,39 @@ pas_thread_local_cache_get_local_allocator(
     }
     
     return pas_local_allocator_result_create_success(
-        pas_thread_local_cache_get_local_allocator_impl(thread_local_cache, allocator_index));
+        pas_thread_local_cache_get_local_allocator_direct_unchecked(thread_local_cache, allocator_index));
 }
 
 static PAS_ALWAYS_INLINE pas_local_allocator_result
-pas_thread_local_cache_try_get_local_allocator(
+pas_thread_local_cache_get_local_allocator_for_initialized_index(
+    pas_thread_local_cache* thread_local_cache,
+    unsigned allocator_index,
+    pas_lock_hold_mode heap_lock_hold_mode)
+{
+    PAS_TESTING_ASSERT(allocator_index != (pas_allocator_index)UINT_MAX);
+    PAS_TESTING_ASSERT(allocator_index != UINT_MAX);
+
+    return pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_but_not_unselected_index(
+        thread_local_cache, allocator_index, heap_lock_hold_mode);
+}
+
+static PAS_ALWAYS_INLINE pas_local_allocator_result
+pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_index(
+    pas_thread_local_cache* thread_local_cache,
+    unsigned allocator_index,
+    pas_lock_hold_mode heap_lock_hold_mode)
+{
+    if (!allocator_index)
+        return pas_local_allocator_result_create_failure();
+
+    return pas_thread_local_cache_get_local_allocator_for_initialized_index(
+        thread_local_cache, allocator_index, heap_lock_hold_mode);
+}
+
+/* This is appropriate for use when we're going to take one of the inline_only paths, which can "handle" the
+   unselected allocator by failing. */
+static PAS_ALWAYS_INLINE pas_local_allocator_result
+pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index(
     pas_thread_local_cache* thread_local_cache,
     unsigned allocator_index)
 {
@@ -218,27 +277,42 @@ pas_thread_local_cache_try_get_local_allocator(
         return pas_local_allocator_result_create_failure();
     
     return pas_local_allocator_result_create_success(
-        pas_thread_local_cache_get_local_allocator_impl(thread_local_cache, allocator_index));
+        pas_thread_local_cache_get_local_allocator_direct_unchecked(thread_local_cache, allocator_index));
+}
+
+static PAS_ALWAYS_INLINE pas_local_allocator_result
+pas_thread_local_cache_try_get_local_allocator_for_possibly_uninitialized_but_not_unselected_index(
+    pas_thread_local_cache* thread_local_cache,
+    unsigned allocator_index)
+{
+    PAS_TESTING_ASSERT(allocator_index);
+
+    return pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index(
+        thread_local_cache, allocator_index);
 }
 
 PAS_API pas_local_allocator_result
-pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow(unsigned allocator_index,
-                                                                 pas_heap_config* heap_config);
+pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index_slow(
+    unsigned allocator_index,
+    pas_heap_config* heap_config);
 
 static PAS_ALWAYS_INLINE pas_local_allocator_result
-pas_thread_local_cache_get_local_allocator_if_can_set_cache(unsigned allocator_index,
-                                                            pas_heap_config* heap_config)
+pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index(
+    unsigned allocator_index,
+    pas_heap_config* heap_config)
 {
     pas_thread_local_cache* cache;
 
     cache = pas_thread_local_cache_try_get();
 
     if (PAS_UNLIKELY(!cache)) {
-        return pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow(
-            allocator_index, heap_config);
+        return
+            pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index_slow(
+                allocator_index, heap_config);
     }
 
-    return pas_thread_local_cache_get_local_allocator(cache, allocator_index, pas_lock_is_not_held);
+    return pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_index(
+        cache, allocator_index, pas_lock_is_not_held);
 }
 
 PAS_API unsigned pas_thread_local_cache_get_num_allocators(pas_thread_local_cache* cache);

@@ -844,6 +844,11 @@ void pas_physical_page_sharing_pool_take_for_page_config(
     pas_lock** locks_already_held,
     size_t num_locks_already_held)
 {
+    static const bool verbose = false;
+
+    if (verbose)
+        pas_log("Taking %zu bytes for page_config = %p\n", bytes, page_config);
+    
     if (!pas_physical_page_sharing_pool_balancing_enabled)
         return;
     

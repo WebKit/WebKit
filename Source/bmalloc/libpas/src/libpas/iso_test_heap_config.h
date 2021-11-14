@@ -46,6 +46,7 @@ PAS_BEGIN_EXTERN_C;
     .activate = pas_heap_config_utils_null_activate, \
     .get_type_size = pas_simple_type_as_heap_type_get_type_size, \
     .get_type_alignment = pas_simple_type_as_heap_type_get_type_alignment, \
+    .dump_type = pas_simple_type_as_heap_type_dump, \
     .check_deallocation = true, \
     .small_segregated_min_align_shift = ISO_TEST_MINALIGN_SHIFT, \
     .small_segregated_sharing_shift = PAS_SMALL_SHARING_SHIFT, \

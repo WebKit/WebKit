@@ -716,17 +716,17 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
                 layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(
                     enumerator, &cache_node->next);
 
-                allocator_index = UINT_MAX;
+                allocator_index = 0;
                 has_allocator = false;
             }
 
             if (has_allocator) {
                 pas_local_allocator* allocator;
                 
-                if (allocator_index >= tlc->allocator_index_upper_bound)
+                if (!allocator_index || allocator_index >= tlc->allocator_index_upper_bound)
                     break;
 
-                allocator = pas_thread_local_cache_get_local_allocator_impl(tlc, allocator_index);
+                allocator = pas_thread_local_cache_get_local_allocator_direct(tlc, allocator_index);
                 
                 consider_allocator(enumerator, &context, allocator);
             }

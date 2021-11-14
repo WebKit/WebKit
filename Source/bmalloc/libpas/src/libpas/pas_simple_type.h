@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,9 @@ PAS_BEGIN_EXTERN_C;
 typedef uintptr_t pas_simple_type;
 
 struct pas_simple_type_with_key_data;
+struct pas_stream;
 typedef struct pas_simple_type_with_key_data pas_simple_type_with_key_data;
+typedef struct pas_stream pas_stream;
 
 struct pas_simple_type_with_key_data {
     uintptr_t simple_type;
@@ -128,6 +130,8 @@ static inline pas_simple_type pas_simple_type_create_with_key_data(
     return result;
 }
 
+PAS_API void pas_simple_type_dump(pas_simple_type type, pas_stream* stream);
+
 static inline size_t pas_simple_type_as_heap_type_get_type_size(pas_heap_type* type)
 {
     return pas_simple_type_size((pas_simple_type)type);
@@ -137,6 +141,8 @@ static inline size_t pas_simple_type_as_heap_type_get_type_alignment(pas_heap_ty
 {
     return pas_simple_type_alignment((pas_simple_type)type);
 }
+
+PAS_API void pas_simple_type_as_heap_type_dump(pas_heap_type* type, pas_stream* stream);
 
 PAS_END_EXTERN_C;
 

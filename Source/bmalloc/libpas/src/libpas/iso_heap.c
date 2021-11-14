@@ -146,7 +146,7 @@ void iso_heap_ref_construct(pas_heap_ref* heap_ref,
 {
     heap_ref->type = (pas_heap_type*)type;
     heap_ref->heap = NULL;
-    heap_ref->allocator_index = UINT_MAX;
+    heap_ref->allocator_index = 0;
 }
 
 void* iso_try_allocate(pas_heap_ref* heap_ref)
@@ -159,38 +159,38 @@ void* iso_allocate(pas_heap_ref* heap_ref)
     return iso_allocate_inline(heap_ref);
 }
 
-void* iso_try_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_try_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return iso_try_allocate_array_inline(heap_ref, count, alignment);
+    return iso_try_allocate_array_by_count_inline(heap_ref, count, alignment);
 }
 
-void* iso_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return iso_allocate_array_inline(heap_ref, count, alignment);
+    return iso_allocate_array_by_count_inline(heap_ref, count, alignment);
 }
 
-void* iso_try_allocate_array_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_try_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return iso_try_allocate_array_zeroed_inline(heap_ref, count, alignment);
+    return iso_try_allocate_array_by_count_zeroed_inline(heap_ref, count, alignment);
 }
 
-void* iso_allocate_array_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return iso_allocate_array_zeroed_inline(heap_ref, count, alignment);
+    return iso_allocate_array_by_count_zeroed_inline(heap_ref, count, alignment);
 }
 
-void* iso_try_reallocate_array(void* old_ptr, pas_heap_ref* heap_ref,
-                               size_t new_count,
-                               pas_reallocate_free_mode free_mode)
+void* iso_try_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
+                                        size_t new_count,
+                                        pas_reallocate_free_mode free_mode)
 {
-    return iso_try_reallocate_array_inline(old_ptr, heap_ref, new_count, free_mode);
+    return iso_try_reallocate_array_by_count_inline(old_ptr, heap_ref, new_count, free_mode);
 }
 
-void* iso_reallocate_array(void* old_ptr, pas_heap_ref* heap_ref,
-                           size_t new_count,
-                           pas_reallocate_free_mode free_mode)
+void* iso_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
+                                    size_t new_count,
+                                    pas_reallocate_free_mode free_mode)
 {
-    return iso_reallocate_array_inline(old_ptr, heap_ref, new_count, free_mode);
+    return iso_reallocate_array_by_count_inline(old_ptr, heap_ref, new_count, free_mode);
 }
 
 pas_heap* iso_heap_ref_get_heap(pas_heap_ref* heap_ref)
@@ -206,7 +206,7 @@ void iso_primitive_heap_ref_construct(pas_primitive_heap_ref* heap_ref,
     PAS_ASSERT(pas_simple_type_alignment(type) == 1);
     heap_ref->base.type = (pas_heap_type*)type;
     heap_ref->base.heap = NULL;
-    heap_ref->base.allocator_index = UINT_MAX;
+    heap_ref->base.allocator_index = 0;
     heap_ref->cached_index = UINT_MAX;
 }
 

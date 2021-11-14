@@ -32,11 +32,13 @@
 #include <math.h>
 #include "pas_all_heaps.h"
 #include "pas_baseline_allocator_table.h"
+#include "pas_compact_expendable_memory.h"
 #include "pas_deferred_decommit_log.h"
 #include "pas_dyld_state.h"
 #include "pas_epoch.h"
 #include "pas_heap_lock.h"
 #include "pas_immortal_heap.h"
+#include "pas_large_expendable_memory.h"
 #include "pas_lock.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_status_reporter.h"
@@ -140,7 +142,12 @@ static void* scavenger_thread_main(void* arg)
 
     if (verbose)
         pas_log("Scavenger is running in thread %p\n", pthread_self());
+
+#if PAS_BMALLOC
     pthread_setname_np("JavaScriptCore libpas scavenger");
+#else
+    pthread_setname_np("libpas scavenger");
+#endif
 
     did_start_callback = pas_scavenger_did_start_callback;
     if (did_start_callback)
@@ -186,6 +193,11 @@ static void* scavenger_thread_main(void* arg)
             pas_thread_local_cache_for_all(pas_allocator_scavenge_request_stop_action,
                                            pas_deallocator_scavenge_flush_log_if_clean_action,
                                            pas_lock_is_not_held);
+
+        pas_heap_lock_lock();
+        should_go_again |= pas_compact_expendable_memory_scavenge(pas_expendable_memory_scavenge_periodic);
+        should_go_again |= pas_large_expendable_memory_scavenge(pas_expendable_memory_scavenge_periodic);
+        pas_heap_lock_unlock();
 
         /* For the purposes of performance tuning, as well as some of the scavenger tests, the epoch
            is time in nanoseconds.
@@ -458,6 +470,14 @@ void pas_scavenger_clear_all_caches(void)
                                    pas_lock_is_not_held);
 }
 
+void pas_scavenger_decommit_expendable_memory(void)
+{
+    pas_heap_lock_lock();
+    pas_compact_expendable_memory_scavenge(pas_expendable_memory_scavenge_forced);
+    pas_large_expendable_memory_scavenge(pas_expendable_memory_scavenge_forced);
+    pas_heap_lock_unlock();
+}
+
 size_t pas_scavenger_decommit_free_memory(void)
 {
     pas_page_sharing_pool_scavenge_result result;
@@ -472,6 +492,7 @@ size_t pas_scavenger_decommit_free_memory(void)
 void pas_scavenger_run_synchronously_now(void)
 {
     pas_scavenger_clear_all_caches();
+    pas_scavenger_decommit_expendable_memory();
     pas_scavenger_decommit_free_memory();
 }
 
@@ -490,6 +511,9 @@ void pas_scavenger_perform_synchronous_operation(
         return;
     case pas_scavenger_clear_all_caches_kind:
         pas_scavenger_clear_all_caches();
+        return;
+    case pas_scavenger_decommit_expendable_memory_kind:
+        pas_scavenger_decommit_expendable_memory();
         return;
     case pas_scavenger_decommit_free_memory_kind:
         pas_scavenger_decommit_free_memory();

@@ -37,10 +37,17 @@
 #include "pas_enumerable_page_malloc.h"
 #include "pas_heap_config_inlines.h"
 #include "pas_root.h"
+#include "pas_stream.h"
 
 #if defined(PAS_BMALLOC)
 #include "BPlatform.h"
 #endif
+
+void jit_type_dump(pas_heap_type* type, pas_stream* stream)
+{
+    PAS_ASSERT(!type);
+    pas_stream_printf(stream, "JIT");
+}
 
 pas_heap_config jit_heap_config = JIT_HEAP_CONFIG;
 
@@ -296,6 +303,14 @@ bool jit_heap_config_for_each_shared_page_directory_remote(
     PAS_UNUSED_PARAM(callback);
     PAS_UNUSED_PARAM(arg);
     return true;
+}
+
+PAS_NO_RETURN void jit_heap_config_dump_shared_page_directory_arg(
+    pas_stream* stream, pas_segregated_shared_page_directory* directory)
+{
+    PAS_UNUSED_PARAM(stream);
+    PAS_UNUSED_PARAM(directory);
+    PAS_ASSERT(!"Should not be reached");
 }
 
 void jit_heap_config_add_fresh_memory(pas_range range)

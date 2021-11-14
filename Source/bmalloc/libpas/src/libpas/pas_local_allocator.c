@@ -75,6 +75,16 @@ void pas_local_allocator_construct(pas_local_allocator* allocator,
     allocator->current_word_is_valid = false;
 }
 
+void pas_local_allocator_construct_unselected(pas_local_allocator* allocator)
+{
+    pas_zero_memory(allocator, PAS_LOCAL_ALLOCATOR_UNSELECTED_SIZE);
+
+    pas_local_allocator_scavenger_data_construct(
+        &allocator->scavenger_data, pas_local_allocator_allocator_kind);
+
+    allocator->config_kind = pas_local_allocator_config_kind_unselected;
+}
+
 void pas_local_allocator_reset(pas_local_allocator* allocator)
 {
     pas_segregated_size_directory* directory;

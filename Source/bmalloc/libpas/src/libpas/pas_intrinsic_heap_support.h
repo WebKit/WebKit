@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,7 @@ struct pas_intrinsic_heap_support {
 };
 
 #define PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER_THREAD_LOCAL_CACHE_FIELDS \
-    .index_to_allocator_index = {[0 ... PAS_NUM_INTRINSIC_SIZE_CLASSES - 1] = \
-                                     (pas_allocator_index)UINT_MAX},
+    .index_to_allocator_index = {[0 ... PAS_NUM_INTRINSIC_SIZE_CLASSES - 1] = 0},
 
 #define PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER_SEGREGATED_HEAP_FIELDS \
     .index_to_size_directory = {[0 ... PAS_NUM_INTRINSIC_SIZE_CLASSES - 1] = \

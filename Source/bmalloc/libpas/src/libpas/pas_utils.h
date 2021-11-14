@@ -165,7 +165,7 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char
                                                                       void* target_heap,
                                                                       void* old_ptr,
                                                                       size_t old_size,
-                                                                      size_t new_count);
+                                                                      size_t new_size);
 
 PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression);
 
@@ -290,6 +290,11 @@ static inline bool pas_compare_and_swap_bool_strong(bool* ptr, bool old_value, b
 {
     __c11_atomic_compare_exchange_strong((_Atomic bool*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
+}
+
+static inline bool pas_compare_and_swap_uint8_weak(uint8_t* ptr, uint8_t old_value, uint8_t new_value)
+{
+    return __c11_atomic_compare_exchange_weak((_Atomic uint8_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
 }
 
 static inline bool pas_compare_and_swap_uint16_weak(uint16_t* ptr, uint16_t old_value, uint16_t new_value)

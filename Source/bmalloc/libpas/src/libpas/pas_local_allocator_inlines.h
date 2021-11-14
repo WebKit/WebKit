@@ -37,14 +37,13 @@
 #include "pas_scavenger.h"
 #include "pas_segregated_exclusive_view_inlines.h"
 #include "pas_segregated_size_directory_inlines.h"
-#include "pas_segregated_heap.h"
+#include "pas_segregated_heap_inlines.h"
 #include "pas_segregated_page_inlines.h"
 #include "pas_segregated_partial_view_inlines.h"
 #include "pas_segregated_shared_page_directory.h"
 #include "pas_segregated_shared_view_inlines.h"
 #include "pas_segregated_size_directory_inlines.h"
 #include "pas_segregated_view_allocator_inlines.h"
-#include "pas_size_thunk.h"
 #include "pas_thread_local_cache.h"
 #include "pas_thread_local_cache_node.h"
 
@@ -631,6 +630,10 @@ pas_local_allocator_start_allocating_in_primordial_partial_view(
             continue;
         }
 
+        /* We have to mark this in use for allocation since otherwise we would try to decommmit this page
+           right as we try to commit it. But that creates a fun situation where the shared_view knows itself
+           to be in use for allocation but we don't know which partial is responsible for that, since the
+           partial doesn't get registered until we do set_up_primordial_bump, below. */
         pas_segregated_partial_view_set_is_in_use_for_allocation(view, shared_view, handle);
         
         if (page_config.base.page_size > page_config.base.granule_size) {
@@ -888,6 +891,9 @@ pas_local_allocator_refill_with_known_config(
         PAS_ASSERT(enable_segregated);
     
     size_directory = pas_segregated_view_get_size_directory(allocator->view);
+
+    pas_segregated_heap_touch_lookup_tables(size_directory->heap, pas_expendable_memory_touch_to_note_use);
+    
     directory = &size_directory->base;
 
     if (verbose) {
@@ -1038,8 +1044,9 @@ pas_local_allocator_refill_with_known_config(
 
             PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
 
-            view_cache_result = pas_thread_local_cache_get_local_allocator(
-                cache, size_directory->view_cache_index, pas_lock_is_not_held);
+            view_cache_result =
+                pas_thread_local_cache_get_local_allocator_for_possibly_uninitialized_but_not_unselected_index(
+                    cache, size_directory->view_cache_index, pas_lock_is_not_held);
             cache = NULL; /* The cache could have been resized, so we don't want to use this pointer
                              anymore. */
             if (view_cache_result.did_succeed) {
@@ -1633,6 +1640,9 @@ pas_local_allocator_try_allocate_slow_impl(pas_local_allocator* allocator,
             pas_log("Refilling from try_allocate_slow with kind = %s\n",
                     pas_local_allocator_config_kind_get_string(allocator->config_kind));
         }
+
+        PAS_ASSERT(allocator->config_kind != pas_local_allocator_config_kind_unselected);
+        PAS_ASSERT(allocator->config_kind != pas_local_allocator_config_kind_null);
     
         /* The config kind may be bitfit, but refilling is specialized on segregated page config. */
         page_config = pas_segregated_view_get_page_config(allocator->view);
@@ -1714,8 +1724,7 @@ pas_local_allocator_try_allocate_inline_only(pas_local_allocator* allocator,
 
 static PAS_ALWAYS_INLINE pas_allocation_result
 pas_local_allocator_try_allocate(pas_local_allocator* allocator,
-                                 pas_size_thunk size_thunk,
-                                 void* size_thunk_arg,
+                                 size_t size,
                                  size_t alignment,
                                  pas_heap_config config,
                                  pas_allocator_counts* counts,
@@ -1729,7 +1738,7 @@ pas_local_allocator_try_allocate(pas_local_allocator* allocator,
     if (verbose) {
         pas_log("Allocator %p (%s) allocating size = %zu, alignment = %zu.\n",
                 allocator, pas_local_allocator_config_kind_get_string(allocator->config_kind),
-                size_thunk(size_thunk_arg), alignment);
+                size, alignment);
     }
     
     allocator->scavenger_data.is_in_use = true;
@@ -1751,7 +1760,7 @@ pas_local_allocator_try_allocate(pas_local_allocator* allocator,
     }
 
     if (PAS_UNLIKELY(pas_debug_heap_is_enabled(config.kind)))
-        return pas_debug_heap_allocate(size_thunk(size_thunk_arg), alignment);
+        return pas_debug_heap_allocate(size, alignment);
     
     if (config.small_segregated_config.base.is_enabled &&
         allocator->config_kind == pas_local_allocator_config_kind_create_normal(
@@ -1771,7 +1780,7 @@ pas_local_allocator_try_allocate(pas_local_allocator* allocator,
     }
 
     result = config.specialized_local_allocator_try_allocate_slow(
-        allocator, size_thunk(size_thunk_arg), alignment, counts, result_filter);
+        allocator, size, alignment, counts, result_filter);
     if (verbose)
         pas_log("in generic return - result.begin = %p\n", (void*)result.begin);
     return result;

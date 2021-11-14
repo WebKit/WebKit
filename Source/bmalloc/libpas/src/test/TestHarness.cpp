@@ -240,6 +240,24 @@ BootJITHeap::BootJITHeap()
 {
 }
 
+EnablePageBalancing::EnablePageBalancing()
+    : TestScope(
+        "enable-page-balancing",
+        [] () {
+            pas_physical_page_sharing_pool_balancing_enabled = true;
+        })
+{
+}
+
+DisablePageBalancing::DisablePageBalancing()
+    : TestScope(
+        "disable-page-balancing",
+        [] () {
+            pas_physical_page_sharing_pool_balancing_enabled = false;
+        })
+{
+}
+
 namespace {
 
 template<typename Func>
@@ -320,8 +338,10 @@ void addBitfieldVectorTests();
 void addBitvectorTests();
 void addCartesianTreeTests();
 void addCoalignTests();
+void addExpendableMemoryTests();
 void addExtendedGCDTests();
 void addHashtableTests();
+void addHeapRefAllocatorIndexTests();
 void addIsoDynamicPrimitiveHeapTests();
 void addIsoHeapChaosTests();
 void addIsoHeapPageSharingTests();
@@ -334,7 +354,6 @@ void addLockFreeReadPtrPtrHashtableTests();
 void addMinHeapTests();
 void addRaceTests();
 void addRedBlackTreeTests();
-void addSkipListTests();
 void addTSDTests();
 void addThingyAndUtilityHeapAllocationTests();
 void addUtilsTests();
@@ -672,13 +691,19 @@ int main(int argc, char** argv)
 #if SEGHEAP
     pas_segregated_page_config_do_validate = true;
 #endif
-    
+
+    // Run the Thingy tests first because they catch the most bugs.
+    ADD_SUITE(ThingyAndUtilityHeapAllocation);
+
+    // Run the rest of the tests in alphabetical order.
     ADD_SUITE(BitfieldVector);
     ADD_SUITE(Bitvector);
     ADD_SUITE(CartesianTree);
     ADD_SUITE(Coalign);
+    ADD_SUITE(ExpendableMemory);
     ADD_SUITE(ExtendedGCD);
     ADD_SUITE(Hashtable);
+    ADD_SUITE(HeapRefAllocatorIndex);
     ADD_SUITE(IsoDynamicPrimitiveHeap);
     ADD_SUITE(IsoHeapChaos);
     ADD_SUITE(IsoHeapPageSharing);
@@ -691,9 +716,7 @@ int main(int argc, char** argv)
     ADD_SUITE(MinHeap);
     ADD_SUITE(Race);
     ADD_SUITE(RedBlackTree);
-    ADD_SUITE(SkipList);
     ADD_SUITE(TSD);
-    ADD_SUITE(ThingyAndUtilityHeapAllocation);
     ADD_SUITE(Utils);
     
     string filter;

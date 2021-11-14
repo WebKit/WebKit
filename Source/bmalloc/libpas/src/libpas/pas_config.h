@@ -90,7 +90,7 @@
 #define PAS_COMPACT_PTR_MASK             ((uintptr_t)(((uint64_t)1 \
                                                        << (PAS_COMPACT_PTR_BITS & 63)) - 1))
 
-#define PAS_ALLOCATOR_INDEX_BYTES        2
+#define PAS_ALLOCATOR_INDEX_BYTES        4
 
 #ifdef PAS_BMALLOC
 #define PAS_USE_SPINLOCKS                1
