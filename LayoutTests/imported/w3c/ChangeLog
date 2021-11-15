@@ -1,3 +1,12 @@
+2021-11-15  Andreu Botella  <andreu@andreubotella.com>
+
+        Empty <input type=file> controls don't show up in the urlencoded and text/plain enctypes
+        https://bugs.webkit.org/show_bug.cgi?id=221549
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-empty-file.window-expected.txt:
+
 2021-11-15  Cathie Chen  <cathiechen@igalia.com>
 
         [CSS contain] Update css-contain tests from WPT

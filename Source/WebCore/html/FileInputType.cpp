@@ -170,10 +170,9 @@ bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
         // Send only the basenames.
         // 4.10.16.4 and 4.10.16.6 sections in HTML5.
 
-        // Unlike the multipart case, we have no special handling for the empty
-        // fileList because Netscape doesn't support for non-multipart
-        // submission of file inputs, and Firefox doesn't add "name=" query
-        // parameter.
+        if (fileList->isEmpty())
+            formData.append(name, "");
+
         for (auto& file : fileList->files())
             formData.append(name, file->name());
         return true;
