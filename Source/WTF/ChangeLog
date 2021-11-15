@@ -1,3 +1,11 @@
+2021-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS 15 build
+
+        Add a new compile-time flag.
+
+        * wtf/PlatformHave.h:
+
 2021-11-13  Simon Fraser  <simon.fraser@apple.com>
 
         Run a ScrollAnimationMomentum for the momentum phase of a scroll
