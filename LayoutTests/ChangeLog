@@ -1,3 +1,13 @@
+2021-11-15  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        nullptr deref in CompositeEditCommand::insertNodeAt
+        https://bugs.webkit.org/show_bug.cgi?id=232837
+
+        Reviewed by Wenson Hsieh and Darin Adler.
+
+        * fast/editing/editing-position-crash-expected.txt: Added.
+        * fast/editing/editing-position-crash.html: Added.
+
 2021-11-15  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Un-skip accessibility/mac/search-predicate-for-adhoc-radio-groups.html for Mac WK1
