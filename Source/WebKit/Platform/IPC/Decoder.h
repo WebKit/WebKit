@@ -59,6 +59,8 @@ public:
 
     Decoder(const Decoder&) = delete;
     Decoder(Decoder&&) = delete;
+    Decoder& operator=(const Decoder&) = delete;
+    Decoder& operator=(Decoder&&) = delete;
 
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
@@ -140,25 +142,10 @@ public:
 
     bool removeAttachment(Attachment&);
 
-    static const bool isIPCDecoder = true;
-
-    template <typename T>
-    static std::optional<T> decodeSingleObject(const uint8_t* source, size_t numberOfBytes)
-    {
-        std::optional<T> result;
-        Decoder decoder(source, numberOfBytes, ConstructWithoutHeader);
-        if (!decoder.isValid())
-            return std::nullopt;
-
-        decoder >> result;
-        return result;
-    }
+    static constexpr bool isIPCDecoder = true;
 
 private:
     Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&&);
-
-    enum ConstructWithoutHeaderTag { ConstructWithoutHeader };
-    Decoder(const uint8_t* buffer, size_t bufferSize, ConstructWithoutHeaderTag);
 
     bool alignBufferPosition(size_t alignment, size_t);
     bool bufferIsLargeEnoughToContain(size_t alignment, size_t) const;

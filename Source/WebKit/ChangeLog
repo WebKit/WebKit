@@ -1,3 +1,21 @@
+2021-11-15  Chris Dumez  <cdumez@apple.com>
+
+        Remove some dead code from IPC::Encoder / IPC::Decoder
+        https://bugs.webkit.org/show_bug.cgi?id=233134
+
+        Reviewed by Sam Weinig.
+
+        Remove some dead code from IPC::Encoder / IPC::Decoder and make sure both
+        types are non-copyable / non-movable.
+
+        * Platform/IPC/Decoder.cpp:
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decodeSingleObject): Deleted.
+        (): Deleted.
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::Encoder):
+        * Platform/IPC/Encoder.h:
+
 2021-11-15  Per Arne Vollan <pvollan@apple.com>
 
         [macOS][GPUP] Add telemetry for syscalls
