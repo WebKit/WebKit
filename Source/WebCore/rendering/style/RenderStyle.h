@@ -42,6 +42,7 @@
 #include "LengthSize.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
+#include "OffsetRotation.h"
 #include "Pagination.h"
 #include "RenderStyleConstants.h"
 #include "RotateTransformOperation.h"
@@ -1900,6 +1901,10 @@ public:
     LengthPoint offsetAnchor() const { return m_rareNonInheritedData->offsetAnchor; }
     void setOffsetAnchor(LengthPoint&& position) { SET_VAR(m_rareNonInheritedData, offsetAnchor, WTFMove(position)); }
     static LengthPoint initialOffsetAnchor() { return LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto)); }
+
+    OffsetRotation offsetRotate() const { return m_rareNonInheritedData->offsetRotate; }
+    void setOffsetRotate(OffsetRotation&& rotation) { SET_VAR(m_rareNonInheritedData, offsetRotate, WTFMove(rotation)); }
+    static OffsetRotation initialOffsetRotate() { return OffsetRotation(true, 0); }
 
 private:
     struct NonInheritedFlags {

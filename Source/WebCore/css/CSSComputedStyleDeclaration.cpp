@@ -2496,6 +2496,19 @@ static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlign
     return result;
 }
 
+static Ref<CSSValueList> valueForOffsetRotate(const OffsetRotation& rotation)
+{
+    auto& cssValuePool = CSSValuePool::singleton();
+
+    auto result = CSSValueList::createSpaceSeparated();
+
+    if (rotation.hasAuto())
+        result->append(cssValuePool.createIdentifierValue(CSSValueAuto));
+    result->append(cssValuePool.createValue(rotation.angle(), CSSUnitType::CSS_DEG));
+
+    return result;
+}
+
 static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
 {
     if (paintOrder == PaintOrder::Normal)
@@ -3207,6 +3220,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return valueForPositionOrAuto(style, style.offsetPosition());
         case CSSPropertyOffsetAnchor:
             return valueForPositionOrAuto(style, style.offsetAnchor());
+        case CSSPropertyOffsetRotate:
+            return valueForOffsetRotate(style.offsetRotate());
         case CSSPropertyOpacity:
             return cssValuePool.createValue(style.opacity(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyOrphans:

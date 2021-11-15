@@ -31,6 +31,7 @@
 #include "LengthPoint.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
+#include "OffsetRotation.h"
 #include "PathOperation.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
@@ -239,6 +240,7 @@ public:
     Length offsetDistance;
     LengthPoint offsetPosition;
     LengthPoint offsetAnchor;
+    OffsetRotation offsetRotate;
 
 private:
     StyleRareNonInheritedData();

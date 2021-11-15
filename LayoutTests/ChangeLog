@@ -1,3 +1,14 @@
+2021-11-15  Kiet Ho  <tho22@apple.com>
+
+        Implement parsing and animation support for offset-rotate
+        https://bugs.webkit.org/show_bug.cgi?id=232752
+
+        Reviewed by Myles C. Maxfield.
+
+        Rebaselined test to account for new CSS property.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-11-15  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         nullptr deref in CompositeEditCommand::insertNodeAt

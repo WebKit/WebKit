@@ -3556,6 +3556,16 @@
                 "url": "https://drafts.fxtf.org/motion-1/#offset-anchor-property"
             }
         },
+        "offset-rotate": {
+            "codegen-properties": {
+                "converter": "OffsetRotate",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-anchor-property"
+            }
+        },
         "opacity": {
             "codegen-properties": {
                 "converter": "Opacity",

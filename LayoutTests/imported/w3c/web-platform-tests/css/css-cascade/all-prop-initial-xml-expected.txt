@@ -198,6 +198,7 @@ PASS offset-anchor
 PASS offset-distance
 PASS offset-path
 PASS offset-position
+PASS offset-rotate
 PASS opacity
 PASS order
 PASS orphans

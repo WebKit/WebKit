@@ -736,6 +736,7 @@ css/CSSMarkup.cpp
 css/CSSMediaRule.cpp
 css/CSSNamedImageValue.cpp
 css/CSSNamespaceRule.cpp
+css/CSSOffsetRotateValue.cpp
 css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
 css/CSSPrimitiveValue.cpp
@@ -2412,6 +2413,7 @@ rendering/style/GridPositionsResolver.cpp
 rendering/style/GridTrackSize.cpp
 rendering/style/KeyframeList.cpp
 rendering/style/NinePieceImage.cpp
+rendering/style/OffsetRotation.cpp
 rendering/style/QuotesData.cpp
 rendering/style/RenderStyle.cpp
 rendering/style/RenderStyleConstants.cpp

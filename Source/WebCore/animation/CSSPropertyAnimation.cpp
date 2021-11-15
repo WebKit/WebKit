@@ -54,6 +54,7 @@
 #include "Logging.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
+#include "OffsetRotation.h"
 #include "PathOperation.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
@@ -589,6 +590,19 @@ static inline std::optional<FontSelectionValue> blendFunc(std::optional<FontSele
     return blendFunc(*from, *to, context);
 }
 
+static inline OffsetRotation blendFunc(const OffsetRotation& from, const OffsetRotation& to, const CSSPropertyBlendingContext& context)
+{
+    if (!context.progress)
+        return from;
+
+    if (context.progress == 1)
+        return to;
+
+    ASSERT(from.hasAuto() == to.hasAuto());
+
+    return OffsetRotation(from.hasAuto(), clampTo<float>(blend(from.angle(), to.angle(), context)));
+}
+
 class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
     WTF_MAKE_FAST_ALLOCATED;
@@ -667,6 +681,29 @@ public:
 
 protected:
     void (RenderStyle::*m_setter)(T);
+};
+
+class OffsetRotatePropertyWrapper final : public PropertyWrapperGetter<OffsetRotation> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    OffsetRotatePropertyWrapper(CSSPropertyID property, OffsetRotation (RenderStyle::*getter)() const, void (RenderStyle::*setter)(OffsetRotation&&))
+        : PropertyWrapperGetter(property, getter)
+        , m_setter(setter)
+    {
+    }
+
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        return value(from).hasAuto() == value(to).hasAuto();
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        (destination.*m_setter)(blendFunc(value(from), value(to), context));
+    }
+
+private:
+    void (RenderStyle::*m_setter)(OffsetRotation&&);
 };
 
 template <typename T>
@@ -2735,7 +2772,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyOffsetDistance, &RenderStyle::offsetDistance, &RenderStyle::setOffsetDistance, LengthPropertyWrapper::Flags::IsLengthPercentage),
         new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetPosition, &RenderStyle::offsetPosition, &RenderStyle::setOffsetPosition),
         new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetAnchor, &RenderStyle::offsetAnchor, &RenderStyle::setOffsetAnchor),
-        new PropertyWrapperContent
+        new PropertyWrapperContent,
+        new OffsetRotatePropertyWrapper(CSSPropertyOffsetRotate, &RenderStyle::offsetRotate, &RenderStyle::setOffsetRotate)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

@@ -118,6 +118,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , offsetDistance(RenderStyle::initialOffsetDistance())
     , offsetPosition(RenderStyle::initialOffsetPosition())
     , offsetAnchor(RenderStyle::initialOffsetAnchor())
+    , offsetRotate(RenderStyle::initialOffsetRotate())
 {
 }
 
@@ -223,6 +224,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , offsetDistance(o.offsetDistance)
     , offsetPosition(o.offsetPosition)
     , offsetAnchor(o.offsetAnchor)
+    , offsetRotate(o.offsetRotate)
 {
 }
 
@@ -335,7 +337,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && rowGap == o.rowGap
         && offsetDistance == o.offsetDistance
         && offsetPosition == o.offsetPosition
-        && offsetAnchor == o.offsetAnchor;
+        && offsetAnchor == o.offsetAnchor
+        && offsetRotate == o.offsetRotate;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& other) const

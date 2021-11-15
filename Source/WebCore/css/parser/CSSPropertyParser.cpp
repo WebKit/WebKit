@@ -50,6 +50,7 @@
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSLineBoxContainValue.h"
+#include "CSSOffsetRotateValue.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
@@ -4039,6 +4040,31 @@ static RefPtr<CSSPrimitiveValue> consumePositionOrAuto(CSSParserTokenRange& rang
     return consumePosition(range, parserMode, unitless, positionSyntax);
 }
 
+static RefPtr<CSSOffsetRotateValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode mode)
+{
+    RefPtr<CSSPrimitiveValue> modifier;
+    RefPtr<CSSPrimitiveValue> angle;
+
+    auto rangeCopy = range;
+
+    // Attempt to parse the first token as the modifier (auto / reverse keyword). If
+    // successful, parse the second token as the angle. If not, try to parse the other
+    // way around.
+    if ((modifier = consumeIdent<CSSValueAuto, CSSValueReverse>(rangeCopy)))
+        angle = consumeAngle(rangeCopy, mode);
+    else {
+        angle = consumeAngle(rangeCopy, mode);
+        modifier = consumeIdent<CSSValueAuto, CSSValueReverse>(rangeCopy);
+    }
+
+    if (!angle && !modifier)
+        return nullptr;
+
+    range = rangeCopy;
+
+    return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
+}
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -4386,6 +4412,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyOffsetPosition:
     case CSSPropertyOffsetAnchor:
         return consumePositionOrAuto(m_range, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
+    case CSSPropertyOffsetRotate:
+        return consumeOffsetRotate(m_range, m_context.mode);
     case CSSPropertyWebkitBoxFlex:
         return consumeNumber(m_range, ValueRange::All);
     case CSSPropertyBaselineShift:

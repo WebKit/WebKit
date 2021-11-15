@@ -138,7 +138,9 @@ public:
 
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
     bool isPendingSubstitutionValue() const { return m_classType == PendingSubstitutionValueClass; }
-    
+
+    bool isOffsetRotateValue() const { return m_classType == OffsetRotateClass; }
+
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
@@ -205,6 +207,8 @@ protected:
         CustomPropertyClass,
         VariableReferenceClass,
         PendingSubstitutionValueClass,
+
+        OffsetRotateClass,
 
         // List class types must appear after ValueListClass. Note CSSFunctionValue
         // is deliberately excluded, since we don't want it exposed to the CSS OM

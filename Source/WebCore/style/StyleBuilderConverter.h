@@ -39,6 +39,7 @@
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
+#include "CSSOffsetRotateValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSReflectValue.h"
@@ -168,6 +169,8 @@ public:
     static Length convertPositionComponentY(BuilderState&, const CSSValue&);
 
     static GapLength convertGapLength(BuilderState&, const CSSValue&);
+
+    static OffsetRotation convertOffsetRotate(BuilderState&, const CSSValue&);
     
 private:
     friend class BuilderCustom;
@@ -1604,6 +1607,33 @@ inline OptionSet<HangingPunctuation> BuilderConverter::convertHangingPunctuation
 inline GapLength BuilderConverter::convertGapLength(BuilderState& builderState, const CSSValue& value)
 {
     return (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal) ? GapLength() : GapLength(convertLength(builderState, value));
+}
+
+inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState&, const CSSValue& value)
+{
+    bool hasAuto = false;
+    float angleInDegrees = 0;
+
+    const auto& offsetRotateValue = downcast<CSSOffsetRotateValue>(value);
+
+    if (auto* angleValue = offsetRotateValue.angle())
+        angleInDegrees = static_cast<float>(angleValue->computeDegrees());
+
+    if (auto* modifierValue = offsetRotateValue.modifier()) {
+        switch (modifierValue->valueID()) {
+        case CSSValueAuto:
+            hasAuto = true;
+            break;
+        case CSSValueReverse:
+            hasAuto = true;
+            angleInDegrees += 180.0;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    return OffsetRotation(hasAuto, angleInDegrees);
 }
 
 }

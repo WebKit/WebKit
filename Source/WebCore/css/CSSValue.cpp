@@ -51,6 +51,7 @@
 #include "CSSImageValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSNamedImageValue.h"
+#include "CSSOffsetRotateValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
@@ -214,6 +215,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSVariableReferenceValue>(*this, other);
         case PendingSubstitutionValueClass:
             return compareCSSValues<CSSPendingSubstitutionValue>(*this, other);
+        case OffsetRotateClass:
+            return compareCSSValues<CSSOffsetRotateValue>(*this, other);
         case FontStyleClass:
             return compareCSSValues<CSSFontStyleValue>(*this, other);
         case FontStyleRangeClass:
@@ -310,6 +313,8 @@ String CSSValue::cssText() const
         return downcast<CSSVariableReferenceValue>(*this).customCSSText();
     case PendingSubstitutionValueClass:
         return downcast<CSSPendingSubstitutionValue>(*this).customCSSText();
+    case OffsetRotateClass:
+        return downcast<CSSOffsetRotateValue>(*this).customCSSText();
     case FontStyleClass:
         return downcast<CSSFontStyleValue>(*this).customCSSText();
     case FontStyleRangeClass:
@@ -453,6 +458,9 @@ void CSSValue::destroy()
         return;
     case PendingSubstitutionValueClass:
         delete downcast<CSSPendingSubstitutionValue>(this);
+        return;
+    case OffsetRotateClass:
+        delete downcast<CSSOffsetRotateValue>(this);
         return;
     case FontStyleClass:
         delete downcast<CSSFontStyleValue>(this);

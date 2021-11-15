@@ -1671,6 +1671,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/GridTrackSize.h
     rendering/style/LineClampValue.h
     rendering/style/NinePieceImage.h
+    rendering/style/OffsetRotation.h
     rendering/style/OutlineValue.h
     rendering/style/RenderStyle.h
     rendering/style/RenderStyleConstants.h

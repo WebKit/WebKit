@@ -2,6 +2,6 @@
 PASS offset-position supports calc
 FAIL offset-path supports calc assert_equals: expected "ray(270deg closest-side)" but got "none"
 PASS offset-distance supports calc
-FAIL offset-rotate supports calc assert_equals: expected (string) "auto 270deg" but got (undefined) undefined
+PASS offset-rotate supports calc
 PASS offset-anchor supports calc
 
