@@ -323,12 +323,15 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , lineRuns };
 }
 
-LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
+LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth, bool isFirstLine)
 {
-    initialize({ { { }, { availableWidth, maxInlineLayoutUnit() } }, false }, false, { }, { }, { });
+    auto lineConstraints = initialConstraintsForLine({ 0, 0, availableWidth, 0 }, isFirstLine);
+    initialize(lineConstraints, isFirstLine, needsLayoutRange.start, { }, { });
+
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
-    return { committedRange, m_line.contentLogicalWidth(), m_floats };
+    auto lineWidth = lineConstraints.logicalRect.left() + m_line.contentLogicalWidth();
+    return { committedRange, lineWidth, m_floats };
 }
 
 void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirstLine, size_t leadingInlineItemIndex, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth)

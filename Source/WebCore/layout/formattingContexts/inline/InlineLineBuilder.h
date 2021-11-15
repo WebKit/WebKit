@@ -71,7 +71,7 @@ public:
         InlineLayoutUnit logicalWidth { 0 };
         const FloatList& floats;
     };
-    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth);
+    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth, bool isFirstLine);
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
