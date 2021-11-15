@@ -1,3 +1,17 @@
+2021-11-15  Chris Dumez  <cdumez@apple.com>
+
+        `Cross-Origin-Embedder-Policy: require-corp` prevents loading of data URL images
+        https://bugs.webkit.org/show_bug.cgi?id=233131
+        <rdar://85236459>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage. This test is based on a reduce test case from Cameron McCormack.
+
+        * http/wpt/html/cross-origin-embedder-policy/require-corp-data-url-expected.txt: Added.
+        * http/wpt/html/cross-origin-embedder-policy/require-corp-data-url.html: Added.
+        * http/wpt/html/cross-origin-embedder-policy/require-corp-data-url.html.headers: Added.
+
 2021-11-15  Kiet Ho  <tho22@apple.com>
 
         Implement parsing and animation support for offset-rotate
