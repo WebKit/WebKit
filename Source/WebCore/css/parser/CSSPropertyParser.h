@@ -77,6 +77,7 @@ private:
     bool parseCounterStyleDescriptor(CSSPropertyID, const CSSParserContext&);
 
     void addProperty(CSSPropertyID, CSSPropertyID, Ref<CSSValue>&&, bool important, bool implicit = false);
+    void addPropertyWithImplicitDefault(CSSPropertyID, CSSPropertyID, RefPtr<CSSValue>&&, Ref<CSSValue>&& implicitDefault, bool important);
     void addExpandedPropertyForValue(CSSPropertyID propId, Ref<CSSValue>&&, bool);
 
     bool consumeBorder(RefPtr<CSSValue>& width, RefPtr<CSSValue>& style, RefPtr<CSSValue>& color);

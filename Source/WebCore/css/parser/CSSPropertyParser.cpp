@@ -224,6 +224,14 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
     m_parsedProperties->append(CSSProperty(property, WTFMove(value), important, setFromShorthand, shorthandIndex, implicit));
 }
 
+void CSSPropertyParser::addPropertyWithImplicitDefault(CSSPropertyID property, CSSPropertyID currentShorthand, RefPtr<CSSValue>&& value, Ref<CSSValue>&& implicitDefault, bool important)
+{
+    if (value)
+        addProperty(property, currentShorthand, value.releaseNonNull(), important, false);
+    else
+        addProperty(property, currentShorthand, WTFMove(implicitDefault), important, true);
+}
+
 void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, Ref<CSSValue>&& value, bool important)
 {
     for (auto longhand : shorthandForProperty(property))
@@ -355,12 +363,11 @@ bool CSSPropertyParser::consumeTransformOrigin(bool important)
         m_range.consumeWhitespace();
         bool atEnd = m_range.atEnd();
         auto resultZ = consumeLength(m_range, m_context.mode, ValueRange::All);
-        bool hasZ = resultZ;
-        if ((!hasZ && !atEnd) || !m_range.atEnd())
+        if ((!resultZ && !atEnd) || !m_range.atEnd())
             return false;
         addProperty(CSSPropertyTransformOriginX, CSSPropertyTransformOrigin, WTFMove(resultXY->x), important);
         addProperty(CSSPropertyTransformOriginY, CSSPropertyTransformOrigin, WTFMove(resultXY->y), important);
-        addProperty(CSSPropertyTransformOriginZ, CSSPropertyTransformOrigin, resultZ ? resultZ.releaseNonNull() : CSSValuePool::singleton().createValue(0, CSSUnitType::CSS_PX), important, !hasZ);
+        addPropertyWithImplicitDefault(CSSPropertyTransformOriginZ, CSSPropertyTransformOrigin, resultZ, CSSValuePool::singleton().createValue(0, CSSUnitType::CSS_PX), important);
         
         return true;
     }
@@ -5021,6 +5028,7 @@ bool CSSPropertyParser::consumeFont(bool important)
         if (id == CSSValueInherit || id == CSSValueInitial)
             return false;
     }
+
     // Optional font-style, font-variant, font-stretch and font-weight.
     RefPtr<CSSFontStyleValue> fontStyle;
     RefPtr<CSSPrimitiveValue> fontVariantCaps;
@@ -5057,39 +5065,33 @@ bool CSSPropertyParser::consumeFont(bool important)
     if (m_range.atEnd())
         return false;
 
-    bool hasStyle = fontStyle;
-    bool hasVariant = fontVariantCaps;
-    bool hasWeight = fontWeight;
-    bool hasStretch = fontStretch;
+    auto& valuePool = CSSValuePool::singleton();
 
-    if (!fontStyle)
-        fontStyle = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
-    
-    addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle.releaseNonNull(), important, !hasStyle);
-    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasVariant);
+    addPropertyWithImplicitDefault(CSSPropertyFontStyle, CSSPropertyFont, fontStyle, CSSFontStyleValue::create(valuePool.createIdentifierValue(CSSValueNormal)), important);
+    addPropertyWithImplicitDefault(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps, valuePool.createIdentifierValue(CSSValueNormal), important);
 /*  
     // FIXME-NEWPARSER: What do we do with these? They aren't part of our fontShorthand().
     addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
     addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
 */
 
-    addProperty(CSSPropertyFontWeight, CSSPropertyFont, fontWeight ? fontWeight.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasWeight);
-    addProperty(CSSPropertyFontStretch, CSSPropertyFont, fontStretch ? fontStretch.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasStretch);
+    addPropertyWithImplicitDefault(CSSPropertyFontWeight, CSSPropertyFont, fontWeight, valuePool.createIdentifierValue(CSSValueNormal), important);
+    addPropertyWithImplicitDefault(CSSPropertyFontStretch, CSSPropertyFont, fontStretch, valuePool.createIdentifierValue(CSSValueNormal), important);
 
     // Now a font size _must_ come.
     RefPtr<CSSValue> fontSize = consumeFontSize(m_range, m_context.mode);
     if (!fontSize || m_range.atEnd())
         return false;
 
-    addProperty(CSSPropertyFontSize, CSSPropertyFont, *fontSize, important);
+    addProperty(CSSPropertyFontSize, CSSPropertyFont, fontSize.releaseNonNull(), important);
 
+    RefPtr<CSSPrimitiveValue> lineHeight;
     if (consumeSlashIncludingWhitespace(m_range)) {
-        RefPtr<CSSPrimitiveValue> lineHeight = consumeLineHeight(m_range, m_context.mode);
+        lineHeight = consumeLineHeight(m_range, m_context.mode);
         if (!lineHeight)
             return false;
-        addProperty(CSSPropertyLineHeight, CSSPropertyFont, lineHeight.releaseNonNull(), important);
-    } else
-        addProperty(CSSPropertyLineHeight, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+    }
+    addPropertyWithImplicitDefault(CSSPropertyLineHeight, CSSPropertyFont, lineHeight, valuePool.createIdentifierValue(CSSValueNormal), important);
 
     // Font family must come now.
     RefPtr<CSSValue> parsedFamilyValue = consumeFontFamily(m_range);
@@ -5167,18 +5169,13 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
 
     addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, ligaturesParser.finalizeValue().releaseNonNull(), important, implicitLigatures);
     addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFontVariant, numericParser.finalizeValue().releaseNonNull(), important, implicitNumeric);
-    bool implicitCaps = !capsValue;
-    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, capsValue ? capsValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, implicitCaps);
-    bool implicitAlternates = !alternatesValue;
-    addProperty(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, alternatesValue ? alternatesValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, implicitAlternates);
-    bool implicitPosition = !positionValue;
-    addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, positionValue ? positionValue.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, implicitPosition);
 
-    bool implicitEastAsian = !eastAsianValue;
-    if (!eastAsianValue)
-        eastAsianValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-    addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, eastAsianValue.releaseNonNull(), important, implicitEastAsian);
-    
+    auto& valuePool = CSSValuePool::singleton();
+    addPropertyWithImplicitDefault(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, capsValue, valuePool.createIdentifierValue(CSSValueNormal), important);
+    addPropertyWithImplicitDefault(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, alternatesValue, valuePool.createIdentifierValue(CSSValueNormal), important);
+    addPropertyWithImplicitDefault(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, positionValue, valuePool.createIdentifierValue(CSSValueNormal), important);
+    addPropertyWithImplicitDefault(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, WTFMove(eastAsianValue), valuePool.createIdentifierValue(CSSValueNormal), important);
+
     return true;
 }
 
@@ -5225,7 +5222,7 @@ bool CSSPropertyParser::consumeColumns(bool important)
     
     if (!m_range.atEnd())
         return false;
-    
+
     // Any unassigned property at this point will become implicit 'auto'.
     if (columnWidth)
         addProperty(CSSPropertyColumnWidth, CSSPropertyInvalid, columnWidth.releaseNonNull(), important);
@@ -5261,10 +5258,7 @@ bool CSSPropertyParser::consumeShorthandGreedily(const StylePropertyShorthand& s
     } while (!m_range.atEnd());
 
     for (size_t i = 0; i < shorthand.length(); ++i) {
-        if (longhands[i])
-            addProperty(shorthandProperties[i], shorthand.id(), longhands[i].releaseNonNull(), important);
-        else
-            addProperty(shorthandProperties[i], shorthand.id(), CSSValuePool::singleton().createImplicitInitialValue(), important);
+        addPropertyWithImplicitDefault(shorthandProperties[i], shorthand.id(), WTFMove(longhands[i]), CSSValuePool::singleton().createImplicitInitialValue(), important);
     }
     return true;
 }
@@ -5424,30 +5418,21 @@ bool CSSPropertyParser::consumeBorderImage(CSSPropertyID property, bool importan
     RefPtr<CSSValue> repeat;
     
     if (consumeBorderImageComponents(property, m_range, m_context, source, slice, width, outset, repeat)) {
-        if (!source)
-            source = CSSValuePool::singleton().createImplicitInitialValue();
-        if (!slice)
-            slice = CSSValuePool::singleton().createImplicitInitialValue();
-        if (!width)
-            width = CSSValuePool::singleton().createImplicitInitialValue();
-        if (!outset)
-            outset = CSSValuePool::singleton().createImplicitInitialValue();
-        if (!repeat)
-            repeat = CSSValuePool::singleton().createImplicitInitialValue();
+        auto& valuePool = CSSValuePool::singleton();
         switch (property) {
         case CSSPropertyWebkitMaskBoxImage:
-            addProperty(CSSPropertyWebkitMaskBoxImageSource, CSSPropertyWebkitMaskBoxImage, source.releaseNonNull(), important);
-            addProperty(CSSPropertyWebkitMaskBoxImageSlice, CSSPropertyWebkitMaskBoxImage, slice.releaseNonNull(), important);
-            addProperty(CSSPropertyWebkitMaskBoxImageWidth, CSSPropertyWebkitMaskBoxImage, width.releaseNonNull(), important);
-            addProperty(CSSPropertyWebkitMaskBoxImageOutset, CSSPropertyWebkitMaskBoxImage, outset.releaseNonNull(), important);
-            addProperty(CSSPropertyWebkitMaskBoxImageRepeat, CSSPropertyWebkitMaskBoxImage, repeat.releaseNonNull(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSource, CSSPropertyWebkitMaskBoxImage, WTFMove(source), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSlice, CSSPropertyWebkitMaskBoxImage, WTFMove(slice), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageWidth, CSSPropertyWebkitMaskBoxImage, WTFMove(width), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageOutset, CSSPropertyWebkitMaskBoxImage, WTFMove(outset), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageRepeat, CSSPropertyWebkitMaskBoxImage, WTFMove(repeat), valuePool.createImplicitInitialValue(), important);
             return true;
         case CSSPropertyBorderImage:
-            addProperty(CSSPropertyBorderImageSource, CSSPropertyBorderImage, source.releaseNonNull(), important);
-            addProperty(CSSPropertyBorderImageSlice, CSSPropertyBorderImage, slice.releaseNonNull(), important);
-            addProperty(CSSPropertyBorderImageWidth, CSSPropertyBorderImage, width.releaseNonNull() , important);
-            addProperty(CSSPropertyBorderImageOutset, CSSPropertyBorderImage, outset.releaseNonNull(), important);
-            addProperty(CSSPropertyBorderImageRepeat, CSSPropertyBorderImage, repeat.releaseNonNull(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageSource, CSSPropertyBorderImage, WTFMove(source), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageSlice, CSSPropertyBorderImage, WTFMove(slice), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageWidth, CSSPropertyBorderImage, WTFMove(width), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageOutset, CSSPropertyBorderImage, WTFMove(outset), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageRepeat, CSSPropertyBorderImage, WTFMove(repeat), valuePool.createImplicitInitialValue(), important);
             return true;
         default:
             ASSERT_NOT_REACHED();
