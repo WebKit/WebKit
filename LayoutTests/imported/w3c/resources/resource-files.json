@@ -392,6 +392,7 @@
         "web-platform-tests/css/css-contain/contain-crash.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-continuations-crash.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-form-controls-crash.html",
+        "web-platform-tests/css/css-contain/crashtests/contain-nested-crash-001.html",
         "web-platform-tests/css/css-display/run-in/after-content-display-004.xht",
         "web-platform-tests/css/css-display/run-in/anonymous-box-generation-002.xht",
         "web-platform-tests/css/css-display/run-in/background-applies-to-011.xht",

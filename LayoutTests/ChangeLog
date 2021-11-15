@@ -1,3 +1,14 @@
+2021-11-15  Cathie Chen  <cathiechen@igalia.com>
+
+        [CSS contain] Update css-contain tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=233121
+
+        Reviewed by Rob Buis.
+
+        Update css/css-contain/ tests to commit 625a2df832.
+
+        * TestExpectations:
+
 2021-11-15  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] webaudio/silent-audio-interrupted-in-background.html is a flaky timeout

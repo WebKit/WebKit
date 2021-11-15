@@ -1,3 +1,116 @@
+2021-11-15  Cathie Chen  <cathiechen@igalia.com>
+
+        [CSS contain] Update css-contain tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=233121
+
+        Reviewed by Rob Buis.
+
+        Update css/css-contain/ tests to commit 625a2df832.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-contain/contain-body-bg-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-bg-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-bg-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-bg-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-bg-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-bg-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-bg-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-bg-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-dir-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-overflow-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-t-o-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-body-w-m-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-content-011-expected.html:
+        * web-platform-tests/css/css-contain/contain-content-011.html:
+        * web-platform-tests/css/css-contain/contain-html-bg-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-bg-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-bg-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-bg-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-bg-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-bg-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-bg-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-bg-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-dir-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-overflow-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-t-o-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-003-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-003.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-004-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-html-w-m-004.html: Added.
+        * web-platform-tests/css/css-contain/contain-layout-019-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-layout-019.html: Added.
+        * web-platform-tests/css/css-contain/contain-paint-010.html:
+        * web-platform-tests/css/css-contain/contain-paint-026-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-paint-026.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-010.html.
+        * web-platform-tests/css/css-contain/contain-paint-change-opacity-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-paint-change-opacity.html: Added.
+        * web-platform-tests/css/css-contain/contain-paint-clip-005.html:
+        * web-platform-tests/css/css-contain/contain-strict-011-expected.html:
+        * web-platform-tests/css/css-contain/contain-strict-011.html:
+        * web-platform-tests/css/css-contain/crashtests/contain-nested-crash-001.html: Added.
+        * web-platform-tests/css/css-contain/crashtests/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/parsing/w3c-import.log.
+        * web-platform-tests/css/css-contain/parsing/contain-computed-children-expected.txt: Added.
+        * web-platform-tests/css/css-contain/parsing/contain-computed-children.html: Added.
+        * web-platform-tests/css/css-contain/parsing/contain-computed-expected.txt:
+        * web-platform-tests/css/css-contain/parsing/contain-computed.html:
+        * web-platform-tests/css/css-contain/parsing/contain-invalid-expected.txt:
+        * web-platform-tests/css/css-contain/parsing/contain-invalid.html:
+        * web-platform-tests/css/css-contain/parsing/w3c-import.log:
+        * web-platform-tests/css/css-contain/w3c-import.log:
+
 2021-11-15  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Fix missing lineNumber and columnNumber in inline violation reports

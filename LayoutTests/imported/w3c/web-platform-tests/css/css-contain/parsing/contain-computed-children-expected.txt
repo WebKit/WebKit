@@ -1,0 +1,3 @@
+
+PASS computed contain value for children should ignore container contain value
+
