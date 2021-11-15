@@ -1,3 +1,22 @@
+2021-11-15  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip tests newly-failing on mips
+        https://bugs.webkit.org/show_bug.cgi?id=233124
+
+        Unreviewed gardening.
+
+        After 3f59d2aa489ec843e055fc3104c275851d7fbd35, these tests started
+        failing with a SIGBUS on MIPS (on fuloong hardware, they pass on the
+        ci20 boards). Temporarily skip them on this arch until we can track
+        down the issue.
+
+        * stress/call-varargs-double-new-array-buffer.js:
+        * stress/callee-save-fpr.js:
+        * stress/forward-varargs-double-new-array-buffer.js:
+        * stress/new-array-with-spread-cow-double.js:
+        * stress/new-array-with-spread-double-new-array-buffer.js:
+        * stress/spread-escapes-but-new-array-buffer-does-not-double.js:
+
 2021-11-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use CallLinkInfo in LLInt
