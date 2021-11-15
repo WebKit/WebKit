@@ -3,11 +3,11 @@ PASS application/x-www-form-urlencoded: Basic test (normal form)
 PASS application/x-www-form-urlencoded: Basic test (formdata event)
 PASS application/x-www-form-urlencoded: Basic File test (normal form)
 FAIL application/x-www-form-urlencoded: Basic File test (formdata event) assert_equals: expected "basic=file-test.txt" but got ""
-FAIL application/x-www-form-urlencoded: 0x00 in name (normal form) assert_equals: expected "a%00b=c" but got "a\0b=c"
-FAIL application/x-www-form-urlencoded: 0x00 in name (formdata event) assert_equals: expected "a%00b=c" but got "a\0b=c"
-FAIL application/x-www-form-urlencoded: 0x00 in value (normal form) assert_equals: expected "a=b%00c" but got "a=b\0c"
-FAIL application/x-www-form-urlencoded: 0x00 in value (formdata event) assert_equals: expected "a=b%00c" but got "a=b\0c"
-FAIL application/x-www-form-urlencoded: 0x00 in filename (normal form) assert_equals: expected "a=b%00c" but got "a=b\0c"
+PASS application/x-www-form-urlencoded: 0x00 in name (normal form)
+PASS application/x-www-form-urlencoded: 0x00 in name (formdata event)
+PASS application/x-www-form-urlencoded: 0x00 in value (normal form)
+PASS application/x-www-form-urlencoded: 0x00 in value (formdata event)
+PASS application/x-www-form-urlencoded: 0x00 in filename (normal form)
 FAIL application/x-www-form-urlencoded: 0x00 in filename (formdata event) assert_equals: expected "a=b%00c" but got ""
 PASS application/x-www-form-urlencoded: \n in name (normal form)
 PASS application/x-www-form-urlencoded: \n in name (formdata event)

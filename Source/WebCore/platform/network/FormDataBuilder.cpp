@@ -90,7 +90,8 @@ static void appendFormURLEncoded(Vector<char>& buffer, const uint8_t* string, si
     static const char safeCharacters[] = "-._*";
     for (size_t i = 0; i < length; ++i) {
         auto character = string[i];
-        if (isASCIIAlphanumeric(character) || strchr(safeCharacters, character))
+        if (isASCIIAlphanumeric(character)
+            || (character != '\0' && strchr(safeCharacters, character)))
             append(buffer, character);
         else if (character == ' ')
             append(buffer, '+');
