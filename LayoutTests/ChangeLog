@@ -1,3 +1,18 @@
+2021-11-15  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Un-skip accessibility/mac/search-predicate-for-adhoc-radio-groups.html for Mac WK1
+        https://bugs.webkit.org/show_bug.cgi?id=233116
+
+        Reviewed by Andres Gonzalez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=233017 implemented
+        AccessibilityUIElement::domIdentifier for WK1, so we don't
+        need to skip accessibility/mac/search-predicate-for-adhoc-radio-groups.html anymore.
+
+        * platform/mac-wk1/TestExpectations:
+        Un-skip because AccessibilityUIElement::domIdentifier is now
+        implemented.
+
 2021-11-15  Cathie Chen  <cathiechen@igalia.com>
 
         [CSS contain] Update css-contain tests from WPT
