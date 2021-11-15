@@ -34,6 +34,10 @@
 #include <dlfcn.h>
 #endif
 
+#if BOS(UNIX)
+#include "valgrind.h"
+#endif
+
 #if BPLATFORM(IOS_FAMILY) && !BPLATFORM(MACCATALYST) && !BPLATFORM(IOS_FAMILY_SIMULATOR)
 #define BUSE_CHECK_NANO_MALLOC 1
 #else
@@ -127,6 +131,15 @@ static bool isSanitizerEnabled()
 #endif
 }
 
+static bool isRunningOnValgrind()
+{
+#if BOS(UNIX)
+    if (RUNNING_ON_VALGRIND)
+        return true;
+#endif
+    return false;
+}
+
 #if BUSE(CHECK_NANO_MALLOC)
 static bool isNanoMallocEnabled()
 {
@@ -157,6 +170,8 @@ bool Environment::computeIsDebugHeapEnabled()
     if (isLibgmallocEnabled())
         return true;
     if (isSanitizerEnabled())
+        return true;
+    if (isRunningOnValgrind())
         return true;
 
 #if BUSE(CHECK_NANO_MALLOC)

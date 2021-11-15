@@ -1,3 +1,18 @@
+2021-11-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Make valgrind work properly without extra environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=230460
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebKitGTK and WPE WebKit users also have to set the WEBKIT_FORCE_SANDBOX=0 environment
+        variable, because the web process sandbox breaks valgrind for some reason I never attempted
+        to understand. If we have bmalloc expose valgrind.h as a public header, then we can check
+        for valgrind in higher layers and make this work automatically too.
+
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2021-11-15  Chris Dumez  <cdumez@apple.com>
 
         Remove some dead code from IPC::Encoder / IPC::Decoder

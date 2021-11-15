@@ -1,3 +1,29 @@
+2021-11-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Make valgrind work properly without extra environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=230460
+
+        Reviewed by Carlos Garcia Campos.
+
+        Currently to run WebKit under valgrind, we have to manually disable bmalloc with Malloc=1,
+        or else the Gigacage breaks everything, because valgrind shadows the entire address space in
+        resident memory, and it just can't handle that much address space. Even with
+        GIGACAGE_ENABLED=0, diagnostics are worse because bmalloc does not use valgrind's
+        annotations.
+
+        Using valgrind.h, we can automatically disable bmalloc when running under valgrind to avoid
+        needing to use the environment variable.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Environment.cpp:
+        (bmalloc::isRunningOnValgrind):
+        (bmalloc::Environment::computeIsDebugHeapEnabled):
+        * bmalloc/valgrind.h: Added.
+        (valgrind_do_client_request_expr):
+        (VALGRIND_PRINTF):
+        (VALGRIND_PRINTF_BACKTRACE):
+
 2021-11-13  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] update to 48d608bf31ba92f8059d2c76488f00c52aaca15a: changes to support universal isoheaps

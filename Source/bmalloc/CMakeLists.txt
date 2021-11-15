@@ -135,6 +135,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/Vector.h
     bmalloc/Zone.h
     bmalloc/bmalloc.h
+    bmalloc/valgrind.h
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")

@@ -1,3 +1,14 @@
+2021-11-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Make valgrind work properly without extra environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=230460
+
+        Reviewed by Carlos Garcia Campos.
+
+        Exempt valgrind.h from the style checker.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2021-11-14  Brady Eidson  <beidson@apple.com>
 
         Get daemon API ready to work in the iOS simulator (starting with WebPushD)

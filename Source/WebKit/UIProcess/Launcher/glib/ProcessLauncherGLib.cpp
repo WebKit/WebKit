@@ -42,6 +42,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if !USE(SYSTEM_MALLOC) && OS(LINUX)
+#include <bmalloc/valgrind.h>
+#endif
+
 namespace WebKit {
 
 #if OS(LINUX)
@@ -138,6 +142,11 @@ void ProcessLauncher::launchProcess()
 
     if (sandboxEnv)
         sandboxEnabled = !strcmp(sandboxEnv, "1");
+
+#if !USE(SYSTEM_MALLOC)
+    if (RUNNING_ON_VALGRIND)
+        sandboxEnabled = false;
+#endif
 
     if (sandboxEnabled && isFlatpakSpawnUsable())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());

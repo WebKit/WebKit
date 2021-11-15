@@ -261,6 +261,7 @@ _PATH_RULES_SPECIFIER = [
     #   No carriage-return line endings: since this is easy to correct.
     #
     ([os.path.join('webkitpy', 'thirdparty'),
+      os.path.join('Source', 'bmalloc', 'bmalloc', 'valgrind.h'),
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
       os.path.join('Source', 'ThirdParty', 'libwebrtc'),
       os.path.join('Source', 'ThirdParty', 'openvr'),
