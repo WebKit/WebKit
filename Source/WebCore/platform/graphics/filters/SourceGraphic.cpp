@@ -26,22 +26,25 @@
 
 namespace WebCore {
 
-Ref<SourceGraphic> SourceGraphic::create(Filter& filter)
+Ref<SourceGraphic> SourceGraphic::create()
 {
-    return adoptRef(*new SourceGraphic(filter));
+    return adoptRef(*new SourceGraphic());
 }
 
-void SourceGraphic::determineAbsolutePaintRect()
+SourceGraphic::SourceGraphic()
+    : FilterEffect(FilterEffect::Type::SourceGraphic)
 {
-    Filter& filter = this->filter();
+    setOperatingColorSpace(DestinationColorSpace::SRGB());
+}
+
+void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
+{
     FloatRect paintRect = filter.sourceImageRect();
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void SourceGraphic::platformApplySoftware()
+void SourceGraphic::platformApplySoftware(const Filter& filter)
 {
-    Filter& filter = this->filter();
-
     ImageBuffer* resultImage = createImageBufferResult();
     ImageBuffer* sourceImage = filter.sourceImage();
     if (!resultImage || !sourceImage)

@@ -35,17 +35,19 @@ class FEImage final : public FilterEffect {
 public:
     using SourceImage = std::variant<Ref<Image>, Ref<ImageBuffer>>;
 
-    static Ref<FEImage> create(Filter&, Ref<Image>&&, const SVGPreserveAspectRatioValue&);
-    static Ref<FEImage> create(Filter&, SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
+    static Ref<FEImage> create(Ref<Image>&&, const SVGPreserveAspectRatioValue&);
+    static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 
     SourceImage& sourceImage() { return m_sourceImage; }
     void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
 private:
-    FEImage(Filter&, SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
+    FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 
-    void platformApplySoftware() final;
-    void determineAbsolutePaintRect() final;
+    void determineAbsolutePaintRect(const Filter&) final;
+
+    void platformApplySoftware(const Filter&) final;
+
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const final;
 
     SourceImage m_sourceImage;

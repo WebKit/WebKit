@@ -22,8 +22,6 @@
 #pragma once
 
 #include "FilterEffect.h"
-
-#include "Filter.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +39,7 @@ enum CompositeOperationType {
 
 class FEComposite : public FilterEffect {
 public:
-    static Ref<FEComposite> create(Filter&, const CompositeOperationType&, float, float, float, float);
+    static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4);
 
     CompositeOperationType operation() const { return m_type; }
     bool setOperation(CompositeOperationType);
@@ -58,16 +56,17 @@ public:
     float k4() const { return m_k4; }
     bool setK4(float);
 
-protected:
-    bool requiresValidPreMultipliedPixels() override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
-
 private:
-    FEComposite(Filter&, const CompositeOperationType&, float, float, float, float);
+    FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4);
 
     void correctFilterResultIfNeeded() override;
-    void determineAbsolutePaintRect() override;
 
-    void platformApplySoftware() override;
+    bool requiresValidPreMultipliedPixels() override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
+
+    void determineAbsolutePaintRect(const Filter&) override;
+
+    void platformApplySoftware(const Filter&) override;
+
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     inline void platformArithmeticSoftware(const Uint8ClampedArray& source, Uint8ClampedArray& destination, float k1, float k2, float k3, float k4);

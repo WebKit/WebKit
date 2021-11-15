@@ -191,9 +191,9 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
+RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto input1 = filterBuilder->getEffectById(in1());
+    auto input1 = filterBuilder.getEffectById(in1());
 
     if (!input1)
         return nullptr;
@@ -246,8 +246,8 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterB
             divisorValue = 1;
     }
 
-    auto effect = FEConvolveMatrix::create(filter, IntSize(orderXValue, orderYValue), divisorValue, bias(), IntPoint(targetXValue, targetYValue), edgeMode(), FloatPoint(kernelUnitLengthXValue, kernelUnitLengthYValue), preserveAlpha(), kernelMatrix);
-    effect->inputEffects() = { input1 };
+    auto effect = FEConvolveMatrix::create(IntSize(orderXValue, orderYValue), divisorValue, bias(), IntPoint(targetXValue, targetYValue), edgeMode(), FloatPoint(kernelUnitLengthXValue, kernelUnitLengthYValue), preserveAlpha(), kernelMatrix);
+    effect->inputEffects() = { WTFMove(input1) };
     return effect;
 }
 

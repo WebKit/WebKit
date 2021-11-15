@@ -22,13 +22,12 @@
 #pragma once
 
 #include "FilterEffect.h"
-#include "Filter.h"
 
 namespace WebCore {
 
 class FEOffset : public FilterEffect {
 public:
-    static Ref<FEOffset> create(Filter&, float dx, float dy);
+    static Ref<FEOffset> create(float dx, float dy);
 
     float dx() const { return m_dx; }
     void setDx(float);
@@ -37,11 +36,11 @@ public:
     void setDy(float);
 
 private:
-    FEOffset(Filter&, float dx, float dy);
+    FEOffset(float dx, float dy);
 
-    void platformApplySoftware() override;
-    
-    void determineAbsolutePaintRect() override;
+    void determineAbsolutePaintRect(const Filter&) override;
+
+    void platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

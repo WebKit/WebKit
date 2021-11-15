@@ -22,20 +22,19 @@
 #pragma once
 
 #include "FilterEffect.h"
-#include "Filter.h"
 
 namespace WebCore {
     
 class FETile : public FilterEffect {
 public:
-    static Ref<FETile> create(Filter&);
+    static Ref<FETile> create();
 
 private:
-    FETile(Filter&);
+    FETile();
 
-    void platformApplySoftware() override;
+    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 };

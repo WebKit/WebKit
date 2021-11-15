@@ -75,7 +75,7 @@ static unsigned totalNumberFilterEffects(const FilterEffect& lastEffect)
     return collectEffects(&lastEffect, allEffects);
 }
 
-RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(Filter& filter, SVGFilterElement& filterElement)
+RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filterElement)
 {
     static constexpr unsigned maxCountChildNodes = 200;
     static constexpr unsigned maxTotalNumberFilterEffects = 100;
@@ -86,7 +86,7 @@ RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(Filter& filter, SVGFil
     RefPtr<FilterEffect> effect;
 
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
-        effect = effectElement.build(this, filter);
+        effect = effectElement.build(*this);
         if (!effect) {
             clearEffects();
             return nullptr;

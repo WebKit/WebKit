@@ -115,19 +115,16 @@ void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrN
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
+RefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto input1 = filterBuilder->getEffectById(in1());
-    auto input2 = filterBuilder->getEffectById(in2());
+    auto input1 = filterBuilder.getEffectById(in1());
+    auto input2 = filterBuilder.getEffectById(in2());
     
     if (!input1 || !input2)
         return nullptr;
 
-    auto effect = FEDisplacementMap::create(filter, xChannelSelector(), yChannelSelector(), scale());
-    FilterEffectVector& inputEffects = effect->inputEffects();
-    inputEffects.reserveCapacity(2);
-    inputEffects.append(input1);
-    inputEffects.append(input2);    
+    auto effect = FEDisplacementMap::create(xChannelSelector(), yChannelSelector(), scale());
+    effect->inputEffects() = { WTFMove(input1), WTFMove(input2) };
     return effect;
 }
 

@@ -45,13 +45,12 @@
 
 namespace WebCore {
 
-FilterEffect::FilterEffect(Filter& filter, FilterEffect::Type type)
+FilterEffect::FilterEffect(FilterEffect::Type type)
     : FilterFunction(type)
-    , m_filter(filter)
 {
 }
 
-void FilterEffect::determineAbsolutePaintRect()
+void FilterEffect::determineAbsolutePaintRect(const Filter&)
 {
     m_absolutePaintRect = IntRect();
     for (auto& effect : m_inputEffects)
@@ -94,22 +93,22 @@ FloatRect FilterEffect::drawingRegionOfInputImage(const IntRect& srcRect) const
     return transform.mapRect(srcRect);
 }
 
-FloatRect FilterEffect::determineFilterPrimitiveSubregion()
+FloatRect FilterEffect::determineFilterPrimitiveSubregion(const Filter& filter)
 {
     // FETile, FETurbulence, FEFlood don't have input effects, take the filter region as unite rect.
     FloatRect subregion;
     if (unsigned numberOfInputEffects = inputEffects().size()) {
-        subregion = inputEffect(0)->determineFilterPrimitiveSubregion();
+        subregion = inputEffect(0)->determineFilterPrimitiveSubregion(filter);
         for (unsigned i = 1; i < numberOfInputEffects; ++i) {
-            auto inputPrimitiveSubregion = inputEffect(i)->determineFilterPrimitiveSubregion();
+            auto inputPrimitiveSubregion = inputEffect(i)->determineFilterPrimitiveSubregion(filter);
             subregion.unite(inputPrimitiveSubregion);
         }
     } else
-        subregion = m_filter.filterRegion();
+        subregion = filter.filterRegion();
 
     // After calling determineFilterPrimitiveSubregion on the target effect, reset the subregion again for <feTile>.
     if (filterType() == FilterEffect::Type::FETile)
-        subregion = m_filter.filterRegion();
+        subregion = filter.filterRegion();
 
     auto boundaries = effectBoundaries();
     if (hasX())
@@ -124,13 +123,13 @@ FloatRect FilterEffect::determineFilterPrimitiveSubregion()
     setFilterPrimitiveSubregion(subregion);
 
     auto absoluteSubregion = subregion;
-    absoluteSubregion.scale(m_filter.filterScale());
+    absoluteSubregion.scale(filter.filterScale());
     // Save this before clipping so we can use it to map lighting points from user space to buffer coordinates.
     setUnclippedAbsoluteSubregion(absoluteSubregion);
 
     // Clip every filter effect to the filter region.
-    auto absoluteScaledFilterRegion = m_filter.filterRegion();
-    absoluteScaledFilterRegion.scale(m_filter.filterScale());
+    auto absoluteScaledFilterRegion = filter.filterRegion();
+    absoluteScaledFilterRegion.scale(filter.filterScale());
     absoluteSubregion.intersect(absoluteScaledFilterRegion);
 
     setMaxEffectRect(absoluteSubregion);
@@ -143,14 +142,14 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
-void FilterEffect::apply()
+void FilterEffect::apply(const Filter& filter)
 {
     if (hasResult())
         return;
     unsigned size = m_inputEffects.size();
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = m_inputEffects.at(i).get();
-        in->apply();
+        in->apply(filter);
         if (!in->hasResult())
             return;
 
@@ -158,10 +157,10 @@ void FilterEffect::apply()
         transformResultColorSpace(in, i);
     }
 
-    determineAbsolutePaintRect();
+    determineAbsolutePaintRect(filter);
     setResultColorSpace(m_operatingColorSpace);
 
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " apply():\n  filterPrimitiveSubregion " << m_filterPrimitiveSubregion << "\n  effectBoundaries " << m_effectBoundaries << "\n  absoluteUnclippedSubregion " << m_absoluteUnclippedSubregion << "\n  absolutePaintRect " << m_absolutePaintRect << "\n  maxEffectRect " << m_maxEffectRect << "\n  filter scale " << m_filter.filterScale());
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " apply():\n  filterPrimitiveSubregion " << m_filterPrimitiveSubregion << "\n  effectBoundaries " << m_effectBoundaries << "\n  absoluteUnclippedSubregion " << m_absoluteUnclippedSubregion << "\n  absolutePaintRect " << m_absolutePaintRect << "\n  maxEffectRect " << m_maxEffectRect << "\n  filter scale " << filter.filterScale());
 
     if (m_absolutePaintRect.isEmpty() || ImageBuffer::sizeNeedsClamping(m_absolutePaintRect.size()))
         return;
@@ -172,7 +171,7 @@ void FilterEffect::apply()
     }
     
     // Add platform specific apply functions here and return earlier.
-    platformApplySoftware();
+    platformApplySoftware(filter);
 }
 
 void FilterEffect::forceValidPreMultipliedPixels()
@@ -253,7 +252,10 @@ ImageBuffer* FilterEffect::imageBufferResult()
     if (m_imageBufferResult)
         return m_imageBufferResult.get();
 
-    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.renderingMode(), 1, m_resultColorSpace, PixelFormat::BGRA8);
+    // FIXME: Respect the Filter::renderingMode() when creating the filter ImageBuffer result.
+    // For now just pass RenderingMode::Unaccelerated. This will not be a behavior change since
+    // this is what we do for the software filter code path anyway.
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), RenderingMode::Unaccelerated, 1, m_resultColorSpace, PixelFormat::BGRA8);
     if (!m_imageBufferResult)
         return nullptr;
 
@@ -422,7 +424,7 @@ std::optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(const De
     IntRect destinationRect(IntPoint(), pixelBuffer.size());
     FloatSize clampedSize = ImageBuffer::clampedSize(destinationRect.size());
     // Create an ImageBuffer to store incoming PixelBuffer
-    auto buffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), 1, operatingColorSpace(), PixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(clampedSize, RenderingMode::Unaccelerated, 1, operatingColorSpace(), PixelFormat::BGRA8);
     if (!buffer)
         return std::nullopt;
     buffer->putPixelBuffer(pixelBuffer, destinationRect);
@@ -436,7 +438,7 @@ std::optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(const De
     FloatSize clampedSize = ImageBuffer::clampedSize(rect.size());
 
     // Create an ImageBuffer with the correct color space and utilize CG to handle color space conversion
-    auto convertedBuffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), 1, targetColorSpace, PixelFormat::BGRA8);
+    auto convertedBuffer = ImageBuffer::create(clampedSize, RenderingMode::Unaccelerated, 1, targetColorSpace, PixelFormat::BGRA8);
     if (!convertedBuffer)
         return std::nullopt;
 
@@ -553,7 +555,7 @@ ImageBuffer* FilterEffect::createImageBufferResult()
         return nullptr;
 
     FloatSize clampedSize = ImageBuffer::clampedSize(m_absolutePaintRect.size());
-    m_imageBufferResult = ImageBuffer::create(clampedSize, m_filter.renderingMode(), 1, m_resultColorSpace, PixelFormat::BGRA8);
+    m_imageBufferResult = ImageBuffer::create(clampedSize, RenderingMode::Unaccelerated, 1, m_resultColorSpace, PixelFormat::BGRA8);
     return m_imageBufferResult.get();
 }
 

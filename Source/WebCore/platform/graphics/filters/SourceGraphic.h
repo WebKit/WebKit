@@ -26,19 +26,17 @@ namespace WebCore {
 
 class SourceGraphic : public FilterEffect {
 public:        
-    static Ref<SourceGraphic> create(Filter&);
+    static Ref<SourceGraphic> create();
 
     static AtomString effectName() { return FilterEffect::sourceGraphicName(); }
 
 private:
-    SourceGraphic(Filter& filter)
-        : FilterEffect(filter, FilterEffect::Type::SourceGraphic)
-    {
-        setOperatingColorSpace(DestinationColorSpace::SRGB());
-    }
+    SourceGraphic();
 
-    void determineAbsolutePaintRect() override;
-    void platformApplySoftware() override;
+    void determineAbsolutePaintRect(const Filter&) override;
+
+    void platformApplySoftware(const Filter&) override;
+
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 };
 

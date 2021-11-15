@@ -35,17 +35,17 @@
 
 namespace WebCore {
 
-FEMorphology::FEMorphology(Filter& filter, MorphologyOperatorType type, float radiusX, float radiusY)
-    : FilterEffect(filter, FilterEffect::Type::FEMorphology)
+Ref<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radiusX, float radiusY)
+{
+    return adoptRef(*new FEMorphology(type, radiusX, radiusY));
+}
+
+FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float radiusY)
+    : FilterEffect(FilterEffect::Type::FEMorphology)
     , m_type(type)
     , m_radiusX(radiusX)
     , m_radiusY(radiusY)
 {
-}
-
-Ref<FEMorphology> FEMorphology::create(Filter& filter, MorphologyOperatorType type, float radiusX, float radiusY)
-{
-    return adoptRef(*new FEMorphology(filter, type, radiusX, radiusY));
 }
 
 bool FEMorphology::setMorphologyOperator(MorphologyOperatorType type)
@@ -72,10 +72,9 @@ bool FEMorphology::setRadiusY(float radiusY)
     return true;
 }
 
-void FEMorphology::determineAbsolutePaintRect()
+void FEMorphology::determineAbsolutePaintRect(const Filter& filter)
 {
     FloatRect paintRect = inputEffect(0)->absolutePaintRect();
-    Filter& filter = this->filter();
     paintRect.inflate(filter.scaledByFilterScale({ m_radiusX, m_radiusY }));
     if (clipsToBounds())
         paintRect.intersect(maxEffectRect());
@@ -240,7 +239,7 @@ bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, con
     return false;
 }
 
-void FEMorphology::platformApplySoftware()
+void FEMorphology::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
@@ -258,7 +257,6 @@ void FEMorphology::platformApplySoftware()
     if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radius.width(), radius.height()))
         return;
 
-    Filter& filter = this->filter();
     auto sourcePixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
     if (!sourcePixelArray)
         return;

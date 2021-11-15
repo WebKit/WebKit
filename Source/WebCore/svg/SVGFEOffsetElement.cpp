@@ -81,15 +81,14 @@ void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEOffsetElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
+RefPtr<FilterEffect> SVGFEOffsetElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto input1 = filterBuilder->getEffectById(in1());
-
+    auto input1 = filterBuilder.getEffectById(in1());
     if (!input1)
         return nullptr;
 
-    auto effect = FEOffset::create(filter, dx(), dy());
-    effect->inputEffects() = { input1 };
+    auto effect = FEOffset::create(dx(), dy());
+    effect->inputEffects() = { WTFMove(input1) };
     return effect;
 }
 

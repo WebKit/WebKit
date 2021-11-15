@@ -48,8 +48,13 @@ static const int s_randAmplitude = 16807; // 7**5; primitive root of m
 static const int s_randQ = 127773; // m / a
 static const int s_randR = 2836; // m % a
 
-FETurbulence::FETurbulence(Filter& filter, TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
-    : FilterEffect(filter, FilterEffect::Type::FETurbulence)
+Ref<FETurbulence> FETurbulence::create(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
+{
+    return adoptRef(*new FETurbulence(type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles));
+}
+
+FETurbulence::FETurbulence(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
+    : FilterEffect(FilterEffect::Type::FETurbulence)
     , m_type(type)
     , m_baseFrequencyX(baseFrequencyX)
     , m_baseFrequencyY(baseFrequencyY)
@@ -57,11 +62,6 @@ FETurbulence::FETurbulence(Filter& filter, TurbulenceType type, float baseFreque
     , m_seed(seed)
     , m_stitchTiles(stitchTiles)
 {
-}
-
-Ref<FETurbulence> FETurbulence::create(Filter& filter, TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
-{
-    return adoptRef(*new FETurbulence(filter, type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles));
 }
 
 bool FETurbulence::setType(TurbulenceType type)
@@ -366,14 +366,14 @@ ColorComponents<uint8_t, 4> FETurbulence::calculateTurbulenceValueForPoint(const
     return toIntBasedColorComponents(turbulenceFunctionResult);
 }
 
-void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY) const
+void FETurbulence::fillRegion(const Filter& filter, Uint8ClampedArray& pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY) const
 {
     ASSERT(endY > startY);
 
     IntRect filterRegion = absolutePaintRect();
     FloatPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
-    FloatSize inverseScale = { 1 / filter().filterScale().width(), 1 / filter().filterScale().height() };
+    FloatSize inverseScale = { 1 / filter.filterScale().width(), 1 / filter.filterScale().height() };
 
     for (int y = startY; y < endY; ++y) {
         point.setY(point.y() + 1);
@@ -390,10 +390,10 @@ void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData&
 
 void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 {
-    parameters->filter->fillRegion(*parameters->pixelArray, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
+    parameters->effect->fillRegion(*parameters->filter, *parameters->pixelArray, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
 }
 
-void FETurbulence::platformApplySoftware()
+void FETurbulence::platformApplySoftware(const Filter& filter)
 {
     auto& destinationPixelBuffer = createUnmultipliedImageResult();
     if (!destinationPixelBuffer)
@@ -438,7 +438,8 @@ void FETurbulence::platformApplySoftware()
 
             for (unsigned i = 0; i < numJobs; ++i) {
                 FillRegionParameters& params = parallelJobs.parameter(i);
-                params.filter = this;
+                params.filter = &filter;
+                params.effect = this;
                 params.pixelArray = &destinationPixelArray;
                 params.paintingData = &paintingData;
                 params.stitchData = stitchData;
@@ -455,7 +456,7 @@ void FETurbulence::platformApplySoftware()
     }
 
     // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
-    fillRegion(destinationPixelArray, paintingData, stitchData, 0, height);
+    fillRegion(filter, destinationPixelArray, paintingData, stitchData, 0, height);
 }
 
 static TextStream& operator<<(TextStream& ts, TurbulenceType type)

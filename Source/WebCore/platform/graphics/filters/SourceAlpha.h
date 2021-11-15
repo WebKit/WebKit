@@ -32,8 +32,10 @@ public:
 private:
     explicit SourceAlpha(FilterEffect&);
 
-    void platformApplySoftware() override;
-    void determineAbsolutePaintRect() override;
+    void determineAbsolutePaintRect(const Filter&) override;
+
+    void platformApplySoftware(const Filter&) override;
+
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 };
 

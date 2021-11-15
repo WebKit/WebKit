@@ -22,14 +22,13 @@
 #pragma once
 
 #include "Color.h"
-#include "Filter.h"
 #include "FilterEffect.h"
 
 namespace WebCore {
 
 class FEFlood : public FilterEffect {
 public:
-    static Ref<FEFlood> create(Filter&, const Color&, float);
+    static Ref<FEFlood> create(const Color& floodColor, float floodOpacity);
 
     const Color& floodColor() const { return m_floodColor; }
     bool setFloodColor(const Color&);
@@ -45,11 +44,11 @@ public:
 #endif
 
 private:
-    FEFlood(Filter&, const Color&, float);
+    FEFlood(const Color& floodColor, float floodOpacity);
 
-    void platformApplySoftware() override;
+    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

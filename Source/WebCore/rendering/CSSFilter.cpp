@@ -68,13 +68,13 @@ CSSFilter::CSSFilter(bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRe
 {
 }
 
-static RefPtr<FilterEffect> createBlurEffect(CSSFilter& filter, const BlurFilterOperation& blurOperation, FilterConsumer consumer)
+static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation, FilterConsumer consumer)
 {
     float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-    return FEGaussianBlur::create(filter, stdDeviation, stdDeviation, consumer == FilterConsumer::FilterProperty ? EDGEMODE_NONE : EDGEMODE_DUPLICATE);
+    return FEGaussianBlur::create(stdDeviation, stdDeviation, consumer == FilterConsumer::FilterProperty ? EDGEMODE_NONE : EDGEMODE_DUPLICATE);
 }
 
-static RefPtr<FilterEffect> createBrightnessEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
+static RefPtr<FilterEffect> createBrightnessEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
     transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
@@ -82,10 +82,10 @@ static RefPtr<FilterEffect> createBrightnessEffect(CSSFilter& filter, const Basi
     transferFunction.intercept = 0;
 
     ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(filter, transferFunction, transferFunction, transferFunction, nullFunction);
+    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
 }
 
-static RefPtr<FilterEffect> createContrastEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
+static RefPtr<FilterEffect> createContrastEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
     transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
@@ -94,16 +94,16 @@ static RefPtr<FilterEffect> createContrastEffect(CSSFilter& filter, const BasicC
     transferFunction.intercept = -0.5 * amount + 0.5;
 
     ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(filter, transferFunction, transferFunction, transferFunction, nullFunction);
+    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
 }
 
-static RefPtr<FilterEffect> createDropShadowEffect(CSSFilter& filter, const DropShadowFilterOperation& dropShadowOperation)
+static RefPtr<FilterEffect> createDropShadowEffect(const DropShadowFilterOperation& dropShadowOperation)
 {
     float std = dropShadowOperation.stdDeviation();
-    return FEDropShadow::create(filter, std, std, dropShadowOperation.x(), dropShadowOperation.y(), dropShadowOperation.color(), 1);
+    return FEDropShadow::create(std, std, dropShadowOperation.x(), dropShadowOperation.y(), dropShadowOperation.color(), 1);
 }
 
-static RefPtr<FilterEffect> createGrayScaleEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+static RefPtr<FilterEffect> createGrayScaleEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
 {
     double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
 
@@ -136,16 +136,16 @@ static RefPtr<FilterEffect> createGrayScaleEffect(CSSFilter& filter, const Basic
         0,
     };
 
-    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
-static RefPtr<FilterEffect> createHueRotateEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+static RefPtr<FilterEffect> createHueRotateEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
 {
     Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
-    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_HUEROTATE, WTFMove(inputParameters));
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_HUEROTATE, WTFMove(inputParameters));
 }
 
-static RefPtr<FilterEffect> createInvertEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
+static RefPtr<FilterEffect> createInvertEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
     transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
@@ -154,10 +154,10 @@ static RefPtr<FilterEffect> createInvertEffect(CSSFilter& filter, const BasicCom
     transferFunction.intercept = amount;
 
     ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(filter, transferFunction, transferFunction, transferFunction, nullFunction);
+    return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
 }
 
-static RefPtr<FilterEffect> createOpacityEffect(CSSFilter& filter, const BasicComponentTransferFilterOperation& componentTransferOperation)
+static RefPtr<FilterEffect> createOpacityEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
     transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
@@ -166,16 +166,16 @@ static RefPtr<FilterEffect> createOpacityEffect(CSSFilter& filter, const BasicCo
     transferFunction.intercept = 0;
 
     ComponentTransferFunction nullFunction;
-    return FEComponentTransfer::create(filter, nullFunction, nullFunction, nullFunction, transferFunction);
+    return FEComponentTransfer::create(nullFunction, nullFunction, nullFunction, transferFunction);
 }
 
-static RefPtr<FilterEffect> createSaturateEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+static RefPtr<FilterEffect> createSaturateEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
 {
     Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
-    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_SATURATE, WTFMove(inputParameters));
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_SATURATE, WTFMove(inputParameters));
 }
 
-static RefPtr<FilterEffect> createSepiaEffect(CSSFilter& filter, const BasicColorMatrixFilterOperation& colorMatrixOperation)
+static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
 {
     double oneMinusAmount = clampTo(1 - colorMatrixOperation.amount(), 0.0, 1.0);
 
@@ -208,7 +208,7 @@ static RefPtr<FilterEffect> createSepiaEffect(CSSFilter& filter, const BasicColo
         0,
     };
 
-    return FEColorMatrix::create(filter, FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
 static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, FilterEffect& previousEffect)
@@ -241,7 +241,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
     m_functions.clear();
     m_outsets = { };
 
-    RefPtr<FilterEffect> previousEffect = SourceGraphic::create(*this);
+    RefPtr<FilterEffect> previousEffect = SourceGraphic::create();
     RefPtr<SVGFilter> filter;
     
     for (auto& operation : operations.operations()) {
@@ -253,43 +253,43 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::BLUR:
-            effect = createBlurEffect(*this, downcast<BlurFilterOperation>(*operation), consumer);
+            effect = createBlurEffect(downcast<BlurFilterOperation>(*operation), consumer);
             break;
 
         case FilterOperation::BRIGHTNESS:
-            effect = createBrightnessEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createBrightnessEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::CONTRAST:
-            effect = createContrastEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createContrastEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::DROP_SHADOW:
-            effect = createDropShadowEffect(*this, downcast<DropShadowFilterOperation>(*operation));
+            effect = createDropShadowEffect(downcast<DropShadowFilterOperation>(*operation));
             break;
 
         case FilterOperation::GRAYSCALE:
-            effect = createGrayScaleEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createGrayScaleEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::HUE_ROTATE:
-            effect = createHueRotateEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createHueRotateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::INVERT:
-            effect = createInvertEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createInvertEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::OPACITY:
-            effect = createOpacityEffect(*this, downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createOpacityEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::SATURATE:
-            effect = createSaturateEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createSaturateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::SEPIA:
-            effect = createSepiaEffect(*this, downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createSepiaEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::REFERENCE:
@@ -392,13 +392,13 @@ RefPtr<FilterEffect> CSSFilter::lastEffect()
 void CSSFilter::determineFilterPrimitiveSubregion()
 {
     auto effect = lastEffect();
-    effect->determineFilterPrimitiveSubregion();
+    effect->determineFilterPrimitiveSubregion(*this);
     FloatRect subRegion = effect->maxEffectRect();
     // At least one FilterEffect has a too big image size, recalculate the effect sizes with new scale factors.
     FloatSize filterScale { 1, 1 };
     if (ImageBuffer::sizeNeedsClamping(subRegion.size(), filterScale)) {
         setFilterScale(filterScale);
-        effect->determineFilterPrimitiveSubregion();
+        effect->determineFilterPrimitiveSubregion(*this);
     }
 }
 
@@ -412,13 +412,21 @@ void CSSFilter::apply()
 {
     auto effect = lastEffect();
     if (m_filterRenderer) {
-        m_filterRenderer->applyEffects(*effect);
+        m_filterRenderer->applyEffects(*this, *effect);
         if (m_filterRenderer->hasResult()) {
             effect->transformResultColorSpace(DestinationColorSpace::SRGB());
             return;
         }
     }
-    effect->apply();
+
+    for (auto& function : m_functions) {
+        if (function->isSVGFilter()) {
+            downcast<SVGFilter>(function.get()).setSourceImage({ sourceImage() });
+            downcast<SVGFilter>(function.get()).apply();
+        } else if (function->isFilterEffect())
+            downcast<FilterEffect>(function.get()).apply(*this);
+    }
+
     effect->transformResultColorSpace(DestinationColorSpace::SRGB());
 }
 

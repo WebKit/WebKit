@@ -70,15 +70,14 @@ void SVGFETileElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFETileElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
+RefPtr<FilterEffect> SVGFETileElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto input1 = filterBuilder->getEffectById(in1());
-
+    auto input1 = filterBuilder.getEffectById(in1());
     if (!input1)
         return nullptr;
 
-    auto effect = FETile::create(filter);
-    effect->inputEffects() = { input1 };
+    auto effect = FETile::create();
+    effect->inputEffects() = { WTFMove(input1) };
     return effect;
 }
 

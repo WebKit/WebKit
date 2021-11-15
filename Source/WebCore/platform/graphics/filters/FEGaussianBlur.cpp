@@ -79,17 +79,17 @@ inline void kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, 
     }
 }
 
-FEGaussianBlur::FEGaussianBlur(Filter& filter, float x, float y, EdgeModeType edgeMode)
-    : FilterEffect(filter, FilterEffect::Type::FEGaussianBlur)
+Ref<FEGaussianBlur> FEGaussianBlur::create(float x, float y, EdgeModeType edgeMode)
+{
+    return adoptRef(*new FEGaussianBlur(x, y, edgeMode));
+}
+
+FEGaussianBlur::FEGaussianBlur(float x, float y, EdgeModeType edgeMode)
+    : FilterEffect(FilterEffect::Type::FEGaussianBlur)
     , m_stdX(x)
     , m_stdY(y)
     , m_edgeMode(edgeMode)
 {
-}
-
-Ref<FEGaussianBlur> FEGaussianBlur::create(Filter& filter, float x, float y, EdgeModeType edgeMode)
-{
-    return adoptRef(*new FEGaussianBlur(filter, x, y, edgeMode));
 }
 
 void FEGaussianBlur::setStdDeviationX(float x)
@@ -496,9 +496,9 @@ IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
     return { 3 * kernelSize.width() / 2, 3 * kernelSize.height() / 2 };
 }
 
-void FEGaussianBlur::determineAbsolutePaintRect()
+void FEGaussianBlur::determineAbsolutePaintRect(const Filter& filter)
 {
-    IntSize kernelSize = calculateKernelSize(filter(), { m_stdX, m_stdY });
+    IntSize kernelSize = calculateKernelSize(filter, { m_stdX, m_stdY });
 
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     // Edge modes other than 'none' do not inflate the affected paint rect.
@@ -519,7 +519,7 @@ void FEGaussianBlur::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-void FEGaussianBlur::platformApplySoftware()
+void FEGaussianBlur::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
@@ -536,7 +536,7 @@ void FEGaussianBlur::platformApplySoftware()
     if (!m_stdX && !m_stdY)
         return;
 
-    IntSize kernelSize = calculateKernelSize(filter(), { m_stdX, m_stdY });
+    IntSize kernelSize = calculateKernelSize(filter, { m_stdX, m_stdY });
 
     IntSize paintSize = absolutePaintRect().size();
     auto tmpImageData = Uint8ClampedArray::tryCreateUninitialized(paintSize.area() * 4);

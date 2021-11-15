@@ -36,7 +36,7 @@ class FilterEffectRenderer {
     
 public:
     static std::unique_ptr<FilterEffectRenderer> tryCreate(bool, FilterEffect&);
-    virtual void applyEffects(FilterEffect&) = 0;
+    virtual void applyEffects(const Filter&, FilterEffect&) = 0;
     virtual bool hasResult() const = 0;
     virtual ImageBuffer* output() const = 0;
     virtual FloatRect destRect(const FilterEffect&) const = 0;

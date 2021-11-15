@@ -29,7 +29,7 @@ class LightSource;
 
 class FEDiffuseLighting : public FELighting {
 public:
-    static Ref<FEDiffuseLighting> create(Filter&, const Color&, float, float, float, float, Ref<LightSource>&&);
+    static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
     float diffuseConstant() const { return m_diffuseConstant; }
     bool setDiffuseConstant(float);
@@ -37,7 +37,7 @@ public:
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
 private:
-    FEDiffuseLighting(Filter&, const Color&, float, float, float, float, Ref<LightSource>&&);
+    FEDiffuseLighting(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 };
 
 } // namespace WebCore

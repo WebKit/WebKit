@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FEBlendNEON_h
-#define FEBlendNEON_h
+#pragma once
 
 #if HAVE(ARM_NEON_INTRINSICS)
 
@@ -107,7 +106,7 @@ public:
     }
 };
 
-void FEBlend::platformApplySoftware()
+void FEBlend::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
@@ -205,5 +204,3 @@ void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* sr
 } // namespace WebCore
 
 #endif // HAVE(ARM_NEON_INTRINSICS)
-
-#endif // FEBlendNEON_h

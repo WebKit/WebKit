@@ -208,16 +208,16 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     return { imageBuffer, imageRect };
 }
 
-RefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter& filter) const
+RefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder&) const
 {
     if (m_cachedImage)
-        return FEImage::create(filter, Ref<Image> { *m_cachedImage->imageForRenderer(renderer()) }, preserveAspectRatio());
+        return FEImage::create(Ref { *m_cachedImage->imageForRenderer(renderer()) }, preserveAspectRatio());
 
     auto [imageBuffer, imageRect] = imageBufferForEffect();
     if (!imageBuffer)
         return nullptr;
 
-    return FEImage::create(filter, imageBuffer.releaseNonNull(), imageRect, preserveAspectRatio());
+    return FEImage::create(imageBuffer.releaseNonNull(), imageRect, preserveAspectRatio());
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

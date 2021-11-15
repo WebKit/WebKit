@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FilterEffect.h"
-#include "Filter.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,7 +36,7 @@ enum ChannelSelectorType {
 
 class FEDisplacementMap : public FilterEffect {
 public:
-    static Ref<FEDisplacementMap> create(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale);
+    static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale);
 
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
     bool setXChannelSelector(const ChannelSelectorType);
@@ -52,11 +51,11 @@ public:
     void transformResultColorSpace(FilterEffect*, const int) override;
 
 private:
-    FEDisplacementMap(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+    FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    void platformApplySoftware() override;
+    void platformApplySoftware(const Filter&) override;
 
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
     int xChannelIndex() const { return m_xChannelSelector - 1; }
     int yChannelIndex() const { return m_yChannelSelector - 1; }

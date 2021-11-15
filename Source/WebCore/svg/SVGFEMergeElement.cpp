@@ -45,13 +45,12 @@ Ref<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEMergeElement(tagName, document));
 }
 
-RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
+RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto effect = FEMerge::create(filter);
-    auto& mergeInputs = effect->inputEffects();
+    FilterEffectVector mergeInputs;
 
     for (auto& mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this)) {
-        auto mergeEffect = filterBuilder->getEffectById(mergeNode.in1());
+        auto mergeEffect = filterBuilder.getEffectById(mergeNode.in1());
         if (!mergeEffect)
             return nullptr;
         mergeInputs.append(WTFMove(mergeEffect));
@@ -62,6 +61,8 @@ RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, F
     if (mergeInputs.isEmpty())
         return nullptr;
 
+    auto effect = FEMerge::create();
+    effect->inputEffects() = WTFMove(mergeInputs);
     return effect;
 }
 

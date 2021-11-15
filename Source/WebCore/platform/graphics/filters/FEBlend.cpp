@@ -26,23 +26,23 @@
 #include "FEBlend.h"
 
 #include "FEBlendNEON.h"
-#include "Filter.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-FEBlend::FEBlend(Filter& filter, BlendMode mode)
-    : FilterEffect(filter, FilterEffect::Type::FEBlend)
-    , m_mode(mode)
+Ref<FEBlend> FEBlend::create(BlendMode mode)
 {
+    return adoptRef(*new FEBlend(mode));
 }
 
-Ref<FEBlend> FEBlend::create(Filter& filter, BlendMode mode)
+FEBlend::FEBlend(BlendMode mode)
+    : FilterEffect(FilterEffect::Type::FEBlend)
+    , m_mode(mode)
 {
-    return adoptRef(*new FEBlend(filter, mode));
 }
 
 bool FEBlend::setBlendMode(BlendMode mode)
@@ -54,7 +54,7 @@ bool FEBlend::setBlendMode(BlendMode mode)
 }
 
 #if !HAVE(ARM_NEON_INTRINSICS)
-void FEBlend::platformApplySoftware()
+void FEBlend::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);

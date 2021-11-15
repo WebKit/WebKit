@@ -30,26 +30,26 @@
 
 namespace WebCore {
 
-Ref<FEImage> FEImage::create(Filter& filter, Ref<Image>&& image, const SVGPreserveAspectRatioValue& preserveAspectRatio)
+Ref<FEImage> FEImage::create(Ref<Image>&& image, const SVGPreserveAspectRatioValue& preserveAspectRatio)
 {
     auto imageRect = FloatRect { { }, image->size() };
-    return create(filter, WTFMove(image), imageRect, preserveAspectRatio);
+    return create(WTFMove(image), imageRect, preserveAspectRatio);
 }
 
-Ref<FEImage> FEImage::create(Filter& filter, SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
+Ref<FEImage> FEImage::create(SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
 {
-    return adoptRef(*new FEImage(filter, WTFMove(sourceImage), sourceImageRect, preserveAspectRatio));
+    return adoptRef(*new FEImage(WTFMove(sourceImage), sourceImageRect, preserveAspectRatio));
 }
 
-FEImage::FEImage(Filter& filter, SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
-    : FilterEffect(filter, Type::FEImage)
+FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
+    : FilterEffect(Type::FEImage)
     , m_sourceImage(WTFMove(sourceImage))
     , m_sourceImageRect(sourceImageRect)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
 }
 
-void FEImage::determineAbsolutePaintRect()
+void FEImage::determineAbsolutePaintRect(const Filter& filter)
 {
     auto primitiveSubregion = filterPrimitiveSubregion();
 
@@ -65,7 +65,7 @@ void FEImage::determineAbsolutePaintRect()
         }
     );
 
-    imageRect.scale(filter().filterScale());
+    imageRect.scale(filter.filterScale());
 
     if (clipsToBounds())
         imageRect.intersect(maxEffectRect());
@@ -74,7 +74,7 @@ void FEImage::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(imageRect));
 }
 
-void FEImage::platformApplySoftware()
+void FEImage::platformApplySoftware(const Filter& filter)
 {
     // FEImage results are always in DestinationColorSpace::SRGB()
     setResultColorSpace(DestinationColorSpace::SRGB());
@@ -91,14 +91,14 @@ void FEImage::platformApplySoftware()
             auto imageRect = primitiveSubregion;
             auto srcRect = m_sourceImageRect;
             m_preserveAspectRatio.transformRect(imageRect, srcRect);
-            imageRect.scale(filter().filterScale());
+            imageRect.scale(filter.filterScale());
             imageRect = drawingRegionOfInputImage(IntRect(imageRect));
             context.drawImage(image, imageRect, srcRect);
         },
         [&] (const Ref<ImageBuffer>& imageBuffer) {
             auto imageRect = primitiveSubregion;
             imageRect.moveBy(m_sourceImageRect.location());
-            imageRect.scale(filter().filterScale());
+            imageRect.scale(filter.filterScale());
             imageRect = drawingRegionOfInputImage(IntRect(imageRect));
             context.drawImageBuffer(imageBuffer, imageRect.location());
         }

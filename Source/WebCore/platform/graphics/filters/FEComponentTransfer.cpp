@@ -24,7 +24,6 @@
 #include "config.h"
 #include "FEComponentTransfer.h"
 
-#include "Filter.h"
 #include "GraphicsContext.h"
 #include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
@@ -33,19 +32,18 @@
 
 namespace WebCore {
 
-FEComponentTransfer::FEComponentTransfer(Filter& filter, const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
-    : FilterEffect(filter, FilterEffect::Type::FEComponentTransfer)
+Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
+{
+    return adoptRef(*new FEComponentTransfer(redFunction, greenFunction, blueFunction, alphaFunction));
+}
+
+FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
+    : FilterEffect(FilterEffect::Type::FEComponentTransfer)
     , m_redFunction(redFunction)
     , m_greenFunction(greenFunction)
     , m_blueFunction(blueFunction)
     , m_alphaFunction(alphaFunction)
 {
-}
-
-Ref<FEComponentTransfer> FEComponentTransfer::create(Filter& filter, const ComponentTransferFunction& redFunction,
-    const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
-{
-    return adoptRef(*new FEComponentTransfer(filter, redFunction, greenFunction, blueFunction, alphaFunction));
 }
 
 void FEComponentTransfer::computeIdentityTable(LookupTable&, const ComponentTransferFunction&)
@@ -103,7 +101,7 @@ void FEComponentTransfer::computeGammaTable(LookupTable& values, const Component
     }
 }
 
-void FEComponentTransfer::platformApplySoftware()
+void FEComponentTransfer::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 

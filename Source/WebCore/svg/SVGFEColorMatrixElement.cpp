@@ -100,9 +100,9 @@ void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
+RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto input1 = filterBuilder->getEffectById(in1());
+    auto input1 = filterBuilder.getEffectById(in1());
 
     if (!input1)
         return nullptr;
@@ -141,8 +141,8 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuil
         filterValues.shrinkToFit();
     }
 
-    auto effect = FEColorMatrix::create(filter, filterType, WTFMove(filterValues));
-    effect->inputEffects() = { input1 };
+    auto effect = FEColorMatrix::create(filterType, WTFMove(filterValues));
+    effect->inputEffects() = { WTFMove(input1) };
     return effect;
 }
 

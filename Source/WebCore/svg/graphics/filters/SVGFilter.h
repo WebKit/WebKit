@@ -39,6 +39,7 @@ public:
     FloatSize scaledByFilterScale(FloatSize) const final;
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
+    void apply() override;
 
     RefPtr<FilterEffect> lastEffect() { return m_lastEffect; }
     void setLastEffect(RefPtr<FilterEffect>&& lastEffect) { m_lastEffect = WTFMove(lastEffect); }

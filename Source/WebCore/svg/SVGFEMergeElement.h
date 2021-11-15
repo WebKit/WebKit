@@ -35,7 +35,7 @@ private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder&) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
 };

@@ -24,7 +24,6 @@
 #include "config.h"
 #include "FEConvolveMatrix.h"
 
-#include "Filter.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
 #include <wtf/WorkQueue.h>
@@ -32,8 +31,13 @@
 
 namespace WebCore {
 
-FEConvolveMatrix::FEConvolveMatrix(Filter& filter, const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
-    : FilterEffect(filter, FilterEffect::Type::FEConvolveMatrix)
+Ref<FEConvolveMatrix> FEConvolveMatrix::create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
+{
+    return adoptRef(*new FEConvolveMatrix(kernelSize, divisor, bias, targetOffset, edgeMode, kernelUnitLength, preserveAlpha, kernelMatrix));
+}
+
+FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
+    : FilterEffect(FilterEffect::Type::FEConvolveMatrix)
     , m_kernelSize(kernelSize)
     , m_divisor(divisor)
     , m_bias(bias)
@@ -45,14 +49,6 @@ FEConvolveMatrix::FEConvolveMatrix(Filter& filter, const IntSize& kernelSize, fl
 {
     ASSERT(m_kernelSize.width() > 0);
     ASSERT(m_kernelSize.height() > 0);
-}
-
-Ref<FEConvolveMatrix> FEConvolveMatrix::create(Filter& filter, const IntSize& kernelSize,
-    float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
-    const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
-{
-    return adoptRef(*new FEConvolveMatrix(filter, kernelSize, divisor, bias, targetOffset, edgeMode, kernelUnitLength,
-        preserveAlpha, kernelMatrix));
 }
 
 void FEConvolveMatrix::setKernelSize(const IntSize& kernelSize)
@@ -365,7 +361,7 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
         fastSetOuterPixels<false>(paintingData, x1, y1, x2, y2);
 }
 
-void FEConvolveMatrix::platformApplySoftware()
+void FEConvolveMatrix::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 

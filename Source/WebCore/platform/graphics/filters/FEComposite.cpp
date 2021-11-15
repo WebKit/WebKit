@@ -25,26 +25,26 @@
 #include "FEComposite.h"
 
 #include "FECompositeArithmeticNEON.h"
-#include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-FEComposite::FEComposite(Filter& filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
-    : FilterEffect(filter, FilterEffect::Type::FEComposite)
+Ref<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4)
+{
+    return adoptRef(*new FEComposite(type, k1, k2, k3, k4));
+}
+
+FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2, float k3, float k4)
+    : FilterEffect(FilterEffect::Type::FEComposite)
     , m_type(type)
     , m_k1(k1)
     , m_k2(k2)
     , m_k3(k3)
     , m_k4(k4)
 {
-}
-
-Ref<FEComposite> FEComposite::create(Filter& filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
-{
-    return adoptRef(*new FEComposite(filter, type, k1, k2, k3, k4));
 }
 
 bool FEComposite::setOperation(CompositeOperationType type)
@@ -201,7 +201,7 @@ inline void FEComposite::platformArithmeticSoftware(const Uint8ClampedArray& sou
 #endif
 }
 
-void FEComposite::determineAbsolutePaintRect()
+void FEComposite::determineAbsolutePaintRect(const Filter& filter)
 {
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_IN:
@@ -218,12 +218,12 @@ void FEComposite::determineAbsolutePaintRect()
         return;
     default:
         // Take the union of both input effects.
-        FilterEffect::determineAbsolutePaintRect();
+        FilterEffect::determineAbsolutePaintRect(filter);
         return;
     }
 }
 
-void FEComposite::platformApplySoftware()
+void FEComposite::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);

@@ -26,7 +26,6 @@
 
 #include "ColorComponents.h"
 #include "FilterEffect.h"
-#include "Filter.h"
 
 namespace WebCore {
 
@@ -38,7 +37,7 @@ enum class TurbulenceType {
 
 class FETurbulence : public FilterEffect {
 public:
-    static Ref<FETurbulence> create(Filter&, TurbulenceType, float, float, int, float, bool);
+    static Ref<FETurbulence> create(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
     TurbulenceType type() const { return m_type; }
     bool setType(TurbulenceType);
@@ -93,7 +92,8 @@ private:
     };
 
     struct FillRegionParameters {
-        FETurbulence* filter;
+        const Filter* filter;
+        FETurbulence* effect;
         Uint8ClampedArray* pixelArray;
         PaintingData* paintingData;
         StitchData stitchData;
@@ -103,17 +103,17 @@ private:
 
     static void fillRegionWorker(FillRegionParameters*);
 
-    FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
+    FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
-    void platformApplySoftware() override;
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void platformApplySoftware(const Filter&) override;
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     void initPaint(PaintingData&);
     StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const;
     ColorComponents<float, 4> noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
     ColorComponents<uint8_t, 4> calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&) const;
-    void fillRegion(Uint8ClampedArray&, const PaintingData&, StitchData, int startY, int endY) const;
+    void fillRegion(const Filter&, Uint8ClampedArray&, const PaintingData&, StitchData, int startY, int endY) const;
 
     static void fillRegionWorker(void*);
 

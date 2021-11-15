@@ -22,23 +22,23 @@
 #include "config.h"
 #include "FEMerge.h"
 
-#include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-FEMerge::FEMerge(Filter& filter)
-    : FilterEffect(filter, FilterEffect::Type::FEMerge)
+Ref<FEMerge> FEMerge::create()
+{
+    return adoptRef(*new FEMerge());
+}
+
+FEMerge::FEMerge()
+    : FilterEffect(FilterEffect::Type::FEMerge)
 {
 }
 
-Ref<FEMerge> FEMerge::create(Filter& filter)
-{
-    return adoptRef(*new FEMerge(filter));
-}
-
-void FEMerge::platformApplySoftware()
+void FEMerge::platformApplySoftware(const Filter&)
 {
     unsigned size = numberOfEffectInputs();
     ASSERT(size > 0);
@@ -46,7 +46,6 @@ void FEMerge::platformApplySoftware()
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
         return;
-
 
     GraphicsContext& filterContext = resultImage->context();
     for (unsigned i = 0; i < size; ++i) {

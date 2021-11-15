@@ -66,7 +66,7 @@ public:
     void clearResultsRecursive(FilterEffect*);
 
     void setupBuiltinEffects(Ref<FilterEffect> sourceGraphic);
-    RefPtr<FilterEffect> buildFilterEffects(Filter&, SVGFilterElement&);
+    RefPtr<FilterEffect> buildFilterEffects(SVGFilterElement&);
 
 private:
     inline void addBuiltinEffects()

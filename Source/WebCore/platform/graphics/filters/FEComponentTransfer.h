@@ -22,8 +22,6 @@
 #pragma once
 
 #include "FilterEffect.h"
-
-#include "Filter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -53,8 +51,7 @@ struct ComponentTransferFunction {
 
 class FEComponentTransfer : public FilterEffect {
 public:
-    static Ref<FEComponentTransfer> create(Filter&, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
-                                           const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
+    static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
     ComponentTransferFunction redFunction() const { return m_redFunction; }
     ComponentTransferFunction greenFunction() const { return m_greenFunction; }
@@ -62,8 +59,7 @@ public:
     ComponentTransferFunction alphaFunction() const { return m_alphaFunction; }
 
 private:
-    FEComponentTransfer(Filter&, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
-                        const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
+    FEComponentTransfer(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
     using LookupTable = std::array<uint8_t, 256>;
 
@@ -75,7 +71,7 @@ private:
 
     void computeLookupTables(LookupTable& redTable, LookupTable& greenTable, LookupTable& blueTable, LookupTable& alphaTable);
 
-    void platformApplySoftware() override;
+    void platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

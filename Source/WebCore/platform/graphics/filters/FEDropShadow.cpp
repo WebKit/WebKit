@@ -24,15 +24,21 @@
 #include "FEGaussianBlur.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include "ShadowBlur.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-    
-FEDropShadow::FEDropShadow(Filter& filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
-    : FilterEffect(filter, FilterEffect::Type::FEDropShadow)
+
+Ref<FEDropShadow> FEDropShadow::create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
+{
+    return adoptRef(*new FEDropShadow(stdX, stdY, dx, dy, shadowColor, shadowOpacity));
+}
+
+FEDropShadow::FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
+    : FilterEffect(FilterEffect::Type::FEDropShadow)
     , m_stdX(stdX)
     , m_stdY(stdY)
     , m_dx(dx)
@@ -42,15 +48,8 @@ FEDropShadow::FEDropShadow(Filter& filter, float stdX, float stdY, float dx, flo
 {
 }
 
-Ref<FEDropShadow> FEDropShadow::create(Filter& filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
+void FEDropShadow::determineAbsolutePaintRect(const Filter& filter)
 {
-    return adoptRef(*new FEDropShadow(filter, stdX, stdY, dx, dy, shadowColor, shadowOpacity));
-}
-
-void FEDropShadow::determineAbsolutePaintRect()
-{
-    Filter& filter = this->filter();
-
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     FloatRect absoluteOffsetPaintRect(absolutePaintRect);
     absoluteOffsetPaintRect.move(filter.scaledByFilterScale({ m_dx, m_dy }));
@@ -70,7 +69,7 @@ void FEDropShadow::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-void FEDropShadow::platformApplySoftware()
+void FEDropShadow::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
@@ -78,8 +77,6 @@ void FEDropShadow::platformApplySoftware()
     if (!resultImage)
         return;
 
-    Filter& filter = this->filter();
-    
     FloatSize blurRadius = 2 * filter.scaledByFilterScale({ m_stdX, m_stdY });
     FloatSize offset = filter.scaledByFilterScale({ m_dx, m_dy });
 

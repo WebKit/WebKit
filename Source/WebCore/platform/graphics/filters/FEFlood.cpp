@@ -24,22 +24,22 @@
 #include "FEFlood.h"
 
 #include "ColorSerialization.h"
-#include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-FEFlood::FEFlood(Filter& filter, const Color& floodColor, float floodOpacity)
-    : FilterEffect(filter, FilterEffect::Type::FEFlood)
+Ref<FEFlood> FEFlood::create(const Color& floodColor, float floodOpacity)
+{
+    return adoptRef(*new FEFlood(floodColor, floodOpacity));
+}
+
+FEFlood::FEFlood(const Color& floodColor, float floodOpacity)
+    : FilterEffect(FilterEffect::Type::FEFlood)
     , m_floodColor(floodColor)
     , m_floodOpacity(floodOpacity)
 {
-}
-
-Ref<FEFlood> FEFlood::create(Filter& filter, const Color& floodColor, float floodOpacity)
-{
-    return adoptRef(*new FEFlood(filter, floodColor, floodOpacity));
 }
 
 bool FEFlood::setFloodColor(const Color& color)
@@ -58,7 +58,7 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     return true;
 }
 
-void FEFlood::platformApplySoftware()
+void FEFlood::platformApplySoftware(const Filter&)
 {
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)

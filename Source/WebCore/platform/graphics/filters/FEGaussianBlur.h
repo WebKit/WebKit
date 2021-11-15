@@ -22,14 +22,13 @@
 #pragma once
 
 #include "FEConvolveMatrix.h"
-#include "Filter.h"
 #include "FilterEffect.h"
 
 namespace WebCore {
 
 class FEGaussianBlur : public FilterEffect {
 public:
-    static Ref<FEGaussianBlur> create(Filter&, float, float, EdgeModeType);
+    static Ref<FEGaussianBlur> create(float x, float y, EdgeModeType);
 
     float stdDeviationX() const { return m_stdX; }
     void setStdDeviationX(float);
@@ -45,7 +44,7 @@ public:
     static IntSize calculateOutsetSize(FloatSize stdDeviation);
 
 private:
-    FEGaussianBlur(Filter&, float, float, EdgeModeType);
+    FEGaussianBlur(float x, float y, EdgeModeType);
 
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
 
@@ -59,9 +58,9 @@ private:
         unsigned kernelSizeY;
     };
 
-    void platformApplySoftware() override;
+    void determineAbsolutePaintRect(const Filter&) override;
 
-    void determineAbsolutePaintRect() override;
+    void platformApplySoftware(const Filter&) override;
 
     IntOutsets outsets() const override;
 

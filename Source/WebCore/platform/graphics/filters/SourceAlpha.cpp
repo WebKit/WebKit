@@ -33,19 +33,19 @@ Ref<SourceAlpha> SourceAlpha::create(FilterEffect& sourceEffect)
 }
 
 SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)
-    : FilterEffect(sourceEffect.filter(), FilterEffect::Type::SourceAlpha)
+    : FilterEffect(FilterEffect::Type::SourceAlpha)
 {
     setOperatingColorSpace(sourceEffect.operatingColorSpace());
     inputEffects().append(&sourceEffect);
 }
 
-void SourceAlpha::determineAbsolutePaintRect()
+void SourceAlpha::determineAbsolutePaintRect(const Filter& filter)
 {
-    inputEffect(0)->determineAbsolutePaintRect();
+    inputEffect(0)->determineAbsolutePaintRect(filter);
     setAbsolutePaintRect(inputEffect(0)->absolutePaintRect());
 }
 
-void SourceAlpha::platformApplySoftware()
+void SourceAlpha::platformApplySoftware(const Filter&)
 {
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)

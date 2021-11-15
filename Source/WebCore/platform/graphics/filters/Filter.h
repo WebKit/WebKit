@@ -43,8 +43,9 @@ public:
     void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
 
     virtual FloatSize scaledByFilterScale(FloatSize size) const { return size * m_filterScale; }
+    virtual void apply() = 0;
 
-    ImageBuffer* sourceImage() { return m_sourceImage.get(); }
+    ImageBuffer* sourceImage() const { return m_sourceImage.get(); }
     void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
     RenderingMode renderingMode() const { return m_renderingMode; }

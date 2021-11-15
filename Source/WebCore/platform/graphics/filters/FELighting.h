@@ -27,7 +27,6 @@
 #pragma once
 
 #include "Color.h"
-#include "Filter.h"
 #include "FilterEffect.h"
 #include "LightSource.h"
 #include <JavaScriptCore/Forward.h>
@@ -40,8 +39,6 @@ struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
 public:
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
-
     float surfaceScale() const { return m_surfaceScale; }
     bool setSurfaceScale(float);
 
@@ -128,14 +125,16 @@ protected:
     static void platformApplyGenericWorker(PlatformApplyGenericParameters*);
     static void platformApplyNeonWorker(FELightingPaintingDataForNeon*);
 
-    FELighting(Filter&, LightingType, const Color&, float, float, float, float, float, float, Ref<LightSource>&&, Type);
+    FELighting(LightingType, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, Type);
 
     bool drawLighting(Uint8ClampedArray&, int, int);
 
     void setPixel(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normalVector);
     void setPixelInternal(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normalVector, float alpha);
 
-    void platformApplySoftware() override;
+    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+
+    void platformApplySoftware(const Filter&) override;
 
     void platformApply(const LightingData&, const LightSource::PaintingData&);
 

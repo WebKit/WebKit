@@ -72,7 +72,7 @@ public:
     IntRect requestedRegionOfInputPixelBuffer(const IntRect&) const;
     
     // Recurses on inputs.
-    FloatRect determineFilterPrimitiveSubregion();
+    FloatRect determineFilterPrimitiveSubregion(const Filter&);
 
     // Solid black image with different alpha values.
     bool isAlphaImage() const { return m_alphaImage; }
@@ -84,14 +84,14 @@ public:
     FloatRect maxEffectRect() const { return m_maxEffectRect; }
     void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; }
 
-    void apply();
+    void apply(const Filter&);
 
     // Correct any invalid pixels, if necessary, in the result of a filter operation.
     // This method is used to ensure valid pixel values on filter inputs and the final result.
     // Only the arithmetic composite filter ever needs to perform correction.
     virtual void correctFilterResultIfNeeded() { }
 
-    virtual void determineAbsolutePaintRect();
+    virtual void determineAbsolutePaintRect(const Filter&);
 
     enum class RepresentationType { TestOutput, Debugging };
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType = RepresentationType::TestOutput) const;
@@ -120,9 +120,6 @@ public:
     
     FloatPoint mapPointFromUserSpaceToBuffer(FloatPoint) const;
     
-    Filter& filter() { return m_filter; }
-    const Filter& filter() const { return m_filter; }
-
     bool clipsToBounds() const { return m_clipsToBounds; }
     void setClipsToBounds(bool value) { m_clipsToBounds = value; }
 
@@ -143,7 +140,7 @@ public:
     }
 
 protected:
-    FilterEffect(Filter&, Type);
+    FilterEffect(Type);
     
     ImageBuffer* createImageBufferResult();
     std::optional<PixelBuffer>& createUnmultipliedImageResult();
@@ -159,7 +156,7 @@ protected:
     void clipAbsolutePaintRect();
 
 private:
-    virtual void platformApplySoftware() = 0;
+    virtual void platformApplySoftware(const Filter&) = 0;
 
     void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
     void copyConvertedImageBufferToDestination(Uint8ClampedArray&, const DestinationColorSpace&, AlphaPremultiplication, const IntRect&);
@@ -168,8 +165,6 @@ private:
     std::optional<PixelBuffer> convertImageBufferToColorSpace(const DestinationColorSpace&, ImageBuffer&, const IntRect&, AlphaPremultiplication);
     std::optional<PixelBuffer> convertPixelBufferToColorSpace(const DestinationColorSpace&, PixelBuffer&);
     
-
-    Filter& m_filter;
     FilterEffectVector m_inputEffects;
 
     RefPtr<ImageBuffer> m_imageBufferResult;

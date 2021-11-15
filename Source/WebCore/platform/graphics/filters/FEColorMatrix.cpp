@@ -23,8 +23,8 @@
 #include "config.h"
 #include "FEColorMatrix.h"
 
-#include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
@@ -35,16 +35,16 @@
 
 namespace WebCore {
 
-FEColorMatrix::FEColorMatrix(Filter& filter, ColorMatrixType type, Vector<float>&& values)
-    : FilterEffect(filter, FilterEffect::Type::FEColorMatrix)
+Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values)
+{
+    return adoptRef(*new FEColorMatrix(type, WTFMove(values)));
+}
+
+FEColorMatrix::FEColorMatrix(ColorMatrixType type, Vector<float>&& values)
+    : FilterEffect(FilterEffect::Type::FEColorMatrix)
     , m_type(type)
     , m_values(WTFMove(values))
 {
-}
-
-Ref<FEColorMatrix> FEColorMatrix::create(Filter& filter, ColorMatrixType type, Vector<float>&& values)
-{
-    return adoptRef(*new FEColorMatrix(filter, type, WTFMove(values)));
 }
 
 bool FEColorMatrix::setType(ColorMatrixType type)
@@ -273,7 +273,7 @@ void effectType(Uint8ClampedArray& pixelArray, const Vector<float>& values, IntS
     }
 }
 
-void FEColorMatrix::platformApplySoftware()
+void FEColorMatrix::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 

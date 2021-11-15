@@ -22,8 +22,6 @@
 #pragma once
 
 #include "FilterEffect.h"
-
-#include "Filter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,7 +36,7 @@ enum ColorMatrixType {
 
 class FEColorMatrix : public FilterEffect {
 public:
-    static Ref<FEColorMatrix> create(Filter&, ColorMatrixType, Vector<float>&&);
+    static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&);
 
     ColorMatrixType type() const { return m_type; }
     bool setType(ColorMatrixType);
@@ -50,9 +48,9 @@ public:
     static inline void calculateHueRotateComponents(float* components, float value);
 
 private:
-    FEColorMatrix(Filter&, ColorMatrixType, Vector<float>&&);
+    FEColorMatrix(ColorMatrixType, Vector<float>&&);
 
-    void platformApplySoftware() override;
+    void platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

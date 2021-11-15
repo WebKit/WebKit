@@ -45,14 +45,14 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     auto filter = adoptRef(*new SVGFilter(filterScale, sourceImageRect, filterRegion, targetBoundingBox, primitiveBoundingBoxMode));
 
     if (!previousEffect)
-        builder.setupBuiltinEffects(SourceGraphic::create(filter));
+        builder.setupBuiltinEffects(SourceGraphic::create());
     else
         builder.setupBuiltinEffects({ *previousEffect });
 
     builder.setTargetBoundingBox(targetBoundingBox);
     builder.setPrimitiveUnits(filterElement.primitiveUnits());
 
-    auto lastEffect = builder.buildFilterEffects(filter, filterElement);
+    auto lastEffect = builder.buildFilterEffects(filterElement);
     if (!lastEffect)
         return nullptr;
 
@@ -73,6 +73,11 @@ FloatSize SVGFilter::scaledByFilterScale(FloatSize size) const
         size = size * m_targetBoundingBox.size();
 
     return Filter::scaledByFilterScale(size);
+}
+
+void SVGFilter::apply()
+{
+    m_lastEffect->apply(*this);
 }
 
 IntOutsets SVGFilter::outsets() const

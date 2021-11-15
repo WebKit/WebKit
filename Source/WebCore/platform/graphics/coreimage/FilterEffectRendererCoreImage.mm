@@ -97,25 +97,25 @@ bool FilterEffectRendererCoreImage::supportsCoreImageRendering(FilterEffect& eff
     return false;
 }
 
-void FilterEffectRendererCoreImage::applyEffects(FilterEffect& lastEffect)
+void FilterEffectRendererCoreImage::applyEffects(const Filter& filter, FilterEffect& lastEffect)
 {
-    m_outputImage = connectCIFilters(lastEffect);
+    m_outputImage = connectCIFilters(filter, lastEffect);
     if (!m_outputImage)
         return;
     renderToImageBuffer(lastEffect);
 }
 
-RetainPtr<CIImage> FilterEffectRendererCoreImage::connectCIFilters(FilterEffect& effect)
+RetainPtr<CIImage> FilterEffectRendererCoreImage::connectCIFilters(const Filter& filter, FilterEffect& effect)
 {
     Vector<RetainPtr<CIImage>> inputImages;
     
     for (auto in : effect.inputEffects()) {
-        auto inputImage = connectCIFilters(*in);
+        auto inputImage = connectCIFilters(filter, *in);
         if (!inputImage)
             return nullptr;
         inputImages.append(inputImage);
     }
-    effect.determineAbsolutePaintRect();
+    effect.determineAbsolutePaintRect(filter);
     effect.setResultColorSpace(effect.operatingColorSpace());
     
     if (effect.absolutePaintRect().isEmpty() || ImageBuffer::sizeNeedsClamping(effect.absolutePaintRect().size()))
@@ -123,7 +123,7 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::connectCIFilters(FilterEffect&
     
     switch (effect.filterType()) {
     case FilterEffect::Type::SourceGraphic:
-        return imageForSourceGraphic(downcast<SourceGraphic>(effect));
+        return imageForSourceGraphic(filter);
     case FilterEffect::Type::FEColorMatrix:
         return imageForFEColorMatrix(downcast<FEColorMatrix>(effect), inputImages);
     case FilterEffect::Type::FEComponentTransfer:
@@ -135,9 +135,9 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::connectCIFilters(FilterEffect&
     return nullptr;
 }
 
-RetainPtr<CIImage> FilterEffectRendererCoreImage::imageForSourceGraphic(SourceGraphic& effect)
+RetainPtr<CIImage> FilterEffectRendererCoreImage::imageForSourceGraphic(const Filter& filter)
 {
-    ImageBuffer* sourceImage = effect.filter().sourceImage();
+    ImageBuffer* sourceImage = filter.sourceImage();
     if (!sourceImage)
         return nullptr;
     

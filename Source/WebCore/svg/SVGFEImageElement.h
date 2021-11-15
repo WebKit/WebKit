@@ -57,7 +57,7 @@ private:
 
     std::tuple<RefPtr<ImageBuffer>, FloatRect> imageBufferForEffect() const;
 
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder&) const override;
 
     void clearResourceReferences();
     void requestImageResource();

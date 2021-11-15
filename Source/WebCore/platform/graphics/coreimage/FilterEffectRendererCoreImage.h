@@ -47,7 +47,7 @@ class FilterEffectRendererCoreImage : public FilterEffectRenderer {
 public:
     static std::unique_ptr<FilterEffectRendererCoreImage> tryCreate(FilterEffect&);
     RetainPtr<CIContext> sharedCIContext();
-    void applyEffects(FilterEffect&) final;
+    void applyEffects(const Filter&, FilterEffect&) final;
     bool hasResult() const final { return m_outputImage; }
     ImageBuffer* output() const final;
     FloatRect destRect(const FilterEffect&) const final;
@@ -55,12 +55,12 @@ public:
     FilterEffectRendererCoreImage();
     
 private:
-    RetainPtr<CIImage> connectCIFilters(FilterEffect&);
+    RetainPtr<CIImage> connectCIFilters(const Filter&, FilterEffect&);
     void renderToImageBuffer(FilterEffect&) final;
     static bool supportsCoreImageRendering(FilterEffect&);
     static bool canRenderUsingCIFilters(FilterEffect&);
     
-    RetainPtr<CIImage> imageForSourceGraphic(SourceGraphic&);
+    RetainPtr<CIImage> imageForSourceGraphic(const Filter&);
     RetainPtr<CIImage> imageForFEColorMatrix(const FEColorMatrix&, const Vector<RetainPtr<CIImage>>&);
     RetainPtr<CIImage> imageForFEComponentTransfer(const FEComponentTransfer&, Vector<RetainPtr<CIImage>>&);
     

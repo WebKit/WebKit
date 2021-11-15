@@ -139,14 +139,14 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter::applyResource\n" << *filterData->builder->lastEffect());
 
-    lastEffect->determineFilterPrimitiveSubregion();
+    lastEffect->determineFilterPrimitiveSubregion(*filterData->filter);
     FloatRect subRegion = lastEffect->maxEffectRect();
 
     // At least one FilterEffect has a too big image size,
     // recalculate the effect sizes with new scale factors.
     if (ImageBuffer::sizeNeedsClamping(subRegion.size(), filterScale)) {
         filterData->filter->setFilterScale(filterScale);
-        lastEffect->determineFilterPrimitiveSubregion();
+        lastEffect->determineFilterPrimitiveSubregion(*filterData->filter);
     }
 
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
@@ -228,7 +228,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         break;
     }
 
-    FilterEffect* lastEffect = filterData.builder->lastEffect();
+    auto lastEffect = filterData.filter->lastEffect();
 
     if (lastEffect && !filterData.boundaries.isEmpty() && !lastEffect->filterPrimitiveSubregion().isEmpty()) {
         // This is the real filtering of the object. It just needs to be called on the
@@ -240,7 +240,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         // Always true if filterData is just built (filterData->state == FilterData::Built).
         if (!lastEffect->hasResult()) {
             filterData.state = FilterData::Applying;
-            lastEffect->apply();
+            filterData.filter->apply();
             lastEffect->correctFilterResultIfNeeded();
             lastEffect->transformResultColorSpace(DestinationColorSpace::SRGB());
         }
