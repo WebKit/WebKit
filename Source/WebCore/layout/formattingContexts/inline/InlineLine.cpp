@@ -342,10 +342,18 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         // Note that the _content_ logical right may be larger than the _run_ logical right.
         auto contentLogicalRight = runLogicalLeft + logicalWidth + m_clonedEndDecorationWidthForInlineBoxRuns;
         m_contentLogicalWidth = std::max(oldContentLogicalWidth, contentLogicalRight);
-    } else {
+    } else if (style.letterSpacing() >= 0) {
         m_runs.last().expand(inlineTextItem, logicalWidth);
-        // Do not let negative letter spacing make the content shorter than it already is.
-        m_contentLogicalWidth += std::max(0.0f, logicalWidth);
+        m_contentLogicalWidth += logicalWidth;
+    } else {
+        auto& lastRun = m_runs.last();
+        ASSERT(lastRun.isText());
+        // Negative letter spacing should only shorten the content to the boundary of the previous run.
+        // FIXME: We may need to traverse all the way to the previous non-text run (or even across inline boxes).
+        auto lastRunLogicalWidth = lastRun.logicalWidth();
+        auto contentWidthWithoutLastTextRun = m_contentLogicalWidth - std::max(0.f, lastRunLogicalWidth);
+        lastRun.expand(inlineTextItem, logicalWidth);
+        m_contentLogicalWidth = std::max(contentWidthWithoutLastTextRun, lastRunLogicalWidth + logicalWidth);
     }
 
     // Handle trailing content, specifically whitespace and letter spacing.
