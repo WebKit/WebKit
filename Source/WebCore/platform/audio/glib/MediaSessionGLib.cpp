@@ -218,42 +218,19 @@ MediaSessionGLib::MediaSessionGLib(MediaSessionManagerGLib& manager, GRefPtr<GDB
     const auto& applicationID = getApplicationID();
     m_instanceId = applicationID.isEmpty() ? makeString("org.mpris.MediaPlayer2.webkit.instance", getpid(), "-", identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2.", applicationID.ascii().data(), "-", identifier.toUInt64());
 
-    m_ownerId = g_bus_own_name_on_connection(m_connection.get(), m_instanceId.ascii().data(), G_BUS_NAME_OWNER_FLAGS_NONE, nullptr,
-        reinterpret_cast<GBusNameLostCallback>(+[](GDBusConnection* connection, const char*, gpointer userData) {
-            auto& session = *reinterpret_cast<MediaSessionGLib*>(userData);
-            session.nameLost(connection);
-        }), this, nullptr);
+    m_ownerId = g_bus_own_name_on_connection(m_connection.get(), m_instanceId.ascii().data(), G_BUS_NAME_OWNER_FLAGS_NONE, nullptr, nullptr, this, nullptr);
 }
 
 MediaSessionGLib::~MediaSessionGLib()
 {
+    if (m_connection) {
+        if (m_rootRegistrationId && !g_dbus_connection_unregister_object(m_connection.get(), m_rootRegistrationId))
+            g_warning("Unable to unregister MPRIS D-Bus object.");
+        if (m_playerRegistrationId && !g_dbus_connection_unregister_object(m_connection.get(), m_playerRegistrationId))
+            g_warning("Unable to unregister MPRIS D-Bus player object.");
+    }
     if (m_ownerId)
         g_bus_unown_name(m_ownerId);
-}
-
-void MediaSessionGLib::nameLost(GDBusConnection* connection)
-{
-    if (UNLIKELY(!m_connection)) {
-        g_warning("Unable to acquire MPRIS D-Bus session ownership for name %s", m_instanceId.ascii().data());
-        return;
-    }
-
-    m_connection = nullptr;
-    if (!m_rootRegistrationId)
-        return;
-
-    if (g_dbus_connection_unregister_object(connection, m_rootRegistrationId))
-        m_rootRegistrationId = 0;
-    else
-        g_warning("Unable to unregister MPRIS D-Bus object.");
-
-    if (!m_playerRegistrationId)
-        return;
-
-    if (g_dbus_connection_unregister_object(connection, m_playerRegistrationId))
-        m_playerRegistrationId = 0;
-    else
-        g_warning("Unable to unregister MPRIS D-Bus player object.");
 }
 
 void MediaSessionGLib::emitPositionChanged(double time)

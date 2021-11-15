@@ -44,7 +44,6 @@ public:
     GVariant* getPositionAsGVariant();
     GVariant* canSeekAsGVariant();
 
-    void nameLost(GDBusConnection*);
     void emitPositionChanged(double time);
     void updateNowPlaying(NowPlayingInfo&);
     void playbackStatusChanged(PlatformMediaSession&);
