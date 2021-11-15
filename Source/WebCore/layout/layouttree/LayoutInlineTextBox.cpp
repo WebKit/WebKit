@@ -36,10 +36,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineTextBox);
 
-InlineTextBox::InlineTextBox(String content, bool canUseSimplifiedContentMeasuring, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+InlineTextBox::InlineTextBox(String content, bool canUseSimplifiedContentMeasuring, bool containsBidiText, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
     : Box({ }, WTFMove(style), WTFMove(firstLineStyle), Box::InlineTextBoxFlag)
     , m_content(content)
     , m_canUseSimplifiedContentMeasuring(canUseSimplifiedContentMeasuring)
+    , m_containsBidiText(containsBidiText)
 {
     setIsAnonymous();
 }

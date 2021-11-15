@@ -190,7 +190,7 @@ inline RenderText::RenderText(Node& node, const String& text)
     : RenderObject(node)
     , m_hasTab(false)
     , m_linesDirty(false)
-    , m_containsReversedText(false)
+    , m_containsBidiText(false)
     , m_isAllASCII(text.impl()->isAllASCII())
     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
     , m_useBackslashAsYenSymbol(false)
@@ -1521,7 +1521,7 @@ void RenderText::positionLineBox(LegacyInlineTextBox& textBox)
 {
     if (!textBox.hasTextContent())
         return;
-    m_containsReversedText |= !textBox.isLeftToRightDirection();
+    m_containsBidiText |= !textBox.isLeftToRightDirection();
 }
 
 bool RenderText::usesLegacyLineLayoutPath() const

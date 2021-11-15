@@ -251,6 +251,31 @@ bool TextUtil::canUseSimplifiedTextMeasuringForFirstLine(const RenderStyle& styl
     return style.collapseWhiteSpace() == firstLineStyle.collapseWhiteSpace() && style.fontCascade() == firstLineStyle.fontCascade();
 }
 
+bool TextUtil::containsBidiText(StringView text)
+{
+    if (text.is8Bit())
+        return false;
+
+    auto length = text.length();
+    for (size_t position = 0; position < length;) {
+        UChar32 character;
+        U16_NEXT(text.characters16(), position, length, character);
+
+        auto bidiCategory = u_charDirection(character);
+        bool hasBidiContent = bidiCategory == U_RIGHT_TO_LEFT
+            || bidiCategory == U_RIGHT_TO_LEFT_ARABIC
+            || bidiCategory == U_RIGHT_TO_LEFT_EMBEDDING
+            || bidiCategory == U_RIGHT_TO_LEFT_OVERRIDE
+            || bidiCategory == U_LEFT_TO_RIGHT_EMBEDDING
+            || bidiCategory == U_LEFT_TO_RIGHT_OVERRIDE
+            || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
+        if (hasBidiContent)
+            return true;
+    }
+
+    return false;
+}
+
 }
 }
 #endif

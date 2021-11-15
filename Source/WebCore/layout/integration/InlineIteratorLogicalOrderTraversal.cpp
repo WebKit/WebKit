@@ -33,7 +33,7 @@ namespace InlineIterator {
 
 static TextLogicalOrderCache makeTextLogicalOrderCacheIfNeeded(const RenderText& text)
 {
-    if (!text.containsReversedText())
+    if (!text.containsBidiText())
         return { };
 
     auto cache = makeUnique<TextLogicalOrderCacheData>();

@@ -97,9 +97,12 @@ void BoxTree::buildTree()
                     return false;
                 return !firstLineStyle || Layout::TextUtil::canUseSimplifiedTextMeasuringForFirstLine(style, *firstLineStyle);
             }();
-            return makeUnique<Layout::InlineTextBox>(
-                style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text())
-                , canUseSimplifiedTextMeasuring, WTFMove(style), WTFMove(firstLineStyle));
+            auto text = style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text());
+            auto containsBidiText = Layout::TextUtil::containsBidiText(text);
+            if (containsBidiText)
+                textRenderer.setContainsBidiText();
+
+            return makeUnique<Layout::InlineTextBox>(text, canUseSimplifiedTextMeasuring, containsBidiText, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         auto style = RenderStyle::clone(childRenderer.style());

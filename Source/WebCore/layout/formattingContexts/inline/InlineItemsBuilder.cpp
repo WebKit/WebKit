@@ -38,8 +38,6 @@
 namespace WebCore {
 namespace Layout {
 
-#define ALLOW_BIDI_CONTENT 0
-
 struct WhitespaceContent {
     size_t length { 0 };
     bool isWordSeparator { true };
@@ -358,6 +356,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (!contentLength)
         return inlineItems.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
+    if (inlineTextBox.containsBidiText())
+        m_hasSeenBidiContent = true;
+
     auto& style = inlineTextBox.style();
     auto& fontCascade = style.fontCascade();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
@@ -435,27 +436,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             auto inlineItemLength = endPosition - startPosition;
             inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, inlineItemLength, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, inlineItemWidth(startPosition, inlineItemLength)));
             currentPosition = endPosition;
-#if ALLOW_BIDI_CONTENT
-            // Check if the content has bidi dependency so that we have to start building the paragraph content for ubidi.
-            if (text.is8Bit() || hasSeenBidiContent())
-                return true;
 
-            for (auto position = startPosition; position < endPosition;) {
-                UChar32 character;
-                U16_NEXT(text.characters16(), position, contentLength, character);
-
-                auto bidiCategory = u_charDirection(character);
-                m_hasSeenBidiContent = bidiCategory == U_RIGHT_TO_LEFT
-                    || bidiCategory == U_RIGHT_TO_LEFT_ARABIC
-                    || bidiCategory == U_RIGHT_TO_LEFT_EMBEDDING
-                    || bidiCategory == U_RIGHT_TO_LEFT_OVERRIDE
-                    || bidiCategory == U_LEFT_TO_RIGHT_EMBEDDING
-                    || bidiCategory == U_LEFT_TO_RIGHT_OVERRIDE
-                    || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
-                if (m_hasSeenBidiContent)
-                    break;
-            }
-#endif
             return true;
         };
         if (handleNonWhitespace())

@@ -59,6 +59,7 @@
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
+#include "TextUtil.h"
 #include "WidthIterator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -133,7 +134,7 @@ std::unique_ptr<Box> TreeBuilder::createReplacedBox(std::optional<Box::ElementAt
 
 std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&& style)
 {
-    return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, WTFMove(style));
+    return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, TextUtil::containsBidiText(text), WTFMove(style));
 }
 
 std::unique_ptr<Box> TreeBuilder::createLineBreakBox(bool isOptional, RenderStyle&& style)
