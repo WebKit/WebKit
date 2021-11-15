@@ -140,7 +140,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
             LOG(ScrollAnimations, "Event (%s, %s): stopping animated scroll", phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()));
             stopAnimatedScroll();
         }
-        return false;
+        return true;
     }
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
