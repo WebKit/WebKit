@@ -56,6 +56,7 @@ private:
     template<CustomPropertyCycleTracking trackCycles>
     void applyPropertiesImpl(int firstProperty, int lastProperty);
     void applyCascadeProperty(const PropertyCascade::Property&);
+    void applyRollbackCascadeProperty(const PropertyCascade::Property&, SelectorChecker::LinkMatchMask);
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask);
 
     Ref<CSSValue> resolveValue(CSSPropertyID, CSSValue&);

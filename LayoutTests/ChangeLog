@@ -1,3 +1,14 @@
+2021-11-15  Antti Koivisto  <antti@apple.com>
+
+        Stack overflow with revert-layer
+        https://bugs.webkit.org/show_bug.cgi?id=233119
+        rdar://85342210
+
+        Reviewed by Antoine Quint.
+
+        * fast/css/revert-layer-stack-overflow-2-expected.txt: Added.
+        * fast/css/revert-layer-stack-overflow-2.html: Added.
+
 2021-11-14  Simon Fraser  <simon.fraser@apple.com>
 
         Fingers down on the trackpad should stop an animated scroll

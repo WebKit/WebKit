@@ -255,6 +255,19 @@ inline void Builder::applyCascadeProperty(const PropertyCascade::Property& prope
     m_state.m_linkMatch = SelectorChecker::MatchDefault;
 }
 
+void Builder::applyRollbackCascadeProperty(const PropertyCascade::Property& property, SelectorChecker::LinkMatchMask linkMatchMask)
+{
+    auto* value = property.cssValue[linkMatchMask];
+    if (!value)
+        return;
+
+    SetForScope levelScope(m_state.m_cascadeLevel, property.level);
+    SetForScope scopeScope(m_state.m_styleScopeOrdinal, property.styleScopeOrdinal);
+    SetForScope layerScope(m_state.m_cascadeLayerPriority, property.cascadeLayerPriority);
+
+    applyProperty(property.id, *value, linkMatchMask);
+}
+
 void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::LinkMatchMask linkMatchMask)
 {
     ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
@@ -296,19 +309,15 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         if (rollbackCascade) {
             // With the rollback cascade built, we need to obtain the property and apply it. If the property is
             // not present, then we behave like "unset." Otherwise we apply the property instead of our own.
-            SetForScope cascadeLevelScope(m_state.m_cascadeLevel, rollbackCascade->maximumCascadeLevel());
-            SetForScope cascadeLayerPriorityScope(m_state.m_cascadeLayerPriority, rollbackCascade->maximumCascadeLayerPriority());
             if (customPropertyValue) {
                 if (customPropertyRegistered && customPropertyRegistered->inherits && rollbackCascade->hasCustomProperty(customPropertyValue->name())) {
                     auto property = rollbackCascade->customProperty(customPropertyValue->name());
-                    if (property.cssValue[linkMatchMask])
-                        applyProperty(property.id, *property.cssValue[linkMatchMask], linkMatchMask);
+                    applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
                 }
             } else if (rollbackCascade->hasProperty(id)) {
                 auto& property = rollbackCascade->property(id);
-                if (property.cssValue[linkMatchMask])
-                    applyProperty(property.id, *property.cssValue[linkMatchMask], linkMatchMask);
+                applyRollbackCascadeProperty(property, linkMatchMask);
                 return;
             }
         }
