@@ -213,6 +213,7 @@ void GraphicsLayerWC::setMasksToBounds(bool value)
         return;
     GraphicsLayer::setMasksToBounds(value);
     noteLayerPropertyChanged(WCLayerChange::MasksToBounds);
+    updateDebugIndicators();
 }
 
 void GraphicsLayerWC::setOpacity(float value)
@@ -245,6 +246,7 @@ void GraphicsLayerWC::setDrawsContent(bool value)
         return;
     GraphicsLayer::setDrawsContent(value);
     noteLayerPropertyChanged(WCLayerChange::BackingStore);
+    updateDebugIndicators();
 }
 
 void GraphicsLayerWC::setContentsVisible(bool value)
@@ -277,6 +279,7 @@ void GraphicsLayerWC::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
         return;
     m_platformLayer = platformLayer;
     noteLayerPropertyChanged(WCLayerChange::PlatformLayer);
+    updateDebugIndicators();
 }
 
 bool GraphicsLayerWC::usesContentsLayer() const
@@ -345,6 +348,7 @@ bool GraphicsLayerWC::setBackdropFilters(const FilterOperations& filters)
     else
         clearBackdropFilters();
     noteLayerPropertyChanged(WCLayerChange::BackdropFilters);
+    updateDebugIndicators();
     return canCompositeFilters;
 }
 
