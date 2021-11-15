@@ -1,3 +1,31 @@
+2021-11-14  Brady Eidson  <beidson@apple.com>
+
+        Get daemon API ready to work in the iOS simulator (starting with WebPushD)
+        https://bugs.webkit.org/show_bug.cgi?id=232982
+
+        Reviewed by Geoff Garen.
+
+        To get this working we needed to:
+        - Have the Daemons installed in a simulator-runtime-root-visible path
+        - Point the OSLaunchDJob plist to the simulator-relative path, not Mac-relative
+        - Solve the "How do I kill existing instances to run a clean test?" problem within the simulator.
+        
+        This patch does those things.
+        
+        * TestWebKitAPI/Configurations/TestWebKitAPI-iOS.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::testWebPushDaemonPList):
+        (TestWebKitAPI::setUpTestWebPushD):
+        (TestWebKitAPI::cleanUpTestWebPushD):
+        
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.h:
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.mm:
+        (TestWebKitAPI::registerPlistWithLaunchD):
+        (TestWebKitAPI::pidOfFirstDaemonInstance):
+        (TestWebKitAPI::killFirstInstanceOfDaemon):
+
 2021-11-13  Simon Fraser  <simon.fraser@apple.com>
 
         Implement UIScriptController.sendEventStream() for DumpRenderTree

@@ -26,8 +26,25 @@
 #import "config.h"
 #import "DaemonTestUtilities.h"
 
+#if PLATFORM(MAC) || PLATFORM(IOS)
+
 #import <mach-o/dyld.h>
 #import <wtf/Vector.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+#if PLATFORM(IOS)
+@interface NSTask : NSObject
+- (instancetype)init;
+- (void)launch;
+- (void)waitUntilExit;
+
+@property (nullable, copy) NSString *launchPath;
+@property (nullable, copy) NSArray<NSString *> *arguments;
+@property (nullable, retain) id standardOutput;
+@property (readonly, getter=isRunning) BOOL running;
+@end
+#endif
 
 namespace TestWebKitAPI {
 
@@ -48,8 +65,6 @@ RetainPtr<NSURL> currentExecutableDirectory()
     return [currentExecutableLocation() URLByDeletingLastPathComponent];
 }
 
-// FIXME: Get this working in the iOS simulator.
-#if PLATFORM(MAC)
 #if HAVE(OS_LAUNCHD_JOB)
 
 void registerPlistWithLaunchD(RetainPtr<xpc_object_t>&& plist)
@@ -57,7 +72,13 @@ void registerPlistWithLaunchD(RetainPtr<xpc_object_t>&& plist)
     NSError *error = nil;
     auto launchDJob = adoptNS([[OSLaunchdJob alloc] initWithPlist:plist.get()]);
     [launchDJob submit:&error];
+
+    // In the iOS Simulator we often see the following error here:
+    // Error Domain=OSLaunchdErrorDomain Code=17 "File exists"
+    // Tests still behave as expected.
+#if PLATFORM(MAC)
     EXPECT_FALSE(error);
+#endif
 }
 
 #else // HAVE(OS_LAUNCHD_JOB)
@@ -77,6 +98,59 @@ void registerPlistWithLaunchD(RetainPtr<NSDictionary>&& plist, NSURL *tempDir)
 }
 
 #endif // HAVE(OS_LAUNCHD_JOB)
-#endif // PLATFORM(MAC)
+
+static int pidOfFirstDaemonInstance(NSString *daemonExecutableName)
+{
+    auto task = adoptNS([[NSTask alloc] init]);
+    task.get().launchPath = @"/bin/ps";
+    task.get().arguments = @[
+        @"-ax",
+        @"-o",
+        @"pid,comm"
+    ];
+
+    auto taskPipe = adoptNS([[NSPipe alloc] init]);
+    [task setStandardOutput:taskPipe.get()];
+    [task launch];
+
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    while ([task isRunning])
+        [data appendData:[[taskPipe fileHandleForReading] readDataToEndOfFile]];
+    [data appendData:[[taskPipe fileHandleForReading] readDataToEndOfFile]];
+
+    auto psString = adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]);
+    NSArray<NSString *> *psEntries = [psString componentsSeparatedByString:@"\n"];
+
+    for (NSString* entry in psEntries) {
+        if (![entry hasSuffix:daemonExecutableName])
+            continue;
+        NSArray<NSString *> *components = [entry componentsSeparatedByString:@" "];
+        EXPECT_GE([components count], 2u);
+        return [[components firstObject] integerValue];
+    }
+
+    return 0;
+}
+
+void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
+{
+    auto pid = pidOfFirstDaemonInstance(daemonExecutableName);
+    if (!pid)
+        return;
+
+    auto task = adoptNS([[NSTask alloc] init]);
+    task.get().launchPath = @"/bin/kill";
+    task.get().arguments = @[
+        @"-9",
+        [@(pid) stringValue]
+    ];
+
+    [task launch];
+    [task waitUntilExit];
+}
 
 } // namespace TestWebKitAPI
+
+NS_ASSUME_NONNULL_END
+
+#endif // PLATFORM(MAC) || PLATFORM(IOS)

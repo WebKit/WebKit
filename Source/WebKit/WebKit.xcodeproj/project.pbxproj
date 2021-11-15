@@ -13238,6 +13238,7 @@
 				1D12CC4E2414265300FDA0A3 /* Copy Feature Flags Plist */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
+				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
 				0FB94836239F31B700926A8F /* Copy Testing Headers */,
 				DFD03A29270D5F57001A996E /* Copy Daemon Plists */,
 			);
@@ -13730,6 +13731,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create symlinks to Daemons for engineering builds";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    exit\nfi\n\n# If we move the Mac Daemons path to WebKit.framework/Versions/A/Daemons,\n# in addition to a Mac-specific plists, the Mac paths below have to be updated as well.\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nelse\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nfi\n\nmkdir -p \"${DAEMONS_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/webpushd\" \"${DAEMONS_PATH}/webpushd\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/adattributiond\" \"${DAEMONS_PATH}/adattributiond\"\n";
 		};
 		5325BDD221DFF47C00A0DEE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

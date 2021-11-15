@@ -32,6 +32,9 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 
+// FIXME: These tests are still currently disabled on iOS while tooling issues with `run-api-tests` are resolved.
+#if PLATFORM(MAC)
+
 static bool alertReceived = false;
 @interface NotificationPermissionDelegate : NSObject<WKUIDelegatePrivate>
 @end
@@ -52,9 +55,6 @@ static bool alertReceived = false;
 @end
 
 namespace TestWebKitAPI {
-
-// FIXME: Get this working in the iOS simulator.
-#if PLATFORM(MAC)
 
 static RetainPtr<NSURL> testWebPushDaemonLocation()
 {
@@ -84,7 +84,14 @@ static RetainPtr<xpc_object_t> testWebPushDaemonPList(NSURL *storageLocation)
     {
         auto programArguments = adoptNS(xpc_array_create(nullptr, 0));
         auto executableLocation = testWebPushDaemonLocation();
+#if PLATFORM(MAC)
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, executableLocation.get().fileSystemRepresentation);
+#else
+        // FIXME: These tests are still currently disabled on iOS while tooling issues with `run-api-tests` are resolved.
+        // Once enabled, this patch must point to the webpushd executable at a path that exists within
+        // the simulator runtime root.
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "/usr/local/bin/webkit-testing/webpushd");
+#endif
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--machServiceName");
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "org.webkit.webpushtestdaemon.service");
         xpc_dictionary_set_value(plist.get(), "ProgramArguments", programArguments.get());
@@ -121,7 +128,7 @@ static NSURL *setUpTestWebPushD()
         [fileManager removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
 
-    system("killall webpushd -9 2> /dev/null");
+    killFirstInstanceOfDaemon(@"webpushd");
 
     auto plist = testWebPushDaemonPList(tempDir);
 #if HAVE(OS_LAUNCHD_JOB)
@@ -135,7 +142,7 @@ static NSURL *setUpTestWebPushD()
 
 static void cleanUpTestWebPushD(NSURL *tempDir)
 {
-    system("killall webpushd -9");
+    killFirstInstanceOfDaemon(@"webpushd");
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:tempDir.path]);
     NSError *error = nil;
@@ -159,6 +166,13 @@ TEST(WebPushD, BasicCommunication)
     
     __block bool done = false;
     xpc_connection_send_message_with_reply(connection.get(), dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
+        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
+            NSLog(@"Unexpected non-dictionary: %@", reply);
+            done = true;
+            EXPECT_TRUE(FALSE);
+            return;
+        }
+
         size_t dataSize = 0;
         const void* data = xpc_dictionary_get_data(reply, "encoded message", &dataSize);
         EXPECT_EQ(dataSize, 15u);
@@ -187,6 +201,7 @@ TEST(WebPushD, PermissionManagement)
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = dataStore.get();
+    [configuration.get().preferences _setNotificationsEnabled:YES];
     for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
         if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];
@@ -222,6 +237,12 @@ TEST(WebPushD, PermissionManagement)
     EXPECT_TRUE([origin.get().protocol isEqualToString:@"testing"]);
     EXPECT_TRUE([origin.get().host isEqualToString:@"main"]);
 
+    // If we failed to retrieve an expected origin, we will have failed the above checks
+    if (!origin) {
+        cleanUpTestWebPushD(tempDirectory);
+        return;
+    }
+
     originOperationDone = false;
     [dataStore _deletePushAndNotificationRegistration:origin.get() completionHandler:^(NSError *error) {
         EXPECT_FALSE(!!error);
@@ -240,6 +261,6 @@ TEST(WebPushD, PermissionManagement)
     cleanUpTestWebPushD(tempDirectory);
 }
 
-#endif // PLATFORM(MAC)
-
 } // namespace TestWebKitAPI
+
+#endif // PLATFORM(MAC)

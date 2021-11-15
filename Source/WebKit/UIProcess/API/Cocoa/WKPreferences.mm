@@ -1163,16 +1163,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->standardFontFamily();
 }
 
-- (void)_setNotificationsEnabled:(BOOL)enabled
-{
-    _preferences->setNotificationsEnabled(enabled);
-}
-
-- (BOOL)_notificationsEnabled
-{
-    return _preferences->notificationsEnabled();
-}
-
 - (void)_setBackspaceKeyNavigationEnabled:(BOOL)enabled
 {
     _preferences->setBackspaceKeyNavigationEnabled(enabled);
@@ -1562,6 +1552,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (void)_setAccessHandleEnabled:(BOOL)accessHandleEnabled
 {
     _preferences->setAccessHandleEnabled(accessHandleEnabled);
+}
+
+- (void)_setNotificationsEnabled:(BOOL)enabled
+{
+    _preferences->setNotificationsEnabled(enabled);
+}
+
+- (BOOL)_notificationsEnabled
+{
+    return _preferences->notificationsEnabled();
 }
 
 @end

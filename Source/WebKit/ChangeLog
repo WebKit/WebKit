@@ -1,3 +1,25 @@
+2021-11-14  Brady Eidson  <beidson@apple.com>
+
+        Get daemon API ready to work in the iOS simulator (starting with WebPushD)
+        https://bugs.webkit.org/show_bug.cgi?id=232982
+
+        Reviewed by Geoff Garen.
+
+        Move all the "enable Notifications" SPI from Mac-only to cross platform:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setNotificationsEnabled:]):
+        (-[WKPreferences _notificationsEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest):
+
+        * WebKit.xcodeproj/project.pbxproj: Add a build phase script to install the daemon executables
+          inside a Daemons directory within the built WebKit.framework for engineering builds.
+        * webpushd/WebPushDaemon.mm:
+
 2021-11-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GraphicsLayerWC] Incorrect compositing debug border color

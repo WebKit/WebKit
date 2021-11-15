@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if PLATFORM(MAC) || PLATFORM(IOS)
+
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
@@ -35,13 +37,15 @@ namespace TestWebKitAPI {
 
 RetainPtr<NSURL> currentExecutableDirectory();
 
-// FIXME: Get this working in the iOS simulator.
-#if PLATFORM(MAC)
+void killFirstInstanceOfDaemon(NSString *daemonExecutableName);
+
 #if HAVE(OS_LAUNCHD_JOB)
 void registerPlistWithLaunchD(RetainPtr<xpc_object_t>&&);
 #else
 void registerPlistWithLaunchD(RetainPtr<NSDictionary>&&, NSURL *tempDir);
 #endif
-#endif
 
 } // namespace TestWebKitAPI
+
+#endif // PLATFORM(MAC) || PLATFORM(IOS)
+
