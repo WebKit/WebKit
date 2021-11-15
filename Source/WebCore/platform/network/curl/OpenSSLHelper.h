@@ -31,6 +31,7 @@
 
 namespace OpenSSL {
 
+std::unique_ptr<WebCore::CertificateInfo> createCertificateInfo(SSL*);
 std::optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX*);
 std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem);
 

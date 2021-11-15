@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CertificateInfo.h"
 #include "CurlProxySettings.h"
 #include "CurlSSLHandle.h"
 
@@ -330,6 +331,8 @@ private:
     static CURLcode willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData);
     CURLcode willSetupSslCtx(void* sslCtx);
 
+    std::optional<SSL*> sslConnection() const;
+
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
 
@@ -338,6 +341,7 @@ private:
 
     std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
     std::unique_ptr<TLSConnectionInfo> m_tlsConnectionInfo;
+    mutable std::unique_ptr<CertificateInfo> m_certificateInfo;
 };
 
 } // namespace WebCore

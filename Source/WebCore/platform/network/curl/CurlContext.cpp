@@ -776,6 +776,20 @@ std::optional<long> CurlHandle::getHttpVersion()
     return version;
 }
 
+std::optional<SSL*> CurlHandle::sslConnection() const
+{
+    curl_tlssessioninfo* info = nullptr;
+
+    auto errorCode = curl_easy_getinfo(m_handle, CURLINFO_TLS_SSL_PTR, &info);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    if (!info || info->backend != CURLSSLBACKEND_OPENSSL || !info->internals)
+        return std::nullopt;
+
+    return static_cast<SSL*>(info->internals);
+}
+
 std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTime startTime)
 {
     double nameLookup = 0.0;
@@ -871,18 +885,10 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
 
     auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
     if (!m_tlsConnectionInfo) {
-        curl_tlssessioninfo* info = nullptr;
-
-        errorCode = curl_easy_getinfo(m_handle, CURLINFO_TLS_SSL_PTR, &info);
-        if (errorCode != CURLE_OK)
-            return;
-
-        if (info && info->backend == CURLSSLBACKEND_OPENSSL && info->internals) {
-            auto ssl = static_cast<SSL*>(info->internals);
-
+        if (auto ssl = sslConnection()) {
             m_tlsConnectionInfo = makeUnique<TLSConnectionInfo>();
-            m_tlsConnectionInfo->protocol = OpenSSL::tlsVersion(ssl);
-            m_tlsConnectionInfo->cipher = OpenSSL::tlsCipherName(ssl);
+            m_tlsConnectionInfo->protocol = OpenSSL::tlsVersion(*ssl);
+            m_tlsConnectionInfo->cipher = OpenSSL::tlsCipherName(*ssl);
         }
     }
 
@@ -906,10 +912,21 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
-    if (!m_sslVerifier)
-        return std::nullopt;
+    if (m_sslVerifier && !m_sslVerifier->certificateInfo().isEmpty())
+        return m_sslVerifier->certificateInfo();
 
-    return m_sslVerifier->certificateInfo();
+    // If you use an existing HTTP/2 connection, SSLVerifier does not exist.
+    if (m_certificateInfo)
+        return *m_certificateInfo;
+
+    if (auto ssl = sslConnection()) {
+        if (auto certificateInfo = OpenSSL::createCertificateInfo(*ssl)) {
+            m_certificateInfo = WTFMove(certificateInfo);
+            return *m_certificateInfo;
+        }
+    }
+
+    return std::nullopt;
 }
 
 long long CurlHandle::maxCurlOffT()

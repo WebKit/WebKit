@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class CertificateInfo {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using Certificate = Vector<uint8_t>;
     using CertificateChain = Vector<Certificate>;
