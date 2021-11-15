@@ -1,3 +1,264 @@
+2021-11-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] [Cocoa] Connect WebCore & PAL to WebGPU.framework
+        https://bugs.webkit.org/show_bug.cgi?id=233106
+
+        Reviewed by Dean Jackson.
+
+        This adds an implementation of WebGPU's virtual interfaces on top of WebGPU.framework.
+        That framework's headers almost exactly match the WebGPU API, so the connections are
+        mostly mechanical. There's just a bunch of marshalling code to convert between
+        descriptor and structs from WebCore's interface to WebGPU.framework's
+        descriptors/structs.
+
+        This uses the same "convertToBacking" convention, where functions that convert from the
+        higher-level WebCore types to the lower-level WebGPU.framework types are named
+        "convertToBacking()". Unfortunately, the WebGPU API takes many of these structs by
+        non-const reference, and the structs are nested by non-const reference, which means I
+        can't just have simple 1-in-1-out converter functions for every struct, since the
+        inner structs have to be referenced by-reference and therefore have to be in-scope. This
+        means that the simple enum and flags types use convertToBacking(), but most of the
+        structs have to be converted at their use site. Luckily, almost all of these structs
+        only have a single use site, so there isn't much duplication.
+
+        For now, this implementation is Cocoa-only, because in order for these calls to
+        WebGPU.framework to be legal, WebCore has to link with an implementation of those
+        functions. The Cocoa ports are the only ones which actually have an implementation of
+        those functions, so those are the only ports which can actually compile this code. If
+        the other ports want to link with Dawn or WGPU, this code should be (mostly) usable
+        out-of-the-box for them. I say "mostly" because the header that's shared between Dawn,
+        WGPU, and WebGPU.framework isn't finalized yet. As such, this implementation relies on
+        functions from WebGPUExt.h, which is an additional header (that only exists in
+        WebGPU.framework) that adds the missing pieces.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp: Added.
+        (PAL::WebGPU::adapterName):
+        (PAL::WebGPU::supportedFeatures):
+        (PAL::WebGPU::supportedLimits):
+        (PAL::WebGPU::isFallbackAdapter):
+        (PAL::WebGPU::AdapterImpl::AdapterImpl):
+        (PAL::WebGPU::AdapterImpl::~AdapterImpl):
+        (PAL::WebGPU::requestDeviceCallback):
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        (PAL::WebGPU::AdapterImpl::requestDeviceCallback):
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.cpp: Added.
+        (PAL::WebGPU::BindGroupImpl::BindGroupImpl):
+        (PAL::WebGPU::BindGroupImpl::~BindGroupImpl):
+        (PAL::WebGPU::BindGroupImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.cpp: Added.
+        (PAL::WebGPU::BindGroupLayoutImpl::BindGroupLayoutImpl):
+        (PAL::WebGPU::BindGroupLayoutImpl::~BindGroupLayoutImpl):
+        (PAL::WebGPU::BindGroupLayoutImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.cpp: Added.
+        (PAL::WebGPU::BufferImpl::BufferImpl):
+        (PAL::WebGPU::BufferImpl::~BufferImpl):
+        (PAL::WebGPU::mapCallback):
+        (PAL::WebGPU::BufferImpl::mapAsync):
+        (PAL::WebGPU::BufferImpl::mapCallback):
+        (PAL::WebGPU::BufferImpl::getMappedRange):
+        (PAL::WebGPU::BufferImpl::unmap):
+        (PAL::WebGPU::BufferImpl::destroy):
+        (PAL::WebGPU::BufferImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.cpp: Added.
+        (PAL::WebGPU::CommandBufferImpl::CommandBufferImpl):
+        (PAL::WebGPU::CommandBufferImpl::~CommandBufferImpl):
+        (PAL::WebGPU::CommandBufferImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.cpp: Added.
+        (PAL::WebGPU::CommandEncoderImpl::CommandEncoderImpl):
+        (PAL::WebGPU::CommandEncoderImpl::~CommandEncoderImpl):
+        (PAL::WebGPU::CommandEncoderImpl::beginRenderPass):
+        (PAL::WebGPU::CommandEncoderImpl::beginComputePass):
+        (PAL::WebGPU::CommandEncoderImpl::copyBufferToBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::copyBufferToTexture):
+        (PAL::WebGPU::CommandEncoderImpl::copyTextureToBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::copyTextureToTexture):
+        (PAL::WebGPU::CommandEncoderImpl::fillBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::CommandEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::CommandEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::CommandEncoderImpl::writeTimestamp):
+        (PAL::WebGPU::CommandEncoderImpl::resolveQuerySet):
+        (PAL::WebGPU::CommandEncoderImpl::finish):
+        (PAL::WebGPU::CommandEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp: Added.
+        (PAL::WebGPU::ComputePassEncoderImpl::ComputePassEncoderImpl):
+        (PAL::WebGPU::ComputePassEncoderImpl::~ComputePassEncoderImpl):
+        (PAL::WebGPU::ComputePassEncoderImpl::setPipeline):
+        (PAL::WebGPU::ComputePassEncoderImpl::dispatch):
+        (PAL::WebGPU::ComputePassEncoderImpl::dispatchIndirect):
+        (PAL::WebGPU::ComputePassEncoderImpl::beginPipelineStatisticsQuery):
+        (PAL::WebGPU::ComputePassEncoderImpl::endPipelineStatisticsQuery):
+        (PAL::WebGPU::ComputePassEncoderImpl::endPass):
+        (PAL::WebGPU::ComputePassEncoderImpl::setBindGroup):
+        (PAL::WebGPU::ComputePassEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::ComputePassEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::ComputePassEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::ComputePassEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.cpp: Added.
+        (PAL::WebGPU::ComputePipelineImpl::ComputePipelineImpl):
+        (PAL::WebGPU::ComputePipelineImpl::~ComputePipelineImpl):
+        (PAL::WebGPU::ComputePipelineImpl::getBindGroupLayout):
+        (PAL::WebGPU::ComputePipelineImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBacking.cpp: Added.
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::convertBufferUsageFlagsToBacking):
+        (PAL::WebGPU::convertColorWriteFlagsToBacking):
+        (PAL::WebGPU::convertMapModeFlagsToBacking):
+        (PAL::WebGPU::convertShaderStageFlagsToBacking):
+        (PAL::WebGPU::convertTextureUsageFlagsToBacking):
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBacking.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp: Added.
+        (PAL::WebGPU::DeviceImpl::DeviceImpl):
+        (PAL::WebGPU::DeviceImpl::~DeviceImpl):
+        (PAL::WebGPU::DeviceImpl::destroy):
+        (PAL::WebGPU::DeviceImpl::createBuffer):
+        (PAL::WebGPU::DeviceImpl::createTexture):
+        (PAL::WebGPU::DeviceImpl::createSampler):
+        (PAL::WebGPU::DeviceImpl::importExternalTexture):
+        (PAL::WebGPU::DeviceImpl::createBindGroupLayout):
+        (PAL::WebGPU::DeviceImpl::createPipelineLayout):
+        (PAL::WebGPU::DeviceImpl::createBindGroup):
+        (PAL::WebGPU::DeviceImpl::createShaderModule):
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::DeviceImpl::createComputePipeline):
+        (PAL::WebGPU::DeviceImpl::createRenderPipeline):
+        (PAL::WebGPU::createComputePipelineAsyncCallback):
+        (PAL::WebGPU::DeviceImpl::createComputePipelineAsync):
+        (PAL::WebGPU::DeviceImpl::createComputePipelineAsyncCallback):
+        (PAL::WebGPU::createRenderPipelineAsyncCallback):
+        (PAL::WebGPU::DeviceImpl::createRenderPipelineAsync):
+        (PAL::WebGPU::DeviceImpl::createRenderPipelineAsyncCallback):
+        (PAL::WebGPU::DeviceImpl::createCommandEncoder):
+        (PAL::WebGPU::DeviceImpl::createRenderBundleEncoder):
+        (PAL::WebGPU::DeviceImpl::createQuerySet):
+        (PAL::WebGPU::DeviceImpl::pushErrorScope):
+        (PAL::WebGPU::popErrorScopeCallback):
+        (PAL::WebGPU::DeviceImpl::popErrorScope):
+        (PAL::WebGPU::DeviceImpl::popErrorScopeCallback):
+        (PAL::WebGPU::DeviceImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.cpp: Added.
+        (PAL::WebGPU::ExternalTextureImpl::ExternalTextureImpl):
+        (PAL::WebGPU::ExternalTextureImpl::~ExternalTextureImpl):
+        (PAL::WebGPU::ExternalTextureImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp: Added.
+        (PAL::WebGPU::GPUImpl::GPUImpl):
+        (PAL::WebGPU::GPUImpl::~GPUImpl):
+        (PAL::WebGPU::requestAdapterCallback):
+        (PAL::WebGPU::GPUImpl::requestAdapter):
+        (PAL::WebGPU::GPUImpl::requestAdapterCallback):
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.cpp: Added.
+        (PAL::WebGPU::PipelineLayoutImpl::PipelineLayoutImpl):
+        (PAL::WebGPU::PipelineLayoutImpl::~PipelineLayoutImpl):
+        (PAL::WebGPU::PipelineLayoutImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.cpp: Added.
+        (PAL::WebGPU::QuerySetImpl::QuerySetImpl):
+        (PAL::WebGPU::QuerySetImpl::~QuerySetImpl):
+        (PAL::WebGPU::QuerySetImpl::destroy):
+        (PAL::WebGPU::QuerySetImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.cpp: Added.
+        (PAL::WebGPU::QueueImpl::QueueImpl):
+        (PAL::WebGPU::QueueImpl::~QueueImpl):
+        (PAL::WebGPU::QueueImpl::submit):
+        (PAL::WebGPU::onSubmittedWorkDoneCallback):
+        (PAL::WebGPU::QueueImpl::onSubmittedWorkDone):
+        (PAL::WebGPU::QueueImpl::onSubmittedWorkDoneCallback):
+        (PAL::WebGPU::QueueImpl::writeBuffer):
+        (PAL::WebGPU::QueueImpl::writeTexture):
+        (PAL::WebGPU::QueueImpl::copyExternalImageToTexture):
+        (PAL::WebGPU::QueueImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.cpp: Added.
+        (PAL::WebGPU::RenderBundleEncoderImpl::RenderBundleEncoderImpl):
+        (PAL::WebGPU::RenderBundleEncoderImpl::~RenderBundleEncoderImpl):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setPipeline):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setIndexBuffer):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setVertexBuffer):
+        (PAL::WebGPU::RenderBundleEncoderImpl::draw):
+        (PAL::WebGPU::RenderBundleEncoderImpl::drawIndexed):
+        (PAL::WebGPU::RenderBundleEncoderImpl::drawIndirect):
+        (PAL::WebGPU::RenderBundleEncoderImpl::drawIndexedIndirect):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setBindGroup):
+        (PAL::WebGPU::RenderBundleEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::RenderBundleEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::RenderBundleEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::RenderBundleEncoderImpl::finish):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.cpp: Added.
+        (PAL::WebGPU::RenderBundleImpl::RenderBundleImpl):
+        (PAL::WebGPU::RenderBundleImpl::~RenderBundleImpl):
+        (PAL::WebGPU::RenderBundleImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp: Added.
+        (PAL::WebGPU::RenderPassEncoderImpl::RenderPassEncoderImpl):
+        (PAL::WebGPU::RenderPassEncoderImpl::~RenderPassEncoderImpl):
+        (PAL::WebGPU::RenderPassEncoderImpl::setPipeline):
+        (PAL::WebGPU::RenderPassEncoderImpl::setIndexBuffer):
+        (PAL::WebGPU::RenderPassEncoderImpl::setVertexBuffer):
+        (PAL::WebGPU::RenderPassEncoderImpl::draw):
+        (PAL::WebGPU::RenderPassEncoderImpl::drawIndexed):
+        (PAL::WebGPU::RenderPassEncoderImpl::drawIndirect):
+        (PAL::WebGPU::RenderPassEncoderImpl::drawIndexedIndirect):
+        (PAL::WebGPU::RenderPassEncoderImpl::setBindGroup):
+        (PAL::WebGPU::RenderPassEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::RenderPassEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::RenderPassEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::RenderPassEncoderImpl::setViewport):
+        (PAL::WebGPU::RenderPassEncoderImpl::setScissorRect):
+        (PAL::WebGPU::RenderPassEncoderImpl::setBlendConstant):
+        (PAL::WebGPU::RenderPassEncoderImpl::setStencilReference):
+        (PAL::WebGPU::RenderPassEncoderImpl::beginOcclusionQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::endOcclusionQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::beginPipelineStatisticsQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::endPipelineStatisticsQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::executeBundles):
+        (PAL::WebGPU::RenderPassEncoderImpl::endPass):
+        (PAL::WebGPU::RenderPassEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.cpp: Added.
+        (PAL::WebGPU::RenderPipelineImpl::RenderPipelineImpl):
+        (PAL::WebGPU::RenderPipelineImpl::~RenderPipelineImpl):
+        (PAL::WebGPU::RenderPipelineImpl::getBindGroupLayout):
+        (PAL::WebGPU::RenderPipelineImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.cpp: Added.
+        (PAL::WebGPU::SamplerImpl::SamplerImpl):
+        (PAL::WebGPU::SamplerImpl::~SamplerImpl):
+        (PAL::WebGPU::SamplerImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.cpp: Added.
+        (PAL::WebGPU::ShaderModuleImpl::ShaderModuleImpl):
+        (PAL::WebGPU::ShaderModuleImpl::~ShaderModuleImpl):
+        (PAL::WebGPU::ShaderModuleImpl::compilationInfo):
+        (PAL::WebGPU::ShaderModuleImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.cpp: Added.
+        (PAL::WebGPU::TextureImpl::TextureImpl):
+        (PAL::WebGPU::TextureImpl::~TextureImpl):
+        (PAL::WebGPU::TextureImpl::createView const):
+        (PAL::WebGPU::TextureImpl::destroy):
+        (PAL::WebGPU::TextureImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.cpp: Added.
+        (PAL::WebGPU::TextureViewImpl::TextureViewImpl):
+        (PAL::WebGPU::TextureViewImpl::~TextureViewImpl):
+        (PAL::WebGPU::TextureViewImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.h: Added.
+
 2021-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS 15 build
