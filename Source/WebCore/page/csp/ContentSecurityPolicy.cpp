@@ -751,6 +751,8 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     auto blockedURL = URL(URL(), blockedURLString);
     info.documentURI = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : deprecatedURLForReporting(blockedURL);
+    info.lineNumber = sourcePosition.m_line.oneBasedInt();
+    info.columnNumber = sourcePosition.m_column.oneBasedInt();
 
     if (m_client)
         m_client->willSendCSPViolationReport(info);

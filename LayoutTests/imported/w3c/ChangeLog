@@ -1,3 +1,14 @@
+2021-11-15  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Fix missing lineNumber and columnNumber in inline violation reports
+        https://bugs.webkit.org/show_bug.cgi?id=233102
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update expectations as passing.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/blockeduri-inline-expected.txt:
+
 2021-11-14  Tim Nguyen  <ntim@apple.com>
 
         Modal dialogs should make the root element unfocusable
