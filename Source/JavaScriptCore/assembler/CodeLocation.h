@@ -27,8 +27,6 @@
 
 #include "MacroAssemblerCodeRef.h"
 
-#if ENABLE(ASSEMBLER)
-
 namespace JSC {
 
 enum class NearCallMode : uint8_t { Regular, Tail };
@@ -269,5 +267,3 @@ inline CodeLocationConvertibleLoad<resultTag> CodeLocationCommon<tag>::convertib
 }
 
 } // namespace JSC
-
-#endif // ENABLE(ASSEMBLER)

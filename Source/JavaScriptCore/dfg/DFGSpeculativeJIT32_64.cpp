@@ -847,10 +847,10 @@ void SpeculativeJIT::emitCall(Node* node)
             
             m_jit.emitStoreCallSiteIndex(callSite);
             
-            info->emitDirectTailCallFastPath(m_jit, [&] {
+            info->emitDirectTailCallFastPath(m_jit, scopedLambda<void()>([&]{
                 info->setFrameShuffleData(shuffleData);
                 CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
-            });
+            }));
 
             JITCompiler::Label slowPath = m_jit.label();
             silentSpillAllRegisters(InvalidGPRReg);
@@ -892,7 +892,7 @@ void SpeculativeJIT::emitCall(Node* node)
 
     CCallHelpers::JumpList slowCases;
     if (isTail) {
-        slowCases = info->emitTailCallFastPath(m_jit, calleePayloadGPR, [&] {
+        slowCases = info->emitTailCallFastPath(m_jit, calleePayloadGPR, scopedLambda<void()>([&]{
             if (node->op() == TailCall) {
                 info->setFrameShuffleData(shuffleData);
                 CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
@@ -900,7 +900,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 m_jit.emitRestoreCalleeSaves();
                 m_jit.prepareForTailCallSlow();
             }
-        });
+        }));
     } else
         slowCases = info->emitFastPath(m_jit, calleePayloadGPR, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
 

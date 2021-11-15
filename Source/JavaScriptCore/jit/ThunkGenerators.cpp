@@ -344,24 +344,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
     return virtualThunkFor(vm, CallMode::Regular, CodeForCall);
 }
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularConstruct(VM& vm)
-{
-    return virtualThunkFor(vm, CallMode::Regular, CodeForConstruct);
-}
-
 static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM& vm)
 {
     return virtualThunkFor(vm, CallMode::Tail, CodeForCall);
-}
-
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailConstruct(VM& vm)
-{
-    return virtualThunkFor(vm, CallMode::Tail, CodeForConstruct);
-}
-
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructCall(VM& vm)
-{
-    return virtualThunkFor(vm, CallMode::Construct, CodeForCall);
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructConstruct(VM& vm)
@@ -369,23 +354,15 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructConstruct(V
     return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct);
 }
 
-MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo& callLinkInfo)
+MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallMode callMode)
 {
-    auto mode = callLinkInfo.callMode();
-    auto kind = callLinkInfo.specializationKind();
     auto generator = [&] () -> ThunkGenerator {
-        switch (mode) {
+        switch (callMode) {
         case CallMode::Regular:
-            if (kind == CodeForCall)
-                return virtualThunkForRegularCall;
-            return virtualThunkForRegularConstruct;
+            return virtualThunkForRegularCall;
         case CallMode::Tail:
-            if (kind == CodeForCall)
-                return virtualThunkForTailCall;
-            return virtualThunkForTailConstruct;
+            return virtualThunkForTailCall;
         case CallMode::Construct:
-            if (kind == CodeForCall)
-                return virtualThunkForConstructCall;
             return virtualThunkForConstructConstruct;
         }
         RELEASE_ASSERT_NOT_REACHED();

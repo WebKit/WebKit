@@ -26,6 +26,7 @@ types [
 
     :BasicBlockLocation,
     :BoundLabel,
+    :CallLinkInfo,
     :DebugHookType,
     :ECMAMode,
     :ErrorTypeWithExtension,
@@ -44,7 +45,6 @@ types [
     :JSScope,
     :JSType,
     :JSValue,
-    :LLIntCallLinkInfo,
     :ResultType,
     :OperandTypes,
     :PrivateFieldPutKind,
@@ -840,7 +840,8 @@ op :call,
         argv: unsigned,
     },
     metadata: {
-        callLinkInfo: LLIntCallLinkInfo,
+        callLinkInfo: CallLinkInfo,
+        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -852,7 +853,8 @@ op :tail_call,
         argv: unsigned,
     },
     metadata: {
-        callLinkInfo: LLIntCallLinkInfo,
+        callLinkInfo: CallLinkInfo,
+        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -865,7 +867,8 @@ op :call_eval,
         ecmaMode: ECMAMode,
     },
     metadata: {
-        callLinkInfo: LLIntCallLinkInfo,
+        callLinkInfo: CallLinkInfo,
+        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -879,6 +882,7 @@ op :call_varargs,
         firstVarArg: int,
     },
     metadata: {
+        callLinkInfo: CallLinkInfo,
         arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
@@ -900,6 +904,7 @@ op :tail_call_varargs,
         firstVarArg: int,
     },
     metadata: {
+        callLinkInfo: CallLinkInfo,
         arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
@@ -921,6 +926,7 @@ op :tail_call_forward_arguments,
         firstVarArg: int,
     },
     metadata: {
+        callLinkInfo: CallLinkInfo,
         arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
@@ -933,7 +939,8 @@ op :construct,
         argv: unsigned,
     },
     metadata: {
-        callLinkInfo: LLIntCallLinkInfo,
+        callLinkInfo: CallLinkInfo,
+        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -947,6 +954,7 @@ op :construct_varargs,
         firstVarArg: int,
     },
     metadata: {
+        callLinkInfo: CallLinkInfo,
         arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
@@ -1249,7 +1257,8 @@ op :iterator_open,
     metadata: {
         iterationMetadata: IterationModeMetadata,
         iterableProfile: ValueProfile,
-        callLinkInfo: LLIntCallLinkInfo,
+        callLinkInfo: CallLinkInfo,
+        arrayProfile: ArrayProfile,
         iteratorProfile: ValueProfile,
         modeMetadata: GetByIdModeMetadata,
         nextProfile: ValueProfile,
@@ -1272,7 +1281,8 @@ op :iterator_next,
     metadata: {
         iterationMetadata: IterationModeMetadata,
         iterableProfile: ArrayProfile,
-        callLinkInfo: LLIntCallLinkInfo,
+        callLinkInfo: CallLinkInfo,
+        arrayProfile: ArrayProfile,
         nextResultProfile: ValueProfile,
         doneModeMetadata: GetByIdModeMetadata,
         doneProfile: ValueProfile,
@@ -1393,6 +1403,9 @@ op :llint_cloop_did_return_from_js_43
 op :llint_cloop_did_return_from_js_44
 op :llint_cloop_did_return_from_js_45
 op :llint_cloop_did_return_from_js_46
+op :llint_cloop_did_return_from_js_47
+op :llint_cloop_did_return_from_js_48
+op :llint_cloop_did_return_from_js_49
 
 end_section :CLoopHelpers
 
@@ -1415,6 +1428,10 @@ op :llint_native_call_trampoline
 op :llint_native_construct_trampoline
 op :llint_internal_function_call_trampoline
 op :llint_internal_function_construct_trampoline
+op :llint_link_call_trampoline
+op :llint_virtual_call_trampoline
+op :llint_virtual_construct_trampoline
+op :llint_virtual_tail_call_trampoline
 op :checkpoint_osr_exit_from_inlined_call_trampoline
 op :checkpoint_osr_exit_trampoline
 op :normal_osr_exit_trampoline
@@ -1423,6 +1440,8 @@ op :llint_get_host_call_return_value
 op :llint_handle_uncaught_exception
 op :op_call_return_location
 op :op_construct_return_location
+op :op_call_varargs_return_location
+op :op_construct_varargs_return_location
 op :op_call_varargs_slow_return_location
 op :op_construct_varargs_slow_return_location
 op :op_get_by_id_return_location
@@ -1438,15 +1457,15 @@ op :op_call_slow_return_location
 op :op_construct_slow_return_location
 op :op_iterator_open_slow_return_location
 op :op_iterator_next_slow_return_location
-op :op_tail_call_return_location
 op :op_tail_call_slow_return_location
 op :op_tail_call_forward_arguments_slow_return_location
 op :op_tail_call_varargs_slow_return_location
 op :op_call_eval_slow_return_location
 
 op :js_trampoline_op_call
-op :js_trampoline_op_tail_call
 op :js_trampoline_op_construct
+op :js_trampoline_op_call_varargs
+op :js_trampoline_op_construct_varargs
 op :js_trampoline_op_iterator_next
 op :js_trampoline_op_iterator_open
 op :js_trampoline_op_call_slow

@@ -572,6 +572,14 @@ def cloopEmitCallSlowPathVoid(operands)
     $asm.putc "#{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
 end
 
+def cloopEmitCallSlowPath4(operands)
+    $asm.putc "{"
+    $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
+    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump}, #{operands[4].clDump});"
+    $asm.putc "    decodeResult(result, t0, t1);"
+    $asm.putc "}"
+end
+
 class Instruction
     def lowerC_LOOP
         case opcode
@@ -1174,6 +1182,9 @@ class Instruction
 
         when "cloopCallSlowPathVoid"
             cloopEmitCallSlowPathVoid(operands)
+
+        when "cloopCallSlowPath4"
+            cloopEmitCallSlowPath4(operands)
 
         # For debugging only. This is used to insert instrumentation into the
         # generated LLIntAssembly.h during llint development only. Do not use

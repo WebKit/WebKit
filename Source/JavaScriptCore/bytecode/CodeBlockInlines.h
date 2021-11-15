@@ -86,13 +86,13 @@ void CodeBlock::forEachObjectAllocationProfile(const Functor& func)
 }
 
 template<typename Functor>
-void CodeBlock::forEachLLIntCallLinkInfo(const Functor& func)
+void CodeBlock::forEachLLIntOrBaselineCallLinkInfo(const Functor& func)
 {
     if (m_metadata) {
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_callLinkInfo); });
 
-        FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(VISIT)
+        FOR_EACH_OPCODE_WITH_CALL_LINK_INFO(VISIT)
 
 #undef VISIT
     }

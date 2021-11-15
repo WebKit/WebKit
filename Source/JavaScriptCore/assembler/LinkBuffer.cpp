@@ -32,7 +32,6 @@
 #include "Disassembler.h"
 #include "JITCode.h"
 #include "Options.h"
-#include "WasmCompilationMode.h"
 
 #if OS(LINUX)
 #include "PerfLog.h"
@@ -42,29 +41,6 @@ namespace JSC {
 
 size_t LinkBuffer::s_profileCummulativeLinkedSizes[LinkBuffer::numberOfProfiles];
 size_t LinkBuffer::s_profileCummulativeLinkedCounts[LinkBuffer::numberOfProfiles];
-
-bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
-{
-    if (codeBlock && JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::dumpDFGDisassembly())
-        return true;
-    return Options::dumpDisassembly();
-}
-
-bool shouldDumpDisassemblyFor(Wasm::CompilationMode mode)
-{
-    if (Options::asyncDisassembly() || Options::dumpDisassembly() || Options::dumpWasmDisassembly())
-        return true;
-    switch (mode) {
-    case Wasm::CompilationMode::BBQMode:
-        return Options::dumpBBQDisassembly();
-    case Wasm::CompilationMode::OMGMode:
-    case Wasm::CompilationMode::OMGForOSREntryMode:
-        return Options::dumpOMGDisassembly();
-    default:
-        break;
-    }
-    return false;
-}
 
 LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()
 {

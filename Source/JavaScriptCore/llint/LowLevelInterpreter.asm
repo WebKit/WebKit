@@ -551,6 +551,7 @@ const SymbolType = constexpr SymbolType
 const ObjectType = constexpr ObjectType
 const FinalObjectType = constexpr FinalObjectType
 const JSFunctionType = constexpr JSFunctionType
+const InternalFunctionType = constexpr InternalFunctionType
 const ArrayType = constexpr ArrayType
 const DerivedArrayType = constexpr DerivedArrayType
 const ProxyObjectType = constexpr ProxyObjectType
@@ -1151,27 +1152,27 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVi
         cloopCallJSFunction callee
     elsif ARM64E
         macro callNarrow()
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%) * PtrSize, a2
-            jmp [a2], NativeToJITGatePtrTag # callPtrTag
+            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%) * PtrSize, a7
+            jmp [a7], NativeToJITGatePtrTag # callPtrTag
             _js_trampoline_%opcodeName%:
-            call t3, callPtrTag
+            call t5, callPtrTag
         end
 
         macro callWide16()
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide16) * PtrSize, a2
-            jmp [a2], NativeToJITGatePtrTag # callPtrTag
+            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide16) * PtrSize, a7
+            jmp [a7], NativeToJITGatePtrTag # callPtrTag
             _js_trampoline_%opcodeName%_wide16:
-            call t3, callPtrTag
+            call t5, callPtrTag
         end
 
         macro callWide32()
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide32) * PtrSize, a2
-            jmp [a2], NativeToJITGatePtrTag # callPtrTag
+            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide32) * PtrSize, a7
+            jmp [a7], NativeToJITGatePtrTag # callPtrTag
             _js_trampoline_%opcodeName%_wide32:
-            call t3, callPtrTag
+            call t5, callPtrTag
         end
 
-        move callee, t3
+        move callee, t5
         size(callNarrow, callWide16, callWide32, macro (gen) gen() end)
     else
         call callee, callPtrTag
@@ -1209,12 +1210,23 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVi
     end
 end
 
-macro prepareForRegularCall(callee, temp1, temp2, temp3, temp4, callPtrTag)
-    addp CallerFrameAndPCSize, sp
+macro prepareForRegularCall(temp1, temp2, temp3, temp4)
 end
 
-# sp points to the new frame
-macro prepareForTailCall(callee, temp1, temp2, temp3, temp4, callPtrTag)
+macro invokeForRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
+    callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
+end
+
+# t5 is metadata
+macro prepareForPolymorphicRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callPtrTag)
+end
+
+macro prepareForSlowRegularCall()
+end
+
+# sp points to the new frame + CallerFrameAndPCSize
+# We leave cfr temp4 to use it for untagging.
+macro prepareForTailCall(temp1, temp2, temp3, temp4)
     restoreCalleeSavesUsedByLLInt()
 
     loadi PayloadOffset + ArgumentCountIncludingThis[cfr], temp2
@@ -1232,18 +1244,17 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, temp4, callPtrTag)
     move cfr, temp1
     addp temp2, temp1
 
-    loadi PayloadOffset + ArgumentCountIncludingThis[sp], temp2
+    loadi PayloadOffset + ArgumentCountIncludingThis - CallerFrameAndPCSize[sp], temp2
     # We assume < 2^28 arguments
     muli SlotSize, temp2
     addi StackAlignment - 1 + CallFrameHeaderSize, temp2
     andi ~StackAlignmentMask, temp2
 
     if ARMv7 or ARM64 or ARM64E or C_LOOP or C_LOOP_WIN or MIPS or RISCV64
-        addp CallerFrameAndPCSize, sp
         subi CallerFrameAndPCSize, temp2
         loadp CallerFrameAndPC::returnPC[cfr], lr
     else
-        addp PtrSize, sp
+        subp PtrSize, sp
         subi PtrSize, temp2
         loadp PtrSize[cfr], temp3
         storep temp3, [sp]
@@ -1270,14 +1281,33 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, temp4, callPtrTag)
     end
 
     move temp1, sp
+end
+
+macro invokeForTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
     if ARM64E
-        move temp4, a2
-        move callee, a0
+        move maybeOldCFR, a2
+        move callee, a7
         leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::tailCall%callPtrTag%) * PtrSize, a1
         jmp [a1], NativeToJITGatePtrTag # %callPtrTag%
     else
         jmp callee, callPtrTag
     end
+end
+
+# t5 is metadata
+macro prepareForPolymorphicTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callPtrTag)
+    if ARM64E
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], a7
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::tailCallWithoutUntag%callPtrTag%) * PtrSize, a1
+        jmp [a1], NativeToJITGatePtrTag # %callPtrTag%
+    else
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], a1
+        jmp a1, callPtrTag
+    end
+end
+
+macro prepareForSlowTailCall()
+    restoreCalleeSavesUsedByLLInt()
 end
 
 macro slowPathForCommonCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
@@ -1287,11 +1317,11 @@ end
 macro slowPathForCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, slowPath, prepareCall)
     callCallSlowPath(
         slowPath,
-        # Those are r0 and r1
+        # Those parameters are r0 and r1
         macro (callee, calleeFramePtr)
             btpz calleeFramePtr, .dontUpdateSP
             move calleeFramePtr, sp
-            prepareCall(callee, t2, t3, t4, t1, JSEntrySlowPathPtrTag)
+            prepareCall(t2, t3, t4, t1)
         .dontUpdateSP:
             callTargetFunction(%opcodeName%_slow, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, JSEntrySlowPathPtrTag)
         end)
@@ -1820,12 +1850,16 @@ if ARM64E
     global _tailCallJSEntryTrampoline
     _tailCallJSEntryTrampoline:
         untagReturnAddress a2
-        jmp a0, JSEntryPtrTag
+        jmp a7, JSEntryPtrTag
 
     global _tailCallJSEntrySlowPathTrampoline
     _tailCallJSEntrySlowPathTrampoline:
         untagReturnAddress a2
-        jmp a0, JSEntrySlowPathPtrTag
+        jmp a7, JSEntryPtrTag
+
+    global _tailCallWithoutUntagJSEntryTrampoline
+    _tailCallWithoutUntagJSEntryTrampoline:
+        jmp a7, JSEntryPtrTag
 
     global _exceptionHandlerTrampoline
     _exceptionHandlerTrampoline:
@@ -2325,17 +2359,17 @@ end)
 
 
 # we can't use callOp because we can't pass `call` as the opcode name, since it's an instruction name
-commonCallOp(op_call, _llint_slow_path_call, OpCall, prepareForRegularCall, macro (getu, metadata)
+commonCallOp(op_call, _llint_slow_path_call, OpCall, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCall, getu)
 end)
 
 
-macro callOp(opcodeName, opcodeStruct, prepareCall, fn)
-    commonCallOp(op_%opcodeName%, _llint_slow_path_%opcodeName%, opcodeStruct, prepareCall, fn)
+macro callOp(opcodeName, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, fn)
+    commonCallOp(op_%opcodeName%, _llint_slow_path_%opcodeName%, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, fn)
 end
 
 
-callOp(tail_call, OpTailCall, prepareForTailCall, macro (getu, metadata)
+callOp(tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall, macro (getu, metadata)
     arrayProfileForCall(OpTailCall, getu)
     checkSwitchToJITForEpilogue()
     # reload metadata since checkSwitchToJITForEpilogue() might have trashed t5
@@ -2343,7 +2377,7 @@ callOp(tail_call, OpTailCall, prepareForTailCall, macro (getu, metadata)
 end)
 
 
-callOp(construct, OpConstruct, prepareForRegularCall, macro (getu, metadata) end)
+callOp(construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata) end)
 
 
 macro branchIfException(exceptionTarget)
@@ -2354,47 +2388,29 @@ macro branchIfException(exceptionTarget)
 .noException:    
 end
 
-macro doCallVarargs(opcodeName, size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepareCall)
-    callSlowPath(frameSlowPath)
-    branchIfException(_llint_throw_from_slow_path_trampoline)
-    # calleeFrame in r1
-    if JSVALUE64
-        move r1, sp
-    else
-        # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
-        if ARMv7
-            subp r1, CallerFrameAndPCSize, t2
-            move t2, sp
-        else
-            subp r1, CallerFrameAndPCSize, sp
-        end
-    end
-    slowPathForCommonCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
-end
 
-
-llintOp(op_call_varargs, OpCallVarargs, macro (size, get, dispatch)
-    doCallVarargs(op_call_varargs, size, OpCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall)
+llintOpWithMetadata(op_call_varargs, OpCallVarargs, macro (size, get, dispatch, metadata, return)
+    doCallVarargs(op_call_varargs, size, get, OpCallVarargs, m_profile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall)
 end)
 
-llintOp(op_tail_call_varargs, OpTailCallVarargs, macro (size, get, dispatch)
+llintOpWithMetadata(op_tail_call_varargs, OpTailCallVarargs, macro (size, get, dispatch, metadata, return)
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't
     # prepare the frame for a call opcode
-    doCallVarargs(op_tail_call_varargs, size, OpTailCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_tail_call_varargs, prepareForTailCall)
+    doCallVarargs(op_tail_call_varargs, size, get, OpTailCallVarargs, m_profile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_tail_call_varargs, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall)
 end)
 
 
-llintOp(op_tail_call_forward_arguments, OpTailCallForwardArguments, macro (size, get, dispatch)
+llintOpWithMetadata(op_tail_call_forward_arguments, OpTailCallForwardArguments, macro (size, get, dispatch, metadata, return)
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't
     # prepare the frame for a call opcode
-    doCallVarargs(op_tail_call_forward_arguments, size, OpTailCallForwardArguments, dispatch, _llint_slow_path_size_frame_for_forward_arguments, _llint_slow_path_tail_call_forward_arguments, prepareForTailCall)
+    doCallVarargs(op_tail_call_forward_arguments, size, get, OpTailCallForwardArguments, m_profile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_forward_arguments, _llint_slow_path_tail_call_forward_arguments, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall)
 end)
 
 
-llintOp(op_construct_varargs, OpConstructVarargs, macro (size, get, dispatch)
-    doCallVarargs(op_construct_varargs, size, OpConstructVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall)
+llintOpWithMetadata(op_construct_varargs, OpConstructVarargs, macro (size, get, dispatch, metadata, return)
+    doCallVarargs(op_construct_varargs, size, get, OpConstructVarargs, m_profile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall)
 end)
 
 
@@ -2510,6 +2526,90 @@ op(llint_internal_function_construct_trampoline, macro ()
     internalFunctionCallTrampoline(InternalFunction::m_functionForConstruct)
 end)
 
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+# t3 is caller's JSGlobalObject
+macro linkSlowPathFor(function)
+    functionPrologue()
+    loadp JSGlobalObject::m_vm[t3], t1
+    storep cfr, VM::topCallFrame[t1]
+    move t2, a2
+    move t3, a1
+    move cfr, a0
+    cCall4(function)
+    functionEpilogue()
+    untagReturnAddress sp
+    btpz r1, .doNotTrash
+    preserveReturnAddressAfterCall(t1)
+    prepareForTailCall(t1, t2, t3, t4)
+    untagReturnAddress t4
+.doNotTrash:
+    jmp t0, JSEntryPtrTag
+end
+
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+# t3 is caller's JSGlobalObject
+macro virtualThunkFor(offsetOfJITCodeWithArityCheck, internalFunctionTrampoline, prepareCall, slowCase)
+    addi 1, CallLinkInfo::m_slowPathCount[t2]
+    if JSVALUE64
+        btqnz t0, NotCellMask, slowCase
+    else
+        bineq t1, CellTag, slowCase
+    end
+    bbneq JSCell::m_type[t0], JSFunctionType, .notJSFunction
+    loadp JSFunction::m_executableOrRareData[t0], t1
+    btpz t1, (constexpr JSFunction::rareDataTag), .isExecutable
+    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[t1], t1
+.isExecutable:
+    loadp offsetOfJITCodeWithArityCheck[t1], t1
+    btpz t1, slowCase
+.callCode:
+    prepareCall(t5, t2, t3, t4)
+    jmp t1, JSEntryPtrTag
+.notJSFunction:
+    bbneq JSCell::m_type[t0], InternalFunctionType, slowCase
+    prepareCall(t5, t2, t3, t4)
+    jmp internalFunctionTrampoline
+end
+
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+# t3 is caller's JSGlobalObject
+op(llint_link_call_trampoline, macro ()
+    linkSlowPathFor(_llint_link_call)
+end)
+
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+# t3 is caller's JSGlobalObject
+op(llint_virtual_call_trampoline, macro ()
+    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
+.slowCase:
+    linkSlowPathFor(_llint_virtual_call)
+end)
+
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+# t3 is caller's JSGlobalObject
+op(llint_virtual_construct_trampoline, macro ()
+    virtualThunkFor(ExecutableBase::m_jitCodeForConstructWithArityCheck, _llint_internal_function_construct_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
+.slowCase:
+    linkSlowPathFor(_llint_virtual_call)
+end)
+
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+# t3 is caller's JSGlobalObject
+op(llint_virtual_tail_call_trampoline, macro ()
+    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4)
+        preserveReturnAddressAfterCall(temp1)
+        prepareForTailCall(temp1, temp2, temp3, temp4)
+        untagReturnAddress temp4
+    end, .slowCase)
+.slowCase:
+    linkSlowPathFor(_llint_virtual_call)
+end)
 
 if JIT
     macro loadBaselineJITConstantPool()

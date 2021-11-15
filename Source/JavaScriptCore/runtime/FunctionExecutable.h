@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExecutableToCodeBlockEdge.h"
+#include "JSFunction.h"
 #include "ScriptExecutable.h"
 #include "SourceCode.h"
 #include <wtf/Box.h>

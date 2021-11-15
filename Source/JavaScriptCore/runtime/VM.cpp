@@ -138,6 +138,7 @@
 #include "JSWebAssemblyTag.h"
 #include "JSWithScope.h"
 #include "LLIntData.h"
+#include "LLIntExceptions.h"
 #include "MinimumReservedZoneSize.h"
 #include "ModuleProgramCodeBlock.h"
 #include "ModuleProgramExecutable.h"
@@ -908,6 +909,41 @@ MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(Cod
     if (kind == CodeForCall)
         return LLInt::getCodePtr<JSEntryPtrTag>(llint_internal_function_call_trampoline);
     return LLInt::getCodePtr<JSEntryPtrTag>(llint_internal_function_construct_trampoline);
+}
+
+MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTILinkCall()
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return getCTIStub(linkCallThunkGenerator).template retagged<JSEntryPtrTag>();
+#endif
+    return LLInt::getCodeRef<JSEntryPtrTag>(llint_link_call_trampoline);
+}
+
+MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTIThrowExceptionFromCallSlowPath()
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return getCTIStub(throwExceptionFromCallSlowPathGenerator).template retagged<JSEntryPtrTag>();
+#endif
+    return LLInt::callToThrow(*this).template retagged<JSEntryPtrTag>();
+}
+
+MacroAssemblerCodeRef<JITStubRoutinePtrTag> VM::getCTIVirtualCall(CallMode callMode)
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return virtualThunkFor(*this, callMode);
+#endif
+    switch (callMode) {
+    case CallMode::Regular:
+        return LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_virtual_call_trampoline);
+    case CallMode::Tail:
+        return LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_virtual_tail_call_trampoline);
+    case CallMode::Construct:
+        return LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_virtual_construct_trampoline);
+    }
+    return LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_virtual_call_trampoline);
 }
 
 VM::ClientData::~ClientData()

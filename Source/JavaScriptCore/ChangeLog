@@ -1,5 +1,182 @@
 2021-11-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Use CallLinkInfo in LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=232746
+
+        Reviewed by Saam Barati.
+
+        This patch integrates normal CallLinkInfo into LLInt and remove adhoc LLIntCallLinkInfo.
+        So that we can simplify our IC software stack, and unifying call IC mechanism into one CallLinkInfo.
+
+        1. LLInt can fully use our polymorphic call IC, and we no longer need to reset call IC when
+           tiering up from LLInt to Baseline JIT since both now uses the same CallLinkInfo data structure.
+           DFG and FTL can also retrieve call information from this CallLinkInfo.
+        2. LLInt varargs calls get the same level of optimization to Baseline. Previously it does not have
+           call IC.
+        3. When JIT is disabled, we disable polymorphic call IC since it requires dynamic code generation.
+           In that case, we only use monomorphic one, which is the same to the old LLIntCallLinkInfo.
+        4. CallLinkInfo::doneLocation is set up only after Baseline JIT. We adjust call IC code so that
+           we no longer rely on doneLocation when using DataIC. This allows us to smoothly tiering up
+           from LLInt to Baseline JIT while using the same CallLinkInfo.
+           We set up doneLocation in Baseline JIT just because DFG OSR exit requires when exiting to
+           Baseline JIT code.
+        5. We remove CallLinkInfo from JIT constant pool, and we store CallLinkInfo in metadata so that
+           LLInt and Baseline JIT quickly access to that and keeping unlinked Baseline JIT working.
+        6. We implement LLInt version of call IC thunks so that we can use them even when JIT is disabled.
+
+        Speedometer2 is neutral. JetStream2 is 0.7% progressed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/CodeLocation.h:
+        * assembler/LinkBuffer.cpp:
+        (JSC::shouldDumpDisassemblyFor): Deleted.
+        * assembler/LinkBuffer.h:
+        * assembler/MacroAssemblerCodeRef.cpp:
+        (JSC::shouldDumpDisassemblyFor):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::dumpWithName const):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeOperandsForCheckpoint.h:
+        (JSC::callLinkInfoFor):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::clearStub):
+        (JSC::CallLinkInfo::setMonomorphicCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        (JSC::CallLinkInfo::visitWeak):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::emitTailCallFastPath):
+        (JSC::CallLinkInfo::emitTailCallDataICFastPath):
+        (JSC::CallLinkInfo::emitSlowPath):
+        (JSC::CallLinkInfo::initializeDataIC):
+        (JSC::CallLinkInfo::emitDirectTailCallFastPath):
+        (JSC::CallLinkInfo::revertCallToStub):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::isLinked const):
+        (JSC::CallLinkInfo::stub const):
+        (JSC::CallLinkInfo::updateMaxArgumentCountIncludingThis):
+        (JSC::CallLinkInfo::forEachDependentCell const):
+        (JSC::CallLinkInfo::setSlowStub): Deleted.
+        (JSC::CallLinkInfo::clearSlowStub): Deleted.
+        (JSC::CallLinkInfo::addressOfMaxArgumentCountIncludingThis): Deleted.
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeFromLLInt): Deleted.
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setupWithUnlinkedBaselineCode):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::finalizeJITInlineCaches):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::getICStatusMap):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::updateAllArrayProfilePredictions):
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachLLIntOrBaselineCallLinkInfo):
+        (JSC::CodeBlock::forEachLLIntCallLinkInfo): Deleted.
+        * bytecode/LLIntCallLinkInfo.h: Removed.
+        * bytecode/Opcode.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::allocateSharedProfiles):
+        * bytecode/UnlinkedCodeBlock.h:
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitVirtualCall):
+        (JSC::AssemblyHelpers::emitVirtualCallWithoutMovingGlobalObject):
+        * jit/AssemblyHelpers.h:
+        * jit/BaselineJITCode.h:
+        * jit/CallFrameShuffleData.cpp:
+        (JSC::CallFrameShuffleData::createForBaselineOrLLIntTailCall):
+        * jit/CallFrameShuffleData.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::addUnlinkedCallLinkInfo):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::returnFromBaselineGenerator):
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::op_ret_handlerGenerator): Deleted.
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        (JSC::handleHostCall): Deleted.
+        (JSC::virtualForWithFunction): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::linkSlowPathTo):
+        (JSC::linkSlowFor):
+        (JSC::webAssemblyOwner):
+        (JSC::linkMonomorphicCall):
+        (JSC::revertCall):
+        (JSC::unlinkCall):
+        (JSC::jsToWasmICCodePtr):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/Repatch.h:
+        * jit/RepatchInlines.h: Added.
+        (JSC::handleHostCall):
+        (JSC::linkFor):
+        (JSC::virtualForWithFunction):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::virtualThunkForRegularConstruct): Deleted.
+        (JSC::virtualThunkForTailConstruct): Deleted.
+        (JSC::virtualThunkForConstructCall): Deleted.
+        * jit/ThunkGenerators.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_link_call):
+        (JSC::LLInt::llint_virtual_call):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        (JSC::LLInt::varargsSetup):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::commonCallEval):
+        (JSC::LLInt::genericCall): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::createJSGateThunk):
+        (JSC::LLInt::createTailCallGate):
+        (JSC::LLInt::returnLocationThunk):
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoopRegister::operator CallLinkInfo*):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * runtime/ExecutableBase.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/Gate.h:
+        * runtime/VM.cpp:
+        (JSC::VM::getCTILinkCall):
+        (JSC::VM::getCTIThrowExceptionFromCallSlowPath):
+        (JSC::VM::getCTIVirtualCall):
+        * runtime/VM.h:
+
+2021-11-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Initialize m_usesT2
         https://bugs.webkit.org/show_bug.cgi?id=233095
 

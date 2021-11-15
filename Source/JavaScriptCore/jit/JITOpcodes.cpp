@@ -370,21 +370,6 @@ void JIT::emit_op_is_object(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_ret_handlerGenerator(VM&)
-{
-    CCallHelpers jit;
-
-    jit.checkStackPointerAlignment();
-    jit.emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
-    jit.emitFunctionEpilogue();
-    jit.ret();
-
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_ret_handler");
-}
-#endif // ENABLE(EXTRA_CTI_THUNKS)
-
 void JIT::emit_op_to_primitive(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToPrimitive>();

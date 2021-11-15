@@ -1752,7 +1752,7 @@ public:
     }
     
     void emitVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
-    void emitVirtualCallWithoutMovingGlobalObject(VM&, CallLinkInfo*);
+    void emitVirtualCallWithoutMovingGlobalObject(VM&, GPRReg callLinkInfoGPR, CallMode);
     
     void makeSpaceOnStackForCCall();
     void reclaimSpaceOnStackForCCall();

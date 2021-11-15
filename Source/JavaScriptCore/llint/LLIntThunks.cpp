@@ -346,9 +346,9 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, Pt
 {
     CCallHelpers jit;
 
-    jit.call(GPRInfo::regT3, tag);
-    jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT3);
-    jit.farJump(GPRInfo::regT3, OperationPtrTag);
+    jit.call(GPRInfo::regT5, tag);
+    jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT5);
+    jit.farJump(GPRInfo::regT5, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "LLInt %s call gate thunk", name);
@@ -366,13 +366,15 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void* pointer, 
     return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "LLInt %s wasm call gate thunk", name);
 }
 
-MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag)
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag, bool untag)
 {
     CCallHelpers jit;
 
-    jit.untagPtr(GPRInfo::argumentGPR2, ARM64Registers::lr);
-    jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::argumentGPR2);
-    jit.farJump(GPRInfo::regT0, tag);
+    if (untag) {
+        jit.untagPtr(GPRInfo::argumentGPR2, ARM64Registers::lr);
+        jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::argumentGPR2);
+    }
+    jit.farJump(GPRInfo::argumentGPR7, tag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "LLInt tail call gate thunk");
@@ -573,8 +575,8 @@ MacroAssemblerCodeRef<JSEntryPtrTag> returnLocationThunk(OpcodeID opcodeID, Opco
     LLINT_RETURN_LOCATION(op_iterator_open)
     LLINT_RETURN_LOCATION(op_iterator_next)
     LLINT_RETURN_LOCATION(op_construct)
-    LLINT_RETURN_LOCATION(op_call_varargs_slow)
-    LLINT_RETURN_LOCATION(op_construct_varargs_slow)
+    LLINT_RETURN_LOCATION(op_call_varargs)
+    LLINT_RETURN_LOCATION(op_construct_varargs)
     LLINT_RETURN_LOCATION(op_get_by_id)
     LLINT_RETURN_LOCATION(op_get_by_val)
     LLINT_RETURN_LOCATION(op_put_by_id)

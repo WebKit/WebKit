@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "RegisterAtOffsetList.h"
 
@@ -80,6 +81,37 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
         registers[reg] = ValueRecovery::inRegister(reg, DataFormatInt32);
 #endif
     }
+}
+
+CallFrameShuffleData CallFrameShuffleData::createForBaselineOrLLIntTailCall(const OpTailCall& bytecode, unsigned numParameters)
+{
+#if USE(JSVALUE64)
+    constexpr JSValueRegs calleeJSR { GPRInfo::regT0 };
+#elif USE(JSVALUE32_64)
+    constexpr JSValueRegs calleeJSR { GPRInfo::regT1, GPRInfo::regT0 };
+#endif
+    CallFrameShuffleData shuffleData;
+    shuffleData.numPassedArgs = bytecode.m_argc;
+    shuffleData.numParameters = numParameters;
+#if USE(JSVALUE64)
+    shuffleData.numberTagRegister = GPRInfo::numberTagRegister;
+#endif
+    shuffleData.numLocals = bytecode.m_argv - sizeof(CallerFrameAndPC) / sizeof(Register);
+    shuffleData.args.resize(bytecode.m_argc);
+    for (unsigned i = 0; i < bytecode.m_argc; ++i) {
+        shuffleData.args[i] =
+            ValueRecovery::displacedInJSStack(
+                virtualRegisterForArgumentIncludingThis(i) - bytecode.m_argv,
+                DataFormatJS);
+    }
+#if USE(JSVALUE64)
+    shuffleData.callee = ValueRecovery::inGPR(calleeJSR.payloadGPR(), DataFormatJS);
+#elif USE(JSVALUE32_64)
+    shuffleData.callee = ValueRecovery::inPair(calleeJSR.tagGPR(), calleeJSR.payloadGPR());
+#endif
+    shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
+    shuffleData.shrinkToFit();
+    return shuffleData;
 }
 
 } // namespace JSC

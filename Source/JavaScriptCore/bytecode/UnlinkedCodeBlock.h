@@ -75,7 +75,6 @@ class CachedCodeBlock;
 
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
-typedef unsigned UnlinkedLLIntCallLinkInfo;
 
 struct UnlinkedStringJumpTable {
     struct OffsetLocation {

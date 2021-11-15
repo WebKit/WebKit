@@ -54,7 +54,6 @@
 #include "JSCast.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
-#include "LLIntCallLinkInfo.h"
 #include "LazyOperandValueProfile.h"
 #include "MetadataTable.h"
 #include "ModuleProgramExecutable.h"
@@ -261,8 +260,6 @@ public:
         friend class LLIntOffsetsExtractor;
 
         FixedVector<StructureStubInfo> m_stubInfos;
-        FixedVector<CallLinkInfo> m_callLinkInfos;
-        SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
         SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
         bool m_hasCalleeSaveRegisters { false };
         RegisterAtOffsetList m_calleeSaveRegisters;
@@ -291,7 +288,7 @@ public:
     // This is a slow function call used primarily for compiling OSR exits in the case
     // that there had been inlining. Chances are if you want to use this, you're really
     // looking for a CallLinkInfoMap to amortize the cost of calling this.
-    CallLinkInfo* getCallLinkInfoForBytecodeIndex(BytecodeIndex);
+    CallLinkInfo* getCallLinkInfoForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
     
     const JITCodeMap& jitCodeMap();
 
@@ -309,13 +306,10 @@ public:
 #endif // ENABLE(JIT)
 
     void unlinkIncomingCalls();
-
-#if ENABLE(JIT)
     void linkIncomingCall(CallFrame* callerFrame, CallLinkInfo*);
+#if ENABLE(JIT)
     void linkIncomingPolymorphicCall(CallFrame* callerFrame, PolymorphicCallNode*);
 #endif // ENABLE(JIT)
-
-    void linkIncomingCall(CallFrame* callerFrame, LLIntCallLinkInfo*);
 
     const Instruction* outOfLineJumpTarget(const Instruction* pc);
     int outOfLineJumpOffset(InstructionStream::Offset offset)
@@ -453,7 +447,7 @@ public:
     template<typename Functor> void forEachValueProfile(const Functor&);
     template<typename Functor> void forEachArrayAllocationProfile(const Functor&);
     template<typename Functor> void forEachObjectAllocationProfile(const Functor&);
-    template<typename Functor> void forEachLLIntCallLinkInfo(const Functor&);
+    template<typename Functor> void forEachLLIntOrBaselineCallLinkInfo(const Functor&);
 
     BinaryArithProfile* binaryArithProfileForBytecodeIndex(BytecodeIndex);
     UnaryArithProfile* unaryArithProfileForBytecodeIndex(BytecodeIndex);
@@ -959,7 +953,7 @@ private:
     VM* m_vm;
 
     const void* m_instructionsRawPointer { nullptr };
-    SentinelLinkedList<LLIntCallLinkInfo, PackedRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
+    SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)

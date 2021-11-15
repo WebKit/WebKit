@@ -70,11 +70,13 @@ function doesTreeHaveStackTrace(tree, stackTraceOrString, isRunFromRunTest = tru
     
     let node = tree;
     for (let i = stackTrace.length; i--; ) {
+        let prev = node;
         node = node.children[stackTrace[i]];
         if (!node) {
             if (VERBOSE) {
                 print("failing on " + i + " : " + stackTrace[i]);
                 print(JSON.stringify(tree));
+                print(Object.keys(prev.children));
             }
             return false;
         }
@@ -108,7 +110,7 @@ function runTest(func, stackTraceOrString) {
         }
     } while (Date.now() - startTime < timeToFail);
     print(JSON.stringify(root, undefined, 2));
-    doesTreeHaveStackTrace(root, stackTrace, true, true);
+    doesTreeHaveStackTrace(root, stackTraceOrString, true, true);
     throw new Error("Bad stack trace");
 }
 

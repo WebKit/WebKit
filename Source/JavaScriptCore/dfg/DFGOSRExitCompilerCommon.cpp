@@ -166,10 +166,10 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
             jumpTarget = LLINT_RETURN_LOCATION(op_construct);
             break;
         case InlineCallFrame::CallVarargs:
-            jumpTarget = LLINT_RETURN_LOCATION(op_call_varargs_slow);
+            jumpTarget = LLINT_RETURN_LOCATION(op_call_varargs);
             break;
         case InlineCallFrame::ConstructVarargs:
-            jumpTarget = LLINT_RETURN_LOCATION(op_construct_varargs_slow);
+            jumpTarget = LLINT_RETURN_LOCATION(op_construct_varargs);
             break;
         case InlineCallFrame::GetterCall: {
             if (callInstruction.opcodeID() == op_get_by_id)
@@ -201,10 +201,12 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
         case InlineCallFrame::Construct:
         case InlineCallFrame::CallVarargs:
         case InlineCallFrame::ConstructVarargs: {
-            CallLinkInfo* callLinkInfo =
-                baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
+            CallLinkInfo* callLinkInfo = nullptr;
+            {
+                ConcurrentJSLocker locker(baselineCodeBlockForCaller->m_lock);
+                callLinkInfo = baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(locker, callBytecodeIndex);
+            }
             RELEASE_ASSERT(callLinkInfo);
-
             jumpTarget = callLinkInfo->doneLocation().retagged<JSEntryPtrTag>();
             break;
         }

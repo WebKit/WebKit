@@ -25,13 +25,13 @@
 
 #pragma once
 
-#if ENABLE(JIT)
-
 #include "CacheableIdentifier.h"
 #include "CallVariant.h"
 #include "PutKind.h"
 
 namespace JSC {
+
+class StructureStubInfo;
 
 enum class GetByKind {
     ById,
@@ -87,5 +87,3 @@ MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(VM&, CodeSpecializationKi
 
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)

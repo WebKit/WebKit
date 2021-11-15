@@ -101,12 +101,9 @@ std::tuple<UnlinkedStructureStubInfo*, JITConstantPool::Constant> JIT::addUnlink
     return std::tuple { stubInfo, stubInfoIndex };
 }
 
-std::tuple<UnlinkedCallLinkInfo*, JITConstantPool::Constant> JIT::addUnlinkedCallLinkInfo()
+UnlinkedCallLinkInfo* JIT::addUnlinkedCallLinkInfo()
 {
-    void* unlinkedCallLinkInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedCalls.size()));
-    UnlinkedCallLinkInfo* info = &m_unlinkedCalls.alloc();
-    JITConstantPool::Constant callLinkInfoIndex = addToConstantPool(JITConstantPool::Type::CallLinkInfo, unlinkedCallLinkInfoIndex);
-    return std::tuple { info, callLinkInfoIndex };
+    return &m_unlinkedCalls.alloc();
 }
 
 #if ENABLE(DFG_JIT)
@@ -1010,7 +1007,6 @@ void JIT::link()
     m_jitCode->m_unlinkedCalls = FixedVector<UnlinkedCallLinkInfo>(m_unlinkedCalls.size());
     if (m_jitCode->m_unlinkedCalls.size())
         std::move(m_unlinkedCalls.begin(), m_unlinkedCalls.end(), m_jitCode->m_unlinkedCalls.begin());
-    m_jitCode->m_evalCallLinkInfos = WTFMove(m_evalCallLinkInfos);
     m_jitCode->m_unlinkedStubInfos = FixedVector<UnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
     if (m_jitCode->m_unlinkedStubInfos.size())
         std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), m_jitCode->m_unlinkedStubInfos.begin());

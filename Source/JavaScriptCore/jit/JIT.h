@@ -153,7 +153,6 @@ namespace JSC {
     struct CallCompilationInfo {
         MacroAssembler::Label doneLocation;
         UnlinkedCallLinkInfo* unlinkedCallLinkInfo;
-        JITConstantPool::Constant callLinkInfoConstant;
     };
 
     void ctiPatchCallByReturnAddress(ReturnAddressPtr, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
@@ -294,16 +293,16 @@ namespace JSC {
         std::enable_if_t<
             Op::opcodeID != op_call_varargs && Op::opcodeID != op_construct_varargs
             && Op::opcodeID != op_tail_call_varargs && Op::opcodeID != op_tail_call_forward_arguments
-        , void> compileSetupFrame(const Op&, JITConstantPool::Constant callLinkInfoConstant);
+        , void> compileSetupFrame(const Op&);
 
         template<typename Op>
         std::enable_if_t<
             Op::opcodeID == op_call_varargs || Op::opcodeID == op_construct_varargs
             || Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments
-        , void> compileSetupFrame(const Op&, JITConstantPool::Constant callLinkInfoConstant);
+        , void> compileSetupFrame(const Op&);
 
         template<typename Op>
-        bool compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex, JITConstantPool::Constant);
+        bool compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex);
         template<typename Op>
         bool compileCallEval(const Op&);
         void compileCallEvalSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -706,6 +705,10 @@ namespace JSC {
         template <typename Op, typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
         void emitMathICSlow(JITUnaryMathIC<Generator>*, const Instruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
 
+    public:
+        static MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
+
+    private:
 #if ENABLE(EXTRA_CTI_THUNKS)
         // Thunk generators.
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_id_prepareCallGenerator(VM&);
@@ -721,7 +724,6 @@ namespace JSC {
 
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> op_ret_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
 
         static constexpr bool thunkIsUsedForOpGetFromScope(ResolveType resolveType)
@@ -958,7 +960,7 @@ namespace JSC {
 
         JITConstantPool::Constant addToConstantPool(JITConstantPool::Type, void* payload = nullptr);
         std::tuple<UnlinkedStructureStubInfo*, JITConstantPool::Constant> addUnlinkedStructureStubInfo();
-        std::tuple<UnlinkedCallLinkInfo*, JITConstantPool::Constant> addUnlinkedCallLinkInfo();
+        UnlinkedCallLinkInfo* addUnlinkedCallLinkInfo();
 
         Interpreter* m_interpreter;
 
@@ -1029,7 +1031,6 @@ namespace JSC {
 
         Vector<JITConstantPool::Value> m_constantPool;
         JITConstantPool::Constant m_globalObjectConstant { std::numeric_limits<unsigned>::max() };
-        Bag<CallLinkInfo> m_evalCallLinkInfos;
         SegmentedVector<UnlinkedCallLinkInfo> m_unlinkedCalls;
         SegmentedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
         FixedVector<SimpleJumpTable> m_switchJumpTables;

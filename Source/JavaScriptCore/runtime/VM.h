@@ -106,6 +106,8 @@ class BasicBlockLocation;
 class BuiltinExecutables;
 class BytecodeIntrinsicRegistry;
 class CallFrame;
+class CallLinkInfo;
+enum class CallMode;
 struct CheckpointOSRExitSideState;
 class CodeBlock;
 class CodeCache;
@@ -902,6 +904,9 @@ public:
     NativeExecutable* getBoundFunction(bool isJSFunction, bool canConstruct);
 
     MacroAssemblerCodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
+    MacroAssemblerCodeRef<JSEntryPtrTag> getCTILinkCall();
+    MacroAssemblerCodeRef<JSEntryPtrTag> getCTIThrowExceptionFromCallSlowPath();
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> getCTIVirtualCall(CallMode);
 
     static ptrdiff_t exceptionOffset()
     {

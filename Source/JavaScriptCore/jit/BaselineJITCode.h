@@ -62,7 +62,6 @@ public:
 
     enum class Type : uint8_t {
         GlobalObject,
-        CallLinkInfo,
         StructureStubInfo,
         FunctionDecl,
         FunctionExpr,
@@ -93,7 +92,6 @@ public:
     ~BaselineJITCode() override;
     PCToCodeOriginMap* pcToCodeOriginMap() override { return m_pcToCodeOriginMap.get(); }
 
-    Bag<CallLinkInfo> m_evalCallLinkInfos;
     FixedVector<UnlinkedCallLinkInfo> m_unlinkedCalls;
     FixedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
     FixedVector<SimpleJumpTable> m_switchJumpTables;

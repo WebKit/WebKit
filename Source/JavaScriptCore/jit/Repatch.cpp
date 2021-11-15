@@ -26,8 +26,6 @@
 #include "config.h"
 #include "Repatch.h"
 
-#if ENABLE(JIT)
-
 #include "BinarySwitch.h"
 #include "CCallHelpers.h"
 #include "CacheableIdentifierInlines.h"
@@ -70,6 +68,122 @@
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
+
+static void linkSlowPathTo(VM&, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
+{
+    callLinkInfo.setSlowPathCallDestination(codeRef.code().template retagged<JSEntryPtrTag>());
+}
+
+#if ENABLE(JIT)
+static void linkSlowPathTo(VM& vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
+{
+    linkSlowPathTo(vm, callLinkInfo, vm.getCTIStub(generator).retagged<JITStubRoutinePtrTag>());
+}
+#endif
+
+static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
+{
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = vm.getCTIVirtualCall(callLinkInfo.callMode());
+    linkSlowPathTo(vm, callLinkInfo, virtualThunk);
+}
+
+static JSCell* webAssemblyOwner(JSCell* callee)
+{
+#if ENABLE(WEBASSEMBLY)
+    // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
+    return jsCast<JSWebAssemblyModule*>(callee);
+#else
+    UNUSED_PARAM(callee);
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+#endif // ENABLE(WEBASSEMBLY)
+}
+
+void linkMonomorphicCall(
+    VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
+    JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
+{
+    ASSERT(!callLinkInfo.stub());
+
+    CallFrame* callerFrame = callFrame->callerFrame();
+    // Our caller must have a cell for a callee. When calling
+    // this from Wasm, we ensure the callee is a cell.
+    ASSERT(callerFrame->callee().isCell());
+
+    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+
+    // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    JSCell* owner = isWebAssemblyModule(callerFrame->callee().asCell()) ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
+    ASSERT(owner);
+
+    ASSERT(!callLinkInfo.isLinked());
+    callLinkInfo.setMonomorphicCallee(vm, owner, callee, codePtr);
+    callLinkInfo.setLastSeenCallee(vm, owner, callee);
+
+    if (shouldDumpDisassemblyFor(callerCodeBlock))
+        dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
+
+    if (calleeCodeBlock)
+        calleeCodeBlock->linkIncomingCall(callerFrame, &callLinkInfo);
+
+#if ENABLE(JIT)
+    if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs()) {
+        linkSlowPathTo(vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
+        return;
+    }
+#endif
+    
+    linkSlowFor(vm, callLinkInfo);
+}
+
+static void revertCall(VM& vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
+{
+    if (callLinkInfo.isDirect()) {
+#if ENABLE(JIT)
+        callLinkInfo.clearCodeBlock();
+        if (!callLinkInfo.clearedByJettison())
+            callLinkInfo.initializeDirectCall();
+#endif
+    } else {
+        if (!callLinkInfo.clearedByJettison()) {
+            linkSlowPathTo(vm, callLinkInfo, codeRef);
+
+            if (callLinkInfo.stub())
+                callLinkInfo.revertCallToStub();
+        }
+        callLinkInfo.clearCallee(); // This also clears the inline cache both for data and code-based caches.
+    }
+    callLinkInfo.clearSeen();
+    callLinkInfo.clearStub();
+    if (callLinkInfo.isOnList())
+        callLinkInfo.remove();
+}
+
+void unlinkCall(VM& vm, CallLinkInfo& callLinkInfo)
+{
+    dataLogLnIf(Options::dumpDisassembly(), "Unlinking CallLinkInfo: ", RawPointer(&callLinkInfo));
+    
+    revertCall(vm, callLinkInfo, vm.getCTILinkCall().retagged<JITStubRoutinePtrTag>());
+}
+
+MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(VM& vm, CodeSpecializationKind kind, JSObject* callee)
+{
+#if ENABLE(WEBASSEMBLY)
+    if (!callee)
+        return nullptr;
+    if (kind != CodeForCall)
+        return nullptr;
+    if (auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, callee))
+        return wasmFunction->jsCallEntrypoint();
+#else
+    UNUSED_PARAM(vm);
+    UNUSED_PARAM(kind);
+    UNUSED_PARAM(callee);
+#endif
+    return nullptr;
+}
+
+#if ENABLE(JIT)
 
 static FunctionPtr<CFunctionPtrTag> retagOperationWithValidation(FunctionPtr<OperationPtrTag> operation)
 {
@@ -1435,70 +1549,6 @@ void repatchInstanceOf(
         repatchSlowPathCall(codeBlock, stubInfo, operationInstanceOfGeneric);
 }
 
-static void linkSlowPathTo(VM&, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
-{
-    callLinkInfo.setSlowPathCallDestination(codeRef.code().template retagged<JSEntryPtrTag>());
-}
-
-static void linkSlowPathTo(VM& vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
-{
-    linkSlowPathTo(vm, callLinkInfo, vm.getCTIStub(generator).retagged<JITStubRoutinePtrTag>());
-}
-
-static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
-{
-    MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, callLinkInfo);
-    linkSlowPathTo(vm, callLinkInfo, virtualThunk);
-    callLinkInfo.setSlowStub(GCAwareJITStubRoutine::create(vm, virtualThunk));
-}
-
-static JSCell* webAssemblyOwner(JSCell* callee)
-{
-#if ENABLE(WEBASSEMBLY)
-    // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
-    return jsCast<JSWebAssemblyModule*>(callee);
-#else
-    UNUSED_PARAM(callee);
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
-#endif // ENABLE(WEBASSEMBLY)
-}
-
-void linkMonomorphicCall(
-    VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
-    JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
-{
-    ASSERT(!callLinkInfo.stub());
-
-    CallFrame* callerFrame = callFrame->callerFrame();
-    // Our caller must have a cell for a callee. When calling
-    // this from Wasm, we ensure the callee is a cell.
-    ASSERT(callerFrame->callee().isCell());
-
-    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
-
-    // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssemblyModule(callerFrame->callee().asCell()) ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
-    ASSERT(owner);
-
-    ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setMonomorphicCallee(vm, owner, callee, codePtr);
-    callLinkInfo.setLastSeenCallee(vm, owner, callee);
-
-    if (shouldDumpDisassemblyFor(callerCodeBlock))
-        dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
-
-    if (calleeCodeBlock)
-        calleeCodeBlock->linkIncomingCall(callerFrame, &callLinkInfo);
-
-    if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs()) {
-        linkSlowPathTo(vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
-        return;
-    }
-    
-    linkSlowFor(vm, callLinkInfo);
-}
-
 void linkDirectCall(
     CallFrame* callFrame, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
     MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
@@ -1528,35 +1578,6 @@ void linkSlowFor(CallFrame* callFrame, CallLinkInfo& callLinkInfo)
     linkSlowFor(vm, callLinkInfo);
 }
 
-static void revertCall(VM& vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
-{
-    if (callLinkInfo.isDirect()) {
-        callLinkInfo.clearCodeBlock();
-        if (!callLinkInfo.clearedByJettison())
-            callLinkInfo.initializeDirectCall();
-    } else {
-        if (!callLinkInfo.clearedByJettison()) {
-            linkSlowPathTo(vm, callLinkInfo, codeRef);
-
-            if (callLinkInfo.stub())
-                callLinkInfo.revertCallToStub();
-        }
-        callLinkInfo.clearCallee(); // This also clears the inline cache both for data and code-based caches.
-    }
-    callLinkInfo.clearSeen();
-    callLinkInfo.clearStub();
-    callLinkInfo.clearSlowStub();
-    if (callLinkInfo.isOnList())
-        callLinkInfo.remove();
-}
-
-void unlinkCall(VM& vm, CallLinkInfo& callLinkInfo)
-{
-    dataLogLnIf(Options::dumpDisassembly(), "Unlinking CallLinkInfo: ", RawPointer(&callLinkInfo));
-    
-    revertCall(vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator).retagged<JITStubRoutinePtrTag>());
-}
-
 static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo)
 {
     CallFrame* callerFrame = callFrame->callerFrame();
@@ -1565,9 +1586,8 @@ static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkI
     dataLogLnIf(shouldDumpDisassemblyFor(callerCodeBlock),
         "Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()));
 
-    MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, callLinkInfo);
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = vm.getCTIVirtualCall(callLinkInfo.callMode());
     revertCall(vm, callLinkInfo, virtualThunk);
-    callLinkInfo.setSlowStub(GCAwareJITStubRoutine::create(vm, virtualThunk));
     callLinkInfo.setClearedByVirtual();
 }
 
@@ -1803,8 +1823,10 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
             }
         }
         calls[caseIndex].codePtr = codePtr;
-        if (needsDoneJump)
+        if (needsDoneJump) {
+            ASSERT(!isDataIC);
             done.append(stubJit.jump());
+        }
     }
     
     slowPath.link(&stubJit);
@@ -1828,15 +1850,28 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     }
     stubJit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
     stubJit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT2);
-    if (isDataIC && !callLinkInfo.isTailCall()) {
-        // We were called from the fast path, get rid of any remnants of that
-        // which may exist. This really only matters for x86, which adjusts
-        // SP for calls.
-        stubJit.preserveReturnAddressAfterCall(GPRInfo::regT4);
+
+    // 1. If it is not DataIC, linkRegister is not pointing the doneLocation.
+    // 2. If it is tail-call, linkRegister is not pointing the doneLocation for slow-call case. But since we are not executing prepareForTailCall, we still stack entries for the caller's frame.
+    // 3. If we're a data IC, then the return address is already correct
+    // Thus we need to put it for the slow-path call.
+    if (!isDataIC) {
+        stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
+        stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
+    } else {
+        // FIXME: We are not doing a real tail-call in this case. We leave stack entries in the caller, and we are not running prepareForTailCall, thus,
+        // we will return to the caller after the callee finishes. We should make it a real tail-call for this slow path case.
+        if (callLinkInfo.isTailCall()) {
+#if ASSERT_ENABLED
+            // It needs to be LLInt or Baseline since we are using returnFromBaselineGenerator.
+            if (!isWebAssembly)
+                ASSERT(!JITCode::isOptimizingJIT(callerCodeBlock->jitType()));
+#endif
+            stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(JIT::returnFromBaselineGenerator).code().untaggedExecutableAddress()), GPRInfo::regT4);
+            stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
+        }
     }
-    stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
-    
-    stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
+
     AssemblyHelpers::Jump slow = stubJit.jump();
         
     LinkBuffer patchBuffer(stubJit, owner, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
@@ -1858,8 +1893,10 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
 #endif
     }
 
-    if (!done.empty())
+    if (!done.empty()) {
+        ASSERT(!isDataIC);
         patchBuffer.link(done, callLinkInfo.doneLocation());
+    }
     patchBuffer.link(slow, CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(linkPolymorphicCallThunkGenerator).code()));
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
@@ -2001,23 +2038,6 @@ void resetSetPrivateBrand(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
     InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo);
 }
 
-MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(VM& vm, CodeSpecializationKind kind, JSObject* callee)
-{
-#if ENABLE(WEBASSEMBLY)
-    if (!callee)
-        return nullptr;
-    if (kind != CodeForCall)
-        return nullptr;
-    if (auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, callee))
-        return wasmFunction->jsCallEntrypoint();
-#else
-    UNUSED_PARAM(vm);
-    UNUSED_PARAM(kind);
-    UNUSED_PARAM(callee);
 #endif
-    return nullptr;
-}
 
 } // namespace JSC
-
-#endif

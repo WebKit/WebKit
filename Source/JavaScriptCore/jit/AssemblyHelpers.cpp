@@ -745,18 +745,18 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
 void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
 {
     move(TrustedImmPtr(globalObject), GPRInfo::regT3);
-    emitVirtualCallWithoutMovingGlobalObject(vm, info);
+    move(TrustedImmPtr(info), GPRInfo::regT2);
+    emitVirtualCallWithoutMovingGlobalObject(vm, GPRInfo::regT2, info->callMode());
 }
 
-void AssemblyHelpers::emitVirtualCallWithoutMovingGlobalObject(VM& vm, CallLinkInfo* info)
+void AssemblyHelpers::emitVirtualCallWithoutMovingGlobalObject(VM& vm, GPRReg callLinkInfoGPR, CallMode callMode)
 {
-    move(TrustedImmPtr(info), GPRInfo::regT2);
+    move(callLinkInfoGPR, GPRInfo::regT2);
     Call call = nearCall();
     addLinkTask([=, &vm] (LinkBuffer& linkBuffer) {
         auto callLocation = linkBuffer.locationOfNearCall<JITCompilationPtrTag>(call);
         linkBuffer.addMainThreadFinalizationTask([=, &vm] () {
-            MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, *info);
-            info->setSlowStub(GCAwareJITStubRoutine::create(vm, virtualThunk));
+            MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = vm.getCTIVirtualCall(callMode);
             MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
         });
     });

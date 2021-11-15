@@ -59,17 +59,21 @@ void JIT::emit_op_ret(const Instruction* currentInstruction)
     // Return the result in returnValueGPR (returnValueGPR2/returnValueGPR on 32-bit).
     auto bytecode = currentInstruction->as<OpRet>();
     emitGetVirtualRegister(bytecode.m_value, returnValueJSR);
-
-#if !ENABLE(EXTRA_CTI_THUNKS)
-    checkStackPointerAlignment();
-    emitRestoreCalleeSaves();
-    emitFunctionEpilogue();
-    ret();
-#else
-    emitNakedNearJump(vm().getCTIStub(op_ret_handlerGenerator).code());
-#endif
+    emitNakedNearJump(vm().getCTIStub(returnFromBaselineGenerator).code());
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::returnFromBaselineGenerator(VM&)
+{
+    CCallHelpers jit;
+
+    jit.checkStackPointerAlignment();
+    jit.emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
+    jit.emitFunctionEpilogue();
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_ret_handler");
+}
 
 template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
@@ -84,7 +88,7 @@ std::enable_if_t<
     Op::opcodeID != op_call_varargs && Op::opcodeID != op_construct_varargs
     && Op::opcodeID != op_tail_call_varargs && Op::opcodeID != op_tail_call_forward_arguments
 , void>
-JIT::compileSetupFrame(const Op& bytecode, JITConstantPool::Constant)
+JIT::compileSetupFrame(const Op& bytecode)
 {
     unsigned checkpoint = m_bytecodeIndex.checkpoint();
     int argCountIncludingThis = argumentCountIncludingThisFor(bytecode, checkpoint);
@@ -97,7 +101,7 @@ JIT::compileSetupFrame(const Op& bytecode, JITConstantPool::Constant)
         emitGetVirtualRegister(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), tmpJSR);
         Jump done = branchIfNotCell(tmpJSR);
         load32(Address(tmpJSR.payloadGPR(), JSCell::structureIDOffset()), tmpGPR);
-        store32ToMetadata(tmpGPR, bytecode, OpCall::Metadata::offsetOfCallLinkInfo() + LLIntCallLinkInfo::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID());
+        store32ToMetadata(tmpGPR, bytecode, Op::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID());
         done.link(this);
     }
 
@@ -110,7 +114,7 @@ std::enable_if_t<
     Op::opcodeID == op_call_varargs || Op::opcodeID == op_construct_varargs
     || Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments
 , void>
-JIT::compileSetupFrame(const Op& bytecode, JITConstantPool::Constant callLinkInfoConstant)
+JIT::compileSetupFrame(const Op& bytecode)
 {
     VirtualRegister thisValue = bytecode.m_thisValue;
     VirtualRegister arguments = bytecode.m_arguments;
@@ -160,7 +164,7 @@ JIT::compileSetupFrame(const Op& bytecode, JITConstantPool::Constant callLinkInf
 
     // Profile the argument count.
     load32(Address(regT5, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
-    loadConstant(callLinkInfoConstant, regT0);
+    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), regT0);
     load32(Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThis()), regT3);
     Jump notBiggest = branch32(Above, regT3, regT2);
     store32(regT2, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThis()));
@@ -203,63 +207,38 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     linkAllSlowCases(iter);
 
     auto bytecode = instruction->as<OpCallEval>();
-    CallLinkInfo* info = m_evalCallLinkInfos.add(CodeOrigin(m_bytecodeIndex));
-    info->setUpCall(CallLinkInfo::Call, regT0);
-
     int registerOffset = -bytecode.m_argv;
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     loadValue(Address(stackPointerRegister, sizeof(Register) * CallFrameSlot::callee - sizeof(CallerFrameAndPC)), calleeJSR);
     loadGlobalObject(regT3);
-    emitVirtualCallWithoutMovingGlobalObject(*m_vm, info);
+    constexpr GPRReg callLinkInfoGPR = regT2;
+    materializePointerIntoMetadata(bytecode, OpCallEval::Metadata::offsetOfCallLinkInfo(), callLinkInfoGPR);
+    emitVirtualCallWithoutMovingGlobalObject(*m_vm, callLinkInfoGPR, CallMode::Regular);
     resetSP();
 
     emitPutCallResult(bytecode);
 }
 
 template<typename Op>
-bool JIT::compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned, JITConstantPool::Constant)
+bool JIT::compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned)
 {
     return false;
 }
 
 template<>
-bool JIT::compileTailCall(const OpTailCall& bytecode, UnlinkedCallLinkInfo* info, unsigned callLinkInfoIndex, JITConstantPool::Constant callLinkInfoConstant)
+bool JIT::compileTailCall(const OpTailCall& bytecode, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex)
 {
-    std::unique_ptr<CallFrameShuffleData> shuffleData = makeUnique<CallFrameShuffleData>();
-    shuffleData->numPassedArgs = bytecode.m_argc;
-    shuffleData->numParameters = m_unlinkedCodeBlock->numParameters();
-#if USE(JSVALUE64)
-    shuffleData->numberTagRegister = GPRInfo::numberTagRegister;
-#endif
-    shuffleData->numLocals =
-        bytecode.m_argv - sizeof(CallerFrameAndPC) / sizeof(Register);
-    shuffleData->args.resize(bytecode.m_argc);
-    for (unsigned i = 0; i < bytecode.m_argc; ++i) {
-        shuffleData->args[i] =
-            ValueRecovery::displacedInJSStack(
-                virtualRegisterForArgumentIncludingThis(i) - bytecode.m_argv,
-                DataFormatJS);
-    }
-#if USE(JSVALUE64)
-    shuffleData->callee = ValueRecovery::inGPR(calleeJSR.payloadGPR(), DataFormatJS);
-#elif USE(JSVALUE32_64)
-    shuffleData->callee = ValueRecovery::inPair(calleeJSR.tagGPR(), calleeJSR.payloadGPR());
-#endif
-    shuffleData->setupCalleeSaveRegisters(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
-
     constexpr GPRReg callLinkInfoGPR = regT2;
-    loadConstant(callLinkInfoConstant, callLinkInfoGPR);
-    JumpList slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, calleeJSR.payloadGPR(), callLinkInfoGPR, [&] {
-        CallFrameShuffler shuffler { *this, *shuffleData };
+    materializePointerIntoMetadata(bytecode, OpTailCall::Metadata::offsetOfCallLinkInfo(), callLinkInfoGPR);
+    JumpList slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, calleeJSR.payloadGPR(), callLinkInfoGPR, scopedLambda<void()>([&]{
+        CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, m_unlinkedCodeBlock->numParameters());
+        CallFrameShuffler shuffler { *this, shuffleData };
         shuffler.lockGPR(callLinkInfoGPR);
         shuffler.prepareForTailCall();
-    });
+    }));
     addSlowCase(slowPaths);
-
-    shuffleData->shrinkToFit();
-    info->frameShuffleData = WTFMove(shuffleData);
 
     auto doneLocation = label();
     m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
@@ -288,17 +267,14 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     */
 
     UnlinkedCallLinkInfo* info = nullptr;
-    JITConstantPool::Constant infoConstant = UINT_MAX;
     if (opcodeID != op_call_eval) {
-        std::tie(info, infoConstant) = addUnlinkedCallLinkInfo();
+        info = addUnlinkedCallLinkInfo();
         info->bytecodeIndex = m_bytecodeIndex;
-        info->callType = CallLinkInfo::callTypeFor(opcodeID);
         ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
         m_callCompilationInfo.append(CallCompilationInfo());
         m_callCompilationInfo[callLinkInfoIndex].unlinkedCallLinkInfo = info;
-        m_callCompilationInfo[callLinkInfoIndex].callLinkInfoConstant = infoConstant;
     }
-    compileSetupFrame(bytecode, infoConstant);
+    compileSetupFrame(bytecode);
 
     // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex).bits();
@@ -316,16 +292,16 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     addSlowCase(branchIfNotCell(calleeJSR));
 #endif
 
-    if (compileTailCall(bytecode, info, callLinkInfoIndex, infoConstant))
+    if (compileTailCall(bytecode, info, callLinkInfoIndex))
         return;
 
     constexpr GPRReg callLinkInfoGPR = regT2;
-    loadConstant(infoConstant, callLinkInfoGPR);
+    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), callLinkInfoGPR);
     if (opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        auto slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, calleeJSR.payloadGPR(), callLinkInfoGPR, [&] {
+        auto slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, calleeJSR.payloadGPR(), callLinkInfoGPR, scopedLambda<void()>([&]{
             emitRestoreCalleeSaves();
             prepareForTailCallSlow(callLinkInfoGPR);
-        });
+        }));
         addSlowCase(slowPaths);
         auto doneLocation = label();
         m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
@@ -344,15 +320,16 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 }
 
 template<typename Op>
-void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex)
+void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned)
 {
     OpcodeID opcodeID = Op::opcodeID;
+    auto bytecode = instruction->as<Op>();
     ASSERT(opcodeID != op_call_eval);
 
     linkAllSlowCases(iter);
 
     loadGlobalObject(regT3);
-    loadConstant(m_callCompilationInfo[callLinkInfoIndex].callLinkInfoConstant, regT2);
+    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), regT2);
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         emitRestoreCalleeSaves();
@@ -366,7 +343,6 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
 
     resetSP();
 
-    auto bytecode = instruction->as<Op>();
     emitPutCallResult(bytecode);
 }
 
