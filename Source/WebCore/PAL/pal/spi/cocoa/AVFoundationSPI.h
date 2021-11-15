@@ -53,6 +53,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <AVFoundation/AVAudioSession_Private.h>
+NS_ASSUME_NONNULL_BEGIN
+@interface AVAudioSession (AVAudioSessionWebKitPrivate)
+- (BOOL)setAuditTokensForProcessAssertion:(NSArray<NSData *>*)inAuditTokens error:(NSError **)outError;
+@end
+NS_ASSUME_NONNULL_END
 #endif
 
 #else
