@@ -20,15 +20,18 @@
 
         setTimeout(async function() {
             // Iterate up from the body AX element to the scrollarea AX element.
-            let maybeScrollArea = (await waitForElementById("body")).parentElement();
-            await waitFor(() => {
-                if (maybeScrollArea && maybeScrollArea.role === "AXRole: AXScrollArea") {
+            let maybeScrollArea = scrollArea = accessibilityController.accessibleElementById("body");
+            while (maybeScrollArea) {
+                if (maybeScrollArea.role === "AXRole: AXScrollArea") {
                     scrollArea = maybeScrollArea;
-                    return true;
+                    break;
                 }
-
                 maybeScrollArea = maybeScrollArea.parentElement();
-                return false;
+            }
+
+            // Wait for scrollbar to be created.
+            await waitFor(() => {
+                return scrollArea.verticalScrollbar;
             });
 
             shouldBe("scrollArea.role", "'AXRole: AXScrollArea'");

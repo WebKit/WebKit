@@ -17,33 +17,23 @@
 
     var progressbar1, progressbar2, progressbar3, progressbar4;
     if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+        // ARIA determinate progressbar
+        progressbar1 = accessibilityController.accessibleElementById("progressbar1");
+        shouldBe("progressbar1.intValue", "7");
 
-        setTimeout(async function() {
-            // ARIA determinate progressbar
-            progressbar1 = await waitForElementById("progressbar1");
-            await waitForExpression(progressbar1, "intValue", 7);
-            shouldBe("progressbar1.intValue", "7");
+        // ARIA indeterminate progressbar
+        progressbar2 = accessibilityController.accessibleElementById("progressbar2");
+        shouldBe("progressbar2.intValue", "5");
 
-            // ARIA indeterminate progressbar
-            progressbar2 = await waitForElementById("progressbar2");
-            await waitForExpression(progressbar2, "intValue", 5);
-            shouldBe("progressbar2.intValue", "5");
+        // Determinate progress element
+        progressbar3 = accessibilityController.accessibleElementById("progressbar3");
+        shouldBe("progressbar3.intValue", "7");
+        shouldBe("progressbar3.role", "'AXRole: AXProgressIndicator'");
 
-            // Determinate progress element
-            progressbar3 = await waitForElementById("progressbar3");
-            await waitForExpression(progressbar3, "intValue", 7);
-            shouldBe("progressbar3.intValue", "7");
-            shouldBe("progressbar3.role", "'AXRole: AXProgressIndicator'");
-
-            // Indeterminate progress element
-            progressbar4 = await waitForElementById("progressbar4");
-            await waitForExpression(progressbar4, "intValue", 0);
-            shouldBe("progressbar4.intValue", "0");
-            shouldBe("progressbar4.role", "'AXRole: AXProgressIndicator'");
-
-            finishJSTest();
-        }, 0);
+        // Indeterminate progress element
+        progressbar4 = accessibilityController.accessibleElementById("progressbar4");
+        shouldBe("progressbar4.intValue", "0");
+        shouldBe("progressbar4.role", "'AXRole: AXProgressIndicator'");
     }
 </script>
 </body>

@@ -12,45 +12,40 @@
     description("This test makes sure that if a range type has a step value, that increment and decrement work.");
 
     var rangeInput;
-    async function waitForAndExpectIntValue(expectedIntValue) {
-        await waitForExpression(rangeInput, "intValue", expectedIntValue);
-        shouldBe("rangeInput.intValue", `${expectedIntValue}`)
-    }
-
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
         setTimeout(async function() {
             // ARIA determinate progressbar
             rangeInput = await waitForElementById("rangeInput");
-            await waitForAndExpectIntValue(25);
+            shouldBe("rangeInput.intValue", "25");
 
             rangeInput.increment();
-            await waitForAndExpectIntValue(50);
+            await expectAsyncExpression("rangeInput.intValue", 50);
 
             rangeInput.increment();
-            await waitForAndExpectIntValue(75);
+            await expectAsyncExpression("rangeInput.intValue", 75);
 
             rangeInput.increment();
-            await waitForAndExpectIntValue(100);
+            await expectAsyncExpression("rangeInput.intValue", 100);
 
             rangeInput.increment();
-            await waitForAndExpectIntValue(100);
+            await expectAsyncExpression("rangeInput.intValue", 100);
 
             rangeInput.decrement();
-            await waitForAndExpectIntValue(75);
+            await expectAsyncExpression("rangeInput.intValue", 75);
 
             rangeInput.decrement();
-            await waitForAndExpectIntValue(50);
+            await expectAsyncExpression("rangeInput.intValue", 50);
 
             rangeInput.decrement();
-            await waitForAndExpectIntValue(25);
+            await expectAsyncExpression("rangeInput.intValue", 25);
 
             rangeInput.decrement();
-            await waitForAndExpectIntValue(0);
+            await expectAsyncExpression("rangeInput.intValue", 0);
 
             rangeInput.decrement();
-            await waitForAndExpectIntValue(0);
+            await expectAsyncExpression("rangeInput.intValue", 0);
 
             finishJSTest();
         }, 0);

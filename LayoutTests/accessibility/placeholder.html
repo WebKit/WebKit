@@ -18,27 +18,19 @@
 <script>
     description("This test makes sure that the placeholder is returned as the correct attribute");
 
-    var fieldElement, passwordElement, searchElement, textInput;
     if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+        var fieldElement = accessibilityController.accessibleElementById("searchterm");
+        shouldBe("fieldElement.stringAttributeValue('AXPlaceholderValue')", "'search'");
 
-        setTimeout(async function() {
-            fieldElement = await waitForElementById("searchterm");
-            shouldBe("fieldElement.stringAttributeValue('AXPlaceholderValue')", "'search'");
+        var passwordElement = accessibilityController.accessibleElementById("password");
+        shouldBe("passwordElement.stringAttributeValue('AXPlaceholderValue')", "'Password'");
 
-            passwordElement = await waitForElementById("password");
-            shouldBe("passwordElement.stringAttributeValue('AXPlaceholderValue')", "'Password'");
-            
-            searchElement = await waitForElementById("search");
-            shouldBe("searchElement.stringAttributeValue('AXPlaceholderValue')", "'MM-DD-YYYY'");
-            
-            // When the placeholder and aria-placeholder attributes are both present, use the placeholder
-            // attribute's value.
-            textInput = await waitForElementById("input");
-            shouldBe("textInput.stringAttributeValue('AXPlaceholderValue')", "'Fill in the blank'");
+        var searchElement = accessibilityController.accessibleElementById("search");
+        shouldBe("searchElement.stringAttributeValue('AXPlaceholderValue')", "'MM-DD-YYYY'");
 
-            finishJSTest();
-        }, 0);
+        // When the placeholder and aria-placeholder attributes are both present, use the placeholder attribute's value.
+        var textInput = accessibilityController.accessibleElementById("input");
+        shouldBe("textInput.stringAttributeValue('AXPlaceholderValue')", "'Fill in the blank'");
     }
 </script>
 </body>

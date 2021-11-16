@@ -1,3 +1,34 @@
+2021-11-16  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Simplify tests changed in https://bugs.webkit.org/show_bug.cgi?id=233085
+        https://bugs.webkit.org/show_bug.cgi?id=233167
+
+        Reviewed by Andres Gonzalez.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=233085 and https://bugs.webkit.org/show_bug.cgi?id=233017,
+        we made some tests async so that they passed in --release --accessibility-isolated-tree mode. However,
+        we can make these tests simpler and still pass — i.e., only wait for elements and expressions asynchronously
+        when it's absolutely necessary.
+
+        * accessibility/color-well.html:
+        * accessibility/mac/header-expected.txt:
+        * accessibility/mac/header.html:
+        * accessibility/mac/scrollbars.html:
+        * accessibility/placeholder.html:
+        * accessibility/progressbar.html:
+        * accessibility/range-alter-by-percent-expected.txt:
+        * accessibility/range-alter-by-percent.html:
+        * accessibility/range-alter-by-step-expected.txt:
+        * accessibility/range-alter-by-step.html:
+        * accessibility/spinbutton-value-expected.txt:
+        * accessibility/spinbutton-value.html:
+        Simplify these tests by only use async waiting when
+        necessary (i.e. dynamic mutation via JS)
+
+        * resources/accessibility-helper.js:
+        (async expectAsyncExpression):
+        (async waitForExpression): Renamed to expectAsyncExpression.
+
 2021-11-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r280078, r280290 and r282008.

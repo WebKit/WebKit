@@ -23,37 +23,35 @@
         window.jsTestIsAsync = true;
 
         setTimeout(async function() {
-            largeRange = await waitForElementById("largeRange");
-            await waitForExpression(largeRange, "intValue", 50);
-            shouldBe("largeRange.intValue", "50");
-            largeRange.increment();
-            await waitForExpression(largeRange, "intValue", 55);
-            shouldBe("largeRange.intValue", "55");
-            largeRange.increment();
-            await waitForExpression(largeRange, "intValue", 60);
-            shouldBe("largeRange.intValue", "60");
-            largeRange.decrement();
-            await waitForExpression(largeRange, "intValue", 55);
-            shouldBe("largeRange.intValue", "55");
-            largeRange.decrement();
-            await waitForExpression(largeRange, "intValue", 50);
+            largeRange = accessibilityController.accessibleElementById("largeRange");
             shouldBe("largeRange.intValue", "50");
 
-            smallRange = await waitForElementById("smallRange");
-            await waitForExpression(smallRange, "intValue", 5);
+            largeRange.increment();
+            await expectAsyncExpression("largeRange.intValue", 55);
+
+            largeRange.increment();
+            await expectAsyncExpression("largeRange.intValue", 60);
+
+            largeRange.decrement();
+            await expectAsyncExpression("largeRange.intValue", 55);
+
+            largeRange.decrement();
+            await expectAsyncExpression("largeRange.intValue", 50);
+
+            smallRange = accessibilityController.accessibleElementById("smallRange");
             shouldBe("smallRange.intValue", "5");
+
             smallRange.increment();
-            await waitForExpression(smallRange, "intValue", 6);
-            shouldBe("smallRange.intValue", "6");
+            await expectAsyncExpression("smallRange.intValue", 6);
+
             smallRange.increment();
-            await waitForExpression(smallRange, "intValue", 7);
-            shouldBe("smallRange.intValue", "7");
+            await expectAsyncExpression("smallRange.intValue", 7);
+
             smallRange.decrement();
-            await waitForExpression(smallRange, "intValue", 6);
-            shouldBe("smallRange.intValue", "6");
+            await expectAsyncExpression("smallRange.intValue", 6);
+
             smallRange.decrement();
-            await waitForExpression(smallRange, "intValue", 5);
-            shouldBe("smallRange.intValue", "5");
+            await expectAsyncExpression("smallRange.intValue", 5);
 
             finishJSTest();
         }, 0);

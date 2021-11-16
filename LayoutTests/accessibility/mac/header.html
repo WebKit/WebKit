@@ -15,28 +15,15 @@
 </section>
 
 <script>
-    async function expectRole(expectedRole, expectedDescription, id) {
-        document.getElementById(id).focus();
-
-        await waitFor(() => {
-            const focusedElement = accessibilityController.focusedElement;
-            return focusedElement && focusedElement.domIdentifier === id;
-        });
-
-        shouldBeEqualToString("accessibilityController.focusedElement.role", "AXRole: " + expectedRole);
-        shouldBeEqualToString("accessibilityController.focusedElement.roleDescription", "AXRoleDescription: " + expectedDescription);
+    function expectRole(expectedRole, expectedDescription, id) {
+        shouldBeEqualToString(`accessibilityController.accessibleElementById("${id}").role`, `AXRole: ${expectedRole}`);
+        shouldBeEqualToString(`accessibilityController.accessibleElementById("${id}").roleDescription`, `AXRoleDescription: ${expectedDescription}`);
     }
 
     if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
-
-        setTimeout(async function() {
-            await expectRole("AXGroup", "banner", "header01");
-            await expectRole("AXGroup", "group", "header02");
-            await expectRole("AXGroup", "group", "header03");
-
-            finishJSTest();
-        }, 0);
+        expectRole("AXGroup", "banner", "header01");
+        expectRole("AXGroup", "group", "header02");
+        expectRole("AXGroup", "group", "header03");
     }
 </script>
 

@@ -120,12 +120,14 @@ async function waitForElementById(id) {
     return element;
 }
 
-async function waitForExpression(element, expression, expectedValue) {
+async function expectAsyncExpression(expression, expectedValue) {
     if (typeof expression !== "string")
         debug("WARN: The expression arg in waitForExpression() should be a string.");
 
+    const evalExpression = `${expression} === ${expectedValue}`;
     await waitFor(() => {
-        return eval(`element.${expression} === ${expectedValue}`);
+        return eval(evalExpression);
     });
+    debug(`PASS ${evalExpression}`);
 }
 

@@ -14,21 +14,15 @@
     description("This test checks the role of ColorWellRolean input with type=color");
 
     if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+        let axColorwell = accessibilityController.accessibleElementById("empty_colorwell");
+        debug("Role of input type=color is: " + axColorwell.role);
+        debug("Value of empty color well: " + axColorwell.stringValue);
 
-        setTimeout(async function() {
-            let axColorwell = await waitForElementById("empty_colorwell");
-            debug("Role of input type=color is: " + axColorwell.role);
-            debug("Value of empty color well: " + axColorwell.stringValue);
+        axColorwell = accessibilityController.accessibleElementById("good_colorwell");
+        debug("Value of good color well: " + axColorwell.stringValue);
 
-            axColorwell = await waitForElementById("good_colorwell");
-            debug("Value of good color well: " + axColorwell.stringValue);
-
-            axColorwell = await waitForElementById("bad_colorwell");
-            debug("Value of bad color well: " + axColorwell.stringValue);
-
-            finishJSTest();
-        }, 0);
+        axColorwell = accessibilityController.accessibleElementById("bad_colorwell");
+        debug("Value of bad color well: " + axColorwell.stringValue);
     }
 </script>
 </body>

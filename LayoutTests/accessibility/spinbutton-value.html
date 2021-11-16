@@ -26,25 +26,19 @@
 
     var spinbutton, untitledButton;
     if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+        untitledButton = accessibilityController.accessibleElementById("untitledButton");
+        spinbutton = accessibilityController.accessibleElementById("spinbutton");
+        shouldBe("spinbutton.intValue", "5");
 
-        setTimeout(async function() {
-            untitledButton = await waitForElementById("untitledButton");
-            spinbutton = await waitForElementById("spinbutton");
-            await waitForExpression(spinbutton, "intValue", 5);
+        // Test range value attributes.
+        shouldBe("endsWith(spinbutton.intValue, '5')", "true");
+        shouldBe("endsWith(spinbutton.minValue, '1')", "true");
+        shouldBe("endsWith(spinbutton.maxValue, '9')", "true");
+        shouldBe("endsWith(spinbutton.valueDescription, '5 of 9')", "true");
 
-            // Test range value attributes.
-            shouldBe("endsWith(spinbutton.intValue, '5')", "true");
-            shouldBe("endsWith(spinbutton.minValue, '1')", "true");
-            shouldBe("endsWith(spinbutton.maxValue, '9')", "true");
-            shouldBe("endsWith(spinbutton.valueDescription, '5 of 9')", "true");
-
-            // Make sure the title doesn't come from the inner text. It should just be empty if
-            // not otherwise specified.
-            shouldBe("spinbutton.title", "untitledButton.title");
-
-            finishJSTest();
-        }, 0);
+        // Make sure the title doesn't come from the inner text. It should just be empty if
+        // not otherwise specified.
+        shouldBe("spinbutton.title", "untitledButton.title");
     }
 </script>
 </body>
