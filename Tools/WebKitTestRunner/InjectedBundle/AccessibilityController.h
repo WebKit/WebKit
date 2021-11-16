@@ -63,7 +63,7 @@ public:
     // Controller Methods - platform-independent implementations.
 #if HAVE(ACCESSIBILITY)
     Ref<AccessibilityUIElement> rootElement();
-    Ref<AccessibilityUIElement> focusedElement();
+    RefPtr<AccessibilityUIElement> focusedElement();
 #endif
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);

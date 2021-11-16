@@ -1,3 +1,46 @@
+2021-11-16  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Stop returning AccessibilityUIElements backed by a null pointer
+        https://bugs.webkit.org/show_bug.cgi?id=233138
+
+        Reviewed by Andres Gonzalez.
+
+        Prior to this patch, some callers of AccessibilityUIElement::create
+        passed null `id`s, resulting in a seemingly valid AccessibilityUIElement
+        that is actually backed by a null pointer. This makes writing tests harder,
+        since you can't rely on common operations like `!myElement` to do the right thing.
+
+        With this patch, we add a RELEASE_ASSERT to
+        AccessibilityUIElement::create requiring the passed pointer to be
+        valid. This patch also fixes up some callsites where we could (and did) pass null pointers.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::AccessibilityController::focusedElement):
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityControllerWin.cpp:
+        (WTR::AccessibilityController::focusedElement):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::focusedElement):
+        Return RefPtr instead of Ref, since it's possible that no element is
+        focused.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::create):
+        Add RELEASE_ASSERT() to verify passed pointer is valid.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::focusedElement const):
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm:
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::uiElementAttributeValue const):
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        (WTR::AccessibilityUIElement::cellForColumnAndRow):
+        (WTR::AccessibilityUIElement::horizontalScrollbar const):
+        (WTR::AccessibilityUIElement::verticalScrollbar const):
+        Don't call AccessibilityUIElement::create with null pointers.
+
 2021-11-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Make valgrind work properly without extra environment variables

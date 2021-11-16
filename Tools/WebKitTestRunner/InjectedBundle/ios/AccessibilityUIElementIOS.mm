@@ -635,7 +635,9 @@ bool AccessibilityUIElement::isRequired() const
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const
 {
-    return AccessibilityUIElement::create([m_element accessibilityFocusedUIElement]);
+    if (id focusedUIElement = [m_element accessibilityFocusedUIElement])
+        return AccessibilityUIElement::create(focusedUIElement);
+    return nullptr;
 }
 
 bool AccessibilityUIElement::isFocused() const
@@ -765,14 +767,18 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 5, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id value = [m_element accessibilityFindMatchingObjects:parameterizedAttribute];
-    if (![value isKindOfClass:[NSArray class]])
+    id results = [m_element accessibilityFindMatchingObjects:parameterizedAttribute];
+    if (![results isKindOfClass:[NSArray class]])
         return nullptr;
-    for (id element in value) {
+
+    for (id element in results) {
         if ([element isAccessibilityElement])
             return AccessibilityUIElement::create(element);
     }
-    return AccessibilityUIElement::create([value firstObject]);
+
+    if (id firstResult = [results firstObject])
+        return AccessibilityUIElement::create(firstResult);
+    return nullptr;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)

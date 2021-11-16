@@ -61,10 +61,10 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
     return AccessibilityUIElement::create(nullptr);
 }
 
-Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     notImplemented();
-    return AccessibilityUIElement::create(nullptr);
+    return nullptr;
 }
 
 bool AccessibilityController::addNotificationListener(JSValueRef)

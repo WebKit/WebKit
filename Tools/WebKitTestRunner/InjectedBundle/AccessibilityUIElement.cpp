@@ -35,6 +35,7 @@ namespace WTR {
 
 Ref<AccessibilityUIElement> AccessibilityUIElement::create(PlatformUIElement uiElement)
 {
+    RELEASE_ASSERT(uiElement);
     return adoptRef(*new AccessibilityUIElement(uiElement));
 }
     

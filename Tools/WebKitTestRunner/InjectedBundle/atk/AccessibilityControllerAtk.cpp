@@ -112,7 +112,7 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
     return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
 }
 
-Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityFocusedObject(page);

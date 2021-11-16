@@ -617,8 +617,9 @@ JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attr
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
-    auto value = attributeValue([NSString stringWithJSStringRef:attribute]);
-    return AccessibilityUIElement::create(value.get());
+    if (auto value = attributeValue([NSString stringWithJSStringRef:attribute]))
+        return AccessibilityUIElement::create(value.get());
+    return nullptr;
 }
 
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
@@ -1241,9 +1242,11 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredica
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id value = [m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameterizedAttribute];
-    if ([value isKindOfClass:[NSArray class]])
-        return AccessibilityUIElement::create([value lastObject]);
+    id searchResults = [m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameterizedAttribute];
+    if ([searchResults isKindOfClass:[NSArray class]]) {
+        if (id lastResult = [searchResults lastObject])
+            return AccessibilityUIElement::create(lastResult);
+    }
     END_AX_OBJC_EXCEPTIONS
     
     return nullptr;
@@ -1410,7 +1413,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsig
 {
     NSArray *colRowArray = @[@(col), @(row)];
     BEGIN_AX_OBJC_EXCEPTIONS
-    return AccessibilityUIElement::create([m_element accessibilityAttributeValue:@"AXCellForColumnAndRow" forParameter:colRowArray]);
+    if (id cell = [m_element accessibilityAttributeValue:@"AXCellForColumnAndRow" forParameter:colRowArray])
+        return AccessibilityUIElement::create(cell);
     END_AX_OBJC_EXCEPTIONS    
 
     return nullptr;
@@ -1422,7 +1426,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() con
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    return AccessibilityUIElement::create(attributeValue(NSAccessibilityHorizontalScrollBarAttribute).get());
+    if (id scrollbar = attributeValue(NSAccessibilityHorizontalScrollBarAttribute).get())
+        return AccessibilityUIElement::create(scrollbar);
     END_AX_OBJC_EXCEPTIONS    
 
     return nullptr;
@@ -1434,7 +1439,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() const
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    return AccessibilityUIElement::create(attributeValue(NSAccessibilityVerticalScrollBarAttribute).get());
+    if (id scrollbar = attributeValue(NSAccessibilityVerticalScrollBarAttribute).get())
+        return AccessibilityUIElement::create(scrollbar);
     END_AX_OBJC_EXCEPTIONS        
 
     return nullptr;
