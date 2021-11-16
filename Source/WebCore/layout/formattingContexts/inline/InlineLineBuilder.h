@@ -39,8 +39,9 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
-    LineBuilder(const InlineFormattingContext&, const InlineItems&);
+    enum class IsIntrinsicWidthMode { No, Yes };
+    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, IsIntrinsicWidthMode = IsIntrinsicWidthMode::No);
+    LineBuilder(const InlineFormattingContext&, const InlineItems&, IsIntrinsicWidthMode = IsIntrinsicWidthMode::Yes);
 
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
@@ -120,6 +121,7 @@ private:
 
 private:
     bool m_isFirstLine { false };
+    bool m_isIntrinsicWidthMode { false };
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
     FloatingState* m_floatingState { nullptr };

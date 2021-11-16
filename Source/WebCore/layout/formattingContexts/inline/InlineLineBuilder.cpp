@@ -268,8 +268,9 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
-    : m_inlineFormattingContext(inlineFormattingContext)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, IsIntrinsicWidthMode isIntrinsicWidthMode)
+    : m_isIntrinsicWidthMode(isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes)
+    , m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineFormattingState(&inlineFormattingContext.formattingState())
     , m_floatingState(&floatingState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
@@ -278,8 +279,9 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Float
 {
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems)
-    : m_inlineFormattingContext(inlineFormattingContext)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, IsIntrinsicWidthMode isIntrinsicWidthMode)
+    : m_isIntrinsicWidthMode(isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes)
+    , m_inlineFormattingContext(inlineFormattingContext)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
 {
@@ -547,6 +549,11 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
         auto textIndent = root.style().textIndent();
         if (textIndent == RenderStyle::initialTextIndent())
             return { };
+        if (m_isIntrinsicWidthMode && textIndent.isPercent()) {
+            // Percentages must be treated as 0 for the purpose of calculating intrinsic size contributions.
+            // https://drafts.csswg.org/css-text/#text-indent-property
+            return { };
+        }
         return { minimumValueForLength(textIndent, initialLineLogicalRect.width()) };
     };
     lineLogicalLeft += computedTextIndent();
