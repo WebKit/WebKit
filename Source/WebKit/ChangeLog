@@ -1,3 +1,18 @@
+2021-11-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Adjust graphics related message filter
+        https://bugs.webkit.org/show_bug.cgi?id=233151
+        <rdar://problem/85430575>
+
+        Reviewed by Brent Fulgham.
+
+        Adjust graphics related message filter in the WebContent process' sandbox on iOS. This patch unifies
+        the filter for different OS versions.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-11-16  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit::WebPageProxy::commitProvisionalPage()
