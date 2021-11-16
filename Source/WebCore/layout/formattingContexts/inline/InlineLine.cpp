@@ -343,17 +343,27 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         auto contentLogicalRight = runLogicalLeft + logicalWidth + m_clonedEndDecorationWidthForInlineBoxRuns;
         m_contentLogicalWidth = std::max(oldContentLogicalWidth, contentLogicalRight);
     } else if (style.letterSpacing() >= 0) {
-        m_runs.last().expand(inlineTextItem, logicalWidth);
-        m_contentLogicalWidth += logicalWidth;
+        auto& lastRun = m_runs.last();
+        lastRun.expand(inlineTextItem, logicalWidth);
+        // Ensure that property values that act like negative margin are not making the line wider.
+        m_contentLogicalWidth = std::max(oldContentLogicalWidth, lastRun.logicalRight());
     } else {
         auto& lastRun = m_runs.last();
         ASSERT(lastRun.isText());
         // Negative letter spacing should only shorten the content to the boundary of the previous run.
         // FIXME: We may need to traverse all the way to the previous non-text run (or even across inline boxes).
-        auto lastRunLogicalWidth = lastRun.logicalWidth();
-        auto contentWidthWithoutLastTextRun = m_contentLogicalWidth - std::max(0.f, lastRunLogicalWidth);
+        auto contentWidthWithoutLastTextRun = [&] {
+            if (style.fontCascade().wordSpacing() >= 0)
+                return m_contentLogicalWidth - std::max(0.f, lastRun.logicalWidth());
+            // FIXME: Let's see if we need to optimize for this is the rare case of both letter and word spacing being negative.
+            auto rightMostPosition = InlineLayoutUnit { };
+            for (auto& run : makeReversedRange(m_runs))
+                rightMostPosition = std::max(rightMostPosition, run.logicalRight());
+            return std::max(0.f, rightMostPosition);
+        }();
+        auto lastRunLogicalRight = lastRun.logicalRight();
         lastRun.expand(inlineTextItem, logicalWidth);
-        m_contentLogicalWidth = std::max(contentWidthWithoutLastTextRun, lastRunLogicalWidth + logicalWidth);
+        m_contentLogicalWidth = std::max(contentWidthWithoutLastTextRun, lastRunLogicalRight + logicalWidth);
     }
 
     // Handle trailing content, specifically whitespace and letter spacing.
