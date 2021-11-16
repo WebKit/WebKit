@@ -4842,7 +4842,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-html-w-m-001.html [ Imag
 imported/w3c/web-platform-tests/css/css-contain/contain-html-w-m-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-w-m-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-w-m-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-layout-019.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-026.html [ ImageOnlyFailure ]
 
 # Flaky css-contain test
