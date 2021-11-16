@@ -1,3 +1,38 @@
+2021-11-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r285811. rdar://problem/85341122
+
+    Declare NSTextListMarker* as type NSTextListMarkerFormat when soft-linking
+    https://bugs.webkit.org/show_bug.cgi?id=233064
+    rdar://85341122
+    
+    Reviewed by Tim Horton.
+    
+    Followup to r285744. Avoid build errors due to defining these constants as a different type of symbol
+    (NSString * vs. NSTextListMarkerFormat). To address this, we directly import `NSTextList.h` if it's available in
+    the SDK; otherwise, fall back to defining NSTextListMarkerFormat. In both cases, we need to keep soft linking
+    each of these constants, since WebCore cannot explicitly link against UIKit.
+    
+    * pal/spi/cocoa/NSAttributedStringSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285811 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Declare NSTextListMarker* as type NSTextListMarkerFormat when soft-linking
+            https://bugs.webkit.org/show_bug.cgi?id=233064
+            rdar://85341122
+
+            Reviewed by Tim Horton.
+
+            Followup to r285744. Avoid build errors due to defining these constants as a different type of symbol
+            (NSString * vs. NSTextListMarkerFormat). To address this, we directly import `NSTextList.h` if it's available in
+            the SDK; otherwise, fall back to defining NSTextListMarkerFormat. In both cases, we need to keep soft linking
+            each of these constants, since WebCore cannot explicitly link against UIKit.
+
+            * pal/spi/cocoa/NSAttributedStringSPI.h:
+
 2021-11-13  Tim Horton  <timothy_horton@apple.com>
 
         Clean up IOKit SPI headers
