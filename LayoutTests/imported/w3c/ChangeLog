@@ -1,3 +1,14 @@
+2021-11-16  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain] Support contain:paint
+        https://bugs.webkit.org/show_bug.cgi?id=224742
+
+        Reviewed by Alan Bujtas.
+
+        Adjust test expectation now that contain: strict is supported.
+
+        * web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt:
+
 2021-11-16  Andreu Botella  <andreu@andreubotella.com>
 
         Empty <input type=file> is represented incorrectly in FormData

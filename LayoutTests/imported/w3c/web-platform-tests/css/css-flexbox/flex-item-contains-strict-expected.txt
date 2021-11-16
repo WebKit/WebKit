@@ -1,17 +1,13 @@
 Stretched:
 
-Column
 
-Row
 
 Column
 
 Row
 Flex-start:
 
-Column
 
-Row
 
 Column
 

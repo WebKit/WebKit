@@ -2317,7 +2317,7 @@ static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderOb
         if (is<RenderBlock>(renderer)) {
             // For fixed height styles, if the overflow size of the element spills out of the specified
             // height, assume we can apply text auto-sizing.
-            if (style.overflowY() == Overflow::Visible
+            if (downcast<RenderBlock>(renderer).effectiveOverflowY() == Overflow::Visible
                 && style.height().value() < downcast<RenderBlock>(renderer).layoutOverflowRect().maxY())
                 return RenderObject::OverflowHeight;
         }
@@ -2405,6 +2405,22 @@ WeakPtr<RenderBlockFlow> RenderElement::backdropRenderer() const
 void RenderElement::setBackdropRenderer(RenderBlockFlow& renderer)
 {
     ensureRareData().backdropRenderer = renderer;
+}
+
+Overflow RenderElement::effectiveOverflowX() const
+{
+    auto overflowX = style().overflowX();
+    if (paintContainmentApplies() && overflowX == Overflow::Visible)
+        return Overflow::Clip;
+    return overflowX;
+}
+
+Overflow RenderElement::effectiveOverflowY() const
+{
+    auto overflowY = style().overflowY();
+    if (paintContainmentApplies() && overflowY == Overflow::Visible)
+        return Overflow::Clip;
+    return overflowY;
 }
 
 }
