@@ -1,3 +1,17 @@
+2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Vertex and fragment shaders are not hooked up to pipeline creation
+        https://bugs.webkit.org/show_bug.cgi?id=233166
+
+        Reviewed by Dean Jackson.
+
+        I simply forgot to implement them in r285831.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::supportedLimits):
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::convertToBacking):
+
 2021-11-15  Sam Weinig  <weinig@apple.com>
 
         Add another <model> backend backed by SceneKit to prove out ModelPlayer infrastructure a bit more

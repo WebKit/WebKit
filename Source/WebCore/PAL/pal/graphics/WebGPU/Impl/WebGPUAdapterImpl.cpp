@@ -89,7 +89,9 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
 static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
 {
     WGPUSupportedLimits limits;
-    wgpuAdapterGetLimits(adapter, &limits);
+    limits.nextInChain = nullptr;
+    auto result = wgpuAdapterGetLimits(adapter, &limits);
+    ASSERT_UNUSED(result, result);
     return SupportedLimits::create(
         limits.limits.maxTextureDimension1D,
         limits.limits.maxTextureDimension2D,

@@ -42,7 +42,7 @@ public:
         return adoptRef(*new RenderBundleEncoderImpl(renderBundleEncoder, convertToBackingContext));
     }
 
-    ~RenderBundleEncoderImpl();
+    virtual ~RenderBundleEncoderImpl();
 
 private:
     friend class DowncastConvertToBackingContext;

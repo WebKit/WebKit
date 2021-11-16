@@ -42,7 +42,7 @@ public:
         return adoptRef(*new RenderPassEncoderImpl(renderPassEncoder, convertToBackingContext));
     }
 
-    ~RenderPassEncoderImpl();
+    virtual ~RenderPassEncoderImpl();
 
 private:
     friend class DowncastConvertToBackingContext;

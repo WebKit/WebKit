@@ -43,7 +43,7 @@ public:
         return adoptRef(*new DeviceImpl(device, WTFMove(features), WTFMove(limits), convertToBackingContext));
     }
 
-    ~DeviceImpl();
+    virtual ~DeviceImpl();
 
 private:
     friend class DowncastConvertToBackingContext;

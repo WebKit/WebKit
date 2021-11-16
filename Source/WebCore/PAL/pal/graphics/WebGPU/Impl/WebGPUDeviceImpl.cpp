@@ -235,8 +235,18 @@ Ref<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor& d
 {
     auto label = descriptor.label.utf8();
 
+    auto source = descriptor.code.utf8();
+
+    WGPUShaderModuleWGSLDescriptor backingWGSLDescriptor {
+        {
+            nullptr,
+            WGPUSType_ShaderModuleWGSLDescriptor,
+        },
+        source.data(),
+    };
+
     WGPUShaderModuleDescriptor backingDescriptor {
-        nullptr,
+        &backingWGSLDescriptor.chain,
         label.data(),
     };
 
@@ -250,10 +260,10 @@ auto convertToBacking(const ComputePipelineDescriptor& descriptor, ConvertToBack
 
     auto entryPoint = descriptor.compute.entryPoint.utf8();
 
-    Vector<CString> keys;
-    keys.reserveInitialCapacity(descriptor.compute.constants.size());
+    Vector<CString> constantNames;
+    constantNames.reserveInitialCapacity(descriptor.compute.constants.size());
     for (const auto& constant : descriptor.compute.constants)
-        keys.uncheckedAppend(constant.key.utf8());
+        constantNames.uncheckedAppend(constant.key.utf8());
 
     Vector<WGPUConstantEntry> backingConstantEntries;
     backingConstantEntries.reserveInitialCapacity(descriptor.compute.constants.size());
@@ -261,7 +271,7 @@ auto convertToBacking(const ComputePipelineDescriptor& descriptor, ConvertToBack
         const auto& constant = descriptor.compute.constants[i];
         backingConstantEntries.uncheckedAppend(WGPUConstantEntry {
             nullptr,
-            keys[i].data(),
+            constantNames[i].data(),
             constant.value
         });
     }
@@ -292,6 +302,24 @@ template <typename T>
 auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
 {
     auto label = descriptor.label.utf8();
+
+    auto vertexEntryPoint = descriptor.vertex.entryPoint.utf8();
+
+    Vector<CString> vertexConstantNames;
+    vertexConstantNames.reserveInitialCapacity(descriptor.vertex.constants.size());
+    for (const auto& constant : descriptor.vertex.constants)
+        vertexConstantNames.uncheckedAppend(constant.key.utf8());
+
+    Vector<WGPUConstantEntry> vertexConstantEntries;
+    vertexConstantEntries.reserveInitialCapacity(descriptor.vertex.constants.size());
+    for (size_t i = 0; i < descriptor.vertex.constants.size(); ++i) {
+        const auto& constant = descriptor.vertex.constants[i];
+        vertexConstantEntries.uncheckedAppend(WGPUConstantEntry {
+            nullptr,
+            vertexConstantNames[i].data(),
+            constant.value,
+        });
+    }
 
     Vector<Vector<WGPUVertexAttribute>> backingAttributes;
     backingAttributes.reserveInitialCapacity(descriptor.vertex.buffers.size());
@@ -345,6 +373,28 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
         descriptor.depthStencil ? descriptor.depthStencil->depthBiasClamp : 0,
     };
 
+    auto fragmentEntryPoint = descriptor.fragment ? descriptor.fragment->entryPoint.utf8() : CString("");
+
+    Vector<CString> fragmentConstantNames;
+    if (descriptor.fragment) {
+        fragmentConstantNames.reserveInitialCapacity(descriptor.fragment->constants.size());
+        for (const auto& constant : descriptor.fragment->constants)
+            fragmentConstantNames.uncheckedAppend(constant.key.utf8());
+    }
+
+    Vector<WGPUConstantEntry> fragmentConstantEntries;
+    if (descriptor.fragment) {
+        fragmentConstantEntries.reserveInitialCapacity(descriptor.fragment->constants.size());
+        for (size_t i = 0; i < descriptor.fragment->constants.size(); ++i) {
+            const auto& constant = descriptor.fragment->constants[i];
+            fragmentConstantEntries.uncheckedAppend(WGPUConstantEntry {
+                nullptr,
+                fragmentConstantNames[i].data(),
+                constant.value,
+            });
+        }
+    }
+
     Vector<std::optional<WGPUBlendState>> blendStates;
     if (descriptor.fragment) {
         blendStates.reserveInitialCapacity(descriptor.fragment->targets.size());
@@ -382,10 +432,10 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
 
     WGPUFragmentState fragmentState {
         nullptr,
-        nullptr,
-        nullptr,
-        0,
-        nullptr,
+        descriptor.fragment ? convertToBackingContext.convertToBacking(descriptor.fragment->module) : nullptr,
+        fragmentEntryPoint.data(),
+        static_cast<uint32_t>(fragmentConstantEntries.size()),
+        fragmentConstantEntries.data(),
         static_cast<uint32_t>(colorTargets.size()),
         colorTargets.data(),
     };
@@ -395,10 +445,10 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
         label.data(),
         descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.layout) : nullptr, {
             nullptr,
-            nullptr,
-            nullptr,
-            0,
-            nullptr,
+            convertToBackingContext.convertToBacking(descriptor.vertex.module),
+            vertexEntryPoint.data(),
+            static_cast<uint32_t>(vertexConstantEntries.size()),
+            vertexConstantEntries.data(),
             static_cast<uint32_t>(backingBuffers.size()),
             backingBuffers.data(),
         }, {
