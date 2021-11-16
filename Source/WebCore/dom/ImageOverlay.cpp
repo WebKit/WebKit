@@ -63,7 +63,7 @@ static const AtomString& imageOverlayElementIdentifier()
     return identifier;
 }
 
-static const AtomString& imageOverlayDataDetectorClassName()
+static const AtomString& imageOverlayDataDetectorClass()
 {
     static MainThreadNeverDestroyed<const AtomString> className("image-overlay-data-detector-result", AtomString::ConstructFromLiteral);
     return className;
@@ -80,6 +80,12 @@ static const AtomString& imageOverlayLineClass()
 static const AtomString& imageOverlayTextClass()
 {
     static MainThreadNeverDestroyed<const AtomString> className("image-overlay-text", AtomString::ConstructFromLiteral);
+    return className;
+}
+
+static const AtomString& imageOverlayBlockClass()
+{
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-block", AtomString::ConstructFromLiteral);
     return className;
 }
 
@@ -106,7 +112,7 @@ static RefPtr<HTMLElement> imageOverlayHost(const Node& node)
 
 bool isDataDetectorResult(const HTMLElement& element)
 {
-    return imageOverlayHost(element) && element.hasClass() && element.classNames().contains(imageOverlayDataDetectorClassName());
+    return imageOverlayHost(element) && element.hasClass() && element.classNames().contains(imageOverlayDataDetectorClass());
 }
 
 bool isInsideOverlay(const SimpleRange& range)
@@ -191,6 +197,7 @@ struct Elements {
     RefPtr<HTMLDivElement> root;
     Vector<LineElements> lines;
     Vector<Ref<HTMLDivElement>> dataDetectors;
+    Vector<Ref<HTMLDivElement>> blocks;
 };
 
 static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult& result)
@@ -229,17 +236,26 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
     }
 
     if (elements.root) {
-        for (auto& lineOrDataDetector : childrenOfType<HTMLDivElement>(*elements.root)) {
-            if (!lineOrDataDetector.hasClass())
+        for (auto& childElement : childrenOfType<HTMLDivElement>(*elements.root)) {
+            if (!childElement.hasClass())
                 continue;
 
-            if (lineOrDataDetector.classList().contains(imageOverlayLineClass())) {
-                LineElements lineElements { lineOrDataDetector, { } };
-                for (auto& text : childrenOfType<HTMLDivElement>(lineOrDataDetector))
-                    lineElements.children.append(text);
-                elements.lines.append(WTFMove(lineElements));
-            } else if (lineOrDataDetector.classList().contains(imageOverlayDataDetectorClassName()))
-                elements.dataDetectors.append(lineOrDataDetector);
+            auto& classes = childElement.classList();
+            if (classes.contains(imageOverlayDataDetectorClass())) {
+                elements.dataDetectors.append(childElement);
+                continue;
+            }
+
+            if (classes.contains(imageOverlayBlockClass())) {
+                elements.blocks.append(childElement);
+                continue;
+            }
+
+            ASSERT(classes.contains(imageOverlayLineClass()));
+            LineElements lineElements { childElement, { } };
+            for (auto& text : childrenOfType<HTMLDivElement>(childElement))
+                lineElements.children.append(text);
+            elements.lines.append(WTFMove(lineElements));
         }
 
         bool canUseExistingElements = ([&] {
@@ -247,6 +263,9 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 return false;
 
             if (result.lines.size() != elements.lines.size())
+                return false;
+
+            if (result.blocks.size() != elements.blocks.size())
                 return false;
 
             for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
@@ -259,6 +278,11 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                     if (childResults[childIndex].text != childTextElements[childIndex]->textContent().stripWhiteSpace())
                         return false;
                 }
+            }
+
+            for (size_t index = 0; index < result.blocks.size(); ++index) {
+                if (result.blocks[index].text != elements.blocks[index]->textContent())
+                    return false;
             }
 
             return true;
@@ -310,11 +334,20 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         elements.dataDetectors.reserveInitialCapacity(result.dataDetectors.size());
         for (auto& dataDetector : result.dataDetectors) {
             auto dataDetectorContainer = DataDetection::createElementForImageOverlay(document.get(), dataDetector);
-            dataDetectorContainer->classList().add(imageOverlayDataDetectorClassName());
+            dataDetectorContainer->classList().add(imageOverlayDataDetectorClass());
             rootContainer->appendChild(dataDetectorContainer);
             elements.dataDetectors.uncheckedAppend(WTFMove(dataDetectorContainer));
         }
 #endif // ENABLE(DATA_DETECTION)
+
+        elements.blocks.reserveInitialCapacity(result.blocks.size());
+        for (auto& block : result.blocks) {
+            auto blockContainer = HTMLDivElement::create(document.get());
+            blockContainer->classList().add(imageOverlayBlockClass());
+            rootContainer->appendChild(blockContainer);
+            blockContainer->appendChild(Text::create(document.get(), makeString('\n', block.text)));
+            elements.blocks.uncheckedAppend(WTFMove(blockContainer));
+        }
 
         if (document->quirks().needsToForceUserSelectWhenInstallingImageOverlay())
             element.setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
@@ -328,6 +361,20 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
     }
 
     return elements;
+}
+
+static RotatedRect fitElementToQuad(HTMLElement& container, const FloatQuad& quad)
+{
+    auto bounds = rotatedBoundingRectWithMinimumAngleOfRotation(quad, 0.01);
+    container.setInlineStyleProperty(CSSPropertyWidth, bounds.size.width(), CSSUnitType::CSS_PX);
+    container.setInlineStyleProperty(CSSPropertyHeight, bounds.size.height(), CSSUnitType::CSS_PX);
+    container.setInlineStyleProperty(CSSPropertyTransform, makeString(
+        "translate("_s,
+        std::round(bounds.center.x() - (bounds.size.width() / 2)), "px, "_s,
+        std::round(bounds.center.y() - (bounds.size.height() / 2)), "px) "_s,
+        bounds.angleInRadians ? makeString("rotate("_s, bounds.angleInRadians, "rad) "_s) : emptyString()
+    ));
+    return bounds;
 }
 
 void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognitionResult& result, CacheTextRecognitionResults cacheTextRecognitionResults)
@@ -362,16 +409,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         if (lineQuad.isEmpty())
             continue;
 
-        auto lineBounds = rotatedBoundingRectWithMinimumAngleOfRotation(lineQuad, 0.01);
-        lineContainer->setInlineStyleProperty(CSSPropertyWidth, lineBounds.size.width(), CSSUnitType::CSS_PX);
-        lineContainer->setInlineStyleProperty(CSSPropertyHeight, lineBounds.size.height(), CSSUnitType::CSS_PX);
-        lineContainer->setInlineStyleProperty(CSSPropertyTransform, makeString(
-            "translate("_s,
-            std::round(lineBounds.center.x() - (lineBounds.size.width() / 2)), "px, "_s,
-            std::round(lineBounds.center.y() - (lineBounds.size.height() / 2)), "px) "_s,
-            lineBounds.angleInRadians ? makeString("rotate("_s, lineBounds.angleInRadians, "rad) "_s) : emptyString()
-        ));
-
+        auto lineBounds = fitElementToQuad(lineContainer.get(), lineQuad);
         auto offsetAlongHorizontalAxis = [&](const FloatPoint& quadPoint1, const FloatPoint& quadPoint2) {
             auto intervalLength = lineBounds.size.width();
             auto mid = midPoint(quadPoint1, quadPoint2);
@@ -451,19 +489,27 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         if (dataDetector.normalizedQuads.isEmpty())
             continue;
 
+        auto firstQuad = dataDetector.normalizedQuads.first();
+        if (firstQuad.isEmpty())
+            continue;
+
         // FIXME: We should come up with a way to coalesce the bounding quads into one or more rotated rects with the same angle of rotation.
-        auto targetQuad = convertToContainerCoordinates(dataDetector.normalizedQuads.first());
-        auto targetBounds = rotatedBoundingRectWithMinimumAngleOfRotation(targetQuad, 0.01);
-        dataDetectorContainer->setInlineStyleProperty(CSSPropertyWidth, targetBounds.size.width(), CSSUnitType::CSS_PX);
-        dataDetectorContainer->setInlineStyleProperty(CSSPropertyHeight, targetBounds.size.height(), CSSUnitType::CSS_PX);
-        dataDetectorContainer->setInlineStyleProperty(CSSPropertyTransform, makeString(
-            "translate("_s,
-            std::round(targetBounds.center.x() - (targetBounds.size.width() / 2)), "px, "_s,
-            std::round(targetBounds.center.y() - (targetBounds.size.height() / 2)), "px) "_s,
-            targetBounds.angleInRadians ? makeString("rotate("_s, targetBounds.angleInRadians, "rad) "_s) : emptyString()
-        ));
+        fitElementToQuad(dataDetectorContainer.get(), convertToContainerCoordinates(firstQuad));
     }
 #endif // ENABLE(DATA_DETECTION)
+
+    ASSERT(result.blocks.size() == elements.blocks.size());
+    for (size_t index = 0; index < result.blocks.size(); ++index) {
+        auto& block = result.blocks[index];
+        if (block.normalizedQuad.isEmpty())
+            continue;
+
+        auto blockContainer = elements.blocks[index];
+        auto bounds = fitElementToQuad(blockContainer.get(), convertToContainerCoordinates(block.normalizedQuad));
+        // FIXME: We'll need a smarter algorithm here that chooses the largest font size for the container without
+        // vertically overflowing the container.
+        blockContainer->setInlineStyleProperty(CSSPropertyFontSize, std::round(0.8 * bounds.size.height()), CSSUnitType::CSS_PX);
+    }
 
     if (RefPtr frame = document->frame())
         frame->eventHandler().scheduleCursorUpdate();
