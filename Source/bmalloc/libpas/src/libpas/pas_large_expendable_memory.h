@@ -51,10 +51,12 @@ struct pas_large_expendable_memory {
 #define PAS_LARGE_EXPENDABLE_MEMORY_TOTAL_SIZE \
     (PAS_LARGE_EXPENDABLE_MEMORY_HEADER_SIZE + PAS_LARGE_EXPENDABLE_MEMORY_PAYLOAD_SIZE)
 
+#if PAS_COMPILER(CLANG)
 _Static_assert(PAS_LARGE_EXPENDABLE_MEMORY_ALIGNMENT > PAS_LARGE_EXPENDABLE_MEMORY_PAYLOAD_SIZE,
                "Large expendable memory should be aligned more so than the payload size.");
 _Static_assert(PAS_LARGE_EXPENDABLE_MEMORY_ALIGNMENT > PAS_LARGE_EXPENDABLE_MEMORY_TOTAL_SIZE,
                "Large expendable memory should be aligned more so than the total size.");
+#endif
 
 PAS_API extern pas_large_expendable_memory* pas_large_expendable_memory_head;
 

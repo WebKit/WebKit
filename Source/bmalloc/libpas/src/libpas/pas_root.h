@@ -26,10 +26,13 @@
 #ifndef PAS_ROOT_H
 #define PAS_ROOT_H
 
-#include <malloc/malloc.h>
 #include "pas_heap.h"
 #include "pas_thread_local_cache_layout_node.h"
 #include "pas_utils.h"
+
+#if PAS_OS(DARWIN)
+#include <malloc/malloc.h>
+#endif
 
 PAS_BEGIN_EXTERN_C;
 
@@ -98,6 +101,7 @@ struct pas_root {
 PAS_API void pas_root_construct(pas_root* root);
 PAS_API pas_root* pas_root_create(void);
 
+#if PAS_OS(DARWIN)
 PAS_API kern_return_t pas_root_enumerate_for_libmalloc(pas_root* remote_root,
                                                        task_t task,
                                                        void* context,
@@ -118,6 +122,7 @@ PAS_API extern pas_root* pas_root_for_libmalloc_enumeration;
 /* This creates the root used for libmalloc enumeration, if there wasn't one already. Clients of
    libpas can choose not to call this, for example because they want to set up enumeration manually. */
 PAS_API pas_root* pas_root_ensure_for_libmalloc_enumeration(void);
+#endif
 
 PAS_END_EXTERN_C;
 

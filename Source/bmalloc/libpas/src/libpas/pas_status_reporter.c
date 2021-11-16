@@ -226,6 +226,8 @@ static void report_segregated_directory_contents(
         
         view = pas_segregated_directory_get(directory, index);
 
+        PAS_UNUSED_PARAM(view);
+
         pas_stream_printf(
             stream, "%c",
             pas_segregated_view_kind_get_character_code(
@@ -663,7 +665,7 @@ static bool dump_large_sharing_pool_node_callback(pas_large_sharing_node* node,
                       node->num_live_bytes,
                       pas_range_size(node->range),
                       100. * (double)node->num_live_bytes / (double)pas_range_size(node->range),
-                      node->use_epoch);
+                      (unsigned long long)node->use_epoch);
 
     if (node->synchronization_style != pas_physical_memory_is_locked_by_virtual_range_common_lock) {
         pas_stream_printf(

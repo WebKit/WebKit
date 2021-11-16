@@ -464,6 +464,8 @@ pas_segregated_size_directory_select_allocator_slow(
                 a_view = a_allocator->u.allocator.view;
                 b_view = b_allocator->u.allocator.view;
 
+                PAS_UNUSED_PARAM(b_view);
+
                 if (!a_view)
                     selected_index = a_index;
                 else
@@ -604,6 +606,8 @@ take_last_empty_should_consider_view_parallel(
 
     data = config->arg;
 
+    PAS_UNUSED_PARAM(data);
+
     return segment.empty_bits;
 }
 
@@ -617,7 +621,6 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
 
     take_last_empty_data* data;
     pas_segregated_directory* directory;
-    pas_segregated_size_directory* size_directory;
     pas_deferred_decommit_log* decommit_log;
     pas_lock_hold_mode heap_lock_hold_mode;
     pas_segregated_page_config* my_page_config_ptr;
@@ -638,7 +641,6 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
     if (!did_take_bit)
         return false;
 
-    size_directory = (pas_segregated_size_directory*)directory;
     generic_view = pas_segregated_directory_get(directory, index);
     PAS_ASSERT(pas_segregated_view_is_exclusive(generic_view));
     view = pas_segregated_view_get_exclusive(generic_view);

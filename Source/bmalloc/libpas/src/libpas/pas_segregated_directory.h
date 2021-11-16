@@ -157,10 +157,10 @@ struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_segregated_directory_data {
 
 #define PAS_SEGREGATED_DIRECTORY_INITIALIZER(page_config_kind_argument, sharing_mode_argument, directory_kind_argument) \
     ((pas_segregated_directory){ \
-        .page_config_kind = page_config_kind_argument, \
         .first_view = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
         .data = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
         .bits = 0, \
+        .page_config_kind = page_config_kind_argument, \
         .sharing_mode = (sharing_mode_argument), \
         .directory_kind = (directory_kind_argument), \
         .is_basic_size_directory = false \

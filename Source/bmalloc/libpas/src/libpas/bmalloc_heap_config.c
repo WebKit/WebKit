@@ -36,6 +36,8 @@
 #include "pas_heap_config_utils_inlines.h"
 #include "pas_root.h"
 
+PAS_BEGIN_EXTERN_C;
+
 pas_heap_config bmalloc_heap_config = BMALLOC_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
@@ -45,14 +47,20 @@ PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
 
 void bmalloc_heap_config_activate(void)
 {
+#if PAS_OS(DARWIN)
     static const bool register_with_libmalloc = true;
+#endif
     
     pas_designated_intrinsic_heap_initialize(&bmalloc_common_primitive_heap.segregated_heap,
                                              &bmalloc_heap_config);
 
+#if PAS_OS(DARWIN)
     if (register_with_libmalloc && !pas_debug_heap_is_enabled(pas_heap_config_kind_bmalloc))
         pas_root_ensure_for_libmalloc_enumeration();
+#endif
 }
+
+PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_BMALLOC */
 

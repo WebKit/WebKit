@@ -369,6 +369,7 @@ void pas_enumerator_record_page_payload_and_meta(pas_enumerator* enumerator,
                 end = PAS_CLIP((granule_index + 1) * granule_size,
                                payload_begin,
                                payload_end);
+                PAS_UNUSED_PARAM(begin);
                 
                 if (use_counts[granule_index] == PAS_PAGE_GRANULE_DECOMMITTED) {
                     record_payload_span(enumerator, page_boundary, span);

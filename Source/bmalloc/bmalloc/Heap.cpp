@@ -48,7 +48,7 @@
 
 namespace bmalloc {
 
-#if BUSE(LIBPAS)
+#if BUSE(LIBPAS) && BCOMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #endif
@@ -70,7 +70,7 @@ Heap::Heap(HeapKind kind, LockHolder&)
     
     m_scavenger = Scavenger::get();
 }
-#if BUSE(LIBPAS)
+#if BUSE(LIBPAS) && BCOMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
 

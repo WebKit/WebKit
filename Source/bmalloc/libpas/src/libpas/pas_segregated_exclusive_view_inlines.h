@@ -49,11 +49,8 @@ static PAS_ALWAYS_INLINE void pas_segregated_exclusive_view_did_start_allocating
 
     static const bool verbose = false;
 
-    unsigned view_index;
-
+    PAS_UNUSED_PARAM(view);
     PAS_UNUSED_PARAM(global_directory);
-
-    view_index = view->index;
 
     if (verbose)
         pas_log("Did start allocating in %p.\n", page);

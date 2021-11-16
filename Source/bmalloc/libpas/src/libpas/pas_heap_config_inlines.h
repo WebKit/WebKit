@@ -44,18 +44,18 @@ PAS_BEGIN_EXTERN_C;
     } \
     \
     PAS_NEVER_INLINE pas_allocation_result \
-    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases( \
-        pas_local_allocator* allocator) \
-    { \
-        return pas_local_allocator_try_allocate_inline_cases(allocator, (heap_config_value)); \
-    } \
-    \
-    PAS_NEVER_INLINE pas_allocation_result \
     lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_medium_segregated_with_free_bits( \
         pas_local_allocator* allocator) \
     { \
         return pas_local_allocator_try_allocate_with_free_bits( \
             allocator, (heap_config_value).medium_segregated_config); \
+    } \
+    \
+    PAS_NEVER_INLINE pas_allocation_result \
+    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases( \
+        pas_local_allocator* allocator) \
+    { \
+        return pas_local_allocator_try_allocate_inline_cases(allocator, (heap_config_value)); \
     } \
     \
     PAS_NEVER_INLINE pas_allocation_result \

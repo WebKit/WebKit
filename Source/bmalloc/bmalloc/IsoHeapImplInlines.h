@@ -38,7 +38,7 @@ IsoHeapImpl<Config>::IsoHeapImpl()
     , m_inlineDirectory(*this)
     , m_allocator(*this)
 {
-#if BUSE(LIBPAS)
+#if BUSE(LIBPAS) && BCOMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     RELEASE_BASSERT(!"Should not be using IsoHeapImpl if BUSE(LIBPAS)");

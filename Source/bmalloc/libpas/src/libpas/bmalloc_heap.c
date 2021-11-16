@@ -36,6 +36,8 @@
 #include "pas_ensure_heap_forced_into_reserved_memory.h"
 #include "pas_get_allocation_size.h"
 
+PAS_BEGIN_EXTERN_C;
+
 bmalloc_type bmalloc_common_primitive_type = BMALLOC_TYPE_INITIALIZER(1, 1, "Common Primitive");
 
 pas_intrinsic_heap_support bmalloc_common_primitive_heap_support =
@@ -358,6 +360,8 @@ size_t bmalloc_get_allocation_size(void* ptr)
 {
     return pas_get_allocation_size(ptr, BMALLOC_HEAP_CONFIG);
 }
+
+PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_BMALLOC */
 

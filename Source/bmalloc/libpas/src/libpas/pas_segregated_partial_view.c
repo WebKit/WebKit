@@ -108,12 +108,12 @@ void pas_segregated_partial_view_set_is_in_use_for_allocation(
     static const bool verbose = false;
     
     pas_segregated_shared_page_directory* shared_page_directory;
-    pas_segregated_directory* directory;
     size_t index;
 
     shared_page_directory = shared_handle->directory;
-    directory = &shared_page_directory->base;
     index = shared_view->index;
+
+    PAS_UNUSED_PARAM(shared_page_directory);
 
     if (verbose) {
         pas_log("Setting partial %p, shared %p (index %zu) as in use for allocation.\n",

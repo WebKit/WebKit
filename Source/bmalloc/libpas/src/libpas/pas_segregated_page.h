@@ -155,6 +155,7 @@ pas_segregated_page_offset_from_page_boundary_to_first_object_for_hugging_mode(
             ((page_config.base.page_size - page_config.base.page_object_payload_offset) /
              object_size) * object_size);
     }
+    return 0;
 }
 
 static PAS_ALWAYS_INLINE unsigned 
@@ -179,6 +180,7 @@ pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_
               object_size - 1) /
              object_size) * object_size);
     }
+    return 0;
 }
 
 static PAS_ALWAYS_INLINE unsigned pas_segregated_page_useful_object_payload_size_for_hugging_mode(

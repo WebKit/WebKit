@@ -96,6 +96,16 @@
 #define BPLATFORM_PLAYSTATION 1
 #endif
 
+#if defined(BUILDING_GTK__)
+#define BPLATFORM_GTK 1
+#elif defined(BUILDING_WPE__)
+#define BPLATFORM_WPE 1
+#elif defined(BUILDING_JSCONLY__)
+/* JSCOnly does not provide BPLATFORM() macro */
+#elif BOS(WINDOWS)
+#define BPLATFORM_WIN 1
+#endif
+
 /* ==== Feature decision macros: these define feature choices for a particular port. ==== */
 
 #define BENABLE(WTF_FEATURE) (defined BENABLE_##WTF_FEATURE && BENABLE_##WTF_FEATURE)
@@ -315,7 +325,7 @@
 /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
 #if !defined(BENABLE_LIBPAS)
 /* Currently not enabling libpas on ARM64 (not ARM64E) on iOS family due to performance reason. */
-#if BCPU(ADDRESS64) && (BOS(MAC) || (BPLATFORM(COCOA) && (BCPU(X86_64) || BCPU(ARM64E))))
+#if BCPU(ADDRESS64) && (BOS(MAC) || (BPLATFORM(COCOA) && (BCPU(X86_64) || BCPU(ARM64E))) || (BOS(LINUX) && !BPLATFORM(GTK) && !BPLATFORM(WPE)))
 #define BENABLE_LIBPAS 1
 #else
 #define BENABLE_LIBPAS 0

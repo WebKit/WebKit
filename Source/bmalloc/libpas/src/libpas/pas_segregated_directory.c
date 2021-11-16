@@ -111,7 +111,7 @@ uint64_t pas_segregated_directory_get_use_epoch(pas_segregated_directory* direct
             pas_segregated_view_unlock_ownership_lock(view);
             if (use_epoch) {
                 if (verbose)
-                    pas_log("%p: returning epoch %llu for index %zu\n", directory, use_epoch, index);
+                    pas_log("%p: returning epoch %llu for index %zu\n", directory, (unsigned long long)use_epoch, index);
                 PAS_ASSERT(use_epoch);
                 return use_epoch;
             }

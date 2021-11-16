@@ -363,7 +363,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
         else
             count_exclusive++;
         pas_log("frees in partial = %llu, frees in exclusive = %llu.\n",
-                count_partial, count_exclusive);
+                (unsigned long long)count_partial, (unsigned long long)count_exclusive);
     }
     
     word = page->alloc_bits[word_index];
@@ -376,7 +376,11 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
             "btrl %1, %0\n\t"
             "jc 0f\n\t"
             "movq %2, %%rdi\n\t"
+#if PAS_OS(DARWIN)
             "call _pas_segregated_page_deallocation_did_fail\n\t"
+#else
+            "call pas_segregated_page_deallocation_did_fail\n\t"
+#endif
             "0:"
             : "+r"(new_word)
             : "r"((unsigned)bit_index_unmasked), "r"(begin)

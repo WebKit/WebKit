@@ -271,7 +271,7 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
         allocator->current_word = pas_reverse64(allocator->bits[current_offset]);
         if (verbose) {
             pas_log("Allocator %p using word %llx, reversed to %llx.\n",
-                    allocator, allocator->bits[current_offset], allocator->current_word);
+                    allocator, (unsigned long long)allocator->bits[current_offset], (unsigned long long)allocator->current_word);
         }
     } else if (page_config.variant == pas_small_segregated_page_config_variant)
         allocator->current_word = allocator->bits[current_offset];
@@ -1402,7 +1402,7 @@ pas_local_allocator_try_allocate_with_free_bits(
             uint64_t reversed_current_word;
             reversed_current_word = pas_reverse64(current_word);
             if (verbose)
-                pas_log("Original word = %llx, reversed = %llx\n", current_word, reversed_current_word);
+                pas_log("Original word = %llx, reversed = %llx\n", (unsigned long long)current_word, (unsigned long long)reversed_current_word);
             current_word = reversed_current_word;
         }
 
@@ -1412,13 +1412,13 @@ pas_local_allocator_try_allocate_with_free_bits(
 
     if (use_reversed_current_word) {
         if (verbose)
-            pas_log("current_word = %llx\n", current_word);
+            pas_log("current_word = %llx\n", (unsigned long long)current_word);
         found_bit_index = (uintptr_t)__builtin_clzll(current_word);
         if (verbose)
             pas_log("found_bit_index = %lu\n", found_bit_index);
         current_word &= ~(0x8000000000000000llu >> found_bit_index);
         if (verbose)
-            pas_log("new current_word = %llx\n", current_word);
+            pas_log("new current_word = %llx\n", (unsigned long long)current_word);
     } else {
         found_bit_index = (uintptr_t)__builtin_ctzll(current_word);
         current_word &= ~PAS_BITVECTOR_BIT_MASK64(found_bit_index);

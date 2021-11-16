@@ -278,6 +278,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
 
     size_of_payload = end_of_payload - start_of_payload;
     size_of_meta = page_config.base.page_size - size_of_payload;
+    PAS_UNUSED_PARAM(size_of_meta);
 
     if (!view->is_owned) {
         if (verbose)

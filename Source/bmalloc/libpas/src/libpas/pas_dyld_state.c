@@ -29,11 +29,14 @@
 
 #include "pas_dyld_state.h"
 
+#if PAS_OS(DARWIN)
 #include <mach/mach_init.h>
 #include <mach/task.h>
 #include <mach/task_info.h>
+#endif
 #include "pas_log.h"
 
+#if PAS_OS(DARWIN)
 /* This is copied from dyld_process_info_internal.h
  
    FIXME: Stop doing it this way. Dyld should give us the is_libsystem_initialized API
@@ -80,5 +83,14 @@ bool pas_dyld_is_libsystem_initialized(void)
 
     return infos->libSystemInitialized;
 }
+
+#else
+
+bool pas_dyld_is_libsystem_initialized(void)
+{
+    return true;
+}
+
+#endif
 
 #endif /* LIBPAS_ENABLED */

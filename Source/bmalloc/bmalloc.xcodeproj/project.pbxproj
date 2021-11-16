@@ -632,6 +632,7 @@
 		E328D84D23CEB38900545B18 /* Packed.h in Headers */ = {isa = PBXBuildFile; fileRef = E328D84C23CEB38900545B18 /* Packed.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E378A9DF246B68720029C2BB /* ObjectTypeTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E378A9DE246B686A0029C2BB /* ObjectTypeTable.cpp */; };
 		E378A9E0246B68750029C2BB /* ObjectTypeTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E378A9DD246B686A0029C2BB /* ObjectTypeTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E38A9E3C27426514000BBD49 /* pas_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = E38A9E3B27426514000BBD49 /* pas_platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3A413C9226061140037F470 /* IsoSharedPageInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A413C8226061140037F470 /* IsoSharedPageInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F24402225D2C0100A0E0C3 /* IsoSharedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F24401225D2C0100A0E0C3 /* IsoSharedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F24404225D2C7600A0E0C3 /* IsoSharedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F24403225D2C7600A0E0C3 /* IsoSharedPage.cpp */; };
@@ -1281,6 +1282,7 @@
 		E328D84C23CEB38900545B18 /* Packed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Packed.h; path = bmalloc/Packed.h; sourceTree = "<group>"; };
 		E378A9DD246B686A0029C2BB /* ObjectTypeTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjectTypeTable.h; path = bmalloc/ObjectTypeTable.h; sourceTree = "<group>"; };
 		E378A9DE246B686A0029C2BB /* ObjectTypeTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectTypeTable.cpp; path = bmalloc/ObjectTypeTable.cpp; sourceTree = "<group>"; };
+		E38A9E3B27426514000BBD49 /* pas_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_platform.h; path = libpas/src/libpas/pas_platform.h; sourceTree = "<group>"; };
 		E3A413C8226061140037F470 /* IsoSharedPageInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoSharedPageInlines.h; path = bmalloc/IsoSharedPageInlines.h; sourceTree = "<group>"; };
 		E3F24401225D2C0100A0E0C3 /* IsoSharedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoSharedPage.h; path = bmalloc/IsoSharedPage.h; sourceTree = "<group>"; };
 		E3F24403225D2C7600A0E0C3 /* IsoSharedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IsoSharedPage.cpp; path = bmalloc/IsoSharedPage.cpp; sourceTree = "<group>"; };
@@ -1735,6 +1737,7 @@
 				0FC40A372451498600876DA0 /* pas_physical_memory_synchronization_style.h */,
 				0FC40A6C2451498A00876DA0 /* pas_physical_memory_transaction.c */,
 				0FC40A352451498600876DA0 /* pas_physical_memory_transaction.h */,
+				E38A9E3B27426514000BBD49 /* pas_platform.h */,
 				0FC40A432451498700876DA0 /* pas_primitive_heap_ref.c */,
 				0FC40AF82451499400876DA0 /* pas_primitive_heap_ref.h */,
 				0F87005725AF8A1A000E1ABF /* pas_promote_intrinsic_heap.h */,
@@ -2391,6 +2394,7 @@
 				0F87007925AF8A1B000E1ABF /* pas_payload_reservation_page_list.h in Headers */,
 				0FC40B162451499400876DA0 /* pas_physical_memory_synchronization_style.h in Headers */,
 				0FC40B142451499400876DA0 /* pas_physical_memory_transaction.h in Headers */,
+				E38A9E3C27426514000BBD49 /* pas_platform.h in Headers */,
 				0FC40BD32451499400876DA0 /* pas_primitive_heap_ref.h in Headers */,
 				0F87007425AF8A1B000E1ABF /* pas_promote_intrinsic_heap.h in Headers */,
 				0F87006325AF8A1B000E1ABF /* pas_ptr_hash_map.h in Headers */,

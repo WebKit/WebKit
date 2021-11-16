@@ -49,11 +49,11 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_INTRINSIC_SEGREGATED_HEAP_INITIALIZER(parent_heap_ptr, support, passed_runtime_config) { \
         .runtime_config = (passed_runtime_config), \
-        .basic_size_directory_and_head = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
-        .small_index_upper_bound = PAS_NUM_INTRINSIC_SIZE_CLASSES, \
-        .index_to_small_size_directory = (support).index_to_size_directory, \
         .index_to_small_allocator_index = (support).index_to_allocator_index, \
+        .index_to_small_size_directory = (support).index_to_size_directory, \
+        .basic_size_directory_and_head = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
         .rare_data = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
+        .small_index_upper_bound = PAS_NUM_INTRINSIC_SIZE_CLASSES, \
     }
 
 #define PAS_INTRINSIC_HEAP_SEGREGATED_HEAP_FIELDS(heap_ptr, intrinsic_support, runtime_config) \
@@ -61,13 +61,13 @@ PAS_BEGIN_EXTERN_C;
             heap_ptr, intrinsic_support, runtime_config), \
 
 #define PAS_INTRINSIC_HEAP_INITIALIZER(heap_ptr, primitive_type, intrinsic_support, passed_config, runtime_config) { \
-        .type = (pas_heap_type*)(primitive_type), \
         PAS_INTRINSIC_HEAP_SEGREGATED_HEAP_FIELDS(heap_ptr, intrinsic_support, runtime_config) \
         .large_heap = { \
             .free_heap = PAS_FAST_LARGE_FREE_HEAP_INITIALIZER, \
+            .index = 0, \
             .table_state = pas_heap_table_state_uninitialized, \
-            .index = 0 \
         }, \
+        .type = (pas_heap_type*)(primitive_type), \
         .heap_ref = NULL, \
         .next_heap = PAS_COMPACT_PTR_INITIALIZER, \
         .config_kind = (passed_config).kind, \

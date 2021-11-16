@@ -57,11 +57,11 @@ typedef struct {
             pas_heap_config_kind kind; \
             \
             kind = arguments.page_config.heap_config_ptr->kind; \
-            PAS_ASSERT(kind < pas_heap_config_kind_num_kinds); \
-            data = enumerator->heap_config_datas[kind]; \
+            PAS_ASSERT((unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds); \
+            data = (pas_basic_heap_config_enumerator_data*)enumerator->heap_config_datas[kind]; \
             PAS_ASSERT(data); \
             \
-            return pas_ptr_hash_map_get(&data->page_header_table, boundary).value; \
+            return (pas_page_base*)pas_ptr_hash_map_get(&data->page_header_table, boundary).value; \
         } } \
         \
         PAS_ASSERT(!"Should not be reached"); \

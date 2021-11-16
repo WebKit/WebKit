@@ -37,6 +37,8 @@
 #include "pas_try_allocate_intrinsic.h"
 #include "pas_try_shrink.h"
 
+PAS_BEGIN_EXTERN_C;
+
 pas_heap jit_common_primitive_heap = PAS_INTRINSIC_HEAP_INITIALIZER(
     &jit_common_primitive_heap,
     NULL,
@@ -98,6 +100,8 @@ void jit_heap_deallocate(void* object)
 {
     pas_deallocate(object, JIT_HEAP_CONFIG);
 }
+
+PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_JIT */
 

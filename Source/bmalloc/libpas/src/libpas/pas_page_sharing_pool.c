@@ -127,7 +127,7 @@ static void verify_participants(pas_page_sharing_pool* pool)
 
             if (epoch < epoch_for_min_heap) {
                 pas_log("Bad epoch: epoch = %llu, epoch_for_min_heap = %llu\n",
-                        epoch, epoch_for_min_heap);
+                        (unsigned long long)epoch, (unsigned long long)epoch_for_min_heap);
                 PAS_ASSERT(epoch >= epoch_for_min_heap);
             }
             
@@ -192,7 +192,7 @@ static void dump_min_heap(pas_page_sharing_pool* pool)
             &pool->participant_by_epoch, index);
         
         pas_log("    %zu: %p, %llu\n", index, participant,
-                pas_page_sharing_participant_get_payload(participant)->use_epoch_for_min_heap);
+                (unsigned long long)pas_page_sharing_participant_get_payload(participant)->use_epoch_for_min_heap);
     }
 }
 
@@ -310,8 +310,8 @@ get_current_participant(pas_page_sharing_pool* pool,
                         participant,
                         pas_page_sharing_participant_kind_get_string(
                             pas_page_sharing_participant_get_kind(participant)));
-                pas_log("Use epoch = %llu\n", use_epoch);
-                pas_log("Use epoch for min heap = %llu\n", payload->use_epoch_for_min_heap);
+                pas_log("Use epoch = %llu\n", (unsigned long long)use_epoch);
+                pas_log("Use epoch for min heap = %llu\n", (unsigned long long)payload->use_epoch_for_min_heap);
             }
             if (use_epoch == payload->use_epoch_for_min_heap
                 && pas_page_sharing_participant_is_eligible(participant)) {
@@ -413,7 +413,7 @@ get_current_participant(pas_page_sharing_pool* pool,
             payload->use_epoch_for_min_heap = pas_page_sharing_participant_get_use_epoch(participant);
             if (verbose) {
                 pas_log("for participant %p set use epoch to %llu\n",
-                        participant, payload->use_epoch_for_min_heap);
+                        participant, (unsigned long long)payload->use_epoch_for_min_heap);
             }
             
             /* So: do we just set the delta_has_been_noted to false?
@@ -601,7 +601,7 @@ pas_page_sharing_pool_take_least_recently_used(
                     participant,
                     pas_page_sharing_participant_kind_get_string(
                         pas_page_sharing_participant_get_kind(participant)),
-                    epoch);
+                    (unsigned long long)epoch);
         }
         
         if (!participant) {
@@ -750,7 +750,7 @@ pas_physical_page_sharing_pool_scavenge(uint64_t max_epoch)
     size_t total_bytes;
     
     if (verbose)
-        pas_log("Doing scavenge up to %llu\n", max_epoch);
+        pas_log("Doing scavenge up to %llu\n", (unsigned long long)max_epoch);
 
     total_bytes = 0;
     

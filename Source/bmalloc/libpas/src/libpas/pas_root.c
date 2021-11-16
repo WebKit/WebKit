@@ -29,7 +29,6 @@
 
 #include "pas_root.h"
 
-#include <mach/mach_init.h>
 #include "pas_all_heaps.h"
 #include "pas_baseline_allocator_table.h"
 #include "pas_compact_heap_reservation.h"
@@ -42,6 +41,10 @@
 #include "pas_scavenger.h"
 #include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
+
+#if PAS_OS(DARWIN)
+#include <mach/mach_init.h>
+#endif
 
 static bool count_static_heaps_callback(pas_heap* heap, void* arg)
 {
@@ -152,6 +155,8 @@ pas_root* pas_root_create(void)
 
     return result;
 }
+
+#if PAS_OS(DARWIN)
 
 static kern_return_t default_reader(task_t task, vm_address_t address, vm_size_t size, void **ptr)
 {
@@ -384,4 +389,5 @@ pas_root* pas_root_ensure_for_libmalloc_enumeration(void)
     return root;
 }
 
+#endif
 #endif /* LIBPAS_ENABLED */

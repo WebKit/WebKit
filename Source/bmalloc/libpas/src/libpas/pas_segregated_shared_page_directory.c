@@ -222,7 +222,6 @@ take_last_empty_consider_view(
     /* We put our take_last_empty logic in consider_view because should_consider_view_parallel
        cannot really tell if a page can be taken. */
 
-    pas_segregated_shared_page_directory* shared_page_directory;
     pas_segregated_directory* directory;
     pas_segregated_directory_bit_reference bit_reference;
     size_t shared_view_index;
@@ -244,7 +243,6 @@ take_last_empty_consider_view(
     unsigned is_in_use_for_allocation_count;
 
     directory = config->directory;
-    shared_page_directory = (pas_segregated_shared_page_directory*)directory;
     bit_reference = config->bit_reference;
     shared_view_index = config->index;
 

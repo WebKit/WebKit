@@ -125,6 +125,8 @@ pas_page_sharing_participant_get_parent_pool(pas_page_sharing_participant partic
 
     ptr = pas_page_sharing_participant_get_ptr(participant);
 
+    PAS_UNUSED_PARAM(ptr);
+
     switch (pas_page_sharing_participant_get_kind(participant)) {
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Cannot get null participant's parent.");

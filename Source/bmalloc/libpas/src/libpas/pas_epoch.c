@@ -53,7 +53,7 @@ uint64_t pas_get_epoch(void)
 
     if (first) {
         if (verbose)
-            pas_log("first epoch = %llu\n", result);
+            pas_log("first epoch = %llu\n", (unsigned long long)result);
         first = false;
     }
 

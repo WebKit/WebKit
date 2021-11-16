@@ -100,7 +100,11 @@ static inline bool pas_lock_try_lock(pas_lock* lock)
 static inline void pas_lock_unlock(pas_lock* lock)
 {
     pas_race_test_will_unlock(lock);
+#if PAS_COMPILER(CLANG)
     __c11_atomic_store((_Atomic bool*)&lock->lock, false, __ATOMIC_SEQ_CST);
+#else
+    __atomic_store_n((bool*)&lock->lock, false, __ATOMIC_SEQ_CST);
+#endif
 }
 
 static inline void pas_lock_assert_held(pas_lock* lock)

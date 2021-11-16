@@ -28,9 +28,11 @@
 #if LIBPAS_ENABLED
 
 #include "pas_monotonic_time.h"
-
+#if PAS_OS(DARWIN)
 #include <mach/mach_time.h>
+#endif
 
+#if PAS_OS(DARWIN)
 static mach_timebase_info_data_t timebase_info;
 static mach_timebase_info_data_t* timebase_info_ptr;
 
@@ -64,5 +66,16 @@ uint64_t pas_get_current_monotonic_time_nanoseconds(void)
 
     return result;
 }
+
+#elif PAS_OS(LINUX)
+
+uint64_t pas_get_current_monotonic_time_nanoseconds(void)
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC_COARSE, &ts);
+    return ts.tv_sec * 1.0e9 + ts.tv_nsec;
+}
+
+#endif
 
 #endif /* LIBPAS_ENABLED */

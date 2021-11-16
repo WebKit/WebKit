@@ -196,10 +196,10 @@ struct pas_heap_config {
 #define PAS_HEAP_CONFIG_SPECIALIZATIONS(lower_case_heap_config_name) \
     .specialized_local_allocator_try_allocate_small_segregated_slow = \
         lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_small_segregated_slow, \
-    .specialized_local_allocator_try_allocate_inline_cases = \
-        lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases, \
     .specialized_local_allocator_try_allocate_medium_segregated_with_free_bits = \
         lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_medium_segregated_with_free_bits, \
+    .specialized_local_allocator_try_allocate_inline_cases = \
+        lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases, \
     .specialized_local_allocator_try_allocate_slow = \
         lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_slow, \
     .specialized_try_allocate_common_impl_slow = \
@@ -213,10 +213,10 @@ struct pas_heap_config {
         pas_local_allocator* allocator, pas_allocator_counts* count, \
         pas_allocation_result_filter result_filter); \
     PAS_API pas_allocation_result \
-    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases( \
+    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_medium_segregated_with_free_bits( \
         pas_local_allocator* allocator); \
     PAS_API pas_allocation_result \
-    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_medium_segregated_with_free_bits( \
+    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases( \
         pas_local_allocator* allocator); \
     PAS_API pas_allocation_result \
     lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_slow( \

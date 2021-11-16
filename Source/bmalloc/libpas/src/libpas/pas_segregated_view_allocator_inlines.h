@@ -60,7 +60,6 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
     pas_segregated_directory* size_directory_base;
     pas_lock_hold_mode heap_lock_hold_mode;
     pas_segregated_shared_page_directory* shared_page_directory;
-    pas_segregated_directory* shared_page_directory_base;
     pas_segregated_heap* heap;
     pas_segregated_shared_view* shared_view;
     pas_segregated_shared_handle* shared_handle;
@@ -229,7 +228,6 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
         size_directory_base = &size_directory->base;
         heap = size_directory->heap;
         shared_page_directory = page_config.shared_page_directory_selector(heap, size_directory);
-        shared_page_directory_base = &shared_page_directory->base;
         heap_lock_hold_mode = pas_segregated_page_config_heap_lock_hold_mode(page_config);
 
         shared_view = pas_compact_segregated_shared_view_ptr_load(&partial->shared_view);

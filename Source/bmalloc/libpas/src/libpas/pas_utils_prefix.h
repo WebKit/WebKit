@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "pas_platform.h"
+
 #ifdef __cplusplus
 #define __PAS_BEGIN_EXTERN_C extern "C" { struct __pas_require_semicolon
 #define __PAS_END_EXTERN_C } struct __pas_require_semicolon
@@ -70,7 +72,7 @@ __PAS_BEGIN_EXTERN_C;
 #define __PAS_OFFSETOF(type, field) __builtin_offsetof(type, field)
 
 typedef __SIZE_TYPE__ __pas_size_t;
-typedef typeof((char*)0 - (char*)0) __pas_ptrdiff_t;
+typedef __PTRDIFF_TYPE__ __pas_ptrdiff_t;
 
 __PAS_API void __pas_set_deallocation_did_fail_callback(
     void (*callback)(const char* reason, void* begin));

@@ -43,6 +43,8 @@
 #include "BPlatform.h"
 #endif
 
+PAS_BEGIN_EXTERN_C;
+
 void jit_type_dump(pas_heap_type* type, pas_stream* stream)
 {
     PAS_ASSERT(!type);
@@ -134,10 +136,10 @@ pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enumerator, v
 {
     pas_basic_heap_config_enumerator_data* data;
     
-    data = enumerator->heap_config_datas[pas_heap_config_kind_jit];
+    data = (pas_basic_heap_config_enumerator_data*)enumerator->heap_config_datas[pas_heap_config_kind_jit];
     PAS_ASSERT(data);
     
-    return pas_ptr_hash_map_get(&data->page_header_table, boundary).value;
+    return (pas_page_base*)pas_ptr_hash_map_get(&data->page_header_table, boundary).value;
 }
 
 void* jit_small_bitfit_allocate_page(
@@ -241,37 +243,37 @@ void* jit_prepare_to_enumerate(pas_enumerator* enumerator)
     pas_heap_config* config;
     jit_heap_config_root_data* root_data;
 
-    configs = pas_enumerator_read(
+    configs = (pas_heap_config**)pas_enumerator_read(
         enumerator, enumerator->root->heap_configs,
         sizeof(pas_heap_config*) * pas_heap_config_kind_num_kinds);
     if (!configs)
         return NULL;
     
-    config = pas_enumerator_read(
+    config = (pas_heap_config*)pas_enumerator_read(
         enumerator, configs[pas_heap_config_kind_jit], sizeof(pas_heap_config));
     if (!config)
         return NULL;
 
-    root_data = pas_enumerator_read(
+    root_data = (jit_heap_config_root_data*)pas_enumerator_read(
         enumerator, config->root_data, sizeof(jit_heap_config_root_data));
     if (!root_data)
         return NULL;
 
-    result = pas_enumerator_allocate(enumerator, sizeof(pas_basic_heap_config_enumerator_data));
+    result = (pas_basic_heap_config_enumerator_data*)pas_enumerator_allocate(enumerator, sizeof(pas_basic_heap_config_enumerator_data));
     
     pas_ptr_hash_map_construct(&result->page_header_table);
 
     if (!pas_basic_heap_config_enumerator_data_add_page_header_table(
             result,
             enumerator,
-            pas_enumerator_read(
+            (pas_page_header_table*)pas_enumerator_read(
                 enumerator, root_data->small_bitfit_page_header_table, sizeof(pas_page_header_table))))
         return NULL;
     
     if (!pas_basic_heap_config_enumerator_data_add_page_header_table(
             result,
             enumerator,
-            pas_enumerator_read(
+            (pas_page_header_table*)pas_enumerator_read(
                 enumerator, root_data->medium_bitfit_page_header_table, sizeof(pas_page_header_table))))
         return NULL;
     
@@ -333,6 +335,8 @@ PAS_BITFIT_PAGE_CONFIG_SPECIALIZATION_DEFINITIONS(
     jit_medium_bitfit_page_config, JIT_HEAP_CONFIG.medium_bitfit_config);
 PAS_HEAP_CONFIG_SPECIALIZATION_DEFINITIONS(
     jit_heap_config, JIT_HEAP_CONFIG);
+
+PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_JIT */
 

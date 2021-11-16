@@ -229,6 +229,7 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 
         directory = pas_segregated_view_get_size_directory(owner);
         data = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data);
+        PAS_UNUSED_PARAM(data);
 
         PAS_ASSERT(directory->object_size);
         page->object_size = directory->object_size;
@@ -342,6 +343,7 @@ bool pas_segregated_page_take_empty_granules(
     PAS_ASSERT(free_granules.num_free_granules);
 
     boundary = pas_segregated_page_boundary(page, page_config);
+    PAS_UNUSED_PARAM(boundary);
     
     if (verbose)
         pas_log("Taking %zu empty granules from %p.\n", free_granules.num_free_granules, page);

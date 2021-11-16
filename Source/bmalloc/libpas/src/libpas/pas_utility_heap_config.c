@@ -34,6 +34,8 @@
 #include "pas_stream.h"
 #include "pas_utility_heap.h"
 
+PAS_BEGIN_EXTERN_C;
+
 pas_segregated_shared_page_directory pas_utility_heap_shared_page_directory =
     PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_INITIALIZER(
         PAS_UTILITY_HEAP_CONFIG.small_segregated_config,
@@ -75,5 +77,7 @@ void pas_utility_heap_config_dump_shared_page_directory_arg(
     PAS_UNUSED_PARAM(directory);
     pas_stream_printf(stream, "Utility");
 }
+
+PAS_END_EXTERN_C;
 
 #endif /* LIBPAS_ENABLED */

@@ -39,13 +39,11 @@ pas_segregated_shared_handle* pas_segregated_shared_handle_create(
     pas_segregated_shared_page_directory* shared_page_directory,
     pas_segregated_page_config* page_config_ptr)
 {
-    pas_segregated_directory* directory;
     pas_segregated_page_config page_config;
     pas_segregated_shared_handle* result;
     size_t index;
 
     page_config = *page_config_ptr;
-    directory = &shared_page_directory->base;
 
     result = pas_heap_for_page_config_allocate(
         page_config_ptr,

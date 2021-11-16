@@ -40,8 +40,8 @@
 PAS_DEFINE_HEAP_CONFIG_KIND(
     null,
     ((pas_heap_config){
+        .config_ptr = NULL,
         .kind = pas_heap_config_kind_null,
-        .config_ptr = NULL
     }))
 
 PAS_DEFINE_HEAP_CONFIG_KIND(pas_utility, PAS_UTILITY_HEAP_CONFIG)

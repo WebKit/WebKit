@@ -27,6 +27,7 @@
 #define PAS_INTERNAL_CONFIG_H
 
 #include "pas_config.h"
+#include "pas_platform.h"
 
 #define PAS_SUBPAGE_SIZE                 4096
 

@@ -110,8 +110,8 @@ PAS_API void pas_utility_heap_config_dump_shared_page_directory_arg(
                 .min_align_shift = PAS_INTERNAL_MIN_ALIGN_SHIFT, \
                 .page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
                 .granule_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
-                .max_object_size = PAS_UTILITY_LOOKUP_SIZE_UPPER_BOUND, \
                 .page_header_size = PAS_UTILITY_HEAP_HEADER_SIZE, \
+                .max_object_size = PAS_UTILITY_LOOKUP_SIZE_UPPER_BOUND, \
                 .page_header_for_boundary = pas_utility_heap_page_header_for_boundary, \
                 .boundary_for_page_header = pas_utility_heap_boundary_for_page_header, \
                 .page_header_for_boundary_remote = NULL, \

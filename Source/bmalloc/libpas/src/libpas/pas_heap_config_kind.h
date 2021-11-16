@@ -74,14 +74,14 @@ PAS_API bool pas_heap_config_kind_for_each(
 
 #define PAS_EACH_HEAP_CONFIG_KIND(kind) \
     kind = (pas_heap_config_kind)0; \
-    kind < pas_heap_config_kind_num_kinds; \
+    (unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds; \
     kind = (pas_heap_config_kind)((unsigned)kind + 1)
 
 PAS_API extern pas_heap_config* pas_heap_config_kind_for_config_table[];
 
 static inline pas_heap_config* pas_heap_config_kind_get_config(pas_heap_config_kind kind)
 {
-    PAS_TESTING_ASSERT(kind < pas_heap_config_kind_num_kinds);
+    PAS_TESTING_ASSERT((unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds);
     return pas_heap_config_kind_for_config_table[kind];
 }
 
@@ -89,7 +89,7 @@ PAS_API extern unsigned pas_heap_config_kind_is_active_bitvector[];
 
 static inline bool pas_heap_config_kind_is_active(pas_heap_config_kind kind)
 {
-    PAS_TESTING_ASSERT(kind < pas_heap_config_kind_num_kinds);
+    PAS_TESTING_ASSERT((unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds);
     return pas_bitvector_get(pas_heap_config_kind_is_active_bitvector, (size_t)kind);
 }
 

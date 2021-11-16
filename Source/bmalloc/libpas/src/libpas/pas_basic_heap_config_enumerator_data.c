@@ -72,11 +72,11 @@ bool pas_basic_heap_config_enumerator_data_add_page_header_table(
         
         pair = table->array + index;
         
-        if (pair->low == UINTPTR_MAX)
+        if (pas_pair_low(*pair) == UINTPTR_MAX)
             continue;
         
-        entry.key = (void*)pair->low;
-        entry.value = (void*)pair->high;
+        entry.key = (void*)pas_pair_low(*pair);
+        entry.value = (void*)pas_pair_high(*pair);
         
         pas_ptr_hash_map_add_new(
             &data->page_header_table, entry, NULL, &enumerator->allocation_config);

@@ -27,7 +27,9 @@
 #define PAS_SCAVENGER_H
 
 #include "pas_utils.h"
+#if PAS_OS(DARWIN)
 #include <sys/qos.h>
+#endif
 
 PAS_BEGIN_EXTERN_C;
 
@@ -70,8 +72,10 @@ PAS_API extern double pas_scavenger_period_in_milliseconds; /* How long to sleep
 PAS_API extern uint64_t pas_scavenger_max_epoch_delta; /* How much to subtract from the current epoch
                                                           to compute the max epoch. */
 
+#if PAS_OS(DARWIN)
 /* It's legal to set this anytime. */
 PAS_API extern qos_class_t pas_scavenger_requested_qos_class;
+#endif
 
 typedef void (*pas_scavenger_activity_callback)(void);
 

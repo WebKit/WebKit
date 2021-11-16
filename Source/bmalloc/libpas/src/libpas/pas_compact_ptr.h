@@ -32,7 +32,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-#define PAS_COMPACT_PTR_INITIALIZER { .payload = {[0 ... PAS_COMPACT_PTR_SIZE - 1] = 0} }
+#define PAS_COMPACT_PTR_INITIALIZER { .payload = { 0 } }
 
 #define PAS_DEFINE_COMPACT_PTR_HELPERS(type, name) \
     static inline uintptr_t name ## _index_for_ptr(type* value) \
