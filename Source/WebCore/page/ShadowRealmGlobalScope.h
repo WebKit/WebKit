@@ -62,7 +62,7 @@ class ShadowRealmGlobalScope : public Supplementable<ShadowRealmGlobalScope>, pu
   {
     WTF_MAKE_ISO_ALLOCATED(ShadowRealmGlobalScope);
 public:
-    virtual ~ShadowRealmGlobalScope();
+    ~ShadowRealmGlobalScope();
 
     virtual bool isDedicatedWorkerGlobalScope() const { return false; }
     virtual bool isSharedWorkerGlobalScope() const { return false; }
