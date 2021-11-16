@@ -33,10 +33,6 @@
 #include <stdio.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(MAC)
-#include "ImportanceAssertion.h"
-#endif
-
 namespace IPC {
 
 static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
@@ -147,11 +143,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
 {
     ASSERT(decoder.isSyncMessage());
 
-    Vector<Attachment> attachments;
-    Attachment attachment;
-    while (decoder.removeAttachment(attachment))
-        attachments.append(WTFMove(attachment));
-    attachments.reverse();
+    auto attachments = std::exchange(decoder.m_attachments, { });
 
     DataReference wrappedMessage;
     if (!decoder.decode(wrappedMessage))
@@ -218,13 +210,11 @@ const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t alignment
     return data;
 }
 
-bool Decoder::removeAttachment(Attachment& attachment)
+std::optional<Attachment> Decoder::takeLastAttachment()
 {
     if (m_attachments.isEmpty())
-        return false;
-
-    attachment = m_attachments.takeLast();
-    return true;
+        return std::nullopt;
+    return m_attachments.takeLast();
 }
 
 } // namespace IPC

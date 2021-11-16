@@ -1,5 +1,30 @@
 2021-11-16  Chris Dumez  <cdumez@apple.com>
 
+        Decoder::unwrapForTesting() is unnecessarily inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=233145
+
+        Reviewed by Darin Adler.
+
+        Decoder::unwrapForTesting() is unnecessarily inefficient. It can take the whole
+        m_attachments data members from the decoder instead of calling removeAttachment()
+        repeatedly on the Decoder.
+
+        Also rename removeAttachment() to takeAttachment() since it returns the Attachment.
+        Update it to return a std::optional<Attachment> instead of using an out-parameter.
+
+        * Platform/IPC/Attachment.cpp:
+        (IPC::Attachment::decode):
+        * Platform/IPC/Attachment.h:
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::unwrapForTesting):
+        (IPC::Decoder::takeAttachment):
+        (IPC::Decoder::removeAttachment): Deleted.
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/win/AttachmentWin.cpp:
+        (IPC::Attachment::decode):
+
+2021-11-16  Chris Dumez  <cdumez@apple.com>
+
         Do some hardening in IPC::createMessageDecoder()
         https://bugs.webkit.org/show_bug.cgi?id=233148
         <rdar://75139294>

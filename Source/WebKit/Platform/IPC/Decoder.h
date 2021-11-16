@@ -27,17 +27,11 @@
 
 #include "Attachment.h"
 #include "MessageNames.h"
-#include "StringReference.h"
-#include <WebCore/SharedBuffer.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"
-#endif
-
-#if HAVE(QOS_CLASSES)
-#include <pthread/qos.h>
 #endif
 
 namespace IPC {
@@ -140,7 +134,7 @@ public:
         return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
-    bool removeAttachment(Attachment&);
+    std::optional<Attachment> takeLastAttachment();
 
     static constexpr bool isIPCDecoder = true;
 

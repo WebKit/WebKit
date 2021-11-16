@@ -65,24 +65,21 @@ static bool getDuplicatedHandle(HANDLE sourceHandle, DWORD sourcePID, HANDLE& du
     return success;
 }
 
-bool Attachment::decode(Decoder& decoder, Attachment& attachment)
+std::optional<Attachment> Attachment::decode(Decoder& decoder)
 {
-    ASSERT_ARG(attachment, attachment.m_handle == INVALID_HANDLE_VALUE);
-
     uint64_t sourceHandle;
     if (!decoder.decode(sourceHandle))
-        return false;
+        return std::nullopt;
 
     uint32_t sourcePID;
     if (!decoder.decode(sourcePID))
-        return false;
+        return std::nullopt;
 
     HANDLE duplicatedHandle;
     if (!getDuplicatedHandle(reinterpret_cast<HANDLE>(sourceHandle), sourcePID, duplicatedHandle))
-        return false;
+        return std::nullopt;
 
-    attachment.m_handle = duplicatedHandle;
-    return true;
+    return Attachment { duplicatedHandle };
 }
 
 } // namespace IPC

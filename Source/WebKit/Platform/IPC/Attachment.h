@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <optional>
+
 #if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
 #include <mach/mach_init.h>
 #include <mach/mach_traps.h>
@@ -98,7 +100,7 @@ public:
 #endif
 
     void encode(Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(Decoder&, Attachment&);
+    static std::optional<Attachment> decode(Decoder&);
     
 private:
     Type m_type;
