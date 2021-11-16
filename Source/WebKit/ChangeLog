@@ -1,3 +1,27 @@
+2021-11-15  Sam Weinig  <weinig@apple.com>
+
+        Add another <model> backend backed by SceneKit to prove out ModelPlayer infrastructure a bit more
+        https://bugs.webkit.org/show_bug.cgi?id=233112
+
+        Reviewed by Dean Jackson.
+
+        Add support for instantiating the new SceneKit backed ModelPlayer.
+
+        If both ARKit based ModelPlayer and SceneKit based ModelPlayer are enabled,
+        the ARKit one wins.
+
+        * WebProcess/Model/WebModelPlayerProvider.cpp:
+        (WebKit::WebModelPlayerProvider::createModelPlayer):
+        Add support for creating a SceneKit based ModelPlayer and add checks
+        for whether the backend is enabled.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::useARKitForModel const):
+        (WebKit::WebPage::useSceneKitForModel const):
+        Add bits to store which <model> backends are enabled.
+
 2021-11-15  Eric Liang  <ericliang@apple.com>
 
         _AXSCopyPathForAccessibilityBundle is going to be deprecated.

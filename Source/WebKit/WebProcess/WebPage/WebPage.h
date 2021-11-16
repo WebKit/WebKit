@@ -1499,6 +1499,13 @@ public:
     const WebCore::AccessibilityRootAtspi& accessibilityRootObject() const { return *m_accessibilityRootObject; }
 #endif
 
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+    bool useARKitForModel() const { return m_useARKitForModel; };
+#endif
+#if HAVE(SCENEKIT)
+    bool useSceneKitForModel() const { return m_useSceneKitForModel; };
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2367,6 +2374,13 @@ private:
     bool m_canUseCredentialStorage { true };
 
     bool m_didUpdateRenderingAfterCommittingLoad { false };
+
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+    bool m_useARKitForModel { false };
+#endif
+#if HAVE(SCENEKIT)
+    bool m_useSceneKitForModel { false };
+#endif
 
     Vector<String> m_corsDisablingPatterns;
 

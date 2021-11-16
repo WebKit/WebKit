@@ -351,6 +351,7 @@
 		A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */; };
 		A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C66CDB1F462D6A009E6EE9 /* SessionID.h */; };
 		ABCA536824895DB900361BFF /* CoreMotionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = ABCA536724895DB900361BFF /* CoreMotionSPI.h */; };
+		BC4DDD9F273EF56E00660EBB /* SceneKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4DDD9E273EF56E00660EBB /* SceneKitSPI.h */; };
 		C15CBB3523F3548A00300CC7 /* NSUserDefaultsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */; };
 		CD6122CC2559B6AC00FC657A /* OutputContext.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6122CA2559B6AC00FC657A /* OutputContext.h */; };
 		CD6122CD2559B6AC00FC657A /* OutputContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6122CB2559B6AC00FC657A /* OutputContext.mm */; };
@@ -755,6 +756,7 @@
 		A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		A3C66CDB1F462D6A009E6EE9 /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
 		ABCA536724895DB900361BFF /* CoreMotionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMotionSPI.h; sourceTree = "<group>"; };
+		BC4DDD9E273EF56E00660EBB /* SceneKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneKitSPI.h; sourceTree = "<group>"; };
 		C037494124127CCB00D9A36E /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
 		C138EA1A2436447200656DF1 /* CoreServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreServicesSPI.h; sourceTree = "<group>"; };
 		C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSUserDefaultsSPI.h; sourceTree = "<group>"; };
@@ -906,6 +908,7 @@
 				0C2DA13A1F3BEB4900DBC317 /* pthreadSPI.h */,
 				0C2DA13B1F3BEB4900DBC317 /* QuartzCoreSPI.h */,
 				442956CC218A72DE0080DB54 /* RevealSPI.h */,
+				BC4DDD9E273EF56E00660EBB /* SceneKitSPI.h */,
 				570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */,
 				0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */,
 				93B38EC125821D2200198E63 /* SpeechSPI.h */,
@@ -1537,6 +1540,7 @@
 				071C00382707EDF000D027C7 /* ReplayKitSoftLink.h in Headers */,
 				F4974EA3265EEA2200B49B8C /* RevealSoftLink.h in Headers */,
 				442956CD218A72DF0080DB54 /* RevealSPI.h in Headers */,
+				BC4DDD9F273EF56E00660EBB /* SceneKitSPI.h in Headers */,
 				570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */,
 				0C2DA1581F3BEB4900DBC317 /* ServersSPI.h in Headers */,
 				A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */,

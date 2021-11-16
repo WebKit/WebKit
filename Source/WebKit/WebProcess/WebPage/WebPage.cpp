@@ -4040,6 +4040,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     PlatformMediaSessionManager::setOpusDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().opusDecoderEnabled());
 #endif
 
+    // FIXME: This should be automated by adding a new field in WebPreferences*.yaml
+    // that indicates override state for captive portal mode. https://webkit.org/b/233100.
     if (WebProcess::singleton().isCaptivePortalModeEnabled()) {
         settings.setWebGLEnabled(false);
 #if ENABLE(WEBGL2)
@@ -4078,6 +4080,13 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         settings.setMathMLEnabled(false);
 #endif
     }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+    m_useARKitForModel = store.getBoolValueForKey(WebPreferencesKey::useARKitForModelKey());
+#endif
+#if HAVE(SCENEKIT)
+    m_useSceneKitForModel = store.getBoolValueForKey(WebPreferencesKey::useSceneKitForModelKey());
+#endif
 
     m_page->settingsDidChange();
 }

@@ -797,6 +797,17 @@ UpgradeKnownHostsToHTTPSEnabled:
     WebKit:
       default: true
 
+UseARKitForModel:
+  type: bool
+  humanReadableName: "Use ARKit for <model>"
+  humanReadableDescription: "Use ARKit for <model>"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  condition: ENABLE(ARKIT_INLINE_PREVIEW)
+  defaultValue:
+    WebKit:
+      default: true
+
 UseCGDisplayListsForDOMRendering:
   type: bool
   humanReadableName: "CG Display Lists: DOM Rendering"
@@ -818,6 +829,17 @@ UseGPUProcessForDOMRenderingEnabled:
   defaultValue:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
+
+UseSceneKitForModel:
+  type: bool
+  humanReadableName: "Use SceneKit for <model>"
+  humanReadableDescription: "Use SceneKit for <model>"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  condition: HAVE(SCENEKIT)
+  defaultValue:
+    WebKit:
+      default: false
 
 # FIXME: Remove once <rdar://73830961> has been fixed
 UseiTunesAVOutputContext:
