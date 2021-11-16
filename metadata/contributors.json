@@ -315,6 +315,14 @@
    },
    {
       "emails" : [
+         "alexandera_22@apple.com"
+      ],
+      "expertise" : "Python, Services, Kubernetes",
+      "github" : "akath20",
+      "name" : "Alex Atwater"
+   },
+   {
+      "emails" : [
          "achristensen@apple.com",
          "achristensen@webkit.org",
          "alex.christensen@flexsim.com"

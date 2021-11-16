@@ -1,3 +1,11 @@
+2021-11-16  Alex Atwater  <alexandera_22@apple.com>
+
+        Add my GitHub username to contributors.json
+
+        Reviewed by Jonathan Bedard
+
+        * metadata/contributors.json:
+
 2021-11-15  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Add my GitHub username to contributors.json
