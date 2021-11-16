@@ -488,10 +488,8 @@ void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
     if (displayID != this->displayID())
         return;
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
     if (!scrollingThreadIsActive)
         return;
-#endif
 
     ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
         protectedThis->displayDidRefreshOnScrollingThread();
