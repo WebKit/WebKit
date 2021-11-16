@@ -1,0 +1,14 @@
+
+PASS subscribe should fail if there is no active service worker
+PASS wait for active service worker
+PASS aes128gcm should be supported
+PASS supportedContentEncodings should be frozen
+PASS pushManager should return same object
+PASS subscribe requires userVisibleOnly to be true
+PASS subscribe requires applicationServerKey
+PASS applicationServerKey string should be base64url-encoded
+FAIL applicationServerKey buffer should be a valid point on the P-256 curve promise_rejects_dom: function "function () { throw e }" threw object "NotAllowedError: Push permission was denied" that is not a DOMException InvalidAccessError: property "code" is equal to 0, expected 15
+FAIL applicationServerKey string should be a valid point on the P-256 curve promise_rejects_dom: function "function () { throw e }" threw object "NotAllowedError: Push permission was denied" that is not a DOMException InvalidAccessError: property "code" is equal to 0, expected 15
+PASS can subscribe with valid applicationServerKey buffer
+PASS can subscribe with valid applicationServerKey string
+

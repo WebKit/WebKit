@@ -1,3 +1,18 @@
+2021-11-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=233156
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Added.
+        * platform/glib/http/wpt/push-api/pushManager.any-expected.txt: Added.
+        * platform/glib/http/wpt/push-api/pushManager.any.serviceworker-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-allowed.sub-expected.txt: Added.
+        * platform/gtk/accessibility/color-well-expected.txt:
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-different-width-001-expected.txt:
+        * platform/wpe/accessibility/color-well-expected.txt:
+
 2021-11-16  Cathie Chen  <cathiechen@igalia.com>
 
         [CSS contain] The size should be updated if layout containment is inside a fit-content parent
