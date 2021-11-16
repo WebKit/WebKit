@@ -1,3 +1,10 @@
+2021-11-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, -latomic is only available for GCC
+        https://bugs.webkit.org/show_bug.cgi?id=233097
+
+        * CMakeLists.txt:
+
 2021-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Build and enable libpas on 64bit JSCOnly
