@@ -766,7 +766,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *description = descriptionOfValue(attributeValue(NSAccessibilityValueAttribute).get());
+    auto value = attributeValue(NSAccessibilityValueAttribute);
+    NSString *description = descriptionOfValue(value.get());
     if (description)
         return concatenateAttributeAndValue(@"AXValue", description);
     END_AX_OBJC_EXCEPTIONS
@@ -2030,10 +2031,15 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(i
 
 bool AccessibilityUIElement::replaceTextInRange(JSStringRef string, int location, int length)
 {
+    bool result = false;
+
     BEGIN_AX_OBJC_EXCEPTIONS
-    return [m_element accessibilityReplaceRange:NSMakeRange(location, length) withText:[NSString stringWithJSStringRef:string]];
+    AccessibilityUIElement::s_controller->executeOnAXThreadAndWait([text = [NSString stringWithJSStringRef:string], range = NSMakeRange(location, length), this, &result] {
+        result = [m_element accessibilityReplaceRange:range withText:text];
+    });
     END_AX_OBJC_EXCEPTIONS
-    return false;
+
+    return result;
 }
 
 bool AccessibilityUIElement::insertText(JSStringRef text)

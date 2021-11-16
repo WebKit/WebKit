@@ -1196,16 +1196,16 @@ FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, Accessibi
 
 bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const PlainTextRange& textRange)
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([&replacementText, &textRange, this] () -> bool {
+    return Accessibility::retrieveValueFromMainThread<bool>([text = replacementText.isolatedCopy(), &textRange, this] () -> bool {
         if (auto* axObject = associatedAXObject())
-            return axObject->replaceTextInRange(replacementText, textRange);
+            return axObject->replaceTextInRange(text, textRange);
         return false;
     });
 }
 
 bool AXIsolatedObject::insertText(const String& text)
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([&text, this] () -> bool {
+    return Accessibility::retrieveValueFromMainThread<bool>([text = text.isolatedCopy(), this] () -> bool {
         if (auto* axObject = associatedAXObject())
             return axObject->insertText(text);
         return false;

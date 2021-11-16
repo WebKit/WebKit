@@ -3277,19 +3277,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string
 {
     auto* backingObject = self.updateObjectBackingStore;
-    if (!backingObject)
-        return NO;
-
-    return backingObject->replaceTextInRange(String(string).isolatedCopy(), PlainTextRange(range));
+    return backingObject ? backingObject->replaceTextInRange(String(string), PlainTextRange(range)) : NO;
 }
 
 - (BOOL)accessibilityInsertText:(NSString *)text
 {
     auto* backingObject = self.updateObjectBackingStore;
-    if (!backingObject)
-        return NO;
-
-    return backingObject->insertText(String(text).isolatedCopy());
+    return backingObject ? backingObject->insertText(String(text)) : NO;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
