@@ -1,3 +1,14 @@
+2021-11-15  Eric Liang  <ericliang@apple.com>
+
+        _AXSCopyPathForAccessibilityBundle is going to be deprecated.
+        https://bugs.webkit.org/show_bug.cgi?id=233081
+
+        Reviewed by Andres Gonzalez.
+
+        To support macOS Accessibility v2 runtime, on macOS there are two places where bundles can live. By doing so, `_AXSCopyPathForAccessibilityBundle` will going to be deprecated because it won’t always return the correct path you would expect.
+
+        * wtf/PlatformHave.h:
+
 2021-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS 15 build
