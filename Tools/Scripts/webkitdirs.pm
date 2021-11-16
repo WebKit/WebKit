@@ -373,7 +373,8 @@ sub determineNativeArchitecture($)
             my $target = $split[0];
             my $port = 22;
             $port = $split[1] if scalar(@split) > 1;
-            $output = `ssh -o NoHostAuthenticationForLocalhost=yes -p $port $target 'uname  -m'`;
+            my $cmd = 'ssh -o NoHostAuthenticationForLocalhost=yes '. (exists $remote->{'idFilePath'} ? ('-i '.$remote->{'idFilePath'}) : '') ." -p $port $target 'uname  -m'";
+            $output = readpipe($cmd);
             last if ($? == 0);
         }
         if (length($output) == 0) {

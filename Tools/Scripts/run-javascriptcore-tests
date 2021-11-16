@@ -524,12 +524,14 @@ if (defined $remoteConfigFile) {
         $remotes = $remoteConfig->{"remotes"};
     } elsif (defined $remoteConfig->{"remote"}) {
         my @split = split(':', $remoteConfig->{"remote"});
-        $remotes = [
-            {
-                "name" => "synthesized",
-                "address" => $remoteConfig->{"remote"}
-            }
-         ];
+        my $remote = {
+            "name" => "synthesized",
+            "address" => $remoteConfig->{"remote"}
+        };
+        if (exists $remoteConfig->{"idFilePath"}) {
+            $remote->{'idFilePath'} = $remoteConfig->{'idFilePath'};
+        }
+        $remotes = [$remote];
     }
 }
 

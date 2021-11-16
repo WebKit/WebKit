@@ -1,3 +1,15 @@
+2021-11-16  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Make run-javascript-core-test and run-jsc-stress-tests support a customized identity file
+        https://bugs.webkit.org/show_bug.cgi?id=232453
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/run-javascriptcore-tests: Add idFilePath field for remote config.
+        * Scripts/run-jsc-stress-tests: Add idFilePath field for remote config.
+        * Scripts/webkitdirs.pm:
+        (determineNativeArchitecture): Provide -i option to ssh
+
 2021-11-16  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Do not require the web browser entitlement to opt into captive portal mode
