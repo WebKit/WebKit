@@ -27,9 +27,10 @@ import time
 from .canonicalize import Canonicalize
 from .command import Command
 from .branch import Branch
+from .pull_request import PullRequest
 from argparse import Namespace
 from webkitcorepy import arguments, run, string_utils, Terminal
-from webkitscmpy import local, log
+from webkitscmpy import local, log, remote
 
 
 class Land(Command):
@@ -75,11 +76,12 @@ class Land(Command):
             sys.stderr.write("Cannot 'land' on a canonical SVN repository that is not configured as git-svn\n")
             return 1
 
-        if not Branch.editable(repository.branch, repository=repository):
+        source_branch = repository.branch
+        if not Branch.editable(source_branch, repository=repository):
             sys.stderr.write("Can only 'land' editable branches\n")
             return 1
         branch_point = Branch.branch_point(repository)
-        commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
+        commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=source_branch)))
         if not commits:
             sys.stderr.write('Failed to find commits to land\n')
             return 1
@@ -87,11 +89,11 @@ class Land(Command):
         pull_request = None
         rmt = repository.remote()
         if rmt and rmt.pull_requests:
-            candidates = list(rmt.pull_requests.find(opened=True, head=repository.branch))
+            candidates = list(rmt.pull_requests.find(opened=True, head=source_branch))
             if len(candidates) == 1:
                 pull_request = candidates[0]
             elif candidates:
-                sys.stderr.write("Multiple pull-request match '{}'\n".format(repository.branch))
+                sys.stderr.write("Multiple pull-request match '{}'\n".format(source_branch))
 
         if pull_request and args.review:
             if pull_request.blockers:
@@ -118,53 +120,55 @@ class Land(Command):
                     '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
                         date='{} -{}'.format(int(time.time()), repository.gmtoffset())
                     ), '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/{}/g"'.format(string_utils.join([p.name for p in pull_request.approvers])),
-                    '{}...{}'.format(repository.branch, branch_point.hash),
+                    '{}...{}'.format(source_branch, branch_point.hash),
                 ], cwd=repository.root_path, env={'FILTER_BRANCH_SQUELCH_WARNING': '1'}, capture_output=True).returncode:
                     sys.stderr.write('Failed to set reviewers\n')
                     return 1
-                commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
+                commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=source_branch)))
                 if not commits:
                     sys.stderr.write('Failed to find commits after setting reviewers\n')
                     return 1
 
         elif not pull_request:
-            sys.stderr.write("Failed to find pull-request associated with '{}'\n".format(repository.branch))
+            sys.stderr.write("Failed to find pull-request associated with '{}'\n".format(source_branch))
 
         if not args.oops and any([cls.OOPS_RE.search(commit.message) for commit in commits]):
             sys.stderr.write("Found '(OOPS!)' message in commit messages, please resolve before committing\n")
             return 1
 
         if not args.oops:
-            for line in repository.diff_lines(branch_point.hash, repository.branch):
+            for line in repository.diff_lines(branch_point.hash, source_branch):
                 if cls.OOPS_RE.search(line):
                     sys.stderr.write("Found '(OOPS!)' in commit diff, please resolve before committing\n")
                     return 1
 
         target = pull_request.base if pull_request else branch_point.branch
-        log.warning("Rebasing '{}' from '{}' to '{}'...".format(repository.branch, branch_point.branch, target))
+        log.warning("Rebasing '{}' from '{}' to '{}'...".format(source_branch, branch_point.branch, target))
         if repository.fetch(branch=target, remote=cls.REMOTE):
             sys.stderr.write("Failed to fetch '{}' from '{}'\n".format(target, cls.REMOTE))
             return 1
-        if repository.rebase(target=target, base=branch_point.branch, head=repository.branch):
-            sys.stderr.write("Failed to rebase '{}' onto '{}', please resolve conflicts\n".format(repository.branch, target))
+        if repository.rebase(target=target, base=branch_point.branch, head=source_branch):
+            sys.stderr.write("Failed to rebase '{}' onto '{}', please resolve conflicts\n".format(source_branch, target))
             return 1
-        log.warning("Rebased '{}' from '{}' to '{}'!".format(repository.branch, branch_point.branch, target))
+        log.warning("Rebased '{}' from '{}' to '{}'!".format(source_branch, branch_point.branch, target))
 
-        if run([repository.executable(), 'branch', '-f', target, repository.branch], cwd=repository.root_path).returncode:
+        if run([repository.executable(), 'branch', '-f', target, source_branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to move '{}' ref\n".format(target))
             return 1
 
         if identifier_template:
-            source = repository.branch
             repository.checkout(target)
             if Canonicalize.main(Namespace(
                 identifier=True, remote=cls.REMOTE, number=len(commits),
             ), repository, identifier_template=identifier_template):
                 sys.stderr.write("Failed to embed identifiers to '{}'\n".format(target))
                 return 1
-            if run([repository.executable(), 'branch', '-f', source, target], cwd=repository.root_path).returncode:
+            if run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to move '{}' ref to the canonicalized head of '{}'\n".format(source, target))
                 return -1
+
+        # Need to compute the remote source
+        remote_target = 'fork' if isinstance(rmt, remote.GitHub) else 'origin'
 
         if canonical_svn:
             if run([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
@@ -181,17 +185,41 @@ class Land(Command):
             latest = original
             while original.hash == latest.hash:
                 if time.time() - started > cls.MIRROR_TIMEOUT:
-                    sys.stderr.write("Timed out waiting for the git-svn mirror, '{}' landed but not closed\n".format(pull_request or repository.branch))
+                    sys.stderr.write("Timed out waiting for the git-svn mirror, '{}' landed but not closed\n".format(pull_request or source_branch))
                     return 1
                 log.warning('    Verifying mirror processesed change')
                 time.sleep(5)
                 run([repository.executable(), 'pull'], cwd=repository.root_path)
-                original = repository.find('HEAD', include_log=False, include_identifier=False)
+                latest = repository.find('HEAD', include_log=False, include_identifier=False)
+            if pull_request:
+                run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path)
+                commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
+                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path)
+                rmt.pull_requests.update(
+                    pull_request=pull_request,
+                    title=PullRequest.title_for(commits),
+                    commits=commits,
+                    base=branch_point.branch,
+                    head=source_branch,
+                )
 
         else:
+            if pull_request:
+                log.warning("Updating '{}' to match landing commits...".format(pull_request))
+                commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
+                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path)
+                rmt.pull_requests.update(
+                    pull_request=pull_request,
+                    title=PullRequest.title_for(commits),
+                    commits=commits,
+                    base=branch_point.branch,
+                    head=source_branch,
+                )
+
             if run([repository.executable(), 'push', cls.REMOTE, target], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to push '{}' to '{}'\n".format(target, cls.REMOTE))
                 return 1
+            repository.checkout(target)
 
         commit = repository.commit(branch=target, include_log=False)
         if identifier_template and commit.identifier:
@@ -202,6 +230,8 @@ class Land(Command):
 
         if pull_request:
             pull_request.comment(land_message)
-            pull_request.close()
 
+        if args.defaults or Terminal.choose("Delete branch '{}'?".format(source_branch), default='Yes') == 'Yes':
+            run([repository.executable(), 'branch', '-D', source_branch], cwd=repository.root_path)
+            run([repository.executable(), 'push', remote_target, '--delete', source_branch], cwd=repository.root_path)
         return 0

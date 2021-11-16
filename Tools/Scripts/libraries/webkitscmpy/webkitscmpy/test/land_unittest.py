@@ -90,7 +90,7 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_default(self):
-        with OutputCapture() as captured, repository(self.path, has_oops=False), mocks.local.Svn():
+        with OutputCapture() as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land',),
                 path=self.path,
@@ -109,10 +109,14 @@ class TestLand(testing.PathTestCase):
             captured.stderr.getvalue(),
             "Failed to find pull-request associated with 'eng/example'\n",
         )
-        self.assertEqual(captured.stdout.getvalue(), 'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
+            "Delete branch 'eng/example'? (Yes/No): \n",
+        )
 
     def test_canonicalize(self):
-        with OutputCapture() as captured, repository(self.path, has_oops=False), mocks.local.Svn():
+        with OutputCapture() as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land',),
                 path=self.path,
@@ -145,7 +149,8 @@ class TestLand(testing.PathTestCase):
             captured.stdout.getvalue(),
             'Rewrite a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd (1/1) (--- seconds passed, remaining --- predicted)\n'
             '1 commit successfully canonicalized!\n'
-            'Landed https://commits.webkit.org/6@main (a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd)!\n',
+            'Landed https://commits.webkit.org/6@main (a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd)!\n'
+            "Delete branch 'eng/example'? (Yes/No): \n",
         )
 
     def test_no_svn_canonical_svn(self):
@@ -163,8 +168,7 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_svn(self):
-        self.maxDiff = None
-        with MockTime, OutputCapture() as captured, repository(self.path, has_oops=False, git_svn=True), mocks.local.Svn():
+        with MockTime, OutputCapture() as captured, repository(self.path, has_oops=False, git_svn=True), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
                 args=('land',),
                 path=self.path, canonical_svn=True,
@@ -186,7 +190,8 @@ class TestLand(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n',
+            'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
+            "Delete branch 'eng/example'? (Yes/No): \n",
         )
 
 
@@ -281,7 +286,7 @@ class TestLandGitHub(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_insert_review(self):
-        with OutputCapture() as captured, MockTerminal.input('y'), self.webserver(approved=True) as remote, \
+        with OutputCapture() as captured, MockTerminal.input('y', 'n'), self.webserver(approved=True) as remote, \
                 repository(self.path, has_oops=True, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
             self.assertEqual(0, program.main(
                 args=('land',),
@@ -302,13 +307,15 @@ class TestLandGitHub(testing.PathTestCase):
                 'Setting Ricky Reviewer as reviewer',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
+                "Updating 'PR 1 | Example Change' to match landing commits...",
             ],
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.stdout.getvalue(),
             "Set 'Ricky Reviewer' as your reviewer? (Yes/No): \n"
-            'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n',
+            'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
+            "Delete branch 'eng/example'? (Yes/No): \n",
         )
 
 
@@ -406,7 +413,7 @@ class TestLandBitBucket(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_insert_review(self):
-        with OutputCapture() as captured, MockTerminal.input('y'), self.webserver(approved=True) as remote, repository(
+        with OutputCapture() as captured, MockTerminal.input('y', 'n'), self.webserver(approved=True) as remote, repository(
                 self.path, has_oops=True, remote='ssh://git@{}/{}/{}.git'.format(
                     remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
                 )), mocks.local.Svn():
@@ -429,11 +436,13 @@ class TestLandBitBucket(testing.PathTestCase):
                 'Setting Ricky Reviewer as reviewer',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
+                "Updating 'PR 1 | Example Change' to match landing commits...",
             ],
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.stdout.getvalue(),
             "Set 'Ricky Reviewer' as your reviewer? (Yes/No): \n"
-            'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n',
+            'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
+            "Delete branch 'eng/example'? (Yes/No): \n",
         )

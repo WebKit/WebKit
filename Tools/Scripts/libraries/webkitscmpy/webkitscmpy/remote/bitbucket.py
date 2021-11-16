@@ -202,8 +202,8 @@ class BitBucket(Scm):
             if response.status_code // 100 != 2:
                 return None
             data = response.json()
-            del data['author']
-            del data['participants']
+            data.pop('author', None)
+            data.pop('participants', None)
             data.update(to_change)
 
             response = requests.put(pr_url, json=data)

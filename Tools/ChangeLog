@@ -1,3 +1,25 @@
+2021-11-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Mark landed changes as merged
+        https://bugs.webkit.org/show_bug.cgi?id=233056
+        <rdar://problem/85351564>
+
+        Reviewed by Dewei Zhu.
+
+        For BitBucket and GitHub to recognize a pull-request as merged, the target
+        branch must be updated with the exact commit to be merged as the merge occurs.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py:
+        (Land.main): Update source branch when merging commits to target branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.update): Only delete values if they exist.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py:
+        (TestLand):
+        (TestLandGitHub):
+        (TestLandBitBucket):
+
 2021-11-16  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit::WebPageProxy::commitProvisionalPage()
