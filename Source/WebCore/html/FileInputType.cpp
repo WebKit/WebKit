@@ -178,11 +178,16 @@ bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
         return true;
     }
 
-    // If no filename at all is entered, return successful but empty.
-    // Null would be more logical, but Netscape posts an empty file. Argh.
+    // If no filename at all is entered, return successful but empty, with
+    // application/octet-stream content type. Null would be more logical, but
+    // Netscape posts an empty file. Argh.
     if (fileList->isEmpty()) {
         auto* document = element() ? &element()->document() : nullptr;
-        formData.append(name, File::create(document, emptyString()));
+        auto file = File::create(
+            document,
+            Blob::create(document, { }, "application/octet-stream"),
+            emptyString());
+        formData.append(name, file);
         return true;
     }
 
