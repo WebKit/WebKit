@@ -24,8 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=ServiceWorkerEnabled,
-    ImplementedBy=ServiceWorkerGlobalScopePushAPI
+    EnabledAtRuntime=ServiceWorkerEnabled
 ] partial interface ServiceWorkerGlobalScope {
     attribute EventHandler onpush;
 };
