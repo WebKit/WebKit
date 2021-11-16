@@ -1,3 +1,17 @@
+2021-11-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Limit graphics related IOKit method filtering
+        https://bugs.webkit.org/show_bug.cgi?id=233209
+        <rdar://problem/85473581>
+
+        Reviewed by Brent Fulgham.
+
+        Limit graphics related IOKit method filtering based on OS version. This patch also adds an entitlement which
+        will enable a replacement for the disabled filtering.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Scripts/process-entitlements.sh:
+
 2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Start preparing for serializing commands to the GPU process
