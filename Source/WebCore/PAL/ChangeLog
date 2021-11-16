@@ -1,5 +1,37 @@
 2021-11-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285828. rdar://problem/85341122
+
+    Unreviewed, fix the internal iOS 15 build
+    
+    Source/WebCore/PAL:
+    
+    In the internal iOS 15 SDK, <UIKit/NSTextList.h> does not define NSTextListMarkerFormat. Add a separate SDK
+    version check instead and only attempt to soft-link these constants if we're compiling against an SDK that we
+    know exports these symbols.
+    
+    * pal/spi/cocoa/NSAttributedStringSPI.h:
+    
+    Source/WTF:
+    
+    Add a new compile-time flag.
+    
+    * wtf/PlatformHave.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285828 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed, fix the internal iOS 15 build
+
+            In the internal iOS 15 SDK, <UIKit/NSTextList.h> does not define NSTextListMarkerFormat. Add a separate SDK
+            version check instead and only attempt to soft-link these constants if we're compiling against an SDK that we
+            know exports these symbols.
+
+            * pal/spi/cocoa/NSAttributedStringSPI.h:
+
+2021-11-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285811. rdar://problem/85341122
 
     Declare NSTextListMarker* as type NSTextListMarkerFormat when soft-linking
