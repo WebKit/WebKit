@@ -41,9 +41,9 @@ WI.Layer = class Layer {
         this._pseudoElementId = pseudoElementId;
         this._pseudoElement = pseudoElement;
 
-        // FIXME: This should probably be moved to the backend.
-        this._compositedBounds.x = this._bounds.x;
-        this._compositedBounds.y = this._bounds.y;
+        // Transform compositedBounds to the global position
+        this._compositedBounds.x += this._bounds.x;
+        this._compositedBounds.y += this._bounds.y;
     }
 
     // Static
