@@ -337,8 +337,6 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
 {
     ASSERT(isMainThread());
 
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ThreadedScrollingTree::willStartRenderingUpdate - scrollingThreadIsActive " << scrollingThreadIsActive());
-
     if (!scrollingThreadIsActive())
         return;
 

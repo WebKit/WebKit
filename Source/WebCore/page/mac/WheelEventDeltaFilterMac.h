@@ -47,6 +47,7 @@ private:
 
     RetainPtr<_NSScrollingPredominantAxisFilter> m_predominantAxisFilter;
     WallTime m_initialWallTime;
+    WallTime m_lastIOHIDEventTimestamp;
 };
 
 } // namespace WebCore
