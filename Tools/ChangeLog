@@ -1,3 +1,13 @@
+2021-11-16  Brady Eidson  <beidson@apple.com>
+
+        Enable webpushd tests in the iOS simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=233149
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::testWebPushDaemonPList): Add a key to allow an OSLaunchdJob executable to break out of the simulator runtime root.
+
 2021-11-16  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Stop returning AccessibilityUIElements backed by a null pointer

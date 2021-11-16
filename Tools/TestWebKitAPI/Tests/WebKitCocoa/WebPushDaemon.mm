@@ -32,8 +32,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 
-// FIXME: These tests are still currently disabled on iOS while tooling issues with `run-api-tests` are resolved.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
 
 static bool alertReceived = false;
 @interface NotificationPermissionDelegate : NSObject<WKUIDelegatePrivate>
@@ -65,15 +64,18 @@ static RetainPtr<NSURL> testWebPushDaemonLocation()
 
 static RetainPtr<xpc_object_t> testWebPushDaemonPList(NSURL *storageLocation)
 {
+    auto currentDirectory = currentExecutableDirectory();
+
     auto plist = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(plist.get(), "_ManagedBy", "TestWebKitAPI");
     xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.webpushtestdaemon");
     xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
+    xpc_dictionary_set_bool(plist.get(), "RootedSimulatorPath", true);
     xpc_dictionary_set_string(plist.get(), "StandardErrorPath", [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path.fileSystemRepresentation);
 
     {
         auto environmentVariables = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectory().get().fileSystemRepresentation);
+        xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentDirectory.get().fileSystemRepresentation);
         xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
     }
     {
@@ -87,10 +89,7 @@ static RetainPtr<xpc_object_t> testWebPushDaemonPList(NSURL *storageLocation)
 #if PLATFORM(MAC)
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, executableLocation.get().fileSystemRepresentation);
 #else
-        // FIXME: These tests are still currently disabled on iOS while tooling issues with `run-api-tests` are resolved.
-        // Once enabled, this patch must point to the webpushd executable at a path that exists within
-        // the simulator runtime root.
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "/usr/local/bin/webkit-testing/webpushd");
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, [currentDirectory URLByAppendingPathComponent:@"webpushd"].path.fileSystemRepresentation);
 #endif
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--machServiceName");
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "org.webkit.webpushtestdaemon.service");
@@ -144,9 +143,15 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
 {
     killFirstInstanceOfDaemon(@"webpushd");
 
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:tempDir.path]);
+    if (![[NSFileManager defaultManager] fileExistsAtPath:tempDir.path])
+        return;
+
     NSError *error = nil;
     [[NSFileManager defaultManager] removeItemAtURL:tempDir error:&error];
+
+    if (error)
+        NSLog(@"Error removing tempDir URL: %@", error);
+
     EXPECT_NULL(error);
 }
 
@@ -263,4 +268,4 @@ TEST(WebPushD, PermissionManagement)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(MAC) || PLATFORM(IOS)
