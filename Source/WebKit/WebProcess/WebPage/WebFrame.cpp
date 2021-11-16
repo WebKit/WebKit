@@ -239,6 +239,9 @@ void WebFrame::invalidatePolicyListener()
 {
     Ref protectedThis { *this };
 
+    if (!m_policyListenerID)
+        return;
+
     m_policyDownloadID = { };
     m_policyListenerID = 0;
     auto identifier = m_policyIdentifier;
