@@ -1,3 +1,19 @@
+2021-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use operation path when PutByVal child1 is not speculated as a Cell
+        https://bugs.webkit.org/show_bug.cgi?id=233147
+        rdar://85344310
+
+        Reviewed by Mark Lam.
+
+        r285530 removed non CellUse / non KnownCellUse case incorrectly (when we do not have Cell edge,
+        then we should use the slow operation path). This patch recovers it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByVal):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+
 2021-11-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use CallLinkInfo in LLInt

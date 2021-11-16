@@ -2626,6 +2626,11 @@ void SpeculativeJIT::compileDoublePutByVal(Node* node)
 void SpeculativeJIT::compilePutByVal(Node* node)
 {
     ArrayMode arrayMode = node->arrayMode().modeForPut();
+    Edge child1 = m_jit.graph().varArgChild(node, 0);
+    Edge child2 = m_jit.graph().varArgChild(node, 1);
+    Edge child3 = m_jit.graph().varArgChild(node, 2);
+    Edge child4 = m_jit.graph().varArgChild(node, 3);
+
     switch (arrayMode.type()) {
     case Array::AnyTypedArray:
     case Array::ForceExit:
@@ -2648,22 +2653,22 @@ void SpeculativeJIT::compilePutByVal(Node* node)
 #endif
     case Array::Generic: {
         DFG_ASSERT(m_jit.graph(), node, node->op() == PutByVal || node->op() == PutByValDirect, node->op());
-        if (m_graph.m_slowPutByVal.contains(node)) {
-            if (m_jit.graph().varArgChild(node, 0).useKind() == CellUse) {
-                if (m_jit.graph().varArgChild(node, 1).useKind() == StringUse) {
+        if (m_graph.m_slowPutByVal.contains(node) || (child1.useKind() != CellUse && child1.useKind() != KnownCellUse)) {
+            if (child1.useKind() == CellUse || child1.useKind() == KnownCellUse) {
+                if (child2.useKind() == StringUse) {
                     compilePutByValForCellWithString(node);
                     break;
                 }
 
-                if (m_jit.graph().varArgChild(node, 1).useKind() == SymbolUse) {
+                if (child2.useKind() == SymbolUse) {
                     compilePutByValForCellWithSymbol(node);
                     break;
                 }
             }
 
-            JSValueOperand base(this, m_jit.graph().varArgChild(node, 0));
-            JSValueOperand property(this, m_jit.graph().varArgChild(node, 1));
-            JSValueOperand value(this, m_jit.graph().varArgChild(node, 2));
+            JSValueOperand base(this, child1);
+            JSValueOperand property(this, child2);
+            JSValueOperand value(this, child3);
             JSValueRegs baseRegs = base.jsValueRegs();
             JSValueRegs propertyRegs = property.jsValueRegs();
             JSValueRegs valueRegs = value.jsValueRegs();
@@ -2679,9 +2684,9 @@ void SpeculativeJIT::compilePutByVal(Node* node)
             break;
         }
 
-        JSValueOperand base(this, m_jit.graph().varArgChild(node, 0), ManualOperandSpeculation);
-        JSValueOperand property(this, m_jit.graph().varArgChild(node, 1), ManualOperandSpeculation);
-        JSValueOperand value(this, m_jit.graph().varArgChild(node, 2), ManualOperandSpeculation);
+        JSValueOperand base(this, child1, ManualOperandSpeculation);
+        JSValueOperand property(this, child2, ManualOperandSpeculation);
+        JSValueOperand value(this, child3, ManualOperandSpeculation);
         JSValueRegs baseRegs = base.jsValueRegs();
         JSValueRegs propertyRegs = property.jsValueRegs();
         JSValueRegs valueRegs = value.jsValueRegs();
@@ -2693,9 +2698,9 @@ void SpeculativeJIT::compilePutByVal(Node* node)
             stubInfoGPR = stubInfo.gpr();
         }
 
-        speculate(node, m_jit.graph().varArgChild(node, 0));
-        speculate(node, m_jit.graph().varArgChild(node, 1));
-        speculate(node, m_jit.graph().varArgChild(node, 2));
+        speculate(node, child1);
+        speculate(node, child2);
+        speculate(node, child3);
 
         CodeOrigin codeOrigin = node->origin.semantic;
         CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
@@ -2707,11 +2712,11 @@ void SpeculativeJIT::compilePutByVal(Node* node)
             m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
             baseRegs, propertyRegs, valueRegs, InvalidGPRReg, stubInfoGPR);
 
-        if (m_state.forNode(m_jit.graph().varArgChild(node, 1)).isType(SpecString))
+        if (m_state.forNode(child2).isType(SpecString))
             gen.stubInfo()->propertyIsString = true;
-        else if (m_state.forNode(m_jit.graph().varArgChild(node, 1)).isType(SpecInt32Only))
+        else if (m_state.forNode(child2).isType(SpecInt32Only))
             gen.stubInfo()->propertyIsInt32 = true;
-        else if (m_state.forNode(m_jit.graph().varArgChild(node, 1)).isType(SpecSymbol))
+        else if (m_state.forNode(child2).isType(SpecSymbol))
             gen.stubInfo()->propertyIsSymbol = true;
 
         gen.generateFastPath(m_jit);
@@ -2739,7 +2744,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         break;
     }
     case Array::Int32: {
-        speculateInt32(m_jit.graph().varArgChild(node, 2));
+        speculateInt32(child3);
         FALLTHROUGH;
     }
     case Array::Contiguous: {
@@ -2752,10 +2757,10 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     }
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage: {
-        SpeculateCellOperand base(this, m_jit.graph().varArgChild(node, 0));
-        SpeculateStrictInt32Operand property(this, m_jit.graph().varArgChild(node, 1));
-        JSValueOperand value(this, m_jit.graph().varArgChild(node, 2));
-        StorageOperand storage(this, m_jit.graph().varArgChild(node, 3));
+        SpeculateCellOperand base(this, child1);
+        SpeculateStrictInt32Operand property(this, child2);
+        JSValueOperand value(this, child3);
+        StorageOperand storage(this, child4);
 
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();

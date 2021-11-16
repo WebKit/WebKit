@@ -5720,7 +5720,7 @@ IGNORE_CLANG_WARNINGS_END
         case Array::BigUint64Array:
         case Array::Generic: {
             if (m_graph.m_slowPutByVal.contains(m_node) || (child1.useKind() != CellUse && child1.useKind() != KnownCellUse)) {
-                if (child1.useKind() == CellUse) {
+                if (child1.useKind() == CellUse || child1.useKind() == KnownCellUse) {
                     V_JITOperation_GCCJ operation = nullptr;
                     if (child2.useKind() == StringUse) {
                         if (m_node->op() == PutByValDirect) {

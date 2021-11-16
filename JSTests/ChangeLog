@@ -1,3 +1,14 @@
+2021-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use operation path when PutByVal child1 is not speculated as a Cell
+        https://bugs.webkit.org/show_bug.cgi?id=233147
+        rdar://85344310
+
+        Reviewed by Mark Lam.
+
+        * stress/put-by-val-slow-dfg.js: Added.
+        (foo):
+
 2021-11-15  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip tests newly-failing on mips
