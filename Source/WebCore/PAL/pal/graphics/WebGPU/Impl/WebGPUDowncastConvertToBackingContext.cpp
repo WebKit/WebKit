@@ -51,8 +51,7 @@
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 WGPUAdapter DowncastConvertToBackingContext::convertToBacking(const Adapter& adapter)
 {
@@ -159,7 +158,6 @@ WGPUTextureView DowncastConvertToBackingContext::convertToBacking(const TextureV
     return static_cast<const TextureViewImpl&>(textureView).backing();
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

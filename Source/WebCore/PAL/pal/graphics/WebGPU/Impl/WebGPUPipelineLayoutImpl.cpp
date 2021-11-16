@@ -31,8 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 PipelineLayoutImpl::PipelineLayoutImpl(WGPUPipelineLayout pipelineLayout, ConvertToBackingContext& convertToBackingContext)
     : m_backing(pipelineLayout)
@@ -50,7 +49,6 @@ void PipelineLayoutImpl::setLabelInternal(const String& label)
     wgpuPipelineLayoutSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

@@ -33,8 +33,7 @@
 #include "WebGPUVertexState.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderPipelineDescriptor : public PipelineDescriptorBase {
     VertexState vertex;
@@ -44,5 +43,4 @@ struct RenderPipelineDescriptor : public PipelineDescriptorBase {
     std::optional<FragmentState> fragment;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -31,8 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 CommandBufferImpl::CommandBufferImpl(WGPUCommandBuffer commandBuffer, ConvertToBackingContext& convertToBackingContext)
     : m_backing(commandBuffer)
@@ -50,7 +49,6 @@ void CommandBufferImpl::setLabelInternal(const String& label)
     wgpuCommandBufferSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

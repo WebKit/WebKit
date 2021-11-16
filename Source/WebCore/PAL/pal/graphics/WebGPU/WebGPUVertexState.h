@@ -30,12 +30,10 @@
 #include <optional>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct VertexState : public ProgrammableStage {
     Vector<std::optional<VertexBufferLayout>> buffers;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

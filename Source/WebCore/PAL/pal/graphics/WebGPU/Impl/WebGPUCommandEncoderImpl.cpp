@@ -38,8 +38,7 @@
 #include "WebGPUTextureViewImpl.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 CommandEncoderImpl::CommandEncoderImpl(WGPUCommandEncoder CommandEncoder, ConvertToBackingContext& convertToBackingContext)
     : m_backing(CommandEncoder)
@@ -277,7 +276,6 @@ void CommandEncoderImpl::setLabelInternal(const String& label)
     wgpuCommandEncoderSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

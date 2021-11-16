@@ -27,11 +27,9 @@
 
 #include "WebGPUObjectDescriptorBase.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderBundleDescriptor : public ObjectDescriptorBase {
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

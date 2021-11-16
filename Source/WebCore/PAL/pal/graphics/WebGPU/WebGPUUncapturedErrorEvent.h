@@ -31,8 +31,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class UncapturedErrorEvent final : public RefCounted<UncapturedErrorEvent> {
 public:
@@ -60,5 +59,4 @@ private:
     UncapturedErrorEventInit m_uncapturedErrorEventInit;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

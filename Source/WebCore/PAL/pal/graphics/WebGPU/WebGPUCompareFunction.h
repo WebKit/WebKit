@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class CompareFunction : uint8_t {
     Never,
@@ -41,5 +40,4 @@ enum class CompareFunction : uint8_t {
     Always,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

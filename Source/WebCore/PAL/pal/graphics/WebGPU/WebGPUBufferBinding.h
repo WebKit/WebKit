@@ -30,8 +30,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct BufferBinding {
     Buffer& buffer;
@@ -39,5 +38,4 @@ struct BufferBinding {
     std::optional<Size64> size;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

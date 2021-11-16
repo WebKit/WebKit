@@ -29,8 +29,7 @@
 
 #include "WebGPUConvertToBackingContext.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
 public:
@@ -69,7 +68,6 @@ private:
     }
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

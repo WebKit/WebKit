@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class BlendFactor : uint8_t {
     Zero,
@@ -46,5 +45,4 @@ enum class BlendFactor : uint8_t {
     OneMinusConstant,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

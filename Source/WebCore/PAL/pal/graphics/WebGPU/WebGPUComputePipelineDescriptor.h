@@ -28,12 +28,10 @@
 #include "WebGPUPipelineDescriptorBase.h"
 #include "WebGPUProgrammableStage.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ComputePipelineDescriptor : public PipelineDescriptorBase {
     ProgrammableStage compute;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

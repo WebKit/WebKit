@@ -35,8 +35,7 @@
 #include "WebGPURenderPipelineImpl.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 RenderBundleEncoderImpl::RenderBundleEncoderImpl(WGPURenderBundleEncoder renderBundleEncoder, ConvertToBackingContext& convertToBackingContext)
     : m_backing(renderBundleEncoder)
@@ -138,7 +137,6 @@ void RenderBundleEncoderImpl::setLabelInternal(const String& label)
     wgpuRenderBundleEncoderSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

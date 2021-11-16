@@ -31,8 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 QuerySetImpl::QuerySetImpl(WGPUQuerySet querySet, ConvertToBackingContext& convertToBackingContext)
     : m_backing(querySet)
@@ -55,7 +54,6 @@ void QuerySetImpl::setLabelInternal(const String& label)
     wgpuQuerySetSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

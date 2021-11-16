@@ -30,10 +30,8 @@
 #include <variant>
 #include <wtf/Ref.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using Error = std::variant<Ref<OutOfMemoryError>, Ref<ValidationError>>;
 
-}
-}
+} // namespace PAL::WebGPU

@@ -27,13 +27,11 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class FrontFace : uint8_t {
     CCW,
     CW,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

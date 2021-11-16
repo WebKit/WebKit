@@ -28,8 +28,7 @@
 #include "WebGPUBlendFactor.h"
 #include "WebGPUBlendOperation.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct BlendComponent {
     BlendOperation operation;
@@ -37,5 +36,4 @@ struct BlendComponent {
     BlendFactor dstFactor;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

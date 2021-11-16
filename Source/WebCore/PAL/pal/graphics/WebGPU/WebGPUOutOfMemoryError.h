@@ -28,8 +28,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class OutOfMemoryError : public RefCounted<OutOfMemoryError> {
 public:
@@ -47,5 +46,4 @@ private:
     OutOfMemoryError& operator=(OutOfMemoryError&&) = delete;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

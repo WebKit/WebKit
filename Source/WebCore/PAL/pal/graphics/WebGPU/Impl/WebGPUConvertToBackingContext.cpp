@@ -58,8 +58,7 @@
 #include "WebGPUVertexStepMode.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 WGPUAddressMode ConvertToBackingContext::convertToBacking(AddressMode addressMode)
 {
@@ -835,7 +834,6 @@ WGPUOrigin3D ConvertToBackingContext::convertToBacking(const Origin3D& origin3D)
     });
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class SamplerBindingType : uint8_t {
     Filtering,
@@ -36,5 +35,4 @@ enum class SamplerBindingType : uint8_t {
     Comparison,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

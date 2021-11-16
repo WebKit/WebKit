@@ -34,8 +34,7 @@
 #include "WebGPUTextureBindingLayout.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct BindGroupLayoutEntry {
     Index32 binding;
@@ -48,5 +47,4 @@ struct BindGroupLayoutEntry {
     std::optional<ExternalTextureBindingLayout> externalTexture;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

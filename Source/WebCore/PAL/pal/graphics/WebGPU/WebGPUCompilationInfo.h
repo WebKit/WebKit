@@ -29,8 +29,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class CompilationInfo final : public RefCounted<CompilationInfo> {
 public:
@@ -56,5 +55,4 @@ private:
     Vector<Ref<CompilationMessage>> m_messages;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

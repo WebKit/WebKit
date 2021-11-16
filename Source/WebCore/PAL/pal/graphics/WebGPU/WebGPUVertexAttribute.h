@@ -28,8 +28,7 @@
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUVertexFormat.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct VertexAttribute {
     VertexFormat format;
@@ -38,5 +37,4 @@ struct VertexAttribute {
     Index32 shaderLocation;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

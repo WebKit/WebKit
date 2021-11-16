@@ -29,12 +29,10 @@
 #include "WebGPUProgrammableStage.h"
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct FragmentState : public ProgrammableStage {
     Vector<ColorTargetState> targets;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

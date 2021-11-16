@@ -27,12 +27,10 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class LoadOp : uint8_t {
     Load,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

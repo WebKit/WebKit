@@ -27,12 +27,10 @@
 
 #include "WebGPUSamplerBindingType.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct SamplerBindingLayout {
     SamplerBindingType type;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

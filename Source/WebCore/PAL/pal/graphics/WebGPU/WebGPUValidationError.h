@@ -29,8 +29,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class ValidationError final : public RefCounted<ValidationError> {
 public:
@@ -55,5 +54,4 @@ private:
     String m_message;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

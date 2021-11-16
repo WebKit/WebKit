@@ -30,13 +30,11 @@
 #include "WebGPUObjectDescriptorBase.h"
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct BindGroupDescriptor : public ObjectDescriptorBase {
     BindGroupLayout& layout;
     Vector<BindGroupEntry> entries;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

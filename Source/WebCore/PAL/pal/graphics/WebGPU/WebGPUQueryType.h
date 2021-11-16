@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class QueryType : uint8_t {
     Occlusion,
@@ -36,5 +35,4 @@ enum class QueryType : uint8_t {
     Timestamp,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

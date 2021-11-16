@@ -33,8 +33,7 @@
 #include <optional>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderPassDescriptor : public ObjectDescriptorBase {
     Vector<RenderPassColorAttachment> colorAttachments;
@@ -43,5 +42,4 @@ struct RenderPassDescriptor : public ObjectDescriptorBase {
     RenderPassTimestampWrites timestampWrites;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

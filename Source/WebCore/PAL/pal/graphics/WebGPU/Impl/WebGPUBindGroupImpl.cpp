@@ -31,8 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 BindGroupImpl::BindGroupImpl(WGPUBindGroup bindGroup, ConvertToBackingContext& convertToBackingContext)
     : m_backing(bindGroup)
@@ -50,7 +49,6 @@ void BindGroupImpl::setLabelInternal(const String& label)
     wgpuBindGroupSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

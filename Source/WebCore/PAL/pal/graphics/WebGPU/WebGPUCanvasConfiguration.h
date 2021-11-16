@@ -33,8 +33,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class Device;
 
@@ -49,5 +48,4 @@ struct CanvasConfiguration {
     std::optional<Extent3D> size;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -31,8 +31,7 @@
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class ConvertToBackingContext;
 
@@ -73,7 +72,6 @@ private:
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

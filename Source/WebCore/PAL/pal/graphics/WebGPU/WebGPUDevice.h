@@ -38,8 +38,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class BindGroup;
 struct BindGroupDescriptor;
@@ -140,5 +139,4 @@ private:
     Ref<SupportedLimits> m_limits;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

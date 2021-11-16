@@ -30,8 +30,7 @@
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using PipelineConstantValue = double; // May represent WGSL’s bool, f32, i32, u32.
 
@@ -41,5 +40,4 @@ struct ProgrammableStage {
     Vector<KeyValuePair<String, PipelineConstantValue>> constants;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

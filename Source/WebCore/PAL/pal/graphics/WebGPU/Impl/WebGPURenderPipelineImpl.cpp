@@ -32,8 +32,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 RenderPipelineImpl::RenderPipelineImpl(WGPURenderPipeline renderPipeline, ConvertToBackingContext& convertToBackingContext)
     : m_backing(renderPipeline)
@@ -56,7 +55,6 @@ void RenderPipelineImpl::setLabelInternal(const String& label)
     wgpuRenderPipelineSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

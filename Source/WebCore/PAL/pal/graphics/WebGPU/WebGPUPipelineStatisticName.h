@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class PipelineStatisticName : uint8_t {
     VertexShaderInvocations,
@@ -38,5 +37,4 @@ enum class PipelineStatisticName : uint8_t {
     ComputeShaderInvocations,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

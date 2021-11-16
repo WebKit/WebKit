@@ -28,13 +28,11 @@
 #include "WebGPUPowerPreference.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RequestAdapterOptions {
     std::optional<PowerPreference> powerPreference;
     bool forceFallbackAdapter;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

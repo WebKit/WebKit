@@ -31,8 +31,7 @@
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using ColorWriteFlags = uint32_t;
 class ColorWrite : public RefCounted<ColorWrite> {
@@ -44,5 +43,4 @@ public:
     static constexpr FlagsConstant ALL   = 0xF;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

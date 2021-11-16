@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class PrimitiveTopology : uint8_t {
     PointList,
@@ -38,5 +37,4 @@ enum class PrimitiveTopology : uint8_t {
     TriangleStrip,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

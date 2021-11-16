@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class VertexFormat : uint8_t {
     Uint8x2,
@@ -63,5 +62,4 @@ enum class VertexFormat : uint8_t {
     Sint32x4,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

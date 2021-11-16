@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class FeatureName : uint8_t {
     DepthClipControl,
@@ -42,5 +41,4 @@ enum class FeatureName : uint8_t {
     IndirectFirstInstance,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

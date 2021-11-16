@@ -32,8 +32,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 GPUImpl::GPUImpl(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
     : m_backing(instance)
@@ -75,7 +74,6 @@ void GPUImpl::requestAdapterCallback(WGPURequestAdapterStatus, WGPUAdapter adapt
     callback(AdapterImpl::create(adapter, m_convertToBackingContext));
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

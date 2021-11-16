@@ -29,8 +29,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ColorDict {
     double r;
@@ -41,5 +40,4 @@ struct ColorDict {
 
 using Color = std::variant<Vector<double>, ColorDict>;
 
-}
-}
+} // namespace PAL::WebGPU

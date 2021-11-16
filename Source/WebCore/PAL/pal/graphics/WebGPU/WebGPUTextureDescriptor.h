@@ -32,8 +32,7 @@
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureUsage.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct TextureDescriptor : public ObjectDescriptorBase {
     Extent3D size;
@@ -44,5 +43,4 @@ struct TextureDescriptor : public ObjectDescriptorBase {
     TextureUsageFlags usage;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

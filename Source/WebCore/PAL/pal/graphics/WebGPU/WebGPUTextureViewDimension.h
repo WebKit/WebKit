@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class TextureViewDimension : uint8_t {
     _1d,
@@ -39,5 +38,4 @@ enum class TextureViewDimension : uint8_t {
     _3d,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

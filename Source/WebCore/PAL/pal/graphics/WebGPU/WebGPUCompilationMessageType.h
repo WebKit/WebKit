@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class CompilationMessageType : uint8_t {
     Error,
@@ -36,5 +35,4 @@ enum class CompilationMessageType : uint8_t {
     Info,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

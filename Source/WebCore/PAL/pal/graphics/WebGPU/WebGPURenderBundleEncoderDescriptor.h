@@ -27,13 +27,11 @@
 
 #include "WebGPURenderPassLayout.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderBundleEncoderDescriptor : public RenderPassLayout {
     bool depthReadOnly;
     bool stencilReadOnly;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

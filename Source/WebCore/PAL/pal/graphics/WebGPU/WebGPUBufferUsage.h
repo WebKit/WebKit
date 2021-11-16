@@ -29,8 +29,7 @@
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using BufferUsageFlags = uint32_t;
 
@@ -48,5 +47,4 @@ public:
     static constexpr FlagsConstant QUERY_RESOLVE = 0x0200;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -27,13 +27,11 @@
 
 #include "WebGPUBlendComponent.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct BlendState {
     BlendComponent color;
     BlendComponent alpha;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

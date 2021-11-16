@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class TextureSampleType : uint8_t {
     Float,
@@ -38,5 +37,4 @@ enum class TextureSampleType : uint8_t {
     Uint,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

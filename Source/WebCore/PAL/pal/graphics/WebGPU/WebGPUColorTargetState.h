@@ -30,8 +30,7 @@
 #include "WebGPUTextureFormat.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ColorTargetState {
     TextureFormat format;
@@ -40,5 +39,4 @@ struct ColorTargetState {
     ColorWriteFlags writeMask;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

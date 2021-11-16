@@ -32,8 +32,7 @@
 #include "WebGPUDeviceImpl.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 static String adapterName(WGPUAdapter adapter)
 {
@@ -216,7 +215,6 @@ void AdapterImpl::requestDeviceCallback(WGPURequestDeviceStatus, WGPUDevice devi
     callback(DeviceImpl::create(device, Ref { features() }, Ref { limits() }, m_convertToBackingContext));
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

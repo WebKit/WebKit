@@ -28,13 +28,11 @@
 #include "WebGPUImageCopyTexture.h"
 #include "WebGPUPredefinedColorSpace.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ImageCopyTextureTagged : public ImageCopyTexture {
     PredefinedColorSpace colorSpace;
     bool premultipliedAlpha;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

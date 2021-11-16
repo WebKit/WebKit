@@ -31,8 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 TextureViewImpl::TextureViewImpl(WGPUTextureView textureView, ConvertToBackingContext& convertToBackingContext)
     : m_backing(textureView)
@@ -50,7 +49,6 @@ void TextureViewImpl::setLabelInternal(const String& label)
     wgpuTextureViewSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

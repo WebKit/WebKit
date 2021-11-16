@@ -27,13 +27,11 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class CanvasCompositingAlphaMode : uint8_t {
     Opaque,
     Premultiplied,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

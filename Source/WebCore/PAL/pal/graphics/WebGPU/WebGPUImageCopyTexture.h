@@ -32,8 +32,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ImageCopyTexture {
     Texture& texture;
@@ -42,5 +41,4 @@ struct ImageCopyTexture {
     TextureAspect aspect;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

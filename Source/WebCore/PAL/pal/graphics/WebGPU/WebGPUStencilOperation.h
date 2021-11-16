@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class StencilOperation : uint8_t {
     Keep,
@@ -41,5 +40,4 @@ enum class StencilOperation : uint8_t {
     DecrementWrap,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -29,8 +29,7 @@
 #include <variant>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct Origin2DDict {
     IntegerCoordinate x;
@@ -39,5 +38,4 @@ struct Origin2DDict {
 
 using Origin2D = std::variant<Vector<IntegerCoordinate>, Origin2DDict>;
 
-}
-}
+} // namespace PAL::WebGPU

@@ -29,8 +29,7 @@
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using MapModeFlags = uint32_t;
 
@@ -40,5 +39,4 @@ public:
     static constexpr FlagsConstant WRITE = 0x0002;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

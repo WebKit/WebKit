@@ -29,8 +29,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class PipelineLayout : public RefCounted<PipelineLayout> {
 public:
@@ -58,5 +57,4 @@ private:
     String m_label;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

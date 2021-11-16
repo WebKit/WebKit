@@ -31,8 +31,7 @@
 #include "WebGPUTextureFormat.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct DepthStencilState {
     TextureFormat format;
@@ -51,5 +50,4 @@ struct DepthStencilState {
     float depthBiasClamp;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

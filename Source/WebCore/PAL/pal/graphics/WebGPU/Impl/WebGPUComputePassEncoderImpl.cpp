@@ -35,8 +35,7 @@
 #include "WebGPUQuerySetImpl.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 ComputePassEncoderImpl::ComputePassEncoderImpl(WGPUComputePassEncoder computePassEncoder, ConvertToBackingContext& convertToBackingContext)
     : m_backing(computePassEncoder)
@@ -117,7 +116,6 @@ void ComputePassEncoderImpl::setLabelInternal(const String& label)
     wgpuComputePassEncoderSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

@@ -31,8 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 SamplerImpl::SamplerImpl(WGPUSampler sampler, ConvertToBackingContext& convertToBackingContext)
     : m_backing(sampler)
@@ -50,7 +49,6 @@ void SamplerImpl::setLabelInternal(const String& label)
     wgpuSamplerSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class TextureFormat : uint8_t {
     // 8-bit formats
@@ -153,5 +152,4 @@ enum class TextureFormat : uint8_t {
     Depth32floatStencil8,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

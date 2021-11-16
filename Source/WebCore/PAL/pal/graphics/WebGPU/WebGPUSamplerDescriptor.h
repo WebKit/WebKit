@@ -32,8 +32,7 @@
 #include <cstdint>
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct SamplerDescriptor : public ObjectDescriptorBase {
     AddressMode addressModeU;
@@ -48,5 +47,4 @@ struct SamplerDescriptor : public ObjectDescriptorBase {
     uint16_t maxAnisotropy;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

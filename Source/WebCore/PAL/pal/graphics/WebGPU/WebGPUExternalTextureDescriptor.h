@@ -28,12 +28,10 @@
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPUPredefinedColorSpace.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
     PredefinedColorSpace colorSpace;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

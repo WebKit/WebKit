@@ -29,8 +29,7 @@
 #include <variant>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct Extent3DDict {
     IntegerCoordinate width;
@@ -40,5 +39,4 @@ struct Extent3DDict {
 
 using Extent3D = std::variant<Vector<IntegerCoordinate>, Extent3DDict>;
 
-}
-}
+} // namespace PAL::WebGPU

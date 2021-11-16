@@ -28,13 +28,11 @@
 #include "WebGPUObjectDescriptorBase.h"
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ShaderModuleDescriptor : public ObjectDescriptorBase {
     String code;
     // JSC::Strong<JSC::JSObject> sourceMap;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

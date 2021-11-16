@@ -29,8 +29,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class SupportedLimits final : public RefCounted<SupportedLimits> {
 public:
@@ -240,5 +239,4 @@ private:
     uint32_t m_maxComputeWorkgroupsPerDimension { 0 };
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

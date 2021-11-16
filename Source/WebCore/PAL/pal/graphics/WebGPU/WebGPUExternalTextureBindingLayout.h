@@ -25,11 +25,9 @@
 
 #pragma once
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ExternalTextureBindingLayout {
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

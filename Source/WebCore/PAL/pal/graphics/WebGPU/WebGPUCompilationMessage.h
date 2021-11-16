@@ -31,8 +31,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class CompilationMessage final : public RefCounted<CompilationMessage> {
 public:
@@ -73,5 +72,4 @@ private:
     uint64_t m_length;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

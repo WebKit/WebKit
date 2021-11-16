@@ -29,13 +29,11 @@
 #include <optional>
 #include <variant>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ImageCopyExternalImage {
     // std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>> source;
     std::optional<Origin2D> origin;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -31,8 +31,7 @@
 #include "WebGPUQueryType.h"
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct QuerySetDescriptor : public ObjectDescriptorBase {
     QueryType type;
@@ -40,5 +39,4 @@ struct QuerySetDescriptor : public ObjectDescriptorBase {
     Vector<PipelineStatisticName> pipelineStatistics;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -33,8 +33,7 @@
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderPassColorAttachment {
     TextureView& view;
@@ -44,5 +43,4 @@ struct RenderPassColorAttachment {
     StoreOp storeOp;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

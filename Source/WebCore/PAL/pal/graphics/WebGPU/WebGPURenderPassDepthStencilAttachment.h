@@ -32,8 +32,7 @@
 #include <variant>
 #include <wtf/Ref.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderPassDepthStencilAttachment {
     TextureView& view;
@@ -47,5 +46,4 @@ struct RenderPassDepthStencilAttachment {
     bool stencilReadOnly;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

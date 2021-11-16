@@ -27,8 +27,7 @@
 
 #include "WebGPUIntegralTypes.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct MultisampleState {
     Size32 count;
@@ -36,5 +35,4 @@ struct MultisampleState {
     bool alphaToCoverageEnabled;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -34,8 +34,7 @@
 #include "WebGPUTextureImpl.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 QueueImpl::QueueImpl(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext)
     : m_backing(queue)
@@ -135,7 +134,6 @@ void QueueImpl::setLabelInternal(const String& label)
     wgpuQueueSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

@@ -28,8 +28,7 @@
 #include "WebGPUIntegralTypes.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ImageDataLayout {
     Size64 offset;
@@ -37,5 +36,4 @@ struct ImageDataLayout {
     std::optional<Size32> rowsPerImage;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

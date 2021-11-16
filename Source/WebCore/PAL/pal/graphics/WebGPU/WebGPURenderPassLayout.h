@@ -31,8 +31,7 @@
 #include <optional>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderPassLayout : public ObjectDescriptorBase {
     Vector<TextureFormat> colorFormats;
@@ -40,5 +39,4 @@ struct RenderPassLayout : public ObjectDescriptorBase {
     Size32 sampleCount;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

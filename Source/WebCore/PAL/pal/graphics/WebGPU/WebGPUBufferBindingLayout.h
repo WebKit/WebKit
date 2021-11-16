@@ -28,8 +28,7 @@
 #include "WebGPUBufferBindingType.h"
 #include "WebGPUIntegralTypes.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct BufferBindingLayout {
     BufferBindingType type;
@@ -37,5 +36,4 @@ struct BufferBindingLayout {
     Size64 minBindingSize;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

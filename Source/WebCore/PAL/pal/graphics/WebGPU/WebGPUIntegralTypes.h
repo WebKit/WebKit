@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using BufferDynamicOffset = uint32_t;
 using StencilValue = uint32_t;
@@ -43,5 +42,4 @@ using SignedOffset32 = int32_t;
 
 using FlagsConstant = uint32_t;
 
-}
-}
+} // namespace PAL::WebGPU

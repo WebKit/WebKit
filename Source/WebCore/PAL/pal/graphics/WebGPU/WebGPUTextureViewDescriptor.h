@@ -32,8 +32,7 @@
 #include "WebGPUTextureViewDimension.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<TextureFormat> format;
@@ -45,5 +44,4 @@ struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<IntegerCoordinate> arrayLayerCount;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

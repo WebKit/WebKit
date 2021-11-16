@@ -29,8 +29,7 @@
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureViewDimension.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct StorageTextureBindingLayout {
     StorageTextureAccess access;
@@ -38,5 +37,4 @@ struct StorageTextureBindingLayout {
     TextureViewDimension viewDimension;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

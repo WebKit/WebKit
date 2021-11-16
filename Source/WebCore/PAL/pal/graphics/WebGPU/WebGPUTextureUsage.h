@@ -29,8 +29,7 @@
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using TextureUsageFlags = uint32_t;
 class TextureUsage : public RefCounted<TextureUsage> {
@@ -42,5 +41,4 @@ public:
     static constexpr FlagsConstant RENDER_ATTACHMENT = 0x10;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

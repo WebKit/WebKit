@@ -27,12 +27,10 @@
 
 #include "WebGPUError.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct UncapturedErrorEventInit {
     Error error;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

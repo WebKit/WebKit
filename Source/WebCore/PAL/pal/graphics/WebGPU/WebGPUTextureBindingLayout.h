@@ -28,8 +28,7 @@
 #include "WebGPUTextureSampleType.h"
 #include "WebGPUTextureViewDimension.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct TextureBindingLayout {
     TextureSampleType sampleType;
@@ -37,5 +36,4 @@ struct TextureBindingLayout {
     bool multisampled;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -30,8 +30,7 @@
 #include "WebGPUVertexStepMode.h"
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct VertexBufferLayout {
     Size64 arrayStride;
@@ -39,5 +38,4 @@ struct VertexBufferLayout {
     Vector<VertexAttribute> attributes;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

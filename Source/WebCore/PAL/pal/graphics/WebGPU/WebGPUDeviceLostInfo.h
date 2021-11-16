@@ -31,8 +31,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class DeviceLostInfo final : public RefCounted<DeviceLostInfo> {
 public:
@@ -63,5 +62,4 @@ private:
     String m_message;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

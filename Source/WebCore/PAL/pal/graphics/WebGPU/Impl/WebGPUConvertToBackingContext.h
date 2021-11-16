@@ -39,8 +39,7 @@
 #include <WebGPU/WebGPU.h>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class Adapter;
 enum class AddressMode : uint8_t;
@@ -159,7 +158,6 @@ public:
     virtual WGPUTextureView convertToBacking(const TextureView&) = 0;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

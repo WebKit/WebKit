@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class AddressMode : uint8_t {
     ClampToEdge,
@@ -36,5 +35,4 @@ enum class AddressMode : uint8_t {
     MirrorRepeat,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

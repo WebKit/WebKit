@@ -29,8 +29,7 @@
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 using ShaderStageFlags = uint32_t;
 class ShaderStage : public RefCounted<ShaderStage> {
@@ -40,5 +39,4 @@ public:
     static constexpr FlagsConstant COMPUTE  = 0x4;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

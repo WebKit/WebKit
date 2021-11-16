@@ -31,8 +31,7 @@
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct RenderPassTimestampWrite {
     QuerySet& querySet;
@@ -42,5 +41,4 @@ struct RenderPassTimestampWrite {
 
 using RenderPassTimestampWrites = Vector<RenderPassTimestampWrite>;
 
-}
-}
+} // namespace PAL::WebGPU

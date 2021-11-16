@@ -28,12 +28,10 @@
 #include "WebGPUComputePassTimestampWrites.h"
 #include "WebGPUObjectDescriptorBase.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct ComputePassDescriptor : public ObjectDescriptorBase {
     ComputePassTimestampWrites timestampWrites;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

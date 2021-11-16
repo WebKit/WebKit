@@ -28,8 +28,7 @@
 #include "WebGPUCompareFunction.h"
 #include "WebGPUStencilOperation.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct StencilFaceState {
     CompareFunction compare;
@@ -38,5 +37,4 @@ struct StencilFaceState {
     StencilOperation passOp;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

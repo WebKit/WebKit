@@ -29,8 +29,7 @@
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUObjectDescriptorBase.h"
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct BufferDescriptor : public ObjectDescriptorBase {
     Size64 size;
@@ -38,5 +37,4 @@ struct BufferDescriptor : public ObjectDescriptorBase {
     bool mappedAtCreation;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

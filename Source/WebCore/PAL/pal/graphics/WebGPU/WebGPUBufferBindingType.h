@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class BufferBindingType : uint8_t {
     Uniform,
@@ -36,5 +35,4 @@ enum class BufferBindingType : uint8_t {
     ReadOnlyStorage,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -31,8 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 ShaderModuleImpl::ShaderModuleImpl(WGPUShaderModule shaderModule, ConvertToBackingContext& convertToBackingContext)
     : m_backing(shaderModule)
@@ -54,7 +53,6 @@ void ShaderModuleImpl::setLabelInternal(const String& label)
     wgpuShaderModuleSetLabel(m_backing, label.utf8().data());
 }
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

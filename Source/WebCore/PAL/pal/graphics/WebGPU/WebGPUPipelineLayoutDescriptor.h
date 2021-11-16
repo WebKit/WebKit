@@ -30,12 +30,10 @@
 #include <utility>
 #include <wtf/Vector.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct PipelineLayoutDescriptor : public ObjectDescriptorBase {
     Vector<std::reference_wrapper<BindGroupLayout>> bindGroupLayouts;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

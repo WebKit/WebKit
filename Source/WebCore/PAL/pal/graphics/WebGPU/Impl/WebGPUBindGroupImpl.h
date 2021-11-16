@@ -30,8 +30,7 @@
 #include "WebGPUBindGroup.h"
 #include <WebGPU/WebGPU.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class ConvertToBackingContext;
 
@@ -62,7 +61,6 @@ private:
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

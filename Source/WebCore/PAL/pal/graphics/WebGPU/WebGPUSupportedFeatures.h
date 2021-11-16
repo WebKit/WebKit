@@ -29,8 +29,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 class SupportedFeatures final : public RefCounted<SupportedFeatures> {
 public:
@@ -61,5 +60,4 @@ private:
     Vector<String> m_features;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class TextureAspect : uint8_t {
     All,
@@ -36,5 +35,4 @@ enum class TextureAspect : uint8_t {
     DepthOnly,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

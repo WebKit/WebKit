@@ -27,8 +27,7 @@
 
 #include <cstdint>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 enum class BlendOperation : uint8_t {
     Add,
@@ -38,5 +37,4 @@ enum class BlendOperation : uint8_t {
     Max,
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU

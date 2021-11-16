@@ -32,8 +32,7 @@
 #include "WebGPUPrimitiveTopology.h"
 #include <optional>
 
-namespace PAL {
-namespace WebGPU {
+namespace PAL::WebGPU {
 
 struct PrimitiveState {
     PrimitiveTopology topology;
@@ -45,5 +44,4 @@ struct PrimitiveState {
     bool unclippedDepth;
 };
 
-} // namespace PAL
-} // namespace WebGPU
+} // namespace PAL::WebGPU
