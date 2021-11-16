@@ -963,9 +963,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
     }
 
-    _nameCompletionDataProvider(text, {allowEmptyPrefix} = {})
+    _nameCompletionDataProvider(text, {caretPosition, allowEmptyPrefix} = {})
     {
-        return WI.CSSKeywordCompletions.forPartialPropertyName(text, {allowEmptyPrefix});
+        return WI.CSSKeywordCompletions.forPartialPropertyName(text, {caretPosition, allowEmptyPrefix});
     }
 
     _handleValueBeforeInput(event)
@@ -987,10 +987,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this.spreadsheetTextFieldDidCommit(this._valueTextField, {direction: "forward"});
     }
 
-    _valueCompletionDataProvider(text, {allowEmptyPrefix} = {})
+    _valueCompletionDataProvider(text, {caretPosition, allowEmptyPrefix} = {})
     {
-        // FIXME: <webkit.org/b/227411> Styles sidebar panel should support midline and multiline completions.
-        return WI.CSSKeywordCompletions.forPartialPropertyValue(text, this._nameElement.textContent.trim(), {additionalFunctionValueCompletionsProvider: this.additionalFunctionValueCompletionsProvider.bind(this)});
+        return WI.CSSKeywordCompletions.forPartialPropertyValue(text, this._nameElement.textContent.trim(), {caretPosition, additionalFunctionValueCompletionsProvider: this.additionalFunctionValueCompletionsProvider.bind(this)});
     }
 
     _setupJumpToSymbol(element)

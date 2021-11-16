@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,12 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._element.addEventListener("click", this._handleClick.bind(this));
         this._element.addEventListener("blur", this._handleBlur.bind(this));
         this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this._element.addEventListener("keyup", this._handleKeyUp.bind(this));
         this._element.addEventListener("input", this._handleInput.bind(this));
 
         this._editing = false;
+        this._preventDiscardingCompletionsOnKeyUp = false;
+        this._keyDownCaretPosition = -1;
         this._valueBeforeEditing = "";
         this._completionPrefix = "";
         this._controlSpaceKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, WI.KeyboardShortcut.Key.Space);
@@ -63,8 +66,14 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     valueWithoutSuggestion()
     {
-        let value = this._element.textContent;
-        return value.slice(0, value.length - this.suggestionHint.length);
+        // The suggestion could appear anywhere within the element, and the text of the element can span multiple nodes.
+        let valueWithoutSuggestion = "";
+        for (let childNode of this._element.childNodes) {
+            if (childNode === this._suggestionHintElement)
+                continue;
+            valueWithoutSuggestion += childNode.textContent;
+        }
+        return valueWithoutSuggestion;
     }
 
     get suggestionHint()
@@ -74,12 +83,20 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     set suggestionHint(value)
     {
+        if (this._suggestionHintElement.textContent === value)
+            return;
+
         this._suggestionHintElement.textContent = value;
 
-        if (value)
+        if (value) {
             this._reAttachSuggestionHint();
-        else
-            this._suggestionHintElement.remove();
+            return;
+        }
+
+        this._suggestionHintElement.remove();
+
+        // Removing the suggestion hint element may leave the contents of `_element` fragmented into multiple text nodes.
+        this._combineEditorElementChildren();
     }
 
     startEditing()
@@ -92,6 +109,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         this._editing = true;
         this._valueBeforeEditing = this.value;
+
+        this._keyDownCaretPosition = -1;
 
         this._element.classList.add("editing");
         this._element.contentEditable = "plaintext-only";
@@ -142,7 +161,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
     {
         this.suggestionHint = selectedText.slice(this._completionPrefix.length);
 
-        this._reAttachSuggestionHint();
+        if (this.suggestionHint.length)
+            this._reAttachSuggestionHint();
 
         if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
             this._delegate.spreadsheetTextFieldDidChange(this);
@@ -150,26 +170,9 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     completionSuggestionsClickedCompletion(suggestionsView, selectedText)
     {
-        // Consider the following example:
-        //
-        //   border: 1px solid ro|
-        //                     rosybrown
-        //                     royalblue
-        //
-        // Clicking on "rosybrown" should replace "ro" with "rosybrown".
-        //
-        //           prefix:  1px solid ro
-        // completionPrefix:            ro
-        //        newPrefix:  1px solid
-        //     selectedText:            rosybrown
-        let prefix = this.valueWithoutSuggestion();
-        let newPrefix = prefix.slice(0, -this._completionPrefix.length);
+        this.suggestionHint = selectedText.slice(this._completionPrefix.length);
 
-        this._element.textContent = newPrefix + selectedText;
-
-        // Place text caret at the end.
-        window.getSelection().setBaseAndExtent(this._element, selectedText.length, this._element, selectedText.length);
-
+        this._applyCompletionHint({moveCaretToEndOfCompletion: true});
         this.discardCompletion();
 
         if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
@@ -200,8 +203,11 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     _handleMouseDown(event)
     {
-        if (this._editing)
-            event.stopPropagation();
+        if (!this._editing)
+            return;
+
+        event.stopPropagation();
+        this.discardCompletion();
     }
 
     _handleBlur(event)
@@ -226,8 +232,12 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (!this._editing)
             return;
 
+        this._preventDiscardingCompletionsOnKeyUp = false;
+        this._keyDownCaretPosition = this._getCaretPosition();
+
         if (this._suggestionsView) {
             let consumed = this._handleKeyDownForSuggestionView(event);
+            this._preventDiscardingCompletionsOnKeyUp = consumed;
             if (consumed)
                 return;
         }
@@ -292,6 +302,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             if (this._suggestionsView.visible)
                 this._suggestionsView.hide();
             else {
+                this._preventDiscardingCompletionsOnKeyUp = true;
                 const forceCompletions = true;
                 this._updateCompletions(forceCompletions);
             }
@@ -327,12 +338,12 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return true;
         }
 
-        if (event.key === "ArrowRight" && this.suggestionHint) {
+        if (event.key === "ArrowRight" && this.suggestionHint.length) {
             let selection = window.getSelection();
 
-            if (selection.isCollapsed && (selection.focusOffset === this.valueWithoutSuggestion().length || selection.focusNode === this._suggestionHintElement)) {
+            if (selection.isCollapsed) {
                 event.stop();
-                document.execCommand("insertText", false, this.suggestionHint);
+                this._applyCompletionHint({moveCaretToEndOfCompletion: true});
 
                 // When completing "background", don't hide the completion popover.
                 // Continue showing the popover with properties such as "background-color" and "background-image".
@@ -362,9 +373,31 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
             if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
                 this._delegate.spreadsheetTextFieldDidChange(this);
+            return true;
         }
 
         return false;
+    }
+
+    _handleKeyUp()
+    {
+        if (!this._editing || !this._suggestionsView)
+            return;
+
+        // Certain actions, like Ctrl+Space will handle updating or discarding completions as necessary.
+        if (this._preventDiscardingCompletionsOnKeyUp)
+            return;
+
+        // Some key events, like the arrow keys and Ctrl+A (move to line start), will move the caret without committing
+        // any input to the text field. In those situations we should discard completion if they are available. It is
+        // also possible that we receive a KeyUp event for a key that was not pressed inside this text field, in which
+        // case the _keyDownCaretPosition will still be -1. This can occur when the user types a `:` to begin editing
+        // the value for a property, and the KeyUp events for each of those keys will be handled here, even though the
+        // corresponding KeyDown events was never handled by this text field.
+        if (this._keyDownCaretPosition === -1 || this._keyDownCaretPosition === this._getCaretPosition())
+            return;
+
+        this.discardCompletion();
     }
 
     _handleInput(event)
@@ -372,6 +405,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (!this._editing)
             return;
 
+        this._preventDiscardingCompletionsOnKeyUp = true;
         this._updateCompletions();
 
         if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
@@ -384,7 +418,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return;
 
         let valueWithoutSuggestion = this.valueWithoutSuggestion();
-        let {completions, prefix} = this._completionProvider(valueWithoutSuggestion, {allowEmptyPrefix: forceCompletions});
+        let {completions, prefix} = this._completionProvider(valueWithoutSuggestion, {allowEmptyPrefix: forceCompletions, caretPosition: this._getCaretPosition()});
         this._completionPrefix = prefix;
 
         if (!completions.length) {
@@ -422,9 +456,14 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     _showSuggestionsView()
     {
-        let prefix = this.valueWithoutSuggestion();
-        let startOffset = prefix.length - this._completionPrefix.length;
-        let caretRect = this._getCaretRect(startOffset);
+        // Adjust the used caret position to correctly align autocompletion results with existing text. The suggestions
+        // should appear aligned as below:
+        //
+        // border: 1px solid ro|
+        //                   rosybrown
+        //                   royalblue
+        let adjustedCaretPosition = this._getCaretPosition() - this._completionPrefix.length;
+        let caretRect = this._getCaretRect(adjustedCaretPosition);
 
         // Hide completion popover when the anchor element is removed from the DOM.
         if (!caretRect)
@@ -435,47 +474,104 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         }
     }
 
-    _getCaretRect(startOffset)
+    _getCaretPosition()
     {
         let selection = window.getSelection();
+        if (!selection.rangeCount)
+            return 0;
 
+        // The window's selection range will only contain the current line's positioning in multiline text, so a new
+        // range must be created between the end of the current range and the beginning of the first line of text in
+        // order to get an accurate character position for the caret.
+        let lineRange = selection.getRangeAt(0);
+        let multilineRange = document.createRange();
+        multilineRange.setStart(this._element, 0);
+        multilineRange.setEnd(lineRange.endContainer, lineRange.endOffset);
+        return multilineRange.toString().length;
+    }
+
+    _getCaretRect(caretPosition)
+    {
         let isHidden = (clientRect) => {
             return clientRect.x === 0 && clientRect.y === 0;
         };
 
-        if (selection.rangeCount) {
-            let range = selection.getRangeAt(0).cloneRange();
-            range.setStart(range.startContainer, startOffset);
-            let clientRect = range.getBoundingClientRect();
+        let caretRange = this._rangeAtCaretPosition(caretPosition);
+        let caretClientRect = caretRange.getBoundingClientRect();
+        if (!isHidden(caretClientRect))
+            return WI.Rect.rectFromClientRect(caretClientRect);
 
-            if (!isHidden(clientRect)) {
-                // This happens after deleting value. However, when focusing
-                // on an empty value clientRect is visible.
-                return WI.Rect.rectFromClientRect(clientRect);
-            }
-        }
-
-        let clientRect = this._element.getBoundingClientRect();
-        if (isHidden(clientRect))
+        let elementClientRect = this._element.getBoundingClientRect();
+        if (isHidden(elementClientRect))
             return null;
 
         const leftPadding = parseInt(getComputedStyle(this._element).paddingLeft) || 0;
-        return new WI.Rect(clientRect.left + leftPadding, clientRect.top, clientRect.width, clientRect.height);
+        return new WI.Rect(elementClientRect.left + leftPadding, elementClientRect.top, elementClientRect.width, elementClientRect.height);
     }
 
-    _applyCompletionHint()
+    _rangeAtCaretPosition(caretPosition) {
+        for (let node of this._element.childNodes) {
+            let textContent = node.textContent;
+            if (caretPosition <= textContent.length) {
+                let range = document.createRange();
+                range.setStart(node, caretPosition);
+                range.setEnd(node, caretPosition);
+                return range;
+            }
+
+            caretPosition -= textContent.length;
+        }
+
+        // If there are no nodes, or the caret position is greater than the total text content, provide the range of a
+        // caret at the end of the element.
+        let range = document.createRange();
+        range.selectNodeContents(this._element);
+        range.collapse();
+        return range;
+    }
+
+    _applyCompletionHint({moveCaretToEndOfCompletion} = {})
     {
         if (!this._completionProvider || !this.suggestionHint)
             return;
 
+        this._combineEditorElementChildren({newCaretPosition: moveCaretToEndOfCompletion ? this._getCaretPosition() + this.suggestionHint.length : null});
+    }
+
+    _combineEditorElementChildren({newCaretPosition} = {})
+    {
+        newCaretPosition ??= this._getCaretPosition();
+
+        // Setting the textContent of the element to its current textContent will take the text from the multiple
+        // potential child nodes (potentially a suggestion hint node and some number of existing text nodes) and turn
+        // them into a single text node within the element.
         this._element.textContent = this._element.textContent;
+
+        if (this._element.textContent.length) {
+            let textChildNode = this._element.firstChild;
+            window.getSelection().setBaseAndExtent(textChildNode, newCaretPosition, textChildNode, newCaretPosition);
+        }
     }
 
     _reAttachSuggestionHint()
     {
+        console.assert(this.suggestionHint.length, "Suggestion hint should not be empty when attaching the suggestion hint element.");
+
         if (this._suggestionHintElement.parentElement === this._element)
             return;
 
-        this._element.append(this._suggestionHintElement);
+        let selection = window.getSelection();
+        if (!this._element.textContent.length || !selection.rangeCount) {
+            this._element.append(this._suggestionHintElement);
+            return;
+        }
+
+        let range = selection.getRangeAt(0);
+
+        console.assert(range.endContainer instanceof Text, range.endContainer);
+        if (!(range.endContainer instanceof Text))
+            return;
+
+        this._element.insertBefore(this._suggestionHintElement, range.endContainer.splitText(range.endOffset));
     }
 };

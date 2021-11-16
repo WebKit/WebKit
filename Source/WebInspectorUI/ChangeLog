@@ -1,3 +1,96 @@
+2021-11-15  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Styles: Autocomplete should support mid-line completions
+        https://bugs.webkit.org/show_bug.cgi?id=227411
+
+        Reviewed by Devin Rousso.
+
+        Autocompletion for CSS property values was lacking in the ability to perform mid-line completions, including
+        within functions, and a lack of support for multi-line CSS property values. This resolves those pain points by
+        making SpreadsheetTextField multi-line aware and allowing mid-line autocompletion.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._nameCompletionDataProvider):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype.valueWithoutSuggestion):
+        Because suggestions can occur anywhere within the value, we need to iterate through each of the nodes and
+        collect the text of any of them that are not the completion suggestion.
+
+        (WI.SpreadsheetTextField.prototype.set suggestionHint):
+        When removing the suggestion hint element, we should recombine the text nodes we may have split upon insertion
+        to prevent the text content from becoming endlessly fragmented into multiple text nodes unnecessarily.
+
+        (WI.SpreadsheetTextField.prototype.startEditing):
+        Reset the last known caret position when editing starts so that we don't mistake keys that are already down as
+        having moved the cursor to its initial position.
+
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsSelectedCompletion):
+        We should only attempt to reattach the suggestion hint element if we have a suggestion hint to show, otherwise
+        we could end up with a phantom empty suggestion hint that isn't properly placed later.
+
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsClickedCompletion):
+        Updated to use existing completion committing path to reduce duplicated logic.
+
+        (WI.SpreadsheetTextField.prototype._handleMouseDown):
+        When the user clicks inside the text field while suggestions are visible treat that as intent to stop
+        autocompletion similar to the escape key, since the new cursor location could be anywhere in the text field.
+        This behavior also matches other code editors like Xcode, where clicking outside a completion popup will dismiss
+        the completions list.
+
+        (WI.SpreadsheetTextField.prototype._handleKeyDown):
+        Keep track of where the caret was as well as if the the key event was handled by the suggestion view at the time
+        a key is pressed so that we can later compare the position to that of when the key is released to determine if
+        completions should be discarded.
+
+        (WI.SpreadsheetTextField.prototype._handleKeyDownForSuggestionView):
+        We can no longer assume that the current selection's offset will match the value's length, as the offset could
+        be on any line, or the suggestion could be in middle of a line. Because a suggestionHint only contains text when
+        we are in middle of autocompletion, it alone is an indicator that pressing the right arrow key should commit the
+        completion. `document.execCommand` is deprecated, so instead we now use the existing completion committing path
+        to reduce duplicated logic here.
+
+        Note that the left arrow key is still explicitly handled for dismissing autocompletion, as the new mechanism for
+        dismissing autocompletion won't trigger unless the caret has moved, and the caret will not move if you press the
+        left arrow key at the start of the text field.
+
+        (WI.SpreadsheetTextField.prototype._handleKeyUp):
+        When a key is released, we should check to see if the caret has moved as a result of the keystroke that we have
+        not already explicitly handled. If it has moved and was not handled, we dismiss the autocompletion suggestions.
+
+        (WI.SpreadsheetTextField.prototype._handleInput):
+
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        Provide the current caret position to the completion provided.
+
+        (WI.SpreadsheetTextField.prototype._showSuggestionsView):
+        In order to correctly align the completion list with the current text content, it must be offset from the caret
+        position excluding the current prefix.
+
+        (WI.SpreadsheetTextField.prototype._getCaretPosition):
+        Added to get the index of the caret in the complete text value, accounting for multi-line values and mid-line
+        suggestions.
+
+        (WI.SpreadsheetTextField.prototype._getCaretRect):
+
+        (WI.SpreadsheetTextField.prototype._rangeAtCaretPosition):
+        Find the range for a caret at the given position. This compliments `_getCaretPosition`, and allows us to count
+        back some number of characters and create a range of which we later get the client rectangle.
+
+        (WI.SpreadsheetTextField.prototype._applyCompletionHint):
+        Add optional support for updating the caret position to be at the end of the newly inserted text.
+
+        (WI.SpreadsheetTextField.prototype._combineEditorElementChildren):
+        Added to handle combining the fragmented text nodes (and possibly a suggestion hint element) back into a single
+        text node while maintaining the current cursor position or optionally moving the cursor to a new location (e.g.
+        the end of a completion).
+
+        (WI.SpreadsheetTextField.prototype._reAttachSuggestionHint):
+        Now that completions are not guaranteed to be at the end of the value, we may need to split the text node to
+        insert the suggestion hint node.
+
 2021-11-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Web Inspector: Layers Tab: the position of composited layer with box-shadow is wrong
