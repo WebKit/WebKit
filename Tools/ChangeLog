@@ -1,3 +1,17 @@
+2021-11-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser][WK2] Show a message box for a provisional navigation failure
+        https://bugs.webkit.org/show_bug.cgi?id=233170
+
+        Reviewed by Don Olmstead.
+
+        Show a MessageBox if a provisional navigation failed.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::didFailProvisionalNavigation):
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+
 2021-11-16  Zhifei Fang  <zhifei_fang@apple.com>
 
         Make run-javascript-core-test and run-jsc-stress-tests support a customized identity file

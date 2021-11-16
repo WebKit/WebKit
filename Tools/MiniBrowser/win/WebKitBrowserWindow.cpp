@@ -41,6 +41,7 @@
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <WebKit/WKWebsiteDataStoreRefCurl.h>
 #include <filesystem>
+#include <sstream>
 #include <vector>
 
 std::wstring createString(WKURLRef wkURL)
@@ -153,6 +154,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConf
     WKPageNavigationClientV0 navigationClient = { };
     navigationClient.base.version = 0;
     navigationClient.base.clientInfo = this;
+    navigationClient.didFailProvisionalNavigation = didFailProvisionalNavigation;
     navigationClient.didReceiveAuthenticationChallenge = didReceiveAuthenticationChallenge;
     WKPageSetPageNavigationClient(page, &navigationClient.base);
 
@@ -357,6 +359,17 @@ void WebKitBrowserWindow::didChangeActiveURL(const void* clientInfo)
     auto page = WKViewGetPage(thisWindow.m_view.get());
     WKRetainPtr<WKURLRef> url = adoptWK(WKPageCopyActiveURL(page));
     thisWindow.m_client.activeURLChanged(createString(url.get()));
+}
+
+void WebKitBrowserWindow::didFailProvisionalNavigation(WKPageRef page, WKNavigationRef navigation, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    std::wstringstream text;
+    text << createString(adoptWK(WKErrorCopyLocalizedDescription(error)).get()) << std::endl;
+    text << L"Error Code: " << WKErrorGetErrorCode(error) << std::endl;
+    text << L"Domain: " << createString(adoptWK(WKErrorCopyDomain(error)).get()) << std::endl;
+    text << L"Failing URL: " << createString(adoptWK(WKErrorCopyFailingURL(error)).get());
+    MessageBox(thisWindow.m_hMainWnd, text.str().c_str(), L"Provisional Navigation Failure", MB_OK | MB_ICONWARNING);
 }
 
 void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef challenge, const void* clientInfo)
