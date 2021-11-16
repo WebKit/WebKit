@@ -1,3 +1,15 @@
+2021-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebKit::WebPageProxy::commitProvisionalPage()
+        https://bugs.webkit.org/show_bug.cgi?id=233199
+        <rdar://57659921>
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-11-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser][WK2] Show a message box for a provisional navigation failure
