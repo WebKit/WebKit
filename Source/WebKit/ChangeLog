@@ -1,3 +1,15 @@
+2021-11-16  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Add overscroll behavior to ScrollableAreaParameters
+        https://bugs.webkit.org/show_bug.cgi?id=233159
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ScrollableAreaParameters>::encode):
+        (IPC::ArgumentCoder<ScrollableAreaParameters>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2021-11-16  Per Arne Vollan  <pvollan@apple.com>
 
         Adjust graphics related message filter

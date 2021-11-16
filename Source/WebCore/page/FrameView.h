@@ -699,6 +699,9 @@ public:
 
     // ScrollView
     void updateScrollbarSteps() override;
+    
+    OverscrollBehavior horizontalOverscrollBehavior() const final;
+    OverscrollBehavior verticalOverscrollBehavior() const final;
 
 private:
     explicit FrameView(Frame&);

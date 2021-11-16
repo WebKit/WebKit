@@ -792,6 +792,8 @@ void AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry(Scrolling
     scrollParameters.verticalScrollElasticity = scrollableArea.verticalScrollElasticity();
     scrollParameters.allowsHorizontalScrolling = scrollableArea.allowsHorizontalScrolling();
     scrollParameters.allowsVerticalScrolling = scrollableArea.allowsVerticalScrolling();
+    scrollParameters.horizontalOverscrollBehavior = scrollableArea.horizontalOverscrollBehavior();
+    scrollParameters.verticalOverscrollBehavior = scrollableArea.verticalOverscrollBehavior();
     scrollParameters.horizontalScrollbarMode = scrollableArea.horizontalScrollbarMode();
     scrollParameters.verticalScrollbarMode = scrollableArea.verticalScrollbarMode();
     scrollParameters.horizontalScrollbarHiddenByStyle = scrollableArea.horizontalScrollbarHiddenByStyle();

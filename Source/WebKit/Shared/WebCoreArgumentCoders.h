@@ -52,6 +52,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RenderingMode.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/ScrollTypes.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/StoredCredentialsPolicy.h>
@@ -1024,6 +1025,15 @@ template<> struct EnumTraits<WebCore::LengthType> {
         WebCore::LengthType::FitContent,
         WebCore::LengthType::Calculated,
         WebCore::LengthType::Undefined
+    >;
+};
+
+template<> struct EnumTraits<WebCore::OverscrollBehavior> {
+    using values = EnumValues<
+        WebCore::OverscrollBehavior,
+        WebCore::OverscrollBehavior::Auto,
+        WebCore::OverscrollBehavior::Contain,
+        WebCore::OverscrollBehavior::None
     >;
 };
 

@@ -76,6 +76,9 @@ struct ScrollableAreaParameters {
 
     ScrollbarMode horizontalScrollbarMode { ScrollbarMode::Auto };
     ScrollbarMode verticalScrollbarMode { ScrollbarMode::Auto };
+    
+    OverscrollBehavior horizontalOverscrollBehavior { OverscrollBehavior::Auto };
+    OverscrollBehavior verticalOverscrollBehavior { OverscrollBehavior::Auto };
 
     bool allowsHorizontalScrolling { false };
     bool allowsVerticalScrolling { false };
@@ -91,6 +94,8 @@ struct ScrollableAreaParameters {
             && verticalScrollElasticity == other.verticalScrollElasticity
             && horizontalScrollbarMode == other.horizontalScrollbarMode
             && verticalScrollbarMode == other.verticalScrollbarMode
+            && horizontalOverscrollBehavior == other.horizontalOverscrollBehavior
+            && verticalOverscrollBehavior == other.verticalOverscrollBehavior
             && allowsHorizontalScrolling == other.allowsHorizontalScrolling
             && allowsVerticalScrolling == other.allowsVerticalScrolling
             && horizontalScrollbarHiddenByStyle == other.horizontalScrollbarHiddenByStyle

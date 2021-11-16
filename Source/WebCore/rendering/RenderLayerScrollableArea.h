@@ -103,6 +103,9 @@ public:
     bool hasVerticalScrollbar() const { return verticalScrollbar(); }
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
+    
+    OverscrollBehavior horizontalOverscrollBehavior() const final;
+    OverscrollBehavior verticalOverscrollBehavior() const final;
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
     void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }

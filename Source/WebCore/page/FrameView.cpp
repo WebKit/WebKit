@@ -5739,6 +5739,24 @@ void FrameView::updateScrollbarSteps()
         verticalScrollbar()->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
     }
 }
+
+OverscrollBehavior FrameView::horizontalOverscrollBehavior() const
+{
+    auto* document = frame().document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject && renderView() && renderView()->canBeScrolledAndHasScrollableArea())
+        return scrollingObject->style().overscrollBehaviorX();
+    return OverscrollBehavior::Auto;
+}
+
+OverscrollBehavior FrameView::verticalOverscrollBehavior()  const
+{
+    auto* document = frame().document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject && renderView() && renderView()->canBeScrolledAndHasScrollableArea())
+        return scrollingObject->style().overscrollBehaviorY();
+    return OverscrollBehavior::Auto;
+}
 } // namespace WebCore
 
 #undef PAGE_ID
