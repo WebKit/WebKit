@@ -408,8 +408,14 @@ void Connection::resumeSendSource()
     sendOutgoingMessages();
 }
 
-static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
+static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, size_t bufferSize)
 {
+    if (UNLIKELY(header->msgh_size > bufferSize)) {
+        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: msgh_size is greater than bufferSize (header->msgh_size: %lu, bufferSize: %lu)", static_cast<unsigned long>(header->msgh_size), bufferSize);
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
         // We have a simple message.
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
@@ -426,8 +432,15 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
     mach_msg_size_t numberOfPortDescriptors = body->msgh_descriptor_count;
     ASSERT(numberOfPortDescriptors);
-    if (!numberOfPortDescriptors)
+    if (UNLIKELY(!numberOfPortDescriptors))
         return nullptr;
+
+    auto sizeWithPortDescriptors = CheckedSize { sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t) } + CheckedSize { numberOfPortDescriptors } * sizeof(mach_msg_port_descriptor_t);
+    if (UNLIKELY(sizeWithPortDescriptors.hasOverflowed() || sizeWithPortDescriptors.value() > bufferSize)) {
+        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing sizeWithPortDescriptors (numberOfPortDescriptors: %lu)", static_cast<unsigned long>(numberOfPortDescriptors));
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 
     uint8_t* descriptorData = reinterpret_cast<uint8_t*>(body + 1);
 
@@ -445,7 +458,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         if (descriptor->type.type != MACH_MSG_PORT_DESCRIPTOR)
             return nullptr;
 
-        attachments[numberOfAttachments - i - 1] = Attachment(descriptor->port.name, descriptor->port.disposition);
+        attachments[numberOfAttachments - i - 1] = Attachment { descriptor->port.name, descriptor->port.disposition };
         descriptorData += sizeof(mach_msg_port_descriptor_t);
     }
 
@@ -457,6 +470,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
 
         uint8_t* messageBody = static_cast<uint8_t*>(descriptor->out_of_line.address);
         size_t messageBodySize = descriptor->out_of_line.size;
+        descriptor->out_of_line.deallocate = false; // We are taking ownership of the memory.
 
         return Decoder::create(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
             // FIXME: <rdar://problem/62086358> bufferDeallocator block ignores mach_msg_ool_descriptor_t->deallocate
@@ -465,10 +479,10 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
     }
 
     uint8_t* messageBody = descriptorData;
-    ASSERT(descriptorData >= reinterpret_cast<uint8_t*>(header));
-    auto messageBodySize = CheckedSize { header->msgh_size } - static_cast<size_t>(descriptorData - reinterpret_cast<uint8_t*>(header));
+    ASSERT((reinterpret_cast<uint8_t*>(header) + sizeWithPortDescriptors.value()) == messageBody);
+    auto messageBodySize = header->msgh_size - sizeWithPortDescriptors;
     if (UNLIKELY(messageBodySize.hasOverflowed())) {
-        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing bodySize (header->msgh_size: %lu, (descriptorData - reinterpret_cast<uint8_t*>(header)): %lu)", static_cast<unsigned long>(header->msgh_size), static_cast<unsigned long>(descriptorData - reinterpret_cast<uint8_t*>(header)));
+        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing bodySize (header->msgh_size: %lu, sizeWithPortDescriptors: %lu)", static_cast<unsigned long>(header->msgh_size), static_cast<unsigned long>(sizeWithPortDescriptors.value()));
         ASSERT_NOT_REACHED();
         return nullptr;
     }
@@ -537,7 +551,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    std::unique_ptr<Decoder> decoder = createMessageDecoder(header);
+    std::unique_ptr<Decoder> decoder = createMessageDecoder(header, buffer.size());
     if (!decoder)
         return;
 
