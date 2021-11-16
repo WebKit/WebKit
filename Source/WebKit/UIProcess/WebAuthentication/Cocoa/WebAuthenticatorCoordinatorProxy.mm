@@ -238,16 +238,15 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     return requestContext;
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
+RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::contextForRequest(WebAuthenticationRequestData&& requestData)
 {
-    auto requestContext = configureRegistrationRequestContext(options);
-    performRequest(requestContext, WTFMove(handler));
-}
-
-void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
-{
-    auto requestContext = configurationAssertionRequestContext(options);
-    performRequest(requestContext, WTFMove(handler));
+    RetainPtr<ASCCredentialRequestContext> result;
+    WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
+        result = configureRegistrationRequestContext(options);
+    }, [&](const PublicKeyCredentialRequestOptions& options) {
+        result = configurationAssertionRequestContext(options);
+    });
+    return result;
 }
 
 void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialRequestContext> requestContext, RequestCompletionHandler&& handler)

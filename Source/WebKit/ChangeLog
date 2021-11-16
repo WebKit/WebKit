@@ -1,3 +1,25 @@
+2021-11-16  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] WebKitTestRunner/TWAPI lacks an entitlement and bundle identifier to use required [ASCAgent performAuthorizationRequestsForContext]
+        https://bugs.webkit.org/show_bug.cgi?id=232846
+        rdar://problem/85170633
+
+        Reviewed by Brent Fulgham.
+
+        Covered by existing tests.
+
+        Calling to ASC requires converting WebAuthenticationRequestData to ASCCredentialRequestContext and then making
+        a call to _WKAuthenticatorAssertionResponse, while also requiring entitlements currently unavailable in OpenSource.
+        This change avoids calling out to ASC in tests using mock / virtual authenticators to avoid this problem, the
+        serialization to and from ASCAgent can be tested seperately.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        Refactor creation of ASCCredentialRequestContext.
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::handleRequest):
+        Refactor use of ASC and add clarifying comment about flow.
+
 2021-11-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteGraphicsContextGLCocoa::m_swapChain is unused

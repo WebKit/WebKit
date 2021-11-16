@@ -77,6 +77,7 @@ private:
     WebPageProxy& m_webPageProxy;
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
+    RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
     void performRequest(RetainPtr<ASCCredentialRequestContext>, RequestCompletionHandler&&);
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
 #endif
