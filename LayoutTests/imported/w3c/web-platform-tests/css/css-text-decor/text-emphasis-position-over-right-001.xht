@@ -2,10 +2,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>CSS Test: text-emphasis-position - above right - basic cases</title>
+		<title>CSS Test: text-emphasis-position - over right - basic cases</title>
 		<link rel="author" title="Makoto Kikuchi" href="mailto:kikuchi@est.co.jp" />
+		<link rel="author" title="Jonathan Kew" href="mailto:jkew@mozilla.com" />
 		<link rel="help" href="https://drafts.csswg.org/css-text-decor-3/#text-emphasis-position-property" />
-		<link rel="match" href="reference/text-emphasis-position-above-right-001-ref.xht"/>
+		<link rel="match" href="reference/text-emphasis-position-over-right-001-ref.xht"/>
 		<meta name="flags" content="ahem" />
 		<meta name="assert" content="This property describes where emphasis marks are drawn at." />
 		<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
@@ -13,18 +14,9 @@
 			.test
 			{
 				text-emphasis-style: filled circle;
-				text-emphasis-position: above right;
+				text-emphasis-position: over right;
 			}
 			/* the CSS below is not part of the test */
-			.common
-			{
-				line-height: 1em;
-				position: relative;
-			}
-			.margin
-			{
-				margin-top: 0.5em;
-			}
 			.parent
 			{
 				background: yellow;
@@ -33,15 +25,8 @@
 				font: 20px/1em ahem;
 				width: 6em;
 			}
-			.refcommon
-			{
-				font-size: 0.5em;
-				left: 0.6em;
-				position: absolute;
-			}
-			.top
-			{
-				top: -1.4em;
+			ruby {
+			    -webkit-ruby-position: over;
 			}
 		]]></style>
 	</head>
@@ -54,12 +39,10 @@
 			</div>
 			<br />
 			<div class="parent">
-				<div class="margin">
-					<div class="margin">
-						<span class="common">a<span class="refcommon top">&#x25CF;</span></span><span class="common">b<span class="refcommon top">&#x25CF;</span></span><span class="common">c<span class="refcommon top">&#x25CF;</span></span>
-						 de<br />
-						<br />
-					</div>
+				<div>
+					<ruby><rb>a</rb><rt>&#x25CF;</rt><rb>b</rb><rt>&#x25CF;</rt><rb>c</rb><rt>&#x25CF;</rt></ruby>
+					 de<br />
+					<br />
 				</div>
 			</div>
 		</div>

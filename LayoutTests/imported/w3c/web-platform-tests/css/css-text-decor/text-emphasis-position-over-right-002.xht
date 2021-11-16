@@ -2,10 +2,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>CSS Test: text-emphasis-position - below right - basic cases</title>
+		<title>CSS Test: text-emphasis-position - over right - basic cases</title>
 		<link rel="author" title="Makoto Kikuchi" href="mailto:kikuchi@est.co.jp" />
+		<link rel="author" title="Jonathan Kew" href="mailto:jkew@mozilla.com" />
 		<link rel="help"  href="https://drafts.csswg.org/css-text-decor-3/#text-emphasis-position-property" />
-		<link rel="match" href="reference/text-emphasis-position-below-right-002-ref.xht"/>
+		<link rel="match" href="reference/text-emphasis-position-over-right-002-ref.xht"/>
 		<meta name="flags" content="ahem" />
 		<meta name="assert" content="This property describes where emphasis marks are drawn at." />
 		<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
@@ -13,19 +14,13 @@
 			.test
 			{
 				text-emphasis-style: filled circle;
-				text-emphasis-position: below right;
+				text-emphasis-position: over right;
 			}
-			.test-vertical
+			.vertical
 			{
 				writing-mode: vertical-rl;
 			}
 			/* the CSS below is not part of the test */
-			.common
-			{
-				left: -0.5em;
-				line-height: 1em;
-				position: relative;
-			}
 			.displayarea
 			{
 				border: solid 1px gray;
@@ -36,6 +31,9 @@
 			{
 				float: right;
 			}
+			.ref {
+				-webkit-ruby-position: over;  /* to match emphasis position 'right' */
+			}
 			.parent
 			{
 				background: yellow;
@@ -45,13 +43,6 @@
 				height: 6em;
 				width: 2em;
 			}
-			.refcommon
-			{
-				font-size: 0.5em;
-				left: 4.1em;
-				position: absolute;
-				top: 0.1em;
-			}
 		]]></style>
 	</head>
 	<body>
@@ -59,15 +50,14 @@
 			<p>Test passes if a pair of left and right block in the square box is identical.</p>
 			<p>vertical</p>
 			<div class="displayarea">
-				<div class="parent floatright">
-					<span class="common">&nbsp;a<span class="refcommon">&#x25CF;</span></span><br />
-					<span class="common">&nbsp;b<span class="refcommon">&#x25CF;</span></span><br />
-					<span class="common">&nbsp;c<span class="refcommon">&#x25CF;</span></span><br />
-					&nbsp;&nbsp;<br />
-					<span class="common">&nbsp;d</span><br />
-					<span class="common">&nbsp;e</span><br />
+				<div class="parent vertical floatright ref">
+					<div>
+						<ruby><rb>a</rb><rt>&#x25CF;</rt><rb>b</rb><rt>&#x25CF;</rt><rb>c</rb><rt>&#x25CF;</rt></ruby>
+						 de<br />
+						<br />
+					</div>
 				</div>
-				<div class="parent test-vertical">
+				<div class="parent vertical">
 					<span class="test">abc</span> de
 				</div>
 			</div>

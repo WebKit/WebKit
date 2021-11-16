@@ -1,5 +1,19 @@
 2021-11-15  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-text-decor WPT
+        https://bugs.webkit.org/show_bug.cgi?id=233154
+
+        Reviewed by Cameron McCormack.
+
+        Since mismatches are now properly renamed to `-expected-mismatch.html` on import since bug 207175,
+        re-import this directory to reduce numbers of false negatives/positives.
+
+        Some tests have also been added/updated/removed since.
+
+        * TestExpectations:
+
+2021-11-15  Tim Nguyen  <ntim@apple.com>
+
         Remove redundant [ Pass ] from TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=233157
 
