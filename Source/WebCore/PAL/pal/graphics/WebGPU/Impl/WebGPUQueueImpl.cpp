@@ -63,7 +63,7 @@ void onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus status, void* userdata)
     queue->onSubmittedWorkDoneCallback(status);
 }
 
-void QueueImpl::onSubmittedWorkDone(std::function<void()>&& callback)
+void QueueImpl::onSubmittedWorkDone(WTF::Function<void()>&& callback)
 {
     Ref protectedThis(*this);
 

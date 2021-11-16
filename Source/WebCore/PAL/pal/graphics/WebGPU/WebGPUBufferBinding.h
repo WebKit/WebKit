@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include "WebGPUBuffer.h"
 #include "WebGPUIntegralTypes.h"
 #include <optional>
 #include <wtf/Ref.h>
 
 namespace PAL::WebGPU {
+
+class Buffer;
 
 struct BufferBinding {
     Buffer& buffer;

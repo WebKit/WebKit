@@ -27,11 +27,12 @@
 
 #include "WebGPUComputePassTimestampLocation.h"
 #include "WebGPUIntegralTypes.h"
-#include "WebGPUQuerySet.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace PAL::WebGPU {
+
+class QuerySet;
 
 struct ComputePassTimestampWrite {
     QuerySet& querySet;

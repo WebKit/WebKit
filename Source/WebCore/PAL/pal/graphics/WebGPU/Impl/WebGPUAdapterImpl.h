@@ -58,11 +58,11 @@ private:
     WGPUAdapter backing() const { return m_backing; }
 
     void requestDeviceCallback(WGPURequestDeviceStatus, WGPUDevice, const char* message);
-    void requestDevice(const DeviceDescriptor&, std::function<void(Ref<Device>)>&&) final;
+    void requestDevice(const DeviceDescriptor&, WTF::function<void(Ref<Device>)>&&) final;
+
+    Deque<WTF::function<void(Ref<Device>)>> m_callbacks;
 
     WGPUAdapter m_backing { nullptr };
-
-    Deque<std::function<void(Ref<Device>)>> m_callbacks;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

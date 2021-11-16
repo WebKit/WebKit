@@ -26,9 +26,10 @@
 #pragma once
 
 #include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUPipelineLayout.h"
 
 namespace PAL::WebGPU {
+
+class PipelineLayout;
 
 struct PipelineDescriptorBase : public ObjectDescriptorBase {
     PipelineLayout* layout;

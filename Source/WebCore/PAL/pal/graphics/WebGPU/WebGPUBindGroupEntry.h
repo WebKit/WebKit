@@ -30,7 +30,7 @@
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUSampler.h"
 #include "WebGPUTextureView.h"
-#include <utility>
+#include <functional>
 #include <variant>
 
 namespace PAL::WebGPU {

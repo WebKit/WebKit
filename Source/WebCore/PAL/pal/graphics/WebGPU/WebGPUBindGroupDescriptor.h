@@ -26,11 +26,12 @@
 #pragma once
 
 #include "WebGPUBindGroupEntry.h"
-#include "WebGPUBindGroupLayout.h"
 #include "WebGPUObjectDescriptorBase.h"
 #include <wtf/Vector.h>
 
 namespace PAL::WebGPU {
+
+class BindGroupLayout;
 
 struct BindGroupDescriptor : public ObjectDescriptorBase {
     BindGroupLayout& layout;

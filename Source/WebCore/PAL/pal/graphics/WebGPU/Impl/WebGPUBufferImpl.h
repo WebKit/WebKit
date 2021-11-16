@@ -58,7 +58,7 @@ private:
     WGPUBuffer backing() const { return m_backing; }
 
     void mapCallback(WGPUBufferMapAsyncStatus);
-    void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64> sizeForMap, std::function<void()>&&) final;
+    void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64> sizeForMap, WTF::Function<void()>&&) final;
     MappedRange getMappedRange(std::optional<Size64> offset, std::optional<Size64>) final;
     void unmap() final;
 
@@ -66,7 +66,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    Deque<std::function<void()>> m_callbacks;
+    Deque<WTF::Function<void()>> m_callbacks;
 
     WGPUBuffer m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

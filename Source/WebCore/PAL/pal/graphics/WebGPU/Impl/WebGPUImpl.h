@@ -58,9 +58,9 @@ private:
     WGPUInstance backing() const { return m_backing; }
 
     void requestAdapterCallback(WGPURequestAdapterStatus, WGPUAdapter, const char* message);
-    void requestAdapter(const RequestAdapterOptions&, std::function<void(RefPtr<Adapter>&&)>&&) final;
+    void requestAdapter(const RequestAdapterOptions&, WTF::Function<void(RefPtr<Adapter>&&)>&&) final;
 
-    Deque<std::function<void(RefPtr<Adapter>&&)>> m_callbacks;
+    Deque<WTF::Function<void(RefPtr<Adapter>&&)>> m_callbacks;
 
     WGPUInstance m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

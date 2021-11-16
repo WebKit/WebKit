@@ -44,7 +44,7 @@ ShaderModuleImpl::~ShaderModuleImpl()
     wgpuShaderModuleRelease(m_backing);
 }
 
-void ShaderModuleImpl::compilationInfo(std::function<void(Ref<CompilationInfo>&&)>&&)
+void ShaderModuleImpl::compilationInfo(WTF::Function<void(Ref<CompilationInfo>&&)>&&)
 {
 }
 

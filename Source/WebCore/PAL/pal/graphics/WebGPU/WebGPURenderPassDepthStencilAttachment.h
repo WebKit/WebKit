@@ -28,11 +28,12 @@
 #include "WebGPUIntegralTypes.h"
 #include "WebGPULoadOp.h"
 #include "WebGPUStoreOp.h"
-#include "WebGPUTextureView.h"
 #include <variant>
 #include <wtf/Ref.h>
 
 namespace PAL::WebGPU {
+
+class TextureView;
 
 struct RenderPassDepthStencilAttachment {
     TextureView& view;

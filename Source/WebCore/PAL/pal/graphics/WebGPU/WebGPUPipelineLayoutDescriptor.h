@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include "WebGPUBindGroupLayout.h"
 #include "WebGPUObjectDescriptorBase.h"
-#include <utility>
+#include <functional>
 #include <wtf/Vector.h>
 
 namespace PAL::WebGPU {
+
+class BindGroupLayout;
 
 struct PipelineLayoutDescriptor : public ObjectDescriptorBase {
     Vector<std::reference_wrapper<BindGroupLayout>> bindGroupLayouts;

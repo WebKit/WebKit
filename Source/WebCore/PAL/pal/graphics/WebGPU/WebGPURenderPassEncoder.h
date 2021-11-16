@@ -28,8 +28,8 @@
 #include "WebGPUColor.h"
 #include "WebGPUIndexFormat.h"
 #include "WebGPUIntegralTypes.h"
+#include <functional>
 #include <optional>
-#include <utility>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

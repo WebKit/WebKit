@@ -1,3 +1,316 @@
+2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Start preparing for serializing commands to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=233179
+
+        Reviewed by Alex Christensen.
+
+        The interaction between WebGPU and the GPU process will work as such:
+
+        1. We have a virtual interface in PAL which holds 3 things:
+               a) Refcounted objects (command buffer, queue, device, etc.).
+               b) Structs holding descriptors for commands. E.g. device.createRenderPipeline(RenderPipelineDescriptor)
+               c) Enums
+           The virtual interface holds all 3 of these things. For refcounted objects, it holds virtual interfaces with no
+           implementations. (There is one implementation of these interfaces which connects them to WebGPU.framework.)
+        2. This patch adds a new implementation of these virtual interfaces, called Remote***Proxy, in
+           WebKit/WebProcess/GPU/graphics/WebGPU. The implementation of all the methods in this implementation will simply
+           send messages to the GPU process. In this patch, these methods are still stubs - they'll be filled in in a
+           subsequent patch.
+        3. The arguments to the commands consist of the structs and enums from PAL. However, we can't use the structs
+           directly, because the structs hold references to the refcounted objects. E.g. a BindGroupDescriptor holds a
+           reference to the Buffer which should be part of the bind group. We can't send refcounted objects across IPC,
+           so instead of sending the objects, we send a WebGPUIdentifier instead. Every refcounted object gets a unique
+           WebGPU identifier. However, because these references to RefCounted objects are buried deep inside nested structs,
+           we can't simply use the structs out of the box. Instead, we have to have a parallel set of structs, where the
+           references are replaced with WebGPUIdentifiers. These structs will be the ones actually sent across the wire.
+        4. The enums don't have this problem, so those are untouched. A subsequent patch will be adding the EnumTraits
+           directly in PAL to make them serializable.
+        5. Upon receiving a struct from the wire, we're going to have to convert it back into its corresponding PAL type,
+           which means we have to find the object associated with the WebGPUIdentifier. The serializers themselves can't do
+           this, because they lack the context necessary for performing the lookup. This patch adds two new context objects
+           which we'll use ourselves when implementing our own conversions - ConvertToBackingContext and
+           ConvertFromBackingContext. Only the first one is implemented in this patch; the second will be implemented in a
+           subsequent patch.
+        6. The GPU process side won't actually implement the virtual interface - only the web process side will implement it.
+           Instead, the GPU process has to manage lifetime of the objects. Just like how 2D canvas in the GPU process has
+           a RemoteResourceCache, the WebGPU objects will be owned by a high-level object in the GPU process. The
+           ownership will be top-down in the GPU process, where Devices have strong references to Textures, and Textures
+           have strong references to TextureViews. On the other hand, in the Web process, ownership will be bottom-up:
+           JavaScript will have strong references to TextureViews, TextureViews will have strong references to Textures, and
+           Textures will have strong references to Devices. This works out quite nicely - it means that, when GC runs and
+           a TextureView gets deleted, the TextureView tells its owner that it's getting destroyed, its owner sends a
+           message to the GPU process, and the corresponding owner in the GPU process looks up its relevant child in its
+           children list, and delete it. Easy peasy.
+
+        No new tests because there is no behavior change (yet). We're getting close, though!
+
+        * Shared/WebGPU/WebGPUBindGroupDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h.
+        * Shared/WebGPU/WebGPUBindGroupEntry.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h.
+        * Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUBindGroupLayoutEntry.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUBlendComponent.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUBlendState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUBufferBinding.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUBufferBindingLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUBufferDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUCanvasConfiguration.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyTexture.h.
+        * Shared/WebGPU/WebGPUColor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUColorTargetState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUCommandBufferDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUCommandEncoderDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUComputePassDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUComputePassTimestampWrites.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h.
+        * Shared/WebGPU/WebGPUComputePipelineDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUConvertFromBackingContext.h: Added.
+        * Shared/WebGPU/WebGPUConvertToBackingContext.h: Added.
+        * Shared/WebGPU/WebGPUDepthStencilState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUDeviceDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h.
+        * Shared/WebGPU/WebGPUExtent3D.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h.
+        * Shared/WebGPU/WebGPUExternalTextureBindingLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUExternalTextureDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUFragmentState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUIdentifier.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUImageCopyBuffer.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUImageCopyExternalImage.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUImageCopyTexture.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyTexture.h.
+        * Shared/WebGPU/WebGPUImageCopyTextureTagged.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUImageDataLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUMultisampleState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUObjectDescriptorBase.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUOrigin2D.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h.
+        * Shared/WebGPU/WebGPUOrigin3D.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h.
+        * Shared/WebGPU/WebGPUPipelineDescriptorBase.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUPipelineLayoutDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h.
+        * Shared/WebGPU/WebGPUPrimitiveState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUProgrammableStage.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUProgrammableStage.h.
+        * Shared/WebGPU/WebGPUQuerySetDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h.
+        * Shared/WebGPU/WebGPURenderBundleDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPURenderPassColorAttachment.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h.
+        * Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        * Shared/WebGPU/WebGPURenderPassDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h.
+        * Shared/WebGPU/WebGPURenderPassLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h.
+        * Shared/WebGPU/WebGPURenderPassTimestampWrites.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h.
+        * Shared/WebGPU/WebGPURenderPipelineDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPURequestAdapterOptions.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Shared/WebGPU/WebGPUSamplerBindingLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUSamplerDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUShaderModuleDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUStencilFaceState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUStorageTextureBindingLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUTextureBindingLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUTextureDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUTextureViewDescriptor.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h.
+        * Shared/WebGPU/WebGPUVertexAttribute.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyBuffer.h.
+        * Shared/WebGPU/WebGPUVertexBufferLayout.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h.
+        * Shared/WebGPU/WebGPUVertexState.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUBufferBinding.h.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteAdapterProxy::RemoteAdapterProxy):
+        (WebKit::WebGPU::RemoteAdapterProxy::~RemoteAdapterProxy):
+        (WebKit::WebGPU::RemoteAdapterProxy::requestDevice):
+        * WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy):
+        (WebKit::WebGPU::RemoteBindGroupLayoutProxy::~RemoteBindGroupLayoutProxy):
+        (WebKit::WebGPU::RemoteBindGroupLayoutProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteBindGroupProxy::RemoteBindGroupProxy):
+        (WebKit::WebGPU::RemoteBindGroupProxy::~RemoteBindGroupProxy):
+        (WebKit::WebGPU::RemoteBindGroupProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteBufferProxy::RemoteBufferProxy):
+        (WebKit::WebGPU::RemoteBufferProxy::~RemoteBufferProxy):
+        (WebKit::WebGPU::RemoteBufferProxy::mapAsync):
+        (WebKit::WebGPU::RemoteBufferProxy::getMappedRange):
+        (WebKit::WebGPU::RemoteBufferProxy::unmap):
+        (WebKit::WebGPU::RemoteBufferProxy::destroy):
+        (WebKit::WebGPU::RemoteBufferProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteCommandBufferProxy::RemoteCommandBufferProxy):
+        (WebKit::WebGPU::RemoteCommandBufferProxy::~RemoteCommandBufferProxy):
+        (WebKit::WebGPU::RemoteCommandBufferProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.cpp: Added.
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::RemoteCommandEncoderProxy):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::~RemoteCommandEncoderProxy):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::beginRenderPass):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::beginComputePass):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyBufferToBuffer):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyBufferToTexture):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyTextureToBuffer):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyTextureToTexture):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::fillBuffer):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::writeTimestamp):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::resolveQuerySet):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::finish):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.h: Added.
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.cpp: Added.
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::RemoteComputePassEncoderProxy):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::~RemoteComputePassEncoderProxy):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::setPipeline):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::dispatch):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::dispatchIndirect):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::beginPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::endPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::endPass):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::setBindGroup):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.h: Added.
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePipelineProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteComputePipelineProxy::RemoteComputePipelineProxy):
+        (WebKit::WebGPU::RemoteComputePipelineProxy::~RemoteComputePipelineProxy):
+        (WebKit::WebGPU::RemoteComputePipelineProxy::getBindGroupLayout):
+        (WebKit::WebGPU::RemoteComputePipelineProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePipelineProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.cpp: Added.
+        (WebKit::WebGPU::RemoteDeviceProxy::RemoteDeviceProxy):
+        (WebKit::WebGPU::RemoteDeviceProxy::~RemoteDeviceProxy):
+        (WebKit::WebGPU::RemoteDeviceProxy::destroy):
+        (WebKit::WebGPU::RemoteDeviceProxy::createBuffer):
+        (WebKit::WebGPU::RemoteDeviceProxy::createTexture):
+        (WebKit::WebGPU::RemoteDeviceProxy::createSampler):
+        (WebKit::WebGPU::RemoteDeviceProxy::importExternalTexture):
+        (WebKit::WebGPU::RemoteDeviceProxy::createBindGroupLayout):
+        (WebKit::WebGPU::RemoteDeviceProxy::createPipelineLayout):
+        (WebKit::WebGPU::RemoteDeviceProxy::createBindGroup):
+        (WebKit::WebGPU::RemoteDeviceProxy::createShaderModule):
+        (WebKit::WebGPU::RemoteDeviceProxy::createComputePipeline):
+        (WebKit::WebGPU::RemoteDeviceProxy::createRenderPipeline):
+        (WebKit::WebGPU::RemoteDeviceProxy::createComputePipelineAsync):
+        (WebKit::WebGPU::RemoteDeviceProxy::createRenderPipelineAsync):
+        (WebKit::WebGPU::RemoteDeviceProxy::createCommandEncoder):
+        (WebKit::WebGPU::RemoteDeviceProxy::createRenderBundleEncoder):
+        (WebKit::WebGPU::RemoteDeviceProxy::createQuerySet):
+        (WebKit::WebGPU::RemoteDeviceProxy::pushErrorScope):
+        (WebKit::WebGPU::RemoteDeviceProxy::popErrorScope):
+        (WebKit::WebGPU::RemoteDeviceProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.h: Added.
+        * WebProcess/GPU/graphics/WebGPU/RemoteExternalTextureProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteExternalTextureProxy::RemoteExternalTextureProxy):
+        (WebKit::WebGPU::RemoteExternalTextureProxy::~RemoteExternalTextureProxy):
+        (WebKit::WebGPU::RemoteExternalTextureProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteExternalTextureProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteGPUProxy::RemoteGPUProxy):
+        (WebKit::WebGPU::RemoteGPUProxy::~RemoteGPUProxy):
+        (WebKit::WebGPU::RemoteGPUProxy::requestAdapter):
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemotePipelineLayoutProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemotePipelineLayoutProxy::RemotePipelineLayoutProxy):
+        (WebKit::WebGPU::RemotePipelineLayoutProxy::~RemotePipelineLayoutProxy):
+        (WebKit::WebGPU::RemotePipelineLayoutProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemotePipelineLayoutProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteQuerySetProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteQuerySetProxy::RemoteQuerySetProxy):
+        (WebKit::WebGPU::RemoteQuerySetProxy::~RemoteQuerySetProxy):
+        (WebKit::WebGPU::RemoteQuerySetProxy::destroy):
+        (WebKit::WebGPU::RemoteQuerySetProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteQuerySetProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.cpp: Added.
+        (WebKit::WebGPU::RemoteQueueProxy::RemoteQueueProxy):
+        (WebKit::WebGPU::RemoteQueueProxy::~RemoteQueueProxy):
+        (WebKit::WebGPU::RemoteQueueProxy::submit):
+        (WebKit::WebGPU::RemoteQueueProxy::onSubmittedWorkDone):
+        (WebKit::WebGPU::RemoteQueueProxy::writeBuffer):
+        (WebKit::WebGPU::RemoteQueueProxy::writeTexture):
+        (WebKit::WebGPU::RemoteQueueProxy::copyExternalImageToTexture):
+        (WebKit::WebGPU::RemoteQueueProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.h: Added.
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.cpp: Added.
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::RemoteRenderBundleEncoderProxy):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::~RemoteRenderBundleEncoderProxy):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setPipeline):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setIndexBuffer):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setVertexBuffer):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::draw):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::drawIndexed):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::drawIndirect):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::drawIndexedIndirect):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setBindGroup):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::finish):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.h: Added.
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteRenderBundleProxy::RemoteRenderBundleProxy):
+        (WebKit::WebGPU::RemoteRenderBundleProxy::~RemoteRenderBundleProxy):
+        (WebKit::WebGPU::RemoteRenderBundleProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp: Added.
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::~RemoteRenderPassEncoderProxy):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setPipeline):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setIndexBuffer):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setVertexBuffer):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::draw):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::drawIndexed):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::drawIndirect):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::drawIndexedIndirect):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setBindGroup):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setViewport):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setScissorRect):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setBlendConstant):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setStencilReference):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::beginOcclusionQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endOcclusionQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::beginPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::executeBundles):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endPass):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.h: Added.
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteRenderPipelineProxy::RemoteRenderPipelineProxy):
+        (WebKit::WebGPU::RemoteRenderPipelineProxy::~RemoteRenderPipelineProxy):
+        (WebKit::WebGPU::RemoteRenderPipelineProxy::getBindGroupLayout):
+        (WebKit::WebGPU::RemoteRenderPipelineProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUProgrammableStage.h.
+        (WebKit::WebGPU::RemoteSamplerProxy::RemoteSamplerProxy):
+        (WebKit::WebGPU::RemoteSamplerProxy::~RemoteSamplerProxy):
+        (WebKit::WebGPU::RemoteSamplerProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteShaderModuleProxy::RemoteShaderModuleProxy):
+        (WebKit::WebGPU::RemoteShaderModuleProxy::~RemoteShaderModuleProxy):
+        (WebKit::WebGPU::RemoteShaderModuleProxy::compilationInfo):
+        (WebKit::WebGPU::RemoteShaderModuleProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteTextureProxy::RemoteTextureProxy):
+        (WebKit::WebGPU::RemoteTextureProxy::~RemoteTextureProxy):
+        (WebKit::WebGPU::RemoteTextureProxy::createView const):
+        (WebKit::WebGPU::RemoteTextureProxy::destroy):
+        (WebKit::WebGPU::RemoteTextureProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h.
+        (WebKit::WebGPU::RemoteTextureViewProxy::RemoteTextureViewProxy):
+        (WebKit::WebGPU::RemoteTextureViewProxy::~RemoteTextureViewProxy):
+        (WebKit::WebGPU::RemoteTextureViewProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h.
+        * WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp: Added.
+        (WebKit::WebGPU::DowncastConvertToBackingContext::convertToBacking):
+        * WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.h: Added.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+
 2021-11-16  Per Arne Vollan  <pvollan@apple.com>
 
         Adjust graphics related message filter

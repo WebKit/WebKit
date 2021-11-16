@@ -26,12 +26,13 @@
 #pragma once
 
 #include "WebGPUIntegralTypes.h"
-#include "WebGPUQuerySet.h"
 #include "WebGPURenderPassTimestampLocation.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace PAL::WebGPU {
+
+class QuerySet;
 
 struct RenderPassTimestampWrite {
     QuerySet& querySet;

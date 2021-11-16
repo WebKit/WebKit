@@ -1,5 +1,27 @@
 2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Start preparing for serializing commands to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=233179
+
+        Reviewed by Alex Christensen.
+
+        Tiny cleanups. Forward-declare things that can be forward declared.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h:
+
+2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Fix namespace comments
         https://bugs.webkit.org/show_bug.cgi?id=233169
 
