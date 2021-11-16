@@ -1,3 +1,16 @@
+2021-11-16  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Do not require the web browser entitlement to opt into captive portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=233191
+
+        Reviewed by Brent Fulgham.
+
+        Do not require the web browser entitlement to opt into captive portal mode on iOS, only require
+        it to opt out.
+
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _setCaptivePortalModeEnabled:]):
+
 2021-11-16  Per Arne Vollan <pvollan@apple.com>
 
         [macOS][GPUP] Add telemetry for syscalls

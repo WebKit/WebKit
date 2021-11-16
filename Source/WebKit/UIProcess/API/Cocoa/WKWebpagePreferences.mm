@@ -393,10 +393,15 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (void)_setCaptivePortalModeEnabled:(BOOL)captivePortalModeEnabled
 {
-#if PLATFORM(IOS_FAMILY)
-    if (!WTF::processHasEntitlement("com.apple.developer.web-browser"))
+    if (_websitePolicies->captivePortalModeEnabled() == captivePortalModeEnabled)
         return;
+
+#if PLATFORM(IOS_FAMILY)
+    // On iOS, the web browser entitlement is required to disable captive portal mode.
+    if (!captivePortalModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"))
+        [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable captive portal mode"];
 #endif
+
     _websitePolicies->setCaptivePortalModeEnabled(!!captivePortalModeEnabled);
 }
 

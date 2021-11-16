@@ -1,3 +1,14 @@
+2021-11-16  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Do not require the web browser entitlement to opt into captive portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=233191
+
+        Reviewed by Brent Fulgham.
+
+        Update API test coverage accordingly.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-11-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/mac/replace-text-with-range-on-webarea-element.html in isolated tree mode.
