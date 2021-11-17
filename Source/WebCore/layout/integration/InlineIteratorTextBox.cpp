@@ -57,6 +57,38 @@ LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
     return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());
 }
 
+unsigned TextBox::offsetForPosition(float x, bool includePartialGlyphs) const
+{
+    if (isLineBreak())
+        return 0;
+    if (x - logicalLeft() > logicalWidth())
+        return isLeftToRightDirection() ? length() : 0;
+    if (x - logicalLeft() < 0)
+        return isLeftToRightDirection() ? 0 : length();
+    return fontCascade().offsetForPosition(createTextRun(CreateTextRunMode::Editing), x - logicalLeft(), includePartialGlyphs);
+}
+
+float TextBox::positionForOffset(unsigned offset) const
+{
+    ASSERT(offset >= start());
+    ASSERT(offset <= end());
+
+    if (isLineBreak())
+        return logicalLeft();
+
+    auto [startOffset, endOffset] = [&] {
+        if (direction() == TextDirection::RTL)
+            return std::pair { selectableRange().clamp(offset), length() };
+        return std::pair { 0u, selectableRange().clamp(offset) };
+    }();
+
+    auto selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
+    
+    auto textRun = createTextRun(CreateTextRunMode::Editing);
+    fontCascade().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
+    return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
+}
+
 bool TextBox::isCombinedText() const
 {
     auto& renderer = this->renderer();

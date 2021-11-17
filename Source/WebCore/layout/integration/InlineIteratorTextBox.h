@@ -43,7 +43,7 @@ public:
     unsigned end() const;
     unsigned length() const;
 
-    unsigned offsetForPosition(float x) const;
+    unsigned offsetForPosition(float x, bool includePartialGlyphs = true) const;
     float positionForOffset(unsigned) const;
 
     TextBoxSelectableRange selectableRange() const;
@@ -52,7 +52,7 @@ public:
     bool isCombinedText() const;
     const FontCascade& fontCascade() const;
 
-    TextRun createTextRun() const;
+    TextRun createTextRun(CreateTextRunMode = CreateTextRunMode::Painting) const;
 
     const RenderText& renderer() const { return downcast<RenderText>(Box::renderer()); }
 
@@ -147,20 +147,6 @@ inline unsigned TextBox::length() const
     });
 }
 
-inline unsigned TextBox::offsetForPosition(float x) const
-{
-    return WTF::switchOn(m_pathVariant, [&](auto& path) {
-        return path.offsetForPosition(x);
-    });
-}
-
-inline float TextBox::positionForOffset(unsigned offset) const
-{
-    return WTF::switchOn(m_pathVariant, [&](auto& path) {
-        return path.positionForOffset(offset);
-    });
-}
-
 inline TextBoxSelectableRange TextBox::selectableRange() const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
@@ -168,10 +154,10 @@ inline TextBoxSelectableRange TextBox::selectableRange() const
     });
 }
 
-inline TextRun TextBox::createTextRun() const
+inline TextRun TextBox::createTextRun(CreateTextRunMode mode) const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
-        return path.createTextRun();
+        return path.createTextRun(mode);
     });
 }
 

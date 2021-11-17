@@ -34,10 +34,10 @@
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
-
 #include "HighlightData.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
+#include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "LegacyEllipsisBox.h"
 #include "Page.h"
@@ -268,7 +268,7 @@ float LegacyInlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdg
             ellipsisX = ltr ? left() + visibleBoxWidth : right() - visibleBoxWidth;
         }
 
-        int offset = offsetForPosition(ellipsisX, false);
+        int offset = InlineIterator::textBoxFor(this)->offsetForPosition(ellipsisX, false);
         if (!offset) {
             // No characters should be rendered. Set ourselves to full truncation and place the ellipsis at the min of our start
             // and the ellipsis edge.
@@ -450,46 +450,6 @@ float LegacyInlineTextBox::textPos() const
     if (!logicalLeft())
         return 0;
     return logicalLeft() - root().logicalLeft();
-}
-
-int LegacyInlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs) const
-{
-    if (isLineBreak())
-        return 0;
-    if (lineOffset - logicalLeft() > logicalWidth())
-        return isLeftToRightDirection() ? len() : 0;
-    if (lineOffset - logicalLeft() < 0)
-        return isLeftToRightDirection() ? 0 : len();
-    bool ignoreCombinedText = true;
-    bool ignoreHyphen = true;
-    return lineFont().offsetForPosition(createTextRun(ignoreCombinedText, ignoreHyphen), lineOffset - logicalLeft(), includePartialGlyphs);
-}
-
-float LegacyInlineTextBox::positionForOffset(unsigned offset) const
-{
-    ASSERT(offset >= m_start);
-    ASSERT(offset <= m_start + len());
-
-    if (isLineBreak())
-        return logicalLeft();
-
-    unsigned startOffset;
-    unsigned endOffset;
-    if (isLeftToRightDirection()) {
-        startOffset = 0;
-        endOffset = selectableRange().clamp(offset);
-    } else {
-        startOffset = selectableRange().clamp(offset);
-        endOffset = m_len;
-    }
-
-    // FIXME: Do we need to add rightBearing here?
-    LayoutRect selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
-    bool ignoreCombinedText = true;
-    bool ignoreHyphen = true;
-    TextRun textRun = createTextRun(ignoreCombinedText, ignoreHyphen);
-    lineFont().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
-    return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
 }
 
 TextRun LegacyInlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen) const

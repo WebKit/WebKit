@@ -43,8 +43,6 @@ public:
 
     int selectionTop() { return top(); }
     int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
-    int offsetForPosition(float x, bool includePartialGlyphs = true) const override;
-    float positionForOffset(unsigned offset) const override;
 
     void paintSelectionBackground(PaintInfo&);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;

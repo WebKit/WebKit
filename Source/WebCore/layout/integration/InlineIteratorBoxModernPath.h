@@ -70,39 +70,6 @@ public:
     unsigned end() const { return box().text()->end(); }
     unsigned length() const { return box().text()->length(); }
 
-    // FIXME: Make a shared generic version of this.
-    inline unsigned offsetForPosition(float x) const
-    {
-        if (isLineBreak())
-            return 0;
-        auto rect = this->rect();
-        auto localX = x - rect.x();
-        if (localX > rect.width())
-            return length();
-        if (localX < 0)
-            return 0;
-
-        bool includePartialGlyphs = true;
-        return box().style().fontCascade().offsetForPosition(createTextRun(HyphenMode::Ignore), localX, includePartialGlyphs);
-    }
-
-    // FIXME: Make a shared generic version of this.
-    float positionForOffset(unsigned offset) const
-    {
-        ASSERT(offset >= start());
-        ASSERT(offset <= end());
-
-        if (isLineBreak())
-            return rect().x();
-
-        auto endOffset = selectableRange().clamp(offset);
-
-        LayoutRect selectionRect = LayoutRect(rect().x(), 0, 0, 0);
-        TextRun textRun = createTextRun(HyphenMode::Ignore);
-        box().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, 0, endOffset);
-        return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
-    }
-
     TextBoxSelectableRange selectableRange() const
     {
         return {
@@ -113,9 +80,25 @@ public:
         };
     }
 
-    TextRun createTextRun() const
+    TextRun createTextRun(CreateTextRunMode mode) const
     {
-        return createTextRun(HyphenMode::Include);
+        auto& style = box().style();
+        auto expansion = box().expansion();
+        auto rect = this->rect();
+        auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLeft());
+
+        auto textForRun = [&] {
+            if (mode == CreateTextRunMode::Editing || !hasHyphen())
+                return text().toStringWithoutCopying();
+
+            return makeString(text(), style.hyphenString());
+        }();
+
+        bool directionalOverride = dirOverride() || style.rtlOrdering() == Order::Visual;
+        bool characterScanForCodePath = !renderText().canUseSimpleFontCodePath();
+        TextRun textRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior, direction(), directionalOverride, characterScanForCodePath };
+        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        return textRun;
     };
 
     const RenderObject& renderer() const
@@ -273,28 +256,6 @@ private:
 
     const LayoutIntegration::InlineContent::Boxes& boxes() const { return m_inlineContent->boxes; }
     const LayoutIntegration::Line& line() const { return m_inlineContent->lineForBox(box()); }
-
-    enum class HyphenMode { Include, Ignore };
-    TextRun createTextRun(HyphenMode hyphenMode) const
-    {
-        auto& style = box().style();
-        auto expansion = box().expansion();
-        auto rect = this->rect();
-        auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLeft());
-
-        auto textForRun = [&] {
-            if (hyphenMode == HyphenMode::Ignore || !hasHyphen())
-                return text().toStringWithoutCopying();
-
-            return makeString(text(), style.hyphenString());
-        }();
-
-        bool directionalOverride = dirOverride() || style.rtlOrdering() == Order::Visual;
-        bool characterScanForCodePath = !renderText().canUseSimpleFontCodePath();
-        TextRun textRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior, direction(), directionalOverride, characterScanForCodePath };
-        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-        return textRun;
-    };
 
     const RenderText& renderText() const { return downcast<RenderText>(renderer()); }
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }

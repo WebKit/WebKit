@@ -78,14 +78,6 @@ void SVGInlineTextBox::dirtyLineBoxes()
         nextBox->dirtyOwnLineBoxes();
 }
 
-int SVGInlineTextBox::offsetForPosition(float, bool) const
-{
-    // SVG doesn't use the standard offset <-> position selection system, as it's not suitable for SVGs complex needs.
-    // vertical text selection, inline boxes spanning multiple lines (contrary to HTML, etc.)
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragment, float position, bool includePartialGlyphs) const
 {
     float scalingFactor = renderer().scalingFactor();
@@ -101,13 +93,6 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
         textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragmentTransform.xScale()));
 
     return fragment.characterOffset - start() + renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
-}
-
-float SVGInlineTextBox::positionForOffset(unsigned) const
-{
-    // SVG doesn't use the offset <-> position selection system. 
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition, const RenderStyle& style) const

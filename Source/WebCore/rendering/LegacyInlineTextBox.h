@@ -146,9 +146,6 @@ private:
     float textPos() const; // returns the x position relative to the left start of the text line.
 
 public:
-    virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    virtual float positionForOffset(unsigned offset) const;
-
     bool hasMarkers() const;
 
 private:
