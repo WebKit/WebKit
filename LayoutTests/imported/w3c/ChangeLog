@@ -1,3 +1,14 @@
+2021-11-16  Rob Buis  <rbuis@igalia.com>
+
+        Re-add 'style' to contain:strict and contain:content CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=233193
+
+        Reviewed by Brent Fulgham.
+
+        Now contain-computed-expected.txt is all PASS.
+
+        * web-platform-tests/css/css-contain/parsing/contain-computed-expected.txt:
+
 2021-11-16  Joonghun Park  <jh718.park@samsung.com>
 
         border-radius inline style should serialize with valid syntax

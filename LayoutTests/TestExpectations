@@ -4796,7 +4796,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-body-w-m-001.html [ Imag
 imported/w3c/web-platform-tests/css/css-contain/contain-body-w-m-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-body-w-m-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-body-w-m-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-content-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-bg-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-bg-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-bg-003.html [ ImageOnlyFailure ]

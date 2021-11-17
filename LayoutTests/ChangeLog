@@ -1,3 +1,12 @@
+2021-11-16  Rob Buis  <rbuis@igalia.com>
+
+        Re-add 'style' to contain:strict and contain:content CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=233193
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations:
+
 2021-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Stop a momentum scroll animation when receiving a momentum end event

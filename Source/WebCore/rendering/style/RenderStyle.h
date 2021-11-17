@@ -1669,8 +1669,8 @@ public:
     static ControlPart initialAppearance() { return NoControlPart; }
     static AspectRatioType initialAspectRatioType() { return AspectRatioType::Auto; }
     static OptionSet<Containment> initialContainment() { return OptionSet<Containment> { }; }
-    static OptionSet<Containment> strictContainment() { return OptionSet<Containment> { Containment::Size, Containment::Layout, Containment::Paint }; }
-    static OptionSet<Containment> contentContainment() { return OptionSet<Containment> { Containment::Layout, Containment::Paint }; }
+    static OptionSet<Containment> strictContainment() { return OptionSet<Containment> { Containment::Size, Containment::Layout, Containment::Paint, Containment::Style }; }
+    static OptionSet<Containment> contentContainment() { return OptionSet<Containment> { Containment::Layout, Containment::Paint, Containment::Style }; }
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
     static Order initialRTLOrdering() { return Order::Logical; }
