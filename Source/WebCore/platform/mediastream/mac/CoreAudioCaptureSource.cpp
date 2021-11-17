@@ -139,6 +139,7 @@ private:
     uint64_t m_microphoneProcsCalled { 0 };
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
+    static constexpr Seconds verifyCaptureInterval = 10_s;
 };
 
 CoreAudioSharedUnit& CoreAudioSharedUnit::unit()
@@ -500,7 +501,7 @@ OSStatus CoreAudioSharedUnit::startInternal()
 
     m_ioUnitStarted = true;
 
-    m_verifyCapturingTimer.startRepeating(10_s);
+    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval);
     m_microphoneProcsCalled = 0;
     m_microphoneProcsCalledLastTime = 0;
 
@@ -511,8 +512,6 @@ void CoreAudioSharedUnit::verifyIsCapturing()
 {
     if (m_microphoneProcsCalledLastTime != m_microphoneProcsCalled) {
         m_microphoneProcsCalledLastTime = m_microphoneProcsCalled;
-        if (m_verifyCapturingTimer.repeatInterval() == 10_s)
-            m_verifyCapturingTimer.startRepeating(2_s);
         return;
     }
 
