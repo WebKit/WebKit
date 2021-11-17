@@ -54,7 +54,10 @@
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-#if HAVE(PUACTIVITYPROGRESSCONTROLLER)
+#if HAVE(PHOTOS_UI_PRIVATE)
+SOFT_LINK_PRIVATE_FRAMEWORK(PhotosUIPrivate)
+SOFT_LINK_CLASS(PhotosUIPrivate, PUActivityProgressController)
+#elif HAVE(PHOTOS_UI)
 SOFT_LINK_FRAMEWORK(PhotosUI)
 SOFT_LINK_CLASS(PhotosUI, PUActivityProgressController)
 #endif

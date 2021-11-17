@@ -25,7 +25,9 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(PUACTIVITYPROGRESSCONTROLLER)
+#if HAVE(PHOTOS_UI_PRIVATE)
+#import <PhotosUIPrivate/PUActivityProgressController.h>
+#elif HAVE(PHOTOS_UI)
 #import <PhotosUI/PUActivityProgressController.h>
 #endif
 
@@ -33,7 +35,7 @@
 
 #import "UIKitSPI.h"
 
-#if HAVE(PUACTIVITYPROGRESSCONTROLLER)
+#if HAVE(PHOTOS_UI)
 
 @interface PUActivityProgressController : NSObject
 
@@ -50,6 +52,6 @@
 
 @end
 
-#endif // HAVE(PUACTIVITYPROGRESSCONTROLLER)
+#endif // HAVE(PHOTOS_UI)
 
 #endif // USE(APPLE_INTERNAL_SDK)

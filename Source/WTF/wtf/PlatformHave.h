@@ -1068,7 +1068,10 @@
 #endif
 
 #if PLATFORM(IOS)
-#define HAVE_PUACTIVITYPROGRESSCONTROLLER 1
+#define HAVE_PHOTOS_UI 1
+#if __has_include(<PhotosUIPrivate/PUActivityProgressController.h>)
+#define HAVE_PHOTOS_UI_PRIVATE 1
+#endif
 #endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000) \
