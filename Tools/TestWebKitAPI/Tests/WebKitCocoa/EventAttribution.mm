@@ -520,7 +520,12 @@ static void attemptConnectionInProcessWithoutEntitlement()
 #endif
 }
 
+// FIXME: Re-enable this test for Monterey+ once webkit.org/232890 is resolved.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+TEST(PrivateClickMeasurement, DISABLED_DaemonBasicFunctionality)
+#else
 TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
+#endif
 {
     auto [tempDir, configuration] = setUpDaemon(configurationWithoutUsingDaemon().autorelease());
     attemptConnectionInProcessWithoutEntitlement();
@@ -555,7 +560,12 @@ static RetainPtr<TestWKWebView> webViewWithOpenInspector(WKWebViewConfiguration 
     return webView;
 }
 
+// FIXME: Re-enable this test for Monterey+ once webkit.org/232890 is resolved.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+TEST(PrivateClickMeasurement, DISABLED_DaemonDebugMode)
+#else
 TEST(PrivateClickMeasurement, DaemonDebugMode)
+#endif
 {
     auto [tempDir, configuration] = setUpDaemon([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"]);
     Vector<String> consoleMessages;

@@ -1,3 +1,13 @@
+2021-11-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Monterey] TestWebKitAPI.PrivateClickMeasurement.Daemon* tests timing out: Failed to connect to mach service org.webkit.pcmtestdaemon.service
+        https://bugs.webkit.org/show_bug.cgi?id=232890
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST): Disable tests for Monterey.
+
 2021-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Enable adattributiond testing on iOS simulator
