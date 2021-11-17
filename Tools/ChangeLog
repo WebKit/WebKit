@@ -1,3 +1,13 @@
+2021-11-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement
+        https://bugs.webkit.org/show_bug.cgi?id=232857
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::TEST): Disable the tests for Monterey.
+
 2021-11-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS Debug] TestWebKitAPI.WKInspectorExtensionDelegate.InspectedPageNavigatedCallbacks is timing out
