@@ -4577,6 +4577,9 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
 
     std::tie(minLogicalWidth, maxLogicalWidth) = modernLineLayout()->computeIntrinsicWidthConstraints();
+    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
+        walker.current()->setPreferredLogicalWidthsDirty(false);
+    return true;
     return true;
 #else
     UNUSED_PARAM(minLogicalWidth);
