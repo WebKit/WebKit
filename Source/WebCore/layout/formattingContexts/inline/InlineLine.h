@@ -64,6 +64,7 @@ public:
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
     void removeTrailingTrimmableContent();
+    void removeHangingGlyphs();
     void visuallyCollapseHangingOverflowingGlyphs(InlineLayoutUnit horizontalAvailableSpace);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
 

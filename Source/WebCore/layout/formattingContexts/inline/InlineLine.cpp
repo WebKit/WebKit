@@ -196,6 +196,13 @@ void Line::removeTrailingTrimmableContent()
     m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
 }
 
+void Line::removeHangingGlyphs()
+{
+    ASSERT(m_trimmableTrailingContent.isEmpty());
+    m_contentLogicalWidth -= m_hangingTrailingContent.width();
+    m_hangingTrailingContent.reset();
+}
+
 void Line::visuallyCollapseHangingOverflowingGlyphs(InlineLayoutUnit horizontalAvailableSpace)
 {
     ASSERT(m_trimmableTrailingContent.isEmpty());

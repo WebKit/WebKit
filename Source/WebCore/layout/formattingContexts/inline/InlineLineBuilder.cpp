@@ -458,7 +458,14 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     }
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
     m_line.removeTrailingTrimmableContent();
-    m_line.visuallyCollapseHangingOverflowingGlyphs(horizontalAvailableSpace);
+    if (isInIntrinsicWidthMode()) {
+        // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
+        // https://drafts.csswg.org/css-text/#hanging
+        // FIXME: Add support for conditionally hanging glyphs.
+        m_line.removeHangingGlyphs();
+    } else
+        m_line.visuallyCollapseHangingOverflowingGlyphs(horizontalAvailableSpace);
+
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     if (runsExpandHorizontally)
