@@ -4580,7 +4580,6 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
         walker.current()->setPreferredLogicalWidthsDirty(false);
     return true;
-    return true;
 #else
     UNUSED_PARAM(minLogicalWidth);
     UNUSED_PARAM(maxLogicalWidth);
