@@ -870,8 +870,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     let contents = rawTokens.slice(0, variableNameIndex + 1);
 
                     if (WI.settings.experimentalEnableStylesJumpToVariableDeclaration.value && this._property.ownerStyle.type !== WI.CSSStyleDeclaration.Type.Computed && this._delegate && this._delegate.spreadsheetStylePropertySelectByProperty) {
-                        const dontCreateIfMissing = true;
-                        let effectiveVariableProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(rawTokens[variableNameIndex].value, dontCreateIfMissing);
+                        let effectiveVariableProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(rawTokens[variableNameIndex].value);
                         if (effectiveVariableProperty) {
                             let arrowElement = WI.createGoToArrowButton();
                             arrowElement.classList.add("select-variable-property");

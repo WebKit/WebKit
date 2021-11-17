@@ -17,8 +17,7 @@ function test() {
         InspectorTest.expectThat(nodeStyles.computedStyle, "Has Computed Styles");
 
         function logProperty(propertyName) {
-            const dontCreateIfMissing = true;
-            let property = nodeStyles.computedStyle.propertyForName(propertyName, dontCreateIfMissing);
+            let property = nodeStyles.computedStyle.propertyForName(propertyName);
             InspectorTest.log(`PROPERTY: ${property.name}: ${property.value};`);
         }
 

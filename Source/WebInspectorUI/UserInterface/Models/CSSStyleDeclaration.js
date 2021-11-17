@@ -301,7 +301,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return this._node.appropriateSelectorFor(true);
     }
 
-    propertyForName(name, dontCreateIfMissing)
+    propertyForName(name)
     {
         console.assert(name);
         if (!name)
@@ -313,39 +313,16 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         // Editable styles don't use the map since they need to
         // account for overridden properties.
 
-        function findMatch(properties)
-        {
-            for (var i = 0; i < properties.length; ++i) {
-                var property = properties[i];
-                if (property.canonicalName !== name && property.name !== name)
-                    continue;
-                if (bestMatchProperty && !bestMatchProperty.overridden && property.overridden)
-                    continue;
-                bestMatchProperty = property;
-            }
+        let bestMatchProperty = null;
+        for (let property of this.enabledProperties) {
+            if (property.canonicalName !== name && property.name !== name)
+                continue;
+            if (bestMatchProperty && !bestMatchProperty.overridden && property.overridden)
+                continue;
+            bestMatchProperty = property;
         }
 
-        var bestMatchProperty = null;
-
-        findMatch(this.enabledProperties);
-
-        if (bestMatchProperty)
-            return bestMatchProperty;
-
-        if (dontCreateIfMissing || !this.editable)
-            return null;
-
-        findMatch(this._pendingProperties, true);
-
-        if (bestMatchProperty)
-            return bestMatchProperty;
-
-        var newProperty = new WI.CSSProperty(NaN, null, name);
-        newProperty.ownerStyle = this;
-
-        this._pendingProperties.push(newProperty);
-
-        return newProperty;
+        return bestMatchProperty;
     }
 
     resolveVariableValue(text)
@@ -385,7 +362,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
                     if (variableNameIndex === -1)
                         continue;
 
-                    let variableProperty = this.propertyForName(variableTokens[variableNameIndex].value, true);
+                    let variableProperty = this.propertyForName(variableTokens[variableNameIndex].value);
                     if (variableProperty)
                         return variableProperty.value.trim();
 

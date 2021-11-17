@@ -1,3 +1,25 @@
+2021-11-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Remove unused `dontCreateIfMissing` argument from CSSStyleDeclaration.prototype.propertyForName
+        https://bugs.webkit.org/show_bug.cgi?id=233198
+
+        Reviewed by Devin Rousso.
+
+        `dontCreateIfMissing` was always set to `true`.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.propertyForName):
+        Drive-by: inline findMatch function, which was only used once.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._parseStylePropertyPayload):
+        * UserInterface/Models/Font.js:
+        (WI.Font):
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WI.BoxModelDetailsSectionRow.prototype._getPropertyValue):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._addVariableTokens):
+
 2021-11-15  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Styles: Autocomplete should support mid-line completions

@@ -206,8 +206,7 @@ WI.Font = class Font
 
     _computedPropertyValueForName(domNodeStyle, name)
     {
-        const dontCreateIfMissing = true;
-        return domNodeStyle.computedStyle?.propertyForName(name, dontCreateIfMissing)?.value || "";
+        return domNodeStyle.computedStyle?.propertyForName(name)?.value || "";
     }
 };
 

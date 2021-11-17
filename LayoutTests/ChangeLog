@@ -1,3 +1,13 @@
+2021-11-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Remove unused `dontCreateIfMissing` argument from CSSStyleDeclaration.prototype.propertyForName
+        https://bugs.webkit.org/show_bug.cgi?id=233198
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/overridden-property.html:
+        * inspector/css/pseudo-element-matches-for-pseudo-element-node.html:
+
 2021-11-16  Rob Buis  <rbuis@igalia.com>
 
         [css-contain] Support contain:paint
