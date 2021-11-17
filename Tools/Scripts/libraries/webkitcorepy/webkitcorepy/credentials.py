@@ -20,12 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import getpass
 import sys
 
 from subprocess import CalledProcessError
-from webkitcorepy import OutputCapture, Terminal
+from webkitcorepy import Environment, OutputCapture, Terminal
 
 _cache = dict()
 
@@ -37,8 +36,8 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
     if _cache.get(name):
         return _cache.get(name)
 
-    username = os.environ.get('{}_USERNAME'.format(name.upper()))
-    key = os.environ.get('{}_{}'.format(name.upper(), key_name.upper()))
+    username = Environment.instance().get('{}_USERNAME'.format(name.upper()))
+    key = Environment.instance().get('{}_{}'.format(name.upper(), key_name.upper()))
 
     if username and key:
         _cache[name] = (username, key)

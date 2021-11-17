@@ -1,3 +1,32 @@
+2021-11-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Load secrets in kubernetes
+        https://bugs.webkit.org/show_bug.cgi?id=233158
+        <rdar://problem/85433499>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version, export Environment.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Use Environment instead of os.environ.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/environment.py: Added.
+        (Environment):
+        (Environment.instance): Construct a shared Environmant intance.
+        (Environment.__init__):
+        (Environment.load): Load secrets in file directory.
+        (Environment.get): Check environment variable and then secret store.
+        (Environment.__getitem__):
+        (Environment.__setitem__):
+        (Environment.keys): Iterate through secret store and environment variables.
+        (Environment.values): Ditto.
+        (Environment.items): Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/environment_unittest.py: Added.
+        (TestEnvironment):
+        (TestEnvironment.test_basic):
+        (TestEnvironment.test_scoped):
+        (TestEnvironment.test_list):
+
 2021-11-12  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Mark landed changes as merged
