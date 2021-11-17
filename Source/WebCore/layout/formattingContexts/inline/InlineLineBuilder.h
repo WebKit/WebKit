@@ -39,9 +39,9 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    enum class IsIntrinsicWidthMode { No, Yes };
-    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, IsIntrinsicWidthMode = IsIntrinsicWidthMode::No);
-    LineBuilder(const InlineFormattingContext&, const InlineItems&, IsIntrinsicWidthMode = IsIntrinsicWidthMode::Yes);
+    enum class IsInIntrinsicWidthMode { No, Yes };
+    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, IsInIntrinsicWidthMode = IsInIntrinsicWidthMode::No);
+    LineBuilder(const InlineFormattingContext&, const InlineItems&, IsInIntrinsicWidthMode = IsInIntrinsicWidthMode::Yes);
 
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
@@ -112,6 +112,8 @@ private:
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
 
+    bool isInIntrinsicWidthMode() const { return m_isInIntrinsicWidthMode; }
+
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
     FloatingState* floatingState() { return m_floatingState; }
@@ -121,7 +123,7 @@ private:
 
 private:
     bool m_isFirstLine { false };
-    bool m_isIntrinsicWidthMode { false };
+    bool m_isInIntrinsicWidthMode { false };
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
     FloatingState* m_floatingState { nullptr };

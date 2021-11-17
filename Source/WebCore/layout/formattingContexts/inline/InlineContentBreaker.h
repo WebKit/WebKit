@@ -38,6 +38,8 @@ struct CandidateTextRunForBreaking;
 
 class InlineContentBreaker {
 public:
+    InlineContentBreaker(bool isInIntrinsicWidthMode);
+
     struct PartialRun {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
@@ -148,7 +150,9 @@ private:
     };
     OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
     bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
+    bool isInIntrinsicWidthMode() const { return m_isInIntrinsicWidthMode; }
 
+    bool m_isInIntrinsicWidthMode { false };
     bool n_hyphenationIsDisabled { false };
 };
 

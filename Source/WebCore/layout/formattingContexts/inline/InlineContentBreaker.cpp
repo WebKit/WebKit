@@ -125,6 +125,11 @@ static inline std::optional<size_t> firstTextRunIndex(const InlineContentBreaker
     return { };
 }
 
+InlineContentBreaker::InlineContentBreaker(bool isInIntrinsicWidthMode)
+    : m_isInIntrinsicWidthMode(isInIntrinsicWidthMode)
+{
+}
+
 bool InlineContentBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& continuousContent) const
 {
     // Grab the style and check for white-space property to decide whether we should let this whitespace content overflow the current line.
@@ -646,13 +651,16 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
             return *wordBreakRule;
         return { };
     };
+
+    // Soft wrap opportunities introduced by break-word are not considered when calculating min-content intrinsic sizes.
+    auto breakWordIsApplicable = !isInIntrinsicWidthMode();
     // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
     // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
-    if (style.wordBreak() == WordBreak::BreakWord && !hasWrapOpportunityAtPreviousPosition)
+    if ((breakWordIsApplicable && style.wordBreak() == WordBreak::BreakWord) && !hasWrapOpportunityAtPreviousPosition)
         return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
     // OverflowWrap::BreakWord/Anywhere An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
     // Note that this applies to content where CSS properties (e.g. WordBreak::KeepAll) make it unbreakable. 
-    if ((style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition)
+    if (((breakWordIsApplicable && style.overflowWrap() == OverflowWrap::BreakWord) || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition)
         return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
     // Breaking is forbidden within “words”.
     if (style.wordBreak() == WordBreak::KeepAll)

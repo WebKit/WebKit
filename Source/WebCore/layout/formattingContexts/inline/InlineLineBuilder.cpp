@@ -268,8 +268,8 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, IsIntrinsicWidthMode isIntrinsicWidthMode)
-    : m_isIntrinsicWidthMode(isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, IsInIntrinsicWidthMode isInIntrinsicWidthMode)
+    : m_isInIntrinsicWidthMode(isInIntrinsicWidthMode == IsInIntrinsicWidthMode::Yes)
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineFormattingState(&inlineFormattingContext.formattingState())
     , m_floatingState(&floatingState)
@@ -279,8 +279,8 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Float
 {
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, IsIntrinsicWidthMode isIntrinsicWidthMode)
-    : m_isIntrinsicWidthMode(isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, IsInIntrinsicWidthMode isInIntrinsicWidthMode)
+    : m_isInIntrinsicWidthMode(isInIntrinsicWidthMode == IsInIntrinsicWidthMode::Yes)
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -392,7 +392,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirs
 LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
 {
     auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
-    auto inlineContentBreaker = InlineContentBreaker { };
+    auto inlineContentBreaker = InlineContentBreaker { isInIntrinsicWidthMode() };
 
     auto currentItemIndex = needsLayoutRange.start;
     size_t committedInlineItemCount = 0;
@@ -550,7 +550,7 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
         auto textIndent = root.style().textIndent();
         if (textIndent == RenderStyle::initialTextIndent())
             return { };
-        if (m_isIntrinsicWidthMode && textIndent.isPercent()) {
+        if (isInIntrinsicWidthMode() && textIndent.isPercent()) {
             // Percentages must be treated as 0 for the purpose of calculating intrinsic size contributions.
             // https://drafts.csswg.org/css-text/#text-indent-property
             return { };
