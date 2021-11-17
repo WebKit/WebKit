@@ -25,6 +25,7 @@
 #define WebKitURISchemeResponse_h
 
 #include <glib-object.h>
+#include <libsoup/soup.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitForwardDeclarations.h>
 
@@ -71,6 +72,10 @@ webkit_uri_scheme_response_set_status         (WebKitURISchemeResponse *response
 WEBKIT_API void
 webkit_uri_scheme_response_set_content_type   (WebKitURISchemeResponse *response,
                                                const gchar             *content_type);
+
+WEBKIT_API void
+webkit_uri_scheme_response_set_http_headers   (WebKitURISchemeResponse *response,
+                                               SoupMessageHeaders      *headers);
 
 G_END_DECLS
 

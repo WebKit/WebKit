@@ -1,3 +1,13 @@
+2021-11-17  Zixing Liu  <liushuyu011@gmail.com>
+
+        [GTK][WPE] Support getting and setting HTTP headers in custom URI scheme handlers
+        https://bugs.webkit.org/show_bug.cgi?id=203273
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextURIScheme): Added a new test to test getting and setting HTTP headers in custom URI scheme handlers
+
 2021-11-16  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Load secrets in kubernetes

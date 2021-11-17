@@ -27,6 +27,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
+#include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ResourceError.h>
@@ -70,6 +71,7 @@ struct _WebKitURISchemeRequestPrivate {
     char readBuffer[gReadBufferSize];
     uint64_t bytesRead;
     const char* httpMethod;
+    GUniquePtr<SoupMessageHeaders> headers;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
@@ -181,6 +183,28 @@ const gchar* webkit_uri_scheme_request_get_http_method(WebKitURISchemeRequest* r
     return request->priv->httpMethod;
 }
 
+/*
+ * webkit_uri_scheme_request_get_http_headers:
+ * @request: a #WebKitURISchemeRequest
+ *
+ * Get the #SoupMessageHeaders of the request.
+ *
+ * Returns: (transfer none): the #SoupMessageHeaders of the @request.
+ *
+ * Since: 2.36
+ */
+SoupMessageHeaders* webkit_uri_scheme_request_get_http_headers(WebKitURISchemeRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
+
+    if (!request->priv->headers) {
+        request->priv->headers.reset(soup_message_headers_new(SOUP_MESSAGE_HEADERS_REQUEST));
+        request->priv->task->request().updateSoupMessageHeaders(request->priv->headers.get());
+    }
+
+    return request->priv->headers.get();
+}
+
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)
 {
     GRefPtr<WebKitURISchemeRequest> request = adoptGRef(schemeRequest);
@@ -199,19 +223,21 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
 
     WebKitURISchemeResponse* resp = priv->response.get();
     if (!priv->bytesRead) {
-        CString contentType = WebKitURISchemeResponseGetContentType(resp);
-        ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(contentType.data()), WebKitURISchemeResponseGetStreamLength(resp), emptyString());
+        CString contentType = webKitURISchemeResponseGetContentType(resp);
+        ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(contentType.data()), webKitURISchemeResponseGetStreamLength(resp), emptyString());
         response.setTextEncodingName(extractCharsetFromMediaType(contentType.data()));
-        const CString& statusMessage = WebKitURISchemeResponseGetStatusMessage(resp);
+        const CString& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
         if (statusMessage.isNull()) {
             response.setHTTPStatusCode(200);
             response.setHTTPStatusText("OK"_s);
         } else {
-            response.setHTTPStatusCode(WebKitURISchemeResponseGetStatusCode(resp));
+            response.setHTTPStatusCode(webKitURISchemeResponseGetStatusCode(resp));
             response.setHTTPStatusText(statusMessage.data());
         }
         if (response.mimeType().isEmpty())
             response.setMimeType(MIMETypeRegistry::mimeTypeForPath(response.url().path().toString()));
+        if (auto* headers = webKitURISchemeResponseGetHeaders(resp))
+            response.updateFromSoupMessageHeaders(headers);
         priv->task->didReceiveResponse(response);
     }
 
@@ -266,7 +292,7 @@ void webkit_uri_scheme_request_finish_with_response(WebKitURISchemeRequest* requ
     request->priv->cancellable = adoptGRef(g_cancellable_new());
     request->priv->response = response;
 
-    g_input_stream_read_async(WebKitURISchemeResponseGetStream(response), request->priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, request->priv->cancellable.get(),
+    g_input_stream_read_async(webKitURISchemeResponseGetStream(response), request->priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, request->priv->cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
 }
 

@@ -22,8 +22,9 @@
 #include "WebKitURISchemeResponse.h"
 #include <wtf/text/CString.h>
 
-int WebKitURISchemeResponseGetStatusCode(const WebKitURISchemeResponse*);
-GInputStream* WebKitURISchemeResponseGetStream(const WebKitURISchemeResponse*);
-const CString& WebKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse*);
-const CString& WebKitURISchemeResponseGetContentType(const WebKitURISchemeResponse*);
-uint64_t WebKitURISchemeResponseGetStreamLength(const WebKitURISchemeResponse*);
+int webKitURISchemeResponseGetStatusCode(const WebKitURISchemeResponse*);
+GInputStream* webKitURISchemeResponseGetStream(const WebKitURISchemeResponse*);
+const CString& webKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse*);
+const CString& webKitURISchemeResponseGetContentType(const WebKitURISchemeResponse*);
+uint64_t webKitURISchemeResponseGetStreamLength(const WebKitURISchemeResponse*);
+SoupMessageHeaders* webKitURISchemeResponseGetHeaders(WebKitURISchemeResponse*);

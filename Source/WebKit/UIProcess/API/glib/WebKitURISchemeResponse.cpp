@@ -21,6 +21,7 @@
 #include "WebKitURISchemeResponsePrivate.h"
 
 #include "WebKitPrivate.h"
+#include <WebCore/GUniquePtrSoup.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -62,6 +63,7 @@ struct _WebKitURISchemeResponsePrivate {
     int statusCode { -1 };
     CString statusMessage;
     CString contentType;
+    GUniquePtr<SoupMessageHeaders> headers;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitURISchemeResponse, webkit_uri_scheme_response, G_TYPE_OBJECT)
@@ -124,29 +126,34 @@ static void webkit_uri_scheme_response_class_init(WebKitURISchemeResponseClass* 
 }
 
 // Private getters
-int WebKitURISchemeResponseGetStatusCode(const WebKitURISchemeResponse* response)
+int webKitURISchemeResponseGetStatusCode(const WebKitURISchemeResponse* response)
 {
     return response->priv->statusCode;
 }
 
-GInputStream* WebKitURISchemeResponseGetStream(const WebKitURISchemeResponse* response)
+GInputStream* webKitURISchemeResponseGetStream(const WebKitURISchemeResponse* response)
 {
     return response->priv->stream.get();
 }
 
-const CString& WebKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse* response)
+const CString& webKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse* response)
 {
     return response->priv->statusMessage;
 }
 
-const CString& WebKitURISchemeResponseGetContentType(const WebKitURISchemeResponse* response)
+const CString& webKitURISchemeResponseGetContentType(const WebKitURISchemeResponse* response)
 {
     return response->priv->contentType;
 }
 
-uint64_t WebKitURISchemeResponseGetStreamLength(const WebKitURISchemeResponse* response)
+uint64_t webKitURISchemeResponseGetStreamLength(const WebKitURISchemeResponse* response)
 {
     return response->priv->streamLength;
+}
+
+SoupMessageHeaders* webKitURISchemeResponseGetHeaders(WebKitURISchemeResponse* response)
+{
+    return response->priv->headers.get();
 }
 
 /**
@@ -182,6 +189,25 @@ void webkit_uri_scheme_response_set_content_type(WebKitURISchemeResponse* respon
     g_return_if_fail(WEBKIT_IS_URI_SCHEME_RESPONSE(response));
 
     response->priv->contentType = contentType;
+}
+
+/*
+ * webkit_uri_scheme_response_set_http_headers:
+ * @response: a #WebKitURISchemeResponse
+ * @headers: (transfer full): the HTTP headers to be set
+ *
+ * Assign the provided #SoupMessageHeaders to the response.
+ * @headers need to be of the type %SOUP_MESSAGE_HEADERS_RESPONSE.
+ * Any existing headers will be overwritten.
+ *
+ * Since: 2.36
+ */
+void webkit_uri_scheme_response_set_http_headers(WebKitURISchemeResponse* response, SoupMessageHeaders* headers)
+{
+    g_return_if_fail(WEBKIT_IS_URI_SCHEME_RESPONSE(response));
+    g_return_if_fail(soup_message_headers_get_headers_type(headers) == SOUP_MESSAGE_HEADERS_RESPONSE);
+
+    response->priv->headers.reset(headers);
 }
 
 /**

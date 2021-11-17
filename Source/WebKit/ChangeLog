@@ -1,3 +1,28 @@
+2021-11-17  Zixing Liu  <liushuyu011@gmail.com>
+
+        [GTK][WPE] Support getting and setting HTTP headers in custom URI scheme handlers
+        https://bugs.webkit.org/show_bug.cgi?id=203273
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_get_http_headers): Added new API function
+        (webkitURISchemeRequestReadCallback): Include user-specified headers
+        * UIProcess/API/glib/WebKitURISchemeResponse.cpp:
+        (WebKitURISchemeResponseGetHeaders): Added a new private getter
+        (webkit_uri_scheme_response_set_http_headers): Added new API function
+        * UIProcess/API/glib/WebKitURISchemeResponsePrivate.h:
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h: Added function prototype for 
+        webkit_uri_scheme_request_get_http_headers
+        * UIProcess/API/gtk/WebKitURISchemeResponse.h: Added function prototype for 
+        webkit_uri_scheme_request_set_http_headers
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Added new symbols
+        * UIProcess/API/wpe/WebKitURISchemeRequest.h: Added function prototype for 
+        webkit_uri_scheme_request_get_http_headers
+        * UIProcess/API/wpe/WebKitURISchemeResponse.h: Added function prototype for 
+        webkit_uri_scheme_request_set_http_headers
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt: Added new symbols
+
 2021-11-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, fix WinCairo build following r285881.

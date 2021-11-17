@@ -22,6 +22,7 @@
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
 #include <WebCore/SoupVersioning.h>
+#include <libsoup/soup.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <wtf/HashMap.h>
@@ -129,6 +130,12 @@ public:
         else
             g_assert_cmpstr(method, ==, "GET");
 
+        if (!g_strcmp0(scheme, "headers")) {
+            auto* headers = webkit_uri_scheme_request_get_http_headers(request);
+            g_assert_cmpstr(soup_message_headers_get_one(headers, "x-test"), ==, "A");
+            g_assert_cmpstr(soup_message_headers_get_list(headers, "x-test2"), ==, "1, 2, 3, 4");
+        }
+
         const URISchemeHandler& handler = test->m_handlersMap.get(String::fromUTF8(scheme));
 
         GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
@@ -166,6 +173,11 @@ public:
         auto response = adoptGRef(webkit_uri_scheme_response_new(inputStream.get(), handler.replyLength));
         webkit_uri_scheme_response_set_status(response.get(), handler.statusCode, nullptr);
         webkit_uri_scheme_response_set_content_type(response.get(), handler.mimeType.data());
+        if (!g_strcmp0(scheme, "headersresp")) {
+            auto* headers = soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE);
+            soup_message_headers_append(headers, "x-test", "test_value");
+            webkit_uri_scheme_response_set_http_headers(response.get(), headers);
+        }
         webkit_uri_scheme_request_finish_with_response(request, response.get());
     }
 
@@ -331,6 +343,25 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('test-form').submit()", &postError.outPtr());
     g_assert_no_error(postError.get());
     test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+
+    static const char* headersHTML = "<html><body><script>let hdrs = new Headers({'X-Test': 'A', 'X-Test2': '1, 2, 3'});hdrs.append('X-Test2', '4');fetch('headers:data', {headers: hdrs})</script></body></html>";
+    test->registerURISchemeHandler("headers", nullptr, 0, "application/json", 204);
+    test->m_loadEvents.clear();
+    test->loadHtml(headersHTML, "headers:form");
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+
+    static const char* respHTML = "<html><head><script>fetch('headersresp:data').then((d)=>{if(d.headers.get('X-Test') !== 'test_value') window.hasError=1}).catch((e)=> window.hasError=1)</script></head></html>";
+    test->registerURISchemeHandler("headersresp", nullptr, 0, "application/json", 204);
+    test->m_loadEvents.clear();
+    test->loadHtml(respHTML, "headersresp:form");
+    test->waitUntilLoadFinished();
+    GUniqueOutPtr<GError> respError;
+    test->runJavaScriptAndWaitUntilFinished("if(window.hasError) throw 'Headers are missing or invalid'", &respError.outPtr());
+    g_assert_no_error(respError.get());
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 
