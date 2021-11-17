@@ -47,6 +47,7 @@
 #include "JSCJSValue.h"
 #include "JSDateMath.h"
 #include "JSLock.h"
+#include "JSONAtomStringCache.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
 #include "NumericStrings.h"
@@ -805,6 +806,7 @@ public:
     std::unique_ptr<SimpleStats> machineCodeBytesPerBytecodeWordForBaselineJIT;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
     Strong<JSString> lastCachedString;
+    JSONAtomStringCache jsonAtomStringCache;
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }

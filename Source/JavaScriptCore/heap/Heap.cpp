@@ -2048,6 +2048,9 @@ void Heap::finalize()
     if (HasOwnPropertyCache* cache = vm().hasOwnPropertyCache())
         cache->clear();
 
+    if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full)
+        vm().jsonAtomStringCache.clear();
+
     immutableButterflyToStringCache.clear();
     
     for (const HeapFinalizerCallback& callback : m_heapFinalizerCallbacks)

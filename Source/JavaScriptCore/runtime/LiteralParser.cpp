@@ -30,6 +30,7 @@
 #include "CodeBlock.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
+#include "JSONAtomStringCacheInlines.h"
 #include "Lexer.h"
 #include "ObjectConstructor.h"
 #include <wtf/ASCIICType.h>
@@ -143,51 +144,25 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
 }
 
 template <typename CharType>
-ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(typename Lexer::LiteralParserTokenPtr token)
+ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
     if (token->stringIs8Bit)
-        return makeIdentifier(token->stringToken8, token->stringLength);
-    return makeIdentifier(token->stringToken16, token->stringLength);
+        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringToken8, token->stringLength));
+    return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringToken16, token->stringLength));
 }
 
-    
 template <typename CharType>
-template <typename LiteralCharType>
-ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(const LiteralCharType* characters, size_t length)
+ALWAYS_INLINE JSString* LiteralParser<CharType>::makeJSString(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
-    VM& vm = m_globalObject->vm();
-    if (!length)
-        return vm.propertyNames->emptyIdentifier;
-
-    auto firstCharacter = characters[0];
-    if (length == 1) {
-        if constexpr (sizeof(LiteralCharType) == 1)
-            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter));
-        if (firstCharacter <= maxSingleCharacterString)
-            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter));
-        return Identifier::fromString(vm, characters, length);
+    constexpr unsigned maxAtomizeStringLength = 10;
+    if (token->stringIs8Bit) {
+        if (token->stringLength > maxAtomizeStringLength)
+            return jsString(vm, String(token->stringToken8, token->stringLength));
+        return jsString(vm, Identifier::fromString(vm, token->stringToken8, token->stringLength).string());
     }
-
-    if (firstCharacter >= maximumCachableCharacter)
-        return Identifier::fromString(vm, characters, length);
-
-    // 0 means no entry since m_recentIdentifiersIndex is zero-filled initially.
-    uint8_t indexPlusOne = m_recentIdentifiersIndex[firstCharacter];
-    if (indexPlusOne) {
-        uint8_t index = indexPlusOne - 1;
-        auto& ident = m_recentIdentifiers[index];
-        if (Identifier::equal(ident.impl(), characters, length))
-            return ident;
-        auto result = Identifier::fromString(vm, characters, length);
-        m_recentIdentifiers[index] = result;
-        return result;
-    }
-
-    auto result = Identifier::fromString(vm, characters, length);
-    m_recentIdentifiers.uncheckedAppend(result);
-    indexPlusOne = m_recentIdentifiers.size();
-    m_recentIdentifiersIndex[firstCharacter] = indexPlusOne;
-    return result;
+    if (token->stringLength > maxAtomizeStringLength)
+        return jsString(vm, String(token->stringToken16, token->stringLength));
+    return jsString(vm, Identifier::fromString(vm, token->stringToken16, token->stringLength).string());
 }
 
 static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar)
@@ -1144,7 +1119,7 @@ ALWAYS_INLINE JSValue LiteralParser<CharType>::parsePrimitiveValue(VM& vm)
 {
     switch (m_lexer.currentToken()->type) {
     case TokString: {
-        JSValue result = jsString(vm, makeIdentifier(m_lexer.currentToken()).string());
+        JSString* result = makeJSString(vm, m_lexer.currentToken());
         m_lexer.next();
         return result;
     }
@@ -1284,7 +1259,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             TokenType type = m_lexer.next();
             if (type == TokString || (m_mode != StrictJSON && type == TokIdentifier)) {
                 while (true) {
-                    Identifier ident = makeIdentifier(m_lexer.currentToken());
+                    Identifier ident = makeIdentifier(vm, m_lexer.currentToken());
 
                     if (UNLIKELY(m_lexer.next() != TokColon)) {
                         setErrorMessageForToken(TokColon);
@@ -1358,7 +1333,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 m_parseErrorMessage = "Property name must be a string literal"_s;
                 return { };
             }
-            identifierStack.append(makeIdentifier(m_lexer.currentToken()));
+            identifierStack.append(makeIdentifier(vm, m_lexer.currentToken()));
 
             // Check for colon
             if (UNLIKELY(m_lexer.next() != TokColon)) {

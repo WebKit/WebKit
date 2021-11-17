@@ -1,3 +1,86 @@
+2021-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Revise JSON.parse atomize policy
+        https://bugs.webkit.org/show_bug.cgi?id=233231
+
+        Reviewed by Mark Lam.
+
+        This patch improves JSON.parse performance by the following two changes.
+
+        1. Introduce JSONAtomStringCache. It is inspired from HTMLAtomStringCache. It offers cheap
+           fixed-sized cache stored in VM. Since it is in VM, we do not need to clear it every time
+           we call JSON.parse. We clear this cache when full GC happens. It contributes to
+           flight-todomvc-json-parse by 5%.
+        2. Do not atomize long string. Profiling of JSON.parse said that most of time is used for
+           atomizing of Strings. There is a tradeoff that, atomizing strings can reduce duplicate string
+           allocations, but it has a performance penalty. V8 limits atomizing for <= 10 length strings,
+           and SpiderMonkey does not atomize strings. In this patch, we aligned our atomizing policy to
+           V8, so we do not atomize strings if the length is longer than 10. It contributes to
+           flight-todomvc-json-parse by 50%.
+
+        Many microbenchmarks show the improvement.
+                                                                 ToT                     Patched
+
+            json-parse-object-reviver-same-value           78.2683+-0.9598           77.7784+-0.9488
+            vanilla-es2015-babel-webpack-todomvc-json-parse
+                                                           99.9129+-0.5508     ^     85.8160+-0.8721        ^ definitely 1.1643x faster
+            json-parse-array-reviver-same-value            63.5891+-0.8066           63.2895+-0.7336
+            flight-todomvc-json-parse                      52.4230+-0.4474     ^     34.1159+-0.2378        ^ definitely 1.5366x faster
+            json-parse-object-reviver                      80.8417+-0.5042           80.6393+-0.8087
+            json-parse-leaf-object                         51.6836+-0.6754     ^     46.8983+-0.1578        ^ definitely 1.1020x faster
+            vanilla-es2015-todomvc-json-parse             100.5916+-0.9399     ^     85.9522+-0.8470        ^ definitely 1.1703x faster
+            vanilla-todomvc-json-parse                     76.4518+-0.4341     ^     64.2318+-0.7621        ^ definitely 1.1902x faster
+            json-parse-array-reviver                       76.1276+-0.8529           75.9747+-0.9002
+
+        And Speedometer2 shows 0.8% improvement.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |109.046667   |108.546667   |0.995415  | 0.197186                                         |
+            | VueJS-TodoMVC                        |21.813333    |21.566667    |0.988692  | 0.313141                                         |
+            | EmberJS-TodoMVC                      |117.796667   |118.086667   |1.002462  | 0.558244                                         |
+            | Flight-TodoMVC                       |64.273333    |62.260000    |0.968675  | 0.000000 (significant)                           |
+            | BackboneJS-TodoMVC                   |42.856667    |42.863333    |1.000156  | 0.975025                                         |
+            | Preact-TodoMVC                       |16.326667    |16.673333    |1.021233  | 0.298674                                         |
+            | AngularJS-TodoMVC                    |123.146667   |122.413333   |0.994045  | 0.160282                                         |
+            | Inferno-TodoMVC                      |57.510000    |57.533333    |1.000406  | 0.947767                                         |
+            | Vanilla-ES2015-TodoMVC               |61.133333    |59.200000    |0.968375  | 0.000000 (significant)                           |
+            | Angular2-TypeScript-TodoMVC          |38.863333    |38.963333    |1.002573  | 0.860359                                         |
+            | VanillaJS-TodoMVC                    |51.296667    |49.423333    |0.963480  | 0.000000 (significant)                           |
+            | jQuery-TodoMVC                       |210.933333   |210.596667   |0.998404  | 0.590132                                         |
+            | EmberJS-Debug-TodoMVC                |326.093333   |324.890000   |0.996310  | 0.156955                                         |
+            | React-TodoMVC                        |81.113333    |81.360000    |1.003041  | 0.335615                                         |
+            | React-Redux-TodoMVC                  |132.560000   |132.256667   |0.997712  | 0.306072                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |60.073333    |59.026667    |0.982577  | 0.000883 (significant)                           |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 280.29390
+            b mean = 282.51413
+            pValue = 0.0000083325
+            (Bigger means are better.)
+            1.008 times better
+            Results ARE significant
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalize):
+        * runtime/JSONAtomStringCache.h: Added.
+        (JSC::JSONAtomStringCache::makeIdentifier):
+        (JSC::JSONAtomStringCache::clear):
+        (JSC::JSONAtomStringCache::cacheSlot):
+        (JSC::JSONAtomStringCache::cache):
+        * runtime/JSONAtomStringCacheInlines.h: Added.
+        (JSC::JSONAtomStringCache::make):
+        (JSC::JSONAtomStringCache::vm const):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::makeIdentifier):
+        (JSC::LiteralParser<CharType>::makeJSString):
+        (JSC::LiteralParser<CharType>::parsePrimitiveValue):
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/LiteralParser.h:
+        * runtime/VM.h:
+
 2021-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use operation path when PutByVal child1 is not speculated as a Cell

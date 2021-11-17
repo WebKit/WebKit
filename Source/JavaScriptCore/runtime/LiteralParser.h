@@ -197,9 +197,8 @@ private:
 
     JSValue parsePrimitiveValue(VM&);
 
-    ALWAYS_INLINE Identifier makeIdentifier(typename Lexer::LiteralParserTokenPtr);
-    template<typename LiteralCharType>
-    ALWAYS_INLINE Identifier makeIdentifier(const LiteralCharType* characters, size_t length);
+    ALWAYS_INLINE Identifier makeIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
+    ALWAYS_INLINE JSString* makeJSString(VM&, typename Lexer::LiteralParserTokenPtr);
 
     void setErrorMessageForToken(TokenType);
 
@@ -208,9 +207,6 @@ private:
     typename LiteralParser<CharType>::Lexer m_lexer;
     ParserMode m_mode;
     String m_parseErrorMessage;
-    static constexpr unsigned maximumCachableCharacter = 128;
-    std::array<uint8_t, maximumCachableCharacter> m_recentIdentifiersIndex { };
-    Vector<Identifier, maximumCachableCharacter> m_recentIdentifiers;
 };
 
 } // namespace JSC

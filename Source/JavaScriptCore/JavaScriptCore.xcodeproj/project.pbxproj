@@ -1875,6 +1875,8 @@
 		E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */; };
 		E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */; };
 		E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */; };
+		E32FEA2C27448F3700FF41C1 /* JSONAtomStringCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E32FEA2A27448F3600FF41C1 /* JSONAtomStringCacheInlines.h */; };
+		E32FEA2D27448F3700FF41C1 /* JSONAtomStringCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E32FEA2B27448F3600FF41C1 /* JSONAtomStringCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33095DD23210A1B00EB7856 /* JSInternalFieldObjectImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E334CBB521FD96A9000EB178 /* RegExpGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5176,6 +5178,8 @@
 		E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendar.h; sourceTree = "<group>"; };
 		E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.h; sourceTree = "<group>"; };
 		E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarConstructor.cpp; sourceTree = "<group>"; };
+		E32FEA2A27448F3600FF41C1 /* JSONAtomStringCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONAtomStringCacheInlines.h; sourceTree = "<group>"; };
+		E32FEA2B27448F3600FF41C1 /* JSONAtomStringCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONAtomStringCache.h; sourceTree = "<group>"; };
 		E3305FB020B0F78700CEB82B /* InByVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByVariant.cpp; sourceTree = "<group>"; };
 		E3305FB120B0F78800CEB82B /* InByVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByVariant.h; sourceTree = "<group>"; };
 		E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSInternalFieldObjectImpl.h; sourceTree = "<group>"; };
@@ -7809,6 +7813,8 @@
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
 				0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */,
+				E32FEA2B27448F3600FF41C1 /* JSONAtomStringCache.h */,
+				E32FEA2A27448F3600FF41C1 /* JSONAtomStringCacheInlines.h */,
 				A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */,
 				A7F9935D0FD7325100A0B2D0 /* JSONObject.h */,
 				7C184E1817BEDBD3007CB63A /* JSPromise.cpp */,
@@ -10430,6 +10436,8 @@
 				0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */,
 				BC18C4250E16F5CD00B34460 /* JSObjectRef.h in Headers */,
 				A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */,
+				E32FEA2D27448F3700FF41C1 /* JSONAtomStringCache.h in Headers */,
+				E32FEA2C27448F3700FF41C1 /* JSONAtomStringCacheInlines.h in Headers */,
 				A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */,
 				BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */,
 				7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */,
