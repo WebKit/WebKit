@@ -237,6 +237,8 @@ void WebFrame::continueWillSubmitForm(uint64_t listenerID)
 
 void WebFrame::invalidatePolicyListener()
 {
+    Ref protectedThis { *this };
+
     if (!m_policyListenerID)
         return;
 
