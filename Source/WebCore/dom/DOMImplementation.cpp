@@ -45,6 +45,7 @@
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
@@ -56,6 +57,10 @@
 #include "XMLDocument.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+
+#if ENABLE(MODEL_ELEMENT)
+#include "ModelDocument.h"
+#endif
 
 namespace WebCore {
 
@@ -160,6 +165,11 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
     parameters.url = url;
     if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported)
         return MediaDocument::create(frame, settings, url);
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    if (MIMETypeRegistry::isUSDMIMEType(contentType) && RuntimeEnabledFeatures::sharedFeatures().modelDocumentEnabled())
+        return ModelDocument::create(frame, settings, url);
 #endif
 
 #if ENABLE(FTPDIR)

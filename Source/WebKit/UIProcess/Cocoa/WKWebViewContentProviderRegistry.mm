@@ -54,7 +54,7 @@
         [self registerProvider:[WKPDFView class] forMIMEType:@(type)];
 #endif
 
-#if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS) && !ENABLE(MODEL_ELEMENT)
     if (configuration._systemPreviewEnabled) {
         for (auto& type : WebCore::MIMETypeRegistry::usdMIMETypes())
             [self registerProvider:[WKUSDPreviewView class] forMIMEType:@(type)];

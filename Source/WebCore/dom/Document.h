@@ -302,8 +302,11 @@ enum DocumentClass {
     SVGDocumentClass = 1 << 5,
     TextDocumentClass = 1 << 6,
     XMLDocumentClass = 1 << 7,
+#if ENABLE(MODEL_ELEMENT)
+    ModelDocumentClass = 1 << 8,
+#endif
 };
-using DocumentClassFlags = unsigned char;
+using DocumentClassFlags = uint16_t;
 
 enum class DocumentCompatibilityMode : unsigned char {
     NoQuirksMode = 1,
@@ -540,6 +543,9 @@ public:
     bool isPluginDocument() const { return m_documentClasses & PluginDocumentClass; }
     bool isMediaDocument() const { return m_documentClasses & MediaDocumentClass; }
     bool isTextDocument() const { return m_documentClasses & TextDocumentClass; }
+#if ENABLE(MODEL_ELEMENT)
+    bool isModelDocument() const { return m_documentClasses & ModelDocumentClass; }
+#endif
     bool hasSVGRootNode() const;
     virtual bool isFrameSet() const { return false; }
 

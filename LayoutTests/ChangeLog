@@ -1,3 +1,19 @@
+2021-11-17  Dean Jackson  <dino@apple.com>
+
+        Add ModelDocument for directly showing content that can be handled by <model>
+        https://bugs.webkit.org/show_bug.cgi?id=233057
+        rdar://85265880
+
+        Reviewed by Darin Adler.
+
+        New test for ModelDocument.
+
+        * http/conf/mime.types: Configure the testing Apache server to serve USDZ files
+        with the correct MIME type.
+        * http/tests/model/UnitBox.usdz: Sample file.
+        * http/tests/model/model-document-expected.txt: Added.
+        * http/tests/model/model-document.html: New test for a ModelDocument.
+
 2021-11-17  Youenn Fablet  <youenn@apple.com>
 
         Safari 15.1 H264 FullHD video encode/decode fails

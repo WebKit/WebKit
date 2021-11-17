@@ -515,6 +515,7 @@ model/vnd.gtw
 model/vnd.mts
 model/vnd.parasolid.transmit.binary
 model/vnd.parasolid.transmit.text
+model/vnd.usdz+zip usdz
 model/vnd.vtu
 model/vrml			wrl vrml
 multipart/alternative

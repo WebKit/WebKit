@@ -1,3 +1,16 @@
+2021-11-17  Dean Jackson  <dino@apple.com>
+
+        Add ModelDocument for directly showing content that can be handled by <model>
+        https://bugs.webkit.org/show_bug.cgi?id=233057
+        rdar://85265880
+
+        Reviewed by Darin Adler.
+
+        We don't need to use WKUSDPreviewView if we have ModelDocument.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+
 2021-11-17  Antoine Quint  <graouts@webkit.org>
 
         [Model] Create iOS ModelPlayer implementation

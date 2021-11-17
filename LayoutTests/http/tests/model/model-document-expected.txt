@@ -1,0 +1,5 @@
+Basic ModelDocument test.
+
+PASS: <model> and <source> seen in iframe.
+
+

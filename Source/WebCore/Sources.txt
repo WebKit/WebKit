@@ -1293,6 +1293,7 @@ html/MediaController.cpp
 html/MediaDocument.cpp
 html/MediaElementSession.cpp
 html/MediaFragmentURIParser.cpp
+html/ModelDocument.cpp
 html/MonthInputType.cpp
 html/NumberInputType.cpp
 html/OffscreenCanvas.cpp

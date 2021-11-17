@@ -47,6 +47,7 @@ css-custom-properties-api [ Skip ]
 css-typedom [ Skip ]
 css-dark-mode [ Skip ]
 model-element [ Skip ]
+http/tests/model [ Skip ]
 
 # Media Stream API testing is not supported for WK1 yet.
 fast/mediastream

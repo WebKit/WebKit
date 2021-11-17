@@ -894,6 +894,19 @@ MediaSourceInlinePaintingEnabled:
     WebKit:
       default: false
 
+ModelDocumentEnabled:
+  type: bool
+  humanReadableName: "HTML <model> elements for stand-alone document"
+  humanReadableDescription: "HTML <model> element for model documents"
+  condition: ENABLE(MODEL_ELEMENT)
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(SEPARATED_MODEL)": true
+      default: false
+
 ModelElementEnabled:
   type: bool
   humanReadableName: "HTML <model> element"

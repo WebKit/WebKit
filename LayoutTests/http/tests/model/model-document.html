@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function run()
+    {
+        const frame = document.createElement("iframe");
+        frame.addEventListener("load", function () {
+            const output = document.getElementById("output");
+            const model = frame.contentDocument.querySelector("model");
+            const source = frame.contentDocument.querySelector("model source");
+            if (!model)
+                output.textContent = "FAIL: <model> not seen in iframe.";
+            else if (!source)
+                output.textContent = "FAIL: <model> found, but no <source> child.";
+            else
+                output.textContent = "PASS: <model> and <source> seen in iframe.";
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+        frame.src = "UnitBox.usdz";
+        document.body.appendChild(frame);
+    }
+    window.addEventListener("load", run, false);
+</script>
+</head>
+<body>
+<p>
+Basic ModelDocument test.
+<p>
+<p id="output"></p>
+</body>
+</html>

@@ -258,6 +258,11 @@ public:
     bool builtInNotificationsEnabled() const { return m_builtInNotificationsEnabled; }
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    void setModelDocumentEnabled(bool isEnabled) { m_modelDocumentEnabled = isEnabled; }
+    bool modelDocumentEnabled() const { return m_modelDocumentEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -396,6 +401,10 @@ private:
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     bool m_builtInNotificationsEnabled { false };
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    bool m_modelDocumentEnabled { false };
 #endif
 
     friend class NeverDestroyed<RuntimeEnabledFeatures>;

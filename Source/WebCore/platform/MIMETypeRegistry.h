@@ -108,6 +108,8 @@ public:
 
     WEBCORE_EXPORT static bool isUSDMIMEType(const String& mimeType);
 
+    WEBCORE_EXPORT static bool isSupportedModelMIMEType(const String& mimeType);
+
     // Check to see if a MIME type is suitable for being shown inside a page.
     // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(),
     // isSupportedMediaMIMEType(), isSupportedJavaScriptMIMEType(), isSupportedJSONMIMEType(),
