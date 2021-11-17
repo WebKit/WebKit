@@ -129,9 +129,6 @@ static const char* phaseToString(PlatformWheelEventPhase phase)
 
 bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (WheelEventDeltaFilter::shouldApplyFilteringForEvent(wheelEvent))
-        m_scrollingVelocityForMomentumAnimation = -wheelEvent.scrollingVelocity(); // Note that event delta is reversed from scroll direction.
-
     if (processWheelEventForScrollSnap(wheelEvent))
         return true;
 
@@ -228,7 +225,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed)) {
         m_momentumScrollInProgress = true;
         if (momentumScrollingAnimatorEnabled()) {
-            startMomentumScrollWithInitialVelocity(m_client.scrollOffset(), m_scrollingVelocityForMomentumAnimation, -wheelEvent.delta(), [](const FloatPoint& targetOffset) { return targetOffset; });
+            startMomentumScrollWithInitialVelocity(m_client.scrollOffset(), -wheelEvent.scrollingVelocity(), -wheelEvent.delta(), [](const FloatPoint& targetOffset) { return targetOffset; });
 #if !LOG_DISABLED
             m_eventDrivenScrollOffset = m_client.scrollOffset();
             m_eventDrivenScrollMomentumStartOffset = m_eventDrivenScrollOffset;

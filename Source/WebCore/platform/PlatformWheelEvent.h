@@ -129,6 +129,13 @@ public:
         return copy;
     }
 
+    PlatformWheelEvent copyWithVelocity(FloatSize velocity) const
+    {
+        PlatformWheelEvent copy = *this;
+        copy.m_scrollingVelocity = velocity;
+        return copy;
+    }
+
     const IntPoint& position() const { return m_position; } // PlatformWindow coordinates.
     const IntPoint& globalPosition() const { return m_globalPosition; } // Screen coordinates.
 

@@ -62,9 +62,24 @@ bool WheelEventDeltaFilter::shouldApplyFilteringForEvent(const PlatformWheelEven
 #endif
 }
 
+bool WheelEventDeltaFilter::shouldIncludeVelocityForEvent(const PlatformWheelEvent& event)
+{
+#if ENABLE(KINETIC_SCROLLING)
+    // Include velocity on momentum-began phases so that the momentum animator can use it.
+    if (event.momentumPhase() == PlatformWheelEventPhase::Began)
+        return true;
+#endif
+    return shouldApplyFilteringForEvent(event);
+}
+
 PlatformWheelEvent WheelEventDeltaFilter::eventCopyWithFilteredDeltas(const PlatformWheelEvent& event) const
 {
     return event.copyWithDeltaAndVelocity(m_currentFilteredDelta, m_currentFilteredVelocity);
+}
+
+PlatformWheelEvent WheelEventDeltaFilter::eventCopyWithVelocity(const PlatformWheelEvent& event) const
+{
+    return event.copyWithVelocity(m_currentFilteredVelocity);
 }
 
 FloatSize WheelEventDeltaFilter::filteredDelta() const

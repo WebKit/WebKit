@@ -260,7 +260,6 @@ private:
     FloatSize m_stretchScrollForce;
     FloatSize m_momentumVelocity;
 
-    FloatSize m_scrollingVelocityForMomentumAnimation; // Do we need both this, m_scrollingVelocityForScrollSnap and m_momentumVelocity?
     FloatSize m_scrollingVelocityForScrollSnap;
 #if !LOG_DISABLED
     FloatPoint m_eventDrivenScrollMomentumStartOffset;

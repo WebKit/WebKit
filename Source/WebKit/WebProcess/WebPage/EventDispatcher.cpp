@@ -106,6 +106,8 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         m_recentWheelEventDeltaFilter->updateFromEvent(platformWheelEvent);
         if (WheelEventDeltaFilter::shouldApplyFilteringForEvent(platformWheelEvent))
             platformWheelEvent = m_recentWheelEventDeltaFilter->eventCopyWithFilteredDeltas(platformWheelEvent);
+        else if (WheelEventDeltaFilter::shouldIncludeVelocityForEvent(platformWheelEvent))
+            platformWheelEvent = m_recentWheelEventDeltaFilter->eventCopyWithVelocity(platformWheelEvent);
 #endif
 
         Locker locker { m_scrollingTreesLock };

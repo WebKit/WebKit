@@ -45,12 +45,11 @@ WheelEventDeltaFilterMac::WheelEventDeltaFilterMac()
 void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 {
     if (event.momentumPhase() != PlatformWheelEventPhase::None) {
+        if (event.momentumPhase() == PlatformWheelEventPhase::Began)
+            updateCurrentVelocityFromEvent(event);
         m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
         return;
     }
-
-    // The absolute value of timestamp doesn't matter; the filter looks at deltas from the previous event.
-    auto timestamp = event.timestamp() - m_initialWallTime;
 
     switch (event.phase()) {
     case PlatformWheelEventPhase::None:
@@ -59,29 +58,13 @@ void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 
     case PlatformWheelEventPhase::Began:
         reset();
-        FALLTHROUGH;
-    case PlatformWheelEventPhase::Changed: {
-        NSPoint filteredDeltaResult;
-        NSPoint filteredVelocityResult;
-
-        [m_predominantAxisFilter filterInputDelta:toFloatPoint(event.delta()) timestamp:timestamp.seconds() outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
-        auto axisFilteredVelocity = toFloatSize(filteredVelocityResult);
-        m_currentFilteredDelta = toFloatSize(filteredDeltaResult);
-
-        // Use a 1ms minimum to avoid divide by zero. The usual cadence of these events matches screen refresh rate.
-        auto deltaFromLastEvent = std::max(event.ioHIDEventTimestamp() - m_lastIOHIDEventTimestamp, 1_ms);
-        m_currentFilteredVelocity = event.delta() / deltaFromLastEvent.seconds();
-
-        // Apply the axis-locking that m_predominantAxisFilter does.
-        if (!axisFilteredVelocity.width())
-            m_currentFilteredVelocity.setWidth(0);
-        if (!axisFilteredVelocity.height())
-            m_currentFilteredVelocity.setHeight(0);
-
-        LOG(ScrollAnimations, "WheelEventDeltaFilterMac::updateFromEvent: _NSScrollingPredominantAxisFilter velocity %.2f, %2f, IOHIDEvent velocity %.2f,%.2f",
-            axisFilteredVelocity.width(), axisFilteredVelocity.height(), m_currentFilteredVelocity.width(), m_currentFilteredVelocity.height());
+        updateCurrentVelocityFromEvent(event);
         break;
-    }
+
+    case PlatformWheelEventPhase::Changed:
+        updateCurrentVelocityFromEvent(event);
+        break;
+
     case PlatformWheelEventPhase::MayBegin:
     case PlatformWheelEventPhase::Cancelled:
     case PlatformWheelEventPhase::Stationary:
@@ -90,6 +73,32 @@ void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
     }
 
     m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
+}
+
+void WheelEventDeltaFilterMac::updateCurrentVelocityFromEvent(const PlatformWheelEvent& event)
+{
+    // The absolute value of timestamp doesn't matter; the filter looks at deltas from the previous event.
+    auto timestamp = event.timestamp() - m_initialWallTime;
+
+    NSPoint filteredDeltaResult;
+    NSPoint filteredVelocityResult;
+
+    [m_predominantAxisFilter filterInputDelta:toFloatPoint(event.delta()) timestamp:timestamp.seconds() outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
+    auto axisFilteredVelocity = toFloatSize(filteredVelocityResult);
+    m_currentFilteredDelta = toFloatSize(filteredDeltaResult);
+
+    // Use a 1ms minimum to avoid divide by zero. The usual cadence of these events matches screen refresh rate.
+    auto deltaFromLastEvent = std::max(event.ioHIDEventTimestamp() - m_lastIOHIDEventTimestamp, 1_ms);
+    m_currentFilteredVelocity = event.delta() / deltaFromLastEvent.seconds();
+
+    // Apply the axis-locking that m_predominantAxisFilter does.
+    if (!axisFilteredVelocity.width())
+        m_currentFilteredVelocity.setWidth(0);
+    if (!axisFilteredVelocity.height())
+        m_currentFilteredVelocity.setHeight(0);
+
+    LOG(ScrollAnimations, "WheelEventDeltaFilterMac::updateFromEvent: _NSScrollingPredominantAxisFilter velocity %.2f, %2f, IOHIDEvent velocity %.2f,%.2f",
+        axisFilteredVelocity.width(), axisFilteredVelocity.height(), m_currentFilteredVelocity.width(), m_currentFilteredVelocity.height());
 }
 
 void WheelEventDeltaFilterMac::reset()
