@@ -40,6 +40,7 @@ public:
 
     virtual void load(Model&, LayoutSize) = 0;
     virtual PlatformLayer* layer() = 0;
+    virtual void enterFullscreen() = 0;
 };
 
 }

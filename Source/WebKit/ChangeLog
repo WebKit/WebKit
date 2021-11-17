@@ -1,3 +1,52 @@
+2021-11-17  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Create iOS ModelPlayer implementation
+        https://bugs.webkit.org/show_bug.cgi?id=233192
+
+        Reviewed by Dean Jackson.
+
+        Bug 232848 factored platform-specific code out of HTMLModelElement with the use of a new ModelPlayer
+        abstraction with a concrete ARKitInlinePreviewModelPlayer implementation. This first patch moved the
+        macOS code, and this patch moves the remaining iOS code.
+
+        To do so we make ARKitInlinePreviewModelPlayer a parent class of two platform-specific subclasses:
+        ARKitInlinePreviewModelPlayerMac and ARKitInlinePreviewModelPlayerIOS. We add a new enterFullscreen()
+        method to ModelPlayer, with an implementation in the iOS subclass. To support this new method, we
+        add a new platformLayerID() on ModelPlayerClient.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h: Added.
+        (WebKit::ARKitInlinePreviewModelPlayer::page):
+        (WebKit::ARKitInlinePreviewModelPlayer::client):
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm: Added.
+        (WebKit::ARKitInlinePreviewModelPlayer::ARKitInlinePreviewModelPlayer):
+        (WebKit::ARKitInlinePreviewModelPlayer::~ARKitInlinePreviewModelPlayer):
+        (WebKit::ARKitInlinePreviewModelPlayer::load):
+        (WebKit::ARKitInlinePreviewModelPlayer::layer):
+        (WebKit::ARKitInlinePreviewModelPlayer::enterFullscreen):
+        * WebProcess/Model/WebModelPlayerProvider.cpp:
+        (WebKit::WebModelPlayerProvider::createModelPlayer):
+        * WebProcess/Model/WebModelPlayerProvider.h:
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.h: Added.
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm: Added.
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::create):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::ARKitInlinePreviewModelPlayerIOS):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::~ARKitInlinePreviewModelPlayerIOS):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::enterFullscreen):
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h: Renamed from Source/WebKit/WebProcess/Model/mac/ARKitInlinePreviewModelPlayer.h.
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm: Renamed from Source/WebKit/WebProcess/Model/mac/ARKitInlinePreviewModelPlayer.mm.
+        (WebKit::ARKitInlinePreviewModelPlayerMac::create):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::ARKitInlinePreviewModelPlayerMac):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::~ARKitInlinePreviewModelPlayerMac):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::setModelElementCacheDirectory):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::createFile):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::clearFile):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::load):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::layer):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+
 2021-11-17  Zixing Liu  <liushuyu011@gmail.com>
 
         [GTK][WPE] Support getting and setting HTTP headers in custom URI scheme handlers

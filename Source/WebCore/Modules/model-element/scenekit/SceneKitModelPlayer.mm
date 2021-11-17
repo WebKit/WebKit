@@ -72,6 +72,10 @@ PlatformLayer* SceneKitModelPlayer::layer()
     return m_layer.get();
 }
 
+void SceneKitModelPlayer::enterFullscreen()
+{
+}
+
 // MARK: - SceneKitModelLoaderClient overrides.
 
 void SceneKitModelPlayer::didFinishLoading(SceneKitModelLoader& loader, Ref<SceneKitModel> model)

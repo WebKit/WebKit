@@ -655,7 +655,9 @@ WebProcess/Inspector/mac/WebInspectorUIMac.mm
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
-WebProcess/Model/mac/ARKitInlinePreviewModelPlayer.mm
+WebProcess/Model/ARKitInlinePreviewModelPlayer.mm
+WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm
+WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
 
 WebProcess/Plugins/PDF/PDFPlugin.mm
 WebProcess/Plugins/PDF/PDFPluginAnnotation.mm

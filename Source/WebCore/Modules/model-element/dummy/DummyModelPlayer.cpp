@@ -54,4 +54,8 @@ PlatformLayer* DummyModelPlayer::layer()
     return nullptr;
 }
 
+void DummyModelPlayer::enterFullscreen()
+{
+}
+
 }

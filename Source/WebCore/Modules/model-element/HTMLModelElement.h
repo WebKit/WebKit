@@ -30,6 +30,7 @@
 #include "CachedRawResource.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "GraphicsLayer.h"
 #include "HTMLElement.h"
 #include "IDLTypes.h"
 #include "ModelPlayerClient.h"
@@ -89,6 +90,7 @@ private:
     // ModelPlayerClient overrides.
     void didFinishLoading(ModelPlayer&) final;
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
+    GraphicsLayer::PlatformLayerID platformLayerID() final;
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;

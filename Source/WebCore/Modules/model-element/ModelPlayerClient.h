@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GraphicsLayer.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,6 +40,7 @@ public:
 
     virtual void didFinishLoading(ModelPlayer&) = 0;
     virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
+    virtual GraphicsLayer::PlatformLayerID platformLayerID() = 0;
 };
 
 }

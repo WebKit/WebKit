@@ -30,8 +30,11 @@
 
 #include "CachedResourceLoader.h"
 #include "DOMPromiseProxy.h"
+#include "Document.h"
 #include "ElementChildIterator.h"
 #include "ElementInlines.h"
+#include "GraphicsLayer.h"
+#include "GraphicsLayerCA.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
@@ -40,21 +43,13 @@
 #include "Model.h"
 #include "ModelPlayer.h"
 #include "ModelPlayerProvider.h"
+#include "Page.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderLayerModelObject.h"
 #include "RenderModel.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-#include "Chrome.h"
-#include "ChromeClient.h"
-#include "Document.h"
-#include "GraphicsLayer.h"
-#include "GraphicsLayerCA.h"
-#include "Page.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
-#endif
 
 namespace WebCore {
 
@@ -234,9 +229,6 @@ void HTMLModelElement::modelDidChange()
     if (!renderer)
         return;
 
-    // NOTE: For now, createModelPlayer returning nullptr means that the GraphicsLayer::setContentsToModel() path
-    // is being used, but that needs to be phased out to allow bidirectional communication between the model player
-    // and the HTMLModelElement. Once that is phased out, createModelPlayer() should be updated to return a Ref<>.
     m_modelPlayer = page->modelPlayerProvider().createModelPlayer(*this);
     if (!m_modelPlayer)
         return;
@@ -244,13 +236,12 @@ void HTMLModelElement::modelDidChange()
     // FIXME: We need to tell the player if the size changes as well, so passing this
     // in with load probably doesn't make sense.
     auto size = renderer->absoluteBoundingBoxRect(false).size();
-
     m_modelPlayer->load(*m_model, size);
 }
 
 bool HTMLModelElement::usesPlatformLayer() const
 {
-    return m_modelPlayer != nullptr;
+    return m_modelPlayer && m_modelPlayer->layer();
 }
 
 PlatformLayer* HTMLModelElement::platformLayer() const
@@ -271,30 +262,31 @@ void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceEr
     ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
 }
 
+GraphicsLayer::PlatformLayerID HTMLModelElement::platformLayerID()
+{
+    auto* page = document().page();
+    if (!page)
+        return 0;
+
+    if (!is<RenderLayerModelObject>(this->renderer()))
+        return 0;
+
+    auto& renderLayerModelObject = downcast<RenderLayerModelObject>(*this->renderer());
+    if (!renderLayerModelObject.isComposited() || !renderLayerModelObject.layer() || !renderLayerModelObject.layer()->backing())
+        return 0;
+
+    auto* graphicsLayer = renderLayerModelObject.layer()->backing()->graphicsLayer();
+    if (!graphicsLayer)
+        return 0;
+
+    return graphicsLayer->contentsLayerIDForModel();
+}
+
 // MARK: - Fullscreen support.
 
 void HTMLModelElement::enterFullscreen()
 {
-// FIXME: Add a new method to ModelPlayer for entering fullscreen and move this into the iOS ARKit inline preview ModelPlayer implementation.
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    auto* page = document().page();
-    if (!page)
-        return;
-
-    if (!is<RenderLayerModelObject>(this->renderer()))
-        return;
-
-    auto& renderLayerModelObject = downcast<RenderLayerModelObject>(*this->renderer());
-    if (!renderLayerModelObject.isComposited() || !renderLayerModelObject.layer() || !renderLayerModelObject.layer()->backing())
-        return;
-
-    auto* graphicsLayer = renderLayerModelObject.layer()->backing()->graphicsLayer();
-    if (!graphicsLayer)
-        return;
-
-    if (auto contentLayerId = graphicsLayer->contentsLayerIDForModel())
-        page->chrome().client().takeModelElementFullscreen(contentLayerId);
-#endif
+    m_modelPlayer->enterFullscreen();
 }
 
 }

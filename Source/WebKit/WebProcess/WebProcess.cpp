@@ -146,7 +146,7 @@
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-#include "ARKitInlinePreviewModelPlayer.h"
+#include "ARKitInlinePreviewModelPlayerMac.h"
 #endif
 
 #if !OS(WINDOWS)
@@ -605,7 +605,7 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     if (!parameters.modelElementCacheDirectory.isEmpty())
-        ARKitInlinePreviewModelPlayer::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
+        ARKitInlinePreviewModelPlayerMac::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
 #endif
 
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);

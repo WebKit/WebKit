@@ -41,8 +41,9 @@ private:
     DummyModelPlayer(ModelPlayerClient&);
 
     // ModelPlayer overrides.
-    virtual void load(Model&, LayoutSize) override;
-    virtual PlatformLayer* layer() override;
+    void load(Model&, LayoutSize) override;
+    PlatformLayer* layer() override;
+    void enterFullscreen() override;
 
     WeakPtr<ModelPlayerClient> m_client;
 };

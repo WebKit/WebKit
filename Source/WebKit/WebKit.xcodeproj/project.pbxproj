@@ -4620,6 +4620,10 @@
 		7137BA7D25F153E900914EE3 /* ModelElementControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelElementControllerCocoa.mm; sourceTree = "<group>"; };
 		7137BA7E25F1540B00914EE3 /* ModelElementController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModelElementController.cpp; sourceTree = "<group>"; };
 		7137BA7F25F1540C00914EE3 /* ModelElementController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelElementController.h; sourceTree = "<group>"; };
+		7177AD5B2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitInlinePreviewModelPlayer.mm; sourceTree = "<group>"; };
+		7177AD5C2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitInlinePreviewModelPlayer.h; sourceTree = "<group>"; };
+		7177AD662743F66C002F103B /* ARKitInlinePreviewModelPlayerIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitInlinePreviewModelPlayerIOS.mm; sourceTree = "<group>"; };
+		7177AD672743F66C002F103B /* ARKitInlinePreviewModelPlayerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitInlinePreviewModelPlayerIOS.h; sourceTree = "<group>"; };
 		71A676A422C62318007D6295 /* WKTouchActionGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKTouchActionGestureRecognizer.h; path = ios/WKTouchActionGestureRecognizer.h; sourceTree = "<group>"; };
 		71A676A522C62318007D6295 /* WKTouchActionGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTouchActionGestureRecognizer.mm; path = ios/WKTouchActionGestureRecognizer.mm; sourceTree = "<group>"; };
 		71BAA73125FFCCBA00D7CD5D /* WKModelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKModelView.h; path = ios/WKModelView.h; sourceTree = "<group>"; };
@@ -5327,8 +5331,8 @@
 		BC20528011C94284008F3375 /* WKBundlePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePage.cpp; sourceTree = "<group>"; };
 		BC2652121182608100243E12 /* DrawingAreaProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxy.cpp; sourceTree = "<group>"; };
 		BC2652131182608100243E12 /* DrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxy.h; sourceTree = "<group>"; };
-		BC2B410C2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitInlinePreviewModelPlayer.h; sourceTree = "<group>"; };
-		BC2B410D2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitInlinePreviewModelPlayer.mm; sourceTree = "<group>"; };
+		BC2B410C2732EF9600A2D191 /* ARKitInlinePreviewModelPlayerMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitInlinePreviewModelPlayerMac.h; sourceTree = "<group>"; };
+		BC2B410D2732EF9600A2D191 /* ARKitInlinePreviewModelPlayerMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitInlinePreviewModelPlayerMac.mm; sourceTree = "<group>"; };
 		BC2B411A2732F66E00A2D191 /* WebModelPlayerProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebModelPlayerProvider.h; sourceTree = "<group>"; };
 		BC2B411B2732F66E00A2D191 /* WebModelPlayerProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebModelPlayerProvider.cpp; sourceTree = "<group>"; };
 		BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SameDocumentNavigationType.h; sourceTree = "<group>"; };
@@ -9519,6 +9523,15 @@
 			name = mac;
 			sourceTree = "<group>";
 		};
+		7177AD652743F66C002F103B /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				7177AD672743F66C002F103B /* ARKitInlinePreviewModelPlayerIOS.h */,
+				7177AD662743F66C002F103B /* ARKitInlinePreviewModelPlayerIOS.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		727A7F3324078527004D2931 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -10840,7 +10853,10 @@
 		BC2B410A2732EF6500A2D191 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				7177AD652743F66C002F103B /* ios */,
 				BC2B410B2732EF7500A2D191 /* mac */,
+				7177AD5C2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.h */,
+				7177AD5B2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.mm */,
 				BC2B411B2732F66E00A2D191 /* WebModelPlayerProvider.cpp */,
 				BC2B411A2732F66E00A2D191 /* WebModelPlayerProvider.h */,
 			);
@@ -10850,8 +10866,8 @@
 		BC2B410B2732EF7500A2D191 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				BC2B410C2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.h */,
-				BC2B410D2732EF9600A2D191 /* ARKitInlinePreviewModelPlayer.mm */,
+				BC2B410C2732EF9600A2D191 /* ARKitInlinePreviewModelPlayerMac.h */,
+				BC2B410D2732EF9600A2D191 /* ARKitInlinePreviewModelPlayerMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";

@@ -55,8 +55,9 @@ private:
     void updateScene();
 
     // ModelPlayer overrides.
-    virtual void load(Model&, LayoutSize) override;
-    virtual CALayer *layer() override;
+    void load(Model&, LayoutSize) override;
+    CALayer *layer() override;
+    void enterFullscreen() override;
 
     // SceneKitModelLoaderClient overrides.
     virtual void didFinishLoading(SceneKitModelLoader&, Ref<SceneKitModel>) override;
