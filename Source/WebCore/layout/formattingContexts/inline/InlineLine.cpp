@@ -32,7 +32,6 @@
 #include "InlineFormattingContext.h"
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutBoxGeometry.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextFlags.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
@@ -173,13 +172,12 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     m_contentLogicalWidth += accumulatedExpansion;
 }
 
-void Line::removeTrailingTrimmableContent()
+void Line::removeTrailingTrimmableContent(ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk shouldApplyTrailingWhiteSpaceFollowedByBRQuirk)
 {
     if (m_trimmableTrailingContent.isEmpty() || m_runs.isEmpty())
         return;
 
-    // Complex line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+    if (shouldApplyTrailingWhiteSpaceFollowedByBRQuirk == ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes) {
         auto isTextAlignRight = [&] {
             auto textAlign = formattingContext().root().style().textAlign();
             return textAlign == TextAlignMode::Right
@@ -192,7 +190,6 @@ void Line::removeTrailingTrimmableContent()
             return;
         }
     }
-
     m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
 }
 
