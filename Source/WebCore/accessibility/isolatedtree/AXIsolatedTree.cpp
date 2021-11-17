@@ -146,7 +146,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
     if (m_usedOnAXThread && isMainThread())
         return nullptr;
 
-    return axID.isValid() ? m_readerThreadNodeMap.get(axID) : nullptr;
+    return axID != InvalidAXID ? m_readerThreadNodeMap.get(axID) : nullptr;
 }
 
 Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& axIDs) const
@@ -166,7 +166,7 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& a
 Vector<AXID> AXIsolatedTree::idsForObjects(const Vector<RefPtr<AXCoreObject>>& objects) const
 {
     return objects.map([] (const RefPtr<AXCoreObject>& object) -> AXID {
-        return object ? object->objectID() : AXID();
+        return object ? object->objectID() : InvalidAXID;
     });
 }
 
@@ -175,7 +175,7 @@ void AXIsolatedTree::updateChildrenIDs(AXID axID, Vector<AXID>&& childrenIDs)
     ASSERT(isMainThread());
     ASSERT(m_changeLogLock.isLocked());
 
-    if (axID.isValid()) {
+    if (axID != InvalidAXID) {
         m_nodeMap.set(axID, childrenIDs);
         m_pendingChildrenUpdates.append(std::make_pair(axID, WTFMove(childrenIDs)));
     }
@@ -186,14 +186,14 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axPar
     AXTRACE("AXIsolatedTree::generateSubtree");
     ASSERT(isMainThread());
 
-    if (!axObject.objectID().isValid())
+    if (axObject.objectID() == InvalidAXID)
         return;
 
-    auto object = createSubtree(axObject, axParent ? axParent->objectID() : AXID(), attachWrapper);
+    auto object = createSubtree(axObject, axParent ? axParent->objectID() : InvalidAXID, attachWrapper);
     Locker locker { m_changeLogLock };
     if (!axParent)
         setRootNode(object.ptr());
-    else if (axParent->objectID().isValid()) // Need to check for the objectID of axParent again because it may have been detached while traversing the tree.
+    else if (axParent->objectID() != InvalidAXID) // Need to check for the objectID of axParent again because it may have been detached while traversing the tree.
         updateChildrenIDs(axParent->objectID(), axParent->childrenIDs());
 }
 
@@ -203,7 +203,7 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
     ASSERT(isMainThread());
 
     auto object = AXIsolatedObject::create(axObject, this, parentID);
-    if (!object->objectID().isValid()) {
+    if (object->objectID() == InvalidAXID) {
         // Either the axObject has an invalid ID or something else went terribly wrong. Don't bother doing anything else.
         ASSERT_NOT_REACHED();
         return object;
@@ -242,7 +242,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
 
     AXID axID = axObject.objectID();
     auto* axParent = axObject.parentObject();
-    AXID parentID = axParent ? axParent->objectID() : AXID();
+    AXID parentID = axParent ? axParent->objectID() : InvalidAXID;
 
     auto newObject = AXIsolatedObject::create(axObject, this, parentID);
     newObject->m_childrenIDs = axObject.childrenIDs();
@@ -316,7 +316,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
         }
         return false;
     });
-    if (!axAncestor || !axAncestor->objectID().isValid() || iterator == m_nodeMap.end()) {
+    if (!axAncestor || axAncestor->objectID() == InvalidAXID || iterator == m_nodeMap.end()) {
         // This update triggered before the isolated tree has been repopulated.
         // Return here since there is nothing to update.
         return;
@@ -365,7 +365,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
     // Apply pending changes in case focus has changed and hasn't been updated.
     applyPendingChanges();
     Locker locker { m_changeLogLock };
-    AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString()));
+    AXLOG(makeString("focusedNodeID ", m_focusedNodeID));
     AXLOG("focused node:");
     AXLOG(nodeForID(m_focusedNodeID));
     return nodeForID(m_focusedNodeID);
@@ -392,7 +392,7 @@ void AXIsolatedTree::setRootNode(AXIsolatedObject* root)
 void AXIsolatedTree::setFocusedNodeID(AXID axID)
 {
     AXTRACE("AXIsolatedTree::setFocusedNodeID");
-    AXLOG(makeString("axID ", axID.loggingString()));
+    AXLOG(makeString("axID ", axID));
     ASSERT(isMainThread());
 
     Locker locker { m_changeLogLock };
@@ -406,7 +406,7 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
 void AXIsolatedTree::removeNode(AXID axID)
 {
     AXTRACE("AXIsolatedTree::removeNode");
-    AXLOG(makeString("AXID ", axID.loggingString()));
+    AXLOG(makeString("AXID ", axID));
     ASSERT(isMainThread());
 
     m_nodeMap.remove(axID);
@@ -417,13 +417,13 @@ void AXIsolatedTree::removeNode(AXID axID)
 void AXIsolatedTree::removeSubtree(AXID axID)
 {
     AXTRACE("AXIsolatedTree::removeSubtree");
-    AXLOG(makeString("Removing subtree for axID ", axID.loggingString()));
+    AXLOG(makeString("Removing subtree for axID ", axID));
     ASSERT(isMainThread());
 
     Vector<AXID> removals = { axID };
     while (removals.size()) {
         AXID axID = removals.takeLast();
-        if (!axID.isValid())
+        if (axID == InvalidAXID)
             continue;
 
         auto it = m_nodeMap.find(axID);
@@ -449,9 +449,9 @@ void AXIsolatedTree::applyPendingChanges()
     Locker locker { m_changeLogLock };
 
     if (m_pendingFocusedNodeID != m_focusedNodeID) {
-        AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString(), " pendingFocusedNodeID ", m_pendingFocusedNodeID.loggingString()));
+        AXLOG(makeString("focusedNodeID ", m_focusedNodeID, " pendingFocusedNodeID ", m_pendingFocusedNodeID));
 
-        if (m_focusedNodeID.isValid()) {
+        if (m_focusedNodeID != InvalidAXID) {
             // Set the old focused object's IsFocused property to false.
             AXPropertyMap propertyMap;
             propertyMap.set(AXPropertyName::IsFocused, false);
@@ -462,7 +462,7 @@ void AXIsolatedTree::applyPendingChanges()
 
     while (m_pendingNodeRemovals.size()) {
         auto axID = m_pendingNodeRemovals.takeLast();
-        AXLOG(makeString("removing axID ", axID.loggingString()));
+        AXLOG(makeString("removing axID ", axID));
         if (auto object = nodeForID(axID)) {
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
             m_readerThreadNodeMap.remove(axID);
@@ -471,7 +471,7 @@ void AXIsolatedTree::applyPendingChanges()
 
     while (m_pendingSubtreeRemovals.size()) {
         auto axID = m_pendingSubtreeRemovals.takeLast();
-        AXLOG(makeString("removing subtree axID ", axID.loggingString()));
+        AXLOG(makeString("removing subtree axID ", axID));
         if (auto object = nodeForID(axID)) {
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
             m_pendingSubtreeRemovals.appendVector(object->m_childrenIDs);
@@ -481,8 +481,8 @@ void AXIsolatedTree::applyPendingChanges()
 
     for (const auto& item : m_pendingAppends) {
         AXID axID = item.isolatedObject->objectID();
-        AXLOG(makeString("appending axID ", axID.loggingString()));
-        if (!axID.isValid())
+        AXLOG(makeString("appending axID ", axID));
+        if (axID == InvalidAXID)
             continue;
 
         auto& wrapper = item.wrapper ? item.wrapper : item.isolatedObject->wrapper();
@@ -518,7 +518,7 @@ void AXIsolatedTree::applyPendingChanges()
     m_pendingAppends.clear();
 
     for (auto& update : m_pendingChildrenUpdates) {
-        AXLOG(makeString("updating children for axID ", update.first.loggingString()));
+        AXLOG(makeString("updating children for axID ", update.first));
         if (auto object = nodeForID(update.first))
             object->m_childrenIDs = WTFMove(update.second);
     }

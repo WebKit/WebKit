@@ -502,7 +502,7 @@ TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
     stream.dumpProperty("address", &object);
     stream.dumpProperty("wrapper", object.wrapper());
 
-    stream.dumpProperty("parentObject", parent ? parent->objectID() : AXID());
+    stream.dumpProperty("parentObject", parent ? parent->objectID() : 0);
 #if PLATFORM(COCOA)
     stream.dumpProperty("remoteParentObject", object.remoteParentObject());
 #endif

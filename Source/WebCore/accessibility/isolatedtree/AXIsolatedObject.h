@@ -667,8 +667,8 @@ private:
     String outerHTML() const override;
 
     RefPtr<AXIsolatedTree> m_cachedTree;
-    AXID m_parentID;
-    AXID m_id;
+    AXID m_parentID { InvalidAXID };
+    AXID m_id { InvalidAXID };
     Vector<AXID> m_childrenIDs;
     Vector<RefPtr<AXCoreObject>> m_children;
     AXPropertyMap m_propertyMap;

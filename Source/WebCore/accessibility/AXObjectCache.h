@@ -60,7 +60,7 @@ class VisiblePosition;
 class Widget;
 
 struct TextMarkerData {
-    AXID axID;
+    AXID axID { 0 };
 
     Node* node { nullptr };
     unsigned offset { 0 };

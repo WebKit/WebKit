@@ -323,7 +323,7 @@ using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, 
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {
-    AXID axID; // ID of the object whose properties changed.
+    AXID axID { InvalidAXID }; // ID of the object whose properties changed.
     AXPropertyMap properties; // Changed properties.
 };
 
@@ -407,8 +407,8 @@ private:
     Vector<AXID> m_pendingNodeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes to be removed from the tree.
     Vector<AXID> m_pendingSubtreeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes whose subtrees are to be removed from the tree.
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
-    AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
-    AXID m_focusedNodeID;
+    AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock) { InvalidAXID };
+    AXID m_focusedNodeID { InvalidAXID };
     Lock m_changeLogLock;
 };
 
