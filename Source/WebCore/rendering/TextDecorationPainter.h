@@ -44,7 +44,7 @@ class TextRun;
 class TextDecorationPainter {
 public:
     struct Styles;
-    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecoration> decorations, const RenderText&, bool isFirstLine, const FontCascade&, std::optional<Styles> = std::nullopt);
+    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecorationLine> decorations, const RenderText&, bool isFirstLine, const FontCascade&, std::optional<Styles> = std::nullopt);
     
     void setTextBox(InlineIterator::TextBoxIterator textBox) { m_textBox = textBox; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
@@ -66,12 +66,12 @@ public:
         TextDecorationStyle linethroughStyle;
     };
     static Color decorationColor(const RenderStyle&);
-    static OptionSet<TextDecoration> textDecorationsInEffectForStyle(const Styles&);
-    static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecoration> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
+    static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const Styles&);
+    static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
 
 private:
     GraphicsContext& m_context;
-    OptionSet<TextDecoration> m_decorations;
+    OptionSet<TextDecorationLine> m_decorations;
     float m_wavyOffset;
     float m_width { 0 };
     FloatPoint m_boxOrigin;

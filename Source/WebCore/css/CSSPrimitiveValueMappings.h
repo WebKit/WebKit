@@ -2412,27 +2412,27 @@ template<> inline CSSPrimitiveValue::operator TextJustify() const
 }
 #endif // CSS3_TEXT
 
-template<> inline CSSPrimitiveValue::operator OptionSet<TextDecoration>() const
+template<> inline CSSPrimitiveValue::operator OptionSet<TextDecorationLine>() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueNone:
-        return OptionSet<TextDecoration> { };
+        return OptionSet<TextDecorationLine> { };
     case CSSValueUnderline:
-        return TextDecoration::Underline;
+        return TextDecorationLine::Underline;
     case CSSValueOverline:
-        return TextDecoration::Overline;
+        return TextDecorationLine::Overline;
     case CSSValueLineThrough:
-        return TextDecoration::LineThrough;
+        return TextDecorationLine::LineThrough;
     case CSSValueBlink:
-        return TextDecoration::Blink;
+        return TextDecorationLine::Blink;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return OptionSet<TextDecoration> { };
+    return OptionSet<TextDecorationLine> { };
 }
 
 template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const

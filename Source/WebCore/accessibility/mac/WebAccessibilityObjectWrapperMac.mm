@@ -879,26 +879,25 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     
     // set underline and strikethrough
     auto decor = style.textDecorationsInEffect();
-    if (!(decor & TextDecoration::Underline)) {
+    if (!(decor & TextDecorationLine::Underline)) {
         [attrString removeAttribute:NSAccessibilityUnderlineTextAttribute range:range];
         [attrString removeAttribute:NSAccessibilityUnderlineColorTextAttribute range:range];
     }
-    
-    if (!(decor & TextDecoration::LineThrough)) {
+    if (!(decor & TextDecorationLine::LineThrough)) {
         [attrString removeAttribute:NSAccessibilityStrikethroughTextAttribute range:range];
         [attrString removeAttribute:NSAccessibilityStrikethroughColorTextAttribute range:range];
     }
 
-    if (decor & TextDecoration::Underline || decor & TextDecoration::LineThrough) {
+    if (decor & TextDecorationLine::Underline || decor & TextDecorationLine::LineThrough) {
         // FIXME: Should the underline style be reported here?
         auto decorationStyles = TextDecorationPainter::stylesForRenderer(*renderer, decor);
 
-        if (decor & TextDecoration::Underline) {
+        if (decor & TextDecorationLine::Underline) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, @YES, range);
             AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, cocoaColor(decorationStyles.underlineColor).get(), range);
         }
-        
-        if (decor & TextDecoration::LineThrough) {
+
+        if (decor & TextDecorationLine::LineThrough) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, @YES, range);
             AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, cocoaColor(decorationStyles.linethroughColor).get(), range);
         }

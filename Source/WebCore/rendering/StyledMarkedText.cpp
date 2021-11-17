@@ -57,15 +57,15 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             auto decorationStyle = renderStyle->textDecorationStyle();
             auto decorations = renderStyle->textDecorationsInEffect();
 
-            if (decorations.contains(TextDecoration::Underline)) {
+            if (decorations.contains(TextDecorationLine::Underline)) {
                 style.textDecorationStyles.underlineColor = color;
                 style.textDecorationStyles.underlineStyle = decorationStyle;
             }
-            if (decorations.contains(TextDecoration::Overline)) {
+            if (decorations.contains(TextDecorationLine::Overline)) {
                 style.textDecorationStyles.overlineColor = color;
                 style.textDecorationStyles.overlineStyle = decorationStyle;
             }
-            if (decorations.contains(TextDecoration::LineThrough)) {
+            if (decorations.contains(TextDecorationLine::LineThrough)) {
                 style.textDecorationStyles.linethroughColor = color;
                 style.textDecorationStyles.linethroughStyle = decorationStyle;
             }

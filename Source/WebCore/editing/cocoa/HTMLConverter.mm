@@ -2380,9 +2380,9 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         if (!renderer)
             continue;
         auto& style = renderer->style();
-        if (style.textDecorationsInEffect() & TextDecoration::Underline)
+        if (style.textDecorationsInEffect() & TextDecorationLine::Underline)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        if (style.textDecorationsInEffect() & TextDecoration::LineThrough)
+        if (style.textDecorationsInEffect() & TextDecorationLine::LineThrough)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
         if (auto font = style.fontCascade().primaryFont().getCTFont())
             [attrs setObject:toNSFont(font) forKey:NSFontAttributeName];

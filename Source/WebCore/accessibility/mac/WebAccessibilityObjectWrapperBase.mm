@@ -591,7 +591,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     AXAttributeStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
 
     auto decor = style.textDecorationsInEffect();
-    if (decor & TextDecoration::Underline)
+    if (decor & TextDecorationLine::Underline)
         AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, @YES, range);
 
     // Add code context if this node is within a <code> block.

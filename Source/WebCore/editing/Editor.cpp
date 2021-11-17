@@ -4098,9 +4098,9 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         }
     } else {
         auto decoration = style->textDecorationsInEffect();
-        if (decoration & TextDecoration::LineThrough)
+        if (decoration & TextDecorationLine::LineThrough)
             attributes.hasStrikeThrough = true;
-        if (decoration & TextDecoration::Underline)
+        if (decoration & TextDecorationLine::Underline)
             attributes.hasUnderline = true;
     }
 

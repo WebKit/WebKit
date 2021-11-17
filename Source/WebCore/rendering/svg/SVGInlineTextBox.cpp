@@ -295,10 +295,10 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
         // Spec: All text decorations except line-through should be drawn before the text is filled and stroked; thus, the text is rendered on top of these decorations.
         auto decorations = style.textDecorationsInEffect();
-        if (decorations & TextDecoration::Underline)
-            paintDecoration(paintInfo.context(), TextDecoration::Underline, fragment);
-        if (decorations & TextDecoration::Overline)
-            paintDecoration(paintInfo.context(), TextDecoration::Overline, fragment);
+        if (decorations & TextDecorationLine::Underline)
+            paintDecoration(paintInfo.context(), TextDecorationLine::Underline, fragment);
+        if (decorations & TextDecorationLine::Overline)
+            paintDecoration(paintInfo.context(), TextDecorationLine::Overline, fragment);
 
         auto paintOrder = RenderStyle::paintTypesForPaintOrder(style.paintOrder());
         for (unsigned i = 0; i < paintOrder.size(); ++i) {
@@ -323,8 +323,8 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         }
 
         // Spec: Line-through should be drawn after the text is filled and stroked; thus, the line-through is rendered on top of the text.
-        if (decorations & TextDecoration::LineThrough)
-            paintDecoration(paintInfo.context(), TextDecoration::LineThrough, fragment);
+        if (decorations & TextDecorationLine::LineThrough)
+            paintDecoration(paintInfo.context(), TextDecorationLine::LineThrough, fragment);
 
         setPaintingResourceMode({ });
     }
@@ -438,22 +438,22 @@ bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGText
     return true;
 }
 
-static inline float positionOffsetForDecoration(OptionSet<TextDecoration> decoration, const FontMetrics& fontMetrics, float thickness)
+static inline float positionOffsetForDecoration(OptionSet<TextDecorationLine> decoration, const FontMetrics& fontMetrics, float thickness)
 {
     // FIXME: For SVG Fonts we need to use the attributes defined in the <font-face> if specified.
     // Compatible with Batik/Opera.
-    if (decoration == TextDecoration::Underline)
+    if (decoration == TextDecorationLine::Underline)
         return fontMetrics.floatAscent() + thickness * 1.5f;
-    if (decoration == TextDecoration::Overline)
+    if (decoration == TextDecorationLine::Overline)
         return thickness;
-    if (decoration == TextDecoration::LineThrough)
+    if (decoration == TextDecorationLine::LineThrough)
         return fontMetrics.floatAscent() * 5 / 8.0f;
 
     ASSERT_NOT_REACHED();
     return 0.0f;
 }
 
-static inline float thicknessForDecoration(OptionSet<TextDecoration>, const FontCascade& font)
+static inline float thicknessForDecoration(OptionSet<TextDecorationLine>, const FontCascade& font)
 {
     // FIXME: For SVG Fonts we need to use the attributes defined in the <font-face> if specified.
     // Compatible with Batik/Opera
@@ -477,7 +477,7 @@ static inline RenderBoxModelObject& findRendererDefininingTextDecoration(LegacyI
     return *renderer;
 }
 
-void SVGInlineTextBox::paintDecoration(GraphicsContext& context, OptionSet<TextDecoration> decoration, const SVGTextFragment& fragment)
+void SVGInlineTextBox::paintDecoration(GraphicsContext& context, OptionSet<TextDecorationLine> decoration, const SVGTextFragment& fragment)
 {
     if (renderer().style().textDecorationsInEffect().isEmpty())
         return;
@@ -505,7 +505,7 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext& context, OptionSet<TextD
     }
 }
 
-void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, OptionSet<TextDecoration> decoration, const SVGTextFragment& fragment, RenderBoxModelObject& decorationRenderer)
+void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, OptionSet<TextDecorationLine> decoration, const SVGTextFragment& fragment, RenderBoxModelObject& decorationRenderer)
 {
     ASSERT(!m_paintingResource);
     ASSERT(!paintingResourceMode().isEmpty());

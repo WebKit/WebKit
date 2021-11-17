@@ -1,3 +1,13 @@
+2021-11-16  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Rename TextDecoration to TextDecorationLine
+        https://bugs.webkit.org/show_bug.cgi?id=232729
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebView/WebView.mm:
+        (-[WebView updateTextTouchBar]):
+
 2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Make scroll granularity an enum class

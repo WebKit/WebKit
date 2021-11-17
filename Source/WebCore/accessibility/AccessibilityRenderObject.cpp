@@ -3858,7 +3858,7 @@ bool AccessibilityRenderObject::hasUnderline() const
     if (!m_renderer)
         return false;
     
-    return m_renderer->style().textDecorationsInEffect().contains(TextDecoration::Underline);
+    return m_renderer->style().textDecorationsInEffect().contains(TextDecorationLine::Underline);
 }
 
 String AccessibilityRenderObject::nameForMSAA() const

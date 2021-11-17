@@ -1046,14 +1046,14 @@ TextStream& operator<<(TextStream& ts, TextCombine textCombine)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextDecoration textDecoration)
+TextStream& operator<<(TextStream& ts, TextDecorationLine line)
 {
-    switch (textDecoration) {
-    case TextDecoration::None: ts << "none"; break;
-    case TextDecoration::Underline: ts << "underline"; break;
-    case TextDecoration::Overline: ts << "overline"; break;
-    case TextDecoration::LineThrough: ts << "line-through"; break;
-    case TextDecoration::Blink: ts << "blink"; break;
+    switch (line) {
+    case TextDecorationLine::None: ts << "none"; break;
+    case TextDecorationLine::Underline: ts << "underline"; break;
+    case TextDecorationLine::Overline: ts << "overline"; break;
+    case TextDecorationLine::LineThrough: ts << "line-through"; break;
+    case TextDecorationLine::Blink: ts << "blink"; break;
     }
     return ts;
 }

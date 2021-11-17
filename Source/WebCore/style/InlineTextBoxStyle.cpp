@@ -49,7 +49,7 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
     return false;
 }
 
-static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
+static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecoration)
 {
     for (auto run = line->firstRun(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
@@ -66,7 +66,7 @@ static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterato
     }
 }
 
-static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
+static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecoration)
 {
     for (auto run = line->firstRun(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
@@ -83,7 +83,7 @@ static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIter
     }
 }
 
-static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, OptionSet<TextDecoration> textDecoration, bool firstLine)
+static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, OptionSet<TextDecorationLine> textDecoration, bool firstLine)
 {
     const RenderElement* current = renderer.parent();
     do {
@@ -135,16 +135,16 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
         ASSERT(textRun);
         // Position underline relative to the bottom edge of the lowest element's content box.
         auto line = textRun->line();
-        auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecoration::Underline, line->isFirst());
+        auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecorationLine::Underline, line->isFirst());
         
         float offset;
         if (textRun->renderer().style().isFlippedLinesWritingMode()) {
             offset = textRun->logicalTop();
-            minLogicalTopForTextDecorationLine(line, offset, decorationRenderer, TextDecoration::Underline);
+            minLogicalTopForTextDecorationLine(line, offset, decorationRenderer, TextDecorationLine::Underline);
             offset = textRun->logicalTop() - offset;
         } else {
             offset = textRun->logicalBottom();
-            maxLogicalBottomForTextDecorationLine(line, offset, decorationRenderer, TextDecoration::Underline);
+            maxLogicalBottomForTextDecorationLine(line, offset, decorationRenderer, TextDecorationLine::Underline);
             offset -= textRun->logicalBottom();
         }
         auto desiredOffset = textRun->logicalHeight() + gap + std::max(offset, 0.0f) + underlineOffset.lengthOr(0);
@@ -190,7 +190,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
 
     // These metrics must match where underlines get drawn.
     // FIXME: Share the code in TextDecorationPainter::paintTextDecoration() so we can just query it for the painted geometry.
-    if (decoration & TextDecoration::Underline) {
+    if (decoration & TextDecorationLine::Underline) {
         // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
         int underlineOffset = 1;
         float textDecorationBaseFontSize = 16;
@@ -204,7 +204,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
             overflowResult.extendTop(-underlineOffset);
         }
     }
-    if (decoration & TextDecoration::Overline) {
+    if (decoration & TextDecorationLine::Overline) {
         FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
         float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.fontMetrics());
         rect.move(0, autoTextDecorationThickness - strokeThickness - wavyOffset);
@@ -217,7 +217,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         overflowResult.extendTop(-rect.y());
         overflowResult.extendBottom(rect.maxY() - height);
     }
-    if (decoration & TextDecoration::LineThrough) {
+    if (decoration & TextDecorationLine::LineThrough) {
         FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
         float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.fontMetrics());
         auto center = 2 * lineStyle.fontMetrics().floatAscent() / 3 + autoTextDecorationThickness / 2;

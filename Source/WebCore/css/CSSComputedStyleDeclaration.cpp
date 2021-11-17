@@ -1613,16 +1613,16 @@ static Ref<CSSValue> touchActionFlagsToCSSValue(OptionSet<TouchAction> touchActi
     return list;
 }
 
-static Ref<CSSValue> renderTextDecorationFlagsToCSSValue(OptionSet<TextDecoration> textDecoration)
+static Ref<CSSValue> renderTextDecorationLineFlagsToCSSValue(OptionSet<TextDecorationLine> textDecorationLine)
 {
     auto& cssValuePool = CSSValuePool::singleton();
     // Blink value is ignored.
     auto list = CSSValueList::createSpaceSeparated();
-    if (textDecoration & TextDecoration::Underline)
+    if (textDecorationLine & TextDecorationLine::Underline)
         list->append(cssValuePool.createIdentifierValue(CSSValueUnderline));
-    if (textDecoration & TextDecoration::Overline)
+    if (textDecorationLine & TextDecorationLine::Overline)
         list->append(cssValuePool.createIdentifierValue(CSSValueOverline));
-    if (textDecoration & TextDecoration::LineThrough)
+    if (textDecorationLine & TextDecorationLine::LineThrough)
         list->append(cssValuePool.createIdentifierValue(CSSValueLineThrough));
 
     if (!list->length())
@@ -3291,7 +3291,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTextAlign:
             return cssValuePool.createValue(style.textAlign());
         case CSSPropertyTextDecoration:
-            return renderTextDecorationFlagsToCSSValue(style.textDecoration());
+            return renderTextDecorationLineFlagsToCSSValue(style.textDecoration());
 #if ENABLE(CSS3_TEXT)
         case CSSPropertyWebkitTextAlignLast:
             return cssValuePool.createValue(style.textAlignLast());
@@ -3301,7 +3301,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitTextDecoration:
             return getCSSPropertyValuesForShorthandProperties(webkitTextDecorationShorthand());
         case CSSPropertyTextDecorationLine:
-            return renderTextDecorationFlagsToCSSValue(style.textDecoration());
+            return renderTextDecorationLineFlagsToCSSValue(style.textDecoration());
         case CSSPropertyTextDecorationStyle:
             return renderTextDecorationStyleFlagsToCSSValue(style.textDecorationStyle());
         case CSSPropertyTextDecorationColor:
@@ -3317,7 +3317,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTextDecorationThickness:
             return textDecorationThicknessToCSSValue(style.textDecorationThickness());
         case CSSPropertyWebkitTextDecorationsInEffect:
-            return renderTextDecorationFlagsToCSSValue(style.textDecorationsInEffect());
+            return renderTextDecorationLineFlagsToCSSValue(style.textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:
             return currentColorOrValidColor(&style, style.textFillColor());
         case CSSPropertyWebkitTextEmphasisColor:

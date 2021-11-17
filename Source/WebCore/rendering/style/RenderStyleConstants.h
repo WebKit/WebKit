@@ -740,7 +740,7 @@ enum class TextTransform : uint8_t {
 };
 
 static const size_t TextDecorationBits = 4;
-enum class TextDecoration : uint8_t {
+enum class TextDecorationLine : uint8_t {
     None          = 0,
     Underline     = 1 << 0,
     Overline      = 1 << 1,
@@ -1333,7 +1333,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, StyleDifference);
 WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextAlignMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextCombine);
-WTF::TextStream& operator<<(WTF::TextStream&, TextDecoration);
+WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationLine);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationSkipInk);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEmphasisFill);
