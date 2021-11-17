@@ -457,7 +457,8 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         return lineRange;
     }
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
-    m_line.removeTrimmableContent(horizontalAvailableSpace);
+    m_line.removeTrailingTrimmableContent();
+    m_line.visuallyCollapseHangingOverflowingGlyphs(horizontalAvailableSpace);
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     if (runsExpandHorizontally)

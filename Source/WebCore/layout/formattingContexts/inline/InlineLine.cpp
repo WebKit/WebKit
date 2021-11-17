@@ -90,12 +90,6 @@ void Line::resetTrailingContent()
     m_trailingSoftHyphenWidth = { };
 }
 
-void Line::removeTrimmableContent(InlineLayoutUnit horizontalAvailableSpace)
-{
-    removeTrailingTrimmableContent();
-    visuallyCollapseHangingOverflow(horizontalAvailableSpace);
-}
-
 void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 {
     ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify);
@@ -202,7 +196,7 @@ void Line::removeTrailingTrimmableContent()
     m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
 }
 
-void Line::visuallyCollapseHangingOverflow(InlineLayoutUnit horizontalAvailableSpace)
+void Line::visuallyCollapseHangingOverflowingGlyphs(InlineLayoutUnit horizontalAvailableSpace)
 {
     ASSERT(m_trimmableTrailingContent.isEmpty());
     // If white-space is set to pre-wrap, the UA must
