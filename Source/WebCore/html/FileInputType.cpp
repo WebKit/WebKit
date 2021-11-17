@@ -171,22 +171,18 @@ bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
         // 4.10.16.4 and 4.10.16.6 sections in HTML5.
 
         if (fileList->isEmpty())
-            formData.append(name, "");
+            formData.append(name, emptyString());
 
         for (auto& file : fileList->files())
             formData.append(name, file->name());
         return true;
     }
 
-    // If no filename at all is entered, return successful but empty, with
-    // application/octet-stream content type. Null would be more logical, but
-    // Netscape posts an empty file. Argh.
+    // If no filename at all is entered, return successful but empty.
+    // Null would be more logical, but Netscape posts an empty file. Argh.
     if (fileList->isEmpty()) {
         auto* document = element() ? &element()->document() : nullptr;
-        auto file = File::create(
-            document,
-            Blob::create(document, { }, "application/octet-stream"),
-            emptyString());
+        auto file = File::create(document, Blob::create(document, { }, defaultMIMEType()), emptyString());
         formData.append(name, file);
         return true;
     }
