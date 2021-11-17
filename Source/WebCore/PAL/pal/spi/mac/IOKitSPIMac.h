@@ -43,6 +43,8 @@
 #define kIOHIDProductIDKey "ProductID"
 
 WTF_EXTERN_C_BEGIN
+
+typedef struct __IOHIDEvent * IOHIDEventRef;
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDServiceClient * IOHIDServiceClientRef;
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDEventSystemClient * IOHIDEventSystemClientRef;
 typedef void (^IOHIDServiceClientBlock)(void *, void *, IOHIDServiceClientRef);
@@ -80,6 +82,8 @@ enum {
 
 };
 typedef uint32_t IOHIDEventType;
+
+uint64_t IOHIDEventGetTimeStamp(IOHIDEventRef);
 
 WTF_EXTERN_C_END
 

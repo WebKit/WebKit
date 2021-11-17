@@ -1,3 +1,94 @@
+2021-11-17  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285790. rdar://problem/85512520
+
+    Attach IOHIDEvent timestamps to wheel events
+    https://bugs.webkit.org/show_bug.cgi?id=233051
+    
+    Reviewed by Wenson Hsieh.
+    Source/WebCore:
+    
+    On some macOS devices, there can be significant deltas between NSEvent timestamps,
+    and the timestamps on underlying IOHIDEvents (rdar://85309639). This makes momentum
+    velocity computation unpredictable; we can get better results by using IOHIDEvent
+    timestamps.
+    
+    * platform/PlatformWheelEvent.cpp:
+    (WebCore::PlatformWheelEvent::createFromGesture):
+    * platform/PlatformWheelEvent.h:
+    (WebCore::PlatformWheelEvent::ioHIDEventTimestamp const):
+    * platform/mac/PlatformEventFactoryMac.h:
+    * platform/mac/PlatformEventFactoryMac.mm:
+    (WebCore::eventTimeStampSince1970):
+    (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+    (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+    (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+    
+    Source/WebCore/PAL:
+    
+    Expose a few bits of SPI needed.
+    
+    * pal/spi/cg/CoreGraphicsSPI.h:
+    * pal/spi/cocoa/IOKitSPI.h:
+    
+    Source/WebKit:
+    
+    On some macOS devices, there can be significant deltas between NSEvent timestamps,
+    and the timestamps on underlying IOHIDEvents (rdar://85309639). This makes momentum
+    velocity computation unpredictable; we can get better results by using IOHIDEvent
+    timestamps.
+    
+    * Shared/WebEventConversion.cpp:
+    (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+    * Shared/WebWheelEvent.cpp:
+    (WebKit::WebWheelEvent::WebWheelEvent):
+    (WebKit::WebWheelEvent::encode const):
+    (WebKit::WebWheelEvent::decode):
+    * Shared/WebWheelEvent.h:
+    (WebKit::WebWheelEvent::ioHIDEventTimestamp const):
+    * Shared/WebWheelEventCoalescer.cpp:
+    (WebKit::WebWheelEventCoalescer::coalesce):
+    * Shared/ios/WebIOSEventFactory.mm:
+    (WebIOSEventFactory::createWebWheelEvent):
+    * Shared/mac/NativeWebGestureEventMac.mm:
+    * Shared/mac/WebEventFactory.mm:
+    (WebKit::WebEventFactory::createWebMouseEvent):
+    (WebKit::WebEventFactory::createWebWheelEvent):
+    (WebKit::WebEventFactory::createWebKeyboardEvent):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285790 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-14  Simon Fraser  <simon.fraser@apple.com>
+
+            Attach IOHIDEvent timestamps to wheel events
+            https://bugs.webkit.org/show_bug.cgi?id=233051
+
+            Reviewed by Wenson Hsieh.
+
+            On some macOS devices, there can be significant deltas between NSEvent timestamps,
+            and the timestamps on underlying IOHIDEvents (rdar://85309639). This makes momentum
+            velocity computation unpredictable; we can get better results by using IOHIDEvent
+            timestamps.
+
+            * Shared/WebEventConversion.cpp:
+            (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+            * Shared/WebWheelEvent.cpp:
+            (WebKit::WebWheelEvent::WebWheelEvent):
+            (WebKit::WebWheelEvent::encode const):
+            (WebKit::WebWheelEvent::decode):
+            * Shared/WebWheelEvent.h:
+            (WebKit::WebWheelEvent::ioHIDEventTimestamp const):
+            * Shared/WebWheelEventCoalescer.cpp:
+            (WebKit::WebWheelEventCoalescer::coalesce):
+            * Shared/ios/WebIOSEventFactory.mm:
+            (WebIOSEventFactory::createWebWheelEvent):
+            * Shared/mac/NativeWebGestureEventMac.mm:
+            * Shared/mac/WebEventFactory.mm:
+            (WebKit::WebEventFactory::createWebMouseEvent):
+            (WebKit::WebEventFactory::createWebWheelEvent):
+            (WebKit::WebEventFactory::createWebKeyboardEvent):
+
 2021-11-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r285886. rdar://problem/85473581
