@@ -828,7 +828,7 @@ protected: // FIXME: Make the data members private.
     mutable bool m_childrenInitialized { false };
     AccessibilityRole m_role { AccessibilityRole::Unknown };
 private:
-    AXID m_id { 0 };
+    AXID m_id;
     OptionSet<AXAncestorFlag> m_ancestorFlags;
     AccessibilityObjectInclusion m_lastKnownIsIgnoredValue { AccessibilityObjectInclusion::DefaultBehavior };
 protected: // FIXME: Make the data members private.

@@ -44,8 +44,8 @@ AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTree* tree, A
     , m_id(object.objectID())
 {
     ASSERT(isMainThread());
-    if (m_id != InvalidAXID)
-        initializeAttributeData(object, parentID == InvalidAXID);
+    if (m_id.isValid())
+        initializeAttributeData(object, !parentID.isValid());
     else {
         // Should never happen under normal circumstances.
         ASSERT_NOT_REACHED();
@@ -438,7 +438,7 @@ AXCoreObject* AXIsolatedObject::associatedAXObject() const
 {
     ASSERT(isMainThread());
 
-    if (m_id == InvalidAXID)
+    if (!m_id.isValid())
         return nullptr;
 
     if (auto* axObjectCache = this->axObjectCache()) {
@@ -529,7 +529,7 @@ bool AXIsolatedObject::isDetached() const
 
 void AXIsolatedObject::detachFromParent()
 {
-    m_parentID = InvalidAXID;
+    m_parentID = { };
 }
 
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)
@@ -587,7 +587,7 @@ AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::contents()
 
 bool AXIsolatedObject::isDetachedFromParent()
 {
-    if (parent() != InvalidAXID)
+    if (parent().isValid())
         return false;
 
     // Check whether this is the root node, in which case we should return false.
@@ -603,7 +603,7 @@ AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsign
             if (auto cell = object->cellForColumnAndRow(columnIndex, rowIndex))
                 return cell->objectID();
         }
-        return InvalidAXID;
+        return { };
     });
 
     return tree()->nodeForID(cellID).get();
@@ -810,7 +810,7 @@ AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) cons
                 return axObject->objectID();
         }
 
-        return InvalidAXID;
+        return { };
     });
 
     return tree()->nodeForID(axID).get();
@@ -830,7 +830,7 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
     auto value = m_propertyMap.get(propertyName);
     AXID nodeID = WTF::switchOn(value,
         [] (AXID& typedValue) -> AXID { return typedValue; },
-        [] (auto&) { return InvalidAXID; }
+        [] (auto&) { return AXID(); }
     );
 
     return tree()->nodeForID(nodeID).get();

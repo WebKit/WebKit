@@ -36,6 +36,7 @@
 #include "Widget.h"
 #include <variant>
 #include <wtf/HashSet.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(WIN)
@@ -93,8 +94,8 @@ class ScrollView;
 struct AccessibilityText;
 struct ScrollRectToVisibleOptions;
 
-using AXID = size_t;
-extern const AXID InvalidAXID;
+enum AXIDType { };
+using AXID = ObjectIdentifier<AXIDType>;
 
 enum class AXAncestorFlag : uint8_t {
     // When the flags aren't initialized, it means the object hasn't been inserted into the tree,
@@ -1582,7 +1583,7 @@ inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
 {
     detachWrapper(detachmentType);
     detachRemoteParts(detachmentType);
-    setObjectID(InvalidAXID);
+    setObjectID({ });
 }
 
 #if ENABLE(ACCESSIBILITY)

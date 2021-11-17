@@ -120,7 +120,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
     ASSERT(obj->objectID() >= 1);
     ASSERT(obj->objectID() <= std::numeric_limits<LONG>::max());
 
-    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->objectID()));
+    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->objectID().toUInt64()));
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
@@ -148,19 +148,19 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
 
 AXID AXObjectCache::platformGenerateAXID() const
 {
-    static AXID lastUsedID = 0;
+    static LONG lastUsedID = 0;
 
     // Generate a new ID. Windows accessibility relies on a positive AXID,
     // ranging from 1 to LONG_MAX.
-    AXID objID = lastUsedID;
+    LONG currentID = lastUsedID;
+    AXID objID;
     do {
-        ++objID;
-        objID %= std::numeric_limits<LONG>::max();
-    } while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
+        objID = makeObjectIdentifier<AXID>(++currentID);
+    } while (!objID.isValid() || m_idsInUse.contains(objID));
 
-    ASSERT(objID >= 1 && objID <= std::numeric_limits<LONG>::max());
+    ASSERT(objID.isValid() && objID.toUInt64() <= std::numeric_limits<LONG>::max());
 
-    lastUsedID = objID;
+    lastUsedID = currentID;
 
     return objID;
 }
