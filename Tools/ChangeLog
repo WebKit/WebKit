@@ -1,3 +1,15 @@
+2021-11-17  Alex Christensen  <achristensen@webkit.org>
+
+        Enable adattributiond testing on iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=233285
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::testDaemonPList):
+        (TestWebKitAPI::cleanUpDaemon):
+        (TestWebKitAPI::TEST):
+
 2021-11-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement
