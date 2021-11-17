@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C023D3F27449070001DB734 /* WGSLUnitTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C023D3E27449070001DB734 /* WGSLUnitTests.mm */; };
+		1C023D4027449070001DB734 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */; };
+		1C023D4B274495B9001DB734 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C023D4A274495B9001DB734 /* JavaScriptCore.framework */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
 		1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA92273A41C20095F8D5 /* Instance.mm */; };
 		1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA98273A426D0095F8D5 /* RenderPipeline.mm */; };
@@ -41,6 +44,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1C023D4127449070001DB734 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1CEBD7F12716B2CC00A5254D;
+			remoteInfo = WGSL;
+		};
 		1CEBD8272716CACC00A5254D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
@@ -51,6 +61,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C023D3C27449070001DB734 /* WGSLUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WGSLUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C023D3E27449070001DB734 /* WGSLUnitTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WGSLUnitTests.mm; sourceTree = "<group>"; };
+		1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WGSLUnitTests.xcconfig; sourceTree = "<group>"; };
+		1C023D4A274495B9001DB734 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		1C5ACA92273A41C20095F8D5 /* Instance.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Instance.mm; sourceTree = "<group>"; };
 		1C5ACA96273A426D0095F8D5 /* Surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Surface.h; sourceTree = "<group>"; };
@@ -124,6 +138,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1C023D3927449070001DB734 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C023D4B274495B9001DB734 /* JavaScriptCore.framework in Frameworks */,
+				1C023D4027449070001DB734 /* libwgsl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1CEBD7E02716AFBA00A5254D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -144,6 +167,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C023D3D27449070001DB734 /* WGSLUnitTests */ = {
+			isa = PBXGroup;
+			children = (
+				1C023D3E27449070001DB734 /* WGSLUnitTests.mm */,
+			);
+			path = WGSLUnitTests;
+			sourceTree = "<group>";
+		};
 		1CEBD7D92716AFBA00A5254D = {
 			isa = PBXGroup;
 			children = (
@@ -151,6 +182,7 @@
 				1CEBD7F92716B38600A5254D /* Configurations */,
 				1CEBD7F62716B33100A5254D /* WGSL */,
 				1CEBD7E52716AFBA00A5254D /* WebGPU */,
+				1C023D3D27449070001DB734 /* WGSLUnitTests */,
 				1CEBD7E42716AFBA00A5254D /* Products */,
 				1CEBD8252716CACC00A5254D /* Frameworks */,
 			);
@@ -161,6 +193,7 @@
 			children = (
 				1CEBD7F22716B2CC00A5254D /* libwgsl.a */,
 				1CEBD7E32716AFBA00A5254D /* WebGPU.framework */,
+				1C023D3C27449070001DB734 /* WGSLUnitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -243,6 +276,7 @@
 				1CC0C8CA273A819100D0B481 /* Version.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
 				1CEBD7FD2716B64F00A5254D /* WGSL.xcconfig */,
+				1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -252,6 +286,7 @@
 			children = (
 				1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */,
 				1CEBD82D2716CB1600A5254D /* Foundation.framework */,
+				1C023D4A274495B9001DB734 /* JavaScriptCore.framework */,
 				1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */,
 				1CEBD8302716CB3800A5254D /* libicucore.tbd */,
 				1CEBD8292716CAE700A5254D /* libWTF.a */,
@@ -284,6 +319,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		1C023D3B27449070001DB734 /* WGSLUnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C023D4627449070001DB734 /* Build configuration list for PBXNativeTarget "WGSLUnitTests" */;
+			buildPhases = (
+				1C023D3827449070001DB734 /* Sources */,
+				1C023D3927449070001DB734 /* Frameworks */,
+				1C023D3A27449070001DB734 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1C023D4227449070001DB734 /* PBXTargetDependency */,
+			);
+			name = WGSLUnitTests;
+			productName = WGSLUnitTests;
+			productReference = 1C023D3C27449070001DB734 /* WGSLUnitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		1CEBD7E22716AFBA00A5254D /* WebGPU */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1CEBD7EA2716AFBA00A5254D /* Build configuration list for PBXNativeTarget "WebGPU" */;
@@ -329,6 +382,9 @@
 				BuildIndependentTargetsInParallel = NO;
 				LastUpgradeCheck = 1330;
 				TargetAttributes = {
+					1C023D3B27449070001DB734 = {
+						CreatedOnToolsVersion = 13.3;
+					};
 					1CEBD7E22716AFBA00A5254D = {
 						CreatedOnToolsVersion = 13.3;
 					};
@@ -352,11 +408,19 @@
 			targets = (
 				1CEBD7E22716AFBA00A5254D /* WebGPU */,
 				1CEBD7F12716B2CC00A5254D /* WGSL */,
+				1C023D3B27449070001DB734 /* WGSLUnitTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1C023D3A27449070001DB734 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1CEBD7E12716AFBA00A5254D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -367,6 +431,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1C023D3827449070001DB734 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C023D3F27449070001DB734 /* WGSLUnitTests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1CEBD7DF2716AFBA00A5254D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -408,6 +480,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1C023D4227449070001DB734 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1CEBD7F12716B2CC00A5254D /* WGSL */;
+			targetProxy = 1C023D4127449070001DB734 /* PBXContainerItemProxy */;
+		};
 		1CEBD8282716CACC00A5254D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1CEBD7F12716B2CC00A5254D /* WGSL */;
@@ -416,6 +493,27 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		1C023D4327449070001DB734 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1C023D4427449070001DB734 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1C023D4527449070001DB734 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		1CEBD7E82716AFBA00A5254D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */;
@@ -482,6 +580,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1C023D4627449070001DB734 /* Build configuration list for PBXNativeTarget "WGSLUnitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C023D4327449070001DB734 /* Debug */,
+				1C023D4427449070001DB734 /* Release */,
+				1C023D4527449070001DB734 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		1CEBD7DD2716AFBA00A5254D /* Build configuration list for PBXProject "WebGPU" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

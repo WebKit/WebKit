@@ -1,3 +1,19 @@
+2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add WGSLUnitTests XCTest target for WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=233227
+
+        Reviewed by Robin Morisset.
+
+        For now, this new target isn't hooked up to any automated testing - it's just a local target which developers can run.
+
+        * Configurations/WGSLUnitTests.xcconfig: Added.
+        * WGSLUnitTests/WGSLUnitTests.mm: Added.
+        (-[WGSLUnitTests testExample]):
+        * WebGPU.xcodeproj/project.pbxproj:
+        * WebGPU.xcodeproj/xcshareddata/xcschemes/WGSL.xcscheme:
+        * WebGPU.xcodeproj/xcshareddata/xcschemes/WGSLUnitTests.xcscheme: Copied from Source/WebGPU/WebGPU.xcodeproj/xcshareddata/xcschemes/WGSL.xcscheme.
+
 2021-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add necessary additions to WebGPU.framework
