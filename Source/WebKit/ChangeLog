@@ -1,3 +1,15 @@
+2021-11-16  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] handle unknown setup features
+        https://bugs.webkit.org/show_bug.cgi?id=233212
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/ApplePay/ApplePayPaymentSetupFeatures.mm:
+        (WebKit::PaymentSetupFeatures::operator Vector<Ref<WebCore::ApplePaySetupFeature>> const):
+        Skip `PKPaymentSetupFeature` that have an unknown `PKPaymentSetupFeatureType`. This ensures
+        that `WebCore::ApplePaySetupFeature` will only ever be created with known/supported `PKPaymentSetupFeatureType`.
+
 2021-11-16  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Add overscroll behavior to ScrollableAreaParameters

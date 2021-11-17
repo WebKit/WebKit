@@ -368,7 +368,6 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureState) {
 typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
     PKPaymentSetupFeatureTypeApplePay,
     PKPaymentSetupFeatureTypeAppleCard,
-    PKPaymentSetupFeatureTypeApplePay_X API_DEPRECATED_WITH_REPLACEMENT("PKPaymentSetupFeatureTypeAppleCard", ios(12.3, 12.3), macos(10.14.5, 10.14.5)) = PKPaymentSetupFeatureTypeAppleCard,
 };
 
 @interface PKPaymentSetupConfiguration : NSObject <NSSecureCoding>

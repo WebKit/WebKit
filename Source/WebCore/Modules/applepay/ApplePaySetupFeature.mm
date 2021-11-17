@@ -34,6 +34,18 @@
 
 namespace WebCore {
 
+bool ApplePaySetupFeature::supportsFeature(PKPaymentSetupFeature *feature)
+{
+    switch (feature.type) {
+    case PKPaymentSetupFeatureTypeApplePay:
+    case PKPaymentSetupFeatureTypeAppleCard:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 ApplePaySetupFeature::ApplePaySetupFeature() = default;
 ApplePaySetupFeature::~ApplePaySetupFeature() = default;
 
@@ -42,10 +54,13 @@ ApplePaySetupFeatureType ApplePaySetupFeature::type() const
     switch ([m_feature type]) {
     case PKPaymentSetupFeatureTypeApplePay:
         return ApplePaySetupFeatureType::ApplePay;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    case PKPaymentSetupFeatureTypeApplePay_X:
-        ALLOW_DEPRECATED_DECLARATIONS_END
+
+    case PKPaymentSetupFeatureTypeAppleCard:
         return ApplePaySetupFeatureType::AppleCard;
+
+    default:
+        ASSERT(!supportsFeature(m_feature.get()));
+        return ApplePaySetupFeatureType::ApplePay;
     }
 }
 

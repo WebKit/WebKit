@@ -43,6 +43,8 @@ public:
     {
         return adoptRef(*new ApplePaySetupFeature(feature));
     }
+
+    WEBCORE_EXPORT static bool supportsFeature(PKPaymentSetupFeature *);
     
     WEBCORE_EXPORT virtual ~ApplePaySetupFeature();
 

@@ -1,3 +1,13 @@
+2021-11-16  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] handle unknown setup features
+        https://bugs.webkit.org/show_bug.cgi?id=233212
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+        Drive-by: Replace all `PKPaymentSetupFeatureTypeApplePay_X` with `PKPaymentSetupFeatureTypeAppleCard`.
+
 2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Start preparing for serializing commands to the GPU process
