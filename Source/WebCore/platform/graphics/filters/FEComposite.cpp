@@ -223,7 +223,7 @@ void FEComposite::determineAbsolutePaintRect(const Filter& filter)
     }
 }
 
-void FEComposite::platformApplySoftware(const Filter&)
+bool FEComposite::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
@@ -231,31 +231,31 @@ void FEComposite::platformApplySoftware(const Filter&)
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
         auto& destinationPixelBuffer = createPremultipliedImageResult();
         if (!destinationPixelBuffer)
-            return;
+            return false;
         
         auto& destinationPixelArray = destinationPixelBuffer->data();
 
         IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
         auto sourcePixelArray = in->premultipliedResult(effectADrawingRect, operatingColorSpace());
         if (!sourcePixelArray)
-            return;
+            return false;
 
         IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
         in2->copyPremultipliedResult(destinationPixelArray, effectBDrawingRect, operatingColorSpace());
 
         platformArithmeticSoftware(*sourcePixelArray, destinationPixelArray, m_k1, m_k2, m_k3, m_k4);
-        return;
+        return true;
     }
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
     GraphicsContext& filterContext = resultImage->context();
 
     ImageBuffer* imageBuffer = in->imageBufferResult();
     ImageBuffer* imageBuffer2 = in2->imageBufferResult();
     if (!imageBuffer || !imageBuffer2)
-        return;
+        return false;
 
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:
@@ -295,6 +295,8 @@ void FEComposite::platformApplySoftware(const Filter&)
     default:
         break;
     }
+
+    return true;
 }
 
 static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type)

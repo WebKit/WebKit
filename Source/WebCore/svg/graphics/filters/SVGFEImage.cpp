@@ -74,14 +74,14 @@ void FEImage::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(imageRect));
 }
 
-void FEImage::platformApplySoftware(const Filter& filter)
+bool FEImage::platformApplySoftware(const Filter& filter)
 {
     // FEImage results are always in DestinationColorSpace::SRGB()
     setResultColorSpace(DestinationColorSpace::SRGB());
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
 
     auto primitiveSubregion = filterPrimitiveSubregion();
     auto& context = resultImage->context();
@@ -103,6 +103,8 @@ void FEImage::platformApplySoftware(const Filter& filter)
             context.drawImageBuffer(imageBuffer, imageRect.location());
         }
     );
+
+    return true;
 }
 
 TextStream& FEImage::externalRepresentation(TextStream& ts, RepresentationType representation) const

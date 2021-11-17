@@ -46,7 +46,7 @@ private:
 
     void determineAbsolutePaintRect(const Filter&) final;
 
-    void platformApplySoftware(const Filter&) final;
+    bool platformApplySoftware(const Filter&) final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const final;
 

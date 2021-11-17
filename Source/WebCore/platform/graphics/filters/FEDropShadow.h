@@ -53,7 +53,7 @@ private:
 
     IntOutsets outsets() const override;
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

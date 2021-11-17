@@ -142,36 +142,42 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
-void FilterEffect::apply(const Filter& filter)
+bool FilterEffect::apply(const Filter& filter)
 {
     if (hasResult())
-        return;
+        return true;
+
     unsigned size = m_inputEffects.size();
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = m_inputEffects.at(i).get();
-        in->apply(filter);
-        if (!in->hasResult())
-            return;
 
         // Convert input results to the current effect's color space.
+        ASSERT(in->hasResult());
         transformResultColorSpace(in, i);
     }
 
     determineAbsolutePaintRect(filter);
     setResultColorSpace(m_operatingColorSpace);
 
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " apply():\n  filterPrimitiveSubregion " << m_filterPrimitiveSubregion << "\n  effectBoundaries " << m_effectBoundaries << "\n  absoluteUnclippedSubregion " << m_absoluteUnclippedSubregion << "\n  absolutePaintRect " << m_absolutePaintRect << "\n  maxEffectRect " << m_maxEffectRect << "\n  filter scale " << filter.filterScale());
+    LOG_WITH_STREAM(Filters, stream
+        << "FilterEffect " << filterName() << " " << this << " apply():"
+        << "\n  filterPrimitiveSubregion " << m_filterPrimitiveSubregion
+        << "\n  effectBoundaries " << m_effectBoundaries
+        << "\n  absoluteUnclippedSubregion " << m_absoluteUnclippedSubregion
+        << "\n  absolutePaintRect " << m_absolutePaintRect
+        << "\n  maxEffectRect " << m_maxEffectRect
+        << "\n  filter scale " << filter.filterScale());
 
     if (m_absolutePaintRect.isEmpty() || ImageBuffer::sizeNeedsClamping(m_absolutePaintRect.size()))
-        return;
+        return false;
 
     if (requiresValidPreMultipliedPixels()) {
         for (unsigned i = 0; i < size; ++i)
             inputEffect(i)->correctFilterResultIfNeeded();
     }
-    
+
     // Add platform specific apply functions here and return earlier.
-    platformApplySoftware(filter);
+    return platformApplySoftware(filter);
 }
 
 void FilterEffect::forceValidPreMultipliedPixels()

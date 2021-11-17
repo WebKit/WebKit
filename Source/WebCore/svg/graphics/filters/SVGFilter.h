@@ -21,6 +21,7 @@
 #pragma once
 
 #include "Filter.h"
+#include "FilterEffectVector.h"
 #include "FloatRect.h"
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
@@ -39,21 +40,22 @@ public:
     FloatSize scaledByFilterScale(FloatSize) const final;
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
-    void apply() override;
+    bool apply() override;
 
-    RefPtr<FilterEffect> lastEffect() { return m_lastEffect; }
-    void setLastEffect(RefPtr<FilterEffect>&& lastEffect) { m_lastEffect = WTFMove(lastEffect); }
+    void setExpression(FilterEffectVector&& expression) { m_expression = WTFMove(expression); }
+    RefPtr<FilterEffect> lastEffect() const { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
 
 private:
     SVGFilter(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
 
+    bool apply(const Filter&) override;
     IntOutsets outsets() const override;
     void clearResult() override;
 
     FloatRect m_targetBoundingBox;
     bool m_effectBBoxMode;
 
-    RefPtr<FilterEffect> m_lastEffect;
+    FilterEffectVector m_expression;
 };
 
 } // namespace WebCore

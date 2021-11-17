@@ -106,7 +106,7 @@ private:
     FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
     void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     void initPaint(PaintingData&);

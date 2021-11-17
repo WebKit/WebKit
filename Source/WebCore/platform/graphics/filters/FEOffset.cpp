@@ -64,20 +64,22 @@ void FEOffset::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void FEOffset::platformApplySoftware(const Filter& filter)
+bool FEOffset::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
     ImageBuffer* resultImage = createImageBufferResult();
     ImageBuffer* inBuffer = in->imageBufferResult();
     if (!resultImage || !inBuffer)
-        return;
+        return false;
 
     setIsAlphaImage(in->isAlphaImage());
 
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
     drawingRegion.move(filter.scaledByFilterScale({ m_dx, m_dy }));
     resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
+
+    return true;
 }
 
 TextStream& FEOffset::externalRepresentation(TextStream& ts, RepresentationType representation) const

@@ -56,7 +56,12 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     if (!lastEffect)
         return nullptr;
 
-    filter->setLastEffect(WTFMove(lastEffect));
+    FilterEffectVector expression;
+    if (!builder.buildExpression(expression))
+        return nullptr;
+
+    ASSERT(!expression.isEmpty());
+    filter->setExpression(WTFMove(expression));
     return filter;
 }
 
@@ -75,19 +80,33 @@ FloatSize SVGFilter::scaledByFilterScale(FloatSize size) const
     return Filter::scaledByFilterScale(size);
 }
 
-void SVGFilter::apply()
+bool SVGFilter::apply(const Filter& filter)
 {
-    m_lastEffect->apply(*this);
+    setSourceImage({ filter.sourceImage() });
+    return apply();
+}
+
+bool SVGFilter::apply()
+{
+    ASSERT(!m_expression.isEmpty());
+    for (auto& effect : m_expression) {
+        if (!effect->apply(*this))
+            return false;
+    }
+    return true;
 }
 
 IntOutsets SVGFilter::outsets() const
 {
-    return m_lastEffect->outsets();
+    ASSERT(lastEffect());
+    return lastEffect()->outsets();
 }
 
 void SVGFilter::clearResult()
 {
-    m_lastEffect->clearResultsRecursive();
+    ASSERT(!m_expression.isEmpty());
+    for (auto& effect : m_expression)
+        effect->clearResult();
 }
 
 } // namespace WebCore

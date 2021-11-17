@@ -53,7 +53,7 @@ public:
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
 
     void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 

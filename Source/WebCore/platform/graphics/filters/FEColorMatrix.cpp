@@ -273,13 +273,13 @@ void effectType(Uint8ClampedArray& pixelArray, const Vector<float>& values, IntS
     }
 }
 
-void FEColorMatrix::platformApplySoftware(const Filter&)
+bool FEColorMatrix::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
 
     ImageBuffer* inBuffer = in->imageBufferResult();
     if (inBuffer)
@@ -289,7 +289,7 @@ void FEColorMatrix::platformApplySoftware(const Filter&)
     IntRect imageRect(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, imageRect);
     if (!pixelBuffer)
-        return;
+        return false;
 
     auto& pixelArray = pixelBuffer->data();
     auto pixelArrayDimensions = pixelBuffer->size();
@@ -315,6 +315,7 @@ void FEColorMatrix::platformApplySoftware(const Filter&)
     }
 
     resultImage->putPixelBuffer(*pixelBuffer, imageRect);
+    return true;
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

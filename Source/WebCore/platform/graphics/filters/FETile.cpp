@@ -42,7 +42,7 @@ FETile::FETile()
 {
 }
 
-void FETile::platformApplySoftware(const Filter& filter)
+bool FETile::platformApplySoftware(const Filter& filter)
 {
 // FIXME: See bug 47315. This is a hack to work around a compile failure, but is incorrect behavior otherwise.
     FilterEffect* in = inputEffect(0);
@@ -50,7 +50,7 @@ void FETile::platformApplySoftware(const Filter& filter)
     ImageBuffer* resultImage = createImageBufferResult();
     ImageBuffer* inBuffer = in->imageBufferResult();
     if (!resultImage || !inBuffer)
-        return;
+        return false;
 
     setIsAlphaImage(in->isAlphaImage());
 
@@ -66,7 +66,7 @@ void FETile::platformApplySoftware(const Filter& filter)
 
     auto tileImage = SVGRenderingContext::createImageBuffer(tileRect, tileRect, DestinationColorSpace::SRGB(), filter.renderingMode());
     if (!tileImage)
-        return;
+        return false;
 
     GraphicsContext& tileImageContext = tileImage->context();
     tileImageContext.translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
@@ -74,7 +74,7 @@ void FETile::platformApplySoftware(const Filter& filter)
 
     auto tileImageCopy = ImageBuffer::sinkIntoNativeImage(WTFMove(tileImage));
     if (!tileImageCopy)
-        return;
+        return false;
 
     AffineTransform patternTransform;
     patternTransform.translate(inMaxEffectLocation - maxEffectLocation);
@@ -84,6 +84,8 @@ void FETile::platformApplySoftware(const Filter& filter)
     GraphicsContext& filterContext = resultImage->context();
     filterContext.setFillPattern(WTFMove(pattern));
     filterContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
+
+    return true;
 }
 
 TextStream& FETile::externalRepresentation(TextStream& ts, RepresentationType representation) const

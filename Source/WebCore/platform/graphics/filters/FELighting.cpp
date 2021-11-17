@@ -471,13 +471,13 @@ bool FELighting::drawLighting(Uint8ClampedArray& pixels, int width, int height)
     return true;
 }
 
-void FELighting::platformApplySoftware(const Filter&)
+bool FELighting::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
     auto& destinationPixelBuffer = createPremultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -492,6 +492,7 @@ void FELighting::platformApplySoftware(const Filter&)
 
     IntSize absolutePaintSize = absolutePaintRect().size();
     drawLighting(destinationPixelArray, absolutePaintSize.width(), absolutePaintSize.height());
+    return true;
 }
 
 } // namespace WebCore

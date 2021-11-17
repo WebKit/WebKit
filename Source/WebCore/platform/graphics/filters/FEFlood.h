@@ -48,7 +48,7 @@ private:
 
     void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

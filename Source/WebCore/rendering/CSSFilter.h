@@ -59,7 +59,7 @@ public:
     IntOutsets outsets() const override;
 
     void clearIntermediateResults();
-    void apply() override;
+    bool apply() override;
 
     ImageBuffer* output();
 

@@ -90,7 +90,7 @@ static inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowByt
     return x * bytesPerPixel + y * rowBytes;
 }
 
-void FEDisplacementMap::platformApplySoftware(const Filter& filter)
+bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
@@ -100,7 +100,7 @@ void FEDisplacementMap::platformApplySoftware(const Filter& filter)
 
     auto& destinationPixelBuffer = createPremultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -112,7 +112,7 @@ void FEDisplacementMap::platformApplySoftware(const Filter& filter)
     auto displacementImage = in2->unmultipliedResult(effectBDrawingRect);
     
     if (!inputImage || !displacementImage)
-        return;
+        return false;
 
     ASSERT(inputImage->length() == displacementImage->length());
 
@@ -147,6 +147,8 @@ void FEDisplacementMap::platformApplySoftware(const Filter& filter)
             *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputImage->data() + byteOffsetOfPixel(srcX, srcY, rowBytes));
         }
     }
+
+    return true;
 }
 
 static TextStream& operator<<(TextStream& ts, const ChannelSelectorType& type)

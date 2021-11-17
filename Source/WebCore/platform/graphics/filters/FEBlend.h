@@ -37,7 +37,7 @@ public:
 private:
     FEBlend(BlendMode);
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
     void platformApplyGeneric(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,
                            unsigned colorArrayLength);
     void platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,

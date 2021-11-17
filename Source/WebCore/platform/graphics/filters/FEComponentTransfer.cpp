@@ -101,13 +101,13 @@ void FEComponentTransfer::computeGammaTable(LookupTable& values, const Component
     }
 }
 
-void FEComponentTransfer::platformApplySoftware(const Filter&)
+bool FEComponentTransfer::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
     auto& destinationPixelBuffer = createUnmultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -127,6 +127,8 @@ void FEComponentTransfer::platformApplySoftware(const Filter&)
         data[pixelOffset + 2] = blueTable[data[pixelOffset + 2]];
         data[pixelOffset + 3] = alphaTable[data[pixelOffset + 3]];
     }
+
+    return true;
 }
 
 void FEComponentTransfer::computeLookupTables(LookupTable& redTable, LookupTable& greenTable, LookupTable& blueTable, LookupTable& alphaTable)

@@ -36,6 +36,8 @@ class TextStream;
 
 namespace WebCore {
 
+class Filter;
+
 class FilterFunction : public RefCounted<FilterFunction> {
 public:
     enum class Type : uint8_t {
@@ -82,6 +84,7 @@ public:
     static AtomString sourceGraphicName() { return filterName(Type::SourceGraphic); }
     AtomString filterName() const { return filterName(m_filterType); }
 
+    virtual bool apply(const Filter&) { return false; }
     virtual IntOutsets outsets() const { return { }; }
     virtual void clearResult() { }
 

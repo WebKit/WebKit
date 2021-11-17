@@ -69,13 +69,13 @@ void FEDropShadow::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-void FEDropShadow::platformApplySoftware(const Filter& filter)
+bool FEDropShadow::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
 
     FloatSize blurRadius = 2 * filter.scaledByFilterScale({ m_stdX, m_stdY });
     FloatSize offset = filter.scaledByFilterScale({ m_dx, m_dy });
@@ -86,7 +86,7 @@ void FEDropShadow::platformApplySoftware(const Filter& filter)
 
     ImageBuffer* sourceImage = in->imageBufferResult();
     if (!sourceImage)
-        return;
+        return false;
 
     GraphicsContext& resultContext = resultImage->context();
     resultContext.setAlpha(m_shadowOpacity);
@@ -99,7 +99,7 @@ void FEDropShadow::platformApplySoftware(const Filter& filter)
     IntRect shadowArea(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, shadowArea);
     if (!pixelBuffer)
-        return;
+        return false;
 
     auto& sourcePixelArray = pixelBuffer->data();
     contextShadow.blurLayerImage(sourcePixelArray.data(), pixelBuffer->size(), 4 * pixelBuffer->size().width());
@@ -111,6 +111,8 @@ void FEDropShadow::platformApplySoftware(const Filter& filter)
     resultContext.setCompositeOperation(CompositeOperator::DestinationOver);
 
     resultImage->context().drawImageBuffer(*sourceImage, drawingRegion);
+
+    return true;
 }
 
 IntOutsets FEDropShadow::outsets() const

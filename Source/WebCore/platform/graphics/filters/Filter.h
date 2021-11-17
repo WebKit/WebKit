@@ -32,6 +32,8 @@ namespace WebCore {
 class FilterEffect;
 
 class Filter : public FilterFunction {
+    using FilterFunction::apply;
+
 public:
     FloatSize filterScale() const { return m_filterScale; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
@@ -43,7 +45,7 @@ public:
     void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
 
     virtual FloatSize scaledByFilterScale(FloatSize size) const { return size * m_filterScale; }
-    virtual void apply() = 0;
+    virtual bool apply() = 0;
 
     ImageBuffer* sourceImage() const { return m_sourceImage.get(); }
     void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }

@@ -361,13 +361,13 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
         fastSetOuterPixels<false>(paintingData, x1, y1, x2, y2);
 }
 
-void FEConvolveMatrix::platformApplySoftware(const Filter&)
+bool FEConvolveMatrix::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
     auto& destinationPixelBuffer = m_preserveAlpha ? createUnmultipliedImageResult() : createPremultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -379,7 +379,7 @@ void FEConvolveMatrix::platformApplySoftware(const Filter&)
     else
         sourcePixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
     if (!sourcePixelArray)
-        return;
+        return false;
 
     IntSize paintSize = absolutePaintRect().size();
     
@@ -397,9 +397,9 @@ void FEConvolveMatrix::platformApplySoftware(const Filter&)
     int clipBottom = paintSize.height() - m_kernelSize.height();
 
     if (clipRight < 0 || clipBottom < 0) {
-        // Rare situation, not optimizied for speed
+        // Rare situation, not optimized for speed
         setOuterPixels(paintingData, 0, 0, paintSize.width(), paintSize.height());
-        return;
+        return true;
     }
 
     if (int iterations = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension) {
@@ -425,6 +425,8 @@ void FEConvolveMatrix::platformApplySoftware(const Filter&)
         setOuterPixels(paintingData, 0, m_targetOffset.y(), m_targetOffset.x(), clipBottom);
     if (clipRight < paintSize.width())
         setOuterPixels(paintingData, clipRight, m_targetOffset.y(), paintSize.width(), clipBottom);
+
+    return true;
 }
 
 static TextStream& operator<<(TextStream& ts, const EdgeModeType& type)

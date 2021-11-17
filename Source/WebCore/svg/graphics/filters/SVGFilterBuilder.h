@@ -67,6 +67,7 @@ public:
 
     void setupBuiltinEffects(Ref<FilterEffect> sourceGraphic);
     RefPtr<FilterEffect> buildFilterEffects(SVGFilterElement&);
+    bool buildExpression(FilterEffectVector& expression) const;
 
 private:
     inline void addBuiltinEffects()

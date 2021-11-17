@@ -38,14 +38,14 @@ FEMerge::FEMerge()
 {
 }
 
-void FEMerge::platformApplySoftware(const Filter&)
+bool FEMerge::platformApplySoftware(const Filter&)
 {
     unsigned size = numberOfEffectInputs();
     ASSERT(size > 0);
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
 
     GraphicsContext& filterContext = resultImage->context();
     for (unsigned i = 0; i < size; ++i) {
@@ -53,6 +53,8 @@ void FEMerge::platformApplySoftware(const Filter&)
         if (ImageBuffer* inBuffer = in->imageBufferResult())
             filterContext.drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
     }
+
+    return true;
 }
 
 TextStream& FEMerge::externalRepresentation(TextStream& ts, RepresentationType representation) const

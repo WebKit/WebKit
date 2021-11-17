@@ -21,12 +21,10 @@
 #include "SVGFilterBuilder.h"
 
 #include "ElementIterator.h"
-#include "ImageBuffer.h"
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
 #include "CSSComputedStyleDeclaration.h"
@@ -178,6 +176,42 @@ void SVGFilterBuilder::clearResultsRecursive(FilterEffect* effect)
 
     for (auto& reference : effectReferences(effect))
         clearResultsRecursive(reference);
+}
+
+static bool buildEffectExpression(const RefPtr<FilterEffect>& effect, FilterEffectVector& stack, FilterEffectVector& expression)
+{
+    // A cycle is detected.
+    if (stack.contains(effect))
+        return false;
+
+    stack.append(effect);
+    
+    expression.append(effect);
+
+    for (auto& inputEffect : effect->inputEffects()) {
+        if (!buildEffectExpression(inputEffect, stack, expression))
+            return false;
+    }
+
+    ASSERT(!stack.isEmpty());
+    ASSERT(stack.last() == effect);
+
+    stack.removeLast();
+    return true;
+}
+
+bool SVGFilterBuilder::buildExpression(FilterEffectVector& expression) const
+{
+    if (!m_lastEffect)
+        return false;
+
+    FilterEffectVector stack;
+    if (!buildEffectExpression(m_lastEffect, stack, expression))
+        return false;
+
+    expression.reverse();
+    expression.shrinkToFit();
+    return true;
 }
 
 } // namespace WebCore

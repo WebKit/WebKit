@@ -134,7 +134,7 @@ protected:
 
     void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
 
     void platformApply(const LightingData&, const LightSource::PaintingData&);
 

@@ -519,13 +519,13 @@ void FEGaussianBlur::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-void FEGaussianBlur::platformApplySoftware(const Filter& filter)
+bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
     auto& destinationPixelBuffer = createPremultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -534,16 +534,17 @@ void FEGaussianBlur::platformApplySoftware(const Filter& filter)
     IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
     in->copyPremultipliedResult(destinationPixelArray, effectDrawingRect, operatingColorSpace());
     if (!m_stdX && !m_stdY)
-        return;
+        return true;
 
     IntSize kernelSize = calculateKernelSize(filter, { m_stdX, m_stdY });
 
     IntSize paintSize = absolutePaintRect().size();
     auto tmpImageData = Uint8ClampedArray::tryCreateUninitialized(paintSize.area() * 4);
     if (!tmpImageData)
-        return;
+        return false;
 
     platformApply(destinationPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
+    return true;
 }
 
 IntOutsets FEGaussianBlur::outsets() const

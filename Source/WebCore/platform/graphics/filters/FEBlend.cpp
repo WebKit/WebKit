@@ -54,23 +54,24 @@ bool FEBlend::setBlendMode(BlendMode mode)
 }
 
 #if !HAVE(ARM_NEON_INTRINSICS)
-void FEBlend::platformApplySoftware(const Filter&)
+bool FEBlend::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
     GraphicsContext& filterContext = resultImage->context();
 
     ImageBuffer* imageBuffer = in->imageBufferResult();
     ImageBuffer* imageBuffer2 = in2->imageBufferResult();
     if (!imageBuffer || !imageBuffer2)
-        return;
+        return false;
 
     filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
     filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, { CompositeOperator::SourceOver, m_mode });
+    return true;
 }
 #endif
 

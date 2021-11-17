@@ -71,7 +71,7 @@ private:
 
     void computeLookupTables(LookupTable& redTable, LookupTable& greenTable, LookupTable& blueTable, LookupTable& alphaTable);
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

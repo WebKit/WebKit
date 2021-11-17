@@ -60,7 +60,7 @@ private:
 
     void determineAbsolutePaintRect(const Filter&) override;
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
 
     IntOutsets outsets() const override;
 

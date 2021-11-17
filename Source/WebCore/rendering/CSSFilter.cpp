@@ -408,26 +408,24 @@ void CSSFilter::clearIntermediateResults()
         function->clearResult();
 }
 
-void CSSFilter::apply()
+bool CSSFilter::apply()
 {
     auto effect = lastEffect();
     if (m_filterRenderer) {
         m_filterRenderer->applyEffects(*this, *effect);
         if (m_filterRenderer->hasResult()) {
             effect->transformResultColorSpace(DestinationColorSpace::SRGB());
-            return;
+            return true;
         }
     }
 
     for (auto& function : m_functions) {
-        if (function->isSVGFilter()) {
-            downcast<SVGFilter>(function.get()).setSourceImage({ sourceImage() });
-            downcast<SVGFilter>(function.get()).apply();
-        } else if (function->isFilterEffect())
-            downcast<FilterEffect>(function.get()).apply(*this);
+        if (!function->apply(*this))
+            return false;
     }
 
     effect->transformResultColorSpace(DestinationColorSpace::SRGB());
+    return true;
 }
 
 LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)

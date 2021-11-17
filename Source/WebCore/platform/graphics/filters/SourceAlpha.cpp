@@ -45,20 +45,23 @@ void SourceAlpha::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(inputEffect(0)->absolutePaintRect());
 }
 
-void SourceAlpha::platformApplySoftware(const Filter&)
+bool SourceAlpha::platformApplySoftware(const Filter&)
 {
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
-    GraphicsContext& filterContext = resultImage->context();
-
+        return false;
+    
     ImageBuffer* imageBuffer = inputEffect(0)->imageBufferResult();
     if (!imageBuffer)
-        return;
+        return false;
 
     FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
+    GraphicsContext& filterContext = resultImage->context();
+
     filterContext.fillRect(imageRect, Color::black);
     filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeOperator::DestinationIn);
+
+    return true;
 }
 
 TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationType) const

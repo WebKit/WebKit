@@ -24,6 +24,7 @@
 
 #include "AlphaPremultiplication.h"
 #include "DestinationColorSpace.h"
+#include "FilterEffectVector.h"
 #include "FilterFunction.h"
 #include "FloatRect.h"
 #include "IntRect.h"
@@ -41,10 +42,7 @@ class TextStream;
 namespace WebCore {
 
 class Filter;
-class FilterEffect;
 class ImageBuffer;
-
-typedef Vector<RefPtr<FilterEffect>> FilterEffectVector;
 
 class FilterEffect : public FilterFunction {
 public:
@@ -84,7 +82,7 @@ public:
     FloatRect maxEffectRect() const { return m_maxEffectRect; }
     void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; }
 
-    void apply(const Filter&);
+    bool apply(const Filter&) override;
 
     // Correct any invalid pixels, if necessary, in the result of a filter operation.
     // This method is used to ensure valid pixel values on filter inputs and the final result.
@@ -156,7 +154,7 @@ protected:
     void clipAbsolutePaintRect();
 
 private:
-    virtual void platformApplySoftware(const Filter&) = 0;
+    virtual bool platformApplySoftware(const Filter&) = 0;
 
     void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
     void copyConvertedImageBufferToDestination(Uint8ClampedArray&, const DestinationColorSpace&, AlphaPremultiplication, const IntRect&);

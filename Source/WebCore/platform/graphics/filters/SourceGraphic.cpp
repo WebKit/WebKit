@@ -43,14 +43,15 @@ void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void SourceGraphic::platformApplySoftware(const Filter& filter)
+bool SourceGraphic::platformApplySoftware(const Filter& filter)
 {
     ImageBuffer* resultImage = createImageBufferResult();
     ImageBuffer* sourceImage = filter.sourceImage();
     if (!resultImage || !sourceImage)
-        return;
+        return false;
 
     resultImage->context().drawImageBuffer(*sourceImage, IntPoint());
+    return true;
 }
 
 TextStream& SourceGraphic::externalRepresentation(TextStream& ts, RepresentationType) const

@@ -50,7 +50,7 @@ public:
 private:
     FEColorMatrix(ColorMatrixType, Vector<float>&&);
 
-    void platformApplySoftware(const Filter&) override;
+    bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

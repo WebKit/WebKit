@@ -239,13 +239,13 @@ bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, con
     return false;
 }
 
-void FEMorphology::platformApplySoftware(const Filter& filter)
+bool FEMorphology::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
     auto& destinationPixelBuffer = createPremultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -255,18 +255,18 @@ void FEMorphology::platformApplySoftware(const Filter& filter)
 
     IntSize radius = flooredIntSize(FloatSize(m_radiusX, m_radiusY));
     if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radius.width(), radius.height()))
-        return;
+        return true;
 
     auto sourcePixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
     if (!sourcePixelArray)
-        return;
+        return false;
 
     radius = flooredIntSize(filter.scaledByFilterScale({ m_radiusX, m_radiusY }));
     int radiusX = std::min(effectDrawingRect.width() - 1, radius.width());
     int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
 
     if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radiusX, radiusY))
-        return;
+        return true;
     
     PaintingData paintingData;
     paintingData.srcPixelArray = sourcePixelArray.get();
@@ -277,6 +277,7 @@ void FEMorphology::platformApplySoftware(const Filter& filter)
     paintingData.radiusY = ceilf(radiusY);
 
     platformApply(paintingData);
+    return true;
 }
 
 static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type)

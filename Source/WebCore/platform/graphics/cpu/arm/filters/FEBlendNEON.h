@@ -106,14 +106,14 @@ public:
     }
 };
 
-void FEBlend::platformApplySoftware(const Filter&)
+bool FEBlend::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
 
     auto& destinationPixelBuffer = createPremultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -128,7 +128,7 @@ void FEBlend::platformApplySoftware(const Filter&)
 
     if (sourcePixelArrayLength >= 8) {
         platformApplyNEON(sourcePixelArrayA->data(), sourcePixelArrayB->data(), destinationPixelArray.data(), sourcePixelArrayLength);
-        return;
+        return true;
     }
     // If there is just one pixel we expand it to two.
     ASSERT(sourcePixelArrayLength > 0);
@@ -139,6 +139,7 @@ void FEBlend::platformApplySoftware(const Filter&)
     sourceBAndDest[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayB->data())[0];
     platformApplyNEON(reinterpret_cast<uint8_t*>(sourceA), reinterpret_cast<uint8_t*>(sourceBAndDest), reinterpret_cast<uint8_t*>(sourceBAndDest), 8);
     reinterpret_cast<uint32_t*>(destinationPixelArray.data())[0] = sourceBAndDest[0];
+    return true;
 }
 
 void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,

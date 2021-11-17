@@ -393,11 +393,11 @@ void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
     parameters->effect->fillRegion(*parameters->filter, *parameters->pixelArray, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
 }
 
-void FETurbulence::platformApplySoftware(const Filter& filter)
+bool FETurbulence::platformApplySoftware(const Filter& filter)
 {
     auto& destinationPixelBuffer = createUnmultipliedImageResult();
     if (!destinationPixelBuffer)
-        return;
+        return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
@@ -405,7 +405,7 @@ void FETurbulence::platformApplySoftware(const Filter& filter)
 
     if (resultSize.isEmpty()) {
         destinationPixelArray.zeroFill();
-        return;
+        return true;
     }
 
     IntSize tileSize = roundedIntSize(filterPrimitiveSubregion().size());
@@ -419,7 +419,7 @@ void FETurbulence::platformApplySoftware(const Filter& filter)
 
     auto area = resultSize.area();
     if (area.hasOverflowed())
-        return;
+        return false;
 
     int height = resultSize.height();
 
@@ -451,12 +451,13 @@ void FETurbulence::platformApplySoftware(const Filter& filter)
             }
 
             parallelJobs.execute();
-            return;
+            return true;
         }
     }
 
     // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
     fillRegion(filter, destinationPixelArray, paintingData, stitchData, 0, height);
+    return true;
 }
 
 static TextStream& operator<<(TextStream& ts, TurbulenceType type)

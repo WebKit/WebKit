@@ -58,14 +58,16 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     return true;
 }
 
-void FEFlood::platformApplySoftware(const Filter&)
+bool FEFlood::platformApplySoftware(const Filter&)
 {
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
 
     auto color = floodColor().colorWithAlphaMultipliedBy(floodOpacity());
     resultImage->context().fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color);
+
+    return true;
 }
 
 TextStream& FEFlood::externalRepresentation(TextStream& ts, RepresentationType representation) const
