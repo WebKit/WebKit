@@ -397,34 +397,34 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
 
     collectContentIfNeeded();
 
-    auto maximumLineWidth = [&](auto availableWidth) {
+    auto maximumLineWidth = [&](auto intrinsicWidthMode) {
         // Switch to the min/max formatting root width values before formatting the lines.
         for (auto* formattingRoot : formattingContextRootList) {
             auto intrinsicWidths = layoutState.formattingStateForBox(*formattingRoot).intrinsicWidthConstraintsForBox(*formattingRoot);
             auto& boxGeometry = formattingState().boxGeometry(*formattingRoot);
-            auto contentWidth = (availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum) - boxGeometry.horizontalMarginBorderAndPadding();
+            auto contentWidth = (intrinsicWidthMode == IntrinsicWidthMode::Maximum ? intrinsicWidths->maximum : intrinsicWidths->minimum) - boxGeometry.horizontalMarginBorderAndPadding();
             boxGeometry.setContentBoxWidth(contentWidth);
         }
-        return computedIntrinsicWidthForConstraint(availableWidth);
+        return computedIntrinsicWidthForConstraint(intrinsicWidthMode);
     };
 
-    auto minimumContentWidth = ceiledLayoutUnit(maximumLineWidth(0));
-    auto maximumContentWidth = ceiledLayoutUnit(maximumLineWidth(maxInlineLayoutUnit()));
+    auto minimumContentWidth = ceiledLayoutUnit(maximumLineWidth(IntrinsicWidthMode::Minimum));
+    auto maximumContentWidth = ceiledLayoutUnit(maximumLineWidth(IntrinsicWidthMode::Maximum));
     auto constraints = formattingGeometry().constrainByMinMaxWidth(root(), { minimumContentWidth, maximumContentWidth });
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
 }
 
-InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const
+InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(IntrinsicWidthMode intrinsicWidthMode) const
 {
     auto& inlineItems = formattingState().inlineItems();
-    auto lineBuilder = LineBuilder { *this, inlineItems };
+    auto lineBuilder = LineBuilder { *this, inlineItems, intrinsicWidthMode };
     auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
     auto maximumLineWidth = InlineLayoutUnit { };
     auto maximumFloatWidth = LayoutUnit { };
     auto isFirstLine = true;
     while (!layoutRange.isEmpty()) {
-        auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, availableWidth, isFirstLine);
+        auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, isFirstLine);
         layoutRange.start = intrinsicContent.inlineItemRange.end;
         maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
         isFirstLine = false;

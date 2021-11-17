@@ -125,8 +125,8 @@ static inline std::optional<size_t> firstTextRunIndex(const InlineContentBreaker
     return { };
 }
 
-InlineContentBreaker::InlineContentBreaker(bool isInIntrinsicWidthMode)
-    : m_isInIntrinsicWidthMode(isInIntrinsicWidthMode)
+InlineContentBreaker::InlineContentBreaker(std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+    : m_intrinsicWidthMode(intrinsicWidthMode)
 {
 }
 

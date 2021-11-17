@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingConstraints.h"
 #include "LayoutUnits.h"
 #include "RenderStyle.h"
 
@@ -38,7 +39,7 @@ struct CandidateTextRunForBreaking;
 
 class InlineContentBreaker {
 public:
-    InlineContentBreaker(bool isInIntrinsicWidthMode);
+    InlineContentBreaker(std::optional<IntrinsicWidthMode>);
 
     struct PartialRun {
         size_t length { 0 };
@@ -150,9 +151,9 @@ private:
     };
     OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
     bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
-    bool isInIntrinsicWidthMode() const { return m_isInIntrinsicWidthMode; }
+    bool isInIntrinsicWidthMode() const { return !!m_intrinsicWidthMode; }
 
-    bool m_isInIntrinsicWidthMode { false };
+    std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     bool n_hyphenationIsDisabled { false };
 };
 

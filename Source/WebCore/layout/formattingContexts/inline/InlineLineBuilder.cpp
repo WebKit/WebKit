@@ -269,8 +269,8 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, IsInIntrinsicWidthMode isInIntrinsicWidthMode)
-    : m_isInIntrinsicWidthMode(isInIntrinsicWidthMode == IsInIntrinsicWidthMode::Yes)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+    : m_intrinsicWidthMode(intrinsicWidthMode)
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineFormattingState(&inlineFormattingContext.formattingState())
     , m_floatingState(&floatingState)
@@ -280,8 +280,8 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Float
 {
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, IsInIntrinsicWidthMode isInIntrinsicWidthMode)
-    : m_isInIntrinsicWidthMode(isInIntrinsicWidthMode == IsInIntrinsicWidthMode::Yes)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+    : m_intrinsicWidthMode(intrinsicWidthMode)
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -326,9 +326,11 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , lineRuns };
 }
 
-LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth, bool isFirstLine)
+LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, bool isFirstLine)
 {
-    auto lineConstraints = initialConstraintsForLine({ 0, 0, availableWidth, 0 }, isFirstLine);
+    ASSERT(isInIntrinsicWidthMode());
+    auto lineLogicalWidth = *intrinsicWidthMode() == IntrinsicWidthMode::Maximum ? maxInlineLayoutUnit() : 0.f;
+    auto lineConstraints = initialConstraintsForLine({ 0, 0, lineLogicalWidth, 0 }, isFirstLine);
     initialize(lineConstraints, isFirstLine, needsLayoutRange.start, { }, { });
 
     auto committedContent = placeInlineContent(needsLayoutRange);
@@ -393,7 +395,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirs
 LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
 {
     auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
-    auto inlineContentBreaker = InlineContentBreaker { isInIntrinsicWidthMode() };
+    auto inlineContentBreaker = InlineContentBreaker { intrinsicWidthMode() };
 
     auto currentItemIndex = needsLayoutRange.start;
     size_t committedInlineItemCount = 0;

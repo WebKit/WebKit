@@ -65,7 +65,7 @@ private:
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
-    InlineLayoutUnit computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const;
+    InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode) const;
 
     void computeHorizontalMargin(const Box&, const HorizontalConstraints&);
     void computeHeightAndMargin(const Box&, const HorizontalConstraints&);

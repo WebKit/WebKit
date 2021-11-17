@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
 #include "InlineLine.h"
@@ -39,9 +40,8 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    enum class IsInIntrinsicWidthMode { No, Yes };
-    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, IsInIntrinsicWidthMode = IsInIntrinsicWidthMode::No);
-    LineBuilder(const InlineFormattingContext&, const InlineItems&, IsInIntrinsicWidthMode = IsInIntrinsicWidthMode::Yes);
+    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
+    LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
@@ -72,7 +72,7 @@ public:
         InlineLayoutUnit logicalWidth { 0 };
         const FloatList& floats;
     };
-    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth, bool isFirstLine);
+    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, bool isFirstLine);
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
@@ -112,7 +112,8 @@ private:
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
 
-    bool isInIntrinsicWidthMode() const { return m_isInIntrinsicWidthMode; }
+    std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
+    bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
@@ -123,7 +124,7 @@ private:
 
 private:
     bool m_isFirstLine { false };
-    bool m_isInIntrinsicWidthMode { false };
+    std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
     FloatingState* m_floatingState { nullptr };
