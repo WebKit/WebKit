@@ -1493,9 +1493,6 @@ webkit.org/b/227536 [ BigSur ] imported/w3c/web-platform-tests/webrtc/simplecall
 
 webkit.org/b/227639 [ BigSur Release ] fast/history/visited-href-mutation.html [ Pass ImageOnlyFailure ]
 
-# rdar://80345048 ([ Monterey wk2 ] webrtc/h264-high.html is a constant timeout)
-[ Monterey ] webrtc/h264-high.html [ Timeout ]
-
 # rdar://80346382 ([ Monterey Release wk2 arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html is a flaky crash)
 [ Monterey arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure Crash ]
 

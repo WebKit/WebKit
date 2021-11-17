@@ -1,3 +1,13 @@
+2021-11-17  Youenn Fablet  <youenn@apple.com>
+
+        Safari 15.1 H264 FullHD video encode/decode fails
+        https://bugs.webkit.org/show_bug.cgi?id=233036
+        <rdar://80345048>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-17  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/notification-listeners.html in isolated tree mode.

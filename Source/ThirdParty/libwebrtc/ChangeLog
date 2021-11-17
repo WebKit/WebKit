@@ -1,3 +1,17 @@
+2021-11-17  Youenn Fablet  <youenn@apple.com>
+
+        Safari 15.1 H264 FullHD video encode/decode fails
+        https://bugs.webkit.org/show_bug.cgi?id=233036
+        <rdar://80345048>
+
+        Reviewed by Eric Carlson.
+
+        H264 encoder now checks the profile and fails if frame is too big.
+        To get back to the past behavior, we are now using auto level for both ARM64 devices as well as devices with Monterey OS.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+
 2021-11-10  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
 
         Update libwebrtc to M96
