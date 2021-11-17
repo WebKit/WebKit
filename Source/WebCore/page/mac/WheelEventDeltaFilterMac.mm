@@ -29,6 +29,7 @@
 #import "WheelEventDeltaFilterMac.h"
 
 #import "FloatPoint.h"
+#import "Logging.h"
 #import "PlatformWheelEvent.h"
 #import <pal/spi/mac/NSScrollingInputFilterSPI.h>
 
@@ -43,33 +44,52 @@ WheelEventDeltaFilterMac::WheelEventDeltaFilterMac()
 
 void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 {
-    if (event.momentumPhase() != PlatformWheelEventPhase::None)
+    if (event.momentumPhase() != PlatformWheelEventPhase::None) {
+        m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
         return;
+    }
 
     // The absolute value of timestamp doesn't matter; the filter looks at deltas from the previous event.
     auto timestamp = event.timestamp() - m_initialWallTime;
 
     switch (event.phase()) {
     case PlatformWheelEventPhase::None:
+    case PlatformWheelEventPhase::Ended:
         break;
 
     case PlatformWheelEventPhase::Began:
+        reset();
+        FALLTHROUGH;
     case PlatformWheelEventPhase::Changed: {
         NSPoint filteredDeltaResult;
         NSPoint filteredVelocityResult;
 
         [m_predominantAxisFilter filterInputDelta:toFloatPoint(event.delta()) timestamp:timestamp.seconds() outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
-        m_currentFilteredVelocity = toFloatSize(filteredVelocityResult);
+        auto axisFilteredVelocity = toFloatSize(filteredVelocityResult);
         m_currentFilteredDelta = toFloatSize(filteredDeltaResult);
+
+        // Use a 1ms minimum to avoid divide by zero. The usual cadence of these events matches screen refresh rate.
+        auto deltaFromLastEvent = std::max(event.ioHIDEventTimestamp() - m_lastIOHIDEventTimestamp, 1_ms);
+        m_currentFilteredVelocity = event.delta() / deltaFromLastEvent.seconds();
+
+        // Apply the axis-locking that m_predominantAxisFilter does.
+        if (!axisFilteredVelocity.width())
+            m_currentFilteredVelocity.setWidth(0);
+        if (!axisFilteredVelocity.height())
+            m_currentFilteredVelocity.setHeight(0);
+
+        LOG(ScrollAnimations, "WheelEventDeltaFilterMac::updateFromEvent: _NSScrollingPredominantAxisFilter velocity %.2f, %2f, IOHIDEvent velocity %.2f,%.2f",
+            axisFilteredVelocity.width(), axisFilteredVelocity.height(), m_currentFilteredVelocity.width(), m_currentFilteredVelocity.height());
         break;
     }
     case PlatformWheelEventPhase::MayBegin:
     case PlatformWheelEventPhase::Cancelled:
     case PlatformWheelEventPhase::Stationary:
-    case PlatformWheelEventPhase::Ended:
         reset();
         break;
     }
+
+    m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
 }
 
 void WheelEventDeltaFilterMac::reset()
@@ -77,6 +97,7 @@ void WheelEventDeltaFilterMac::reset()
     [m_predominantAxisFilter reset];
     m_currentFilteredVelocity = { };
     m_currentFilteredDelta = { };
+    m_lastIOHIDEventTimestamp = { };
 }
 
 }
