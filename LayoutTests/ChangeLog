@@ -1,3 +1,50 @@
+2021-11-17  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285797. rdar://problem/85512520
+
+    Fingers down on the trackpad should stop an animated scroll
+    https://bugs.webkit.org/show_bug.cgi?id=233114
+    
+    Reviewed by Wenson Hsieh.
+    Source/WebCore:
+    
+    Fingers down on the trackpad sends a "MayBegin" event; this needs to stop any in-progress
+    animated momentum scroll.
+    
+    This failed because ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent() early-returned
+    on the MayBegin event before it got to ScrollingEffectsController. Fix that, and have
+    ScrollingEffectsController::handleWheelEvent() return true to say it was handled.
+    
+    This triggered an assertion in ScrollingTreeGestureState, but for "post-main-thread"
+    handling for which the assertion was wrong.
+    
+    Test: fast/scrolling/mac/momentum-animator-maybegin-stops.html
+    
+    * page/scrolling/ScrollingTreeGestureState.cpp:
+    (WebCore::ScrollingTreeGestureState::nodeDidHandleEvent):
+    * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+    (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+    * platform/mac/ScrollingEffectsController.mm:
+    (WebCore::ScrollingEffectsController::handleWheelEvent):
+    
+    LayoutTests:
+    
+    * fast/scrolling/mac/momentum-animator-maybegin-stops-expected.txt: Added.
+    * fast/scrolling/mac/momentum-animator-maybegin-stops.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285797 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-14  Simon Fraser  <simon.fraser@apple.com>
+
+            Fingers down on the trackpad should stop an animated scroll
+            https://bugs.webkit.org/show_bug.cgi?id=233114
+
+            Reviewed by Wenson Hsieh.
+
+            * fast/scrolling/mac/momentum-animator-maybegin-stops-expected.txt: Added.
+            * fast/scrolling/mac/momentum-animator-maybegin-stops.html: Added.
+
 2021-11-13  Simon Fraser  <simon.fraser@apple.com>
 
         Run a ScrollAnimationMomentum for the momentum phase of a scroll
