@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/any-link-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/defined.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/enabled-disabled.html

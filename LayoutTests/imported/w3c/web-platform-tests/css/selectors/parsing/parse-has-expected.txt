@@ -8,22 +8,9 @@ PASS ":has([a|=\"b\"])" should be a valid selector
 PASS ":has(:hover)" should be a valid selector
 PASS "*:has(.a)" should be a valid selector
 PASS ".a:has(.b)" should be a valid selector
-PASS ".a:has(:scope .b)" should be a valid selector
-PASS ":has(.a:scope .b)" should be a valid selector
-PASS ":has(.a .b:scope)" should be a valid selector
 PASS ".a:has(> .b)" should be a valid selector
-PASS ".a:has(:scope > .b)" should be a valid selector
-PASS ":has(.a:scope > .b)" should be a valid selector
-PASS ":has(> .a .b:scope)" should be a valid selector
 PASS ".a:has(~ .b)" should be a valid selector
-PASS ".a:has(:scope ~ .b)" should be a valid selector
-PASS ":has(.a:scope ~ .b)" should be a valid selector
-PASS ":has(~ .a .b:scope)" should be a valid selector
 PASS ".a:has(+ .b)" should be a valid selector
-PASS ".a:has(:scope + .b)" should be a valid selector
-PASS ":has(.a:scope + .b)" should be a valid selector
-PASS ":has(+ .a .b:scope)" should be a valid selector
-PASS ".a:has(:scope .b :scope)" should be a valid selector
 PASS ".a:has(.b) .c" should be a valid selector
 PASS ".a .b:has(.c)" should be a valid selector
 PASS ".a .b:has(.c .d)" should be a valid selector

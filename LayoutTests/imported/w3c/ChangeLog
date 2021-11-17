@@ -1,3 +1,39 @@
+2021-11-17  Antti Koivisto  <antti@apple.com>
+
+        Update web-platform-tests/css/selectors
+        https://bugs.webkit.org/show_bug.cgi?id=233246
+
+        Reviewed by Alexey Shvayka.
+
+        WPT updates.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/selectors/first-letter-flag-001-expected.html: Added.
+        * web-platform-tests/css/selectors/first-letter-flag-001.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-004.html:
+        * web-platform-tests/css/selectors/has-argument-with-explicit-scope.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/has-argument-with-explicit-scope.tentative.html: Added.
+        * web-platform-tests/css/selectors/has-basic-expected.txt:
+        * web-platform-tests/css/selectors/has-basic.html:
+        * web-platform-tests/css/selectors/has-matches-to-uninserted-elements-expected.txt: Added.
+        * web-platform-tests/css/selectors/has-matches-to-uninserted-elements.html: Added.
+        * web-platform-tests/css/selectors/has-relative-argument-expected.txt:
+        * web-platform-tests/css/selectors/has-relative-argument.html:
+        * web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has-expected.txt: Added.
+        * web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has.html: Added.
+        * web-platform-tests/css/selectors/invalidation/w3c-import.log:
+        * web-platform-tests/css/selectors/nesting-expected.html: Added.
+        * web-platform-tests/css/selectors/nesting-parsing-expected.txt: Added.
+        * web-platform-tests/css/selectors/nesting-parsing.html: Added.
+        * web-platform-tests/css/selectors/nesting.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-has-expected.txt:
+        * web-platform-tests/css/selectors/parsing/parse-has.html:
+        * web-platform-tests/css/selectors/selection-image-001-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/selectors/selection-image-001-expected.html.
+        * web-platform-tests/css/selectors/selection-image-002-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/selectors/selection-image-002-expected.html.
+        * web-platform-tests/css/selectors/w3c-import.log:
+        * web-platform-tests/css/selectors/xml-class-selector-expected.xml: Added.
+        * web-platform-tests/css/selectors/xml-class-selector.xml: Added.
+
 2021-11-16  Rob Buis  <rbuis@igalia.com>
 
         Re-add 'style' to contain:strict and contain:content CSS properties

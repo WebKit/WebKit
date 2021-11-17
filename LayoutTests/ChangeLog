@@ -1,3 +1,12 @@
+2021-11-17  Antti Koivisto  <antti@apple.com>
+
+        Update web-platform-tests/css/selectors
+        https://bugs.webkit.org/show_bug.cgi?id=233246
+
+        Reviewed by Alexey Shvayka.
+
+        * TestExpectations:
+
 2021-11-17  Rob Buis  <rbuis@igalia.com>
 
         Null check clonedParent
