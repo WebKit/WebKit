@@ -1280,6 +1280,19 @@
         (syscall-number SYS_workq_kernreturn)
         (syscall-number SYS_workq_open))
 
+    (allow syscall-unix (with telemetry)
+        (syscall-number SYS_fgetxattr)
+        (syscall-number SYS_getgid)
+        (syscall-number SYS_getxattr)
+        (syscall-number SYS_necp_client_action)
+        (syscall-number SYS_necp_open)
+        (syscall-number SYS_sendto)
+        (syscall-number SYS_setrlimit)
+        (syscall-number SYS_sigaltstack)
+        (syscall-number SYS_socket)
+        (syscall-number SYS_thread_selfusage)
+    )
+
     (allow syscall-unix (with telemetry-backtrace)
         (syscall-number SYS___pthread_kill)
         (syscall-number SYS___pthread_markcancel)
@@ -1298,25 +1311,20 @@
         (syscall-number SYS_dup)
         (syscall-number SYS_dup2)
         (syscall-number SYS_fchmod)
-        (syscall-number SYS_fgetxattr)
         (syscall-number SYS_fileport_makefd)
         (syscall-number SYS_fileport_makeport)
         (syscall-number SYS_fstatat64)
         (syscall-number SYS_fsync)
         (syscall-number SYS_getattrlistbulk) ;; xpc_realpath and directory enumeration
         (syscall-number SYS_getaudit_addr)
-        (syscall-number SYS_getgid)
         (syscall-number SYS_getpeername)
         (syscall-number SYS_getsockopt) ;; used by libwebrtc
-        (syscall-number SYS_getxattr)
         (syscall-number SYS_ioctl) ;; needed by tcgetattr (TIOCGETA) - debugging
         (syscall-number SYS_kdebug_trace)
         (syscall-number SYS_mkdirat)
         (syscall-number SYS_mlock)
         (syscall-number SYS_mremap_encrypted)
         (syscall-number SYS_munlock)
-        (syscall-number SYS_necp_client_action)
-        (syscall-number SYS_necp_open)
         (syscall-number SYS_open)
         (syscall-number SYS_open_dprotected_np)
         (syscall-number SYS_open_nocancel)
@@ -1340,21 +1348,16 @@
         (syscall-number SYS_sem_post)
         (syscall-number SYS_sem_wait)
         (syscall-number SYS_sendmsg_nocancel)
-        (syscall-number SYS_sendto)
         (syscall-number SYS_sendto_nocancel)
         (syscall-number SYS_setpriority)
-        (syscall-number SYS_setrlimit)
         (syscall-number SYS_setsockopt)
         (syscall-number SYS_shm_open)
         (syscall-number SYS_shutdown)
-        (syscall-number SYS_sigaltstack)
         (syscall-number SYS_sigprocmask)
         (syscall-number SYS_sigreturn)
-        (syscall-number SYS_socket)
         (syscall-number SYS_socketpair)
         (syscall-number SYS_sysctl)
         (syscall-number SYS_sysctlbyname)
-        (syscall-number SYS_thread_selfusage)
         (syscall-number SYS_umask)
         (syscall-number SYS_unlink)
         (syscall-number SYS_work_interval_ctl)
@@ -1547,18 +1550,18 @@
                 mach_exception_raise
                 (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
                 (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
-                mach_memory_entry_ownership
                 mach_port_request_notification
                 mach_vm_region
                 mach_vm_region_recurse
-                task_set_exc_guard_behavior
                 task_threads_from_user
-                thread_policy
                 (when (defined? 'vm_copy) vm_copy)
                 (when (defined? 'vm_remap_external) vm_remap_external)))
 
             (allow mach-message-send (with telemetry) (kernel-mig-routine
+                mach_memory_entry_ownership
+                task_set_exc_guard_behavior
                 thread_info
+                thread_policy
                 thread_policy_set))
 
             (allow mach-message-send (kernel-mig-routine
