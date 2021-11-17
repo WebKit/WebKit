@@ -1,5 +1,14 @@
 2021-11-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement
+        https://bugs.webkit.org/show_bug.cgi?id=232857
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm: Fix number in version check.
+
+2021-11-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         [Monterey] TestWebKitAPI.PrivateClickMeasurement.Daemon* tests timing out: Failed to connect to mach service org.webkit.pcmtestdaemon.service
         https://bugs.webkit.org/show_bug.cgi?id=232890
 
