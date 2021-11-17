@@ -35,9 +35,7 @@
                          [ "check8", "true" ]];
 
           for (var i = 0; i < answers.length; i++) {
-                var checkbox = document.getElementById(answers[i][0]);
-                checkbox.focus();
-                checkbox = accessibilityController.focusedElement;
+                var checkbox = accessibilityController.accessibleElementById(answers[i][0]);
                 shouldBe("checkbox.isChecked", answers[i][1]);
           }
     }

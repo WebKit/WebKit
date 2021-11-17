@@ -1,3 +1,26 @@
+2021-11-17  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Fix 5 tests in --release --accessibility-isolated-tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=233232
+
+        Reviewed by Chris Fleizach.
+
+        Fix all of these tests in --release --accessibility-isolated-tree
+        mode by asynchronously waiting for document changes (when necessary).
+        Some tests are changed to use accessibleElementById instead of
+        element.focus() + accessibilityController.focusedElement for selecting
+        elements in JS, as the former doesn't require asynchronous waiting for static elements.
+
+        * accessibility/add-children-pseudo-element-expected.txt:
+        * accessibility/add-children-pseudo-element.html:
+        * accessibility/aria-checkbox-checked.html:
+        * accessibility/aria-checkbox-text.html:
+        * accessibility/aria-toggle-button-with-title.html:
+        * accessibility/auto-fill-types-expected.txt:
+        * accessibility/auto-fill-types.html:
+        * accessibility/ax-value-with-search-expected.txt:
+        * accessibility/ax-value-with-search.html:
+
 2021-11-17  Dean Jackson  <dino@apple.com>
 
         Add ModelDocument for directly showing content that can be handled by <model>
