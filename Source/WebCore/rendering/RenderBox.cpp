@@ -3989,13 +3989,14 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     }
 }
 
-static void computeLogicalLeftPositionedOffset(LayoutUnit& logicalLeftPos, const RenderBox* child, LayoutUnit logicalWidthValue, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalWidth)
+static void computeLogicalLeftPositionedOffset(LayoutUnit& logicalLeftPos, const RenderBox* child, LayoutUnit logicalWidthValue, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalWidth, bool logicalLeftIsAuto, bool logicalRightIsAuto)
 {
-    auto logicalLeftAndRightAreAuto = child->style().logicalLeft().isAuto() && child->style().logicalRight().isAuto();
+    auto logicalLeftAndRightAreAuto = logicalLeftIsAuto && logicalRightIsAuto;
+    bool isOverconstrained = !logicalLeftIsAuto && !logicalRightIsAuto && !child->style().logicalWidth().isAuto();
     // Deal with differing writing modes here. Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
     // along this axis, then we need to flip the coordinate. Auto positioned items do not need this correction as it was properly handled in
     // computeInlineStaticDistance().
-    if (isOrthogonal(*child, containerBlock) && !logicalLeftAndRightAreAuto && containerBlock.style().isFlippedBlocksWritingMode()) {
+    if (isOrthogonal(*child, containerBlock) && !logicalLeftAndRightAreAuto && !isOverconstrained && containerBlock.style().isFlippedBlocksWritingMode()) {
         logicalLeftPos = containerLogicalWidth - logicalWidthValue - logicalLeftPos;
         logicalLeftPos += (child->isHorizontalWritingMode() ? containerBlock.borderRight() : containerBlock.borderBottom());
     } else
@@ -4089,7 +4090,7 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
 
             // Use the containing block's direction rather than the parent block's
             // per CSS 2.1 reference test abspos-non-replaced-width-margin-000.
-            if (containerDirection == TextDirection::RTL)
+            if (!isOrthogonal(*this, containerBlock) && containerDirection == TextDirection::RTL)
                 logicalLeftValue = (availableSpace + logicalLeftValue) - marginLogicalLeftValue - marginLogicalRightValue;
         }
     } else {
@@ -4193,7 +4194,7 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
     }
 
     computedValues.m_position = logicalLeftValue + marginLogicalLeftValue;
-    computeLogicalLeftPositionedOffset(computedValues.m_position, this, computedValues.m_extent + bordersPlusPadding, containerBlock, containerLogicalWidth);
+    computeLogicalLeftPositionedOffset(computedValues.m_position, this, computedValues.m_extent + bordersPlusPadding, containerBlock, containerLogicalWidth, style().logicalLeft().isAuto(), style().logicalRight().isAuto());
 }
 
 static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom, const RenderBox* child, const RenderBoxModelObject& containerBlock)
@@ -4673,7 +4674,7 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
 
     LayoutUnit logicalLeftPos = logicalLeftValue + marginLogicalLeftAlias;
     // Border and padding have already been included in computedValues.m_extent.
-    computeLogicalLeftPositionedOffset(logicalLeftPos, this, computedValues.m_extent, containerBlock, containerLogicalWidth);
+    computeLogicalLeftPositionedOffset(logicalLeftPos, this, computedValues.m_extent, containerBlock, containerLogicalWidth, style().logicalLeft().isAuto(), style().logicalRight().isAuto());
     computedValues.m_position = logicalLeftPos;
 }
 

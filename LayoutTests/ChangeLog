@@ -1,3 +1,13 @@
+2021-11-17  Rob Buis  <rbuis@igalia.com>
+
+        Limit logical width over-constrained direction check
+        https://bugs.webkit.org/show_bug.cgi?id=233189
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations: Removed 4 tests that are now passing.
+        * platform/ios/TestExpectations: Skipped several tests that show 1px diff in the result.
+
 2021-11-17  Antti Koivisto  <antti@apple.com>
 
         Update web-platform-tests/css/selectors
