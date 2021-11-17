@@ -1,3 +1,15 @@
+2021-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Web Locks API does get enabled in Service Workers when running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=233273
+
+        Reviewed by Geoffrey Garen.
+
+        Use RuntimeEnabledFeatures to back the Web Lock API since regular settings do not get
+        properly propagated to service workers at the moment.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-11-17  Dean Jackson  <dino@apple.com>
 
         Add ModelDocument for directly showing content that can be handled by <model>

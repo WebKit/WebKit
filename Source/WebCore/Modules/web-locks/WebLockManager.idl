@@ -23,7 +23,7 @@
  */
 
 [
-    EnabledBySetting=WebLocksAPIEnabled,
+    EnabledAtRuntime=WebLocksAPIEnabled,
     Exposed=(Window,Worker),
     InterfaceName=LockManager,
     ImplementationLacksVTable,

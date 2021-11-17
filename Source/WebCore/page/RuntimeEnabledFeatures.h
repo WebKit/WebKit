@@ -263,6 +263,9 @@ public:
     bool modelDocumentEnabled() const { return m_modelDocumentEnabled; }
 #endif
 
+    void setWebLocksAPIEnabled(bool isEnabled) { m_webLocksAPIEnabled = isEnabled; }
+    bool webLocksAPIEnabled() const { return m_webLocksAPIEnabled; }
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -406,6 +409,8 @@ private:
 #if ENABLE(MODEL_ELEMENT)
     bool m_modelDocumentEnabled { false };
 #endif
+
+    bool m_webLocksAPIEnabled { false };
 
     friend class NeverDestroyed<RuntimeEnabledFeatures>;
 };
