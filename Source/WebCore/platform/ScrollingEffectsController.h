@@ -263,7 +263,9 @@ private:
     FloatSize m_scrollingVelocityForMomentumAnimation; // Do we need both this, m_scrollingVelocityForScrollSnap and m_momentumVelocity?
     FloatSize m_scrollingVelocityForScrollSnap;
 #if !LOG_DISABLED
+    FloatPoint m_eventDrivenScrollMomentumStartOffset;
     FloatPoint m_eventDrivenScrollOffset;
+    WallTime m_momentumBeganEventTime;
 #endif
 
     bool m_momentumScrollInProgress { false };

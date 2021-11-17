@@ -180,6 +180,24 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         return true;
     }
 
+#if !LOG_DISABLED
+    if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Began)
+        m_momentumBeganEventTime = wheelEvent.timestamp();
+#endif
+
+    if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended && momentumScrollingAnimatorEnabled()) {
+#if !LOG_DISABLED
+        auto timeSinceStart = wheelEvent.timestamp() - m_momentumBeganEventTime;
+        auto distance = m_eventDrivenScrollOffset - m_eventDrivenScrollMomentumStartOffset;
+#endif
+        // FIXME: We can't distinguish between the natural end of a momentum sequence, and a two-finger tap on the trackpad (rdar://85414238),
+        // so we always have to end the animation here.
+        LOG(ScrollAnimations, "Event (%s, %s): stopping event scroll duration %.2fms distance %.2f %.2f",
+            phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()), timeSinceStart.milliseconds(),
+            fabs(distance.width()), fabs(distance.height()));
+        stopAnimatedNonRubberbandingScroll();
+    }
+
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhase::None);
     if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_isAnimatingRubberBand)) {
         if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended) {
@@ -213,6 +231,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
             startMomentumScrollWithInitialVelocity(m_client.scrollOffset(), m_scrollingVelocityForMomentumAnimation, -wheelEvent.delta(), [](const FloatPoint& targetOffset) { return targetOffset; });
 #if !LOG_DISABLED
             m_eventDrivenScrollOffset = m_client.scrollOffset();
+            m_eventDrivenScrollMomentumStartOffset = m_eventDrivenScrollOffset;
 #endif
         }
     }

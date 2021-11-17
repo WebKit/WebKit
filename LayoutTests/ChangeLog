@@ -1,3 +1,16 @@
+2021-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Stop a momentum scroll animation when receiving a momentum end event
+        https://bugs.webkit.org/show_bug.cgi?id=233236
+
+        Reviewed by Tim Horton.
+
+        New test, and skip one that breaks now because we need a fix for webkit.org/b/233234.
+
+        * fast/scrolling/mac/momentum-animator-end-event-stops-expected.txt: Added.
+        * fast/scrolling/mac/momentum-animator-end-event-stops.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-16  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemFileHandle.getFile()
