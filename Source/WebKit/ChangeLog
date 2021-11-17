@@ -1,3 +1,21 @@
+2021-11-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement FileSystemFileHandle.getFile()
+        https://bugs.webkit.org/show_bug.cgi?id=232716
+        <rdar://problem/85022453>
+
+        Reviewed by Youenn Fablet.
+
+        Let web process send message to network process for file path.
+
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::getFile):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::getFile):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+
 2021-11-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add sandbox telemetry for preference access

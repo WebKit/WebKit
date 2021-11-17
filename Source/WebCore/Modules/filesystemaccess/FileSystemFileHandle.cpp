@@ -48,7 +48,19 @@ FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext& context, Stri
 
 void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "getFile is not implemented"_s });
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+
+    connection().getFile(identifier(), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
+        if (result.hasException())
+            return promise.reject(result.releaseException());
+
+        auto* context = protectedThis->scriptExecutionContext();
+        if (!context)
+            return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
+
+        promise.resolve(File::create(context, result.returnValue(), { }, protectedThis->name()));
+    });
 }
 
 void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&& promise)

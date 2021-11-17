@@ -73,6 +73,10 @@ void WorkerFileSystemStorageConnection::scopeClosed()
     for (auto& callback : resolveCallbacks.values())
         callback(Exception { InvalidStateError });
 
+    auto stringCallbacks = std::exchange(m_stringCallbacks, { });
+    for (auto& callback : stringCallbacks.values())
+        callback(Exception { InvalidStateError });
+
     m_scope = nullptr;
 }
 
@@ -199,6 +203,32 @@ void WorkerFileSystemStorageConnection::resolve(FileSystemHandleIdentifier ident
 void WorkerFileSystemStorageConnection::didResolve(CallbackIdentifier callbackIdentifier, ExceptionOr<Vector<String>>&& result)
 {
     if (auto callback = m_resolveCallbacks.take(callbackIdentifier))
+        callback(WTFMove(result));
+}
+
+void WorkerFileSystemStorageConnection::getFile(FileSystemHandleIdentifier identifier, StringCallback&& callback)
+{
+    if (!m_scope)
+        return callback(Exception { InvalidStateError });
+
+    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    m_stringCallbacks.add(callbackIdentifier, WTFMove(callback));
+
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier]() mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
+                if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
+                    connection->completeStringCallback(callbackIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+
+        mainThreadConnection->getFile(identifier, WTFMove(mainThreadCallback));
+    });
+}
+
+void WorkerFileSystemStorageConnection::completeStringCallback(CallbackIdentifier callbackIdentifier, ExceptionOr<String>&& result)
+{
+    if (auto callback = m_stringCallbacks.take(callbackIdentifier))
         callback(WTFMove(result));
 }
 

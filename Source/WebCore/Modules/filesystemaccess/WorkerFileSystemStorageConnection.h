@@ -47,6 +47,7 @@ public:
     void didIsSameEntry(CallbackIdentifier, ExceptionOr<bool>&&);
     void didGetHandle(CallbackIdentifier, ExceptionOr<FileSystemHandleIdentifier>&&);
     void didResolve(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
+    void completeStringCallback(CallbackIdentifier, ExceptionOr<String>&&);
     void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);
     void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
@@ -65,6 +66,7 @@ private:
     void resolve(FileSystemHandleIdentifier, FileSystemHandleIdentifier, FileSystemStorageConnection::ResolveCallback&&) final;
     void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) final;
     void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleWithTypeCallback&&) final;
+    void getFile(FileSystemHandleIdentifier, StringCallback&&) final;
 
     void createSyncAccessHandle(FileSystemHandleIdentifier, FileSystemStorageConnection::GetAccessHandleCallback&&) final;
     void close(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, FileSystemStorageConnection::VoidCallback&&) final;
@@ -78,6 +80,7 @@ private:
     HashMap<CallbackIdentifier, FileSystemStorageConnection::VoidCallback> m_voidCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleNamesCallback> m_getHandleNamesCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleWithTypeCallback> m_getHandleWithTypeCallbacks;
+    HashMap<CallbackIdentifier, FileSystemStorageConnection::StringCallback> m_stringCallbacks;
 };
 
 } // namespace WebCore
