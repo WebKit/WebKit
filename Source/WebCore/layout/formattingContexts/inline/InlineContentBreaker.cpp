@@ -652,15 +652,15 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
         return { };
     };
 
-    // Soft wrap opportunities introduced by break-word are not considered when calculating min-content intrinsic sizes.
-    auto breakWordIsApplicable = !isInIntrinsicWidthMode();
     // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
     // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
-    if ((breakWordIsApplicable && style.wordBreak() == WordBreak::BreakWord) && !hasWrapOpportunityAtPreviousPosition)
+    if (style.wordBreak() == WordBreak::BreakWord && !hasWrapOpportunityAtPreviousPosition)
         return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
     // OverflowWrap::BreakWord/Anywhere An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
     // Note that this applies to content where CSS properties (e.g. WordBreak::KeepAll) make it unbreakable. 
-    if (((breakWordIsApplicable && style.overflowWrap() == OverflowWrap::BreakWord) || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition)
+    // Soft wrap opportunities introduced by overflow-wrap/word-wrap: break-word are not considered when calculating min-content intrinsic sizes.
+    auto overflowWrapBreakWordIsApplicable = !isInIntrinsicWidthMode();
+    if (((overflowWrapBreakWordIsApplicable && style.overflowWrap() == OverflowWrap::BreakWord) || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition)
         return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
     // Breaking is forbidden within “words”.
     if (style.wordBreak() == WordBreak::KeepAll)
