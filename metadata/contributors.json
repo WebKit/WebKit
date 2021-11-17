@@ -1476,8 +1476,10 @@
       "emails" : [
          "clord@igalia.com",
          "chris@igalia.com",
-         "contact@chrislord.net"
+         "contact@chrislord.net",
+         "chrislord.net@gmail.com"
       ],
+      "github" : "Cwiiis",
       "name" : "Chris Lord",
       "nicks" : [
          "cwiiis"
