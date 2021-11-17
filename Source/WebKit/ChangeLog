@@ -1,3 +1,15 @@
+2021-11-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add message filter guard in the GPU process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=233282
+        <rdar://85514428>
+
+        Reviewed by Brent Fulgham.
+
+        Add message filter guard in the GPU process' sandbox.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-17  Tim Horton  <timothy_horton@apple.com>
 
         Momentum animator sometimes starts the animation at a very high velocity

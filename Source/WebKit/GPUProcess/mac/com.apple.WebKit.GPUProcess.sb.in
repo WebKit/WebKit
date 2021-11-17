@@ -856,6 +856,7 @@
     )
 )
 
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
@@ -890,6 +891,7 @@
         MSC_swtch_pri
         MSC_syscall_thread_switch
         MSC_thread_get_special_reply_port)))
+#endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
 (when (defined? 'syscall-unix)
     (allow syscall-unix (with telemetry))
