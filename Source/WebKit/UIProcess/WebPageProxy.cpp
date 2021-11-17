@@ -8636,6 +8636,12 @@ void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& resul
     sendWithAsyncReply(Messages::WebPage::UpdateWithTextRecognitionResult(WTFMove(results), context, location), WTFMove(completionHandler));
 }
 
+void WebPageProxy::startImageAnalysis(const String& identifier)
+{
+    if (hasRunningProcess())
+        send(Messages::WebPage::StartImageAnalysis(identifier));
+}
+
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(ENCRYPTED_MEDIA)

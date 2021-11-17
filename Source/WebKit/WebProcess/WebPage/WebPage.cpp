@@ -202,6 +202,7 @@
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/ImageAnalysisQueue.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/JSDOMExceptionHandling.h>
@@ -7629,6 +7630,15 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
     })();
 
     completionHandler(updateResult);
+}
+
+void WebPage::startImageAnalysis(const String& identifier)
+{
+    if (RefPtr document = m_mainFrame->coreFrame()->document()) {
+        // We only consider main document content for now, to match the behavior of the corresponding feature
+        // that will trigger this codepath.
+        corePage()->imageAnalysisQueue().enqueueAllImages(*document, identifier);
+    }
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

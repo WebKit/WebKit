@@ -76,6 +76,7 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "IDBConnectionToServer.h"
+#include "ImageAnalysisQueue.h"
 #include "ImageOverlay.h"
 #include "ImageOverlayController.h"
 #include "InspectorClient.h"
@@ -316,7 +317,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     , m_servicesOverlayController(makeUnique<ServicesOverlayController>(*this))
 #endif
-    , m_imageOverlayController(makeUnique<ImageOverlayController>(*this))
     , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_pageOverlayController(makeUnique<PageOverlayController>(*this))
 #if ENABLE(APPLE_PAY)
@@ -3704,7 +3704,21 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     return ts;
 }
 
+ImageOverlayController& Page::imageOverlayController()
+{
+    if (!m_imageOverlayController)
+        m_imageOverlayController = makeUnique<ImageOverlayController>(*this);
+    return *m_imageOverlayController;
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
+
+ImageAnalysisQueue& Page::imageAnalysisQueue()
+{
+    if (!m_imageAnalysisQueue)
+        m_imageAnalysisQueue = makeUnique<ImageAnalysisQueue>(*this);
+    return *m_imageAnalysisQueue;
+}
 
 void Page::updateElementsWithTextRecognitionResults()
 {

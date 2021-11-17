@@ -2204,6 +2204,18 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     });
 }
 
+- (void)_startImageAnalysis:(NSString *)identifier
+{
+#if ENABLE(IMAGE_ANALYSIS)
+    THROW_IF_SUSPENDED;
+
+    if (!_page || !_page->preferences().textRecognitionEnhancementsEnabled())
+        return;
+
+    _page->startImageAnalysis(identifier);
+#endif
+}
+
 - (void)_takeFindStringFromSelection:(id)sender
 {
     THROW_IF_SUSPENDED;

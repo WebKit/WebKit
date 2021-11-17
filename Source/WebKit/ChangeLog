@@ -1,3 +1,24 @@
+2021-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a helper class to coordinate batch analysis of images
+        https://bugs.webkit.org/show_bug.cgi?id=233075
+
+        Reviewed by Dean Jackson.
+
+        Add a couple of WKWebView SPI methods to kick off (and cancel) batch image analysis for mainframe content.
+        See WebCore ChangeLog for more details.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _startImageAnalysis:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startImageAnalysis):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::startImageAnalysis):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-11-17  Dean Jackson  <dino@apple.com>
 
         Add ModelDocument for directly showing content that can be handled by <model>

@@ -115,6 +115,7 @@ class Frame;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
+class ImageAnalysisQueue;
 class ImageOverlayController;
 class InspectorClient;
 class InspectorController;
@@ -531,8 +532,13 @@ public:
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
 #endif
-    ImageOverlayController& imageOverlayController() { return *m_imageOverlayController; }
+    ImageOverlayController& imageOverlayController();
     ImageOverlayController* imageOverlayControllerIfExists() { return m_imageOverlayController.get(); }
+
+#if ENABLE(IMAGE_ANALYSIS)
+    WEBCORE_EXPORT ImageAnalysisQueue& imageAnalysisQueue();
+    ImageAnalysisQueue* imageAnalysisQueueIfExists() { return m_imageAnalysisQueue.get(); }
+#endif
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingController& scrollLatchingController();
@@ -1191,6 +1197,10 @@ private:
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
     std::unique_ptr<ImageOverlayController> m_imageOverlayController;
+
+#if ENABLE(IMAGE_ANALYSIS)
+    std::unique_ptr<ImageAnalysisQueue> m_imageAnalysisQueue;
+#endif
 
     std::unique_ptr<WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
     std::unique_ptr<PageOverlayController> m_pageOverlayController;
