@@ -1,79 +1,60 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
-
-<p id="description"></p>
 
 <select id="select" value="Select"></select>
 
 <div id="slider" tabindex="0" role="slider" aria-valuenow="5">Slider</div>
 
-<div id="console"></div>
-
 <script>
-description("This tests that a notification listener on an element only listens to that one element, and that a global notification listener listens to all notifications.");
-
-function runTest() {
-    window.jsTestIsAsync = true;
-
-    window.selectNotificationCount = 0;
-    window.sliderNotificationCount = 0;
-    window.globalNotificationCount = 0;
+    description("This tests that a notification listener on an element only listens to that one element, and that a global notification listener listens to all notifications.");
 
     if (window.accessibilityController) {
-        document.getElementById("select").focus();
-        window.select = accessibilityController.focusedElement;
-        select.addNotificationListener(function(notification) {
-            selectNotificationCount++;
-            debug("SELECT " + notification);
-        });
+        window.jsTestIsAsync = true;
 
-        document.getElementById("slider").focus();
-        window.slider = accessibilityController.focusedElement;
-        slider.addNotificationListener(function(notification) {
-            sliderNotificationCount++;
-            debug("SLIDER " + notification);
-        });
+        setTimeout(async () => {
+            window.selectNotificationCount = 0;
+            window.sliderNotificationCount = 0;
+            window.globalNotificationCount = 0;
 
-        accessibilityController.addNotificationListener(function(element, notification) {
-            if (element.isEqual(slider) || element.isEqual(select)) {
-                globalNotificationCount++;
-                debug("GLOBAL " + notification + " on element with role " + element.role);
-            }
-        });
-    }
+            let select = await waitForElementById("select");
+            select.addNotificationListener((notification) => {
+                selectNotificationCount++;
+                debug(`SELECT ${notification}`);
+            });
 
-    // Ensure these elements exist in the AX tree otherwise notifications won't be generated.
-    accessibilityController.accessibleElementById("select");
-    accessibilityController.accessibleElementById("slider");
+            let slider = accessibilityController.accessibleElementById("slider");
+            slider.addNotificationListener((notification) => {
+                sliderNotificationCount++;
+                debug(`SLIDER ${notification}`);
+            });
 
-    // This should trigger a "invalid status changed" notification on the select.
-    document.getElementById("select").setAttribute("aria-invalid", "true");
+            accessibilityController.addNotificationListener((element, notification) => {
+                if (element.isEqual(slider) || element.isEqual(select)) {
+                    globalNotificationCount++;
+                    debug(`GLOBAL ${notification} on element with role ${element.role}`);
+                }
+            });
 
-    // This should trigger a "value changed" notification on the slider.
-    document.getElementById("slider").setAttribute("aria-valuenow", "6");
+            // This should trigger a "invalid status changed" notification on the select.
+            document.getElementById("select").setAttribute("aria-invalid", "true");
+            await expectAsyncExpression("selectNotificationCount", 1);
 
-    window.setTimeout(function() {
-        shouldBe("selectNotificationCount", "1");
-        shouldBe("sliderNotificationCount", "1");
-        shouldBe("globalNotificationCount", "2");
+            // This should trigger a "value changed" notification on the slider.
+            document.getElementById("slider").setAttribute("aria-valuenow", "6");
+            await expectAsyncExpression("sliderNotificationCount", 1);
 
-        if (window.accessibilityController) {
+            await expectAsyncExpression("globalNotificationCount", 2);
+
             accessibilityController.removeNotificationListener();
             select.removeNotificationListener();
             slider.removeNotificationListener();
-        }
-
-        finishJSTest();
-    }, 10);
-}
-
-runTest();
-
+            finishJSTest();
+        }, 0);
+    }
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

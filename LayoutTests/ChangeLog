@@ -1,3 +1,21 @@
+2021-11-17  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/notification-listeners.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=233228
+        <rdar://problem/85484341>
+
+        Reviewed by Chris Fleizach.
+
+        Made this test async in order to pass in isolated tree mode.
+        The first accessible element needs to be retrieved with waitForElementById,
+        otherwise if we use accessibilityController.accessibleElementById, the
+        test would fail randomly (~10 out of 1000 flakiness). It requires
+        further investigation to determine if this is an issue with the <select>
+        element or with the first accessible element the test retrieves.
+
+        * accessibility/notification-listeners.html:
+        * platform/mac/accessibility/notification-listeners-expected.txt:
+
 2021-11-17  Rob Buis  <rbuis@igalia.com>
 
         Limit logical width over-constrained direction check
