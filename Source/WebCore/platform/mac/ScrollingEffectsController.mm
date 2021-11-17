@@ -127,6 +127,28 @@ static const char* phaseToString(PlatformWheelEventPhase phase)
 }
 #endif
 
+static FloatSize adjustedVelocity(FloatSize velocity)
+{
+    auto applyCurve = ^(float originalValue) {
+        if (!originalValue)
+            return originalValue;
+
+        float value = fabs(originalValue);
+        float powerLow = 6.7 * pow(value, -.166);
+        float powerHigh = 36.3 * pow(value, -.392);
+        const float transitionVelocity = 2000;
+
+        auto interpolate = ^(float v0, float v1, float t) {
+            return (1 - t) * v0 + t * v1;
+        };
+        
+        float multiplier = interpolate(powerLow, powerHigh, std::min(value, transitionVelocity) / transitionVelocity);
+        return copysign(value * multiplier, originalValue);
+    };
+
+    return { applyCurve(velocity.width()), applyCurve(velocity.height()) };
+}
+
 bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (processWheelEventForScrollSnap(wheelEvent))
@@ -225,7 +247,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed)) {
         m_momentumScrollInProgress = true;
         if (momentumScrollingAnimatorEnabled()) {
-            startMomentumScrollWithInitialVelocity(m_client.scrollOffset(), -wheelEvent.scrollingVelocity(), -wheelEvent.delta(), [](const FloatPoint& targetOffset) { return targetOffset; });
+            startMomentumScrollWithInitialVelocity(m_client.scrollOffset(), -adjustedVelocity(wheelEvent.scrollingVelocity()), -wheelEvent.delta(), [](const FloatPoint& targetOffset) { return targetOffset; });
 #if !LOG_DISABLED
             m_eventDrivenScrollOffset = m_client.scrollOffset();
             m_eventDrivenScrollMomentumStartOffset = m_eventDrivenScrollOffset;
