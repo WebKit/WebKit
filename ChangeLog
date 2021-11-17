@@ -1,3 +1,15 @@
+2021-11-17  Patrick Angle  <pangle@apple.com>
+
+        Update my (Patrick Angle's) status to reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=233270
+
+        Unreviewed.
+
+        Update my status to reviewer, as well as drive-by updates to set my github name and update the area of
+        expertise.
+
+        * metadata/contributors.json:
+
 2021-11-17  Chris Lord  <clord@igalia.com>
 
         Add Chris Lord's GitHub username to contributors.json
