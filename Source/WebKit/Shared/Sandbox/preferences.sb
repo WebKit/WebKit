@@ -30,7 +30,7 @@
 (define (shared-preferences-read . domains)
     (for-each (lambda (domain)
         (begin
-            (allow user-preference-read (preference-domain domain))
+            (allow user-preference-read (with telemetry) (preference-domain domain))
             (allow file-read*
                 (literal (string-append "/Library/Preferences/" domain ".plist"))
                 (home-library-preferences-literal (string-append "/" domain ".plist"))
