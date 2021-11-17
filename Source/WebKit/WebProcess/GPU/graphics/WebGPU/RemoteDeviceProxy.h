@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUIdentifier.h"
+#include <pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPUDevice.h>
 #include <wtf/Deque.h>
 

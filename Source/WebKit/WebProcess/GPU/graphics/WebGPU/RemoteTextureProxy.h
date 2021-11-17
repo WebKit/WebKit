@@ -32,6 +32,7 @@
 #include <pal/graphics/WebGPU/WebGPUTexture.h>
 #include <pal/graphics/WebGPU/WebGPUTextureDimension.h>
 #include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
+#include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
 
 namespace WebKit::WebGPU {
 

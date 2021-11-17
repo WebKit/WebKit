@@ -1,3 +1,11 @@
+2021-11-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, fix WinCairo build following r285881.
+
+        * CMakeLists.txt:
+        * WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.h:
+
 2021-11-16  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemFileHandle.getFile()
