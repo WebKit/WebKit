@@ -219,12 +219,12 @@ Name SymbolEnv::TemplateName::fullName(std::string &buffer) const
                     break;
 
                 case TemplateArg::Kind::Int:
-                    sprintf(argBuffer, "%i", value.i);
+                    snprintf(argBuffer, sizeof(argBuffer), "%i", value.i);
                     buffer += argBuffer;
                     break;
 
                 case TemplateArg::Kind::UInt:
-                    sprintf(argBuffer, "%u", value.u);
+                    snprintf(argBuffer, sizeof(argBuffer), "%u", value.u);
                     buffer += argBuffer;
                     break;
 
@@ -241,15 +241,15 @@ Name SymbolEnv::TemplateName::fullName(std::string &buffer) const
                         buffer += type.getBasicString();
                         if (type.isVector())
                         {
-                            sprintf(argBuffer, "%i", type.getNominalSize());
+                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getNominalSize());
                             buffer += argBuffer;
                         }
                         else if (type.isMatrix())
                         {
-                            sprintf(argBuffer, "%i", type.getCols());
+                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getCols());
                             buffer += argBuffer;
                             buffer += "x";
-                            sprintf(argBuffer, "%i", type.getRows());
+                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getRows());
                             buffer += argBuffer;
                         }
                     }

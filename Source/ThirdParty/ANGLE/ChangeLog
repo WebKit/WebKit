@@ -1,3 +1,18 @@
+2021-11-17  Dean Jackson  <dino@apple.com>
+
+        ANGLE build failure - sprintf is deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=233279
+
+        Reviewed by Wenson Hsieh.
+
+        Replace sprintf with snprintf.
+
+        * src/compiler/translator/TranslatorMetalDirect/IdGen.cpp:
+        (IdGen::createNewName):
+        * src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp:
+        * src/compiler/translator/TranslatorMetalDirect/SymbolEnv.cpp:
+        (SymbolEnv::TemplateName::fullName const):
+
 2021-11-06  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository as of r285357

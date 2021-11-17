@@ -23,7 +23,7 @@ Name IdGen::createNewName(size_t count,
 {
     const unsigned id = mNext++;
     char idBuffer[std::numeric_limits<unsigned>::digits10 + 1];
-    sprintf(idBuffer, "%u", id);
+    snprintf(idBuffer, sizeof(idBuffer), "%u", id);
 
     mNewNameBuffer.clear();
     mNewNameBuffer += '_';

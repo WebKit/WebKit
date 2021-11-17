@@ -597,7 +597,7 @@ class ConvertStructState : angle::NonCopyable
     void pushNamePath(unsigned extra)
     {
         char buffer[std::numeric_limits<unsigned>::digits10 + 1];
-        sprintf(buffer, "%u", extra);
+        snprintf(buffer, sizeof(buffer), "%u", extra);
         pushNamePath(buffer);
     }
 
