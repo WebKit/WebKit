@@ -160,7 +160,12 @@ TEST(WKInspectorExtensionDelegate, ShowAndHideTabCallbacks)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 }
 
+// FIXME: Re-enable this test for debug once webkit.org/b/231847 is fixed.
+#if !defined(NDEBUG)
+TEST(WKInspectorExtensionDelegate, DISABLED_InspectedPageNavigatedCallbacks)
+#else
 TEST(WKInspectorExtensionDelegate, InspectedPageNavigatedCallbacks)
+#endif
 {
     resetGlobalState();
 

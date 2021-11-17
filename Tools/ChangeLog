@@ -1,3 +1,12 @@
+2021-11-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS Debug] TestWebKitAPI.WKInspectorExtensionDelegate.InspectedPageNavigatedCallbacks is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231847
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm: Disable test in the debug configuration.
+
 2021-11-17  Zixing Liu  <liushuyu011@gmail.com>
 
         [GTK][WPE] Support getting and setting HTTP headers in custom URI scheme handlers
