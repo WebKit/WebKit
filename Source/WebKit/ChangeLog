@@ -1,3 +1,15 @@
+2021-11-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Block access to unused resources in the Networking process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=233086
+        <rdar://problem/85376544>
+
+        Reviewed by Brent Fulgham.
+
+        Follow-up patch, allow access to logging service for root.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2021-11-18  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerAVFoundation should support rvfc

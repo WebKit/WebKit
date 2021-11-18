@@ -360,6 +360,10 @@
     (literal "/private/var/run/mDNSResponder")
     (remote tcp))
 
+(with-filter (uid 0)
+    (allow mach-lookup
+        (global-name "com.apple.system.logger")))
+
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup
     (global-name "org.h5l.kcm")
