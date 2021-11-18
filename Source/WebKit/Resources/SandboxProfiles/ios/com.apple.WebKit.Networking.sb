@@ -321,7 +321,7 @@
     (allow file-read*
         (subpath "/usr/lib"
                  "/usr/share"
-                 "/private/var/db/timezone")
+                 "/private/var/db/timezone"
                  "/private/var/preferences/Logging"))
 
     (allow-read-and-issue-generic-extensions
@@ -461,7 +461,7 @@
 
 (deny lsopen)
 
-(deny sysctl*) (with telemetry)
+(deny sysctl* (with telemetry))
 (allow sysctl-read
     (sysctl-name
         "hw.activecpu"
