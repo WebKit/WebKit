@@ -577,10 +577,13 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
                 // We managed to break this text run mid content. It has to be either an arbitrary mid-word or a hyphen break.
                 return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { true, partialRun } };
             }
-            auto trailingRunIndex = *findTrailingRunIndex(runs, index);
-            // At worst we are back to the overflowing run, like in the example above.
-            ASSERT(trailingRunIndex >= overflowingRunIndex);
-            return OverflowingTextContent::BreakingPosition { trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
+            if (auto trailingRunIndex = findTrailingRunIndex(runs, index)) {
+                // At worst we are back to the overflowing run, like in the example above.
+                ASSERT(*trailingRunIndex >= overflowingRunIndex);
+                return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
+            }
+            // This happens when the overflowing run is also the first run in this set, no trailing run.
+            return OverflowingTextContent::BreakingPosition { overflowingRunIndex, { } };
         }
         nextContentWidth += run.logicalWidth;
     }
