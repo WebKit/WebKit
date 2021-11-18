@@ -64,8 +64,8 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
         window.removeEventListener("blur", this, options);
         window.removeEventListener("keydown", this, options);
         window.removeEventListener("mousedown", this, options);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayShown, this);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayHidden, this);
+        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayShown, this);
+        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayHidden, this);
 
         this._stopEventSamplingTimerIfNeeded();
     }
