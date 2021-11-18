@@ -121,7 +121,7 @@ public:
         return aboveLowerBound(rawPtr) && belowUpperBound(rawPtr);
     }
     
-    const CellAttributes& attributes() const { return m_attributes; }
+    const CellAttributes attributes() const { return m_attributes; }
     
     Dependency aboutToMark(HeapVersion) { return Dependency(); }
     

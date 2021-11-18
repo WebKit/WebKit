@@ -1,3 +1,29 @@
+2021-11-18  Mark Lam  <mark.lam@apple.com>
+
+        CellAttributes should be returned by value.
+        https://bugs.webkit.org/show_bug.cgi?id=233335
+        rdar://85568435
+
+        Reviewed by Yusuke Suzuki.
+
+        CellAttributes fits in 16 bits, and client code never modifies returned CellAttributes
+        values.  Hence, there is no reason to return them by reference.
+
+        Also fixed a bit-rotted comment in SubSpace.h.
+
+        * heap/BlockDirectory.h:
+        (JSC::BlockDirectory::attributes const):
+        * heap/HeapCellType.h:
+        (JSC::HeapCellType::attributes const):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::attributes const):
+        (JSC::MarkedBlock::attributes const):
+        * heap/PreciseAllocation.h:
+        (JSC::PreciseAllocation::attributes const):
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::attributes const):
+
 2021-11-18  Robin Morisset  <rmorisset@apple.com>
 
         DFGByteCodeParser.cpp should avoid resizing the Operands<> of every BasicBlock on every inlining

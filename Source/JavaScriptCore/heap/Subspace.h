@@ -39,7 +39,7 @@ class HeapCellType;
 
 // The idea of subspaces is that you can provide some custom behavior for your objects if you
 // allocate them from a custom Subspace in which you override some of the virtual methods. This
-// class is the baseclass of Subspaces. Usually you will use either Subspace or FixedSizeSubspace.
+// class is the baseclass of all subspaces e.g. CompleteSubspace, IsoSubspace.
 class Subspace {
     WTF_MAKE_NONCOPYABLE(Subspace);
     WTF_MAKE_FAST_ALLOCATED;
@@ -50,7 +50,7 @@ public:
     const char* name() const { return m_name.data(); }
     MarkedSpace& space() const { return m_space; }
     
-    const CellAttributes& attributes() const;
+    const CellAttributes attributes() const;
     HeapCellType* heapCellType() const { return m_heapCellType; }
     AlignedMemoryAllocator* alignedMemoryAllocator() const { return m_alignedMemoryAllocator; }
     
