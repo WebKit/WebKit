@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivateAVFoundation.h"
+#include <CoreMedia/CMTime.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 
@@ -342,6 +343,11 @@ private:
     bool pauseAtHostTime(const MonotonicTime&) final;
     bool haveBeenAskedToPaint() const { return m_haveBeenAskedToPaint; }
 
+    void startVideoFrameMetadataGathering() final;
+    void stopVideoFrameMetadataGathering() final;
+    std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
+    void checkNewVideoFrameMetadata(CMTime);
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
@@ -451,6 +457,10 @@ private:
     bool m_haveProcessedChapterTracks { false };
     bool m_waitForVideoOutputMediaDataWillChangeTimedOut { false };
     bool m_haveBeenAskedToPaint { false };
+    uint64_t m_sampleCount { 0 };
+    RetainPtr<id> m_videoFrameMetadataGatheringObserver;
+    bool m_isGatheringVideoFrameMetadata { false };
+    std::optional<VideoFrameMetadata> m_videoFrameMetadata;
 };
 
 }

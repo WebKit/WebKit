@@ -132,6 +132,9 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     PlayAtHostTime(MonotonicTime time)
     PauseAtHostTime(MonotonicTime time)
+
+    StartVideoFrameMetadataGathering()
+    StopVideoFrameMetadataGathering()
 }
 
 #endif

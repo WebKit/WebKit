@@ -1,3 +1,22 @@
+2021-11-18  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerAVFoundation should support rvfc
+        https://bugs.webkit.org/show_bug.cgi?id=231945
+        <rdar://problem/84657372>
+
+        Reviewed by Eric Carlson.
+
+        Transforming tests from async to promise based so that there is only one video playing at a time, to make it work smoothly in iOS.
+
+        * web-platform-tests/video-rvfc/request-video-frame-callback-dom-expected.txt:
+        * web-platform-tests/video-rvfc/request-video-frame-callback-dom.html:
+        * web-platform-tests/video-rvfc/request-video-frame-callback-parallel-expected.txt:
+        * web-platform-tests/video-rvfc/request-video-frame-callback-parallel.html:
+        * web-platform-tests/video-rvfc/request-video-frame-callback-repeating-expected.txt:
+        * web-platform-tests/video-rvfc/request-video-frame-callback-repeating.html:
+        * web-platform-tests/video-rvfc/request-video-frame-callback-expected.txt:
+        * web-platform-tests/video-rvfc/request-video-frame-callback.html:
+
 2021-11-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Import WPT tests. November 2021 edition.

@@ -307,6 +307,12 @@ private:
     void playAtHostTime(MonotonicTime);
     void pauseAtHostTime(MonotonicTime);
 
+    void startVideoFrameMetadataGathering();
+    void stopVideoFrameMetadataGathering();
+#if PLATFORM(COCOA)
+    void mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
+#endif
+
     bool mediaPlayerPausedOrStalled() const;
     void currentTimeChanged(const MediaTime&);
 

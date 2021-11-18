@@ -536,6 +536,11 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
             [m_avPlayer removeTimeObserver:m_currentTimeObserver.get()];
         m_currentTimeObserver = nil;
 
+        if (m_videoFrameMetadataGatheringObserver) {
+            [m_avPlayer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
+            m_videoFrameMetadataGatheringObserver = nil;
+        }
+
         m_avPlayer = nil;
     }
 
@@ -1108,6 +1113,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         });
     }];
 
+    if (m_isGatheringVideoFrameMetadata)
+        startVideoFrameMetadataGathering();
     setDelayCallbacks(false);
 }
 
@@ -1431,6 +1438,49 @@ bool MediaPlayerPrivateAVFoundationObjC::pauseAtHostTime(const MonotonicTime& ho
 bool MediaPlayerPrivateAVFoundationObjC::platformPaused() const
 {
     return m_cachedTimeControlStatus == AVPlayerTimeControlStatusPaused;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::startVideoFrameMetadataGathering()
+{
+    ASSERT(!m_videoFrameMetadataGatheringObserver || m_avPlayer);
+    m_isGatheringVideoFrameMetadata = true;
+
+    // FIXME: We should use a CADisplayLink to get updates on rendering, for now we emulate with addPeriodicTimeObserverForInterval.
+    m_videoFrameMetadataGatheringObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentTime) {
+        ensureOnMainThread([weakThis, currentTime] {
+            if (weakThis)
+                weakThis->checkNewVideoFrameMetadata(currentTime);
+        });
+    }];
+}
+
+void MediaPlayerPrivateAVFoundationObjC::checkNewVideoFrameMetadata(CMTime currentTime)
+{
+    if (!updateLastPixelBuffer())
+        return;
+
+    VideoFrameMetadata metadata;
+    metadata.width = m_cachedPresentationSize.width();
+    metadata.height = m_cachedPresentationSize.height();
+    metadata.presentedFrames = ++m_sampleCount;
+    metadata.mediaTime = PAL::CMTimeGetSeconds(currentTime);
+    // FIXME: presentationTime and expectedDisplayTime might not always have the same value, we should try getting more precise values.
+    metadata.presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds();
+    metadata.expectedDisplayTime = metadata.presentationTime;
+
+    m_videoFrameMetadata = metadata;
+    player()->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
+}
+
+void MediaPlayerPrivateAVFoundationObjC::stopVideoFrameMetadataGathering()
+{
+    m_isGatheringVideoFrameMetadata = false;
+    m_videoFrameMetadata = { };
+
+    if (m_videoFrameMetadataGatheringObserver) {
+        [m_avPlayer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
+        m_videoFrameMetadataGatheringObserver = nil;
+    }
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformDuration() const
@@ -2548,7 +2598,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
     // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
     // should be displayed.
-    if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer))
+    if ((m_isGatheringVideoFrameMetadata || !updateLastPixelBuffer()) && (m_lastImage || !m_lastPixelBuffer))
         return;
 
     if (!m_pixelBufferConformer) {
@@ -2583,9 +2633,8 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime()
 {
-    updateLastPixelBuffer();
-    if (!m_lastPixelBuffer)
-        return nullptr;
+    if (!m_isGatheringVideoFrameMetadata)
+        updateLastPixelBuffer();
 
     return m_lastPixelBuffer;
 }

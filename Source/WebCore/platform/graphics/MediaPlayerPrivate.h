@@ -323,6 +323,8 @@ public:
     virtual bool pauseAtHostTime(const MonotonicTime&) { return false; }
 
     virtual std::optional<VideoFrameMetadata> videoFrameMetadata() { return { }; }
+    virtual void startVideoFrameMetadataGathering() { }
+    virtual void stopVideoFrameMetadataGathering() { }
 };
 
 }

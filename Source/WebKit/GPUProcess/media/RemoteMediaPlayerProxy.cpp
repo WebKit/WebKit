@@ -1098,6 +1098,18 @@ void RemoteMediaPlayerProxy::pauseAtHostTime(MonotonicTime time)
         m_player->pauseAtHostTime(time);
 }
 
+void RemoteMediaPlayerProxy::startVideoFrameMetadataGathering()
+{
+    if (m_player)
+        m_player->startVideoFrameMetadataGathering();
+}
+
+void RemoteMediaPlayerProxy::stopVideoFrameMetadataGathering()
+{
+    if (m_player)
+        m_player->startVideoFrameMetadataGathering();
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 {

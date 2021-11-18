@@ -33,6 +33,11 @@ http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
 # rdar://problem/61793884 : Enabling this test for WK1 only.
 fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Pass ]
 
+imported/w3c/web-platform-tests/video-rvfc [ Pass ]
+# Timing out tests until we add XR session.
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

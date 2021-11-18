@@ -1,3 +1,15 @@
+2021-11-18  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerAVFoundation should support rvfc
+        https://bugs.webkit.org/show_bug.cgi?id=231945
+
+        Reviewed by Eric Carlson.
+
+        Enable rvfc by default in test runner.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * WebKitTestRunner/TestController.cpp:
+
 2021-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] jsc_value_object_define_property_accessor() throws an exception when called on a value without a wrapper instance

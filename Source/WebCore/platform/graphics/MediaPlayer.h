@@ -286,6 +286,10 @@ public:
 
     virtual void mediaPlayerQueueTaskOnEventLoop(Function<void()>&& task) { callOnMainThread(WTFMove(task)); }
 
+#if PLATFORM(COCOA)
+    virtual void mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&) { }
+#endif
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
@@ -584,6 +588,10 @@ public:
     void removeTextTrack(InbandTextTrackPrivate&);
     void removeVideoTrack(VideoTrackPrivate&);
 
+#if PLATFORM(COCOA)
+    void onNewVideoFrameMetadata(VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
+#endif
+
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
     void syncTextTrackBounds();
@@ -681,6 +689,8 @@ public:
     bool hasMediaEngine() const;
 
     std::optional<VideoFrameMetadata> videoFrameMetadata();
+    void startVideoFrameMetadataGathering();
+    void stopVideoFrameMetadataGathering();
 
 private:
     MediaPlayer(MediaPlayerClient&);
@@ -725,6 +735,7 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     bool m_shouldContinueAfterKeyNeeded { false };
 #endif
+    bool m_isGatheringVideoFrameMetadata { false };
 };
 
 class MediaPlayerFactory {

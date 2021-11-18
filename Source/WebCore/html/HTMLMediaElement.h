@@ -641,6 +641,9 @@ protected:
     void setChangingVideoFullscreenMode(bool value) { m_changingVideoFullscreenMode = value; }
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
+protected:
+    void mediaPlayerEngineUpdated() override;
+
 private:
     friend class Internals;
 
@@ -692,7 +695,6 @@ private:
     void mediaPlayerSizeChanged() final;
     void mediaPlayerRenderingModeChanged() final;
     bool mediaPlayerAcceleratedCompositingEnabled() final;
-    void mediaPlayerEngineUpdated() final;
     void mediaPlayerWillInitializeMediaEngine() final;
     void mediaPlayerDidInitializeMediaEngine() final;
     void mediaPlayerReloadAndResumePlaybackIfNeeded() final;

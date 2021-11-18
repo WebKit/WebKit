@@ -1,3 +1,28 @@
+2021-11-18  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerAVFoundation should support rvfc
+        https://bugs.webkit.org/show_bug.cgi?id=231945
+        <rdar://problem/84657372>
+
+        Reviewed by Eric Carlson.
+
+        Add IPC messaging to start/stop metadata gathering from WebProcess to GPUProcess.
+        Add IPC messaging to push metadata to WebProcess, including sending the corresponding CVPixelBuffer for the current metadata.
+        MediaPlayerPrivateRemote will then serve that buffer when being requested the current image.
+        This ensures that painting on a canvas does not mark the current buffer as acquired, which would then skip the video frame metadata gathering.
+        This also ensures the same buffer is used if a video element is painted several times during the same rvfc callback.
+        This has the side benefit of removing the synchronous IPC to paint the video element in a canvas.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        * Scripts/webkit/messages.py:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+
 2021-11-18  Chris Lord  <clord@igalia.com>
 
         [GLIB] twitch.tv forces synchronous scrolling

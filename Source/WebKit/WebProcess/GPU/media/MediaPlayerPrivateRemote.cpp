@@ -80,6 +80,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#import <WebCore/PixelBufferConformerCV.h>
 #import <WebCore/VideoLayerManagerObjC.h>
 #endif
 
@@ -1375,6 +1376,27 @@ bool MediaPlayerPrivateRemote::pauseAtHostTime(const MonotonicTime& time)
         return false;
     connection().send(Messages::RemoteMediaPlayerProxy::PauseAtHostTime(time), m_id);
     return true;
+}
+
+std::optional<VideoFrameMetadata> MediaPlayerPrivateRemote::videoFrameMetadata()
+{
+    auto videoFrameMetadata = std::exchange(m_videoFrameMetadata, { });
+    return videoFrameMetadata;
+}
+
+void MediaPlayerPrivateRemote::startVideoFrameMetadataGathering()
+{
+    m_isGatheringVideoFrameMetadata = true;
+    connection().send(Messages::RemoteMediaPlayerProxy::StartVideoFrameMetadataGathering(), m_id);
+}
+
+void MediaPlayerPrivateRemote::stopVideoFrameMetadataGathering()
+{
+    m_isGatheringVideoFrameMetadata = false;
+#if PLATFORM(COCOA)
+    m_pixelBufferGatheredWithVideoFrameMetadata = nullptr;
+#endif
+    connection().send(Messages::RemoteMediaPlayerProxy::StopVideoFrameMetadataGathering(), m_id);
 }
 
 void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)

@@ -1,3 +1,16 @@
+2021-11-18  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerAVFoundation should support rvfc
+        https://bugs.webkit.org/show_bug.cgi?id=231945
+
+        Reviewed by Eric Carlson.
+
+        Unskipped some tests.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Import WPT tests. November 2021 edition.

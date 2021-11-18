@@ -589,6 +589,9 @@ void HTMLVideoElement::exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaE
 
 unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallback>&& callback)
 {
+    if (m_videoFrameRequests.isEmpty() && player())
+        player()->startVideoFrameMetadataGathering();
+
     auto identifier = ++m_nextVideoFrameRequestIndex;
     m_videoFrameRequests.append(makeUniqueRef<VideoFrameRequest>(identifier, WTFMove(callback)));
 
@@ -608,6 +611,9 @@ void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
         return;
     }
     m_videoFrameRequests.remove(index);
+
+    if (m_videoFrameRequests.isEmpty() && player())
+        player()->stopVideoFrameMetadataGathering();
 }
 
 static void processVideoFrameMetadataTimestamps(VideoFrameMetadata& metadata, Performance& performance)
@@ -640,13 +646,23 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
     for (size_t index = 0; index < callbackCount; ++index) {
         auto& request = m_videoFrameRequests[index];
         if (!request->cancelled) {
-            request->callback->handleEvent(now.value(), *videoFrameMetadata);
+            request->callback->handleEvent(std::round(now.milliseconds()), *videoFrameMetadata);
             request->cancelled = true;
         }
     }
     m_isRunningVideoFrameRequests = false;
 
     m_videoFrameRequests.removeAllMatching([](auto& callback) { return callback->cancelled; });
+
+    if (m_videoFrameRequests.isEmpty() && player())
+        player()->stopVideoFrameMetadataGathering();
+}
+
+void HTMLVideoElement::mediaPlayerEngineUpdated()
+{
+    HTMLMediaElement::mediaPlayerEngineUpdated();
+    if (!m_videoFrameRequests.isEmpty() && player())
+        player()->startVideoFrameMetadataGathering();
 }
 
 }
