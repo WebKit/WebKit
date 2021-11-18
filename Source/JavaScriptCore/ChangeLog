@@ -1,3 +1,27 @@
+2021-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] jsc_value_object_define_property_accessor() throws an exception when called on a value without a wrapper instance
+        https://bugs.webkit.org/show_bug.cgi?id=233253
+
+        Reviewed by Michael Catanzaro.
+
+        We assumed that getter and setter were always methods, so we always try to set the initial parameter as the
+        instance. When called with a value not having an instance we get an exception because the expected instance is
+        nullptr. This patch changes the behavior of jsc_value_object_define_property_accessor() to call the getter and
+        setter as functions, but keeping the behavior of jsc_class_add_property() in which case they are still called as
+        methods.
+
+        * API/glib/JSCClass.cpp:
+        (jsc_class_add_property): Use jscValueAddPropertyAccessor().
+        * API/glib/JSCValue.cpp:
+        (jsObjectCall): Remove useless break after return.
+        (jscValueObjectDefinePropertyAccessor): Helper to define the property accessor using the given function type for
+        the getter and setter.
+        (jsc_value_object_define_property_accessor): Call jscValueObjectDefinePropertyAccessor() with function as
+        function type.
+        (jscValueAddPropertyAccessor): Call jscValueObjectDefinePropertyAccessor() with method as function type.
+        * API/glib/JSCValuePrivate.h:
+
 2021-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] TypedArray GetArrayLength should not use Reuse

@@ -859,5 +859,5 @@ void jsc_class_add_property(JSCClass* jscClass, const char* name, GType property
 
     auto context = jscContextGetOrCreate(priv->context);
     GRefPtr<JSCValue> prototype = jscContextGetOrCreateValue(context.get(), toRef(priv->prototype.get()));
-    jsc_value_object_define_property_accessor(prototype.get(), name, JSC_VALUE_PROPERTY_CONFIGURABLE, propertyType, getter, setter, userData, destroyNotify);
+    jscValueAddPropertyAccessor(prototype.get(), name, propertyType, getter, setter, userData, destroyNotify);
 }

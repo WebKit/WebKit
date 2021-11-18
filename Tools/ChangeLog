@@ -1,3 +1,17 @@
+2021-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] jsc_value_object_define_property_accessor() throws an exception when called on a value without a wrapper instance
+        https://bugs.webkit.org/show_bug.cgi?id=233253
+
+        Reviewed by Michael Catanzaro.
+
+        Add unit tests to check jsc_value_object_define_property_accessor().
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (getIntProperty):
+        (setIntProperty):
+        (testJSCObject):
+
 2021-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Implement most of redirect and modify-headers action types

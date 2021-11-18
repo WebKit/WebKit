@@ -867,13 +867,11 @@ static JSValueRef jsObjectCall(JSGlobalContextRef jsContext, JSObjectRef functio
     switch (functionType) {
     case JSC::JSCCallbackFunction::Type::Constructor:
         return JSObjectCallAsConstructor(jsContext, function, arguments.size(), arguments.data(), exception);
-        break;
     case JSC::JSCCallbackFunction::Type::Method:
         ASSERT(thisObject);
         FALLTHROUGH;
     case JSC::JSCCallbackFunction::Type::Function:
         return JSObjectCallAsFunction(jsContext, function, thisObject, arguments.size(), arguments.data(), exception);
-        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1074,35 +1072,8 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
     }
 }
 
-/**
- * jsc_value_object_define_property_accessor:
- * @value: a #JSCValue
- * @property_name: the name of the property to define
- * @flags: #JSCValuePropertyFlags
- * @property_type: the #GType of the property
- * @getter: (scope async) (nullable): a #GCallback to be called to get the property value
- * @setter: (scope async) (nullable): a #GCallback to be called to set the property value
- * @user_data: (closure): user data to pass to @getter and @setter
- * @destroy_notify: (nullable): destroy notifier for @user_data
- *
- * Define or modify a property with @property_name in object referenced by @value. When the
- * property value needs to be getted or set, @getter and @setter callbacks will be called.
- * When the property is cleared in the #JSCClass context, @destroy_notify is called with
- * @user_data as parameter. This is equivalent to JavaScript <function>Object.defineProperty()</function>
- * when used with an accessor descriptor.
- *
- * Note that the value returned by @getter must be fully transferred. In case of boxed types, you could use
- * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
- * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
- * with jsc_value_new_object() that receives the copy as instance parameter.
- */
-void jsc_value_object_define_property_accessor(JSCValue* value, const char* propertyName, JSCValuePropertyFlags flags, GType propertyType, GCallback getter, GCallback setter, gpointer userData, GDestroyNotify destroyNotify)
+static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* propertyName, JSCValuePropertyFlags flags, GType propertyType, JSC::JSCCallbackFunction::Type functionType, GCallback getter, GCallback setter, gpointer userData, GDestroyNotify destroyNotify)
 {
-    g_return_if_fail(JSC_IS_VALUE(value));
-    g_return_if_fail(propertyName);
-    g_return_if_fail(propertyType != G_TYPE_INVALID && propertyType != G_TYPE_NONE);
-    g_return_if_fail(getter || setter);
-
     JSCValuePrivate* priv = value->priv;
     auto* jsContext = jscContextGetJSContext(priv->context.get());
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
@@ -1126,15 +1097,17 @@ void jsc_value_object_define_property_accessor(JSCValue* value, const char* prop
     descriptor.setEnumerable(flags & JSC_VALUE_PROPERTY_ENUMERABLE);
     descriptor.setConfigurable(flags & JSC_VALUE_PROPERTY_CONFIGURABLE);
     if (getter) {
-        GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "get"_s,
-            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), propertyType, Vector<GType> { });
+        GRefPtr<GClosure> closure;
+        if (functionType == JSC::JSCCallbackFunction::Type::Function && userData)
+            closure = adoptGRef(g_cclosure_new_swap(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
+        else
+            closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
+        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "get"_s, functionType, nullptr, WTFMove(closure), propertyType, Vector<GType> { });
         descriptor.setGetter(function);
     }
     if (setter) {
         GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(setter, userData, getter ? nullptr : reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_s,
-            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType });
+        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_s, functionType, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType });
         descriptor.setSetter(function);
     }
     object->methodTable(vm)->defineOwnProperty(object, globalObject, name->identifier(&vm), descriptor, true);
@@ -1142,6 +1115,46 @@ void jsc_value_object_define_property_accessor(JSCValue* value, const char* prop
         jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
         return;
     }
+}
+
+/**
+ * jsc_value_object_define_property_accessor:
+ * @value: a #JSCValue
+ * @property_name: the name of the property to define
+ * @flags: #JSCValuePropertyFlags
+ * @property_type: the #GType of the property
+ * @getter: (scope async) (nullable): a #GCallback to be called to get the property value
+ * @setter: (scope async) (nullable): a #GCallback to be called to set the property value
+ * @user_data: (closure): user data to pass to @getter and @setter
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ *
+ * Define or modify a property with @property_name in object referenced by @value. When the
+ * property value needs to be getted or set, @getter and @setter callbacks will be called.
+ * When the property is cleared in the #JSCClass context, @destroy_notify is called with
+ * @user_data as parameter. This is equivalent to JavaScript <function>Object.defineProperty()</function>
+ * when used with an accessor descriptor.
+ *
+ * Note that the value returned by @getter must be fully transferred. In case of boxed types, you could use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as instance parameter.
+ *
+ * Note that @getter and @setter are called as functions and not methods, so they don't receive an instance as
+ * first parameter. Use jsc_class_add_property() if you want to add property accessor invoked as a method.
+ */
+void jsc_value_object_define_property_accessor(JSCValue* value, const char* propertyName, JSCValuePropertyFlags flags, GType propertyType, GCallback getter, GCallback setter, gpointer userData, GDestroyNotify destroyNotify)
+{
+    g_return_if_fail(JSC_IS_VALUE(value));
+    g_return_if_fail(propertyName);
+    g_return_if_fail(propertyType != G_TYPE_INVALID && propertyType != G_TYPE_NONE);
+    g_return_if_fail(getter || setter);
+
+    jscValueObjectDefinePropertyAccessor(value, propertyName, flags, propertyType, JSC::JSCCallbackFunction::Type::Function, getter, setter, userData, destroyNotify);
+}
+
+void jscValueAddPropertyAccessor(JSCValue* value, const char* propertyName, GType propertyType, GCallback getter, GCallback setter, gpointer userData, GDestroyNotify destroyNotify)
+{
+    jscValueObjectDefinePropertyAccessor(value, propertyName, JSC_VALUE_PROPERTY_CONFIGURABLE, propertyType, JSC::JSCCallbackFunction::Type::Method, getter, setter, userData, destroyNotify);
 }
 
 static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, std::optional<Vector<GType>>&& parameters)
