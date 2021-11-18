@@ -221,8 +221,13 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                     return endOfCodePoint;
                 }();
 
-                if (inlineTextItem.length() <= firstCodePointLength)
-                    return Result { Result::Action::Keep, IsEndOfLine::Yes };
+                if (inlineTextItem.length() <= firstCodePointLength) {
+                    if (continuousContent.runs().size() == 1) {
+                        // Let's return single, leading text items as is.
+                        return Result { Result::Action::Keep, IsEndOfLine::Yes };
+                    }
+                    return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, { } } };
+                }
 
                 auto firstCodePointWidth = TextUtil::width(inlineTextItem, leadingTextRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + firstCodePointLength, lineStatus.contentLogicalRight);
                 return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, PartialRun { firstCodePointLength, firstCodePointWidth } } };
