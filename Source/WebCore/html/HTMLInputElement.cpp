@@ -1159,8 +1159,10 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 
     updateValidity();
 
-    // Clear auto fill flag (and yellow background) on user edit.
+    // We clear certain AutoFill flags here because this catches user edits.
     setAutoFilled(false);
+    if (m_isAutoFilledAndViewable && value.isEmpty())
+        setAutoFilledAndViewable(false);
 }
 
 void HTMLInputElement::willDispatchEvent(Event& event, InputElementClickState& state)

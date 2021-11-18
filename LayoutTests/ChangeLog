@@ -1,3 +1,13 @@
+2021-11-17  Ricky Mondello  <rmondello@apple.com>
+
+        When an "autofilled and viewable" field becomes empty, turn "autofilled and viewable" off
+        https://bugs.webkit.org/show_bug.cgi?id=233239
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/input-autofilled-and-viewable-expected.txt: Added.
+        * fast/forms/input-autofilled-and-viewable.html: Added.
+
 2021-11-17  John Wilander  <wilander@apple.com>
 
         PCM: Add capability for click destination to fire triggering event without cross-site requests to the click source
