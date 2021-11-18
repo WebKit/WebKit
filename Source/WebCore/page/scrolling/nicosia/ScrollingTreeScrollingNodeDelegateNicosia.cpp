@@ -80,11 +80,14 @@ void ScrollingTreeScrollingNodeDelegateNicosia::updateVisibleLengths()
 
 WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
-    if (!scrollingNode().canHandleWheelEvent(wheelEvent, eventTargeting)
-        || !m_scrollController.handleWheelEvent(wheelEvent))
-        return WheelEventHandlingResult::unhandled();
+    bool wasInUserScroll = m_scrollController.isUserScrollInProgress();
+    bool handled = scrollingNode().canHandleWheelEvent(wheelEvent, eventTargeting) && m_scrollController.handleWheelEvent(wheelEvent);
+    bool isInUserScroll = m_scrollController.isUserScrollInProgress();
 
-    return WheelEventHandlingResult::handled();
+    if (isInUserScroll != wasInUserScroll)
+        scrollingNode().setUserScrollInProgress(isInUserScroll);
+
+    return handled ? WheelEventHandlingResult::handled() : WheelEventHandlingResult::unhandled();
 }
 
 std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDelegateNicosia::createTimer(Function<void()>&& function)

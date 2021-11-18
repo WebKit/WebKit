@@ -63,6 +63,25 @@ ScrollingTree::ScrollingTree()
 
 ScrollingTree::~ScrollingTree() = default;
 
+bool ScrollingTree::isUserScrollInProgressAtEventLocation(const PlatformWheelEvent& wheelEvent)
+{
+    if (!m_rootNode)
+        return false;
+
+    // This method is invoked by the event handling thread
+    Locker locker { m_treeStateLock };
+
+    if (m_treeState.nodesWithActiveUserScrolls.isEmpty())
+        return false;
+
+    FloatPoint position = wheelEvent.position();
+    position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+    if (auto node = scrollingNodeForPoint(position))
+        return m_treeState.nodesWithActiveUserScrolls.contains(node->scrollingNodeID());
+
+    return false;
+}
+
 OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(const PlatformWheelEvent& wheelEvent)
 {
     if (!m_rootNode)

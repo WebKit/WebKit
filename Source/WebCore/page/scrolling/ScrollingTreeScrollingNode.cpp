@@ -205,7 +205,7 @@ RectEdges<bool> ScrollingTreeScrollingNode::edgePinnedState() const
     };
 }
 
-bool ScrollingTreeScrollingNode::isUserScrollProgress() const
+bool ScrollingTreeScrollingNode::isUserScrollInProgress() const
 {
     return scrollingTree().isUserScrollInProgressForNode(scrollingNodeID());
 }

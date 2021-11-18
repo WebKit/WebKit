@@ -1,3 +1,17 @@
+2021-11-18  Chris Lord  <clord@igalia.com>
+
+        [GLIB] twitch.tv forces synchronous scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=232376
+        <rdar://problem/85247010>
+
+        Reviewed by Simon Fraser.
+
+        Don't force synchronous wheel event delivery for scroll events when
+        a user scroll is in progress.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2021-11-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteGraphicsContextGLProxyBase should not have platform-specific implementations

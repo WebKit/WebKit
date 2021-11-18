@@ -103,6 +103,7 @@ public:
     bool momentumScrollingAnimatorEnabled() const { return m_momentumScrollingAnimatorEnabled; }
     void setMomentumScrollingAnimatorEnabled(bool value) { m_momentumScrollingAnimatorEnabled = value; }
 
+    WEBCORE_EXPORT bool isUserScrollInProgressAtEventLocation(const PlatformWheelEvent&);
     WEBCORE_EXPORT OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const PlatformWheelEvent&);
     WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
 

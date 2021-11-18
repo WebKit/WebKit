@@ -69,7 +69,7 @@ public:
 
     RectEdges<bool> edgePinnedState() const;
 
-    bool isUserScrollProgress() const;
+    bool isUserScrollInProgress() const;
     void setUserScrollInProgress(bool);
 
     bool isScrollSnapInProgress() const;
