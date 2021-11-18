@@ -1,3 +1,38 @@
+2021-11-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import WPT tests. November 2021 edition.
+        https://bugs.webkit.org/show_bug.cgi?id=233197
+
+        Reviewed by Martin Robinson.
+
+        * web-platform-tests/css/css-flexbox/baseline-synthesis-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/baseline-synthesis-001.html: Added.
+        * web-platform-tests/css/css-flexbox/baseline-synthesis-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/baseline-synthesis-002.html: Added.
+        * web-platform-tests/css/css-flexbox/column-intrinsic-size-aspect-ratio-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/column-intrinsic-size-aspect-ratio-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-011-expected.txt:
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-011.html:
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-016-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-016.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-023.html:
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-013.html:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001.xhtml:
+        * web-platform-tests/css/css-flexbox/percentage-heights-016-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-016.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-017-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-017.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-018-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-018.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-019-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-019.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-large-intrinsic-size-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-large-intrinsic-size.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2021-11-17  Youenn Fablet  <youenn@apple.com>
 
         Add support for more rvfc metadata
