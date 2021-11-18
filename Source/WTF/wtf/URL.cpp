@@ -1190,6 +1190,11 @@ bool URL::hostIsIPAddress(StringView host)
 
 #endif
 
+Vector<KeyValuePair<String, String>> queryParameters(const URL& url)
+{
+    return URLParser::parseURLEncodedForm(url.query());
+}
+
 Vector<KeyValuePair<String, String>> differingQueryParameters(const URL& firstURL, const URL& secondURL)
 {
     auto firstQueryParameters = URLParser::parseURLEncodedForm(firstURL.query());

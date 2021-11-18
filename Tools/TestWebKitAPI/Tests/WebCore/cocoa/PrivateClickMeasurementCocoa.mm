@@ -94,7 +94,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     // Continue the test.
     errorMessage = pcm.calculateAndUpdateSourceSecretToken(base64URLEncodeToString([blindedSignature bytes], [blindedSignature length]));
     EXPECT_FALSE(errorMessage);
-    auto& persistentToken = pcm.sourceUnlinkableToken();
+    auto& persistentToken = pcm.sourceSecretToken();
     EXPECT_TRUE(persistentToken);
     EXPECT_FALSE(persistentToken->tokenBase64URL.isEmpty());
     EXPECT_FALSE(persistentToken->keyIDBase64URL.isEmpty());

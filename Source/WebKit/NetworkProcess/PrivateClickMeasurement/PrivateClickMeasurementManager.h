@@ -76,7 +76,7 @@ private:
     void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&);
     void clearSentAttribution(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint);
-    void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
+    void attribute(SourceSite&&, AttributionDestinationSite&&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
     void fireConversionRequest(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
     void fireConversionRequestImpl(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
     void clearExpired();
@@ -94,8 +94,8 @@ private:
     UniqueRef<PCM::Client> m_client;
 
     struct AttributionReportTestConfig {
-        URL attributionReportSourceURL;
-        URL attributionReportAttributeOnURL;
+        URL attributionReportClickSourceURL;
+        URL attributionReportClickDestinationURL;
     };
 
     std::optional<AttributionReportTestConfig> m_attributionReportTestConfig;

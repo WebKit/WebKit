@@ -1,3 +1,19 @@
+2021-11-17  John Wilander  <wilander@apple.com>
+
+        PCM: Add capability for click destination to fire triggering event without cross-site requests to the click source
+        https://bugs.webkit.org/show_bug.cgi?id=233173
+        <rdar://79426605>
+
+        Reviewed by Alex Christensen.
+
+        These changes are just a correction of a function name:
+        sourceUnlinkableToken() to sourceSecretToken()
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+
 2021-11-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement

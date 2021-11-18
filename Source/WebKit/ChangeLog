@@ -1,3 +1,44 @@
+2021-11-17  John Wilander  <wilander@apple.com>
+
+        PCM: Add capability for click destination to fire triggering event without cross-site requests to the click source
+        https://bugs.webkit.org/show_bug.cgi?id=233173
+        <rdar://79426605>
+
+        Reviewed by Alex Christensen.
+
+        This patch enables click destination sites a non-JavaScript way to fire triggering
+        events without a requirement to make cross-site requests to source sites. This is
+        referred to as a "same-site pixel API" and has been discussed in W3C Privacy CG:
+        https://github.com/privacycg/private-click-measurement/issues/71
+
+        The reason why some merchants want such an "API" is reluctance to deploy new
+        JavaScript on their sites. In some industries it's even a compliance issue. Legacy
+        "pixels" are however accepted and so a same-site "pixel" can work for them.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::insertPrivateClickMeasurement):
+            These changes are just a correction of a function name:
+            - sourceUnlinkableToken() to sourceSecretToken()
+            Note that it was always the secret token used, just bad renaming earlier.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+            Now checks if the incoming WebCore::PrivateClickMeasurement::AttributionTriggerData
+            carries a sourceRegistrableDomain. If so, it accepts that domain as the source site
+            for attribution if the triggering event was same-site as the first-party.
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+            These changes are just a correction of a function name:
+            - sourceUnlinkableToken() to sourceSecretToken()
+            Note that it was always the secret token used, just bad renaming earlier.
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+            These changes are because of clarification in naming:
+            - attributionReportSourceURL to attributionReportClickSourceURL
+            - attributionReportAttributeOnURL to attributionReportClickDestinationURL
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        (WebKit::PCM::Store::attributePrivateClickMeasurement):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.h:
+
 2021-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a Translation WebKit2 logging category

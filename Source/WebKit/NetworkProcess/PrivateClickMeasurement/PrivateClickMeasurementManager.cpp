@@ -248,14 +248,22 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
         return;
     }
 
+    RegistrableDomain sourceDomain;
     if (redirectDomain.matches(firstPartyURL)) {
-        m_client->broadcastConsoleMessage(MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because it was requested in an HTTP redirect that is same-site as the first-party."_s);
+        if (!attributionTriggerData.sourceRegistrableDomain) {
+            m_client->broadcastConsoleMessage(MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because it was requested in an HTTP redirect that is same-site as the   first-party and no attributionSource query parameter was provided."_s);
+            return;
+        }
+        sourceDomain = *attributionTriggerData.sourceRegistrableDomain;
+    } else if (attributionTriggerData.sourceRegistrableDomain) {
+        m_client->broadcastConsoleMessage(MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because it was requested in an HTTP redirect that is cross-site from the first-party but an attributionSource query parameter was still provided."_s);
         return;
-    }
+    } else
+        sourceDomain = WTFMove(redirectDomain);
 
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Triggering event accepted."_s);
 
-    attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData), m_privateClickMeasurementAppBundleIDForTesting ? *m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
+    attribute(SourceSite { WTFMove(sourceDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData), m_privateClickMeasurementAppBundleIDForTesting ? *m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
 }
 
 void PrivateClickMeasurementManager::startTimerImmediatelyForTesting()
@@ -276,12 +284,12 @@ void PrivateClickMeasurementManager::startTimer(Seconds seconds)
     m_firePendingAttributionRequestsTimer.startOneShot(seconds);
 }
 
-void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData, const ApplicationBundleIdentifier& applicationBundleIdentifier)
+void PrivateClickMeasurementManager::attribute(SourceSite&& sourceSite, AttributionDestinationSite&& destinationSite, AttributionTriggerData&& attributionTriggerData, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
     if (!featureEnabled())
         return;
 
-    store().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), m_isRunningTest ? WebCore::PrivateClickMeasurement::IsRunningLayoutTest::Yes : WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No, [this, weakThis = WeakPtr { *this }] (auto attributionSecondsUntilSendData, auto debugInfo) {
+    store().attributePrivateClickMeasurement(WTFMove(sourceSite), WTFMove(destinationSite), applicationBundleIdentifier, WTFMove(attributionTriggerData), m_isRunningTest ? WebCore::PrivateClickMeasurement::IsRunningLayoutTest::Yes : WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No, [this, weakThis = WeakPtr { *this }] (auto attributionSecondsUntilSendData, auto debugInfo) {
         if (!weakThis)
             return;
         
@@ -319,7 +327,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     if (!featureEnabled())
         return;
 
-    if (!attribution.sourceUnlinkableToken()) {
+    if (!attribution.sourceSecretToken()) {
         fireConversionRequestImpl(attribution, attributionReportEndpoint);
         return;
     }
@@ -339,7 +347,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
         auto publicKeyDataHash = crypto->computeHash();
 
         auto keyID = base64URLEncodeToString(publicKeyDataHash.data(), publicKeyDataHash.size());
-        if (keyID != attribution.sourceUnlinkableToken()->keyIDBase64URL)
+        if (keyID != attribution.sourceSecretToken()->keyIDBase64URL)
             return;
 
         fireConversionRequestImpl(attribution, attributionReportEndpoint);
@@ -351,10 +359,10 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     URL attributionURL;
     switch (attributionReportEndpoint) {
     case PrivateClickMeasurement::AttributionReportEndpoint::Source:
-        attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportSourceURL : attribution.attributionReportSourceURL();
+        attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportClickSourceURL : attribution.attributionReportClickSourceURL();
         break;
     case PrivateClickMeasurement::AttributionReportEndpoint::Destination:
-        attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportAttributeOnURL : attribution.attributionReportAttributeOnURL();
+        attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportClickDestinationURL : attribution.attributionReportClickDestinationURL();
     }
 
     if (attributionURL.isEmpty() || !attributionURL.isValid())

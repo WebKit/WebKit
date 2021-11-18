@@ -44,6 +44,7 @@ static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/pr
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
+const uint8_t privateClickMeasurementVersion = 2;
 
 const Seconds PrivateClickMeasurement::maxAge()
 {
@@ -103,15 +104,48 @@ PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const
     return copy;
 }
 
+Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequestQuery(const URL& redirectURL)
+{
+    if (!redirectURL.hasQuery())
+        return AttributionTriggerData { };
+
+    auto parameters = queryParameters(redirectURL);
+    if (!parameters.size())
+        return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL had a query string but it didn't contain supported parameters."_s);
+
+    if (parameters.size() > 1)
+        return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's query string contained unsupported parameters."_s);
+
+    auto parameter = parameters.first();
+    if (parameter.key == "attributionSource") {
+        if (parameter.value.isEmpty())
+            return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's attributionSource query parameter had no value."_s);
+
+        auto attributionSourceURL = URL(URL(), parameter.value);
+        if (!attributionSourceURL.isValid() || (attributionSourceURL.hasPath() && attributionSourceURL.path().length() > 1) || attributionSourceURL.hasCredentials() || attributionSourceURL.hasQuery() || attributionSourceURL.hasFragmentIdentifier())
+            return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's attributionSource query parameter was not a valid URL or was a URL with a path, credentials, query string, or fragment."_s);
+
+        AttributionTriggerData attributionTriggerData;
+        attributionTriggerData.sourceRegistrableDomain = RegistrableDomain { attributionSourceURL };
+        return attributionTriggerData;
+    }
+
+    return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL did not contain an attributionSource query parameter."_s);
+}
+
 Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
 {
     auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
     if (path.isEmpty() || !path.startsWith(privateClickMeasurementTriggerAttributionPath))
         return makeUnexpected(nullString());
 
-    if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasQuery() || redirectURL.hasFragmentIdentifier())
-        return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment."_s);
+    if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasFragmentIdentifier())
+        return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, and fragment."_s);
 
+    auto result = parseAttributionRequestQuery(redirectURL);
+    if (!result && !result.error().isEmpty())
+        return result;
+    auto attributionTriggerData = result.value();
 
     auto prefixLength = sizeof(privateClickMeasurementTriggerAttributionPath) - 1;
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize) {
@@ -119,7 +153,9 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
         if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)
             return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
 
-        return AttributionTriggerData { static_cast<uint8_t>(*attributionTriggerDataUInt64), Priority { 0 } };
+        attributionTriggerData.data = static_cast<uint8_t>(*attributionTriggerDataUInt64);
+        attributionTriggerData.priority = 0;
+        return attributionTriggerData;
     }
     
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1 + privateClickMeasurementPriorityPathSegmentSize) {
@@ -131,7 +167,9 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
         if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > Priority::MaxEntropy)
             return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, Priority::MaxEntropy, "."_s));
 
-        return AttributionTriggerData { static_cast<uint8_t>(*attributionTriggerDataUInt64), Priority { static_cast<uint8_t>(*attributionPriorityUInt64) } };
+        attributionTriggerData.data = static_cast<uint8_t>(*attributionTriggerDataUInt64);
+        attributionTriggerData.priority = static_cast<uint8_t>(*attributionPriorityUInt64);
+        return attributionTriggerData;
     }
 
     return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL path contained unrecognized parts."_s);
@@ -189,7 +227,7 @@ static URL attributionReportURL(const RegistrableDomain& domain)
     return makeValidURL(domain, privateClickMeasurementReportAttributionPath);
 }
 
-URL PrivateClickMeasurement::attributionReportSourceURL() const
+URL PrivateClickMeasurement::attributionReportClickSourceURL() const
 {
     if (!isValid())
         return URL();
@@ -197,7 +235,7 @@ URL PrivateClickMeasurement::attributionReportSourceURL() const
     return attributionReportURL(m_sourceSite.registrableDomain);
 }
 
-URL PrivateClickMeasurement::attributionReportAttributeOnURL() const
+URL PrivateClickMeasurement::attributionReportClickDestinationURL() const
 {
     if (!isValid())
         return URL();
@@ -216,7 +254,7 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
     reportDetails->setInteger("source_id"_s, m_sourceID.id);
     reportDetails->setString("attributed_on_site"_s, m_destinationSite.registrableDomain.string());
     reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
-    reportDetails->setInteger("version"_s, 2);
+    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
 
     // This token has been kept secret this far and cannot be linked to the unlinkable token.
     if (m_sourceSecretToken) {
@@ -274,7 +312,7 @@ Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
     reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
     // This token can not be linked to the secret token.
     reportDetails->setString("source_unlinkable_token"_s, m_sourceUnlinkableToken.valueBase64URL);
-    reportDetails->setInteger("version"_s, 2);
+    reportDetails->setInteger("version"_s, privateClickMeasurementVersion);
     return reportDetails;
 }
 

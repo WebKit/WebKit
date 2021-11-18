@@ -172,7 +172,8 @@ public:
         static constexpr uint8_t MaxEntropy = 15;
 
         enum class WasSent : bool { No, Yes };
-        
+
+        AttributionTriggerData() = default;
         AttributionTriggerData(uint8_t data, Priority priority, WasSent wasSent = WasSent::No)
             : data { data }
             , priority { priority.value }
@@ -188,6 +189,7 @@ public:
         uint8_t data { 0 };
         PriorityValue priority;
         WasSent wasSent = WasSent::No;
+        std::optional<RegistrableDomain> sourceRegistrableDomain;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<AttributionTriggerData> decode(Decoder&);
@@ -317,8 +319,8 @@ public:
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
     WEBCORE_EXPORT AttributionSecondsUntilSendData attributeAndGetEarliestTimeToSend(AttributionTriggerData&&, IsRunningLayoutTest);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
-    WEBCORE_EXPORT URL attributionReportSourceURL() const;
-    WEBCORE_EXPORT URL attributionReportAttributeOnURL() const;
+    WEBCORE_EXPORT URL attributionReportClickSourceURL() const;
+    WEBCORE_EXPORT URL attributionReportClickDestinationURL() const;
     WEBCORE_EXPORT Ref<JSON::Object> attributionReportJSON() const;
     const SourceSite& sourceSite() const { return m_sourceSite; };
     const AttributionDestinationSite& destinationSite() const { return m_destinationSite; };
@@ -371,7 +373,7 @@ public:
 #endif
 
     void setSourceUnlinkableTokenValue(const String& value) { m_sourceUnlinkableToken.valueBase64URL = value; }
-    const std::optional<SourceSecretToken>& sourceUnlinkableToken() const { return m_sourceSecretToken; }
+    const std::optional<SourceSecretToken>& sourceSecretToken() const { return m_sourceSecretToken; }
     WEBCORE_EXPORT void setSourceSecretToken(SourceSecretToken&&);
 
     template<class Encoder> void encode(Encoder&) const;
@@ -380,6 +382,7 @@ public:
     WEBCORE_EXPORT PrivateClickMeasurement isolatedCopy() const;
 
 private:
+    static Expected<AttributionTriggerData, String> parseAttributionRequestQuery(const URL&);
     bool isValid() const;
 
     SourceID m_sourceID;
@@ -505,7 +508,7 @@ std::optional<PrivateClickMeasurement::EphemeralSourceNonce> PrivateClickMeasure
 template<class Encoder>
 void PrivateClickMeasurement::AttributionTriggerData::encode(Encoder& encoder) const
 {
-    encoder << data << priority << wasSent;
+    encoder << data << priority << wasSent << sourceRegistrableDomain;
 }
 
 template<class Decoder>
@@ -526,7 +529,14 @@ std::optional<PrivateClickMeasurement::AttributionTriggerData> PrivateClickMeasu
     if (!wasSent)
         return std::nullopt;
     
-    return AttributionTriggerData { WTFMove(*data), Priority { *priority }, *wasSent };
+    std::optional<std::optional<RegistrableDomain>> sourceRegistrableDomain;
+    decoder >> sourceRegistrableDomain;
+    if (!sourceRegistrableDomain)
+        return std::nullopt;
+    
+    AttributionTriggerData attributionTriggerData { WTFMove(*data), Priority { *priority }, *wasSent };
+    attributionTriggerData.sourceRegistrableDomain = WTFMove(*sourceRegistrableDomain);
+    return attributionTriggerData;
 }
 
 } // namespace WebCore

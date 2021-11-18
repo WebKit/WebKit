@@ -47,9 +47,9 @@ TEST(PrivateClickMeasurement, WellKnownURLs)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(min6BitValue, PrivateClickMeasurement::Priority(min6BitValue)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    auto attributionSourceURL = attribution.attributionReportSourceURL();
+    auto attributionSourceURL = attribution.attributionReportClickSourceURL();
     ASSERT_EQ(attributionSourceURL.string(), "https://webkit.org/.well-known/private-click-measurement/report-attribution/");
-    auto attributionAttributeOnURL = attribution.attributionReportAttributeOnURL();
+    auto attributionAttributeOnURL = attribution.attributionReportClickDestinationURL();
     ASSERT_EQ(attributionAttributeOnURL.string(), "https://example.com/.well-known/private-click-measurement/report-attribution/");
 }
 
@@ -137,8 +137,8 @@ TEST(PrivateClickMeasurement, InvalidSourceHost)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { emptyURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportAttributeOnURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
 }
 
 TEST(PrivateClickMeasurement, InvalidDestinationHost)
@@ -146,8 +146,8 @@ TEST(PrivateClickMeasurement, InvalidDestinationHost)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { emptyURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportAttributeOnURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
 }
 
 TEST(PrivateClickMeasurement, AttributionTriggerData)
@@ -155,8 +155,8 @@ TEST(PrivateClickMeasurement, AttributionTriggerData)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData((PrivateClickMeasurement::AttributionTriggerData::MaxEntropy + 1), PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportAttributeOnURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
 }
 
 TEST(PrivateClickMeasurement, InvalidPriority)
@@ -164,16 +164,16 @@ TEST(PrivateClickMeasurement, InvalidPriority)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy + 1)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportAttributeOnURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
 }
 
 TEST(PrivateClickMeasurement, InvalidMissingConversion)
 {
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
 
-    ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportAttributeOnURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
     ASSERT_FALSE(attribution.timesToSend().sourceEarliestTimeToSend && attribution.timesToSend().destinationEarliestTimeToSend);
 }
 

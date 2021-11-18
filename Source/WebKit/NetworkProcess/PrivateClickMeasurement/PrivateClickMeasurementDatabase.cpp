@@ -175,7 +175,7 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
     if (!sourceID || !attributionDestinationID)
         return;
 
-    auto& sourceUnlinkableToken = attribution.sourceUnlinkableToken();
+    auto& sourceSecretToken = attribution.sourceSecretToken();
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
         auto attributionTriggerData = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().data : -1;
         auto priority = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().priority : -1;
@@ -194,9 +194,9 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
             || statement->bindInt(5, priority) != SQLITE_OK
             || statement->bindDouble(6, attribution.timeOfAdClick().secondsSinceEpoch().value()) != SQLITE_OK
             || statement->bindDouble(7, sourceEarliestTimeToSend) != SQLITE_OK
-            || statement->bindText(8, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
-            || statement->bindText(9, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
-            || statement->bindText(10, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(8, sourceSecretToken ? sourceSecretToken->tokenBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(9, sourceSecretToken ? sourceSecretToken->signatureBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(10, sourceSecretToken ? sourceSecretToken->keyIDBase64URL : emptyString()) != SQLITE_OK
             || statement->bindDouble(11, destinationEarliestTimeToSend) != SQLITE_OK
             || statement->bindText(12, attribution.sourceApplicationBundleID()) != SQLITE_OK
             || statement->step() != SQLITE_DONE) {
@@ -214,9 +214,9 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
         || statement->bindInt(2, *attributionDestinationID) != SQLITE_OK
         || statement->bindInt(3, attribution.sourceID().id) != SQLITE_OK
         || statement->bindDouble(4, attribution.timeOfAdClick().secondsSinceEpoch().value()) != SQLITE_OK
-        || statement->bindText(5, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
-        || statement->bindText(6, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
-        || statement->bindText(7, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(5, sourceSecretToken ? sourceSecretToken->tokenBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(6, sourceSecretToken ? sourceSecretToken->signatureBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(7, sourceSecretToken ? sourceSecretToken->keyIDBase64URL : emptyString()) != SQLITE_OK
         || statement->bindText(8, attribution.sourceApplicationBundleID()) != SQLITE_OK
         || statement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::insertPrivateClickMeasurement insertUnattributedPrivateClickMeasurementQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
