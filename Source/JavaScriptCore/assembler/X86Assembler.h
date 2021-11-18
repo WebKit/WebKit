@@ -2049,6 +2049,19 @@ public:
         m_formatter.oneByteOp(OP_CMP_EvGv, src, base, index, scale, offset);
     }
 
+    void cmpw_im(int imm, int offset, RegisterID base)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.prefix(PRE_OPERAND_SIZE);
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.prefix(PRE_OPERAND_SIZE);
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, base, offset);
+            m_formatter.immediate16(imm);
+        }
+    }
+
     void cmpw_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -2151,7 +2164,21 @@ public:
         m_formatter.prefix(PRE_OPERAND_SIZE);
         m_formatter.oneByteOp(OP_TEST_EvGv, src, dst);
     }
-    
+
+    void testw_im(int imm, int offset, RegisterID base)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, base, offset);
+        m_formatter.immediate16(imm);
+    }
+
+    void testw_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, base, index, scale, offset);
+        m_formatter.immediate16(imm);
+    }
+
     void testb_i8r(int imm, RegisterID dst)
     {
         if (dst == X86Registers::eax)

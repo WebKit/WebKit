@@ -326,6 +326,98 @@ void testBranchTruncateDoubleToInt32(double val, int32_t expected)
     }), expected);
 }
 
+void testBranchTest8()
+{
+    for (auto value : int32Operands()) {
+        for (auto value2 : int32Operands()) {
+            auto test1 = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                auto branch = jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(GPRInfo::argumentGPR0, 1), CCallHelpers::TrustedImm32(value2));
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                branch.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            auto test2 = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                auto branch = jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesOne), CCallHelpers::TrustedImm32(value2));
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                branch.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            int result = 0;
+            if (static_cast<uint8_t>(value) & static_cast<uint8_t>(value2))
+                result = 1;
+
+            uint8_t array[] = {
+                0,
+                static_cast<uint8_t>(value)
+            };
+            CHECK_EQ(invoke<int>(test1, array), result);
+            CHECK_EQ(invoke<int>(test2, array, 1), result);
+        }
+    }
+}
+
+void testBranchTest16()
+{
+    for (auto value : int32Operands()) {
+        for (auto value2 : int32Operands()) {
+            auto test1 = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                auto branch = jit.branchTest16(MacroAssembler::NonZero, CCallHelpers::Address(GPRInfo::argumentGPR0, 2), CCallHelpers::TrustedImm32(value2));
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                branch.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            auto test2 = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                auto branch = jit.branchTest16(MacroAssembler::NonZero, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesTwo), CCallHelpers::TrustedImm32(value2));
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                branch.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            int result = 0;
+            if (static_cast<uint16_t>(value) & static_cast<uint16_t>(value2))
+                result = 1;
+
+            uint16_t array[] = {
+                0,
+                static_cast<uint16_t>(value)
+            };
+            CHECK_EQ(invoke<int>(test1, array), result);
+            CHECK_EQ(invoke<int>(test2, array, 1), result);
+        }
+    }
+}
+
 #if CPU(X86_64)
 void testBranchTestBit32RegReg()
 {
@@ -5648,6 +5740,9 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testMul32WithImmediates());
     RUN(testLoadStorePair32());
     RUN(testSub32ArgImm());
+
+    RUN(testBranchTest8());
+    RUN(testBranchTest16());
 
 #if CPU(X86_64)
     RUN(testBranchTestBit32RegReg());

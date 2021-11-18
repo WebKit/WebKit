@@ -2759,6 +2759,26 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchTest16(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        TrustedImm32 mask16(static_cast<int16_t>(mask.m_value));
+        if (mask16.m_value == -1)
+            m_assembler.cmpw_im(0, address.offset, address.base);
+        else
+            m_assembler.testw_im(mask16.m_value, address.offset, address.base);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    Jump branchTest16(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        TrustedImm32 mask16(static_cast<int16_t>(mask.m_value));
+        if (mask16.m_value == -1)
+            m_assembler.cmpw_im(0, address.offset, address.base, address.index, address.scale);
+        else
+            m_assembler.testw_im(mask16.m_value, address.offset, address.base, address.index, address.scale);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         TrustedImm32 right8(static_cast<int8_t>(right.m_value));

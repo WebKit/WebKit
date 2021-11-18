@@ -1563,7 +1563,23 @@ public:
         MacroAssemblerX86Common::move(TrustedImmPtr(address.m_ptr), scratchRegister());
         return MacroAssemblerX86Common::branchTest8(cond, Address(scratchRegister()), mask8);
     }
-    
+
+    using MacroAssemblerX86Common::branchTest16;
+    Jump branchTest16(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        TrustedImm32 mask16(static_cast<int16_t>(mask.m_value));
+        TrustedImmPtr addr(reinterpret_cast<void*>(address.offset));
+        MacroAssemblerX86Common::move(addr, scratchRegister());
+        return MacroAssemblerX86Common::branchTest16(cond, BaseIndex(scratchRegister(), address.base, TimesOne), mask16);
+    }
+
+    Jump branchTest16(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        TrustedImm32 mask16(static_cast<int16_t>(mask.m_value));
+        MacroAssemblerX86Common::move(TrustedImmPtr(address.m_ptr), scratchRegister());
+        return MacroAssemblerX86Common::branchTest16(cond, Address(scratchRegister()), mask16);
+    }
+
     void xchg64(RegisterID reg, Address address)
     {
         m_assembler.xchgq_rm(reg, address.offset, address.base);

@@ -880,6 +880,12 @@ public:
         return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }
 
+    using MacroAssemblerBase::branchTest16;
+    Jump branchTest16(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        return MacroAssemblerBase::branchTest16(cond, Address(address.base, address.offset), mask);
+    }
+
 #else // !CPU(ADDRESS64)
 
     void addPtr(RegisterID src, RegisterID dest)

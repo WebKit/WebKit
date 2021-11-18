@@ -1772,7 +1772,7 @@ public:
 
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/
+        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask8);
@@ -1780,7 +1780,7 @@ public:
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/
+        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask8);
@@ -1788,11 +1788,36 @@ public:
 
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/
+        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
         move(TrustedImmPtr(address.m_ptr), addressTempRegister);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, Address(addressTempRegister), addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask8);
+    }
+
+    Jump branchTest16(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, addressTempRegister);
+        return branchTest32(cond, addressTempRegister, mask16);
+    }
+
+    Jump branchTest16(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, addressTempRegister);
+        return branchTest32(cond, addressTempRegister, mask16);
+    }
+
+    Jump branchTest16(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
+        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, Address(addressTempRegister), addressTempRegister);
+        return branchTest32(cond, addressTempRegister, mask16);
     }
 
     void farJump(RegisterID target, PtrTag)
@@ -2041,8 +2066,8 @@ public:
     // asm ops like test, or pseudo ops like pop().
     void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
-        load32(address, dataTempRegister);
-        test32(dataTempRegister, mask);
+        load32(address, addressTempRegister);
+        test32(addressTempRegister, mask);
         m_assembler.it(armV7Condition(cond), false);
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(1));
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
@@ -2051,8 +2076,8 @@ public:
     void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, dataTempRegister);
-        test32(dataTempRegister, mask8);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
+        test32(addressTempRegister, mask8);
         m_assembler.it(armV7Condition(cond), false);
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(1));
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));

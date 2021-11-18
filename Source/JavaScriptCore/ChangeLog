@@ -1,3 +1,46 @@
+2021-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add branchTest16 operation
+        https://bugs.webkit.org/show_bug.cgi?id=233275
+
+        Reviewed by Mark Lam.
+
+        This patch adds branchTest16 to all macro assemblers. And it also fixes the existing bug of
+        edge case of branchTest8: when we cannot represent the imm as ARM logical value, then we are
+        failing to emit the right instructions. Probably this bug does not appear since we are not using
+        such a value as an imm for branchTest8. We added tests to testmasm so that these code is stressed
+        now.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchTest16):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::branchTest32):
+        (JSC::MacroAssemblerARM64::branchTest8):
+        (JSC::MacroAssemblerARM64::branchTest16):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTest16):
+        (JSC::MacroAssemblerARMv7::test32):
+        (JSC::MacroAssemblerARMv7::test8):
+        * assembler/MacroAssemblerHelpers.h:
+        (JSC::MacroAssemblerHelpers::mask16OnCondition):
+        (JSC::MacroAssemblerHelpers::load16OnCondition):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load16):
+        (JSC::MacroAssemblerMIPS::load16SignedExtendTo32):
+        (JSC::MacroAssemblerMIPS::mask16OnTest):
+        (JSC::MacroAssemblerMIPS::branchTest16):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest16):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchTest16):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpw_im):
+        (JSC::X86Assembler::testw_im):
+        * assembler/testmasm.cpp:
+        (JSC::testBranchTest8):
+        (JSC::testBranchTest16):
+
 2021-11-18  David Kilzer  <ddkilzer@apple.com>
 
         Add missing dependencies for <wtf/Platform.h> when generating derived sources

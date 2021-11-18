@@ -1272,6 +1272,29 @@ public:
         }
     }
 
+    ALWAYS_INLINE void load16(AbsoluteAddress address, RegisterID dest)
+    {
+        load16(address.m_ptr, dest);
+    }
+
+    /* Need to use zero-extened load half-word for load16.  */
+    void load16SignedExtendTo32(Address address, RegisterID dest)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767
+            && !m_fixedWidth)
+            m_assembler.lh(dest, address.base, address.offset);
+        else {
+            /*
+                lui     addrTemp, (offset + 0x8000) >> 16
+                addu    addrTemp, addrTemp, base
+                lh      dest, (offset & 0xffff)(addrTemp)
+              */
+            m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.lh(dest, addrTempRegister, address.offset);
+        }
+    }
+
     void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         if (!m_fixedWidth) {
@@ -1292,6 +1315,28 @@ public:
             m_assembler.lh(dest, addrTempRegister, address.offset);
         }
     }
+
+    ALWAYS_INLINE void load16SignedExtendTo32(AbsoluteAddress address, RegisterID dest)
+    {
+        load16SignedExtendTo32(address.m_ptr, dest);
+    }
+
+    void load16SignedExtendTo32(const void* address, RegisterID dest)
+    {
+        if (m_fixedWidth) {
+            /*
+                li  addrTemp, address
+                lh dest, 0(addrTemp)
+            */
+            move(TrustedImmPtr(address), addrTempRegister);
+            m_assembler.lh(dest, addrTempRegister, 0);
+        } else {
+            uintptr_t adr = reinterpret_cast<uintptr_t>(address);
+            m_assembler.lui(addrTempRegister, (adr + 0x8000) >> 16);
+            m_assembler.lh(dest, addrTempRegister, adr & 0xffff);
+        }
+    }
+
 
     void loadPair32(RegisterID src, RegisterID dest1, RegisterID dest2)
     {
@@ -2041,6 +2086,34 @@ public:
         TrustedImm32 mask8 = mask8OnTest(cond, mask);
         MacroAssemblerHelpers::load8OnCondition(*this, cond, address, dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask8);
+    }
+
+    TrustedImm32 mask16OnTest(ResultCondition cond, TrustedImm32 mask)
+    {
+        if (mask.m_value == -1 && !m_fixedWidth)
+            return TrustedImm32(-1);
+        return MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
+    }
+
+    Jump branchTest16(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        TrustedImm32 mask16 = mask16OnTest(cond, mask);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask16);
+    }
+
+    Jump branchTest16(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        TrustedImm32 mask16 = mask16OnTest(cond, mask);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask16);
+    }
+
+    Jump branchTest16(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        TrustedImm32 mask16 = mask16OnTest(cond, mask);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask16);
     }
 
     Jump jump()
