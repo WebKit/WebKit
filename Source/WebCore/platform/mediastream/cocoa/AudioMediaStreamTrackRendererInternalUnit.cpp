@@ -162,7 +162,6 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
     if (m_remoteIOUnit)
         return;
 
-    CAAudioStreamDescription outputDescription;
     AudioComponentInstance remoteIOUnit { nullptr };
 
     AudioComponentDescription ioUnitDescription { kAudioUnitType_Output, 0, kAudioUnitManufacturer_Apple, 0, 0 };
@@ -211,16 +210,19 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
         return;
     }
 
-    UInt32 size = sizeof(outputDescription.streamDescription());
-    error  = PAL::AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), &size);
-    if (error) {
-        RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to get input stream format, error = %d", error);
-        return;
+    if (!m_outputDescription) {
+        CAAudioStreamDescription outputDescription;
+        UInt32 size = sizeof(outputDescription.streamDescription());
+        error  = PAL::AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), &size);
+        if (error) {
+            RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to get input stream format, error = %d", error);
+            return;
+        }
+
+        outputDescription.streamDescription().mSampleRate = AudioSession::sharedSession().sampleRate();
+        m_outputDescription = makeUnique<CAAudioStreamDescription>(outputDescription);
     }
-
-    outputDescription.streamDescription().mSampleRate = AudioSession::sharedSession().sampleRate();
-
-    error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), sizeof(outputDescription.streamDescription()));
+    error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &m_outputDescription->streamDescription(), sizeof(m_outputDescription->streamDescription()));
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::createAudioUnit unable to set input stream format, error = %d", error);
         return;
@@ -232,7 +234,6 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
         return;
     }
 
-    m_outputDescription = makeUnique<CAAudioStreamDescription>(outputDescription);
     m_remoteIOUnit = remoteIOUnit;
 }
 
