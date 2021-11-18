@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -38,3 +39,18 @@ enum class PipelineStatisticName : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::PipelineStatisticName> {
+    using values = EnumValues<
+        PAL::WebGPU::PipelineStatisticName,
+        PAL::WebGPU::PipelineStatisticName::VertexShaderInvocations,
+        PAL::WebGPU::PipelineStatisticName::ClipperInvocations,
+        PAL::WebGPU::PipelineStatisticName::ClipperPrimitivesOut,
+        PAL::WebGPU::PipelineStatisticName::FragmentShaderInvocations,
+        PAL::WebGPU::PipelineStatisticName::ComputeShaderInvocations
+    >;
+};
+
+} // namespace WTF

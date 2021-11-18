@@ -247,6 +247,28 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/graphics/RemoteDisplayListRecorder \
 	GPUProcess/graphics/RemoteRenderingBackend \
 	GPUProcess/graphics/RemoteGraphicsContextGL \
+	GPUProcess/graphics/WebGPU/RemoteAdapter \
+	GPUProcess/graphics/WebGPU/RemoteBindGroup \
+	GPUProcess/graphics/WebGPU/RemoteBindGroupLayout \
+	GPUProcess/graphics/WebGPU/RemoteBuffer \
+	GPUProcess/graphics/WebGPU/RemoteCommandBuffer \
+	GPUProcess/graphics/WebGPU/RemoteCommandEncoder \
+	GPUProcess/graphics/WebGPU/RemoteComputePassEncoder \
+	GPUProcess/graphics/WebGPU/RemoteComputePipeline \
+	GPUProcess/graphics/WebGPU/RemoteDevice \
+	GPUProcess/graphics/WebGPU/RemoteExternalTexture \
+	GPUProcess/graphics/WebGPU/RemoteGPU \
+	GPUProcess/graphics/WebGPU/RemotePipelineLayout \
+	GPUProcess/graphics/WebGPU/RemoteQuerySet \
+	GPUProcess/graphics/WebGPU/RemoteQueue \
+	GPUProcess/graphics/WebGPU/RemoteRenderBundle \
+	GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder \
+	GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder \
+	GPUProcess/graphics/WebGPU/RemoteRenderPipeline \
+	GPUProcess/graphics/WebGPU/RemoteSampler \
+	GPUProcess/graphics/WebGPU/RemoteShaderModule \
+	GPUProcess/graphics/WebGPU/RemoteTexture \
+	GPUProcess/graphics/WebGPU/RemoteTextureView \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \
 	GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager \
 	GPUProcess/webrtc/RemoteMediaRecorderManager \

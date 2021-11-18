@@ -33,6 +33,27 @@ namespace WebKit::WebGPU {
 struct RequestAdapterOptions {
     std::optional<PAL::WebGPU::PowerPreference> powerPreference;
     bool forceFallbackAdapter;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << powerPreference;
+        encoder << forceFallbackAdapter;
+    }
+
+    template<class Decoder> static std::optional<RequestAdapterOptions> decode(Decoder& decoder)
+    {
+        std::optional<std::optional<PAL::WebGPU::PowerPreference>> powerPreference;
+        decoder >> powerPreference;
+        if (!powerPreference)
+            return std::nullopt;
+
+        std::optional<bool> forceFallbackAdapter;
+        decoder >> forceFallbackAdapter;
+        if (!forceFallbackAdapter)
+            return std::nullopt;
+
+        return { { WTFMove(*powerPreference), WTFMove(*forceFallbackAdapter) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

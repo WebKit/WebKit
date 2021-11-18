@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -35,3 +36,15 @@ enum class FrontFace : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::FrontFace> {
+    using values = EnumValues<
+        PAL::WebGPU::FrontFace,
+        PAL::WebGPU::FrontFace::CCW,
+        PAL::WebGPU::FrontFace::CW
+    >;
+};
+
+} // namespace WTF

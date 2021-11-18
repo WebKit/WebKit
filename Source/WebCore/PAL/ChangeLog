@@ -1,3 +1,59 @@
+2021-11-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add IPC message handlers for WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=233247
+
+        Reviewed by Dean Jackson.
+
+        Add EnumTraits to the enum classes, so they can be serialized.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.h:
+        * pal/graphics/WebGPU/WebGPUAdapter.h:
+        * pal/graphics/WebGPU/WebGPUAddressMode.h:
+        * pal/graphics/WebGPU/WebGPUBlendFactor.h:
+        * pal/graphics/WebGPU/WebGPUBlendOperation.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingType.h:
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h:
+        * pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h:
+        * pal/graphics/WebGPU/WebGPUCompareFunction.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessageType.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPUCullMode.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostReason.h:
+        * pal/graphics/WebGPU/WebGPUErrorFilter.h:
+        * pal/graphics/WebGPU/WebGPUFeatureName.h:
+        * pal/graphics/WebGPU/WebGPUFilterMode.h:
+        * pal/graphics/WebGPU/WebGPUFrontFace.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPUIndexFormat.h:
+        * pal/graphics/WebGPU/WebGPULoadOp.h:
+        * pal/graphics/WebGPU/WebGPUMapMode.h:
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h:
+        * pal/graphics/WebGPU/WebGPUPowerPreference.h:
+        * pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveTopology.h:
+        * pal/graphics/WebGPU/WebGPUQueryType.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingType.h:
+        * pal/graphics/WebGPU/WebGPUStencilOperation.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureAccess.h:
+        * pal/graphics/WebGPU/WebGPUStoreOp.h:
+        * pal/graphics/WebGPU/WebGPUTexture.h:
+        * pal/graphics/WebGPU/WebGPUTextureAspect.h:
+        * pal/graphics/WebGPU/WebGPUTextureDimension.h:
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h:
+        * pal/graphics/WebGPU/WebGPUTextureSampleType.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDimension.h:
+        * pal/graphics/WebGPU/WebGPUVertexFormat.h:
+        * pal/graphics/WebGPU/WebGPUVertexStepMode.h:
+
 2021-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Plumb an identifier string through `ChromeClient::requestTextRecognition()`

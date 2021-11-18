@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -35,3 +36,15 @@ enum class ComputePassTimestampLocation : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::ComputePassTimestampLocation> {
+    using values = EnumValues<
+        PAL::WebGPU::ComputePassTimestampLocation,
+        PAL::WebGPU::ComputePassTimestampLocation::Beginning,
+        PAL::WebGPU::ComputePassTimestampLocation::End
+    >;
+};
+
+} // namespace WTF

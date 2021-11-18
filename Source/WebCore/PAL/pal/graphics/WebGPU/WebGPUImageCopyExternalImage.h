@@ -32,7 +32,7 @@
 namespace PAL::WebGPU {
 
 struct ImageCopyExternalImage {
-    // std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>> source;
+    // FIXME: Handle the source.
     std::optional<Origin2D> origin;
 };
 

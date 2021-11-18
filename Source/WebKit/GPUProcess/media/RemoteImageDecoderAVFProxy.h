@@ -29,6 +29,7 @@
 
 #include "DataReference.h"
 #include "MessageReceiver.h"
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/ImageDecoderAVFObjC.h>
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <wtf/CompletionHandler.h>

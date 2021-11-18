@@ -47,7 +47,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual Ref<TextureView> createView(const std::optional<TextureViewDescriptor>&) const = 0;
+    virtual Ref<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
 
     virtual void destroy() = 0;
 

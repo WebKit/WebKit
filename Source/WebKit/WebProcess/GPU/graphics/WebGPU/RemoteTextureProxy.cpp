@@ -30,6 +30,7 @@
 
 #include "RemoteTextureViewProxy.h"
 #include "WebGPUConvertToBackingContext.h"
+#include "WebGPUTextureViewDescriptor.h"
 
 namespace WebKit::WebGPU {
 
@@ -42,7 +43,7 @@ RemoteTextureProxy::~RemoteTextureProxy()
 {
 }
 
-Ref<PAL::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>& descriptor) const
+Ref<PAL::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return RemoteTextureViewProxy::create(m_convertToBackingContext);

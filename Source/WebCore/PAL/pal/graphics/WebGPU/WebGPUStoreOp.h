@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -35,3 +36,15 @@ enum class StoreOp : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::StoreOp> {
+    using values = EnumValues<
+        PAL::WebGPU::StoreOp,
+        PAL::WebGPU::StoreOp::Store,
+        PAL::WebGPU::StoreOp::Discard
+    >;
+};
+
+} // namespace WTF

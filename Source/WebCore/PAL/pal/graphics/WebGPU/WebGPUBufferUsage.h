@@ -32,7 +32,6 @@
 namespace PAL::WebGPU {
 
 using BufferUsageFlags = uint32_t;
-
 class BufferUsage : public RefCounted<BufferUsage> {
 public:
     static constexpr FlagsConstant MAP_READ      = 0x0001;

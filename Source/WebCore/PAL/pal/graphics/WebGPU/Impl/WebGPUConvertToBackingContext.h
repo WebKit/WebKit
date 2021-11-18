@@ -37,6 +37,7 @@
 #include "WebGPUShaderStage.h"
 #include "WebGPUTextureUsage.h"
 #include <WebGPU/WebGPU.h>
+#include <cstdint>
 #include <wtf/RefCounted.h>
 
 namespace PAL::WebGPU {

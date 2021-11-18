@@ -33,6 +33,33 @@ namespace WebKit::WebGPU {
 struct ImageCopyTextureTagged : public ImageCopyTexture {
     PAL::WebGPU::PredefinedColorSpace colorSpace;
     bool premultipliedAlpha;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << static_cast<const ImageCopyTexture&>(*this);
+        encoder << colorSpace;
+        encoder << premultipliedAlpha;
+    }
+
+    template<class Decoder> static std::optional<ImageCopyTextureTagged> decode(Decoder& decoder)
+    {
+        std::optional<ImageCopyTexture> imageCopyTexture;
+        decoder >> imageCopyTexture;
+        if (!imageCopyTexture)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::PredefinedColorSpace> colorSpace;
+        decoder >> colorSpace;
+        if (!colorSpace)
+            return std::nullopt;
+
+        std::optional<bool> premultipliedAlpha;
+        decoder >> premultipliedAlpha;
+        if (!premultipliedAlpha)
+            return std::nullopt;
+
+        return { { WTFMove(*imageCopyTexture), WTFMove(*colorSpace), WTFMove(*premultipliedAlpha) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

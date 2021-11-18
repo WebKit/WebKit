@@ -56,7 +56,7 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
 
-    void requestDevice(const PAL::WebGPU::DeviceDescriptor&, WTF::Function<void(Ref<PAL::WebGPU::Device>)>&&) final;
+    void requestDevice(const PAL::WebGPU::DeviceDescriptor&, WTF::Function<void(Ref<PAL::WebGPU::Device>&&)>&&) final;
 
     Deque<WTF::Function<void(Ref<PAL::WebGPU::Device>)>> m_callbacks;
 

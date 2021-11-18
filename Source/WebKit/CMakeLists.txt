@@ -15,6 +15,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}"
     "${WEBKIT_DIR}/GPUProcess"
     "${WEBKIT_DIR}/GPUProcess/graphics"
+    "${WEBKIT_DIR}/GPUProcess/graphics/WebGPU"
     "${WEBKIT_DIR}/GPUProcess/media"
     "${WEBKIT_DIR}/GPUProcess/webrtc"
     "${WEBKIT_DIR}/NetworkProcess"
@@ -135,6 +136,29 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/RemoteDisplayListRecorder
     GPUProcess/graphics/RemoteGraphicsContextGL
     GPUProcess/graphics/RemoteRenderingBackend
+
+    GPUProcess/graphics/WebGPU/RemoteAdapter
+    GPUProcess/graphics/WebGPU/RemoteBindGroup
+    GPUProcess/graphics/WebGPU/RemoteBindGroupLayout
+    GPUProcess/graphics/WebGPU/RemoteBuffer
+    GPUProcess/graphics/WebGPU/RemoteCommandBuffer
+    GPUProcess/graphics/WebGPU/RemoteCommandEncoder
+    GPUProcess/graphics/WebGPU/RemoteComputePassEncoder
+    GPUProcess/graphics/WebGPU/RemoteComputePipeline
+    GPUProcess/graphics/WebGPU/RemoteDevice
+    GPUProcess/graphics/WebGPU/RemoteExternalTexture
+    GPUProcess/graphics/WebGPU/RemoteGPU
+    GPUProcess/graphics/WebGPU/RemotePipelineLayout
+    GPUProcess/graphics/WebGPU/RemoteQuerySet
+    GPUProcess/graphics/WebGPU/RemoteQueue
+    GPUProcess/graphics/WebGPU/RemoteRenderBundle
+    GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder
+    GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder
+    GPUProcess/graphics/WebGPU/RemoteRenderPipeline
+    GPUProcess/graphics/WebGPU/RemoteSampler
+    GPUProcess/graphics/WebGPU/RemoteShaderModule
+    GPUProcess/graphics/WebGPU/RemoteTexture
+    GPUProcess/graphics/WebGPU/RemoteTextureView
 
     GPUProcess/media/RemoteAudioDestinationManager
     GPUProcess/media/RemoteAudioSessionProxy

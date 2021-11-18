@@ -32,7 +32,6 @@
 namespace PAL::WebGPU {
 
 using MapModeFlags = uint32_t;
-
 class MapMode : public RefCounted<MapMode> {
 public:
     static constexpr FlagsConstant READ  = 0x0001;

@@ -44,6 +44,57 @@ struct RenderPassDepthStencilAttachment {
     std::variant<PAL::WebGPU::LoadOp, PAL::WebGPU::StencilValue> stencilLoadValue;
     PAL::WebGPU::StoreOp stencilStoreOp;
     bool stencilReadOnly;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << view;
+        encoder << depthLoadValue;
+        encoder << depthStoreOp;
+        encoder << depthReadOnly;
+        encoder << stencilLoadValue;
+        encoder << stencilStoreOp;
+        encoder << stencilReadOnly;
+    }
+
+    template<class Decoder> static std::optional<RenderPassDepthStencilAttachment> decode(Decoder& decoder)
+    {
+        std::optional<WebGPUIdentifier> view;
+        decoder >> view;
+        if (!view)
+            return std::nullopt;
+
+        std::optional<std::variant<PAL::WebGPU::LoadOp, float>> depthLoadValue;
+        decoder >> depthLoadValue;
+        if (!depthLoadValue)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::StoreOp> depthStoreOp;
+        decoder >> depthStoreOp;
+        if (!depthStoreOp)
+            return std::nullopt;
+
+        std::optional<bool> depthReadOnly;
+        decoder >> depthReadOnly;
+        if (!depthReadOnly)
+            return std::nullopt;
+
+        std::optional<std::variant<PAL::WebGPU::LoadOp, PAL::WebGPU::StencilValue>> stencilLoadValue;
+        decoder >> stencilLoadValue;
+        if (!stencilLoadValue)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::StoreOp> stencilStoreOp;
+        decoder >> stencilStoreOp;
+        if (!stencilStoreOp)
+            return std::nullopt;
+
+        std::optional<bool> stencilReadOnly;
+        decoder >> stencilReadOnly;
+        if (!stencilReadOnly)
+            return std::nullopt;
+
+        return { { WTFMove(*view), WTFMove(*depthLoadValue), WTFMove(*depthStoreOp), WTFMove(*depthReadOnly), WTFMove(*stencilLoadValue), WTFMove(*stencilStoreOp), WTFMove(*stencilReadOnly) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -46,3 +47,26 @@ enum class BlendFactor : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::BlendFactor> {
+    using values = EnumValues<
+        PAL::WebGPU::BlendFactor,
+        PAL::WebGPU::BlendFactor::Zero,
+        PAL::WebGPU::BlendFactor::One,
+        PAL::WebGPU::BlendFactor::Src,
+        PAL::WebGPU::BlendFactor::OneMinusSrc,
+        PAL::WebGPU::BlendFactor::SrcAlpha,
+        PAL::WebGPU::BlendFactor::OneMinusSrcAlpha,
+        PAL::WebGPU::BlendFactor::Dst,
+        PAL::WebGPU::BlendFactor::OneMinusDst,
+        PAL::WebGPU::BlendFactor::DstAlpha,
+        PAL::WebGPU::BlendFactor::OneMinusDstAlpha,
+        PAL::WebGPU::BlendFactor::SrcAlphaSaturated,
+        PAL::WebGPU::BlendFactor::Constant,
+        PAL::WebGPU::BlendFactor::OneMinusConstant
+    >;
+};
+
+} // namespace WTF

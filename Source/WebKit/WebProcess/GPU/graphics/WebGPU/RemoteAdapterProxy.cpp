@@ -42,7 +42,7 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
 {
 }
 
-void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, WTF::Function<void(Ref<PAL::WebGPU::Device>)>&& callback)
+void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, WTF::Function<void(Ref<PAL::WebGPU::Device>&&)>&& callback)
 {
     UNUSED_PARAM(descriptor);
     UNUSED_PARAM(callback);

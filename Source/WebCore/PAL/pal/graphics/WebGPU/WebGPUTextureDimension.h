@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -36,3 +37,16 @@ enum class TextureDimension : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::TextureDimension> {
+    using values = EnumValues<
+        PAL::WebGPU::TextureDimension,
+        PAL::WebGPU::TextureDimension::_1d,
+        PAL::WebGPU::TextureDimension::_2d,
+        PAL::WebGPU::TextureDimension::_3d
+    >;
+};
+
+} // namespace WTF

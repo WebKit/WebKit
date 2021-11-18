@@ -41,6 +41,57 @@ struct TextureDescriptor : public ObjectDescriptorBase {
     PAL::WebGPU::TextureDimension dimension;
     PAL::WebGPU::TextureFormat format;
     PAL::WebGPU::TextureUsageFlags usage;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << static_cast<const ObjectDescriptorBase&>(*this);
+        encoder << size;
+        encoder << mipLevelCount;
+        encoder << sampleCount;
+        encoder << dimension;
+        encoder << format;
+        encoder << usage;
+    }
+
+    template<class Decoder> static std::optional<TextureDescriptor> decode(Decoder& decoder)
+    {
+        std::optional<ObjectDescriptorBase> objectDescriptorBase;
+        decoder >> objectDescriptorBase;
+        if (!objectDescriptorBase)
+            return std::nullopt;
+
+        std::optional<Extent3D> size;
+        decoder >> size;
+        if (!size)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::IntegerCoordinate> mipLevelCount;
+        decoder >> mipLevelCount;
+        if (!mipLevelCount)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::Size32> sampleCount;
+        decoder >> sampleCount;
+        if (!sampleCount)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::TextureDimension> dimension;
+        decoder >> dimension;
+        if (!dimension)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::TextureFormat> format;
+        decoder >> format;
+        if (!format)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::TextureUsageFlags> usage;
+        decoder >> usage;
+        if (!usage)
+            return std::nullopt;
+
+        return { { WTFMove(*objectDescriptorBase), WTFMove(*size), WTFMove(*mipLevelCount), WTFMove(*sampleCount), WTFMove(*dimension), WTFMove(*format), WTFMove(*usage) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

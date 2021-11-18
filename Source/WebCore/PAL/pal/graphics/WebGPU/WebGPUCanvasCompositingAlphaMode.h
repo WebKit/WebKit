@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -35,3 +36,15 @@ enum class CanvasCompositingAlphaMode : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::CanvasCompositingAlphaMode> {
+    using values = EnumValues<
+        PAL::WebGPU::CanvasCompositingAlphaMode,
+        PAL::WebGPU::CanvasCompositingAlphaMode::Opaque,
+        PAL::WebGPU::CanvasCompositingAlphaMode::Premultiplied
+    >;
+};
+
+} // namespace WTF

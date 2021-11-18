@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -36,3 +37,16 @@ enum class BufferBindingType : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::BufferBindingType> {
+    using values = EnumValues<
+        PAL::WebGPU::BufferBindingType,
+        PAL::WebGPU::BufferBindingType::Uniform,
+        PAL::WebGPU::BufferBindingType::Storage,
+        PAL::WebGPU::BufferBindingType::ReadOnlyStorage
+    >;
+};
+
+} // namespace WTF

@@ -35,6 +35,33 @@ struct Extent3DDict {
     PAL::WebGPU::IntegerCoordinate width;
     PAL::WebGPU::IntegerCoordinate height;
     PAL::WebGPU::IntegerCoordinate depthOrArrayLayers;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << width;
+        encoder << height;
+        encoder << depthOrArrayLayers;
+    }
+
+    template<class Decoder> static std::optional<Extent3DDict> decode(Decoder& decoder)
+    {
+        std::optional<PAL::WebGPU::IntegerCoordinate> width;
+        decoder >> width;
+        if (!width)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::IntegerCoordinate> height;
+        decoder >> height;
+        if (!height)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::IntegerCoordinate> depthOrArrayLayers;
+        decoder >> depthOrArrayLayers;
+        if (!depthOrArrayLayers)
+            return std::nullopt;
+
+        return { { WTFMove(*width), WTFMove(*height), WTFMove(*depthOrArrayLayers) } };
+    }
 };
 
 using Extent3D = std::variant<Vector<PAL::WebGPU::IntegerCoordinate>, Extent3DDict>;

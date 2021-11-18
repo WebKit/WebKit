@@ -32,6 +32,7 @@
 #include "WebGPUImageCopyTextureTagged.h"
 #include "WebGPUImageDataLayout.h"
 #include "WebGPUIntegralTypes.h"
+#include <cstdint>
 #include <functional>
 #include <optional>
 #include <wtf/Function.h>

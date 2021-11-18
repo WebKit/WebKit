@@ -35,6 +35,39 @@ struct BufferDescriptor : public ObjectDescriptorBase {
     PAL::WebGPU::Size64 size;
     PAL::WebGPU::BufferUsageFlags usage;
     bool mappedAtCreation;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << static_cast<const ObjectDescriptorBase&>(*this);
+        encoder << size;
+        encoder << usage;
+        encoder << mappedAtCreation;
+    }
+
+    template<class Decoder> static std::optional<BufferDescriptor> decode(Decoder& decoder)
+    {
+        std::optional<ObjectDescriptorBase> objectDescriptorBase;
+        decoder >> objectDescriptorBase;
+        if (!objectDescriptorBase)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::Size64> size;
+        decoder >> size;
+        if (!size)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::BufferUsageFlags> usage;
+        decoder >> usage;
+        if (!usage)
+            return std::nullopt;
+
+        std::optional<bool> mappedAtCreation;
+        decoder >> mappedAtCreation;
+        if (!mappedAtCreation)
+            return std::nullopt;
+
+        return { { WTFMove(*objectDescriptorBase), WTFMove(*size), WTFMove(*usage), WTFMove(*mappedAtCreation) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

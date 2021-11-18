@@ -58,7 +58,7 @@ private:
 
     WGPUTexture backing() const { return m_backing; }
 
-    Ref<TextureView> createView(const std::optional<TextureViewDescriptor>&) const final;
+    Ref<TextureView> createView(const std::optional<TextureViewDescriptor>&) final;
 
     void destroy() final;
 

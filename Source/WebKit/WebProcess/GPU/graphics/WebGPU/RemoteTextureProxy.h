@@ -59,7 +59,7 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
 
-    Ref<PAL::WebGPU::TextureView> createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>&) const final;
+    Ref<PAL::WebGPU::TextureView> createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>&) final;
 
     void destroy() final;
 

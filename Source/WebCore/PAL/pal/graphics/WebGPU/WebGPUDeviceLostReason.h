@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -34,3 +35,14 @@ enum class DeviceLostReason : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::DeviceLostReason> {
+    using values = EnumValues<
+        PAL::WebGPU::DeviceLostReason,
+        PAL::WebGPU::DeviceLostReason::Destroyed
+    >;
+};
+
+} // namespace WTF

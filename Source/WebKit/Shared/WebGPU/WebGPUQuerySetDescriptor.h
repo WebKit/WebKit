@@ -37,6 +37,39 @@ struct QuerySetDescriptor : public ObjectDescriptorBase {
     PAL::WebGPU::QueryType type;
     PAL::WebGPU::Size32 count;
     Vector<PAL::WebGPU::PipelineStatisticName> pipelineStatistics;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << static_cast<const ObjectDescriptorBase&>(*this);
+        encoder << type;
+        encoder << count;
+        encoder << pipelineStatistics;
+    }
+
+    template<class Decoder> static std::optional<QuerySetDescriptor> decode(Decoder& decoder)
+    {
+        std::optional<ObjectDescriptorBase> objectDescriptorBase;
+        decoder >> objectDescriptorBase;
+        if (!objectDescriptorBase)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::QueryType> type;
+        decoder >> type;
+        if (!type)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::Size32> count;
+        decoder >> count;
+        if (!count)
+            return std::nullopt;
+
+        std::optional<Vector<PAL::WebGPU::PipelineStatisticName>> pipelineStatistics;
+        decoder >> pipelineStatistics;
+        if (!pipelineStatistics)
+            return std::nullopt;
+
+        return { { WTFMove(*objectDescriptorBase), WTFMove(*type), WTFMove(*count), WTFMove(*pipelineStatistics) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

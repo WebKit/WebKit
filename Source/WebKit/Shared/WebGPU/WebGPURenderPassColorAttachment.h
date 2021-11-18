@@ -41,6 +41,39 @@ struct RenderPassColorAttachment {
 
     std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict> loadValue;
     PAL::WebGPU::StoreOp storeOp;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << view;
+        encoder << resolveTarget;
+        encoder << loadValue;
+        encoder << storeOp;
+    }
+
+    template<class Decoder> static std::optional<RenderPassColorAttachment> decode(Decoder& decoder)
+    {
+        std::optional<WebGPUIdentifier> view;
+        decoder >> view;
+        if (!view)
+            return std::nullopt;
+
+        std::optional<WebGPUIdentifier> resolveTarget;
+        decoder >> resolveTarget;
+        if (!resolveTarget)
+            return std::nullopt;
+
+        std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> loadValue;
+        decoder >> loadValue;
+        if (!loadValue)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::StoreOp> storeOp;
+        decoder >> storeOp;
+        if (!storeOp)
+            return std::nullopt;
+
+        return { { WTFMove(*view), WTFMove(*resolveTarget), WTFMove(*loadValue), WTFMove(*storeOp) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -41,3 +42,21 @@ enum class StencilOperation : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::StencilOperation> {
+    using values = EnumValues<
+        PAL::WebGPU::StencilOperation,
+        PAL::WebGPU::StencilOperation::Keep,
+        PAL::WebGPU::StencilOperation::Zero,
+        PAL::WebGPU::StencilOperation::Replace,
+        PAL::WebGPU::StencilOperation::Invert,
+        PAL::WebGPU::StencilOperation::IncrementClamp,
+        PAL::WebGPU::StencilOperation::DecrementClamp,
+        PAL::WebGPU::StencilOperation::IncrementWrap,
+        PAL::WebGPU::StencilOperation::DecrementWrap
+    >;
+};
+
+} // namespace WTF

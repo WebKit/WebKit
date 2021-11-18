@@ -31,6 +31,8 @@
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
+
 class LocalAudioSessionRoutingArbitrator final
     : public WebCore::AudioSessionRoutingArbitrationClient {
     WTF_MAKE_FAST_ALLOCATED;

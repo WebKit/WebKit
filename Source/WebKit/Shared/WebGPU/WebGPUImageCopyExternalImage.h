@@ -32,8 +32,23 @@
 namespace WebKit::WebGPU {
 
 struct ImageCopyExternalImage {
-    // std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>> source;
+    // FIXME: Handle the source.
     std::optional<Origin2D> origin;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << origin;
+    }
+
+    template<class Decoder> static std::optional<ImageCopyExternalImage> decode(Decoder& decoder)
+    {
+        std::optional<std::optional<Origin2D>> origin;
+        decoder >> origin;
+        if (!origin)
+            return std::nullopt;
+
+        return { { WTFMove(*origin) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

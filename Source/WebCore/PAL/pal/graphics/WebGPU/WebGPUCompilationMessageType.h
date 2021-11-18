@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -36,3 +37,16 @@ enum class CompilationMessageType : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::CompilationMessageType> {
+    using values = EnumValues<
+        PAL::WebGPU::CompilationMessageType,
+        PAL::WebGPU::CompilationMessageType::Error,
+        PAL::WebGPU::CompilationMessageType::Warning,
+        PAL::WebGPU::CompilationMessageType::Info
+    >;
+};
+
+} // namespace WTF

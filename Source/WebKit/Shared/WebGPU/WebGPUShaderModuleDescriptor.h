@@ -33,6 +33,27 @@ namespace WebKit::WebGPU {
 struct ShaderModuleDescriptor : public ObjectDescriptorBase {
     String code;
     // JSC::Strong<JSC::JSObject> sourceMap;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << static_cast<const ObjectDescriptorBase&>(*this);
+        encoder << code;
+    }
+
+    template<class Decoder> static std::optional<ShaderModuleDescriptor> decode(Decoder& decoder)
+    {
+        std::optional<ObjectDescriptorBase> objectDescriptorBase;
+        decoder >> objectDescriptorBase;
+        if (!objectDescriptorBase)
+            return std::nullopt;
+
+        std::optional<String> code;
+        decoder >> code;
+        if (!code)
+            return std::nullopt;
+
+        return { { WTFMove(*objectDescriptorBase), WTFMove(*code) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

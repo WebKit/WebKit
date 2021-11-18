@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -34,3 +35,14 @@ enum class PredefinedColorSpace : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::PredefinedColorSpace> {
+    using values = EnumValues<
+        PAL::WebGPU::PredefinedColorSpace,
+        PAL::WebGPU::PredefinedColorSpace::SRGB
+    >;
+};
+
+} // namespace WTF

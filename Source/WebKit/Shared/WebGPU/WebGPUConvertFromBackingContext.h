@@ -68,7 +68,7 @@ public:
     virtual const PAL::WebGPU::Buffer* convertBufferFromBacking(WebGPUIdentifier) = 0;
     virtual const PAL::WebGPU::CommandBuffer* convertCommandBufferFromBacking(WebGPUIdentifier) = 0;
     virtual const PAL::WebGPU::CommandEncoder* convertCommandEncoderFromBacking(WebGPUIdentifier) = 0;
-    virtual const PAL::WebGPU::ComputePassEncoder8 convertComputePassEncoderFromBacking(WebGPUIdentifier) = 0;
+    virtual const PAL::WebGPU::ComputePassEncoder* convertComputePassEncoderFromBacking(WebGPUIdentifier) = 0;
     virtual const PAL::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) = 0;
     virtual const PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) = 0;
     virtual const PAL::WebGPU::GPU* convertGPUFromBacking(WebGPUIdentifier) = 0;

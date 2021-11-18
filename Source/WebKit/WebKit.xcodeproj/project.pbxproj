@@ -380,6 +380,9 @@
 		1C0A195C1C916E1B00FE0EBB /* WebAutomationSessionProxyScriptSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0A195B1C916E1B00FE0EBB /* WebAutomationSessionProxyScriptSource.h */; };
 		1C20936022318CB000026A39 /* NSAttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C20935E22318CB000026A39 /* NSAttributedString.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C2184022233872800BAC700 /* NSAttributedStringPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C56557F2745C5A1006300AF /* UnifiedSource101.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */; };
+		1C5655802745C5A1006300AF /* UnifiedSource102.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */; };
+		1C5655812745C5A1006300AF /* UnifiedSource103.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */; };
 		1C891D6619B124FF00BA79DD /* WebInspectorUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C891D6319B124FF00BA79DD /* WebInspectorUI.h */; };
 		1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8E281E1275D15400BC7BD0 /* WebInspector.h */; };
 		1C8E28341275D73800BC7BD0 /* WebInspectorUIProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8E28321275D73800BC7BD0 /* WebInspectorUIProxy.h */; };
@@ -2879,6 +2882,9 @@
 		1C20935E22318CB000026A39 /* NSAttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSAttributedString.h; sourceTree = "<group>"; };
 		1C20935F22318CB000026A39 /* NSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedString.mm; sourceTree = "<group>"; };
 		1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringPrivate.h; sourceTree = "<group>"; };
+		1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource101.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource101.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource102.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource102.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource103.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource103.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C739E852347BCF600C621EC /* CoreTextHelpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreTextHelpers.mm; sourceTree = "<group>"; };
 		1C739E872347BD0F00C621EC /* CoreTextHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextHelpers.h; sourceTree = "<group>"; };
 		1C77C1951288A872006A742F /* WebInspectorUIProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorUIProxy.messages.in; sourceTree = "<group>"; };
@@ -2895,6 +2901,80 @@
 		1C8E2A311277852400BC7BD0 /* WebInspectorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorMessageReceiver.cpp; path = DerivedSources/WebKit2/WebInspectorMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C8E2A321277852400BC7BD0 /* WebInspectorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorMessages.h; path = DerivedSources/WebKit2/WebInspectorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C8E2DAD1278C5B200BC7BD0 /* WebInspectorUIMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorUIMac.mm; sourceTree = "<group>"; };
+		1C98C01D27446A03002CCB78 /* RemoteGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGPU.cpp; sourceTree = "<group>"; };
+		1C98C01E27446A03002CCB78 /* WebGPUObjectHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUObjectHeap.h; sourceTree = "<group>"; };
+		1C98C01F27446A03002CCB78 /* RemoteQuerySet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteQuerySet.h; sourceTree = "<group>"; };
+		1C98C02027446A04002CCB78 /* RemoteRenderBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderBundle.h; sourceTree = "<group>"; };
+		1C98C02127446A04002CCB78 /* RemoteQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteQueue.cpp; sourceTree = "<group>"; };
+		1C98C02227446A04002CCB78 /* RemoteRenderBundleEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderBundleEncoder.h; sourceTree = "<group>"; };
+		1C98C02327446A05002CCB78 /* RemoteShaderModule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteShaderModule.cpp; sourceTree = "<group>"; };
+		1C98C02427446A05002CCB78 /* WebGPUObjectHeap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUObjectHeap.cpp; sourceTree = "<group>"; };
+		1C98C02527446A06002CCB78 /* RemoteTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTexture.h; sourceTree = "<group>"; };
+		1C98C02627446A06002CCB78 /* RemoteRenderPassEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderPassEncoder.cpp; sourceTree = "<group>"; };
+		1C98C02727446A06002CCB78 /* RemoteRenderPassEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPassEncoder.h; sourceTree = "<group>"; };
+		1C98C02827446A06002CCB78 /* RemoteSampler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSampler.cpp; sourceTree = "<group>"; };
+		1C98C02927446A07002CCB78 /* RemoteRenderPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPipeline.h; sourceTree = "<group>"; };
+		1C98C02A27446A07002CCB78 /* RemoteExternalTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteExternalTexture.cpp; sourceTree = "<group>"; };
+		1C98C02B27446A07002CCB78 /* RemoteRenderBundleEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderBundleEncoder.cpp; sourceTree = "<group>"; };
+		1C98C02C27446A07002CCB78 /* RemoteSampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSampler.h; sourceTree = "<group>"; };
+		1C98C02D27446A07002CCB78 /* RemotePipelineLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePipelineLayout.h; sourceTree = "<group>"; };
+		1C98C02E27446A08002CCB78 /* RemoteTextureView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureView.h; sourceTree = "<group>"; };
+		1C98C02F27446A08002CCB78 /* RemoteDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDevice.cpp; sourceTree = "<group>"; };
+		1C98C03027446A08002CCB78 /* RemoteQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteQueue.h; sourceTree = "<group>"; };
+		1C98C03127446A08002CCB78 /* RemotePipelineLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePipelineLayout.cpp; sourceTree = "<group>"; };
+		1C98C03227446A08002CCB78 /* RemoteExternalTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteExternalTexture.h; sourceTree = "<group>"; };
+		1C98C03327446A08002CCB78 /* RemoteRenderPipeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderPipeline.cpp; sourceTree = "<group>"; };
+		1C98C03427446A09002CCB78 /* RemoteShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteShaderModule.h; sourceTree = "<group>"; };
+		1C98C03527446A09002CCB78 /* RemoteTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTexture.cpp; sourceTree = "<group>"; };
+		1C98C03627446A09002CCB78 /* RemoteTextureView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextureView.cpp; sourceTree = "<group>"; };
+		1C98C03727446A09002CCB78 /* RemoteDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDevice.h; sourceTree = "<group>"; };
+		1C98C03827446A09002CCB78 /* RemoteGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGPU.h; sourceTree = "<group>"; };
+		1C98C03927446A09002CCB78 /* RemoteRenderBundle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderBundle.cpp; sourceTree = "<group>"; };
+		1C98C03A27446A09002CCB78 /* RemoteQuerySet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteQuerySet.cpp; sourceTree = "<group>"; };
+		1C98C03B27446A0A002CCB78 /* RemoteComputePipeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteComputePipeline.cpp; sourceTree = "<group>"; };
+		1C98C03C27446A0A002CCB78 /* RemoteComputePipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteComputePipeline.h; sourceTree = "<group>"; };
+		1C98C04D27446CB7002CCB78 /* RemoteBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBuffer.h; sourceTree = "<group>"; };
+		1C98C04E27446CB7002CCB78 /* RemoteBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBuffer.cpp; sourceTree = "<group>"; };
+		1C98C04F27446CB8002CCB78 /* RemoteAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAdapter.h; sourceTree = "<group>"; };
+		1C98C05027446CB8002CCB78 /* RemoteCommandBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandBuffer.cpp; sourceTree = "<group>"; };
+		1C98C05127446CB8002CCB78 /* RemoteBindGroupLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBindGroupLayout.cpp; sourceTree = "<group>"; };
+		1C98C05227446CB8002CCB78 /* RemoteBindGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBindGroup.cpp; sourceTree = "<group>"; };
+		1C98C05327446CB9002CCB78 /* RemoteBindGroupLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBindGroupLayout.h; sourceTree = "<group>"; };
+		1C98C05427446CB9002CCB78 /* RemoteBindGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBindGroup.h; sourceTree = "<group>"; };
+		1C98C05527446CB9002CCB78 /* RemoteCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCommandEncoder.h; sourceTree = "<group>"; };
+		1C98C05627446CB9002CCB78 /* RemoteCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandEncoder.cpp; sourceTree = "<group>"; };
+		1C98C05727446CB9002CCB78 /* RemoteCommandBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCommandBuffer.h; sourceTree = "<group>"; };
+		1C98C05827446CBA002CCB78 /* RemoteComputePassEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteComputePassEncoder.cpp; sourceTree = "<group>"; };
+		1C98C05927446CBA002CCB78 /* RemoteAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAdapter.cpp; sourceTree = "<group>"; };
+		1C98C05A27446CBA002CCB78 /* RemoteComputePassEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteComputePassEncoder.h; sourceTree = "<group>"; };
+		1C98C0792744A1CC002CCB78 /* WebGPUSupportedFeatures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSupportedFeatures.h; sourceTree = "<group>"; };
+		1C98C07A2744A205002CCB78 /* WebGPUSupportedLimits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSupportedLimits.h; sourceTree = "<group>"; };
+		1C98C07B2744B416002CCB78 /* WebGPUCompilationMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCompilationMessage.h; sourceTree = "<group>"; };
+		1C98C07C2744B991002CCB78 /* WebGPUOutOfMemoryError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUOutOfMemoryError.h; sourceTree = "<group>"; };
+		1C98C07D2744B9B7002CCB78 /* WebGPUValidationError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUValidationError.h; sourceTree = "<group>"; };
+		1C98C07E2744B9DB002CCB78 /* WebGPUError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUError.h; sourceTree = "<group>"; };
+		1C98C0802744BD97002CCB78 /* RemoteQueue.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteQueue.messages.in; sourceTree = "<group>"; };
+		1C98C0812744BD98002CCB78 /* RemoteRenderPassEncoder.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteRenderPassEncoder.messages.in; sourceTree = "<group>"; };
+		1C98C0822744BD98002CCB78 /* RemoteExternalTexture.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteExternalTexture.messages.in; sourceTree = "<group>"; };
+		1C98C0832744BD98002CCB78 /* RemoteRenderBundle.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteRenderBundle.messages.in; sourceTree = "<group>"; };
+		1C98C0842744BD98002CCB78 /* RemoteBindGroupLayout.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteBindGroupLayout.messages.in; sourceTree = "<group>"; };
+		1C98C0852744BD98002CCB78 /* RemotePipelineLayout.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemotePipelineLayout.messages.in; sourceTree = "<group>"; };
+		1C98C0862744BD99002CCB78 /* RemoteRenderPipeline.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteRenderPipeline.messages.in; sourceTree = "<group>"; };
+		1C98C0872744BD99002CCB78 /* RemoteTexture.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteTexture.messages.in; sourceTree = "<group>"; };
+		1C98C0882744BD99002CCB78 /* RemoteTextureView.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteTextureView.messages.in; sourceTree = "<group>"; };
+		1C98C0892744BD99002CCB78 /* RemoteCommandBuffer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteCommandBuffer.messages.in; sourceTree = "<group>"; };
+		1C98C08A2744BD99002CCB78 /* RemoteRenderBundleEncoder.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteRenderBundleEncoder.messages.in; sourceTree = "<group>"; };
+		1C98C08B2744BD99002CCB78 /* RemoteQuerySet.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteQuerySet.messages.in; sourceTree = "<group>"; };
+		1C98C08C2744BD9A002CCB78 /* RemoteShaderModule.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteShaderModule.messages.in; sourceTree = "<group>"; };
+		1C98C08D2744BD9A002CCB78 /* RemoteSampler.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteSampler.messages.in; sourceTree = "<group>"; };
+		1C98C08E2744BD9A002CCB78 /* RemoteComputePipeline.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteComputePipeline.messages.in; sourceTree = "<group>"; };
+		1C98C08F2744BD9A002CCB78 /* RemoteDevice.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteDevice.messages.in; sourceTree = "<group>"; };
+		1C98C0902744BD9A002CCB78 /* RemoteBuffer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteBuffer.messages.in; sourceTree = "<group>"; };
+		1C98C0912744BD9A002CCB78 /* RemoteAdapter.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAdapter.messages.in; sourceTree = "<group>"; };
+		1C98C0922744BD9B002CCB78 /* RemoteBindGroup.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteBindGroup.messages.in; sourceTree = "<group>"; };
+		1C98C0932744BD9B002CCB78 /* RemoteComputePassEncoder.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteComputePassEncoder.messages.in; sourceTree = "<group>"; };
+		1C98C0942744BD9B002CCB78 /* RemoteGPU.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteGPU.messages.in; sourceTree = "<group>"; };
+		1C98C0952744BD9B002CCB78 /* RemoteCommandEncoder.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteCommandEncoder.messages.in; sourceTree = "<group>"; };
 		1C9EBA5B2087E74E00054429 /* NativeWebMouseEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebMouseEventIOS.mm; path = ios/NativeWebMouseEventIOS.mm; sourceTree = "<group>"; };
 		1CA8B935127C774E00576C2B /* WebInspectorUIProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorUIProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorUIProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/WebInspectorUIProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7185,6 +7265,81 @@
 			path = Automation;
 			sourceTree = "<group>";
 		};
+		1C98C01C27446926002CCB78 /* WebGPU */ = {
+			isa = PBXGroup;
+			children = (
+				1C98C05927446CBA002CCB78 /* RemoteAdapter.cpp */,
+				1C98C04F27446CB8002CCB78 /* RemoteAdapter.h */,
+				1C98C0912744BD9A002CCB78 /* RemoteAdapter.messages.in */,
+				1C98C05227446CB8002CCB78 /* RemoteBindGroup.cpp */,
+				1C98C05427446CB9002CCB78 /* RemoteBindGroup.h */,
+				1C98C0922744BD9B002CCB78 /* RemoteBindGroup.messages.in */,
+				1C98C05127446CB8002CCB78 /* RemoteBindGroupLayout.cpp */,
+				1C98C05327446CB9002CCB78 /* RemoteBindGroupLayout.h */,
+				1C98C0842744BD98002CCB78 /* RemoteBindGroupLayout.messages.in */,
+				1C98C04E27446CB7002CCB78 /* RemoteBuffer.cpp */,
+				1C98C04D27446CB7002CCB78 /* RemoteBuffer.h */,
+				1C98C0902744BD9A002CCB78 /* RemoteBuffer.messages.in */,
+				1C98C05027446CB8002CCB78 /* RemoteCommandBuffer.cpp */,
+				1C98C05727446CB9002CCB78 /* RemoteCommandBuffer.h */,
+				1C98C0892744BD99002CCB78 /* RemoteCommandBuffer.messages.in */,
+				1C98C05627446CB9002CCB78 /* RemoteCommandEncoder.cpp */,
+				1C98C05527446CB9002CCB78 /* RemoteCommandEncoder.h */,
+				1C98C0952744BD9B002CCB78 /* RemoteCommandEncoder.messages.in */,
+				1C98C05827446CBA002CCB78 /* RemoteComputePassEncoder.cpp */,
+				1C98C05A27446CBA002CCB78 /* RemoteComputePassEncoder.h */,
+				1C98C0932744BD9B002CCB78 /* RemoteComputePassEncoder.messages.in */,
+				1C98C03B27446A0A002CCB78 /* RemoteComputePipeline.cpp */,
+				1C98C03C27446A0A002CCB78 /* RemoteComputePipeline.h */,
+				1C98C08E2744BD9A002CCB78 /* RemoteComputePipeline.messages.in */,
+				1C98C02F27446A08002CCB78 /* RemoteDevice.cpp */,
+				1C98C03727446A09002CCB78 /* RemoteDevice.h */,
+				1C98C08F2744BD9A002CCB78 /* RemoteDevice.messages.in */,
+				1C98C02A27446A07002CCB78 /* RemoteExternalTexture.cpp */,
+				1C98C03227446A08002CCB78 /* RemoteExternalTexture.h */,
+				1C98C0822744BD98002CCB78 /* RemoteExternalTexture.messages.in */,
+				1C98C01D27446A03002CCB78 /* RemoteGPU.cpp */,
+				1C98C03827446A09002CCB78 /* RemoteGPU.h */,
+				1C98C0942744BD9B002CCB78 /* RemoteGPU.messages.in */,
+				1C98C03127446A08002CCB78 /* RemotePipelineLayout.cpp */,
+				1C98C02D27446A07002CCB78 /* RemotePipelineLayout.h */,
+				1C98C0852744BD98002CCB78 /* RemotePipelineLayout.messages.in */,
+				1C98C03A27446A09002CCB78 /* RemoteQuerySet.cpp */,
+				1C98C01F27446A03002CCB78 /* RemoteQuerySet.h */,
+				1C98C08B2744BD99002CCB78 /* RemoteQuerySet.messages.in */,
+				1C98C02127446A04002CCB78 /* RemoteQueue.cpp */,
+				1C98C03027446A08002CCB78 /* RemoteQueue.h */,
+				1C98C0802744BD97002CCB78 /* RemoteQueue.messages.in */,
+				1C98C03927446A09002CCB78 /* RemoteRenderBundle.cpp */,
+				1C98C02027446A04002CCB78 /* RemoteRenderBundle.h */,
+				1C98C0832744BD98002CCB78 /* RemoteRenderBundle.messages.in */,
+				1C98C02B27446A07002CCB78 /* RemoteRenderBundleEncoder.cpp */,
+				1C98C02227446A04002CCB78 /* RemoteRenderBundleEncoder.h */,
+				1C98C08A2744BD99002CCB78 /* RemoteRenderBundleEncoder.messages.in */,
+				1C98C02627446A06002CCB78 /* RemoteRenderPassEncoder.cpp */,
+				1C98C02727446A06002CCB78 /* RemoteRenderPassEncoder.h */,
+				1C98C0812744BD98002CCB78 /* RemoteRenderPassEncoder.messages.in */,
+				1C98C03327446A08002CCB78 /* RemoteRenderPipeline.cpp */,
+				1C98C02927446A07002CCB78 /* RemoteRenderPipeline.h */,
+				1C98C0862744BD99002CCB78 /* RemoteRenderPipeline.messages.in */,
+				1C98C02827446A06002CCB78 /* RemoteSampler.cpp */,
+				1C98C02C27446A07002CCB78 /* RemoteSampler.h */,
+				1C98C08D2744BD9A002CCB78 /* RemoteSampler.messages.in */,
+				1C98C02327446A05002CCB78 /* RemoteShaderModule.cpp */,
+				1C98C03427446A09002CCB78 /* RemoteShaderModule.h */,
+				1C98C08C2744BD9A002CCB78 /* RemoteShaderModule.messages.in */,
+				1C98C03527446A09002CCB78 /* RemoteTexture.cpp */,
+				1C98C02527446A06002CCB78 /* RemoteTexture.h */,
+				1C98C0872744BD99002CCB78 /* RemoteTexture.messages.in */,
+				1C98C03627446A09002CCB78 /* RemoteTextureView.cpp */,
+				1C98C02E27446A08002CCB78 /* RemoteTextureView.h */,
+				1C98C0882744BD99002CCB78 /* RemoteTextureView.messages.in */,
+				1C98C02427446A05002CCB78 /* WebGPUObjectHeap.cpp */,
+				1C98C01E27446A03002CCB78 /* WebGPUObjectHeap.h */,
+			);
+			path = WebGPU;
+			sourceTree = "<group>";
+		};
 		1CB7461927436DE300F19874 /* WebGPU */ = {
 			isa = PBXGroup;
 			children = (
@@ -7255,6 +7410,7 @@
 				1CB7467927439CB200F19874 /* WebGPUColorTargetState.h */,
 				1CB7468327439CB500F19874 /* WebGPUCommandBufferDescriptor.h */,
 				1CB7469227439CB900F19874 /* WebGPUCommandEncoderDescriptor.h */,
+				1C98C07B2744B416002CCB78 /* WebGPUCompilationMessage.h */,
 				1CB7469727439CBA00F19874 /* WebGPUComputePassDescriptor.h */,
 				1CB7468927439CB600F19874 /* WebGPUComputePassTimestampWrites.h */,
 				1CB7467627439CB100F19874 /* WebGPUComputePipelineDescriptor.h */,
@@ -7262,6 +7418,7 @@
 				1CB7464727437A7F00F19874 /* WebGPUConvertToBackingContext.h */,
 				1CB7467127439CB000F19874 /* WebGPUDepthStencilState.h */,
 				1CB7468527439CB500F19874 /* WebGPUDeviceDescriptor.h */,
+				1C98C07E2744B9DB002CCB78 /* WebGPUError.h */,
 				1CB7468727439CB600F19874 /* WebGPUExtent3D.h */,
 				1CB7466F27439CB000F19874 /* WebGPUExternalTextureBindingLayout.h */,
 				1CB7468627439CB500F19874 /* WebGPUExternalTextureDescriptor.h */,
@@ -7276,6 +7433,7 @@
 				1CB7466C27439CAF00F19874 /* WebGPUObjectDescriptorBase.h */,
 				1CB7467027439CB000F19874 /* WebGPUOrigin2D.h */,
 				1CB746A027439CBD00F19874 /* WebGPUOrigin3D.h */,
+				1C98C07C2744B991002CCB78 /* WebGPUOutOfMemoryError.h */,
 				1CB7469427439CB900F19874 /* WebGPUPipelineDescriptorBase.h */,
 				1CB7469827439CBB00F19874 /* WebGPUPipelineLayoutDescriptor.h */,
 				1CB7466D27439CAF00F19874 /* WebGPUPrimitiveState.h */,
@@ -7295,9 +7453,12 @@
 				1CB7466B27439CAF00F19874 /* WebGPUShaderModuleDescriptor.h */,
 				1CB7467327439CB100F19874 /* WebGPUStencilFaceState.h */,
 				1CB7469627439CBA00F19874 /* WebGPUStorageTextureBindingLayout.h */,
+				1C98C0792744A1CC002CCB78 /* WebGPUSupportedFeatures.h */,
+				1C98C07A2744A205002CCB78 /* WebGPUSupportedLimits.h */,
 				1CB7467527439CB100F19874 /* WebGPUTextureBindingLayout.h */,
 				1CB7468127439CB400F19874 /* WebGPUTextureDescriptor.h */,
 				1CB7468027439CB400F19874 /* WebGPUTextureViewDescriptor.h */,
+				1C98C07D2744B9B7002CCB78 /* WebGPUValidationError.h */,
 				1CB7467227439CB000F19874 /* WebGPUVertexAttribute.h */,
 				1CB7468F27439CB800F19874 /* WebGPUVertexBufferLayout.h */,
 				1CB7469A27439CBB00F19874 /* WebGPUVertexState.h */,
@@ -7686,6 +7847,9 @@
 				2D8508C4212E33EC000EF46C /* UnifiedSource98.cpp */,
 				2D8508B1212E33E9000EF46C /* UnifiedSource99.cpp */,
 				2D8508BE212E33EB000EF46C /* UnifiedSource100.cpp */,
+				1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */,
+				1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */,
+				1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */,
 			);
 			name = "unified-sources";
 			path = "DerivedSources/WebKit2/unified-sources";
@@ -9051,6 +9215,7 @@
 		550640A124071A2900AAE045 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				1C98C01C27446926002CCB78 /* WebGPU */,
 				F4094CBC255304AF003D73E3 /* DisplayListReaderHandle.cpp */,
 				F4094CBB255304AF003D73E3 /* DisplayListReaderHandle.h */,
 				7B1619132719AE7600C40EAC /* GPUProcessGraphicsContextGL.h */,
@@ -14712,6 +14877,9 @@
 				2D8508D8212E33ED000EF46C /* UnifiedSource98.cpp in Sources */,
 				2D8508C5212E33ED000EF46C /* UnifiedSource99.cpp in Sources */,
 				2D8508D2212E33ED000EF46C /* UnifiedSource100.cpp in Sources */,
+				1C56557F2745C5A1006300AF /* UnifiedSource101.cpp in Sources */,
+				1C5655802745C5A1006300AF /* UnifiedSource102.cpp in Sources */,
+				1C5655812745C5A1006300AF /* UnifiedSource103.cpp in Sources */,
 				E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,

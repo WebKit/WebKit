@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -63,3 +64,43 @@ enum class VertexFormat : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::VertexFormat> {
+    using values = EnumValues<
+        PAL::WebGPU::VertexFormat,
+        PAL::WebGPU::VertexFormat::Uint8x2,
+        PAL::WebGPU::VertexFormat::Uint8x4,
+        PAL::WebGPU::VertexFormat::Sint8x2,
+        PAL::WebGPU::VertexFormat::Sint8x4,
+        PAL::WebGPU::VertexFormat::Unorm8x2,
+        PAL::WebGPU::VertexFormat::Unorm8x4,
+        PAL::WebGPU::VertexFormat::Snorm8x2,
+        PAL::WebGPU::VertexFormat::Snorm8x4,
+        PAL::WebGPU::VertexFormat::Uint16x2,
+        PAL::WebGPU::VertexFormat::Uint16x4,
+        PAL::WebGPU::VertexFormat::Sint16x2,
+        PAL::WebGPU::VertexFormat::Sint16x4,
+        PAL::WebGPU::VertexFormat::Unorm16x2,
+        PAL::WebGPU::VertexFormat::Unorm16x4,
+        PAL::WebGPU::VertexFormat::Snorm16x2,
+        PAL::WebGPU::VertexFormat::Snorm16x4,
+        PAL::WebGPU::VertexFormat::Float16x2,
+        PAL::WebGPU::VertexFormat::Float16x4,
+        PAL::WebGPU::VertexFormat::Float32,
+        PAL::WebGPU::VertexFormat::Float32x2,
+        PAL::WebGPU::VertexFormat::Float32x3,
+        PAL::WebGPU::VertexFormat::Float32x4,
+        PAL::WebGPU::VertexFormat::Uint32,
+        PAL::WebGPU::VertexFormat::Uint32x2,
+        PAL::WebGPU::VertexFormat::Uint32x3,
+        PAL::WebGPU::VertexFormat::Uint32x4,
+        PAL::WebGPU::VertexFormat::Sint32,
+        PAL::WebGPU::VertexFormat::Sint32x2,
+        PAL::WebGPU::VertexFormat::Sint32x3,
+        PAL::WebGPU::VertexFormat::Sint32x4
+    >;
+};
+
+} // namespace WTF

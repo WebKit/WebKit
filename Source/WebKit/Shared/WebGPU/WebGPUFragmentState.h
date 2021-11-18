@@ -33,6 +33,27 @@ namespace WebKit::WebGPU {
 
 struct FragmentState : public ProgrammableStage {
     Vector<ColorTargetState> targets;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << static_cast<const ProgrammableStage&>(*this);
+        encoder << targets;
+    }
+
+    template<class Decoder> static std::optional<FragmentState> decode(Decoder& decoder)
+    {
+        std::optional<ProgrammableStage> programmableStage;
+        decoder >> programmableStage;
+        if (!programmableStage)
+            return std::nullopt;
+
+        std::optional<Vector<ColorTargetState>> targets;
+        decoder >> targets;
+        if (!targets)
+            return std::nullopt;
+
+        return { { WTFMove(*programmableStage), WTFMove(*targets) } };
+    }
 };
 
 } // namespace WebKit::WebGPU

@@ -41,6 +41,7 @@
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
 #include "RemoteTextureProxy.h"
+#include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {

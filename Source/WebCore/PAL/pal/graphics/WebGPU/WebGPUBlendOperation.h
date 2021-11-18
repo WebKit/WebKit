@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -38,3 +39,18 @@ enum class BlendOperation : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::BlendOperation> {
+    using values = EnumValues<
+        PAL::WebGPU::BlendOperation,
+        PAL::WebGPU::BlendOperation::Add,
+        PAL::WebGPU::BlendOperation::Subtract,
+        PAL::WebGPU::BlendOperation::ReverseSubtract,
+        PAL::WebGPU::BlendOperation::Min,
+        PAL::WebGPU::BlendOperation::Max
+    >;
+};
+
+} // namespace WTF

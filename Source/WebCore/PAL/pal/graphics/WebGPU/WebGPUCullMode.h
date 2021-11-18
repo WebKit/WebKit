@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -36,3 +37,16 @@ enum class CullMode : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::CullMode> {
+    using values = EnumValues<
+        PAL::WebGPU::CullMode,
+        PAL::WebGPU::CullMode::None,
+        PAL::WebGPU::CullMode::Front,
+        PAL::WebGPU::CullMode::Back
+    >;
+};
+
+} // namespace WTF

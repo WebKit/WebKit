@@ -28,6 +28,7 @@
 #include "WebGPUIndexFormat.h"
 #include "WebGPUIntegralTypes.h"
 #include "WebGPURenderBundleDescriptor.h"
+#include <cstdint>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

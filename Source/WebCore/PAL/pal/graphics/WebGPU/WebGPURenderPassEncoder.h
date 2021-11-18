@@ -28,6 +28,7 @@
 #include "WebGPUColor.h"
 #include "WebGPUIndexFormat.h"
 #include "WebGPUIntegralTypes.h"
+#include <cstdint>
 #include <functional>
 #include <optional>
 #include <wtf/Ref.h>

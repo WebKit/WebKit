@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace PAL::WebGPU {
 
@@ -42,3 +43,22 @@ enum class FeatureName : uint8_t {
 };
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::FeatureName> {
+    using values = EnumValues<
+        PAL::WebGPU::FeatureName,
+        PAL::WebGPU::FeatureName::DepthClipControl,
+        PAL::WebGPU::FeatureName::Depth24unormStencil8,
+        PAL::WebGPU::FeatureName::Depth32floatStencil8,
+        PAL::WebGPU::FeatureName::PipelineStatisticsQuery,
+        PAL::WebGPU::FeatureName::TextureCompressionBc,
+        PAL::WebGPU::FeatureName::TextureCompressionEtc2,
+        PAL::WebGPU::FeatureName::TextureCompressionAstc,
+        PAL::WebGPU::FeatureName::TimestampQuery,
+        PAL::WebGPU::FeatureName::IndirectFirstInstance
+    >;
+};
+
+} // namespace WTF

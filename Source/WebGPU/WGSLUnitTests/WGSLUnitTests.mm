@@ -25,6 +25,7 @@
 
 #import <XCTest/XCTest.h>
 #import <vector>
+#import <wtf/DataLog.h>
 #import <wtf/Vector.h>
 
 @interface WGSLUnitTests : XCTestCase
@@ -34,6 +35,7 @@
 @implementation WGSLUnitTests
 
 - (void)testExample {
+    dataLog("asdf\n");
     Vector<int> x { 2, 3, };
     Vector<int> y;
     y.append(2);
