@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-box-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-box-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-box-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-invalid.html

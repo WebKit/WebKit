@@ -1,3 +1,83 @@
+2021-11-18  Martin Robinson  <mrobinson@webkit.org>
+
+        Update css-transforms WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=233188
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WPT transform tests and expectations.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-transforms/2d-rotate-001.html:
+        * web-platform-tests/css/css-transforms/2d-rotate-notref-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/2d-rotate-notref-expected.html.
+        * web-platform-tests/css/css-transforms/2d-rotate-ref-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/2d-rotate-ref-expected.html.
+        * web-platform-tests/css/css-transforms/animation/rotate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-composition.html:
+        * web-platform-tests/css/css-transforms/animation/support/transform-interpolation-reftests.js:
+        (async createTests):
+        (async createRefs):
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value.html:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-inline-value-expected.txt: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-inline-value.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value.html.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix-expected.txt: Removed.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp-expected.txt: Removed.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-scale-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-scale-expected.txt: Removed.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-skew-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-skew-expected.txt: Removed.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-translate-em-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-translate-em-expected.txt: Removed.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-translate-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-translate-expected.txt: Removed.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-verify-reftests-expected.txt: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-verify-reftests.html: Added.
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation.html:
+        * web-platform-tests/css/css-transforms/animation/w3c-import.log:
+        * web-platform-tests/css/css-transforms/backface-visibility-hidden-child-translate-expected.xht: Added.
+        * web-platform-tests/css/css-transforms/backface-visibility-hidden-child-translate.html: Added.
+        * web-platform-tests/css/css-transforms/backface-visibility-hidden-child-will-change-transform-expected.xht: Added.
+        * web-platform-tests/css/css-transforms/backface-visibility-hidden-child-will-change-transform.html: Added.
+        * web-platform-tests/css/css-transforms/css-skew-002.html:
+        * web-platform-tests/css/css-transforms/inheritance-expected.txt:
+        * web-platform-tests/css/css-transforms/inheritance.html:
+        * web-platform-tests/css/css-transforms/parsing/scale-parsing-invalid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/scale-parsing-invalid.html:
+        * web-platform-tests/css/css-transforms/parsing/transform-computed-expected.txt: Added.
+        * web-platform-tests/css/css-transforms/parsing/transform-computed.html: Added.
+        * web-platform-tests/css/css-transforms/parsing/translate-parsing-invalid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/translate-parsing-invalid.html:
+        * web-platform-tests/css/css-transforms/parsing/w3c-import.log:
+        * web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html:
+        * web-platform-tests/css/css-transforms/preserve-3d-flat-grouping-properties.html:
+        * web-platform-tests/css/css-transforms/preserve3d-overflow-percent-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/preserve3d-overflow-percent-expected.html.
+        * web-platform-tests/css/css-transforms/transform-abspos-005-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-abspos-005-expected.html.
+        * web-platform-tests/css/css-transforms/transform-and-individual-transform-properties-computed-style.html:
+        * web-platform-tests/css/css-transforms/transform-background-007.html:
+        * web-platform-tests/css/css-transforms/transform-background-008.html:
+        * web-platform-tests/css/css-transforms/transform-input-015.html:
+        * web-platform-tests/css/css-transforms/transform-input-016.html:
+        * web-platform-tests/css/css-transforms/transform-input-017.html:
+        * web-platform-tests/css/css-transforms/transform-origin-001-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-origin-001-expected.html.
+        * web-platform-tests/css/css-transforms/transform-origin-002-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-origin-002-expected.html.
+        * web-platform-tests/css/css-transforms/transform-scale-hittest-expected.txt:
+        * web-platform-tests/css/css-transforms/transform-scale-hittest.html:
+        * web-platform-tests/css/css-transforms/transform3d-perspective-origin-ref-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform3d-perspective-origin-ref-expected.html.
+        * web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-001-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-001-expected.html.
+        * web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-002-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-002-expected.html.
+        * web-platform-tests/css/css-transforms/transform3d-rotatex-ref-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-ref-expected.html.
+        * web-platform-tests/css/css-transforms/transform3d-sorting-006.html:
+        * web-platform-tests/css/css-transforms/transforms-rotate-degree-45.html:
+        * web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle-mismatch-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle-mismatch-expected.html.
+        * web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html:
+        * web-platform-tests/css/css-transforms/w3c-import.log:
+
 2021-11-18  Ziran Sun  <zsun@igalia.com>
 
         Images as grid items should use the overridingLogicalWidth when defined to compute the logical Height

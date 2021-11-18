@@ -36,12 +36,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-inline-value.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-scale.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-skew.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-translate-em.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-translate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-verify-reftests.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-matrix-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-origin-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-perspective-composition.html

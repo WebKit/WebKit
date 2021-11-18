@@ -141,6 +141,7 @@
     "web-platform-tests/css/css-sizing/aspect-ratio": "import", 
     "web-platform-tests/css/css-text": "import", 
     "web-platform-tests/css/css-transforms": "import", 
+    "web-platform-tests/css/css-transforms/": "import", 
     "web-platform-tests/css/css-transitions": "import", 
     "web-platform-tests/css/css-ui": "import", 
     "web-platform-tests/css/css-variables": "import", 
@@ -476,6 +477,7 @@
     "web-platform-tests/worklets": "import", 
     "web-platform-tests/x-frame-options": "skip", 
     "web-platform-tests/xhr": "import", 
+    "web-platform-testscss/css-transforms/": "import", 
     "web-platform/test/html/infrastructure": "import", 
     "webrtc-platform-tests/webrtc": "import"
 }

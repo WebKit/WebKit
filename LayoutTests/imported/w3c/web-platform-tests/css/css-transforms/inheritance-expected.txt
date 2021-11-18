@@ -15,7 +15,7 @@ PASS Property transform-box has initial value view-box
 PASS Property transform-box does not inherit
 PASS Property transform-origin has initial value 30px 20px
 PASS Property transform-origin does not inherit
-FAIL Property transform-style has initial value auto assert_equals: expected "auto" but got "flat"
+PASS Property transform-style has initial value flat
 PASS Property transform-style does not inherit
 PASS Property translate has initial value none
 PASS Property translate does not inherit
