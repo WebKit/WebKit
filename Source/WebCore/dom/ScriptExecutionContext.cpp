@@ -114,17 +114,17 @@ public:
 };
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_contextIdentifier(ScriptExecutionContextIdentifier::generateThreadSafe())
+    : m_identifier(ScriptExecutionContextIdentifier::generateThreadSafe())
 {
     Locker locker { allScriptExecutionContextsMapLock };
-    allScriptExecutionContextsMap().add(m_contextIdentifier, this);
+    allScriptExecutionContextsMap().add(m_identifier, this);
 }
 
 void ScriptExecutionContext::removeFromContextsMap()
 {
     Locker locker { allScriptExecutionContextsMapLock };
-    ASSERT(allScriptExecutionContextsMap().contains(m_contextIdentifier));
-    allScriptExecutionContextsMap().remove(m_contextIdentifier);
+    ASSERT(allScriptExecutionContextsMap().contains(m_identifier));
+    allScriptExecutionContextsMap().remove(m_identifier);
 }
 
 #if !ASSERT_ENABLED
@@ -158,7 +158,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 #if ASSERT_ENABLED
     {
         Locker locker { allScriptExecutionContextsMapLock };
-        ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_contextIdentifier), "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
+        ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_identifier), "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
     }
 
     m_inScriptExecutionContextDestructor = true;

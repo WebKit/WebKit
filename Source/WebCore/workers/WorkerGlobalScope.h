@@ -79,7 +79,7 @@ public:
 
     const URL& url() const final { return m_url; }
     String origin() const;
-    const String& identifier() const { return m_identifier; }
+    const String& inspectorIdentifier() const { return m_inspectorIdentifier; }
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     void suspend() final;
@@ -177,7 +177,7 @@ private:
     String userAgent(const URL&) const final;
 
     EventTarget* errorEventTarget() final;
-    String resourceRequestIdentifier() const final { return m_identifier; }
+    String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
     SocketProvider* socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
@@ -191,7 +191,7 @@ private:
     void stopIndexedDatabase();
 
     URL m_url;
-    String m_identifier;
+    String m_inspectorIdentifier;
     String m_userAgent;
 
     mutable RefPtr<WorkerLocation> m_location;

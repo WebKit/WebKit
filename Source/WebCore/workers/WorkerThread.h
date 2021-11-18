@@ -61,7 +61,7 @@ struct WorkerParameters {
 public:
     URL scriptURL;
     String name;
-    String identifier;
+    String inspectorIdentifier;
     String userAgent;
     bool isOnline;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;

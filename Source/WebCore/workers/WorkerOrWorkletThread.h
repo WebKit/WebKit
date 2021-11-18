@@ -63,14 +63,14 @@ public:
     void suspend();
     void resume();
 
-    const String& identifier() const { return m_identifier; }
+    const String& inspectorIdentifier() const { return m_inspectorIdentifier; }
 
     static HashSet<WorkerOrWorkletThread*>& workerOrWorkletThreads() WTF_REQUIRES_LOCK(workerOrWorkletThreadsLock());
     static Lock& workerOrWorkletThreadsLock() WTF_RETURNS_LOCK(s_workerOrWorkletThreadsLock);
     static void releaseFastMallocFreeMemoryInAllThreads();
 
 protected:
-    explicit WorkerOrWorkletThread(const String& identifier, WorkerThreadMode = WorkerThreadMode::CreateNewThread);
+    explicit WorkerOrWorkletThread(const String& inspectorIdentifier, WorkerThreadMode = WorkerThreadMode::CreateNewThread);
     void workerOrWorkletThread();
 
     // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
@@ -84,7 +84,7 @@ private:
 
     static Lock s_workerOrWorkletThreadsLock;
 
-    String m_identifier;
+    String m_inspectorIdentifier;
     Lock m_threadCreationAndGlobalScopeLock;
     RefPtr<WorkerOrWorkletGlobalScope> m_globalScope;
     RefPtr<Thread> m_thread;

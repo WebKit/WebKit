@@ -159,7 +159,7 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
     m_transformer->setIsEncrypting(side == Side::Sender);
     m_transformer->setMediaType(backend.mediaType());
 
-    backend.setTransformableFrameCallback([transformer = m_transformer, identifier = context->contextIdentifier(), backend = Ref { backend }, weakThis = WeakPtr { *this }](auto&& frame) {
+    backend.setTransformableFrameCallback([transformer = m_transformer, identifier = context->identifier(), backend = Ref { backend }, weakThis = WeakPtr { *this }](auto&& frame) {
         auto chunk = frame->data();
         if (!chunk.data() || !chunk.size())
             return;
@@ -231,13 +231,13 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
 
         // We do not want to throw any exception in the transform to make sure we do not error the transform.
         WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
-            transformFrame(*value, globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
+            transformFrame(*value, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
-            transformFrame(*value, globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
+            transformFrame(*value, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         }, [&](RefPtr<ArrayBuffer>& value) {
-            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
+            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         }, [&](RefPtr<ArrayBufferView>& value) {
-            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
+            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         });
         return { };
     }));

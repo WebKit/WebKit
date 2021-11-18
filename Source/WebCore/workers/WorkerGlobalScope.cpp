@@ -88,7 +88,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
     : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread)
     , m_url(params.scriptURL)
-    , m_identifier(params.identifier)
+    , m_inspectorIdentifier(params.inspectorIdentifier)
     , m_userAgent(params.userAgent)
     , m_isOnline(params.isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
@@ -103,7 +103,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
 {
     {
         Locker locker { allWorkerGlobalScopeIdentifiersLock };
-        allWorkerGlobalScopeIdentifiers().add(contextIdentifier());
+        allWorkerGlobalScopeIdentifiers().add(identifier());
     }
 
     if (m_topOrigin->hasUniversalAccess())
@@ -124,7 +124,7 @@ WorkerGlobalScope::~WorkerGlobalScope()
 
     {
         Locker locker { allWorkerGlobalScopeIdentifiersLock };
-        allWorkerGlobalScopeIdentifiers().remove(contextIdentifier());
+        allWorkerGlobalScopeIdentifiers().remove(identifier());
     }
 
     m_performance = nullptr;

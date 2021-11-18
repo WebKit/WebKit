@@ -66,8 +66,8 @@ static UniqueRef<WorkerRunLoop> constructRunLoop(WorkerThreadMode workerThreadMo
     return makeUniqueRef<WorkerDedicatedRunLoop>();
 }
 
-WorkerOrWorkletThread::WorkerOrWorkletThread(const String& identifier, WorkerThreadMode workerThreadMode)
-    : m_identifier(identifier)
+WorkerOrWorkletThread::WorkerOrWorkletThread(const String& inspectorIdentifier, WorkerThreadMode workerThreadMode)
+    : m_inspectorIdentifier(inspectorIdentifier)
     , m_runLoop(constructRunLoop(workerThreadMode))
 {
     Locker locker { workerOrWorkletThreadsLock() };

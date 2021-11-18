@@ -118,7 +118,7 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Docume
 
 void BroadcastChannel::MainThreadBridge::registerChannel()
 {
-    ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->contextIdentifier()](auto& document) {
+    ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier()](auto& document) {
         m_origin = { shouldPartitionOrigin(document) ? document.topOrigin().data() : document.securityOrigin().data(), document.securityOrigin().data() };
         if (auto* page = document.page())
             page->broadcastChannelRegistry().registerChannel(m_origin, m_name, m_identifier);

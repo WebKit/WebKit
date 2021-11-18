@@ -257,7 +257,7 @@ void MediaCapabilities::decodingInfo(ScriptExecutionContext& context, MediaDecod
     }
 
     m_decodingTasks.add(++m_nextTaskIdentifier, WTFMove(callback));
-    context.postTaskToResponsibleDocument([configuration = WTFMove(configuration).isolatedCopy(), contextIdentifier = context.contextIdentifier(), weakThis = WeakPtr { this }, taskIdentifier = m_nextTaskIdentifier](auto& document) mutable {
+    context.postTaskToResponsibleDocument([configuration = WTFMove(configuration).isolatedCopy(), contextIdentifier = context.identifier(), weakThis = WeakPtr { this }, taskIdentifier = m_nextTaskIdentifier](auto& document) mutable {
         gatherDecodingInfo(document, WTFMove(configuration), [contextIdentifier, weakThis = WTFMove(weakThis), taskIdentifier](auto&& result) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [weakThis = WTFMove(weakThis), taskIdentifier, result = WTFMove(result).isolatedCopy()](auto&) mutable {
                 if (!weakThis)
@@ -314,7 +314,7 @@ void MediaCapabilities::encodingInfo(ScriptExecutionContext& context, MediaEncod
     }
 
     m_encodingTasks.add(++m_nextTaskIdentifier, WTFMove(callback));
-    context.postTaskToResponsibleDocument([configuration = WTFMove(configuration).isolatedCopy(), contextIdentifier = context.contextIdentifier(), weakThis = WeakPtr { this }, taskIdentifier = m_nextTaskIdentifier](auto& document) mutable {
+    context.postTaskToResponsibleDocument([configuration = WTFMove(configuration).isolatedCopy(), contextIdentifier = context.identifier(), weakThis = WeakPtr { this }, taskIdentifier = m_nextTaskIdentifier](auto& document) mutable {
         gatherEncodingInfo(document, WTFMove(configuration), [contextIdentifier, weakThis = WTFMove(weakThis), taskIdentifier](auto&& result) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [weakThis = WTFMove(weakThis), taskIdentifier, result = WTFMove(result).isolatedCopy()](auto&) mutable {
                 if (!weakThis)

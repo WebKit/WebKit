@@ -277,7 +277,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
 
     __block auto blockCallback(WTFMove(callback));
     __block auto blockFailureCallback(WTFMove(failureCallback));
-    auto contextIdentifier = context->contextIdentifier();
+    auto contextIdentifier = context->identifier();
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         CCRSACryptorRef ccPublicKey = nullptr;
         CCRSACryptorRef ccPrivateKey = nullptr;

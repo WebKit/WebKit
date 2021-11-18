@@ -71,7 +71,7 @@ Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std:
         if (!channel->m_handler)
             return;
         if (auto* context = channel->scriptExecutionContext())
-            channel->m_handler->setClient(*channel, context->contextIdentifier());
+            channel->m_handler->setClient(*channel, context->identifier());
     });
     return channel;
 }
@@ -97,7 +97,7 @@ RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<
     : ActiveDOMObject(&context)
     , m_handler(WTFMove(handler))
     , m_identifier(RTCDataChannelIdentifier { Process::identifier(), ObjectIdentifier<RTCDataChannelLocalIdentifierType>::generateThreadSafe() })
-    , m_contextIdentifier(context.isDocument() ? ScriptExecutionContextIdentifier { } : context.contextIdentifier())
+    , m_contextIdentifier(context.isDocument() ? ScriptExecutionContextIdentifier { } : context.identifier())
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))
     , m_messageQueue(createMessageQueue(context, *this))

@@ -50,7 +50,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
     return {
         scriptURL.isolatedCopy(),
         name.isolatedCopy(),
-        identifier.isolatedCopy(),
+        inspectorIdentifier.isolatedCopy(),
         userAgent.isolatedCopy(),
         isOnline,
         contentSecurityPolicyResponseHeaders,
@@ -87,7 +87,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const WorkerParameters& other, 
 }
 
 WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerOrWorkletThread(params.identifier.isolatedCopy(), params.workerThreadMode)
+    : WorkerOrWorkletThread(params.inspectorIdentifier.isolatedCopy(), params.workerThreadMode)
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerDebuggerProxy(workerDebuggerProxy)
     , m_workerReportingProxy(workerReportingProxy)

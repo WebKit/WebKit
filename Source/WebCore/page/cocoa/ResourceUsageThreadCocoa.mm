@@ -178,7 +178,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
                 continue;
             mach_port_t machThread = thread->thread()->machThread();
             if (MACH_PORT_VALID(machThread))
-                knownWorkerThreads.set(machThread, thread->identifier().isolatedCopy());
+                knownWorkerThreads.set(machThread, thread->inspectorIdentifier().isolatedCopy());
         }
     }
 
