@@ -1,3 +1,14 @@
+2021-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] TypedArray GetArrayLength should not use Reuse
+        https://bugs.webkit.org/show_bug.cgi?id=233299
+        rdar://85502079
+
+        Reviewed by Robin Morisset.
+
+        * stress/get-array-length-reuse.js: Added.
+        (foo):
+
 2021-11-17  Saam Barati  <sbarati@apple.com>
 
         Run the memmove fast path in JSGenericTypedArrayView<Adaptor>::set when using a combination of Uint8 and Uint8Clamped
