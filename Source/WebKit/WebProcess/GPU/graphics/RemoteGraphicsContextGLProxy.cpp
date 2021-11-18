@@ -35,23 +35,9 @@
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
 
-#if PLATFORM(COCOA)
-#include <WebCore/GraphicsContextCG.h>
-#include <WebCore/GraphicsContextGLIOSurfaceSwapChain.h>
-#endif
-
-#if USE(GRAPHICS_LAYER_WC)
-#include "WCPlatformLayerGCGL.h"
-#endif
-
 namespace WebKit {
 
 using namespace WebCore;
-
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
-{
-    return adoptRef(new RemoteGraphicsContextGLProxy(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
-}
 
 static constexpr size_t defaultStreamSize = 1 << 21;
 
@@ -66,9 +52,6 @@ RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection&
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
-#if USE(GRAPHICS_LAYER_WC)
-    setPlatformLayer(makeUnique<WCPlatformLayerGCGL>(m_graphicsContextGLIdentifier));
-#endif
 }
 
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
@@ -86,20 +69,6 @@ void RemoteGraphicsContextGLProxy::reshape(int width, int height)
     if (!sendResult)
         markContextLost();
 }
-
-#if !PLATFORM(COCOA)
-void RemoteGraphicsContextGLProxy::prepareForDisplay()
-{
-    if (isContextLost())
-        return;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply());
-    if (!sendResult) {
-        markContextLost();
-        return;
-    }
-    markLayerComposited();
-}
-#endif
 
 void RemoteGraphicsContextGLProxy::ensureExtensionEnabled(const String& extension)
 {

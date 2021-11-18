@@ -42,7 +42,6 @@ namespace WebCore {
 RemoteGraphicsContextGLProxyBase::RemoteGraphicsContextGLProxyBase(const GraphicsContextGLAttributes& attrs)
     : GraphicsContextGL(attrs)
 {
-    platformInitialize();
 }
 
 RemoteGraphicsContextGLProxyBase::~RemoteGraphicsContextGLProxyBase() = default;
@@ -134,16 +133,6 @@ void RemoteGraphicsContextGLProxyBase::initialize(const String& availableExtensi
         m_requestableExtensions.add(extension);
 }
 
-#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC)
-void RemoteGraphicsContextGLProxyBase::platformInitialize()
-{
-}
-
-PlatformLayer* RemoteGraphicsContextGLProxyBase::platformLayer() const
-{
-    return nullptr;
-}
-#endif
 #if !USE(ANGLE)
 void RemoteGraphicsContextGLProxyBase::readnPixelsEXT(GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLvoid*)
 {
@@ -159,10 +148,6 @@ void RemoteGraphicsContextGLProxyBase::getnUniformivEXT(GCGLuint, GCGLint, GCGLs
 #endif
 
 #if ENABLE(MEDIA_STREAM) && !PLATFORM(COCOA)
-RefPtr<MediaSample> RemoteGraphicsContextGLProxyBase::paintCompositedResultsToMediaSample()
-{
-    return nullptr;
-}
 #endif
 }
 #endif

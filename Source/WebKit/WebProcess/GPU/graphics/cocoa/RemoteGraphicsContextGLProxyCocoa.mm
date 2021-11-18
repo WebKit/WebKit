@@ -27,15 +27,68 @@
 #import "RemoteGraphicsContextGLProxy.h"
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+#import "GPUConnectionToWebProcess.h"
+#import "GPUProcessConnection.h"
 #import "RemoteGraphicsContextGLMessages.h"
+#import "WebProcess.h"
+#import <WebCore/CVUtilities.h>
+#import <WebCore/GraphicsContextCG.h>
+#import <WebCore/GraphicsContextGLIOSurfaceSwapChain.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/MediaSampleAVFObjC.h>
 #import <WebCore/WebGLLayer.h>
 #import <wtf/BlockObjCExceptions.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-void RemoteGraphicsContextGLProxy::prepareForDisplay()
+namespace {
+
+class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
+public:
+    bool isValid() const { return m_webGLLayer; }
+    WebCore::IOSurface* displayBuffer() const { return m_displayBuffer.get(); }
+
+    // RemoteGraphicsContextGLProxy overrides.
+    PlatformLayer* platformLayer() const final { return m_webGLLayer.get(); }
+    void prepareForDisplay() final;
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+    WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
+#endif
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<WebCore::MediaSample> paintCompositedResultsToMediaSample() final;
+#endif
+private:
+    RemoteGraphicsContextGLProxyCocoa(GPUProcessConnection&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
+    RetainPtr<WebGLLayer> m_webGLLayer;
+    std::unique_ptr<WebCore::IOSurface> m_displayBuffer;
+    friend class RemoteGraphicsContextGLProxy;
+};
+
+RemoteGraphicsContextGLProxyCocoa::RemoteGraphicsContextGLProxyCocoa(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+    : RemoteGraphicsContextGLProxy(gpuProcessConnection, attributes, renderingBackend)
+{
+    auto attrs = contextAttributes();
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
+#ifndef NDEBUG
+    [m_webGLLayer setName:@"WebGL Layer"];
+#endif
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+#if ENABLE(MEDIA_STREAM)
+RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxyCocoa::paintCompositedResultsToMediaSample()
+{
+    if (!m_displayBuffer)
+        return nullptr;
+    auto pixelBuffer = WebCore::createCVPixelBuffer(m_displayBuffer->surface());
+    if (!pixelBuffer)
+        return nullptr;
+    return WebCore::MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), WebCore::MediaSampleAVFObjC::VideoRotation::UpsideDown, true);
+}
+#endif
+
+void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {
     if (isContextLost())
         return;
@@ -57,6 +110,16 @@ void RemoteGraphicsContextGLProxy::prepareForDisplay()
     [m_webGLLayer setContents:m_displayBuffer->asLayerContents()];
     END_BLOCK_OBJC_EXCEPTIONS
     markLayerComposited();
+}
+
+}
+
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+{
+    auto context = adoptRef(new RemoteGraphicsContextGLProxyCocoa(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
+    if (!context->isValid())
+        return nullptr;
+    return context;
 }
 
 }

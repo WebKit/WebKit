@@ -1,3 +1,26 @@
+2021-11-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteGraphicsContextGLProxyBase should not have platform-specific implementations
+        https://bugs.webkit.org/show_bug.cgi?id=233175
+
+        Reviewed by Antti Koivisto.
+
+        Move platform-specific code from RemoteGraphicsContextGLProxyBase to
+        WebKit::RemoteGraphicsContextGLProxyCocoa and WebKit::RemoteGraphicsContextGLProxyWC.
+        The platform-specific code is trivial and anyway used by the WebKit side concrete classes.
+
+        * PlatformWin.cmake:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::create): Deleted.
+        (WebKit::RemoteGraphicsContextGLProxy::prepareForDisplay): Deleted.
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm:
+        (WebKit::RemoteGraphicsContextGLProxy::create):
+        (WebKit::RemoteGraphicsContextGLProxy::prepareForDisplay): Deleted.
+        * WebProcess/GPU/graphics/wc/RemoteGraphicsContextGLProxyWC.cpp: Added.
+        (WebKit::RemoteGraphicsContextGLProxy::create):
+
 2021-11-18  Antoine Quint  <graouts@webkit.org>
 
         [Model] [macOS] Add support for interaction on macOS

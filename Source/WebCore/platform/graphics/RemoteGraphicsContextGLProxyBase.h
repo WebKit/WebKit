@@ -33,20 +33,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if PLATFORM(COCOA)
-OBJC_CLASS WebGLLayer;
-#endif
-
 namespace WebCore {
-
-#if PLATFORM(COCOA)
-class GraphicsContextGLIOSurfaceSwapChain;
-class IOSurface;
-#endif
 
 // A base class for RemoteGraphicsContextGL proxy side implementation
 // This implements the parts that are using WebCore internal functionality:
@@ -59,7 +46,6 @@ public:
 
     // Other WebCore::GraphicsContextGL overrides.
     using GraphicsContextGL::isEnabled;
-    PlatformLayer* platformLayer() const final;
     ExtensionsGL& getExtensions() final;
     void setContextVisibility(bool) final;
     bool isGLES2Compliant() const final;
@@ -69,9 +55,6 @@ public:
     GCGLbitfield getBuffersToAutoClear() const final;
     void markLayerComposited() final;
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    GraphicsContextGLCV* asCV() final;
-#endif
     // Other ExtensionGL overrides.
     using ExtensionsGL::isEnabled;
     bool supports(const String&) final;
@@ -83,9 +66,6 @@ public:
     void getnUniformfvEXT(GCGLuint, GCGLint, GCGLsizei, GCGLfloat*) final;
     void getnUniformivEXT(GCGLuint, GCGLint, GCGLsizei, GCGLint*) final;
 #endif
-#if ENABLE(MEDIA_STREAM)
-    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
-#endif
 
 protected:
     void initialize(const String& availableExtensions, const String& requestableExtensions);
@@ -93,16 +73,7 @@ protected:
     virtual void ensureExtensionEnabled(const String&) = 0;
     virtual void notifyMarkContextChanged() = 0;
 
-#if PLATFORM(COCOA)
-    RetainPtr<WebGLLayer> m_webGLLayer;
-    std::unique_ptr<IOSurface> m_displayBuffer;
-#elif USE(GRAPHICS_LAYER_WC)
-    void setPlatformLayer(PlatformLayerContainer&&);
-    PlatformLayerContainer m_platformLayer;
-#endif
 private:
-    void platformInitialize();
-
     // Guarded by waitUntilInitialized().
     HashSet<String> m_availableExtensions;
     HashSet<String> m_requestableExtensions;

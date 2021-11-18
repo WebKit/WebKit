@@ -82,6 +82,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/win/WebProcessPoolWin.cpp
     UIProcess/win/WebView.cpp
 
+    WebProcess/GPU/graphics/wc/RemoteGraphicsContextGLProxyWC.cpp
     WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy.cpp
 
     WebProcess/GPU/media/win/VideoLayerRemoteWin.cpp

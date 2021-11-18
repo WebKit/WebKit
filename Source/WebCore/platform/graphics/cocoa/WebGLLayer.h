@@ -28,7 +28,7 @@
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 // A layer class showing one IOSurface.
-@interface WebGLLayer : CALayer
+WEBCORE_EXPORT @interface WebGLLayer : CALayer
 
 - (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque;
 
