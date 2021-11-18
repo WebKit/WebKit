@@ -87,6 +87,9 @@
     (allow user-preference-read
         (preference-domain "com.apple.opengl")
         (preference-domain "com.nvidia.OpenGL"))
+    ;; CVMS
+    (allow mach-lookup (with telemetry)
+        (global-name "com.apple.cvmsServ"))
     (allow file-read* (with telemetry)
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
     ;; OpenCL

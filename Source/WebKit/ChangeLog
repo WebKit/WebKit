@@ -1,3 +1,16 @@
+2021-11-18  Per Arne  <pvollan@apple.com>
+
+        [macOS][GPUP] Remove access to mach services in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=232208
+        <rdar://problem/84584565>
+
+        Unreviewed, revert minor part of initial patch.
+
+        Add back Mach service which is potentially still needed, although telemetry shows no usage.
+        We will reevaluate the need for this service when more telemetry is available.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-18  Antoine Quint  <graouts@webkit.org>
 
         [Model] add support for getting and setting the camera
