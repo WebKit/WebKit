@@ -459,6 +459,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
+    auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
     auto isInIntrinsicWidthMode = this->isInIntrinsicWidthMode();
     // Legacy line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
@@ -472,13 +473,19 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     if (isInIntrinsicWidthMode) {
         // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
         // https://drafts.csswg.org/css-text/#hanging
-        // FIXME: Add support for conditionally hanging glyphs.
-        m_line.removeHangingGlyphs();
+        if (*intrinsicWidthMode() == IntrinsicWidthMode::Minimum)
+            m_line.removeHangingGlyphs();
+        else {
+            // Glyphs that conditionally hang are not taken into account when computing min-content sizes and any sizes derived thereof, but they are taken into account for max-content sizes and any sizes derived thereof.
+            auto isConditionalHanging = isLastLine || (!m_line.runs().isEmpty() && m_line.runs().last().isLineBreak());
+            if (!isConditionalHanging)
+                m_line.removeHangingGlyphs();
+        }
     } else
         m_line.visuallyCollapseHangingOverflowingGlyphs(horizontalAvailableSpace);
 
     auto horizontalAlignment = root().style().textAlign();
-    auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
+    auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLine;
     if (runsExpandHorizontally)
         m_line.applyRunExpansion(horizontalAvailableSpace);
     auto lineEndsWithHyphen = false;
