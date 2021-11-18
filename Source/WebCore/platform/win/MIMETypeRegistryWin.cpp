@@ -99,6 +99,9 @@ String MIMETypeRegistry::mimeTypeForExtension(const String &ext)
         mimetypeMap.add("wml", "text/vnd.wap.wml");
         mimetypeMap.add("wmlc", "application/vnd.wap.wmlc");
         mimetypeMap.add("m4a", "audio/x-m4a");
+#if USE(JPEGXL)
+        mimetypeMap.add("jxl", "image/jxl");
+#endif
     }
     String result = mimetypeMap.get(ext);
     if (result.isEmpty()) {

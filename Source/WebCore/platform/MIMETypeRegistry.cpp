@@ -111,6 +111,9 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if !USE(CG) && USE(OPENJPEG)
     "image/jpeg2000",
 #endif
+#if USE(JPEGXL)
+    "image/jxl",
+#endif
 #if PLATFORM(IOS_FAMILY)
     "image/ms-bmp",
     "image/pipeg",

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+window.onload = function() {
+  document.getElementById('results').innerHTML =
+    document.getElementsByTagName('img')[0].width + 'x' +
+    document.getElementsByTagName('img')[0].height;
+}
+</script>
+<picture>
+  <source srcset="resources/green-313x313.jxl" type="image/jxl">
+  <img src="resources/green-313x313.jxl">
+</picture>
+<div id="results"></div>
+</body>

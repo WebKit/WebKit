@@ -1,3 +1,22 @@
+2021-11-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        Implement JPEG XL image decoder using libjxl
+        https://bugs.webkit.org/show_bug.cgi?id=233113
+
+        Reviewed by Michael Catanzaro.
+
+        This patch introduces the initial version of JPEG XL image decoder.
+        JPEG XL is a royalty-free raster-graphics file format that supports
+        both lossy and lossless compression and is experimentally supported by
+        Chrome, FireFox, and Edge.
+        The image decoder implemented by this patch uses libjxl, a reference
+        implementation of JPEG XL decoder (and encoder). JPEG XL animations
+        will be supported later.
+
+        * Source/cmake/FindJPEGXL.cmake: Added.
+        * Source/cmake/OptionsWinCairo.cmake: Enable JPEG XL support if
+        libjxl is available.
+
 2021-11-17  Patrick Angle  <pangle@apple.com>
 
         Update my (Patrick Angle's) status to reviewer

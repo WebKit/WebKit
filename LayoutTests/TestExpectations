@@ -132,6 +132,10 @@ fast/images/avif-as-image.html [ Skip ]
 fast/images/animated-avif.html [ Skip ]
 http/tests/images/avif-partial-load-crash.html [ Skip ]
 
+# These tests don't have to be platform-specific, but they are only implemented on WinCairo now.
+fast/images/jpegxl-image-decoding.html [ Skip ]
+fast/images/jpegxl-as-image.html [ Skip ]
+
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
 fast/css/apple-system-control-colors.html [ Skip ]

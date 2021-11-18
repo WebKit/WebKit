@@ -39,6 +39,9 @@
 #if USE(WEBP)
 #include "WEBPImageDecoder.h"
 #endif
+#if USE(JPEGXL)
+#include "JPEGXLImageDecoder.h"
+#endif
 
 #include <algorithm>
 #include <cmath>
@@ -107,6 +110,14 @@ bool matchesWebPSignature(char* contents)
 }
 #endif
 
+#if USE(JPEGXL)
+bool matchesJPEGXLSignature(const uint8_t* contents, size_t length)
+{
+    JxlSignature signature = JxlSignatureCheck(contents, length);
+    return signature != JXL_SIG_NOT_ENOUGH_BYTES && signature != JXL_SIG_INVALID;
+}
+#endif
+
 bool matchesBMPSignature(char* contents)
 {
     return !memcmp(contents, "BM", 2);
@@ -160,6 +171,11 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(SharedBuffer& data, Al
 #if USE(WEBP)
     if (matchesWebPSignature(contents))
         return WEBPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
+#endif
+
+#if USE(JPEGXL)
+    if (matchesJPEGXLSignature(reinterpret_cast<const uint8_t*>(contents), length))
+        return JPEGXLImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 
     if (matchesBMPSignature(contents))

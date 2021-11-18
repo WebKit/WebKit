@@ -1,3 +1,27 @@
+2021-11-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        Implement JPEG XL image decoder using libjxl
+        https://bugs.webkit.org/show_bug.cgi?id=233113
+
+        Reviewed by Michael Catanzaro.
+
+        This patch introduces the initial version of JPEG XL image decoder.
+        JPEG XL is a royalty-free raster-graphics file format that supports
+        both lossy and lossless compression and is experimentally supported by
+        Chrome, FireFox, and Edge.
+        The image decoder implemented by this patch uses libjxl, a reference
+        implementation of JPEG XL decoder (and encoder). JPEG XL animations
+        will be supported later.
+
+        * TestExpectations: Skip JPEG XL tests by default.
+        * fast/images/jpegxl-as-image-expected.html: Added.
+        * fast/images/jpegxl-as-image.html: Added.
+        * fast/images/jpegxl-image-decoding-expected.txt: Added.
+        * fast/images/jpegxl-image-decoding.html: Added.
+        * fast/images/resources/green-313x313.jxl: Added.
+        * platform/wincairo/TestExpectations: Skip JPEG XL tests until
+        WebKitReqirements release with libjxl.
+
 2021-11-18  Martin Robinson  <mrobinson@webkit.org>
 
         Update css-transforms WPT tests
