@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "WebCoreArgumentCoders.h"
 #include <wtf/MachSendRight.h>
 
 namespace WebKit {
