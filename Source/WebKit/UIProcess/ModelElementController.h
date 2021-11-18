@@ -53,11 +53,15 @@ public:
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(URL, String, WebCore::FloatSize, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);
+    void handleMouseDownForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
+    void handleMouseMoveForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
+    void handleMouseUpForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
 #endif
 
 private:
     WebPageProxy& m_webPageProxy;
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+    RetainPtr<ASVInlinePreview> previewForUUID(const String&);
     HashMap<String, RetainPtr<ASVInlinePreview>> m_inlinePreviews;
 #endif
 };

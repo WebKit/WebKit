@@ -44,6 +44,9 @@ private:
     void load(Model&, LayoutSize) override;
     PlatformLayer* layer() override;
     void enterFullscreen() override;
+    void handleMouseDown(const LayoutPoint&, MonotonicTime) override;
+    void handleMouseMove(const LayoutPoint&, MonotonicTime) override;
+    void handleMouseUp(const LayoutPoint&, MonotonicTime) override;
 
     WeakPtr<ModelPlayerClient> m_client;
 };

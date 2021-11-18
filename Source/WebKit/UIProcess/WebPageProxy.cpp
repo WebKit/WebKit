@@ -10844,6 +10844,21 @@ void WebPageProxy::modelElementDidCreatePreview(const URL& url, const String& uu
 {
     modelElementController()->modelElementDidCreatePreview(url, uuid, size, WTFMove(completionHandler));
 }
+
+void WebPageProxy::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    modelElementController()->handleMouseDownForModelElement(uuid, locationInPageCoordinates, timestamp);
+}
+
+void WebPageProxy::handleMouseMoveForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    modelElementController()->handleMouseMoveForModelElement(uuid, locationInPageCoordinates, timestamp);
+}
+
+void WebPageProxy::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    modelElementController()->handleMouseUpForModelElement(uuid, locationInPageCoordinates, timestamp);
+}
 #endif
 
 #if !PLATFORM(COCOA)

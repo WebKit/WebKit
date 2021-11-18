@@ -58,6 +58,9 @@ private:
     void load(Model&, LayoutSize) override;
     CALayer *layer() override;
     void enterFullscreen() override;
+    void handleMouseDown(const LayoutPoint&, MonotonicTime) override;
+    void handleMouseMove(const LayoutPoint&, MonotonicTime) override;
+    void handleMouseUp(const LayoutPoint&, MonotonicTime) override;
 
     // SceneKitModelLoaderClient overrides.
     virtual void didFinishLoading(SceneKitModelLoader&, Ref<SceneKitModel>) override;

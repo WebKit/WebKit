@@ -1,3 +1,37 @@
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for interaction on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=233105
+        <rdar://problem/80079386>
+
+        Reviewed by Wenson Hsieh.
+
+        Forward mouse events captured in the Web process to the matching ASVInlinePreview.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::previewForUUID):
+        (WebKit::ModelElementController::handleMouseDownForModelElement):
+        (WebKit::ModelElementController::handleMouseMoveForModelElement):
+        (WebKit::ModelElementController::handleMouseUpForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseDownForModelElement):
+        (WebKit::WebPageProxy::handleMouseMoveForModelElement):
+        (WebKit::WebPageProxy::handleMouseUpForModelElement):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.h:
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::handleMouseDown):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::handleMouseMove):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::handleMouseUp):
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::handleMouseDown):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::handleMouseMove):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::handleMouseUp):
+
 2021-11-17  Youenn Fablet  <youenn@apple.com>
 
         Add support for more rvfc metadata

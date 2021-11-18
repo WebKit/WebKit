@@ -76,6 +76,18 @@ void SceneKitModelPlayer::enterFullscreen()
 {
 }
 
+void SceneKitModelPlayer::handleMouseDown(const LayoutPoint&, MonotonicTime)
+{
+}
+
+void SceneKitModelPlayer::handleMouseMove(const LayoutPoint&, MonotonicTime)
+{
+}
+
+void SceneKitModelPlayer::handleMouseUp(const LayoutPoint&, MonotonicTime)
+{
+}
+
 // MARK: - SceneKitModelLoaderClient overrides.
 
 void SceneKitModelPlayer::didFinishLoading(SceneKitModelLoader& loader, Ref<SceneKitModel> model)

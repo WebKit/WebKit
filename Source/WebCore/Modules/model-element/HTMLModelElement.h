@@ -40,8 +40,10 @@
 
 namespace WebCore {
 
+class Event;
 class Model;
 class ModelPlayer;
+class MouseEvent;
 
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
@@ -92,12 +94,18 @@ private:
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
     GraphicsLayer::PlatformLayerID platformLayerID() final;
 
+    void defaultEventHandler(Event&) final;
+    void dragDidStart(MouseEvent&);
+    void dragDidChange(MouseEvent&);
+    void dragDidEnd(MouseEvent&);
+
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
     RefPtr<SharedBuffer> m_data;
     RefPtr<Model> m_model;
     UniqueRef<ReadyPromise> m_readyPromise;
     bool m_dataComplete { false };
+    bool m_isDragging { false };
 
     RefPtr<ModelPlayer> m_modelPlayer;
 };

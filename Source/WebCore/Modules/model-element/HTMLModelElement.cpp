@@ -33,6 +33,8 @@
 #include "Document.h"
 #include "ElementChildIterator.h"
 #include "ElementInlines.h"
+#include "EventHandler.h"
+#include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerCA.h"
 #include "HTMLNames.h"
@@ -43,7 +45,9 @@
 #include "Model.h"
 #include "ModelPlayer.h"
 #include "ModelPlayerProvider.h"
+#include "MouseEvent.h"
 #include "Page.h"
+#include "PlatformMouseEvent.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerModelObject.h"
@@ -287,6 +291,73 @@ GraphicsLayer::PlatformLayerID HTMLModelElement::platformLayerID()
 void HTMLModelElement::enterFullscreen()
 {
     m_modelPlayer->enterFullscreen();
+}
+
+// MARK: - Interaction support.
+
+void HTMLModelElement::defaultEventHandler(Event& event)
+{
+    if (!m_modelPlayer || !m_modelPlayer->supportsMouseInteraction())
+        return;
+
+    auto type = event.type();
+    if (type != eventNames().mousedownEvent && type != eventNames().mousemoveEvent && type != eventNames().mouseupEvent)
+        return;
+
+    ASSERT(is<MouseEvent>(event));
+    auto& mouseEvent = downcast<MouseEvent>(event);
+
+    if (mouseEvent.button() != LeftButton)
+        return;
+
+    if (type == eventNames().mousedownEvent && !m_isDragging && !event.defaultPrevented())
+        dragDidStart(mouseEvent);
+    else if (type == eventNames().mousemoveEvent && m_isDragging)
+        dragDidChange(mouseEvent);
+    else if (type == eventNames().mouseupEvent && m_isDragging)
+        dragDidEnd(mouseEvent);
+}
+
+void HTMLModelElement::dragDidStart(MouseEvent& event)
+{
+    ASSERT(!m_isDragging);
+
+    RefPtr frame = document().frame();
+    if (!frame)
+        return;
+
+    frame->eventHandler().setCapturingMouseEventsElement(this);
+    event.setDefaultHandled();
+    m_isDragging = true;
+
+    if (m_modelPlayer)
+        m_modelPlayer->handleMouseDown(event.pageLocation(), event.timeStamp());
+}
+
+void HTMLModelElement::dragDidChange(MouseEvent& event)
+{
+    ASSERT(m_isDragging);
+
+    event.setDefaultHandled();
+
+    if (m_modelPlayer)
+        m_modelPlayer->handleMouseMove(event.pageLocation(), event.timeStamp());
+}
+
+void HTMLModelElement::dragDidEnd(MouseEvent& event)
+{
+    ASSERT(m_isDragging);
+
+    RefPtr frame = document().frame();
+    if (!frame)
+        return;
+
+    frame->eventHandler().setCapturingMouseEventsElement(nullptr);
+    event.setDefaultHandled();
+    m_isDragging = false;
+
+    if (m_modelPlayer)
+        m_modelPlayer->handleMouseUp(event.pageLocation(), event.timeStamp());
 }
 
 }

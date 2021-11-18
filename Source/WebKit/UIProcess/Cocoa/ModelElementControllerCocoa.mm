@@ -42,9 +42,12 @@
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#import <WebCore/LayoutPoint.h>
+#import <WebCore/LayoutUnit.h>
 #import <WebCore/ResourceError.h>
 #import <pal/spi/mac/SystemPreviewSPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/MonotonicTime.h>
 #endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
@@ -186,6 +189,29 @@ void ModelElementController::modelElementDidCreatePreview(URL fileURL, String uu
             });
         }).get()];
     }).get()];
+}
+
+RetainPtr<ASVInlinePreview> ModelElementController::previewForUUID(const String& uuid)
+{
+    return m_inlinePreviews.get(uuid);
+}
+
+void ModelElementController::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    if (auto preview = previewForUUID(uuid))
+        [preview mouseDownAtLocation:CGPointMake(locationInPageCoordinates.x().toFloat(), locationInPageCoordinates.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
+}
+
+void ModelElementController::handleMouseMoveForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    if (auto preview = previewForUUID(uuid))
+        [preview mouseDraggedAtLocation:CGPointMake(locationInPageCoordinates.x().toFloat(), locationInPageCoordinates.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
+}
+
+void ModelElementController::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    if (auto preview = previewForUUID(uuid))
+        [preview mouseUpAtLocation:CGPointMake(locationInPageCoordinates.x().toFloat(), locationInPageCoordinates.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
 }
 
 #endif

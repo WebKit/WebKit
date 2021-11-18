@@ -50,6 +50,10 @@ private:
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) override;
     PlatformLayer* layer() override;
+    bool supportsMouseInteraction() override;
+    void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) override;
+    void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) override;
+    void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) override;
 
     void createFile(WebCore::Model&);
     void clearFile();

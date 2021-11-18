@@ -170,6 +170,32 @@ PlatformLayer* ARKitInlinePreviewModelPlayerMac::layer()
     return [m_inlinePreview layer];
 }
 
+bool ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction()
+{
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+    return true;
+#endif
+    return false;
+}
+
+void ARKitInlinePreviewModelPlayerMac::handleMouseDown(const LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    if (auto* page = this->page())
+        page->send(Messages::WebPageProxy::HandleMouseDownForModelElement([m_inlinePreview uuid].UUIDString, locationInPageCoordinates, timestamp));
+}
+
+void ARKitInlinePreviewModelPlayerMac::handleMouseMove(const LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    if (auto* page = this->page())
+        page->send(Messages::WebPageProxy::HandleMouseMoveForModelElement([m_inlinePreview uuid].UUIDString, locationInPageCoordinates, timestamp));
+}
+
+void ARKitInlinePreviewModelPlayerMac::handleMouseUp(const LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+{
+    if (auto* page = this->page())
+        page->send(Messages::WebPageProxy::HandleMouseUpForModelElement([m_inlinePreview uuid].UUIDString, locationInPageCoordinates, timestamp));
+}
+
 }
 
 #endif

@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "LayoutPoint.h"
 #include "LayoutSize.h"
 #include "PlatformLayer.h"
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -41,6 +43,11 @@ public:
     virtual void load(Model&, LayoutSize) = 0;
     virtual PlatformLayer* layer() = 0;
     virtual void enterFullscreen() = 0;
+    virtual bool supportsMouseInteraction();
+    virtual void handleMouseDown(const LayoutPoint&, MonotonicTime) = 0;
+    virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;
+    virtual void handleMouseUp(const LayoutPoint&, MonotonicTime) = 0;
+
 };
 
 }

@@ -59,6 +59,20 @@ void ARKitInlinePreviewModelPlayerIOS::enterFullscreen()
         page()->takeModelElementFullscreen(layerId);
 }
 
+void ARKitInlinePreviewModelPlayerIOS::handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime)
+{
+    ASSERT_NOT_REACHED();
 }
 
+void ARKitInlinePreviewModelPlayerIOS::handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void ARKitInlinePreviewModelPlayerIOS::handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime)
+{
+    ASSERT_NOT_REACHED();
+}
+
+}
 #endif

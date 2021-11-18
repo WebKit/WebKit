@@ -48,6 +48,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)preparePreviewOfFileAtURL:(NSURL *)url completionHandler:(void (^)(NSError * _Nullable error))handler;
 - (void)setRemoteContext:(uint32_t)contextId;
 
+- (void)mouseDownAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;
+- (void)mouseDraggedAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;
+- (void)mouseUpAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;
+
 @end
 
 #endif // ENABLE(ARKIT_INLINE_PREVIEW_MAC)

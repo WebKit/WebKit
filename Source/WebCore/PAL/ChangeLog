@@ -1,3 +1,15 @@
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for interaction on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=233105
+        <rdar://problem/80079386>
+
+        Reviewed by Wenson Hsieh.
+
+        Add new ARQL SPIs.
+
+        * pal/spi/mac/SystemPreviewSPI.h:
+
 2021-11-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add IPC message handlers for WebGPU

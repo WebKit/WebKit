@@ -58,4 +58,16 @@ void DummyModelPlayer::enterFullscreen()
 {
 }
 
+void DummyModelPlayer::handleMouseDown(const LayoutPoint&, MonotonicTime)
+{
+}
+
+void DummyModelPlayer::handleMouseMove(const LayoutPoint&, MonotonicTime)
+{
+}
+
+void DummyModelPlayer::handleMouseUp(const LayoutPoint&, MonotonicTime)
+{
+}
+
 }

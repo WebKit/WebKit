@@ -43,6 +43,9 @@ private:
 
     // WebCore::ModelPlayer overrides.
     void enterFullscreen() override;
+    void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) override;
+    void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) override;
+    void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) override;
 };
 
 }

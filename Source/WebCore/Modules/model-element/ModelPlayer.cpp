@@ -30,4 +30,9 @@ namespace WebCore {
 
 ModelPlayer::~ModelPlayer() = default;
 
+bool ModelPlayer::supportsMouseInteraction()
+{
+    return false;
+}
+
 }
