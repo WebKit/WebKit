@@ -264,11 +264,8 @@
                 (allow iokit-async-external-method
 #if PLATFORM(IOS)
                     (iokit-method-number
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 150500
                         43
-#else
                         44
-#endif
                     )
 #endif
                 )
@@ -293,21 +290,16 @@
                         25
                         26
                         27
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 150500
                         36
+                        37
                         38
                         39
                         40
-                        42
-                        44
-#else
-                        37
-                        39
-                        40
                         41
+                        42
                         43
+                        44
                         45
-#endif
                     )
 #endif
                 )
