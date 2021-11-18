@@ -7502,7 +7502,7 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& completion)
+void WebPage::requestTextRecognition(Element& element, const String& identifier, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
 {
     if (!is<HTMLElement>(element)) {
         if (completion)
@@ -7561,7 +7561,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
 
     auto cachedImage = renderImage.cachedImage();
     auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
-    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
+    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle), identifier), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
         RefPtr protectedPage { webPage.get() };
         if (!protectedPage)
             return;

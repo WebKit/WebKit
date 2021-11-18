@@ -8616,9 +8616,9 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completionHandler)
+void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(TextRecognitionResult&&)>&& completionHandler)
 {
-    pageClient().requestTextRecognition(imageURL, imageData, WTFMove(completionHandler));
+    pageClient().requestTextRecognition(imageURL, imageData, identifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType type, CompletionHandler<void(bool)>&& completion)

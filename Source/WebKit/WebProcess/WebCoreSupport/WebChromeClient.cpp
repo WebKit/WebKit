@@ -1492,9 +1492,9 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebChromeClient::requestTextRecognition(Element& element, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
+void WebChromeClient::requestTextRecognition(Element& element, const String& identifier, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
 {
-    m_page.requestTextRecognition(element, WTFMove(completion));
+    m_page.requestTextRecognition(element, identifier, WTFMove(completion));
 }
 
 #endif

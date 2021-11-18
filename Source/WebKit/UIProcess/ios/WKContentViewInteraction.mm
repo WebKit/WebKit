@@ -10150,7 +10150,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return NO;
 }
 
-- (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
+- (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData identifier:(NSString *)identifier completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
 {
     auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
     if (!imageBitmap) {
@@ -10164,8 +10164,15 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         return;
     }
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (identifier.length)
+        return WebKit::requestImageAnalysisWithIdentifier(self.imageAnalyzer, identifier, cgImage.get(), WTFMove(completion));
+#else
+    UNUSED_PARAM(identifier);
+#endif
+
     auto request = [self createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
-    [[self imageAnalyzer] processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)] (VKImageAnalysis *result, NSError *) mutable {
+    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)] (VKImageAnalysis *result, NSError *) mutable {
         completion(WebKit::makeTextRecognitionResult(result));
     }).get()];
 }

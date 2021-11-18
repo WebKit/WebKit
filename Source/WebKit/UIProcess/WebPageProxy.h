@@ -1698,7 +1698,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void updateWithTextRecognitionResult(WebCore::TextRecognitionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
     void computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType, CompletionHandler<void(bool)>&&);
     void startImageAnalysis(const String& identifier);

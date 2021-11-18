@@ -204,7 +204,7 @@ static RetainPtr<VKImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef i
     return request;
 }
 
-void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
+void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
     if (!isLiveTextAvailableAndEnabled()) {
         completion({ });
@@ -218,6 +218,14 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
     }
 
     auto cgImage = imageBitmap->makeCGImage();
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (!identifier.isEmpty())
+        return requestImageAnalysisWithIdentifier(ensureImageAnalyzer(), identifier, cgImage.get(), WTFMove(completion));
+#else
+    UNUSED_PARAM(identifier);
+#endif
+
     auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
     auto startTime = MonotonicTime::now();
     [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (VKImageAnalysis *analysis, NSError *) mutable {

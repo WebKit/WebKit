@@ -1,3 +1,46 @@
+2021-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Plumb an identifier string through `ChromeClient::requestTextRecognition()`
+        https://bugs.webkit.org/show_bug.cgi?id=233210
+
+        Reviewed by Dean Jackson.
+
+        Add an optional (i.e. null-by-default) identifier string to the `requestTextRecognition()` WebKit client hook,
+        and call into a new helper function in TextRecognitionUtilities.h, that's implemented in WebKitAdditions (with
+        an empty stub in open source code).
+
+        See corresponding radar for more information.
+
+        * Platform/cocoa/TextRecognitionUtilities.h:
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::requestImageAnalysisWithIdentifier):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::requestTextRecognition):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::requestTextRecognition):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestTextRecognition):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestTextRecognition):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestTextRecognition:imageData:identifier:completionHandler:]):
+        (-[WKContentView requestTextRecognition:imageData:completionHandler:]): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestTextRecognition):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestTextRecognition):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestTextRecognition):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::requestTextRecognition):
+
 2021-11-17  John Wilander  <wilander@apple.com>
 
         PCM: Add capability for click destination to fire triggering event without cross-site requests to the click source

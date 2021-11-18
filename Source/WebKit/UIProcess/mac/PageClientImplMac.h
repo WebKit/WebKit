@@ -131,7 +131,7 @@ private:
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
     void computeHasImageAnalysisResults(const URL&, ShareableBitmap&, ImageAnalysisType, CompletionHandler<void(bool)>&&) override;
 #endif
 

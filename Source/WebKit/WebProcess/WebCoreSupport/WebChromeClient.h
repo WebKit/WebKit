@@ -431,7 +431,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { }) final;
+    void requestTextRecognition(WebCore::Element&, const String& identifier = { }, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { }) final;
 #endif
 
     bool needsImageOverlayControllerForSelectionPainting() const final

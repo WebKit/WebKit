@@ -28,6 +28,7 @@
 #if ENABLE(IMAGE_ANALYSIS)
 
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -42,6 +43,10 @@ WebCore::TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *);
 // FIXME: Replace the return types of these helper functions with VKCImageAnalyzer and VKCImageAnalyzerRequest, respectively.
 RetainPtr<VKImageAnalyzer> createImageAnalyzer();
 RetainPtr<VKImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAnalysisTypes);
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+void requestImageAnalysisWithIdentifier(VKImageAnalyzer *, const String& identifier, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+#endif
 
 }
 

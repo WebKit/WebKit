@@ -585,7 +585,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(Element&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
+    virtual void requestTextRecognition(Element&, const String& = { }, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
     {
         if (completion)
             completion({ });

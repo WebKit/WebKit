@@ -28,6 +28,7 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#import "Logging.h"
 #import <WebCore/TextRecognitionResult.h>
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
@@ -137,6 +138,15 @@ static bool isLiveTextEnabled()
 {
     return true;
 }
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+void requestImageAnalysisWithIdentifier(VKImageAnalyzer *, const String&, CGImageRef, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+{
+    completion({ });
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif
 

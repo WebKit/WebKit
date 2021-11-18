@@ -93,7 +93,7 @@ void ImageAnalysisQueue::resumeProcessing()
 
         m_pendingRequestCount++;
         m_page->resetTextRecognitionResult(*element);
-        m_page->chrome().client().requestTextRecognition(*element, [this, page = m_page] (auto&&) {
+        m_page->chrome().client().requestTextRecognition(*element, identifier, [this, page = m_page] (auto&&) {
             if (!page)
                 return;
 

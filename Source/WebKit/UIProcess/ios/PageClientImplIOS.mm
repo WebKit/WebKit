@@ -463,9 +463,9 @@ void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void PageClientImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
+void PageClientImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
-    [m_contentView requestTextRecognition:imageURL imageData:imageData completionHandler:WTFMove(completion)];
+    [m_contentView requestTextRecognition:imageURL imageData:imageData identifier:identifier completionHandler:WTFMove(completion)];
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

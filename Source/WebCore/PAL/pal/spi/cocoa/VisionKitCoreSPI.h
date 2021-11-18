@@ -146,4 +146,8 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/VisionKitCoreSPIAdditions.h>
+#endif
+
 #endif // HAVE(VK_IMAGE_ANALYSIS)

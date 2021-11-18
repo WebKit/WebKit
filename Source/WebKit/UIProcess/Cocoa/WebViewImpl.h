@@ -598,7 +598,7 @@ public:
     bool shouldRequestCandidates() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType, CompletionHandler<void(bool)>&&);
 #endif
 

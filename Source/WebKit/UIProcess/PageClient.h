@@ -547,7 +547,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
+    virtual void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
     virtual void computeHasImageAnalysisResults(const URL&, ShareableBitmap&, ImageAnalysisType, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 

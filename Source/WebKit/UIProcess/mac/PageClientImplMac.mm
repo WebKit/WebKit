@@ -480,9 +480,9 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void PageClientImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+void PageClientImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
-    m_impl->requestTextRecognition(imageURL, imageData, WTFMove(completion));
+    m_impl->requestTextRecognition(imageURL, imageData, identifier, WTFMove(completion));
 }
 
 void PageClientImpl::computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType type, CompletionHandler<void(bool)>&& completion)

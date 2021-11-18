@@ -5791,7 +5791,7 @@ void Internals::requestTextRecognition(Element& element, RefPtr<VoidCallback>&& 
     }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    page->chrome().client().requestTextRecognition(element, [callback = WTFMove(callback)] (auto&&) {
+    page->chrome().client().requestTextRecognition(element, { }, [callback = WTFMove(callback)] (auto&&) {
         if (callback)
             callback->handleEvent();
     });

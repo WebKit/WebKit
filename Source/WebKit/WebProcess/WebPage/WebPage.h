@@ -1430,7 +1430,7 @@ public:
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);
+    void requestTextRecognition(WebCore::Element&, const String& identifier = { }, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { });
     void updateWithTextRecognitionResult(const WebCore::TextRecognitionResult&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
     void startImageAnalysis(const String& identifier);
 #endif
