@@ -31,8 +31,8 @@
 #include "BuiltinNames.h"
 #include "DumpContext.h"
 #include "JSCInlines.h"
-#include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
+#include "PropertyTable.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
@@ -1048,33 +1048,33 @@ void Structure::startWatchingInternalProperties(VM& vm)
 
 #if DUMP_PROPERTYMAP_STATS
 
-PropertyMapHashTableStats* propertyMapHashTableStats = 0;
+PropertyTableStats* propertyTableStats = 0;
 
-struct PropertyMapStatisticsExitLogger {
-    PropertyMapStatisticsExitLogger();
-    ~PropertyMapStatisticsExitLogger();
+struct PropertyTableStatisticsExitLogger {
+    PropertyTableStatisticsExitLogger();
+    ~PropertyTableStatisticsExitLogger();
 };
 
-DEFINE_GLOBAL_FOR_LOGGING(PropertyMapStatisticsExitLogger, logger, );
+DEFINE_GLOBAL_FOR_LOGGING(PropertyTableStatisticsExitLogger, logger, { });
 
-PropertyMapStatisticsExitLogger::PropertyMapStatisticsExitLogger()
+PropertyTableStatisticsExitLogger::PropertyTableStatisticsExitLogger()
 {
-    propertyMapHashTableStats = adoptPtr(new PropertyMapHashTableStats()).leakPtr();
+    propertyTableStats = adoptPtr(new PropertyTableStats()).leakPtr();
 }
 
-PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
+PropertyTableStatisticsExitLogger::~PropertyTableStatisticsExitLogger()
 {
-    unsigned finds = propertyMapHashTableStats->numFinds;
-    unsigned collisions = propertyMapHashTableStats->numCollisions;
+    unsigned finds = propertyTableStats->numFinds;
+    unsigned collisions = propertyTableStats->numCollisions;
     dataLogF("\nJSC::PropertyMap statistics for process %d\n\n", getCurrentProcessID());
     dataLogF("%d finds\n", finds);
     dataLogF("%d collisions (%.1f%%)\n", collisions, 100.0 * collisions / finds);
-    dataLogF("%d lookups\n", propertyMapHashTableStats->numLookups.load());
-    dataLogF("%d lookup probings\n", propertyMapHashTableStats->numLookupProbing.load());
-    dataLogF("%d adds\n", propertyMapHashTableStats->numAdds.load());
-    dataLogF("%d removes\n", propertyMapHashTableStats->numRemoves.load());
-    dataLogF("%d rehashes\n", propertyMapHashTableStats->numRehashes.load());
-    dataLogF("%d reinserts\n", propertyMapHashTableStats->numReinserts.load());
+    dataLogF("%d lookups\n", propertyTableStats->numLookups.load());
+    dataLogF("%d lookup probings\n", propertyTableStats->numLookupProbing.load());
+    dataLogF("%d adds\n", propertyTableStats->numAdds.load());
+    dataLogF("%d removes\n", propertyTableStats->numRemoves.load());
+    dataLogF("%d rehashes\n", propertyTableStats->numRehashes.load());
+    dataLogF("%d reinserts\n", propertyTableStats->numReinserts.load());
 }
 
 #endif

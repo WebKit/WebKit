@@ -1750,7 +1750,7 @@
 		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC87CDB810712ACA000614CF /* JSONObject.lut.h */; };
 		BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9041470EB9250900FE26FA /* StructureTransitionTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC95437D0EBA70FD0072B6D3 /* PropertyTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC95437C0EBA70FD0072B6D3 /* PropertyTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBE2CAD14E985AA000593AD /* GCAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
@@ -4991,7 +4991,7 @@
 		BC87CDB810712ACA000614CF /* JSONObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONObject.lut.h; sourceTree = "<group>"; };
 		BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructData.h; sourceTree = "<group>"; };
 		BC9041470EB9250900FE26FA /* StructureTransitionTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureTransitionTable.h; sourceTree = "<group>"; };
-		BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyMapHashTable.h; sourceTree = "<group>"; };
+		BC95437C0EBA70FD0072B6D3 /* PropertyTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyTable.h; sourceTree = "<group>"; };
 		BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalFunction.cpp; sourceTree = "<group>"; };
 		BCA62DFE0E2826230004F30D /* CallData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallData.cpp; sourceTree = "<group>"; };
 		BCA62DFF0E2826310004F30D /* ConstructData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstructData.cpp; sourceTree = "<group>"; };
@@ -7958,7 +7958,6 @@
 				147341D31DC02E6D00AA29BA /* ProgramExecutable.h */,
 				A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */,
 				A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */,
-				BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */,
 				86158AB2155C8B3F00B45C9C /* PropertyName.h */,
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
 				0FF7168A15A3B231008F5DAA /* PropertyOffset.h */,
@@ -7966,6 +7965,7 @@
 				65621E6C089E859700760F35 /* PropertySlot.h */,
 				0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */,
 				AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */,
+				BC95437C0EBA70FD0072B6D3 /* PropertyTable.h */,
 				65C02FBB0637462A003E7EE6 /* Protect.h */,
 				0F74B93A1F89614500B935D3 /* PrototypeKey.h */,
 				79B00CB81C6AB07E0088C65D /* ProxyConstructor.cpp */,
@@ -10676,7 +10676,7 @@
 				147341D41DC02E6D00AA29BA /* ProgramExecutable.h in Headers */,
 				0FD3E40E1B618B6600C80E1E /* PropertyCondition.h in Headers */,
 				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
-				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
+				BC95437D0EBA70FD0072B6D3 /* PropertyTable.h in Headers */,
 				86158AB3155C8B4000B45C9C /* PropertyName.h in Headers */,
 				BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */,
 				0FF7168C15A3B235008F5DAA /* PropertyOffset.h in Headers */,

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PropertyMapHashTable.h"
+#include "PropertyTable.h"
 
 #include "JSCJSValueInlines.h"
 

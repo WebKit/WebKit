@@ -149,7 +149,7 @@
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
 #include "ProgramExecutable.h"
-#include "PropertyMapHashTable.h"
+#include "PropertyTable.h"
 #include "ProxyRevoke.h"
 #include "RandomizingFuzzerAgent.h"
 #include "RegExpCache.h"

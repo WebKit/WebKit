@@ -29,7 +29,7 @@
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
-#include "PropertyMapHashTable.h"
+#include "PropertyTable.h"
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"

@@ -42,7 +42,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyTable);
 
 #if DUMP_PROPERTYMAP_STATS
 
-struct PropertyMapHashTableStats {
+struct PropertyTableStats {
     std::atomic<unsigned> numFinds;
     std::atomic<unsigned> numCollisions;
     std::atomic<unsigned> numLookups;
@@ -53,7 +53,7 @@ struct PropertyMapHashTableStats {
     std::atomic<unsigned> numReinserts;
 };
 
-JS_EXPORT_PRIVATE extern PropertyMapHashTableStats* propertyMapHashTableStats;
+JS_EXPORT_PRIVATE extern PropertyTableStats* propertyTableStats;
 
 #endif
 
@@ -173,8 +173,8 @@ public:
     // Add a value to the table
     std::pair<find_iterator, bool> WARN_UNUSED_RETURN add(VM&, const ValueType& entry);
     // Remove a value from the table.
-    void remove(VM&, const find_iterator& iter);
-    void remove(VM&, const KeyType& key);
+    void remove(VM&, const find_iterator&);
+    void remove(VM&, const KeyType&);
 
     // Returns the number of values in the hashtable.
     unsigned size() const;
@@ -219,7 +219,7 @@ private:
     // Used to insert a value known not to be in the table, and where we know capacity to be available.
     void reinsert(const ValueType& entry);
 
-    // Rehash the table.  Used to grow, or to recover deleted slots.
+    // Rehash the table. Used to grow, or to recover deleted slots.
     void rehash(VM&, unsigned newCapacity);
 
     // The capacity of the table of values is half of the size of the index.
@@ -230,7 +230,7 @@ private:
     // so this is tableCapacity() + 1.
     // For example, if m_tableSize is 16, then tableCapacity() is 8 - but the
     // values array is actually 9 long (the 9th used for the deleted value/
-    // iteration guard).  The 8 valid entries are numbered 1..8, so the
+    // iteration guard). The 8 valid entries are numbered 1..8, so the
     // deleted index is 9 (0 being reserved for empty).
     unsigned deletedEntryIndex() const;
 
@@ -298,7 +298,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
     unsigned hash = IdentifierRepHash::hash(key);
 
 #if DUMP_PROPERTYMAP_STATS
-    ++propertyMapHashTableStats->numFinds;
+    ++propertyTableStats->numFinds;
 #endif
 
     while (true) {
@@ -309,7 +309,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
             return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 
 #if DUMP_PROPERTYMAP_STATS
-        ++propertyMapHashTableStats->numCollisions;
+        ++propertyTableStats->numCollisions;
 #endif
 
 #if DUMP_PROPERTYMAP_COLLISIONS
@@ -333,7 +333,7 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
     unsigned hash = IdentifierRepHash::hash(key);
 
 #if DUMP_PROPERTYMAP_STATS
-    ++propertyMapHashTableStats->numLookups;
+    ++propertyTableStats->numLookups;
 #endif
 
     while (true) {
@@ -346,7 +346,7 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
         }
 
 #if DUMP_PROPERTYMAP_STATS
-        ++propertyMapHashTableStats->numLookupProbing;
+        ++propertyTableStats->numLookupProbing;
 #endif
 
         hash++;
@@ -363,7 +363,7 @@ inline std::pair<PropertyTable::find_iterator, bool> WARN_UNUSED_RETURN Property
         return std::make_pair(iter, false);
 
 #if DUMP_PROPERTYMAP_STATS
-    ++propertyMapHashTableStats->numAdds;
+    ++propertyTableStats->numAdds;
 #endif
 
     // Ref the key
@@ -394,7 +394,7 @@ inline void PropertyTable::remove(VM& vm, const find_iterator& iter)
         return;
 
 #if DUMP_PROPERTYMAP_STATS
-    ++propertyMapHashTableStats->numRemoves;
+    ++propertyTableStats->numRemoves;
 #endif
 
     // Replace this one element with the deleted sentinel. Also clear out
@@ -489,7 +489,7 @@ inline size_t PropertyTable::sizeInMemory()
 inline void PropertyTable::reinsert(const ValueType& entry)
 {
 #if DUMP_PROPERTYMAP_STATS
-    ++propertyMapHashTableStats->numReinserts;
+    ++propertyTableStats->numReinserts;
 #endif
 
     // Used to insert a value known not to be in the table, and where
@@ -508,7 +508,7 @@ inline void PropertyTable::reinsert(const ValueType& entry)
 inline void PropertyTable::rehash(VM& vm, unsigned newCapacity)
 {
 #if DUMP_PROPERTYMAP_STATS
-    ++propertyMapHashTableStats->numRehashes;
+    ++propertyTableStats->numRehashes;
 #endif
 
     size_t oldDataSize = dataSize();

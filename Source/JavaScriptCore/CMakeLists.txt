@@ -1139,12 +1139,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/PrivateName.h
     runtime/ProgramExecutable.h
     runtime/PropertyDescriptor.h
-    runtime/PropertyMapHashTable.h
     runtime/PropertyName.h
     runtime/PropertyNameArray.h
     runtime/PropertyOffset.h
     runtime/PropertySlot.h
     runtime/PropertyStorage.h
+    runtime/PropertyTable.h
     runtime/Protect.h
     runtime/PrototypeKey.h
     runtime/ProxyObject.h
