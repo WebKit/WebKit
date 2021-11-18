@@ -130,6 +130,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "AudioComponentRegistration.h"
 #include "DefaultWebBrowserChecks.h"
 #include <WebCore/GameControllerGamepadProvider.h>
 #include <WebCore/HIDGamepadProvider.h>
@@ -878,7 +879,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #endif
 
 #if PLATFORM(COCOA)
-    process.sendAudioComponentRegistrations();
+    sendAudioComponentRegistrations<Messages::WebProcess::ConsumeAudioComponentRegistrations>(process);
 #endif
 
 #if PLATFORM(MAC)

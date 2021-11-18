@@ -39,7 +39,6 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -63,8 +62,6 @@
 #if PLATFORM(MAC)
 #include "TCCSoftLink.h"
 #endif
-
-#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
 
@@ -288,31 +285,6 @@ void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHand
     completionHandler(authenticated);
 }
 #endif
-
-void WebProcessProxy::sendAudioComponentRegistrations()
-{
-    using namespace PAL;
-
-    if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentFetchServerRegistrations())
-        return;
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakThis = WeakPtr { *this }] () mutable {
-        CFDataRef registrations { nullptr };
-
-        WebCore::registerOpusDecoderIfNeeded();
-        WebCore::registerVorbisDecoderIfNeeded();
-        if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
-            return;
-
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = adoptCF(registrations)] () mutable {
-            if (!weakThis)
-                return;
-
-            auto registrationData = WebCore::SharedBuffer::create(registrations.get());
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
-        });
-    });
-}
 
 bool WebProcessProxy::messageSourceIsValidWebContentProcess()
 {
