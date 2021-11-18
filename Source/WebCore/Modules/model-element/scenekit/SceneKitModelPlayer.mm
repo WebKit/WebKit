@@ -88,6 +88,14 @@ void SceneKitModelPlayer::handleMouseUp(const LayoutPoint&, MonotonicTime)
 {
 }
 
+void SceneKitModelPlayer::getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&)
+{
+}
+
+void SceneKitModelPlayer::setCamera(HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&)
+{
+}
+
 // MARK: - SceneKitModelLoaderClient overrides.
 
 void SceneKitModelPlayer::didFinishLoading(SceneKitModelLoader& loader, Ref<SceneKitModel> model)

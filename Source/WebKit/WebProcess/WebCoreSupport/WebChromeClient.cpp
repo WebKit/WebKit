@@ -1524,13 +1524,6 @@ void WebChromeClient::enumerateImmersiveXRDevices(CompletionHandler<void(const P
 }
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-void WebChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId) const
-{
-    m_page.takeModelElementFullscreen(contentLayerId);
-}
-#endif
-
 #if ENABLE(APPLE_PAY_AMS_UI)
 
 void WebChromeClient::startApplePayAMSUISession(const URL& originatingURL, const ApplePayAMSUIRequest& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)

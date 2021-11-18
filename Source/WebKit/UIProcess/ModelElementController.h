@@ -27,14 +27,17 @@
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 
+#include "ModelIdentifier.h"
 #include <WebCore/ElementContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 OBJC_CLASS ASVInlinePreview;
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+OBJC_CLASS WKModelView;
 #endif
 
 namespace WebKit {
@@ -48,8 +51,12 @@ public:
 
     WebPageProxy& page() { return m_webPageProxy; }
 
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+    void getCameraForModelElement(ModelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)>&&);
+    void setCameraForModelElement(ModelIdentifier, WebCore::HTMLModelElementCamera, CompletionHandler<void(bool)>&&);
+#endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
+    void takeModelElementFullscreen(ModelIdentifier);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(URL, String, WebCore::FloatSize, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);
@@ -59,6 +66,14 @@ public:
 #endif
 
 private:
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+    ASVInlinePreview * previewForModelIdentifier(ModelIdentifier);
+#endif
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+    WKModelView * modelViewForModelIdentifier(ModelIdentifier);
+#endif
+
     WebPageProxy& m_webPageProxy;
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     RetainPtr<ASVInlinePreview> previewForUUID(const String&);

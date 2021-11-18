@@ -1,3 +1,62 @@
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for getting and setting the camera
+        https://bugs.webkit.org/show_bug.cgi?id=233265
+        <rdar://problem/85426290>
+
+        Reviewed by Darin Adler.
+
+        The ARQL APIs we'd adopted so far were specific to either macOS or iOS. The new camera
+        methods are different since they exist on both platforms.
+
+        In order to expose a single message for both platforms, we introduce a new ModelIdentifier
+        struct which wraps the UUID string for macOS and the layer identifier for iOS. Then on
+        ModelElementController, we have the previewForModelIdentifier() method to get the matching
+        ASVInlinePreview for the provided ModelIdentifier.
+
+        This allows getCameraForModelElement() and setCameraForModelElement to be specified for both
+        iOS and macOS with a single implementation.
+
+        We also modify takeModelElementFullscreen() to take advantage of ModelIdentifier which showed
+        that we had some lingering code in ChromeClient related to this method that was no longer
+        necessary following r285922.
+
+        * Shared/ModelIdentifier.h: Copied from Source/WebCore/Modules/model-element/scenekit/SceneKitModelPlayer.h.
+        (WebKit::ModelIdentifier::encode const):
+        (WebKit::ModelIdentifier::decode):
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelViewForModelIdentifier):
+        (WebKit::ModelElementController::previewForModelIdentifier):
+        (WebKit::ModelElementController::takeModelElementFullscreen):
+        (WebKit::previewHasCameraSupport):
+        (WebKit::ModelElementController::getCameraForModelElement):
+        (WebKit::ModelElementController::setCameraForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementGetCamera):
+        (WebKit::WebPageProxy::modelElementSetCamera):
+        (WebKit::WebPageProxy::takeModelElementFullscreen):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::getCamera):
+        (WebKit::ARKitInlinePreviewModelPlayer::setCamera):
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.h:
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::modelIdentifier):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::enterFullscreen):
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::modelIdentifier):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::takeModelElementFullscreen const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeModelElementFullscreen): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2021-11-18  Chris Dumez  <cdumez@apple.com>
 
         Drop ServiceWorkerClientIdentifier / DocumentIdentifier and use ScriptExecutionContextIdentifier instead

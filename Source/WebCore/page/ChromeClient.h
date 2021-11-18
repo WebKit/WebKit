@@ -605,10 +605,6 @@ public:
     virtual void textAutosizingUsesIdempotentModeChanged() { }
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    virtual void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const { }
-#endif
-
 #if ENABLE(APPLE_PAY_AMS_UI)
     virtual void startApplePayAMSUISession(const URL&, const ApplePayAMSUIRequest&, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler) { completionHandler(std::nullopt); }
     virtual void abortApplePayAMSUISession() { }

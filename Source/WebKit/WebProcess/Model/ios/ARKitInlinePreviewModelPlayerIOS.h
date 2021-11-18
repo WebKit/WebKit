@@ -41,6 +41,8 @@ public:
 private:
     ARKitInlinePreviewModelPlayerIOS(WebPage&, WebCore::ModelPlayerClient&);
 
+    std::optional<ModelIdentifier> modelIdentifier() override;
+
     // WebCore::ModelPlayer overrides.
     void enterFullscreen() override;
     void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) override;

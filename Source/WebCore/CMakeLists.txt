@@ -463,6 +463,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCTransformEvent.idl
 
     Modules/model-element/HTMLModelElement.idl
+    Modules/model-element/HTMLModelElementCamera.idl
 
     Modules/notifications/Notification.idl
     Modules/notifications/NotificationPermission.idl

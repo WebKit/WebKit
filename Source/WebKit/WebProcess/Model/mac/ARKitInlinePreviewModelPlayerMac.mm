@@ -55,6 +55,13 @@ ARKitInlinePreviewModelPlayerMac::~ARKitInlinePreviewModelPlayerMac()
     clearFile();
 }
 
+std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerMac::modelIdentifier()
+{
+    if (m_inlinePreview)
+        return { { [m_inlinePreview uuid].UUIDString } };
+    return { };
+}
+
 static String& sharedModelElementCacheDirectory()
 {
     static NeverDestroyed<String> sharedModelElementCacheDirectory;

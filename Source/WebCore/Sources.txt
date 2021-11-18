@@ -3301,6 +3301,7 @@ JSHTMLMetaElement.cpp
 JSHTMLMeterElement.cpp
 JSHTMLModElement.cpp
 JSHTMLModelElement.cpp
+JSHTMLModelElementCamera.cpp
 JSHTMLOListElement.cpp
 JSHTMLObjectElement.cpp
 JSHTMLOptGroupElement.cpp

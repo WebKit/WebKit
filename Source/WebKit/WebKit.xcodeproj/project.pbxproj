@@ -4708,6 +4708,7 @@
 		71A676A522C62318007D6295 /* WKTouchActionGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTouchActionGestureRecognizer.mm; path = ios/WKTouchActionGestureRecognizer.mm; sourceTree = "<group>"; };
 		71BAA73125FFCCBA00D7CD5D /* WKModelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKModelView.h; path = ios/WKModelView.h; sourceTree = "<group>"; };
 		71BAA73225FFCCBA00D7CD5D /* WKModelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKModelView.mm; path = ios/WKModelView.mm; sourceTree = "<group>"; };
+		71E9650F2745682E00ADCF43 /* ModelIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelIdentifier.h; sourceTree = "<group>"; };
 		71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteSimulatedMouseEventsDispatchPolicy.h; sourceTree = "<group>"; };
 		7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MonotonicObjectIdentifier.h; sourceTree = "<group>"; };
 		7203449B26A6C476000A5F54 /* RenderingUpdateID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingUpdateID.h; sourceTree = "<group>"; };
@@ -6834,6 +6835,7 @@
 				2D10875E1D2C573E00B85F82 /* LoadParameters.cpp */,
 				2D10875F1D2C573E00B85F82 /* LoadParameters.h */,
 				49917DB0252E30750050313F /* MediaPlaybackState.h */,
+				71E9650F2745682E00ADCF43 /* ModelIdentifier.h */,
 				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
 				2D50366A1BCDE17900E20BB3 /* NativeWebGestureEvent.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,

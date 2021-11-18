@@ -10832,10 +10832,22 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-void WebPageProxy::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+void WebPageProxy::modelElementGetCamera(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)>&& completionHandler)
 {
-    modelElementController()->takeModelElementFullscreen(contentLayerId);
+    modelElementController()->getCameraForModelElement(modelIdentifier, WTFMove(completionHandler));
+}
+
+void WebPageProxy::modelElementSetCamera(ModelIdentifier modelIdentifier, WebCore::HTMLModelElementCamera camera, CompletionHandler<void(bool)>&& completionHandler)
+{
+    modelElementController()->setCameraForModelElement(modelIdentifier, camera, WTFMove(completionHandler));
+}
+#endif
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+void WebPageProxy::takeModelElementFullscreen(ModelIdentifier modelIdentifier)
+{
+    modelElementController()->takeModelElementFullscreen(modelIdentifier);
 }
 #endif
 

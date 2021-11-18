@@ -70,4 +70,12 @@ void DummyModelPlayer::handleMouseUp(const LayoutPoint&, MonotonicTime)
 {
 }
 
+void DummyModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&)
+{
+}
+
+void DummyModelPlayer::setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&)
+{
+}
+
 }

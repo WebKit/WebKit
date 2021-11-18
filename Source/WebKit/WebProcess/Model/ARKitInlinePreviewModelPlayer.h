@@ -27,9 +27,12 @@
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 
-#include <WebCore/ModelPlayer.h>
-#include <WebCore/ModelPlayerClient.h>
-#include <wtf/Compiler.h>
+#import "ModelIdentifier.h"
+#import "WebPage.h"
+#import "WebPageProxyMessages.h"
+#import <WebCore/ModelPlayer.h>
+#import <WebCore/ModelPlayerClient.h>
+#import <wtf/Compiler.h>
 
 namespace WebKit {
 
@@ -43,11 +46,15 @@ protected:
     WebPage* page() { return m_page.get(); }
     WebCore::ModelPlayerClient* client() { return m_client.get(); }
 
+    virtual std::optional<ModelIdentifier> modelIdentifier() = 0;
+
 private:
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) override;
     PlatformLayer* layer() override;
     void enterFullscreen() override;
+    void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) override;
+    void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&) override;
 
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;

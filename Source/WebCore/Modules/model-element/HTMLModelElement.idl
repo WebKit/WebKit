@@ -33,4 +33,7 @@
     readonly attribute Promise<HTMLModelElement> ready;
 
     undefined enterFullscreen();
+
+    Promise<HTMLModelElementCamera> getCamera();
+    Promise<undefined> setCamera(HTMLModelElementCamera camera);
 };

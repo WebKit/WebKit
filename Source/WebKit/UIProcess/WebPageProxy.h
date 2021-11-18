@@ -196,6 +196,7 @@ interface ID3D11Device1;
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 #include "ModelElementController.h"
+#include "ModelIdentifier.h"
 #endif
 
 namespace API {
@@ -587,9 +588,11 @@ public:
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     ModelElementController* modelElementController() { return m_modelElementController.get(); }
+    void modelElementGetCamera(ModelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)>&&);
+    void modelElementSetCamera(ModelIdentifier, WebCore::HTMLModelElementCamera, CompletionHandler<void(bool)>&&);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
+    void takeModelElementFullscreen(ModelIdentifier);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(const URL&, const String&, const WebCore::FloatSize&, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);

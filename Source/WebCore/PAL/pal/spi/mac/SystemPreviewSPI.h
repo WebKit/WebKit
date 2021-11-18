@@ -31,9 +31,11 @@
 
 #else // USE(APPLE_INTERNAL_SDK)
 
-NS_ASSUME_NONNULL_BEGIN
-
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+
+#import <simd/simd.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class ASVInlinePreview;
 
@@ -52,10 +54,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)mouseDraggedAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;
 - (void)mouseUpAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;
 
+typedef void (^ASVCameraTransformReplyBlock) (simd_float3 cameraTransform, NSError * _Nullable error);
+- (void)getCameraTransform:(ASVCameraTransformReplyBlock)reply;
+- (void)setCameraTransform:(simd_float3)transform;
+
 @end
 
-#endif // ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-
 NS_ASSUME_NONNULL_END
+
+#endif // ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #endif // USE(APPLE_INTERNAL_SDK)

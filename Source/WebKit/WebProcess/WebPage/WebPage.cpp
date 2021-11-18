@@ -7789,13 +7789,6 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 }
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-void WebPage::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
-{
-    send(Messages::WebPageProxy::TakeModelElementFullscreen(contentLayerId));
-}
-#endif
-
 void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin)
 {
     mainFrameView()->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));

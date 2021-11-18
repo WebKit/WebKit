@@ -1490,10 +1490,6 @@ public:
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
-#endif
-
     void prepareToRunModalJavaScriptDialog();
 
 #if USE(ATSPI)

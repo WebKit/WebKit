@@ -32,6 +32,7 @@
 #include "CachedResourceHandle.h"
 #include "GraphicsLayer.h"
 #include "HTMLElement.h"
+#include "HTMLModelElementCamera.h"
 #include "IDLTypes.h"
 #include "ModelPlayerClient.h"
 #include "PlatformLayer.h"
@@ -45,6 +46,7 @@ class Model;
 class ModelPlayer;
 class MouseEvent;
 
+template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient {
@@ -68,6 +70,10 @@ public:
     PlatformLayer* platformLayer() const;
 
     void enterFullscreen();
+
+    using CameraPromise = DOMPromiseDeferred<IDLDictionary<HTMLModelElementCamera>>;
+    void getCamera(CameraPromise&&);
+    void setCamera(HTMLModelElementCamera, DOMPromiseDeferred<void>&&);
 
     bool isDraggableIgnoringAttributes() const final { return true; }
 

@@ -457,6 +457,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCTrackEvent.idl \
     $(WebCore)/Modules/mediastream/RTCTransformEvent.idl \
     $(WebCore)/Modules/model-element/HTMLModelElement.idl \
+    $(WebCore)/Modules/model-element/HTMLModelElementCamera.idl \
     $(WebCore)/Modules/notifications/Notification.idl \
     $(WebCore)/Modules/notifications/NotificationPermission.idl \
     $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \

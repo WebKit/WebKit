@@ -583,12 +583,6 @@ void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandle
 {
 }
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-void EmptyChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const
-{
-}
-#endif
-
 void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&)
 {
 }

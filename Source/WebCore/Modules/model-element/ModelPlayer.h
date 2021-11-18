@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "HTMLModelElementCamera.h"
 #include "LayoutPoint.h"
 #include "LayoutSize.h"
 #include "PlatformLayer.h"
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 
@@ -47,7 +49,8 @@ public:
     virtual void handleMouseDown(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseUp(const LayoutPoint&, MonotonicTime) = 0;
-
+    virtual void getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) = 0;
+    virtual void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&) = 0;
 };
 
 }

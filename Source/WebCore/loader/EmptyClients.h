@@ -217,10 +217,6 @@ class EmptyChromeClient : public ChromeClient {
     void didAssociateFormControls(const Vector<RefPtr<Element>>&, Frame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const final;
-#endif
-
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
 };
 

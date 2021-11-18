@@ -441,6 +441,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCStatsReport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTrackEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTransformEvent.idl
 $(PROJECT_DIR)/Modules/model-element/HTMLModelElement.idl
+$(PROJECT_DIR)/Modules/model-element/HTMLModelElementCamera.idl
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/activity-indicator.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/airplay-button.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/airplay-button.js

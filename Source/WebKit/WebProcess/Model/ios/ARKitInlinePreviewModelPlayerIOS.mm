@@ -48,15 +48,27 @@ ARKitInlinePreviewModelPlayerIOS::~ARKitInlinePreviewModelPlayerIOS()
 {
 }
 
+std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerIOS::modelIdentifier()
+{
+    if (!client())
+        return { };
+
+    if (auto layerId = client()->platformLayerID())
+        return { { layerId } };
+
+    return { };
+}
+
 // MARK: - WebCore::ModelPlayer overrides.
 
 void ARKitInlinePreviewModelPlayerIOS::enterFullscreen()
 {
-    if (!client() || !page())
+    auto* strongPage = page();
+    if (!strongPage)
         return;
 
-    if (auto layerId = client()->platformLayerID())
-        page()->takeModelElementFullscreen(layerId);
+    if (auto modelIdentifier = this->modelIdentifier())
+        strongPage->send(Messages::WebPageProxy::TakeModelElementFullscreen(*modelIdentifier));
 }
 
 void ARKitInlinePreviewModelPlayerIOS::handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime)

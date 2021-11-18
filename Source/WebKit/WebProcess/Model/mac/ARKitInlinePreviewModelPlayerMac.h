@@ -47,6 +47,8 @@ public:
 private:
     ARKitInlinePreviewModelPlayerMac(WebPage&, WebCore::ModelPlayerClient&);
 
+    std::optional<ModelIdentifier> modelIdentifier() override;
+
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) override;
     PlatformLayer* layer() override;

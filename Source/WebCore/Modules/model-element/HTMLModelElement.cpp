@@ -37,11 +37,14 @@
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerCA.h"
+#include "HTMLModelElementCamera.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSEventTarget.h"
 #include "JSHTMLModelElement.h"
+#include "JSHTMLModelElementCamera.h"
 #include "Model.h"
 #include "ModelPlayer.h"
 #include "ModelPlayerProvider.h"
@@ -358,6 +361,38 @@ void HTMLModelElement::dragDidEnd(MouseEvent& event)
 
     if (m_modelPlayer)
         m_modelPlayer->handleMouseUp(event.pageLocation(), event.timeStamp());
+}
+
+// MARK: – Camera support.
+
+void HTMLModelElement::getCamera(CameraPromise&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->getCamera([promise = WTFMove(promise)] (std::optional<HTMLModelElementCamera> camera) mutable {
+        if (!camera)
+            promise.reject();
+        else
+            promise.resolve(*camera);
+    });
+}
+
+void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->setCamera(camera, [promise = WTFMove(promise)] (bool success) mutable {
+        if (success)
+            promise.resolve();
+        else
+            promise.reject();
+    });
 }
 
 }

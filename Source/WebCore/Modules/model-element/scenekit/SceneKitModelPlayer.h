@@ -61,6 +61,8 @@ private:
     void handleMouseDown(const LayoutPoint&, MonotonicTime) override;
     void handleMouseMove(const LayoutPoint&, MonotonicTime) override;
     void handleMouseUp(const LayoutPoint&, MonotonicTime) override;
+    void getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) override;
+    void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&) override;
 
     // SceneKitModelLoaderClient overrides.
     virtual void didFinishLoading(SceneKitModelLoader&, Ref<SceneKitModel>) override;

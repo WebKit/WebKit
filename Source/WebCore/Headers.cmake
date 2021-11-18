@@ -137,6 +137,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/libwebrtc/LibWebRTCUtils.h
 
     Modules/model-element/HTMLModelElement.h
+    Modules/model-element/HTMLModelElementCamera.h
     Modules/model-element/ModelPlayer.h
     Modules/model-element/ModelPlayerClient.h
     Modules/model-element/ModelPlayerProvider.h
