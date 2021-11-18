@@ -25,6 +25,7 @@
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityAtspiInterfaces.h"
 #include "Document.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "Page.h"
 #include <glib/gi18n-lib.h>
@@ -220,6 +221,36 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
 
     wrapper->setRoot(const_cast<AccessibilityRootAtspi*>(this));
     wrapper->setParent(nullptr); // nullptr parent means root.
+
+    return wrapper;
+}
+
+AccessibilityObjectAtspi* AccessibilityRootAtspi::focusedObject() const
+{
+    RELEASE_ASSERT(isMainThread());
+    if (!AXObjectCache::accessibilityEnabled())
+        AXObjectCache::enableAccessibility();
+
+    if (!m_page)
+        return nullptr;
+
+    auto* focusedDocument = m_page->focusController().focusedOrMainFrame().document();
+    if (!focusedDocument)
+        return nullptr;
+
+    auto* cache = focusedDocument->axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    auto* focusedObject = cache->focusedObjectForPage(m_page.get());
+    if (!focusedObject)
+        return nullptr;
+
+    auto* wrapper = focusedObject->wrapper();
+    if (!wrapper)
+        return nullptr;
+
+    wrapper->setRoot(const_cast<AccessibilityRootAtspi*>(this));
 
     return wrapper;
 }

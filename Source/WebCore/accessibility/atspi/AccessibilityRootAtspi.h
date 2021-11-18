@@ -49,6 +49,7 @@ public:
     GVariant* applicationReference() const;
     AccessibilityAtspi& atspi() const { return m_atspi; }
     AccessibilityObjectAtspi* child() const;
+    AccessibilityObjectAtspi* focusedObject() const;
 
     void serialize(GVariantBuilder*) const;
 

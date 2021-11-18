@@ -43,6 +43,8 @@ public:
     AccessibilityAtspi(const String&);
     ~AccessibilityAtspi() = default;
 
+    WEBCORE_EXPORT RunLoop& runLoop() const;
+
     const char* uniqueName() const;
     GVariant* nullReference() const;
 

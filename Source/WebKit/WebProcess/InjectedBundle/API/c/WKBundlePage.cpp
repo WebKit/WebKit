@@ -246,7 +246,11 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 #if ENABLE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
-    
+
+#if USE(ATSPI)
+    return WebKit::toImpl(pageRef)->accessibilityRootObject().child();
+#endif
+
     WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
     if (!page)
         return 0;
@@ -273,6 +277,10 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 #if ENABLE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
+
+#if USE(ATSPI)
+    return WebKit::toImpl(pageRef)->accessibilityRootObject().focusedObject();
+#endif
 
     WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
     if (!page)

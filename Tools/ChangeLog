@@ -1,3 +1,93 @@
+2021-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Add initial WTR accessibility support when building with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=230259
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityControllerAtspi.cpp:
+        (WTR::findAccessibleObjectById):
+        (WTR::AccessibilityController::accessibleElementById):
+        (WTR::AccessibilityController::platformName):
+        (WTR::AccessibilityController::axRunLoop):
+        (WTR::AccessibilityController::executeOnAXThreadAndWait):
+        (WTR::AccessibilityController::executeOnAXThread):
+        (WTR::AccessibilityController::executeOnMainThread):
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+        (WTR::AccessibilityUIElement::AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::isEqual):
+        (WTR::AccessibilityUIElement::childrenCount):
+        (WTR::AccessibilityUIElement::elementAtPoint):
+        (WTR::AccessibilityUIElement::childAtIndex):
+        (WTR::elementForRelationAtIndex):
+        (WTR::AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex):
+        (WTR::AccessibilityUIElement::titleUIElement):
+        (WTR::AccessibilityUIElement::parentElement):
+        (WTR::attributesOfElement):
+        (WTR::attributesOfElements):
+        (WTR::AccessibilityUIElement::attributesOfChildren):
+        (WTR::AccessibilityUIElement::allAttributes):
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+        (WTR::checkElementState):
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+        (WTR::AccessibilityUIElement::isAttributeSupported):
+        (WTR::roleValueToString):
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::roleDescription):
+        (WTR::AccessibilityUIElement::computedRoleString):
+        (WTR::AccessibilityUIElement::title):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::orientation const):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::helpText const):
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::y):
+        (WTR::AccessibilityUIElement::width):
+        (WTR::AccessibilityUIElement::height):
+        (WTR::AccessibilityUIElement::clickPointX):
+        (WTR::AccessibilityUIElement::clickPointY):
+        (WTR::AccessibilityUIElement::isEnabled):
+        (WTR::AccessibilityUIElement::isRequired const):
+        (WTR::AccessibilityUIElement::isFocused const):
+        (WTR::AccessibilityUIElement::isSelected const):
+        (WTR::AccessibilityUIElement::isSelectedOptionActive const):
+        (WTR::AccessibilityUIElement::isExpanded const):
+        (WTR::AccessibilityUIElement::isChecked const):
+        (WTR::AccessibilityUIElement::isIndeterminate const):
+        (WTR::AccessibilityUIElement::hierarchicalLevel const):
+        (WTR::AccessibilityUIElement::ariaIsGrabbed const):
+        (WTR::AccessibilityUIElement::ariaDropEffects const):
+        (WTR::AccessibilityUIElement::lineForIndex):
+        (WTR::AccessibilityUIElement::rangeForLine):
+        (WTR::AccessibilityUIElement::boundsForRange):
+        (WTR::AccessibilityUIElement::stringForRange):
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        (WTR::AccessibilityUIElement::setSelectedTextRange):
+        (WTR::AccessibilityUIElement::isFocusable const):
+        (WTR::AccessibilityUIElement::isSelectable const):
+        (WTR::AccessibilityUIElement::isMultiSelectable const):
+        (WTR::AccessibilityUIElement::isVisible const):
+        (WTR::AccessibilityUIElement::isOffScreen const):
+        (WTR::AccessibilityUIElement::isCollapsed const):
+        (WTR::AccessibilityUIElement::isSingleLine const):
+        (WTR::AccessibilityUIElement::isMultiLine const):
+        (WTR::AccessibilityUIElement::hasPopup const):
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        (WTR::AccessibilityUIElement::scrollToGlobalPoint):
+        (WTR::stringAtOffset):
+        (WTR::AccessibilityUIElement::characterAtOffset):
+        (WTR::AccessibilityUIElement::wordAtOffset):
+        (WTR::AccessibilityUIElement::lineAtOffset):
+        (WTR::AccessibilityUIElement::sentenceAtOffset):
+        * WebKitTestRunner/gtk/main.cpp:
+        (main):
+
 2021-11-18  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerAVFoundation should support rvfc

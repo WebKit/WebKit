@@ -1,3 +1,16 @@
+2021-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Add initial WTR accessibility support when building with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=230259
+
+        Reviewed by Adrian Perez de Castro.
+
+        In case of ATSPI we need the web page accessibility object to get the root and focused object wrappers.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityRootObject):
+        (WKAccessibilityFocusedObject):
+
 2021-11-18  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerAVFoundation should support rvfc

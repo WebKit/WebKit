@@ -50,10 +50,10 @@ public:
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
     void setRoot(AccessibilityRootAtspi*);
-    AccessibilityRootAtspi* root() const;
+    WEBCORE_EXPORT AccessibilityRootAtspi* root() const;
     void setParent(std::optional<AccessibilityObjectAtspi*>);
-    std::optional<AccessibilityObjectAtspi*> parent() const;
-    void updateBackingStore();
+    WEBCORE_EXPORT std::optional<AccessibilityObjectAtspi*> parent() const;
+    WEBCORE_EXPORT void updateBackingStore();
 
     void attach(AXCoreObject*);
     void detach();
@@ -66,24 +66,24 @@ public:
     GVariant* reference();
     void serialize(GVariantBuilder*) const;
 
-    String id() const;
-    CString name() const;
-    CString description() const;
-    unsigned role() const;
-    unsigned childCount() const;
-    Vector<RefPtr<AccessibilityObjectAtspi>> children() const;
-    AccessibilityObjectAtspi* childAt(unsigned) const;
-    uint64_t state() const;
+    WEBCORE_EXPORT String id() const;
+    WEBCORE_EXPORT CString name() const;
+    WEBCORE_EXPORT CString description() const;
+    WEBCORE_EXPORT unsigned role() const;
+    WEBCORE_EXPORT unsigned childCount() const;
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> children() const;
+    WEBCORE_EXPORT AccessibilityObjectAtspi* childAt(unsigned) const;
+    WEBCORE_EXPORT uint64_t state() const;
     void stateChanged(const char*, bool);
-    HashMap<String, String> attributes() const;
-    HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> relationMap() const;
+    WEBCORE_EXPORT HashMap<String, String> attributes() const;
+    WEBCORE_EXPORT HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> relationMap() const;
 
-    AccessibilityObjectAtspi* hitTest(const IntPoint&, uint32_t) const;
-    IntRect elementRect(uint32_t) const;
-    void scrollToMakeVisible(uint32_t) const;
-    void scrollToPoint(const IntPoint&, uint32_t) const;
+    WEBCORE_EXPORT AccessibilityObjectAtspi* hitTest(const IntPoint&, uint32_t) const;
+    WEBCORE_EXPORT IntRect elementRect(uint32_t) const;
+    WEBCORE_EXPORT void scrollToMakeVisible(uint32_t) const;
+    WEBCORE_EXPORT void scrollToPoint(const IntPoint&, uint32_t) const;
 
-    String text() const;
+    WEBCORE_EXPORT String text() const;
     enum class TextGranularity {
         Character,
         WordStart,
@@ -94,16 +94,16 @@ public:
         LineEnd,
         Paragraph
     };
-    IntPoint boundaryOffset(unsigned, TextGranularity) const;
-    IntRect boundsForRange(unsigned, unsigned, uint32_t) const;
+    WEBCORE_EXPORT IntPoint boundaryOffset(unsigned, TextGranularity) const;
+    WEBCORE_EXPORT IntRect boundsForRange(unsigned, unsigned, uint32_t) const;
     struct TextAttributes {
         HashMap<String, String> attributes;
         int startOffset;
         int endOffset;
     };
-    TextAttributes textAttributes(std::optional<unsigned> = std::nullopt, bool = false) const;
-    IntPoint selectedRange() const;
-    void setSelectedRange(unsigned, unsigned);
+    WEBCORE_EXPORT TextAttributes textAttributes(std::optional<unsigned> = std::nullopt, bool = false) const;
+    WEBCORE_EXPORT IntPoint selectedRange() const;
+    WEBCORE_EXPORT void setSelectedRange(unsigned, unsigned);
     void textInserted(const String&, const VisiblePosition&);
     void textDeleted(const String&, const VisiblePosition&);
     void textAttributesChanged();

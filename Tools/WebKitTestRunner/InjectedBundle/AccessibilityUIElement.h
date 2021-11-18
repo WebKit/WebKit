@@ -430,6 +430,7 @@ private:
 #if USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #elif USE(ATSPI)
+    static RefPtr<AccessibilityController> s_controller;
     RefPtr<WebCore::AccessibilityObjectAtspi> m_element;
 #endif
 #endif

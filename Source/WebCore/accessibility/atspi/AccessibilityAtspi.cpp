@@ -48,6 +48,11 @@ AccessibilityAtspi::AccessibilityAtspi(const String& busAddress)
     });
 }
 
+RunLoop& AccessibilityAtspi::runLoop() const
+{
+    return m_queue->runLoop();
+}
+
 const char* AccessibilityAtspi::uniqueName() const
 {
     RELEASE_ASSERT(!isMainThread());
