@@ -61,7 +61,6 @@ function mac_process_gpu_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
-            plistbuddy Add :com.apple.private.security.message-filter bool YES
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
         fi
 
