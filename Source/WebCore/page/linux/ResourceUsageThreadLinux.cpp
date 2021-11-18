@@ -249,7 +249,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
                 continue;
 
             if (auto id = thread->thread()->id())
-                knownWorkerThreads.set(id, thread->identifier().isolatedCopy());
+                knownWorkerThreads.set(id, thread->inspectorIdentifier().isolatedCopy());
         }
     }
 
