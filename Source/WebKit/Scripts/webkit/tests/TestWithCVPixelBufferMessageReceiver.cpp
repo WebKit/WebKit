@@ -32,6 +32,9 @@
 #include "HandleMessage.h"
 #include "TestWithCVPixelBufferMessages.h"
 #if USE(AVFOUNDATION)
+#include <WebCore/CVUtilities.h>
+#endif
+#if USE(AVFOUNDATION)
 #include <wtf/RetainPtr.h>
 #endif
 

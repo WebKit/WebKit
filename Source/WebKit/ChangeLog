@@ -1,3 +1,17 @@
+2021-11-18  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerAVFoundation should support rvfc
+        https://bugs.webkit.org/show_bug.cgi?id=231945
+        <rdar://problem/84657372>
+
+        Reviewed by Chris Dumez.
+
+        Unreviewed, rebasing generator tests.
+
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessageReceiver.cpp:
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessages.h:
+
 2021-11-18  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Block access to unused resources in the Networking process' sandbox

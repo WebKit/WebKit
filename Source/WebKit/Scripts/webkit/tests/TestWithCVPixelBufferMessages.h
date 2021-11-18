@@ -28,6 +28,9 @@
 #include "Connection.h"
 #include "MessageNames.h"
 #include "TestWithCVPixelBufferMessagesReplies.h"
+#if PLATFORM(COCOA)
+#include <WebCore/CVUtilities.h>
+#endif
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
