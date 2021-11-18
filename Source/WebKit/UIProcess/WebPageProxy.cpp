@@ -5680,10 +5680,12 @@ void WebPageProxy::willSubmitForm(FrameIdentifier frameID, FrameIdentifier sourc
     });
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
 void WebPageProxy::contentRuleListNotification(URL&& url, ContentRuleListResults&& results)
 {
     m_navigationClient->contentRuleListNotification(*this, WTFMove(url), WTFMove(results));
 }
+#endif
     
 void WebPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, FrameIdentifier frameID)
 {

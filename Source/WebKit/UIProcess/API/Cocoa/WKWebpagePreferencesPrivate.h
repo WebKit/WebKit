@@ -69,6 +69,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteMouseEventPolicy) {
 @interface WKWebpagePreferences (WKPrivate)
 
 @property (nonatomic, setter=_setContentBlockersEnabled:) BOOL _contentBlockersEnabled;
+@property (nonatomic, copy, setter=_setActiveContentRuleListActionPatterns:) NSSet<NSString *> *_activeContentRuleListActionPatterns;
 @property (nonatomic, setter=_setAllowedAutoplayQuirks:) _WKWebsiteAutoplayQuirk _allowedAutoplayQuirks;
 @property (nonatomic, setter=_setAutoplayPolicy:) _WKWebsiteAutoplayPolicy _autoplayPolicy;
 @property (nonatomic, copy, setter=_setCustomHeaderFields:) NSArray<_WKCustomHeaderFields *> *_customHeaderFields;

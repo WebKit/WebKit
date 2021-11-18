@@ -264,6 +264,7 @@ void TestController::setDefaultCalendarType(NSString *identifier, NSString *loca
         m_calendarSwizzler = makeUnique<ClassMethodSwizzler>([NSCalendar class], @selector(currentCalendar), reinterpret_cast<IMP>(swizzledCalendar));
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
 void TestController::resetContentExtensions()
 {
     __block bool doneRemoving = false;
@@ -278,6 +279,7 @@ void TestController::resetContentExtensions()
         [platformView.configuration.userContentController _removeAllUserContentFilters];
     }
 }
+#endif
 
 void TestController::setApplicationBundleIdentifier(const std::string& bundleIdentifier)
 {

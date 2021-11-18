@@ -76,12 +76,16 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
     using ActionLocation = uint32_t;
     using ActionMap = HashMap<ResourceFlags, ActionLocation, DefaultHash<ResourceFlags>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>;
     using StringActionMap = HashMap<std::pair<String, ResourceFlags>, ActionLocation, DefaultHash<std::pair<String, ResourceFlags>>, PairHashTraits<HashTraits<String>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
+    using RedirectActionMap = HashMap<std::pair<RedirectAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<RedirectAction, ResourceFlags>>, PairHashTraits<HashTraits<RedirectAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
+    using ModifyHeadersActionMap = HashMap<std::pair<ModifyHeadersAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<ModifyHeadersAction, ResourceFlags>>, PairHashTraits<HashTraits<ModifyHeadersAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
     ActionMap blockLoadActionsMap;
     ActionMap blockCookiesActionsMap;
     PendingDisplayNoneActionsMap cssDisplayNoneActionsMap;
     ActionMap ignorePreviousRuleActionsMap;
     ActionMap makeHTTPSActionsMap;
     StringActionMap notifyActionsMap;
+    RedirectActionMap redirectActionMap;
+    ModifyHeadersActionMap modifyHeadersActionMap;
 
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& rule = ruleList[ruleIndex];
@@ -111,31 +115,34 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
         }
 
         ResourceFlags flags = rule.trigger().flags;
-        unsigned actionLocation = std::numeric_limits<unsigned>::max();
-        
+
         auto findOrMakeActionLocation = [&] (ActionMap& map) {
-            const auto existingAction = map.find(flags);
-            if (existingAction == map.end()) {
-                actionLocation = actions.size();
+            return map.ensure(flags, [&] {
+                auto newActionLocation = actions.size();
                 actions.append(actionData.index());
-                map.set(flags, actionLocation);
-            } else
-                actionLocation = existingAction->value;
+                return newActionLocation;
+            }).iterator->value;
         };
-        
-        auto findOrMakeStringActionLocation = [&] (StringActionMap& map, const NotifyAction& actionData) {
-            const String& notification = actionData.string;
-            auto existingAction = map.find(std::make_pair(notification, flags));
-            if (existingAction == map.end()) {
-                actionLocation = actions.size();
-                actions.append(WTF::alternativeIndexV<NotifyAction, ActionData>);
-                serializeString(actions, notification);
-                map.set(std::make_pair(notification, flags), actionLocation);
-            } else
-                actionLocation = existingAction->value;
+
+        auto findOrMakeNotifyActionLocation = [&] (auto& map, const auto& action) {
+            return map.ensure({ action.string, flags }, [&] {
+                auto newActionLocation = actions.size();
+                actions.append(actionData.index());
+                action.serialize(actions);
+                return newActionLocation;
+            }).iterator->value;
         };
-        
-        std::visit(WTF::makeVisitor([&] (const CSSDisplayNoneSelectorAction& actionData) {
+
+        auto findOrMakeOtherActionLocation = [&] (auto& map, const auto& action) {
+            return map.ensure({ action, flags }, [&] {
+                auto newActionLocation = actions.size();
+                actions.append(actionData.index());
+                action.serialize(actions);
+                return newActionLocation;
+            }).iterator->value;
+        };
+
+        auto actionLocation = std::visit(WTF::makeVisitor([&] (const CSSDisplayNoneSelectorAction& actionData) {
             const auto addResult = cssDisplayNoneActionsMap.add(rule.trigger(), PendingDisplayNoneActions());
             auto& pendingStringActions = addResult.iterator->value;
             if (!pendingStringActions.combinedSelectors.isEmpty())
@@ -143,21 +150,22 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             pendingStringActions.combinedSelectors.append(actionData.string);
             pendingStringActions.clientLocations.append(actionLocations.size());
 
-            actionLocation = std::numeric_limits<unsigned>::max();
+            // resolvePendingDisplayNoneActions will fill this in later.
+            return std::numeric_limits<ActionLocation>::max();
         }, [&] (const IgnorePreviousRulesAction&) {
-            findOrMakeActionLocation(ignorePreviousRuleActionsMap);
+            return findOrMakeActionLocation(ignorePreviousRuleActionsMap);
         }, [&] (const BlockLoadAction&) {
-            findOrMakeActionLocation(blockLoadActionsMap);
+            return findOrMakeActionLocation(blockLoadActionsMap);
         }, [&] (const BlockCookiesAction&) {
-            findOrMakeActionLocation(blockCookiesActionsMap);
+            return findOrMakeActionLocation(blockCookiesActionsMap);
         }, [&] (const MakeHTTPSAction&) {
-            findOrMakeActionLocation(makeHTTPSActionsMap);
+            return findOrMakeActionLocation(makeHTTPSActionsMap);
         }, [&] (const NotifyAction& actionData) {
-            findOrMakeStringActionLocation(notifyActionsMap, actionData);
-        }, [&] (const ModifyHeadersAction&) {
-            // FIXME: Implement
-        }, [&] (const RedirectAction&) {
-            // FIXME: Implement
+            return findOrMakeNotifyActionLocation(notifyActionsMap, actionData);
+        }, [&] (const ModifyHeadersAction& action) {
+            return findOrMakeOtherActionLocation(modifyHeadersActionMap, action);
+        }, [&] (const RedirectAction& action) {
+            return findOrMakeOtherActionLocation(redirectActionMap, action);
         }), actionData);
         actionLocations.append(actionLocation);
     }
@@ -267,7 +275,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 {
 #if ASSERT_ENABLED
     callOnMainThread([ruleJSON = ruleJSON.isolatedCopy(), parsedRuleList = parsedRuleList.isolatedCopy()] {
-        ASSERT(parseRuleList(ruleJSON, { }).value() == parsedRuleList);
+        ASSERT(parseRuleList(ruleJSON, std::nullopt).value() == parsedRuleList);
     });
 #endif
 

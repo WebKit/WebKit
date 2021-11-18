@@ -141,6 +141,32 @@ static WebCore::MouseEventPolicy coreMouseEventPolicy(_WKWebsiteMouseEventPolicy
     return _websitePolicies->contentBlockersEnabled();
 }
 
+- (void)_setActiveContentRuleListActionPatterns:(NSSet<NSString *> *)patterns
+{
+    if (!patterns) {
+        _websitePolicies->setActiveContentRuleListActionPatterns(std::nullopt);
+        return;
+    }
+
+    HashSet<String> patternHashSet;
+    patternHashSet.reserveInitialCapacity(patterns.count);
+    for (NSString *pattern in patterns)
+        patternHashSet.add(pattern);
+    _websitePolicies->setActiveContentRuleListActionPatterns(WTFMove(patternHashSet));
+}
+
+- (NSSet<NSString *> *)_activeContentRuleListActionPatterns
+{
+    const auto& patterns = _websitePolicies->activeContentRuleListActionPatterns();
+    if (!patterns)
+        return nil;
+
+    NSMutableSet<NSString *> *set = [NSMutableSet set];
+    for (const auto& pattern : *patterns)
+        [set addObject:pattern];
+    return set;
+}
+
 - (void)_setAllowedAutoplayQuirks:(_WKWebsiteAutoplayQuirk)allowedQuirks
 {
     OptionSet<WebKit::WebsiteAutoplayQuirk> quirks;

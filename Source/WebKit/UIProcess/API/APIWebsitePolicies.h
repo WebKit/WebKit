@@ -63,6 +63,9 @@ public:
     bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
     void setContentBlockersEnabled(bool enabled) { m_contentBlockersEnabled = enabled; }
     
+    void setActiveContentRuleListActionPatterns(std::optional<HashSet<WTF::String>>&& patterns) { m_activeContentRuleListActionPatterns = WTFMove(patterns); }
+    const std::optional<HashSet<WTF::String>>& activeContentRuleListActionPatterns() const { return m_activeContentRuleListActionPatterns; }
+    
     OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
     void setAllowedAutoplayQuirks(OptionSet<WebKit::WebsiteAutoplayQuirk> quirks) { m_allowedAutoplayQuirks = quirks; }
     
@@ -135,7 +138,9 @@ public:
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
 
 private:
+    // FIXME: replace most or all of these members with a WebsitePoliciesData.
     bool m_contentBlockersEnabled { true };
+    std::optional<HashSet<WTF::String>> m_activeContentRuleListActionPatterns { HashSet<WTF::String>() };
     OptionSet<WebKit::WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
     WebKit::WebsiteAutoplayPolicy m_autoplayPolicy { WebKit::WebsiteAutoplayPolicy::Default };
 #if ENABLE(DEVICE_ORIENTATION)

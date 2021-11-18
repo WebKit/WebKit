@@ -587,6 +587,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     }
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
 void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy&, URL&& url, ContentRuleListResults&& results)
 {
     if (!m_navigationState)
@@ -624,6 +625,7 @@ void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy
             [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView contentRuleListWithIdentifier:pair.first performedAction:wrapper(API::ContentRuleListAction::create(WTFMove(pair.second)).get()) forURL:url];
     }
 }
+#endif
     
 void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy& page, Ref<API::NavigationResponse>&& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {

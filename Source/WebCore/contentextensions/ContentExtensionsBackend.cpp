@@ -228,10 +228,12 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 }
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
-            }, [&] (const ModifyHeadersAction&) {
-                // FIXME: Implement
-            }, [&] (const RedirectAction&) {
-                // FIXME: Implement
+            }, [&] (const ModifyHeadersAction& action) {
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(url))
+                    results.summary.modifyHeadersActions.append(action);
+            }, [&] (const RedirectAction& action) {
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(url))
+                    results.summary.redirectActions.append(action);
             }), action.data());
         }
 
@@ -292,9 +294,9 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
             }, [&] (const ModifyHeadersAction&) {
-                // FIXME: Implement
+                // We currently have not implemented active actions from the network process (CORS preflight).
             }, [&] (const RedirectAction&) {
-                // FIXME: Implement
+                // We currently have not implemented active actions from the network process (CORS preflight).
             }), action.data());
         }
     }
@@ -324,6 +326,12 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
             newURL.setPort(WTF::defaultPortForProtocol("https").value());
         request.setURL(newURL);
     }
+
+    for (auto& action : results.summary.modifyHeadersActions)
+        action.applyToRequest(request);
+
+    for (auto& action : results.summary.redirectActions)
+        action.applyToRequest(request);
 
     if (page && results.shouldNotifyApplication()) {
         results.results.removeAllMatching([](const auto& pair) {

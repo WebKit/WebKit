@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
+#include "ContentExtensionActions.h"
 #include <wtf/KeyValuePair.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -54,6 +57,8 @@ struct ContentRuleListResults {
         bool madeHTTPS { false };
         bool blockedCookies { false };
         bool hasNotifications { false };
+        Vector<ContentExtensions::ModifyHeadersAction> modifyHeadersActions;
+        Vector<ContentExtensions::RedirectAction> redirectActions;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<Summary> decode(Decoder&);
@@ -168,7 +173,11 @@ template<class Decoder> auto ContentRuleListResults::Summary::decode(Decoder& de
         WTFMove(*madeHTTPS),
         WTFMove(*blockedCookies),
         WTFMove(*hasNotifications),
+        { }, // modifyHeadersActions and redirectActions have no need to be serialized to another process.
+        { }
     }};
 }
 
 }
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

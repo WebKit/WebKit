@@ -70,7 +70,7 @@ static NSError *toUserContentRuleListStoreError(const NSError *error)
 
 - (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentRuleList completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
 {
-    [_contentRuleListStore _compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
+    [_contentRuleListStore compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
         auto contentFilter = contentRuleList ? adoptNS([[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList]) : nil;
         completionHandler(contentFilter.get(), toUserContentRuleListStoreError(error));
     }];

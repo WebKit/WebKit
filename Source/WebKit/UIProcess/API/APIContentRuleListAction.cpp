@@ -26,6 +26,8 @@
 #include "config.h"
 #include "APIContentRuleListAction.h"
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
 namespace API {
 
 Ref<ContentRuleListAction> ContentRuleListAction::create(WebCore::ContentRuleListResults::Result&& result)
@@ -61,3 +63,5 @@ const Vector<WTF::String>& ContentRuleListAction::notifications() const
 }
 
 } // namespace API
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

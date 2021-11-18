@@ -491,7 +491,7 @@ void ContentRuleListStore::lookupContentRuleList(const WTF::String& identifier, 
         if (contentRuleList->metaData.version != ContentRuleListStore::CurrentContentRuleListFileVersion) {
             if (auto sourceFromOldVersion = getContentRuleListSourceFromMappedFile(*contentRuleList); !sourceFromOldVersion.isEmpty()) {
                 RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), sourceFromOldVersion = sourceFromOldVersion.isolatedCopy(), identifier = identifier.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-                    protectedThis->compileContentRuleList(identifier, WTFMove(sourceFromOldVersion), WTFMove(completionHandler));
+                    protectedThis->compileContentRuleList(identifier, WTFMove(sourceFromOldVersion), std::nullopt, WTFMove(completionHandler));
                 });
                 return;
             }
@@ -530,13 +530,13 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
     });
 }
 
-void ContentRuleListStore::compileContentRuleList(const WTF::String& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
+void ContentRuleListStore::compileContentRuleList(const WTF::String& identifier, WTF::String&& json, std::optional<HashSet<WTF::String>>&& allowedRedirectSchemes, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
     ASSERT(RunLoop::isMain());
     AtomString::init();
     WebCore::QualifiedName::init();
     
-    auto parsedRules = WebCore::ContentExtensions::parseRuleList(json, { });
+    auto parsedRules = WebCore::ContentExtensions::parseRuleList(json, WTFMove(allowedRedirectSchemes));
     if (!parsedRules.has_value())
         return completionHandler(nullptr, parsedRules.error());
     

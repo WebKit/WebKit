@@ -33,6 +33,7 @@ namespace API {
 
 class ContentRuleListAction final : public ObjectImpl<Object::Type::ContentRuleListAction> {
 public:
+#if ENABLE(CONTENT_EXTENSIONS)
     static Ref<ContentRuleListAction> create(WebCore::ContentRuleListResults::Result&&);
     virtual ~ContentRuleListAction();
 
@@ -45,6 +46,7 @@ private:
     ContentRuleListAction(WebCore::ContentRuleListResults::Result&&);
 
     WebCore::ContentRuleListResults::Result m_result;
+#endif // ENABLE(CONTENT_EXTENSIONS)
 };
     
 } // namespace API

@@ -2108,7 +2108,9 @@ private:
 
     void willSubmitForm(WebCore::FrameIdentifier, WebCore::FrameIdentifier sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, FormSubmitListenerIdentifier, const UserData&);
 
+#if ENABLE(CONTENT_EXTENSIONS)
     void contentRuleListNotification(URL&&, WebCore::ContentRuleListResults&&);
+#endif
 
     // History client
     void didNavigateWithNavigationData(const WebNavigationDataStore&, WebCore::FrameIdentifier);

@@ -479,6 +479,12 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     ASSERT(resourceLoader);
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::remove, url '%s'", resourceLoader->url().string().utf8().data());
 
+    auto identifier = resourceLoader->identifier();
+    if (!identifier) {
+        LOG_ERROR("WebLoaderStrategy removing a ResourceLoader that has no identifier.");
+        return;
+    }
+
     if (auto task = m_urlSchemeTasks.take(resourceLoader->identifier())) {
         ASSERT(!m_internallyFailedResourceLoaders.contains(resourceLoader));
         task->stopLoading();
@@ -487,12 +493,6 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
 
     if (m_internallyFailedResourceLoaders.contains(resourceLoader)) {
         m_internallyFailedResourceLoaders.remove(resourceLoader);
-        return;
-    }
-    
-    auto identifier = resourceLoader->identifier();
-    if (!identifier) {
-        LOG_ERROR("WebLoaderStrategy removing a ResourceLoader that has no identifier.");
         return;
     }
 

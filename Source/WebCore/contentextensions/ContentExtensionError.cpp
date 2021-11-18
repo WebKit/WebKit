@@ -103,8 +103,20 @@ const std::error_category& contentExtensionErrorCategory()
                 return "A redirect extension path must start with a slash";
             case ContentExtensionError::JSONRedirectURLSchemeNotAllowed:
                 return "A redirect url scheme must be in the set of allowed schemes";
+            case ContentExtensionError::JSONRedirectURLSchemeInvalid:
+                return "A redirect url scheme must be a valid scheme";
+            case ContentExtensionError::JSONRedirectURLSchemesShouldNotIncludeJavascript:
+                return "The set of allowed redirect schemes shouldn't include javascript";
+            case ContentExtensionError::JSONRedirectURLInvalid:
+                return "A redirect url must be valid";
             case ContentExtensionError::JSONRedirectInvalidType:
                 return "A redirect must have a member named \"extension-path\", \"regex-substitution\", \"transform\" or \"url\"";
+            case ContentExtensionError::JSONRedirectInvalidPort:
+                return "A redirect port must be either empty or a number between 0 and 65535, inclusive";
+            case ContentExtensionError::JSONRedirectInvalidQuery:
+                return "A redirect query must either be empty or begin with '?'";
+            case ContentExtensionError::JSONRedirectInvalidFragment:
+                return "A redirect fragment must either be empty or begin with '#'";
             case ContentExtensionError::JSONModifyHeadersInvalidOperation:
                 return "A modify-headers operation must have an operation that is either \"set\", \"append\", or \"remove\"";
             case ContentExtensionError::JSONModifyHeadersInfoNotADictionary:

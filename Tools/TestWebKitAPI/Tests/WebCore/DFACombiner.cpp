@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
 #include "DFAHelpers.h"
 #include <WebCore/DFACombiner.h>
 #include <wtf/MainThread.h>
@@ -119,3 +121,5 @@ TEST_F(DFACombinerTest, CombinedInputReachesMinimumSize)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

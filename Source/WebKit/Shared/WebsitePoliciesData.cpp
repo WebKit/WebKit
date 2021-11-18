@@ -36,6 +36,7 @@ namespace WebKit {
 void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 {
     encoder << contentBlockersEnabled;
+    encoder << activeContentRuleListActionPatterns;
     encoder << autoplayPolicy;
 #if ENABLE(DEVICE_ORIENTATION)
     encoder << deviceOrientationAndMotionAccessState;
@@ -62,7 +63,12 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     decoder >> contentBlockersEnabled;
     if (!contentBlockersEnabled)
         return std::nullopt;
-    
+
+    std::optional<std::optional<HashSet<String>>> activeContentRuleListActionPatterns;
+    decoder >> activeContentRuleListActionPatterns;
+    if (!activeContentRuleListActionPatterns)
+        return std::nullopt;
+
     std::optional<WebsiteAutoplayPolicy> autoplayPolicy;
     decoder >> autoplayPolicy;
     if (!autoplayPolicy)
@@ -147,6 +153,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
 
     return { {
         WTFMove(*contentBlockersEnabled),
+        WTFMove(*activeContentRuleListActionPatterns),
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
 #if ENABLE(DEVICE_ORIENTATION)
@@ -182,6 +189,8 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
     if (documentLoader.userContentExtensionsEnabled())
         documentLoader.setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
+
+    documentLoader.setActiveContentRuleListActionPatterns(websitePolicies.activeContentRuleListActionPatterns);
 
     OptionSet<WebCore::AutoplayQuirk> quirks;
     const auto& allowedQuirks = websitePolicies.allowedAutoplayQuirks;

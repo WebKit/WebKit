@@ -26,7 +26,6 @@
 #include "CSSStyleSheet.h"
 #include "CachePolicy.h"
 #include "CachedCSSStyleSheet.h"
-#include "ContentRuleListResults.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -44,6 +43,7 @@
 #include <wtf/Ref.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
+#include "ContentRuleListResults.h"
 #include "UserContentController.h"
 #endif
 

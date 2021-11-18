@@ -179,7 +179,7 @@ bool isValidCSSSelector(const String& selector)
     return !!parser.parseSelector(selector);
 }
 
-static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const HashSet<String>& allowedRedirectURLSchemes)
+static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const std::optional<HashSet<String>>& allowedRedirectURLSchemes)
 {
     auto actionObject = ruleObject.getObject("action");
     if (!actionObject)
@@ -224,7 +224,7 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
 
-static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject, const HashSet<String>& allowedRedirectURLSchemes)
+static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject, const std::optional<HashSet<String>>& allowedRedirectURLSchemes)
 {
     auto trigger = loadTrigger(ruleObject);
     if (!trigger.has_value())
@@ -239,8 +239,11 @@ static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(c
     return { { { WTFMove(trigger.value()), WTFMove(action->value()) } } };
 }
 
-static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON, const HashSet<String>& allowedRedirectURLSchemes)
+static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON, const std::optional<HashSet<String>>& allowedRedirectURLSchemes)
 {
+    if (allowedRedirectURLSchemes && allowedRedirectURLSchemes->contains("javascript"))
+        return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemesShouldNotIncludeJavascript);
+
     auto decodedRules = JSON::Value::parseJSON(ruleJSON);
 
     if (!decodedRules)
@@ -272,7 +275,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
     return ruleList;
 }
 
-Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON, const HashSet<String>& allowedRedirectURLSchemes)
+Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON, const std::optional<HashSet<String>>& allowedRedirectURLSchemes)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime loadExtensionStartTime = MonotonicTime::now();

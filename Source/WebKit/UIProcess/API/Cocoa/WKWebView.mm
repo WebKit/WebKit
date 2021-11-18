@@ -2766,7 +2766,11 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 + (BOOL)_willUpgradeToHTTPS:(NSURL *)url
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return WebCore::ContentExtensions::ContentExtensionsBackend::shouldBeMadeSecure(url);
+#else
+    return NO;
+#endif
 }
 
 - (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler

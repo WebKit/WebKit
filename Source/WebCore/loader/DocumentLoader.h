@@ -87,6 +87,7 @@ class SharedBuffer;
 class SWClientConnection;
 class SubresourceLoader;
 class SubstituteResource;
+class UserContentURLPattern;
 
 enum class ShouldContinue;
 
@@ -300,6 +301,9 @@ public:
 
     bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
     void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
+
+    bool allowsActiveContentRuleListActionsForURL(const URL&) const;
+    WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const std::optional<HashSet<String>>&);
 
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
@@ -651,6 +655,7 @@ private:
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
+    std::optional<Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState m_deviceOrientationAndMotionAccessState { DeviceOrientationOrMotionPermissionState::Prompt };
 #endif
