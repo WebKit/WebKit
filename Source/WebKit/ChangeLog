@@ -1,3 +1,32 @@
+2021-11-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285977. rdar://problem/85529760
+
+    [macOS][GPUP] Add access to logging service for root
+    https://bugs.webkit.org/show_bug.cgi?id=233300
+    <rdar://85529760>
+    
+    Reviewed by Brent Fulgham.
+    
+    Access to logging service is required for root in the GPU process on macOS.
+    
+    * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285977 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-17  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS][GPUP] Add access to logging service for root
+            https://bugs.webkit.org/show_bug.cgi?id=233300
+            <rdar://85529760>
+
+            Reviewed by Brent Fulgham.
+
+            Access to logging service is required for root in the GPU process on macOS.
+
+            * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r285959. rdar://problem/85529891
