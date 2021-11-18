@@ -53,9 +53,10 @@ public:
         PostMainThreadWheelEventHandling    = 1 << 2,
         RubberbandInProgress                = 1 << 3,
         ScrollSnapInProgress                = 1 << 4,
-        ScrollingThreadSyncNeeded           = 1 << 5,
-        ContentScrollInProgress             = 1 << 6,
-        RequestedScrollPosition             = 1 << 7,
+        ScrollAnimationInProgress           = 1 << 5,
+        ScrollingThreadSyncNeeded           = 1 << 6,
+        ContentScrollInProgress             = 1 << 7,
+        RequestedScrollPosition             = 1 << 8,
     };
     typedef const void* ScrollableAreaIdentifier;
 

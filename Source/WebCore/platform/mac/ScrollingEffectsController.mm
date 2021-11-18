@@ -31,7 +31,6 @@
 #import "ScrollAnimationRubberBand.h"
 #import "ScrollExtents.h"
 #import "WheelEventDeltaFilter.h"
-#import "WheelEventTestMonitor.h"
 #import <pal/spi/mac/NSScrollViewSPI.h>
 #import <sys/sysctl.h>
 #import <sys/time.h>
@@ -680,7 +679,7 @@ void ScrollingEffectsController::scheduleStatelessScrollSnap()
         statelessSnapTransitionTimerFired();
     });
     m_statelessSnapTransitionTimer->startOneShot(statelessScrollSnapDelay);
-    startDeferringWheelEventTestCompletionDueToScrollSnapping();
+    startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
 }
 
 void ScrollingEffectsController::statelessSnapTransitionTimerFired()
@@ -692,16 +691,6 @@ void ScrollingEffectsController::statelessSnapTransitionTimerFired()
 
     if (m_scrollSnapState->transitionToSnapAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset()))
         startScrollSnapAnimation();
-}
-
-void ScrollingEffectsController::startDeferringWheelEventTestCompletionDueToScrollSnapping()
-{
-    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ScrollSnapInProgress);
-}
-
-void ScrollingEffectsController::stopDeferringWheelEventTestCompletionDueToScrollSnapping()
-{
-    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ScrollSnapInProgress);
 }
 
 bool ScrollingEffectsController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)

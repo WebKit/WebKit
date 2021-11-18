@@ -34,7 +34,6 @@
 #include "ScrollAnimationSmooth.h"
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
-#include "WheelEventTestMonitor.h"
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(KINETIC_SCROLLING) && !PLATFORM(MAC)
@@ -446,9 +445,7 @@ void ScrollingEffectsController::startScrollSnapAnimation()
 
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " startScrollSnapAnimation (main thread " << isMainThread() << ")");
 
-#if PLATFORM(MAC)
-    startDeferringWheelEventTestCompletionDueToScrollSnapping();
-#endif
+    startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
     m_client.willStartScrollSnapAnimation();
     setIsAnimatingScrollSnap(true);
 }
@@ -460,9 +457,7 @@ void ScrollingEffectsController::stopScrollSnapAnimation()
 
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " stopScrollSnapAnimation (main thread " << isMainThread() << ")");
 
-#if PLATFORM(MAC)
-    stopDeferringWheelEventTestCompletionDueToScrollSnapping();
-#endif
+    stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
     m_client.didStopScrollSnapAnimation();
 
     setIsAnimatingScrollSnap(false);
@@ -497,6 +492,7 @@ void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation& anima
     UNUSED_PARAM(animation);
 #endif
 
+    startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollAnimationInProgress);
     startOrStopAnimationCallbacks();
 }
 
@@ -519,11 +515,22 @@ void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animatio
     // FIXME: Need to track state better and only call this when the running animation is for CSS smooth scrolling. Calling should be harmless, though.
     m_client.didStopAnimatedScroll();
     startOrStopAnimationCallbacks();
+    stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollAnimationInProgress);
 }
 
 ScrollExtents ScrollingEffectsController::scrollExtentsForAnimation(ScrollAnimation&)
 {
     return m_client.scrollExtents();
+}
+
+void ScrollingEffectsController::startDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason reason)
+{
+    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), reason);
+}
+
+void ScrollingEffectsController::stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason reason)
+{
+    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), reason);
 }
 
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding

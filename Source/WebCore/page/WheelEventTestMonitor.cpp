@@ -174,6 +174,7 @@ TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason
     case WheelEventTestMonitor::PostMainThreadWheelEventHandling: ts << "post-main thread event handling"; break;
     case WheelEventTestMonitor::RubberbandInProgress: ts << "rubberbanding"; break;
     case WheelEventTestMonitor::ScrollSnapInProgress: ts << "scroll-snapping"; break;
+    case WheelEventTestMonitor::ScrollAnimationInProgress: ts << "scroll animation"; break;
     case WheelEventTestMonitor::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
     case WheelEventTestMonitor::ContentScrollInProgress: ts << "content scrolling"; break;
     case WheelEventTestMonitor::RequestedScrollPosition: ts << "requested scroll position"; break;
