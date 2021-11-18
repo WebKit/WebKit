@@ -1,3 +1,38 @@
+2021-11-18  Robin Morisset  <rmorisset@apple.com>
+
+        DFGByteCodeParser.cpp should avoid resizing the Operands<> of every BasicBlock on every inlining
+        https://bugs.webkit.org/show_bug.cgi?id=228053
+
+        Reviewed by Saam Barati.
+
+        The dfg bytecode parser only makes use of block->variablesAtTail.
+        But currently it updates the size of variablesAtHead, valuesAtHead, valuesAtTail and intersectionOfPastValuesAtHead every single time it changes the number of Tmps and/or Locals.
+        This happens notably whenever it inlines a function.
+
+        It is not nearly as cheap as it looks, as each resizing may reallocate a Vector, requires filling the new slots with zeros, and requires moving the existing values (which are all 0) to the new Vector.
+        This was obvious when looking at profiling of JS2: bzero + memmove are the two hottest C++ functions, and the manipulation of Operands is partly responsible.
+
+        This patch fixes this by only resizing block->variablesAtTail during the execution of the bytecode parser, and initializing all of the other operands at the very end of it.
+        It also merges the adjustment of numLocals and of numTmps for variablesAtTail during inlining, to avoid accidentally moving data twice.
+
+        On JetStream2 on an M1 MBP, it changes the total time spent in the DFGByteCodeParser from 1240-1260ms to 1155-1170ms.
+
+        * bytecode/Operands.h:
+        (JSC::Operands::ensureLocalsAndTmps):
+        * dfg/DFGBasicBlock.cpp:
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ensureLocalsForVariablesAtTail):
+        (JSC::DFG::ByteCodeParser::ensureLocalsAndTmpsForVariablesAtTail):
+        (JSC::DFG::ByteCodeParser::allocateBlock):
+        (JSC::DFG::ByteCodeParser::allocateTargetableBlock):
+        (JSC::DFG::ByteCodeParser::allocateUntargetableBlock):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2021-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add branchTest16 operation

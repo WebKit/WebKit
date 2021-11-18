@@ -138,24 +138,25 @@ private:
     // Just parse from m_currentIndex to the end of the current CodeBlock.
     void parseCodeBlock();
     
-    void ensureLocals(unsigned newNumLocals)
+    void ensureLocalsForVariablesAtTail(unsigned newNumLocals)
     {
         VERBOSE_LOG("   ensureLocals: trying to raise m_numLocals from ", m_numLocals, " to ", newNumLocals, "\n");
         if (newNumLocals <= m_numLocals)
             return;
         m_numLocals = newNumLocals;
         for (size_t i = 0; i < m_graph.numBlocks(); ++i)
-            m_graph.block(i)->ensureLocals(newNumLocals);
+            m_graph.block(i)->variablesAtTail.ensureLocals(newNumLocals);
     }
 
-    void ensureTmps(unsigned newNumTmps)
+    void ensureLocalsAndTmpsForVariablesAtTail(unsigned newNumLocals, unsigned newNumTmps)
     {
-        VERBOSE_LOG("   ensureTmps: trying to raise m_numTmps from ", m_numTmps, " to ", newNumTmps, "\n");
-        if (newNumTmps <= m_numTmps)
+        VERBOSE_LOG("   ensureLocalsAndTmps: trying to raise m_numLocals/m_numTmps from ", m_numLocals, "/", m_numTmps, " to ", newNumLocals, "/", newNumTmps, "\n");
+        if (newNumLocals <= m_numLocals && newNumTmps <= m_numTmps)
             return;
-        m_numTmps = newNumTmps;
+        m_numLocals = std::max(m_numLocals, newNumLocals);
+        m_numTmps = std::max(m_numTmps, newNumTmps);
         for (size_t i = 0; i < m_graph.numBlocks(); ++i)
-            m_graph.block(i)->ensureTmps(newNumTmps);
+            m_graph.block(i)->variablesAtTail.ensureLocalsAndTmps(m_numLocals, m_numTmps);
     }
 
 
@@ -171,6 +172,8 @@ private:
     // than to move the right index all the way to the treatment of op_ret.
     BasicBlock* allocateTargetableBlock(BytecodeIndex);
     BasicBlock* allocateUntargetableBlock();
+    // Helper for allocateTargetableBlock and allocateUntargetableBlock, do not use directly
+    BasicBlock* allocateBlock(BytecodeIndex);
     // An untargetable block can be given a bytecodeIndex to be later managed by linkBlock, but only once, and it can never go in the other direction
     void makeBlockTargetable(BasicBlock*, BytecodeIndex);
     void addJumpTo(BasicBlock*);
@@ -1262,24 +1265,32 @@ private:
     bool m_hasAnyForceOSRExits { false };
 };
 
+BasicBlock* ByteCodeParser::allocateBlock(BytecodeIndex bytecodeIndex)
+{
+    // We don't bother initializing most Operands here, since inlining can change the number of locals and tmps.
+    // We only initialize variablesAtTail because it is the only part which is used in the bytecode parser
+    // We will initialize all of the other Operands in bulk at the end of the phase.
+    Ref<BasicBlock> block = adoptRef(*new BasicBlock(bytecodeIndex, 0, 0, 0, 1));
+    BasicBlock* blockPtr = block.ptr();
+    blockPtr->variablesAtTail = Operands<Node*>(m_numArguments, m_numLocals, m_numTmps);
+    m_graph.appendBlock(WTFMove(block));
+    return blockPtr;
+}
+
 BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 {
     ASSERT(bytecodeIndex);
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(bytecodeIndex, m_numArguments, m_numLocals, m_numTmps, 1));
-    BasicBlock* blockPtr = block.ptr();
     // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
     if (m_inlineStackTop->m_blockLinkingTargets.size())
         ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin.offset() < bytecodeIndex.offset());
+    BasicBlock* blockPtr = allocateBlock(bytecodeIndex);
     m_inlineStackTop->m_blockLinkingTargets.append(blockPtr);
-    m_graph.appendBlock(WTFMove(block));
     return blockPtr;
 }
 
 BasicBlock* ByteCodeParser::allocateUntargetableBlock()
 {
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(BytecodeIndex(), m_numArguments, m_numLocals, m_numTmps, 1));
-    BasicBlock* blockPtr = block.ptr();
-    m_graph.appendBlock(WTFMove(block));
+    BasicBlock* blockPtr = allocateBlock(BytecodeIndex());
     VERBOSE_LOG("Adding new untargetable block: ", blockPtr->index, "\n");
     return blockPtr;
 }
@@ -1677,11 +1688,9 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     
     Operand inlineCallFrameStart = VirtualRegister(m_inlineStackTop->remapOperand(VirtualRegister(registerOffsetAfterFixup)).value() + CallFrame::headerSizeInRegisters);
     
-    ensureLocals(
-        inlineCallFrameStart.toLocal() + 1 +
-        CallFrame::headerSizeInRegisters + codeBlock->numCalleeLocals());
-    
-    ensureTmps((m_inlineStackTop->m_inlineCallFrame ? m_inlineStackTop->m_inlineCallFrame->tmpOffset : 0) + m_inlineStackTop->m_codeBlock->numTmps() + codeBlock->numTmps());
+    unsigned numLocals = inlineCallFrameStart.toLocal() + 1 + CallFrame::headerSizeInRegisters + codeBlock->numCalleeLocals();
+    unsigned numTmps = (m_inlineStackTop->m_inlineCallFrame ? m_inlineStackTop->m_inlineCallFrame->tmpOffset : 0) + m_inlineStackTop->m_codeBlock->numTmps() + codeBlock->numTmps();
+    ensureLocalsAndTmpsForVariablesAtTail(numLocals, numTmps);
 
     size_t argumentPositionStart = m_graph.m_argumentPositions.size();
 
@@ -1994,7 +2003,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
         int remappedRegisterOffset =
         m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).virtualRegister().offset();
         
-        ensureLocals(VirtualRegister(remappedRegisterOffset).toLocal());
+        ensureLocalsForVariablesAtTail(VirtualRegister(remappedRegisterOffset).toLocal());
         
         int argumentStart = registerOffset + CallFrame::headerSizeInRegisters;
         int remappedArgumentStart = m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).virtualRegister().offset();
@@ -4791,7 +4800,7 @@ void ByteCodeParser::handleGetById(
         stackAlignmentRegisters(),
         -registerOffset);
     
-    ensureLocals(
+    ensureLocalsForVariablesAtTail(
         m_inlineStackTop->remapOperand(
             VirtualRegister(registerOffset)).toLocal());
     
@@ -5185,7 +5194,7 @@ void ByteCodeParser::handlePutById(
             stackAlignmentRegisters(),
             -registerOffset);
     
-        ensureLocals(
+        ensureLocalsForVariablesAtTail(
             m_inlineStackTop->remapOperand(
                 VirtualRegister(registerOffset)).toLocal());
     
@@ -9040,6 +9049,17 @@ void ByteCodeParser::parse()
     parseCodeBlock();
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
 
+    for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+        // We kept block->variablesAtTail updated throughout, but not the other Operands, to avoid having to resize them every time we inline
+        ASSERT(block->variablesAtTail.numberOfArguments() == m_numArguments);
+        ASSERT(block->variablesAtTail.numberOfLocals() == m_numLocals);
+        ASSERT(block->variablesAtTail.numberOfTmps() == m_numTmps);
+        block->variablesAtHead = Operands<Node*>(OperandsLike, block->variablesAtTail);
+        block->valuesAtHead = Operands<AbstractValue>(OperandsLike, block->variablesAtTail);
+        block->valuesAtTail = Operands<AbstractValue>(OperandsLike, block->variablesAtTail);
+        block->intersectionOfPastValuesAtHead = Operands<AbstractValue>(OperandsLike, block->variablesAtTail);
+    }
+
     // We run backwards propagation now because the soundness of that phase
     // relies on seeing the graph as if it were an IR over bytecode, since
     // the spec-correctness of that phase relies on seeing all bytecode uses.
@@ -9155,16 +9175,6 @@ void ByteCodeParser::parse()
     
     m_graph.determineReachability();
     m_graph.killUnreachableBlocks();
-
-    for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-        BasicBlock* block = m_graph.block(blockIndex);
-        if (!block)
-            continue;
-        ASSERT(block->variablesAtHead.numberOfLocals() == m_graph.block(0)->variablesAtHead.numberOfLocals());
-        ASSERT(block->variablesAtHead.numberOfArguments() == m_graph.block(0)->variablesAtHead.numberOfArguments());
-        ASSERT(block->variablesAtTail.numberOfLocals() == m_graph.block(0)->variablesAtHead.numberOfLocals());
-        ASSERT(block->variablesAtTail.numberOfArguments() == m_graph.block(0)->variablesAtHead.numberOfArguments());
-    }
 
     m_graph.m_tmps = m_numTmps;
     m_graph.m_localVars = m_numLocals;

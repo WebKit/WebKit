@@ -63,24 +63,6 @@ BasicBlock::~BasicBlock()
 {
 }
 
-void BasicBlock::ensureLocals(unsigned newNumLocals)
-{
-    variablesAtHead.ensureLocals(newNumLocals);
-    variablesAtTail.ensureLocals(newNumLocals);
-    valuesAtHead.ensureLocals(newNumLocals);
-    valuesAtTail.ensureLocals(newNumLocals);
-    intersectionOfPastValuesAtHead.ensureLocals(newNumLocals, AbstractValue::fullTop());
-}
-
-void BasicBlock::ensureTmps(unsigned newNumTmps)
-{
-    variablesAtHead.ensureTmps(newNumTmps);
-    variablesAtTail.ensureTmps(newNumTmps);
-    valuesAtHead.ensureTmps(newNumTmps);
-    valuesAtTail.ensureTmps(newNumTmps);
-    intersectionOfPastValuesAtHead.ensureTmps(newNumTmps, AbstractValue::fullTop());
-}
-
 void BasicBlock::replaceTerminal(Graph& graph, Node* node)
 {
     NodeAndIndex result = findTerminal();
