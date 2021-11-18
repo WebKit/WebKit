@@ -124,8 +124,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const AXID InvalidAXID = 0;
-
 // Post value change notifications for password fields or elements contained in password fields at a 40hz interval to thwart analysis of typing cadence
 static const Seconds accessibilityPasswordValueChangeNotificationInterval { 25_ms };
 static const Seconds accessibilityLiveRegionChangedNotificationInterval { 20_ms };
@@ -418,7 +416,7 @@ void AXObjectCache::setIsolatedTreeFocusedObject(Node* focusedNode)
     auto* focus = getOrCreate(focusedNode);
 
     if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
-        tree->setFocusedNodeID(focus ? focus->objectID() : InvalidAXID);
+        tree->setFocusedNodeID(focus ? focus->objectID() : AXID());
 }
 #endif
 
@@ -428,7 +426,7 @@ AccessibilityObject* AXObjectCache::get(Widget* widget)
         return nullptr;
         
     AXID axID = m_widgetObjectMapping.get(widget);
-    ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
+    ASSERT(!axID.isHashTableDeletedValue());
     if (!axID)
         return nullptr;
     
@@ -441,7 +439,7 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
         return nullptr;
     
     AXID axID = m_renderObjectMapping.get(renderer);
-    ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
+    ASSERT(!axID.isHashTableDeletedValue());
     if (!axID)
         return nullptr;
 
@@ -453,11 +451,11 @@ AccessibilityObject* AXObjectCache::get(Node* node)
     if (!node)
         return nullptr;
 
-    AXID renderID = node->renderer() ? m_renderObjectMapping.get(node->renderer()) : 0;
-    ASSERT(!HashTraits<AXID>::isDeletedValue(renderID));
+    AXID renderID = node->renderer() ? m_renderObjectMapping.get(node->renderer()) : AXID();
+    ASSERT(!renderID.isHashTableDeletedValue());
 
     AXID nodeID = m_nodeObjectMapping.get(node);
-    ASSERT(!HashTraits<AXID>::isDeletedValue(nodeID));
+    ASSERT(!nodeID.isHashTableDeletedValue());
 
     if (node->renderer() && nodeID && !renderID) {
         // This can happen if an AccessibilityNodeObject is created for a node that's not
@@ -611,7 +609,7 @@ void AXObjectCache::cacheAndInitializeWrapper(AccessibilityObject* newObject, DO
 {
     ASSERT(newObject);
     AXID axID = getAXID(newObject);
-    ASSERT(axID != InvalidAXID);
+    ASSERT(axID.isValid());
 
     WTF::switchOn(domObject,
         [&axID, this] (RenderObject* typedValue) { m_renderObjectMapping.set(typedValue, axID); },
@@ -830,7 +828,7 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
 void AXObjectCache::remove(AXID axID)
 {
     AXTRACE("AXObjectCache::remove");
-    AXLOG(makeString("AXID ", axID));
+    AXLOG(makeString("AXID ", axID.loggingString()));
 
     if (!axID)
         return;
@@ -895,16 +893,10 @@ void AXObjectCache::remove(Widget* view)
 #if !PLATFORM(WIN)
 AXID AXObjectCache::platformGenerateAXID() const
 {
-    static AXID lastUsedID = 0;
-
-    // Generate a new ID.
-    AXID objID = lastUsedID;
+    AXID objID;
     do {
-        ++objID;
-    } while (!objID || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
-
-    lastUsedID = objID;
-
+        objID = AXID::generate();
+    } while (!objID.isValid() || m_idsInUse.contains(objID));
     return objID;
 }
 #endif
@@ -914,7 +906,7 @@ Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& ax
     ASSERT(isMainThread());
 
     return axIDs.map([this] (AXID axID) -> RefPtr<AXCoreObject> {
-        ASSERT(axID != InvalidAXID);
+        ASSERT(axID.isValid());
         return objectFromAXID(axID);
     });
 }
@@ -3272,7 +3264,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     AXLOG(std::make_pair(&object, notification));
     AXLOG(*this);
 
-    if (!m_pageID || object.objectID() == InvalidAXID) {
+    if (!m_pageID || !object.objectID().isValid()) {
         AXLOG("No pageID or objectID");
         return;
     }
@@ -3352,7 +3344,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
     Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> filteredNotifications;
     for (const auto& notification : notifications) {
         AXLOG(notification);
-        if (!notification.first || notification.first->objectID() == InvalidAXID)
+        if (!notification.first || !notification.first->objectID().isValid())
             continue;
 
         switch (notification.second) {

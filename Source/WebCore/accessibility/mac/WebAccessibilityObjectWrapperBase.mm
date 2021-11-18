@@ -290,18 +290,18 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 
 - (void)attachAXObject:(AXCoreObject*)axObject
 {
-    ASSERT(axObject && (_identifier == InvalidAXID || _identifier == axObject->objectID()));
+    ASSERT(axObject && (!_identifier.isValid() || _identifier == axObject->objectID()));
     m_axObject = axObject;
-    if (_identifier == InvalidAXID)
+    if (!_identifier.isValid())
         _identifier = m_axObject->objectID();
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)attachIsolatedObject:(AXCoreObject*)isolatedObject
 {
-    ASSERT(isolatedObject && (_identifier == InvalidAXID || _identifier == isolatedObject->objectID()));
+    ASSERT(isolatedObject && (!_identifier.isValid() || _identifier == isolatedObject->objectID()));
     m_isolatedObject = isolatedObject;
-    if (_identifier == InvalidAXID)
+    if (!_identifier.isValid())
         _identifier = m_isolatedObject->objectID();
 }
 #endif
@@ -309,14 +309,14 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 - (void)detach
 {
     ASSERT(isMainThread());
-    _identifier = InvalidAXID;
+    _identifier = { };
     m_axObject = nullptr;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)detachIsolatedObject:(AccessibilityDetachmentType)detachmentType
 {
-    ASSERT_UNUSED(detachmentType, detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier != InvalidAXID && m_axObject : true);
+    ASSERT_UNUSED(detachmentType, detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier.isValid() && m_axObject : true);
     m_isolatedObject = nullptr;
 }
 #endif

@@ -1,3 +1,15 @@
+2021-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: Use ObjectIdentifier for AXID
+        https://bugs.webkit.org/show_bug.cgi?id=233248
+        <rdar://problem/85497145>
+
+        Reviewed by Andres Gonzalez.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_uniqueID):
+        (AccessibleBase::getAccessibilityObjectForChild const):
+
 2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Make scroll granularity an enum class
