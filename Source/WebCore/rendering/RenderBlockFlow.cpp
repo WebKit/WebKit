@@ -3682,6 +3682,10 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
             path = ForcedLegacyPath;
 #endif
+#if ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION
+        for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
+            walker.current()->setPreferredLogicalWidthsDirty(true);
+#endif
         m_lineLayout = std::monostate();
         setLineLayoutPath(path);
         if (needsLayout())
