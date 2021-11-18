@@ -63,27 +63,23 @@
 
 (define-once (allow-network-common)
     ;; <rdar://problem/8645367>
-    (allow system-socket (with telemetry) (require-all (socket-domain AF_SYSTEM) (socket-protocol 2)))
-    (allow network-outbound (with telemetry)
-           (control-name "com.apple.network.statistics")
+    (allow system-socket (require-all (socket-domain AF_SYSTEM) (socket-protocol 2)))
+    (allow network-outbound
            (control-name "com.apple.netsrc"))
 
-    (allow sysctl-read (with telemetry)
-           (sysctl-name "kern.ipc.maxsockbuf")
-           (sysctl-name "kern.nisdomainname")
-           (sysctl-name-prefix "net.routetable.")
-           (sysctl-name "net.statistics"))
+    (allow sysctl-read
+           (sysctl-name-prefix "net.routetable."))
 
     ;; <rdar://problem/10642881>
-    (allow file-read* (with telemetry)
+    (allow file-read*
            (literal "/private/var/preferences/com.apple.networkd.plist"))
 
     ;; <rdar://problem/27580907>
-    (allow file-read* (with telemetry)
+    (allow file-read*
            (literal "/private/var/Managed Preferences/mobile/com.apple.SystemConfiguration.plist"))
 
     ;; <rdar://problem/13679154>
-    (allow file-read* (with telemetry)
+    (deny file-read* (with telemetry)
            (literal "/private/var/preferences/com.apple.NetworkStatistics.plist"))
 
     ;; <rdar://problem/15711661>
@@ -91,7 +87,7 @@
            (global-name "com.apple.nesessionmanager"))
 
     ;; <rdar://problem/7693463>
-    (allow system-socket (with telemetry) (socket-domain AF_ROUTE))
+    (deny system-socket (with telemetry) (socket-domain AF_ROUTE))
 
     (if gizmo?
         (with-filter
@@ -104,32 +100,34 @@
             (allow network-outbound (literal "/private/var/run/mDNSResponder"))
             (allow mach-lookup (global-name "com.apple.dnssd.service")))) ;; <rdar://problem/55562091>
 
+    (deny mach-lookup (with telemetry)
+           (global-name "com.apple.SystemConfiguration.helper")
+           (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
+           (global-name "com.apple.SystemConfiguration.DNSConfiguration")
+           (global-name "com.apple.SystemConfiguration.PPPController"))
     ;; <rdar://problem/10962803>
     ;; <rdar://problem/13238730>
     (allow mach-lookup (with telemetry)
            (global-name "com.apple.SystemConfiguration.configd")
-           (global-name "com.apple.SystemConfiguration.helper")
-           (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
-           (global-name "com.apple.SystemConfiguration.DNSConfiguration")
-           (global-name "com.apple.SystemConfiguration.PPPController")
            (global-name "com.apple.SystemConfiguration.NetworkInformation"))
 
     ;; <rdar://problem/11792470>
     ;; <rdar://problem/13305819>
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
            (global-name "com.apple.commcenter.xpc")
            (global-name "com.apple.commcenter.cupolicy.xpc"))
 
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
            (global-name "com.apple.securityd")
+           (global-name "com.apple.symptomsd"))
+    (allow mach-lookup
            (global-name "com.apple.trustd"))
-    (allow file-read* (with telemetry)
+    (deny file-read* (with telemetry)
            (literal "/private/var/preferences/com.apple.security.plist"))
 
     ;; <rdar://problem/13301795>
     (allow mach-lookup (with telemetry)
            (global-name "com.apple.usymptomsd")
-           (global-name "com.apple.symptomsd")
            (global-name "com.apple.symptoms.symptomsd.managed_events")) ; <rdar://problem/32768772>
 
     (with-filter (entitlement-is-present "com.apple.private.networkextension.configuration")
@@ -140,9 +138,9 @@
         (prefix "/private/var/db/com.apple.networkextension.")
     )
 
-    (allow mach-lookup (with telemetry)
+    (allow mach-lookup
            (global-name "com.apple.AppSSO.service-xpc"))
-    (allow ipc-posix-shm-read-data (with telemetry)
+    (deny ipc-posix-shm-read-data (with telemetry)
            (ipc-posix-name "/com.apple.AppSSO.version"))
 
     ;; <rdar://problem/30452093>
@@ -152,7 +150,7 @@
     (allow-network-common)
 
     ;; <rdar://problem/9193431>
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
            (global-name "com.apple.networkd"))
 
     ;; <rdar://problem/20094008>
@@ -163,16 +161,16 @@
                    (require-entitlement "com.apple.networkd.modify_settings")
                    (require-entitlement "com.apple.networkd.persistent_interface")
                    (require-entitlement "com.apple.networkd_privileged"))
-        (allow mach-lookup (with telemetry)
+        (deny mach-lookup (with telemetry)
                (global-name "com.apple.networkd_privileged")))
 
     ;; <rdar://problem/20201593>
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
         (global-name "com.apple.ak.anisette.xpc")
         (global-name "com.apple.ak.auth.xpc"))
 
     ;; <rdar://problem/15897781>
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
            (global-name "com.apple.nsurlsessiond"))
     (allow file-issue-extension
         (require-all
@@ -186,33 +184,34 @@
             (global-name "com.apple.sharingd.NSURLSessionProxyService")))
 
     ;; <rdar://problem/15608009>
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
            (global-name "com.apple.nsurlstorage-cache"))
 
+    (deny mach-lookup (with telemetry)
+           (global-name "com.apple.cfnetwork.AuthBrokerAgent"))
     ;; <rdar://problem/10423007>
     (allow mach-lookup (with telemetry)
-           (global-name "com.apple.cfnetwork.AuthBrokerAgent")
            (global-name "com.apple.cfnetwork.cfnetworkagent"))
 
     ;; <rdar://problem/12620714>
     (deny file-write-create (with no-report)
           (home-prefix "/Library/Logs/CrashReporter/CFNetwork_"))
 
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
            (global-name "com.apple.cookied"))
 
     ;; <rdar://problem/17910466>
-    (allow mach-lookup (with telemetry)
+    (allow mach-lookup
            (global-name "com.apple.accountsd.accountmanager"))
 
     ;; GSS-API
-    (allow mach-lookup (with telemetry)
+    (allow mach-lookup
            (global-name "com.apple.GSSCred"))
 
     ;; <rdar://problem/17853959>
     (mobile-keybag-access)
 
-    (allow mach-lookup (with telemetry)
+    (allow mach-lookup
            (global-name "com.apple.nehelper"))
 
     (allow-well-known-system-group-container-literal-read
@@ -230,11 +229,11 @@
     (allow system-socket (with telemetry) (socket-domain 39)))
 
 (define-once (managed-configuration-read-public)
-    (allow file-read* (with telemetry)
+    (allow file-read*
            (well-known-system-group-container-subpath "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/PublicInfo")
            (front-user-home-subpath "/Library/ConfigurationProfiles/PublicInfo")
            (front-user-home-subpath "/Library/UserConfigurationProfiles/PublicInfo"))
-    (allow mach-lookup (with telemetry)
+    (deny mach-lookup (with telemetry)
            (global-name "com.apple.managedconfiguration.profiled.public")))
 
 (define-once (allow-preferences-common)
@@ -252,7 +251,7 @@
         domains))
 
 (define-once (mobile-keybag-access)
-    (allow iokit-open (with telemetry)
+    (allow iokit-open
         (iokit-user-client-class "AppleKeyStoreUserClient") ;; Needed by NSURLCache
 ))
 
@@ -299,51 +298,42 @@
              (global-name "com.apple.osanalytics.osanalyticshelper")))
 
 (define required-etc-files
-  (literal "/private/etc/fstab"
-           "/private/etc/hosts"
-           "/private/etc/group"
+  (literal "/private/etc/hosts"
            "/private/etc/passwd"
-           "/private/etc/protocols"
            "/private/etc/services"))
 
 (define-once (allow-multi-instance-xpc-services)
     ;; <rdar://problem/46716068>
-    (allow mach-lookup
+    (deny mach-lookup
            (with telemetry)
            (with message "Create a radar and set it as a blocker to rdar://problem/48527566")
            (xpc-service-name "com.apple.WebKit.Networking"
                              "com.apple.WebKit.WebContent")
 ))
 
-(allow sysctl-read (with telemetry)
-   (sysctl-name "kern.bootsessionuuid"))
-
 (deny file-map-executable)
 (deny file-write-mount file-write-unmount)
 (allow file-read-metadata (with telemetry)
     (vnode-type DIRECTORY))
 
-(mobile-preferences-read "com.apple.security")
-
 (with-elevated-precedence
     ;; System files.
-    (allow file-read* (with telemetry)
+    (allow file-read*
         (subpath "/usr/lib"
                  "/usr/share"
-                 "/private/var/db/timezone"))
+                 "/private/var/db/timezone")
+                 "/private/var/preferences/Logging"))
+
     (allow-read-and-issue-generic-extensions
          (subpath "/Library/RegionFeatures"
                   "/System/Library"))
     
-    (allow file-map-executable (with telemetry)
+    (allow file-map-executable
         (subpath "/System/Library")
         (subpath "/usr/lib"))
 
     (allow file-read-metadata (with telemetry)
         (vnode-type SYMLINK))
-
-    (allow file-read* (with telemetry)
-        (subpath "/private/var/preferences/Logging"))
 
     (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
     (allow file-read*
@@ -353,7 +343,7 @@
            (literal "/private/var/Managed Preferences/mobile/.GlobalPreferences.plist"))
     (allow managed-preference-read (preference-domain "kCFPreferencesAnyApplication"))
 
-    (allow file-read-metadata (with telemetry)
+    (deny file-read-metadata (with telemetry)
         (home-literal "/Library/Caches/powerlog.launchd"))
 
     (allow-read-and-issue-generic-extensions (executable-bundle))
@@ -365,10 +355,10 @@
             (regex #"/[^/]+/SC_Info/")))
 
     (with-filter (global-name-prefix "")
-        (allow mach-lookup (with telemetry)
+        (deny mach-lookup (with telemetry)
                (extension "com.apple.security.exception.mach-lookup.global-name")))
     (with-filter (local-name-prefix "")
-        (allow mach-lookup (with telemetry)
+        (deny mach-lookup (with telemetry)
                (extension "com.apple.security.exception.mach-lookup.local-name"))
     )
     (allow managed-preference-read
@@ -398,11 +388,13 @@
     (internal-debugging-support)
 )
 
-(allow file-read* (with telemetry)
-    required-etc-files
+(allow file-read*
+    required-etc-files)
+
+(allow file-read* (with telemetry) (with message "Allowing read access to root")
     (literal "/"))
 
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.logd")
     (global-name "com.apple.logd.events"))
 
@@ -414,100 +406,46 @@
 (allow system-sched
     (require-entitlement "com.apple.private.kernel.override-cpumon"))
 
-(allow sysctl-read (with telemetry)
-    (sysctl-name "hw.busfrequency")
-    (sysctl-name "hw.busfrequency_compat")
-    (sysctl-name "hw.byteorder")
-    (sysctl-name "hw.cachelinesize")
-    (sysctl-name "hw.cachelinesize_compat")
-    (sysctl-name "hw.cpufamily")
-    (sysctl-name "hw.cpufrequency")
-    (sysctl-name "hw.cpufrequency_compat")
-    (sysctl-name "hw.cpufrequency_max")
-    (sysctl-name "hw.cpusubtype")
-    (sysctl-name "hw.cputhreadtype")
-    (sysctl-name "hw.cputype")
-    (sysctl-name "hw.l1dcachesize")
-    (sysctl-name "hw.l1dcachesize_compat")
-    (sysctl-name "hw.l1icachesize")
-    (sysctl-name "hw.l1icachesize_compat")
-    (sysctl-name "hw.l2cachesize")
-    (sysctl-name "hw.l2cachesize_compat")
-    (sysctl-name "hw.l2settings")
-    (sysctl-name "hw.l3cachesize")
-    (sysctl-name "hw.l3cachesize_compat")
-    (sysctl-name "hw.l3settings")
-    (sysctl-name "hw.logicalcpu")
-    (sysctl-name "hw.logicalcpu_max")
-    (sysctl-name "hw.pagesize")
-    (sysctl-name "hw.physicalcpu")
-    (sysctl-name "hw.physicalcpu_max")
-    (sysctl-name "hw.physmem")
-    (sysctl-name "hw.tbfrequency")
-    (sysctl-name "hw.tbfrequency_compat")
-    (sysctl-name "hw.usermem")
-    (sysctl-name "hw.vectorunit")
-    (sysctl-name "kern.boottime")
-    (sysctl-name "kern.clockrate")
-    (sysctl-name "kern.development")
-    (sysctl-name "kern.hostid")
-    (sysctl-name "kern.maxproc")
-    (sysctl-name "kern.maxvnodes")
-    (sysctl-name-prefix "kern.monotonicclock")
-    (sysctl-name "kern.monotoniclock_offset_usecs")
-    (sysctl-name "kern.ngroups")
-    (sysctl-name "kern.saved_ids")
-    (sysctl-name "kern.usrstack")
-    (sysctl-name "kern.usrstack64")
-    (sysctl-name "kern.waketime")
-    (sysctl-name "security.mac.sandbox.sentinel")
-    (sysctl-name "vm.loadavg")
-    (sysctl-name-prefix "kern.argmax")
-)
-
 (with-filter (system-attribute apple-internal)
     (allow sysctl-read
            (sysctl-name "kern.dtrace.dof_mode"))
     (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend")))
 
-(allow mach-lookup (with telemetry)
-       (global-name "com.apple.system.logger"))
-
 ;; Needed by WebKit LOG macros and ASL logging.
-(allow file-read-metadata (with telemetry)
+(deny file-read-metadata (with telemetry)
        (literal "/private/var/run/syslog"))
 
 ;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
 (with-filter (system-attribute apple-internal)
-    (allow network-outbound (with telemetry)
+    (allow network-outbound
        (literal "/private/var/run/syslog")
     )
 )
 
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.system.notification_center"))
-(allow ipc-posix-shm-read* (with telemetry)
+(allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center")) ;; Needed by os_log_create
 
-(allow mach-lookup (with telemetry)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.distributed_notifications@1v3"))
 
 (managed-configuration-read-public)
 
-(allow mach-lookup (with telemetry)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.ctkd.token-client"))
 
 (deny system-info (with no-report)
     (info-type "net.link.addr"))
 
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.system.libinfo.muser"))
 
 (allow mach-task-name (target self))
 
-(allow process-info* (with telemetry))
-(allow process-info-pidinfo (target self))
+(deny process-info* (with telemetry))
+(allow process-info-pidinfo)
 (allow process-info-pidfdinfo (target self))
 (allow process-info-pidfileportinfo (target self))
 (allow process-info-setcontrol (target self))
@@ -523,52 +461,25 @@
 
 (deny lsopen)
 
-(deny sysctl*)
-(allow sysctl-read (with telemetry)
+(deny sysctl*) (with telemetry)
+(allow sysctl-read
     (sysctl-name
-        "hw.activecpu" ;; Needed by JSC engine.
-        "hw.availcpu"
-        "hw.cacheconfig" ;; <rdar://problem/78213563>
-        "hw.cachelinesize" ;; <rdar://problem/15721872>
-        "hw.cachesize" ;; <rdar://problem/78213563>
-        "hw.cpu64bit_capable"
-        "hw.cpufamily" ;; <rdar://problem/15721872>
-        "hw.cpusubfamily"
-        "hw.l1dcachesize" ;; <rdar://problem/15721872>
-        "hw.l1icachesize" ;; <rdar://problem/15721872>
-        "hw.l2cachesize" ;; <rdar://problem/15721872>
-        "hw.l3cachesize" ;; <rdar://problem/15721872>
-        "hw.logicalcpu" ;; <rdar://problem/15721872>
-        "hw.logicalcpu_max" ;; <rdar://problem/15721872>
-        "hw.ncpu"
-        "hw.machine" ;; Needed by CFNetwork (CFURLProtocols)
+        "hw.activecpu"
+        "hw.machine"
         "hw.memsize"
-        "hw.model" ;; Needed for bundle loading
-        "hw.ncpu" ;; <rdar://problem/76782530>
-        "hw.nperflevels" ;; <rdar://problem/76782530>
-        "hw.pagesize" ;; <rdar://problem/76782530>
-        "hw.pagesize_compat" ;; Needed by bmalloc
-        "hw.physicalcpu" ;; <rdar://problem/76782530>
-        "hw.physicalcpu_max" ;; <rdar://problem/76782530>
-        "hw.physmem" ;; <rdar://problem/76782530>
-        "kern.bootargs"  ;; Needed for bundle loading
+        "hw.ncpu"
+        "hw.pagesize_compat"
         "kern.hostname"
-        "kern.hv_vmm_present"
         "kern.maxfilesperproc"
-        "kern.memorystatus_level"
-        "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
-        "kern.ostype" ;; Needed by NSURLSession
-        "kern.osrelease" ;; Ditto.
-        "kern.osvariant_status" ;; Needed for bundle loading
-        "kern.osversion" ;; Needed by WebKit and ASL logging.
-        "kern.secure_kernel" ;; Needed by XPC bundle resolution
-        "kern.tcsm_available" ;; Needed for IndexedDB support
+        "kern.osproductversion"
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osvariant_status"
+        "kern.osversion"
+        "kern.secure_kernel"
         "kern.version"
-        "sysctl.name2oid"
         "vm.footprint_suspend")
     (sysctl-name-prefix "kern.proc.pid.")
-    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/70973527>
-    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
 )
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
@@ -586,12 +497,12 @@
 ;; enough access to make it possible.
 
 ;; IOKit user clients
-(allow iokit-open (with telemetry)
+(deny iokit-open (with telemetry)
        (iokit-user-client-class "RootDomainUserClient") ;; Needed by PowerObserver
 )
 
 ;; Various services required by CFNetwork and other frameworks
-(allow mach-lookup (with telemetry)
+(deny mach-lookup (with telemetry)
        (global-name "com.apple.PowerManagement.control"))
 
 (network-client (remote tcp) (remote udp))
@@ -600,23 +511,25 @@
 (allow-well-known-system-group-container-subpath-read
     "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
 
-(allow file-read-data (with telemetry)
+(allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
 ;; Security framework
-(allow mach-lookup (with telemetry)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.ocspd")
     (global-name "com.apple.securityd"))
 
 ;; PassKit framework
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.passd.in-app-payment")
     (global-name "com.apple.passd.library"))
 
-(allow mach-lookup (with telemetry)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.FileCoordination")
-    (global-name "com.apple.dmd.policy")
+    (global-name "com.apple.dmd.policy"))
+
+(allow mach-lookup (with telemetry)
     (global-name "com.apple.siri.context.service")
     (global-name "com.apple.ctcategories.service"))
 
@@ -645,31 +558,21 @@
         (global-name "com.apple.analyticsd")))
 
 ;; For reporting progress for active downloads <rdar://problem/44405661>
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.ProgressReporting"))
 
  ;; <rdar://problem/47598758>
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.nesessionmanager.content-filter"))
 
-;; Various shared memory accesses required by system frameworks
-(allow ipc-posix-shm-read-data (with telemetry)
-    (ipc-posix-name "/com.apple.AppSSO.version"))
-
 ;; Access to ContainerManager
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.containermanagerd"))
-(allow ipc-posix-sem-open (with telemetry)
+(allow ipc-posix-sem-open
     (ipc-posix-name "containermanagerd.fb_check"))
 
-(allow file-read* (with telemetry)
-    (literal "/dev/aes_0")
-    (literal "/dev/random")
+(allow file-read*
     (literal "/dev/urandom"))
-
-(allow file-read* file-write-data (with telemetry)
-    (literal "/dev/null")
-    (literal "/dev/zero"))
 
 (if (system-attribute apple-internal)
     (allow file-read* file-write-data file-ioctl (with telemetry)
@@ -682,15 +585,15 @@
 (allow mach-lookup (with telemetry) (global-name "com.apple.webkit.adattributiond.service"))
 
 ;; Access to MobileGestalt
-(allow mach-lookup (with telemetry)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.mobilegestalt.xpc"))
-(allow file-read* (with telemetry)
+(allow file-read*
     (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
 (allow iokit-get-properties
     (iokit-property "IORegistryEntryPropertyKeys"))
 
 ;; Needed for TCC.
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.tccd"))
 
 (when (defined? 'syscall-unix)
@@ -701,6 +604,8 @@
         SYS___channel_sync
         SYS___disable_threadsignal
         SYS___mac_syscall
+        SYS___semwait_signal
+        SYS_abort_with_payload
         SYS_access
         SYS_bind
         SYS_bsdthread_create
@@ -715,6 +620,7 @@
         SYS_connect_nocancel
         SYS_csops
         SYS_csops_audittoken
+        SYS_dup
         SYS_exit
         SYS_fcntl
         SYS_fcntl_nocancel
@@ -756,6 +662,7 @@
         SYS_listxattr
         SYS_lseek
         SYS_lstat64
+        SYS_lstat64_extended
         SYS_madvise
         SYS_memorystatus_control
         SYS_mkdir
@@ -773,6 +680,7 @@
         SYS_openat
         SYS_os_fault_with_payload
         SYS_pathconf
+        SYS_persona
         SYS_pipe
         SYS_pread
         SYS_pread_nocancel
@@ -784,6 +692,8 @@
         SYS_psynch_cvwait
         SYS_psynch_mutexdrop
         SYS_psynch_mutexwait
+        SYS_psynch_rw_rdlock
+        SYS_psynch_rw_unlock
         SYS_pwrite_nocancel
         SYS_read
         SYS_read_nocancel
@@ -797,6 +707,7 @@
         SYS_select_nocancel
         SYS_sem_close
         SYS_sem_open
+        SYS_sendmsg
         SYS_sendmsg_nocancel
         SYS_sendto
         SYS_sendto_nocancel
@@ -808,6 +719,8 @@
         SYS_shm_open
         SYS_shutdown
         SYS_sigaction
+        SYS_sigaltstack
+        SYS_sigprocmask
         SYS_socket
         SYS_socketpair
         SYS_stat64

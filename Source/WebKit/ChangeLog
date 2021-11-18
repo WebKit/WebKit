@@ -1,5 +1,17 @@
 2021-11-18  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Block access to unused resources in the Networking process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=233129
+        <rdar://problem/85411927>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, block access to unused resources in the Networking process' sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
+2021-11-18  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Block access to unused resources in the Networking process' sandbox
         https://bugs.webkit.org/show_bug.cgi?id=233086
         <rdar://problem/85376544>
