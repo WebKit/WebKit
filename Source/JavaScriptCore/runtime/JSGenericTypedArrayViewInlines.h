@@ -255,10 +255,8 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const ClassInfo* ci = object->classInfo(vm);
-    if (ci->typedArrayStorageType == Adaptor::typeValue) {
-        // The super fast case: we can just memmove since we're the same type.
-        JSGenericTypedArrayView* other = jsCast<JSGenericTypedArrayView*>(object);
+    auto memmoveFastPath = [&] (auto* other) {
+        // The super fast case: we can just memmove since we're the same underlying storage type.
         length = std::min(length, other->length());
         
         RELEASE_ASSERT(other->canAccessRangeQuickly(objectOffset, length));
@@ -267,8 +265,22 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!success)
             return false;
 
+        RELEASE_ASSERT((std::is_same_v<decltype(typedVector()), decltype(other->typedVector())>));
         memmove(typedVector() + offset, other->typedVector() + objectOffset, length * elementSize);
         return true;
+    };
+
+    const ClassInfo* ci = object->classInfo(vm);
+    if (ci->typedArrayStorageType == Adaptor::typeValue)
+        return memmoveFastPath(jsCast<JSGenericTypedArrayView*>(object));
+
+    auto isSomeUint8 = [] (TypedArrayType type) {
+        return type == TypedArrayType::TypeUint8 || type == TypedArrayType::TypeUint8Clamped;
+    };
+    if (isSomeUint8(ci->typedArrayStorageType) && isSomeUint8(Adaptor::typeValue)) {
+        if (ci->typedArrayStorageType == TypedArrayType::TypeUint8)
+            return memmoveFastPath(jsCast<JSGenericTypedArrayView<Uint8Adaptor>*>(object));
+        return memmoveFastPath(jsCast<JSGenericTypedArrayView<Uint8ClampedAdaptor>*>(object));
     }
     
     switch (ci->typedArrayStorageType) {

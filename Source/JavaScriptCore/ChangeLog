@@ -1,3 +1,25 @@
+2021-11-17  Saam Barati  <sbarati@apple.com>
+
+        Run the memmove fast path in JSGenericTypedArrayView<Adaptor>::set when using a combination of Uint8 and Uint8Clamped
+        https://bugs.webkit.org/show_bug.cgi?id=233271
+        <rdar://85259288>
+
+        Reviewed by Yusuke Suzuki.
+
+        We have a fast path for running memmove when both the thing being
+        copied from and the thing being copied to have the same typed array
+        type. However, when copying from a Uint8Array into a Uint8ClampedArray,
+        or vice versa, we were going down the slow path. In this case,
+        we can still take the fast path, since we're guaranteed that storing
+        into a Uint8ClampedArray from a Uint8Array will never actually need
+        to clamp values. And when storing from a Uint8ClampedArray into a
+        Uint8Array, the values can trivially be copied over.
+
+        This patch is a 100x speedup on the attached microbenchmark.
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+
 2021-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Revise JSON.parse atomize policy
