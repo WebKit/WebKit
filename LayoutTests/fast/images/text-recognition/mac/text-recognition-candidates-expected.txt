@@ -1,0 +1,12 @@
+Verifies that Live Text does not trigger for images in editable content. This test requires WebKitTestRunner/DumpRenderTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS topImage is internals.textRecognitionCandidate
+PASS internals.textRecognitionCandidate is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

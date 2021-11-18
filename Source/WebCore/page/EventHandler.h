@@ -354,6 +354,10 @@ public:
 
     WEBCORE_EXPORT void invalidateClick();
 
+#if ENABLE(IMAGE_ANALYSIS)
+    WEBCORE_EXPORT RefPtr<Element> textRecognitionCandidateElement() const;
+#endif
+
     static bool scrollableAreaCanHandleEvent(const PlatformWheelEvent&, ScrollableArea&);
 
 private:
@@ -361,8 +365,6 @@ private:
     static DragState& dragState();
     static const Seconds TextDragDelay;
 #endif
-
-    RefPtr<Element> textRecognitionCandidateElement() const;
 
     bool eventActivatedView(const PlatformMouseEvent&) const;
     bool updateSelectionForMouseDownDispatchingSelectStart(Node*, const VisibleSelection&, TextGranularity);

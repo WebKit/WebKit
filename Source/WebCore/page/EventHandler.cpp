@@ -2524,6 +2524,8 @@ static bool hierarchyHasCapturingEventListeners(Element* element, const AtomStri
     return false;
 }
 
+#if ENABLE(IMAGE_ANALYSIS)
+
 RefPtr<Element> EventHandler::textRecognitionCandidateElement() const
 {
     RefPtr candidateElement = m_elementUnderMouse;
@@ -2533,6 +2535,9 @@ RefPtr<Element> EventHandler::textRecognitionCandidateElement() const
     }
 
     if (!candidateElement)
+        return nullptr;
+
+    if (candidateElement->hasEditableStyle())
         return nullptr;
 
     auto renderer = candidateElement->renderer();
@@ -2551,6 +2556,8 @@ RefPtr<Element> EventHandler::textRecognitionCandidateElement() const
 
     return candidateElement;
 }
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node* targetNode, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
 {

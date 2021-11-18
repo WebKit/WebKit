@@ -919,7 +919,11 @@ public:
         ~ImageOverlayLine();
     };
     void installImageOverlay(Element&, Vector<ImageOverlayLine>&&);
+
+#if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(Element&, RefPtr<VoidCallback>&&);
+    RefPtr<Element> textRecognitionCandidate() const;
+#endif
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;

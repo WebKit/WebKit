@@ -939,7 +939,8 @@ enum AutoplayPolicy {
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 
-    undefined requestTextRecognition(Element element, VoidCallback callback);
+    [Conditional=IMAGE_ANALYSIS] readonly attribute Element? textRecognitionCandidate;
+    [Conditional=IMAGE_ANALYSIS] undefined requestTextRecognition(Element element, VoidCallback callback);
     undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines);
 
     boolean usingAppleInternalSDK();

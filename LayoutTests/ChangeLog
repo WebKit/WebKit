@@ -1,3 +1,15 @@
+2021-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [Live Text] Avoid analyzing images in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=233317
+
+        Reviewed by Megan Gardner.
+
+        Add a layout test to exercise the change.
+
+        * fast/images/text-recognition/mac/text-recognition-candidates-expected.txt: Added.
+        * fast/images/text-recognition/mac/text-recognition-candidates.html: Added.
+
 2021-11-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         Implement JPEG XL image decoder using libjxl
