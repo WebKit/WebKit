@@ -1,3 +1,33 @@
+2021-11-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow left docking when in LTR and right docking when in RTL
+        https://bugs.webkit.org/show_bug.cgi?id=233294
+
+        Reviewed by Patrick Angle.
+
+        Some developers prefer docking to the left even when in LTR and/or docking to the right when
+        in RTL. There's no technical reason to disallow this, so let's make it possible.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.contentLoaded.addDockButton): Added.
+        (WI.contentLoaded.addDockLeftButton): Added.
+        (WI.contentLoaded.addDockRightButton): Added.
+        (WI._updateDockNavigationItems):
+        (WI._updateTabBarDividers):
+        (WI.setLayoutDirection):
+        Instead of having a single `_dockToSideTabBarButton` that looks at the layout direction to
+        decide its image, tooltip, and action, split it into two distinct `_dockLeftTabBarButton`
+        and `_dockRightTabBarButton` buttons that are both always visible (unless Web Inspector is
+        already in the corresponding docking state).
+
+        * UserInterface/Images/DockBottom.svg:
+        * UserInterface/Images/DockLeft.svg:
+        * UserInterface/Images/DockRight.svg:
+        Fill in the area representing Web Inspector and make it a bit smaller so it's not as heavy.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2021-11-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Remove unused `dontCreateIfMissing` argument from CSSStyleDeclaration.prototype.propertyForName

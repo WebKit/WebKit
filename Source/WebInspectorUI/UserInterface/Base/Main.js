@@ -353,32 +353,46 @@ WI.contentLoaded = function()
     let supportsDockBottom = InspectorFrontendHost.supportsDockSide(WI.DockConfiguration.Bottom);
     let supportsUndocked = InspectorFrontendHost.supportsDockSide(WI.DockConfiguration.Undocked);
 
-    if (supportsDockRight || supportsDockLeft || supportsDockBottom) {
-        WI._closeTabBarButton = new WI.ButtonNavigationItem("dock-close", WI.UIString("Close"), "Images/CloseLarge.svg");
-        WI._closeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close, WI);
-        dockingConfigurationNavigationItems.push(WI._closeTabBarButton);
+    function addDockButton(identifier, tooltip, image, handler) {
+        let button = new WI.ButtonNavigationItem(identifier, tooltip, image);
+        button.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+        button.addEventListener(WI.ButtonNavigationItem.Event.Clicked, handler, WI);
+        dockingConfigurationNavigationItems.push(button);
+        return button;
     }
 
-    if ((supportsDockRight || supportsDockLeft) && (supportsDockBottom || supportsUndocked)) {
-        WI._dockToSideTabBarButton = new WI.ButtonNavigationItem("dock-right", WI.UIString("Dock to side of window"), WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg", 16, 16);
-        WI._dockToSideTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-        WI._dockToSideTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI._dockLeft : WI._dockRight, WI);
-        dockingConfigurationNavigationItems.push(WI._dockToSideTabBarButton);
+    function addDockLeftButton() {
+        if (!supportsDockLeft || (!supportsDockRight && !supportsDockBottom && !supportsUndocked))
+            return;
+
+        WI._dockLeftTabBarButton = addDockButton("dock-left", WI.UIString("Dock to left of window"), "Images/DockLeft.svg", WI._dockLeft);
     }
 
-    if (supportsDockBottom && (supportsDockRight || supportsDockLeft || supportsUndocked)) {
-        WI._dockBottomTabBarButton = new WI.ButtonNavigationItem("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg", 16, 16);
-        WI._dockBottomTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-        WI._dockBottomTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._dockBottom, WI);
-        dockingConfigurationNavigationItems.push(WI._dockBottomTabBarButton);
+    function addDockRightButton() {
+        if (!supportsDockRight || (!supportsDockLeft && !supportsDockBottom && !supportsUndocked))
+            return;
+
+        WI._dockRightTabBarButton = addDockButton("dock-right", WI.UIString("Dock to right of window"), "Images/DockRight.svg", WI._dockRight);
     }
 
-    if (supportsUndocked && (supportsDockRight || supportsDockLeft || supportsDockBottom)) {
-        WI._undockTabBarButton = new WI.ButtonNavigationItem("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg", 16, 16);
-        WI._undockTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-        WI._undockTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock, WI);
-        dockingConfigurationNavigationItems.push(WI._undockTabBarButton);
-    }
+    if (supportsDockRight || supportsDockLeft || supportsDockBottom)
+        WI._closeTabBarButton = addDockButton("dock-close", WI.UIString("Close"), "Images/CloseLarge.svg", WI.close);
+
+    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+        addDockRightButton();
+    else
+        addDockLeftButton();
+
+    if (supportsDockBottom && (supportsDockRight || supportsDockLeft || supportsUndocked))
+        WI._dockBottomTabBarButton = addDockButton("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg", WI._dockBottom);
+
+    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+        addDockLeftButton();
+    else
+        addDockRightButton();
+
+    if (supportsUndocked && (supportsDockRight || supportsDockLeft || supportsDockBottom))
+        WI._undockTabBarButton = addDockButton("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg", WI._undock);
 
     let inspectedPageControlNavigationItems = [];
 
@@ -1896,19 +1910,23 @@ WI._updateDockNavigationItems = function()
     if (WI._dockingAvailable || docked) {
         if (WI._closeTabBarButton)
             WI._closeTabBarButton.hidden = !docked;
-        if (WI._dockToSideTabBarButton)
-            WI._dockToSideTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Right || WI.dockConfiguration === WI.DockConfiguration.Left;
+        if (WI._dockLeftTabBarButton)
+            WI._dockLeftTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Left;
         if (WI._dockBottomTabBarButton)
             WI._dockBottomTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Bottom;
+        if (WI._dockRightTabBarButton)
+            WI._dockRightTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Right;
         if (WI._undockTabBarButton)
             WI._undockTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Undocked;
     } else {
         if (WI._closeTabBarButton)
             WI._closeTabBarButton.hidden = true;
-        if (WI._dockToSideTabBarButton)
-            WI._dockToSideTabBarButton.hidden = true;
+        if (WI._dockLeftTabBarButton)
+            WI._dockLeftTabBarButton.hidden = true;
         if (WI._dockBottomTabBarButton)
             WI._dockBottomTabBarButton.hidden = true;
+        if (WI._dockRightTabBarButton)
+            WI._dockRightTabBarButton.hidden = true;
         if (WI._undockTabBarButton)
             WI._undockTabBarButton.hidden = true;
     }
@@ -2502,8 +2520,9 @@ WI._updateTabBarDividers = function()
     }
 
     let closeHidden = isHidden(WI._closeTabBarButton);
-    let dockToSideHidden = isHidden(WI._dockToSideTabBarButton);
+    let dockLeftHidden = isHidden(WI._dockLeftTabBarButton);
     let dockBottomHidden = isHidden(WI._dockBottomTabBarButton);
+    let dockRightHidden = isHidden(WI._dockRightTabBarButton);
     let undockHidden = isHidden(WI._undockTabBarButton);
 
     let inspectModeHidden = isHidden(WI._inspectModeTabBarButton);
@@ -2515,7 +2534,7 @@ WI._updateTabBarDividers = function()
     let errorsHidden = WI._consoleErrorsTabBarButton.hidden;
 
     // Hide the divider if everything to the left is hidden OR if everything to the right is hidden.
-    WI._consoleDividerNavigationItem.hidden = (closeHidden && dockToSideHidden && dockBottomHidden && undockHidden && inspectModeHidden && deviceSettingsHidden && reloadHidden && downloadHidden) || (warningsHidden && errorsHidden);
+    WI._consoleDividerNavigationItem.hidden = (closeHidden && dockLeftHidden && dockBottomHidden && dockRightHidden && undockHidden && inspectModeHidden && deviceSettingsHidden && reloadHidden && downloadHidden) || (warningsHidden && errorsHidden);
 
     WI.tabBar.needsLayout();
 };
@@ -2899,12 +2918,6 @@ WI.setLayoutDirection = function(value)
         return;
 
     WI.settings.debugLayoutDirection.value = value;
-
-    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL && WI.dockConfiguration === WI.DockConfiguration.Right)
-        WI._dockLeft();
-
-    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR && WI.dockConfiguration === WI.DockConfiguration.Left)
-        WI._dockRight();
 
     InspectorFrontendHost.reopen();
 };
