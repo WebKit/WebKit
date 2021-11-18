@@ -1,3 +1,22 @@
+2021-11-17  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Add SPI for makeCredential / getAssertion using clientDataHash
+        https://bugs.webkit.org/show_bug.cgi?id=233216
+        <rdar://problem/85476386>
+
+        Reviewed by Brent Fulgham.
+
+        In order to avoid needing to make and coordinate changes to ASC to support new fields or changes
+        within ClientDataJSON and to maintain a single source of truth, calls to ASC from WebKit
+        will contain a precomputed ClientDataHash. This change creates new SPIs that will be called
+        from ASC using the ClientDataHash.
+
+        * UIProcess/API/Cocoa/_WKAuthenticatorResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel makeCredentialWithClientDataHash:options:completionHandler:]):
+        (-[_WKWebAuthenticationPanel getAssertionWithClientDataHash:options:completionHandler:]):
+        New functions to take in ClientDataHash instead of the data needed to construct it.
+
 2021-11-17  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add message filter guard in the GPU process' sandbox
