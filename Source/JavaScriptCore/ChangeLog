@@ -1,3 +1,29 @@
+2021-11-18  David Kilzer  <ddkilzer@apple.com>
+
+        Add missing dependencies for <wtf/Platform.h> when generating derived sources
+        <https://webkit.org/b/233304>
+        <rdar://problem/85533245>
+
+        Reviewed by Darin Adler.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        (Derived Sources : Generate Derived Sources):
+        - Add an input dependency on the script run from the build phase
+          script.
+
+        * DerivedSources-input.xcfilelist:
+        - Update after changes to DerivedSoures.make.  WebKit headers
+          included by <wtf/Platform.h> are now listed.
+        * DerivedSources.make:
+        (platform_h_compiler_command): Add.
+        (FEATURE_AND_PLATFORM_DEFINES):
+        - Extract compiler command into a call routine for reuse.
+        (PLATFORM_HEADER_DIR): Add.
+        (PLATFORM_HEADER_DEPENDENCIES): Add.
+        (FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES):
+        - Generate a makefile dependency list for <wtf/Platform.h>, then
+          filter it to list only WebKit project headers.
+
 2021-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] jsc_value_object_define_property_accessor() throws an exception when called on a value without a wrapper instance

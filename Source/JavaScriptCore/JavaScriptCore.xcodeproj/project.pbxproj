@@ -11670,6 +11670,7 @@
 				"$(SRCROOT)/DerivedSources-input.xcfilelist",
 			);
 			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-derived-sources.sh",
 			);
 			name = "Generate Derived Sources";
 			outputFileListPaths = (
