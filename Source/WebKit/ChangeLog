@@ -1,3 +1,14 @@
+2021-11-17  Cameron McCormack  <heycam@apple.com>
+
+        Protect against null SharedBitmaps when starting a drag
+        https://bugs.webkit.org/show_bug.cgi?id=233217
+        <rdar://problem/85478309>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::startDrag):
+
 2021-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Plumb an identifier string through `ChromeClient::requestTextRecognition()`

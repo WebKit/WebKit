@@ -910,7 +910,10 @@ void PageClientImpl::didHandleAdditionalDragItemsRequest(bool added)
 
 void PageClientImpl::startDrag(const DragItem& item, const ShareableBitmap::Handle& image)
 {
-    [m_contentView _startDrag:ShareableBitmap::create(image)->makeCGImageCopy() item:item];
+    auto bitmap = ShareableBitmap::create(image);
+    if (!bitmap)
+        return;
+    [m_contentView _startDrag:bitmap->makeCGImageCopy() item:item];
 }
 
 void PageClientImpl::willReceiveEditDragSnapshot()
