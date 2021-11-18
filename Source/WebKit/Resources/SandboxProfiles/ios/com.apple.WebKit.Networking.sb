@@ -736,3 +736,46 @@
         SYS_write
         SYS_write_nocancel
         SYS_writev)))
+
+(when (defined? 'syscall-mach)
+    (allow syscall-mach (with report) (with telemetry))
+    (allow syscall-mach
+        (machtrap-number
+            MSC__kernelrpc_mach_port_allocate_trap
+            MSC__kernelrpc_mach_port_construct_trap
+            MSC__kernelrpc_mach_port_deallocate_trap
+            MSC__kernelrpc_mach_port_destruct_trap
+            MSC__kernelrpc_mach_port_extract_member_trap
+            MSC__kernelrpc_mach_port_guard_trap
+            MSC__kernelrpc_mach_port_insert_member_trap
+            MSC__kernelrpc_mach_port_insert_right_trap
+            MSC__kernelrpc_mach_port_mod_refs_trap
+            MSC__kernelrpc_mach_port_request_notification_trap
+            MSC__kernelrpc_mach_port_type_trap
+            MSC__kernelrpc_mach_port_unguard_trap
+            MSC__kernelrpc_mach_vm_allocate_trap
+            MSC__kernelrpc_mach_vm_deallocate_trap
+            MSC__kernelrpc_mach_vm_map_trap
+            MSC__kernelrpc_mach_vm_protect_trap
+            MSC__kernelrpc_mach_vm_purgable_control_trap
+            MSC_host_create_mach_voucher_trap
+            MSC_host_self_trap
+            MSC_mach_generate_activity_id
+            MSC_mach_msg_trap
+            MSC_mach_reply_port
+            MSC_mach_timebase_info_trap
+            MSC_mach_voucher_extract_attr_recipe_trap
+            MSC_mk_timer_arm
+            MSC_mk_timer_cancel
+            MSC_mk_timer_create
+            MSC_mk_timer_destroy
+            MSC_semaphore_signal_trap
+            MSC_semaphore_wait_trap
+            MSC_syscall_thread_switch
+            MSC_task_self_trap
+            MSC_thread_get_special_reply_port)))
+
+(when (defined? 'mach-kernel-endpoint)
+    (allow mach-kernel-endpoint
+        (apply-message-filter
+            (allow mach-message-send (with report) (with telemetry)))))
