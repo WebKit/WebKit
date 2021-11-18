@@ -1,3 +1,30 @@
+2021-11-18  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        Update test expectations after r285346
+        https://bugs.webkit.org/show_bug.cgi?id=233290
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.blur.exceptions-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.blur.exceptions.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.colorMatrix-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.colorMatrix.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.convolveMatrix.exceptions-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.convolveMatrix.exceptions.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontKerning-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontKerning.with.uppercase-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontKerning.with.uppercase.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontKerning.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontVariant.settings.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.textRendering.settings-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.textRendering.settings.worker-expected.txt:
+
 2021-11-18  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerAVFoundation should support rvfc
