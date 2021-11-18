@@ -29,7 +29,7 @@ def readme():
 
 setup(
     name='webkitscmpy',
-    version='3.0.1',
+    version='3.0.2',
     description='Library designed to interact with git and svn repositories.',
     long_description=readme(),
     classifiers=[
@@ -42,7 +42,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     keywords='git svn',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitscmpy',
+    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitscmpy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',

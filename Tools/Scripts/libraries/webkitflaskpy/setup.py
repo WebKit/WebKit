@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitflaskpy',
-    version='0.1.1',
+    version='0.1.2',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -45,7 +45,7 @@ setup(
         'Topic :: Software Development :: Testing',
     ],
     keywords='web javascript webkit',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitflaskpy',
+    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitflaskpy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',

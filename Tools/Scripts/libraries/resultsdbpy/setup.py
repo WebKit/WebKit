@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='resultsdbpy',
-    version='3.1.3',
+    version='3.1.4',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -45,7 +45,7 @@ setup(
         'Topic :: Software Development :: Testing',
     ],
     keywords='database history results testing webkit',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/resultsdbpy',
+    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/resultsdbpy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',
