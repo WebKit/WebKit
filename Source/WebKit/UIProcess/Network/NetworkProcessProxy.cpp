@@ -1405,7 +1405,7 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     WebProcessPool::establishWorkerContextConnectionToNetworkProcess(*this, WTFMove(registrableDomain), serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
 }

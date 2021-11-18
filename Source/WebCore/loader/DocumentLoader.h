@@ -35,7 +35,6 @@
 #include "ContentSecurityPolicyClient.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "DeviceOrientationOrMotionPermissionState.h"
-#include "DocumentIdentifier.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentWriter.h"
 #include "FrameDestructionObserver.h"
@@ -46,6 +45,7 @@
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "StringWithDirection.h"
@@ -161,7 +161,7 @@ public:
         return adoptRef(*new DocumentLoader(request, data));
     }
 
-    WEBCORE_EXPORT static DocumentLoader* fromTemporaryDocumentIdentifier(DocumentIdentifier);
+    WEBCORE_EXPORT static DocumentLoader* fromTemporaryDocumentIdentifier(ScriptExecutionContextIdentifier);
 
     WEBCORE_EXPORT virtual ~DocumentLoader();
 
@@ -670,7 +670,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
-    std::optional<DocumentIdentifier> m_temporaryServiceWorkerClient;
+    std::optional<ScriptExecutionContextIdentifier> m_temporaryServiceWorkerClient;
 #endif
 
 #if ASSERT_ENABLED

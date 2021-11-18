@@ -28,20 +28,20 @@
 #if USE(LIBWEBRTC)
 
 #include "WebRTCMonitor.h"
-#include <WebCore/DocumentIdentifier.h>
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/RTCNetworkManager.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 
 namespace WebKit {
 
 class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public rtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitor::Observer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static LibWebRTCNetworkManager* getOrCreate(WebCore::DocumentIdentifier);
+    static LibWebRTCNetworkManager* getOrCreate(WebCore::ScriptExecutionContextIdentifier);
     ~LibWebRTCNetworkManager();
 
 private:
-    explicit LibWebRTCNetworkManager(WebCore::DocumentIdentifier);
+    explicit LibWebRTCNetworkManager(WebCore::ScriptExecutionContextIdentifier);
 
     // WebCore::RTCNetworkManager
     void setICECandidateFiltering(bool doFiltering) final { m_useMDNSCandidates = doFiltering; }
@@ -60,7 +60,7 @@ private:
     void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&) final;
     void networkProcessCrashed() final;
 
-    WebCore::DocumentIdentifier m_documentIdentifier;
+    WebCore::ScriptExecutionContextIdentifier m_documentIdentifier;
     bool m_useMDNSCandidates { true };
     bool m_receivedNetworkList { false };
 };

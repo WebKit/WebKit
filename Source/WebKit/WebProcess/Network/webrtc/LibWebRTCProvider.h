@@ -54,7 +54,7 @@ public:
 private:
     std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, bool /* isFirstParty */, WebCore::RegistrableDomain&&) final;
 
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(WebCore::DocumentIdentifier, webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(WebCore::ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 
     void disableNonLocalhostConnections() final;
     void startedNetworkThread() final;

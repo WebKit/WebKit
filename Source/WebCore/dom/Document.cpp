@@ -563,7 +563,7 @@ void Document::configureSharedLogger()
 
 void Document::addToDocumentsMap()
 {
-    auto addResult = allDocumentsMap().add(m_identifier, this);
+    auto addResult = allDocumentsMap().add(identifier(), this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     configureSharedLogger();
@@ -571,8 +571,8 @@ void Document::addToDocumentsMap()
 
 void Document::removeFromDocumentsMap()
 {
-    ASSERT(allDocumentsMap().contains(m_identifier));
-    allDocumentsMap().remove(m_identifier);
+    ASSERT(allDocumentsMap().contains(identifier()));
+    allDocumentsMap().remove(identifier());
     configureSharedLogger();
 }
 
@@ -653,7 +653,6 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
-    , m_identifier(DocumentIdentifier::generate())
     , m_undoManager(UndoManager::create(*this))
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
@@ -8734,7 +8733,7 @@ void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConne
         return;
 
     auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
-    m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this, *serviceWorkerConnection), controllingServiceWorkerRegistrationIdentifier, userAgent(url()));
+    m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, userAgent(url()));
 }
 #endif
 

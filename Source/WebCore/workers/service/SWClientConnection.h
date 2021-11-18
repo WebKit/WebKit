@@ -27,10 +27,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "DocumentIdentifier.h"
 #include "ExceptionOr.h"
 #include "PushPermissionState.h"
 #include "PushSubscriptionData.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/CompletionHandler.h>
@@ -50,7 +50,6 @@ enum class ShouldNotifyWhenResolved : bool;
 struct ExceptionData;
 struct MessageWithMessagePorts;
 struct ServiceWorkerClientData;
-struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
@@ -70,9 +69,9 @@ public:
 
     virtual void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
     virtual void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
-    virtual void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, DocumentOrWorkerIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) = 0;
+    virtual void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, ServiceWorkerOrClientIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) = 0;
 
-    WEBCORE_EXPORT virtual void scheduleJob(DocumentOrWorkerIdentifier, const ServiceWorkerJobData&);
+    WEBCORE_EXPORT virtual void scheduleJob(ServiceWorkerOrClientIdentifier, const ServiceWorkerJobData&);
 
     virtual void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) = 0;
 
@@ -82,7 +81,7 @@ public:
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const = 0;
 
     virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const std::optional<ServiceWorkerRegistrationIdentifier>&, const String& userAgent) = 0;
-    virtual void unregisterServiceWorkerClient(DocumentIdentifier) = 0;
+    virtual void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) = 0;
 
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
 
@@ -109,13 +108,13 @@ protected:
     WEBCORE_EXPORT void jobRejectedInServer(ServiceWorkerJobIdentifier, const ExceptionData&);
     WEBCORE_EXPORT void registrationJobResolvedInServer(ServiceWorkerJobIdentifier, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     WEBCORE_EXPORT void startScriptFetchForServer(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationKey&, FetchOptions::Cache);
-    WEBCORE_EXPORT void postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, MessageWithMessagePorts&&, ServiceWorkerData&& source, String&& sourceOrigin);
+    WEBCORE_EXPORT void postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&&, ServiceWorkerData&& source, String&& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
     WEBCORE_EXPORT void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
     WEBCORE_EXPORT void setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier, WallTime);
     WEBCORE_EXPORT void setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier, ServiceWorkerUpdateViaCache);
-    WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController);
+    WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, ServiceWorkerData&& newController);
 
     WEBCORE_EXPORT void clearPendingJobs();
 
@@ -125,7 +124,7 @@ private:
     enum class IsJobComplete { No, Yes };
     bool postTaskForJob(ServiceWorkerJobIdentifier, IsJobComplete, Function<void(ServiceWorkerJob&)>&&);
 
-    HashMap<ServiceWorkerJobIdentifier, DocumentOrWorkerIdentifier> m_scheduledJobSources;
+    HashMap<ServiceWorkerJobIdentifier, ServiceWorkerOrClientIdentifier> m_scheduledJobSources;
 };
 
 } // namespace WebCore

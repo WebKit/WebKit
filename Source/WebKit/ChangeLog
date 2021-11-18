@@ -1,3 +1,97 @@
+2021-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Drop ServiceWorkerClientIdentifier / DocumentIdentifier and use ScriptExecutionContextIdentifier instead
+        https://bugs.webkit.org/show_bug.cgi?id=233288
+
+        Reviewed by Darin Adler.
+
+        Drop ServiceWorkerClientIdentifier / DocumentIdentifier and use ScriptExecutionContextIdentifier instead.
+
+        We need to generic identifier type to identify script execution contexts globally. This patch augments
+        ScriptExecutionContextIdentifier with a process identifier to make it app-global, and then gets rid of
+        ServiceWorkerClientIdentifier & DocumentIdentifier (which become obsolete).
+
+        This is useful for Web Lock API support as we need a clientId that is consistent between the Web Lock
+        API and the service worker API (tested by imported/w3c/web-platform-tests/web-locks//clientids.tentative.https.html).
+        The clientId in service workers was using the ServiceWorkerClientIdentifier type, which made little
+        sense to use for the Web Lock API given its name.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::swServerForSession):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::notifyClientsOfControllerChange):
+        (WebKit::WebSWServerConnection::controlClient):
+        (WebKit::WebSWServerConnection::createFetchTask):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+        (WebKit::WebSWServerConnection::clientURLFromIdentifier):
+        (WebKit::WebSWServerConnection::scheduleUnregisterJobInServer):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorkerClient):
+        (WebKit::WebSWServerConnection::unregisterServiceWorkerClient):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::postMessageToServiceWorkerClient):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::unregisterMDNSNames):
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * NetworkProcess/webrtc/NetworkMDNSRegister.h:
+        * NetworkProcess/webrtc/NetworkMDNSRegister.messages.in:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode):
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::liveDocumentURLs):
+        * WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp:
+        (WebKit::LibWebRTCNetworkManager::getOrCreate):
+        (WebKit::LibWebRTCNetworkManager::LibWebRTCNetworkManager):
+        * WebProcess/Network/webrtc/LibWebRTCNetworkManager.h:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/WebMDNSRegister.cpp:
+        (WebKit::WebMDNSRegister::unregisterMDNSNames):
+        (WebKit::WebMDNSRegister::registerMDNSName):
+        * WebProcess/Network/webrtc/WebMDNSRegister.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::scheduleUnregisterJobInServer):
+        (WebKit::WebSWClientConnection::unregisterServiceWorkerClient):
+        (WebKit::WebSWClientConnection::setDocumentIsControlled):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        (WebKit::WebSWContextManagerConnection::postMessageToServiceWorkerClient):
+        (WebKit::WebSWContextManagerConnection::findClientByIdentifier):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2021-11-18  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Block access to unused resources in the Networking process' sandbox

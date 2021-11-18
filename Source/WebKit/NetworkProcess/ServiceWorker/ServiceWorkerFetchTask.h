@@ -30,7 +30,7 @@
 #include "DataReference.h"
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/ServiceWorkerClientIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>

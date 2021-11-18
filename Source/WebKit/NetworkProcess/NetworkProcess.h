@@ -96,7 +96,6 @@ struct ClientOrigin;
 struct MessageWithMessagePorts;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
-struct ServiceWorkerClientIdentifier;
 }
 
 namespace WebKit {

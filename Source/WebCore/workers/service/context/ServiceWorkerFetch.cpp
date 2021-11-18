@@ -35,8 +35,8 @@
 #include "FetchResponse.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceRequest.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorker.h"
-#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
 #include "WorkerGlobalScope.h"
@@ -139,7 +139,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     });
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ScriptExecutionContextIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
 

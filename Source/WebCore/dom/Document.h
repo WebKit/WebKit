@@ -34,7 +34,6 @@
 #include "CrossOriginOpenerPolicy.h"
 #include "DisabledAdaptations.h"
 #include "DocumentEventTiming.h"
-#include "DocumentIdentifier.h"
 #include "ElementIdentifier.h"
 #include "FocusOptions.h"
 #include "FontSelectorClient.h"
@@ -400,9 +399,7 @@ public:
 
     void removedLastRef();
 
-    DocumentIdentifier identifier() const { return m_identifier; }
-
-    using DocumentsMap = HashMap<DocumentIdentifier, Document*>;
+    using DocumentsMap = HashMap<ScriptExecutionContextIdentifier, Document*>;
     WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
     WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
 
@@ -2193,8 +2190,6 @@ private:
 
     RefPtr<DocumentTimeline> m_timeline;
     std::unique_ptr<DocumentTimelinesController> m_timelinesController;
-
-    DocumentIdentifier m_identifier;
 
     RefPtr<WindowEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;

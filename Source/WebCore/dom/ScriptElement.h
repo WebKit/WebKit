@@ -23,9 +23,9 @@
 
 #include "ContainerNode.h"
 #include "ContentSecurityPolicy.h"
-#include "DocumentIdentifier.h"
 #include "LoadableScript.h"
 #include "ReferrerPolicy.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "UserGestureIndicator.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/TextPosition.h>
@@ -139,7 +139,7 @@ private:
     RefPtr<LoadableScript> m_loadableScript;
 
     // https://html.spec.whatwg.org/multipage/scripting.html#preparation-time-document
-    DocumentIdentifier m_preparationTimeDocumentIdentifier;
+    ScriptExecutionContextIdentifier m_preparationTimeDocumentIdentifier;
 
     MonotonicTime m_creationTime;
     RefPtr<UserGestureToken> m_userGestureToken;

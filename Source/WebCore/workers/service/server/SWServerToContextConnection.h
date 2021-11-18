@@ -29,6 +29,7 @@
 
 #include "ExceptionData.h"
 #include "RegistrableDomain.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerIdentifier.h"
@@ -39,7 +40,6 @@ namespace WebCore {
 
 class SWServer;
 struct ServiceWorkerClientData;
-struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
@@ -70,25 +70,25 @@ public:
     WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);
     WEBCORE_EXPORT void skipWaiting(ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void workerTerminated(ServiceWorkerIdentifier);
-    WEBCORE_EXPORT void findClientByIdentifier(uint64_t clientIdRequestIdentifier, ServiceWorkerIdentifier, ServiceWorkerClientIdentifier);
+    WEBCORE_EXPORT void findClientByIdentifier(uint64_t clientIdRequestIdentifier, ServiceWorkerIdentifier, ScriptExecutionContextIdentifier);
     WEBCORE_EXPORT void matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&);
     WEBCORE_EXPORT void claim(ServiceWorkerIdentifier, CompletionHandler<void(std::optional<ExceptionData>&&)>&&);
     WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, ServiceWorkerContextData::ImportedScript&&);
     WEBCORE_EXPORT void didFailHeartBeatCheck(ServiceWorkerIdentifier);
 
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
-    std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
+    std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
     virtual void connectionIsNoLongerNeeded() = 0;
     virtual void terminateDueToUnresponsiveness() = 0;
 
 protected:
-    WEBCORE_EXPORT SWServerToContextConnection(RegistrableDomain&&, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier);
+    WEBCORE_EXPORT SWServerToContextConnection(RegistrableDomain&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
 
 private:
     SWServerToContextConnectionIdentifier m_identifier;
     RegistrableDomain m_registrableDomain;
-    std::optional<ServiceWorkerClientIdentifier> m_serviceWorkerPageIdentifier;
+    std::optional<ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
 };
 
 } // namespace WebCore

@@ -28,7 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SWServer.h"
-#include "ServiceWorkerClientIdentifier.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerTypes.h"
 #include "Timer.h"
@@ -52,7 +52,7 @@ enum class IsAppInitiated : bool { No, Yes };
 class SWServerRegistration : public CanMakeWeakPtr<SWServerRegistration> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier);
+    SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
     ~SWServerRegistration();
 
     const ServiceWorkerRegistrationKey& key() const { return m_registrationKey; }
@@ -84,12 +84,12 @@ public:
     MonotonicTime creationTime() const { return m_creationTime; }
 
     bool hasClientsUsingRegistration() const { return !m_clientsUsingRegistration.isEmpty(); }
-    void addClientUsingRegistration(const ServiceWorkerClientIdentifier&);
-    void removeClientUsingRegistration(const ServiceWorkerClientIdentifier&);
+    void addClientUsingRegistration(const ScriptExecutionContextIdentifier&);
+    void removeClientUsingRegistration(const ScriptExecutionContextIdentifier&);
     void unregisterServerConnection(SWServerConnectionIdentifier);
 
     void notifyClientsOfControllerChange();
-    void controlClient(ServiceWorkerClientIdentifier);
+    void controlClient(ScriptExecutionContextIdentifier);
 
     void clear();
     bool tryClear();
@@ -108,7 +108,7 @@ public:
     URL scriptURL() const { return m_scriptURL; }
 
     bool isAppInitiated() const { return m_isAppInitiated; }
-    std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
+    std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
 private:
     void activate();
@@ -120,7 +120,7 @@ private:
     ServiceWorkerUpdateViaCache m_updateViaCache;
     URL m_scopeURL;
     URL m_scriptURL;
-    std::optional<ServiceWorkerClientIdentifier> m_serviceWorkerPageIdentifier;
+    std::optional<ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
 
     RefPtr<SWServerWorker> m_preInstallationWorker; // Implementation detail, not part of the specification.
     RefPtr<SWServerWorker> m_installingWorker;
@@ -133,7 +133,7 @@ private:
     SWServer& m_server;
 
     MonotonicTime m_creationTime;
-    HashMap<SWServerConnectionIdentifier, HashSet<DocumentIdentifier>> m_clientsUsingRegistration;
+    HashMap<SWServerConnectionIdentifier, HashSet<ScriptExecutionContextIdentifier>> m_clientsUsingRegistration;
 
     WebCore::Timer m_softUpdateTimer;
     

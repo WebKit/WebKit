@@ -54,7 +54,7 @@ NetworkMDNSRegister::~NetworkMDNSRegister()
 }
 
 #if ENABLE_MDNS
-void NetworkMDNSRegister::unregisterMDNSNames(WebCore::DocumentIdentifier documentIdentifier)
+void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier documentIdentifier)
 {
     auto iterator = m_services.find(documentIdentifier);
     if (iterator == m_services.end())
@@ -104,7 +104,7 @@ static void registerMDNSNameCallback(DNSServiceRef, DNSRecordRef record, DNSServ
     request->connection->send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { request->requestIdentifier, request->name, { } }, 0);
 }
 
-void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentifier, WebCore::DocumentIdentifier documentIdentifier, const String& ipAddress)
+void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress)
 {
     auto name = makeString(createCanonicalUUIDString(), ".local");
 
@@ -165,11 +165,11 @@ void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentif
 
 #else
 
-void NetworkMDNSRegister::unregisterMDNSNames(WebCore::DocumentIdentifier)
+void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier)
 {
 }
 
-void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentifier, WebCore::DocumentIdentifier documentIdentifier, const String& ipAddress)
+void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress)
 {
     MDNS_RELEASE_LOG("registerMDNSName not implemented");
     auto name = makeString(createCanonicalUUIDString(), ".local");

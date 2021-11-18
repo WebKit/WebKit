@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ScriptExecutionContextIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -38,7 +39,6 @@ class FormData;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-struct ServiceWorkerClientIdentifier;
 class ServiceWorkerGlobalScope;
 class ServiceWorkerGlobalScope;
 class SharedBuffer;
@@ -59,7 +59,7 @@ public:
     virtual void continueDidReceiveResponse() = 0;
 };
 
-void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ScriptExecutionContextIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);
 };
 
 } // namespace WebCore

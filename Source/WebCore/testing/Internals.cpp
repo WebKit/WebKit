@@ -2754,12 +2754,12 @@ unsigned Internals::numberOfResizeObservers(const Document& document) const
 
 uint64_t Internals::documentIdentifier(const Document& document) const
 {
-    return document.identifier().toUInt64();
+    return document.identifier().object().toUInt64();
 }
 
 bool Internals::isDocumentAlive(uint64_t documentIdentifier) const
 {
-    return Document::allDocumentsMap().contains(makeObjectIdentifier<DocumentIdentifierType>(documentIdentifier));
+    return Document::allDocumentsMap().contains({ makeObjectIdentifier<ScriptExecutionContextIdentifierType>(documentIdentifier), Process::identifier() });
 }
 
 uint64_t Internals::storageAreaMapCount() const
@@ -2800,12 +2800,7 @@ bool Internals::isAnyWorkletGlobalScopeAlive() const
 
 String Internals::serviceWorkerClientIdentifier(const Document& document) const
 {
-#if ENABLE(SERVICE_WORKER)
-    return ServiceWorkerClientIdentifier { ServiceWorkerProvider::singleton().serviceWorkerConnection().serverConnectionIdentifier(), document.identifier() }.toString();
-#else
-    UNUSED_PARAM(document);
-    return String();
-#endif
+    return document.identifier().toString();
 }
 
 RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)

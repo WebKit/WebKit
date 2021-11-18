@@ -151,13 +151,13 @@ static void setAllDefersLoading(const ResourceLoaderMap& loaders, bool defers)
         loader->setDefersLoading(defers);
 }
 
-static HashMap<DocumentIdentifier, DocumentLoader*>& temporaryIdentifierToLoaderMap()
+static HashMap<ScriptExecutionContextIdentifier, DocumentLoader*>& temporaryIdentifierToLoaderMap()
 {
-    static NeverDestroyed<HashMap<DocumentIdentifier, DocumentLoader*>> map;
+    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, DocumentLoader*>> map;
     return map.get();
 }
 
-DocumentLoader* DocumentLoader::fromTemporaryDocumentIdentifier(DocumentIdentifier identifier)
+DocumentLoader* DocumentLoader::fromTemporaryDocumentIdentifier(ScriptExecutionContextIdentifier identifier)
 {
     return temporaryIdentifierToLoaderMap().get(identifier);
 }
@@ -2110,7 +2110,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 #if ENABLE(SERVICE_WORKER)
     if (!m_temporaryServiceWorkerClient) {
         // The main navigation load will trigger the registration of the temp client.
-        m_temporaryServiceWorkerClient = DocumentIdentifier::generate();
+        m_temporaryServiceWorkerClient = ScriptExecutionContextIdentifier::generateThreadSafe();
         ASSERT(!temporaryIdentifierToLoaderMap().contains(*m_temporaryServiceWorkerClient));
         temporaryIdentifierToLoaderMap().add(*m_temporaryServiceWorkerClient, this);
     }

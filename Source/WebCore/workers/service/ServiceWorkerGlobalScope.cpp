@@ -90,7 +90,7 @@ Page* ServiceWorkerGlobalScope::serviceWorkerPage()
         return nullptr;
 
     RELEASE_ASSERT(isMainThread());
-    auto* serviceWorkerPageDocument = Document::allDocumentsMap().get(m_contextData.serviceWorkerPageIdentifier->contextIdentifier);
+    auto* serviceWorkerPageDocument = Document::allDocumentsMap().get(*m_contextData.serviceWorkerPageIdentifier);
     return serviceWorkerPageDocument ? serviceWorkerPageDocument->page() : nullptr;
 }
 
@@ -125,7 +125,7 @@ ServiceWorkerThread& ServiceWorkerGlobalScope::thread()
     return static_cast<ServiceWorkerThread&>(WorkerGlobalScope::thread());
 }
 
-ServiceWorkerClient* ServiceWorkerGlobalScope::serviceWorkerClient(ServiceWorkerClientIdentifier identifier)
+ServiceWorkerClient* ServiceWorkerGlobalScope::serviceWorkerClient(ScriptExecutionContextIdentifier identifier)
 {
     return m_clientMap.get(identifier);
 }

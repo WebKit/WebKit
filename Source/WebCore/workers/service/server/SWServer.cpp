@@ -91,7 +91,7 @@ SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
     return worker;
 }
 
-std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientWithOriginByID(const ClientOrigin& clientOrigin, const ServiceWorkerClientIdentifier& clientIdentifier) const
+std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientWithOriginByID(const ClientOrigin& clientOrigin, const ScriptExecutionContextIdentifier& clientIdentifier) const
 {
     auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
     if (iterator == m_clientIdentifiersPerOrigin.end())
@@ -410,7 +410,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
     });
 }
 
-void SWServer::scheduleUnregisterJob(ServiceWorkerJobDataIdentifier jobDataIdentifier, SWServerRegistration& registration, DocumentOrWorkerIdentifier contextIdentifier, URL&& clientCreationURL)
+void SWServer::scheduleUnregisterJob(ServiceWorkerJobDataIdentifier jobDataIdentifier, SWServerRegistration& registration, ServiceWorkerOrClientIdentifier contextIdentifier, URL&& clientCreationURL)
 {
     ServiceWorkerJobData jobData { jobDataIdentifier, contextIdentifier };
     jobData.clientCreationURL = WTFMove(clientCreationURL);
@@ -667,7 +667,7 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
         registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& coep, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier)
+void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& coep, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
 {
     tryInstallContextData(ServiceWorkerContextData { jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, certificateInfo, contentSecurityPolicy, coep, referrerPolicy, url, type, false, clientIsAppInitiatedForRegistrableDomain(RegistrableDomain(url)), WTFMove(scriptResourceMap), serviceWorkerPageIdentifier });
 }
@@ -942,7 +942,7 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     clientIdentifiersForOrigin.terminateServiceWorkersTimer = nullptr;
 
     m_clientsByRegistrableDomain.ensure(clientOrigin.clientRegistrableDomain(), [] {
-        return HashSet<ServiceWorkerClientIdentifier> { };
+        return HashSet<ScriptExecutionContextIdentifier> { };
     }).iterator->value.add(clientIdentifier);
 
     if (!controllingServiceWorkerRegistrationIdentifier)
@@ -957,7 +957,7 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     m_clientToControllingRegistration.add(clientIdentifier, *controllingServiceWorkerRegistrationIdentifier);
 }
 
-void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier clientIdentifier)
+void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ScriptExecutionContextIdentifier clientIdentifier)
 {
     auto clientRegistrableDomain = clientOrigin.clientRegistrableDomain();
     auto appInitiatedValueBefore = clientIsAppInitiatedForRegistrableDomain(clientOrigin.clientRegistrableDomain());
@@ -1142,7 +1142,7 @@ void SWServer::removeContextConnection(SWServerToContextConnection& connection)
         createContextConnection(registrableDomain, serviceWorkerPageIdentifier);
 }
 
-void SWServer::createContextConnection(const RegistrableDomain& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier)
+void SWServer::createContextConnection(const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
 {
     ASSERT(!m_contextConnections.contains(registrableDomain));
     if (m_pendingConnectionDomains.contains(registrableDomain))

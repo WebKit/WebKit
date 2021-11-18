@@ -44,7 +44,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier, SWServer& server)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, SWServer& server)
     : SWServerToContextConnection(WTFMove(registrableDomain), serviceWorkerPageIdentifier)
     , m_connection(connection)
     , m_server(server)
@@ -78,13 +78,13 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
     return 0;
 }
 
-void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     if (!m_server)
         return;
 
-    if (auto* connection = m_server->connection(destinationIdentifier.serverConnectionIdentifier))
-        connection->postMessageToServiceWorkerClient(destinationIdentifier.contextIdentifier, message, sourceIdentifier, sourceOrigin);
+    if (auto* connection = m_server->connection(destinationIdentifier.processIdentifier()))
+        connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent, WorkerThreadMode workerThreadMode)

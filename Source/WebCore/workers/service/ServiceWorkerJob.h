@@ -67,7 +67,7 @@ public:
 
     void fetchScriptWithContext(ScriptExecutionContext&, FetchOptions::Cache);
 
-    const DocumentOrWorkerIdentifier& contextIdentifier() { return m_contextIdentifier; }
+    const ServiceWorkerOrClientIdentifier& contextIdentifier() { return m_contextIdentifier; }
 
     bool cancelPendingLoad();
 
@@ -84,7 +84,7 @@ private:
 
     bool m_completed { false };
 
-    DocumentOrWorkerIdentifier m_contextIdentifier;
+    ServiceWorkerOrClientIdentifier m_contextIdentifier;
     RefPtr<WorkerScriptLoader> m_scriptLoader;
 
 #if ASSERT_ENABLED

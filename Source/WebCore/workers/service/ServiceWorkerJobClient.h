@@ -44,7 +44,7 @@ class ServiceWorkerJobClient {
 public:
     virtual ~ServiceWorkerJobClient() = default;
 
-    virtual DocumentOrWorkerIdentifier contextIdentifier() = 0;
+    virtual ServiceWorkerOrClientIdentifier contextIdentifier() = 0;
 
     virtual void jobFailedWithException(ServiceWorkerJob&, const Exception&) = 0;
     virtual void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved) = 0;

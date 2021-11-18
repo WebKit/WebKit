@@ -512,7 +512,7 @@ void WebProcessPool::getWebAuthnProcessConnection(WebProcessProxy& webProcessPro
 bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     auto* websiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(sessionID);
     if (!websiteDataStore)
@@ -528,7 +528,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
 
     if (serviceWorkerPageIdentifier) {
         // This is a service worker for a service worker page so we need to make sure we use use the page's WebProcess for the service worker.
-        if ((serviceWorkerProcessProxy = WebProcessProxy::processForIdentifier(serviceWorkerPageIdentifier->serverConnectionIdentifier))) {
+        if ((serviceWorkerProcessProxy = WebProcessProxy::processForIdentifier(serviceWorkerPageIdentifier->processIdentifier()))) {
             serviceWorkerProcessProxy->enableServiceWorkers(processPool->userContentControllerIdentifierForServiceWorkers());
             if (serviceWorkerProcessProxy->isInProcessCache()) {
                 processPool->webProcessCache().removeProcess(*serviceWorkerProcessProxy, WebProcessCache::ShouldShutDownProcess::No);

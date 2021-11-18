@@ -114,30 +114,17 @@ public:
 };
 
 ScriptExecutionContext::ScriptExecutionContext()
+    : m_contextIdentifier(ScriptExecutionContextIdentifier::generateThreadSafe())
 {
-}
-
-ScriptExecutionContextIdentifier ScriptExecutionContext::contextIdentifier() const
-{
-    ASSERT(isContextThread());
-    if (!m_contextIdentifier) {
-        Locker locker { allScriptExecutionContextsMapLock };
-
-        m_contextIdentifier = ScriptExecutionContextIdentifier::generate();
-
-        ASSERT(!allScriptExecutionContextsMap().contains(m_contextIdentifier));
-        allScriptExecutionContextsMap().add(m_contextIdentifier, const_cast<ScriptExecutionContext*>(this));
-    }
-    return m_contextIdentifier;
+    Locker locker { allScriptExecutionContextsMapLock };
+    allScriptExecutionContextsMap().add(m_contextIdentifier, this);
 }
 
 void ScriptExecutionContext::removeFromContextsMap()
 {
-    if (m_contextIdentifier) {
-        Locker locker { allScriptExecutionContextsMapLock };
-        ASSERT(allScriptExecutionContextsMap().contains(m_contextIdentifier));
-        allScriptExecutionContextsMap().remove(m_contextIdentifier);
-    }
+    Locker locker { allScriptExecutionContextsMapLock };
+    ASSERT(allScriptExecutionContextsMap().contains(m_contextIdentifier));
+    allScriptExecutionContextsMap().remove(m_contextIdentifier);
 }
 
 #if !ASSERT_ENABLED
@@ -169,10 +156,9 @@ ScriptExecutionContext::~ScriptExecutionContext()
     checkConsistency();
 
 #if ASSERT_ENABLED
-    if (m_contextIdentifier) {
+    {
         Locker locker { allScriptExecutionContextsMapLock };
-        ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_contextIdentifier),
-            "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
+        ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_contextIdentifier), "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
     }
 
     m_inScriptExecutionContextDestructor = true;

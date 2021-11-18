@@ -42,7 +42,7 @@ static ServiceWorkerRegistrationIdentifier generateServiceWorkerRegistrationIden
     return ServiceWorkerRegistrationIdentifier::generate();
 }
 
-SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier)
+SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
     : m_identifier(generateServiceWorkerRegistrationIdentifier())
     , m_registrationKey(key)
     , m_updateViaCache(updateViaCache)
@@ -172,22 +172,20 @@ void SWServerRegistration::removeClientServiceWorkerRegistration(SWServerConnect
     m_connectionsWithClientRegistrations.remove(connectionIdentifier);
 }
 
-void SWServerRegistration::addClientUsingRegistration(const ServiceWorkerClientIdentifier& clientIdentifier)
+void SWServerRegistration::addClientUsingRegistration(const ScriptExecutionContextIdentifier& clientIdentifier)
 {
-    auto addResult = m_clientsUsingRegistration.ensure(clientIdentifier.serverConnectionIdentifier, [] {
-        return HashSet<DocumentIdentifier> { };
-    }).iterator->value.add(clientIdentifier.contextIdentifier);
+    auto addResult = m_clientsUsingRegistration.add(clientIdentifier.processIdentifier(), HashSet<ScriptExecutionContextIdentifier> { }).iterator->value.add(clientIdentifier);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-void SWServerRegistration::removeClientUsingRegistration(const ServiceWorkerClientIdentifier& clientIdentifier)
+void SWServerRegistration::removeClientUsingRegistration(const ScriptExecutionContextIdentifier& clientIdentifier)
 {
-    auto iterator = m_clientsUsingRegistration.find(clientIdentifier.serverConnectionIdentifier);
+    auto iterator = m_clientsUsingRegistration.find(clientIdentifier.processIdentifier());
     ASSERT(iterator != m_clientsUsingRegistration.end());
     if (iterator == m_clientsUsingRegistration.end())
         return;
 
-    bool wasRemoved = iterator->value.remove(clientIdentifier.contextIdentifier);
+    bool wasRemoved = iterator->value.remove(clientIdentifier);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 
     if (iterator->value.isEmpty())
@@ -347,15 +345,15 @@ bool SWServerRegistration::isUnregistered() const
     return m_server.getRegistration(key()) != this;
 }
 
-void SWServerRegistration::controlClient(ServiceWorkerClientIdentifier identifier)
+void SWServerRegistration::controlClient(ScriptExecutionContextIdentifier identifier)
 {
     ASSERT(activeWorker());
 
     addClientUsingRegistration(identifier);
 
-    HashSet<DocumentIdentifier> identifiers;
-    identifiers.add(identifier.contextIdentifier);
-    m_server.connection(identifier.serverConnectionIdentifier)->notifyClientsOfControllerChange(identifiers, activeWorker()->data());
+    HashSet<ScriptExecutionContextIdentifier> identifiers;
+    identifiers.add(identifier);
+    m_server.connection(identifier.processIdentifier())->notifyClientsOfControllerChange(identifiers, activeWorker()->data());
 }
 
 bool SWServerRegistration::shouldSoftUpdate(const FetchOptions& options) const

@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ServiceWorkerClientIdentifier.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
@@ -62,7 +62,7 @@ public:
 
     ServiceWorkerThread& thread();
 
-    ServiceWorkerClient* serviceWorkerClient(ServiceWorkerClientIdentifier);
+    ServiceWorkerClient* serviceWorkerClient(ScriptExecutionContextIdentifier);
     void addServiceWorkerClient(ServiceWorkerClient&);
     void removeServiceWorkerClient(ServiceWorkerClient&);
 
@@ -90,7 +90,7 @@ private:
     Ref<ServiceWorkerRegistration> m_registration;
     Ref<ServiceWorker> m_serviceWorker;
     Ref<ServiceWorkerClients> m_clients;
-    HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClient*> m_clientMap;
+    HashMap<ScriptExecutionContextIdentifier, ServiceWorkerClient*> m_clientMap;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
 
     uint64_t m_lastRequestIdentifier { 0 };

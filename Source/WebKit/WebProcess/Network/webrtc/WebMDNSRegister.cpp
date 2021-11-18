@@ -54,7 +54,7 @@ void WebMDNSRegister::finishedRegisteringMDNSName(MDNSRegisterIdentifier identif
     pendingRegistration.callback(name, error);
 }
 
-void WebMDNSRegister::unregisterMDNSNames(DocumentIdentifier identifier)
+void WebMDNSRegister::unregisterMDNSNames(ScriptExecutionContextIdentifier identifier)
 {
     if (m_registeringDocuments.take(identifier).isEmpty())
         return;
@@ -63,7 +63,7 @@ void WebMDNSRegister::unregisterMDNSNames(DocumentIdentifier identifier)
     connection.send(Messages::NetworkMDNSRegister::UnregisterMDNSNames { identifier }, 0);
 }
 
-void WebMDNSRegister::registerMDNSName(DocumentIdentifier identifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& callback)
+void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& callback)
 {
     auto& map = m_registeringDocuments.ensure(identifier, [] {
         return HashMap<String, String> { };

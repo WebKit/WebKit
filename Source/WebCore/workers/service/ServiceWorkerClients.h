@@ -39,7 +39,6 @@ namespace WebCore {
 class DeferredPromise;
 class ScriptExecutionContext;
 struct ServiceWorkerClientData;
-struct ServiceWorkerClientIdentifier;
 
 class ServiceWorkerClients : public RefCounted<ServiceWorkerClients> {
 public:

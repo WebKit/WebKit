@@ -25,11 +25,13 @@
 
 #pragma once
 
-#include <wtf/ObjectIdentifier.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
+template <typename> class ProcessQualified;
+
 enum ScriptExecutionContextIdentifierType { };
-using ScriptExecutionContextIdentifier = ObjectIdentifier<ScriptExecutionContextIdentifierType>;
+using ScriptExecutionContextIdentifier = ProcessQualified<ObjectIdentifier<ScriptExecutionContextIdentifierType>>;
 
 }

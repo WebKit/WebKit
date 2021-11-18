@@ -179,7 +179,7 @@ void WorkerSWClientConnection::registerServiceWorkerClient(const SecurityOrigin&
     });
 }
 
-void WorkerSWClientConnection::unregisterServiceWorkerClient(DocumentIdentifier)
+void WorkerSWClientConnection::unregisterServiceWorkerClient(ScriptExecutionContextIdentifier)
 {
     ASSERT_NOT_REACHED();
 }
@@ -192,7 +192,7 @@ void WorkerSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerF
     });
 }
 
-void WorkerSWClientConnection::scheduleJob(DocumentOrWorkerIdentifier identifier, const ServiceWorkerJobData& data)
+void WorkerSWClientConnection::scheduleJob(ServiceWorkerOrClientIdentifier identifier, const ServiceWorkerJobData& data)
 {
     callOnMainThread([identifier, data = crossThreadCopy(data)]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
@@ -200,7 +200,7 @@ void WorkerSWClientConnection::scheduleJob(DocumentOrWorkerIdentifier identifier
     });
 }
 
-void WorkerSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentOrWorkerIdentifier contextIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&& callback)
+void WorkerSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, ServiceWorkerOrClientIdentifier contextIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_unregisterRequests.add(requestIdentifier, WTFMove(callback));

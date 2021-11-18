@@ -81,7 +81,7 @@ void Page::platformInitialize()
             WTFLogAlways("%u live documents:", Document::allDocuments().size());
             for (const auto* document : Document::allDocuments()) {
                 const char* documentType = is<SVGDocument>(document) ? "SVGDocument" : "Document";
-                WTFLogAlways("%s %p %llu (refCount %d, referencingNodeCount %d) %s", documentType, document, document->identifier().toUInt64(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8().data());
+                WTFLogAlways("%s %p %s (refCount %d, referencingNodeCount %d) %s", documentType, document, document->identifier().toString().utf8().data(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8().data());
             }
         });
     });

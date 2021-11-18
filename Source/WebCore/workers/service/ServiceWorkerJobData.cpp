@@ -30,23 +30,23 @@
 
 namespace WebCore {
 
-static inline ServiceWorkerOrClientIdentifier serviceWorkerOrClientIdentifier(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
+static inline ServiceWorkerOrClientIdentifier serviceWorkerOrClientIdentifier(const ServiceWorkerOrClientIdentifier& localSourceContext)
 {
-    return WTF::switchOn(localSourceContext, [&](DocumentIdentifier documentIdentifier) -> ServiceWorkerOrClientIdentifier {
-        return ServiceWorkerClientIdentifier { connectionIdentifier, documentIdentifier };
+    return WTF::switchOn(localSourceContext, [&](ScriptExecutionContextIdentifier contextIdentifier) -> ServiceWorkerOrClientIdentifier {
+        return contextIdentifier;
     }, [&](ServiceWorkerIdentifier serviceWorkerIdentifier) -> ServiceWorkerOrClientIdentifier {
         return serviceWorkerIdentifier;
     });
 }
 
-ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
-    : sourceContext(serviceWorkerOrClientIdentifier(connectionIdentifier, localSourceContext))
+ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const ServiceWorkerOrClientIdentifier& localSourceContext)
+    : sourceContext(serviceWorkerOrClientIdentifier(localSourceContext))
     , m_identifier { connectionIdentifier, ServiceWorkerJobIdentifier::generateThreadSafe() }
 {
 }
 
-ServiceWorkerJobData::ServiceWorkerJobData(Identifier identifier, const DocumentOrWorkerIdentifier& localSourceContext)
-    : sourceContext(serviceWorkerOrClientIdentifier(identifier.connectionIdentifier, localSourceContext))
+ServiceWorkerJobData::ServiceWorkerJobData(Identifier identifier, const ServiceWorkerOrClientIdentifier& localSourceContext)
+    : sourceContext(serviceWorkerOrClientIdentifier(localSourceContext))
     , m_identifier { identifier }
 {
 }
@@ -58,10 +58,10 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
     return { SecurityOriginData { topOrigin }, WTFMove(scope) };
 }
 
-std::optional<ServiceWorkerClientIdentifier> ServiceWorkerJobData::serviceWorkerPageIdentifier() const
+std::optional<ScriptExecutionContextIdentifier> ServiceWorkerJobData::serviceWorkerPageIdentifier() const
 {
-    if (isFromServiceWorkerPage && std::holds_alternative<ServiceWorkerClientIdentifier>(sourceContext))
-        return std::get<ServiceWorkerClientIdentifier>(sourceContext);
+    if (isFromServiceWorkerPage && std::holds_alternative<ScriptExecutionContextIdentifier>(sourceContext))
+        return std::get<ScriptExecutionContextIdentifier>(sourceContext);
     return std::nullopt;
 }
 

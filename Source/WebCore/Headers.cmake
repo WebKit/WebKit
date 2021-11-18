@@ -1082,7 +1082,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/DateTimeChooserParameters.h
     platform/Decimal.h
     platform/DeferrableTask.h
-    platform/DocumentIdentifier.h
     platform/DragData.h
     platform/DragImage.h
     platform/DragItem.h
@@ -1761,7 +1760,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     workers/service/SWClientConnection.h
     workers/service/ServiceWorkerClientData.h
-    workers/service/ServiceWorkerClientIdentifier.h
     workers/service/ServiceWorkerClientQueryOptions.h
     workers/service/ServiceWorkerClientType.h
     workers/service/ServiceWorkerContextData.h

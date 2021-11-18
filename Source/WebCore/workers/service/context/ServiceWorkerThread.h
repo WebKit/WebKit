@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerFetch.h"
 #include "ServiceWorkerIdentifier.h"
@@ -44,7 +45,6 @@ class MessagePortChannel;
 class SerializedScriptValue;
 class WorkerObjectProxy;
 struct MessageWithMessagePorts;
-struct ServiceWorkerClientIdentifier;
 
 class ServiceWorkerThread : public WorkerThread, public CanMakeWeakPtr<ServiceWorkerThread, WeakPtrFactoryInitialization::Eager> {
 public:
@@ -62,7 +62,7 @@ public:
     void willPostTaskToFireActivateEvent();
     void willPostTaskToFireMessageEvent();
 
-    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, std::optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
+    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, std::optional<ScriptExecutionContextIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
     void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
     void queueTaskToFireInstallEvent();
     void queueTaskToFireActivateEvent();

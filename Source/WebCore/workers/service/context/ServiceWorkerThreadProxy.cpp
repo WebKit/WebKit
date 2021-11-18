@@ -40,8 +40,8 @@
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "PlatformStrategies.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientData.h"
-#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
@@ -214,7 +214,7 @@ void ServiceWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
     }, WorkerRunLoop::defaultMode());
 }
 
-void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, Ref<ServiceWorkerFetch::Client>&& client, std::optional<ServiceWorkerClientIdentifier>&& clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
+void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, Ref<ServiceWorkerFetch::Client>&& client, std::optional<ScriptExecutionContextIdentifier>&& clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::startFetch %llu", fetchIdentifier.toUInt64());
 

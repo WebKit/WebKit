@@ -1856,7 +1856,7 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store, const RegistrableDomain& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
+void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store, const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishServiceWorkerContext: Started");
     markProcessAsRecentlyUsed();

@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ProcessQualified.h"
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCNotifiersMock.h"
 

@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "DocumentIdentifier.h"
 #include "LibWebRTCMacros.h"
 #include "MDNSRegisterError.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/UniqueRef.h>
@@ -100,7 +100,7 @@ public:
     void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
 
 #if USE(LIBWEBRTC)
-    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(DocumentIdentifier, webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);
+    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     webrtc::PeerConnectionFactoryInterface* factory();
     LibWebRTCAudioModule* audioModule();

@@ -223,7 +223,7 @@ void SWServerWorker::contextTerminated()
         m_server->workerContextTerminated(*this);
 }
 
-std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(const ServiceWorkerClientIdentifier& clientId) const
+std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(const ScriptExecutionContextIdentifier& clientId) const
 {
     ASSERT(m_server);
     if (!m_server)
@@ -374,7 +374,7 @@ WorkerThreadMode SWServerWorker::workerThreadMode() const
     return WorkerThreadMode::CreateNewThread;
 }
 
-std::optional<ServiceWorkerClientIdentifier> SWServerWorker::serviceWorkerPageIdentifier() const
+std::optional<ScriptExecutionContextIdentifier> SWServerWorker::serviceWorkerPageIdentifier() const
 {
     if (!m_registration)
         return std::nullopt;

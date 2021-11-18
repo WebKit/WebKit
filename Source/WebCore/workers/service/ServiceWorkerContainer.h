@@ -114,7 +114,7 @@ private:
     void destroyJob(ServiceWorkerJob&);
     void willSettleRegistrationPromise(bool success);
 
-    DocumentOrWorkerIdentifier contextIdentifier() final;
+    ServiceWorkerOrClientIdentifier contextIdentifier() final;
 
     SWClientConnection& ensureSWClientConnection();
 

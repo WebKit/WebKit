@@ -28,8 +28,9 @@
 
 #pragma once
 
-#include "DocumentIdentifier.h"
+#include "ProcessQualified.h"
 #include "ReferrerPolicy.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include <wtf/Markable.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,7 +60,7 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     bool keepAlive { false };
     String integrity;
-    Markable<DocumentIdentifier, DocumentIdentifier::MarkableTraits> clientIdentifier;
+    std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
 };
 
 inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive)
@@ -248,7 +249,7 @@ template<class Encoder>
 inline void FetchOptions::encode(Encoder& encoder) const
 {
     encodePersistent(encoder);
-    encoder << clientIdentifier.asOptional();
+    encoder << clientIdentifier;
 }
 
 template<class Decoder>
@@ -258,7 +259,7 @@ inline std::optional<FetchOptions> FetchOptions::decode(Decoder& decoder)
     if (!decodePersistent(decoder, options))
         return std::nullopt;
 
-    std::optional<std::optional<DocumentIdentifier>> clientIdentifier;
+    std::optional<std::optional<ScriptExecutionContextIdentifier>> clientIdentifier;
     decoder >> clientIdentifier;
     if (!clientIdentifier)
         return std::nullopt;

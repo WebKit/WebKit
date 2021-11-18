@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::DocumentIdentifier identifier)
+LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExecutionContextIdentifier identifier)
 {
     auto* document = Document::allDocumentsMap().get(identifier);
     if (!document)
@@ -53,7 +53,7 @@ LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::DocumentI
     return networkManager;
 }
 
-LibWebRTCNetworkManager::LibWebRTCNetworkManager(WebCore::DocumentIdentifier documentIdentifier)
+LibWebRTCNetworkManager::LibWebRTCNetworkManager(WebCore::ScriptExecutionContextIdentifier documentIdentifier)
     : m_documentIdentifier(documentIdentifier)
 {
     WebProcess::singleton().libWebRTCNetwork().monitor().addObserver(*this);

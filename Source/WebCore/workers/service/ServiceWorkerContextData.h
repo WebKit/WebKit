@@ -29,7 +29,7 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "ScriptBuffer.h"
-#include "ServiceWorkerClientIdentifier.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -94,7 +94,7 @@ struct ServiceWorkerContextData {
     bool loadedFromDisk;
     std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
     HashMap<URL, ImportedScript> scriptResourceMap;
-    std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier;
+    std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
@@ -170,7 +170,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!certificateInfo)
         return std::nullopt;
 
-    std::optional<std::optional<ServiceWorkerClientIdentifier>> serviceWorkerPageIdentifier;
+    std::optional<std::optional<ScriptExecutionContextIdentifier>> serviceWorkerPageIdentifier;
     decoder >> serviceWorkerPageIdentifier;
     if (!serviceWorkerPageIdentifier)
         return std::nullopt;

@@ -40,7 +40,7 @@ static SWServerToContextConnectionIdentifier generateServerToContextConnectionId
     return SWServerToContextConnectionIdentifier::generate();
 }
 
-SWServerToContextConnection::SWServerToContextConnection(RegistrableDomain&& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier)
+SWServerToContextConnection::SWServerToContextConnection(RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
     : m_identifier(generateServerToContextConnectionIdentifier())
     , m_registrableDomain(WTFMove(registrableDomain))
     , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)
@@ -87,7 +87,7 @@ void SWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier servi
         worker->contextTerminated();
 }
 
-void SWServerToContextConnection::findClientByIdentifier(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerClientIdentifier clientId)
+void SWServerToContextConnection::findClientByIdentifier(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptExecutionContextIdentifier clientId)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
         worker->contextConnection()->findClientByIdentifierCompleted(requestIdentifier, worker->findClientByIdentifier(clientId), false);

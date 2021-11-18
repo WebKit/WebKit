@@ -624,13 +624,13 @@ void ServiceWorkerContainer::stop()
         notifyRegistrationIsSettled(registration);
 }
 
-DocumentOrWorkerIdentifier ServiceWorkerContainer::contextIdentifier()
+ServiceWorkerOrClientIdentifier ServiceWorkerContainer::contextIdentifier()
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(scriptExecutionContext());
     if (is<ServiceWorkerGlobalScope>(*scriptExecutionContext()))
         return downcast<ServiceWorkerGlobalScope>(*scriptExecutionContext()).thread().identifier();
-    return downcast<Document>(*scriptExecutionContext()).identifier();
+    return scriptExecutionContext()->identifier();
 }
 
 ServiceWorkerJob* ServiceWorkerContainer::job(ServiceWorkerJobIdentifier identifier)

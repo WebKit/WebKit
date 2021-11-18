@@ -59,9 +59,9 @@
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
-#include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerClientQueryOptions.h>
 #include <WebCore/ServiceWorkerJobDataIdentifier.h>
 #include <WebCore/UserAgent.h>
@@ -100,7 +100,7 @@ Ref<DocumentLoader> ServiceWorkerFrameLoaderClient::createDocumentLoader(const R
     return WebDocumentLoader::create(request, substituteData);
 }
 
-WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, std::optional<WebCore::ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, ServiceWorkerInitializationData&& initializationData)
+WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, ServiceWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connection))
     , m_registrableDomain(WTFMove(registrableDomain))
     , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)
@@ -251,9 +251,7 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
     }
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToNetworkProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, request.requester() == ResourceRequest::Requester::Main);
-    std::optional<ServiceWorkerClientIdentifier> clientId;
-    if (options.clientIdentifier)
-        clientId = ServiceWorkerClientIdentifier { serverConnectionIdentifier, options.clientIdentifier.value() };
+    std::optional<ScriptExecutionContextIdentifier> clientId = options.clientIdentifier;
 
     request.setHTTPBody(formData.takeData());
     serviceWorkerThreadProxy->startFetch(serverConnectionIdentifier, fetchIdentifier, WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(referrer), WTFMove(options));
@@ -294,7 +292,7 @@ void WebSWContextManagerConnection::didSaveScriptsToDisk(WebCore::ServiceWorkerI
 }
 #endif
 
-void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::PostMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin), 0);
 }
@@ -329,7 +327,7 @@ void WebSWContextManagerConnection::workerTerminated(ServiceWorkerIdentifier ser
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::WorkerTerminated(serviceWorkerIdentifier), 0);
 }
 
-void WebSWContextManagerConnection::findClientByIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerClientIdentifier clientIdentifier, FindClientByIdentifierCallback&& callback)
+void WebSWContextManagerConnection::findClientByIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptExecutionContextIdentifier clientIdentifier, FindClientByIdentifierCallback&& callback)
 {
     auto requestIdentifier = ++m_previousRequestIdentifier;
     m_findClientByIdentifierRequests.add(requestIdentifier, WTFMove(callback));

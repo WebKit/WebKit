@@ -305,7 +305,7 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
 {
     m_systemPreviewInfo.isPreview = true;
     m_systemPreviewInfo.element.elementIdentifier = makeObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
-    m_systemPreviewInfo.element.documentIdentifier = makeObjectIdentifier<WebCore::DocumentIdentifierType>(documentID);
+    m_systemPreviewInfo.element.documentIdentifier = WebCore::ScriptExecutionContextIdentifier { makeObjectIdentifier<WebCore::ScriptExecutionContextIdentifierType>(documentID), m_webPageProxy.process().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = makeObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }

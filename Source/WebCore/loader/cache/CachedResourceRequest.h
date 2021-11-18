@@ -106,7 +106,7 @@ public:
     static String acceptHeaderValueFromType(CachedResource::Type);
 
 #if ENABLE(SERVICE_WORKER)
-    void setClientIdentifierIfNeeded(DocumentIdentifier);
+    void setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
     void setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
     void setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
 #endif

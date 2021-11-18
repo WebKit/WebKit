@@ -34,6 +34,7 @@
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -52,9 +53,26 @@ static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, Deferred
     promise.resolve<IDLInterface<ServiceWorkerClient>>(ServiceWorkerClient::getOrCreate(scope, WTFMove(data.value())));
 }
 
+static std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifierFromString(StringView string)
+{
+    ProcessIdentifier processIdentifier;
+    ObjectIdentifier<ScriptExecutionContextIdentifierType> contextIdentifier;
+    unsigned counter = 0;
+    for (auto item : string.split('-')) {
+        auto identifier = parseInteger<uint64_t>(item);
+        if (!identifier || !*identifier)
+            return std::nullopt;
+        if (!counter++)
+            processIdentifier = makeObjectIdentifier<ProcessIdentifierType>(*identifier);
+        else if (counter == 2)
+            contextIdentifier = makeObjectIdentifier<ScriptExecutionContextIdentifierType>(*identifier);
+    }
+    return (processIdentifier && contextIdentifier) ? std::make_optional(ScriptExecutionContextIdentifier { contextIdentifier, processIdentifier }) : std::nullopt;
+}
+
 void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id, Ref<DeferredPromise>&& promise)
 {
-    auto identifier = ServiceWorkerClientIdentifier::fromString(id);
+    auto identifier = scriptExecutionContextIdentifierFromString(id);
     if (!identifier) {
         promise->resolve();
         return;

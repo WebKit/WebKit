@@ -283,7 +283,9 @@ public:
     WEBCORE_EXPORT static bool postTaskTo(ScriptExecutionContextIdentifier, Task&&);
     WEBCORE_EXPORT static bool ensureOnContextThread(ScriptExecutionContextIdentifier, Task&&);
 
-    ScriptExecutionContextIdentifier contextIdentifier() const;
+    // FIXME: Port call sites to identifier() and drop this function.
+    ScriptExecutionContextIdentifier contextIdentifier() const { return m_contextIdentifier; }
+    ScriptExecutionContextIdentifier identifier() const { return m_contextIdentifier; }
 
 protected:
     class AddConsoleMessageTask : public Task {

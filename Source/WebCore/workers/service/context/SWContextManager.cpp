@@ -30,7 +30,6 @@
 #include "FrameLoaderClient.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
-#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerGlobalScope.h"
 
 namespace WebCore {

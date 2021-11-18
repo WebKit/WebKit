@@ -27,10 +27,13 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "ProcessQualified.h"
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelState.h"
 #include "SharedBuffer.h"
 #include <wtf/Lock.h>
+#include <wtf/ObjectIdentifier.h>
+#include <wtf/WeakPtr.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
