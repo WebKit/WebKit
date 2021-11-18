@@ -1,3 +1,56 @@
+2021-11-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add a swatch for align-content
+        https://bugs.webkit.org/show_bug.cgi?id=230065
+        <rdar://problem/82891361>
+
+        Reviewed by Devin Rousso.
+
+        Introduce an inline swatch for `align-content`, that shows icons for common align-content values:
+        start, center, end, space-between, space-around, space-evenly, and stretch.
+
+        * UserInterface/Images/AlignmentCenter.svg: Added.
+        * UserInterface/Images/AlignmentEnd.svg: Added.
+        * UserInterface/Images/AlignmentSpaceAround.svg: Added.
+        * UserInterface/Images/AlignmentSpaceBetween.svg: Added.
+        * UserInterface/Images/AlignmentSpaceEvenly.svg: Added.
+        * UserInterface/Images/AlignmentStart.svg: Added.
+        * UserInterface/Images/AlignmentStretch.svg: Added.
+        * UserInterface/Images/AlignmentUnknown.svg: Added.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/AlignmentEditor.css: Added.
+        (.alignment-editor .glyph):
+        (.alignment-editor .glyph:not(:last-child)):
+        (.alignment-editor .glyph:active):
+        (.alignment-editor .glyph.selected):
+        (.alignment-editor .glyph.selected + .glyph):
+        (.alignment-editor .glyph.selected:active):
+
+        * UserInterface/Views/AlignmentEditor.js: Added.
+        (WI.AlignmentEditor):
+        (WI.AlignmentEditor.isAlignContentValue):
+        (WI.AlignmentEditor.prototype.get element):
+        (WI.AlignmentEditor.prototype.get value):
+        (WI.AlignmentEditor.prototype.set value):
+        (WI.AlignmentEditor.prototype._updateSelected):
+
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable, .alignment):hover):
+        (.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable, .alignment):active):
+        (.inline-swatch:is(.image, .alignment) > span):
+        (@media (prefers-color-scheme: dark) .inline-swatch.box-shadow > svg,):
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype.didDismissPopover):
+        (WI.InlineSwatch.prototype._updateSwatch):
+        (WI.InlineSwatch.prototype._valueEditorValueDidChange):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._replaceSpecialTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addAlignmentTokens):
+
 2021-11-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: assertion failures in `WI.GridOverlayConfigurationDiagnosticEventRecorder`

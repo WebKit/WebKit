@@ -70,6 +70,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 // Handled later by _updateSwatch.
                 break;
 
+            case WI.InlineSwatch.Type.Alignment:
+                // Handled later by _updateSwatch.
+                break;
+
             case WI.InlineSwatch.Type.Gradient:
                 this._swatchElement.title = WI.UIString("Edit custom gradient");
                 break;
@@ -151,6 +155,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.removeEventListener(WI.GradientEditor.Event.GradientChanged, this._valueEditorValueDidChange, this);
         else if (this._valueEditor instanceof WI.SpringEditor)
             this._valueEditor.removeEventListener(WI.SpringEditor.Event.SpringChanged, this._valueEditorValueDidChange, this);
+        else if (this._valueEditor instanceof WI.AlignmentEditor)
+            this._valueEditor.removeEventListener(WI.AlignmentEditor.Event.ValueChanged, this._valueEditorValueDidChange, this);
 
         this._valueEditor = null;
 
@@ -181,16 +187,26 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
     {
         let value = this.value;
 
-        if (this._type === WI.InlineSwatch.Type.Color || this._type === WI.InlineSwatch.Type.Gradient)
-            this._swatchInnerElement.style.background = value ? value.toString() : null;
-        else if (this._type === WI.InlineSwatch.Type.Image)
-            this._swatchInnerElement.style.setProperty("background-image", `url(${value.src})`);
-
-        if (this._type === WI.InlineSwatch.Type.Color) {
+        switch (this._type) {
+        case WI.InlineSwatch.Type.Color:
             if (this._allowChangingColorFormats())
                 this._swatchElement.title = WI.UIString("Click to select a color\nShift-click to switch color formats");
             else
                 this._swatchElement.title = WI.UIString("Click to select a color");
+            // fallthrough
+
+        case WI.InlineSwatch.Type.Gradient:
+            this._swatchInnerElement.style.background = value ? value.toString() : null;
+            break;
+
+        case WI.InlineSwatch.Type.Image:
+            this._swatchInnerElement.style.setProperty("background-image", `url(${value.src})`);
+            break;
+
+        case WI.InlineSwatch.Type.Alignment:
+            let glyphPath = WI.AlignmentEditor.ValueGlyphs[value] || WI.AlignmentEditor.UnknownValueGlyph;
+            this._swatchInnerElement.style.backgroundImage = `url(${glyphPath})`;
+            break;
         }
 
         if (!dontFireEvents)
@@ -285,6 +301,13 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.addEventListener(WI.SpringEditor.Event.SpringChanged, this._valueEditorValueDidChange, this);
             break;
 
+        case WI.InlineSwatch.Type.Alignment:
+            // FIXME: <https://webkit.org/b/233054> Web Inspector: Add a swatch for align-items and align-self
+            // FIXME: <https://webkit.org/b/233055> Web Inspector: Add a swatch for justify-content, justify-items, and justify-self
+            this._valueEditor = new WI.AlignmentEditor;
+            this._valueEditor.addEventListener(WI.AlignmentEditor.Event.ValueChanged, this._valueEditorValueDidChange, this);
+            break;
+
         case WI.InlineSwatch.Type.Variable:
             this._valueEditor = {};
 
@@ -331,6 +354,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.spring = value;
             break;
 
+        case WI.InlineSwatch.Type.Alignment:
+            this._valueEditor.value = value;
+            break;
+
         case WI.InlineSwatch.Type.Variable: {
             let codeMirror = this._valueEditor.codeMirror;
             codeMirror.setValue(value);
@@ -375,6 +402,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         case WI.InlineSwatch.Type.Spring:
             this._value = event.data.spring;
+            break;
+
+        case WI.InlineSwatch.Type.Alignment:
+            this._value = event.data.value;
             break;
         }
 
@@ -525,6 +556,7 @@ WI.InlineSwatch.Type = {
     Spring: "inline-swatch-type-spring",
     Variable: "inline-swatch-type-variable",
     Image: "inline-swatch-type-image",
+    Alignment: "inline-swatch-type-alignment",
 };
 
 WI.InlineSwatch.Event = {

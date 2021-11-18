@@ -627,9 +627,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     _replaceSpecialTokens(tokens)
     {
         // FIXME: <https://webkit.org/b/178636> Web Inspector: Styles: Make inline widgets work with CSS functions (var(), calc(), etc.)
+        // FIXME: <https://webkit.org/b/233054> Web Inspector: Add a swatch for align-items and align-self
+        // FIXME: <https://webkit.org/b/233055> Web Inspector: Add a swatch for justify-content, justify-items, and justify-self
 
         if (this._property.name === "box-shadow")
             return this._addBoxShadowTokens(tokens);
+
+        if (this._property.name === "align-content")
+            return this._addAlignmentTokens(tokens);
 
         if (this._property.isVariable || WI.CSSKeywordCompletions.isColorAwareProperty(this._property.name)) {
             tokens = this._addGradientTokens(tokens);
@@ -842,6 +847,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
 
         return newTokens;
+    }
+
+    _addAlignmentTokens(tokens)
+    {
+        // FIXME: <https://webkit.org/b/233281> Web Inspector: Alignment swatch should handle multi-token values better
+        let text = this._resolveVariables(tokens.map((token) => token.value).join(""));
+        let swatch = this._createInlineSwatch(WI.InlineSwatch.Type.Alignment, this._addVariableTokens(tokens), text);
+        return [swatch];
     }
 
     _addVariableTokens(tokens)
