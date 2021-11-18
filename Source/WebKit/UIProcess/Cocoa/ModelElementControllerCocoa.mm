@@ -253,6 +253,7 @@ void ModelElementController::getCameraForModelElement(ModelIdentifier modelIdent
         return;
     }
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM)
     [preview getCameraTransform:makeBlockPtr([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (simd_float3 cameraTransform, NSError *error) mutable {
         if (error) {
             callOnMainRunLoop([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { WebCore::ResourceError::Type::General }] () mutable {
@@ -267,6 +268,13 @@ void ModelElementController::getCameraForModelElement(ModelIdentifier modelIdent
                 completionHandler(WebCore::HTMLModelElementCamera { cameraTransform.x, cameraTransform.y, cameraTransform.z });
         });
     }).get()];
+#else
+    callOnMainRunLoop([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { WebCore::ResourceError::Type::General }] () mutable {
+        if (weakThis)
+            completionHandler(makeUnexpected(error));
+    });
+    return;
+#endif
 }
 
 void ModelElementController::setCameraForModelElement(ModelIdentifier modelIdentifier, WebCore::HTMLModelElementCamera camera, CompletionHandler<void(bool)>&& completionHandler)
@@ -280,11 +288,17 @@ void ModelElementController::setCameraForModelElement(ModelIdentifier modelIdent
         return;
     }
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM)
     [preview setCameraTransform:simd_make_float3(camera.pitch, camera.yaw, camera.scale)];
+#endif
 
     callOnMainRunLoop([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         if (weakThis)
+#if ENABLE(ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM)
             completionHandler(true);
+#else
+            completionHandler(false);
+#endif
     });
 }
 

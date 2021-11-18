@@ -1,3 +1,17 @@
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for getting and setting the camera
+        https://bugs.webkit.org/show_bug.cgi?id=233265
+        <rdar://problem/85426290>
+
+        Unreviewed build fix.
+
+        Fix the Montery build, making sure we guard calls to the new ARQL SPIs.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::getCameraForModelElement):
+        (WebKit::ModelElementController::setCameraForModelElement):
+
 2021-11-18  Per Arne  <pvollan@apple.com>
 
         [iOS] Block access to unused resources in the Networking process' sandbox
