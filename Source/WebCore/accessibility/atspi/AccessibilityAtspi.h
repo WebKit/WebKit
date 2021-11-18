@@ -63,6 +63,8 @@ public:
     void textCaretMoved(AccessibilityObjectAtspi&, unsigned);
     void textSelectionChanged(AccessibilityObjectAtspi&);
 
+    void valueChanged(AccessibilityObjectAtspi&, double);
+
     static const char* localizedRoleName(AccessibilityRole);
 
 private:

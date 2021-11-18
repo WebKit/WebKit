@@ -1614,6 +1614,57 @@ static void testTextReplacedObjects(AccessibilityTest* test, gconstpointer)
 #endif
 }
 
+static void testValueBasic(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <input type='range' min='0' max='100' value='50' step='25'/>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
+    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
+
+    auto slider = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_VALUE(slider.get()));
+    g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 50);
+    g_assert_cmpfloat(atspi_value_get_minimum_value(ATSPI_VALUE(slider.get()), nullptr), ==, 0);
+    g_assert_cmpfloat(atspi_value_get_maximum_value(ATSPI_VALUE(slider.get()), nullptr), ==, 100);
+    g_assert_cmpfloat(atspi_value_get_minimum_increment(ATSPI_VALUE(slider.get()), nullptr), ==, 25);
+
+    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value" });
+    g_assert_true(atspi_value_set_current_value(ATSPI_VALUE(slider.get()), 75, nullptr));
+    auto events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:property-change:accessible-value");
+    g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 75);
+
+    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value" });
+    g_assert_true(atspi_value_set_current_value(ATSPI_VALUE(slider.get()), 125, nullptr));
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:property-change:accessible-value");
+    g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 100);
+    test->startEventMonitor(slider.get(), { "object:property-change:accessible-value" });
+    g_assert_true(atspi_value_set_current_value(ATSPI_VALUE(slider.get()), -25, nullptr));
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:property-change:accessible-value");
+    g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 0);
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -1634,6 +1685,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "text/attributes", testTextAttributes);
     AccessibilityTest::add("WebKitAccessibility", "text/state-changed", testTextStateChanged);
     AccessibilityTest::add("WebKitAccessibility", "text/replaced-objects", testTextReplacedObjects);
+    AccessibilityTest::add("WebKitAccessibility", "value/basic", testValueBasic);
 }
 
 void afterAll()

@@ -220,6 +220,18 @@ void AccessibilityAtspi::textSelectionChanged(AccessibilityObjectAtspi& atspiObj
     });
 }
 
+void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, double value)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, value] {
+        if (!m_connection)
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
+            g_variant_new("(siiva{sv})", "accessible-value", 0, 0, g_variant_new_double(value), nullptr), nullptr);
+    });
+}
+
 struct RoleNameEntry {
     const char* name;
     const char* localizedName;

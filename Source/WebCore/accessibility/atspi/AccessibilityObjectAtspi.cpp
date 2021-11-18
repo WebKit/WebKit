@@ -83,6 +83,9 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
         }
     }
 
+    if (coreObject.supportsRangeValue())
+        interfaces.add(Interface::Value);
+
     return interfaces;
 }
 
@@ -469,6 +472,8 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_component_interface), &s_componentFunctions });
         if (m_interfaces.contains(Interface::Text))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_text_interface), &s_textFunctions });
+        if (m_interfaces.contains(Interface::Value))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_value_interface), &s_valueFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -1084,6 +1089,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_component_interface.name);
     if (m_interfaces.contains(Interface::Text))
         g_variant_builder_add(builder, "s", webkit_text_interface.name);
+    if (m_interfaces.contains(Interface::Value))
+        g_variant_builder_add(builder, "s", webkit_value_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const

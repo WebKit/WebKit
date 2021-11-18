@@ -86,6 +86,8 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
     case AXMenuListValueChanged:
         break;
     case AXValueChanged:
+        if (wrapper->interfaces().contains(AccessibilityObjectAtspi::Interface::Value))
+            wrapper->valueChanged(coreObject->valueForRange());
         break;
     case AXInvalidStatusChanged:
         wrapper->stateChanged("invalid-entry", coreObject->invalidStatus() != "false");

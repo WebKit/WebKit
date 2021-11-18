@@ -383,6 +383,31 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
+    String attributeName = toWTFString(attribute);
+    if (attributeName != "AXValue")
+        return false;
+
+    if (checkElementState(m_element.get(), WebCore::Atspi::State::ReadOnly))
+        return false;
+
+    if (checkElementState(m_element.get(), WebCore::Atspi::State::Editable))
+        return true;
+
+    if (checkElementState(m_element.get(), WebCore::Atspi::State::Checkable))
+        return true;
+
+    if (m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value)
+        && checkElementState(m_element.get(), WebCore::Atspi::State::Focusable)) {
+        double minimumValue, maximumValue;
+        s_controller->executeOnAXThreadAndWait([this, &minimumValue, &maximumValue] {
+            m_element->updateBackingStore();
+            minimumValue = m_element->minimumValue();
+            maximumValue = m_element->maximumValue();
+        });
+        if (minimumValue != maximumValue)
+            return true;
+    }
+
     return false;
 }
 
@@ -717,22 +742,48 @@ double AccessibilityUIElement::clickPointY()
 
 double AccessibilityUIElement::intValue() const
 {
-    return 0;
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))
+        return 0;
+
+    double currentValue;
+    s_controller->executeOnAXThreadAndWait([this, &currentValue] {
+        m_element->updateBackingStore();
+        currentValue = m_element->currentValue();
+    });
+    return currentValue;
 }
 
 double AccessibilityUIElement::minValue()
 {
-    return 0;
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))
+        return 0;
+
+    double minimumValue;
+    s_controller->executeOnAXThreadAndWait([this, &minimumValue] {
+        m_element->updateBackingStore();
+        minimumValue = m_element->minimumValue();
+    });
+    return minimumValue;
 }
 
 double AccessibilityUIElement::maxValue()
 {
-    return 0;
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))
+        return 0;
+
+    double maximumValue;
+    s_controller->executeOnAXThreadAndWait([this, &maximumValue] {
+        m_element->updateBackingStore();
+        maximumValue = m_element->maximumValue();
+    });
+    return maximumValue;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    auto attributes = m_element->attributes();
+    auto value = makeString("AXValueDescription: ", attributes.get("valuetext"));
+    return OpaqueJSString::tryCreate(value).leakRef();
 }
 
 int AccessibilityUIElement::insertionPointLineNumber()
@@ -1022,10 +1073,18 @@ bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
 
 void AccessibilityUIElement::increment()
 {
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))
+        return;
+
+    m_element->setCurrentValue(intValue() + m_element->minimumIncrement());
 }
 
 void AccessibilityUIElement::decrement()
 {
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))
+        return;
+
+    m_element->setCurrentValue(intValue() - m_element->minimumIncrement());
 }
 
 void AccessibilityUIElement::showMenu()

@@ -43,6 +43,7 @@ accessibility/atspi/AccessibilityAtspi.cpp
 accessibility/atspi/AccessibilityObjectAtspi.cpp
 accessibility/atspi/AccessibilityObjectComponentAtspi.cpp
 accessibility/atspi/AccessibilityObjectTextAtspi.cpp
+accessibility/atspi/AccessibilityObjectValueAtspi.cpp
 accessibility/atspi/AccessibilityRootAtspi.cpp
 accessibility/atspi/AXObjectCacheAtspi.cpp
 

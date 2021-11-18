@@ -45,7 +45,8 @@ public:
     enum class Interface : uint8_t {
         Accessible = 1 << 0,
         Component = 1 << 1,
-        Text = 1 << 2
+        Text = 1 << 2,
+        Value = 1 << 3
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -109,6 +110,13 @@ public:
     void textAttributesChanged();
     void selectionChanged(const VisibleSelection&);
 
+    WEBCORE_EXPORT double currentValue() const;
+    WEBCORE_EXPORT bool setCurrentValue(double);
+    WEBCORE_EXPORT double minimumValue() const;
+    WEBCORE_EXPORT double maximumValue() const;
+    WEBCORE_EXPORT double minimumIncrement() const;
+    void valueChanged(double);
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
@@ -145,6 +153,7 @@ private:
     static GDBusInterfaceVTable s_accessibleFunctions;
     static GDBusInterfaceVTable s_componentFunctions;
     static GDBusInterfaceVTable s_textFunctions;
+    static GDBusInterfaceVTable s_valueFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

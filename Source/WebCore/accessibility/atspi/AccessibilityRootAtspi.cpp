@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "Page.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/MainThread.h>
