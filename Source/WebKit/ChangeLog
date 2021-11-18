@@ -1,5 +1,38 @@
 2021-11-18  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r285886. rdar://problem/85473581
+
+    [iOS] Limit graphics related IOKit method filtering
+    https://bugs.webkit.org/show_bug.cgi?id=233209
+    <rdar://problem/85473581>
+    
+    Reviewed by Brent Fulgham.
+    
+    Limit graphics related IOKit method filtering based on OS version. This patch also adds an entitlement which
+    will enable a replacement for the disabled filtering.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    * Scripts/process-entitlements.sh:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285886 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-16  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Limit graphics related IOKit method filtering
+            https://bugs.webkit.org/show_bug.cgi?id=233209
+            <rdar://problem/85473581>
+
+            Reviewed by Brent Fulgham.
+
+            Limit graphics related IOKit method filtering based on OS version. This patch also adds an entitlement which
+            will enable a replacement for the disabled filtering.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+            * Scripts/process-entitlements.sh:
+
+2021-11-18  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r285889. rdar://problem/85430575
 
     Adjust graphics related message filter

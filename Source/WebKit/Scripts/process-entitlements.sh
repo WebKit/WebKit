@@ -32,6 +32,10 @@ function mac_process_webcontent_entitlements()
         then
             plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
         fi
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+        then
+            plistbuddy Add :com.apple.private.gpu-restricted bool YES
+        fi
     fi
 
     mac_process_webcontent_or_plugin_entitlements
@@ -58,6 +62,11 @@ function mac_process_gpu_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
+        fi
+
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+        then
+            plistbuddy Add :com.apple.private.gpu-restricted bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
@@ -279,6 +288,7 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
     plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
+    plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
@@ -307,6 +317,7 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
+    plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.mediaexperience.startrecordinginthebackground.allow bool YES
     plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
