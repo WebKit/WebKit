@@ -960,8 +960,12 @@ void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& aut
     populateGridPositionsForDirection(ForColumns);
     populateGridPositionsForDirection(ForRows);
 
-    for (auto& autoGridItem : autoGridItems) 
+    for (auto& autoGridItem : autoGridItems) {
         updateGridAreaLogicalSize(*autoGridItem, gridAreaBreadthForChildIncludingAlignmentOffsets(*autoGridItem, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*autoGridItem, ForRows));
+        // For an item wtih aspect-ratio, if it has stretch alignment that stretches to the definite row, we also need to transfer the size before laying out the grid item.
+        if (autoGridItem->hasStretchedLogicalHeight())
+            applyStretchAlignmentToChildIfNeeded(*autoGridItem);
+    }
 }
 
 void RenderGrid::layoutGridItems()

@@ -84,7 +84,7 @@ bool isOrthogonalChild(const RenderGrid& grid, const RenderBox& child)
 
 bool isAspectRatioBlockSizeDependentChild(const RenderBox& child)
 {
-    return (child.style().hasAspectRatio() || child.hasIntrinsicAspectRatio()) && child.hasRelativeLogicalHeight();
+    return (child.style().hasAspectRatio() || child.hasIntrinsicAspectRatio()) && (child.hasRelativeLogicalHeight() || child.hasStretchedLogicalHeight());
 }
 
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid& grid, const RenderBox& child, GridTrackSizingDirection direction)
