@@ -70,7 +70,7 @@ private:
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
-    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&);
+    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
 
     void setConnection(IPC::Connection*);
 
@@ -105,7 +105,7 @@ private:
         using Source = std::variant<Ref<RemoteRealtimeVideoSource>, Ref<RemoteRealtimeDisplaySource>>;
         explicit RemoteVideo(Source&&);
 
-        void videoSampleAvailable(WebCore::RemoteVideoSample&&);
+        void videoSampleAvailable(WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
 
     private:
         Source m_source;

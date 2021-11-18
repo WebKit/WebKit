@@ -179,7 +179,7 @@ private:
             m_captureSemaphore->signal();
     }
 
-    void videoSampleAvailable(MediaSample& sample) final
+    void videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata) final
     {
         std::unique_ptr<RemoteVideoSample> remoteSample;
         if (m_shouldApplyRotation && sample.videoRotation() != MediaSample::VideoRotation::None) {
@@ -192,7 +192,7 @@ private:
             if (m_webProcessIdentityToken)
                 remoteSample->setOwnershipIdentity(*m_webProcessIdentityToken);
 #endif
-            m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
+            m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample), metadata), 0);
         }
     }
 

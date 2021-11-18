@@ -220,7 +220,8 @@ void DisplayCaptureSourceCocoa::emitFrame()
     if (!m_imageTransferSession)
         m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
 
-    auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
+    auto elapsedTime = this->elapsedTime();
+    auto sampleTime = MediaTime::createWithDouble((elapsedTime + 100_ms).seconds());
 
     auto frame = m_capturer->generateFrame();
     auto imageSize = WTF::switchOn(frame,
@@ -282,7 +283,9 @@ void DisplayCaptureSourceCocoa::emitFrame()
         return;
     }
 
-    videoSampleAvailable(*sample.get());
+    VideoSampleMetadata metadata;
+    metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
+    videoSampleAvailable(*sample.get(), metadata);
 }
 
 void DisplayCaptureSourceCocoa::setLogger(const Logger& logger, const void* identifier)

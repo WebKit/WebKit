@@ -41,6 +41,7 @@
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include "Page.h"
+#include "Performance.h"
 #include "PictureInPictureSupport.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
@@ -609,14 +610,26 @@ void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
     m_videoFrameRequests.remove(index);
 }
 
+static void processVideoFrameMetadataTimestamps(VideoFrameMetadata& metadata, Performance& performance)
+{
+    metadata.presentationTime = performance.relativeTimeFromTimeOriginInReducedResolution(MonotonicTime::fromRawSeconds(metadata.presentationTime));
+    metadata.expectedDisplayTime = performance.relativeTimeFromTimeOriginInReducedResolution(MonotonicTime::fromRawSeconds(metadata.expectedDisplayTime));
+    if (metadata.captureTime)
+        metadata.captureTime = performance.relativeTimeFromTimeOriginInReducedResolution(MonotonicTime::fromRawSeconds(*metadata.captureTime));
+    if (metadata.receiveTime)
+        metadata.receiveTime = performance.relativeTimeFromTimeOriginInReducedResolution(MonotonicTime::fromRawSeconds(*metadata.receiveTime));
+}
+
 void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSeconds now)
 {
     if (!player())
         return;
 
     auto videoFrameMetadata = player()->videoFrameMetadata();
-    if (!videoFrameMetadata)
+    if (!videoFrameMetadata || !document().domWindow())
         return;
+
+    processVideoFrameMetadataTimestamps(*videoFrameMetadata, document().domWindow()->performance());
 
     Ref protectedThis { *this };
 

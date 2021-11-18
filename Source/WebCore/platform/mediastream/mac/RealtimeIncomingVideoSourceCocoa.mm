@@ -196,7 +196,8 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
     auto sample = adoptCF(sampleBuffer);
 
     setIntrinsicSize(IntSize(width, height));
-    videoSampleAvailable(MediaSampleAVFObjC::create(sample.get(), rotation));
+
+    videoSampleAvailable(MediaSampleAVFObjC::create(sample.get(), rotation), metadataFromVideoFrame(frame));
 }
 
 } // namespace WebCore

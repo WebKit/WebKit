@@ -191,7 +191,7 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     });
 }
 
-void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
+void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample, VideoSampleMetadata metadata)
 {
 #if !RELEASE_LOG_DISABLED
     ++m_frameCount;
@@ -211,7 +211,7 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 
     Locker locker { m_videoSampleObserversLock };
     for (auto* observer : m_videoSampleObservers)
-        observer->videoSampleAvailable(mediaSample);
+        observer->videoSampleAvailable(mediaSample, metadata);
 }
 
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)

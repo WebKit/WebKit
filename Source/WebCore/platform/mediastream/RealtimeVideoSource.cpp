@@ -179,7 +179,7 @@ RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 }
 #endif
 
-void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample)
+void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
 {
     if (m_frameDecimation > 1 && ++m_frameDecimationCounter % m_frameDecimation)
         return;
@@ -193,13 +193,13 @@ void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample)
     auto size = this->size();
     if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
         if (auto mediaSample = adaptVideoSample(sample)) {
-            RealtimeMediaSource::videoSampleAvailable(*mediaSample);
+            RealtimeMediaSource::videoSampleAvailable(*mediaSample, metadata);
             return;
         }
     }
 #endif
 
-    RealtimeMediaSource::videoSampleAvailable(sample);
+    RealtimeMediaSource::videoSampleAvailable(sample, metadata);
 }
 
 Ref<RealtimeMediaSource> RealtimeVideoSource::clone()

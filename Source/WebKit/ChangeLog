@@ -1,3 +1,22 @@
+2021-11-17  Youenn Fablet  <youenn@apple.com>
+
+        Add support for more rvfc metadata
+        https://bugs.webkit.org/show_bug.cgi?id=233185
+
+        Reviewed by Eric Carlson.
+
+        Make sure to receive frame metadats, send it through IPC to WebProcess and pipe it to media source observers.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeDisplaySource.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+
 2021-11-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add IPC message handlers for WebGPU

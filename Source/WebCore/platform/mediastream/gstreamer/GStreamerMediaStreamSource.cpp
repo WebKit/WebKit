@@ -262,7 +262,7 @@ public:
         }
     }
 
-    void videoSampleAvailable(MediaSample& sample) final
+    void videoSampleAvailable(MediaSample& sample, VideoSampleMetadata) final
     {
         if (!m_parent)
             return;

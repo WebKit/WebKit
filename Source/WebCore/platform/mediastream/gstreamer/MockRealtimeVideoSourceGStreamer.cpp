@@ -88,9 +88,9 @@ void MockDisplayCaptureSourceGStreamer::requestToEnd(Observer& callingObserver)
     m_source->requestToEnd(callingObserver);
 }
 
-void MockDisplayCaptureSourceGStreamer::videoSampleAvailable(MediaSample& sample)
+void MockDisplayCaptureSourceGStreamer::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
 {
-    RealtimeMediaSource::videoSampleAvailable(sample);
+    RealtimeMediaSource::videoSampleAvailable(sample, metadata);
 }
 
 const RealtimeMediaSourceCapabilities& MockDisplayCaptureSourceGStreamer::capabilities()
@@ -154,7 +154,7 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
 
     auto sample = MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer), size(), frameRate(), sampleRotation());
     sample->offsetTimestampsBy(MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds()));
-    dispatchMediaSampleToObservers(sample.get());
+    dispatchMediaSampleToObservers(sample.get(), { });
 }
 
 } // namespace WebCore

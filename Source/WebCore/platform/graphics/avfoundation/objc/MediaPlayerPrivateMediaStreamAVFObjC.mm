@@ -244,9 +244,10 @@ static inline CGAffineTransform videoTransformationMatrix(MediaSample& sample)
     return videoTransform;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sample)
+void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
 {
-    processNewVideoSample(sample, sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored);
+    auto presentationTime = MonotonicTime::now().secondsSinceEpoch();
+    processNewVideoSample(sample, sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored, metadata, presentationTime);
     enqueueVideoSample(sample);
 }
 
@@ -276,14 +277,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sampl
     m_sampleBufferDisplayLayer->enqueueSample(sample);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, bool hasChangedOrientation)
+void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, bool hasChangedOrientation, VideoSampleMetadata metadata, Seconds presentationTime)
 {
     if (!isMainThread()) {
         {
             Locker locker { m_currentVideoSampleLock };
             m_currentVideoSample = &sample;
         }
-        callOnMainThread([weakThis = WeakPtr { *this }, hasChangedOrientation]() mutable {
+        callOnMainThread([weakThis = WeakPtr { *this }, hasChangedOrientation, metadata, presentationTime]() mutable {
             if (!weakThis)
                 return;
 
@@ -298,7 +299,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
             if (!sample)
                 return;
 
-            weakThis->processNewVideoSample(*sample, hasChangedOrientation);
+            weakThis->processNewVideoSample(*sample, hasChangedOrientation, metadata, presentationTime);
         });
         return;
     }
@@ -316,6 +317,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
             updateReadyState();
     }
 
+    m_presentationTime = presentationTime;
+    m_sampleMetadata = metadata;
     ++m_sampleCount;
 
     if (m_displayMode != LivePreview && !m_waitingForFirstImage)
@@ -1106,8 +1109,14 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateMediaStreamAVFObjC::videoFra
     metadata.width = m_intrinsicSize.width();
     metadata.height = m_intrinsicSize.height();
     metadata.presentedFrames = m_sampleCount;
-
-    // FIXME: It would be good to expose more video frame metadata.
+    metadata.presentationTime = m_presentationTime.seconds();
+    metadata.expectedDisplayTime = m_presentationTime.seconds();
+    metadata.processingDuration = m_sampleMetadata.processingDuration;
+    if (m_sampleMetadata.captureTime)
+        metadata.captureTime = m_sampleMetadata.captureTime->seconds();
+    if (m_sampleMetadata.receiveTime)
+        metadata.receiveTime = m_sampleMetadata.receiveTime->seconds();
+    metadata.rtpTimestamp = m_sampleMetadata.rtpTimestamp;
 
     return metadata;
 }

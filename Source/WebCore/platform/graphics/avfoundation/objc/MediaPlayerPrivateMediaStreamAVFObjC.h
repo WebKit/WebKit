@@ -136,7 +136,7 @@ private:
 
     void flushRenderers();
 
-    void processNewVideoSample(MediaSample&, bool hasChangedOrientation);
+    void processNewVideoSample(MediaSample&, bool hasChangedOrientation, VideoSampleMetadata, Seconds);
     void enqueueVideoSample(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
 
@@ -208,7 +208,7 @@ private:
     void readyStateChanged(MediaStreamTrackPrivate&) override;
 
     // RealtimeMediaSouce::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&) final;
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
@@ -283,6 +283,8 @@ private:
 
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
+    Seconds m_presentationTime { 0 };
+    VideoSampleMetadata m_sampleMetadata;
 };
     
 }

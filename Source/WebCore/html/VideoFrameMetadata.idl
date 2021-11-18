@@ -29,9 +29,8 @@ typedef double DOMHighResTimeStamp;
     Conditional=VIDEO,
     JSGenerateToJSObject,
 ] dictionary VideoFrameMetadata {
-    // FIXME: expose presentationTime and expectedDisplayTime.
-    // required DOMHighResTimeStamp presentationTime;
-    // required DOMHighResTimeStamp expectedDisplayTime;
+    required DOMHighResTimeStamp presentationTime;
+    required DOMHighResTimeStamp expectedDisplayTime;
 
     required unsigned long width;
     required unsigned long height;

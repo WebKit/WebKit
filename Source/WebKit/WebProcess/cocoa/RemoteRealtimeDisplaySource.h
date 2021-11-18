@@ -61,7 +61,7 @@ public:
     void captureStopped();
     void captureFailed() final;
 
-    void remoteVideoSampleAvailable(WebCore::MediaSample& sample) { videoSampleAvailable(sample); }
+    void remoteVideoSampleAvailable(WebCore::MediaSample& sample, WebCore::VideoSampleMetadata metadata) { videoSampleAvailable(sample, metadata); }
     void sourceMutedChanged(bool value) { notifyMutedChange(value); }
 
 private:

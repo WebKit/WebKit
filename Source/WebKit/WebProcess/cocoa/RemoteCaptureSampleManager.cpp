@@ -150,7 +150,7 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(ipcHandle.handle, description, numberOfFrames, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample)
+void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample, VideoSampleMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -159,7 +159,7 @@ void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentif
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
         return;
     }
-    iterator->value->videoSampleAvailable(WTFMove(sample));
+    iterator->value->videoSampleAvailable(WTFMove(sample), metadata);
 }
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeAudioSource>&& source)
@@ -232,7 +232,7 @@ RemoteCaptureSampleManager::RemoteVideo::RemoteVideo(Source&& source)
 {
 }
 
-void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSample&& remoteSample)
+void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSample&& remoteSample, VideoSampleMetadata metadata)
 {
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
         m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
@@ -248,9 +248,9 @@ void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSa
         return;
     }
     switchOn(m_source, [&](Ref<RemoteRealtimeVideoSource>& source) {
-        source->videoSampleAvailable(*sampleRef, remoteSample.size());
+        source->videoSampleAvailable(*sampleRef, remoteSample.size(), metadata);
     }, [&](Ref<RemoteRealtimeDisplaySource>& source) {
-        source->remoteVideoSampleAvailable(*sampleRef);
+        source->remoteVideoSampleAvailable(*sampleRef, metadata);
     });
 }
 

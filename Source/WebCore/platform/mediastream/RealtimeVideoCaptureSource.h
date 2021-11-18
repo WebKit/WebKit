@@ -72,7 +72,7 @@ protected:
 
     void updateCapabilities(RealtimeMediaSourceCapabilities&);
 
-    void dispatchMediaSampleToObservers(MediaSample&);
+    void dispatchMediaSampleToObservers(MediaSample&, WebCore::VideoSampleMetadata);
     const Vector<IntSize>& standardVideoSizes();
 
 private:

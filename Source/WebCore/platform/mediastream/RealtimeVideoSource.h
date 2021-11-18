@@ -72,7 +72,7 @@ private:
     bool preventSourceFromStopping() final;
 
     // RealtimeMediaSource::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&) final;
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
 
 #if PLATFORM(COCOA)
     RefPtr<MediaSample> adaptVideoSample(MediaSample&);

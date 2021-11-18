@@ -386,7 +386,7 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(std::optional<int> width, s
     setFrameRate(match->requestedFrameRate);
 }
 
-void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample)
+void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample, WebCore::VideoSampleMetadata metadata)
 {
     MediaTime sampleTime = sample.presentationTime();
 
@@ -400,7 +400,7 @@ void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sam
     if (interval > 1)
         m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
 
-    videoSampleAvailable(sample);
+    videoSampleAvailable(sample, metadata);
 }
 
 void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)

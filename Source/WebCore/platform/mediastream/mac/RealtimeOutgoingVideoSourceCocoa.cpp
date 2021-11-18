@@ -61,7 +61,7 @@ RealtimeOutgoingVideoSourceCocoa::RealtimeOutgoingVideoSourceCocoa(Ref<MediaStre
 {
 }
 
-void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample)
+void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
 #if !RELEASE_LOG_DISABLED
     if (!(++m_numberOfFrames % 60))

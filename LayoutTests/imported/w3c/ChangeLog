@@ -1,3 +1,12 @@
+2021-11-17  Youenn Fablet  <youenn@apple.com>
+
+        Add support for more rvfc metadata
+        https://bugs.webkit.org/show_bug.cgi?id=233185
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https-expected.txt:
+
 2021-11-17  Chris Dumez  <cdumez@apple.com>
 
         Web Locks API does get enabled in Service Workers when running layout tests

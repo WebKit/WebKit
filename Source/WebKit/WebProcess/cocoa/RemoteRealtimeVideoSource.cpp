@@ -112,7 +112,7 @@ void RemoteRealtimeVideoSource::setSettings(RealtimeMediaSourceSettings&& settin
     notifySettingsDidChangeObservers(changed);
 }
 
-void RemoteRealtimeVideoSource::videoSampleAvailable(MediaSample& sample, IntSize sampleSize)
+void RemoteRealtimeVideoSource::videoSampleAvailable(MediaSample& sample, IntSize sampleSize, VideoSampleMetadata metadata)
 {
     ASSERT(type() == Type::Video);
 
@@ -131,7 +131,7 @@ void RemoteRealtimeVideoSource::videoSampleAvailable(MediaSample& sample, IntSiz
             notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
         });
     }
-    dispatchMediaSampleToObservers(sample);
+    dispatchMediaSampleToObservers(sample, metadata);
 }
 
 bool RemoteRealtimeVideoSource::setShouldApplyRotation(bool shouldApplyRotation)

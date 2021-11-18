@@ -1,3 +1,14 @@
+2021-11-17  Youenn Fablet  <youenn@apple.com>
+
+        Add support for more rvfc metadata
+        https://bugs.webkit.org/show_bug.cgi?id=233185
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-17  Ricky Mondello  <rmondello@apple.com>
 
         When an "autofilled and viewable" field becomes empty, turn "autofilled and viewable" off

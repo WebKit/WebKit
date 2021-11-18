@@ -5477,7 +5477,7 @@ void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
     m_nextTrackFramePromise = makeUnique<TrackFramePromise>(WTFMove(promise));
 }
 
-void Internals::videoSampleAvailable(MediaSample& sample)
+void Internals::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
     callOnMainThread([this, weakThis = WeakPtr { *this }, sample = Ref { sample }] {
         if (!weakThis)

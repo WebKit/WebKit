@@ -195,7 +195,7 @@ void GStreamerVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
     if (!isProducingData() || muted())
         return;
 
-    dispatchMediaSampleToObservers(WTFMove(sample));
+    dispatchMediaSampleToObservers(WTFMove(sample), { });
 }
 
 GstFlowReturn GStreamerVideoCaptureSource::newSampleCallback(GstElement* sink, GStreamerVideoCaptureSource* source)

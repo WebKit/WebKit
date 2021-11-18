@@ -62,7 +62,9 @@ protected:
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "RealtimeIncomingVideoSource"; }
 #endif
-    
+
+    static VideoSampleMetadata metadataFromVideoFrame(const webrtc::VideoFrame&);
+
 private:
     // RealtimeMediaSource API
     void startProducingData() final;

@@ -89,7 +89,7 @@ MediaRecorderPrivate::~MediaRecorderPrivate()
     m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { m_identifier }, 0);
 }
 
-void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample)
+void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
     std::unique_ptr<RemoteVideoSample> remoteSample;
     if (shouldMuteVideo()) {
