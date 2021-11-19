@@ -8,6 +8,8 @@
 	<array>
 		<string>com.apple.TestWebKitAPI</string>
 	</array>
+	<key>com.apple.private.webkit.webpush</key>
+	<true/>
 	<key>com.apple.security.temporary-exception.sbpl</key>
 	<array>
 		<string>(allow mach-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.mach&quot;)))</string>

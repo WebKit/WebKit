@@ -25,14 +25,19 @@
 
 #pragma once
 
+#include "PushClientConnection.h"
 #include "WebPushDaemonConstants.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/Span.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
-using WebKit::WebPushD::MessageType;
+
+namespace JSC {
+enum class MessageLevel : uint8_t;
+}
 
 namespace WebPushD {
 
@@ -48,18 +53,28 @@ public:
     void connectionRemoved(xpc_connection_t);
 
     // Message handlers
-    void echoTwice(const String&, CompletionHandler<void(const String&)>&& replySender);
-    void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&& replySender);
-    void getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<String>&)>&& replySender);
-    void deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender);
+    void echoTwice(ClientConnection*, const String&, CompletionHandler<void(const String&)>&& replySender);
+    void requestSystemNotificationPermission(ClientConnection*, const String&, CompletionHandler<void(bool)>&& replySender);
+    void getOriginsWithPushAndNotificationPermissions(ClientConnection*, CompletionHandler<void(const Vector<String>&)>&& replySender);
+    void deletePushAndNotificationRegistration(ClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
+    void setHostAppAuditToken(ClientConnection*, const Vector<uint8_t>&);
+    void setDebugModeIsEnabled(ClientConnection*, bool);
+
+    void broadcastDebugMessage(JSC::MessageLevel, const String&);
 
 private:
     Daemon() = default;
 
-    CompletionHandler<void(EncodedMessage&&)> createReplySender(MessageType, OSObjectPtr<xpc_object_t>&& request);
-    void decodeAndHandleMessage(MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
+    CompletionHandler<void(EncodedMessage&&)> createReplySender(WebKit::WebPushD::MessageType, OSObjectPtr<xpc_object_t>&& request);
+    void decodeAndHandleMessage(xpc_connection_t, WebKit::WebPushD::MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
+
+    bool canRegisterForNotifications(ClientConnection&);
+
+    ClientConnection* toClientConnection(xpc_connection_t);
 
     HashSet<String> m_inMemoryOriginStringsWithPermissionForTesting;
+
+    HashMap<xpc_connection_t, std::unique_ptr<ClientConnection>> m_connectionMap;
 };
 
 } // namespace WebPushD

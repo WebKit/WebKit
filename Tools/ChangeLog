@@ -1,3 +1,16 @@
+2021-11-19  Brady Eidson  <beidson@apple.com>
+
+        More webpushd architecture work
+        https://bugs.webkit.org/show_bug.cgi?id=233295
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI-iOS.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS-internal.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS.entitlements:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::TEST):
+
 2021-11-18  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Move AuthedBlueprint to webkitflaskpy

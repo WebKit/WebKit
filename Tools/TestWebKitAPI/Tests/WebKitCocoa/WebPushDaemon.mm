@@ -31,6 +31,8 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
+#import <mach/mach_init.h>
+#import <mach/task.h>
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
@@ -156,7 +158,7 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
 }
 
 // FIXME: Re-enable this test for Monterey+ once webkit.org/232857 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
 TEST(WebPushD, DISABLED_BasicCommunication)
 #else
 TEST(WebPushD, BasicCommunication)
@@ -165,16 +167,67 @@ TEST(WebPushD, BasicCommunication)
     NSURL *tempDir = setUpTestWebPushD();
 
     auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", dispatch_get_main_queue(), 0));
-    xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
-    xpc_connection_activate(connection.get());
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
 
+    __block bool done = false;
+    xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t request) {
+        if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
+            return;
+        const char* debugMessage = xpc_dictionary_get_string(request, "debug message");
+        if (!debugMessage)
+            return;
+
+        bool stringMatches = !strcmp(debugMessage, "[webpushd - TestWebKitAPI] Turned Debug Mode on");
+        if (!stringMatches)
+            stringMatches = !strcmp(debugMessage, "[webpushd - com.apple.WebKit.TestWebKitAPI] Turned Debug Mode on");
+
+        EXPECT_TRUE(stringMatches);
+
+        done = true;
+    });
+
+    xpc_connection_activate(connection.get());
+
+    audit_token_t token = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
+    kern_return_t result = task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
+    if (result != KERN_SUCCESS) {
+        EXPECT_TRUE(false);
+        return;
+    }
+
+    // Send audit token
+    {
+        std::array<uint8_t, 40> encodedMessage;
+        encodedMessage.fill(0);
+        encodedMessage[0] = 32;
+        memcpy(&encodedMessage[8], &token, sizeof(token));
+        auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
+        xpc_dictionary_set_uint64(dictionary.get(), "message type", 5);
+        xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
+        xpc_connection_send_message(connection.get(), dictionary.get());
+    }
+
+    // Enable debug messages, and wait for the resulting debug message
+    {
+        auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+        std::array<uint8_t, 1> encodedMessage { 1 };
+        xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
+        xpc_dictionary_set_uint64(dictionary.get(), "message type", 6);
+        xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
+
+        xpc_connection_send_message(connection.get(), dictionary.get());
+        TestWebKitAPI::Util::run(&done);
+    }
+
+    // Echo and wait for a reply
+    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
     std::array<uint8_t, 10> encodedString { 5, 0, 0, 0, 1, 'h', 'e', 'l', 'l', 'o' };
     xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
     xpc_dictionary_set_uint64(dictionary.get(), "message type", 1);
     xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedString.data(), encodedString.size());
-    
-    __block bool done = false;
+
+    done = false;
     xpc_connection_send_message_with_reply(connection.get(), dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
             NSLog(@"Unexpected non-dictionary: %@", reply);
@@ -202,7 +255,7 @@ static const char* mainBytes = R"WEBPUSHRESOURCE(
 )WEBPUSHRESOURCE";
 
 // FIXME: Re-enable this test for Monterey+ once webkit.org/232857 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
 TEST(WebPushD, DISABLED_PermissionManagement)
 #else
 TEST(WebPushD, PermissionManagement)

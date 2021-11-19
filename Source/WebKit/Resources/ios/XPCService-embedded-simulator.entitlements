@@ -6,5 +6,7 @@
 	<true/>
 	<key>com.apple.private.webkit.use-xpc-endpoint</key>
 	<true/>
+	<key>com.apple.private.webkit.webpush</key>
+	<true/>
 </dict>
 </plist>

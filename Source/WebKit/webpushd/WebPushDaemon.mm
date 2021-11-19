@@ -68,6 +68,14 @@ ARGUMENTS(String)
 REPLY(bool)
 END
 
+FUNCTION(setHostAppAuditToken)
+ARGUMENTS(Vector<uint8_t>)
+END
+
+FUNCTION(setDebugModeIsEnabled)
+ARGUMENTS(bool)
+END
+
 #undef FUNCTION
 #undef ARGUMENTS
 #undef REPLY
@@ -104,7 +112,7 @@ WebPushD::EncodedMessage requestSystemNotificationPermission::encodeReply(bool r
 } // namespace MessageInfo
 
 template<typename Info>
-void handleWebPushDMessageWithReply(Span<const uint8_t> encodedMessage, CompletionHandler<void(WebPushD::EncodedMessage&&)>&& replySender)
+void handleWebPushDMessageWithReply(ClientConnection* connection, Span<const uint8_t> encodedMessage, CompletionHandler<void(WebPushD::EncodedMessage&&)>&& replySender)
 {
     WebKit::Daemon::Decoder decoder(encodedMessage);
 
@@ -117,13 +125,37 @@ void handleWebPushDMessageWithReply(Span<const uint8_t> encodedMessage, Completi
         replySender(Info::encodeReply(args...));
     } };
 
-    IPC::callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), &WebPushD::Daemon::singleton(), Info::MemberFunction);
+    IPC::callMemberFunction(tuple_cat(std::make_tuple(connection), WTFMove(*arguments)), WTFMove(completionHandler), &WebPushD::Daemon::singleton(), Info::MemberFunction);
+}
+
+template<typename Info>
+void handleWebPushDMessage(ClientConnection* connection, Span<const uint8_t> encodedMessage)
+{
+    WebKit::Daemon::Decoder decoder(encodedMessage);
+
+    std::optional<typename Info::ArgsTuple> arguments;
+    decoder >> arguments;
+    if (UNLIKELY(!arguments))
+        return;
+
+    IPC::callMemberFunction(tuple_cat(std::make_tuple(connection), WTFMove(*arguments)), &WebPushD::Daemon::singleton(), Info::MemberFunction);
 }
 
 Daemon& Daemon::singleton()
 {
     static NeverDestroyed<Daemon> daemon;
     return daemon;
+}
+
+void Daemon::broadcastDebugMessage(JSC::MessageLevel messageLevel, const String& message)
+{
+    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_uint64(dictionary.get(), protocolDebugMessageLevelKey, static_cast<uint64_t>(messageLevel));
+    xpc_dictionary_set_string(dictionary.get(), protocolDebugMessageKey, message.utf8().data());
+    for (auto& iterator : m_connectionMap) {
+        if (iterator.value->debugModeIsEnabled())
+            xpc_connection_send_message(iterator.key, dictionary.get());
+    }
 }
 
 void Daemon::connectionEventHandler(xpc_object_t request)
@@ -142,17 +174,19 @@ void Daemon::connectionEventHandler(xpc_object_t request)
     const void* data = xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize);
     Span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
     
-    decodeAndHandleMessage(messageType, encodedMessage, createReplySender(messageType, request));
+    decodeAndHandleMessage(xpc_dictionary_get_remote_connection(request), messageType, encodedMessage, createReplySender(messageType, request));
 }
 
-void Daemon::connectionAdded(xpc_connection_t)
+void Daemon::connectionAdded(xpc_connection_t connection)
 {
-    // FIXME: Track connections
+    RELEASE_ASSERT(!m_connectionMap.contains(connection));
+    m_connectionMap.set(connection, WTF::makeUnique<ClientConnection>(connection));
 }
 
-void Daemon::connectionRemoved(xpc_connection_t)
+void Daemon::connectionRemoved(xpc_connection_t connection)
 {
-    // FIXME: Track connections
+    RELEASE_ASSERT(m_connectionMap.contains(connection));
+    m_connectionMap.remove(connection);
 }
 
 CompletionHandler<void(EncodedMessage&&)> Daemon::createReplySender(MessageType messageType, OSObjectPtr<xpc_object_t>&& request)
@@ -169,54 +203,104 @@ CompletionHandler<void(EncodedMessage&&)> Daemon::createReplySender(MessageType 
     };
 }
 
-void Daemon::decodeAndHandleMessage(MessageType messageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&& replySender)
+void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType messageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&& replySender)
 {
     ASSERT(messageTypeSendsReply(messageType) == !!replySender);
 
+    auto* clientConnection = toClientConnection(connection);
+
     switch (messageType) {
     case MessageType::EchoTwice:
-        handleWebPushDMessageWithReply<MessageInfo::echoTwice>(encodedMessage, WTFMove(replySender));
+        handleWebPushDMessageWithReply<MessageInfo::echoTwice>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
     case MessageType::GetOriginsWithPushAndNotificationPermissions:
-        handleWebPushDMessageWithReply<MessageInfo::getOriginsWithPushAndNotificationPermissions>(encodedMessage, WTFMove(replySender));
+        handleWebPushDMessageWithReply<MessageInfo::getOriginsWithPushAndNotificationPermissions>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
     case MessageType::DeletePushAndNotificationRegistration:
-        handleWebPushDMessageWithReply<MessageInfo::deletePushAndNotificationRegistration>(encodedMessage, WTFMove(replySender));
+        handleWebPushDMessageWithReply<MessageInfo::deletePushAndNotificationRegistration>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
     case MessageType::RequestSystemNotificationPermission:
-        handleWebPushDMessageWithReply<MessageInfo::requestSystemNotificationPermission>(encodedMessage, WTFMove(replySender));
+        handleWebPushDMessageWithReply<MessageInfo::requestSystemNotificationPermission>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::SetHostAppAuditToken:
+        handleWebPushDMessage<MessageInfo::setHostAppAuditToken>(clientConnection, encodedMessage);
+        break;
+    case MessageType::SetDebugModeIsEnabled:
+        handleWebPushDMessage<MessageInfo::setDebugModeIsEnabled>(clientConnection, encodedMessage);
         break;
     }
 }
 
-void Daemon::echoTwice(const String& message, CompletionHandler<void(const String&)>&& replySender)
+void Daemon::echoTwice(ClientConnection*, const String& message, CompletionHandler<void(const String&)>&& replySender)
 {
     replySender(makeString(message, message));
 }
 
-void Daemon::requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&& replySender)
+bool Daemon::canRegisterForNotifications(ClientConnection& connection)
 {
+    if (connection.hostAppCodeSigningIdentifier().isEmpty()) {
+        NSLog(@"ClientConnection cannot interact with notifications: Unknown host application code signing identifier");
+        return false;
+    }
+
+    return true;
+}
+
+void Daemon::requestSystemNotificationPermission(ClientConnection* connection, const String& originString, CompletionHandler<void(bool)>&& replySender)
+{
+    if (!canRegisterForNotifications(*connection)) {
+        replySender(false);
+        return;
+    }
+
     // FIXME: This is for an API testing checkpoint
     // Next step is actually perform a persistent permissions request on a per-platform basis
     m_inMemoryOriginStringsWithPermissionForTesting.add(originString);
     replySender(true);
 }
 
-void Daemon::getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<String>&)>&& replySender)
+void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* connection, CompletionHandler<void(const Vector<String>&)>&& replySender)
 {
+    if (!canRegisterForNotifications(*connection)) {
+        replySender({ });
+        return;
+    }
+
     // FIXME: This is for an API testing checkpoint
     // Next step is actually gather persistent permissions from the system on a per-platform basis
     replySender(copyToVector(m_inMemoryOriginStringsWithPermissionForTesting));
 }
 
-void Daemon::deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender)
+void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection, const String& originString, CompletionHandler<void(const String&)>&& replySender)
 {
+    if (!canRegisterForNotifications(*connection)) {
+        replySender("Could not delete push and notification registrations for connection: Unknown host application code signing identifier");
+        return;
+    }
+
     // FIXME: This is for an API testing checkpoint
     // Next step is actually delete any persistent permissions on a per-platform basis
     if (m_inMemoryOriginStringsWithPermissionForTesting.remove(originString))
         replySender("");
     else
         replySender(makeString("Origin ", originString, " not registered for push or notifications"));
+}
+
+void Daemon::setHostAppAuditToken(ClientConnection* clientConnection, const Vector<uint8_t>& tokenData)
+{
+    clientConnection->setHostAppAuditTokenData(tokenData);
+}
+
+void Daemon::setDebugModeIsEnabled(ClientConnection* clientConnection, bool enabled)
+{
+    clientConnection->setDebugModeIsEnabled(enabled);
+}
+
+ClientConnection* Daemon::toClientConnection(xpc_connection_t connection)
+{
+    auto clientConnection = m_connectionMap.get(connection);
+    RELEASE_ASSERT(clientConnection);
+    return clientConnection;
 }
 
 } // namespace WebPushD

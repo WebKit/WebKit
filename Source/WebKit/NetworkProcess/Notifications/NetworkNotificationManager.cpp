@@ -43,6 +43,25 @@ NetworkNotificationManager::NetworkNotificationManager(NetworkSession& networkSe
         m_connection = makeUnique<WebPushD::Connection>(webPushMachServiceName.utf8(), *this);
 }
 
+void NetworkNotificationManager::maybeSendHostAppAuditToken() const
+{
+    if (m_sentHostAppAuditToken)
+        return;
+    m_sentHostAppAuditToken = true;
+
+#if PLATFORM(COCOA)
+        auto token = m_networkSession.networkProcess().parentProcessConnection()->getAuditToken();
+        if (!token)
+            return;
+
+        Vector<uint8_t> auditTokenData;
+        auditTokenData.resize(sizeof(*token));
+        memcpy(auditTokenData.data(), &(*token), sizeof(*token));
+
+        sendMessage<WebPushD::MessageType::SetHostAppAuditToken>(auditTokenData);
+#endif
+}
+
 void NetworkNotificationManager::requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&& completionHandler)
 {
     sendMessageWithReply<WebPushD::MessageType::RequestSystemNotificationPermission>(WTFMove(completionHandler), originString);
@@ -103,6 +122,9 @@ template<WebPushD::MessageType messageType, typename... Args>
 void NetworkNotificationManager::sendMessage(Args&&... args) const
 {
     RELEASE_ASSERT(m_connection);
+
+    maybeSendHostAppAuditToken();
+
     Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);
     m_connection->send(messageType, encoder.takeBuffer());
@@ -164,6 +186,8 @@ template<WebPushD::MessageType messageType, typename... Args, typename... ReplyA
 void NetworkNotificationManager::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& completionHandler, Args&&... args) const
 {
     RELEASE_ASSERT(m_connection);
+
+    maybeSendHostAppAuditToken();
 
     Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);

@@ -1,3 +1,66 @@
+2021-11-19  Brady Eidson  <beidson@apple.com>
+
+        More webpushd architecture work
+        https://bugs.webkit.org/show_bug.cgi?id=233295
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+        
+        This patch:
+        - Adds entitlement checks for connections to webpushd
+        - Adds a "ClientConnection" object to the daemon to manage per-connection state
+        - Adds a debug enabled setting
+        - Adds the ability for the connecting app (com.apple.WebKit.Networking) to pass the host app's audit_token
+        - Tests some of the above
+        - Adds the beginnings of other future infrastructure
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::NetworkNotificationManager):
+
+        * Resources/ios/XPCService-embedded-simulator.entitlements:
+        * Scripts/process-entitlements.sh:
+
+        * Shared/Cocoa/CodeSigning.h:
+        * Shared/Cocoa/CodeSigning.mm:
+        (WebKit::codeSigningIdentifierAndPlatformBinaryStatus):
+        (WebKit::codeSigningIdentifier):
+
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * webpushd/PushClientConnection.h: Copied from Source/WebKit/Shared/Cocoa/CodeSigning.h.
+        (WebPushD::ClientConnection::hasAuditToken const):
+        (WebPushD::ClientConnection::debugModeIsEnabled const):
+        * webpushd/PushClientConnection.mm: Added.
+        (WebPushD::ClientConnection::ClientConnection):
+        (WebPushD::ClientConnection::setAuditTokenData):
+        (WebPushD::ClientConnection::hostCodeSigningIdentifier):
+        (WebPushD::ClientConnection::hostHasPushEntitlement):
+        (WebPushD::ClientConnection::setDebugModeIsEnabled):
+
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::handleWebPushDMessageWithReply):
+        (WebPushD::handleWebPushDMessage):
+        (WebPushD::Daemon::broadcastDebugMessage):
+        (WebPushD::Daemon::connectionEventHandler):
+        (WebPushD::Daemon::connectionAdded):
+        (WebPushD::Daemon::connectionRemoved):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::echoTwice):
+        (WebPushD::Daemon::canRegisterForNotifications):
+        (WebPushD::Daemon::requestSystemNotificationPermission):
+        (WebPushD::Daemon::getOriginsWithPushAndNotificationPermissions):
+        (WebPushD::Daemon::deletePushAndNotificationRegistration):
+        (WebPushD::Daemon::setHostAppAuditToken):
+        (WebPushD::Daemon::setDebugModeIsEnabled):
+        (WebPushD::Daemon::toClientConnection):
+        * webpushd/WebPushDaemonMain.mm:
+        (main):
+
 2021-11-19  Brent Fulgham  <bfulgham@apple.com>
 
         Add support for web app manifest icons in WebKit/UI Process layer

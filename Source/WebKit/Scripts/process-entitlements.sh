@@ -131,6 +131,7 @@ function mac_process_network_entitlements()
         plistbuddy Add :com.apple.rootless.storage.WebKitNetworkingSandbox bool YES
         plistbuddy Add :com.apple.symptom_analytics.configure bool YES
         plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
+        plistbuddy Add :com.apple.private.webkit.webpush bool YES
     fi
 }
 
@@ -401,6 +402,7 @@ function ios_family_process_webpushd_entitlements()
 function ios_family_process_network_entitlements()
 {
     plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
+    plistbuddy Add :com.apple.private.webkit.webpush bool YES
     plistbuddy Add :com.apple.multitasking.systemappassertions bool YES
     plistbuddy Add :com.apple.payment.all-access bool YES
     plistbuddy Add :com.apple.private.accounts.bundleidspoofing bool YES

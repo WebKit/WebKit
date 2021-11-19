@@ -64,9 +64,7 @@ int main(int argc, const char** argv)
     const char* machServiceName = argv[2];
 
     @autoreleasepool {
-        // FIXME: Add a sandbox.
-        // FIXME: Add an entitlement check.
-        WebKit::startListeningForMachServiceConnections(machServiceName, nullptr, WebPushD::connectionAdded, WebPushD::connectionRemoved, WebPushD::connectionEventHandler);
+        WebKit::startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.webpush", WebPushD::connectionAdded, WebPushD::connectionRemoved, WebPushD::connectionEventHandler);
         WTF::initializeMainThread();
     }
     CFRunLoopRun();

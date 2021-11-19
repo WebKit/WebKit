@@ -40,6 +40,8 @@ enum class MessageType : uint8_t {
     RequestSystemNotificationPermission,
     DeletePushAndNotificationRegistration,
     GetOriginsWithPushAndNotificationPermissions,
+    SetHostAppAuditToken,
+    SetDebugModeIsEnabled,
 };
 
 inline bool messageTypeSendsReply(MessageType messageType)
@@ -50,6 +52,9 @@ inline bool messageTypeSendsReply(MessageType messageType)
     case MessageType::DeletePushAndNotificationRegistration:
     case MessageType::RequestSystemNotificationPermission:
         return true;
+    case MessageType::SetHostAppAuditToken:
+    case MessageType::SetDebugModeIsEnabled:
+        return false;
     }
     ASSERT_NOT_REACHED();
     return false;
