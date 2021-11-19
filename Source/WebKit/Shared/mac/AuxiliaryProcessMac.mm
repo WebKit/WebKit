@@ -56,6 +56,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WallTime.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringBuilder.h>
@@ -719,6 +720,12 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #else
     String dataVaultParentDirectory;
 #endif
+
+    bool enableMessageFilter = false;
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
+    enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter");
+#endif
+    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
 
     initializeSandboxParameters(parameters, sandboxParameters);
 

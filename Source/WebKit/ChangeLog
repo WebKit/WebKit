@@ -1,3 +1,18 @@
+2021-11-19  Per Arne  <pvollan@apple.com>
+
+        [macOS] Enable message filtering for all WebKit processes
+        https://bugs.webkit.org/show_bug.cgi?id=233334
+        <rdar://problem/85568306>
+
+        Reviewed by Brent Fulgham.
+
+        The sandbox parameter enabling message filtering should be set in all WebKit processes.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+
 2021-11-19  Antoine Quint  <graouts@webkit.org>
 
         [Model] add support for seeking animations
