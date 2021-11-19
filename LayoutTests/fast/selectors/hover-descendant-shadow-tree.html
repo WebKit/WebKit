@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<body>
+<template id="template">
+<style>
+.parent {
+  width: 100px;
+  height: 100px;
+  background: blue;
+}
+  
+.child {
+  width: 30px;
+  height: 30px;
+}
+
+.parent:hover .child { 
+    background: green;
+}
+
+</style>
+<div class="parent">
+  <div class="child">
+  </div>
+</div>
+</template>
+
+<script>
+customElements.define('custom-element', class extends HTMLElement {
+  connectedCallback() {
+    this.attachShadow({mode: 'open'}).append(template.content.cloneNode(true));
+  }
+});
+</script>
+
+<custom-element id=target></custom-element>
+
+<script>
+if (window.eventSender) {
+    var x = target.offsetLeft + target.offsetWidth / 2;
+    var y = target.offsetTop + target.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+</script>
+</body>

@@ -7480,7 +7480,16 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     auto changeState = [](auto& elements, auto pseudoClassType, auto&& setter) {
         if (elements.isEmpty())
             return;
+
         Style::PseudoClassChangeInvalidation styleInvalidation { *elements.last(), pseudoClassType, Style::InvalidationScope::Descendants };
+
+        // We need to do descendant invalidation for each shadow tree separately as the style is per-scope.
+        Vector<Style::PseudoClassChangeInvalidation> shadowDescendantStyleInvalidations;
+        for (auto& element : elements) {
+            if (hasShadowRootParent(*element))
+                shadowDescendantStyleInvalidations.append({ *element, pseudoClassType, Style::InvalidationScope::Descendants });
+        }
+
         for (auto& element : elements)
             setter(*element);
     };

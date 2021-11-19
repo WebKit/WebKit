@@ -1,3 +1,14 @@
+2021-11-19  Antti Koivisto  <antti@apple.com>
+
+        :hover with descendant selector not invalidated correctly in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=233354
+
+        Reviewed by Antoine Quint.
+
+        * fast/selectors/hover-descendant-shadow-tree-expected.html: Added.
+        * fast/selectors/hover-descendant-shadow-tree.html: Added.
+        * platform/ios/TestExpectations:
+
 2021-11-19  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         REGRESSION(r285859) [GTK][WPE] a number of accessibility/* tests crash on GTK and WPE
