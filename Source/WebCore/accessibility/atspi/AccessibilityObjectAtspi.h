@@ -49,7 +49,8 @@ public:
         Value = 1 << 3,
         Hyperlink = 1 << 4,
         Hypertext = 1 << 5,
-        Action = 1 << 6
+        Action = 1 << 6,
+        Document = 1 << 7
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -74,6 +75,7 @@ public:
     WEBCORE_EXPORT String id() const;
     WEBCORE_EXPORT CString name() const;
     WEBCORE_EXPORT CString description() const;
+    WEBCORE_EXPORT String locale() const;
     WEBCORE_EXPORT unsigned role() const;
     WEBCORE_EXPORT unsigned childCount() const;
     WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> children() const;
@@ -126,6 +128,8 @@ public:
     WEBCORE_EXPORT String actionName() const;
     WEBCORE_EXPORT bool doAction() const;
 
+    WEBCORE_EXPORT String documentAttribute(const String&) const;
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
@@ -168,6 +172,9 @@ private:
     String localizedActionName() const;
     String actionKeyBinding() const;
 
+    HashMap<String, String> documentAttributes() const;
+    String documentLocale() const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
@@ -177,6 +184,7 @@ private:
     static GDBusInterfaceVTable s_hyperlinkFunctions;
     static GDBusInterfaceVTable s_hypertextFunctions;
     static GDBusInterfaceVTable s_actionFunctions;
+    static GDBusInterfaceVTable s_documentFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

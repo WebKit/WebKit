@@ -1939,6 +1939,68 @@ static void testActionBasic(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(keyBinding.get(), ==, "");
 }
 
+static void testDocumentBasic(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<!doctype html>"
+        "<html>"
+        "  <head>"
+        "    <meta http-equiv='content-language' content='en-us'/>"
+        "    <meta http-equiv='content-type' content='text/html; charset=UTF-8'/>"
+        "    <title>Document attributes</title>"
+        "  </head>"
+        "  <body>"
+        "    <p>This is a paragraph</p>"
+        "    <p lang='es'>Spanish</p>"
+        "  </body>"
+        "</html>",
+        "http://example.org");
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_DOCUMENT(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
+
+    GUniquePtr<char> language(atspi_document_get_locale(ATSPI_DOCUMENT(documentWeb.get()), nullptr));
+    g_assert_cmpstr(language.get(), ==, "en-us");
+    // Elements with no language attribute inhewir the document one.
+    auto p1 = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(p1.get()));
+    g_assert_cmpstr(atspi_accessible_get_object_locale(p1.get(), nullptr), ==, "en-us");
+    auto p2 = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(p2.get()));
+    g_assert_cmpstr(atspi_accessible_get_object_locale(p2.get(), nullptr), ==, "es");
+
+    GRefPtr<GHashTable> attributes = adoptGRef(atspi_document_get_attributes(ATSPI_DOCUMENT(documentWeb.get()), nullptr));
+    g_assert_nonnull(attributes.get());
+#if USE(ATSPI)
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 5);
+#else
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 3);
+#endif
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "DocType")), ==, "html");
+    GUniquePtr<char> value(atspi_document_get_document_attribute_value(ATSPI_DOCUMENT(documentWeb.get()), const_cast<char*>("DocType"), nullptr));
+    g_assert_cmpstr(value.get(), ==, "html");
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "Encoding")), ==, "UTF-8");
+    value.reset(atspi_document_get_document_attribute_value(ATSPI_DOCUMENT(documentWeb.get()), const_cast<char*>("Encoding"), nullptr));
+    g_assert_cmpstr(value.get(), ==, "UTF-8");
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "URI")), ==, "http://example.org/");
+    value.reset(atspi_document_get_document_attribute_value(ATSPI_DOCUMENT(documentWeb.get()), const_cast<char*>("URI"), nullptr));
+    g_assert_cmpstr(value.get(), ==, "http://example.org/");
+#if USE(ATSPI)
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "MimeType")), ==, "text/html");
+    value.reset(atspi_document_get_document_attribute_value(ATSPI_DOCUMENT(documentWeb.get()), const_cast<char*>("MimeType"), nullptr));
+    g_assert_cmpstr(value.get(), ==, "text/html");
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "Title")), ==, "Document attributes");
+    value.reset(atspi_document_get_document_attribute_value(ATSPI_DOCUMENT(documentWeb.get()), const_cast<char*>("Title"), nullptr));
+    g_assert_cmpstr(value.get(), ==, "Document attributes");
+#endif
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -1963,6 +2025,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "hyperlink/basic", testHyperlinkBasic);
     AccessibilityTest::add("WebKitAccessibility", "hypertext/basic", testHypertextBasic);
     AccessibilityTest::add("WebKitAccessibility", "action/basic", testActionBasic);
+    AccessibilityTest::add("WebKitAccessibility", "document/basic", testDocumentBasic);
 }
 
 void afterAll()

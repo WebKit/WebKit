@@ -684,7 +684,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    m_element->updateBackingStore();
+    auto locale = m_element->locale();
+    if (locale.isEmpty())
+        return JSStringCreateWithCharacters(0, 0);
+
+    return OpaqueJSString::tryCreate(makeString("AXLanguage: ", locale)).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
@@ -1122,12 +1127,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Document))
+        return JSStringCreateWithCharacters(0, 0);
+
+    return OpaqueJSString::tryCreate(m_element->documentAttribute("Encoding")).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Document))
+        return JSStringCreateWithCharacters(0, 0);
+
+    return OpaqueJSString::tryCreate(m_element->documentAttribute("URI")).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
