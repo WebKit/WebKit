@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBXR) && ENABLE(WEBXR_HANDS)
 
+#include "PlatformXR.h"
+
 namespace WebCore {
 
 using XRHandJoint = PlatformXR::HandJoint;
