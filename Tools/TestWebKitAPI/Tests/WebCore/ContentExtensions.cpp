@@ -131,7 +131,7 @@ public:
     {
         CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
-        auto parsedRules = ContentExtensions::parseRuleList(filter, std::nullopt);
+        auto parsedRules = ContentExtensions::parseRuleList(filter);
         auto compilerError = ContentExtensions::compileRuleList(client, WTFMove(filter), WTFMove(parsedRules.value()));
 
         // Compiling should always succeed here. We have other tests for compile failures.
@@ -1362,11 +1362,11 @@ TEST_F(ContentExtensionTest, DeepNFA)
     EXPECT_EQ(1ul, createNFAs(combinedURLFilters).size());
 }
 
-void checkCompilerError(const char* json, std::error_code expectedError, const std::optional<HashSet<String>>& allowedRedirectURLSchemes = std::nullopt)
+void checkCompilerError(const char* json, std::error_code expectedError)
 {
     CompiledContentExtensionData extensionData;
     InMemoryContentExtensionCompilationClient client(extensionData);
-    auto parsedRules = ContentExtensions::parseRuleList(json, allowedRedirectURLSchemes);
+    auto parsedRules = ContentExtensions::parseRuleList(json);
     std::error_code compilerError;
     if (parsedRules.has_value())
         compilerError = ContentExtensions::compileRuleList(client, json, WTFMove(parsedRules.value()));
@@ -1532,7 +1532,6 @@ TEST_F(ContentExtensionTest, InvalidJSON)
         ContentExtensionError::JSONInvalidActionType);
     checkCompilerError("[{\"action\":{\"type\":\"css-display-none\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
         ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
-    checkCompilerError("", ContentExtensionError::JSONRedirectURLSchemesShouldNotIncludeJavascript, { { "javascript" } });
 
     checkCompilerError("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"webkit.org\"}},"
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]", { });
@@ -1561,10 +1560,8 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":\"k\",\"value\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"about:blank\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectURLSchemeNotAllowed, { { "not-about" } });
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"about:blank\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { }, { { "about" } });
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"https://127..1/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectURLInvalid, { { "https" } });
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"about:blank\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { }, { { "about" } });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"https://127..1/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectURLInvalid);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"JaVaScRiPt:dostuff\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectToJavaScriptURL);
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"not a number\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectInvalidPort);
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"65536\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectInvalidPort);
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query\":\"no-question-mark\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectInvalidQuery);
@@ -1572,9 +1569,9 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"65535\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"extension-path\":\"/does/start/with/slash/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { });
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"about\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectURLSchemeNotAllowed, { { "not-about" } });
     checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"!@#$%\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectURLSchemeInvalid);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"About\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { }, { { "about" } });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"JaVaScRiPt\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONRedirectToJavaScriptURL);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"About\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":5},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersNotArray);
     checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[5]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
     checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"request-headers\":[{}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]", ContentExtensionError::JSONModifyHeadersMissingOperation);

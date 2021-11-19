@@ -279,7 +279,7 @@ size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(Span<const uint8_
     return deserializeLength(span, 0);
 }
 
-Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const std::optional<HashSet<String>>& allowedRedirectURLSchemes)
+Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject)
 {
     auto redirect = redirectObject.getObject("redirect");
     if (!redirect)
@@ -295,7 +295,7 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
         return RedirectAction { RegexSubstitutionAction { WTFMove(regexSubstitution) } };
 
     if (auto transform = redirect->getObject("transform")) {
-        auto parsedTransform = URLTransformAction::parse(*transform, allowedRedirectURLSchemes);
+        auto parsedTransform = URLTransformAction::parse(*transform);
         if (!parsedTransform)
             return makeUnexpected(parsedTransform.error());
         return RedirectAction { WTFMove(*parsedTransform) };
@@ -305,8 +305,8 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
         auto url = URL(URL(), urlString);
         if (!url.isValid())
             return makeUnexpected(ContentExtensionError::JSONRedirectURLInvalid);
-        if (allowedRedirectURLSchemes && !allowedRedirectURLSchemes->contains(url.protocol().toStringWithoutCopying()))
-            return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeNotAllowed);
+        if (url.protocolIsJavaScript())
+            return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
         return RedirectAction { URLAction { WTFMove(urlString) } };
     }
 
@@ -383,7 +383,7 @@ void RedirectAction::applyToRequest(ResourceRequest& request)
     }), action);
 }
 
-auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform, const std::optional<HashSet<String>>& allowedRedirectURLSchemes) -> Expected<URLTransformAction, std::error_code>
+auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> Expected<URLTransformAction, std::error_code>
 {
     URLTransformAction action;
     if (auto fragment = transform.getString("fragment"); !!fragment) {
@@ -410,8 +410,8 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform, co
         auto scheme = WTF::URLParser::maybeCanonicalizeScheme(uncanonicalizedScheme);
         if (!scheme)
             return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeInvalid);
-        if (allowedRedirectURLSchemes && !allowedRedirectURLSchemes->contains(*scheme))
-            return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeNotAllowed);
+        if (scheme == "javascript")
+            return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
         action.scheme = WTFMove(*scheme);
     }
     action.username = transform.getString("username");

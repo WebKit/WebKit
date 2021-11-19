@@ -484,7 +484,7 @@ static RetainPtr<WKContentRuleList> compileContentRuleList(const char* json, NSS
     [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
 
     __block RetainPtr<WKContentRuleList> list;
-    [[WKContentRuleListStore defaultStore] _compileContentRuleListForIdentifier:@"testidentifier" encodedContentRuleList:[NSString stringWithFormat:@"%s", json] allowedRedirectSchemes:[NSSet setWithObjects:@"testscheme", @"othertestscheme", nil] completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"testidentifier" encodedContentRuleList:[NSString stringWithFormat:@"%s", json] completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(error);
         list = filter;
     }];

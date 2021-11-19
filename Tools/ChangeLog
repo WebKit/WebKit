@@ -1,3 +1,17 @@
+2021-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        Allow all redirect schemes when compiling a content rule list
+        https://bugs.webkit.org/show_bug.cgi?id=233338
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::InMemoryCompiledContentExtension::create):
+        (TestWebKitAPI::checkCompilerError):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentExtensionStore.mm:
+        (compileContentRuleList):
+
 2021-11-18  Robert Jenner  <Jenner@apple.com>
 
         [ Monterey ] TestWebKitAPI.WebpagePreferences.WebsitePoliciesDuringRedirect is a constant timeout

@@ -101,12 +101,10 @@ const std::error_category& contentExtensionErrorCategory()
                 return "Members of the add-or-replace-parameters array must contain a value that is a string";
             case ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash:
                 return "A redirect extension path must start with a slash";
-            case ContentExtensionError::JSONRedirectURLSchemeNotAllowed:
-                return "A redirect url scheme must be in the set of allowed schemes";
             case ContentExtensionError::JSONRedirectURLSchemeInvalid:
                 return "A redirect url scheme must be a valid scheme";
-            case ContentExtensionError::JSONRedirectURLSchemesShouldNotIncludeJavascript:
-                return "The set of allowed redirect schemes shouldn't include javascript";
+            case ContentExtensionError::JSONRedirectToJavaScriptURL:
+                return "A redirect url can't have a scheme of javascript";
             case ContentExtensionError::JSONRedirectURLInvalid:
                 return "A redirect url must be valid";
             case ContentExtensionError::JSONRedirectInvalidType:

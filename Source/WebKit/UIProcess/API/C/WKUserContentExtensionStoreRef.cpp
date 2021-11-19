@@ -76,7 +76,7 @@ static inline WKUserContentExtensionStoreResult toResult(const std::error_code& 
 void WKUserContentExtensionStoreCompile(WKUserContentExtensionStoreRef store, WKStringRef identifier, WKStringRef jsonSource, void* context, WKUserContentExtensionStoreFunction callback)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(store)->compileContentRuleList(toWTFString(identifier), toWTFString(jsonSource), { HashSet<String>() }, [context, callback](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+    toImpl(store)->compileContentRuleList(toWTFString(identifier), toWTFString(jsonSource), [context, callback](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
         callback(error ? nullptr : toAPI(contentRuleList.leakRef()), toResult(error), context);
     });
 #else

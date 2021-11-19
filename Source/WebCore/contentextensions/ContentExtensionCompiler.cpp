@@ -275,7 +275,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 {
 #if ASSERT_ENABLED
     callOnMainThread([ruleJSON = ruleJSON.isolatedCopy(), parsedRuleList = parsedRuleList.isolatedCopy()] {
-        ASSERT(parseRuleList(ruleJSON, std::nullopt).value() == parsedRuleList);
+        ASSERT(parseRuleList(ruleJSON).value() == parsedRuleList);
     });
 #endif
 

@@ -207,7 +207,7 @@ struct WEBCORE_EXPORT RedirectAction {
         String username;
 
         uint32_t hash() const { return computeHash(fragment.hash(), host.hash(), password.hash(), path.hash(), port, VariantHasher::hash(queryTransform), scheme.hash(), username.hash()); }
-        static Expected<URLTransformAction, std::error_code> parse(const JSON::Object&, const std::optional<HashSet<String>>&);
+        static Expected<URLTransformAction, std::error_code> parse(const JSON::Object&);
         URLTransformAction isolatedCopy() const;
         bool operator==(const URLTransformAction&) const;
         void serialize(Vector<uint8_t>&) const;
@@ -238,7 +238,7 @@ struct WEBCORE_EXPORT RedirectAction {
     bool isDeletedValue() const { return hashTableType == HashTableType::Deleted; }
     uint32_t hash() const { return VariantHasher::hash(action); }
 
-    static Expected<RedirectAction, std::error_code> parse(const JSON::Object&, const std::optional<HashSet<String>>&);
+    static Expected<RedirectAction, std::error_code> parse(const JSON::Object&);
     RedirectAction isolatedCopy() const;
     bool operator==(const RedirectAction&) const;
     void serialize(Vector<uint8_t>&) const;

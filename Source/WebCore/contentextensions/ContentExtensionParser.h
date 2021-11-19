@@ -38,12 +38,7 @@ namespace ContentExtensions {
 
 class ContentExtensionRule;
 
-// An allowedRedirectURLSchemes of std::nullopt indicates that all URL schemes are allowed.
-// This is used when recompiling source from older versions of WKContentRuleLists on disk,
-// where we don't have the list of allowed URL schemes but assume that if it compiled
-// successfully the first time then all the schemes used must have been allowed.
-// An allowedRedirectURLSchemes of an empty HashSet indicates that no active actions are allowed.
-WEBCORE_EXPORT Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String&, const std::optional<HashSet<String>>& allowedRedirectURLSchemes);
+WEBCORE_EXPORT Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String&);
 WEBCORE_EXPORT bool isValidCSSSelector(const String&);
 
 } // namespace ContentExtensions

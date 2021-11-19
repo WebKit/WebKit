@@ -66,7 +66,7 @@ public:
     explicit ContentRuleListStore(const WTF::String& storePath);
     virtual ~ContentRuleListStore();
 
-    void compileContentRuleList(const WTF::String& identifier, WTF::String&& json, std::optional<HashSet<WTF::String>>&& allowedRedirectSchemes, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void compileContentRuleList(const WTF::String& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
     void lookupContentRuleList(const WTF::String& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
     void removeContentRuleList(const WTF::String& identifier, CompletionHandler<void(std::error_code)>);
     void getAvailableContentRuleListIdentifiers(CompletionHandler<void(WTF::Vector<WTF::String>)>);

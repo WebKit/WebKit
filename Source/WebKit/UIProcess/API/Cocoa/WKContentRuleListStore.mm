@@ -87,7 +87,18 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 - (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
 {
-    [self _compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList allowedRedirectSchemes:nil completionHandler:completionHandler];
+#if ENABLE(CONTENT_EXTENSIONS)
+    _contentRuleListStore->compileContentRuleList(identifier, encodedContentRuleList, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+        if (error) {
+            auto userInfo = @{ NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Rule list compilation failed: %s", error.message().c_str()] };
+
+            // error.value() could have a specific compiler error that is not equal to WKErrorContentRuleListStoreCompileFailed.
+            // We want to use error.message, but here we want to only pass on CompileFailed with userInfo from the std::error_code.
+            return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorContentRuleListStoreCompileFailed userInfo:userInfo]);
+        }
+        completionHandler(wrapper(*contentRuleList), nil);
+    });
+#endif
 }
 
 - (void)lookUpContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
@@ -167,25 +178,6 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
             rawHandler(nil);
         else
             rawHandler(source);
-    });
-#endif
-}
-
-- (void)_compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList allowedRedirectSchemes:(NSSet<NSString *> *)schemes completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
-{
-#if ENABLE(CONTENT_EXTENSIONS)
-    HashSet<String> allowedRedirectSchemes;
-    for (NSString *scheme in schemes)
-        allowedRedirectSchemes.add(scheme);
-    _contentRuleListStore->compileContentRuleList(identifier, encodedContentRuleList, WTFMove(allowedRedirectSchemes), [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
-        if (error) {
-            auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Rule list compilation failed: %s", error.message().c_str()]};
-
-            // error.value() could have a specific compiler error that is not equal to WKErrorContentRuleListStoreCompileFailed.
-            // We want to use error.message, but here we want to only pass on CompileFailed with userInfo from the std::error_code.
-            return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorContentRuleListStoreCompileFailed userInfo:userInfo]);
-        }
-        completionHandler(wrapper(*contentRuleList), nil);
     });
 #endif
 }
