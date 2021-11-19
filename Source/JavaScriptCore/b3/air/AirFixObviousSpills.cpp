@@ -48,6 +48,8 @@ public:
     FixObviousSpills(Code& code)
         : m_code(code)
         , m_atHead(code.size())
+        , m_notBottom(code.size())
+        , m_shouldVisit(code.size())
     {
     }
 
@@ -63,17 +65,19 @@ public:
 private:
     void computeAliases()
     {
-        m_atHead[m_code[0]].wasVisited = true;
+        m_notBottom.quickSet(0);
+        m_shouldVisit.quickSet(0);
         
         bool changed = true;
         while (changed) {
             changed = false;
             
-            for (BasicBlock* block : m_code) {
+            for (unsigned blockIndex : m_shouldVisit) {
+                m_shouldVisit.quickClear(blockIndex);
+                BasicBlock* block = m_code[blockIndex];
+                ASSERT(m_notBottom.quickGet(blockIndex));
                 m_block = block;
                 m_state = m_atHead[block];
-                if (!m_state.wasVisited)
-                    continue;
 
                 if (AirFixObviousSpillsInternal::verbose)
                     dataLog("Executing block ", *m_block, ": ", m_state, "\n");
@@ -81,13 +85,23 @@ private:
                 for (m_instIndex = 0; m_instIndex < block->size(); ++m_instIndex)
                     executeInst();
 
+                // Before we call merge we must make sure that the two states are sorted.
+                m_state.sort();
+
                 for (BasicBlock* successor : block->successorBlocks()) {
+                    unsigned successorIndex = successor->index();
                     State& toState = m_atHead[successor];
-                    if (toState.wasVisited)
-                        changed |= toState.merge(m_state);
-                    else {
+                    if (m_notBottom.quickGet(successorIndex)) {
+                        bool changedAtSuccessorHead = toState.merge(m_state);
+                        if (changedAtSuccessorHead) {
+                            changed = true;
+                            m_shouldVisit.quickSet(successorIndex);
+                        }
+                    } else { // The state at head of successor is bottom
                         toState = m_state;
                         changed = true;
+                        m_notBottom.quickSet(successorIndex);
+                        m_shouldVisit.quickSet(successorIndex);
                     }
                 }
             }
@@ -99,7 +113,7 @@ private:
         for (BasicBlock* block : m_code) {
             m_block = block;
             m_state = m_atHead[block];
-            RELEASE_ASSERT(m_state.wasVisited);
+            RELEASE_ASSERT(m_notBottom.quickGet(block->index()));
 
             for (m_instIndex = 0; m_instIndex < block->size(); ++m_instIndex) {
                 fixInst();
@@ -341,6 +355,11 @@ private:
                 && constant == other.constant;
         }
 
+        bool operator<(const RegConst& other) const
+        {
+            return reg < other.reg || (reg == other.reg && constant < other.constant);
+        }
+
         void dump(PrintStream& out) const
         {
             out.print(reg, "->", constant);
@@ -378,6 +397,12 @@ private:
             return slot == other.slot
                 && reg == other.reg
                 && mode == other.mode;
+        }
+
+        bool operator<(const RegSlot& other) const
+        {
+            // We ignore `mode` on purpose, see merge() for how we deal with it.
+            return slot < other.slot || (slot == other.slot && reg < other.reg);
         }
 
         void dump(PrintStream& out) const
@@ -423,6 +448,11 @@ private:
                 && constant == other.constant;
         }
 
+        bool operator<(const SlotConst& other) const
+        {
+            return slot < other.slot || (slot == other.slot && constant < other.constant);
+        }
+
         void dump(PrintStream& out) const
         {
             out.print(pointerDump(slot), "->", constant);
@@ -435,15 +465,24 @@ private:
     struct State {
         void addAlias(const RegConst& newAlias)
         {
-            return regConst.append(newAlias);
+            regConst.append(newAlias);
+#if ASSERT_ENABLED
+            m_isSorted = false;
+#endif
         }
         void addAlias(const RegSlot& newAlias)
         {
-            return regSlot.append(newAlias);
+            regSlot.append(newAlias);
+#if ASSERT_ENABLED
+            m_isSorted = false;
+#endif
         }
         void addAlias(const SlotConst& newAlias)
         {
-            return slotConst.append(newAlias);
+            slotConst.append(newAlias);
+#if ASSERT_ENABLED
+            m_isSorted = false;
+#endif
         }
         
         bool contains(const RegConst& alias)
@@ -544,41 +583,59 @@ private:
             }
         }
 
+        void sort()
+        {
+            std::sort(regConst.begin(), regConst.end(), [] (const RegConst& a, const RegConst& b) {
+                return a < b;
+            });
+            std::sort(slotConst.begin(), slotConst.end(), [] (const SlotConst& a, const SlotConst& b) {
+                return a < b;
+            });
+            std::sort(regSlot.begin(), regSlot.end(), [] (const RegSlot& a, const RegSlot& b) {
+                return a < b;
+            });
+#if ASSERT_ENABLED
+            m_isSorted = true;
+#endif
+        }
+
+        // Takes two sorted vectors, for each element in the first, it looks for the first element in the second which is not smaller.
+        // If such an element exist, call f on both the element from the first vector and this element.
+        // Remove the element from the first vector unless f returned true (so f says whether to keep the element)
+        // Returns true if any element has been removed.
+        template<typename T, typename Func>
+        static bool filterVectorAgainst(Vector<T>& own, const Vector<T>& other, Func f)
+        {
+            const T* it = other.begin();
+            const T* end = other.end();
+            return !!own.removeAllMatching(
+                [&] (T& alias) {
+                    it = std::find_if_not(it, end, [&] (const T& otherAlias) {
+                        return otherAlias < alias;
+                    });
+                    if (it == end)
+                        return true;
+                    return !f(alias, *it);
+            });
+        }
+
         bool merge(const State& other)
         {
+            ASSERT(m_isSorted);
+            ASSERT(other.m_isSorted);
             bool changed = false;
-            
-            changed |= !!regConst.removeAllMatching(
-                [&] (RegConst& alias) -> bool {
-                    const RegConst* otherAlias = other.getRegConst(alias.reg);
-                    if (!otherAlias)
-                        return true;
-                    if (alias.constant != otherAlias->constant)
-                        return true;
-                    return false;
-                });
 
-            changed |= !!slotConst.removeAllMatching(
-                [&] (SlotConst& alias) -> bool {
-                    const SlotConst* otherAlias = other.getSlotConst(alias.slot);
-                    if (!otherAlias)
-                        return true;
-                    if (alias.constant != otherAlias->constant)
-                        return true;
+            changed |= filterVectorAgainst(regConst, other.regConst, [](RegConst& a, const RegConst& b) { return a == b; });
+            changed |= filterVectorAgainst(slotConst, other.slotConst, [](SlotConst& a, const SlotConst& b) { return a == b; });
+            changed |= filterVectorAgainst(regSlot, other.regSlot, [&](RegSlot& alias, const RegSlot& otherAlias) {
+                if (alias.reg != otherAlias.reg || alias.slot != otherAlias.slot)
                     return false;
-                });
-
-            changed |= !!regSlot.removeAllMatching(
-                [&] (RegSlot& alias) -> bool {
-                    const RegSlot* otherAlias = other.getRegSlot(alias.reg, alias.slot);
-                    if (!otherAlias)
-                        return true;
-                    if (alias.mode != RegSlot::Match32 && alias.mode != otherAlias->mode) {
-                        alias.mode = RegSlot::Match32;
-                        changed = true;
-                    }
-                    return false;
-                });
+                if (alias.mode != RegSlot::Match32 && alias.mode != otherAlias.mode) {
+                    alias.mode = RegSlot::Match32;
+                    changed = true;
+                }
+                return true;
+            });
 
             return changed;
         }
@@ -587,18 +644,22 @@ private:
         {
             out.print(
                 "{regConst = [", listDump(regConst), "], slotConst = [", listDump(slotConst),
-                "], regSlot = [", listDump(regSlot), "], wasVisited = ", wasVisited, "}");
+                "], regSlot = [", listDump(regSlot), "]}");
         }
 
         Vector<RegConst> regConst;
         Vector<SlotConst> slotConst;
         Vector<RegSlot> regSlot;
-        bool wasVisited { false };
+#if ASSERT_ENABLED
+        bool m_isSorted { true };
+#endif
     };
 
     Code& m_code;
     IndexMap<BasicBlock*, State> m_atHead;
     State m_state;
+    BitVector m_notBottom;
+    BitVector m_shouldVisit;
     BasicBlock* m_block { nullptr };
     unsigned m_instIndex { 0 };
 };

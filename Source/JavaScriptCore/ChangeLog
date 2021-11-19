@@ -1,3 +1,23 @@
+2021-11-19  Robin Morisset  <rmorisset@apple.com>
+
+        AirFixObviousSpills should be optimized
+        https://bugs.webkit.org/show_bug.cgi?id=228052
+
+        Reviewed by Yusuke Suzuki.
+
+        There were two problems with AirFixObviousSpills:
+        - merge() had a quadratic blow-up, as for each element in a vector, it was searching it in a different vector.
+        - it would visit blocks even when their state at head had not changed.
+
+        I fixed the first problem by making sure that the vectors are sorted before calling merge, and making use of that invariant in the search of the vectors
+        (see filterVectorAgainst)
+        This reduced the total time spent in that phase from 390ms to 230ms, and the worst case time spent in that phase for one function from 100ms to 30ms (all of the results in this Changelog are for JetStream2 on a M1 MBP).
+
+        I fixed the second problem even more easily by adding a m_shouldVisit BitVector. I also moved the m_wasVisited boolean that was in State to a m_notBottom BitVector for simplicity and symmetry.
+        That change further reduced the total/max time from 230ms/30ms to 140ms/16ms.
+
+        * b3/air/AirFixObviousSpills.cpp:
+
 2021-11-18  Robin Morisset  <rmorisset@apple.com>
 
         [JSC/Air] Optimize enableMovesOnValueAndAdjacents in IRC
