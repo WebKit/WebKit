@@ -74,7 +74,7 @@ public:
     void cloneChildNodes(ContainerNode& clone);
 
     struct ChildChange {
-        enum class Type : uint8_t { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced };
+        enum class Type : uint8_t { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced, FinishedParsingChildren };
         enum class Source : bool { Parser, API };
 
         ChildChange::Type type;
@@ -96,6 +96,8 @@ public:
             case ChildChange::Type::AllChildrenRemoved:
             case ChildChange::Type::NonContentsChildRemoved:
                 return false;
+            case ChildChange::Type::FinishedParsingChildren:
+                break;
             }
             ASSERT_NOT_REACHED();
             return false;

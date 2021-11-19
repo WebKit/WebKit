@@ -65,7 +65,7 @@ protected:
 private:
     String nodeValue() const final;
     ExceptionOr<void> setNodeValue(const String&) final;
-    void notifyParentAfterChange(ContainerNode::ChildChange::Source);
+    void notifyParentAfterChange(const ContainerNode::ChildChange&);
 
     String m_data;
 };

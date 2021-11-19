@@ -763,6 +763,8 @@ private:
     RefPtr<ElementData> m_elementData;
 };
 
+void invalidateForSiblingCombinators(Element* sibling);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Element)

@@ -144,6 +144,9 @@ void ShadowRoot::childrenChanged(const ChildChange& childChange)
     case ChildChange::Type::NonContentsChildInserted:
     case ChildChange::Type::AllChildrenReplaced:
         break;
+    case ChildChange::Type::FinishedParsingChildren:
+        ASSERT_NOT_REACHED();
+        break;
     }
 }
 
