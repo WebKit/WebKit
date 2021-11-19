@@ -1641,6 +1641,25 @@ static int getFoo(Foo* foo)
     return foo->foo;
 }
 
+static void setFooValue(Foo* foo, JSCValue* value)
+{
+    if (jsc_value_is_undefined(value))
+        foo->foo = std::numeric_limits<int>::min();
+    else if (jsc_value_is_null(value))
+        foo->foo = std::numeric_limits<int>::max();
+    else
+        foo->foo = jsc_value_to_int32(value);
+}
+
+static JSCValue* getFooValue(Foo* foo)
+{
+    if (foo->foo == std::numeric_limits<int>::min())
+        return jsc_value_new_undefined(jsc_context_get_current());
+    if (foo->foo == std::numeric_limits<int>::max())
+        return jsc_value_new_null(jsc_context_get_current());
+    return jsc_value_new_number(jsc_context_get_current(), foo->foo);
+}
+
 static void setSibling(Foo* foo, Foo* sibling)
 {
     foo->sibling = sibling;
@@ -2728,6 +2747,78 @@ static void testJSCClass()
         checker.watch(result.get());
         g_assert_true(jsc_value_is_boolean(result.get()));
         g_assert_true(jsc_value_to_boolean(result.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        JSCClass* jscClass = jsc_context_register_class(context.get(), "Foo", nullptr, &fooVTable, reinterpret_cast<GDestroyNotify>(fooFree));
+        checker.watch(jscClass);
+        g_object_set_data(G_OBJECT(jscClass), "leak-checker", &checker);
+
+        GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructor(jscClass, nullptr, G_CALLBACK(fooCreate), nullptr, nullptr, G_TYPE_POINTER, 0, G_TYPE_NONE));
+        checker.watch(constructor.get());
+        g_assert_true(jsc_value_is_constructor(constructor.get()));
+        jsc_context_set_value(context.get(), jsc_class_get_name(jscClass), constructor.get());
+        jsc_class_add_property(jscClass, "foo", JSC_TYPE_VALUE, G_CALLBACK(getFooValue), G_CALLBACK(setFooValue), nullptr, nullptr);
+
+        GRefPtr<JSCValue> foo = adoptGRef(jsc_context_evaluate(context.get(), "f = new Foo();", -1));
+        checker.watch(foo.get());
+        g_assert_true(jsc_value_is_object(foo.get()));
+        g_assert_true(jsc_value_object_has_property(foo.get(), "foo"));
+
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "f.foo", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_number(result.get()));
+        g_assert_cmpuint(jsc_value_to_int32(result.get()), ==, 0);
+
+        GRefPtr<JSCValue> value = adoptGRef(jsc_value_object_get_property(foo.get(), "foo"));
+        checker.watch(value.get());
+        g_assert_true(value.get() == result.get());
+
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f.foo = 52", -1));
+        checker.watch(result.get());
+        value = adoptGRef(jsc_context_evaluate(context.get(), "f.foo", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_number(value.get()));
+        g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 52);
+
+        value = adoptGRef(jsc_value_new_number(context.get(), 25));
+        checker.watch(value.get());
+        jsc_value_object_set_property(foo.get(), "foo", value.get());
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f.foo", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_number(result.get()));
+        g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 25);
+
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f.foo = undefined", -1));
+        checker.watch(result.get());
+        value = adoptGRef(jsc_context_evaluate(context.get(), "f.foo", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_undefined(value.get()));
+
+        value = adoptGRef(jsc_value_new_undefined(context.get()));
+        checker.watch(value.get());
+        jsc_value_object_set_property(foo.get(), "foo", value.get());
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f.foo", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_undefined(result.get()));
+
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f.foo = null", -1));
+        checker.watch(result.get());
+        value = adoptGRef(jsc_context_evaluate(context.get(), "f.foo", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_null(value.get()));
+
+        value = adoptGRef(jsc_value_new_null(context.get()));
+        checker.watch(value.get());
+        jsc_value_object_set_property(foo.get(), "foo", value.get());
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f.foo", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_null(result.get()));
     }
 }
 

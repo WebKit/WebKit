@@ -1,3 +1,14 @@
+2021-11-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GLIB] Add new test case to /jsc/class
+
+        Add a test case to check using JSC_TYPE_VALUE for a JSCClass property.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (setFooValue):
+        (getFooValue):
+        (testJSCClass):
+
 2021-11-19  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         REGRESSION(r285859) [GTK][WPE] a number of accessibility/* tests crash on GTK and WPE
