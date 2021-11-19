@@ -76,6 +76,7 @@ TEST(WebKit, CustomDisplayName)
 TEST(WebKit, DISABLED_DefaultDisplayName)
 #else
 TEST(WebKit, DefaultDisplayName)
+#endif
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"start web process"];
