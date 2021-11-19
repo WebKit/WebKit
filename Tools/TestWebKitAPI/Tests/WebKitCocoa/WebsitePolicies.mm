@@ -729,7 +729,12 @@ struct ParsedRange {
 
 @end
 
+// FIXME: Re-enable this test for Monterey+ once rdar://80476146 is resolved.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesDuringRedirect)
+#else
 TEST(WebpagePreferences, WebsitePoliciesDuringRedirect)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto videoData = adoptNS([[NSData alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]]);

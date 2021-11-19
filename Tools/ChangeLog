@@ -1,5 +1,15 @@
 2021-11-18  Robert Jenner  <Jenner@apple.com>
 
+        [ Monterey ] TestWebKitAPI.WebpagePreferences.WebsitePoliciesDuringRedirect is a constant timeout
+        <rdar://80476146>
+
+        Uneviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+
+2021-11-18  Robert Jenner  <Jenner@apple.com>
+
         [ Monterey ] 2 TestWebKitAPI.WebKit.DisplayName (api-tests) are constantly failing
         <rdar://80353834>
 
