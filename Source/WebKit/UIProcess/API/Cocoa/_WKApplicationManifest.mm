@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -41,17 +42,103 @@
 #import "AppKitSPI.h"
 #endif
 
+static OptionSet<WebCore::ApplicationManifest::Icon::Purpose> fromPurposes(NSArray<NSNumber *> *purposes)
+{
+    OptionSet<WebCore::ApplicationManifest::Icon::Purpose> purposeSet;
+    for (NSNumber *purposeNumber in purposes) {
+        auto purpose = static_cast<WebCore::ApplicationManifest::Icon::Purpose>(purposeNumber.integerValue);
+        purposeSet.add(purpose);
+    }
+
+    return purposeSet;
+}
+
+static RetainPtr<NSArray<NSNumber *>> fromPurposes(OptionSet<WebCore::ApplicationManifest::Icon::Purpose> purposes)
+{
+    auto purposeArray = adoptNS([[NSMutableArray alloc] init]);
+    for (auto purpose : purposes)
+        [purposeArray addObject:[NSNumber numberWithUnsignedChar:static_cast<std::underlying_type<WebCore::ApplicationManifest::Icon::Purpose>::type>(purpose)]];
+    return purposeArray;
+}
+
 static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const WebCore::ApplicationManifest::Icon*, id arrayElement)
 {
-
     if (![arrayElement isKindOfClass: _WKApplicationManifestIcon.class])
         return std::nullopt;
 
+    auto icon = dynamic_objc_cast<_WKApplicationManifestIcon>(arrayElement);
+    if (!icon)
+        return std::nullopt;
+
     return WebCore::ApplicationManifest::Icon {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
+        icon.src,
+        makeVector<String>(icon.sizes),
+        icon.type,
+        fromPurposes(icon.purposes)
     };
 }
 
+@implementation _WKApplicationManifestIcon
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [self init]))
+        return nil;
+
+    _src = [[coder decodeObjectOfClass:[NSString class] forKey:@"src"] copy];
+    _sizes = [[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"sizes"] copy];
+    _type = [[coder decodeObjectOfClass:[NSString class] forKey:@"type"] copy];
+    _purposes = [[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"purposes"] copy];
+
+    return self;
+}
+
+- (instancetype)initWithCoreIcon:(const WebCore::ApplicationManifest::Icon *)icon
+{
+    if (!(self = [[_WKApplicationManifestIcon alloc] init]))
+        return nil;
+
+    if (icon) {
+        _src = [icon->src copy];
+        _sizes = createNSArray(icon->sizes, [] (auto& size) -> NSString * {
+            return size;
+        }).leakRef();
+        _type = [icon->type copy];
+        _purposes = fromPurposes(icon->purposes).leakRef();
+    }
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:_src forKey:@"src"];
+    [coder encodeObject:_sizes forKey:@"sizes"];
+    [coder encodeObject:_type forKey:@"type"];
+    [coder encodeObject:_purposes forKey:@"purposes"];
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestIcon.class, self))
+        return;
+
+    [_src release];
+    [_sizes release];
+    [_type release];
+    [_purposes release];
+
+    [super dealloc];
+}
+
+@end
+
+    
 @implementation _WKApplicationManifest
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -63,24 +150,24 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    NSString *name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
-    NSString *shortName = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"];
-    NSString *description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
-    NSURL *scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
+    String name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
+    String shortName = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"];
+    String description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
+    URL scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
-    NSURL *startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
+    URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
     CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[CocoaColor class] forKey:@"theme_color"];
     NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
-        WTF::String(name),
-        WTF::String(shortName),
-        WTF::String(description),
-        URL(scopeURL),
+        WTFMove(name),
+        WTFMove(shortName),
+        WTFMove(description),
+        WTFMove(scopeURL),
         static_cast<WebCore::ApplicationManifest::Display>(display),
-        URL(startURL),
+        WTFMove(startURL),
         WebCore::roundAndClampToSRGBALossy(themeColor.CGColor),
-        Vector<WebCore::ApplicationManifest::Icon>(makeVector<WebCore::ApplicationManifest::Icon>(icons)),
+        makeVector<WebCore::ApplicationManifest::Icon>(icons),
     };
 
     API::Object::constructInWrapper<API::ApplicationManifest>(self, WTFMove(coreApplicationManifest));
@@ -174,8 +261,9 @@ static NSString *nullableNSString(const WTF::String& string)
 
 - (NSArray<_WKApplicationManifestIcon *> *)icons
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
-    return nil;
+    return createNSArray(_applicationManifest->applicationManifest().icons, [] (auto& coreIcon) -> id {
+        return adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&coreIcon]).autorelease();
+    }).autorelease();
 }
 
 #else // ENABLE(APPLICATION_MANIFEST)
@@ -241,36 +329,5 @@ static NSString *nullableNSString(const WTF::String& string)
 }
 
 #endif // ENABLE(APPLICATION_MANIFEST)
-
-@end
-
-@implementation _WKApplicationManifestIcon
-
-+ (BOOL)supportsSecureCoding
-{
-    return YES;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
-    UNUSED_PARAM(aDecoder);
-    [self release];
-    return nil;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
-    UNUSED_PARAM(aCoder);
-}
-
-- (void)dealloc
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232959
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestIcon.class, self))
-        return;
-    [super dealloc];
-}
 
 @end

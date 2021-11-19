@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -160,11 +160,13 @@ public:
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
-    void testIconsSizes(const String &rawJSON, const String& expectedValue)
+    void testIconsSizes(const String &rawJSON, size_t expectedCount, size_t testIndex, const String& expectedValue)
     {
         auto manifest = parseIconFirstTopLevelProperty("sizes", rawJSON);
         auto value = manifest.icons[0].sizes;
-        EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
+        EXPECT_EQ(expectedCount, value.size());
+        EXPECT_TRUE(testIndex < value.size());
+        EXPECT_STREQ(expectedValue.utf8().data(), value[testIndex].utf8().data());
     }
 
     void testIconsPurposes(const String &rawJSON, OptionSet<ApplicationManifest::Icon::Purpose> expectedValues)
@@ -368,8 +370,9 @@ TEST_F(ApplicationManifestParserTest, Icons)
     URL srcURL = { { }, "https://example.com/icon.jpg" };
     testIconsSrc("\"icon.jpg\"", srcURL);
     testIconsType("\"image/webp\"", "image/webp");
-    testIconsSizes("\"256x256\"", "256x256");
-    testIconsSizes("\"72x72 96x96\"", "72x72 96x96");
+    testIconsSizes("\"256x256\"", 1, 0, "256x256");
+    testIconsSizes("\"72x72 96x96\"", 2, 0, "72x72");
+    testIconsSizes("\"72x72 96x96\"", 2, 1, "96x96");
 
     OptionSet<ApplicationManifest::Icon::Purpose> purposeAny { ApplicationManifest::Icon::Purpose::Any };
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochrome { ApplicationManifest::Icon::Purpose::Monochrome };

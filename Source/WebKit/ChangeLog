@@ -1,3 +1,31 @@
+2021-11-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Add support for web app manifest icons in WebKit/UI Process layer
+        https://bugs.webkit.org/show_bug.cgi?id=233350
+        <rdar://problem/84311569>
+
+        Reviewed by Chris Dumez.
+
+        This patch builds on the work in Bug 231339 and threads the new icons
+        feature through the WebKit layer.
+
+        Note: This change also moves the implementation of _WKApplicationManifestIcon
+        earlier in the file since the implementation is needed for proper serialization
+        of the _WKApplicationManifest.
+
+        Tested by TestWebKitAPI (ApplicationManifest.Icons) test.
+
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (fromPurposes): New helper function.
+        (makeVectorElement): Ditto.
+        (-[_WKApplicationManifestIcon initWithCoder:]): Updated to call proper
+        serialization methods.
+        (-[_WKApplicationManifestIcon initWithCoreIcon:]): Added.
+        (-[_WKApplicationManifest initWithCoder:]): Updated to properly handle
+        serializing the object.
+        (-[_WKApplicationManifest icons]): Added.
+
 2021-11-19  Per Arne  <pvollan@apple.com>
 
         [macOS] Enable message filtering for all WebKit processes
