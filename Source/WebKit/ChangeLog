@@ -1,3 +1,16 @@
+2021-11-19  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Add headers for [_WKWebAuthenticationPanel makeCredentialWithClientDataHash] and [_WKWebAuthenticationPanel getAssertionWithClientDataHash]
+        https://bugs.webkit.org/show_bug.cgi?id=233371
+        <rdar://problem/85607248>
+
+        Reviewed by Brent Fulgham.
+
+        These SPIs were added in https://bugs.webkit.org/show_bug.cgi?id=233216, but were not added to the header
+        file _WKWebAuthenticationPanel.h, this change adds them.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+
 2021-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add converters from serializable descriptors to interface descriptors

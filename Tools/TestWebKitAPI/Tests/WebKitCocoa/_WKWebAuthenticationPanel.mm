@@ -1898,6 +1898,44 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
     }];
     Util::run(&webAuthenticationPanelRan);
 }
+
+TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHash)
+{
+    reset();
+
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    [rp setIdentifier:@"example.com"];
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel setMockConfiguration:@{ @"privateKeyBase64": testES256PrivateKeyBase64 }];
+    auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+    [panel setDelegate:delegate.get()];
+
+    [panel makeCredentialWithClientDataHash:nsHash.get() options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+        cleanUpKeychain("example.com");
+
+        EXPECT_TRUE(laContextRequested);
+        EXPECT_NULL(error);
+
+        EXPECT_NOT_NULL(response);
+        EXPECT_NULL(response.clientDataJSON);
+        // This is the sha1 hash of the public key of testES256PrivateKeyBase64.
+        EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
+        EXPECT_NULL(response.extensions);
+        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
 #endif
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
@@ -2025,6 +2063,56 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
 
         EXPECT_NOT_NULL(response);
         EXPECT_WK_STREQ([[NSString alloc] initWithData:response.clientDataJSON encoding:NSUTF8StringEncoding], "{\"type\":\"webauthn.get\",\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"https://example.com\"}");
+        EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
+        EXPECT_NULL(response.extensions);
+
+        // echo -n "example.com" | shasum -a 256 | xxd -r -p | base64
+        NSString *base64RPIDHash = @"o3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUc=";
+        constexpr uint8_t additionalAuthenticatorData[] = {
+            0x05, // 'flags': UV=1, UP=1
+
+            // 32-bit 'signCount'
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        };
+        NSMutableData *expectedAuthenticatorData = [[NSMutableData alloc] initWithBase64EncodedString:base64RPIDHash options:0];
+        [expectedAuthenticatorData appendBytes:additionalAuthenticatorData length:sizeof(additionalAuthenticatorData)];
+
+        EXPECT_WK_STREQ([response.authenticatorData base64EncodedStringWithOptions:0], [expectedAuthenticatorData base64EncodedStringWithOptions:0]);
+        EXPECT_NOT_NULL(response.signature);
+        EXPECT_WK_STREQ([response.userHandle base64EncodedStringWithOptions:0], "AAECAwQFBgcICQ==");
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
+
+TEST(WebAuthenticationPanel, GetAssertionLAClientDataHash)
+{
+    reset();
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64));
+
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    [options setRelyingPartyIdentifier:@"example.com"];
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel setMockConfiguration:@{ }];
+    auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+    [panel setDelegate:delegate.get()];
+
+    [panel getAssertionWithClientDataHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+        cleanUpKeychain("example.com");
+
+        EXPECT_NULL(error);
+
+        EXPECT_NOT_NULL(response);
+        EXPECT_NULL(response.clientDataJSON);
+        // This is the sha1 hash of the public key of testES256PrivateKeyBase64.
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
 
