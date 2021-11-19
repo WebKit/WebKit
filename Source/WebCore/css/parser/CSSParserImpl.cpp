@@ -343,8 +343,11 @@ static CSSParserImpl::AllowedRulesType computeNewAllowedRules(CSSParserImpl::All
 {
     if (!rule || allowedRules == CSSParserImpl::KeyframeRules || allowedRules == CSSParserImpl::CounterStyleRules || allowedRules == CSSParserImpl::NoRules)
         return allowedRules;
+    
     ASSERT(allowedRules <= CSSParserImpl::RegularRules);
-    if (allowedRules <= CSSParserImpl::AllowLayerStatementRules && (rule->isCharsetRule() || rule->isLayerRule()))
+    if (rule->isCharsetRule())
+        return CSSParserImpl::AllowLayerStatementRules;
+    if (allowedRules <= CSSParserImpl::AllowLayerStatementRules && rule->isLayerRule() && downcast<StyleRuleLayer>(*rule).isStatement())
         return CSSParserImpl::AllowLayerStatementRules;
     if (rule->isImportRule())
         return CSSParserImpl::AllowImportRules;

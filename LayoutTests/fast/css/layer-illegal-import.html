@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@layer imported {
+    div { color: blue; }
+}
+
+@layer imported, special;
+
+@import url("data:text/css,div{color:red}") layer(special);
+
+@layer imported {
+    div { color: green; }
+}
+</style>
+</head>
+<body>
+<div>This should be green because the misplaced @import shouldn't parse</div>
+</body>
+</html>
