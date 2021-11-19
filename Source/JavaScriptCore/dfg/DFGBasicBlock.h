@@ -53,6 +53,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
         float executionCount);
     ~BasicBlock();
     
+    void ensureLocals(unsigned newNumLocals);
+    void ensureTmps(unsigned newNumTmps);
+    
     size_t size() const { return m_nodes.size(); }
     bool isEmpty() const { return !size(); }
     Node*& at(size_t i) { return m_nodes[i]; }

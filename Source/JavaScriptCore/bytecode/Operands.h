@@ -274,25 +274,16 @@ public:
         }
     }
 
-    void ensureLocalsAndTmps(size_t newNumLocals, size_t newNumTmps, const T& ensuredValue = T())
+    void ensureTmps(size_t size, const T& ensuredValue = T())
     {
-        ASSERT(newNumLocals >= numberOfLocals());
-        ASSERT(newNumTmps >= numberOfTmps());
-
-        size_t oldNumLocals = numberOfLocals();
-        size_t oldNumTmps = numberOfTmps();
+        if (size <= numberOfTmps())
+            return;
 
         size_t oldSize = m_values.size();
-        size_t newSize = numberOfArguments() + newNumLocals + newNumTmps;
+        size_t newSize = numberOfArguments() + numberOfLocals() + size;
         m_values.grow(newSize);
 
-        for (size_t i = 0; i < oldNumTmps; ++i)
-            m_values[newSize - 1 - i] = m_values[tmpIndex(oldNumTmps - 1 - i)];
-
-        m_numLocals = newNumLocals;
         if (ensuredValue != T() || !WTF::VectorTraits<T>::needsInitialization) {
-            for (size_t i = 0; i < newNumLocals - oldNumLocals; ++i)
-                m_values[localIndex(oldNumLocals + i)] = ensuredValue;
             for (size_t i = oldSize; i < newSize; ++i)
                 m_values[i] = ensuredValue;
         }
