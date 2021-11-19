@@ -30,7 +30,7 @@ from resultsdbpy.controller.failure_controller import FailureController
 from resultsdbpy.controller.suite_controller import SuiteController
 from resultsdbpy.controller.test_controller import TestController
 from resultsdbpy.controller.upload_controller import UploadController
-from resultsdbpy.flask_support.authed_blueprint import AuthedBlueprint
+from webkitflaskpy import AuthedBlueprint
 from werkzeug.exceptions import HTTPException
 
 

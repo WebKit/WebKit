@@ -44,7 +44,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(3, 1, 4)
+version = Version(3, 1, 5)
 
 import webkitflaskpy
 

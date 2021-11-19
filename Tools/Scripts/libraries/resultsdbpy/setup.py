@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='resultsdbpy',
-    version='3.1.4',
+    version='3.1.5',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -61,9 +61,6 @@ setup(
         'boto3',
         'cassandra-driver',
         'fakeredis',
-        'Flask',
-        'Flask-Cors',
-        'gunicorn',
         'lupa',
         'pycryptodome',
         'redis',
@@ -71,6 +68,7 @@ setup(
         'selenium',
         'webkitcorepy',
         'webkitscmpy',
+        'webkitflaskpy',
     ],
     include_package_data=True,
     zip_safe=False,
