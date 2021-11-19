@@ -1,3 +1,23 @@
+2021-11-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Add build recipe for libjxl
+        https://bugs.webkit.org/show_bug.cgi?id=233326
+
+        Reviewed by Philippe Normand.
+
+        Add the build recipe for libjxl, which in turns needs highway (libhwy), which gets imported
+        as well. Highway is always built as a static library, and therefore only needed at build
+        time. As for libjxl, the recipe tries to disable as much as possible of bundled sources from
+        its third_party/ subdirectory, but LodePNG gets always needed, and the same goes for either
+        SkCMS or LCMS2; and in both cases they get built and linked statically into the resulting
+        libjxl library. Ideally we would prefer that libjxl could use a system-installed copy of
+        LCMS2 because that is already available in the SDK, but that not being an option SkCMS is
+        preferred as it is smaller.
+
+        * elements/sdk-platform.bst: List libjxl for installation in the SDK.
+        * elements/sdk/highway.bst: Added.
+        * elements/sdk/libjxl.bst: Added.
+
 2021-11-06  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository as of r285357
