@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUExtent3D.h"
 #include "WebGPUIdentifier.h"
 #include <cstdint>
@@ -95,3 +97,5 @@ struct CanvasConfiguration {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

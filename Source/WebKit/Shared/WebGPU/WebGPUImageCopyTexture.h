@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUIdentifier.h"
 #include "WebGPUOrigin3D.h"
 #include <optional>
@@ -75,3 +77,5 @@ struct ImageCopyTexture {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

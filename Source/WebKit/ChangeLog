@@ -1,3 +1,229 @@
+2021-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add converters from serializable descriptors to interface descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=233310
+
+        Reviewed by Dean Jackson.
+
+        * GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp:
+        (WebKit::WebGPU::ObjectHeap::convertAdapterFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBindGroupFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBindGroupLayoutFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBufferFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertCommandBufferFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertCommandEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertComputePassEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertComputePipelineFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertDeviceFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertExternalTextureFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertGPUFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertPipelineLayoutFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertQuerySetFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertQueueFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderBundleEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderBundleFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderPassEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderPipelineFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertSamplerFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertShaderModuleFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertTextureFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertTextureViewFromBacking):
+        * GPUProcess/graphics/WebGPU/WebGPUObjectHeap.h:
+        * Scripts/generate-unified-sources.sh:
+        * Shared/WebGPU/WebGPUBindGroupDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUFragmentState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBindGroupDescriptor.h:
+        * Shared/WebGPU/WebGPUBindGroupEntry.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBindGroupDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBindGroupEntry.h:
+        * Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.cpp: Copied from Source/WebCore/Modules/WebGPU/GPUBindGroupLayoutDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.h:
+        * Shared/WebGPU/WebGPUBindGroupLayoutEntry.cpp: Added.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBindGroupLayoutEntry.h:
+        * Shared/WebGPU/WebGPUBlendComponent.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBlendComponent.h:
+        * Shared/WebGPU/WebGPUBlendState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBlendState.h:
+        * Shared/WebGPU/WebGPUBufferBinding.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUValidationError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBufferBinding.h:
+        * Shared/WebGPU/WebGPUBufferBindingLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUValidationError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBufferBindingLayout.h:
+        * Shared/WebGPU/WebGPUBufferDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUImageCopyExternalImage.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUBufferDescriptor.h:
+        * Shared/WebGPU/WebGPUCanvasConfiguration.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUFragmentState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUCanvasConfiguration.h:
+        * Shared/WebGPU/WebGPUColor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBlendState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUColor.h:
+        * Shared/WebGPU/WebGPUColorTargetState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUColorTargetState.h:
+        * Shared/WebGPU/WebGPUCommandBufferDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUCommandBufferDescriptor.h:
+        * Shared/WebGPU/WebGPUCommandEncoderDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUCommandEncoderDescriptor.h:
+        * Shared/WebGPU/WebGPUCompilationMessage.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUCompilationMessage.h:
+        * Shared/WebGPU/WebGPUComputePassDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBlendState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUComputePassDescriptor.h:
+        * Shared/WebGPU/WebGPUComputePassTimestampWrites.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUComputePassDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUComputePassTimestampWrites.h:
+        * Shared/WebGPU/WebGPUComputePipelineDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBlendState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUComputePipelineDescriptor.h:
+        * Shared/WebGPU/WebGPUConvertFromBackingContext.h:
+        * Shared/WebGPU/WebGPUDepthStencilState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUDepthStencilState.h:
+        * Shared/WebGPU/WebGPUDeviceDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUDeviceDescriptor.h:
+        * Shared/WebGPU/WebGPUError.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUOrigin2D.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUError.h:
+        * Shared/WebGPU/WebGPUExtent3D.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUExtent3D.h:
+        * Shared/WebGPU/WebGPUExternalTextureBindingLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUExternalTextureBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUExternalTextureBindingLayout.h:
+        * Shared/WebGPU/WebGPUExternalTextureDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * Shared/WebGPU/WebGPUFragmentState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUPipelineDescriptorBase.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUFragmentState.h:
+        * Shared/WebGPU/WebGPUImageCopyBuffer.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageCopyBuffer.h:
+        * Shared/WebGPU/WebGPUImageCopyExternalImage.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUImageCopyExternalImage.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageCopyExternalImage.h:
+        * Shared/WebGPU/WebGPUImageCopyTexture.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUImageCopyExternalImage.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageCopyTexture.h:
+        * Shared/WebGPU/WebGPUImageCopyTextureTagged.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageCopyTextureTagged.h:
+        * Shared/WebGPU/WebGPUImageDataLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUExternalTextureBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageDataLayout.h:
+        * Shared/WebGPU/WebGPUMultisampleState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUExternalTextureBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUMultisampleState.h:
+        * Shared/WebGPU/WebGPUObjectDescriptorBase.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUExternalTextureBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUObjectDescriptorBase.h:
+        * Shared/WebGPU/WebGPUOrigin2D.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUPipelineLayoutDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUOrigin2D.h:
+        * Shared/WebGPU/WebGPUOrigin3D.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUOrigin3D.h:
+        * Shared/WebGPU/WebGPUOutOfMemoryError.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUOutOfMemoryError.h:
+        * Shared/WebGPU/WebGPUPipelineDescriptorBase.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBlendState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp: Copied from Source/WebCore/Modules/WebGPU/GPUPipelineLayoutDescriptor.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * Shared/WebGPU/WebGPUPrimitiveState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUValidationError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUPrimitiveState.h:
+        * Shared/WebGPU/WebGPUProgrammableStage.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUProgrammableStage.h:
+        * Shared/WebGPU/WebGPUQuerySetDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUQuerySetDescriptor.h:
+        * Shared/WebGPU/WebGPURenderBundleDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderBundleDescriptor.h:
+        * Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUObjectDescriptorBase.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.h:
+        * Shared/WebGPU/WebGPURenderPassColorAttachment.cpp: Added.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassColorAttachment.h:
+        * Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUImageCopyBuffer.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * Shared/WebGPU/WebGPURenderPassDescriptor.cpp: Added.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassDescriptor.h:
+        * Shared/WebGPU/WebGPURenderPassLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassLayout.h:
+        * Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp: Copied from Source/WebCore/Modules/WebGPU/GPURenderPassTimestampWrite.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassTimestampWrites.h:
+        * Shared/WebGPU/WebGPURenderPipelineDescriptor.cpp: Added.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPipelineDescriptor.h:
+        * Shared/WebGPU/WebGPURequestAdapterOptions.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUValidationError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURequestAdapterOptions.h:
+        * Shared/WebGPU/WebGPUSamplerBindingLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUExternalTextureBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUSamplerBindingLayout.h:
+        * Shared/WebGPU/WebGPUSamplerDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBlendState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUSamplerDescriptor.h:
+        * Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSamplerBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUShaderModuleDescriptor.h:
+        * Shared/WebGPU/WebGPUStencilFaceState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUValidationError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUStencilFaceState.h:
+        * Shared/WebGPU/WebGPUStorageTextureBindingLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUSupportedFeatures.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUStorageTextureBindingLayout.h:
+        * Shared/WebGPU/WebGPUSupportedFeatures.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUExternalTextureBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUSupportedFeatures.h:
+        * Shared/WebGPU/WebGPUSupportedLimits.cpp: Added.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUSupportedLimits.h:
+        * Shared/WebGPU/WebGPUTextureBindingLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUValidationError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUTextureBindingLayout.h:
+        * Shared/WebGPU/WebGPUTextureDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBlendState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUTextureDescriptor.h:
+        * Shared/WebGPU/WebGPUTextureViewDescriptor.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUObjectDescriptorBase.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUTextureViewDescriptor.h:
+        * Shared/WebGPU/WebGPUValidationError.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUError.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUValidationError.h:
+        * Shared/WebGPU/WebGPUVertexAttribute.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUExternalTextureBindingLayout.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUVertexAttribute.h:
+        * Shared/WebGPU/WebGPUVertexBufferLayout.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUImageCopyBuffer.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUVertexBufferLayout.h:
+        * Shared/WebGPU/WebGPUVertexState.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUBlendState.h.
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUVertexState.h:
+        * Sources.txt:
+        * UnifiedSources-output.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-11-19  Brady Eidson  <beidson@apple.com>
 
         More webpushd architecture work

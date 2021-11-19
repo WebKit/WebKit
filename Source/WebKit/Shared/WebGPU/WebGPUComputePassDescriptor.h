@@ -25,8 +25,11 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUComputePassTimestampWrites.h"
 #include "WebGPUObjectDescriptorBase.h"
+#include <optional>
 
 namespace WebKit::WebGPU {
 
@@ -56,3 +59,5 @@ struct ComputePassDescriptor : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

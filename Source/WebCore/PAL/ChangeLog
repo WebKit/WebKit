@@ -1,3 +1,32 @@
+2021-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add converters from serializable descriptors to interface descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=233310
+
+        Reviewed by Dean Jackson.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::DeviceImpl::createBindGroupLayout):
+        (PAL::WebGPU::DeviceImpl::createPipelineLayout):
+        (PAL::WebGPU::DeviceImpl::createBindGroup):
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::DeviceImpl::createRenderBundleEncoder):
+        (PAL::WebGPU::DeviceImpl::createQuerySet):
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.cpp:
+        (PAL::WebGPU::QueueImpl::submit):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp:
+        (PAL::WebGPU::RenderPassEncoderImpl::executeBundles):
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.cpp:
+        (PAL::WebGPU::TextureImpl::createView):
+        (PAL::WebGPU::TextureImpl::createView const): Deleted.
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h:
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h:
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h:
+        * pal/graphics/WebGPU/WebGPUValidationError.h:
+
 2021-11-19  Antoine Quint  <graouts@webkit.org>
 
         [Model] add support for seeking animations

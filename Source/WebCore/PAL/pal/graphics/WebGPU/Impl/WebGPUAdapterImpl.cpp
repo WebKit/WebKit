@@ -160,10 +160,9 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, WTF::Functio
         label.data()
     };
 
-    Vector<WGPUFeatureName> features;
-    features.reserveInitialCapacity(descriptor.requiredFeatures.size());
-    for (auto featureName : descriptor.requiredFeatures)
-        features.uncheckedAppend(m_convertToBackingContext->convertToBacking(featureName));
+    auto features = descriptor.requiredFeatures.map([this] (auto featureName) {
+        return m_convertToBackingContext->convertToBacking(featureName);
+    });
 
     WGPURequiredLimits limits {
         nullptr, {

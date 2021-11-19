@@ -42,13 +42,9 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            ([this] () {
-                Vector<PAL::WebGPU::RenderPassColorAttachment> colorAttachments;
-                colorAttachments.reserveInitialCapacity(this->colorAttachments.size());
-                for (auto& colorAttachment : this->colorAttachments)
-                    colorAttachments.uncheckedAppend(colorAttachment.convertToBacking());
-                return colorAttachments;
-            })(),
+            colorAttachments.map([] (auto& colorAttachment) {
+                return colorAttachment.convertToBacking();
+            }),
             depthStencilAttachment ? std::optional { depthStencilAttachment->convertToBacking() } : std::nullopt,
             occlusionQuerySet ? &occlusionQuerySet->backing() : nullptr,
             WebCore::convertToBacking(timestampWrites),

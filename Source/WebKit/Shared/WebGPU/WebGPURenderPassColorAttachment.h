@@ -25,8 +25,11 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUColor.h"
 #include "WebGPUIdentifier.h"
+#include <optional>
 #include <pal/graphics/WebGPU/WebGPULoadOp.h>
 #include <pal/graphics/WebGPU/WebGPUStoreOp.h>
 #include <variant>
@@ -77,3 +80,5 @@ struct RenderPassColorAttachment {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

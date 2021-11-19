@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUPowerPreference.h>
 
@@ -57,3 +59,5 @@ struct RequestAdapterOptions {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

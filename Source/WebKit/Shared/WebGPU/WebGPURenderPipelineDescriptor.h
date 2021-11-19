@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUDepthStencilState.h"
 #include "WebGPUFragmentState.h"
 #include "WebGPUMultisampleState.h"
@@ -89,3 +91,5 @@ struct RenderPipelineDescriptor : public PipelineDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

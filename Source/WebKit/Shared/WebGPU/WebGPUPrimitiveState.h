@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUCullMode.h>
 #include <pal/graphics/WebGPU/WebGPUFrontFace.h>
@@ -84,3 +86,5 @@ struct PrimitiveState {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

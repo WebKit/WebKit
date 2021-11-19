@@ -14,7 +14,7 @@ if [ -z "${BUILD_SCRIPTS_DIR}" ]; then
     fi
 fi
 
-UnifiedSourceCppFileCount=103
+UnifiedSourceCppFileCount=111
 UnifiedSourceMmFileCount=80
 
 if [ $# -eq 0 ]; then

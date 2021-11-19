@@ -25,7 +25,10 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include <cstdint>
+#include <optional>
 
 namespace WebKit::WebGPU {
 
@@ -251,3 +254,5 @@ struct SupportedLimits {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

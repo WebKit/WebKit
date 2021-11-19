@@ -25,7 +25,10 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPURenderPassLayout.h"
+#include <optional>
 
 namespace WebKit::WebGPU {
 
@@ -62,3 +65,5 @@ struct RenderBundleEncoderDescriptor : public RenderPassLayout {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
+#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <variant>
 #include <wtf/Vector.h>
@@ -67,3 +70,5 @@ struct Extent3DDict {
 using Extent3D = std::variant<Vector<PAL::WebGPU::IntegerCoordinate>, Extent3DDict>;
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

@@ -391,6 +391,14 @@
 		1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8E2A321277852400BC7BD0 /* WebInspectorMessages.h */; };
 		1CA8B945127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */; };
 		1CA8B946127C882A00576C2B /* WebInspectorUIProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */; };
+		1CAECB6527465AE400AB78D0 /* UnifiedSource109.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB5D27465AE300AB78D0 /* UnifiedSource109.cpp */; };
+		1CAECB6627465AE400AB78D0 /* UnifiedSource111.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB5E27465AE300AB78D0 /* UnifiedSource111.cpp */; };
+		1CAECB6727465AE400AB78D0 /* UnifiedSource108.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB5F27465AE300AB78D0 /* UnifiedSource108.cpp */; };
+		1CAECB6827465AE400AB78D0 /* UnifiedSource110.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6027465AE300AB78D0 /* UnifiedSource110.cpp */; };
+		1CAECB6927465AE400AB78D0 /* UnifiedSource104.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6127465AE300AB78D0 /* UnifiedSource104.cpp */; };
+		1CAECB6A27465AE400AB78D0 /* UnifiedSource105.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6227465AE400AB78D0 /* UnifiedSource105.cpp */; };
+		1CAECB6B27465AE400AB78D0 /* UnifiedSource106.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6327465AE400AB78D0 /* UnifiedSource106.cpp */; };
+		1CAECB6C27465AE400AB78D0 /* UnifiedSource107.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6427465AE400AB78D0 /* UnifiedSource107.cpp */; };
 		1CB7464D274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB7464B274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h */; };
 		1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */; };
 		1CBBE4A119B66C53006B7D81 /* WebInspectorUIMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */; };
@@ -2981,10 +2989,81 @@
 		1C98C0932744BD9B002CCB78 /* RemoteComputePassEncoder.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteComputePassEncoder.messages.in; sourceTree = "<group>"; };
 		1C98C0942744BD9B002CCB78 /* RemoteGPU.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteGPU.messages.in; sourceTree = "<group>"; };
 		1C98C0952744BD9B002CCB78 /* RemoteCommandEncoder.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteCommandEncoder.messages.in; sourceTree = "<group>"; };
+		1C98C0962746210E002CCB78 /* WebGPUBindGroupDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroupDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C09827462678002CCB78 /* WebGPUValidationError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUValidationError.cpp; sourceTree = "<group>"; };
+		1C98C09927462678002CCB78 /* WebGPUShaderModuleDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModuleDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C09A27462678002CCB78 /* WebGPUCanvasConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCanvasConfiguration.cpp; sourceTree = "<group>"; };
+		1C98C09B27462678002CCB78 /* WebGPUPrimitiveState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPrimitiveState.cpp; sourceTree = "<group>"; };
+		1C98C09C27462678002CCB78 /* WebGPUProgrammableStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUProgrammableStage.cpp; sourceTree = "<group>"; };
+		1C98C09D27462678002CCB78 /* WebGPUImageCopyTextureTagged.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUImageCopyTextureTagged.cpp; sourceTree = "<group>"; };
+		1C98C09E27462679002CCB78 /* WebGPURenderPassTimestampWrites.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassTimestampWrites.cpp; sourceTree = "<group>"; };
+		1C98C09F27462679002CCB78 /* WebGPUPipelineDescriptorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPipelineDescriptorBase.cpp; sourceTree = "<group>"; };
+		1C98C0A027462679002CCB78 /* WebGPUOrigin3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUOrigin3D.cpp; sourceTree = "<group>"; };
+		1C98C0A127462679002CCB78 /* WebGPUQuerySetDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUQuerySetDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0A227462679002CCB78 /* WebGPUCommandBufferDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCommandBufferDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0A32746267A002CCB78 /* WebGPUImageDataLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUImageDataLayout.cpp; sourceTree = "<group>"; };
+		1C98C0A52746267A002CCB78 /* WebGPUBufferBindingLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBufferBindingLayout.cpp; sourceTree = "<group>"; };
+		1C98C0A62746267A002CCB78 /* WebGPUBlendState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBlendState.cpp; sourceTree = "<group>"; };
+		1C98C0A72746267A002CCB78 /* WebGPURenderPassDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0A82746267A002CCB78 /* WebGPURenderBundleEncoderDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderBundleEncoderDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0A92746267B002CCB78 /* WebGPUBufferDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBufferDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0AA2746267B002CCB78 /* WebGPUSupportedLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSupportedLimits.cpp; sourceTree = "<group>"; };
+		1C98C0AB2746267B002CCB78 /* WebGPUBufferBinding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBufferBinding.cpp; sourceTree = "<group>"; };
+		1C98C0AC2746267B002CCB78 /* WebGPUVertexBufferLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUVertexBufferLayout.cpp; sourceTree = "<group>"; };
+		1C98C0AD2746267B002CCB78 /* WebGPUImageCopyBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUImageCopyBuffer.cpp; sourceTree = "<group>"; };
+		1C98C0AE2746267B002CCB78 /* WebGPUTextureDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUTextureDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0B02746267C002CCB78 /* WebGPUBindGroupEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroupEntry.cpp; sourceTree = "<group>"; };
+		1C98C0B12746267C002CCB78 /* WebGPUBindGroupLayoutDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroupLayoutDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0B22746267C002CCB78 /* WebGPUTextureBindingLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUTextureBindingLayout.cpp; sourceTree = "<group>"; };
+		1C98C0B32746267C002CCB78 /* WebGPUColorTargetState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUColorTargetState.cpp; sourceTree = "<group>"; };
+		1C98C0B42746267C002CCB78 /* WebGPURenderBundleDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderBundleDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0B52746267D002CCB78 /* WebGPUPipelineLayoutDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPipelineLayoutDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0B62746267D002CCB78 /* WebGPUStorageTextureBindingLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUStorageTextureBindingLayout.cpp; sourceTree = "<group>"; };
+		1C98C0B72746267D002CCB78 /* WebGPUSamplerBindingLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSamplerBindingLayout.cpp; sourceTree = "<group>"; };
+		1C98C0B82746267D002CCB78 /* WebGPUDepthStencilState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDepthStencilState.cpp; sourceTree = "<group>"; };
+		1C98C0B92746267D002CCB78 /* WebGPUExtent3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUExtent3D.cpp; sourceTree = "<group>"; };
+		1C98C0BA2746267D002CCB78 /* WebGPUExternalTextureDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUExternalTextureDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0BB2746267E002CCB78 /* WebGPURenderPassDepthStencilAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassDepthStencilAttachment.cpp; sourceTree = "<group>"; };
+		1C98C0BC2746267E002CCB78 /* WebGPUFragmentState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUFragmentState.cpp; sourceTree = "<group>"; };
+		1C98C0BD2746267E002CCB78 /* WebGPUCommandEncoderDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCommandEncoderDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0BE2746267E002CCB78 /* WebGPUColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUColor.cpp; sourceTree = "<group>"; };
+		1C98C0BF2746267E002CCB78 /* WebGPUOrigin2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUOrigin2D.cpp; sourceTree = "<group>"; };
+		1C98C0C02746267E002CCB78 /* WebGPUError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUError.cpp; sourceTree = "<group>"; };
+		1C98C0C12746267F002CCB78 /* WebGPUOutOfMemoryError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUOutOfMemoryError.cpp; sourceTree = "<group>"; };
+		1C98C0C22746267F002CCB78 /* WebGPUComputePassTimestampWrites.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputePassTimestampWrites.cpp; sourceTree = "<group>"; };
+		1C98C0C32746267F002CCB78 /* WebGPURenderPassLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassLayout.cpp; sourceTree = "<group>"; };
+		1C98C0C42746267F002CCB78 /* WebGPUExternalTextureBindingLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUExternalTextureBindingLayout.cpp; sourceTree = "<group>"; };
+		1C98C0C52746267F002CCB78 /* WebGPUBlendComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBlendComponent.cpp; sourceTree = "<group>"; };
+		1C98C0C62746267F002CCB78 /* WebGPUImageCopyExternalImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUImageCopyExternalImage.cpp; sourceTree = "<group>"; };
+		1C98C0C727462680002CCB78 /* WebGPUComputePipelineDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputePipelineDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0C827462680002CCB78 /* WebGPUCompilationMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCompilationMessage.cpp; sourceTree = "<group>"; };
+		1C98C0C927462680002CCB78 /* WebGPUMultisampleState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUMultisampleState.cpp; sourceTree = "<group>"; };
+		1C98C0CA27462680002CCB78 /* WebGPUStencilFaceState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUStencilFaceState.cpp; sourceTree = "<group>"; };
+		1C98C0CB27462680002CCB78 /* WebGPUTextureViewDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUTextureViewDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0CC27462680002CCB78 /* WebGPUSamplerDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSamplerDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0CD27462681002CCB78 /* WebGPUVertexState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUVertexState.cpp; sourceTree = "<group>"; };
+		1C98C0CE27462681002CCB78 /* WebGPUImageCopyTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUImageCopyTexture.cpp; sourceTree = "<group>"; };
+		1C98C0CF27462681002CCB78 /* WebGPUBindGroupLayoutEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroupLayoutEntry.cpp; sourceTree = "<group>"; };
+		1C98C0D027462681002CCB78 /* WebGPUVertexAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUVertexAttribute.cpp; sourceTree = "<group>"; };
+		1C98C0D127462681002CCB78 /* WebGPURequestAdapterOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURequestAdapterOptions.cpp; sourceTree = "<group>"; };
+		1C98C0D227462681002CCB78 /* WebGPUComputePassDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputePassDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0D327462682002CCB78 /* WebGPUSupportedFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSupportedFeatures.cpp; sourceTree = "<group>"; };
+		1C98C0D527462682002CCB78 /* WebGPURenderPipelineDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPipelineDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0D627462682002CCB78 /* WebGPURenderPassColorAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassColorAttachment.cpp; sourceTree = "<group>"; };
+		1C98C0D727462682002CCB78 /* WebGPUDeviceDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDeviceDescriptor.cpp; sourceTree = "<group>"; };
+		1C98C0D827462682002CCB78 /* WebGPUObjectDescriptorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUObjectDescriptorBase.cpp; sourceTree = "<group>"; };
 		1C9EBA5B2087E74E00054429 /* NativeWebMouseEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebMouseEventIOS.mm; path = ios/NativeWebMouseEventIOS.mm; sourceTree = "<group>"; };
 		1CA8B935127C774E00576C2B /* WebInspectorUIProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorUIProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorUIProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/WebInspectorUIProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorUIProxyMessages.h; path = DerivedSources/WebKit2/WebInspectorUIProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB5D27465AE300AB78D0 /* UnifiedSource109.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource109.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource109.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB5E27465AE300AB78D0 /* UnifiedSource111.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource111.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource111.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB5F27465AE300AB78D0 /* UnifiedSource108.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource108.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource108.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB6027465AE300AB78D0 /* UnifiedSource110.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource110.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource110.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB6127465AE300AB78D0 /* UnifiedSource104.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource104.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource104.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB6227465AE400AB78D0 /* UnifiedSource105.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource105.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource105.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB6327465AE400AB78D0 /* UnifiedSource106.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource106.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource106.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAECB6427465AE400AB78D0 /* UnifiedSource107.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource107.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource107.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CB7461A27436EE400F19874 /* RemoteTextureViewProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureViewProxy.h; sourceTree = "<group>"; };
 		1CB7461B27436EE400F19874 /* RemoteBindGroupLayoutProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBindGroupLayoutProxy.h; sourceTree = "<group>"; };
 		1CB7461C27436EE500F19874 /* RemoteCommandBufferProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandBufferProxy.cpp; sourceTree = "<group>"; };
@@ -7410,71 +7489,134 @@
 		1CB74645274379F100F19874 /* WebGPU */ = {
 			isa = PBXGroup;
 			children = (
+				1C98C0962746210E002CCB78 /* WebGPUBindGroupDescriptor.cpp */,
 				1CB7468B27439CB700F19874 /* WebGPUBindGroupDescriptor.h */,
+				1C98C0B02746267C002CCB78 /* WebGPUBindGroupEntry.cpp */,
 				1CB7468A27439CB600F19874 /* WebGPUBindGroupEntry.h */,
+				1C98C0B12746267C002CCB78 /* WebGPUBindGroupLayoutDescriptor.cpp */,
 				1CB7466A27439CAF00F19874 /* WebGPUBindGroupLayoutDescriptor.h */,
+				1C98C0CF27462681002CCB78 /* WebGPUBindGroupLayoutEntry.cpp */,
 				1CB7469527439CB900F19874 /* WebGPUBindGroupLayoutEntry.h */,
+				1C98C0C52746267F002CCB78 /* WebGPUBlendComponent.cpp */,
 				1CB7467827439CB200F19874 /* WebGPUBlendComponent.h */,
+				1C98C0A62746267A002CCB78 /* WebGPUBlendState.cpp */,
 				1CB7467C27439CB300F19874 /* WebGPUBlendState.h */,
+				1C98C0AB2746267B002CCB78 /* WebGPUBufferBinding.cpp */,
 				1CB7469027439CB800F19874 /* WebGPUBufferBinding.h */,
+				1C98C0A52746267A002CCB78 /* WebGPUBufferBindingLayout.cpp */,
 				1CB7469327439CB900F19874 /* WebGPUBufferBindingLayout.h */,
+				1C98C0A92746267B002CCB78 /* WebGPUBufferDescriptor.cpp */,
 				1CB7466627439CAE00F19874 /* WebGPUBufferDescriptor.h */,
+				1C98C09A27462678002CCB78 /* WebGPUCanvasConfiguration.cpp */,
 				1CB7467F27439CB400F19874 /* WebGPUCanvasConfiguration.h */,
+				1C98C0BE2746267E002CCB78 /* WebGPUColor.cpp */,
 				1CB7467727439CB200F19874 /* WebGPUColor.h */,
+				1C98C0B32746267C002CCB78 /* WebGPUColorTargetState.cpp */,
 				1CB7467927439CB200F19874 /* WebGPUColorTargetState.h */,
+				1C98C0A227462679002CCB78 /* WebGPUCommandBufferDescriptor.cpp */,
 				1CB7468327439CB500F19874 /* WebGPUCommandBufferDescriptor.h */,
+				1C98C0BD2746267E002CCB78 /* WebGPUCommandEncoderDescriptor.cpp */,
 				1CB7469227439CB900F19874 /* WebGPUCommandEncoderDescriptor.h */,
+				1C98C0C827462680002CCB78 /* WebGPUCompilationMessage.cpp */,
 				1C98C07B2744B416002CCB78 /* WebGPUCompilationMessage.h */,
+				1C98C0D227462681002CCB78 /* WebGPUComputePassDescriptor.cpp */,
 				1CB7469727439CBA00F19874 /* WebGPUComputePassDescriptor.h */,
+				1C98C0C22746267F002CCB78 /* WebGPUComputePassTimestampWrites.cpp */,
 				1CB7468927439CB600F19874 /* WebGPUComputePassTimestampWrites.h */,
+				1C98C0C727462680002CCB78 /* WebGPUComputePipelineDescriptor.cpp */,
 				1CB7467627439CB100F19874 /* WebGPUComputePipelineDescriptor.h */,
 				1CB746A42743ADBA00F19874 /* WebGPUConvertFromBackingContext.h */,
 				1CB7464727437A7F00F19874 /* WebGPUConvertToBackingContext.h */,
+				1C98C0B82746267D002CCB78 /* WebGPUDepthStencilState.cpp */,
 				1CB7467127439CB000F19874 /* WebGPUDepthStencilState.h */,
+				1C98C0D727462682002CCB78 /* WebGPUDeviceDescriptor.cpp */,
 				1CB7468527439CB500F19874 /* WebGPUDeviceDescriptor.h */,
+				1C98C0C02746267E002CCB78 /* WebGPUError.cpp */,
 				1C98C07E2744B9DB002CCB78 /* WebGPUError.h */,
+				1C98C0B92746267D002CCB78 /* WebGPUExtent3D.cpp */,
 				1CB7468727439CB600F19874 /* WebGPUExtent3D.h */,
+				1C98C0C42746267F002CCB78 /* WebGPUExternalTextureBindingLayout.cpp */,
 				1CB7466F27439CB000F19874 /* WebGPUExternalTextureBindingLayout.h */,
+				1C98C0BA2746267D002CCB78 /* WebGPUExternalTextureDescriptor.cpp */,
 				1CB7468627439CB500F19874 /* WebGPUExternalTextureDescriptor.h */,
+				1C98C0BC2746267E002CCB78 /* WebGPUFragmentState.cpp */,
 				1CB7467A27439CB200F19874 /* WebGPUFragmentState.h */,
 				1CB7464927437FC500F19874 /* WebGPUIdentifier.h */,
+				1C98C0AD2746267B002CCB78 /* WebGPUImageCopyBuffer.cpp */,
 				1CB7467D27439CB300F19874 /* WebGPUImageCopyBuffer.h */,
+				1C98C0C62746267F002CCB78 /* WebGPUImageCopyExternalImage.cpp */,
 				1CB7466827439CAE00F19874 /* WebGPUImageCopyExternalImage.h */,
+				1C98C0CE27462681002CCB78 /* WebGPUImageCopyTexture.cpp */,
 				1CB7469B27439CBB00F19874 /* WebGPUImageCopyTexture.h */,
+				1C98C09D27462678002CCB78 /* WebGPUImageCopyTextureTagged.cpp */,
 				1CB7467427439CB100F19874 /* WebGPUImageCopyTextureTagged.h */,
+				1C98C0A32746267A002CCB78 /* WebGPUImageDataLayout.cpp */,
 				1CB7469F27439CBC00F19874 /* WebGPUImageDataLayout.h */,
+				1C98C0C927462680002CCB78 /* WebGPUMultisampleState.cpp */,
 				1CB7466927439CAE00F19874 /* WebGPUMultisampleState.h */,
+				1C98C0D827462682002CCB78 /* WebGPUObjectDescriptorBase.cpp */,
 				1CB7466C27439CAF00F19874 /* WebGPUObjectDescriptorBase.h */,
+				1C98C0BF2746267E002CCB78 /* WebGPUOrigin2D.cpp */,
 				1CB7467027439CB000F19874 /* WebGPUOrigin2D.h */,
+				1C98C0A027462679002CCB78 /* WebGPUOrigin3D.cpp */,
 				1CB746A027439CBD00F19874 /* WebGPUOrigin3D.h */,
+				1C98C0C12746267F002CCB78 /* WebGPUOutOfMemoryError.cpp */,
 				1C98C07C2744B991002CCB78 /* WebGPUOutOfMemoryError.h */,
+				1C98C09F27462679002CCB78 /* WebGPUPipelineDescriptorBase.cpp */,
 				1CB7469427439CB900F19874 /* WebGPUPipelineDescriptorBase.h */,
+				1C98C0B52746267D002CCB78 /* WebGPUPipelineLayoutDescriptor.cpp */,
 				1CB7469827439CBB00F19874 /* WebGPUPipelineLayoutDescriptor.h */,
+				1C98C09B27462678002CCB78 /* WebGPUPrimitiveState.cpp */,
 				1CB7466D27439CAF00F19874 /* WebGPUPrimitiveState.h */,
+				1C98C09C27462678002CCB78 /* WebGPUProgrammableStage.cpp */,
 				1CB7468827439CB600F19874 /* WebGPUProgrammableStage.h */,
+				1C98C0A127462679002CCB78 /* WebGPUQuerySetDescriptor.cpp */,
 				1CB7469E27439CBC00F19874 /* WebGPUQuerySetDescriptor.h */,
+				1C98C0B42746267C002CCB78 /* WebGPURenderBundleDescriptor.cpp */,
 				1CB7468227439CB400F19874 /* WebGPURenderBundleDescriptor.h */,
+				1C98C0A82746267A002CCB78 /* WebGPURenderBundleEncoderDescriptor.cpp */,
 				1CB7467B27439CB300F19874 /* WebGPURenderBundleEncoderDescriptor.h */,
+				1C98C0D627462682002CCB78 /* WebGPURenderPassColorAttachment.cpp */,
 				1CB7469D27439CBC00F19874 /* WebGPURenderPassColorAttachment.h */,
+				1C98C0BB2746267E002CCB78 /* WebGPURenderPassDepthStencilAttachment.cpp */,
 				1CB7467E27439CB300F19874 /* WebGPURenderPassDepthStencilAttachment.h */,
+				1C98C0A72746267A002CCB78 /* WebGPURenderPassDescriptor.cpp */,
 				1CB7466E27439CB000F19874 /* WebGPURenderPassDescriptor.h */,
+				1C98C0C32746267F002CCB78 /* WebGPURenderPassLayout.cpp */,
 				1CB7469127439CB800F19874 /* WebGPURenderPassLayout.h */,
+				1C98C09E27462679002CCB78 /* WebGPURenderPassTimestampWrites.cpp */,
 				1CB7469927439CBB00F19874 /* WebGPURenderPassTimestampWrites.h */,
+				1C98C0D527462682002CCB78 /* WebGPURenderPipelineDescriptor.cpp */,
 				1CB7468E27439CB800F19874 /* WebGPURenderPipelineDescriptor.h */,
+				1C98C0D127462681002CCB78 /* WebGPURequestAdapterOptions.cpp */,
 				1CB7468C27439CB700F19874 /* WebGPURequestAdapterOptions.h */,
+				1C98C0B72746267D002CCB78 /* WebGPUSamplerBindingLayout.cpp */,
 				1CB7466727439CAE00F19874 /* WebGPUSamplerBindingLayout.h */,
+				1C98C0CC27462680002CCB78 /* WebGPUSamplerDescriptor.cpp */,
 				1CB7468D27439CB700F19874 /* WebGPUSamplerDescriptor.h */,
+				1C98C09927462678002CCB78 /* WebGPUShaderModuleDescriptor.cpp */,
 				1CB7466B27439CAF00F19874 /* WebGPUShaderModuleDescriptor.h */,
+				1C98C0CA27462680002CCB78 /* WebGPUStencilFaceState.cpp */,
 				1CB7467327439CB100F19874 /* WebGPUStencilFaceState.h */,
+				1C98C0B62746267D002CCB78 /* WebGPUStorageTextureBindingLayout.cpp */,
 				1CB7469627439CBA00F19874 /* WebGPUStorageTextureBindingLayout.h */,
+				1C98C0D327462682002CCB78 /* WebGPUSupportedFeatures.cpp */,
 				1C98C0792744A1CC002CCB78 /* WebGPUSupportedFeatures.h */,
+				1C98C0AA2746267B002CCB78 /* WebGPUSupportedLimits.cpp */,
 				1C98C07A2744A205002CCB78 /* WebGPUSupportedLimits.h */,
+				1C98C0B22746267C002CCB78 /* WebGPUTextureBindingLayout.cpp */,
 				1CB7467527439CB100F19874 /* WebGPUTextureBindingLayout.h */,
+				1C98C0AE2746267B002CCB78 /* WebGPUTextureDescriptor.cpp */,
 				1CB7468127439CB400F19874 /* WebGPUTextureDescriptor.h */,
+				1C98C0CB27462680002CCB78 /* WebGPUTextureViewDescriptor.cpp */,
 				1CB7468027439CB400F19874 /* WebGPUTextureViewDescriptor.h */,
+				1C98C09827462678002CCB78 /* WebGPUValidationError.cpp */,
 				1C98C07D2744B9B7002CCB78 /* WebGPUValidationError.h */,
+				1C98C0D027462681002CCB78 /* WebGPUVertexAttribute.cpp */,
 				1CB7467227439CB000F19874 /* WebGPUVertexAttribute.h */,
+				1C98C0AC2746267B002CCB78 /* WebGPUVertexBufferLayout.cpp */,
 				1CB7468F27439CB800F19874 /* WebGPUVertexBufferLayout.h */,
+				1C98C0CD27462681002CCB78 /* WebGPUVertexState.cpp */,
 				1CB7469A27439CBB00F19874 /* WebGPUVertexState.h */,
 			);
 			path = WebGPU;
@@ -7864,6 +8006,14 @@
 				1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */,
 				1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */,
 				1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */,
+				1CAECB6127465AE300AB78D0 /* UnifiedSource104.cpp */,
+				1CAECB6227465AE400AB78D0 /* UnifiedSource105.cpp */,
+				1CAECB6327465AE400AB78D0 /* UnifiedSource106.cpp */,
+				1CAECB6427465AE400AB78D0 /* UnifiedSource107.cpp */,
+				1CAECB5F27465AE300AB78D0 /* UnifiedSource108.cpp */,
+				1CAECB5D27465AE300AB78D0 /* UnifiedSource109.cpp */,
+				1CAECB6027465AE300AB78D0 /* UnifiedSource110.cpp */,
+				1CAECB5E27465AE300AB78D0 /* UnifiedSource111.cpp */,
 			);
 			name = "unified-sources";
 			path = "DerivedSources/WebKit2/unified-sources";
@@ -14904,6 +15054,14 @@
 				1C56557F2745C5A1006300AF /* UnifiedSource101.cpp in Sources */,
 				1C5655802745C5A1006300AF /* UnifiedSource102.cpp in Sources */,
 				1C5655812745C5A1006300AF /* UnifiedSource103.cpp in Sources */,
+				1CAECB6927465AE400AB78D0 /* UnifiedSource104.cpp in Sources */,
+				1CAECB6A27465AE400AB78D0 /* UnifiedSource105.cpp in Sources */,
+				1CAECB6B27465AE400AB78D0 /* UnifiedSource106.cpp in Sources */,
+				1CAECB6C27465AE400AB78D0 /* UnifiedSource107.cpp in Sources */,
+				1CAECB6727465AE400AB78D0 /* UnifiedSource108.cpp in Sources */,
+				1CAECB6527465AE400AB78D0 /* UnifiedSource109.cpp in Sources */,
+				1CAECB6827465AE400AB78D0 /* UnifiedSource110.cpp in Sources */,
+				1CAECB6627465AE400AB78D0 /* UnifiedSource111.cpp in Sources */,
 				E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,

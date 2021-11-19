@@ -25,7 +25,10 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUVertexAttribute.h"
+#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <pal/graphics/WebGPU/WebGPUVertexStepMode.h>
 #include <wtf/Vector.h>
@@ -66,3 +69,5 @@ struct VertexBufferLayout {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)
