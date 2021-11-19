@@ -83,14 +83,10 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ARM __PAS_ARM
 
-#if PAS_COMPILER(CLANG)
-#define PAS_TYPEOF(a) typeof (a)
-#else
 #ifdef __cplusplus
 #define PAS_TYPEOF(a) decltype (a)
 #else
 #define PAS_TYPEOF(a) typeof (a)
-#endif
 #endif
 
 /* NOTE: panic format string must have \n at the end. */

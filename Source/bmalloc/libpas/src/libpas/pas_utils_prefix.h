@@ -112,7 +112,7 @@ static __PAS_ALWAYS_INLINE void __pas_fence(void)
 #endif
 }
 
-static __PAS_ALWAYS_INLINE unsigned __pas_depend_impl(unsigned long input, _Bool cpu_only)
+static __PAS_ALWAYS_INLINE unsigned __pas_depend_impl(unsigned long input, int cpu_only)
 {
     unsigned output;
 #if __PAS_ARM64
@@ -148,13 +148,13 @@ static __PAS_ALWAYS_INLINE unsigned __pas_depend_impl(unsigned long input, _Bool
 
 static __PAS_ALWAYS_INLINE unsigned __pas_depend(unsigned long input)
 {
-    _Bool cpu_only = 0;
+    int cpu_only = 0;
     return __pas_depend_impl(input, cpu_only);
 }
 
 static __PAS_ALWAYS_INLINE unsigned __pas_depend_cpu_only(unsigned long input)
 {
-    _Bool cpu_only = 1;
+    int cpu_only = 1;
     return __pas_depend_impl(input, cpu_only);
 }
 

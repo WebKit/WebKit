@@ -1,3 +1,14 @@
+2021-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Unreviewed, build fix for relatively old clang on oss-fuzz
+        https://bugs.webkit.org/show_bug.cgi?id=233097
+
+        * libpas/src/libpas/pas_utils.h:
+        * libpas/src/libpas/pas_utils_prefix.h:
+        (__pas_depend_impl):
+        (__pas_depend):
+        (__pas_depend_cpu_only):
+
 2021-11-18  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] freeableMemory and footprint of Heap are completely broken
