@@ -120,9 +120,9 @@ public:
     {
         return aboveLowerBound(rawPtr) && belowUpperBound(rawPtr);
     }
-    
-    const CellAttributes attributes() const { return m_attributes; }
-    
+
+    CellAttributes attributes() const { return m_attributes; }
+
     Dependency aboutToMark(HeapVersion) { return Dependency(); }
     
     ALWAYS_INLINE bool testAndSetMarked()

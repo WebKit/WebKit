@@ -227,9 +227,9 @@ JSC::IsoSubspace* JSTestStringifierReadWriteAttribute::subspaceForImpl(JSC::VM& 
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierReadWriteAttribute> || !JSTestStringifierReadWriteAttribute::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierReadWriteAttribute>)
-        spaces.m_subspaceForTestStringifierReadWriteAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestStringifierReadWriteAttribute);
+        spaces.m_subspaceForTestStringifierReadWriteAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestStringifierReadWriteAttribute);
     else
-        spaces.m_subspaceForTestStringifierReadWriteAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestStringifierReadWriteAttribute);
+        spaces.m_subspaceForTestStringifierReadWriteAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestStringifierReadWriteAttribute);
     auto* space = spaces.m_subspaceForTestStringifierReadWriteAttribute.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

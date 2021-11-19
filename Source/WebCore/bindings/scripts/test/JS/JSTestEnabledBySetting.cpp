@@ -459,9 +459,9 @@ JSC::IsoSubspace* JSTestEnabledBySetting::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestEnabledBySetting> || !JSTestEnabledBySetting::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestEnabledBySetting>)
-        spaces.m_subspaceForTestEnabledBySetting = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestEnabledBySetting);
+        spaces.m_subspaceForTestEnabledBySetting = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestEnabledBySetting);
     else
-        spaces.m_subspaceForTestEnabledBySetting = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestEnabledBySetting);
+        spaces.m_subspaceForTestEnabledBySetting = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestEnabledBySetting);
     auto* space = spaces.m_subspaceForTestEnabledBySetting.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

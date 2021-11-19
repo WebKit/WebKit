@@ -264,9 +264,9 @@ JSC::IsoSubspace* JSTestCEReactionsStringifier::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestCEReactionsStringifier> || !JSTestCEReactionsStringifier::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestCEReactionsStringifier>)
-        spaces.m_subspaceForTestCEReactionsStringifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestCEReactionsStringifier);
+        spaces.m_subspaceForTestCEReactionsStringifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestCEReactionsStringifier);
     else
-        spaces.m_subspaceForTestCEReactionsStringifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestCEReactionsStringifier);
+        spaces.m_subspaceForTestCEReactionsStringifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestCEReactionsStringifier);
     auto* space = spaces.m_subspaceForTestCEReactionsStringifier.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

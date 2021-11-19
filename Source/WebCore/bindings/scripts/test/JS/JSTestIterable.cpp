@@ -201,9 +201,9 @@ public:
             return space;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, TestIterableIterator> || !TestIterableIterator::needsDestruction);
         if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, TestIterableIterator>)
-            spaces.m_subspaceForTestIterableIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), TestIterableIterator);
+            spaces.m_subspaceForTestIterableIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType.get(), TestIterableIterator);
         else
-            spaces.m_subspaceForTestIterableIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), TestIterableIterator);
+            spaces.m_subspaceForTestIterableIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, TestIterableIterator);
         auto* space = spaces.m_subspaceForTestIterableIterator.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")
@@ -293,9 +293,9 @@ JSC::IsoSubspace* JSTestIterable::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestIterable> || !JSTestIterable::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestIterable>)
-        spaces.m_subspaceForTestIterable = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestIterable);
+        spaces.m_subspaceForTestIterable = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestIterable);
     else
-        spaces.m_subspaceForTestIterable = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestIterable);
+        spaces.m_subspaceForTestIterable = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestIterable);
     auto* space = spaces.m_subspaceForTestIterable.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

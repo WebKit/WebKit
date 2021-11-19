@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@ namespace JSC {
 
 class CompleteSubspace final : public Subspace {
 public:
-    JS_EXPORT_PRIVATE CompleteSubspace(CString name, Heap&, HeapCellType*, AlignedMemoryAllocator*);
+    JS_EXPORT_PRIVATE CompleteSubspace(CString name, Heap&, const HeapCellType&, AlignedMemoryAllocator*);
     JS_EXPORT_PRIVATE ~CompleteSubspace() final;
 
     // In some code paths, we need it to be a compile error to call the virtual version of one of

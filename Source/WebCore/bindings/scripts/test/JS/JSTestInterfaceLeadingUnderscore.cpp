@@ -187,9 +187,9 @@ JSC::IsoSubspace* JSTestInterfaceLeadingUnderscore::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestInterfaceLeadingUnderscore> || !JSTestInterfaceLeadingUnderscore::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestInterfaceLeadingUnderscore>)
-        spaces.m_subspaceForTestInterfaceLeadingUnderscore = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestInterfaceLeadingUnderscore);
+        spaces.m_subspaceForTestInterfaceLeadingUnderscore = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestInterfaceLeadingUnderscore);
     else
-        spaces.m_subspaceForTestInterfaceLeadingUnderscore = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestInterfaceLeadingUnderscore);
+        spaces.m_subspaceForTestInterfaceLeadingUnderscore = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestInterfaceLeadingUnderscore);
     auto* space = spaces.m_subspaceForTestInterfaceLeadingUnderscore.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

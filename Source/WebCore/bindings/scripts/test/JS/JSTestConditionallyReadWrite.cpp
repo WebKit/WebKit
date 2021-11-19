@@ -611,9 +611,9 @@ JSC::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestConditionallyReadWrite> || !JSTestConditionallyReadWrite::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestConditionallyReadWrite>)
-        spaces.m_subspaceForTestConditionallyReadWrite = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestConditionallyReadWrite);
+        spaces.m_subspaceForTestConditionallyReadWrite = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestConditionallyReadWrite);
     else
-        spaces.m_subspaceForTestConditionallyReadWrite = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestConditionallyReadWrite);
+        spaces.m_subspaceForTestConditionallyReadWrite = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestConditionallyReadWrite);
     auto* space = spaces.m_subspaceForTestConditionallyReadWrite.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

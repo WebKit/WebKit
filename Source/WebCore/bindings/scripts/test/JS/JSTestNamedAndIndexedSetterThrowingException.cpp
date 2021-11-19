@@ -344,9 +344,9 @@ JSC::IsoSubspace* JSTestNamedAndIndexedSetterThrowingException::subspaceForImpl(
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedAndIndexedSetterThrowingException> || !JSTestNamedAndIndexedSetterThrowingException::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedAndIndexedSetterThrowingException>)
-        spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestNamedAndIndexedSetterThrowingException);
+        spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestNamedAndIndexedSetterThrowingException);
     else
-        spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestNamedAndIndexedSetterThrowingException);
+        spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestNamedAndIndexedSetterThrowingException);
     auto* space = spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

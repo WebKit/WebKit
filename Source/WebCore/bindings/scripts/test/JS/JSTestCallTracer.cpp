@@ -513,9 +513,9 @@ JSC::IsoSubspace* JSTestCallTracer::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestCallTracer> || !JSTestCallTracer::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestCallTracer>)
-        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestCallTracer);
+        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestCallTracer);
     else
-        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestCallTracer);
+        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestCallTracer);
     auto* space = spaces.m_subspaceForTestCallTracer.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

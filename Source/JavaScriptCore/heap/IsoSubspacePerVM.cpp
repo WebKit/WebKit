@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace JSC {
 
 class IsoSubspacePerVM::AutoremovingIsoSubspace final : public IsoSubspace {
 public:
-    AutoremovingIsoSubspace(IsoSubspacePerVM& perVM, CString name, Heap& heap, HeapCellType* heapCellType, size_t size)
+    AutoremovingIsoSubspace(IsoSubspacePerVM& perVM, CString name, Heap& heap, const HeapCellType& heapCellType, size_t size)
         : IsoSubspace(name, heap, heapCellType, size, /* numberOfLowerTierCells */ 0)
         , m_perVM(perVM)
     {
@@ -65,7 +65,7 @@ IsoSubspace& IsoSubspacePerVM::forVM(VM& vm)
     auto result = m_subspacePerVM.add(&vm, nullptr);
     if (result.isNewEntry) {
         SubspaceParameters params = m_subspaceParameters(vm);
-        result.iterator->value = new AutoremovingIsoSubspace(*this, params.name, vm.heap, params.heapCellType, params.size);
+        result.iterator->value = new AutoremovingIsoSubspace(*this, params.name, vm.heap, *params.heapCellType, params.size);
     }
     return *result.iterator->value;
 }

@@ -4852,13 +4852,13 @@ sub GenerateImplementation
     push(@implContent, "    if (auto* space = spaces.m_subspaceFor${interfaceName}.get())\n");
     push(@implContent, "        return space;\n");
     if (IsDOMGlobalObject($interface)) {
-        push(@implContent, "    spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, clientData.m_heapCellTypeFor${className}.get(), ${className});\n");
+        push(@implContent, "    spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *clientData.m_heapCellTypeFor${className}, ${className});\n");
     } else {
         push(@implContent, "    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, ${className}> || !${className}::needsDestruction);\n");
         push(@implContent, "    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, ${className}>)\n");
-        push(@implContent, "        spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), ${className});\n");
+        push(@implContent, "        spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, ${className});\n");
         push(@implContent, "    else\n");
-        push(@implContent, "        spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), ${className});\n");
+        push(@implContent, "        spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, ${className});\n");
     }
     push(@implContent, "    auto* space = spaces.m_subspaceFor${interfaceName}.get();\n");
     push(@implContent, "IGNORE_WARNINGS_BEGIN(\"unreachable-code\")\n");
@@ -6731,9 +6731,9 @@ public:
             return space;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, ${iteratorName}> || !${iteratorName}::needsDestruction);
         if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, ${iteratorName}>)
-            spaces.m_subspaceFor${iteratorName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), ${iteratorName});
+            spaces.m_subspaceFor${iteratorName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType.get(), ${iteratorName});
         else
-            spaces.m_subspaceFor${iteratorName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), ${iteratorName});
+            spaces.m_subspaceFor${iteratorName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, ${iteratorName});
         auto* space = spaces.m_subspaceFor${iteratorName}.get();
 IGNORE_WARNINGS_BEGIN(\"unreachable-code\")
 IGNORE_WARNINGS_BEGIN(\"tautological-compare\")

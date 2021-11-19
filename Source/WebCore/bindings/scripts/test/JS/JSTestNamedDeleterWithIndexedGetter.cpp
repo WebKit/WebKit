@@ -262,9 +262,9 @@ JSC::IsoSubspace* JSTestNamedDeleterWithIndexedGetter::subspaceForImpl(JSC::VM& 
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedDeleterWithIndexedGetter> || !JSTestNamedDeleterWithIndexedGetter::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedDeleterWithIndexedGetter>)
-        spaces.m_subspaceForTestNamedDeleterWithIndexedGetter = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestNamedDeleterWithIndexedGetter);
+        spaces.m_subspaceForTestNamedDeleterWithIndexedGetter = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestNamedDeleterWithIndexedGetter);
     else
-        spaces.m_subspaceForTestNamedDeleterWithIndexedGetter = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestNamedDeleterWithIndexedGetter);
+        spaces.m_subspaceForTestNamedDeleterWithIndexedGetter = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestNamedDeleterWithIndexedGetter);
     auto* space = spaces.m_subspaceForTestNamedDeleterWithIndexedGetter.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

@@ -361,9 +361,9 @@ JSC::IsoSubspace* JSTestNamedSetterWithLegacyUnforgeableProperties::subspaceForI
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedSetterWithLegacyUnforgeableProperties> || !JSTestNamedSetterWithLegacyUnforgeableProperties::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedSetterWithLegacyUnforgeableProperties>)
-        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestNamedSetterWithLegacyUnforgeableProperties);
+        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestNamedSetterWithLegacyUnforgeableProperties);
     else
-        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestNamedSetterWithLegacyUnforgeableProperties);
+        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestNamedSetterWithLegacyUnforgeableProperties);
     auto* space = spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

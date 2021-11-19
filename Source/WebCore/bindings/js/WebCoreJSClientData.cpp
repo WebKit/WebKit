@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,15 +77,15 @@ JSVMClientData::JSVMClientData(VM& vm)
     , m_heapCellTypeForJSAudioWorkletGlobalScope(JSC::IsoHeapCellType::create<JSAudioWorkletGlobalScope>())
 #endif
     , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::create<JSIDBSerializationGlobalObject>())
-    , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMBuiltinConstructorBase)
-    , m_domConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMConstructorBase)
-    , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMObject)
-    , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMWindowProperties)
-    , m_runtimeArraySpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeArrayHeapCellType.get(), RuntimeArray)
-    , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), RuntimeMethod) // Hash:0xf70c4a85
-    , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeObjectHeapCellType.get(), JSC::Bindings::RuntimeObject)
-    , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, m_windowProxyHeapCellType.get(), JSWindowProxy)
-    , m_idbSerializationSpace ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSIDBSerializationGlobalObject.get(), JSIDBSerializationGlobalObject)
+    , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMBuiltinConstructorBase)
+    , m_domConstructorSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMConstructorBase)
+    , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMObject)
+    , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMWindowProperties)
+    , m_runtimeArraySpace ISO_SUBSPACE_INIT(vm.heap, *m_runtimeArrayHeapCellType, RuntimeArray)
+    , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, RuntimeMethod) // Hash:0xf70c4a85
+    , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, *m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
+    , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, *m_windowProxyHeapCellType, JSWindowProxy)
+    , m_idbSerializationSpace ISO_SUBSPACE_INIT(vm.heap, *m_heapCellTypeForJSIDBSerializationGlobalObject, JSIDBSerializationGlobalObject)
     , m_subspaces(makeUnique<DOMIsoSubspaces>())
 {
 }

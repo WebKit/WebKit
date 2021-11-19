@@ -162,9 +162,9 @@ JSC::IsoSubspace* JSTestDefaultToJSONIndirectInheritance::subspaceForImpl(JSC::V
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONIndirectInheritance> || !JSTestDefaultToJSONIndirectInheritance::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONIndirectInheritance>)
-        spaces.m_subspaceForTestDefaultToJSONIndirectInheritance = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestDefaultToJSONIndirectInheritance);
+        spaces.m_subspaceForTestDefaultToJSONIndirectInheritance = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestDefaultToJSONIndirectInheritance);
     else
-        spaces.m_subspaceForTestDefaultToJSONIndirectInheritance = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestDefaultToJSONIndirectInheritance);
+        spaces.m_subspaceForTestDefaultToJSONIndirectInheritance = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestDefaultToJSONIndirectInheritance);
     auto* space = spaces.m_subspaceForTestDefaultToJSONIndirectInheritance.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

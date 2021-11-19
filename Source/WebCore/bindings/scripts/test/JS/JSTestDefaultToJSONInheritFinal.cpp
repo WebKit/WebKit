@@ -332,9 +332,9 @@ JSC::IsoSubspace* JSTestDefaultToJSONInheritFinal::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONInheritFinal> || !JSTestDefaultToJSONInheritFinal::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONInheritFinal>)
-        spaces.m_subspaceForTestDefaultToJSONInheritFinal = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestDefaultToJSONInheritFinal);
+        spaces.m_subspaceForTestDefaultToJSONInheritFinal = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestDefaultToJSONInheritFinal);
     else
-        spaces.m_subspaceForTestDefaultToJSONInheritFinal = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestDefaultToJSONInheritFinal);
+        spaces.m_subspaceForTestDefaultToJSONInheritFinal = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestDefaultToJSONInheritFinal);
     auto* space = spaces.m_subspaceForTestDefaultToJSONInheritFinal.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

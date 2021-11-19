@@ -246,9 +246,9 @@ JSC::IsoSubspace* JSTestDelegateToSharedSyntheticAttribute::subspaceForImpl(JSC:
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDelegateToSharedSyntheticAttribute> || !JSTestDelegateToSharedSyntheticAttribute::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestDelegateToSharedSyntheticAttribute>)
-        spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestDelegateToSharedSyntheticAttribute);
+        spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestDelegateToSharedSyntheticAttribute);
     else
-        spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestDelegateToSharedSyntheticAttribute);
+        spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestDelegateToSharedSyntheticAttribute);
     auto* space = spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

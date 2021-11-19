@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,15 +41,15 @@ public:
     struct SubspaceParameters {
         SubspaceParameters() { }
         
-        SubspaceParameters(CString name, HeapCellType* heapCellType, size_t size)
+        SubspaceParameters(CString name, const HeapCellType& heapCellType, size_t size)
             : name(WTFMove(name))
-            , heapCellType(heapCellType)
+            , heapCellType(&heapCellType)
             , size(size)
         {
         }
         
         CString name;
-        HeapCellType* heapCellType { nullptr };
+        const HeapCellType* heapCellType { nullptr };
         size_t size { 0 };
     };
     

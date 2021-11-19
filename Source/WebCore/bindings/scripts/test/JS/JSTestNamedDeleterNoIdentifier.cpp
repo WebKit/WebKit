@@ -246,9 +246,9 @@ JSC::IsoSubspace* JSTestNamedDeleterNoIdentifier::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedDeleterNoIdentifier> || !JSTestNamedDeleterNoIdentifier::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedDeleterNoIdentifier>)
-        spaces.m_subspaceForTestNamedDeleterNoIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestNamedDeleterNoIdentifier);
+        spaces.m_subspaceForTestNamedDeleterNoIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestNamedDeleterNoIdentifier);
     else
-        spaces.m_subspaceForTestNamedDeleterNoIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestNamedDeleterNoIdentifier);
+        spaces.m_subspaceForTestNamedDeleterNoIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestNamedDeleterNoIdentifier);
     auto* space = spaces.m_subspaceForTestNamedDeleterNoIdentifier.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

@@ -192,9 +192,9 @@ JSC::IsoSubspace* JSTestStringifierAnonymousOperation::subspaceForImpl(JSC::VM& 
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierAnonymousOperation> || !JSTestStringifierAnonymousOperation::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierAnonymousOperation>)
-        spaces.m_subspaceForTestStringifierAnonymousOperation = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestStringifierAnonymousOperation);
+        spaces.m_subspaceForTestStringifierAnonymousOperation = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestStringifierAnonymousOperation);
     else
-        spaces.m_subspaceForTestStringifierAnonymousOperation = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestStringifierAnonymousOperation);
+        spaces.m_subspaceForTestStringifierAnonymousOperation = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestStringifierAnonymousOperation);
     auto* space = spaces.m_subspaceForTestStringifierAnonymousOperation.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

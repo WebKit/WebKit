@@ -252,9 +252,9 @@ JSC::IsoSubspace* JSExposedToWorkerAndWindow::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSExposedToWorkerAndWindow> || !JSExposedToWorkerAndWindow::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSExposedToWorkerAndWindow>)
-        spaces.m_subspaceForExposedToWorkerAndWindow = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSExposedToWorkerAndWindow);
+        spaces.m_subspaceForExposedToWorkerAndWindow = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSExposedToWorkerAndWindow);
     else
-        spaces.m_subspaceForExposedToWorkerAndWindow = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSExposedToWorkerAndWindow);
+        spaces.m_subspaceForExposedToWorkerAndWindow = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSExposedToWorkerAndWindow);
     auto* space = spaces.m_subspaceForExposedToWorkerAndWindow.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

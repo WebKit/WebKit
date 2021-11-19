@@ -335,9 +335,9 @@ JSC::IsoSubspace* JSTestLegacyNoInterfaceObject::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestLegacyNoInterfaceObject> || !JSTestLegacyNoInterfaceObject::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestLegacyNoInterfaceObject>)
-        spaces.m_subspaceForTestLegacyNoInterfaceObject = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestLegacyNoInterfaceObject);
+        spaces.m_subspaceForTestLegacyNoInterfaceObject = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestLegacyNoInterfaceObject);
     else
-        spaces.m_subspaceForTestLegacyNoInterfaceObject = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestLegacyNoInterfaceObject);
+        spaces.m_subspaceForTestLegacyNoInterfaceObject = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestLegacyNoInterfaceObject);
     auto* space = spaces.m_subspaceForTestLegacyNoInterfaceObject.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

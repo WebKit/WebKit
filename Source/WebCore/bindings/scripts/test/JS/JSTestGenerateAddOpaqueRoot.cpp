@@ -187,9 +187,9 @@ JSC::IsoSubspace* JSTestGenerateAddOpaqueRoot::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestGenerateAddOpaqueRoot> || !JSTestGenerateAddOpaqueRoot::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestGenerateAddOpaqueRoot>)
-        spaces.m_subspaceForTestGenerateAddOpaqueRoot = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestGenerateAddOpaqueRoot);
+        spaces.m_subspaceForTestGenerateAddOpaqueRoot = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestGenerateAddOpaqueRoot);
     else
-        spaces.m_subspaceForTestGenerateAddOpaqueRoot = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestGenerateAddOpaqueRoot);
+        spaces.m_subspaceForTestGenerateAddOpaqueRoot = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestGenerateAddOpaqueRoot);
     auto* space = spaces.m_subspaceForTestGenerateAddOpaqueRoot.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

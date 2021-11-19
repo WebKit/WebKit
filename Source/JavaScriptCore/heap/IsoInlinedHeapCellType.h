@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #pragma once
 
 #include "HeapCellType.h"
-#include "MarkedBlockInlines.h"
 
 namespace JSC {
 
@@ -45,12 +44,12 @@ public:
         }
     };
 
-    void finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) final
+    void finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) const final
     {
         handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
     }
 
-    void destroy(VM&, JSCell* cell) final
+    void destroy(VM&, JSCell* cell) const final
     {
         CellType::destroy(cell);
     }
