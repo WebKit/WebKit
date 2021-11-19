@@ -63,7 +63,7 @@ void ARKitInlinePreviewModelPlayer::getCamera(CompletionHandler<void(std::option
         return;
     }
 
-    auto* strongPage = m_page.get();
+    RefPtr strongPage = m_page.get();
     if (!strongPage) {
         completionHandler(std::nullopt);
         return;
@@ -89,7 +89,7 @@ void ARKitInlinePreviewModelPlayer::setCamera(WebCore::HTMLModelElementCamera ca
         return;
     }
 
-    auto* strongPage = m_page.get();
+    RefPtr strongPage = m_page.get();
     if (!strongPage) {
         completionHandler(false);
         return;
@@ -110,7 +110,7 @@ void ARKitInlinePreviewModelPlayer::isPlayingAnimation(CompletionHandler<void(st
         return;
     }
 
-    auto* strongPage = m_page.get();
+    RefPtr strongPage = m_page.get();
     if (!strongPage) {
         completionHandler(std::nullopt);
         return;
@@ -136,7 +136,7 @@ void ARKitInlinePreviewModelPlayer::setAnimationIsPlaying(bool isPlaying, Comple
         return;
     }
 
-    auto* strongPage = m_page.get();
+    RefPtr strongPage = m_page.get();
     if (!strongPage) {
         completionHandler(false);
         return;

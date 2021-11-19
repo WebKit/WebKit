@@ -1,5 +1,22 @@
 2021-11-19  Antoine Quint  <graouts@webkit.org>
 
+        [Model] Use RefPtr across ARKitInlinePreviewModelPlayer when creating strong pointers
+        https://bugs.webkit.org/show_bug.cgi?id=233375
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::getCamera):
+        (WebKit::ARKitInlinePreviewModelPlayer::setCamera):
+        (WebKit::ARKitInlinePreviewModelPlayer::isPlayingAnimation):
+        (WebKit::ARKitInlinePreviewModelPlayer::setAnimationIsPlaying):
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::enterFullscreen):
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::load):
+
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
         [Model] Reduce use of callOnMainRunLoop in ModelElementControllerCocoa
         https://bugs.webkit.org/show_bug.cgi?id=233376
 

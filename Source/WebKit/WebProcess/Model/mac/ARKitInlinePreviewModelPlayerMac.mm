@@ -128,7 +128,7 @@ void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore
     if (!strongClient)
         return;
 
-    auto* strongPage = page();
+    RefPtr strongPage = page();
     if (!strongPage) {
         strongClient->didFailLoading(*this, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, modelSource.url(), "WebPage destroyed"_s });
         return;
@@ -140,7 +140,7 @@ void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore
     LOG(ModelElement, "ARKitInlinePreviewModelPlayer::modelDidChange() created preview with UUID %s and size %f x %f.", ((String)[m_inlinePreview uuid].UUIDString).utf8().data(), size.width(), size.height());
 
     CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)> completionHandler = [weakSelf = WeakPtr { *this }] (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result) mutable {
-        auto strongSelf = weakSelf.get();
+        RefPtr strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
 

@@ -63,7 +63,7 @@ std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerIOS::modelIdentifier
 
 void ARKitInlinePreviewModelPlayerIOS::enterFullscreen()
 {
-    auto* strongPage = page();
+    RefPtr strongPage = page();
     if (!strongPage)
         return;
 
