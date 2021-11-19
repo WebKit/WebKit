@@ -25,11 +25,8 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUColorTargetState.h"
 #include "WebGPUProgrammableStage.h"
-#include <optional>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebGPU {
@@ -60,5 +57,3 @@ struct FragmentState : public ProgrammableStage {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

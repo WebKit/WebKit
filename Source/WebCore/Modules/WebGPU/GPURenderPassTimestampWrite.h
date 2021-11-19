@@ -54,9 +54,11 @@ using GPURenderPassTimestampWrites = Vector<GPURenderPassTimestampWrite>;
 
 inline PAL::WebGPU::RenderPassTimestampWrites convertToBacking(const GPURenderPassTimestampWrites& renderPassTimestampWrites)
 {
-    return renderPassTimestampWrites.map([] (auto& renderPassTimestampWrite) {
-        return renderPassTimestampWrite.convertToBacking();
-    });
+    PAL::WebGPU::RenderPassTimestampWrites result;
+    result.reserveInitialCapacity(renderPassTimestampWrites.size());
+    for (auto& renderPassTimestampWrite : renderPassTimestampWrites)
+        result.uncheckedAppend(renderPassTimestampWrite.convertToBacking());
+    return result;
 }
 
 }

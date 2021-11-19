@@ -41,13 +41,21 @@ struct GPUVertexState : public GPUProgrammableStage {
             {
                 module->backing(),
                 entryPoint,
-                constants,
+                ([this] () {
+                    Vector<KeyValuePair<String, PAL::WebGPU::PipelineConstantValue>> constants;
+                    constants.reserveInitialCapacity(this->constants.size());
+                    for (auto& constant : this->constants)
+                        constants.uncheckedAppend(makeKeyValuePair(constant.key, constant.value));
+                    return constants;
+                })(),
             },
-            buffers.map([] (auto& buffer) -> std::optional<PAL::WebGPU::VertexBufferLayout> {
-                if (buffer)
-                    return buffer->convertToBacking();
-                return std::nullopt;
-            }),
+            ([this] () {
+                Vector<std::optional<PAL::WebGPU::VertexBufferLayout>> buffers;
+                buffers.reserveInitialCapacity(this->buffers.size());
+                for (auto& buffer : this->buffers)
+                    buffers.append(buffer ? std::optional { buffer->convertToBacking() } : std::nullopt);
+                return buffers;
+            })(),
         };
     }
 

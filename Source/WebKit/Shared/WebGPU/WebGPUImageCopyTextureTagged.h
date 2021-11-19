@@ -25,10 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUImageCopyTexture.h"
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
 
 namespace WebKit::WebGPU {
@@ -66,5 +63,3 @@ struct ImageCopyTextureTagged : public ImageCopyTexture {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

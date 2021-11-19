@@ -38,11 +38,6 @@ public:
         return adoptRef(*new SupportedFeatures(WTFMove(features)));
     }
 
-    static Ref<SupportedFeatures> create(const Vector<String>& features)
-    {
-        return adoptRef(*new SupportedFeatures(features));
-    }
-
     static Ref<SupportedFeatures> clone(const SupportedFeatures& features)
     {
         return adoptRef(*new SupportedFeatures(Vector<String>(features.features())));
@@ -50,17 +45,13 @@ public:
 
     const Vector<String>& features() const { return m_features; }
 
-private:
+protected:
     SupportedFeatures(Vector<String>&& features)
         : m_features(WTFMove(features))
     {
     }
 
-    SupportedFeatures(const Vector<String>& features)
-        : m_features(features)
-    {
-    }
-
+private:
     SupportedFeatures(const SupportedFeatures&) = delete;
     SupportedFeatures(SupportedFeatures&&) = delete;
     SupportedFeatures& operator=(const SupportedFeatures&) = delete;

@@ -148,7 +148,7 @@ public:
     uint32_t maxComputeWorkgroupSizeZ() const { return m_maxComputeWorkgroupSizeZ; }
     uint32_t maxComputeWorkgroupsPerDimension() const { return m_maxComputeWorkgroupsPerDimension; }
 
-private:
+protected:
     SupportedLimits(
         uint32_t maxTextureDimension1D,
         uint32_t maxTextureDimension2D,
@@ -205,6 +205,7 @@ private:
     {
     }
 
+private:
     SupportedLimits(const SupportedLimits&) = delete;
     SupportedLimits(SupportedLimits&&) = delete;
     SupportedLimits& operator=(const SupportedLimits&) = delete;

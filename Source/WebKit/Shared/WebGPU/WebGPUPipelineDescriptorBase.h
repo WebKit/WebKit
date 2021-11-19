@@ -25,11 +25,8 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUIdentifier.h"
 #include "WebGPUObjectDescriptorBase.h"
-#include <optional>
 
 namespace WebKit::WebGPU {
 
@@ -59,5 +56,3 @@ struct PipelineDescriptorBase : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

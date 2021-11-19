@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUIdentifier.h"
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPURenderPassColorAttachment.h"
@@ -84,5 +82,3 @@ struct RenderPassDescriptor : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

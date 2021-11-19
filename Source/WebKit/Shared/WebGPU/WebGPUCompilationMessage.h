@@ -25,10 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include <cstdint>
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUCompilationMessageType.h>
 #include <wtf/text/WTFString.h>
 
@@ -89,5 +86,3 @@ struct CompilationMessage {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

@@ -25,12 +25,9 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUBufferBinding.h"
 #include "WebGPUIdentifier.h"
 #include <cstdint>
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 
 namespace WebKit::WebGPU {
@@ -97,5 +94,3 @@ template<> struct EnumTraits<WebKit::WebGPU::BindingResourceType> {
 };
 
 } // namespace WTF
-
-#endif // ENABLE(GPU_PROCESS)

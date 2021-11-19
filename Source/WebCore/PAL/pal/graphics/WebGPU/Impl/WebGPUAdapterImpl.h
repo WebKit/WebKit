@@ -58,9 +58,9 @@ private:
     WGPUAdapter backing() const { return m_backing; }
 
     void requestDeviceCallback(WGPURequestDeviceStatus, WGPUDevice, const char* message);
-    void requestDevice(const DeviceDescriptor&, WTF::Function<void(Ref<Device>&&)>&&) final;
+    void requestDevice(const DeviceDescriptor&, WTF::function<void(Ref<Device>&&)>&&) final;
 
-    Deque<WTF::Function<void(Ref<Device>&&)>> m_callbacks;
+    Deque<WTF::function<void(Ref<Device>&&)>> m_callbacks;
 
     WGPUAdapter m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

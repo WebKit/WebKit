@@ -25,9 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUSamplerBindingType.h>
 
 namespace WebKit::WebGPU {
@@ -52,5 +49,3 @@ struct SamplerBindingLayout {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

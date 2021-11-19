@@ -25,9 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUCompareFunction.h>
 #include <pal/graphics/WebGPU/WebGPUStencilOperation.h>
 
@@ -74,5 +71,3 @@ struct StencilFaceState {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

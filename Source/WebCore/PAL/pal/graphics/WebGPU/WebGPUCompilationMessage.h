@@ -40,11 +40,6 @@ public:
         return adoptRef(*new CompilationMessage(WTFMove(message), type, lineNum, linePos, offset, length));
     }
 
-    static Ref<CompilationMessage> create(const String& message, CompilationMessageType type, uint64_t lineNum, uint64_t linePos, uint64_t offset, uint64_t length)
-    {
-        return adoptRef(*new CompilationMessage(message, type, lineNum, linePos, offset, length));
-    }
-
     const String& message() const { return m_message; }
     CompilationMessageType type() const { return m_type; }
     uint64_t lineNum() const { return m_lineNum; }
@@ -52,7 +47,7 @@ public:
     uint64_t offset() const { return m_offset; }
     uint64_t length() const { return m_length; }
 
-private:
+protected:
     CompilationMessage(String&& message, CompilationMessageType type, uint64_t lineNum, uint64_t linePos, uint64_t offset, uint64_t length)
         : m_message(WTFMove(message))
         , m_type(type)
@@ -63,16 +58,7 @@ private:
     {
     }
 
-    CompilationMessage(const String& message, CompilationMessageType type, uint64_t lineNum, uint64_t linePos, uint64_t offset, uint64_t length)
-        : m_message(message)
-        , m_type(type)
-        , m_lineNum(lineNum)
-        , m_linePos(linePos)
-        , m_offset(offset)
-        , m_length(length)
-    {
-    }
-
+private:
     CompilationMessage(const CompilationMessage&) = delete;
     CompilationMessage(CompilationMessage&&) = delete;
     CompilationMessage& operator=(const CompilationMessage&) = delete;

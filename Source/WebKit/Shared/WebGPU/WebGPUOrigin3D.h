@@ -25,9 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <variant>
 #include <wtf/Vector.h>
@@ -70,5 +67,3 @@ struct Origin3DDict {
 using Origin3D = std::variant<Vector<PAL::WebGPU::IntegerCoordinate>, Origin3DDict>;
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

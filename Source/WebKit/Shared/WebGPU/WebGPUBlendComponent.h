@@ -25,9 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUBlendFactor.h>
 #include <pal/graphics/WebGPU/WebGPUBlendOperation.h>
 
@@ -67,5 +64,3 @@ struct BlendComponent {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

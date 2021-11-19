@@ -25,10 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUIdentifier.h"
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <pal/graphics/WebGPU/WebGPULoadOp.h>
 #include <pal/graphics/WebGPU/WebGPUStoreOp.h>
@@ -101,5 +98,3 @@ struct RenderPassDepthStencilAttachment {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

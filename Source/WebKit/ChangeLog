@@ -1,3 +1,16 @@
+2021-11-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r286047.
+
+        Breaks internal builds
+
+        Reverted changeset:
+
+        "[WebGPU] Add converters from serializable descriptors to
+        interface descriptors"
+        https://bugs.webkit.org/show_bug.cgi?id=233310
+        https://commits.webkit.org/r286047
+
 2021-11-19  Antoine Quint  <graouts@webkit.org>
 
         [Model] add support for controlling looping animations

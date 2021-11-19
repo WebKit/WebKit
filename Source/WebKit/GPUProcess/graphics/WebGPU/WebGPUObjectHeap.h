@@ -47,28 +47,27 @@ public:
 private:
     ObjectHeap();
 
-    PAL::WebGPU::Adapter* convertAdapterFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::BindGroup* convertBindGroupFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::BindGroupLayout* convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::Buffer* convertBufferFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::CommandBuffer* convertCommandBufferFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::CommandEncoder* convertCommandEncoderFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::ComputePassEncoder* convertComputePassEncoderFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::ExternalTexture* convertExternalTextureFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::GPU* convertGPUFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::PipelineLayout* convertPipelineLayoutFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::QuerySet* convertQuerySetFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::Queue* convertQueueFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::RenderBundleEncoder* convertRenderBundleEncoderFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::RenderBundle* convertRenderBundleFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::RenderPassEncoder* convertRenderPassEncoderFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::RenderPipeline* convertRenderPipelineFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::Sampler* convertSamplerFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::Adapter* convertAdapterFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::BindGroup* convertBindGroupFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::BindGroupLayout* convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::Buffer* convertBufferFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::CommandBuffer* convertCommandBufferFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::CommandEncoder* convertCommandEncoderFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::ComputePassEncoder* convertComputePassEncoderFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::GPU* convertGPUFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::PipelineLayout* convertPipelineLayoutFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::QuerySet* convertQuerySetFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::Queue* convertQueueFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::RenderBundleEncoder* convertRenderBundleEncoderFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::RenderBundle* convertRenderBundleFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::RenderPassEncoder* convertRenderPassEncoderFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::RenderPipeline* convertRenderPipelineFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::Sampler* convertSamplerFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
+    const PAL::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
 
     using Object = std::variant<
         Ref<PAL::WebGPU::Adapter>,
@@ -80,7 +79,6 @@ private:
         Ref<PAL::WebGPU::ComputePassEncoder>,
         Ref<PAL::WebGPU::ComputePipeline>,
         Ref<PAL::WebGPU::Device>,
-        Ref<PAL::WebGPU::ExternalTexture>,
         Ref<PAL::WebGPU::GPU>,
         Ref<PAL::WebGPU::PipelineLayout>,
         Ref<PAL::WebGPU::QuerySet>,

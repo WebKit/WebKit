@@ -42,9 +42,13 @@ struct GPUQuerySetDescriptor : public GPUObjectDescriptorBase {
             { label },
             WebCore::convertToBacking(type),
             count,
-            pipelineStatistics.map([] (const auto& pipelineStatistic) {
-                return WebCore::convertToBacking(pipelineStatistic);
-            }),
+            ([this] () {
+                Vector<PAL::WebGPU::PipelineStatisticName> pipelineStatistics;
+                pipelineStatistics.reserveInitialCapacity(this->pipelineStatistics.size());
+                for (const auto& pipelineStatistic : this->pipelineStatistics)
+                    pipelineStatistics.uncheckedAppend(WebCore::convertToBacking(pipelineStatistic));
+                return pipelineStatistics;
+            })(),
         };
     }
 

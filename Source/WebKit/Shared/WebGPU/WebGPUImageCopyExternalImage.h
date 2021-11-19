@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUOrigin2D.h"
 #include <optional>
 #include <variant>
@@ -54,5 +52,3 @@ struct ImageCopyExternalImage {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

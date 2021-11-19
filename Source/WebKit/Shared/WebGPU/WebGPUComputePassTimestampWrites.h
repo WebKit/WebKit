@@ -25,10 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUIdentifier.h"
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
@@ -72,5 +69,3 @@ struct ComputePassTimestampWrite {
 using ComputePassTimestampWrites = Vector<ComputePassTimestampWrite>;
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

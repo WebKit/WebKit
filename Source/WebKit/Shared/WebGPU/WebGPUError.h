@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUValidationError.h"
 #include <variant>
@@ -36,5 +34,3 @@ namespace WebKit::WebGPU {
 using Error = std::variant<OutOfMemoryError, ValidationError>;
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

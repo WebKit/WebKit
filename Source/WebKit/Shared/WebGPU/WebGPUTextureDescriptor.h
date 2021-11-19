@@ -25,11 +25,8 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUExtent3D.h"
 #include "WebGPUObjectDescriptorBase.h"
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <pal/graphics/WebGPU/WebGPUTextureDimension.h>
 #include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
@@ -98,5 +95,3 @@ struct TextureDescriptor : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

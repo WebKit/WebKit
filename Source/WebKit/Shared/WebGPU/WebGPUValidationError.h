@@ -25,9 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include <optional>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit::WebGPU {
@@ -52,5 +49,3 @@ struct ValidationError {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

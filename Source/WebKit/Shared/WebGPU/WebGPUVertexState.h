@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUProgrammableStage.h"
 #include "WebGPUVertexBufferLayout.h"
 #include <optional>
@@ -60,5 +58,3 @@ struct VertexState : public ProgrammableStage {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

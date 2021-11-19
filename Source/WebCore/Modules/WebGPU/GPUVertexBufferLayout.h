@@ -39,9 +39,13 @@ struct GPUVertexBufferLayout {
         return {
             arrayStride,
             WebCore::convertToBacking(stepMode),
-            attributes.map([] (auto& attribute) {
-                return attribute.convertToBacking();
-            }),
+            ([this] () {
+                Vector<PAL::WebGPU::VertexAttribute> attributes;
+                attributes.reserveInitialCapacity(this->attributes.size());
+                for (auto& attribute : this->attributes)
+                    attributes.uncheckedAppend(attribute.convertToBacking());
+                return attributes;
+            })(),
         };
     }
 

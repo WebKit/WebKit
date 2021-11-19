@@ -40,9 +40,13 @@ struct GPUBindGroupDescriptor : public GPUObjectDescriptorBase {
         return {
             { label },
             layout->backing(),
-            entries.map([] (auto& bindGroupEntry) {
-                return bindGroupEntry.convertToBacking();
-            }),
+            ([this] () {
+                Vector<PAL::WebGPU::BindGroupEntry> entries;
+                entries.reserveInitialCapacity(this->entries.size());
+                for (auto& bindGroupEntry : this->entries)
+                    entries.uncheckedAppend(bindGroupEntry.convertToBacking());
+                return entries;
+            })(),
         };
     }
 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUObjectDescriptorBase.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
@@ -75,5 +73,3 @@ struct RenderPassLayout : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

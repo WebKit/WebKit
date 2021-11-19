@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUBufferBindingLayout.h"
 #include "WebGPUExternalTextureBindingLayout.h"
 #include "WebGPUSamplerBindingLayout.h"
@@ -101,5 +99,3 @@ struct BindGroupLayoutEntry {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

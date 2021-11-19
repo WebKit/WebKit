@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUBlendState.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUColorWrite.h>
@@ -69,5 +67,3 @@ struct ColorTargetState {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

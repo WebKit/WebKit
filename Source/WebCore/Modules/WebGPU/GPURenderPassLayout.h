@@ -39,9 +39,13 @@ struct GPURenderPassLayout : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            colorFormats.map([] (const auto& colorFormat) {
-                return WebCore::convertToBacking(colorFormat);
-            }),
+            ([this] () {
+                Vector<PAL::WebGPU::TextureFormat> colorFormats;
+                colorFormats.reserveInitialCapacity(this->colorFormats.size());
+                for (const auto& colorFormat : this->colorFormats)
+                    colorFormats.uncheckedAppend(WebCore::convertToBacking(colorFormat));
+                return colorFormats;
+            })(),
             depthStencilFormat ? std::optional { WebCore::convertToBacking(*depthStencilFormat) } : std::nullopt,
             sampleCount,
         };

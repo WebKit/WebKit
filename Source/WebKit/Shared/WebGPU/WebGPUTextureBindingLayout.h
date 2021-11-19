@@ -25,9 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUTextureSampleType.h>
 #include <pal/graphics/WebGPU/WebGPUTextureViewDimension.h>
 
@@ -67,5 +64,3 @@ struct TextureBindingLayout {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)

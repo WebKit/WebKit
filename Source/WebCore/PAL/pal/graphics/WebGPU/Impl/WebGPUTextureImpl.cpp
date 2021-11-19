@@ -49,7 +49,7 @@ TextureImpl::~TextureImpl()
     wgpuTextureRelease(m_backing);
 }
 
-Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescriptor>& descriptor)
+Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescriptor>& descriptor) const
 {
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 

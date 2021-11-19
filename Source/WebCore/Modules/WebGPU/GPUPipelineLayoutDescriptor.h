@@ -37,10 +37,15 @@ struct GPUPipelineLayoutDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            bindGroupLayouts.map([] (const auto& bindGroupLayout) -> std::reference_wrapper<PAL::WebGPU::BindGroupLayout> {
-                ASSERT(bindGroupLayout);
-                return bindGroupLayout->backing();
-            }),
+            ([this] () {
+                Vector<std::reference_wrapper<PAL::WebGPU::BindGroupLayout>> bindGroupLayouts;
+                bindGroupLayouts.reserveInitialCapacity(this->bindGroupLayouts.size());
+                for (const auto& bindGroupLayout : this->bindGroupLayouts) {
+                    ASSERT(bindGroupLayout);
+                    bindGroupLayouts.uncheckedAppend(bindGroupLayout->backing());
+                }
+                return bindGroupLayouts;
+            })(),
         };
     }
 

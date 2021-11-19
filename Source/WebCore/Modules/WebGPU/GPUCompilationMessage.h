@@ -36,9 +36,9 @@ namespace WebCore {
 
 class GPUCompilationMessage : public RefCounted<GPUCompilationMessage> {
 public:
-    static Ref<GPUCompilationMessage> create(PAL::WebGPU::CompilationMessage& backing)
+    static Ref<GPUCompilationMessage> create(Ref<PAL::WebGPU::CompilationMessage>&& backing)
     {
-        return adoptRef(*new GPUCompilationMessage(backing));
+        return adoptRef(*new GPUCompilationMessage(WTFMove(backing)));
     }
 
     const String& message() const;
@@ -52,8 +52,8 @@ public:
     const PAL::WebGPU::CompilationMessage& backing() const { return m_backing; }
 
 private:
-    GPUCompilationMessage(PAL::WebGPU::CompilationMessage& backing)
-        : m_backing(backing)
+    GPUCompilationMessage(Ref<PAL::WebGPU::CompilationMessage>&& backing)
+        : m_backing(WTFMove(backing))
     {
     }
 

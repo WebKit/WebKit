@@ -25,11 +25,8 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "WebGPUIdentifier.h"
 #include "WebGPUImageDataLayout.h"
-#include <optional>
 #include <wtf/Ref.h>
 
 namespace WebKit::WebGPU {
@@ -60,5 +57,3 @@ struct ImageCopyBuffer : public ImageDataLayout {
 };
 
 } // namespace WebKit::WebGPU
-
-#endif // ENABLE(GPU_PROCESS)
