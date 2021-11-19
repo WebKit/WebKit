@@ -437,6 +437,53 @@ void HTMLModelElement::pauseAnimation(DOMPromiseDeferred<void>&& promise)
     setAnimationIsPlaying(false, WTFMove(promise));
 }
 
+// MARK: - Audio support.
+
+void HTMLModelElement::hasAudio(HasAudioPromise&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->isPlayingAnimation([promise = WTFMove(promise)] (std::optional<bool> hasAudio) mutable {
+        if (!hasAudio)
+            promise.reject();
+        else
+            promise.resolve(*hasAudio);
+    });
+}
+
+void HTMLModelElement::isMuted(IsMutedPromise&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->isPlayingAnimation([promise = WTFMove(promise)] (std::optional<bool> isMuted) mutable {
+        if (!isMuted)
+            promise.reject();
+        else
+            promise.resolve(*isMuted);
+    });
+}
+
+void HTMLModelElement::setIsMuted(bool isMuted, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->setIsMuted(isMuted, [promise = WTFMove(promise)] (bool success) mutable {
+        if (success)
+            promise.resolve();
+        else
+            promise.reject();
+    });
+}
+
 }
 
 #endif // ENABLE(MODEL_ELEMENT)

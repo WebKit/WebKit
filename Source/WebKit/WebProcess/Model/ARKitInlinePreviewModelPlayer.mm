@@ -149,6 +149,79 @@ void ARKitInlinePreviewModelPlayer::setAnimationIsPlaying(bool isPlaying, Comple
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationIsPlaying(*modelIdentifier, isPlaying), WTFMove(remoteCompletionHandler));
 }
 
+void ARKitInlinePreviewModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    RefPtr strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
+        if (!result) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(*result);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementHasAudio(*modelIdentifier), WTFMove(remoteCompletionHandler));
+}
+
+void ARKitInlinePreviewModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    RefPtr strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
+        if (!result) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(*result);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsMuted(*modelIdentifier), WTFMove(remoteCompletionHandler));
+}
+
+void ARKitInlinePreviewModelPlayer::setIsMuted(bool isMuted, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(false);
+        return;
+    }
+
+    RefPtr strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(false);
+        return;
+    }
+
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+        completionHandler(success);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsMuted(*modelIdentifier, isMuted), WTFMove(remoteCompletionHandler));
+}
+
 }
 
 #endif

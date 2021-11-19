@@ -112,6 +112,9 @@ typedef void (^ASVCameraTransformReplyBlock) (simd_float3 cameraTransform, NSErr
 typedef void (^ASVSetIsPlayingReplyBlock) (BOOL isPlaying, NSError * _Nullable error);
 - (void)setIsPlaying:(BOOL)isPlaying reply:(ASVSetIsPlayingReplyBlock)reply;
 
+@property (nonatomic, readonly) BOOL hasAudio;
+@property (nonatomic, readwrite) BOOL isMuted;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -599,6 +599,9 @@ messages -> WebPageProxy {
     ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success) Async
     ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
     ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success) Async
+    ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
+    ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
+    ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success) Async
 #endif
 
     requestPermission(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor) -> (enum:uint8_t WebCore::PermissionState state) Async

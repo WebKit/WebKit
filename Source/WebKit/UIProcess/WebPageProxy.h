@@ -592,6 +592,9 @@ public:
     void modelElementSetCamera(ModelIdentifier, WebCore::HTMLModelElementCamera, CompletionHandler<void(bool)>&&);
     void modelElementIsPlayingAnimation(ModelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&&);
     void modelElementSetAnimationIsPlaying(ModelIdentifier, bool, CompletionHandler<void(bool)>&&);
+    void modelElementHasAudio(ModelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&&);
+    void modelElementIsMuted(ModelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&&);
+    void modelElementSetIsMuted(ModelIdentifier, bool, CompletionHandler<void(bool)>&&);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     void takeModelElementFullscreen(ModelIdentifier);

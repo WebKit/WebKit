@@ -1,3 +1,33 @@
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add audio support
+        https://bugs.webkit.org/show_bug.cgi?id=233365
+        <rdar://problem/85428982>
+
+        Reviewed by Wenson Hsieh.
+
+        Expose new WebPageProxy messages to let the WebProcess message the UIProcess
+        to call into ASVInlinePreview methods to get and set the muted state and get
+        whehter the model contains audio.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::previewHasAudioSupport):
+        (WebKit::ModelElementController::hasAudioForModelElement):
+        (WebKit::ModelElementController::isMutedForModelElement):
+        (WebKit::ModelElementController::setIsMutedForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementHasAudio):
+        (WebKit::WebPageProxy::modelElementIsMuted):
+        (WebKit::WebPageProxy::modelElementSetIsMuted):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::hasAudio):
+        (WebKit::ARKitInlinePreviewModelPlayer::isMuted):
+        (WebKit::ARKitInlinePreviewModelPlayer::setIsMuted):
+
 2021-11-18  Antoine Quint  <graouts@webkit.org>
 
         [Model] add support for pausing and resuming animations

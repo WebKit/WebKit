@@ -57,6 +57,9 @@ private:
     void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) override;
     void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) override;
+    void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void setIsMuted(bool, CompletionHandler<void(bool success)>&&) override;
 
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;

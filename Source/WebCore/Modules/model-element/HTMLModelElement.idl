@@ -40,4 +40,8 @@
     Promise<boolean> isPlayingAnimation();
     Promise<undefined> playAnimation();
     Promise<undefined> pauseAnimation();
+
+    Promise<boolean> hasAudio();
+    Promise<boolean> isMuted();
+    Promise<undefined> setIsMuted(boolean isMuted);
 };

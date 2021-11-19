@@ -1,3 +1,15 @@
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add audio support
+        https://bugs.webkit.org/show_bug.cgi?id=233365
+        <rdar://problem/85428982>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a new compile-time flag for the new autio-related ARQL SPIs we are using.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-11-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove allocation in JSON::Value::parseJSON

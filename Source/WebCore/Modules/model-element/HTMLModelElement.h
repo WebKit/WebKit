@@ -80,6 +80,12 @@ public:
     void playAnimation(DOMPromiseDeferred<void>&&);
     void pauseAnimation(DOMPromiseDeferred<void>&&);
 
+    using HasAudioPromise = DOMPromiseDeferred<IDLBoolean>;
+    void hasAudio(HasAudioPromise&&);
+    using IsMutedPromise = DOMPromiseDeferred<IDLBoolean>;
+    void isMuted(IsMutedPromise&&);
+    void setIsMuted(bool, DOMPromiseDeferred<void>&&);
+
     bool isDraggableIgnoringAttributes() const final { return true; }
 
 private:

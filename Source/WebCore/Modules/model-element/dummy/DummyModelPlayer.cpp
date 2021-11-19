@@ -86,4 +86,16 @@ void DummyModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(bool s
 {
 }
 
+void DummyModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void DummyModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void DummyModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
+{
+}
+
 }

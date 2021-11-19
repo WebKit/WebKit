@@ -359,6 +359,61 @@ void ModelElementController::setAnimationIsPlayingForModelElement(ModelIdentifie
 #endif
 }
 
+static bool previewHasAudioSupport(ASVInlinePreview *preview)
+{
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
+    return [preview respondsToSelector:@selector(hasAudio)];
+#else
+    return false;
+#endif
+}
+
+void ModelElementController::hasAudioForModelElement(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAudioSupport(preview)) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::ResourceError::Type::General }));
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
+    completionHandler([preview hasAudio]);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void ModelElementController::isMutedForModelElement(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAudioSupport(preview)) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::ResourceError::Type::General }));
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
+    completionHandler([preview isMuted]);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void ModelElementController::setIsMutedForModelElement(ModelIdentifier modelIdentifier, bool isMuted, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAudioSupport(preview)) {
+        completionHandler(false);
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
+    preview.isMuted = isMuted;
+    completionHandler(true);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
 #endif
 
 }

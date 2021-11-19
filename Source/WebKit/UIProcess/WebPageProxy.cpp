@@ -10852,6 +10852,21 @@ void WebPageProxy::modelElementSetAnimationIsPlaying(ModelIdentifier modelIdenti
 {
     modelElementController()->setAnimationIsPlayingForModelElement(modelIdentifier, isPlaying, WTFMove(completionHandler));
 }
+
+void WebPageProxy::modelElementHasAudio(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
+{
+    modelElementController()->hasAudioForModelElement(modelIdentifier, WTFMove(completionHandler));
+}
+
+void WebPageProxy::modelElementIsMuted(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
+{
+    modelElementController()->isMutedForModelElement(modelIdentifier, WTFMove(completionHandler));
+}
+
+void WebPageProxy::modelElementSetIsMuted(ModelIdentifier modelIdentifier, bool isMuted, CompletionHandler<void(bool)>&& completionHandler)
+{
+    modelElementController()->setIsMutedForModelElement(modelIdentifier, isMuted, WTFMove(completionHandler));
+}
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)

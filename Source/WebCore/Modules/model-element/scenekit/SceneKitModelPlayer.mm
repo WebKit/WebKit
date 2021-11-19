@@ -104,6 +104,18 @@ void SceneKitModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(boo
 {
 }
 
+void SceneKitModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void SceneKitModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void SceneKitModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
+{
+}
+
 // MARK: - SceneKitModelLoaderClient overrides.
 
 void SceneKitModelPlayer::didFinishLoading(SceneKitModelLoader& loader, Ref<SceneKitModel> model)
