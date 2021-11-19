@@ -1,3 +1,15 @@
+2021-11-19  Saam Barati  <sbarati@apple.com>
+
+        Fix assertion added in r285592
+        https://bugs.webkit.org/show_bug.cgi?id=233373
+
+        Reviewed by Keith Miller.
+
+        * stress/validate-assert-uid-is-not-index-or-it-is-symbol.js: Added.
+        (main.v11):
+        (main.v29):
+        (main):
+
 2021-11-19  Joseph Griego  <jgriego@igalia.com>
 
         [JSC] Shadow realms: set correct Function prototype on wrapped functions

@@ -238,7 +238,7 @@ public:
 
                 if (node->hasCacheableIdentifier()) {
                     auto* uid = node->cacheableIdentifier().uid();
-                    VALIDATE((node), !parseIndex(*uid));
+                    VALIDATE((node), uid->isSymbol() || !parseIndex(*uid));
                 }
                  
                 switch (node->op()) {
