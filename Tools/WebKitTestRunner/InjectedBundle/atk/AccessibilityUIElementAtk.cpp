@@ -745,6 +745,10 @@ void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >
     int count = childrenCount();
     for (int i = 0; i < count; i++) {
         GRefPtr<AtkObject> child = adoptGRef(atk_object_ref_accessible_child(ATK_OBJECT(m_element.get()), i));
+
+        if (!ATK_IS_OBJECT(child.get()))
+            continue;
+
         children.append(AccessibilityUIElement::create(child.get()));
     }
 }
@@ -756,6 +760,10 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIE
     unsigned end = location + length;
     for (unsigned i = location; i < end; i++) {
         GRefPtr<AtkObject> child = adoptGRef(atk_object_ref_accessible_child(ATK_OBJECT(m_element.get()), i));
+
+        if (!ATK_IS_OBJECT(child.get()))
+            continue;
+
         children.append(AccessibilityUIElement::create(child.get()));
     }
 }

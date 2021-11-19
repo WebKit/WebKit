@@ -1,3 +1,15 @@
+2021-11-19  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        REGRESSION(r285859) [GTK][WPE] a number of accessibility/* tests crash on GTK and WPE
+        https://bugs.webkit.org/show_bug.cgi?id=233221
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/accessibility/add-children-pseudo-element-expected.txt:
+        * platform/glib/accessibility/aria-modal-text-descendants-expected.txt: Added.
+        * platform/glib/accessibility/table-cell-display-block-expected.txt: Added.
+
 2021-11-18  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr crash in SimplifiedBackwardsTextIterator::range() via previousSentencePosition
