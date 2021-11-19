@@ -60,7 +60,7 @@ static inline bool roleIsTextType(AccessibilityRole role)
 
 OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfacesForObject(AXCoreObject& coreObject)
 {
-    OptionSet<Interface> interfaces = { Interface::Accessible, Interface::Component };
+    OptionSet<Interface> interfaces = { Interface::Accessible, Interface::Component, Interface::Action };
 
     RenderObject* renderer = coreObject.isAccessibilityRenderObject() ? coreObject.renderer() : nullptr;
     if (coreObject.roleValue() == AccessibilityRole::StaticText || coreObject.roleValue() == AccessibilityRole::ColorWell)
@@ -483,6 +483,8 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_hyperlink_interface), &s_hyperlinkFunctions });
         if (m_interfaces.contains(Interface::Hypertext))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_hypertext_interface), &s_hypertextFunctions });
+        if (m_interfaces.contains(Interface::Action))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_action_interface), &s_actionFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -1115,6 +1117,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_hyperlink_interface.name);
     if (m_interfaces.contains(Interface::Hypertext))
         g_variant_builder_add(builder, "s", webkit_hypertext_interface.name);
+    if (m_interfaces.contains(Interface::Action))
+        g_variant_builder_add(builder, "s", webkit_action_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const

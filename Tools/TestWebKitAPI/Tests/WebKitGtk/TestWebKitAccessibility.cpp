@@ -1884,6 +1884,61 @@ static void testHypertextBasic(AccessibilityTest* test, gconstpointer)
 #endif
 }
 
+static void testActionBasic(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is <button accessKey='p'>button</button> and <a href='https://www.webkitgtk.org'>link</a> in a paragraph</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACTION(p.get()));
+    // Paragraph implements action interface, but it does nothing.
+    g_assert_cmpint(atspi_action_get_n_actions(ATSPI_ACTION(p.get()), nullptr), ==, 1);
+    GUniquePtr<char> name(atspi_action_get_action_name(ATSPI_ACTION(p.get()), 0, nullptr));
+    g_assert_cmpstr(name.get(), ==, "");
+    GUniquePtr<char> localizedName(atspi_action_get_localized_name(ATSPI_ACTION(p.get()), 0, nullptr));
+    g_assert_cmpstr(localizedName.get(), ==, "");
+    GUniquePtr<char> keyBinding(atspi_action_get_key_binding(ATSPI_ACTION(p.get()), 0, nullptr));
+    g_assert_cmpstr(keyBinding.get(), ==, "");
+
+    auto button = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACTION(button.get()));
+    g_assert_cmpint(atspi_action_get_n_actions(ATSPI_ACTION(button.get()), nullptr), ==, 1);
+    name.reset(atspi_action_get_action_name(ATSPI_ACTION(button.get()), 0, nullptr));
+    g_assert_cmpstr(name.get(), ==, "press");
+#if USE(ATSPI)
+    localizedName.reset(atspi_action_get_localized_name(ATSPI_ACTION(button.get()), 0, nullptr));
+    g_assert_cmpstr(localizedName.get(), ==, "press");
+#endif
+    keyBinding.reset(atspi_action_get_key_binding(ATSPI_ACTION(button.get()), 0, nullptr));
+    g_assert_cmpstr(keyBinding.get(), ==, "p");
+
+    auto a = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACTION(a.get()));
+    g_assert_cmpint(atspi_action_get_n_actions(ATSPI_ACTION(a.get()), nullptr), ==, 1);
+    name.reset(atspi_action_get_action_name(ATSPI_ACTION(a.get()), 0, nullptr));
+    g_assert_cmpstr(name.get(), ==, "jump");
+#if USE(ATSPI)
+    localizedName.reset(atspi_action_get_localized_name(ATSPI_ACTION(a.get()), 0, nullptr));
+    g_assert_cmpstr(localizedName.get(), ==, "jump");
+#endif
+    keyBinding.reset(atspi_action_get_key_binding(ATSPI_ACTION(a.get()), 0, nullptr));
+    g_assert_cmpstr(keyBinding.get(), ==, "");
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -1907,6 +1962,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "value/basic", testValueBasic);
     AccessibilityTest::add("WebKitAccessibility", "hyperlink/basic", testHyperlinkBasic);
     AccessibilityTest::add("WebKitAccessibility", "hypertext/basic", testHypertextBasic);
+    AccessibilityTest::add("WebKitAccessibility", "action/basic", testActionBasic);
 }
 
 void afterAll()

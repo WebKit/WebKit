@@ -794,7 +794,9 @@ int AccessibilityUIElement::insertionPointLineNumber()
 
 bool AccessibilityUIElement::isPressActionSupported()
 {
-    return false;
+    m_element->updateBackingStore();
+    auto name = m_element->actionName();
+    return name == "press" || name == "jump";
 }
 
 bool AccessibilityUIElement::isIncrementActionSupported()
@@ -1094,6 +1096,7 @@ void AccessibilityUIElement::showMenu()
 
 void AccessibilityUIElement::press()
 {
+    m_element->doAction();
 }
 
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const

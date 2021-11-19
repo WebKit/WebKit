@@ -48,7 +48,8 @@ public:
         Text = 1 << 2,
         Value = 1 << 3,
         Hyperlink = 1 << 4,
-        Hypertext = 1 << 5
+        Hypertext = 1 << 5,
+        Action = 1 << 6
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -122,6 +123,9 @@ public:
 
     WEBCORE_EXPORT URL url() const;
 
+    WEBCORE_EXPORT String actionName() const;
+    WEBCORE_EXPORT bool doAction() const;
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
@@ -161,6 +165,9 @@ private:
     AccessibilityObjectAtspi* hyperlink(unsigned) const;
     std::optional<unsigned> hyperlinkIndex(unsigned) const;
 
+    String localizedActionName() const;
+    String actionKeyBinding() const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
@@ -169,6 +176,7 @@ private:
     static GDBusInterfaceVTable s_valueFunctions;
     static GDBusInterfaceVTable s_hyperlinkFunctions;
     static GDBusInterfaceVTable s_hypertextFunctions;
+    static GDBusInterfaceVTable s_actionFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };
