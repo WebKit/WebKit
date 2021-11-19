@@ -245,8 +245,13 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
 ResolvedURL CSSParserContext::completeURL(const String& string) const
 {
     auto result = [&] () -> ResolvedURL {
+        // See also Document::completeURL(const String&)
         if (string.isNull())
             return { };
+
+        if (CSSValue::isCSSLocalURL(string))
+            return { string, { URL(), string } };
+
         if (charset.isEmpty())
             return { string, { baseURL, string } };
         auto encodingForURLParsing = TextEncoding { charset }.encodingForFormSubmissionOrURLParsing();

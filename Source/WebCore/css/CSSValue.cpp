@@ -232,6 +232,11 @@ bool CSSValue::equals(const CSSValue& other) const
     return false;
 }
 
+bool CSSValue::isCSSLocalURL(StringView relativeURL)
+{
+    return relativeURL.isEmpty() || relativeURL.startsWith('#');
+}
+
 String CSSValue::cssText() const
 {
     switch (classType()) {

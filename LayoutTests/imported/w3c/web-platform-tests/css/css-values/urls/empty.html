@@ -7,10 +7,12 @@
 <style>
 #inline-unquoted {
     background-image: url();
+    cursor: url(), pointer;
 }
 
 #inline-quoted {
     background-image: url("");
+    cursor: url(""), pointer;
 }
 </style>
 <link rel=stylesheet href=support/empty-urls.css>
@@ -26,15 +28,12 @@ const ids = [
   "external-quoted"
 ];
 
-const inline_url = location.href;
-const external_url = new URL(document.querySelector("link[rel=stylesheet]").href, location.href).href;
-
 for (let id of ids) {
     test(function() {
         const el = document.getElementById(id);
-        const expected = id.startsWith("inline-") ? inline_url : external_url;
         const style = window.getComputedStyle(el);
-        assert_equals(style["background-image"], 'url("' + expected + '")');
+        assert_equals(style["background-image"], 'url("")');
+        assert_equals(style["cursor"], 'url(""), pointer');
     }, "empty URL: " + id);
 }
 </script>

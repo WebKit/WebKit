@@ -155,6 +155,10 @@ public:
     bool equals(const CSSValue&) const;
     bool operator==(const CSSValue& other) const { return equals(other); }
 
+    // https://www.w3.org/TR/css-values-4/#local-urls
+    // Empty URLs and fragment-only URLs should not be resolved relative to the base URL.
+    static bool isCSSLocalURL(StringView relativeURL);
+
 protected:
 
     static const size_t ClassTypeBits = 6;

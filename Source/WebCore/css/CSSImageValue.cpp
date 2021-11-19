@@ -84,6 +84,9 @@ bool CSSImageValue::isPending() const
 
 URL CSSImageValue::reresolvedURL(const Document& document) const
 {
+    if (isCSSLocalURL(m_location.resolvedURL.string()))
+        return m_location.resolvedURL;
+
     // Re-resolving the URL is important for cases where resolvedURL is still not an absolute URL.
     // This can happen if there was no absolute base URL when the value was created, like a style from a document without a base URL.
     return document.completeURL(m_location.resolvedURL.string());

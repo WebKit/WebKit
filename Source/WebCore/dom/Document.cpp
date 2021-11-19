@@ -5591,11 +5591,13 @@ void Document::setDecoder(RefPtr<TextResourceDecoder>&& decoder)
 
 URL Document::completeURL(const String& url, const URL& baseURLOverride, ForceUTF8 forceUTF8) const
 {
+    // See also CSSParserContext::completeURL(const String&)
+
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the URL constructor to have this behavior?
-    // See also [CSS]StyleSheet::completeURL(const String&)
     if (url.isNull())
         return URL();
+
     const URL& baseURL = ((baseURLOverride.isEmpty() || baseURLOverride == aboutBlankURL()) && parentDocument()) ? parentDocument()->baseURL() : baseURLOverride;
     if (!m_decoder || forceUTF8 == ForceUTF8::Yes)
         return URL(baseURL, url);

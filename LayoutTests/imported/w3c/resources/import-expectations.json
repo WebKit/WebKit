@@ -144,6 +144,7 @@
     "web-platform-tests/css/css-transforms/": "import", 
     "web-platform-tests/css/css-transitions": "import", 
     "web-platform-tests/css/css-ui": "import", 
+    "web-platform-tests/css/css-values/urls": "import", 
     "web-platform-tests/css/css-variables": "import", 
     "web-platform-tests/css/css-will-change": "import", 
     "web-platform-tests/css/css-writing-modes": "import", 
