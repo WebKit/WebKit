@@ -1,3 +1,15 @@
+2021-11-19  Alex Christensen  <achristensen@webkit.org>
+
+        Remove allocation in JSON::Value::parseJSON
+        https://bugs.webkit.org/show_bug.cgi?id=233346
+
+        Reviewed by Yusuke Suzuki.
+
+        Parse the characters as Latin1 characters if we have an 8 bit string rather than converting them to UTF-16 just to be parsed.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::parseJSON):
+
 2021-11-18  Antoine Quint  <graouts@webkit.org>
 
         [Model] add support for pausing and resuming animations
