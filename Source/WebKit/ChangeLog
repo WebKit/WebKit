@@ -1,3 +1,32 @@
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for seeking animations
+        https://bugs.webkit.org/show_bug.cgi?id=233362
+        <rdar://problem/85428812>
+
+        Reviewed by Wenson Hsieh.
+
+        Expose new WebPageProxy messages to let the WebProcess message the UIProcess
+        to call into ASVInlinePreview methods to get and set the animation's current
+        time as well as getting its duration.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::animationDurationForModelElement):
+        (WebKit::ModelElementController::animationCurrentTimeForModelElement):
+        (WebKit::ModelElementController::setAnimationCurrentTimeForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementAnimationDuration):
+        (WebKit::WebPageProxy::modelElementAnimationCurrentTime):
+        (WebKit::WebPageProxy::modelElementSetAnimationCurrentTime):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::animationDuration):
+        (WebKit::ARKitInlinePreviewModelPlayer::animationCurrentTime):
+        (WebKit::ARKitInlinePreviewModelPlayer::setAnimationCurrentTime):
+
 2021-11-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r286047.

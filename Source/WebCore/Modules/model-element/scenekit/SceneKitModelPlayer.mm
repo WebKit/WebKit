@@ -112,6 +112,18 @@ void SceneKitModelPlayer::setIsLoopingAnimation(bool, CompletionHandler<void(boo
 {
 }
 
+void SceneKitModelPlayer::animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+{
+}
+
+void SceneKitModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+{
+}
+
+void SceneKitModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&)
+{
+}
+
 void SceneKitModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }

@@ -84,6 +84,12 @@ public:
     void isLoopingAnimation(IsLoopingAnimationPromise&&);
     void setIsLoopingAnimation(bool, DOMPromiseDeferred<void>&&);
 
+    using DurationPromise = DOMPromiseDeferred<IDLDouble>;
+    void animationDuration(DurationPromise&&);
+    using CurrentTimePromise = DOMPromiseDeferred<IDLDouble>;
+    void animationCurrentTime(CurrentTimePromise&&);
+    void setAnimationCurrentTime(double, DOMPromiseDeferred<void>&&);
+
     using HasAudioPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasAudio(HasAudioPromise&&);
     using IsMutedPromise = DOMPromiseDeferred<IDLBoolean>;

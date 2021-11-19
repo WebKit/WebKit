@@ -390,6 +390,51 @@ void ModelElementController::setIsLoopingAnimationForModelElement(ModelIdentifie
 #endif
 }
 
+void ModelElementController::animationDurationForModelElement(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAnimationSupport(preview)) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::ResourceError::Type::General }));
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    completionHandler(Seconds([preview duration]));
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void ModelElementController::animationCurrentTimeForModelElement(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAnimationSupport(preview)) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::ResourceError::Type::General }));
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    completionHandler(Seconds([preview currentTime]));
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void ModelElementController::setAnimationCurrentTimeForModelElement(ModelIdentifier modelIdentifier, Seconds currentTime, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAnimationSupport(preview)) {
+        completionHandler(false);
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    preview.currentTime = currentTime.seconds();
+    completionHandler(true);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
 
 static bool previewHasAudioSupport(ASVInlinePreview *preview)
 {

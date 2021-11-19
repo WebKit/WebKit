@@ -32,6 +32,7 @@
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -55,6 +56,9 @@ public:
     virtual void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) = 0;
     virtual void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) = 0;
+    virtual void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) = 0;
+    virtual void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) = 0;
+    virtual void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) = 0;
     virtual void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void setIsMuted(bool, CompletionHandler<void(bool success)>&&) = 0;

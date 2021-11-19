@@ -44,6 +44,10 @@
     Promise<boolean> isLoopingAnimation();
     Promise<undefined> setIsLoopingAnimation(boolean looping);
 
+    Promise<double> animationDuration();
+    Promise<double> animationCurrentTime();
+    Promise<undefined> setAnimationCurrentTime(double currentTime);
+
     Promise<boolean> hasAudio();
     Promise<boolean> isMuted();
     Promise<undefined> setIsMuted(boolean isMuted);

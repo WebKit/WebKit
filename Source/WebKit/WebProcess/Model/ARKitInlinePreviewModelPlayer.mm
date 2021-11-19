@@ -196,6 +196,79 @@ void ARKitInlinePreviewModelPlayer::setIsLoopingAnimation(bool isLooping, Comple
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsLoopingAnimation(*modelIdentifier, isLooping), WTFMove(remoteCompletionHandler));
 }
 
+void ARKitInlinePreviewModelPlayer::animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    RefPtr strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<Seconds, WebCore::ResourceError> result) mutable {
+        if (!result) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(*result);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementAnimationDuration(*modelIdentifier), WTFMove(remoteCompletionHandler));
+}
+
+void ARKitInlinePreviewModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    RefPtr strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<Seconds, WebCore::ResourceError> result) mutable {
+        if (!result) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(*result);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementAnimationCurrentTime(*modelIdentifier), WTFMove(remoteCompletionHandler));
+}
+
+void ARKitInlinePreviewModelPlayer::setAnimationCurrentTime(Seconds currentTime, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(false);
+        return;
+    }
+
+    RefPtr strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(false);
+        return;
+    }
+
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+        completionHandler(success);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationCurrentTime(*modelIdentifier, currentTime), WTFMove(remoteCompletionHandler));
+}
+
 void ARKitInlinePreviewModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
     auto modelIdentifier = this->modelIdentifier();

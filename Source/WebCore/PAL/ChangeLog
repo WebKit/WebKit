@@ -1,3 +1,17 @@
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for seeking animations
+        https://bugs.webkit.org/show_bug.cgi?id=233362
+        <rdar://problem/85428812>
+
+        Reviewed by Wenson Hsieh.
+
+        Add the new ARQL SPIs we are using to query the animation duration, the current and time
+        as well as allowing to set the latter.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
 2021-11-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r286047.

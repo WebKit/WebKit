@@ -56,6 +56,7 @@
 #include "RenderLayerModelObject.h"
 #include "RenderModel.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Seconds.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -460,6 +461,51 @@ void HTMLModelElement::setIsLoopingAnimation(bool isLooping, DOMPromiseDeferred<
     }
 
     m_modelPlayer->setIsLoopingAnimation(isLooping, [promise = WTFMove(promise)] (bool success) mutable {
+        if (success)
+            promise.resolve();
+        else
+            promise.reject();
+    });
+}
+
+void HTMLModelElement::animationDuration(DurationPromise&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->animationDuration([promise = WTFMove(promise)] (std::optional<Seconds> duration) mutable {
+        if (!duration)
+            promise.reject();
+        else
+            promise.resolve(duration->seconds());
+    });
+}
+
+void HTMLModelElement::animationCurrentTime(CurrentTimePromise&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->animationCurrentTime([promise = WTFMove(promise)] (std::optional<Seconds> currentTime) mutable {
+        if (!currentTime)
+            promise.reject();
+        else
+            promise.resolve(currentTime->seconds());
+    });
+}
+
+void HTMLModelElement::setAnimationCurrentTime(double currentTime, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->setAnimationCurrentTime(Seconds(currentTime), [promise = WTFMove(promise)] (bool success) mutable {
         if (success)
             promise.resolve();
         else

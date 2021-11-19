@@ -86,15 +86,27 @@ void DummyModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(bool s
 {
 }
 
-void DummyModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
-{
-}
-
 void DummyModelPlayer::isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
 
 void DummyModelPlayer::setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&)
+{
+}
+
+void DummyModelPlayer::animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+{
+}
+
+void DummyModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&)
+{
+}
+
+void DummyModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&)
+{
+}
+
+void DummyModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
 
