@@ -112,7 +112,7 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
-            "Delete branch 'eng/example'? (Yes/No): \n",
+            "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
 
     def test_canonicalize(self):
@@ -150,7 +150,7 @@ class TestLand(testing.PathTestCase):
             'Rewrite a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd (1/1) (--- seconds passed, remaining --- predicted)\n'
             '1 commit successfully canonicalized!\n'
             'Landed https://commits.webkit.org/6@main (a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd)!\n'
-            "Delete branch 'eng/example'? (Yes/No): \n",
+            "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
 
     def test_no_svn_canonical_svn(self):
@@ -191,7 +191,7 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
-            "Delete branch 'eng/example'? (Yes/No): \n",
+            "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
 
 
@@ -313,9 +313,9 @@ class TestLandGitHub(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Set 'Ricky Reviewer' as your reviewer? (Yes/No): \n"
+            "Set 'Ricky Reviewer' as your reviewer? ([Yes]/No): \n"
             'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
-            "Delete branch 'eng/example'? (Yes/No): \n",
+            "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
 
 
@@ -442,7 +442,7 @@ class TestLandBitBucket(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Set 'Ricky Reviewer' as your reviewer? (Yes/No): \n"
+            "Set 'Ricky Reviewer' as your reviewer? ([Yes]/No): \n"
             'Landed a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd!\n'
-            "Delete branch 'eng/example'? (Yes/No): \n",
+            "Delete branch 'eng/example'? ([Yes]/No): \n",
         )

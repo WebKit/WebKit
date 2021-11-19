@@ -58,7 +58,7 @@ class Setup(Command):
 
         if repository.owner == username or args.defaults or Terminal.choose(
             "Create a private fork of '{}' belonging to '{}'".format(repository.name, username),
-            default='No',
+            default='Yes',
         ) == 'No':
             log.warning("Continuing without forking '{}'".format(repository.name))
             return 1

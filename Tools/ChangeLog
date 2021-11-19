@@ -1,3 +1,29 @@
+2021-11-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Indicate to user the default option
+        https://bugs.webkit.org/show_bug.cgi?id=233342
+        <rdar://problem/85573383>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/terminal.py:
+        (Terminal.choose): Surround the default option with square brackets.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/terminal_unittest.py:
+        (TerminalTests.test_choose_triple):
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.github): We should construct a user owned mirror by default.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py:
+        (TestLand.test_default):
+        (TestLand.test_canonicalize):
+        (TestLand.test_svn):
+        (TestLandGitHub):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+        (TestSetup.test_github):
+
 2021-11-19  Brady Eidson  <beidson@apple.com>
 
         More webpushd architecture work

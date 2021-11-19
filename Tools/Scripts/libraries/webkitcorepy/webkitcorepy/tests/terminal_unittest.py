@@ -85,7 +85,7 @@ class TerminalTests(unittest.TestCase):
 
         with mocks.Terminal.input('huh'), OutputCapture() as captured:
             self.assertEqual('No', Terminal.choose('Continue', options=('Yes', 'No', 'Maybe'), default='No'))
-        self.assertEqual(captured.stdout.getvalue(), 'Continue (Yes/No/Maybe): \n')
+        self.assertEqual(captured.stdout.getvalue(), 'Continue (Yes/[No]/Maybe): \n')
 
     def test_choose_number(self):
         with mocks.Terminal.input('2'), OutputCapture() as captured:

@@ -51,7 +51,7 @@ class TestSetup(testing.PathTestCase):
                 path=self.path,
             ))
 
-        self.assertEqual(captured.stdout.getvalue(), "Create a private fork of 'WebKit' belonging to 'username' (Yes/No): \n")
+        self.assertEqual(captured.stdout.getvalue(), "Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): \n")
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.root.log.getvalue(),
@@ -114,18 +114,21 @@ Using the default git editor
         programs = ['default'] + [p.name for p in Editor.programs()]
         self.assertEqual(
             captured.stdout.getvalue(),
-            '''Set 'tapple@webkit.org' as the git user email (Yes/No): 
+            '''Set 'tapple@webkit.org' as the git user email ([Yes]/No): 
 Git user email: 
-Set 'Tim Apple' as the git user name (Yes/No): 
+Set 'Tim Apple' as the git user name ([Yes]/No): 
 Git user name: 
-Auto-color status, diff, and branch? (Yes/No): 
+Auto-color status, diff, and branch? ([Yes]/No): 
 Pick a commit message editor:
     {}
 : 
 http based remotes will prompt for your password when pushing,
-would you like to convert to a ssh remote? (Yes/No): 
-Create a private fork of 'WebKit' belonging to 'username' (Yes/No): 
-'''.format('\n    '.join(['{}) {}'.format(count + 1, programs[count]) for count in range(len(programs))])))
+would you like to convert to a ssh remote? ([Yes]/No): 
+Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): 
+'''.format('\n    '.join([
+            '{}) {}'.format(
+                count + 1, programs[count] if count else '[{}]'.format(programs[count]),
+            ) for count in range(len(programs))])))
         self.assertEqual(captured.stderr.getvalue(), '')
 
         self.assertEqual(

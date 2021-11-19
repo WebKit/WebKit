@@ -45,10 +45,15 @@ class Terminal(object):
         response = None
         while response is None:
             if numbered:
-                numbered_options = ['{}) {}'.format(i + 1, options[i]) for i in range(len(options))]
+                numbered_options = [
+                    ('{}) [{}]' if options[i] == default else '{}) {}').format( i + 1, options[i])
+                    for i in range(len(options))
+                ]
                 response = cls.input('{}:\n    {}\n: '.format(prompt, '\n    '.join(numbered_options)))
             else:
-                response = cls.input('{} ({}): '.format(prompt, '/'.join(options)))
+                response = cls.input('{} ({}): '.format(prompt, '/'.join([
+                    '[{}]'.format(option) if option == default else option for option in options
+                ])))
 
             if numbered and response.isdigit():
                 index = int(response) - 1
