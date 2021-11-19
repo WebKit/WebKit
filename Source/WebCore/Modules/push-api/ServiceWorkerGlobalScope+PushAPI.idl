@@ -27,4 +27,5 @@
     EnabledAtRuntime=ServiceWorkerEnabled
 ] partial interface ServiceWorkerGlobalScope {
     attribute EventHandler onpush;
+    attribute EventHandler onpushsubscriptionchange;
 };

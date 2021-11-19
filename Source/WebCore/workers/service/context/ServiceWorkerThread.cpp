@@ -38,6 +38,8 @@
 #include "Logging.h"
 #include "PlatformStrategies.h"
 #include "PushEvent.h"
+#include "PushSubscription.h"
+#include "PushSubscriptionChangeEvent.h"
 #include "SWContextManager.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
@@ -235,6 +237,33 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
     });
 }
 
+void ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
+{
+    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope, newSubscriptionData = WTFMove(newSubscriptionData), oldSubscriptionData = WTFMove(oldSubscriptionData)]() mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
+
+        RefPtr<PushSubscription> newSubscription;
+        RefPtr<PushSubscription> oldSubscription;
+
+        if (newSubscriptionData)
+            newSubscription = PushSubscription::create(WTFMove(*newSubscriptionData), &serviceWorkerGlobalScope->registration());
+        if (oldSubscriptionData)
+            oldSubscription = PushSubscription::create(WTFMove(*oldSubscriptionData));
+
+        auto pushSubscriptionChangeEvent = PushSubscriptionChangeEvent::create(eventNames().pushsubscriptionchangeEvent, { }, WTFMove(newSubscription), WTFMove(oldSubscription), ExtendableEvent::IsTrusted::Yes);
+        serviceWorkerGlobalScope->dispatchEvent(pushSubscriptionChangeEvent);
+
+        pushSubscriptionChangeEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTFMove(weakThis)](auto&&) mutable {
+            callOnMainThread([weakThis = WTFMove(weakThis)] {
+                RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent finishing for worker %llu", weakThis ? weakThis->identifier().toUInt64() : 0);
+                if (weakThis)
+                    weakThis->finishedFiringPushSubscriptionChangeEvent();
+            });
+        });
+    });
+}
+
 void ServiceWorkerThread::finishedEvaluatingScript()
 {
     ASSERT(globalScope()->isContextThread());
@@ -295,7 +324,7 @@ void ServiceWorkerThread::startHeartBeatTimer()
 void ServiceWorkerThread::heartBeatTimerFired()
 {
     if (!m_ongoingHeartBeatCheck) {
-        if (m_state == State::Installing || m_state == State::Activating || m_isHandlingFetchEvent || m_isHandlingPushEvent || m_messageEventCount)
+        if (m_state == State::Installing || m_state == State::Activating || m_isHandlingFetchEvent || m_isHandlingPushEvent || m_pushSubscriptionChangeEventCount || m_messageEventCount)
             startHeartBeatTimer();
         return;
     }
@@ -360,6 +389,18 @@ void ServiceWorkerThread::finishedFiringMessageEvent()
 {
     ASSERT(m_messageEventCount);
     --m_messageEventCount;
+}
+
+void ServiceWorkerThread::willPostTaskToFirePushSubscriptionChangeEvent()
+{
+    if (!m_pushSubscriptionChangeEventCount++)
+        startHeartBeatTimer();
+}
+
+void ServiceWorkerThread::finishedFiringPushSubscriptionChangeEvent()
+{
+    ASSERT(m_pushSubscriptionChangeEventCount);
+    --m_pushSubscriptionChangeEventCount;
 }
 
 } // namespace WebCore

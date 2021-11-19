@@ -56,6 +56,7 @@ public:
     Ref<FetchResponse> createOpaqueWithBlobBodyResponse(ScriptExecutionContext&);
 
     void schedulePushEvent(const String&, RefPtr<DeferredPromise>&&);
+    void schedulePushSubscriptionChangeEvent(PushSubscription* newSubscription, PushSubscription* oldSubscription);
     Vector<String> fetchResponseHeaderList(FetchResponse&);
 
     String processName() const;

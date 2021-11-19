@@ -552,11 +552,6 @@ void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& regis
     m_registrations.remove(registration.identifier());
 }
 
-static Ref<PushSubscription> createPushSubscriptionFromData(Ref<ServiceWorkerRegistration> registration, PushSubscriptionData&& data)
-{
-    return PushSubscription::create(WTFMove(registration), WTFMove(data.endpoint), data.expirationTime, WTFMove(data.serverVAPIDPublicKey), WTFMove(data.clientECDHPublicKey), WTFMove(data.sharedAuthenticationSecret));
-}
-
 void ServiceWorkerContainer::subscribeToPushService(ServiceWorkerRegistration& registration, const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
 {
     ensureSWClientConnection().subscribeToPushService(registration.identifier(), applicationServerKey, [protectedRegistration = Ref { registration }, promise = WTFMove(promise)](auto&& result) mutable {
@@ -565,7 +560,7 @@ void ServiceWorkerContainer::subscribeToPushService(ServiceWorkerRegistration& r
             return;
         }
         
-        promise.resolve(createPushSubscriptionFromData(WTFMove(protectedRegistration), result.releaseReturnValue()));
+        promise.resolve(PushSubscription::create(result.releaseReturnValue(), WTFMove(protectedRegistration)));
     });
 }
 
@@ -590,7 +585,7 @@ void ServiceWorkerContainer::getPushSubscription(ServiceWorkerRegistration& regi
             return;
         }
 
-        promise.resolve(createPushSubscriptionFromData(WTFMove(protectedRegistration), WTFMove(*optionalPushSubscriptionData)).ptr());
+        promise.resolve(PushSubscription::create(WTFMove(*optionalPushSubscriptionData), WTFMove(protectedRegistration)).ptr());
     });
 }
 

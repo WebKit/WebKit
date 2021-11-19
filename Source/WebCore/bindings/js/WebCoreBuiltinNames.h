@@ -453,6 +453,7 @@ namespace WebCore {
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
     macro(onpush) \
+    macro(onpushsubscriptionchange) \
     macro(onrtctransform) \
     macro(ontouchcancel) \
     macro(ontouchend) \

@@ -31,6 +31,7 @@
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PushEncryptionKeyName.h"
+#include "PushSubscriptionData.h"
 #include "PushSubscriptionJSON.h"
 
 #include <optional>
@@ -51,24 +52,25 @@ public:
     template<typename... Args> static Ref<PushSubscription> create(Args&&... args) { return adoptRef(*new PushSubscription(std::forward<Args>(args)...)); }
     WEBCORE_EXPORT ~PushSubscription();
 
+    WEBCORE_EXPORT const PushSubscriptionData& data() const;
+
     const String& endpoint() const;
     std::optional<EpochTimeStamp> expirationTime() const;
     PushSubscriptionOptions& options() const;
+    const Vector<uint8_t>& clientECDHPublicKey() const;
+    const Vector<uint8_t>& sharedAuthenticationSecret() const;
+
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> getKey(PushEncryptionKeyName) const;
     void unsubscribe(ScriptExecutionContext&, DOMPromiseDeferred<IDLBoolean>&&);
 
     PushSubscriptionJSON toJSON() const;
 
 private:
-    WEBCORE_EXPORT PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
-    PushSubscription(Ref<ServiceWorkerRegistration>&&, String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
+    WEBCORE_EXPORT explicit PushSubscription(PushSubscriptionData&&, RefPtr<ServiceWorkerRegistration>&& = nullptr);
 
+    PushSubscriptionData m_data;
     RefPtr<ServiceWorkerRegistration> m_serviceWorkerRegistration;
-    String m_endpoint;
-    std::optional<EpochTimeStamp> m_expirationTime;
-    Ref<PushSubscriptionOptions> m_options;
-    Vector<uint8_t> m_clientECDHPublicKey;
-    Vector<uint8_t> m_sharedAuthenticationSecret;
+    mutable RefPtr<PushSubscriptionOptions> m_options;
 };
 
 } // namespace WebCore

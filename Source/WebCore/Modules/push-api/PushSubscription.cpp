@@ -40,52 +40,59 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PushSubscription);
 
-PushSubscription::PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
-    : m_endpoint(WTFMove(endpoint))
-    , m_expirationTime(expirationTime)
-    , m_options(PushSubscriptionOptions::create(WTFMove(serverVAPIDPublicKey)))
-    , m_clientECDHPublicKey(WTFMove(clientECDHPublicKey))
-    , m_sharedAuthenticationSecret(WTFMove(sharedAuthenticationSecret))
-{
-}
-
-PushSubscription::PushSubscription(Ref<ServiceWorkerRegistration>&& registration, String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
-    : m_serviceWorkerRegistration(WTFMove(registration))
-    , m_endpoint(WTFMove(endpoint))
-    , m_expirationTime(expirationTime)
-    , m_options(PushSubscriptionOptions::create(WTFMove(serverVAPIDPublicKey)))
-    , m_clientECDHPublicKey(WTFMove(clientECDHPublicKey))
-    , m_sharedAuthenticationSecret(WTFMove(sharedAuthenticationSecret))
+PushSubscription::PushSubscription(PushSubscriptionData&& data, RefPtr<ServiceWorkerRegistration>&& registration)
+    : m_data(WTFMove(data))
+    , m_serviceWorkerRegistration(WTFMove(registration))
 {
 }
 
 PushSubscription::~PushSubscription() = default;
 
+const PushSubscriptionData& PushSubscription::data() const
+{
+    return m_data;
+}
+
 const String& PushSubscription::endpoint() const
 {
-    return m_endpoint;
+    return m_data.endpoint;
 }
 
 std::optional<EpochTimeStamp> PushSubscription::expirationTime() const
 {
-    return m_expirationTime;
+    return m_data.expirationTime;
 }
 
 PushSubscriptionOptions& PushSubscription::options() const
 {
-    return m_options;
+    if (!m_options) {
+        auto key = m_data.serverVAPIDPublicKey;
+        m_options = PushSubscriptionOptions::create(WTFMove(key));
+    }
+
+    return *m_options;
+}
+
+const Vector<uint8_t>& PushSubscription::clientECDHPublicKey() const
+{
+    return m_data.clientECDHPublicKey;
+}
+
+const Vector<uint8_t>& PushSubscription::sharedAuthenticationSecret() const
+{
+    return m_data.sharedAuthenticationSecret;
 }
 
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKeyName name) const
 {
-    const Vector<uint8_t> *source = nullptr;
+    const Vector<uint8_t>* source = nullptr;
 
     switch (name) {
     case PushEncryptionKeyName::P256dh:
-        source = &m_clientECDHPublicKey;
+        source = &clientECDHPublicKey();
         break;
     case PushEncryptionKeyName::Auth:
-        source = &m_sharedAuthenticationSecret;
+        source = &sharedAuthenticationSecret();
         break;
     default:
         return nullptr;
@@ -112,11 +119,11 @@ void PushSubscription::unsubscribe(ScriptExecutionContext& scriptExecutionContex
 PushSubscriptionJSON PushSubscription::toJSON() const
 {
     return PushSubscriptionJSON {
-        m_endpoint,
-        m_expirationTime,
+        endpoint(),
+        expirationTime(),
         Vector<KeyValuePair<String, String>> {
-            { "p256dh"_s, base64URLEncodeToString(m_clientECDHPublicKey) },
-            { "auth"_s, base64URLEncodeToString(m_sharedAuthenticationSecret) }
+            { "p256dh"_s, base64URLEncodeToString(clientECDHPublicKey()) },
+            { "auth"_s, base64URLEncodeToString(sharedAuthenticationSecret()) }
         }
     };
 }

@@ -39,6 +39,7 @@
     sequence<ByteString> fetchResponseHeaderList(FetchResponse response);
 
     Promise<boolean> schedulePushEvent(optional DOMString data);
+    undefined schedulePushSubscriptionChangeEvent(PushSubscription? newSubscription, PushSubscription? oldSubscription);
 
     readonly attribute DOMString processName;
     readonly attribute boolean isThrottleable;

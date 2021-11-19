@@ -80,7 +80,7 @@ PASS PushSubscriptionChangeEvent interface: new PushSubscriptionChangeEvent("pus
 PASS ServiceWorkerRegistration interface: attribute pushManager
 PASS ServiceWorkerRegistration interface: registration must inherit property "pushManager" with the proper type
 PASS ServiceWorkerGlobalScope interface: attribute onpush
-FAIL ServiceWorkerGlobalScope interface: attribute onpushsubscriptionchange assert_own_property: The global object must have a property "onpushsubscriptionchange" expected property "onpushsubscriptionchange" missing
+PASS ServiceWorkerGlobalScope interface: attribute onpushsubscriptionchange
 PASS ServiceWorkerGlobalScope interface: self must inherit property "onpush" with the proper type
-FAIL ServiceWorkerGlobalScope interface: self must inherit property "onpushsubscriptionchange" with the proper type assert_own_property: expected property "onpushsubscriptionchange" missing
+PASS ServiceWorkerGlobalScope interface: self must inherit property "onpushsubscriptionchange" with the proper type
 

@@ -2,27 +2,23 @@
 // META: global=serviceworker
 // META: script=constants.js
 
-test(() => {
-    let event = new PushSubscriptionChangeEvent("pushsubscriptionchange");
-    assert_equals(event.newSubscription, null, "new");
-    assert_equals(event.oldSubscription, null, "old");
-}, "PushSubscriptionChangeEvent without data");
-
-test(() => {
-    let event = new PushSubscriptionChangeEvent("pushsubscriptionchange", { newSubscription: null, oldSubscription: null });
-    assert_equals(event.newSubscription, null, "new");
-    assert_equals(event.oldSubscription, null, "old");
-}, "PushSubscriptionChangeEvent without subscriptions");
+let activatePromise = new Promise(resolve => self.onactivate = resolve);
+promise_test(() => {
+   return activatePromise;
+}, "wait for active service worker");
 
 let newSubscription = null;
 let oldSubscription = null;
 
-let activatePromise = new Promise(resolve => self.onactivate = resolve);
-promise_test(async () => {
-   return activatePromise;
-}, "wait for active service worker");
+function assertSubscriptionsAreEqual(a, b, reason)
+{
+    if (!a || !b)
+        assert_equals(a, b, reason);
+    else
+        assert_equals(JSON.stringify(a.toJSON()), JSON.stringify(b.toJSON()), reason);
+}
 
-promise_test(async() => {
+promise_test(() => {
     newSubscription = self.internals.createPushSubscription(ENDPOINT, EXPIRATION_TIME, VALID_SERVER_KEY, CLIENT_KEY_1, AUTH);
     oldSubscription = self.internals.createPushSubscription(ENDPOINT, EXPIRATION_TIME, VALID_SERVER_KEY, CLIENT_KEY_2, AUTH);
 
@@ -32,20 +28,30 @@ promise_test(async() => {
     return new Promise(resolve => resolve());
 }, "create subscriptions");
 
-test(() => {
-    let event = new PushSubscriptionChangeEvent("pushsubscriptionchange", { newSubscription });
-    assert_equals(event.newSubscription, newSubscription, "new");
-    assert_equals(event.oldSubscription, null, "old");
+promise_test(async() => {
+    self.internals.schedulePushSubscriptionChangeEvent(null, null);
+    let event = await new Promise(resolve => self.onpushsubscriptionchange = resolve);
+    assertSubscriptionsAreEqual(event.newSubscription, null, "new");
+    assertSubscriptionsAreEqual(event.oldSubscription, null, "old");
+}, "PushSubscriptionChangeEvent without subscriptions");
+
+promise_test(async() => {
+    self.internals.schedulePushSubscriptionChangeEvent(newSubscription, null);
+    let event = await new Promise(resolve => self.onpushsubscriptionchange = resolve);
+    assertSubscriptionsAreEqual(event.newSubscription, newSubscription, "new");
+    assertSubscriptionsAreEqual(event.oldSubscription, null, "old");
 }, "PushSubscriptionChangeEvent with new subscription");
 
-test(() => {
-    let event = new PushSubscriptionChangeEvent("pushsubscriptionchange", { oldSubscription });
-    assert_equals(event.newSubscription, null, "new");
-    assert_equals(event.oldSubscription, oldSubscription, "old");
+promise_test(async() => {
+    self.internals.schedulePushSubscriptionChangeEvent(null, oldSubscription);
+    let event = await new Promise(resolve => self.onpushsubscriptionchange = resolve);
+    assertSubscriptionsAreEqual(event.newSubscription, null, "new");
+    assertSubscriptionsAreEqual(event.oldSubscription, oldSubscription, "old");
 }, "PushSubscriptionChangeEvent with old subscription");
 
-test(() => {
-    let event = new PushSubscriptionChangeEvent("pushsubscriptionchange", { newSubscription, oldSubscription });
-    assert_equals(event.newSubscription, newSubscription, "new");
-    assert_equals(event.oldSubscription, oldSubscription, "old");
+promise_test(async() => {
+    self.internals.schedulePushSubscriptionChangeEvent(newSubscription, oldSubscription);
+    let event = await new Promise(resolve => self.onpushsubscriptionchange = resolve);
+    assertSubscriptionsAreEqual(event.newSubscription, newSubscription, "new");
+    assertSubscriptionsAreEqual(event.oldSubscription, oldSubscription, "old");
 }, "PushSubscriptionChangeEvent with new and old subscription");

@@ -28,6 +28,18 @@ function waitForState(worker, state)
     });
 }
 
+async function sendSyncMessage(worker, messageName, timeout)
+{
+    if (!window.internals)
+        return Promise.reject("requires internals");
+
+    const channel = new MessageChannel();
+    const receivedMessage = new Promise(resolve => channel.port1.onmessage = resolve);
+    const timedOut = new Promise((resolve, reject) => setTimeout(reject, timeout || 5000));
+    worker.postMessage(messageName, [channel.port2]);
+    return Promise.race([receivedMessage, timedOut]);
+}
+
 async function waitForServiceWorkerNoLongerRunning(worker)
 {
     if (!window.internals)

@@ -31,7 +31,9 @@
 #include "FetchEvent.h"
 #include "JSFetchResponse.h"
 #include "PushSubscription.h"
+#include "PushSubscriptionData.h"
 #include "SWContextManager.h"
+#include "ServiceWorkerRegistration.h"
 #include <wtf/ProcessID.h>
 
 namespace WebCore {
@@ -79,6 +81,21 @@ void ServiceWorkerInternals::schedulePushEvent(const String& message, RefPtr<Def
                 }, WorkerRunLoop::defaultMode());
             }
         });
+    });
+}
+
+void ServiceWorkerInternals::schedulePushSubscriptionChangeEvent(PushSubscription* newSubscription, PushSubscription* oldSubscription)
+{
+    std::optional<PushSubscriptionData> newSubscriptionData;
+    std::optional<PushSubscriptionData> oldSubscriptionData;
+
+    if (newSubscription)
+        newSubscriptionData = newSubscription->data().isolatedCopy();
+    if (oldSubscription)
+        oldSubscriptionData = oldSubscription->data().isolatedCopy();
+
+    callOnMainThread([identifier = m_identifier, newSubscriptionData = WTFMove(newSubscriptionData), oldSubscriptionData = WTFMove(oldSubscriptionData)]() mutable {
+        SWContextManager::singleton().firePushSubscriptionChangeEvent(identifier, WTFMove(newSubscriptionData), WTFMove(oldSubscriptionData));
     });
 }
 
@@ -168,7 +185,7 @@ RefPtr<PushSubscription> ServiceWorkerInternals::createPushSubscription(const St
     Vector<uint8_t> myClientECDHPublicKey { static_cast<const uint8_t*>(clientECDHPublicKey.data()), clientECDHPublicKey.byteLength() };
     Vector<uint8_t> myAuth { static_cast<const uint8_t*>(auth.data()), auth.byteLength() };
 
-    return PushSubscription::create(WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth));
+    return PushSubscription::create(PushSubscriptionData { WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
 
 } // namespace WebCore

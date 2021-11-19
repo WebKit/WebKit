@@ -45,11 +45,11 @@ class ServiceWorker;
 class ServiceWorkerContainer;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public Supplementable<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(ServiceWorkerRegistration);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(ServiceWorkerRegistration, WEBCORE_EXPORT);
 public:
     static Ref<ServiceWorkerRegistration> getOrCreate(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);
 
-    ~ServiceWorkerRegistration();
+    WEBCORE_EXPORT ~ServiceWorkerRegistration();
 
     ServiceWorkerRegistrationIdentifier identifier() const { return m_registrationData.identifier; }
 

@@ -45,6 +45,7 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
@@ -318,6 +319,14 @@ void ServiceWorkerThreadProxy::firePushEvent(std::optional<Vector<uint8_t>>&& da
     }, WorkerRunLoop::defaultMode());
     if (!isPosted)
         m_ongoingPushTasks.take(identifier)(false);
+}
+
+void ServiceWorkerThreadProxy::firePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
+{
+    thread().willPostTaskToFirePushSubscriptionChangeEvent();
+    thread().runLoop().postTask([this, protectedThis = Ref { *this }, newSubscriptionData = crossThreadCopy(WTFMove(newSubscriptionData)), oldSubscriptionData = crossThreadCopy(WTFMove(oldSubscriptionData))](auto&) mutable {
+        thread().queueTaskToFirePushSubscriptionChangeEvent(WTFMove(newSubscriptionData), WTFMove(oldSubscriptionData));
+    });
 }
 
 } // namespace WebCore
