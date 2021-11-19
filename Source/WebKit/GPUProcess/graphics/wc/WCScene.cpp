@@ -137,6 +137,8 @@ void WCScene::update(WCUpateInfo&& update, Vector<RefPtr<RemoteGraphicsContextGL
             layer->texmapLayer.setDebugVisuals(layerUpdate.showDebugBorder, layerUpdate.debugBorderColor, layerUpdate.debugBorderWidth);
         if (layerUpdate.changes & WCLayerChange::RepaintCount)
             layer->texmapLayer.setRepaintCounter(layerUpdate.showRepaintCounter, layerUpdate.repaintCount);
+        if (layerUpdate.changes & WCLayerChange::BackgroundColor)
+            layer->texmapLayer.setBackgroundColor(layerUpdate.backgroundColor);
         if (layerUpdate.changes & WCLayerChange::Opacity)
             layer->texmapLayer.setOpacity(layerUpdate.opacity);
         if (layerUpdate.changes & WCLayerChange::Transform)

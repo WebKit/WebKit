@@ -35,6 +35,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperPlatformLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxy.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxyProvider.h
+    platform/graphics/texmap/TextureMapperSolidColorLayer.h
     platform/graphics/texmap/TextureMapperTile.h
     platform/graphics/texmap/TextureMapperTiledBackingStore.h
 )

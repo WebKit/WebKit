@@ -255,6 +255,14 @@ void GraphicsLayerTextureMapper::setBackfaceVisibility(bool value)
     notifyChange(BackfaceVisibilityChange);
 }
 
+void GraphicsLayerTextureMapper::setBackgroundColor(const Color& value)
+{
+    if (value == backgroundColor())
+        return;
+    GraphicsLayer::setBackgroundColor(value);
+    notifyChange(BackgroundColorChange);
+}
+
 void GraphicsLayerTextureMapper::setOpacity(float value)
 {
     if (value == opacity())
@@ -286,7 +294,7 @@ void GraphicsLayerTextureMapper::setContentsToSolidColor(const Color& color)
         return;
 
     m_solidColor = color;
-    notifyChange(BackgroundColorChange);
+    notifyChange(SolidColorChange);
 }
 
 void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
@@ -475,10 +483,13 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     if (m_changeMask & BackfaceVisibilityChange)
         m_layer.setBackfaceVisibility(backfaceVisibility());
 
+    if (m_changeMask & BackgroundColorChange)
+        m_layer.setBackgroundColor(backgroundColor());
+
     if (m_changeMask & OpacityChange)
         m_layer.setOpacity(opacity());
 
-    if (m_changeMask & BackgroundColorChange)
+    if (m_changeMask & SolidColorChange)
         m_layer.setSolidColor(m_solidColor);
 
     if (m_changeMask & FilterChange)

@@ -1,3 +1,20 @@
+2021-11-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper][GraphicsLayerTextureMapper][GraphicsLayerWC] setBackgroundColor support
+        https://bugs.webkit.org/show_bug.cgi?id=233244
+
+        Reviewed by Don Olmstead.
+
+        * GPUProcess/graphics/wc/WCScene.cpp:
+        (WebKit::WCScene::update):
+        * WebProcess/WebPage/wc/GraphicsLayerWC.cpp:
+        (WebKit::GraphicsLayerWC::setBackgroundColor):
+        (WebKit::GraphicsLayerWC::flushCompositingStateForThisLayerOnly):
+        * WebProcess/WebPage/wc/GraphicsLayerWC.h:
+        * WebProcess/WebPage/wc/WCUpateInfo.h:
+        (WebKit::WCLayerUpateInfo::encode const):
+        (WebKit::WCLayerUpateInfo::decode):
+
 2021-11-18  Alex Christensen  <achristensen@webkit.org>
 
         Allow all redirect schemes when compiling a content rule list

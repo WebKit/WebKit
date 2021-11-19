@@ -67,6 +67,7 @@ public:
     void setChildrenTransform(const WebCore::TransformationMatrix&) override;
     void setPreserves3D(bool) override;
     void setMasksToBounds(bool) override;
+    void setBackgroundColor(const WebCore::Color&) override;
     void setOpacity(float) override;
     void setContentsRect(const WebCore::FloatRect&) override;
     void setContentsClippingRect(const WebCore::FloatRoundedRect&) override;

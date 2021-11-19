@@ -55,6 +55,7 @@ enum class WCLayerChange : uint32_t {
     Filters                 = 1 << 17,
     BackdropFilters         = 1 << 18,
     PlatformLayer           = 1 << 19,
+    BackgroundColor         = 1 << 20,
 };
 
 struct WCLayerUpateInfo {
@@ -74,6 +75,7 @@ struct WCLayerUpateInfo {
     bool backfaceVisibility;
     bool preserves3D;
     WebCore::Color solidColor;
+    WebCore::Color backgroundColor;
     WebCore::Color debugBorderColor;
     float opacity;
     float debugBorderWidth;
@@ -119,6 +121,8 @@ struct WCLayerUpateInfo {
             encoder << contentsRect;
         if (changes & WCLayerChange::ContentsClippingRect)
             encoder << contentsClippingRect;
+        if (changes & WCLayerChange::BackgroundColor)
+            encoder << backgroundColor;
         if (changes & WCLayerChange::Opacity)
             encoder << opacity;
         if (changes & WCLayerChange::BackingStore)
@@ -204,6 +208,10 @@ struct WCLayerUpateInfo {
         }
         if (result.changes & WCLayerChange::ContentsClippingRect) {
             if (!decoder.decode(result.contentsClippingRect))
+                return false;
+        }
+        if (result.changes & WCLayerChange::BackgroundColor) {
+            if (!decoder.decode(result.backgroundColor))
                 return false;
         }
         if (result.changes & WCLayerChange::Opacity) {
@@ -296,7 +304,8 @@ template<> struct EnumTraits<WebKit::WCLayerChange> {
         WebKit::WCLayerChange::ChildrenTransform,
         WebKit::WCLayerChange::Filters,
         WebKit::WCLayerChange::BackdropFilters,
-        WebKit::WCLayerChange::PlatformLayer
+        WebKit::WCLayerChange::PlatformLayer,
+        WebKit::WCLayerChange::BackgroundColor
     >;
 };
 

@@ -59,6 +59,7 @@ public:
     void setContentsVisible(bool) override;
     void setContentsOpaque(bool) override;
     void setBackfaceVisibility(bool) override;
+    void setBackgroundColor(const Color&) override;
     void setOpacity(float) override;
     bool setFilters(const FilterOperations&) override;
     bool setBackdropFilters(const FilterOperations&) override;
@@ -149,6 +150,7 @@ private:
 
         AnimationStarted =          (1L << 26),
         BackdropLayerChange =       (1L << 27),
+        SolidColorChange =          (1L << 28),
     };
     void notifyChange(ChangeMask);
 

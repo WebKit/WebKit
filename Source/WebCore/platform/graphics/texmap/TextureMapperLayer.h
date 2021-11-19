@@ -23,7 +23,7 @@
 #include "FloatRect.h"
 #include "NicosiaAnimation.h"
 #include "TextureMapper.h"
-#include "TextureMapperBackingStore.h"
+#include "TextureMapperSolidColorLayer.h"
 #include <wtf/WeakPtr.h>
 
 #if USE(COORDINATED_GRAPHICS)
@@ -77,6 +77,7 @@ public:
     void setBackfaceVisibility(bool);
     void setOpacity(float);
     void setSolidColor(const Color&);
+    void setBackgroundColor(const Color&);
     void setContentsTileSize(const FloatSize&);
     void setContentsTilePhase(const FloatSize&);
     void setContentsClippingRect(const FloatRoundedRect&);
@@ -178,6 +179,7 @@ private:
         WeakPtr<TextureMapperLayer> backdropLayer;
         FloatRoundedRect backdropFiltersRect;
         Color solidColor;
+        Color backgroundColor;
         FilterOperations filters;
         Color debugBorderColor;
         float debugBorderWidth;

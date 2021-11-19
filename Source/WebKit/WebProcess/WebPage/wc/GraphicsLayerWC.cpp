@@ -216,6 +216,14 @@ void GraphicsLayerWC::setMasksToBounds(bool value)
     updateDebugIndicators();
 }
 
+void GraphicsLayerWC::setBackgroundColor(const WebCore::Color& value)
+{
+    if (value == backgroundColor())
+        return;
+    GraphicsLayer::setBackgroundColor(value);
+    noteLayerPropertyChanged(WCLayerChange::BackgroundColor);
+}
+
 void GraphicsLayerWC::setOpacity(float value)
 {
     if (value == opacity())
@@ -446,6 +454,8 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.showRepaintCounter = isShowingRepaintCounter();
         update.repaintCount = repaintCount();
     }
+    if (update.changes & WCLayerChange::BackgroundColor)
+        update.backgroundColor = backgroundColor();
     if (update.changes & WCLayerChange::Opacity)
         update.opacity = opacity();
     if (update.changes & WCLayerChange::Transform)
