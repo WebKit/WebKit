@@ -1,5 +1,31 @@
 2021-11-19  Antoine Quint  <graouts@webkit.org>
 
+        [Model] add support for controlling looping animations
+        https://bugs.webkit.org/show_bug.cgi?id=233356
+        <rdar://problem/85428884>
+
+        Reviewed by Wenson Hsieh.
+
+        Expose new WebPageProxy messages to let the WebProcess message the UIProcess
+        to call into ASVInlinePreview methods to get and set the animation's looping
+        state.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::isLoopingAnimationForModelElement):
+        (WebKit::ModelElementController::setIsLoopingAnimationForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementIsLoopingAnimation):
+        (WebKit::WebPageProxy::modelElementSetIsLoopingAnimation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::isLoopingAnimation):
+        (WebKit::ARKitInlinePreviewModelPlayer::setIsLoopingAnimation):
+
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
         [Model] add audio support
         https://bugs.webkit.org/show_bug.cgi?id=233365
         <rdar://problem/85428982>

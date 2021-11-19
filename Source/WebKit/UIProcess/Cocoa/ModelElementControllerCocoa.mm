@@ -359,6 +359,38 @@ void ModelElementController::setAnimationIsPlayingForModelElement(ModelIdentifie
 #endif
 }
 
+void ModelElementController::isLoopingAnimationForModelElement(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAnimationSupport(preview)) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::ResourceError::Type::General }));
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    completionHandler([preview isLooping]);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void ModelElementController::setIsLoopingAnimationForModelElement(ModelIdentifier modelIdentifier, bool isLooping, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAnimationSupport(preview)) {
+        completionHandler(false);
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    preview.isLooping = isLooping;
+    completionHandler(true);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+
 static bool previewHasAudioSupport(ASVInlinePreview *preview)
 {
 #if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)

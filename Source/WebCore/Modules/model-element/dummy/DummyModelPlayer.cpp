@@ -90,6 +90,14 @@ void DummyModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&
 {
 }
 
+void DummyModelPlayer::isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void DummyModelPlayer::setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&)
+{
+}
+
 void DummyModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }

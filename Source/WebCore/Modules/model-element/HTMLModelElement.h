@@ -80,6 +80,10 @@ public:
     void playAnimation(DOMPromiseDeferred<void>&&);
     void pauseAnimation(DOMPromiseDeferred<void>&&);
 
+    using IsLoopingAnimationPromise = DOMPromiseDeferred<IDLBoolean>;
+    void isLoopingAnimation(IsLoopingAnimationPromise&&);
+    void setIsLoopingAnimation(bool, DOMPromiseDeferred<void>&&);
+
     using HasAudioPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasAudio(HasAudioPromise&&);
     using IsMutedPromise = DOMPromiseDeferred<IDLBoolean>;

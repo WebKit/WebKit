@@ -41,6 +41,9 @@
     Promise<undefined> playAnimation();
     Promise<undefined> pauseAnimation();
 
+    Promise<boolean> isLoopingAnimation();
+    Promise<undefined> setIsLoopingAnimation(boolean looping);
+
     Promise<boolean> hasAudio();
     Promise<boolean> isMuted();
     Promise<undefined> setIsMuted(boolean isMuted);

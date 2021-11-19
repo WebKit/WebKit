@@ -10853,6 +10853,16 @@ void WebPageProxy::modelElementSetAnimationIsPlaying(ModelIdentifier modelIdenti
     modelElementController()->setAnimationIsPlayingForModelElement(modelIdentifier, isPlaying, WTFMove(completionHandler));
 }
 
+void WebPageProxy::modelElementIsLoopingAnimation(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
+{
+    modelElementController()->isLoopingAnimationForModelElement(modelIdentifier, WTFMove(completionHandler));
+}
+
+void WebPageProxy::modelElementSetIsLoopingAnimation(ModelIdentifier modelIdentifier, bool isLooping, CompletionHandler<void(bool)>&& completionHandler)
+{
+    modelElementController()->setIsLoopingAnimationForModelElement(modelIdentifier, isLooping, WTFMove(completionHandler));
+}
+
 void WebPageProxy::modelElementHasAudio(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
 {
     modelElementController()->hasAudioForModelElement(modelIdentifier, WTFMove(completionHandler));

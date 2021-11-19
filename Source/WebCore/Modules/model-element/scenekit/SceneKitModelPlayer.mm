@@ -104,6 +104,14 @@ void SceneKitModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(boo
 {
 }
 
+void SceneKitModelPlayer::isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void SceneKitModelPlayer::setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&)
+{
+}
+
 void SceneKitModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }

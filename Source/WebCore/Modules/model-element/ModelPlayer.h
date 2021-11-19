@@ -53,6 +53,8 @@ public:
     virtual void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) = 0;
     virtual void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) = 0;
+    virtual void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
+    virtual void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) = 0;
     virtual void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void setIsMuted(bool, CompletionHandler<void(bool success)>&&) = 0;

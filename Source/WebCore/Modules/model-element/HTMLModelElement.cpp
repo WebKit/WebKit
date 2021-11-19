@@ -437,6 +437,36 @@ void HTMLModelElement::pauseAnimation(DOMPromiseDeferred<void>&& promise)
     setAnimationIsPlaying(false, WTFMove(promise));
 }
 
+void HTMLModelElement::isLoopingAnimation(IsLoopingAnimationPromise&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->isLoopingAnimation([promise = WTFMove(promise)] (std::optional<bool> isLooping) mutable {
+        if (!isLooping)
+            promise.reject();
+        else
+            promise.resolve(*isLooping);
+    });
+}
+
+void HTMLModelElement::setIsLoopingAnimation(bool isLooping, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->setIsLoopingAnimation(isLooping, [promise = WTFMove(promise)] (bool success) mutable {
+        if (success)
+            promise.resolve();
+        else
+            promise.reject();
+    });
+}
+
 // MARK: - Audio support.
 
 void HTMLModelElement::hasAudio(HasAudioPromise&& promise)

@@ -65,6 +65,8 @@ private:
     void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) override;
     void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) override;
+    void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void setIsLoopingAnimation(bool, CompletionHandler<void(bool success)>&&) override;
     void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void setIsMuted(bool, CompletionHandler<void(bool success)>&&) override;
