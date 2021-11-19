@@ -74,7 +74,15 @@ void DummyModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::H
 {
 }
 
-void DummyModelPlayer::setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&)
+void DummyModelPlayer::setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&)
+{
+}
+
+void DummyModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void DummyModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&)
 {
 }
 

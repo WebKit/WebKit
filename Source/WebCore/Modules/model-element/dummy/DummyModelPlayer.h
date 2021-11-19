@@ -48,7 +48,9 @@ private:
     void handleMouseMove(const LayoutPoint&, MonotonicTime) override;
     void handleMouseUp(const LayoutPoint&, MonotonicTime) override;
     void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) override;
-    void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&) override;
+    void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) override;
+    void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
+    void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) override;
 
     WeakPtr<ModelPlayerClient> m_client;
 };

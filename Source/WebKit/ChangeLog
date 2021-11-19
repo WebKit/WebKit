@@ -1,3 +1,30 @@
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for pausing and resuming animations
+        https://bugs.webkit.org/show_bug.cgi?id=233319
+        <rdar://problem/85428464>
+
+        Reviewed by Wenson Hsieh.
+
+        Expose new WebPageProxy messages to let the WebProcess message the UIProcess
+        to call into ASVInlinePreview methods to get and set the animation's playback
+        state.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::previewHasAnimationSupport):
+        (WebKit::ModelElementController::isPlayingAnimationForModelElement):
+        (WebKit::ModelElementController::setAnimationIsPlayingForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementIsPlayingAnimation):
+        (WebKit::WebPageProxy::modelElementSetAnimationIsPlaying):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::isPlayingAnimation):
+        (WebKit::ARKitInlinePreviewModelPlayer::setAnimationIsPlaying):
+
 2021-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add converters from serializable descriptors to interface descriptors

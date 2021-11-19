@@ -92,7 +92,15 @@ void SceneKitModelPlayer::getCamera(CompletionHandler<void(std::optional<HTMLMod
 {
 }
 
-void SceneKitModelPlayer::setCamera(HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&)
+void SceneKitModelPlayer::setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&)
+{
+}
+
+void SceneKitModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
+{
+}
+
+void SceneKitModelPlayer::setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&)
 {
 }
 

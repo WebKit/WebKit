@@ -1,5 +1,18 @@
 2021-11-18  Antoine Quint  <graouts@webkit.org>
 
+        [Model] add support for pausing and resuming animations
+        https://bugs.webkit.org/show_bug.cgi?id=233319
+        <rdar://problem/85428464>
+
+        Reviewed by Wenson Hsieh.
+
+        Add the new ARQL SPIs we are using.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
         [Model] add support for getting and setting the camera
         https://bugs.webkit.org/show_bug.cgi?id=233265
         <rdar://problem/85426290>

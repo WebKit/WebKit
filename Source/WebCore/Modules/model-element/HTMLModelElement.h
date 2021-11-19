@@ -75,6 +75,11 @@ public:
     void getCamera(CameraPromise&&);
     void setCamera(HTMLModelElementCamera, DOMPromiseDeferred<void>&&);
 
+    using IsPlayingAnimationPromise = DOMPromiseDeferred<IDLBoolean>;
+    void isPlayingAnimation(IsPlayingAnimationPromise&&);
+    void playAnimation(DOMPromiseDeferred<void>&&);
+    void pauseAnimation(DOMPromiseDeferred<void>&&);
+
     bool isDraggableIgnoringAttributes() const final { return true; }
 
 private:
@@ -104,6 +109,8 @@ private:
     void dragDidStart(MouseEvent&);
     void dragDidChange(MouseEvent&);
     void dragDidEnd(MouseEvent&);
+
+    void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;

@@ -36,4 +36,8 @@
 
     Promise<HTMLModelElementCamera> getCamera();
     Promise<undefined> setCamera(HTMLModelElementCamera camera);
+
+    Promise<boolean> isPlayingAnimation();
+    Promise<undefined> playAnimation();
+    Promise<undefined> pauseAnimation();
 };

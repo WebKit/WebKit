@@ -363,7 +363,7 @@ void HTMLModelElement::dragDidEnd(MouseEvent& event)
         m_modelPlayer->handleMouseUp(event.pageLocation(), event.timeStamp());
 }
 
-// MARK: – Camera support.
+// MARK: - Camera support.
 
 void HTMLModelElement::getCamera(CameraPromise&& promise)
 {
@@ -393,6 +393,48 @@ void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferr
         else
             promise.reject();
     });
+}
+
+// MARK: - Animations support.
+
+void HTMLModelElement::isPlayingAnimation(IsPlayingAnimationPromise&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->isPlayingAnimation([promise = WTFMove(promise)] (std::optional<bool> isPlaying) mutable {
+        if (!isPlaying)
+            promise.reject();
+        else
+            promise.resolve(*isPlaying);
+    });
+}
+
+void HTMLModelElement::setAnimationIsPlaying(bool isPlaying, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->setAnimationIsPlaying(isPlaying, [promise = WTFMove(promise)] (bool success) mutable {
+        if (success)
+            promise.resolve();
+        else
+            promise.reject();
+    });
+}
+
+void HTMLModelElement::playAnimation(DOMPromiseDeferred<void>&& promise)
+{
+    setAnimationIsPlaying(true, WTFMove(promise));
+}
+
+void HTMLModelElement::pauseAnimation(DOMPromiseDeferred<void>&& promise)
+{
+    setAnimationIsPlaying(false, WTFMove(promise));
 }
 
 }

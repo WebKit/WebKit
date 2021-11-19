@@ -245,7 +245,7 @@ static bool previewHasCameraSupport(ASVInlinePreview *preview)
 void ModelElementController::getCameraForModelElement(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)>&& completionHandler)
 {
     auto* preview = previewForModelIdentifier(modelIdentifier);
-    if (!preview || !previewHasCameraSupport(preview)) {
+    if (!previewHasCameraSupport(preview)) {
         callOnMainRunLoop([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { WebCore::ResourceError::Type::General }] () mutable {
             if (weakThis)
                 completionHandler(makeUnexpected(error));
@@ -280,7 +280,7 @@ void ModelElementController::getCameraForModelElement(ModelIdentifier modelIdent
 void ModelElementController::setCameraForModelElement(ModelIdentifier modelIdentifier, WebCore::HTMLModelElementCamera camera, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto* preview = previewForModelIdentifier(modelIdentifier);
-    if (!preview || !previewHasCameraSupport(preview)) {
+    if (!previewHasCameraSupport(preview)) {
         callOnMainRunLoop([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
             if (weakThis)
                 completionHandler(false);
@@ -300,6 +300,63 @@ void ModelElementController::setCameraForModelElement(ModelIdentifier modelIdent
             completionHandler(false);
 #endif
     });
+}
+
+static bool previewHasAnimationSupport(ASVInlinePreview *preview)
+{
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    return [preview respondsToSelector:@selector(isPlaying)];
+#else
+    return false;
+#endif
+}
+
+void ModelElementController::isPlayingAnimationForModelElement(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAnimationSupport(preview)) {
+        callOnMainRunLoop([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { WebCore::ResourceError::Type::General }] () mutable {
+            if (weakThis)
+                completionHandler(makeUnexpected(error));
+        });
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    auto isPlaying = [preview isPlaying];
+#else
+    auto isPlaying = false;
+#endif
+    callOnMainRunLoop([isPlaying, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (weakThis)
+            completionHandler(isPlaying);
+    });
+}
+
+void ModelElementController::setAnimationIsPlayingForModelElement(ModelIdentifier modelIdentifier, bool isPlaying, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* preview = previewForModelIdentifier(modelIdentifier);
+    if (!previewHasAnimationSupport(preview)) {
+        callOnMainRunLoop([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+            if (weakThis)
+                completionHandler(false);
+        });
+        return;
+    }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
+    [preview setIsPlaying:isPlaying reply:makeBlockPtr([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (BOOL, NSError *error) mutable {
+        callOnMainRunLoop([error, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)] () mutable {
+            if (weakThis)
+                completionHandler(!error);
+        });
+    }).get()];
+#else
+    callOnMainRunLoop([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (weakThis)
+            completionHandler(false);
+    });
+#endif
 }
 
 #endif

@@ -50,7 +50,9 @@ public:
     virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseUp(const LayoutPoint&, MonotonicTime) = 0;
     virtual void getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) = 0;
-    virtual void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool&&)>&&) = 0;
+    virtual void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) = 0;
+    virtual void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
+    virtual void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) = 0;
 };
 
 }

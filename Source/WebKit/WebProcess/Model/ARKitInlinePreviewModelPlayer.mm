@@ -81,7 +81,7 @@ void ARKitInlinePreviewModelPlayer::getCamera(CompletionHandler<void(std::option
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementGetCamera(*modelIdentifier), WTFMove(remoteCompletionHandler));
 }
 
-void ARKitInlinePreviewModelPlayer::setCamera(WebCore::HTMLModelElementCamera camera, CompletionHandler<void(bool&&)>&& completionHandler)
+void ARKitInlinePreviewModelPlayer::setCamera(WebCore::HTMLModelElementCamera camera, CompletionHandler<void(bool success)>&& completionHandler)
 {
     auto modelIdentifier = this->modelIdentifier();
     if (!modelIdentifier) {
@@ -96,10 +96,57 @@ void ARKitInlinePreviewModelPlayer::setCamera(WebCore::HTMLModelElementCamera ca
     }
 
     CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
-        completionHandler(WTFMove(success));
+        completionHandler(success);
     };
 
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetCamera(*modelIdentifier, camera), WTFMove(remoteCompletionHandler));
+}
+
+void ARKitInlinePreviewModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    auto* strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    CompletionHandler<void(Expected<bool, WebCore::ResourceError>)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (Expected<bool, WebCore::ResourceError> result) mutable {
+        if (!result) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(*result);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementIsPlayingAnimation(*modelIdentifier), WTFMove(remoteCompletionHandler));
+}
+
+void ARKitInlinePreviewModelPlayer::setAnimationIsPlaying(bool isPlaying, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    auto modelIdentifier = this->modelIdentifier();
+    if (!modelIdentifier) {
+        completionHandler(false);
+        return;
+    }
+
+    auto* strongPage = m_page.get();
+    if (!strongPage) {
+        completionHandler(false);
+        return;
+    }
+
+    CompletionHandler<void(bool)> remoteCompletionHandler = [completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+        completionHandler(success);
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationIsPlaying(*modelIdentifier, isPlaying), WTFMove(remoteCompletionHandler));
 }
 
 }
