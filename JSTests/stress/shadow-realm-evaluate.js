@@ -77,6 +77,7 @@ function shouldThrow(func, errorType, assertionFn) {
     let wrappedInvokeAndAdd = realm.evaluate("function invokeAndAdd(xFn, yFn) { return xFn() + yFn(); }; invokeAndAdd");
     shouldBe(wrappedInvokeAndAdd(() => { return 1 }, () => { return 2 }), 3);
     shouldBe($.globalObjectFor(wrappedInvokeAndAdd), globalThis);
+    shouldBe(Object.getPrototypeOf(wrappedInvokeAndAdd), Function.prototype);
 
     // name and length properties from wrapped function are absent
     shouldBe(Object.getOwnPropertyDescriptor(wrappedInvokeAndAdd, "length"), undefined);
@@ -122,12 +123,14 @@ function shouldThrow(func, errorType, assertionFn) {
         let f = doEval(realm, '(x) => { return x() + globalThis.secret; }');
         shouldBe($.globalObjectFor(f), globalThis);
         shouldBe(f(() => { return 41; }), 42);
+        shouldBe(Object.getPrototypeOf(f), Function.prototype);
     }
     // (potential) inlining of wrapped function uses correct global object
     let f = doEval(realm, '(x) => { return x() + globalThis.secret; }');
     for (var i = 0; i < 10000; ++i) {
         shouldBe($.globalObjectFor(f), globalThis);
         shouldBe(f(() => { return 41; }), 42);
+        shouldBe(Object.getPrototypeOf(f), Function.prototype);
     }
     // (potential) inlining inside a realm uses correct global object
     let loopInside = doEval(realm, '(x) => { let acc = 0; for (var i = 0; i < 10000; ++i) { acc += x(); }; return acc; }');
@@ -150,4 +153,24 @@ function shouldThrow(func, errorType, assertionFn) {
     shouldBe(evaluateLength.enumerable, false);
     shouldBe(evaluateLength.writable, false);
     shouldBe(evaluateLength.configurable, true);
+}
+
+// Enclosing realm is hidden from shaodw realm even when playing Function prototype tricks
+{
+    let realm = new ShadowRealm();
+    foo = 42;
+
+    realm.evaluate("foo = false");
+
+    let realmFn = realm.evaluate(`(f) => {
+      let ourFn = Object.getPrototypeOf(f).constructor;
+      return (new ourFn("return this"))().foo
+    }`);
+
+    let retrievedFoo = realmFn(() => {});
+    let aFunction = Object.getPrototypeOf(realmFn).constructor;
+    let anotherFoo = (new aFunction("return this"))().foo;
+
+    shouldBe(retrievedFoo, false);
+    shouldBe(anotherFoo, 42);
 }

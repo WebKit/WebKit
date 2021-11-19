@@ -1137,9 +1137,6 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/ShadowRealm/prototype/evaluate/wrapped-function-proto-from-caller-realm.js:
-  default: 'Test262Error: callable arguments passed into WrappedFunction should be wrapped in target realm Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: callable arguments passed into WrappedFunction should be wrapped in target realm Expected SameValue(«false», «true») to be true'
 test/built-ins/Temporal/Instant/prototype/toString/timezone-offset.js:
   default: 'Test262Error: offset of UTC is +00:00 Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T00:00:00+00:00») to be true'
   strict mode: 'Test262Error: offset of UTC is +00:00 Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T00:00:00+00:00») to be true'

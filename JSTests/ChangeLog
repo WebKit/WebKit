@@ -1,3 +1,29 @@
+2021-11-19  Joseph Griego  <jgriego@igalia.com>
+
+        [JSC] Shadow realms: set correct Function prototype on wrapped functions
+        https://bugs.webkit.org/show_bug.cgi?id=233143
+
+        Reviewed by Yusuke Suzuki.
+
+        At present, the Function prototype set on each of the returned wrapped
+        functions will be the Function object from the realm the shadow realm
+        builtin is from--to comply with the latest draft of the shadow realms
+        spec [1], wrapped function objects should have the Function prototype
+        from the realm the wrapper object is destined for, instead.
+
+        At present, this requires tracking both the calling (destination) and
+        target (source) realm and switching between the two as function
+        arguments are wrapped (when the notion of source and destination realm
+        also flips)
+
+        Adds a simple builtin (moveFunctionToRealm) that can switch the Function
+        prototype given only the Shadow Realm object corresponding to the
+        correct global object.
+
+        Also marks the corresponding part of test262 as passing.
+
+        * test262/expectations.yaml:
+
 2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Workaround for failing mips tests
