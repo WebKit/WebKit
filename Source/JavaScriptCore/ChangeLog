@@ -1,3 +1,21 @@
+2021-11-18  Robin Morisset  <rmorisset@apple.com>
+
+        [JSC/Air] Optimize enableMovesOnValueAndAdjacents in IRC
+        https://bugs.webkit.org/show_bug.cgi?id=228615
+
+        Reviewed by Saam Barati.
+
+        The Iterated Register Coalescing (IRC) register allocator spends a very significant fraction of its time in JS2 in enableMovesOnValueAndAdjacents (816ms out of 2.07s spent in register allocation for Wasm code in one run I looked at with Instruments).
+        The reason is that if this function is called on N nodes that are neighbors of each other, then enableMovesOnValue (which is kinda expensive as it iterates a SmallSet which is not always small) will be called N times on each of the N nodes. This can trivially be fixed by keeping track of which nodes need enableMovesOnValue called on them and only calling it on them once.
+
+        It is a bit tricky to measure the performance impact of this, as it heavily depends on whether some very large functions reach Air or not, so there is a lot of noise.
+        Here are the numbers out of 4 runs of JS2 (cli version) on an M1 MBP with --airForceIRCAllocator=1:
+        Baseline       : total time in allocateRegistersByGraphColoring ranges from 2090ms to 3018ms, most time for a single function ranges from 631ms to 849ms
+        With this patch: total time in allocateRegistersByGraphColoring ranges from 1580ms to 2333ms, most time for a single function ranges from 337ms to 560ms
+        So despite the noise it seems quite clearly a win.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+
 2021-11-18  Mark Lam  <mark.lam@apple.com>
 
         SubSpace constructors should take a const HeapCellType& instead of a HeapCellType*.
