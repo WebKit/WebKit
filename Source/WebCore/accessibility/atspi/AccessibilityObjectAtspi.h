@@ -46,7 +46,8 @@ public:
         Accessible = 1 << 0,
         Component = 1 << 1,
         Text = 1 << 2,
-        Value = 1 << 3
+        Value = 1 << 3,
+        Hyperlink = 1 << 4
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -117,6 +118,8 @@ public:
     WEBCORE_EXPORT double minimumIncrement() const;
     void valueChanged(double);
 
+    WEBCORE_EXPORT URL url() const;
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
@@ -139,6 +142,7 @@ private:
     CString text(int, int) const;
     CString textAtOffset(int, TextGranularity, int&, int&) const;
     int characterAtOffset(int) const;
+    std::optional<unsigned> characterOffset(UChar, int) const;
     IntRect textExtents(int, int, uint32_t) const;
     int offsetAtPoint(const IntPoint&, uint32_t) const;
     IntPoint boundsForSelection(const VisibleSelection&) const;
@@ -148,12 +152,15 @@ private:
     bool scrollToMakeVisible(int, int, uint32_t) const;
     bool scrollToPoint(int, int, uint32_t, int, int) const;
 
+    unsigned offsetInParent() const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
     static GDBusInterfaceVTable s_componentFunctions;
     static GDBusInterfaceVTable s_textFunctions;
     static GDBusInterfaceVTable s_valueFunctions;
+    static GDBusInterfaceVTable s_hyperlinkFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

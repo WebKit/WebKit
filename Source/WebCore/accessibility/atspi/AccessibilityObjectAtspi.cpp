@@ -30,6 +30,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"
+#include "TextIterator.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
@@ -85,6 +86,9 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
 
     if (coreObject.supportsRangeValue())
         interfaces.add(Interface::Value);
+
+    if (coreObject.isLink() || (isRendererReplacedElement(renderer)))
+        interfaces.add(Interface::Hyperlink);
 
     return interfaces;
 }
@@ -474,6 +478,8 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_text_interface), &s_textFunctions });
         if (m_interfaces.contains(Interface::Value))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_value_interface), &s_valueFunctions });
+        if (m_interfaces.contains(Interface::Hyperlink))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_hyperlink_interface), &s_hyperlinkFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -1091,6 +1097,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_text_interface.name);
     if (m_interfaces.contains(Interface::Value))
         g_variant_builder_add(builder, "s", webkit_value_interface.name);
+    if (m_interfaces.contains(Interface::Hyperlink))
+        g_variant_builder_add(builder, "s", webkit_hyperlink_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const

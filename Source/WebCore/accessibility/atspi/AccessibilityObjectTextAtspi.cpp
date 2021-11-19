@@ -21,13 +21,18 @@
 #include "AccessibilityObjectAtspi.h"
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include "AXObjectCache.h"
 #include "AccessibilityAtspiEnums.h"
+#include "AccessibilityObject.h"
 #include "AccessibilityObjectInterface.h"
+#include "AccessibilityRootAtspi.h"
 #include "Editing.h"
 #include "PlatformScreen.h"
+#include "RenderLayer.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
+#include <gio/gio.h>
 
 namespace WebCore {
 
@@ -482,6 +487,25 @@ int AccessibilityObjectAtspi::characterAtOffset(int offset) const
         return 0;
 
     return g_utf8_get_char(g_utf8_offset_to_pointer(utf8Text.data(), offset));
+}
+
+std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(UChar character, int index) const
+{
+    auto utf16Text = text();
+    unsigned start = 0;
+    size_t offset;
+    while ((offset = utf16Text.find(character, start)) != notFound) {
+        start = offset + 1;
+        if (!index)
+            break;
+        index--;
+    }
+
+    if (offset == notFound)
+        return std::nullopt;
+
+    auto mapping = offsetMapping(utf16Text);
+    return UTF16OffsetToUTF8(mapping, offset);
 }
 
 IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned length, uint32_t coordinateType) const

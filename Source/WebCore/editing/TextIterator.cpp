@@ -277,6 +277,11 @@ bool isRendererReplacedElement(RenderObject* renderer)
             return true;
         if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(roleAttr), "img"))
             return true;
+#if USE(ATSPI)
+        // Links are also replaced with object replacement character in ATSPI.
+        if (element.isLink())
+            return true;
+#endif
     }
 
     return false;
@@ -750,7 +755,7 @@ bool TextIterator::handleReplacedElement()
 
     m_hasEmitted = true;
 
-    if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) && renderer.isReplaced()) {
+    if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters)) {
         emitCharacter(objectReplacementCharacter, *m_node->parentNode(), m_node, 0, 1);
         // Don't process subtrees for embedded objects. If the text there is required,
         // it must be explicitly asked by specifying a range falling inside its boundaries.

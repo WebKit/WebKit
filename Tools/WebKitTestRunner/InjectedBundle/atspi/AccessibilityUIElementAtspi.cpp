@@ -34,6 +34,7 @@
 #include <WebCore/AccessibilityAtspiEnums.h>
 #include <WebCore/AccessibilityObjectAtspi.h>
 #include <WebKit/WKBundleFrame.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -1128,7 +1129,24 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Hyperlink))
+        return JSStringCreateWithCharacters(0, 0);
+
+    m_element->updateBackingStore();
+    auto axURL = m_element->url();
+    if (axURL.isNull())
+        return JSStringCreateWithUTF8CString("AXURL: (null)");
+
+    if (axURL.isLocalFile()) {
+        // Do not expose absolute paths.
+        auto path = axURL.fileSystemPath();
+        auto index = path.find("LayoutTests");
+        if (index != notFound)
+            path = path.substring(index);
+        return OpaqueJSString::tryCreate(makeString("AXURL: ", path)).leakRef();
+    }
+
+    return OpaqueJSString::tryCreate(makeString("AXURL: ", axURL.string())).leakRef();
 }
 
 bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
