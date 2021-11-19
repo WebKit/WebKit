@@ -1,3 +1,19 @@
+2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Workaround for failing mips tests
+        https://bugs.webkit.org/show_bug.cgi?id=233359
+
+        Reviewed by Adrian Perez de Castro.
+
+        Re-enable tests skipped on mips after adding workaround.
+
+        * stress/call-varargs-double-new-array-buffer.js:
+        * stress/callee-save-fpr.js:
+        * stress/forward-varargs-double-new-array-buffer.js:
+        * stress/new-array-with-spread-cow-double.js:
+        * stress/new-array-with-spread-double-new-array-buffer.js:
+        * stress/spread-escapes-but-new-array-buffer-does-not-double.js:
+
 2021-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] TypedArray GetArrayLength should not use Reuse

@@ -1,4 +1,3 @@
-//@ skip if ["mips"].include?($architecture)
 'use strict';
 
 function _f(a1, a2, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) {

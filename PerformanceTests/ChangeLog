@@ -1,3 +1,14 @@
+2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Workaround for failing mips tests
+        https://bugs.webkit.org/show_bug.cgi?id=233359
+
+        Reviewed by Adrian Perez de Castro.
+
+        Re-enable tests skipped on mips after adding workaround.
+
+        * ARES-6/Basic/basic-tests.yaml:
+
 2021-11-15  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip tests newly-failing on mips

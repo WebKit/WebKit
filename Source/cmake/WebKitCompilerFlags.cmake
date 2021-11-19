@@ -326,3 +326,11 @@ if (COMPILER_IS_GCC_OR_CLANG)
     endif ()
     unset(CMAKE_REQUIRED_FLAGS)
 endif ()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WTF_CPU_MIPS)
+    # Work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78176.
+    # This only manifests when executing 32-bit code on a 64-bit
+    # processor. This is a workaround and does not cover all cases
+    # (see comment #28 in the link above).
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-mno-lxc1-sxc1)
+endif ()

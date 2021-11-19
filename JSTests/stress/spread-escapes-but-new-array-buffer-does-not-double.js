@@ -1,4 +1,3 @@
-//@ skip if ["mips"].include?($architecture)
 function assert(b) {
     if (!b)
         throw new Error;

@@ -24,10 +24,5 @@
 - path: .
   tests:
     - stress-test.js
-  cmd: |
-    if ["mips"].include?($architecture)
-        skip
-    else
-        defaultRunNoisyTest unless parseRunCommands
-    end
+  cmd: defaultRunNoisyTest unless parseRunCommands
 

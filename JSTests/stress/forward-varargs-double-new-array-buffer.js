@@ -1,4 +1,3 @@
-//@ skip if ["mips"].include?($architecture)
 "use strict";
 
 function assert(b, m="") {

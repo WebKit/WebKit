@@ -1,3 +1,16 @@
+2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Workaround for failing mips tests
+        https://bugs.webkit.org/show_bug.cgi?id=233359
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a compiler flag on GCC+mips to work around a code generation bug
+        resulting in SIGBUS. This only manifests when running 32-bit mips code
+        on mips64 hardware (which the buildbots do).
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2021-11-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         Implement JPEG XL image decoder using libjxl
