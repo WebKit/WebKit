@@ -244,7 +244,7 @@ struct WEBCORE_EXPORT RedirectAction {
     void serialize(Vector<uint8_t>&) const;
     static RedirectAction deserialize(Span<const uint8_t>);
     static size_t serializedLength(Span<const uint8_t>);
-    void applyToRequest(ResourceRequest&);
+    void applyToRequest(ResourceRequest&, const URL&);
 };
 
 using ActionData = std::variant<

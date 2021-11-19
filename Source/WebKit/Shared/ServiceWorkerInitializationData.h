@@ -44,7 +44,7 @@ struct ServiceWorkerInitializationData {
 
     UserContentControllerIdentifier userContentControllerIdentifier;
 #if ENABLE(CONTENT_EXTENSIONS)
-    Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleLists;
+    Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleLists;
 #endif
 };
 

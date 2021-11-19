@@ -201,7 +201,7 @@ ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
     AtomString::init();
     auto extension = InMemoryCompiledContentExtension::create(json);
     ContentExtensions::ContentExtensionsBackend backend;
-    backend.addContentExtension("testFilter", WTFMove(extension));
+    backend.addContentExtension("testFilter", WTFMove(extension), { });
     return backend;
 }
 
@@ -848,8 +848,8 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     auto extension1 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]");
     auto extension2 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}}]");
     ContentExtensions::ContentExtensionsBackend backend;
-    backend.addContentExtension("testFilter1", WTFMove(extension1));
-    backend.addContentExtension("testFilter2", WTFMove(extension2));
+    backend.addContentExtension("testFilter1", WTFMove(extension1), { });
+    backend.addContentExtension("testFilter2", WTFMove(extension2), { });
     
     testRequest(backend, mainDocumentRequest("http://webkit.org"), { }, 2);
     testRequest(backend, mainDocumentRequest("http://webkit.org/block_load.html"), { variantIndex<ContentExtensions::BlockLoadAction> }, 2);
@@ -862,8 +862,8 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     auto ignoreExtension2 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore2\"}}]");
     ContentExtensions::ContentExtensionsBackend backendWithIgnore;
-    backendWithIgnore.addContentExtension("testFilter1", WTFMove(ignoreExtension1));
-    backendWithIgnore.addContentExtension("testFilter2", WTFMove(ignoreExtension2));
+    backendWithIgnore.addContentExtension("testFilter1", WTFMove(ignoreExtension1), { });
+    backendWithIgnore.addContentExtension("testFilter2", WTFMove(ignoreExtension2), { });
 
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org"), { }, 2);
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore1.html"), { }, 1);

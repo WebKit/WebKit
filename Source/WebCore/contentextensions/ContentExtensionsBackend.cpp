@@ -78,13 +78,13 @@ bool ContentExtensionsBackend::shouldBeMadeSecure(const URL& url)
     return results.summary.madeHTTPS;
 }
 
-void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, ContentExtension::ShouldCompileCSS shouldCompileCSS)
+void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, URL&& extensionBaseURL, ContentExtension::ShouldCompileCSS shouldCompileCSS)
 {
     ASSERT(!identifier.isEmpty());
     if (identifier.isEmpty())
         return;
     
-    auto contentExtension = ContentExtension::create(identifier, WTFMove(compiledContentExtension), shouldCompileCSS);
+    auto contentExtension = ContentExtension::create(identifier, WTFMove(compiledContentExtension), WTFMove(extensionBaseURL), shouldCompileCSS);
     m_contentExtensions.set(identifier, WTFMove(contentExtension));
 }
 
@@ -231,9 +231,9 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             }, [&] (const ModifyHeadersAction& action) {
                 if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(url))
                     results.summary.modifyHeadersActions.append(action);
-            }, [&] (const RedirectAction& action) {
+            }, [&] (const RedirectAction& redirectAction) {
                 if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(url))
-                    results.summary.redirectActions.append(action);
+                    results.summary.redirectActions.append({ redirectAction, m_contentExtensions.get(actionsFromContentRuleList.contentRuleListIdentifier)->extensionBaseURL() });
             }), action.data());
         }
 
@@ -330,8 +330,8 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
     for (auto& action : results.summary.modifyHeadersActions)
         action.applyToRequest(request);
 
-    for (auto& action : results.summary.redirectActions)
-        action.applyToRequest(request);
+    for (auto& pair : results.summary.redirectActions)
+        pair.first.applyToRequest(request, pair.second);
 
     if (page && results.shouldNotifyApplication()) {
         results.results.removeAllMatching([](const auto& pair) {

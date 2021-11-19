@@ -36,6 +36,8 @@ namespace WebKit {
 
 void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 {
+    encoder << identifier;
+
     SharedMemory::Handle handle;
     data->createHandle(handle, SharedMemory::Protection::ReadOnly);
     
@@ -60,10 +62,17 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 
 std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
 {
+    std::optional<String> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+
     SharedMemory::IPCHandle ipcHandle;
     if (!decoder.decode(ipcHandle))
         return std::nullopt;
-    RefPtr<SharedMemory> data = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    auto data = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    if (!data)
+        return std::nullopt;
 
     std::optional<unsigned> conditionsApplyOnlyToDomainOffset;
     decoder >> conditionsApplyOnlyToDomainOffset;
@@ -111,7 +120,8 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
         return std::nullopt;
 
     return {{
-        WTFMove(data),
+        WTFMove(*identifier),
+        data.releaseNonNull(),
         WTFMove(*conditionsApplyOnlyToDomainOffset),
         WTFMove(*actionsOffset),
         WTFMove(*actionsSize),

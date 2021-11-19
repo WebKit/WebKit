@@ -58,7 +58,7 @@ struct ContentRuleListResults {
         bool blockedCookies { false };
         bool hasNotifications { false };
         Vector<ContentExtensions::ModifyHeadersAction> modifyHeadersActions;
-        Vector<ContentExtensions::RedirectAction> redirectActions;
+        Vector<std::pair<ContentExtensions::RedirectAction, URL>> redirectActions;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<Summary> decode(Decoder&);

@@ -1,3 +1,49 @@
+2021-11-19  Alex Christensen  <achristensen@webkit.org>
+
+        Implement extension-path variant of redirect action in WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=233351
+
+        Reviewed by Tim Hatcher.
+
+        * NetworkProcess/NetworkContentRuleListManager.cpp:
+        (WebKit::NetworkContentRuleListManager::addContentRuleLists):
+        * NetworkProcess/NetworkContentRuleListManager.h:
+        * NetworkProcess/NetworkContentRuleListManager.messages.in:
+        * Shared/ServiceWorkerInitializationData.cpp:
+        (WebKit::ServiceWorkerInitializationData::decode):
+        * Shared/ServiceWorkerInitializationData.h:
+        * Shared/UserContentControllerParameters.cpp:
+        (WebKit::UserContentControllerParameters::decode):
+        * Shared/UserContentControllerParameters.h:
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::encode const):
+        (WebKit::WebCompiledContentRuleListData::decode):
+        * Shared/WebCompiledContentRuleListData.h:
+        (WebKit::WebCompiledContentRuleListData::WebCompiledContentRuleListData):
+        * UIProcess/API/APIContentRuleList.cpp:
+        (API::ContentRuleList::ContentRuleList):
+        (API::ContentRuleList::name const):
+        * UIProcess/API/APIContentRuleList.h:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::createExtension):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _addContentRuleList:extensionBaseURL:]):
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::contentExtensionRules):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::contentRuleListData const):
+        (WebKit::WebUserContentControllerProxy::addContentRuleList):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::addContentRuleList):
+        (WebKit::WebUserContentControllerProxy::contentExtensionRules):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::contentRuleListsFromIdentifier):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addContentRuleLists):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+
 2021-11-19  Antoine Quint  <graouts@webkit.org>
 
         [Model] Use RefPtr across ARKitInlinePreviewModelPlayer when creating strong pointers

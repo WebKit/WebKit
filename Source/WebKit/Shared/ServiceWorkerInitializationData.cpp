@@ -30,6 +30,7 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "WebCompiledContentRuleListData.h"
+#include <wtf/URL.h>
 
 namespace WebKit {
 
@@ -49,7 +50,7 @@ std::optional<ServiceWorkerInitializationData> ServiceWorkerInitializationData::
         return std::nullopt;
     
 #if ENABLE(CONTENT_EXTENSIONS)
-    std::optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
+    std::optional<Vector<std::pair<WebCompiledContentRuleListData, URL>>> contentRuleLists;
     decoder >> contentRuleLists;
     if (!contentRuleLists)
         return std::nullopt;

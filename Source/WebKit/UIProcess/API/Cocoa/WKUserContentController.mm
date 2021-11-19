@@ -285,6 +285,13 @@ private:
 #endif
 }
 
+- (void)_addContentRuleList:(WKContentRuleList *)contentRuleList extensionBaseURL:(NSURL *)extensionBaseURL
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->addContentRuleList(*contentRuleList->_contentRuleList, extensionBaseURL);
+#endif
+}
+
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName
 {
 #if ENABLE(CONTENT_EXTENSIONS)

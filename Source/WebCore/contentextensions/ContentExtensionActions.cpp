@@ -368,10 +368,12 @@ size_t RedirectAction::serializedLength(Span<const uint8_t> span)
     return deserializeLength(span, 0);
 }
 
-void RedirectAction::applyToRequest(ResourceRequest& request)
+void RedirectAction::applyToRequest(ResourceRequest& request, const URL& extensionBaseURL)
 {
-    std::visit(WTF::makeVisitor([](const ExtensionPathAction&) {
-        // FIXME: Implement. We need to know the base URL of the extension here from new SPI.
+    std::visit(WTF::makeVisitor([&](const ExtensionPathAction& action) {
+        auto url = extensionBaseURL;
+        url.setPath(action.extensionPath);
+        request.setURL(WTFMove(url));
     }, [&] (const RegexSubstitutionAction&) {
         // FIXME: Implement, ideally in a way that doesn't require making a new VM and global object for each redirect operation.
     }, [&] (const URLTransformAction& action) {

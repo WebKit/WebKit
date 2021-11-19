@@ -408,11 +408,12 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
 
     // Content extensions are always compiled to files, and at this point the file
     // has been already mapped, therefore tryCreateSharedMemory() cannot fail.
-    ASSERT(sharedMemory);
+    RELEASE_ASSERT(sharedMemory);
 
     const size_t headerAndSourceSize = ContentRuleListFileHeaderSize + data.metaData.sourceSize;
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
-        WTFMove(sharedMemory),
+        WTF::String(identifier),
+        sharedMemory.releaseNonNull(),
         ConditionsApplyOnlyToDomainOffset,
         headerAndSourceSize,
         data.metaData.actionsSize,
@@ -430,7 +431,7 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
         data.metaData.conditionedFiltersBytecodeSize
     );
     auto compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
-    return API::ContentRuleList::create(identifier, WTFMove(compiledContentRuleList), WTFMove(data.data));
+    return API::ContentRuleList::create(WTFMove(compiledContentRuleList), WTFMove(data.data));
 }
 
 static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mappedData)

@@ -32,6 +32,7 @@
 #import "TestURLSchemeHandler.h"
 #import <WebKit/WKContentRuleList.h>
 #import <WebKit/WKContentRuleListStorePrivate.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentFilter.h>
@@ -750,4 +751,41 @@ TEST_F(WKContentRuleListStoreTest, NullPatternSet)
     EXPECT_TRUE(getRedirectResult(DelegateAction::AllowAll));
     EXPECT_FALSE(getRedirectResult(DelegateAction::AllowNone));
     EXPECT_TRUE(getRedirectResult(DelegateAction::AllowTestHost));
+}
+
+TEST_F(WKContentRuleListStoreTest, ExtensionPath)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "redirect", "redirect": {
+                "extension-path": "/redirected-to-extension?no-query#no-fragment"
+            } },
+            "trigger": { "url-filter": "main.html" }
+        } ]
+    )JSON");
+
+    __block RetainPtr<NSURL> redirectedURL;
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        redirectedURL = task.request.URL;
+        respond(task, "");
+    };
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._activeContentRuleListActionPatterns = nil;
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] _addContentRuleList:list.get() extensionBaseURL:[NSURL URLWithString:@"extension-scheme://extension-host/"]];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"extension-scheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    while (!redirectedURL)
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_WK_STREQ([redirectedURL absoluteString], "extension-scheme://extension-host/redirected-to-extension%3Fno-query%23no-fragment");
 }

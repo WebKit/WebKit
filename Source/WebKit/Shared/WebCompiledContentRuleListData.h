@@ -41,8 +41,9 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(RefPtr<SharedMemory>&& data, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
-        : data(WTFMove(data))
+    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
+        : identifier(WTFMove(identifier))
+        , data(WTFMove(data))
         , conditionsApplyOnlyToDomainOffset(conditionsApplyOnlyToDomainOffset)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
@@ -58,7 +59,8 @@ public:
     void encode(IPC::Encoder&) const;
     static std::optional<WebCompiledContentRuleListData> decode(IPC::Decoder&);
 
-    RefPtr<SharedMemory> data;
+    String identifier;
+    Ref<SharedMemory> data;
     unsigned conditionsApplyOnlyToDomainOffset { 0 };
     unsigned actionsOffset { 0 };
     unsigned actionsSize { 0 };

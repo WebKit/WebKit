@@ -41,6 +41,7 @@
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_API_AVAILABLE(macos(10.11), ios(9.0));
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_API_AVAILABLE(macos(10.11), ios(9.0));
 - (void)_removeAllUserContentFilters WK_API_AVAILABLE(macos(10.11), ios(9.0));
+- (void)_addContentRuleList:(WKContentRuleList *)contentRuleList extensionBaseURL:(NSURL *)extensionBaseURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly, copy) NSArray<_WKUserStyleSheet *> *_userStyleSheets WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet WK_API_AVAILABLE(macos(10.12), ios(10.0));

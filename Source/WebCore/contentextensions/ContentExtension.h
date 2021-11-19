@@ -42,9 +42,10 @@ class CompiledContentExtension;
 class ContentExtension : public RefCounted<ContentExtension> {
 public:
     enum class ShouldCompileCSS { No, Yes };
-    static Ref<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&, ShouldCompileCSS = ShouldCompileCSS::Yes);
+    static Ref<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);
 
     const String& identifier() const { return m_identifier; }
+    const URL& extensionBaseURL() const { return m_extensionBaseURL; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
     StyleSheetContents* globalDisplayNoneStyleSheet();
     const DFABytecodeInterpreter::Actions& topURLActions(const URL& topURL);
@@ -52,11 +53,12 @@ public:
     const Vector<uint32_t>& universalActionsWithConditions(const URL& topURL);
 
 private:
-    ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&, ShouldCompileCSS);
+    ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&, URL&&, ShouldCompileCSS);
     uint32_t findFirstIgnorePreviousRules() const;
     
     String m_identifier;
     Ref<CompiledContentExtension> m_compiledExtension;
+    URL m_extensionBaseURL;
 
     RefPtr<StyleSheetContents> m_globalDisplayNoneStyleSheet;
     void compileGlobalDisplayNoneStyleSheet();

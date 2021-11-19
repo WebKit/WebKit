@@ -1983,7 +1983,7 @@ void WebProcessProxy::disableServiceWorkers()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleListsFromIdentifier(const std::optional<UserContentControllerIdentifier>& userContentControllerIdentifier)
+static Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListsFromIdentifier(const std::optional<UserContentControllerIdentifier>& userContentControllerIdentifier)
 {
     if (!userContentControllerIdentifier) {
         ASSERT_NOT_REACHED();

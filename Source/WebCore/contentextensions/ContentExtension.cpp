@@ -36,14 +36,15 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, ShouldCompileCSS shouldCompileCSS)
+Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
 {
-    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension), shouldCompileCSS));
+    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension), WTFMove(extensionBaseURL), shouldCompileCSS));
 }
 
-ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, ShouldCompileCSS shouldCompileCSS)
+ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
     : m_identifier(identifier)
     , m_compiledExtension(WTFMove(compiledExtension))
+    , m_extensionBaseURL(WTFMove(extensionBaseURL))
 {
     DFABytecodeInterpreter withoutConditions(m_compiledExtension->filtersWithoutConditionsBytecode(), m_compiledExtension->filtersWithoutConditionsBytecodeLength());
     DFABytecodeInterpreter withConditions(m_compiledExtension->filtersWithConditionsBytecode(), m_compiledExtension->filtersWithConditionsBytecodeLength());

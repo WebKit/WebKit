@@ -1388,8 +1388,8 @@ void NetworkProcessProxy::contentExtensionRules(UserContentControllerIdentifier 
         m_webUserContentControllerProxies.add(webUserContentControllerProxy);
         webUserContentControllerProxy->addNetworkProcess(*this);
 
-        auto rules = WTF::map(webUserContentControllerProxy->contentExtensionRules(), [](auto&& keyValue) -> std::pair<String, WebCompiledContentRuleListData> {
-            return std::make_pair(keyValue.value->name(), keyValue.value->compiledRuleList().data());
+        auto rules = WTF::map(webUserContentControllerProxy->contentExtensionRules(), [](auto&& keyValue) -> std::pair<WebCompiledContentRuleListData, URL> {
+            return { keyValue.value.first->compiledRuleList().data(), keyValue.value.second };
         });
         send(Messages::NetworkContentRuleListManager::AddContentRuleLists { identifier, rules }, 0);
         return;
