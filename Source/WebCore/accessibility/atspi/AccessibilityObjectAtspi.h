@@ -47,7 +47,8 @@ public:
         Component = 1 << 1,
         Text = 1 << 2,
         Value = 1 << 3,
-        Hyperlink = 1 << 4
+        Hyperlink = 1 << 4,
+        Hypertext = 1 << 5
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -66,6 +67,7 @@ public:
 
     const String& path();
     GVariant* reference();
+    GVariant* hyperlinkReference();
     void serialize(GVariantBuilder*) const;
 
     WEBCORE_EXPORT String id() const;
@@ -143,6 +145,7 @@ private:
     CString textAtOffset(int, TextGranularity, int&, int&) const;
     int characterAtOffset(int) const;
     std::optional<unsigned> characterOffset(UChar, int) const;
+    std::optional<unsigned> characterIndex(UChar, unsigned) const;
     IntRect textExtents(int, int, uint32_t) const;
     int offsetAtPoint(const IntPoint&, uint32_t) const;
     IntPoint boundsForSelection(const VisibleSelection&) const;
@@ -154,6 +157,10 @@ private:
 
     unsigned offsetInParent() const;
 
+    unsigned hyperlinkCount() const;
+    AccessibilityObjectAtspi* hyperlink(unsigned) const;
+    std::optional<unsigned> hyperlinkIndex(unsigned) const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
@@ -161,6 +168,7 @@ private:
     static GDBusInterfaceVTable s_textFunctions;
     static GDBusInterfaceVTable s_valueFunctions;
     static GDBusInterfaceVTable s_hyperlinkFunctions;
+    static GDBusInterfaceVTable s_hypertextFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };
@@ -169,6 +177,7 @@ private:
     std::optional<AccessibilityObjectAtspi*> m_parent;
     Atomic<bool> m_isRegistered { false };
     String m_path;
+    String m_hyperlinkPath;
     mutable int m_indexInParent { -1 };
     mutable Lock m_rootLock;
 };

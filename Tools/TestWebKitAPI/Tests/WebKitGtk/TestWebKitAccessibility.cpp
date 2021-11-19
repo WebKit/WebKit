@@ -1817,6 +1817,73 @@ static void testHyperlinkBasic(AccessibilityTest* test, gconstpointer)
     g_assert_true(atspi_hyperlink_get_object(ATSPI_HYPERLINK(link.get()), 0, nullptr) == link2.get());
 }
 
+static void testHypertextBasic(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is <button>button</button> and <a href='https://www.webkitgtk.org'>link</a> in a paragraph</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_HYPERTEXT(p.get()));
+    g_assert_cmpint(atspi_hypertext_get_n_links(ATSPI_HYPERTEXT(p.get()), nullptr), ==, 2);
+
+    auto link = adoptGRef(atspi_hypertext_get_link(ATSPI_HYPERTEXT(p.get()), 0, nullptr));
+    g_assert_true(ATSPI_IS_HYPERLINK(link.get()));
+    g_assert_cmpint(atspi_hyperlink_get_n_anchors(ATSPI_HYPERLINK(link.get()), nullptr), ==, 1);
+    g_assert_true(atspi_hyperlink_is_valid(ATSPI_HYPERLINK(link.get()), nullptr));
+    g_assert_cmpint(atspi_hyperlink_get_start_index(ATSPI_HYPERLINK(link.get()), nullptr), ==, 8);
+#if USE(ATSPI)
+    g_assert_cmpint(atspi_hyperlink_get_end_index(ATSPI_HYPERLINK(link.get()), nullptr), ==, 9);
+#else
+    g_assert_cmpint(atspi_hyperlink_get_end_index(ATSPI_HYPERLINK(link.get()), nullptr), ==, 15);
+#endif
+    GUniquePtr<char> uri(atspi_hyperlink_get_uri(ATSPI_HYPERLINK(link.get()), 0, nullptr));
+    g_assert_cmpstr(uri.get(), ==, "");
+    auto button = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 0, nullptr));
+    g_assert_true(atspi_hyperlink_get_object(ATSPI_HYPERLINK(link.get()), 0, nullptr) == button.get());
+
+    link = adoptGRef(atspi_hypertext_get_link(ATSPI_HYPERTEXT(p.get()), 1, nullptr));
+    g_assert_true(ATSPI_IS_HYPERLINK(link.get()));
+    g_assert_cmpint(atspi_hyperlink_get_n_anchors(ATSPI_HYPERLINK(link.get()), nullptr), ==, 1);
+    g_assert_true(atspi_hyperlink_is_valid(ATSPI_HYPERLINK(link.get()), nullptr));
+#if USE(ATSPI)
+    g_assert_cmpint(atspi_hyperlink_get_start_index(ATSPI_HYPERLINK(link.get()), nullptr), ==, 14);
+    g_assert_cmpint(atspi_hyperlink_get_end_index(ATSPI_HYPERLINK(link.get()), nullptr), ==, 15);
+#else
+    g_assert_cmpint(atspi_hyperlink_get_start_index(ATSPI_HYPERLINK(link.get()), nullptr), ==, 20);
+    g_assert_cmpint(atspi_hyperlink_get_end_index(ATSPI_HYPERLINK(link.get()), nullptr), ==, 24);
+#endif
+    uri.reset(atspi_hyperlink_get_uri(ATSPI_HYPERLINK(link.get()), 0, nullptr));
+    g_assert_cmpstr(uri.get(), ==, "https://www.webkitgtk.org/");
+    auto a = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 1, nullptr));
+    g_assert_true(atspi_hyperlink_get_object(ATSPI_HYPERLINK(link.get()), 0, nullptr) == a.get());
+
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 0, nullptr), ==, -1);
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 8, nullptr), ==, 0);
+#if USE(ATSPI)
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 9, nullptr), ==, -1);
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 14, nullptr), ==, 1);
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 15, nullptr), ==, -1);
+#else
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 15, nullptr), ==, -1);
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 20, nullptr), ==, 1);
+    g_assert_cmpint(atspi_hypertext_get_link_index(ATSPI_HYPERTEXT(p.get()), 24, nullptr), ==, -1);
+#endif
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -1839,6 +1906,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "text/replaced-objects", testTextReplacedObjects);
     AccessibilityTest::add("WebKitAccessibility", "value/basic", testValueBasic);
     AccessibilityTest::add("WebKitAccessibility", "hyperlink/basic", testHyperlinkBasic);
+    AccessibilityTest::add("WebKitAccessibility", "hypertext/basic", testHypertextBasic);
 }
 
 void afterAll()

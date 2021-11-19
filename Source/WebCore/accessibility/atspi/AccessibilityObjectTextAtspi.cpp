@@ -508,6 +508,38 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterOffset(UChar characte
     return UTF16OffsetToUTF8(mapping, offset);
 }
 
+std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(UChar character, unsigned offset) const
+{
+    auto utf16Text = text();
+    auto utf8Text = utf16Text.utf8();
+    if (utf8Text.isNull())
+        return std::nullopt;
+
+    auto length = g_utf8_strlen(utf8Text.data(), -1);
+    if (offset >= length)
+        return std::nullopt;
+
+    auto mapping = offsetMapping(utf16Text);
+    auto utf16Offset = UTF8OffsetToUTF16(mapping, offset);
+    if (utf16Text[utf16Offset] != character)
+        return std::nullopt;
+
+    unsigned start = 0;
+    int index = -1;
+    size_t position;
+    while ((position = utf16Text.find(character, start)) != notFound) {
+        index++;
+        if (static_cast<unsigned>(position) == utf16Offset)
+            break;
+        start = position + 1;
+    }
+
+    if (index == -1)
+        return std::nullopt;
+
+    return index;
+}
+
 IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned length, uint32_t coordinateType) const
 {
     return Accessibility::retrieveValueFromMainThread<IntRect>([this, utf16Offset, length, coordinateType]() -> IntRect {

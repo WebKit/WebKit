@@ -69,6 +69,7 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
         interfaces.add(Interface::Text);
     else if (!coreObject.isWebArea()) {
         if (coreObject.roleValue() != AccessibilityRole::Table) {
+            interfaces.add(Interface::Hypertext);
             if ((renderer && renderer->childrenInline()) || roleIsTextType(coreObject.roleValue()) || coreObject.isMathToken())
                 interfaces.add(Interface::Text);
         }
@@ -480,6 +481,8 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_value_interface), &s_valueFunctions });
         if (m_interfaces.contains(Interface::Hyperlink))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_hyperlink_interface), &s_hyperlinkFunctions });
+        if (m_interfaces.contains(Interface::Hypertext))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_hypertext_interface), &s_hypertextFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -490,6 +493,17 @@ GVariant* AccessibilityObjectAtspi::reference()
 {
     RELEASE_ASSERT(!isMainThread());
     return g_variant_new("(so)", root()->atspi().uniqueName(), path().utf8().data());
+}
+
+GVariant* AccessibilityObjectAtspi::hyperlinkReference()
+{
+    RELEASE_ASSERT(!isMainThread());
+    if (m_hyperlinkPath.isNull()) {
+        path();
+        m_hyperlinkPath = root()->atspi().registerHyperlink(*this, { { const_cast<GDBusInterfaceInfo*>(&webkit_hyperlink_interface), &s_hyperlinkFunctions } });
+    }
+
+    return g_variant_new("(so)", root()->atspi().uniqueName(), m_hyperlinkPath.utf8().data());
 }
 
 void AccessibilityObjectAtspi::setRoot(AccessibilityRootAtspi* root)
@@ -1099,6 +1113,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_value_interface.name);
     if (m_interfaces.contains(Interface::Hyperlink))
         g_variant_builder_add(builder, "s", webkit_hyperlink_interface.name);
+    if (m_interfaces.contains(Interface::Hypertext))
+        g_variant_builder_add(builder, "s", webkit_hypertext_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
