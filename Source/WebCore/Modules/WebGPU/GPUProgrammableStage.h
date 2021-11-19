@@ -42,13 +42,7 @@ struct GPUProgrammableStage {
         return {
             module->backing(),
             entryPoint,
-            ([this] () {
-                Vector<KeyValuePair<String, PAL::WebGPU::PipelineConstantValue>> constants;
-                constants.reserveInitialCapacity(this->constants.size());
-                for (const auto& constant : this->constants)
-                    constants.uncheckedAppend(makeKeyValuePair(constant.key, constant.value));
-                return constants;
-            })(),
+            constants,
         };
     }
 

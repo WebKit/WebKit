@@ -38,6 +38,7 @@
 #include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
 #include <pal/graphics/WebGPU/WebGPUComputePipeline.h>
 #include <pal/graphics/WebGPU/WebGPUDevice.h>
+#include <pal/graphics/WebGPU/WebGPUExternalTexture.h>
 #include <pal/graphics/WebGPU/WebGPUPipelineLayout.h>
 #include <pal/graphics/WebGPU/WebGPUQuerySet.h>
 #include <pal/graphics/WebGPU/WebGPUQueue.h>
@@ -60,7 +61,7 @@ ObjectHeap::~ObjectHeap()
 {
 }
 
-const PAL::WebGPU::Adapter* ObjectHeap::convertAdapterFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::Adapter* ObjectHeap::convertAdapterFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Adapter>>(iterator->value))
@@ -68,7 +69,7 @@ const PAL::WebGPU::Adapter* ObjectHeap::convertAdapterFromBacking(WebGPUIdentifi
     return std::get<Ref<PAL::WebGPU::Adapter>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::BindGroup* ObjectHeap::convertBindGroupFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::BindGroup* ObjectHeap::convertBindGroupFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::BindGroup>>(iterator->value))
@@ -76,7 +77,7 @@ const PAL::WebGPU::BindGroup* ObjectHeap::convertBindGroupFromBacking(WebGPUIden
     return std::get<Ref<PAL::WebGPU::BindGroup>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::BindGroupLayout* ObjectHeap::convertBindGroupLayoutFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::BindGroupLayout* ObjectHeap::convertBindGroupLayoutFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::BindGroupLayout>>(iterator->value))
@@ -84,7 +85,7 @@ const PAL::WebGPU::BindGroupLayout* ObjectHeap::convertBindGroupLayoutFromBackin
     return std::get<Ref<PAL::WebGPU::BindGroupLayout>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::Buffer* ObjectHeap::convertBufferFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::Buffer* ObjectHeap::convertBufferFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Buffer>>(iterator->value))
@@ -92,7 +93,7 @@ const PAL::WebGPU::Buffer* ObjectHeap::convertBufferFromBacking(WebGPUIdentifier
     return std::get<Ref<PAL::WebGPU::Buffer>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::CommandBuffer* ObjectHeap::convertCommandBufferFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::CommandBuffer* ObjectHeap::convertCommandBufferFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::CommandBuffer>>(iterator->value))
@@ -100,7 +101,7 @@ const PAL::WebGPU::CommandBuffer* ObjectHeap::convertCommandBufferFromBacking(We
     return std::get<Ref<PAL::WebGPU::CommandBuffer>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::CommandEncoder* ObjectHeap::convertCommandEncoderFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::CommandEncoder* ObjectHeap::convertCommandEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::CommandEncoder>>(iterator->value))
@@ -108,7 +109,7 @@ const PAL::WebGPU::CommandEncoder* ObjectHeap::convertCommandEncoderFromBacking(
     return std::get<Ref<PAL::WebGPU::CommandEncoder>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::ComputePassEncoder* ObjectHeap::convertComputePassEncoderFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::ComputePassEncoder* ObjectHeap::convertComputePassEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ComputePassEncoder>>(iterator->value))
@@ -116,7 +117,7 @@ const PAL::WebGPU::ComputePassEncoder* ObjectHeap::convertComputePassEncoderFrom
     return std::get<Ref<PAL::WebGPU::ComputePassEncoder>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::ComputePipeline* ObjectHeap::convertComputePipelineFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::ComputePipeline* ObjectHeap::convertComputePipelineFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ComputePipeline>>(iterator->value))
@@ -124,7 +125,7 @@ const PAL::WebGPU::ComputePipeline* ObjectHeap::convertComputePipelineFromBackin
     return std::get<Ref<PAL::WebGPU::ComputePipeline>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::Device* ObjectHeap::convertDeviceFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::Device* ObjectHeap::convertDeviceFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Device>>(iterator->value))
@@ -132,7 +133,15 @@ const PAL::WebGPU::Device* ObjectHeap::convertDeviceFromBacking(WebGPUIdentifier
     return std::get<Ref<PAL::WebGPU::Device>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::GPU* ObjectHeap::convertGPUFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::ExternalTexture* ObjectHeap::convertExternalTextureFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ExternalTexture>>(iterator->value))
+        return nullptr;
+    return std::get<Ref<PAL::WebGPU::ExternalTexture>>(iterator->value).ptr();
+}
+
+PAL::WebGPU::GPU* ObjectHeap::convertGPUFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::GPU>>(iterator->value))
@@ -140,7 +149,7 @@ const PAL::WebGPU::GPU* ObjectHeap::convertGPUFromBacking(WebGPUIdentifier ident
     return std::get<Ref<PAL::WebGPU::GPU>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::PipelineLayout* ObjectHeap::convertPipelineLayoutFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::PipelineLayout* ObjectHeap::convertPipelineLayoutFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::PipelineLayout>>(iterator->value))
@@ -148,7 +157,7 @@ const PAL::WebGPU::PipelineLayout* ObjectHeap::convertPipelineLayoutFromBacking(
     return std::get<Ref<PAL::WebGPU::PipelineLayout>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::QuerySet* ObjectHeap::convertQuerySetFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::QuerySet* ObjectHeap::convertQuerySetFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::QuerySet>>(iterator->value))
@@ -156,7 +165,7 @@ const PAL::WebGPU::QuerySet* ObjectHeap::convertQuerySetFromBacking(WebGPUIdenti
     return std::get<Ref<PAL::WebGPU::QuerySet>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::Queue* ObjectHeap::convertQueueFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::Queue* ObjectHeap::convertQueueFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Queue>>(iterator->value))
@@ -164,7 +173,7 @@ const PAL::WebGPU::Queue* ObjectHeap::convertQueueFromBacking(WebGPUIdentifier i
     return std::get<Ref<PAL::WebGPU::Queue>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::RenderBundleEncoder* ObjectHeap::convertRenderBundleEncoderFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::RenderBundleEncoder* ObjectHeap::convertRenderBundleEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderBundleEncoder>>(iterator->value))
@@ -172,7 +181,7 @@ const PAL::WebGPU::RenderBundleEncoder* ObjectHeap::convertRenderBundleEncoderFr
     return std::get<Ref<PAL::WebGPU::RenderBundleEncoder>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::RenderBundle* ObjectHeap::convertRenderBundleFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::RenderBundle* ObjectHeap::convertRenderBundleFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderBundle>>(iterator->value))
@@ -180,7 +189,7 @@ const PAL::WebGPU::RenderBundle* ObjectHeap::convertRenderBundleFromBacking(WebG
     return std::get<Ref<PAL::WebGPU::RenderBundle>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::RenderPassEncoder* ObjectHeap::convertRenderPassEncoderFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::RenderPassEncoder* ObjectHeap::convertRenderPassEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderPassEncoder>>(iterator->value))
@@ -188,7 +197,7 @@ const PAL::WebGPU::RenderPassEncoder* ObjectHeap::convertRenderPassEncoderFromBa
     return std::get<Ref<PAL::WebGPU::RenderPassEncoder>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::RenderPipeline* ObjectHeap::convertRenderPipelineFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::RenderPipeline* ObjectHeap::convertRenderPipelineFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderPipeline>>(iterator->value))
@@ -196,7 +205,7 @@ const PAL::WebGPU::RenderPipeline* ObjectHeap::convertRenderPipelineFromBacking(
     return std::get<Ref<PAL::WebGPU::RenderPipeline>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::Sampler* ObjectHeap::convertSamplerFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::Sampler* ObjectHeap::convertSamplerFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Sampler>>(iterator->value))
@@ -204,7 +213,7 @@ const PAL::WebGPU::Sampler* ObjectHeap::convertSamplerFromBacking(WebGPUIdentifi
     return std::get<Ref<PAL::WebGPU::Sampler>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::ShaderModule* ObjectHeap::convertShaderModuleFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::ShaderModule* ObjectHeap::convertShaderModuleFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ShaderModule>>(iterator->value))
@@ -212,7 +221,7 @@ const PAL::WebGPU::ShaderModule* ObjectHeap::convertShaderModuleFromBacking(WebG
     return std::get<Ref<PAL::WebGPU::ShaderModule>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::Texture* ObjectHeap::convertTextureFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::Texture* ObjectHeap::convertTextureFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Texture>>(iterator->value))
@@ -220,7 +229,7 @@ const PAL::WebGPU::Texture* ObjectHeap::convertTextureFromBacking(WebGPUIdentifi
     return std::get<Ref<PAL::WebGPU::Texture>>(iterator->value).ptr();
 }
 
-const PAL::WebGPU::TextureView* ObjectHeap::convertTextureViewFromBacking(WebGPUIdentifier identifier)
+PAL::WebGPU::TextureView* ObjectHeap::convertTextureViewFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::TextureView>>(iterator->value))

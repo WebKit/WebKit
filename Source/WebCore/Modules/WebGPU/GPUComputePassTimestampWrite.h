@@ -54,11 +54,9 @@ using GPUComputePassTimestampWrites = Vector<GPUComputePassTimestampWrite>;
 
 inline PAL::WebGPU::ComputePassTimestampWrites convertToBacking(const GPUComputePassTimestampWrites& computePassTimestampWrites)
 {
-    PAL::WebGPU::ComputePassTimestampWrites result;
-    result.reserveInitialCapacity(computePassTimestampWrites.size());
-    for (auto& computePassTimestampWrite : computePassTimestampWrites)
-        result.uncheckedAppend(computePassTimestampWrite.convertToBacking());
-    return result;
+    return computePassTimestampWrites.map([] (auto& computePassTimestampWrite) {
+        return computePassTimestampWrite.convertToBacking();
+    });
 }
 
 }

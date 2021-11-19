@@ -25,7 +25,10 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUObjectDescriptorBase.h"
+#include <optional>
 
 namespace WebKit::WebGPU {
 
@@ -47,3 +50,5 @@ struct CommandEncoderDescriptor : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

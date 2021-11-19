@@ -41,13 +41,9 @@ struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            ([this] () {
-                Vector<PAL::WebGPU::FeatureName> requiredFeatures;
-                requiredFeatures.reserveInitialCapacity(this->requiredFeatures.size());
-                for (const auto& requiredFeature : this->requiredFeatures)
-                    requiredFeatures.uncheckedAppend(WebCore::convertToBacking(requiredFeature));
-                return requiredFeatures;
-            })(),
+            requiredFeatures.map([] (const auto& requiredFeature) {
+                return WebCore::convertToBacking(requiredFeature);
+            }),
         };
     }
 

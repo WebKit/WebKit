@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
+#include <optional>
 #include <pal/graphics/WebGPU/WebGPUStorageTextureAccess.h>
 #include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
 #include <pal/graphics/WebGPU/WebGPUTextureViewDimension.h>
@@ -65,3 +68,5 @@ struct StorageTextureBindingLayout {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

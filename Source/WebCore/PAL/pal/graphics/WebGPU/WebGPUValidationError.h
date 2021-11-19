@@ -38,11 +38,21 @@ public:
         return adoptRef(*new ValidationError(WTFMove(message)));
     }
 
+    static Ref<ValidationError> create(const String& message)
+    {
+        return adoptRef(*new ValidationError(message));
+    }
+
     const String& message() const { return m_message; }
 
 private:
     ValidationError(String&& message)
         : m_message(WTFMove(message))
+    {
+    }
+
+    ValidationError(const String& message)
+        : m_message(message)
     {
     }
 

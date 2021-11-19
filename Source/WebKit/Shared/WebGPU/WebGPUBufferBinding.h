@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUIdentifier.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
@@ -66,3 +68,5 @@ struct BufferBinding {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

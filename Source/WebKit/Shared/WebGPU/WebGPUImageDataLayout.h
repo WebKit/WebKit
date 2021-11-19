@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 
@@ -64,3 +66,5 @@ struct ImageDataLayout {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

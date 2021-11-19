@@ -25,8 +25,11 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUObjectDescriptorBase.h"
 #include <cstdint>
+#include <optional>
 #include <pal/graphics/WebGPU/WebGPUFeatureName.h>
 #include <wtf/HashMap.h>
 #include <wtf/KeyValuePair.h>
@@ -61,3 +64,5 @@ struct DeviceDescriptor : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

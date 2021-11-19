@@ -25,7 +25,10 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUBlendComponent.h"
+#include <optional>
 
 namespace WebKit::WebGPU {
 
@@ -56,3 +59,5 @@ struct BlendState {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

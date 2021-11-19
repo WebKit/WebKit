@@ -144,10 +144,8 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
 {
     auto label = descriptor.label.utf8();
 
-    Vector<WGPUBindGroupLayoutEntry> backingEntries;
-    backingEntries.reserveInitialCapacity(descriptor.entries.size());
-    for (const auto& entry : descriptor.entries) {
-        backingEntries.uncheckedAppend(WGPUBindGroupLayoutEntry {
+    auto backingEntries = descriptor.entries.map([this] (const auto& entry) {
+        return WGPUBindGroupLayoutEntry {
             nullptr,
             entry.binding,
             m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility), {
@@ -169,8 +167,8 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->viewDimension) : WGPUTextureViewDimension_Undefined,
             },
-        });
-    }
+        };
+    });
 
     WGPUBindGroupLayoutDescriptor backingDescriptor {
         nullptr,
@@ -186,10 +184,9 @@ Ref<PipelineLayout> DeviceImpl::createPipelineLayout(const PipelineLayoutDescrip
 {
     auto label = descriptor.label.utf8();
 
-    Vector<WGPUBindGroupLayout> backingBindGroupLayouts;
-    backingBindGroupLayouts.reserveInitialCapacity(descriptor.bindGroupLayouts.size());
-    for (auto bindGroupLayout : descriptor.bindGroupLayouts)
-        backingBindGroupLayouts.uncheckedAppend(m_convertToBackingContext->convertToBacking(bindGroupLayout.get()));
+    auto backingBindGroupLayouts = descriptor.bindGroupLayouts.map([this] (auto bindGroupLayout) {
+        return m_convertToBackingContext->convertToBacking(bindGroupLayout.get());
+    });
 
     WGPUPipelineLayoutDescriptor backingDescriptor {
         nullptr,
@@ -205,10 +202,8 @@ Ref<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descriptor
 {
     auto label = descriptor.label.utf8();
 
-    Vector<WGPUBindGroupEntry> backingEntries;
-    backingEntries.reserveInitialCapacity(descriptor.entries.size());
-    for (const auto& bindGroupEntry : descriptor.entries) {
-        backingEntries.uncheckedAppend(WGPUBindGroupEntry {
+    auto backingEntries = descriptor.entries.map([this] (const auto& bindGroupEntry) {
+        return WGPUBindGroupEntry {
             nullptr,
             bindGroupEntry.binding,
             std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? m_convertToBackingContext->convertToBacking(std::get<BufferBinding>(bindGroupEntry.resource).buffer) : nullptr,
@@ -216,8 +211,8 @@ Ref<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descriptor
             std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).size.value_or(WGPU_WHOLE_SIZE) : 0,
             std::holds_alternative<std::reference_wrapper<Sampler>>(bindGroupEntry.resource) ? m_convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<Sampler>>(bindGroupEntry.resource).get()) : nullptr,
             std::holds_alternative<std::reference_wrapper<TextureView>>(bindGroupEntry.resource) ? m_convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<TextureView>>(bindGroupEntry.resource).get()) : nullptr,
-        });
-    }
+        };
+    });
 
     WGPUBindGroupDescriptor backingDescriptor {
         nullptr,
@@ -259,10 +254,9 @@ auto convertToBacking(const ComputePipelineDescriptor& descriptor, ConvertToBack
 
     auto entryPoint = descriptor.compute.entryPoint.utf8();
 
-    Vector<CString> constantNames;
-    constantNames.reserveInitialCapacity(descriptor.compute.constants.size());
-    for (const auto& constant : descriptor.compute.constants)
-        constantNames.uncheckedAppend(constant.key.utf8());
+    auto constantNames = descriptor.compute.constants.map([] (const auto& constant) {
+        return constant.key.utf8();
+    });
 
     Vector<WGPUConstantEntry> backingConstantEntries;
     backingConstantEntries.reserveInitialCapacity(descriptor.compute.constants.size());
@@ -304,10 +298,9 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
 
     auto vertexEntryPoint = descriptor.vertex.entryPoint.utf8();
 
-    Vector<CString> vertexConstantNames;
-    vertexConstantNames.reserveInitialCapacity(descriptor.vertex.constants.size());
-    for (const auto& constant : descriptor.vertex.constants)
-        vertexConstantNames.uncheckedAppend(constant.key.utf8());
+    auto vertexConstantNames = descriptor.vertex.constants.map([] (const auto& constant) {
+        return constant.key.utf8();
+    });
 
     Vector<WGPUConstantEntry> vertexConstantEntries;
     vertexConstantEntries.reserveInitialCapacity(descriptor.vertex.constants.size());
@@ -320,23 +313,18 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
         });
     }
 
-    Vector<Vector<WGPUVertexAttribute>> backingAttributes;
-    backingAttributes.reserveInitialCapacity(descriptor.vertex.buffers.size());
-    for (const auto& buffer : descriptor.vertex.buffers) {
+    auto backingAttributes = descriptor.vertex.buffers.map([&convertToBackingContext] (const auto& buffer) -> Vector<WGPUVertexAttribute> {
         if (buffer) {
-            Vector<WGPUVertexAttribute> attributes;
-            attributes.reserveInitialCapacity(buffer->attributes.size());
-            for (const auto& attribute : buffer->attributes) {
-                attributes.uncheckedAppend(WGPUVertexAttribute {
+            return buffer->attributes.map([&convertToBackingContext] (const auto& attribute) {
+                return WGPUVertexAttribute {
                     convertToBackingContext.convertToBacking(attribute.format),
                     attribute.offset,
                     attribute.shaderLocation,
-                });
-            }
-            backingAttributes.uncheckedAppend(WTFMove(attributes));
+                };
+            });
         } else
-            backingAttributes.uncheckedAppend({ });
-    }
+            return { };
+    });
 
     Vector<WGPUVertexBufferLayout> backingBuffers;
     backingBuffers.reserveInitialCapacity(descriptor.vertex.buffers.size());
@@ -376,9 +364,9 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
 
     Vector<CString> fragmentConstantNames;
     if (descriptor.fragment) {
-        fragmentConstantNames.reserveInitialCapacity(descriptor.fragment->constants.size());
-        for (const auto& constant : descriptor.fragment->constants)
-            fragmentConstantNames.uncheckedAppend(constant.key.utf8());
+        fragmentConstantNames = descriptor.fragment->constants.map([] (const auto& constant) {
+            return constant.key.utf8();
+        });
     }
 
     Vector<WGPUConstantEntry> fragmentConstantEntries;
@@ -396,10 +384,9 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
 
     Vector<std::optional<WGPUBlendState>> blendStates;
     if (descriptor.fragment) {
-        blendStates.reserveInitialCapacity(descriptor.fragment->targets.size());
-        for (const auto& target : descriptor.fragment->targets) {
+        blendStates = descriptor.fragment->targets.map([&convertToBackingContext] (const auto& target) -> std::optional<WGPUBlendState> {
             if (target.blend) {
-                blendStates.uncheckedAppend(WGPUBlendState {
+                return WGPUBlendState {
                     {
                         convertToBackingContext.convertToBacking(target.blend->color.operation),
                         convertToBackingContext.convertToBacking(target.blend->color.srcFactor),
@@ -409,10 +396,10 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
                         convertToBackingContext.convertToBacking(target.blend->alpha.srcFactor),
                         convertToBackingContext.convertToBacking(target.blend->alpha.dstFactor),
                     }
-                });
+                };
             } else
-                blendStates.uncheckedAppend(std::nullopt);
-        }
+                return std::nullopt;
+        });
     }
 
     Vector<WGPUColorTargetState> colorTargets;
@@ -540,10 +527,9 @@ Ref<RenderBundleEncoder> DeviceImpl::createRenderBundleEncoder(const RenderBundl
 {
     auto label = descriptor.label.utf8();
 
-    Vector<WGPUTextureFormat> backingColorFormats;
-    backingColorFormats.reserveInitialCapacity(descriptor.colorFormats.size());
-    for (auto colorFormat : descriptor.colorFormats)
-        backingColorFormats.uncheckedAppend(m_convertToBackingContext->convertToBacking(colorFormat));
+    auto backingColorFormats = descriptor.colorFormats.map([this] (auto colorFormat) {
+        return m_convertToBackingContext->convertToBacking(colorFormat);
+    });
 
     WGPURenderBundleEncoderDescriptor backingDescriptor {
         nullptr,
@@ -561,10 +547,9 @@ Ref<QuerySet> DeviceImpl::createQuerySet(const QuerySetDescriptor& descriptor)
 {
     auto label = descriptor.label.utf8();
 
-    Vector<WGPUPipelineStatisticName> backingPipelineStatistics;
-    backingPipelineStatistics.reserveInitialCapacity(descriptor.pipelineStatistics.size());
-    for (auto pipelineStatistic : descriptor.pipelineStatistics)
-        backingPipelineStatistics.uncheckedAppend(m_convertToBackingContext->convertToBacking(pipelineStatistic));
+    auto backingPipelineStatistics = descriptor.pipelineStatistics.map([this] (auto pipelineStatistic) {
+        return m_convertToBackingContext->convertToBacking(pipelineStatistic);
+    });
 
     WGPUQuerySetDescriptor backingDescriptor {
         nullptr,

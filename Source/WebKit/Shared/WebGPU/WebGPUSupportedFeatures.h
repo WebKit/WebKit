@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
+#include <optional>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,3 +53,5 @@ struct SupportedFeatures {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

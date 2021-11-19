@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUStencilFaceState.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUCompareFunction.h>
@@ -120,3 +122,5 @@ struct DepthStencilState {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
+#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <pal/graphics/WebGPU/WebGPUVertexFormat.h>
 
@@ -65,3 +68,5 @@ struct VertexAttribute {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

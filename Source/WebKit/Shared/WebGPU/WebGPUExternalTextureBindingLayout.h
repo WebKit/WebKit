@@ -25,6 +25,10 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
+#include <optional>
+
 namespace WebKit::WebGPU {
 
 struct ExternalTextureBindingLayout {
@@ -39,3 +43,5 @@ struct ExternalTextureBindingLayout {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

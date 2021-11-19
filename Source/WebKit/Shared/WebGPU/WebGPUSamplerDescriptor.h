@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
 #include "WebGPUObjectDescriptorBase.h"
 #include <cstdint>
 #include <optional>
@@ -123,3 +125,5 @@ struct SamplerDescriptor : public ObjectDescriptorBase {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

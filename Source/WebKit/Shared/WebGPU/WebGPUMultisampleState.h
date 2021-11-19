@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
+#include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 
 namespace WebKit::WebGPU {
@@ -63,3 +66,5 @@ struct MultisampleState {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

@@ -37,13 +37,9 @@ struct GPUBindGroupLayoutDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            ([this] () {
-                Vector<PAL::WebGPU::BindGroupLayoutEntry> entries;
-                entries.reserveInitialCapacity(this->entries.size());
-                for (auto& entry : this->entries)
-                    entries.uncheckedAppend(entry.convertToBacking());
-                return entries;
-            })(),
+            entries.map([] (auto& entry) {
+                return entry.convertToBacking();
+            }),
         };
     }
 

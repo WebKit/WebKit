@@ -168,10 +168,9 @@ void RenderPassEncoderImpl::endPipelineStatisticsQuery()
 
 void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& renderBundles)
 {
-    Vector<WGPURenderBundle> backingBundles;
-    backingBundles.reserveInitialCapacity(renderBundles.size());
-    for (auto renderBundle : renderBundles)
-        backingBundles.uncheckedAppend(m_convertToBackingContext->convertToBacking(renderBundle.get()));
+    auto backingBundles = renderBundles.map([this] (auto renderBundle) {
+        return m_convertToBackingContext->convertToBacking(renderBundle.get());
+    });
 
     wgpuRenderPassEncoderExecuteBundles(m_backing, backingBundles.size(), backingBundles.data());
 }

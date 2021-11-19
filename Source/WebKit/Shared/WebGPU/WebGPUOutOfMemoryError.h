@@ -25,6 +25,10 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS)
+
+#include <optional>
+
 namespace WebKit::WebGPU {
 
 struct OutOfMemoryError {
@@ -39,3 +43,5 @@ struct OutOfMemoryError {
 };
 
 } // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)
