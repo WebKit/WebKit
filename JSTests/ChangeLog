@@ -1,3 +1,13 @@
+2021-11-19  Asumu Takikawa  <asumu@igalia.com>
+
+        Fix WebAssembly memory.fill out of bounds error message
+        https://bugs.webkit.org/show_bug.cgi?id=233392
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/references/memory_fill_out_of_bounds.js: Added.
+        (async test):
+
 2021-11-19  Saam Barati  <sbarati@apple.com>
 
         Fix assertion added in r285592

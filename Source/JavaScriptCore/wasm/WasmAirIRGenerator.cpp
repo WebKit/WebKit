@@ -1343,7 +1343,7 @@ auto AirIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType tar
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
     }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
     });
 
     return { };

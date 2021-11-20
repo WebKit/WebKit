@@ -390,7 +390,7 @@ WASM_SLOW_PATH_DECL(memory_fill)
     uint32_t targetValue = READ(instruction.m_targetValue).unboxedUInt32();
     uint32_t count = READ(instruction.m_count).unboxedUInt32();
     if (!Wasm::operationWasmMemoryFill(instance, dstAddress, targetValue, count))
-        WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     WASM_END();
 }
 
