@@ -26,7 +26,6 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
-#include "TextSizeAdjustment.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {

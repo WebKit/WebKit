@@ -2524,7 +2524,6 @@ storage/StorageMap.cpp
 storage/StorageNamespaceProvider.cpp
 storage/StorageQuotaManager.cpp
 style/AttributeChangeInvalidation.cpp
-style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/IdChangeInvalidation.cpp
