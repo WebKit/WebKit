@@ -1,3 +1,15 @@
+2021-11-19  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=233385
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/interaction/focus/chrome-object-tab-focus-bug-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * transitions/clip-path-path-transitions-expected.txt:
+
 2021-11-19  Kiet Ho  <tho22@apple.com>
 
         Integrate motion path transforms in transformation pipeline

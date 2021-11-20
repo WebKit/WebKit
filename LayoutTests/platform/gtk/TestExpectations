@@ -432,7 +432,6 @@ webkit.org/b/169918 compositing/hidpi-subpixel-transform-origin.html [ ImageOnly
 webkit.org/b/169918 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/masks/mask-with-preserve-3d.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
@@ -1315,7 +1314,8 @@ imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html [ Sl
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Slow ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html [ Slow ]
 
-webrtc/concurrentVideoPlayback2.html [ Slow ]
+# Uncomment when webkit.org/b/231811 is fixed and glib expectation is removed.
+# webrtc/concurrentVideoPlayback2.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests

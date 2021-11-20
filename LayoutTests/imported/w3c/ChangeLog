@@ -1,3 +1,10 @@
+2021-11-19  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=233385
+
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontVariant.settings-expected.txt:
+
 2021-11-19  Kiet Ho  <tho22@apple.com>
 
         Implement parsing and animation support for ray() shape accepted by offset-path

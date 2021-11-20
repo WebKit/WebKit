@@ -288,6 +288,8 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.h
 # GLIB PASS since r281724
 imported/mozilla/svg/as-image/border-image-simple-1.html [ Pass ]
 
+fast/css/accent-color/text.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -591,7 +593,6 @@ webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-9
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-add.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-modify.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-remove.html [ ImageOnlyFailure ]
-webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
 
@@ -1576,6 +1577,9 @@ webkit.org/b/232346 imported/w3c/web-platform-tests/html/canvas/element/manual/i
 webkit.org/b/232346 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
 webkit.org/b/232346 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
 webkit.org/b/232346 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
+webkit.org/b/232346 media/video-canvas-createPattern.html [ Failure ]
+webkit.org/b/232346 media/video-canvas-drawing-output.html [ Failure ]
+webkit.org/b/232346 media/video-orientation-canvas.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
@@ -2046,7 +2050,6 @@ webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
 webkit.org/b/168426 svg/clip-path/clip-opacity.html [ ImageOnlyFailure ]
 
 webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
-webkit.org/b/168433 http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
 webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/169909 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
@@ -2377,8 +2380,6 @@ http/tests/cache-storage/page-cache-domcache-pending-promise.html [ DumpJSConsol
 # Added in r276357. Also marked as ImageOnlyFailure in iOS TestExpectations.
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
-fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ ImageOnlyFailure ]
-
 # It was a flaky crash until r275516, but it's still a timeout flaky.
 webkit.org/b/224112 media/video-as-img-output-pts.html [ Timeout Pass ]
 
@@ -2481,6 +2482,7 @@ webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed
 webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.html [ Failure ]
 webkit.org/b/231818 storage/filesystemaccess/handle-move-worker.html [ Failure ]
 webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-basics-worker.html [ Failure ]
+webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-close-worker.html [ Failure ]
 webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-read-write-worker.html [ Failure ]
 
 # Tests failing due to HTML being interpreted as XHTML
@@ -2580,6 +2582,7 @@ webkit.org/b/232386 ietestcenter/css3/bordersbackgrounds/background-size-aspect-
 webkit.org/b/232386 imported/blink/css3/filters/effect-reference-add-hw.html [ ImageOnlyFailure ]
 webkit.org/b/232386 imported/blink/css3/filters/effect-reference-source-alpha-hw.html [ ImageOnlyFailure ]
 webkit.org/b/232386 imported/blink/svg/as-image/zero-size-buffered-image-nopaint.html [ ImageOnlyFailure ]
+webkit.org/b/232386 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/232386 svg/as-object/mutate-on-load.html [ ImageOnlyFailure ]
 webkit.org/b/232386 svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1.html [ Failure ]
 webkit.org/b/232386 svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html [ Failure ]
