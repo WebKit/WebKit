@@ -152,12 +152,11 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     
     RefPtr<SharedBuffer> imageBuffer = image->image()->data();
     size_t imageSize = imageBuffer->size();
-    SharedMemory::Handle imageHandle;
-    
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(imageBuffer->size());
+
+    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*imageBuffer);
     if (!sharedMemoryBuffer)
         return;
-    memcpy(sharedMemoryBuffer->data(), imageBuffer->data(), imageSize);
+    SharedMemory::Handle imageHandle;
     sharedMemoryBuffer->createHandle(imageHandle, SharedMemory::Protection::ReadOnly);
     
     RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
@@ -165,11 +164,10 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     size_t archiveSize = 0;
     if (data) {
         auto archiveBuffer = SharedBuffer::create((__bridge NSData *)data.get());
-        RefPtr<SharedMemory> archiveSharedMemoryBuffer = SharedMemory::allocate(archiveBuffer->size());
+        auto archiveSharedMemoryBuffer = SharedMemory::copyBuffer(archiveBuffer.get());
         if (!archiveSharedMemoryBuffer)
             return;
         archiveSize = archiveBuffer->size();
-        memcpy(archiveSharedMemoryBuffer->data(), archiveBuffer->data(), archiveSize);
         archiveSharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::Protection::ReadOnly);
     }
 

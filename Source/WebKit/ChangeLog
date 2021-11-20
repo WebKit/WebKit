@@ -1,3 +1,38 @@
+2021-11-20  Jean-Yves Avenard  <jya@apple.com>
+
+        Remove unnecessary flattening of SharedBuffer when sending them over IPC
+        https://bugs.webkit.org/show_bug.cgi?id=233363
+        rdar://85600684
+
+        Reviewed by Sam Weinig.
+
+        In several places, a SharedMemory was allocated followed by a copy. To perform
+        this copy, the SharedBuffer was flattened which could involve a memory allocation
+        followed by a copy of all segments into the final vector.
+        We instead make use of SharedBuffer::copyBuffer convenience method which will simply
+        copy the individual segment into the newly allocated SharedMemory.
+
+        No change in user observable behaviour.
+
+        Fly-by fix: SharedMemory::allocate is fallible; few instances didn't check the
+        returned value. So test that it succeeded and prevent a crash (null deref)
+
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performActionOnElement):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+
 2021-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Report the initiating url instead of the redirected one

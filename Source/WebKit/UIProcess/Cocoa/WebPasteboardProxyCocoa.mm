@@ -233,10 +233,9 @@ void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection,
         uint64_t size = buffer->size();
         if (!size)
             return completionHandler({ });
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
         if (!sharedMemoryBuffer)
             return completionHandler({ });
-        memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
         SharedMemory::Handle handle;
         if (!sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly))
             return completionHandler({ });
@@ -556,10 +555,9 @@ void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, s
         uint64_t size = buffer->size();
         if (!size)
             return completionHandler({ });
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
         if (!sharedMemoryBuffer)
             return completionHandler({ });
-        memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
         SharedMemory::Handle handle;
         if (!sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly))
             return completionHandler({ });

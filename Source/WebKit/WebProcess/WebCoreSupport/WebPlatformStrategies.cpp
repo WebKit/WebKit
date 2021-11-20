@@ -211,13 +211,11 @@ int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const Stri
 {
     SharedMemory::Handle handle;
     if (buffer && buffer->size()) {
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(buffer->size());
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
         // FIXME: Null check prevents crashing, but it is not great that we will have empty pasteboard content for this type,
         // because we've already set the types.
-        if (sharedMemoryBuffer) {
-            memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
+        if (sharedMemoryBuffer)
             sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        }
     }
     int64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, pasteboardType, SharedMemory::IPCHandle { WTFMove(handle), buffer ? buffer->size() : 0 }, pageIdentifier(context)), Messages::WebPasteboardProxy::SetPasteboardBufferForType::Reply(newChangeCount), 0);

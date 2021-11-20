@@ -569,12 +569,12 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, Complet
     RefPtr<SharedBuffer> buffer = frame.editor().dataSelectionForPasteboard(pasteboardType);
     if (!buffer)
         return completionHandler({ });
-    uint64_t size = buffer->size();
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
-    memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
+    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+    if (!sharedMemoryBuffer)
+        return completionHandler({ });
     SharedMemory::Handle handle;
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    completionHandler(SharedMemory::IPCHandle { WTFMove(handle), size });
+    completionHandler(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() });
 }
 
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()

@@ -3220,12 +3220,12 @@ void WebPage::performActionOnElement(uint32_t action)
         RefPtr<SharedBuffer> buffer = cachedImage->resourceBuffer();
         if (!buffer)
             return;
-        uint64_t bufferSize = buffer->size();
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(bufferSize);
-        memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+        if (!sharedMemoryBuffer)
+            return;
         SharedMemory::Handle handle;
         sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        send(Messages::WebPageProxy::SaveImageToLibrary(SharedMemory::IPCHandle { WTFMove(handle), bufferSize }));
+        send(Messages::WebPageProxy::SaveImageToLibrary(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() }));
     }
 }
 
