@@ -1,3 +1,11 @@
+2021-11-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB][WebDriver] Gardening COOP-related timeouts
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2021-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WebDriver] Update w3c and selenium tests
