@@ -2001,6 +2001,51 @@ static void testDocumentBasic(AccessibilityTest* test, gconstpointer)
 #endif
 }
 
+static void testImageBasic(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <img style='position:absolute; left:1; top:1' src='blank.ico' width=5 height=5 alt='This is a blank icon' lang='en'></img>"
+        "  </body>"
+        "</html>",
+        baseDir.get());
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto img = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_IMAGE(img.get()));
+    GUniquePtr<AtspiRect> rect(atspi_image_get_image_extents(ATSPI_IMAGE(img.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_nonnull(rect.get());
+    g_assert_cmpuint(rect->x, ==, 1);
+    g_assert_cmpuint(rect->y, ==, 1);
+    g_assert_cmpuint(rect->width, ==, 5);
+    g_assert_cmpuint(rect->height, ==, 5);
+    GUniquePtr<AtspiPoint> point(atspi_image_get_image_position(ATSPI_IMAGE(img.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_nonnull(point.get());
+    g_assert_cmpuint(rect->x, ==, point->x);
+    g_assert_cmpuint(rect->y, ==, point->y);
+    GUniquePtr<AtspiPoint> size(atspi_image_get_image_size(ATSPI_IMAGE(img.get()), nullptr));
+    g_assert_nonnull(size.get());
+    g_assert_cmpuint(size->x, ==, rect->width);
+    g_assert_cmpuint(size->y, ==, rect->height);
+
+    GUniquePtr<char> description(atspi_image_get_image_description(ATSPI_IMAGE(img.get()), nullptr));
+    g_assert_cmpstr(description.get(), ==, "This is a blank icon");
+#if USE(ATSPI)
+    GUniquePtr<char> locale(atspi_image_get_image_locale(ATSPI_IMAGE(img.get()), nullptr));
+    g_assert_cmpstr(locale.get(), ==, "en");
+#endif
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -2026,6 +2071,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "hypertext/basic", testHypertextBasic);
     AccessibilityTest::add("WebKitAccessibility", "action/basic", testActionBasic);
     AccessibilityTest::add("WebKitAccessibility", "document/basic", testDocumentBasic);
+    AccessibilityTest::add("WebKitAccessibility", "image/basic", testImageBasic);
 }
 
 void afterAll()

@@ -42,7 +42,7 @@ public:
     static Ref<AccessibilityObjectAtspi> create(AXCoreObject*);
     ~AccessibilityObjectAtspi() = default;
 
-    enum class Interface : uint8_t {
+    enum class Interface : uint16_t {
         Accessible = 1 << 0,
         Component = 1 << 1,
         Text = 1 << 2,
@@ -50,7 +50,8 @@ public:
         Hyperlink = 1 << 4,
         Hypertext = 1 << 5,
         Action = 1 << 6,
-        Document = 1 << 7
+        Document = 1 << 7,
+        Image = 1 << 8
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -175,6 +176,8 @@ private:
     HashMap<String, String> documentAttributes() const;
     String documentLocale() const;
 
+    String imageDescription() const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
@@ -185,6 +188,7 @@ private:
     static GDBusInterfaceVTable s_hypertextFunctions;
     static GDBusInterfaceVTable s_actionFunctions;
     static GDBusInterfaceVTable s_documentFunctions;
+    static GDBusInterfaceVTable s_imageFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

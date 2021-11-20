@@ -94,6 +94,9 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
     if (coreObject.roleValue() == AccessibilityRole::WebArea)
         interfaces.add(Interface::Document);
 
+    if (coreObject.isImage())
+        interfaces.add(Interface::Image);
+
     return interfaces;
 }
 
@@ -490,6 +493,8 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_action_interface), &s_actionFunctions });
         if (m_interfaces.contains(Interface::Document))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_document_interface), &s_documentFunctions });
+        if (m_interfaces.contains(Interface::Image))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_image_interface), &s_imageFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -1132,6 +1137,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_action_interface.name);
     if (m_interfaces.contains(Interface::Document))
         g_variant_builder_add(builder, "s", webkit_document_interface.name);
+    if (m_interfaces.contains(Interface::Image))
+        g_variant_builder_add(builder, "s", webkit_image_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
