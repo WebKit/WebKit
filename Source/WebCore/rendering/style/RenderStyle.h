@@ -645,7 +645,7 @@ public:
     ColumnSpan columnSpan() const { return static_cast<ColumnSpan>(m_rareNonInheritedData->multiCol->columnSpan); }
 
     const TransformOperations& transform() const { return m_rareNonInheritedData->transform->operations; }
-    bool hasTransform() const { return !m_rareNonInheritedData->transform->operations.operations().isEmpty(); }
+    bool hasTransform() const { return !m_rareNonInheritedData->transform->operations.operations().isEmpty() || offsetPath(); }
     const Length& transformOriginX() const { return m_rareNonInheritedData->transform->x; }
     const Length& transformOriginY() const { return m_rareNonInheritedData->transform->y; }
     float transformOriginZ() const { return m_rareNonInheritedData->transform->z; }
@@ -684,12 +684,14 @@ public:
         TransformOrigin = 1 << 0,
         Translate       = 1 << 1,
         Rotate          = 1 << 2,
-        Scale           = 1 << 3
+        Scale           = 1 << 3,
+        Offset          = 1 << 4
     };
 
-    static constexpr OptionSet<TransformOperationOption> allTransformOperations = { TransformOperationOption::TransformOrigin, TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale };
-    static constexpr OptionSet<TransformOperationOption> individualTransformOperations = { TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale };
+    static constexpr OptionSet<TransformOperationOption> allTransformOperations = { TransformOperationOption::TransformOrigin, TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale , TransformOperationOption::Offset };
+    static constexpr OptionSet<TransformOperationOption> individualTransformOperations = { TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale, TransformOperationOption::Offset };
     void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<TransformOperationOption> = allTransformOperations) const;
+    void applyMotionPathTransform(TransformationMatrix&, const FloatRect& boundingBox) const;
     void setPageScaleTransform(float);
 
     bool hasMask() const { return m_rareNonInheritedData->mask->hasImage() || m_rareNonInheritedData->maskBoxImage.hasImage(); }

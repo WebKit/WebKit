@@ -36,6 +36,7 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "Pagination.h"
+#include "PathTraversalState.h"
 #include "QuotesData.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"
@@ -696,6 +697,13 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
     if (!arePointingToEqualData(first.scale, second.scale)
         || !arePointingToEqualData(first.rotate, second.rotate)
         || !arePointingToEqualData(first.translate, second.translate))
+        changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Transform);
+
+    if (!arePointingToEqualData(first.offsetPath, second.offsetPath)
+        || first.offsetPosition != second.offsetPosition
+        || first.offsetDistance != second.offsetDistance
+        || first.offsetAnchor != second.offsetAnchor
+        || first.offsetRotate != second.offsetRotate)
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Transform);
 
     if (first.grid != second.grid
@@ -1407,7 +1415,11 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
     // 1. Start with the identity matrix.
 
     auto& transformOperations = m_rareNonInheritedData->transform->operations;
-    bool applyTransformOrigin = options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && ((m_rareNonInheritedData->rotate && !m_rareNonInheritedData->rotate->isIdentity()) || (m_rareNonInheritedData->scale && !m_rareNonInheritedData->scale->isIdentity()) || transformOperations.affectedByTransformOrigin());
+    bool applyTransformOrigin = options.contains(RenderStyle::TransformOperationOption::TransformOrigin)
+        && ((m_rareNonInheritedData->rotate && !m_rareNonInheritedData->rotate->isIdentity())
+            || (m_rareNonInheritedData->scale && !m_rareNonInheritedData->scale->isIdentity())
+            || transformOperations.affectedByTransformOrigin()
+            || offsetPath());
 
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     FloatPoint3D originTranslate;
@@ -1435,7 +1447,9 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
             scale->apply(transform, boundingBox.size());
     }
 
-    // 6. Translate and rotate by the transform specified by offset. (FIXME: we don't support the offset property)
+    // 6. Translate and rotate by the transform specified by offset.
+    if (options.contains(RenderStyle::TransformOperationOption::Offset))
+        applyMotionPathTransform(transform, boundingBox);
 
     // 7. Multiply by each of the transform functions in transform from left to right.
     for (auto& operation : transformOperations.operations())
@@ -1444,6 +1458,67 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     if (applyTransformOrigin)
         transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
+}
+
+static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const PathOperation& operation)
+{
+    if (operation.type() == PathOperation::Shape)
+        return downcast<ShapePathOperation>(operation).pathForReferenceRect(box);
+
+    // FIXME: support Reference and Box type.
+    // https://bugs.webkit.org/show_bug.cgi?id=233382
+    return std::nullopt;
+}
+
+static PathTraversalState getTraversalStateAtDistance(const Path& path, const Length& distance)
+{
+    auto pathLength = path.length();
+    auto distanceValue = floatValueForLength(distance, pathLength);
+
+    float resolvedLength = 0;
+    if (path.isClosed()) {
+        if (pathLength) {
+            resolvedLength = fmod(distanceValue, pathLength);
+            if (resolvedLength < 0)
+                resolvedLength += pathLength;
+        }
+    } else
+        resolvedLength = clampTo<float>(distanceValue, 0, pathLength);
+
+    ASSERT(resolvedLength >= 0);
+    return path.traversalStateAtLength(resolvedLength);
+}
+
+void RenderStyle::applyMotionPathTransform(TransformationMatrix& transform, const FloatRect& boundingBox) const
+{
+    if (!offsetPath())
+        return;
+
+    // Shift element to the point on path specified by offset-path and offset-distance.
+    auto path = getPathFromPathOperation(boundingBox, *offsetPath());
+    if (!path)
+        return;
+    auto traversalState = getTraversalStateAtDistance(*path, offsetDistance());
+    transform.translate(traversalState.current().x(), traversalState.current().y());
+
+    // Shift element to the anchor specified by offset-anchor.
+    auto transformOrigin = floatPointForLengthPoint(transformOriginXY(), boundingBox.size()) + boundingBox.location();
+    auto anchor = transformOrigin;
+    if (!offsetAnchor().x().isAuto())
+        anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
+    transform.translate(-anchor.x(), -anchor.y());
+
+    auto shiftToOrigin = anchor - transformOrigin;
+    transform.translate(shiftToOrigin.width(), shiftToOrigin.height());
+
+    // Apply rotation.
+    auto rotation = offsetRotate();
+    if (rotation.hasAuto())
+        transform.rotate(traversalState.normalAngle() + rotation.angle());
+    else
+        transform.rotate(rotation.angle());
+
+    transform.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
 }
 
 void RenderStyle::setPageScaleTransform(float scale)

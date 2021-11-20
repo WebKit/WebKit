@@ -160,6 +160,8 @@ public:
     bool hasCurrentPoint() const;
     FloatPoint currentPoint() const;
 
+    bool isClosed() const;
+
     WEBCORE_EXPORT void moveTo(const FloatPoint&);
     WEBCORE_EXPORT void addLineTo(const FloatPoint&);
     WEBCORE_EXPORT void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint);

@@ -444,7 +444,7 @@ public:
     bool hasPotentiallyScrollableOverflow() const;
 
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
-    bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate()); }
+    bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate() || style().offsetPath()); }
 
     inline bool preservesNewline() const;
 

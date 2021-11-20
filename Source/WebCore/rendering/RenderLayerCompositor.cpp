@@ -1647,6 +1647,11 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || oldStyle.perspectiveOriginX() != newStyle.perspectiveOriginX()
         || oldStyle.perspectiveOriginY() != newStyle.perspectiveOriginY()
         || oldStyle.backfaceVisibility() != newStyle.backfaceVisibility()
+        || !arePointingToEqualData(oldStyle.offsetPath(), newStyle.offsetPath())
+        || oldStyle.offsetAnchor() != newStyle.offsetAnchor()
+        || oldStyle.offsetPosition() != newStyle.offsetPosition()
+        || oldStyle.offsetDistance() != newStyle.offsetDistance()
+        || oldStyle.offsetRotate() != newStyle.offsetRotate()
         || !arePointingToEqualData(oldStyle.clipPath(), newStyle.clipPath());
 }
 

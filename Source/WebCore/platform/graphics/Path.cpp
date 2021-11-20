@@ -275,6 +275,26 @@ FloatPoint Path::currentPoint() const
     return currentPointSlowCase();
 }
 
+bool Path::isClosed() const
+{
+    bool lastElementIsClosed = false;
+
+    // The path is closed if the type of the last PathElement is CloseSubpath. Unfortunately,
+    // the only way to access PathElements is sequentially through apply(), there's no random
+    // access as if they're in a vector.
+    // The lambda below sets lastElementIsClosed if the last PathElement is CloseSubpath.
+    // Because lastElementIsClosed is overridden if there are any remaining PathElements
+    // to be iterated, its final value is the value of the last iteration.
+    // (i.e the last PathElement).
+    // FIXME: find a more efficient way to implement this, that does not require iterating
+    // through all PathElements.
+    apply([&lastElementIsClosed](const WebCore::PathElement& element) {
+        lastElementIsClosed = (element.type == PathElement::Type::CloseSubpath);
+    });
+
+    return lastElementIsClosed;
+}
+
 size_t Path::elementCount() const
 {
 #if ENABLE(INLINE_PATH_DATA)

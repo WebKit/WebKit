@@ -1,3 +1,14 @@
+2021-11-19  Kiet Ho  <tho22@apple.com>
+
+        Integrate motion path transforms in transformation pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=233144
+
+        Reviewed by Dean Jackson.
+
+        Removed ImageOnlyFailure expectations for tests that should now pass.
+
+        * TestExpectations:
+
 2021-11-19  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] [Debug] ASSERTION FAILED: m_childRules.isEmpty() when using @import with layer name
