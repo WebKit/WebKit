@@ -49,21 +49,22 @@ struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
 struct ImageDataLayout;
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteQueue final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteQueue> create(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteQueue> create(PAL::WebGPU::Queue& queue, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteQueue(queue, objectHeap));
+        return adoptRef(*new RemoteQueue(queue, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteQueue();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteQueue(PAL::WebGPU::Queue&, WebGPU::ObjectHeap&);
+    RemoteQueue(PAL::WebGPU::Queue&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteQueue(const RemoteQueue&) = delete;
     RemoteQueue(RemoteQueue&&) = delete;
@@ -95,7 +96,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Queue> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

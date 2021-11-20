@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteCommandBuffer final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteCommandBuffer> create(PAL::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteCommandBuffer> create(PAL::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectHeap));
+        return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteCommandBuffer();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteCommandBuffer(PAL::WebGPU::CommandBuffer&, WebGPU::ObjectHeap&);
+    RemoteCommandBuffer(PAL::WebGPU::CommandBuffer&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteCommandBuffer(const RemoteCommandBuffer&) = delete;
     RemoteCommandBuffer(RemoteCommandBuffer&&) = delete;
@@ -66,7 +67,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::CommandBuffer> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

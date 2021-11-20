@@ -29,38 +29,65 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
 
 namespace WebKit {
 
-RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap)
+RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(buffer)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteBuffer::~RemoteBuffer()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
-void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size, WTF::CompletionHandler<void(Vector<uint8_t>&&)>&& callback)
+void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
-    UNUSED_PARAM(mapModeFlags);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(callback);
+    if (m_isMapped) {
+        callback(std::nullopt);
+        return;
+    }
+    m_isMapped = true;
+    m_mapModeFlags = mapModeFlags;
+
+    m_backing->mapAsync(mapModeFlags, offset, size, [mapModeFlags, offset, size, strongThis = Ref<RemoteBuffer>(*this), callback = WTFMove(callback)] () mutable {
+        auto mappedRange = strongThis->m_backing->getMappedRange(offset, size);
+        strongThis->m_mappedRange = mappedRange;
+        if (mapModeFlags & PAL::WebGPU::MapMode::READ)
+            callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
+        else
+            callback({ { } });
+    });
 }
 
 void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 {
-    UNUSED_PARAM(data);
+    if (!m_mappedRange)
+        return;
+    ASSERT(m_isMapped);
+
+    if (m_mapModeFlags & PAL::WebGPU::MapMode::WRITE)
+        memcpy(m_mappedRange->source, data.data(), data.size());
+
+    m_isMapped = false;
+    m_mappedRange = std::nullopt;
+    m_mapModeFlags = 0;
 }
 
 void RemoteBuffer::destroy()
 {
+    m_backing->destroy();
 }
 
 void RemoteBuffer::setLabel(String&& label)
 {
-    UNUSED_PARAM(label);
+    m_backing->setLabel(WTFMove(label));
 }
 
 } // namespace WebKit

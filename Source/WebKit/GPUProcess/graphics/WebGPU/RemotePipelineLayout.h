@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemotePipelineLayout final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemotePipelineLayout> create(PAL::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemotePipelineLayout> create(PAL::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemotePipelineLayout(pipelineLayout, objectHeap));
+        return adoptRef(*new RemotePipelineLayout(pipelineLayout, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemotePipelineLayout();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemotePipelineLayout(PAL::WebGPU::PipelineLayout&, WebGPU::ObjectHeap&);
+    RemotePipelineLayout(PAL::WebGPU::PipelineLayout&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemotePipelineLayout(const RemotePipelineLayout&) = delete;
     RemotePipelineLayout(RemotePipelineLayout&&) = delete;
@@ -66,7 +67,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::PipelineLayout> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

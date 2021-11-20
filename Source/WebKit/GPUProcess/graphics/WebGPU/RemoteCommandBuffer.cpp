@@ -29,23 +29,28 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUCommandBuffer.h>
 
 namespace WebKit {
 
-RemoteCommandBuffer::RemoteCommandBuffer(PAL::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap)
+RemoteCommandBuffer::RemoteCommandBuffer(PAL::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(commandBuffer)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteCommandBuffer::~RemoteCommandBuffer()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
 void RemoteCommandBuffer::setLabel(String&& label)
 {
-    UNUSED_PARAM(label);
+    m_backing->setLabel(WTFMove(label));
 }
 
 } // namespace WebKit

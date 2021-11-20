@@ -43,21 +43,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteShaderModule final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteShaderModule> create(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteShaderModule> create(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap));
+        return adoptRef(*new RemoteShaderModule(shaderModule, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteShaderModule();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteShaderModule(PAL::WebGPU::ShaderModule&, WebGPU::ObjectHeap&);
+    RemoteShaderModule(PAL::WebGPU::ShaderModule&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteShaderModule(const RemoteShaderModule&) = delete;
     RemoteShaderModule(RemoteShaderModule&&) = delete;
@@ -71,7 +72,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::ShaderModule> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

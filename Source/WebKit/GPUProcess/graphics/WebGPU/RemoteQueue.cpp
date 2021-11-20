@@ -29,28 +29,44 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUQueue.h>
 
 namespace WebKit {
 
-RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap)
+RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(queue)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteQueue::~RemoteQueue()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
 void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
 {
-    UNUSED_PARAM(commandBuffers);
+    Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>> convertedCommandBuffers;
+    convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
+    for (WebGPUIdentifier identifier : commandBuffers) {
+        auto convertedCommandBuffer = m_objectRegistry.convertCommandBufferFromBacking(identifier);
+        ASSERT(convertedCommandBuffer);
+        if (!convertedCommandBuffer)
+            return;
+        convertedCommandBuffers.uncheckedAppend(*convertedCommandBuffer);
+    }
+    m_backing->submit(WTFMove(convertedCommandBuffers));
 }
 
 void RemoteQueue::onSubmittedWorkDone(WTF::CompletionHandler<void()>&& callback)
 {
-    UNUSED_PARAM(callback);
+    m_backing->onSubmittedWorkDone([callback = WTFMove(callback)] () mutable {
+        callback();
+    });
 }
 
 void RemoteQueue::writeBuffer(
@@ -58,9 +74,12 @@ void RemoteQueue::writeBuffer(
     PAL::WebGPU::Size64 bufferOffset,
     Vector<uint8_t>&& data)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(bufferOffset);
-    UNUSED_PARAM(data);
+    auto convertedBuffer = m_objectRegistry.convertBufferFromBacking(buffer);
+    ASSERT(convertedBuffer);
+    if (!convertedBuffer)
+        return;
+
+    m_backing->writeBuffer(*convertedBuffer, bufferOffset, data.data(), data.size(), 0, std::nullopt);
 }
 
 void RemoteQueue::writeTexture(
@@ -69,10 +88,16 @@ void RemoteQueue::writeTexture(
     const WebGPU::ImageDataLayout& dataLayout,
     const WebGPU::Extent3D& size)
 {
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(dataLayout);
-    UNUSED_PARAM(size);
+    auto convertedDestination = m_objectRegistry.convertFromBacking(destination);
+    ASSERT(convertedDestination);
+    auto convertedDataLayout = m_objectRegistry.convertFromBacking(dataLayout);
+    ASSERT(convertedDestination);
+    auto convertedSize = m_objectRegistry.convertFromBacking(size);
+    ASSERT(convertedSize);
+    if (!convertedDestination || !convertedDestination || !convertedSize)
+        return;
+
+    m_backing->writeTexture(*convertedDestination, data.data(), data.size(), *convertedDataLayout, *convertedSize);
 }
 
 void RemoteQueue::copyExternalImageToTexture(
@@ -80,14 +105,21 @@ void RemoteQueue::copyExternalImageToTexture(
     const WebGPU::ImageCopyTextureTagged& destination,
     const WebGPU::Extent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    auto convertedSource = m_objectRegistry.convertFromBacking(source);
+    ASSERT(convertedSource);
+    auto convertedDestination = m_objectRegistry.convertFromBacking(destination);
+    ASSERT(convertedDestination);
+    auto convertedCopySize = m_objectRegistry.convertFromBacking(copySize);
+    ASSERT(convertedCopySize);
+    if (!convertedDestination || !convertedDestination || !convertedCopySize)
+        return;
+
+    m_backing->copyExternalImageToTexture(*convertedSource, *convertedDestination, *convertedCopySize);
 }
 
 void RemoteQueue::setLabel(String&& label)
 {
-    UNUSED_PARAM(label);
+    m_backing->setLabel(WTFMove(label));
 }
 
 } // namespace WebKit

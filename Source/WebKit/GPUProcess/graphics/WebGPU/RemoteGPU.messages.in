@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteGPU NotRefCounted Stream {
-    void RequestAdapter(WebKit::WebGPU::RequestAdapterOptions options) -> (String name, WebKit::WebGPU::SupportedFeatures supportedFeatures, WebKit::WebGPU::SupportedLimits supportedLimits) Synchronous
+    void RequestAdapter(WebKit::WebGPU::RequestAdapterOptions options, WebKit::WebGPUIdentifier identifier) -> (String name, WebKit::WebGPU::SupportedFeatures supportedFeatures, WebKit::WebGPU::SupportedLimits supportedLimits) Synchronous
 }
 
 #endif

@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteRenderPipeline final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteRenderPipeline> create(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteRenderPipeline> create(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderPipeline(renderPipeline, objectHeap));
+        return adoptRef(*new RemoteRenderPipeline(renderPipeline, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteRenderPipeline();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteRenderPipeline(PAL::WebGPU::RenderPipeline&, WebGPU::ObjectHeap&);
+    RemoteRenderPipeline(PAL::WebGPU::RenderPipeline&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteRenderPipeline(const RemoteRenderPipeline&) = delete;
     RemoteRenderPipeline(RemoteRenderPipeline&&) = delete;
@@ -68,7 +69,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::RenderPipeline> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

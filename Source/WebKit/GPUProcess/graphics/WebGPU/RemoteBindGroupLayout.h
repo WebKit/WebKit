@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteBindGroupLayout final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteBindGroupLayout> create(PAL::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteBindGroupLayout> create(PAL::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBindGroupLayout(bindGroupLayout, objectHeap));
+        return adoptRef(*new RemoteBindGroupLayout(bindGroupLayout, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteBindGroupLayout();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteBindGroupLayout(PAL::WebGPU::BindGroupLayout&, WebGPU::ObjectHeap&);
+    RemoteBindGroupLayout(PAL::WebGPU::BindGroupLayout&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteBindGroupLayout(const RemoteBindGroupLayout&) = delete;
     RemoteBindGroupLayout(RemoteBindGroupLayout&&) = delete;
@@ -66,7 +67,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::BindGroupLayout> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

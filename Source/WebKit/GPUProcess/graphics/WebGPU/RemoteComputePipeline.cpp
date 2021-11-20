@@ -28,30 +28,38 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBindGroupLayout.h"
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
+#include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
 #include <pal/graphics/WebGPU/WebGPUComputePipeline.h>
 
 namespace WebKit {
 
-RemoteComputePipeline::RemoteComputePipeline(PAL::WebGPU::ComputePipeline& computePipeline, WebGPU::ObjectHeap& objectHeap)
+RemoteComputePipeline::RemoteComputePipeline(PAL::WebGPU::ComputePipeline& computePipeline, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(computePipeline)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteComputePipeline::~RemoteComputePipeline()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
 void RemoteComputePipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier identifier)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(identifier);
+    auto bindGroupLayout = m_backing->getBindGroupLayout(index);
+    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectRegistry, m_objectHeap, identifier);
+    m_objectHeap.addObject(remoteBindGroupLayout);
 }
 
 void RemoteComputePipeline::setLabel(String&& label)
 {
-    UNUSED_PARAM(label);
+    m_backing->setLabel(WTFMove(label));
 }
 
 } // namespace WebKit

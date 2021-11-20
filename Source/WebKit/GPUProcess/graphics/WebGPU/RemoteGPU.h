@@ -42,22 +42,23 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 struct RequestAdapterOptions;
 }
 
 class RemoteGPU final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteGPU> create(PAL::WebGPU::GPU& gpu, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteGPU> create(PAL::WebGPU::GPU& gpu, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteGPU(gpu, objectHeap));
+        return adoptRef(*new RemoteGPU(gpu, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteGPU();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteGPU(PAL::WebGPU::GPU&, WebGPU::ObjectHeap&);
+    RemoteGPU(PAL::WebGPU::GPU&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteGPU(const RemoteGPU&) = delete;
     RemoteGPU(RemoteGPU&&) = delete;
@@ -66,10 +67,12 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
-    void requestAdapter(const WebGPU::RequestAdapterOptions&, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&&);
+    void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&&);
 
     Ref<PAL::WebGPU::GPU> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

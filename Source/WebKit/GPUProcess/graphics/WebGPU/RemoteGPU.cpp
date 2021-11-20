@@ -28,25 +28,76 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteAdapter.h"
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
+#include <pal/graphics/WebGPU/WebGPUAdapter.h>
 
 namespace WebKit {
 
-RemoteGPU::RemoteGPU(PAL::WebGPU::GPU& gpu, WebGPU::ObjectHeap& objectHeap)
+RemoteGPU::RemoteGPU(PAL::WebGPU::GPU& gpu, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(gpu)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteGPU::~RemoteGPU()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
-void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
+void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
 {
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(callback);
+    auto convertedOptions = m_objectRegistry.convertFromBacking(options);
+    ASSERT(convertedOptions);
+    if (!convertedOptions) {
+        callback(StringImpl::empty(), { { } }, { });
+        return;
+    }
+
+    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
+        if (!weakObjectHeap || !adapter) {
+            // FIXME: Deal with failure here.
+            return;
+        }
+        auto remoteAdapter = RemoteAdapter::create(*adapter, objectRegistry, *weakObjectHeap, identifier);
+        weakObjectHeap->addObject(remoteAdapter);
+        auto name = adapter->name();
+        const auto& features = adapter->features();
+        const auto& limits = adapter->limits();
+        callback(WTFMove(name), WebGPU::SupportedFeatures { features.features() }, WebGPU::SupportedLimits {
+            limits.maxTextureDimension1D(),
+            limits.maxTextureDimension2D(),
+            limits.maxTextureDimension3D(),
+            limits.maxTextureArrayLayers(),
+            limits.maxBindGroups(),
+            limits.maxDynamicUniformBuffersPerPipelineLayout(),
+            limits.maxDynamicStorageBuffersPerPipelineLayout(),
+            limits.maxSampledTexturesPerShaderStage(),
+            limits.maxSamplersPerShaderStage(),
+            limits.maxStorageBuffersPerShaderStage(),
+            limits.maxStorageTexturesPerShaderStage(),
+            limits.maxUniformBuffersPerShaderStage(),
+            limits.maxUniformBufferBindingSize(),
+            limits.maxStorageBufferBindingSize(),
+            limits.minUniformBufferOffsetAlignment(),
+            limits.minStorageBufferOffsetAlignment(),
+            limits.maxVertexBuffers(),
+            limits.maxVertexAttributes(),
+            limits.maxVertexBufferArrayStride(),
+            limits.maxInterStageShaderComponents(),
+            limits.maxComputeWorkgroupStorageSize(),
+            limits.maxComputeInvocationsPerWorkgroup(),
+            limits.maxComputeWorkgroupSizeX(),
+            limits.maxComputeWorkgroupSizeY(),
+            limits.maxComputeWorkgroupSizeZ(),
+            limits.maxComputeWorkgroupsPerDimension(),
+        });
+    });
 }
 
 } // namespace WebKit

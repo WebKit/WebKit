@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteSampler final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteSampler> create(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteSampler> create(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteSampler(sampler, objectHeap));
+        return adoptRef(*new RemoteSampler(sampler, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteSampler();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteSampler(PAL::WebGPU::Sampler&, WebGPU::ObjectHeap&);
+    RemoteSampler(PAL::WebGPU::Sampler&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteSampler(const RemoteSampler&) = delete;
     RemoteSampler(RemoteSampler&&) = delete;
@@ -66,7 +67,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Sampler> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

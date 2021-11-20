@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteBindGroup final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteBindGroup> create(PAL::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteBindGroup> create(PAL::WebGPU::BindGroup& bindGroup, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBindGroup(bindGroup, objectHeap));
+        return adoptRef(*new RemoteBindGroup(bindGroup, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteBindGroup();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteBindGroup(PAL::WebGPU::BindGroup&, WebGPU::ObjectHeap&);
+    RemoteBindGroup(PAL::WebGPU::BindGroup&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteBindGroup(const RemoteBindGroup&) = delete;
     RemoteBindGroup(RemoteBindGroup&&) = delete;
@@ -66,7 +67,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::BindGroup> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

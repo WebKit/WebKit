@@ -28,35 +28,54 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteTextureView.h"
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
 #include "WebGPUTextureViewDescriptor.h"
 #include <pal/graphics/WebGPU/WebGPUTexture.h>
+#include <pal/graphics/WebGPU/WebGPUTextureView.h>
+#include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
 
 namespace WebKit {
 
-RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap)
+RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(texture)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteTexture::~RemoteTexture()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
 void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor>& descriptor, WebGPUIdentifier identifier)
 {
-    UNUSED_PARAM(descriptor);
-    UNUSED_PARAM(identifier);
+    std::optional<PAL::WebGPU::TextureViewDescriptor> convertedDescriptor;
+    if (descriptor) {
+        auto resultDescriptor = m_objectRegistry.convertFromBacking(*descriptor);
+        ASSERT(resultDescriptor);
+        convertedDescriptor = WTFMove(resultDescriptor);
+        if (!convertedDescriptor)
+            return;
+    }
+    ASSERT(convertedDescriptor);
+    auto textureView = m_backing->createView(*convertedDescriptor);
+    auto remoteTextureView = RemoteTextureView::create(textureView, m_objectRegistry, m_objectHeap, identifier);
+    m_objectHeap.addObject(remoteTextureView);
 }
 
 void RemoteTexture::destroy()
 {
+    m_backing->destroy();
 }
 
 void RemoteTexture::setLabel(String&& label)
 {
-    UNUSED_PARAM(label);
+    m_backing->setLabel(WTFMove(label));
 }
 
 } // namespace WebKit

@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteBuffer NotRefCounted Stream {
-    void MapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size) -> (Vector<uint8_t> data) Synchronous
+    void MapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size) -> (std::optional<Vector<uint8_t>> data) Synchronous
     void Unmap(Vector<uint8_t> data)
     void Destroy()
     void SetLabel(String label)

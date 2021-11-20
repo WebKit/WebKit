@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteRenderBundle final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteRenderBundle> create(PAL::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteRenderBundle> create(PAL::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderBundle(renderBundle, objectHeap));
+        return adoptRef(*new RemoteRenderBundle(renderBundle, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteRenderBundle();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteRenderBundle(PAL::WebGPU::RenderBundle&, WebGPU::ObjectHeap&);
+    RemoteRenderBundle(PAL::WebGPU::RenderBundle&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteRenderBundle(const RemoteRenderBundle&) = delete;
     RemoteRenderBundle(RemoteRenderBundle&&) = delete;
@@ -66,7 +67,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::RenderBundle> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

@@ -40,21 +40,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteQuerySet final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteQuerySet> create(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteQuerySet> create(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteQuerySet(querySet, objectHeap));
+        return adoptRef(*new RemoteQuerySet(querySet, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteQuerySet();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteQuerySet(PAL::WebGPU::QuerySet&, WebGPU::ObjectHeap&);
+    RemoteQuerySet(PAL::WebGPU::QuerySet&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteQuerySet(const RemoteQuerySet&) = delete;
     RemoteQuerySet(RemoteQuerySet&&) = delete;
@@ -68,7 +69,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::QuerySet> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

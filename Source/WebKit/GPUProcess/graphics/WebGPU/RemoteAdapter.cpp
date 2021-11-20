@@ -28,29 +28,76 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDevice.h"
 #include "WebGPUDeviceDescriptor.h"
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
 #include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
+#include <pal/graphics/WebGPU/WebGPUDevice.h>
 
 namespace WebKit {
 
-RemoteAdapter::RemoteAdapter(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap)
+RemoteAdapter::RemoteAdapter(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(adapter)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteAdapter::~RemoteAdapter()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
 void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUIdentifier identifier, WTF::CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
 {
-    UNUSED_PARAM(descriptor);
-    UNUSED_PARAM(identifier);
-    UNUSED_PARAM(callback);
+    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    ASSERT(convertedDescriptor);
+    if (!convertedDescriptor) {
+        callback({ { } }, { });
+        return;
+    }
+
+    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (Ref<PAL::WebGPU::Device>&& device) mutable {
+        if (!weakObjectHeap)
+            return;
+        auto remoteDevice = RemoteDevice::create(device, objectRegistry, *weakObjectHeap, identifier);
+        weakObjectHeap->addObject(remoteDevice);
+        const auto& features = device->features();
+        const auto& limits = device->limits();
+        callback(WebGPU::SupportedFeatures { features.features() }, WebGPU::SupportedLimits {
+            limits.maxTextureDimension1D(),
+            limits.maxTextureDimension2D(),
+            limits.maxTextureDimension3D(),
+            limits.maxTextureArrayLayers(),
+            limits.maxBindGroups(),
+            limits.maxDynamicUniformBuffersPerPipelineLayout(),
+            limits.maxDynamicStorageBuffersPerPipelineLayout(),
+            limits.maxSampledTexturesPerShaderStage(),
+            limits.maxSamplersPerShaderStage(),
+            limits.maxStorageBuffersPerShaderStage(),
+            limits.maxStorageTexturesPerShaderStage(),
+            limits.maxUniformBuffersPerShaderStage(),
+            limits.maxUniformBufferBindingSize(),
+            limits.maxStorageBufferBindingSize(),
+            limits.minUniformBufferOffsetAlignment(),
+            limits.minStorageBufferOffsetAlignment(),
+            limits.maxVertexBuffers(),
+            limits.maxVertexAttributes(),
+            limits.maxVertexBufferArrayStride(),
+            limits.maxInterStageShaderComponents(),
+            limits.maxComputeWorkgroupStorageSize(),
+            limits.maxComputeInvocationsPerWorkgroup(),
+            limits.maxComputeWorkgroupSizeX(),
+            limits.maxComputeWorkgroupSizeY(),
+            limits.maxComputeWorkgroupSizeZ(),
+            limits.maxComputeWorkgroupsPerDimension(),
+        });
+    });
 }
 
 } // namespace WebKit

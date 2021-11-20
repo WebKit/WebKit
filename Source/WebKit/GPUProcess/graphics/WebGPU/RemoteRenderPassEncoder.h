@@ -43,21 +43,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteRenderPassEncoder final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteRenderPassEncoder> create(PAL::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteRenderPassEncoder> create(PAL::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderPassEncoder(renderPassEncoder, objectHeap));
+        return adoptRef(*new RemoteRenderPassEncoder(renderPassEncoder, objectRegistry, objectHeap, identifier));
     }
 
     ~RemoteRenderPassEncoder();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteRenderPassEncoder(PAL::WebGPU::RenderPassEncoder&, WebGPU::ObjectHeap&);
+    RemoteRenderPassEncoder(PAL::WebGPU::RenderPassEncoder&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteRenderPassEncoder(const RemoteRenderPassEncoder&) = delete;
     RemoteRenderPassEncoder(RemoteRenderPassEncoder&&) = delete;
@@ -110,7 +111,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::RenderPassEncoder> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

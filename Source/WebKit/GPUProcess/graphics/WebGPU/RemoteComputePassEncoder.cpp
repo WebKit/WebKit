@@ -29,77 +29,99 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
 
 namespace WebKit {
 
-RemoteComputePassEncoder::RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap)
+RemoteComputePassEncoder::RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(computePassEncoder)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteComputePassEncoder::~RemoteComputePassEncoder()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
 void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
 {
-    UNUSED_PARAM(computePipeline);
+    auto convertedComputePipeline = m_objectRegistry.convertComputePipelineFromBacking(computePipeline);
+    ASSERT(convertedComputePipeline);
+    if (!convertedComputePipeline)
+        return;
+
+    m_backing->setPipeline(*convertedComputePipeline);
 }
 
 void RemoteComputePassEncoder::dispatch(PAL::WebGPU::Size32 x, std::optional<PAL::WebGPU::Size32> y, std::optional<PAL::WebGPU::Size32> z)
 {
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
+    m_backing->dispatch(x, y, z);
 }
 
 void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectOffset);
+    auto convertedIndirectBuffer = m_objectRegistry.convertBufferFromBacking(indirectBuffer);
+    ASSERT(convertedIndirectBuffer);
+    if (!convertedIndirectBuffer)
+        return;
+
+    m_backing->dispatchIndirect(*convertedIndirectBuffer, indirectOffset);
 }
 
 void RemoteComputePassEncoder::beginPipelineStatisticsQuery(WebGPUIdentifier querySet, PAL::WebGPU::Size32 queryIndex)
 {
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
+    auto convertedQuerySet = m_objectRegistry.convertQuerySetFromBacking(querySet);
+    ASSERT(convertedQuerySet);
+    if (!convertedQuerySet)
+        return;
+
+    m_backing->beginPipelineStatisticsQuery(*convertedQuerySet, queryIndex);
 }
 
 void RemoteComputePassEncoder::endPipelineStatisticsQuery()
 {
+    m_backing->endPipelineStatisticsQuery();
 }
 
 void RemoteComputePassEncoder::endPass()
 {
+    m_backing->endPass();
 }
 
 void RemoteComputePassEncoder::setBindGroup(PAL::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
     std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&& offsets)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(bindGroup);
-    UNUSED_PARAM(offsets);
+    auto convertedBindGroup = m_objectRegistry.convertBindGroupFromBacking(bindGroup);
+    ASSERT(convertedBindGroup);
+    if (!convertedBindGroup)
+        return;
+
+    m_backing->setBindGroup(index, *convertedBindGroup, WTFMove(offsets));
 }
 
 void RemoteComputePassEncoder::pushDebugGroup(String&& groupLabel)
 {
-    UNUSED_PARAM(groupLabel);
+    m_backing->pushDebugGroup(WTFMove(groupLabel));
 }
 
 void RemoteComputePassEncoder::popDebugGroup()
 {
+    m_backing->popDebugGroup();
 }
 
 void RemoteComputePassEncoder::insertDebugMarker(String&& markerLabel)
 {
-    UNUSED_PARAM(markerLabel);
+    m_backing->insertDebugMarker(WTFMove(markerLabel));
 }
 
 void RemoteComputePassEncoder::setLabel(String&& label)
 {
-    UNUSED_PARAM(label);
+    m_backing->setLabel(WTFMove(label));
 }
 
 } // namespace WebKit

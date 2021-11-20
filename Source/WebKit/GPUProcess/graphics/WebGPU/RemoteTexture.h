@@ -40,22 +40,23 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 struct TextureViewDescriptor;
 }
 
 class RemoteTexture final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteTexture> create(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteTexture> create(PAL::WebGPU::Texture& texture, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTexture(texture, objectHeap));
+        return adoptRef(*new RemoteTexture(texture, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteTexture();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteTexture(PAL::WebGPU::Texture&, WebGPU::ObjectHeap&);
+    RemoteTexture(PAL::WebGPU::Texture&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteTexture(const RemoteTexture&) = delete;
     RemoteTexture(RemoteTexture&&) = delete;
@@ -71,7 +72,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Texture> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

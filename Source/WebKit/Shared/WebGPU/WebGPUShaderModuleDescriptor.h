@@ -35,7 +35,7 @@ namespace WebKit::WebGPU {
 
 struct ShaderModuleDescriptor : public ObjectDescriptorBase {
     String code;
-    // JSC::Strong<JSC::JSObject> sourceMap;
+    // FIXME: Hook up the sourceMap.
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

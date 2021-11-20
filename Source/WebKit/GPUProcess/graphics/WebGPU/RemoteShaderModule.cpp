@@ -29,28 +29,47 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
+#include "WebGPUObjectRegistry.h"
+#include <pal/graphics/WebGPU/WebGPUCompilationInfo.h>
+#include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
 #include <pal/graphics/WebGPU/WebGPUShaderModule.h>
 
 namespace WebKit {
 
-RemoteShaderModule::RemoteShaderModule(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap)
+RemoteShaderModule::RemoteShaderModule(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(shaderModule)
+    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
+    , m_identifier(identifier)
 {
+    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
 RemoteShaderModule::~RemoteShaderModule()
 {
+    m_objectRegistry.removeObject(m_identifier);
 }
 
 void RemoteShaderModule::compilationInfo(WTF::CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&& callback)
 {
-    UNUSED_PARAM(callback);
+    m_backing->compilationInfo([callback = WTFMove(callback)] (Ref<PAL::WebGPU::CompilationInfo>&& compilationMessage) mutable {
+        auto convertedMessages = compilationMessage->messages().map([] (const Ref<PAL::WebGPU::CompilationMessage>& message) {
+            return WebGPU::CompilationMessage {
+                message->message(),
+                message->type(),
+                message->lineNum(),
+                message->linePos(),
+                message->offset(),
+                message->length(),
+            };
+        });
+        callback(WTFMove(convertedMessages));
+    });
 }
 
 void RemoteShaderModule::setLabel(String&& label)
 {
-    UNUSED_PARAM(label);
+    m_backing->setLabel(WTFMove(label));
 }
 
 } // namespace WebKit

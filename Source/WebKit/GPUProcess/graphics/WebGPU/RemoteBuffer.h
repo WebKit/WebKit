@@ -45,21 +45,22 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 }
 
 class RemoteBuffer final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteBuffer> create(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteBuffer> create(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBuffer(buffer, objectHeap));
+        return adoptRef(*new RemoteBuffer(buffer, objectRegistry, objectHeap, identifier));
     }
 
     virtual ~RemoteBuffer();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteBuffer(PAL::WebGPU::Buffer&, WebGPU::ObjectHeap&);
+    RemoteBuffer(PAL::WebGPU::Buffer&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteBuffer(const RemoteBuffer&) = delete;
     RemoteBuffer(RemoteBuffer&&) = delete;
@@ -68,7 +69,7 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
-    void mapAsync(PAL::WebGPU::MapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> sizeForMap, WTF::CompletionHandler<void(Vector<uint8_t>&&)>&&);
+    void mapAsync(PAL::WebGPU::MapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> sizeForMap, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void unmap(Vector<uint8_t>&&);
 
     void destroy();
@@ -76,7 +77,12 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Buffer> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
+    bool m_isMapped { false };
+    std::optional<PAL::WebGPU::Buffer::MappedRange> m_mappedRange;
+    PAL::WebGPU::MapModeFlags m_mapModeFlags { 0 };
 };
 
 } // namespace WebKit

@@ -28,28 +28,28 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <pal/graphics/WebGPU/WebGPU.h>
-#include <pal/graphics/WebGPU/WebGPUAdapter.h>
-#include <pal/graphics/WebGPU/WebGPUBindGroup.h>
-#include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
-#include <pal/graphics/WebGPU/WebGPUBuffer.h>
-#include <pal/graphics/WebGPU/WebGPUCommandBuffer.h>
-#include <pal/graphics/WebGPU/WebGPUCommandEncoder.h>
-#include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
-#include <pal/graphics/WebGPU/WebGPUComputePipeline.h>
-#include <pal/graphics/WebGPU/WebGPUDevice.h>
-#include <pal/graphics/WebGPU/WebGPUExternalTexture.h>
-#include <pal/graphics/WebGPU/WebGPUPipelineLayout.h>
-#include <pal/graphics/WebGPU/WebGPUQuerySet.h>
-#include <pal/graphics/WebGPU/WebGPUQueue.h>
-#include <pal/graphics/WebGPU/WebGPURenderBundle.h>
-#include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
-#include <pal/graphics/WebGPU/WebGPURenderPassEncoder.h>
-#include <pal/graphics/WebGPU/WebGPURenderPipeline.h>
-#include <pal/graphics/WebGPU/WebGPUSampler.h>
-#include <pal/graphics/WebGPU/WebGPUShaderModule.h>
-#include <pal/graphics/WebGPU/WebGPUTexture.h>
-#include <pal/graphics/WebGPU/WebGPUTextureView.h>
+#include "RemoteAdapter.h"
+#include "RemoteBindGroup.h"
+#include "RemoteBindGroupLayout.h"
+#include "RemoteBuffer.h"
+#include "RemoteCommandBuffer.h"
+#include "RemoteCommandEncoder.h"
+#include "RemoteComputePassEncoder.h"
+#include "RemoteComputePipeline.h"
+#include "RemoteDevice.h"
+#include "RemoteExternalTexture.h"
+#include "RemoteGPU.h"
+#include "RemotePipelineLayout.h"
+#include "RemoteQuerySet.h"
+#include "RemoteQueue.h"
+#include "RemoteRenderBundle.h"
+#include "RemoteRenderBundleEncoder.h"
+#include "RemoteRenderPassEncoder.h"
+#include "RemoteRenderPipeline.h"
+#include "RemoteSampler.h"
+#include "RemoteShaderModule.h"
+#include "RemoteTexture.h"
+#include "RemoteTextureView.h"
 
 namespace WebKit::WebGPU {
 
@@ -61,180 +61,268 @@ ObjectHeap::~ObjectHeap()
 {
 }
 
-PAL::WebGPU::Adapter* ObjectHeap::convertAdapterFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteAdapter& adapter)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Adapter>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::Adapter>>(iterator->value).ptr();
+    auto result = m_objects.add(&adapter, adapter);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::BindGroup* ObjectHeap::convertBindGroupFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteBindGroup& bindGroup)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::BindGroup>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::BindGroup>>(iterator->value).ptr();
+    auto result = m_objects.add(&bindGroup, bindGroup);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::BindGroupLayout* ObjectHeap::convertBindGroupLayoutFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteBindGroupLayout& bindGroupLayout)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::BindGroupLayout>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::BindGroupLayout>>(iterator->value).ptr();
+    auto result = m_objects.add(&bindGroupLayout, bindGroupLayout);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::Buffer* ObjectHeap::convertBufferFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteBuffer& buffer)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Buffer>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::Buffer>>(iterator->value).ptr();
+    auto result = m_objects.add(&buffer, buffer);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::CommandBuffer* ObjectHeap::convertCommandBufferFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteCommandBuffer& commandBuffer)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::CommandBuffer>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::CommandBuffer>>(iterator->value).ptr();
+    auto result = m_objects.add(&commandBuffer, commandBuffer);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::CommandEncoder* ObjectHeap::convertCommandEncoderFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteCommandEncoder& commandEncoder)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::CommandEncoder>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::CommandEncoder>>(iterator->value).ptr();
+    auto result = m_objects.add(&commandEncoder, commandEncoder);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::ComputePassEncoder* ObjectHeap::convertComputePassEncoderFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteComputePassEncoder& computePassEncoder)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ComputePassEncoder>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::ComputePassEncoder>>(iterator->value).ptr();
+    auto result = m_objects.add(&computePassEncoder, computePassEncoder);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::ComputePipeline* ObjectHeap::convertComputePipelineFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteComputePipeline& computePipeline)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ComputePipeline>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::ComputePipeline>>(iterator->value).ptr();
+    auto result = m_objects.add(&computePipeline, computePipeline);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::Device* ObjectHeap::convertDeviceFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteDevice& device)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Device>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::Device>>(iterator->value).ptr();
+    auto result = m_objects.add(&device, device);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::ExternalTexture* ObjectHeap::convertExternalTextureFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteExternalTexture& externalTexture)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ExternalTexture>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::ExternalTexture>>(iterator->value).ptr();
+    auto result = m_objects.add(&externalTexture, externalTexture);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::GPU* ObjectHeap::convertGPUFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteGPU& gpu)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::GPU>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::GPU>>(iterator->value).ptr();
+    auto result = m_objects.add(&gpu, gpu);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::PipelineLayout* ObjectHeap::convertPipelineLayoutFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemotePipelineLayout& pipelineLayout)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::PipelineLayout>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::PipelineLayout>>(iterator->value).ptr();
+    auto result = m_objects.add(&pipelineLayout, pipelineLayout);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::QuerySet* ObjectHeap::convertQuerySetFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteQuerySet& querySet)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::QuerySet>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::QuerySet>>(iterator->value).ptr();
+    auto result = m_objects.add(&querySet, querySet);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::Queue* ObjectHeap::convertQueueFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteQueue& queue)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Queue>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::Queue>>(iterator->value).ptr();
+    auto result = m_objects.add(&queue, queue);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::RenderBundleEncoder* ObjectHeap::convertRenderBundleEncoderFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteRenderBundleEncoder& renderBundleEncoder)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderBundleEncoder>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::RenderBundleEncoder>>(iterator->value).ptr();
+    auto result = m_objects.add(&renderBundleEncoder, renderBundleEncoder);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::RenderBundle* ObjectHeap::convertRenderBundleFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteRenderBundle& renderBundle)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderBundle>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::RenderBundle>>(iterator->value).ptr();
+    auto result = m_objects.add(&renderBundle, renderBundle);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::RenderPassEncoder* ObjectHeap::convertRenderPassEncoderFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteRenderPassEncoder& renderPassEncoder)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderPassEncoder>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::RenderPassEncoder>>(iterator->value).ptr();
+    auto result = m_objects.add(&renderPassEncoder, renderPassEncoder);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::RenderPipeline* ObjectHeap::convertRenderPipelineFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteRenderPipeline& renderPipeline)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::RenderPipeline>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::RenderPipeline>>(iterator->value).ptr();
+    auto result = m_objects.add(&renderPipeline, renderPipeline);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::Sampler* ObjectHeap::convertSamplerFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteSampler& sampler)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Sampler>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::Sampler>>(iterator->value).ptr();
+    auto result = m_objects.add(&sampler, sampler);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::ShaderModule* ObjectHeap::convertShaderModuleFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteShaderModule& shaderModule)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::ShaderModule>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::ShaderModule>>(iterator->value).ptr();
+    auto result = m_objects.add(&shaderModule, shaderModule);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::Texture* ObjectHeap::convertTextureFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteTexture& texture)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::Texture>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::Texture>>(iterator->value).ptr();
+    auto result = m_objects.add(&texture, texture);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-PAL::WebGPU::TextureView* ObjectHeap::convertTextureViewFromBacking(WebGPUIdentifier identifier)
+void ObjectHeap::addObject(RemoteTextureView& textureView)
 {
-    auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<PAL::WebGPU::TextureView>>(iterator->value))
-        return nullptr;
-    return std::get<Ref<PAL::WebGPU::TextureView>>(iterator->value).ptr();
+    auto result = m_objects.add(&textureView, textureView);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::removeObject(RemoteAdapter& adapter)
+{
+    auto result = m_objects.remove(&adapter);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteBindGroup& bindGroup)
+{
+    auto result = m_objects.remove(&bindGroup);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteBindGroupLayout& bindGroupLayout)
+{
+    auto result = m_objects.remove(&bindGroupLayout);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteBuffer& buffer)
+{
+    auto result = m_objects.remove(&buffer);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteCommandBuffer& commandBuffer)
+{
+    auto result = m_objects.remove(&commandBuffer);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteCommandEncoder& commandEncoder)
+{
+    auto result = m_objects.remove(&commandEncoder);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteComputePassEncoder& computePassEncoder)
+{
+    auto result = m_objects.remove(&computePassEncoder);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteComputePipeline& computePipeline)
+{
+    auto result = m_objects.remove(&computePipeline);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteDevice& device)
+{
+    auto result = m_objects.remove(&device);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteExternalTexture& externalTexture)
+{
+    auto result = m_objects.remove(&externalTexture);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteGPU& gpu)
+{
+    auto result = m_objects.remove(&gpu);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemotePipelineLayout& pipelineLayout)
+{
+    auto result = m_objects.remove(&pipelineLayout);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteQuerySet& querySet)
+{
+    auto result = m_objects.remove(&querySet);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteQueue& queue)
+{
+    auto result = m_objects.remove(&queue);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteRenderBundleEncoder& renderBundleEncoder)
+{
+    auto result = m_objects.remove(&renderBundleEncoder);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteRenderBundle& renderBundle)
+{
+    auto result = m_objects.remove(&renderBundle);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteRenderPassEncoder& renderPassEncoder)
+{
+    auto result = m_objects.remove(&renderPassEncoder);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteRenderPipeline& renderPipeline)
+{
+    auto result = m_objects.remove(&renderPipeline);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteSampler& sampler)
+{
+    auto result = m_objects.remove(&sampler);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteShaderModule& shaderModule)
+{
+    auto result = m_objects.remove(&shaderModule);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteTexture& texture)
+{
+    auto result = m_objects.remove(&texture);
+    ASSERT_UNUSED(result, result);
+}
+
+void ObjectHeap::removeObject(RemoteTextureView& textureView)
+{
+    auto result = m_objects.remove(&textureView);
+    ASSERT_UNUSED(result, result);
 }
 
 } // namespace WebKit::WebGPU

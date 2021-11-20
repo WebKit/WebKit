@@ -50,8 +50,8 @@ public:
 
     virtual void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64>, WTF::Function<void()>&&) = 0;
     struct MappedRange {
-        const void* source;
-        size_t byteLength;
+        void* source { nullptr };
+        size_t byteLength { 0 };
     };
     virtual MappedRange getMappedRange(std::optional<Size64> offset, std::optional<Size64>) = 0;
     virtual void unmap() = 0;

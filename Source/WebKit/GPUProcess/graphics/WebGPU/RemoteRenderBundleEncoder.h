@@ -42,22 +42,23 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+class ObjectRegistry;
 struct RenderBundleDescriptor;
 }
 
 class RemoteRenderBundleEncoder final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteRenderBundleEncoder> create(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteRenderBundleEncoder> create(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderBundleEncoder(renderBundleEncoder, objectHeap));
+        return adoptRef(*new RemoteRenderBundleEncoder(renderBundleEncoder, objectRegistry, objectHeap, identifier));
     }
 
     ~RemoteRenderBundleEncoder();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder&, WebGPU::ObjectHeap&);
+    RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteRenderBundleEncoder(const RemoteRenderBundleEncoder&) = delete;
     RemoteRenderBundleEncoder(RemoteRenderBundleEncoder&&) = delete;
@@ -93,7 +94,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::RenderBundleEncoder> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

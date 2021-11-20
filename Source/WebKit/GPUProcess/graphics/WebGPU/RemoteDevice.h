@@ -49,6 +49,7 @@ struct CommandEncoderDescriptor;
 struct ComputePipelineDescriptor;
 struct ExternalTextureDescriptor;
 class ObjectHeap;
+class ObjectRegistry;
 struct PipelineLayoutDescriptor;
 struct QuerySetDescriptor;
 struct RenderBundleEncoderDescriptor;
@@ -60,17 +61,17 @@ struct TextureDescriptor;
 
 class RemoteDevice final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteDevice> create(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap)
+    static Ref<RemoteDevice> create(PAL::WebGPU::Device& device, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteDevice(device, objectHeap));
+        return adoptRef(*new RemoteDevice(device, objectRegistry, objectHeap, identifier));
     }
 
     ~RemoteDevice();
 
 private:
-    friend class ObjectHeap;
+    friend class ObjectRegistry;
 
-    RemoteDevice(PAL::WebGPU::Device&, WebGPU::ObjectHeap&);
+    RemoteDevice(PAL::WebGPU::Device&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
@@ -107,7 +108,9 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Device> m_backing;
-    Ref<WebGPU::ObjectHeap> m_objectHeap;
+    WebGPU::ObjectRegistry& m_objectRegistry;
+    WebGPU::ObjectHeap& m_objectHeap;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit
