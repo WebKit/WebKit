@@ -1,3 +1,12 @@
+2021-11-19  Alan Bujtas  <zalan@apple.com>
+
+        Add layout performance test for simple bidi content
+        (this is not about inline axis direction, just mixed, bidirectional content)
+
+        Unreviewed.
+
+        * Layout/line-layout-simple-bidi.html: Added.
+
 2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Workaround for failing mips tests
