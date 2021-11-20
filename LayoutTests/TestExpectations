@@ -525,7 +525,6 @@ imported/w3c/web-platform-tests/content-security-policy/inside-worker/servicewor
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-blob-scheme.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-data-scheme.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/domain/domain-attribute-host-with-and-without-leading-period.sub.https.html [ Skip ]

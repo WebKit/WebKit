@@ -681,11 +681,11 @@ bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, 
     case ContentSecurityPolicyEnforcement::DoNotEnforce:
         return true;
     case ContentSecurityPolicyEnforcement::EnforceChildSrcDirective:
-        return contentSecurityPolicy().allowChildContextFromSource(url, redirectResponseReceived);
+        return contentSecurityPolicy().allowChildContextFromSource(url, redirectResponseReceived, preRedirectURL);
     case ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective:
         return contentSecurityPolicy().allowConnectToSource(url, redirectResponseReceived, preRedirectURL);
     case ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective:
-        return contentSecurityPolicy().allowScriptFromSource(url, redirectResponseReceived);
+        return contentSecurityPolicy().allowScriptFromSource(url, redirectResponseReceived, preRedirectURL);
     }
     ASSERT_NOT_REACHED();
     return false;
