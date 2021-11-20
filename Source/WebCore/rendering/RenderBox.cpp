@@ -1458,6 +1458,9 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
     }
     case PathOperation::Box:
         break;
+    case PathOperation::Ray:
+        ASSERT_NOT_REACHED("clip-path does not support Ray shape");
+        break;
     }
 
     return true;

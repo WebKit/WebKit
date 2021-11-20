@@ -140,6 +140,7 @@ public:
     bool isPendingSubstitutionValue() const { return m_classType == PendingSubstitutionValueClass; }
 
     bool isOffsetRotateValue() const { return m_classType == OffsetRotateClass; }
+    bool isRayValue() const { return m_classType == RayClass; }
 
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
 
@@ -213,6 +214,7 @@ protected:
         PendingSubstitutionValueClass,
 
         OffsetRotateClass,
+        RayClass,
 
         // List class types must appear after ValueListClass. Note CSSFunctionValue
         // is deliberately excluded, since we don't want it exposed to the CSS OM

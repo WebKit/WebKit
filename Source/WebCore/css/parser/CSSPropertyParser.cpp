@@ -55,6 +55,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
@@ -2774,14 +2775,53 @@ static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const
     return list;
 }
 
+// Parses the ray() definition as defined in https://drafts.fxtf.org/motion-1/#funcdef-offset-path-ray
+// ray( [ <angle> && <size> && contain? ] )
+static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueRay)
+        return nullptr;
+
+    CSSParserTokenRange args = consumeFunction(range);
+
+    RefPtr<CSSPrimitiveValue> angle;
+    RefPtr<CSSPrimitiveValue> size;
+    bool isContaining = false;
+    while (!args.atEnd()) {
+        if (!angle && (angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid)))
+            continue;
+
+        if (!size && (size = consumeIdent<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueSides>(args)))
+            continue;
+
+        if (!isContaining && (isContaining = consumeIdent<CSSValueContain>(args)))
+            continue;
+
+        return nullptr;
+    }
+
+    // <angle> and <size> must be present.
+    if (!angle || !size)
+        return nullptr;
+
+    return CSSRayValue::create(angle.releaseNonNull(), size.releaseNonNull(), isContaining);
+}
+
+enum class ConsumeRay { Include, Exclude };
+
 // Consumes shapes accepted by clip-path and offset-path.
-// FIXME: implement support for ray() shape accepted by offset-path.
-static RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParserContext& context, ConsumeRay consumeRay)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
     if (RefPtr<CSSPrimitiveValue> url = consumeUrl(range))
         return url;
+
+    if (consumeRay == ConsumeRay::Include) {
+        if (auto ray = consumeRayShape(range, context))
+            return ray;
+    }
+
     return consumeBasicShapeOrBox(range, context);
 }
 
@@ -4413,7 +4453,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
             return parsedValue;
         return consumePercent(m_range, ValueRange::All);
     case CSSPropertyOffsetPath:
-        return consumePathOperation(m_range, m_context);
+        return consumePathOperation(m_range, m_context, ConsumeRay::Include);
     case CSSPropertyOffsetDistance:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All, UnitlessQuirk::Forbid);
     case CSSPropertyOffsetPosition:
@@ -4476,7 +4516,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyShapeOutside:
         return consumeShapeOutside(m_range, m_context);
     case CSSPropertyClipPath:
-        return consumePathOperation(m_range, m_context);
+        return consumePathOperation(m_range, m_context, ConsumeRay::Exclude);
     case CSSPropertyJustifyContent:
         // justify-content property does not allow the <baseline-position> values.
         if (isBaselineKeyword(m_range.peek().id()))

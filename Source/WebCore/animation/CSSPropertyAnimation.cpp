@@ -294,6 +294,14 @@ static inline RefPtr<PathOperation> blendFunc(PathOperation* from, PathOperation
             return ShapePathOperation::create(toShape.blend(fromShape, context));
     }
 
+    if (is<RayPathOperation>(from) && is<RayPathOperation>(to)) {
+        auto& fromRay = downcast<RayPathOperation>(*from);
+        auto& toRay = downcast<RayPathOperation>(*to);
+
+        if (fromRay.canBlend(toRay))
+            return fromRay.blend(toRay, context);
+    }
+
     // fall back to discrete animation.
     return context.progress < 0.5 ? from : to;
 }
@@ -1089,6 +1097,13 @@ private:
             auto& toShape = downcast<ShapePathOperation>(*toPath).basicShape();
 
             return fromShape.canBlend(toShape);
+        }
+
+        if (is<RayPathOperation>(fromPath) && is<RayPathOperation>(toPath)) {
+            auto& fromRay = downcast<RayPathOperation>(*fromPath);
+            auto& toRay = downcast<RayPathOperation>(*toPath);
+
+            return fromRay.canBlend(toRay);
         }
 
         return false;

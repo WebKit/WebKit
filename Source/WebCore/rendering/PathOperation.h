@@ -43,7 +43,8 @@ public:
     enum OperationType {
         Reference,
         Shape,
-        Box
+        Box,
+        Ray
     };
 
     virtual ~PathOperation() = default;
@@ -161,6 +162,62 @@ private:
     CSSBoxType m_referenceBox;
 };
 
+
+class RayPathOperation final : public PathOperation {
+public:
+    enum class Size {
+        ClosestSide,
+        ClosestCorner,
+        FarthestSide,
+        FarthestCorner,
+        Sides
+    };
+
+    static Ref<RayPathOperation> create(float angle, Size size, bool isContaining)
+    {
+        return adoptRef(*new RayPathOperation(angle, size, isContaining));
+    }
+
+    float angle() const { return m_angle; }
+    Size size() const { return m_size; }
+    bool isContaining() const { return m_isContaining; }
+
+    bool canBlend(const RayPathOperation& other) const
+    {
+        // Two rays can only be blended if they have the same size and are both containing.
+        return m_size == other.m_size && m_isContaining == other.m_isContaining;
+    }
+
+    Ref<RayPathOperation> blend(const RayPathOperation& to, const BlendingContext& context) const
+    {
+        return RayPathOperation::create(WebCore::blend(m_angle, to.m_angle, context), m_size, m_isContaining);
+    }
+
+private:
+    bool operator==(const PathOperation& other) const override
+    {
+        if (!isSameType(other))
+            return false;
+
+        auto& otherCasted = downcast<RayPathOperation>(other);
+        return m_angle == otherCasted.m_angle
+            && m_size == otherCasted.m_size
+            && m_isContaining == otherCasted.m_isContaining;
+    }
+
+    RayPathOperation(float angle, Size size, bool isContaining)
+        : PathOperation(Ray)
+        , m_angle(angle)
+        , m_size(size)
+        , m_isContaining(isContaining)
+    {
+    }
+
+    float m_angle;
+    Size m_size;
+    bool m_isContaining;
+};
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ToValueTypeName, predicate) \
@@ -171,3 +228,4 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ReferencePathOperation, PathOperation::Reference)
 SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ShapePathOperation, PathOperation::Shape)
 SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(BoxPathOperation, PathOperation::Box)
+SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(RayPathOperation, PathOperation::Ray)

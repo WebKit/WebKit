@@ -42,6 +42,7 @@
 #include "CSSOffsetRotateValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CalcExpressionLength.h"
 #include "CalcExpressionOperation.h"
@@ -634,6 +635,34 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
         }
         ASSERT(primitiveValue.valueID() == CSSValueNone);
         return nullptr;
+    }
+
+    if (is<CSSRayValue>(value)) {
+        auto& rayValue = downcast<CSSRayValue>(value);
+
+        RayPathOperation::Size size = RayPathOperation::Size::ClosestCorner;
+        switch (rayValue.size()->valueID()) {
+        case CSSValueClosestCorner:
+            size = RayPathOperation::Size::ClosestCorner;
+            break;
+        case CSSValueClosestSide:
+            size = RayPathOperation::Size::ClosestSide;
+            break;
+        case CSSValueFarthestCorner:
+            size = RayPathOperation::Size::FarthestCorner;
+            break;
+        case CSSValueFarthestSide:
+            size = RayPathOperation::Size::FarthestSide;
+            break;
+        case CSSValueSides:
+            size = RayPathOperation::Size::Sides;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+
+        return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
     }
 
     CSSBoxType referenceBox = CSSBoxType::BoxMissing;

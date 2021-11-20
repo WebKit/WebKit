@@ -56,6 +56,7 @@
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
+#include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
@@ -217,6 +218,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSPendingSubstitutionValue>(*this, other);
         case OffsetRotateClass:
             return compareCSSValues<CSSOffsetRotateValue>(*this, other);
+        case RayClass:
+            return compareCSSValues<CSSRayValue>(*this, other);
         case FontStyleClass:
             return compareCSSValues<CSSFontStyleValue>(*this, other);
         case FontStyleRangeClass:
@@ -320,6 +323,8 @@ String CSSValue::cssText() const
         return downcast<CSSPendingSubstitutionValue>(*this).customCSSText();
     case OffsetRotateClass:
         return downcast<CSSOffsetRotateValue>(*this).customCSSText();
+    case RayClass:
+        return downcast<CSSRayValue>(*this).customCSSText();
     case FontStyleClass:
         return downcast<CSSFontStyleValue>(*this).customCSSText();
     case FontStyleRangeClass:
@@ -466,6 +471,9 @@ void CSSValue::destroy()
         return;
     case OffsetRotateClass:
         delete downcast<CSSOffsetRotateValue>(this);
+        return;
+    case RayClass:
+        delete downcast<CSSRayValue>(this);
         return;
     case FontStyleClass:
         delete downcast<CSSFontStyleValue>(this);

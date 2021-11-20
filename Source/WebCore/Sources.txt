@@ -742,6 +742,7 @@ css/CSSPaintImageValue.cpp
 css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
 css/CSSPropertySourceData.cpp
+css/CSSRayValue.cpp
 css/CSSReflectValue.cpp
 css/CSSRegisteredCustomProperty.cpp
 css/CSSRule.cpp

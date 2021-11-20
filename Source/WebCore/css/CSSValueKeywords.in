@@ -1577,3 +1577,13 @@ layout
 #if !(defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API)
 paint
 #endif
+
+// offset-path
+// https://drafts.fxtf.org/motion-1/#offset-path-property
+ray
+// closest-side
+// closest-corner
+// farthest-side
+// farthest-corner
+sides
+// contain

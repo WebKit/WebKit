@@ -41,6 +41,7 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
 #include "CSSShadowValue.h"
@@ -1456,6 +1457,25 @@ static Ref<CSSValue> valueForPositionOrAuto(const RenderStyle& style, const Leng
     return valueForPosition(style, position);
 }
 
+static CSSValueID valueIDForRaySize(RayPathOperation::Size size)
+{
+    switch (size) {
+    case RayPathOperation::Size::ClosestCorner:
+        return CSSValueClosestCorner;
+    case RayPathOperation::Size::ClosestSide:
+        return CSSValueClosestSide;
+    case RayPathOperation::Size::FarthestCorner:
+        return CSSValueFarthestCorner;
+    case RayPathOperation::Size::FarthestSide:
+        return CSSValueFarthestSide;
+    case RayPathOperation::Size::Sides:
+        return CSSValueSides;
+    }
+
+    ASSERT_NOT_REACHED();
+    return CSSValueInvalid;
+}
+
 static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, SVGPathConversion conversion = SVGPathConversion::None)
 {
     auto& cssValuePool = CSSValuePool::singleton();
@@ -1463,21 +1483,37 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
     if (!operation)
         return cssValuePool.createIdentifierValue(CSSValueNone);
 
-    if (is<ReferencePathOperation>(*operation))
+    switch (operation->type()) {
+    case PathOperation::Reference:
         return CSSPrimitiveValue::create(downcast<ReferencePathOperation>(*operation).url(), CSSUnitType::CSS_URI);
 
-    auto list = CSSValueList::createSpaceSeparated();
-    if (is<ShapePathOperation>(*operation)) {
+    case PathOperation::Shape: {
+        auto list = CSSValueList::createSpaceSeparated();
+
         auto& shapeOperation = downcast<ShapePathOperation>(*operation);
         list->append(valueForBasicShape(style, shapeOperation.basicShape(), conversion));
+
         if (shapeOperation.referenceBox() != CSSBoxType::BoxMissing)
             list->append(cssValuePool.createValue(shapeOperation.referenceBox()));
+
+        return list;
     }
 
-    if (is<BoxPathOperation>(*operation))
-        list->append(cssValuePool.createValue(downcast<BoxPathOperation>(*operation).referenceBox()));
+    case PathOperation::Box:
+        return cssValuePool.createValue(downcast<BoxPathOperation>(*operation).referenceBox());
 
-    return list;
+    case PathOperation::Ray: {
+        auto& ray = downcast<RayPathOperation>(*operation);
+
+        auto angle = cssValuePool.createValue(ray.angle(), CSSUnitType::CSS_DEG);
+        auto size = cssValuePool.createIdentifierValue(valueIDForRaySize(ray.size()));
+
+        return CSSRayValue::create(WTFMove(angle), WTFMove(size), ray.isContaining());
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return cssValuePool.createIdentifierValue(CSSValueNone);
 }
 
 ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
