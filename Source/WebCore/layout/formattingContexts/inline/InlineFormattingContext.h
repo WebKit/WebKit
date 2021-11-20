@@ -54,6 +54,7 @@ public:
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
     void lineLayoutForIntergration(const ConstraintsForInFlowContent&);
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }

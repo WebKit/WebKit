@@ -220,7 +220,7 @@ void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderS
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, nullptr };
-    auto constraints = inlineFormattingContext.computedIntrinsicWidthConstraints();
+    auto constraints = inlineFormattingContext.computedIntrinsicWidthConstraintsForIntegration();
 
     return { constraints.minimum, constraints.maximum };
 }

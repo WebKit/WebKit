@@ -157,6 +157,20 @@ void InlineFormattingContext::lineLayoutForIntergration(const ConstraintsForInFl
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes());
 }
 
+IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraintsForIntegration()
+{
+    if (formattingState().intrinsicWidthConstraints())
+        return *formattingState().intrinsicWidthConstraints();
+
+    collectContentIfNeeded();
+
+    auto constraints = formattingGeometry().constrainByMinMaxWidth(root(),
+        { ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum))
+        , ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum)) });
+    formattingState().setIntrinsicWidthConstraints(constraints);
+    return constraints;
+}
+
 LayoutUnit InlineFormattingContext::usedContentHeight() const
 {
     // 10.6.7 'Auto' heights for block formatting context roots

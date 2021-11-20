@@ -4580,6 +4580,21 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
     if (!modernLineLayout())
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
 
+#if ENABLE_MODERN_PREFERRED_WIDTH_COMPUTATION_FOR_INLINE_BOXES
+    auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
+    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
+        auto& renderer = *walker.current();
+        if (renderer.isText() || is<RenderLineBreak>(renderer))
+            continue;
+        if (is<RenderInline>(renderer)) {
+            layoutFormattingContextLineLayout.updateInlineBoxDimensions(downcast<RenderInline>(renderer));
+            continue;
+        }
+        // FIXME: Add other, inline level box cases.
+        ASSERT_NOT_IMPLEMENTED_YET();
+    }
+#endif
+
     std::tie(minLogicalWidth, maxLogicalWidth) = modernLineLayout()->computeIntrinsicWidthConstraints();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
         walker.current()->setPreferredLogicalWidthsDirty(false);
