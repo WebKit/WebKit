@@ -327,16 +327,6 @@ fast/forms/validation-message-on-radio.html [ Skip ]
 fast/forms/validation-message-on-range.html [ Skip ]
 fast/forms/validation-message-on-textarea.html [ Skip ]
 
-# No support for QuickTime/YouTube plugin replacement.
-security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
-
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera [ Skip ]
 
@@ -842,6 +832,8 @@ http/tests/misc/webtiming-no-origin.html [ Failure Pass ]
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 
 http/tests/misc/acid3.html [ Failure ]
+
+http/tests/model [ Skip ]
 
 http/tests/navigation [ Skip ]
 http/tests/navigation/post-301-response.html [ Pass ]

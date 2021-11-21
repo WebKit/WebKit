@@ -1,3 +1,10 @@
+2021-11-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-11-21  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] svg image as grid items should use the overriding logical width/height when defined to compute the logical height/width
