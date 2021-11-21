@@ -55,7 +55,9 @@ public:
     FloatRect rect() const { return box().logicalRect(); }
 
     bool isHorizontal() const { return true; }
-    // FIXME: Provide or remove.
+    // FIXME: Currently dirOverride() is used at two places:
+    // 1. RenderTreeAsText when dumping the text content.
+    // 2. Passing in when constructing a TextRun object. This bit is then used at drawBidiText which we don't use it yet here (and maybe never).
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return box().isLineBreak(); }
 

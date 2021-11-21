@@ -114,8 +114,7 @@ layer at (0,0) size 800x615
               text run at (20,0) width 1: "\x{202C}"
           RenderBlock {P} at (4,64) size 21x20
             RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21 LTR override: "\x{202D}\x{5D2}\x{5D1}\x{5D0}"
-              text run at (20,0) width 1: "\x{202C}"
+              text run at (0,0) width 21: "\x{202D}\x{5D2}\x{5D1}\x{5D0}\x{202C}"
         RenderText {#text} at (143,86) size 5x19
           text run at (143,86) width 5: " "
         RenderBlock {DIV} at (150,63) size 89x68 [border: (1px solid #008000)]
@@ -271,15 +270,14 @@ layer at (0,0) size 800x615
               text run at (118,0) width 20 RTL: "\x{5D6}\x{5D7}\x{5D8}"
           RenderBlock {P} at (4,124) size 139x20
             RenderText {#text} at (0,0) size 138x19
-              text run at (0,0) width 57 RTL override: "\x{202E}CBA \x{5D0}\x{5D1}\x{5D2}"
-              text run at (56,0) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5} "
+              text run at (0,0) width 80 RTL: "\x{5D3}\x{5D4}\x{5D5} \x{202E}CBA \x{5D0}\x{5D1}\x{5D2}"
               text run at (79,0) width 39: "\x{202C} DEF "
               text run at (117,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
           RenderBlock {P} at (4,144) size 139x20
             RenderText {#text} at (0,0) size 138x19
               text run at (0,0) width 21 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (20,0) width 5: " "
-              text run at (24,0) width 56 LTR override: "\x{202D}ABC \x{5D5}\x{5D4}\x{5D3}"
+              text run at (24,0) width 56: "\x{202D}ABC \x{5D5}\x{5D4}\x{5D3}"
               text run at (79,0) width 40: "\x{202C} DEF "
               text run at (118,0) width 20 RTL: "\x{5D6}\x{5D7}\x{5D8}"
           RenderBlock {P} at (4,164) size 139x20
@@ -448,8 +446,7 @@ layer at (0,0) size 800x615
                     text run at (0,0) width 5 RTL: "\x{5D6}"
           RenderBlock {P} at (4,24) size 171x20
             RenderText {#text} at (0,0) size 171x19
-              text run at (0,0) width 90 RTL override: "\x{202E}ABC \x{5D3}\x{5D4}\x{5D5} DEF"
-              text run at (89,0) width 26 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+              text run at (0,0) width 115 RTL: "\x{5D0}\x{5D1}\x{5D2} \x{202E}ABC \x{5D3}\x{5D4}\x{5D5} DEF"
               text run at (114,0) width 37: "\x{202C} GHI "
               text run at (150,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (184,210) size 5x19
@@ -531,7 +528,7 @@ layer at (0,0) size 800x615
             RenderText {#text} at (0,0) size 171x19
               text run at (0,0) width 21 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (20,0) width 42: " ABC "
-              text run at (61,0) width 54 RTL override: "\x{202E}\x{5D3}\x{5D4}\x{5D5} DEF"
+              text run at (61,0) width 54 RTL: "\x{202E}\x{5D3}\x{5D4}\x{5D5} DEF"
               text run at (114,0) width 37: "\x{202C} GHI "
               text run at (150,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (0,0) size 0x0

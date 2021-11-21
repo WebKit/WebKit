@@ -110,10 +110,10 @@ layer at (0,0) size 800x356
             RenderTableCell {TD} at (97,87) size 214x29 [border: (0.50px solid #008000)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (4,4) size 204x20
                 text run at (4,4) width 23: "abc"
-                text run at (26,4) width 62 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (26,4) width 62 RTL: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
                 text run at (87,4) width 22: "\x{202C}jkl "
                 text run at (108,4) width 19 RTL: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
-                text run at (126,4) width 62 LTR override: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (126,4) width 62: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
                 text run at (187,4) width 21 RTL: "\x{5D0}\x{5D1}\x{5D2}"
             RenderTableCell {TD} at (310,87) size 213x29 [border: (0.50px solid #008000)] [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 204x20

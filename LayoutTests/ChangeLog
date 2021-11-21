@@ -1,3 +1,21 @@
+2021-11-21  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable bidi content for non-inline-box cases
+        https://bugs.webkit.org/show_bug.cgi?id=232980
+        <rdar://problem/85281410>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios/fast/dom/52776-expected.txt: progression
+        * platform/ios/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt: progression
+        * platform/ios/fast/text/international/bidi-neutral-run-expected.txt: rebaseline
+        * platform/ios/fast/text/international/bidi-override-expected.txt: see FIXME
+        * platform/ios/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt: see FIXME
+
+        * platform/mac/fast/dom/52776-expected.txt:
+        * platform/mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+
 2021-11-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
