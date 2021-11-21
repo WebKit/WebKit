@@ -1,3 +1,46 @@
+2021-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an API test for batch image analysis (-[WKWebView _startImageAnalysis:])
+        https://bugs.webkit.org/show_bug.cgi?id=233331
+
+        Reviewed by Sam Weinig.
+
+        Add a new API teset to exercise the `-_startImageAnalysis:` SPI introduced in r285949, along with helper
+        functions to simulate `VKImageAnalysis` results from VisionKitCore. See below for more details.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (-[TestWKWebView waitForImageAnalysisRequests:]):
+        (TestWebKitAPI::createWebViewWithTextRecognitionEnhancements):
+        (TestWebKitAPI::swizzledProcessRequestWithResults):
+        (TestWebKitAPI::swizzledProcessRequestWithError):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::swizzledProcessRequest): Deleted.
+
+        Add an API test that uses `-_startImageAnalysis:` to perform batch image analysis over 5 image elements on the
+        page, and verify that the text results are injected back into the page.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/multiple-images.html: Added.
+        * TestWebKitAPI/cocoa/ImageAnalysisTestingUtilities.h: Added.
+        * TestWebKitAPI/cocoa/ImageAnalysisTestingUtilities.mm: Added.
+        (-[TestVKQuad initWithTopLeft:topRight:bottomLeft:bottomRight:]):
+        (-[TestVKWKTextInfo initWithString:quad:]):
+        (-[TestVKWKTextInfo string]):
+        (-[TestVKWKTextInfo quad]):
+        (-[TestVKWKLineInfo initWithString:quad:children:]):
+        (-[TestVKWKLineInfo children]):
+        (-[TestVKImageAnalysis initWithLines:]):
+        (-[TestVKImageAnalysis allLines]):
+        (TestWebKitAPI::createQuad):
+        (TestWebKitAPI::createTextInfo):
+        (TestWebKitAPI::createLineInfo):
+        (TestWebKitAPI::createImageAnalysis):
+        (TestWebKitAPI::createImageAnalysisWithSimpleFixedResults):
+
+        Add helper functions to create and return mock objects that represent VKImageAnalysis, VKWKLineInfo,
+        VKWKTextInfo and VKQuad.
+
 2021-11-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Dispatch all AccessibilityUIElement parameterized attribute requests to the AX thread for isolated tree mode.

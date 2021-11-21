@@ -1016,6 +1016,7 @@
 		F42BD7D9245CC508001E207A /* attributedStringNewlineAtEndOfDocument.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42BD7D8245CC4E6001E207A /* attributedStringNewlineAtEndOfDocument.html */; };
 		F42D634422A1729F00D2FB3A /* AutocorrectionTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */; };
 		F42DA5161D8CEFE400336F40 /* large-input-field-focus-onload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */; };
+		F42F081227449892007E0D90 /* multiple-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42F0811274497C8007E0D90 /* multiple-images.html */; };
 		F434CA1A22E65BCA005DDB26 /* ScrollToRevealSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */; };
 		F4352F9F26D403DE00E605E4 /* editable-responsive-body.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4352F9E26D4037000E605E4 /* editable-responsive-body.html */; };
 		F43E3BBF20DADA1E00A4E7ED /* WKScrollViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */; };
@@ -1464,6 +1465,7 @@
 				9B59F12A2034086F009E63D5 /* mso-list-compat-mode.html in Copy Resources */,
 				9BCD411A206DBCA3001D71BE /* mso-list-on-h4.html in Copy Resources */,
 				9BF356CD202D458500F71160 /* mso-list.html in Copy Resources */,
+				F42F081227449892007E0D90 /* multiple-images.html in Copy Resources */,
 				5797FE331EB15AB100B2F4A0 /* navigation-client-default-crypto.html in Copy Resources */,
 				2E4838472169DF30002F4531 /* nested-lists.html in Copy Resources */,
 				C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */,
@@ -2937,6 +2939,9 @@
 		F42BD7D8245CC4E6001E207A /* attributedStringNewlineAtEndOfDocument.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributedStringNewlineAtEndOfDocument.html; sourceTree = "<group>"; };
 		F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutocorrectionTestsIOS.mm; sourceTree = "<group>"; };
 		F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "large-input-field-focus-onload.html"; path = "Tests/WebKitCocoa/large-input-field-focus-onload.html"; sourceTree = SOURCE_ROOT; };
+		F42F0811274497C8007E0D90 /* multiple-images.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "multiple-images.html"; sourceTree = "<group>"; };
+		F42F081627449FFD007E0D90 /* ImageAnalysisTestingUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ImageAnalysisTestingUtilities.mm; path = cocoa/ImageAnalysisTestingUtilities.mm; sourceTree = "<group>"; };
+		F42F081727449FFD007E0D90 /* ImageAnalysisTestingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageAnalysisTestingUtilities.h; path = cocoa/ImageAnalysisTestingUtilities.h; sourceTree = "<group>"; };
 		F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollToRevealSelection.mm; sourceTree = "<group>"; };
 		F4352F9E26D4037000E605E4 /* editable-responsive-body.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editable-responsive-body.html"; sourceTree = "<group>"; };
 		F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScrollViewTests.mm; sourceTree = "<group>"; };
@@ -3210,6 +3215,8 @@
 				F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */,
 				5C7C24FB237C972300599C91 /* HTTPServer.h */,
 				5C7C24FA237C972300599C91 /* HTTPServer.mm */,
+				F42F081727449FFD007E0D90 /* ImageAnalysisTestingUtilities.h */,
+				F42F081627449FFD007E0D90 /* ImageAnalysisTestingUtilities.mm */,
 				F44A530D21B8976900DBB99C /* InstanceMethodSwizzler.h */,
 				F44A531021B8976900DBB99C /* InstanceMethodSwizzler.mm */,
 				0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */,
@@ -4102,6 +4109,7 @@
 				9B59F12920340854009E63D5 /* mso-list-compat-mode.html */,
 				9BCD4119206D5ED7001D71BE /* mso-list-on-h4.html */,
 				9BF356CC202D44F200F71160 /* mso-list.html */,
+				F42F0811274497C8007E0D90 /* multiple-images.html */,
 				2E4838462169DD42002F4531 /* nested-lists.html */,
 				466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */,
 				CDB5DFFE21360ED800D3E189 /* now-playing.html */,

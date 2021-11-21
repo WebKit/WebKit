@@ -26,6 +26,7 @@ EditingTestHarness.mm
 WKWebViewConfigurationExtras.mm
 
 cocoa/DaemonTestUtilities.mm
+cocoa/ImageAnalysisTestingUtilities.mm
 cocoa/NSItemProviderAdditions.mm
 cocoa/PlatformUtilitiesCocoa.mm
 cocoa/TestCocoa.mm

@@ -1,0 +1,168 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ImageAnalysisTestingUtilities.h"
+
+#if HAVE(VK_IMAGE_ANALYSIS)
+
+#import <pal/spi/cocoa/VisionKitCoreSPI.h>
+
+@interface TestVKQuad : NSObject
+- (instancetype)initWithTopLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight;
+@property (nonatomic, readonly) CGPoint topLeft;
+@property (nonatomic, readonly) CGPoint topRight;
+@property (nonatomic, readonly) CGPoint bottomLeft;
+@property (nonatomic, readonly) CGPoint bottomRight;
+@end
+
+@implementation TestVKQuad
+
+- (instancetype)initWithTopLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _topLeft = topLeft;
+    _topRight = topRight;
+    _bottomLeft = bottomLeft;
+    _bottomRight = bottomRight;
+    return self;
+}
+
+@end
+
+@interface TestVKWKTextInfo : NSObject
+- (instancetype)initWithString:(NSString *)string quad:(VKQuad *)quad;
+@end
+
+@implementation TestVKWKTextInfo {
+    RetainPtr<NSString> _string;
+    RetainPtr<VKQuad> _quad;
+}
+
+- (instancetype)initWithString:(NSString *)string quad:(VKQuad *)quad
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _string = string;
+    _quad = quad;
+    return self;
+}
+
+- (NSString *)string
+{
+    return _string.get();
+}
+
+- (VKQuad *)quad
+{
+    return _quad.get();
+}
+
+@end
+
+@interface TestVKWKLineInfo : TestVKWKTextInfo
+- (instancetype)initWithString:(NSString *)string quad:(VKQuad *)quad children:(NSArray<VKWKTextInfo *> *)children;
+@end
+
+@implementation TestVKWKLineInfo {
+    RetainPtr<NSArray> _children;
+}
+
+- (instancetype)initWithString:(NSString *)string quad:(VKQuad *)quad children:(NSArray<VKWKTextInfo *> *)children
+{
+    if (!(self = [super initWithString:string quad:quad]))
+        return nil;
+
+    _children = children;
+    return self;
+}
+
+- (NSArray<VKWKTextInfo *> *)children
+{
+    return _children.get();
+}
+
+@end
+
+@interface TestVKImageAnalysis : NSObject
+- (instancetype)initWithLines:(NSArray<VKWKLineInfo *> *)lines;
+@end
+
+@implementation TestVKImageAnalysis {
+    RetainPtr<NSArray> _lines;
+}
+
+- (instancetype)initWithLines:(NSArray<VKWKLineInfo *> *)lines
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _lines = lines;
+    return self;
+}
+
+- (NSArray<VKWKLineInfo *> *)allLines
+{
+    return _lines.get();
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+RetainPtr<VKQuad> createQuad(CGPoint topLeft, CGPoint topRight, CGPoint bottomLeft, CGPoint bottomRight)
+{
+    return adoptNS(static_cast<VKQuad *>([[TestVKQuad alloc] initWithTopLeft:topLeft topRight:topRight bottomLeft:bottomLeft bottomRight:bottomRight]));
+}
+
+RetainPtr<VKWKTextInfo> createTextInfo(NSString *string, VKQuad *quad)
+{
+    return adoptNS(static_cast<VKWKTextInfo *>([[TestVKWKTextInfo alloc] initWithString:string quad:quad]));
+}
+
+RetainPtr<VKWKLineInfo> createLineInfo(NSString *string, VKQuad *quad, NSArray<VKWKTextInfo *> *children)
+{
+    return adoptNS(static_cast<VKWKLineInfo *>([[TestVKWKLineInfo alloc] initWithString:string quad:quad children:children]));
+}
+
+RetainPtr<VKImageAnalysis> createImageAnalysis(NSArray<VKWKLineInfo *> *lines)
+{
+    return adoptNS(static_cast<VKImageAnalysis *>([[TestVKImageAnalysis alloc] initWithLines:lines]));
+}
+
+RetainPtr<VKImageAnalysis> createImageAnalysisWithSimpleFixedResults()
+{
+    auto quad = createQuad(CGPointMake(0, 0), CGPointMake(1, 0), CGPointMake(1, 0.5), CGPointMake(0, 0.5));
+    auto text = createTextInfo(@"Foo bar", quad.get());
+    auto line = createLineInfo(@"Foo bar", quad.get(), @[ text.get() ]);
+    return createImageAnalysis(@[ line.get() ]);
+}
+
+} // namespace TestWebKitAPI
+
+#endif // HAVE(VK_IMAGE_ANALYSIS)

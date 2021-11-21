@@ -27,6 +27,7 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#import "ImageAnalysisTestingUtilities.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -36,7 +37,46 @@
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 
+static unsigned gDidProcessRequestCount = 0;
+
+@interface TestWKWebView (ImageAnalysisTests)
+- (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests;
+@end
+
+@implementation TestWKWebView (ImageAnalysisTests)
+
+- (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests
+{
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+        return gDidProcessRequestCount == numberOfRequests;
+    }, 3, @"Timed out waiting for %u image analysis to complete.", numberOfRequests);
+
+    [self waitForNextPresentationUpdate];
+    EXPECT_EQ(gDidProcessRequestCount, numberOfRequests);
+}
+
+@end
+
 namespace TestWebKitAPI {
+
+static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
+        if ([feature.key isEqualToString:@"TextRecognitionEnhancementsEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            break;
+        }
+    }
+    return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+}
+
+static void swizzledProcessRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
+{
+    gDidProcessRequestCount++;
+    auto analysis = createImageAnalysisWithSimpleFixedResults();
+    completion(analysis.get(), nil);
+}
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -45,17 +85,16 @@ static CGPoint swizzledLocationInView(id, SEL, UIView *)
     return CGPointMake(100, 100);
 }
 
-static bool gDidProcessRequest = false;
-static void swizzledProcessRequest(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
+static void swizzledProcessRequestWithError(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
 {
-    gDidProcessRequest = true;
+    gDidProcessRequestCount++;
     completion(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:nil]);
 }
 
 TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 {
     InstanceMethodSwizzler gestureLocationSwizzler { UIGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequest) };
+    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView _setEditable:YES];
@@ -63,23 +102,38 @@ TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 
     [webView _imageAnalysisGestureRecognizer].state = UIGestureRecognizerStateBegan;
     [webView waitForNextPresentationUpdate];
-    EXPECT_FALSE(gDidProcessRequest);
+    EXPECT_EQ(gDidProcessRequestCount, 0U);
 }
 
 TEST(ImageAnalysisTests, HandleImageAnalyzerError)
 {
     InstanceMethodSwizzler gestureLocationSwizzler { UIGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequest) };
+    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"image"];
 
     [webView _imageAnalysisGestureRecognizer].state = UIGestureRecognizerStateBegan;
     [webView waitForNextPresentationUpdate];
-    EXPECT_TRUE(gDidProcessRequest);
+    EXPECT_EQ(gDidProcessRequestCount, 1U);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+TEST(ImageAnalysisTests, StartImageAnalysisWithoutIdentifier)
+{
+    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithResults) };
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
+    [webView _startImageAnalysis:nil];
+    [webView waitForImageAnalysisRequests:5];
+
+    NSArray<NSString *> *overlaysAsText = [webView objectByEvaluatingJavaScript:@"imageOverlaysAsText()"];
+    EXPECT_EQ(overlaysAsText.count, 5U);
+    for (NSString *overlayText in overlaysAsText)
+        EXPECT_WK_STREQ(overlayText, @"Foo bar");
+}
 
 } // namespace TestWebKitAPI
 
