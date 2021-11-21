@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUCommandEncoder.h>
 
@@ -36,17 +37,20 @@ class ConvertToBackingContext;
 
 class RemoteCommandEncoderProxy final : public PAL::WebGPU::CommandEncoder {
 public:
-    static Ref<RemoteCommandEncoderProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteCommandEncoderProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandEncoderProxy(convertToBackingContext));
+        return adoptRef(*new RemoteCommandEncoderProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteCommandEncoderProxy();
 
+    RemoteDeviceProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->parent().parent(); }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteCommandEncoderProxy(ConvertToBackingContext&);
+    RemoteCommandEncoderProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteCommandEncoderProxy(const RemoteCommandEncoderProxy&) = delete;
     RemoteCommandEncoderProxy(RemoteCommandEncoderProxy&&) = delete;
@@ -54,6 +58,18 @@ private:
     RemoteCommandEncoderProxy& operator=(RemoteCommandEncoderProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     Ref<PAL::WebGPU::RenderPassEncoder> beginRenderPass(const PAL::WebGPU::RenderPassDescriptor&) final;
     Ref<PAL::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<PAL::WebGPU::ComputePassDescriptor>&) final;
@@ -102,8 +118,9 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteDeviceProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

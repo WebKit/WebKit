@@ -29,9 +29,32 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroupDescriptor& bindGroupDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(bindGroupDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    auto identifier = convertToBacking(bindGroupDescriptor.layout);
+    if (!identifier)
+        return std::nullopt;
+
+    Vector<BindGroupEntry> entries;
+    entries.reserveInitialCapacity(bindGroupDescriptor.entries.size());
+    for (const auto& entry : bindGroupDescriptor.entries) {
+        auto convertedEntry = convertToBacking(entry);
+        if (!convertedEntry)
+            return std::nullopt;
+        entries.uncheckedAppend(WTFMove(*convertedEntry));
+    }
+
+    return { { WTFMove(*base), identifier, WTFMove(entries) } };
+}
 
 std::optional<PAL::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::convertFromBacking(const BindGroupDescriptor& bindGroupDescriptor)
 {

@@ -29,9 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUSamplerDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<SamplerDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::SamplerDescriptor& samplerDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(samplerDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    return { { WTFMove(*base), samplerDescriptor.addressModeU, samplerDescriptor.addressModeV, samplerDescriptor.addressModeW, samplerDescriptor.magFilter, samplerDescriptor.minFilter, samplerDescriptor.mipmapFilter, samplerDescriptor.lodMinClamp, samplerDescriptor.lodMaxClamp, samplerDescriptor.compare, samplerDescriptor.maxAnisotropy } };
+}
 
 std::optional<PAL::WebGPU::SamplerDescriptor> ConvertFromBackingContext::convertFromBacking(const SamplerDescriptor& samplerDescriptor)
 {

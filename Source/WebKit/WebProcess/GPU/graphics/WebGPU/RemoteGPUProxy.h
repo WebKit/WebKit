@@ -27,9 +27,14 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
+
+namespace WebKit {
+class GPUProcessConnection;
+}
 
 namespace WebKit::WebGPU {
 
@@ -37,17 +42,21 @@ class ConvertToBackingContext;
 
 class RemoteGPUProxy final : public PAL::WebGPU::GPU {
 public:
-    static Ref<RemoteGPUProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteGPUProxy> create(GPUProcessConnection& gpuProcessConnection, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteGPUProxy(convertToBackingContext));
+        return adoptRef(*new RemoteGPUProxy(gpuProcessConnection, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteGPUProxy();
 
+    RemoteGPUProxy& root() { return *this; }
+
+    IPC::StreamClientConnection& streamClientConnection() { return m_streamConnection; }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(ConvertToBackingContext&);
+    RemoteGPUProxy(GPUProcessConnection&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
     RemoteGPUProxy(RemoteGPUProxy&&) = delete;
@@ -55,13 +64,26 @@ private:
     RemoteGPUProxy& operator=(RemoteGPUProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
 
     Deque<WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    IPC::StreamClientConnection m_streamConnection;
 };
 
 } // namespace WebKit::WebGPU

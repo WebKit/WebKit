@@ -29,12 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteBindGroupLayoutProxy.h"
+#include "RemoteRenderPipelineMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemoteRenderPipelineProxy::RemoteRenderPipelineProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteRenderPipelineProxy::RemoteRenderPipelineProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -44,13 +47,17 @@ RemoteRenderPipelineProxy::~RemoteRenderPipelineProxy()
 
 Ref<PAL::WebGPU::BindGroupLayout> RemoteRenderPipelineProxy::getBindGroupLayout(uint32_t index)
 {
-    UNUSED_PARAM(index);
-    return RemoteBindGroupLayoutProxy::create(m_convertToBackingContext);
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteRenderPipeline::GetBindGroupLayout(index, identifier));
+    UNUSED_VARIABLE(sendResult);
+
+    return RemoteBindGroupLayoutProxy::create(m_parent, m_convertToBackingContext, identifier);
 }
 
 void RemoteRenderPipelineProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteRenderPipeline::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

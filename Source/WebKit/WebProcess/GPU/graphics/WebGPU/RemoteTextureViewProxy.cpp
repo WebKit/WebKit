@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteTextureViewMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemoteTextureViewProxy::RemoteTextureViewProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteTextureViewProxy::RemoteTextureViewProxy(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,7 +46,8 @@ RemoteTextureViewProxy::~RemoteTextureViewProxy()
 
 void RemoteTextureViewProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteTextureView::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

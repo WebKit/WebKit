@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<CompilationMessage> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::CompilationMessage& compilationMessage)
+{
+    return { { compilationMessage.message(), compilationMessage.type(), compilationMessage.lineNum(), compilationMessage.linePos(), compilationMessage.offset(), compilationMessage.length() } };
+}
 
 RefPtr<PAL::WebGPU::CompilationMessage> ConvertFromBackingContext::convertFromBacking(const CompilationMessage& compilationMessage)
 {

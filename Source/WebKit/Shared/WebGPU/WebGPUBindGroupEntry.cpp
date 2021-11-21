@@ -29,9 +29,39 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroupEntry.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroupEntry& bindGroupEntry)
+{
+    return WTF::switchOn(bindGroupEntry.resource, [&] (std::reference_wrapper<PAL::WebGPU::Sampler> sampler) -> std::optional<BindGroupEntry> {
+        auto identifier = convertToBacking(sampler);
+        if (!identifier)
+            return std::nullopt;
+
+        return { { bindGroupEntry.binding, { }, identifier, BindingResourceType::Sampler } };
+    }, [&] (std::reference_wrapper<PAL::WebGPU::TextureView> textureView) -> std::optional<BindGroupEntry> {
+        auto identifier = convertToBacking(textureView);
+        if (!identifier)
+            return std::nullopt;
+
+        return { { bindGroupEntry.binding, { }, identifier, BindingResourceType::TextureView } };
+    }, [&] (const auto& bufferBinding) -> std::optional<BindGroupEntry> {
+        auto convertedBufferBinding = convertToBacking(bufferBinding);
+        if (!convertedBufferBinding)
+            return std::nullopt;
+
+        return { { bindGroupEntry.binding, WTFMove(*convertedBufferBinding), { }, BindingResourceType::TextureView } };
+    }, [&] (std::reference_wrapper<PAL::WebGPU::ExternalTexture> externalTexture) -> std::optional<BindGroupEntry> {
+        auto identifier = convertToBacking(externalTexture);
+        if (!identifier)
+            return std::nullopt;
+
+        return { { bindGroupEntry.binding, { }, identifier, BindingResourceType::ExternalTexture } };
+    });
+}
 
 std::optional<PAL::WebGPU::BindGroupEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupEntry& bindGroupEntry)
 {

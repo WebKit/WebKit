@@ -29,13 +29,43 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h>
 
 namespace WebKit::WebGPU {
 
+std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassColorAttachment& renderPassColorAttachment)
+{
+    auto view = convertToBacking(renderPassColorAttachment.view);
+    if (!view)
+        return std::nullopt;
+
+    WebGPUIdentifier resolveTarget;
+    if (renderPassColorAttachment.resolveTarget) {
+        resolveTarget = convertToBacking(*renderPassColorAttachment.resolveTarget);
+        if (!resolveTarget)
+            return std::nullopt;
+    }
+
+    auto loadValue = WTF::switchOn(renderPassColorAttachment.loadValue, [] (PAL::WebGPU::LoadOp loadOp) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> {
+        return { { loadOp } };
+    }, [] (const Vector<double>& vector) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> {
+        return { { vector } };
+    }, [this] (const PAL::WebGPU::ColorDict& colorDict) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> {
+        auto backingColorDict = convertToBacking(colorDict);
+        if (!backingColorDict)
+            return std::nullopt;
+        return { { WTFMove(*backingColorDict) } };
+    });
+    if (!loadValue)
+        return std::nullopt;
+
+    return { { view, resolveTarget, WTFMove(*loadValue), renderPassColorAttachment.storeOp } };
+}
+
 std::optional<PAL::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
 {
-    auto view = convertTextureViewFromBacking(renderPassColorAttachment.view);
+    auto* view = convertTextureViewFromBacking(renderPassColorAttachment.view);
     if (!view)
         return std::nullopt;
 
@@ -50,11 +80,11 @@ std::optional<PAL::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext:
         return { { loadOp } };
     }, [] (const Vector<double>& vector) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict>> {
         return { { vector } };
-    }, [this] (const ColorDict& originColorDict) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict>> {
-        auto colorDict = convertFromBacking(originColorDict);
-        if (!colorDict)
+    }, [this] (const ColorDict& colorDict) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict>> {
+        auto backingColorDict = convertFromBacking(colorDict);
+        if (!backingColorDict)
             return std::nullopt;
-        return { { WTFMove(*colorDict) } };
+        return { { WTFMove(*backingColorDict) } };
     });
     if (!loadValue)
         return std::nullopt;

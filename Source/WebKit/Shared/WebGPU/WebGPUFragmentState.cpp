@@ -29,9 +29,28 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUFragmentState.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::FragmentState& fragmentState)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ProgrammableStage&>(fragmentState));
+    if (!base)
+        return std::nullopt;
+
+    Vector<ColorTargetState> targets;
+    targets.reserveInitialCapacity(fragmentState.targets.size());
+    for (const auto& target : fragmentState.targets) {
+        auto convertedTarget = convertToBacking(target);
+        if (!convertedTarget)
+            return std::nullopt;
+        targets.uncheckedAppend(WTFMove(*convertedTarget));
+    }
+
+    return { { WTFMove(*base), WTFMove(targets) } };
+}
 
 std::optional<PAL::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBacking(const FragmentState& fragmentState)
 {

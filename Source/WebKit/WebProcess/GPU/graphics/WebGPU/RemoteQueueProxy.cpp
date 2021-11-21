@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteQueueMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemoteQueueProxy::RemoteQueueProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteQueueProxy::RemoteQueueProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,12 +46,25 @@ RemoteQueueProxy::~RemoteQueueProxy()
 
 void RemoteQueueProxy::submit(Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>>&& commandBuffers)
 {
-    UNUSED_PARAM(commandBuffers);
+    Vector<WebGPUIdentifier> convertedCommandBuffers;
+    convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
+    for (auto commandBuffer : commandBuffers) {
+        auto convertedCommandBuffer = m_convertToBackingContext->convertToBacking(commandBuffer);
+        ASSERT(convertedCommandBuffer);
+        if (!convertedCommandBuffer)
+            return;
+        convertedCommandBuffers.uncheckedAppend(convertedCommandBuffer);
+    }
+    auto sendResult = send(Messages::RemoteQueue::Submit(convertedCommandBuffers));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQueueProxy::onSubmittedWorkDone(WTF::Function<void()>&& callback)
 {
-    UNUSED_PARAM(callback);
+    auto sendResult = sendSync(Messages::RemoteQueue::OnSubmittedWorkDone(), { });
+    UNUSED_VARIABLE(sendResult);
+
+    callback();
 }
 
 void RemoteQueueProxy::writeBuffer(
@@ -59,12 +75,13 @@ void RemoteQueueProxy::writeBuffer(
     PAL::WebGPU::Size64 dataOffset,
     std::optional<PAL::WebGPU::Size64> size)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(bufferOffset);
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(byteLength);
-    UNUSED_PARAM(dataOffset);
-    UNUSED_PARAM(size);
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
+    ASSERT(convertedBuffer);
+    if (!convertedBuffer)
+        return;
+
+    auto sendResult = send(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, Vector<uint8_t>(static_cast<const uint8_t*>(source) + dataOffset, size.value_or(byteLength - dataOffset))));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQueueProxy::writeTexture(
@@ -74,11 +91,17 @@ void RemoteQueueProxy::writeTexture(
     const PAL::WebGPU::ImageDataLayout& dataLayout,
     const PAL::WebGPU::Extent3D& size)
 {
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(byteLength);
-    UNUSED_PARAM(dataLayout);
-    UNUSED_PARAM(size);
+    auto convertedDestination = m_convertToBackingContext->convertToBacking(destination);
+    ASSERT(convertedDestination);
+    auto convertedDataLayout = m_convertToBackingContext->convertToBacking(dataLayout);
+    ASSERT(convertedDataLayout);
+    auto convertedSize = m_convertToBackingContext->convertToBacking(size);
+    ASSERT(convertedSize);
+    if (!convertedDestination || !convertedDataLayout || !convertedSize)
+        return;
+
+    auto sendResult = send(Messages::RemoteQueue::WriteTexture(*convertedDestination, Vector<uint8_t>(static_cast<const uint8_t*>(source), byteLength), *convertedDataLayout, *convertedSize));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQueueProxy::copyExternalImageToTexture(
@@ -86,14 +109,23 @@ void RemoteQueueProxy::copyExternalImageToTexture(
     const PAL::WebGPU::ImageCopyTextureTagged& destination,
     const PAL::WebGPU::Extent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    auto convertedSource = m_convertToBackingContext->convertToBacking(source);
+    ASSERT(convertedSource);
+    auto convertedDestination = m_convertToBackingContext->convertToBacking(destination);
+    ASSERT(convertedDestination);
+    auto convertedCopySize = m_convertToBackingContext->convertToBacking(copySize);
+    ASSERT(convertedCopySize);
+    if (!convertedSource || !convertedDestination || !convertedCopySize)
+        return;
+
+    auto sendResult = send(Messages::RemoteQueue::CopyExternalImageToTexture(*convertedSource, *convertedDestination, *convertedCopySize));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQueueProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteQueue::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

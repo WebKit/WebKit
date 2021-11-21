@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUOutOfMemoryError.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<OutOfMemoryError> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::OutOfMemoryError& outOfMemoryError)
+{
+    return { { } };
+}
 
 RefPtr<PAL::WebGPU::OutOfMemoryError> ConvertFromBackingContext::convertFromBacking(const OutOfMemoryError& outOfMemoryError)
 {

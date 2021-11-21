@@ -29,13 +29,30 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUImageCopyTexture.h>
 
 namespace WebKit::WebGPU {
 
+std::optional<ImageCopyTexture> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageCopyTexture& imageCopyTexture)
+{
+    auto texture = convertToBacking(imageCopyTexture.texture);
+    if (!texture)
+        return std::nullopt;
+
+    std::optional<Origin3D> origin;
+    if (imageCopyTexture.origin) {
+        auto origin = convertToBacking(*imageCopyTexture.origin);
+        if (!origin)
+            return std::nullopt;
+    }
+
+    return { { texture, imageCopyTexture.mipLevel, WTFMove(origin), imageCopyTexture.aspect } };
+}
+
 std::optional<PAL::WebGPU::ImageCopyTexture> ConvertFromBackingContext::convertFromBacking(const ImageCopyTexture& imageCopyTexture)
 {
-    auto texture = convertTextureFromBacking(imageCopyTexture.texture);
+    auto* texture = convertTextureFromBacking(imageCopyTexture.texture);
     if (!texture)
         return std::nullopt;
 

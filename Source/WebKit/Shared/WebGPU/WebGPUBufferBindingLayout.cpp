@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUBufferBindingLayout.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<BufferBindingLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BufferBindingLayout& bufferBindingLayout)
+{
+    return { { bufferBindingLayout.type, bufferBindingLayout.hasDynamicOffset, bufferBindingLayout.minBindingSize } };
+}
 
 std::optional<PAL::WebGPU::BufferBindingLayout> ConvertFromBackingContext::convertFromBacking(const BufferBindingLayout& bufferBindingLayout)
 {

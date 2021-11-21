@@ -29,9 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPURenderPassLayout.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<RenderPassLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassLayout& renderPassLayout)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(renderPassLayout));
+    if (!base)
+        return std::nullopt;
+
+    return { { WTFMove(*base), renderPassLayout.colorFormats, renderPassLayout.depthStencilFormat, renderPassLayout.sampleCount } };
+}
 
 std::optional<PAL::WebGPU::RenderPassLayout> ConvertFromBackingContext::convertFromBacking(const RenderPassLayout& renderPassLayout)
 {

@@ -28,12 +28,17 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteShaderModuleMessages.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <pal/graphics/WebGPU/WebGPUCompilationInfo.h>
+#include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
 
 namespace WebKit::WebGPU {
 
-RemoteShaderModuleProxy::RemoteShaderModuleProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteShaderModuleProxy::RemoteShaderModuleProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,12 +48,20 @@ RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 
 void RemoteShaderModuleProxy::compilationInfo(WTF::Function<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&& callback)
 {
-    UNUSED_PARAM(callback);
+    Vector<CompilationMessage> messages;
+    auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfo(), { messages });
+    UNUSED_VARIABLE(sendResult);
+
+    auto backingMessages = messages.map([] (CompilationMessage compilationMessage) {
+        return PAL::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
+    });
+    callback(PAL::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));
 }
 
 void RemoteShaderModuleProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteShaderModule::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

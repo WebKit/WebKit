@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUSupportedFeatures.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<SupportedFeatures> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::SupportedFeatures& supportedFeatures)
+{
+    return { { supportedFeatures.features() } };
+}
 
 RefPtr<PAL::WebGPU::SupportedFeatures> ConvertFromBackingContext::convertFromBacking(const SupportedFeatures& supportedFeatures)
 {

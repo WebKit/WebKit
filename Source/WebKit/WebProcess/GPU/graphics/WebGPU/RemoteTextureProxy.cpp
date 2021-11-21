@@ -28,14 +28,17 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteTextureMessages.h"
 #include "RemoteTextureViewProxy.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUTextureViewDescriptor.h"
 
 namespace WebKit::WebGPU {
 
-RemoteTextureProxy::RemoteTextureProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteTextureProxy::RemoteTextureProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -45,17 +48,32 @@ RemoteTextureProxy::~RemoteTextureProxy()
 
 Ref<PAL::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>& descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return RemoteTextureViewProxy::create(m_convertToBackingContext);
+    std::optional<TextureViewDescriptor> convertedDescriptor;
+    if (descriptor) {
+        convertedDescriptor = m_convertToBackingContext->convertToBacking(*descriptor);
+        if (!convertedDescriptor) {
+            // FIXME: Implement error handling.
+            return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
+        }
+    }
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteTexture::CreateView(*convertedDescriptor, identifier));
+    UNUSED_VARIABLE(sendResult);
+
+    return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
 void RemoteTextureProxy::destroy()
 {
+    auto sendResult = send(Messages::RemoteTexture::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteTextureProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteTexture::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

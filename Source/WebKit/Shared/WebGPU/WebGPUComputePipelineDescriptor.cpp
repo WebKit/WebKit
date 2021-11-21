@@ -29,9 +29,23 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUComputePipelineDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ComputePipelineDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePipelineDescriptor& computePipelineDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::PipelineDescriptorBase&>(computePipelineDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    auto compute = convertToBacking(computePipelineDescriptor.compute);
+    if (!compute)
+        return std::nullopt;
+
+    return { { WTFMove(*base), WTFMove(*compute) } };
+}
 
 std::optional<PAL::WebGPU::ComputePipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePipelineDescriptor& computePipelineDescriptor)
 {
@@ -43,7 +57,7 @@ std::optional<PAL::WebGPU::ComputePipelineDescriptor> ConvertFromBackingContext:
     if (!compute)
         return std::nullopt;
 
-    return { PAL::WebGPU::ComputePipelineDescriptor { WTFMove(*base), WTFMove(*compute) } };
+    return { { WTFMove(*base), WTFMove(*compute) } };
 }
 
 } // namespace WebKit

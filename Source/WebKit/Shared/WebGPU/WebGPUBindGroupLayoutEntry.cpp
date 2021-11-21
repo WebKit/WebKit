@@ -29,9 +29,50 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<BindGroupLayoutEntry> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroupLayoutEntry& bindGroupLayoutEntry)
+{
+    std::optional<BufferBindingLayout> buffer;
+    if (bindGroupLayoutEntry.buffer) {
+        buffer = convertToBacking(*bindGroupLayoutEntry.buffer);
+        if (!buffer)
+            return std::nullopt;
+    }
+
+    std::optional<SamplerBindingLayout> sampler;
+    if (bindGroupLayoutEntry.sampler) {
+        sampler = convertToBacking(*bindGroupLayoutEntry.sampler);
+        if (!sampler)
+            return std::nullopt;
+    }
+
+    std::optional<TextureBindingLayout> texture;
+    if (bindGroupLayoutEntry.texture) {
+        texture = convertToBacking(*bindGroupLayoutEntry.texture);
+        if (!texture)
+            return std::nullopt;
+    }
+
+    std::optional<StorageTextureBindingLayout> storageTexture;
+    if (bindGroupLayoutEntry.storageTexture) {
+        storageTexture = convertToBacking(*bindGroupLayoutEntry.storageTexture);
+        if (!storageTexture)
+            return std::nullopt;
+    }
+
+    std::optional<ExternalTextureBindingLayout> externalTexture;
+    if (bindGroupLayoutEntry.externalTexture) {
+        externalTexture = convertToBacking(*bindGroupLayoutEntry.externalTexture);
+        if (!externalTexture)
+            return std::nullopt;
+    }
+
+    return { { bindGroupLayoutEntry.binding, bindGroupLayoutEntry.visibility, WTFMove(buffer), WTFMove(sampler), WTFMove(texture), WTFMove(storageTexture), WTFMove(externalTexture) } };
+}
 
 std::optional<PAL::WebGPU::BindGroupLayoutEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupLayoutEntry& bindGroupLayoutEntry)
 {

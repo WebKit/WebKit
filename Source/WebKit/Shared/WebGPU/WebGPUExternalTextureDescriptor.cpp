@@ -29,9 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ExternalTextureDescriptor& externalTextureDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(externalTextureDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    return { { WTFMove(*base), externalTextureDescriptor.colorSpace } };
+}
 
 std::optional<PAL::WebGPU::ExternalTextureDescriptor> ConvertFromBackingContext::convertFromBacking(const ExternalTextureDescriptor& externalTextureDescriptor)
 {

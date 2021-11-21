@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemotePipelineLayoutMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemotePipelineLayoutProxy::RemotePipelineLayoutProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemotePipelineLayoutProxy::RemotePipelineLayoutProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,7 +46,8 @@ RemotePipelineLayoutProxy::~RemotePipelineLayoutProxy()
 
 void RemotePipelineLayoutProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemotePipelineLayout::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

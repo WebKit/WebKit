@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUValidationError.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ValidationError> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ValidationError& validationError)
+{
+    return { { validationError.message() } };
+}
 
 RefPtr<PAL::WebGPU::ValidationError> ConvertFromBackingContext::convertFromBacking(const ValidationError& validationError)
 {

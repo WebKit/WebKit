@@ -29,9 +29,27 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUOrigin2D.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<Origin2DDict> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Origin2DDict& origin2DDict)
+{
+    return { { origin2DDict.x, origin2DDict.y } };
+}
+
+std::optional<Origin2D> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Origin2D& origin2D)
+{
+    return WTF::switchOn(origin2D, [] (const Vector<PAL::WebGPU::IntegerCoordinate>& vector) -> std::optional<Origin2D> {
+        return { { vector } };
+    }, [this] (const PAL::WebGPU::Origin2DDict& origin2DDict) -> std::optional<Origin2D> {
+        auto origin2D = convertToBacking(origin2DDict);
+        if (!origin2D)
+            return std::nullopt;
+        return { { WTFMove(*origin2D) } };
+    });
+}
 
 std::optional<PAL::WebGPU::Origin2DDict> ConvertFromBackingContext::convertFromBacking(const Origin2DDict& origin2DDict)
 {

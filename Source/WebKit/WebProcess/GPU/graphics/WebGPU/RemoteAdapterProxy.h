@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
 #include <wtf/Deque.h>
@@ -34,20 +35,24 @@
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
+class RemoteGPUProxy;
 
 class RemoteAdapterProxy final : public PAL::WebGPU::Adapter {
 public:
-    static Ref<RemoteAdapterProxy> create(String&& name, PAL::WebGPU::SupportedFeatures& features, PAL::WebGPU::SupportedLimits& limits, bool isFallbackAdapter, ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteAdapterProxy> create(String&& name, PAL::WebGPU::SupportedFeatures& features, PAL::WebGPU::SupportedLimits& limits, bool isFallbackAdapter, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteAdapterProxy(WTFMove(name), features, limits, isFallbackAdapter, convertToBackingContext));
+        return adoptRef(*new RemoteAdapterProxy(WTFMove(name), features, limits, isFallbackAdapter, parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteAdapterProxy();
 
+    RemoteGPUProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent; }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteAdapterProxy(String&& name, PAL::WebGPU::SupportedFeatures&, PAL::WebGPU::SupportedLimits&, bool isFallbackAdapter, ConvertToBackingContext&);
+    RemoteAdapterProxy(String&& name, PAL::WebGPU::SupportedFeatures&, PAL::WebGPU::SupportedLimits&, bool isFallbackAdapter, RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteAdapterProxy(const RemoteAdapterProxy&) = delete;
     RemoteAdapterProxy(RemoteAdapterProxy&&) = delete;
@@ -55,13 +60,26 @@ private:
     RemoteAdapterProxy& operator=(RemoteAdapterProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void requestDevice(const PAL::WebGPU::DeviceDescriptor&, WTF::Function<void(Ref<PAL::WebGPU::Device>&&)>&&) final;
 
     Deque<WTF::Function<void(Ref<PAL::WebGPU::Device>)>> m_callbacks;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteGPUProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

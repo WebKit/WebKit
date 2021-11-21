@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteQuerySetMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemoteQuerySetProxy::RemoteQuerySetProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteQuerySetProxy::RemoteQuerySetProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,11 +46,14 @@ RemoteQuerySetProxy::~RemoteQuerySetProxy()
 
 void RemoteQuerySetProxy::destroy()
 {
+    auto sendResult = send(Messages::RemoteQuerySet::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQuerySetProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteQuerySet::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

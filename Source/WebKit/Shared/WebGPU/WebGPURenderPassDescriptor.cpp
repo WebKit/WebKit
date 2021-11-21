@@ -29,9 +29,46 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPURenderPassDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassDescriptor& renderPassDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(renderPassDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    Vector<RenderPassColorAttachment> colorAttachments;
+    colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
+    for (const auto& colorAttachment : renderPassDescriptor.colorAttachments) {
+        auto backingColorAttachment = convertToBacking(colorAttachment);
+        if (!backingColorAttachment)
+            return std::nullopt;
+        colorAttachments.uncheckedAppend(WTFMove(*backingColorAttachment));
+    }
+
+    std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
+    if (renderPassDescriptor.depthStencilAttachment) {
+        depthStencilAttachment = convertToBacking(*renderPassDescriptor.depthStencilAttachment);
+        if (!depthStencilAttachment)
+            return std::nullopt;
+    }
+
+    WebGPUIdentifier occlusionQuerySet;
+    if (renderPassDescriptor.occlusionQuerySet) {
+        occlusionQuerySet = convertToBacking(*renderPassDescriptor.occlusionQuerySet);
+        if (!occlusionQuerySet)
+            return std::nullopt;
+    }
+
+    auto timestampWrites = convertToBacking(renderPassDescriptor.timestampWrites);
+    if (!timestampWrites)
+        return std::nullopt;
+
+    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(*timestampWrites) } };
+}
 
 std::optional<PAL::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPassDescriptor& renderPassDescriptor)
 {

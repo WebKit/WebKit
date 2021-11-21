@@ -29,13 +29,23 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUProgrammableStage.h>
 
 namespace WebKit::WebGPU {
 
+std::optional<ProgrammableStage> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ProgrammableStage& programmableStage)
+{
+    auto module = convertToBacking(programmableStage.module);
+    if (!module)
+        return std::nullopt;
+
+    return { { module, programmableStage.entryPoint, programmableStage.constants } };
+}
+
 std::optional<PAL::WebGPU::ProgrammableStage> ConvertFromBackingContext::convertFromBacking(const ProgrammableStage& programmableStage)
 {
-    auto module = convertShaderModuleFromBacking(programmableStage.module);
+    auto* module = convertShaderModuleFromBacking(programmableStage.module);
     if (!module)
         return std::nullopt;
 

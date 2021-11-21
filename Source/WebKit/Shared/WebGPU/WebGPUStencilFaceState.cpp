@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUStencilFaceState.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<StencilFaceState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::StencilFaceState& stencilFaceState)
+{
+    return { { stencilFaceState.compare, stencilFaceState.failOp, stencilFaceState.depthFailOp, stencilFaceState.passOp } };
+}
 
 std::optional<PAL::WebGPU::StencilFaceState> ConvertFromBackingContext::convertFromBacking(const StencilFaceState& stencilFaceState)
 {

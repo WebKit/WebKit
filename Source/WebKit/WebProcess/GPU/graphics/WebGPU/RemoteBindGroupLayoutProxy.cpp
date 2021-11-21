@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBindGroupLayoutMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,7 +46,8 @@ RemoteBindGroupLayoutProxy::~RemoteBindGroupLayoutProxy()
 
 void RemoteBindGroupLayoutProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteBindGroupLayout::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

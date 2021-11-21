@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteTextureProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUTextureView.h>
 
@@ -36,17 +37,20 @@ class ConvertToBackingContext;
 
 class RemoteTextureViewProxy final : public PAL::WebGPU::TextureView {
 public:
-    static Ref<RemoteTextureViewProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteTextureViewProxy> create(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTextureViewProxy(convertToBackingContext));
+        return adoptRef(*new RemoteTextureViewProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteTextureViewProxy();
 
+    RemoteTextureProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->parent().parent().parent(); }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteTextureViewProxy(ConvertToBackingContext&);
+    RemoteTextureViewProxy(RemoteTextureProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteTextureViewProxy(const RemoteTextureViewProxy&) = delete;
     RemoteTextureViewProxy(RemoteTextureViewProxy&&) = delete;
@@ -54,11 +58,24 @@ private:
     RemoteTextureViewProxy& operator=(RemoteTextureViewProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void setLabelInternal(const String&) final;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteTextureProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

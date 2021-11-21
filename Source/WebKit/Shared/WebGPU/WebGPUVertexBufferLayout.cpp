@@ -29,9 +29,24 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUVertexBufferLayout.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<VertexBufferLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::VertexBufferLayout& vertexBufferLayout)
+{
+    Vector<VertexAttribute> attributes;
+    attributes.reserveInitialCapacity(vertexBufferLayout.attributes.size());
+    for (const auto& attribute : vertexBufferLayout.attributes) {
+        auto convertedAttribute = convertToBacking(attribute);
+        if (!convertedAttribute)
+            return std::nullopt;
+        attributes.uncheckedAppend(WTFMove(*convertedAttribute));
+    }
+
+    return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, WTFMove(attributes) } };
+}
 
 std::optional<PAL::WebGPU::VertexBufferLayout> ConvertFromBackingContext::convertFromBacking(const VertexBufferLayout& vertexBufferLayout)
 {

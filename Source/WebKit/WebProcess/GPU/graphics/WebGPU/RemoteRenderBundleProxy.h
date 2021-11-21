@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPURenderBundle.h>
 
@@ -36,17 +37,20 @@ class ConvertToBackingContext;
 
 class RemoteRenderBundleProxy final : public PAL::WebGPU::RenderBundle {
 public:
-    static Ref<RemoteRenderBundleProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteRenderBundleProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderBundleProxy(convertToBackingContext));
+        return adoptRef(*new RemoteRenderBundleProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteRenderBundleProxy();
 
+    RemoteDeviceProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->parent().parent(); }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteRenderBundleProxy(ConvertToBackingContext&);
+    RemoteRenderBundleProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteRenderBundleProxy(const RemoteRenderBundleProxy&) = delete;
     RemoteRenderBundleProxy(RemoteRenderBundleProxy&&) = delete;
@@ -54,11 +58,24 @@ private:
     RemoteRenderBundleProxy& operator=(RemoteRenderBundleProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void setLabelInternal(const String&) final;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteDeviceProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

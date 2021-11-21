@@ -1,3 +1,339 @@
+2021-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Send WebGPU messages in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=233396
+
+        Reviewed by Dean Jackson.
+
+        This hooks up our Remote***Proxy() WebGPU implementation to the serializable structs.
+        There are 2 pieces: adding converter functions from PAL::WebGPU::X to WebKit::WebGPU::X
+        structs (which are serializable) and actually calling the send() function itself.
+        Because streaming IPC doesn't support async replies yet, all the async calls are currently
+        sync in this patch. I'll be adding support for async streaming messages in a subsequent
+        patch, which will migrate callers to use sendAsync() instead of sendSync().
+
+        No new tests because there is no behavior change yet. This is the last untested foundational
+        patch in the series. All subsequent WebGPU patches should have tests.
+
+        * GPUProcess/graphics/WebGPU/RemoteGPU.cpp:
+        (WebKit::RemoteGPU::requestAdapter):
+        * GPUProcess/graphics/WebGPU/RemoteGPU.h:
+        * GPUProcess/graphics/WebGPU/RemoteGPU.messages.in:
+        * Shared/WebGPU/WebGPUBindGroupDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBindGroupEntry.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBindGroupLayoutEntry.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBlendComponent.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBlendState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBufferBinding.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBufferBindingLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUBufferDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUCanvasConfiguration.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUColor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUColorTargetState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUCommandBufferDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUCommandEncoderDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUCompilationMessage.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUComputePassDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUComputePassTimestampWrites.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUComputePipelineDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUConvertToBackingContext.h:
+        * Shared/WebGPU/WebGPUDepthStencilState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUDeviceDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUError.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUExtent3D.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUExternalTextureBindingLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUExternalTextureDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUFragmentState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUImageCopyBuffer.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageCopyExternalImage.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUImageCopyTexture.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageCopyTextureTagged.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUImageDataLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUMultisampleState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUObjectDescriptorBase.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUOrigin2D.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUOrigin3D.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUOutOfMemoryError.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUPipelineDescriptorBase.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUPrimitiveState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUProgrammableStage.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUQuerySetDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPURenderBundleDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPURenderPassColorAttachment.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPURenderPassLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPURenderPipelineDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPURequestAdapterOptions.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUSamplerBindingLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUSamplerDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUStencilFaceState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUStorageTextureBindingLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUSupportedFeatures.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUSupportedLimits.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUTextureBindingLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUTextureDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUTextureViewDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUValidationError.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUVertexAttribute.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUVertexBufferLayout.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * Shared/WebGPU/WebGPUVertexState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        * WebKit.xcodeproj/xcshareddata/xcschemes/WebKit.xcscheme:
+        * WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp:
+        (WebKit::WebGPU::RemoteAdapterProxy::RemoteAdapterProxy):
+        (WebKit::WebGPU::RemoteAdapterProxy::requestDevice):
+        * WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.cpp:
+        (WebKit::WebGPU::RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy):
+        (WebKit::WebGPU::RemoteBindGroupLayoutProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.cpp:
+        (WebKit::WebGPU::RemoteBindGroupProxy::RemoteBindGroupProxy):
+        (WebKit::WebGPU::RemoteBindGroupProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.cpp:
+        (WebKit::WebGPU::RemoteBufferProxy::RemoteBufferProxy):
+        (WebKit::WebGPU::RemoteBufferProxy::mapAsync):
+        (WebKit::WebGPU::RemoteBufferProxy::getMappedRange):
+        (WebKit::WebGPU::RemoteBufferProxy::unmap):
+        (WebKit::WebGPU::RemoteBufferProxy::destroy):
+        (WebKit::WebGPU::RemoteBufferProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.cpp:
+        (WebKit::WebGPU::RemoteCommandBufferProxy::RemoteCommandBufferProxy):
+        (WebKit::WebGPU::RemoteCommandBufferProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.cpp:
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::RemoteCommandEncoderProxy):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::beginRenderPass):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::beginComputePass):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyBufferToBuffer):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyBufferToTexture):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyTextureToBuffer):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::copyTextureToTexture):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::fillBuffer):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::writeTimestamp):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::resolveQuerySet):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::finish):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.cpp:
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::RemoteComputePassEncoderProxy):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::setPipeline):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::dispatch):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::dispatchIndirect):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::beginPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::endPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::endPass):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::setBindGroup):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePipelineProxy.cpp:
+        (WebKit::WebGPU::RemoteComputePipelineProxy::RemoteComputePipelineProxy):
+        (WebKit::WebGPU::RemoteComputePipelineProxy::getBindGroupLayout):
+        (WebKit::WebGPU::RemoteComputePipelineProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePipelineProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.cpp:
+        (WebKit::WebGPU::RemoteDeviceProxy::RemoteDeviceProxy):
+        (WebKit::WebGPU::RemoteDeviceProxy::createBuffer):
+        (WebKit::WebGPU::RemoteDeviceProxy::createTexture):
+        (WebKit::WebGPU::RemoteDeviceProxy::createSampler):
+        (WebKit::WebGPU::RemoteDeviceProxy::importExternalTexture):
+        (WebKit::WebGPU::RemoteDeviceProxy::createBindGroupLayout):
+        (WebKit::WebGPU::RemoteDeviceProxy::createPipelineLayout):
+        (WebKit::WebGPU::RemoteDeviceProxy::createBindGroup):
+        (WebKit::WebGPU::RemoteDeviceProxy::createShaderModule):
+        (WebKit::WebGPU::RemoteDeviceProxy::createComputePipeline):
+        (WebKit::WebGPU::RemoteDeviceProxy::createRenderPipeline):
+        (WebKit::WebGPU::RemoteDeviceProxy::createComputePipelineAsync):
+        (WebKit::WebGPU::RemoteDeviceProxy::createRenderPipelineAsync):
+        (WebKit::WebGPU::RemoteDeviceProxy::createCommandEncoder):
+        (WebKit::WebGPU::RemoteDeviceProxy::createRenderBundleEncoder):
+        (WebKit::WebGPU::RemoteDeviceProxy::createQuerySet):
+        (WebKit::WebGPU::RemoteDeviceProxy::pushErrorScope):
+        (WebKit::WebGPU::RemoteDeviceProxy::popErrorScope):
+        (WebKit::WebGPU::RemoteDeviceProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteExternalTextureProxy.cpp:
+        (WebKit::WebGPU::RemoteExternalTextureProxy::RemoteExternalTextureProxy):
+        (WebKit::WebGPU::RemoteExternalTextureProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteExternalTextureProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp:
+        (WebKit::WebGPU::RemoteGPUProxy::RemoteGPUProxy):
+        (WebKit::WebGPU::RemoteGPUProxy::requestAdapter):
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemotePipelineLayoutProxy.cpp:
+        (WebKit::WebGPU::RemotePipelineLayoutProxy::RemotePipelineLayoutProxy):
+        (WebKit::WebGPU::RemotePipelineLayoutProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemotePipelineLayoutProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteQuerySetProxy.cpp:
+        (WebKit::WebGPU::RemoteQuerySetProxy::RemoteQuerySetProxy):
+        (WebKit::WebGPU::RemoteQuerySetProxy::destroy):
+        (WebKit::WebGPU::RemoteQuerySetProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteQuerySetProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.cpp:
+        (WebKit::WebGPU::RemoteQueueProxy::RemoteQueueProxy):
+        (WebKit::WebGPU::RemoteQueueProxy::submit):
+        (WebKit::WebGPU::RemoteQueueProxy::onSubmittedWorkDone):
+        (WebKit::WebGPU::RemoteQueueProxy::writeBuffer):
+        (WebKit::WebGPU::RemoteQueueProxy::writeTexture):
+        (WebKit::WebGPU::RemoteQueueProxy::copyExternalImageToTexture):
+        (WebKit::WebGPU::RemoteQueueProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.cpp:
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::RemoteRenderBundleEncoderProxy):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setPipeline):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setIndexBuffer):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setVertexBuffer):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::draw):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::drawIndexed):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::drawIndirect):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::drawIndexedIndirect):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setBindGroup):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::finish):
+        (WebKit::WebGPU::RemoteRenderBundleEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleProxy.cpp:
+        (WebKit::WebGPU::RemoteRenderBundleProxy::RemoteRenderBundleProxy):
+        (WebKit::WebGPU::RemoteRenderBundleProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp:
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setPipeline):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setIndexBuffer):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setVertexBuffer):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::draw):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::drawIndexed):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::drawIndirect):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::drawIndexedIndirect):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setBindGroup):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::pushDebugGroup):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::popDebugGroup):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::insertDebugMarker):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setViewport):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setScissorRect):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setBlendConstant):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setStencilReference):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::beginOcclusionQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endOcclusionQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::beginPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endPipelineStatisticsQuery):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::executeBundles):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endPass):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.cpp:
+        (WebKit::WebGPU::RemoteRenderPipelineProxy::RemoteRenderPipelineProxy):
+        (WebKit::WebGPU::RemoteRenderPipelineProxy::getBindGroupLayout):
+        (WebKit::WebGPU::RemoteRenderPipelineProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.cpp:
+        (WebKit::WebGPU::RemoteSamplerProxy::RemoteSamplerProxy):
+        (WebKit::WebGPU::RemoteSamplerProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.cpp:
+        (WebKit::WebGPU::RemoteShaderModuleProxy::RemoteShaderModuleProxy):
+        (WebKit::WebGPU::RemoteShaderModuleProxy::compilationInfo):
+        (WebKit::WebGPU::RemoteShaderModuleProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp:
+        (WebKit::WebGPU::RemoteTextureProxy::RemoteTextureProxy):
+        (WebKit::WebGPU::RemoteTextureProxy::createView):
+        (WebKit::WebGPU::RemoteTextureProxy::destroy):
+        (WebKit::WebGPU::RemoteTextureProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.cpp:
+        (WebKit::WebGPU::RemoteTextureViewProxy::RemoteTextureViewProxy):
+        (WebKit::WebGPU::RemoteTextureViewProxy::setLabelInternal):
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp:
+        (WebKit::WebGPU::DowncastConvertToBackingContext::convertToBacking):
+        * WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.h:
+
 2021-11-20  Jean-Yves Avenard  <jya@apple.com>
 
         Remove unnecessary flattening of SharedBuffer when sending them over IPC

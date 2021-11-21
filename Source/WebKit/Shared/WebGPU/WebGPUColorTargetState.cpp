@@ -29,9 +29,22 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUColorTargetState.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ColorTargetState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ColorTargetState& colorTargetState)
+{
+    std::optional<BlendState> blend;
+    if (colorTargetState.blend) {
+        blend = convertToBacking(*colorTargetState.blend);
+        if (!blend)
+            return std::nullopt;
+    }
+
+    return { { colorTargetState.format, WTFMove(blend), colorTargetState.writeMask } };
+}
 
 std::optional<PAL::WebGPU::ColorTargetState> ConvertFromBackingContext::convertFromBacking(const ColorTargetState& colorTargetState)
 {

@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ExternalTextureBindingLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ExternalTextureBindingLayout& externalTextureBindingLayout)
+{
+    return { { } };
+}
 
 std::optional<PAL::WebGPU::ExternalTextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const ExternalTextureBindingLayout& externalTextureBindingLayout)
 {

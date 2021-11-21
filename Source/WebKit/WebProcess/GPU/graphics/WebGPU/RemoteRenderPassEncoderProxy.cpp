@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteRenderPassEncoderMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,32 +46,42 @@ RemoteRenderPassEncoderProxy::~RemoteRenderPassEncoderProxy()
 
 void RemoteRenderPassEncoderProxy::setPipeline(const PAL::WebGPU::RenderPipeline& renderPipeline)
 {
-    UNUSED_PARAM(renderPipeline);
+    auto convertedRenderPipeline = m_convertToBackingContext->convertToBacking(renderPipeline);
+    ASSERT(convertedRenderPipeline);
+    if (!convertedRenderPipeline)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetPipeline(convertedRenderPipeline));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setIndexBuffer(const PAL::WebGPU::Buffer& buffer, PAL::WebGPU::IndexFormat indexFormat, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(indexFormat);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
+    ASSERT(convertedBuffer);
+    if (!convertedBuffer)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetIndexBuffer(convertedBuffer, indexFormat, offset, size));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setVertexBuffer(PAL::WebGPU::Index32 slot, const PAL::WebGPU::Buffer& buffer, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
 {
-    UNUSED_PARAM(slot);
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
+    ASSERT(convertedBuffer);
+    if (!convertedBuffer)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetVertexBuffer(slot, convertedBuffer, offset, size));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::draw(PAL::WebGPU::Size32 vertexCount, PAL::WebGPU::Size32 instanceCount,
     PAL::WebGPU::Size32 firstVertex, PAL::WebGPU::Size32 firstInstance)
 {
-    UNUSED_PARAM(vertexCount);
-    UNUSED_PARAM(instanceCount);
-    UNUSED_PARAM(firstVertex);
-    UNUSED_PARAM(firstInstance);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::Draw(vertexCount, instanceCount, firstVertex, firstInstance));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::drawIndexed(PAL::WebGPU::Size32 indexCount, PAL::WebGPU::Size32 instanceCount,
@@ -76,31 +89,42 @@ void RemoteRenderPassEncoderProxy::drawIndexed(PAL::WebGPU::Size32 indexCount, P
     PAL::WebGPU::SignedOffset32 baseVertex,
     PAL::WebGPU::Size32 firstInstance)
 {
-    UNUSED_PARAM(indexCount);
-    UNUSED_PARAM(instanceCount);
-    UNUSED_PARAM(firstIndex);
-    UNUSED_PARAM(baseVertex);
-    UNUSED_PARAM(firstInstance);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::drawIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectOffset);
+    auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
+    ASSERT(convertedIndirectBuffer);
+    if (!convertedIndirectBuffer)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndirect(convertedIndirectBuffer, indirectOffset));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::drawIndexedIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectBuffer);
+    auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
+    ASSERT(convertedIndirectBuffer);
+    if (!convertedIndirectBuffer)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndexedIndirect(convertedIndirectBuffer, indirectOffset));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setBindGroup(PAL::WebGPU::Index32 index, const PAL::WebGPU::BindGroup& bindGroup,
     std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&& dynamicOffsets)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(bindGroup);
-    UNUSED_PARAM(dynamicOffsets);
+    auto convertedBindGroup = m_convertToBackingContext->convertToBacking(bindGroup);
+    ASSERT(convertedBindGroup);
+    if (!convertedBindGroup)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, dynamicOffsets));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setBindGroup(PAL::WebGPU::Index32 index, const PAL::WebGPU::BindGroup& bindGroup,
@@ -109,90 +133,120 @@ void RemoteRenderPassEncoderProxy::setBindGroup(PAL::WebGPU::Index32 index, cons
     PAL::WebGPU::Size64 dynamicOffsetsDataStart,
     PAL::WebGPU::Size32 dynamicOffsetsDataLength)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(bindGroup);
-    UNUSED_PARAM(dynamicOffsetsArrayBuffer);
-    UNUSED_PARAM(dynamicOffsetsArrayBufferLength);
-    UNUSED_PARAM(dynamicOffsetsDataStart);
-    UNUSED_PARAM(dynamicOffsetsDataLength);
+    auto convertedBindGroup = m_convertToBackingContext->convertToBacking(bindGroup);
+    ASSERT(convertedBindGroup);
+    if (!convertedBindGroup)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, Vector<PAL::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength)));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::pushDebugGroup(String&& groupLabel)
 {
-    UNUSED_PARAM(groupLabel);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::PushDebugGroup(WTFMove(groupLabel)));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::popDebugGroup()
 {
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::PopDebugGroup());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::insertDebugMarker(String&& markerLabel)
 {
-    UNUSED_PARAM(markerLabel);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::InsertDebugMarker(WTFMove(markerLabel)));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setViewport(float x, float y,
     float width, float height,
     float minDepth, float maxDepth)
 {
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(minDepth);
-    UNUSED_PARAM(maxDepth);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetViewport(x, y, width, height, minDepth, maxDepth));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setScissorRect(PAL::WebGPU::IntegerCoordinate x, PAL::WebGPU::IntegerCoordinate y,
     PAL::WebGPU::IntegerCoordinate width, PAL::WebGPU::IntegerCoordinate height)
 {
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetScissorRect(x, y, width, height));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setBlendConstant(PAL::WebGPU::Color color)
 {
-    UNUSED_PARAM(color);
+    auto convertedColor = m_convertToBackingContext->convertToBacking(color);
+    ASSERT(convertedColor);
+    if (!convertedColor)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBlendConstant(*convertedColor));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setStencilReference(PAL::WebGPU::StencilValue stencilValue)
 {
-    UNUSED_PARAM(stencilValue);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetStencilReference(stencilValue));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::beginOcclusionQuery(PAL::WebGPU::Size32 queryIndex)
 {
-    UNUSED_PARAM(queryIndex);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::BeginOcclusionQuery(queryIndex));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::endOcclusionQuery()
 {
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::EndOcclusionQuery());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::beginPipelineStatisticsQuery(const PAL::WebGPU::QuerySet& querySet, PAL::WebGPU::Size32 queryIndex)
 {
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
+    auto convertedQuerySet = m_convertToBackingContext->convertToBacking(querySet);
+    ASSERT(convertedQuerySet);
+    if (!convertedQuerySet)
+        return;
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::BeginPipelineStatisticsQuery(convertedQuerySet, queryIndex));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::endPipelineStatisticsQuery()
 {
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::EndPipelineStatisticsQuery());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::executeBundles(Vector<std::reference_wrapper<PAL::WebGPU::RenderBundle>>&& renderBundles)
 {
-    UNUSED_PARAM(renderBundles);
+    Vector<WebGPUIdentifier> convertedRenderBundles;
+    convertedRenderBundles.reserveInitialCapacity(renderBundles.size());
+    for (auto renderBundle : renderBundles) {
+        auto convertedRenderBundle = m_convertToBackingContext->convertToBacking(renderBundle);
+        ASSERT(convertedRenderBundle);
+        if (!convertedRenderBundle)
+            return;
+        convertedRenderBundles.uncheckedAppend(convertedRenderBundle);
+    }
+
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::ExecuteBundles(WTFMove(convertedRenderBundles)));
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::endPass()
 {
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::EndPass());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

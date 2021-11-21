@@ -29,9 +29,53 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPipelineDescriptor& renderPipelineDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::PipelineDescriptorBase&>(renderPipelineDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    auto vertex = convertToBacking(renderPipelineDescriptor.vertex);
+    if (!vertex)
+        return std::nullopt;
+
+    std::optional<PrimitiveState> primitive;
+    if (renderPipelineDescriptor.primitive) {
+        primitive = convertToBacking(*renderPipelineDescriptor.primitive);
+        if (!primitive)
+            return std::nullopt;
+    }
+
+    std::optional<DepthStencilState> depthStencil;
+    if (renderPipelineDescriptor.depthStencil) {
+        depthStencil = convertToBacking(*renderPipelineDescriptor.depthStencil);
+        if (!depthStencil)
+            return std::nullopt;
+    }
+
+    std::optional<MultisampleState> multisample;
+    if (renderPipelineDescriptor.multisample) {
+        multisample = convertToBacking(*renderPipelineDescriptor.multisample);
+        if (!multisample)
+            return std::nullopt;
+    }
+
+    std::optional<FragmentState> fragment;
+    if (renderPipelineDescriptor.fragment) {
+        fragment = convertToBacking(*renderPipelineDescriptor.fragment);
+        if (!fragment)
+            return std::nullopt;
+    }
+    if (renderPipelineDescriptor.fragment && !fragment)
+        return std::nullopt;
+
+    return { { WTFMove(*base), WTFMove(*vertex), WTFMove(primitive), WTFMove(depthStencil), WTFMove(multisample), WTFMove(fragment) } };
+}
 
 std::optional<PAL::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor)
 {

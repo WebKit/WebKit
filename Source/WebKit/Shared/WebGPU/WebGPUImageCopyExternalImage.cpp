@@ -29,9 +29,22 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ImageCopyExternalImage> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageCopyExternalImage& imageCopyExternalImage)
+{
+    std::optional<Origin2D> origin;
+    if (imageCopyExternalImage.origin) {
+        auto convertedOrigin = convertToBacking(*imageCopyExternalImage.origin);
+        if (!convertedOrigin)
+            return std::nullopt;
+    }
+
+    return { { WTFMove(origin) } };
+}
 
 std::optional<PAL::WebGPU::ImageCopyExternalImage> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImage& imageCopyExternalImage)
 {

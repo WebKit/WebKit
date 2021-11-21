@@ -29,9 +29,32 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ComputePassTimestampWrite> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassTimestampWrite& computePassTimestampWrite)
+{
+    auto querySet = convertToBacking(computePassTimestampWrite.querySet);
+    if (!querySet)
+        return std::nullopt;
+
+    return { { querySet, computePassTimestampWrite.queryIndex, computePassTimestampWrite.location } };
+}
+
+std::optional<ComputePassTimestampWrites> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassTimestampWrites& computePassTimestampWrites)
+{
+    Vector<ComputePassTimestampWrite> timestampWrites;
+    timestampWrites.reserveInitialCapacity(computePassTimestampWrites.size());
+    for (const auto& timestampWrite : computePassTimestampWrites) {
+        auto convertedTimestampWrite = convertToBacking(timestampWrite);
+        if (!convertedTimestampWrite)
+            return std::nullopt;
+        timestampWrites.uncheckedAppend(WTFMove(*convertedTimestampWrite));
+    }
+    return timestampWrites;
+}
 
 std::optional<PAL::WebGPU::ComputePassTimestampWrite> ConvertFromBackingContext::convertFromBacking(const ComputePassTimestampWrite& computePassTimestampWrite)
 {

@@ -29,9 +29,27 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUColor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ColorDict> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ColorDict& colorDict)
+{
+    return { { colorDict.r, colorDict.g, colorDict.b, colorDict.a } };
+}
+
+std::optional<Color> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Color& color)
+{
+    return WTF::switchOn(color, [] (const Vector<double>& vector) -> std::optional<Color> {
+        return { { vector } };
+    }, [this] (const PAL::WebGPU::ColorDict& colorDict) -> std::optional<Color> {
+        auto color = convertToBacking(colorDict);
+        if (!color)
+            return std::nullopt;
+        return { { WTFMove(*color) } };
+    });
+}
 
 std::optional<PAL::WebGPU::ColorDict> ConvertFromBackingContext::convertFromBacking(const ColorDict& colorDict)
 {

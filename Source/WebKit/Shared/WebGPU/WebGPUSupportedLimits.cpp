@@ -29,9 +29,42 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUSupportedLimits.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<SupportedLimits> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::SupportedLimits& supportedLimits)
+{
+    return { {
+        supportedLimits.maxTextureDimension1D(),
+        supportedLimits.maxTextureDimension2D(),
+        supportedLimits.maxTextureDimension3D(),
+        supportedLimits.maxTextureArrayLayers(),
+        supportedLimits.maxBindGroups(),
+        supportedLimits.maxDynamicUniformBuffersPerPipelineLayout(),
+        supportedLimits.maxDynamicStorageBuffersPerPipelineLayout(),
+        supportedLimits.maxSampledTexturesPerShaderStage(),
+        supportedLimits.maxSamplersPerShaderStage(),
+        supportedLimits.maxStorageBuffersPerShaderStage(),
+        supportedLimits.maxStorageTexturesPerShaderStage(),
+        supportedLimits.maxUniformBuffersPerShaderStage(),
+        supportedLimits.maxUniformBufferBindingSize(),
+        supportedLimits.maxStorageBufferBindingSize(),
+        supportedLimits.minUniformBufferOffsetAlignment(),
+        supportedLimits.minStorageBufferOffsetAlignment(),
+        supportedLimits.maxVertexBuffers(),
+        supportedLimits.maxVertexAttributes(),
+        supportedLimits.maxVertexBufferArrayStride(),
+        supportedLimits.maxInterStageShaderComponents(),
+        supportedLimits.maxComputeWorkgroupStorageSize(),
+        supportedLimits.maxComputeInvocationsPerWorkgroup(),
+        supportedLimits.maxComputeWorkgroupSizeX(),
+        supportedLimits.maxComputeWorkgroupSizeY(),
+        supportedLimits.maxComputeWorkgroupSizeZ(),
+        supportedLimits.maxComputeWorkgroupsPerDimension(),
+    } };
+}
 
 RefPtr<PAL::WebGPU::SupportedLimits> ConvertFromBackingContext::convertFromBacking(const SupportedLimits& supportedLimits)
 {
@@ -61,7 +94,8 @@ RefPtr<PAL::WebGPU::SupportedLimits> ConvertFromBackingContext::convertFromBacki
         supportedLimits.maxComputeWorkgroupSizeX,
         supportedLimits.maxComputeWorkgroupSizeY,
         supportedLimits.maxComputeWorkgroupSizeZ,
-        supportedLimits.maxComputeWorkgroupsPerDimension) };
+        supportedLimits.maxComputeWorkgroupsPerDimension
+    ) };
 }
 
 } // namespace WebKit

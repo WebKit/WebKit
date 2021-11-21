@@ -50,12 +50,12 @@ RemoteGPU::~RemoteGPU()
     m_objectRegistry.removeObject(m_identifier);
 }
 
-void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
+void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&, bool)>&& callback)
 {
     auto convertedOptions = m_objectRegistry.convertFromBacking(options);
     ASSERT(convertedOptions);
     if (!convertedOptions) {
-        callback(StringImpl::empty(), { { } }, { });
+        callback(StringImpl::empty(), { { } }, { }, false);
         return;
     }
 
@@ -96,7 +96,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
             limits.maxComputeWorkgroupSizeY(),
             limits.maxComputeWorkgroupSizeZ(),
             limits.maxComputeWorkgroupsPerDimension(),
-        });
+        }, adapter->isFallbackAdapter());
     });
 }
 

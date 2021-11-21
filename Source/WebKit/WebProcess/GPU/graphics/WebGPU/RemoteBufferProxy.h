@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUBuffer.h>
 #include <wtf/Deque.h>
@@ -37,17 +38,20 @@ class ConvertToBackingContext;
 
 class RemoteBufferProxy final : public PAL::WebGPU::Buffer {
 public:
-    static Ref<RemoteBufferProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBufferProxy(convertToBackingContext));
+        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteBufferProxy();
 
+    RemoteDeviceProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->parent().parent(); }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteBufferProxy(ConvertToBackingContext&);
+    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteBufferProxy(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy(RemoteBufferProxy&&) = delete;
@@ -55,6 +59,18 @@ private:
     RemoteBufferProxy& operator=(RemoteBufferProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void mapAsync(PAL::WebGPU::MapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> sizeForMap, WTF::Function<void()>&&) final;
     MappedRange getMappedRange(std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64>) final;
@@ -66,8 +82,11 @@ private:
 
     Deque<WTF::Function<void()>> m_callbacks;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteDeviceProxy> m_parent;
+    std::optional<Vector<uint8_t>> m_data;
+    PAL::WebGPU::MapModeFlags m_mapModeFlags { 0 };
 };
 
 } // namespace WebKit::WebGPU

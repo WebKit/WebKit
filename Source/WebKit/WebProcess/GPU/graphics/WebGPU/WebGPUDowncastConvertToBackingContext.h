@@ -44,6 +44,7 @@ public:
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePassEncoder&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePipeline&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::Device&) final;
+    WebGPUIdentifier convertToBacking(const PAL::WebGPU::ExternalTexture&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::GPU&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::PipelineLayout&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::QuerySet&) final;

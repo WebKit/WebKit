@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBufferMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
 namespace WebKit::WebGPU {
 
-RemoteBufferProxy::RemoteBufferProxy(ConvertToBackingContext& convertToBackingContext)
-    : m_convertToBackingContext(convertToBackingContext)
+RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    : m_backing(identifier)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_parent(parent)
 {
 }
 
@@ -43,29 +46,55 @@ RemoteBufferProxy::~RemoteBufferProxy()
 
 void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size, WTF::Function<void()>&& callback)
 {
-    UNUSED_PARAM(mapModeFlags);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(callback);
+    std::optional<Vector<uint8_t>> data;
+    auto sendResult = sendSync(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), { data });
+    UNUSED_VARIABLE(sendResult);
+    if (!data) {
+        // FIXME: Implement error handling.
+        return;
+    }
+
+    m_data = WTFMove(data);
+    m_mapModeFlags = mapModeFlags;
+    callback();
 }
 
 auto RemoteBufferProxy::getMappedRange(std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size) -> MappedRange
 {
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
-    return { };
+    // FIXME: Implement error handling.
+    if (!m_data)
+        return { };
+
+    auto usedOffset = offset.value_or(0);
+    return { m_data->data() + usedOffset, static_cast<size_t>(size.value_or(m_data->size() - usedOffset)) };
 }
 
 void RemoteBufferProxy::unmap()
 {
+    // FIXME: Implement error handling.
+    if (!m_data)
+        return;
+
+    Vector<uint8_t> data;
+    if (m_mapModeFlags & PAL::WebGPU::MapMode::WRITE)
+        data = WTFMove(*m_data);
+    auto sendResult = send(Messages::RemoteBuffer::Unmap(WTFMove(data)));
+    UNUSED_VARIABLE(sendResult);
+
+    m_data = std::nullopt;
+    m_mapModeFlags = 0;
 }
 
 void RemoteBufferProxy::destroy()
 {
+    auto sendResult = send(Messages::RemoteBuffer::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteBufferProxy::setLabelInternal(const String& label)
 {
-    UNUSED_PARAM(label);
+    auto sendResult = send(Messages::RemoteBuffer::SetLabel(label));
+    UNUSED_VARIABLE(sendResult);
 }
 
 } // namespace WebKit::WebGPU

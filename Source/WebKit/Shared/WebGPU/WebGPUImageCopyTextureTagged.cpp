@@ -29,9 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ImageCopyTextureTagged> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageCopyTextureTagged& imageCopyTextureTagged)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ImageCopyTexture&>(imageCopyTextureTagged));
+    if (!base)
+        return std::nullopt;
+
+    return { { WTFMove(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
+}
 
 std::optional<PAL::WebGPU::ImageCopyTextureTagged> ConvertFromBackingContext::convertFromBacking(const ImageCopyTextureTagged& imageCopyTextureTagged)
 {

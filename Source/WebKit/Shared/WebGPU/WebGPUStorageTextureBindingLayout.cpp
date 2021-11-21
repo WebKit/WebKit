@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<StorageTextureBindingLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::StorageTextureBindingLayout& storageTextureBindingLayout)
+{
+    return { { storageTextureBindingLayout.access, storageTextureBindingLayout.format, storageTextureBindingLayout.viewDimension } };
+}
 
 std::optional<PAL::WebGPU::StorageTextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const StorageTextureBindingLayout& storageTextureBindingLayout)
 {

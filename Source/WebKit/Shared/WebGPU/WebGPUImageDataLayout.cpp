@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUImageDataLayout.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ImageDataLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageDataLayout& imageDataLayout)
+{
+    return { { imageDataLayout.offset, imageDataLayout.bytesPerRow, imageDataLayout.rowsPerImage } };
+}
 
 std::optional<PAL::WebGPU::ImageDataLayout> ConvertFromBackingContext::convertFromBacking(const ImageDataLayout& imageDataLayout)
 {

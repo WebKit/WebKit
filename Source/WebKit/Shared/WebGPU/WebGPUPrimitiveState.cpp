@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUPrimitiveState.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<PrimitiveState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::PrimitiveState& primitiveState)
+{
+    return { { primitiveState.topology, primitiveState.stripIndexFormat, primitiveState.frontFace, primitiveState.cullMode, primitiveState.unclippedDepth } };
+}
 
 std::optional<PAL::WebGPU::PrimitiveState> ConvertFromBackingContext::convertFromBacking(const PrimitiveState& primitiveState)
 {

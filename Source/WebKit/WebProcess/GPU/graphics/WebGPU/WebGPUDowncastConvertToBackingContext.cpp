@@ -98,6 +98,11 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::We
     return static_cast<const RemoteDeviceProxy&>(device).backing();
 }
 
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ExternalTexture& externalTexture)
+{
+    return static_cast<const RemoteExternalTextureProxy&>(externalTexture).backing();
+}
+
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::GPU& gpu)
 {
     return static_cast<const RemoteGPUProxy&>(gpu).backing();

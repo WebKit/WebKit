@@ -29,13 +29,23 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h>
 
 namespace WebKit::WebGPU {
 
+std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
+{
+    auto view = convertToBacking(renderPassDepthStencilAttachment.view);
+    if (!view)
+        return std::nullopt;
+
+    return { { view, renderPassDepthStencilAttachment.depthLoadValue, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilLoadValue, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
+}
+
 std::optional<PAL::WebGPU::RenderPassDepthStencilAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
-    auto view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
+    auto* view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
     if (!view)
         return std::nullopt;
 

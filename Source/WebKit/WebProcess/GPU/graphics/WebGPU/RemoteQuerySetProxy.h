@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUQuerySet.h>
 
@@ -36,17 +37,20 @@ class ConvertToBackingContext;
 
 class RemoteQuerySetProxy final : public PAL::WebGPU::QuerySet {
 public:
-    static Ref<RemoteQuerySetProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteQuerySetProxy(convertToBackingContext));
+        return adoptRef(*new RemoteQuerySetProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteQuerySetProxy();
 
+    RemoteDeviceProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->parent().parent(); }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteQuerySetProxy(ConvertToBackingContext&);
+    RemoteQuerySetProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteQuerySetProxy(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy(RemoteQuerySetProxy&&) = delete;
@@ -54,13 +58,26 @@ private:
     RemoteQuerySetProxy& operator=(RemoteQuerySetProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void destroy() final;
 
     void setLabelInternal(const String&) final;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteDeviceProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

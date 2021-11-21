@@ -29,9 +29,23 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUComputePassDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ComputePassDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassDescriptor& computePassDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(computePassDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    auto timestampWrites = convertToBacking(computePassDescriptor.timestampWrites);
+    if (!timestampWrites)
+        return std::nullopt;
+
+    return { { WTFMove(*base), WTFMove(*timestampWrites) } };
+}
 
 std::optional<PAL::WebGPU::ComputePassDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePassDescriptor& computePassDescriptor)
 {

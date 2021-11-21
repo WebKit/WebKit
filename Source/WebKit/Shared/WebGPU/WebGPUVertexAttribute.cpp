@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUVertexAttribute.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<VertexAttribute> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::VertexAttribute& vertexAttribute)
+{
+    return { { vertexAttribute.format, vertexAttribute.offset, vertexAttribute.shaderLocation } };
+}
 
 std::optional<PAL::WebGPU::VertexAttribute> ConvertFromBackingContext::convertFromBacking(const VertexAttribute& vertexAttribute)
 {

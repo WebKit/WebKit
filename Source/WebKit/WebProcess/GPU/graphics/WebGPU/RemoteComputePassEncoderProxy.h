@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteCommandEncoderProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
 
@@ -36,17 +37,20 @@ class ConvertToBackingContext;
 
 class RemoteComputePassEncoderProxy final : public PAL::WebGPU::ComputePassEncoder {
 public:
-    static Ref<RemoteComputePassEncoderProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteComputePassEncoderProxy> create(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteComputePassEncoderProxy(convertToBackingContext));
+        return adoptRef(*new RemoteComputePassEncoderProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteComputePassEncoderProxy();
 
+    RemoteCommandEncoderProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->parent().parent().parent(); }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteComputePassEncoderProxy(ConvertToBackingContext&);
+    RemoteComputePassEncoderProxy(RemoteCommandEncoderProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteComputePassEncoderProxy(const RemoteComputePassEncoderProxy&) = delete;
     RemoteComputePassEncoderProxy(RemoteComputePassEncoderProxy&&) = delete;
@@ -54,6 +58,18 @@ private:
     RemoteComputePassEncoderProxy& operator=(RemoteComputePassEncoderProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void setPipeline(const PAL::WebGPU::ComputePipeline&) final;
     void dispatch(PAL::WebGPU::Size32 x, std::optional<PAL::WebGPU::Size32> y, std::optional<PAL::WebGPU::Size32>) final;
@@ -79,8 +95,9 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteCommandEncoderProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

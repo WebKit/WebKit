@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<SamplerBindingLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::SamplerBindingLayout& samplerBindingLayout)
+{
+    return { { samplerBindingLayout.type } };
+}
 
 std::optional<PAL::WebGPU::SamplerBindingLayout> ConvertFromBackingContext::convertFromBacking(const SamplerBindingLayout& samplerBindingLayout)
 {

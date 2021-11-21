@@ -67,7 +67,7 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
-    void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&&);
+    void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&, bool)>&&);
 
     Ref<PAL::WebGPU::GPU> m_backing;
     WebGPU::ObjectRegistry& m_objectRegistry;

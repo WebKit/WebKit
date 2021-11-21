@@ -29,9 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<TextureViewDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::TextureViewDescriptor& textureViewDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(textureViewDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    return { { WTFMove(*base), textureViewDescriptor.format, textureViewDescriptor.dimension, textureViewDescriptor.aspect, textureViewDescriptor.baseMipLevel, textureViewDescriptor.mipLevelCount, textureViewDescriptor.baseArrayLayer, textureViewDescriptor.arrayLayerCount } };
+}
 
 std::optional<PAL::WebGPU::TextureViewDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureViewDescriptor& textureViewDescriptor)
 {

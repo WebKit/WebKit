@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUBlendComponent.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<BlendComponent> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BlendComponent& blendComponent)
+{
+    return { { blendComponent.operation, blendComponent.srcFactor, blendComponent.dstFactor } };
+}
 
 std::optional<PAL::WebGPU::BlendComponent> ConvertFromBackingContext::convertFromBacking(const BlendComponent& blendComponent)
 {

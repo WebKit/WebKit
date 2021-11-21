@@ -29,9 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<QuerySetDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::QuerySetDescriptor& querySetDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(querySetDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    return { { WTFMove(*base), querySetDescriptor.type, querySetDescriptor.count, querySetDescriptor.pipelineStatistics } };
+}
 
 std::optional<PAL::WebGPU::QuerySetDescriptor> ConvertFromBackingContext::convertFromBacking(const QuerySetDescriptor& querySetDescriptor)
 {

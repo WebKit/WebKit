@@ -29,9 +29,23 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUDepthStencilState.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::DepthStencilState& depthStencilState)
+{
+    auto stencilFront = convertToBacking(depthStencilState.stencilFront);
+    if (!stencilFront)
+        return std::nullopt;
+
+    auto stencilBack = convertToBacking(depthStencilState.stencilBack);
+    if (!stencilBack)
+        return std::nullopt;
+
+    return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTFMove(*stencilFront), WTFMove(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
+}
 
 std::optional<PAL::WebGPU::DepthStencilState> ConvertFromBackingContext::convertFromBacking(const DepthStencilState& depthStencilState)
 {

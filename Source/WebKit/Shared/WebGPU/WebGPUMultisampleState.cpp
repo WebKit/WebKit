@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUMultisampleState.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<MultisampleState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::MultisampleState& multisampleState)
+{
+    return { { multisampleState.count, multisampleState.mask, multisampleState.alphaToCoverageEnabled } };
+}
 
 std::optional<PAL::WebGPU::MultisampleState> ConvertFromBackingContext::convertFromBacking(const MultisampleState& multisampleState)
 {

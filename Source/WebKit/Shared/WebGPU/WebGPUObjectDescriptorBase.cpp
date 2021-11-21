@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<ObjectDescriptorBase> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ObjectDescriptorBase& objectDescriptorBase)
+{
+    return { { objectDescriptorBase.label } };
+}
 
 std::optional<PAL::WebGPU::ObjectDescriptorBase> ConvertFromBackingContext::convertFromBacking(const ObjectDescriptorBase& objectDescriptorBase)
 {

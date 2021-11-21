@@ -29,9 +29,26 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<PipelineDescriptorBase> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::PipelineDescriptorBase& pipelineDescriptorBase)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(pipelineDescriptorBase));
+    if (!base)
+        return std::nullopt;
+
+    WebGPUIdentifier layout;
+    if (pipelineDescriptorBase.layout) {
+        layout = convertToBacking(*pipelineDescriptorBase.layout);
+        if (!layout)
+            return std::nullopt;
+    }
+
+    return { { WTFMove(*base), layout } };
+}
 
 std::optional<PAL::WebGPU::PipelineDescriptorBase> ConvertFromBackingContext::convertFromBacking(const PipelineDescriptorBase& pipelineDescriptorBase)
 {

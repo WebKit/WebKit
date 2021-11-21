@@ -29,9 +29,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPURequestAdapterOptions.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<RequestAdapterOptions> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RequestAdapterOptions& requestAdapterOptions)
+{
+    return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter } };
+}
 
 std::optional<PAL::WebGPU::RequestAdapterOptions> ConvertFromBackingContext::convertFromBacking(const RequestAdapterOptions& requestAdapterOptions)
 {

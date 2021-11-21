@@ -29,9 +29,26 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUCanvasConfiguration.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::CanvasConfiguration& canvasConfiguration)
+{
+    auto device = convertToBacking(canvasConfiguration.device);
+    if (!device)
+        return std::nullopt;
+
+    std::optional<Extent3D> size;
+    if (canvasConfiguration.size) {
+        size = convertToBacking(*canvasConfiguration.size);
+        if (!size)
+            return std::nullopt;
+    }
+
+    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, WTFMove(size) } };
+}
 
 std::optional<PAL::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
 {

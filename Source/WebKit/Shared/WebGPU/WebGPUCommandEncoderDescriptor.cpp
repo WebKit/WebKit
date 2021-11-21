@@ -29,9 +29,19 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h>
 
 namespace WebKit::WebGPU {
+
+std::optional<CommandEncoderDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::CommandEncoderDescriptor& commandEncoderDescriptor)
+{
+    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(commandEncoderDescriptor));
+    if (!base)
+        return std::nullopt;
+
+    return { { WTFMove(*base) } };
+}
 
 std::optional<PAL::WebGPU::CommandEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const CommandEncoderDescriptor& commandEncoderDescriptor)
 {

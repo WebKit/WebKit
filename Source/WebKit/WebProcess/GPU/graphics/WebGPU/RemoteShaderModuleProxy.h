@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUShaderModule.h>
 
@@ -36,17 +37,20 @@ class ConvertToBackingContext;
 
 class RemoteShaderModuleProxy final : public PAL::WebGPU::ShaderModule {
 public:
-    static Ref<RemoteShaderModuleProxy> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<RemoteShaderModuleProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteShaderModuleProxy(convertToBackingContext));
+        return adoptRef(*new RemoteShaderModuleProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteShaderModuleProxy();
 
+    RemoteDeviceProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->parent().parent(); }
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteShaderModuleProxy(ConvertToBackingContext&);
+    RemoteShaderModuleProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteShaderModuleProxy(const RemoteShaderModuleProxy&) = delete;
     RemoteShaderModuleProxy(RemoteShaderModuleProxy&&) = delete;
@@ -54,13 +58,26 @@ private:
     RemoteShaderModuleProxy& operator=(RemoteShaderModuleProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    
+    static inline constexpr Seconds defaultSendTimeout = 30_s;
+    template<typename T>
+    WARN_UNUSED_RETURN bool send(T&& message)
+    {
+        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+    }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+    }
 
     void compilationInfo(WTF::Function<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
 
-    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
+    WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<RemoteDeviceProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU
