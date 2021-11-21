@@ -70,6 +70,7 @@ private:
     friend class InlineItemsBuilder;
 
     void setBidiLevel(UBiDiLevel bidiLevel) { m_bidiLevel = bidiLevel; }
+    void setWidth(InlineLayoutUnit);
 
     const Box* m_layoutBox { nullptr };
     Type m_type { };
@@ -94,6 +95,12 @@ inline InlineItem::InlineItem(const Box& layoutBox, Type type, UBiDiLevel bidiLe
     , m_type(type)
     , m_bidiLevel(bidiLevel)
 {
+}
+
+inline void InlineItem::setWidth(InlineLayoutUnit width)
+{
+    m_width = width;
+    m_hasWidth = true;
 }
 
 #define SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(ToValueTypeName, predicate) \
