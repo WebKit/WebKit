@@ -349,12 +349,22 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     setBidiLevelForOpaqueInlineItems();
 }
 
-static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& inlineTextBox)
+static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& inlineTextBox, size_t start, size_t length, bool isWhitespace)
 {
-    // FIXME: Disable width caching for position dependent content only.
-    if (!inlineTextBox.canUseSimplifiedContentMeasuring())
+    // Do not cache when:
+    // 1. first-line style's unique font properties may produce non-matching width values.
+    // 2. position dependent content is present (preserved tab character atm).
+    if (inlineTextBox.style().fontCascade() != inlineTextBox.firstLineStyle().fontCascade())
         return false;
-    return inlineTextBox.style().fontCascade() == inlineTextBox.firstLineStyle().fontCascade();
+    if (!isWhitespace || !TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox))
+        return true;
+    // FIXME: Currently we opt out of caching only when we see a preserved \t character (position dependent measured width).
+    auto textContent = inlineTextBox.content();
+    for (auto index = start; index < start + length; ++index) {
+        if (textContent[index] == tabCharacter)
+            return false;
+    }
+    return true;
 }
 
 void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems)
@@ -369,19 +379,13 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 
     auto& style = inlineTextBox.style();
     auto& fontCascade = style.fontCascade();
+    auto whiteSpaceWidth = std::optional<InlineLayoutUnit> { fontCascade.spaceWidth() };
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto whitespaceContentIsTreatedAsSingleSpace = !shouldPreserveSpacesAndTabs;
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
     auto shouldTreatNonBreakingSpaceAsRegularSpace = style.nbspMode() == NBSPMode::Space;
     auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
     unsigned currentPosition = 0;
-
-    auto textWidth = [&](auto startPosition, auto length) -> std::optional<InlineLayoutUnit> {
-        // Delay content measuring until after bidi split.
-        if (hasSeenBidiContent() || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox))
-            return { };
-        return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + length, { });
-    };
 
     while (currentPosition < contentLength) {
         auto handleSegmentBreak = [&] {
@@ -403,8 +407,13 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 
             ASSERT(whitespaceContent->length);
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
-                auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
-                auto width = simpleSingleWhitespaceContent ? std::make_optional(InlineLayoutUnit { fontCascade.spaceWidth() }) : textWidth(startPosition, itemLength);
+                auto width = [&]() -> std::optional<InlineLayoutUnit> {
+                    if (!canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, startPosition, itemLength, true))
+                        return { };
+                    if (whitespaceContentIsTreatedAsSingleSpace || (itemLength == 1 && inlineTextBox.canUseSimplifiedContentMeasuring()))
+                        return whiteSpaceWidth;
+                    return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + itemLength, { });
+                }();
                 inlineItems.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, width));
             };
             if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
@@ -437,10 +446,15 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
                 hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
             }
             ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
-            auto inlineItemLength = endPosition - startPosition;
-            inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, inlineItemLength, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, textWidth(startPosition, inlineItemLength)));
+            auto length = endPosition - startPosition;
+            auto textWidth = [&]() -> std::optional<InlineLayoutUnit> {
+                // Delay non-whitespace content measuring until after bidi split.
+                if (hasSeenBidiContent() || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, startPosition, length, false))
+                    return { };
+                return TextUtil::width(inlineTextBox, fontCascade, startPosition, endPosition, { });
+            }();
+            inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, length, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, textWidth));
             currentPosition = endPosition;
-
             return true;
         };
         if (handleNonWhitespace())
