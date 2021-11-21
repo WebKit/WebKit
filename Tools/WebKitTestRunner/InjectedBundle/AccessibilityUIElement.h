@@ -64,7 +64,6 @@ class AccessibilityUIElement : public JSWrappable {
 #if PLATFORM(COCOA)
     // Helper functions that dispatch the corresponding AccessibilityObjectWrapper method to the AX secondary thread when appropriate.
     friend RetainPtr<NSArray> supportedAttributes(id);
-    friend RetainPtr<id> attributeValue(id, NSString *);
     friend void setAttributeValue(id, NSString *, id, bool synchronous);
 #endif
 
@@ -133,6 +132,7 @@ public:
     RefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const;
     bool boolAttributeValue(JSStringRef attribute);
 #if PLATFORM(MAC)
+    RetainPtr<id> attributeValue(NSString *) const;
     void attributeValueAsync(JSStringRef attribute, JSValueRef callback);
 #else
     void attributeValueAsync(JSStringRef attribute, JSValueRef callback) { }
@@ -401,7 +401,7 @@ private:
     AccessibilityUIElement(const AccessibilityUIElement&);
 
 #if PLATFORM(MAC)
-    RetainPtr<id> attributeValue(NSString *) const;
+    RetainPtr<id> attributeValueForParameter(NSString *, id) const;
     NSString *descriptionOfValue(id valueObject) const;
 #endif
 

@@ -139,31 +139,23 @@ RetainPtr<NSArray> supportedAttributes(id element)
     return attributes;
 }
 
-RetainPtr<id> attributeValue(id element, NSString *attribute)
+static id attributeValue(id element, NSString *attribute)
 {
-    RetainPtr<id> value;
+    // The given `element` may not respond to `accessibilityAttributeValue`, so first check to see if it responds to the attribute-specific selector.
+    if ([attribute isEqual:NSAccessibilityChildrenAttribute] && [element respondsToSelector:@selector(accessibilityChildren)])
+        return [element accessibilityChildren];
+    if ([attribute isEqual:NSAccessibilityDescriptionAttribute] && [element respondsToSelector:@selector(accessibilityLabel)])
+        return [element accessibilityLabel];
+    if ([attribute isEqual:NSAccessibilityParentAttribute] && [element respondsToSelector:@selector(accessibilityParent)])
+        return [element accessibilityParent];
+    if ([attribute isEqual:NSAccessibilityRoleAttribute] && [element respondsToSelector:@selector(accessibilityRole)])
+        return [element accessibilityRole];
+    if ([attribute isEqual:NSAccessibilityValueAttribute] && [element respondsToSelector:@selector(accessibilityValue)])
+        return [element accessibilityValue];
+    if ([attribute isEqual:NSAccessibilityFocusedUIElementAttribute] && [element respondsToSelector:@selector(accessibilityFocusedUIElement)])
+        return [element accessibilityFocusedUIElement];
 
-    BEGIN_AX_OBJC_EXCEPTIONS
-    AccessibilityUIElement::s_controller->executeOnAXThreadAndWait([&element, &attribute, &value] {
-        // The given `element` may not respond to `accessibilityAttributeValue`, so first check to see if it responds to the attribute-specific selector.
-        if ([attribute isEqual:NSAccessibilityChildrenAttribute] && [element respondsToSelector:@selector(accessibilityChildren)])
-            value = [element accessibilityChildren];
-        else if ([attribute isEqual:NSAccessibilityDescriptionAttribute] && [element respondsToSelector:@selector(accessibilityLabel)])
-            value = [element accessibilityLabel];
-        else if ([attribute isEqual:NSAccessibilityParentAttribute] && [element respondsToSelector:@selector(accessibilityParent)])
-            value = [element accessibilityParent];
-        else if ([attribute isEqual:NSAccessibilityRoleAttribute] && [element respondsToSelector:@selector(accessibilityRole)])
-            value = [element accessibilityRole];
-        else if ([attribute isEqual:NSAccessibilityValueAttribute] && [element respondsToSelector:@selector(accessibilityValue)])
-            value = [element accessibilityValue];
-        else if ([attribute isEqual:NSAccessibilityFocusedUIElementAttribute] && [element respondsToSelector:@selector(accessibilityFocusedUIElement)])
-            value = [element accessibilityFocusedUIElement];
-        else
-            value = [element accessibilityAttributeValue:attribute];
-    });
-    END_AX_OBJC_EXCEPTIONS
-
-    return value;
+    return [element accessibilityAttributeValue:attribute];
 }
 
 void setAttributeValue(id element, NSString* attribute, id value, bool synchronous = false)
@@ -315,9 +307,30 @@ static NSDictionary *misspellingSearchParameterizedAttributeForCriteria(Accessib
     return parameters;
 }
 
-inline RetainPtr<id> AccessibilityUIElement::attributeValue(NSString *attributeName) const
+RetainPtr<id> AccessibilityUIElement::attributeValue(NSString *attributeName) const
 {
-    return WTR::attributeValue(m_element.get(), attributeName);
+    RetainPtr<id> value;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    s_controller->executeOnAXThreadAndWait([this, &attributeName, &value] {
+        value = WTR::attributeValue(m_element.get(), attributeName);
+    });
+    END_AX_OBJC_EXCEPTIONS
+
+    return value;
+}
+
+RetainPtr<id> AccessibilityUIElement::attributeValueForParameter(NSString *attributeName, id parameter) const
+{
+    RetainPtr<id> value;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    s_controller->executeOnAXThreadAndWait([this, &attributeName, &parameter, &value] {
+        value = [m_element accessibilityAttributeValue:attributeName forParameter:parameter];
+    });
+    END_AX_OBJC_EXCEPTIONS
+
+    return value;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
@@ -1131,7 +1144,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const
 int AccessibilityUIElement::lineForIndex(int index)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id value = [m_element accessibilityAttributeValue:NSAccessibilityLineForIndexParameterizedAttribute forParameter:@(index)];
+    auto value = attributeValueForParameter(NSAccessibilityLineForIndexParameterizedAttribute, @(index));
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber *)value intValue]; 
     END_AX_OBJC_EXCEPTIONS
@@ -1142,18 +1155,18 @@ int AccessibilityUIElement::lineForIndex(int index)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int line)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id value = [m_element accessibilityAttributeValue:NSAccessibilityRangeForLineParameterizedAttribute forParameter:@(line)];
+    auto value = attributeValueForParameter(NSAccessibilityRangeForLineParameterizedAttribute, @(line));
     if ([value isKindOfClass:[NSValue class]])
         return [NSStringFromRange([value rangeValue]) createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int x, int y)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id value = [m_element accessibilityAttributeValue:NSAccessibilityRangeForPositionParameterizedAttribute forParameter:[NSValue valueWithPoint:NSMakePoint(x, y)]];
+    auto value = attributeValueForParameter(NSAccessibilityRangeForPositionParameterizedAttribute, [NSValue valueWithPoint:NSMakePoint(x, y)]);
     if ([value isKindOfClass:[NSValue class]])
         return [NSStringFromRange([value rangeValue]) createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
@@ -1165,16 +1178,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned locatio
 {
     NSRange range = NSMakeRange(location, length);
     BEGIN_AX_OBJC_EXCEPTIONS
-    id value = [m_element accessibilityAttributeValue:NSAccessibilityBoundsForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    auto value = attributeValueForParameter(NSAccessibilityBoundsForRangeParameterizedAttribute, [NSValue valueWithRange:range]);
     NSRect rect = NSMakeRect(0,0,0,0);
     if ([value isKindOfClass:[NSValue class]])
         rect = [value rectValue]; 
-    
+
     // don't return position information because it is platform dependent
     NSMutableString* boundsDescription = [NSMutableString stringWithFormat:@"{{%f, %f}, {%f, %f}}",-1.0f,-1.0f,rect.size.width,rect.size.height];
     return [boundsDescription createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1182,10 +1195,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned locatio
 {
     NSRange range = NSMakeRange(location, length);
     BEGIN_AX_OBJC_EXCEPTIONS
-    id string = [m_element accessibilityAttributeValue:NSAccessibilityStringForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    auto string = attributeValueForParameter(NSAccessibilityStringForRangeParameterizedAttribute, [NSValue valueWithRange:range]);
     if (![string isKindOfClass:[NSString class]])
         return nullptr;
-    
+
     return [string createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
     
@@ -1196,14 +1209,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
 {
     NSRange range = NSMakeRange(location, length);
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSAttributedString* string = [m_element accessibilityAttributeValue:NSAccessibilityAttributedStringForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    auto string = attributeValueForParameter(NSAccessibilityAttributedStringForRangeParameterizedAttribute, [NSValue valueWithRange:range]);
     if (![string isKindOfClass:[NSAttributedString class]])
         return nullptr;
-    
+
     NSString* stringWithAttrs = [string description];
     return [stringWithAttrs createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1211,7 +1224,7 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
 {
     NSRange range = NSMakeRange(location, length);
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSAttributedString* string = [m_element accessibilityAttributeValue:NSAccessibilityAttributedStringForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    auto string = attributeValueForParameter(NSAccessibilityAttributedStringForRangeParameterizedAttribute, [NSValue valueWithRange:range]);
     if (![string isKindOfClass:[NSAttributedString class]])
         return false;
 
@@ -1223,7 +1236,7 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
 #endif
     return misspelled;
     END_AX_OBJC_EXCEPTIONS
-    
+
     return false;
 }
 
@@ -1231,7 +1244,7 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, UINT_MAX, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id value = [m_element accessibilityAttributeValue:@"AXUIElementCountForSearchPredicate" forParameter:parameterizedAttribute];
+    auto value = attributeValueForParameter(@"AXUIElementCountForSearchPredicate", parameterizedAttribute);
     if ([value isKindOfClass:[NSNumber class]])
         return [value unsignedIntValue];
     END_AX_OBJC_EXCEPTIONS
@@ -1243,13 +1256,13 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredica
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id searchResults = [m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameterizedAttribute];
+    auto searchResults = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameterizedAttribute);
     if ([searchResults isKindOfClass:[NSArray class]]) {
         if (id lastResult = [searchResults lastObject])
             return AccessibilityUIElement::create(lastResult);
     }
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1257,11 +1270,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContex
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = selectTextParameterizedAttributeForCriteria(context, ambiguityResolution, searchStrings, replacementString, activity);
-    RetainPtr<id> result;
-    s_controller->executeOnAXThreadAndWait([&parameterizedAttribute, &result, this] {
-        result = [m_element accessibilityAttributeValue:@"AXSelectTextWithCriteria" forParameter:parameterizedAttribute];
-    });
-    if ([result.get() isKindOfClass:[NSString class]])
+    auto result = attributeValueForParameter(@"AXSelectTextWithCriteria", parameterizedAttribute);
+    if ([result isKindOfClass:[NSString class]])
         return [result.get() createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
 
@@ -1273,9 +1283,9 @@ JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef context, 
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = searchTextParameterizedAttributeForCriteria(context, searchStrings, startFrom, direction);
-    id result = [m_element accessibilityAttributeValue:@"AXSearchTextWithCriteria" forParameter:parameterizedAttribute];
+    auto result = attributeValueForParameter(@"AXSearchTextWithCriteria", parameterizedAttribute);
     if ([result isKindOfClass:[NSArray class]])
-        return makeJSArray(makeVector<RefPtr<AccessibilityTextMarkerRange>>(result));
+        return makeJSArray(makeVector<RefPtr<AccessibilityTextMarkerRange>>(result.get()));
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -1414,8 +1424,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsig
 {
     NSArray *colRowArray = @[@(col), @(row)];
     BEGIN_AX_OBJC_EXCEPTIONS
-    if (id cell = [m_element accessibilityAttributeValue:@"AXCellForColumnAndRow" forParameter:colRowArray])
-        return AccessibilityUIElement::create(cell);
+    if (auto cell = attributeValueForParameter(@"AXCellForColumnAndRow", colRowArray))
+        return AccessibilityUIElement::create(cell.get());
     END_AX_OBJC_EXCEPTIONS    
 
     return nullptr;
@@ -1850,10 +1860,10 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXLineTextMarkerRangeForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXLineTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1863,7 +1873,7 @@ int AccessibilityUIElement::lineIndexForTextMarker(AccessibilityTextMarker* mark
         return -1;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    return [[m_element accessibilityAttributeValue:@"AXLineForTextMarker" forParameter:marker->platformTextMarker()] intValue];
+    return [attributeValueForParameter(@"AXLineForTextMarker", marker->platformTextMarker()) intValue];
     END_AX_OBJC_EXCEPTIONS
 
     return -1;
@@ -1873,8 +1883,8 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMark
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameters = misspellingSearchParameterizedAttributeForCriteria(start, forward);
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXMisspellingTextMarkerRange" forParameter:parameters];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXMisspellingTextMarkerRange", parameters);
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -1883,10 +1893,10 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMark
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForUIElement" forParameter:element->platformUIElement()];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXTextMarkerRangeForUIElement", element->platformUIElement());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1896,10 +1906,10 @@ int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* 
         return 0;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSNumber* lengthValue = [m_element accessibilityAttributeValue:@"AXLengthForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
+    auto lengthValue = attributeValueForParameter(@"AXLengthForTextMarkerRange", range->platformTextMarkerRange());
     return [lengthValue intValue];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return 0;
 }
 
@@ -1909,10 +1919,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(Acces
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id previousMarker = [m_element accessibilityAttributeValue:@"AXPreviousTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(previousMarker);
+    auto previousMarker = attributeValueForParameter(@"AXPreviousTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(previousMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1922,10 +1932,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(Accessibi
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id nextMarker = [m_element accessibilityAttributeValue:@"AXNextTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(nextMarker);
+    auto nextMarker = attributeValueForParameter(@"AXNextTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(nextMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1935,10 +1945,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(Access
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textString = [m_element accessibilityAttributeValue:@"AXStringForTextMarkerRange" forParameter:markerRange->platformTextMarkerRange()];
+    auto textString = attributeValueForParameter(@"AXStringForTextMarkerRange", markerRange->platformTextMarkerRange());
     return [textString createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -1952,8 +1962,8 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForM
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray *textMarkers = @[startMarker->platformTextMarker(), endMarker->platformTextMarker()];
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForTextMarkers" forParameter:textMarkers];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXTextMarkerRangeForTextMarkers", textMarkers);
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -1962,8 +1972,8 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForM
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned location, unsigned length)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    return AccessibilityTextMarkerRange::create([m_element accessibilityAttributeValue:@"AXTextMarkerRangeForNSRange"
-        forParameter:[NSValue valueWithRange:NSMakeRange(location, length)]]);
+    return AccessibilityTextMarkerRange::create(attributeValueForParameter(@"AXTextMarkerRangeForNSRange",
+        [NSValue valueWithRange:NSMakeRange(location, length)]).get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -1986,11 +1996,11 @@ void AccessibilityUIElement::resetSelectedTextMarkerRange()
         return;
 
     NSArray *textMarkers = @[start.get(), start.get()];
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForUnorderedTextMarkers" forParameter:textMarkers];
+    auto textMarkerRange = attributeValueForParameter(@"AXTextMarkerRangeForUnorderedTextMarkers", textMarkers);
     if (!textMarkerRange)
         return;
 
-    setAttributeValue(m_element.get(), NSAccessibilitySelectedTextMarkerRangeAttribute, textMarkerRange, true);
+    setAttributeValue(m_element.get(), NSAccessibilitySelectedTextMarkerRangeAttribute, textMarkerRange.get(), true);
 }
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
@@ -1999,10 +2009,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMa
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:@"AXStartTextMarkerForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
-    return AccessibilityTextMarker::create(textMarker);
+    auto textMarker = attributeValueForParameter(@"AXStartTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
+    return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2012,20 +2022,21 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMark
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:@"AXEndTextMarkerForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
-    return AccessibilityTextMarker::create(textMarker);
+    auto textMarker = attributeValueForParameter(@"AXEndTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
+    return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute forParameter:[NSValue valueWithRect:NSMakeRect(x, y, width, height)]];
-    return AccessibilityTextMarker::create(textMarker);
+    auto textMarker = attributeValueForParameter(NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute,
+        [NSValue valueWithRect:NSMakeRect(x, y, width, height)]);
+    return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2053,20 +2064,21 @@ bool AccessibilityUIElement::insertText(JSStringRef text)
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute forParameter:[NSValue valueWithRect:NSMakeRect(x, y, width, height)]];
-    return AccessibilityTextMarker::create(textMarker);
+    auto textMarker = attributeValueForParameter(NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute,
+        [NSValue valueWithRect:NSMakeRect(x, y, width, height)]);
+    return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:@"AXTextMarkerForPosition" forParameter:[NSValue valueWithPoint:NSMakePoint(x, y)]];
-    return AccessibilityTextMarker::create(textMarker);
+    auto textMarker = attributeValueForParameter(@"AXTextMarkerForPosition", [NSValue valueWithPoint:NSMakePoint(x, y)]);
+    return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2076,11 +2088,11 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTe
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id uiElement = [m_element accessibilityAttributeValue:@"AXUIElementForTextMarker" forParameter:marker->platformTextMarker()];
+    auto uiElement = attributeValueForParameter(@"AXUIElementForTextMarker", marker->platformTextMarker());
     if (uiElement)
-        return AccessibilityUIElement::create(uiElement);
+        return AccessibilityUIElement::create(uiElement.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2108,24 +2120,19 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRa
     if (!markerRange)
         return nullptr;
 
-    NSAttributedString* string = nil;
-
     BEGIN_AX_OBJC_EXCEPTIONS
-    string = [m_element accessibilityAttributeValue:@"AXAttributedStringForTextMarkerRange" forParameter:markerRange->platformTextMarkerRange()];
+    auto string = attributeValueForParameter(@"AXAttributedStringForTextMarkerRange", markerRange->platformTextMarkerRange());
+    if ([string isKindOfClass:[NSAttributedString class]])
+        return createJSStringRef(string.get());
     END_AX_OBJC_EXCEPTIONS
 
-    if (![string isKindOfClass:[NSAttributedString class]])
-        return nil;
-
-    return createJSStringRef(string);
+    return nil;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange* markerRange, bool includeSpellCheck)
 {
     if (!markerRange || !markerRange->platformTextMarkerRange())
         return nullptr;
-
-    NSAttributedString* string = nil;
 
     id parameter = nil;
     if (includeSpellCheck)
@@ -2134,13 +2141,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRa
         parameter = markerRange->platformTextMarkerRange();
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    string = [m_element accessibilityAttributeValue:@"AXAttributedStringForTextMarkerRangeWithOptions" forParameter:parameter];
+    auto string = attributeValueForParameter(@"AXAttributedStringForTextMarkerRangeWithOptions", parameter);
+    if ([string isKindOfClass:[NSAttributedString class]])
+        return createJSStringRef(string.get());
     END_AX_OBJC_EXCEPTIONS
 
-    if (![string isKindOfClass:[NSAttributedString class]])
-        return nil;
-
-    return createJSStringRef(string);
+    return nil;
 }
 
 bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef attribute, AccessibilityTextMarkerRange* range)
@@ -2149,15 +2155,15 @@ bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute
         return false;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSAttributedString* string = [m_element accessibilityAttributeValue:@"AXAttributedStringForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
+    auto string = attributeValueForParameter(@"AXAttributedStringForTextMarkerRange", range->platformTextMarkerRange());
     if (![string isKindOfClass:[NSAttributedString class]])
         return false;
-    
+
     NSDictionary* attrs = [string attributesAtIndex:0 effectiveRange:nil];
     if ([attrs objectForKey:[NSString stringWithJSStringRef:attribute]])
         return true;    
     END_AX_OBJC_EXCEPTIONS
-    
+
     return false;
 }
     
@@ -2167,10 +2173,10 @@ int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker* marker)
         return -1;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSNumber* indexNumber = [m_element accessibilityAttributeValue:@"AXIndexForTextMarker" forParameter:marker->platformTextMarker()];
+    auto indexNumber = attributeValueForParameter(@"AXIndexForTextMarker", marker->platformTextMarker());
     return [indexNumber intValue];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return -1;
 }
 
@@ -2180,20 +2186,20 @@ bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMark
         return false;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSNumber* validNumber = [m_element accessibilityAttributeValue:@"AXTextMarkerIsValid" forParameter:textMarker->platformTextMarker()];
-    return [validNumber boolValue];
+    auto value = attributeValueForParameter(@"AXTextMarkerIsValid", textMarker->platformTextMarker());
+    return [value boolValue];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return false;
 }
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int textIndex)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:@"AXTextMarkerForIndex" forParameter:[NSNumber numberWithInteger:textIndex]];
-    return AccessibilityTextMarker::create(textMarker);
+    auto textMarker = attributeValueForParameter(@"AXTextMarkerForIndex", [NSNumber numberWithInteger:textIndex]);
+    return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2223,10 +2229,10 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftWordTextMarkerR
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXLeftWordTextMarkerRangeForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXLeftWordTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2236,10 +2242,10 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightWordTextMarker
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXRightWordTextMarkerRangeForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXRightWordTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2249,10 +2255,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousWordStartTextMar
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id previousWordStartMarker = [m_element accessibilityAttributeValue:@"AXPreviousWordStartTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(previousWordStartMarker);
+    auto previousWordStartMarker = attributeValueForParameter(@"AXPreviousWordStartTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(previousWordStartMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2262,10 +2268,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextWordEndTextMarkerFor
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id nextWordEndMarker = [m_element accessibilityAttributeValue:@"AXNextWordEndTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(nextWordEndMarker);
+    auto nextWordEndMarker = attributeValueForParameter(@"AXNextWordEndTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(nextWordEndMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2275,10 +2281,10 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::paragraphTextMarker
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXParagraphTextMarkerRangeForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXParagraphTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2288,10 +2294,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousParagraphStartTe
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id previousParagraphStartMarker = [m_element accessibilityAttributeValue:@"AXPreviousParagraphStartTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(previousParagraphStartMarker);
+    auto previousParagraphStartMarker = attributeValueForParameter(@"AXPreviousParagraphStartTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(previousParagraphStartMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2301,10 +2307,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextParagraphEndTextMark
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id nextParagraphEndMarker = [m_element accessibilityAttributeValue:@"AXNextParagraphEndTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(nextParagraphEndMarker);
+    auto nextParagraphEndMarker = attributeValueForParameter(@"AXNextParagraphEndTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(nextParagraphEndMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2314,10 +2320,10 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::sentenceTextMarkerR
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXSentenceTextMarkerRangeForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    auto textMarkerRange = attributeValueForParameter(@"AXSentenceTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2327,10 +2333,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTex
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id previousParagraphStartMarker = [m_element accessibilityAttributeValue:@"AXPreviousSentenceStartTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(previousParagraphStartMarker);
+    auto previousParagraphStartMarker = attributeValueForParameter(@"AXPreviousSentenceStartTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(previousParagraphStartMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2340,10 +2346,10 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextSentenceEndTextMarke
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    id nextParagraphEndMarker = [m_element accessibilityAttributeValue:@"AXNextSentenceEndTextMarkerForTextMarker" forParameter:textMarker->platformTextMarker()];
-    return AccessibilityTextMarker::create(nextParagraphEndMarker);
+    auto nextParagraphEndMarker = attributeValueForParameter(@"AXNextSentenceEndTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(nextParagraphEndMarker.get());
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
@@ -2351,8 +2357,11 @@ static NSString *_convertMathMultiscriptPairsToString(NSArray *pairs)
 {
     __block NSMutableString *result = [NSMutableString string];
     [pairs enumerateObjectsUsingBlock:^(id pair, NSUInteger index, BOOL *stop) {
-        for (NSString *key in pair)
-            [result appendFormat:@"\t%lu. %@ = %@\n", (unsigned long)index, key, [[pair objectForKey:key] accessibilityAttributeValue:NSAccessibilitySubroleAttribute]];
+        for (NSString *key in pair) {
+            auto element = AccessibilityUIElement::create([pair objectForKey:key]);
+            auto subrole = element->attributeValue(NSAccessibilitySubroleAttribute);
+            [result appendFormat:@"\t%lu. %@ = %@\n", (unsigned long)index, key, subrole.get()];
+        }
     }];
 
     return result;
