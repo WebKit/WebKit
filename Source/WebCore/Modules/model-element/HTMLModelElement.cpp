@@ -82,14 +82,6 @@ Ref<HTMLModelElement> HTMLModelElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLModelElement(tagName, document));
 }
 
-RefPtr<SharedBuffer> HTMLModelElement::modelData() const
-{
-    if (!m_dataComplete)
-        return nullptr;
-
-    return m_data;
-}
-
 RefPtr<Model> HTMLModelElement::model() const
 {
     if (!m_dataComplete)
@@ -212,7 +204,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     }
 
     m_dataComplete = true;
-    m_model = Model::create(*m_data, resource.mimeType(), resource.url());
+    m_model = Model::create(m_data.releaseNonNull().get(), resource.mimeType(), resource.url());
 
     invalidateResourceHandleAndUpdateRenderer();
 

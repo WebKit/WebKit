@@ -63,7 +63,6 @@ public:
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<HTMLModelElement>>;
     ReadyPromise& ready() { return m_readyPromise.get(); }
 
-    RefPtr<SharedBuffer> modelData() const;
     RefPtr<Model> model() const;
 
     bool usesPlatformLayer() const;
