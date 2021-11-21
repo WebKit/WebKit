@@ -246,11 +246,6 @@ LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
     return LineBreakIteratorMode::Default;
 }
 
-bool TextUtil::canUseSimplifiedTextMeasuringForFirstLine(const RenderStyle& style, const RenderStyle& firstLineStyle)
-{
-    return style.collapseWhiteSpace() == firstLineStyle.collapseWhiteSpace() && style.fontCascade() == firstLineStyle.fontCascade();
-}
-
 bool TextUtil::containsBidiText(StringView text)
 {
     if (text.is8Bit())
