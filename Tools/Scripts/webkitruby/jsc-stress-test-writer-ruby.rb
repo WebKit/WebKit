@@ -260,25 +260,7 @@ def chakraPassFailErrorHandler
    }
 end
 
-class Plan
-    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler, :additionalEnv
-    attr_accessor :index
-    
-    def initialize(directory, arguments, family, name, outputHandler, errorHandler)
-        @directory = directory
-        @arguments = arguments
-        @family = family
-        @name = name
-        @outputHandler = outputHandler
-        @errorHandler = errorHandler
-        @isSlow = !!$runCommandOptions[:isSlow]
-        @crashOK = !!$runCommandOptions[:crashOK]
-        if @crashOK
-            @outputHandler = noisyOutputHandler
-        end
-        @additionalEnv = []
-    end
-    
+class Plan < BasePlan
     def shellCommand 
         script = "out = nil\n"
         script += "err = nil\n"
@@ -398,82 +380,97 @@ class Plan
     end
 end
 
-def prepareShellTestRunner
-    File.open($runnerDir + "runscript", "w") {
-        | outp |
-        $runlist.each {
-            | plan |
-            outp.puts "ruby test_script_#{plan.index}"
+class TestRunnerShell < TestRunner
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        File.open("#{@runnerDir + "runscript"}", "w") { |f|
+            runlist.each { |plan|
+                if completedPlans.include?(plan)
+                    next
+                end
+                f.puts("ruby test_script_#{plan.index}")
+            }
         }
-    }
-    `dos2unix #{$runnerDir + "runscript"}`    
+        `dos2unix #{@runnerDir + "runscript"}`
+    end
+    def command(remoteIndex=0)
+        "sh runscript"
+    end
 end
 
-def output_target(outp, plan, prereqs)
-    index = plan.index
-    target = "test_done_#{index}"
-    outp.puts "#{target}: #{prereqs.join(" ")}"
-    outp.puts "\truby test_script_#{index}"
-    target
-end
-
-def prepareMakeTestRunner(remoteIndex)
-    serialPlans = {}
-    $serialRunlist.each { |p| serialPlans[p] = nil }
-    runPlans = []
-    serialRunPlans = []
-    $runlist.each {
-        | plan |
-        if !$remote or plan.index % $remoteHosts.length == remoteIndex
-            if serialPlans.has_key?(plan)
-                serialRunPlans << plan
-            else
-                runPlans << plan
+class TestRunnerMake < TestRunner
+    def output_target(outp, plan, prereqs)
+        index = plan.index
+        target = "test_done_#{index}"
+        outp.puts "#{target}: #{prereqs.join(" ")}"
+        outp.puts "\truby test_script_#{index}"
+        target
+    end
+    def prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteIndex)
+        runPlans = []
+        serialRunPlans = []
+        runlist.each {
+            | plan |
+            if completedPlans.include?(plan)
+                next
             end
-        end
-    }
+            if @remoteHosts.nil? or plan.index % @remoteHosts.length == remoteIndex
+                if serialPlans.include?(plan)
+                    serialRunPlans << plan
+                else
+                    runPlans << plan
+                end
+            end
+        }
 
-    File.open($runnerDir + "Makefile.#{remoteIndex}", "w") {
-        | outp |
-        if serialRunPlans.empty?
-            outp.puts("all: parallel")
-        else
-            serialPrereq = "test_done_#{serialRunPlans[-1].index}"
-            outp.puts("all: #{serialPrereq}")
-            prev_target = "parallel"
-            serialRunPlans.each {
+        File.open(@runnerDir + "Makefile.#{remoteIndex}", "w") {
+            | outp |
+            if serialRunPlans.empty?
+                outp.puts("all: parallel")
+            else
+                serialPrereq = "test_done_#{serialRunPlans[-1].index}"
+                outp.puts("all: #{serialPrereq}")
+                prev_target = "parallel"
+                serialRunPlans.each {
+                    | plan |
+                    prev_target = output_target(outp, plan, [prev_target])
+                }
+            end
+            parallelTargets = runPlans.collect {
                 | plan |
-                prev_target = output_target(outp, plan, [prev_target])
+                output_target(outp, plan, [])
+            }
+            outp.puts("parallel: " + parallelTargets.join(" "))
+        }
+    end
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        if remoteHosts.nil?
+            prepareRunnerForRemote(runlist, serialPlans, completedPlans, 0)
+        else
+            remoteHosts.each_index {
+                |remoteIndex|
+                prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteIndex)
             }
         end
-        parallelTargets = runPlans.collect {
-            | plan |
-            output_target(outp, plan, [])
-        }
-        outp.puts("parallel: " + parallelTargets.join(" "))
-    }
-end
-
-def prepareRubyTestRunner
-    File.open($runnerDir + "runscript", "w") {
-        | outp |
-        $runlist.each {
-            | plan |
-            outp.puts "system \"ruby test_script_#{plan.index}\""
-        }
-    }
-end
-
-def testRunnerCommand(remoteIndex=0)
-    case $testRunnerType
-    when :shell
-        command = "sh runscript"
-    when :make
-        command = "make -j #{$numChildProcesses} -s -f Makefile.#{remoteIndex}"
-    when :ruby
-        command = "ruby runscript"
-    else
-        raise "Unknown test runner type: #{$testRunnerType.to_s}"
     end
-    return command
+    def command(remoteIndex=0)
+        "make -j #{$numChildProcesses} -s -f Makefile.#{remoteIndex}"
+    end
+end
+
+class TestRunnerRuby < TestRunner
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        File.open(@runnerDir + "runscript", "w") {
+            | outp |
+            runlist.each {
+                | plan |
+                if completedPlans.include?(plan)
+                    next
+                end
+                outp.puts "system \"ruby test_script_#{plan.index}\""
+            }
+        }
+    end
+    def command(remoteIndex=0)
+        "ruby runscript"
+    end
 end

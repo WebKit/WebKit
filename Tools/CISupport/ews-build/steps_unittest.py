@@ -48,7 +48,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
-                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
+                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -1361,6 +1361,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.jsc_dfg_air_and_stress_test_failure = '''{"allDFGTestsPassed":false,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":false,"allApiTestsPassed":true,"stressTestFailures":["stress/weakset-gc.js"]}\n'''
         self.jsc_single_stress_test_failure = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":["stress/switch-on-char-llint-rope.js.dfg-eager"],"allApiTestsPassed":true}\n'''
         self.jsc_multiple_stress_test_failures = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":["stress/switch-on-char-llint-rope.js.dfg-eager","stress/switch-on-char-llint-rope.js.dfg-eager-no-cjit-validate","stress/switch-on-char-llint-rope.js.eager-jettison-no-cjit","stress/switch-on-char-llint-rope.js.ftl-eager","stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit","stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit-b3o1","stress/switch-on-char-llint-rope.js.ftl-no-cjit-b3o0","stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-inline-validate","stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-put-stack-validate","stress/switch-on-char-llint-rope.js.ftl-no-cjit-small-pool","stress/switch-on-char-llint-rope.js.ftl-no-cjit-validate-sampling-profiler","stress/switch-on-char-llint-rope.js.no-cjit-collect-continuously","stress/switch-on-char-llint-rope.js.no-cjit-validate-phases","stress/switch-on-char-llint-rope.js.no-ftl"],"allApiTestsPassed":true}\n'''
+        self.jsc_passed_with_flaky = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":[],"flakyAndPassed":{"stress/switch-on-char-llint-rope.js.default":{"P":"7","T":"10"}},"allApiTestsPassed":true}\n'''
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -1369,6 +1370,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
     def configureStep(self, platform=None, fullPlatform=None, configuration=None):
         self.setupStep(RunJavaScriptCoreTests())
         self.prefix = RunJavaScriptCoreTests.prefix
+        self.command_extra = RunJavaScriptCoreTests.command_extra
         if platform:
             self.setProperty('platform', platform)
         if fullPlatform:
@@ -1381,7 +1383,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -1395,7 +1397,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited', '--verbose', '--jsc-only'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -1408,7 +1410,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -1423,7 +1425,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_single_stress_test_failure),
@@ -1440,7 +1442,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_multiple_stress_test_failures),
@@ -1457,7 +1459,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_masm_failure),
@@ -1474,7 +1476,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_b3_and_stress_test_failure),
@@ -1491,7 +1493,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--memory-limited', '--verbose', '--jsc-only'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_dfg_air_and_stress_test_failure),
@@ -1502,52 +1504,30 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty(self.prefix + 'binary_failures'), ['testair', 'testdfg'])
         return rc
 
-
-class TestReRunJavaScriptCoreTests(TestRunJavaScriptCoreTests):
-    def configureStep(self, platform=None, fullPlatform=None, configuration=None):
-        self.setupStep(ReRunJavaScriptCoreTests())
-        self.prefix = ReRunJavaScriptCoreTests.prefix
-        if platform:
-            self.setProperty('platform', platform)
-        if fullPlatform:
-            self.setProperty('fullPlatform', fullPlatform)
-        if configuration:
-            self.setProperty('configuration', configuration)
-
-    def test_success(self):
-        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
-        self.setProperty('jsc_stress_test_failures', ['test1', 'test2'])
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
-                        logfiles={'json': self.jsonFileName},
-                        ) +
-            0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Found flaky tests: test1, test2')
-        return self.runStep()
-
-    def test_remote_success(self):
+    def test_success_with_flaky(self):
         self.configureStep(platform='jsc-only', fullPlatform='jsc-only', configuration='release')
-        self.setProperty('remotes', 'remote-machines.json')
-        self.setProperty('jsc_binary_failures', ['testmasm'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited', '--verbose', '--jsc-only'],
                         logfiles={'json': self.jsonFileName},
-                        ) +
-            0,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
+                        )
+            + 0
+            + ExpectShell.log('json', stdout=self.jsc_passed_with_flaky),
         )
-        self.expectOutcome(result=SUCCESS, state_string='Found flaky test: testmasm')
-        return self.runStep()
+        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests (1 flaky)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.prefix + 'flaky_and_passed'), {'stress/switch-on-char-llint-rope.js.default': {'P': '7', 'T': '10'}})
+        self.assertEqual(self.getProperty(self.prefix + 'stress_test_failures'), None)
+        self.assertEqual(self.getProperty(self.prefix + 'binary_test_failures'), None)
+        return rc
 
 
 class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'jsc_results.json'
+        self.command_extra = RunJSCTestsWithoutPatch.command_extra
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -1560,7 +1540,7 @@ class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -1575,7 +1555,7 @@ class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -1597,38 +1577,34 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(AnalyzeJSCTestsResults())
         self.setProperty('jsc_stress_test_failures', [])
         self.setProperty('jsc_binary_failures', [])
-        self.setProperty('jsc_rerun_stress_test_failures', [])
-        self.setProperty('jsc_rerun_binary_failures', [])
+        self.setProperty('jsc_flaky_and_passed', {})
         self.setProperty('jsc_clean_tree_stress_test_failures', [])
         self.setProperty('jsc_clean_tree_binary_failures', [])
+        self.setProperty('jsc_clean_tree_flaky_and_passed', {})
         AnalyzeJSCTestsResults.send_email_for_flaky_failure = lambda self, test: None
         AnalyzeJSCTestsResults.send_email_for_pre_existing_failure = lambda self, test: None
 
     def test_single_new_stress_failure(self):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.bytecode-cache'])
-        self.setProperty('jsc_rerun_stress_test_failures', ['stress/force-error.js.bytecode-cache'])
         self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC stress test failure: stress/force-error.js.bytecode-cache (failure)')
         return self.runStep()
 
     def test_single_new_binary_failure(self):
         self.configureStep()
         self.setProperty('jsc_binary_failures', ['testmasm'])
-        self.setProperty('jsc_rerun_binary_failures', ['testmasm'])
         self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC binary failure: testmasm (failure)')
         return self.runStep()
 
     def test_multiple_new_stress_failure(self):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
-        self.setProperty('jsc_rerun_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
         self.expectOutcome(result=FAILURE, state_string='Found 30 new JSC stress test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
         return self.runStep()
 
     def test_multiple_new_binary_failure(self):
         self.configureStep()
         self.setProperty('jsc_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
-        self.setProperty('jsc_rerun_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
         self.expectOutcome(result=FAILURE, state_string='Found 5 new JSC binary failures: testair, testapi, testb3, testdfg, testmasm (failure)')
         return self.runStep()
 
@@ -1636,15 +1612,12 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
         self.setProperty('jsc_binary_failures', ['testmasm'])
-        self.setProperty('jsc_rerun_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
-        self.setProperty('jsc_rerun_binary_failures', ['testmasm'])
         self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC binary failure: testmasm, Found 1 new JSC stress test failure: es6.yaml/es6/Set_iterator_closing.js.default (failure)')
         return self.runStep()
 
     def test_stress_failure_on_clean_tree(self):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.default'])
-        self.setProperty('jsc_rerun_stress_test_failures', ['stress/force-error.js.default'])
         self.setProperty('jsc_clean_tree_stress_test_failures', ['stress/force-error.js.default'])
         self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
         return self.runStep()
@@ -1661,39 +1634,29 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
         self.setProperty('jsc_binary_failures', ['testair'])
-        self.setProperty('jsc_rerun_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
-        self.setProperty('jsc_rerun_binary_failures', ['testair'])
         self.setProperty('jsc_clean_tree_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
         self.setProperty('jsc_clean_tree_binary_failures', ['testair'])
         self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
         return self.runStep()
 
-    def test_flaky_stress_and_binary_failures(self):
-        self.configureStep()
-        self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.default'])
-        self.setProperty('jsc_binary_failures', ['testapi'])
-        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
-        return self.runStep()
-
     def test_flaky_and_consistent_stress_failures(self):
         self.configureStep()
-        self.setProperty('jsc_stress_test_failures', ['test1', 'test2'])
-        self.setProperty('jsc_rerun_stress_test_failures', ['test2'])
-        self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC stress test failure: test2 (failure)')
+        self.setProperty('jsc_stress_test_failures', ['test1'])
+        self.setProperty('jsc_flaky_and_passed', {'test2': {'P': '7', 'T': '10'}})
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC stress test failure: test1 (failure)')
         return self.runStep()
 
     def test_flaky_and_consistent_failures_with_clean_tree_failures(self):
         self.configureStep()
-        self.setProperty('jsc_stress_test_failures', ['test1', 'test2'])
-        self.setProperty('jsc_rerun_stress_test_failures', ['test1'])
-        self.setProperty('jsc_clean_tree_stress_test_failures', ['test1', 'test2'])
+        self.setProperty('jsc_stress_test_failures', ['test1'])
+        self.setProperty('jsc_flaky_and_passed', {'test2': {'P': 7, 'T': 10}})
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['test1'])
         self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
         return self.runStep()
 
     def test_unexpected_infra_issue(self):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', [])
-        self.setProperty('jsc_rerun_stress_test_failures', [])
         self.setProperty('jsc_clean_tree_stress_test_failures', [])
         self.setProperty('clean_tree_run_status', FAILURE)
         self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue, retrying build (retry)')
@@ -1702,8 +1665,9 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_patch_breaking_jsc_test_suite(self):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', [])
-        self.setProperty('jsc_rerun_stress_test_failures', [])
+        self.setProperty('jsc_flaky_and_passed', {})
         self.setProperty('jsc_clean_tree_stress_test_failures', [])
+        self.setProperty('jsc_clean_tree_flaky_and_passed', {})
         self.setProperty('clean_tree_run_status', SUCCESS)
         self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with patch (failure)')
         return self.runStep()

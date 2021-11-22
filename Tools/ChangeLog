@@ -1,3 +1,96 @@
+2021-11-22  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Move detection of flaky JSC tests to run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=232529
+
+        Reviewed by Jonathan Bedard.
+
+        Currently, flaky detection happens by
+        ReRunJavaScriptCoreTests. Unfortunately, this means that we end up
+        rerunning all JSC tests when there's even a single failure. Even
+        worse, when the tree is broken (as sometimes happens on ARM32 and
+        MIPS) we end up
+
+        1. running the tests once (they fail)
+        2. running all tests again
+        3. running all tests again without the patch
+
+        This means the queue slows down a lot, since it runs all JSC
+        stress tests 3 times.
+
+        This patch attempts to eliminate step 2, while also being more
+        reliable about handling flaky tests. Since we no longer need to
+        rerun the whole test suite, we can spend more CPU time on
+        identifying tests that might be flaky. The user can pass in
+        --treat-failing-as-flaky=passPercentage,maxTries,maxFailing. If
+        less than maxFailing tests failed, we run them again (up to
+        maxTries) until we can tell whether they pass more than
+        passPercentage of the time. This should result in less false
+        positives compared to ReRunJavaScriptCoreTests, as we'll no longer
+        declare a flaky test a failure if it happens to fail two times in
+        a row. In order to remove ReRunJavaScriptCoreTests, the patch
+        unconditionally enables --treat-failing-as-flaky by default in the
+        JSC EWS queues.
+
+        Implementation-wise, the patch generalizes the existing retry loop in
+        run-jsc-stress-tests (for dealing with flaky remote hosts) to (a) work
+        with any runner and (b) also retry flaky tests. As flaky handling is
+        impractical to test manually, it also abstracts-out the retry logic so
+        that we can test with predetermined results. This means we need to
+        e.g. pass the runlist around instead of treating it as a global,
+        capturing the main logic in classes and having a subclass provide
+        methods to be called back and so on. The patch does not shy away from
+        refactoring code when it makes sense but also doesn't go out of its
+        way to refactor (e.g. there's still a lot of duplication between the
+        default and ruby writers).
+
+        Downsides: we can no longer detect flakiness in the binary tests
+        (testair, testb3, ...). However, I'm not aware of any instance of
+        flakiness in those tests. The retry loop is now being used for all
+        runners, which means the results analysis path for e.g. the make
+        runner is now a bit more complicated. Detecting flaky tests needs
+        code somewhere, but this moves the detection code before the
+        result reporting, so is a bit riskier. The self tests should
+        counterbalance this.
+        * CISupport/ews-build/steps.py:
+        Kill ReRunJavaScriptCoreTests and enable --treat-failing-as-flaky.
+        Defaults to 60% pass percentage, 10 maxTries and a limit of 200
+        failing tests.
+        (RunJavaScriptCoreTests):
+        (RunJavaScriptCoreTests.__init__):
+        (RunJavaScriptCoreTests.start):
+        (RunJavaScriptCoreTests.evaluateCommand):
+        (RunJavaScriptCoreTests.commandComplete):
+        (RunJavaScriptCoreTests.getResultSummary):
+        (RunJavaScriptCoreTests._addToLog):
+        (AnalyzeJSCTestsResults.start):
+        (ReRunJavaScriptCoreTests): Deleted.
+        (ReRunJavaScriptCoreTests.evaluateCommand): Deleted.
+        * CISupport/ews-build/steps_unittest.py:
+        Update to match the changes in steps.py. Some testcases no longer
+        apply.
+        * Scripts/jsc-stress-test-helpers/shell-runner.sh:
+        Don't deduce the test list manually, expect it as an argument instead.
+        * Scripts/run-javascriptcore-tests:
+        Propagate info on test flakiness.
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+        Refactor the execution logic to use the abstracted-out code in
+        executor.rb. Use the retry loop on every runner.
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+        Update the test-writer files for the changes to run-jsc-stress-tests.
+        Move prepareFooRunner and testRunnerCommand to a class so that we can
+        keep state (for the new argument to the shell runner).
+        * Scripts/webkitruby/jsc-stress-test-writer-playstation.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+        * Scripts/webkitruby/jsc-stress-test/executor.rb: Added.
+        Implement a generic retry loop and define an array of virtual
+        tests (using predefined test results for each iteration).
+        * Scripts/webkitruby/jsc-stress-test/test-result-evaluator.rb: Added.
+        Encapsulate the logic on whether a test has passed or not
+        (Did we get any results? Were those results enough to declare a
+        flaky/non-flaky test a pass?) and add a number of tests.
+
 2021-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an API test for batch image analysis (-[WKWebView _startImageAnalysis:])

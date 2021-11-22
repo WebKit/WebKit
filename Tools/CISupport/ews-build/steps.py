@@ -1834,6 +1834,8 @@ class RunJavaScriptCoreTests(shell.Test):
     jsonFileName = 'jsc_results.json'
     logfiles = {'json': jsonFileName}
     command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
+    # We rely on run-jsc-stress-tests to weed out any flaky tests
+    command_extra = ['--treat-failing-as-flaky=0.6,10,200']
     prefix = 'jsc_'
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
 
@@ -1841,10 +1843,12 @@ class RunJavaScriptCoreTests(shell.Test):
         shell.Test.__init__(self, logEnviron=False, sigtermTime=10, **kwargs)
         self.binaryFailures = []
         self.stressTestFailures = []
+        self.flaky = {}
 
     def start(self):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
+
 
         # add remotes configuration file path to the command line if needed
         remotesfile = self.getProperty('remotes', False)
@@ -1862,6 +1866,7 @@ class RunJavaScriptCoreTests(shell.Test):
             self.command.extend(['--memory-limited', '--verbose'])
 
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.command.extend(self.command_extra)
         return shell.Test.start(self)
 
     def evaluateCommand(self, cmd):
@@ -1872,7 +1877,14 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), KillOldProcesses(), ReRunJavaScriptCoreTests()])
+            self.setProperty('patchFailedTests', True)
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                CompileJSCWithoutPatch(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                KillOldProcesses(),
+                                                RunJSCTestsWithoutPatch(),
+                                                AnalyzeJSCTestsResults()])
         return rc
 
     def commandComplete(self, cmd):
@@ -1895,10 +1907,12 @@ class RunJavaScriptCoreTests(shell.Test):
             self.binaryFailures.append('testdfg')
         if jsc_results.get('allApiTestsPassed') is False:
             self.binaryFailures.append('testapi')
-
         self.stressTestFailures = jsc_results.get('stressTestFailures')
         if self.stressTestFailures:
             self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
+        self.flaky = jsc_results.get('flakyAndPassed')
+        if self.flaky:
+            self.setProperty(self.prefix + 'flaky_and_passed', self.flaky)
         if self.binaryFailures:
             self.setProperty(self.prefix + 'binary_failures', self.binaryFailures)
 
@@ -1919,6 +1933,8 @@ class RunJavaScriptCoreTests(shell.Test):
                 status += 'JSC test binary failure{}: {}'.format(pluralSuffix, ', '.join(self.binaryFailures))
 
             return {'step': status}
+        elif self.results == SUCCESS and self.flaky:
+            return {'step': "Passed JSC tests (%d flaky)" % len(self.flaky)}
 
         return shell.Test.getResultSummary(self)
 
@@ -1929,35 +1945,6 @@ class RunJavaScriptCoreTests(shell.Test):
         except KeyError:
             log = yield self.addLog(logName)
         log.addStdout(message)
-
-
-class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
-    name = 'jscore-test-rerun'
-    prefix = 'jsc_rerun_'
-
-    def evaluateCommand(self, cmd):
-        rc = shell.Test.evaluateCommand(self, cmd)
-        first_run_failures = set(self.getProperty('jsc_stress_test_failures', []) + self.getProperty('jsc_binary_failures', []))
-        second_run_failures = set(self.getProperty('jsc_rerun_stress_test_failures', []) + self.getProperty('jsc_rerun_binary_failures', []))
-        flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
-        flaky_failures_string = ', '.join(sorted(flaky_failures))
-
-        if rc == SUCCESS or rc == WARNINGS:
-            pluralSuffix = 's' if len(flaky_failures) > 1 else ''
-            message = 'Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
-            self.descriptionDone = message
-            self.build.results = SUCCESS
-            self.build.buildFinished([message], SUCCESS)
-        else:
-            self.setProperty('patchFailedTests', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
-                                                CompileJSCWithoutPatch(),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
-                                                KillOldProcesses(),
-                                                RunJSCTestsWithoutPatch(),
-                                                AnalyzeJSCTestsResults()])
-        return rc
 
 
 class RunJSCTestsWithoutPatch(RunJavaScriptCoreTests):
@@ -1977,34 +1964,29 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
     NUM_FAILURES_TO_DISPLAY = 10
 
     def start(self):
-        first_run_stress_failures = set(self.getProperty('jsc_stress_test_failures', []))
-        first_run_binary_failures = set(self.getProperty('jsc_binary_failures', []))
-        second_run_stress_failures = set(self.getProperty('jsc_rerun_stress_test_failures', []))
-        second_run_binary_failures = set(self.getProperty('jsc_rerun_binary_failures', []))
+        stress_failures_with_patch = set(self.getProperty('jsc_stress_test_failures', []))
+        binary_failures_with_patch = set(self.getProperty('jsc_binary_failures', []))
         clean_tree_stress_failures = set(self.getProperty('jsc_clean_tree_stress_test_failures', []))
         clean_tree_binary_failures = set(self.getProperty('jsc_clean_tree_binary_failures', []))
         clean_tree_failures = list(clean_tree_binary_failures) + list(clean_tree_stress_failures)
         clean_tree_failures_string = ', '.join(clean_tree_failures[:self.NUM_FAILURES_TO_DISPLAY])
 
-        stress_failures_with_patch = first_run_stress_failures.intersection(second_run_stress_failures)
-        binary_failures_with_patch = first_run_binary_failures.intersection(second_run_binary_failures)
-
-        flaky_stress_failures = first_run_stress_failures.union(second_run_stress_failures) - first_run_stress_failures.intersection(second_run_stress_failures)
-        flaky_binary_failures = first_run_binary_failures.union(second_run_binary_failures) - first_run_binary_failures.intersection(second_run_binary_failures)
-        flaky_failures = sorted(list(flaky_binary_failures) + list(flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
-        flaky_failures_string = ', '.join(flaky_failures)
+        flaky_stress_failures_with_patch = set(self.getProperty('jsc_flaky_and_passed', {}).keys())
+        clean_tree_flaky_stress_failures = set(self.getProperty('jsc_clean_tree_flaky_and_passed', {}).keys())
+        flaky_stress_failures = sorted(list(flaky_stress_failures_with_patch) + list(clean_tree_flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
+        flaky_failures_string = ', '.join(flaky_stress_failures)
 
         new_stress_failures = stress_failures_with_patch - clean_tree_stress_failures
         new_binary_failures = binary_failures_with_patch - clean_tree_binary_failures
         self.new_stress_failures_to_display = ', '.join(sorted(list(new_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY])
         self.new_binary_failures_to_display = ', '.join(sorted(list(new_binary_failures))[:self.NUM_FAILURES_TO_DISPLAY])
 
-        self._addToLog('stderr', '\nFailures in first run: {}'.format((list(first_run_binary_failures) + list(first_run_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]))
-        self._addToLog('stderr', '\nFailures in second run: {}'.format((list(second_run_binary_failures) + list(second_run_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]))
-        self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures_string))
+        self._addToLog('stderr', '\nFailures with patch: {}'.format(list(binary_failures_with_patch) + list(stress_failures_with_patch))[:self.NUM_FAILURES_TO_DISPLAY])
+        self._addToLog('stderr', '\nFlaky Tests with patch: {}'.format(', '.join(flaky_stress_failures_with_patch)))
         self._addToLog('stderr', '\nFailures on clean tree: {}'.format(clean_tree_failures_string))
+        self._addToLog('stderr', '\nFlaky Tests on clean tree: {}'.format(', '.join(clean_tree_flaky_stress_failures)))
 
-        if (not first_run_stress_failures) and (not first_run_binary_failures) and (not second_run_stress_failures) and (not second_run_binary_failures):
+        if (not stress_failures_with_patch) and (not binary_failures_with_patch):
             # If we've made it here, then jsc-tests and re-run-jsc-tests failed, which means
             # there should have been some test failures. Otherwise there is some unexpected issue.
             clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
@@ -2029,9 +2011,9 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
                     self.send_email_for_pre_existing_failure(clean_tree_failure)
             if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
-            if flaky_failures:
+            if flaky_stress_failures:
                 message += ' Found flaky tests: {}'.format(flaky_failures_string)
-                for flaky_failure in flaky_failures:
+                for flaky_failure in flaky_stress_failures:
                     self.send_email_for_flaky_failure(flaky_failure)
             self.build.buildFinished([message], SUCCESS)
         return defer.succeed(None)

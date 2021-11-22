@@ -25,11 +25,16 @@
 
 require 'fileutils'
 require 'getoptlong'
+require 'ostruct'
 require 'pathname'
 require 'rbconfig'
+require 'set'
 require 'tempfile'
 require 'uri'
 require 'yaml'
+
+require_relative "webkitruby/jsc-stress-test/test-result-evaluator"
+require_relative "webkitruby/jsc-stress-test/executor"
 
 module URI
     class SSH < Generic
@@ -73,6 +78,8 @@ STATUS_FILE_FAIL = "F"
 PARALLEL_REMOTE_WRAPPER_MARK_BEGIN = "5d65329bd1a3"
 PARALLEL_REMOTE_WRAPPER_MARK_END = "a9aea5c3b843"
 PARALLEL_REMOTE_STATE_LOST_MARKER = "709fb7a77c45231918eb118a"
+ITERATION_LIMITS = OpenStruct.new(:infraIterationsFloor => 3,
+                                  :iterationsCeiling => 10)
 
 begin
     require 'shellwords'
@@ -124,7 +131,6 @@ def escapeAll(array)
     }.join(' ')
 end
 
-
 $jscPath = nil
 $doNotMessWithVMPath = false
 $jitTests = true
@@ -152,6 +158,11 @@ $ldd = nil
 $artifact_exec_wrapper = nil
 $numChildProcessesSetByUser = false
 $runUniqueId = Random.new.bytes(16).unpack("H*")[0]
+$testsDebugStream = nil # set to $stderr for debugging
+
+def putd(s)
+    $testsDebugStream.puts(s) unless $testsDebugStream.nil?
+end
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -222,6 +233,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--ruby-runner', GetoptLong::NO_ARGUMENT],
                ['--gnu-parallel-runner', GetoptLong::NO_ARGUMENT],
                ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
+               ['--treat-failing-as-flaky', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
                ['--report-execution-time', GetoptLong::NO_ARGUMENT],
@@ -270,6 +282,30 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $testRunnerType = :gnuparallel
     when '--test-writer'
         $testWriter = arg
+    when '--treat-failing-as-flaky'
+        md = /^([^,]+),(\d+),(\d+)$/.match(arg)
+        if md.nil?
+            $stderr.puts("Could not parse argument to `--treat-failing-as-flaky`; expected `passPercentage,maxTries,maxFailing`")
+            exit(1)
+        end
+        passPercentage = md[1].to_f
+        if passPercentage.zero?
+            $stderr.puts("Invalid passPercentage `#{md[1]}`")
+            exit(1)
+        end
+        maxTries = md[2].to_i
+        if maxTries == 0
+            $stderr.puts("Invalid maxTries `#{md[2]}`")
+            exit(1)
+        end
+        maxFailing = md[3].to_i
+        if maxFailing == 0
+            $stderr.puts("Invalid maxFailing `#{md[3]}`")
+            exit(1)
+        end
+        $treatFailingAsFlaky = OpenStruct.new(:passPercentage => passPercentage,
+                                              :maxTries => maxTries,
+                                              :maxFailing => maxFailing)
     when '--remote'
         $copyVM = true
         $tarball = true
@@ -576,6 +612,96 @@ FTL_OPTIONS = ["--useFTLJIT=true"]
 FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
 EXECUTABLE_FUZZER_OPTIONS = ["--useExecutableAllocationFuzz=true", "--fireExecutableAllocationFuzzRandomly=true"]
 
+class BasePlan
+    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler, :additionalEnv, :index
+    attr_accessor :retryParameters
+
+    @@index = 0
+    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters)
+        @directory = directory
+        @arguments = argumentsMapper(arguments)
+        @family = family
+        @name = name
+        @outputHandler = outputHandler
+        @errorHandler = errorHandler
+        # A plan for which @retryParameters is not nil is being
+        # treated as potentially flaky.
+        @retryParameters = retryParameters
+        @additionalEnv = []
+        @index = @@index
+        @@index += 1
+    end
+    def self.mock(family, name, retryParameters=nil)
+        self.new("/none", [], family, name, nil, nil, retryParameters)
+    end
+    def self.create(directory, arguments, family, name, outputHandler, errorHandler)
+        if $runCommandOptions[:crashOK]
+            outputHandler = noisyOutputHandler
+        end
+        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky])
+    end
+    def argumentsMapper(args)
+        args
+    end
+    # We regularly place Plans in containers, but may modify @retryParameters
+    # after the fact; only hash on @index instead.
+    def hash
+        @index
+    end
+    def to_s
+        "#{@index}"
+    end
+end
+
+class TestRunner
+    def initialize(testRunnerType, runnerDir)
+        @testRunnerType = testRunnerType
+        @runnerDir = runnerDir
+    end
+    def prepare(runlist, serialPlans, completedPlans, remoteHosts)
+        prepareScripts(runlist)
+        prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+    end
+    def prepareScripts(runlist)
+        Dir.mkdir(@runnerDir) unless @runnerDir.directory?
+        toDelete = []
+        Dir.foreach(@runnerDir) {
+            | filename |
+            if filename =~ /^test_/
+                toDelete << filename
+            end
+        }
+
+        toDelete.each {
+            | filename |
+            File.unlink(@runnerDir + filename)
+        }
+
+        # Write test scripts in parallel as this is both an expensive and a
+        # highly IO intensive operation, but each script is independent and
+        # the operation is pure other than writing the unique run script.
+        parallelEach(runlist) do | plan |
+            plan.writeRunScript(@runnerDir + "test_script_#{plan.index}")
+        end
+    end
+    def self.create(testRunnerType, runnerDir)
+        cls = nil
+        case testRunnerType
+        when :shell
+            cls = TestRunnerShell
+        when :make
+            cls = TestRunnerMake
+        when :ruby
+            cls = TestRunnerRuby
+        when :gnuparallel
+            cls = TestRunnerGnuParallel
+        else
+            raise "Unknown test runner type: #{testRunnerType.to_s}"
+        end
+        return cls.new(testRunnerType, runnerDir)
+    end
+end
+
 require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
 
 def shouldCollectContinuously?
@@ -584,7 +710,7 @@ end
 
 COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false", "--verifyGC=true"] : []
 
-$serialRunlist = []
+$serialPlans = Set.new
 $runlist = []
 
 def frameworkFromJSCPath(jscPath)
@@ -657,7 +783,7 @@ def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
     if $filter and name !~ $filter
         return
     end
-    plan = Plan.new(
+    plan = Plan.create(
         $benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}", name, outputHandler,
         errorHandler)
     plan.additionalEnv.push(*additionalEnv)
@@ -666,7 +792,7 @@ def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
         # that we can treat them specially when scheduling, but keep
         # it in the $runlist for code that dosn't care about
         # scheduling.
-        $serialRunlist << plan
+        $serialPlans.add(plan)
     end
 
     if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
@@ -722,6 +848,51 @@ end
 
 def serial!
     $runCommandOptions[:serial] = true
+end
+
+
+# Retry parameters for tests that we treat as flaky, either because
+# they've been explicitly marked so (via flaky!) or because we were
+# asked to --treat-failing-as-flaky.
+class RetryParameters
+    attr_reader :passPercentage, :maxTries
+    def initialize(passPercentage, maxTries)
+        @passPercentage = passPercentage
+        @maxTries = maxTries
+    end
+    def to_s
+        "RetryParameters(#{@passPercentage}, #{@maxTries})"
+    end
+    def result(statuses)
+        if statuses.length > @maxTries
+            # This could happen if (because of remotes disappearing
+            # and reappearing) there are multiple runs for the last
+            # try for a flaky test. Just ignore any extra statuses.
+            statuses = statuses.take(@maxTries)
+        end
+        successes = successfulStatuses(statuses)
+        remaining = @maxTries - statuses.length
+        requiredSuccesses = (@passPercentage * @maxTries).ceil
+        ret = nil # "has not completed yet"
+        if successes >= requiredSuccesses
+            ret = true
+        elsif (successes + remaining) < requiredSuccesses
+            ret = false
+        end
+        putd("#{self}.result(#{statuses}) => #{ret}")
+        ret
+    end
+    private
+    def successfulStatuses(statuses)
+        statuses.count {
+            |status|
+            status == STATUS_FILE_PASS
+        }
+    end
+end
+
+def flaky!(passPercentage, maxTries)
+    $runCommandOptions[:flaky] = RetryParameters.new(passPercentage, maxTries)
 end
 
 def requireOptions(*options)
@@ -1859,34 +2030,6 @@ def handleCollection(collection)
     end
 end
 
-def appendFailure(plan)
-    File.open($outputDir + "failed", "a") {
-        | outp |
-        outp.puts plan.name
-    }
-end
-
-def appendPass(plan)
-    File.open($outputDir + "passed", "a") {
-        | outp |
-        outp.puts plan.name
-    }
-end
-
-def appendNoResult(plan)
-    File.open($outputDir + "noresult", "a") {
-        | outp |
-        outp.puts plan.name
-    }
-end
-
-def appendResult(plan, didPass)
-    File.open($outputDir + "results", "a") {
-        | outp |
-        outp.puts "#{plan.name}: #{didPass ? 'PASS' : 'FAIL'}"
-    }
-end
-
 def prepareBundle
     raise if $bundle
 
@@ -2069,54 +2212,11 @@ def parallelEach(array, &block)
     end
 end
 
-def prepareTestRunner(remoteIndex=0)
-    raise if $bundle
-
-    $runlist.each_with_index {
-        | plan, index |
-        plan.index = index
-    }
-
-    Dir.mkdir($runnerDir) unless $runnerDir.directory?
-    toDelete = []
-    Dir.foreach($runnerDir) {
-        | filename |
-        if filename =~ /^test_/
-            toDelete << filename
-        end
-    }
-    
-    toDelete.each {
-        | filename |
-        File.unlink($runnerDir + filename)
-    }
-
-    # Write test scripts in parallel as this is both an expensive and a
-    # highly IO intensive operation, but each script is independent and
-    # the operation is pure other than writing the unique run script.
-    parallelEach($runlist) do | plan |
-        plan.writeRunScript($runnerDir + "test_script_#{plan.index}")
-    end
-
-    case $testRunnerType
-    when :make
-        prepareMakeTestRunner(remoteIndex)
-    when :shell
-        prepareShellTestRunner
-    when :ruby
-        prepareRubyTestRunner
-    when :gnuparallel
-        prepareGnuParallelTestRunner
-    else
-        raise "Unknown test runner type: #{$testRunnerType.to_s}"
-    end
-end
-
 def cleanRunnerDirectory
     raise unless $bundle
     Dir.foreach($runnerDir) {
         | filename |
-        next unless filename =~ /^test_fail/
+        next unless filename =~ /^#{STATUS_FILE_PREFIX}/
         FileUtils.rm_f $runnerDir + filename
     }
 end
@@ -2285,9 +2385,9 @@ def exportBaseEnvironmentVariables(escape)
     ].join("")
 end
 
-def runTestRunner(remoteIndex=0)
-    if $remote
-        remoteHost = $remoteHosts[remoteIndex]
+def runTestRunner(testRunner, remoteHosts, remoteIndex=0)
+    if not remoteHosts.nil?
+        remoteHost = remoteHosts[remoteIndex]
         getRemoteDirectoryIfNeeded(remoteHost)
         copyBundleToRemote(remoteHost)
         remoteScript = "\""
@@ -2297,11 +2397,11 @@ def runTestRunner(remoteIndex=0)
         remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += exportBaseEnvironmentVariables(true)
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
-        remoteScript += "#{testRunnerCommand(remoteIndex)}\""
+        remoteScript += "#{testRunner.command(remoteIndex)}\""
         runAndMonitorTestRunnerCommand(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
     else
         Dir.chdir($runnerDir) {
-            runAndMonitorTestRunnerCommand(Shellwords.shellsplit(testRunnerCommand))
+            runAndMonitorTestRunnerCommand(Shellwords.shellsplit(testRunner.command))
         }
     end
 end
@@ -2318,38 +2418,21 @@ def processStatusLine(map, line)
     runId = md[:runId]
     result = md[:result]
     if runId != $runUniqueId
-        # This may conceivably happen if a remote goes
-        # away in the middle of a run and comes back
-        # online in the middle of a different run.
-        $stderr.puts("Ignoring stale status file for #{index} (ID #{runId} but current ID is #{$runUniqueId})")
-        return
+        if $bundle
+            # The scripts in the bundle have their own runId embedded,
+            # just ignore the value.
+        else
+            # This may conceivably happen if a remote goes
+            # away in the middle of a run and comes back
+            # online in the middle of a different run.
+            $stderr.puts("Ignoring stale status file for #{index} (ID #{runId} but current ID is #{$runUniqueId})")
+            return
+        end
     end
     if map.has_key?(index)
-        # One scenario in which this could happen:
-        # Test T runs on remote host A and
-        #   1. the status file reaches A's disk
-        #   2. somehow the gnu parallel runner is not made aware of the test's completion (packet loss?)
-        #   3. machine A crashes
-        #   4. gnu parallel re-schedules the test to run on remote host B, where it runs to completion
-        #   5. B comes back online before the end of the run
-        #   6. we collect the status files from all remotes and end up with two status files for T.
-        prev = map[index]
-        # map[index] holds
-        # - a number, if all results codes we've observed for a test are the same
-        # - an array, if they diverge.
-        if prev.is_a?(Array)
-            prev.push(result)
-        elsif prev != result
-            # If the two results differ, keep them
-            # both. This is simply a way to make note of
-            # the divergence (for later reporting).
-            map[index] = [prev, result]
-        else
-            # Got the same result, no need to do anything.
-        end
-        $stderr.puts("Duplicate state file for #{index}: #{map[index]}")
+        map[index].push(result)
     else
-        map[index] = result
+        map[index] = [result]
     end
 end
 
@@ -2385,57 +2468,22 @@ def getStatusMap(map={})
     map
 end
 
-def getCompletedTestsFromStatusMap(statusMap)
-    completedTests = {}
-    $runlist.each_with_index {
-        | plan, index |
-        if statusMap.has_key?(index)
-            completedTests[plan] = nil
-        end
-    }
-    completedTests
-end
-
 def detectFailures(statusMap={})
     raise if $bundle
-    noresult = 0
     if statusMap.size == 0
         statusMap = getStatusMap
     end
-    familyMap = {}
 
-    $runlist.each_with_index {
-        | plan, index |
-        unless familyMap[plan.family]
-            familyMap[plan.family] = []
-        end
-        if not statusMap.has_key?(index)
-            appendNoResult(plan)
-            noresult += 1
-            next
-        end
-        result = nil
-        # If any of the results we got was a pass, consider the test
-        # successful. The assumption here is that failures are because
-        # of infrastructure issues (which is why the test was run
-        # multiple times in the first place).
-        testWasSuccessful = statusMap[index].include?(STATUS_FILE_PASS)
-        if testWasSuccessful
-            appendPass(plan)
-            result = "PASS"
-        else
-            appendFailure(plan)
-            result = "FAIL"
-        end
-        appendResult(plan, testWasSuccessful)
-        familyMap[plan.family] << { :result => result, :plan => plan }
-    }
+    evaluator = TestResultEvaluatorFinal.new($runlist, statusMap)
+    evaluator.visit!
 
-    if noresult > 0
-        $stderr.puts("Could not get the exit status for #{noresult} tests")
+    if evaluator.noresult > 0
+        $stderr.puts("Could not get the exit status for #{evaluator.noresult} tests")
         # We can't change our exit code, as run-javascriptcore-tests
         # expects 0 even when there are failures.
     end
+
+    familyMap = evaluator.familyMap
 
     File.open($outputDir + "resultsByFamily", "w") {
         | outp |
@@ -2486,6 +2534,7 @@ end
 clean($outputDir + "failed")
 clean($outputDir + "passed")
 clean($outputDir + "noresult")
+clean($outputDir + "flaky")
 clean($outputDir + "results")
 clean($outputDir + "resultsByFamily")
 clean($outputDir + ".vm")
@@ -2528,27 +2577,17 @@ ENV["TZ"] = "US/Pacific";
 def runBundle
     raise unless $bundle
 
-    cleanRunnerDirectory
-    cleanOldResults
-    runTestRunner
-    cleanEmptyResultFiles
-end
-
-def runNormal
-    raise if $bundle or $tarball
-
-    prepareBundle
-    prepareTestRunner
-    runTestRunner
-    cleanEmptyResultFiles
-    detectFailures
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    evaluator = BundleTestsExecutor.new($runlist, $serialPlans, ITERATION_LIMITS, $treatFailingAsFlaky, testRunner)
+    evaluator.loop
 end
 
 def runTarball
     raise unless $tarball
 
-    prepareBundle 
-    prepareTestRunner
+    prepareBundle
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    testRunner.prepare($runlist, $serialPlans, Set.new, nil)
     compressBundle
 end
 
@@ -2582,44 +2621,28 @@ def forEachRemote(remoteHosts, options={}, &blk)
     liveRemotes
 end
 
-def runRemote
-    raise unless $remote
+class TestRunnerGnuParallel < TestRunner
+    def prepareGnuParallelRunnerJobs(name, runlist, completedPlans)
+        path = @runnerDir + name
+        FileUtils.mkdir_p(@runnerDir)
 
-    prepareBundle
-    $remoteHosts.each_index {
-        | index |
-        prepareTestRunner(index)
-    }
-    compressBundle
-    forEachRemote($remoteHosts) {
-        | index |
-        runTestRunner(index)
-    }
-    detectFailures
-end
-
-def prepareGnuParallelRunnerJobs(name, runlist, exclude)
-    path = $runnerDir + name
-    FileUtils.mkdir_p($runnerDir)
-
-    File.open(path, "w") {
-        | outp |
-        runlist.each {
-            | plan |
-            if exclude.has_key?(plan)
-                next
-            end
-            outp.puts("./test_script_#{plan.index}")
+        File.open(path, "w") {
+            | outp |
+            runlist.each {
+                | plan |
+                if completedPlans.include?(plan)
+                    next
+                end
+                outp.puts("./test_script_#{plan.index}")
+            }
         }
-    }
+    end
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        prepareGnuParallelRunnerJobs("parallel-tests", runlist, completedPlans | serialPlans)
+        prepareGnuParallelRunnerJobs("serial-tests", serialPlans, completedPlans)
+    end
 end
 
-def prepareGnuParallelTestRunner(exclude={})
-    serialTests = {}
-    $serialRunlist.each { |p| serialTests[p] = nil }
-    prepareGnuParallelRunnerJobs("parallel-tests", $runlist, exclude.merge(serialTests))
-    prepareGnuParallelRunnerJobs("serial-tests", $serialRunlist, exclude)
-end
 
 def withGnuParallelSshWrapper(&blk)
     Tempfile.open('ssh-wrapper', $runnerDir) {
@@ -2738,28 +2761,104 @@ def runGnuParallelRunner(remoteHosts, inputs, options={})
     }
 end
 
-def runGnuParallel
-    raise unless $remote
-    prepareBundle
-    prepareTestRunner
-    compressBundle
-    statusMap = {}
-    # This is a high-level retry loop. If a remote host goes away in
-    # the middle of a run and either doesn't come back online or comes
-    # back having removed the remote directory (*), getStatusMap will be
-    # missing results for these tests, allowing us to retry them in
-    # the next iteration.
-    #
-    # (*) This may well happen when running the tests on embedded
-    # boards that regularly corrupt their SD card. Definitely an issue
-    # for the ci20 boards used to test MIPS.
-    #
-    # The number of tries scales with the number of remotes in use,
-    # with a reasonable floor.
-    tries = [3, $remoteHosts.size / 2].max
-    tries.times {
-        | iteration |
-        remoteHosts = $remoteHosts
+# Unconditionally run the selftests on every execution, they're pretty cheap.
+ExecutorSelfTests.run
+TestResultEvaluatorSelfTests.run
+
+class NonRemoteTestsExecutor < BaseTestsExecutor
+    def initialize(runlist, serialPlans, maxIterationsBounds, treatFailingAsFlaky, testRunner)
+        super(runlist, serialPlans,
+              nil,
+              maxIterationsBounds,
+              treatFailingAsFlaky
+             )
+        @testRunner = testRunner
+    end
+    def prepareExecution(remoteHosts)
+        remoteHosts
+    end
+    def refreshExecution(runlist, serialPlans, completedTests)
+        if not @remoteHosts.nil?
+            raise "remoteHosts #{@remoteHosts}, expected nil"
+        end
+        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
+    end
+end
+
+class NormalTestsExecutor < NonRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        raise "remoteHosts not nil" unless remoteHosts.nil?
+        prepareBundle
+        @testRunner.prepare(@runlist, @serialPlans, Set.new, nil)
+    end
+    def executeTests(remoteHosts)
+        runTestRunner(@testRunner, nil, nil)
+        cleanEmptyResultFiles
+    end
+    def updateStatusMap(iteration, statusMap)
+        return getStatusMap(statusMap)
+    end
+end
+
+class BundleTestsExecutor < NonRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        raise "remoteHosts not nil" unless remoteHosts.nil?
+        cleanRunnerDirectory
+        cleanOldResults
+    end
+    def executeTests(remoteHosts)
+        runTestRunner(@testRunner, nil, nil)
+        cleanEmptyResultFiles
+    end
+    def updateStatusMap(iteration, statusMap)
+        return getStatusMap(statusMap)
+    end
+end
+
+class BaseRemoteTestsExecutor < BaseTestsExecutor
+    def initialize(runlist, serialPlans, remoteHosts, iterationLimits,
+                   treatFailingAsFlaky, testRunner)
+        super(runlist, serialPlans, remoteHosts, iterationLimits, treatFailingAsFlaky)
+        @testRunner = testRunner
+    end
+    def updateStatusMap(iteration, statusMap)
+        return getStatusMap(statusMap)
+    end
+    def refreshExecution(runlist, serialPlans, completedTests)
+        # Note, when running tests remotely, we always prepare tests
+        # for all the hosts when refreshing execution, as even hosts
+        # that went away during testing may have come back online in
+        # the meantime -- so we don't expect a list of live remote
+        # hosts to be passed in.
+        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
+    end
+end
+
+class RemoteTestsExecutor < BaseRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        raise "remoteHosts nil" if remoteHosts.nil?
+        prepareBundle
+        @testRunner.prepare(@runlist, @serialPlans, Set.new, remoteHosts)
+        compressBundle
+    end
+    def prepareExecution(remoteHosts)
+        remoteHosts
+    end
+    def executeTests(remoteHosts)
+        forEachRemote(remoteHosts) {
+            | index |
+            runTestRunner(@testRunner, remoteHosts, index)
+        }
+    end
+end
+
+class GnuParallelTestsExecutor < BaseRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        prepareBundle
+        @testRunner.prepare(@runlist, @serialPlans, Set.new, remoteHosts)
+        compressBundle
+    end
+    def prepareExecution(remoteHosts)
         # If the preparatory steps fail, drop the remote host from our
         # list. Otherwise, if it comes back online in the middle of an
         # iteration, we'll try to run test jobs on it, possibly using
@@ -2769,30 +2868,43 @@ def runGnuParallel
             getRemoteDirectoryIfNeeded(remoteHost)
             copyBundleToRemote(remoteHost)
         }
-        remoteHosts = unpackBundleGnuParallel(remoteHosts)
-        if remoteHosts.size == 0
-            # Either everything is down, or everything got
-            # rebooted. In the latter case, allow enough time for the
-            # remote boards to boot up, then retry.
-            waitInterval = 60
-            $stderr.puts("All remote hosts failed, retrying after #{waitInterval}s")
-            sleep(waitInterval)
-            next
-        end
-
+        return unpackBundleGnuParallel(remoteHosts)
+    end
+    def executeTests(remoteHosts)
         runGnuParallelRunner(remoteHosts, $runnerDir + "serial-tests",
                              { :parallelJobsOnEachHost => 1})
         runGnuParallelRunner(remoteHosts, $runnerDir + "parallel-tests")
-        statusMap = getStatusMap(statusMap)
-        completedTests = getCompletedTestsFromStatusMap(statusMap)
-        break unless completedTests.size != $runlist.size
-        if completedTests.size > $runlist.size
-            raise "Test count mismatch: #{completedTests.size} > #{$runlist.size}"
-        end
-        # Regenerate the lists of tests to run
-        prepareGnuParallelTestRunner(completedTests)
-        $stderr.puts("After try #{iteration + 1}/#{tries}: got results for #{completedTests.size}/#{$runlist.size} tests, #{remoteHosts.size}/#{$remoteHosts.size} hosts live")
-    }
+    end
+end
+
+def runNormal
+    raise if $bundle or $tarball
+
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    evaluator = NormalTestsExecutor.new($runlist, $serialPlans, ITERATION_LIMITS,
+                                        $treatFailingAsFlaky, testRunner)
+    statusMap = evaluator.loop
+    detectFailures(statusMap)
+
+end
+
+def runRemote
+    raise unless $remote
+
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    executor = RemoteTestsExecutor.new($runlist, $serialPlans, $remoteHosts, ITERATION_LIMITS, $treatFailingAsFlaky, testRunner)
+    statusMap = executor.loop
+    detectFailures(statusMap)
+end
+
+def runGnuParallel
+    raise "Can only use --gnu-parallel-runner with --remote*" unless $remote
+    raise "Can only use --gnu-parallel-runner with the default writer" unless $testWriter == "default"
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    executor = GnuParallelTestsExecutor.new($runlist, $serialPlans,
+                                            $remoteHosts, ITERATION_LIMITS,
+                                            $treatFailingAsFlaky, testRunner)
+    statusMap = executor.loop
     detectFailures(statusMap)
 end
 
