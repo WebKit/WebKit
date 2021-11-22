@@ -130,7 +130,7 @@ public:
     void updateScrollInfoAfterLayout();
     void updateScrollbarSteps();
 
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
+    bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1);
 
 public:
     // All methods in this section override ScrollableaArea methods (final).

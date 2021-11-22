@@ -3834,9 +3834,9 @@ void FrameView::scrollToPositionWithAnimation(const ScrollPosition& position, Sc
     setCurrentScrollType(previousScrollType);
 }
 
-float FrameView::adjustScrollStepForFixedContent(float step, ScrollbarOrientation orientation, ScrollGranularity granularity)
+float FrameView::adjustScrollStepForFixedContent(float step, ScrollEventAxis axis, ScrollGranularity granularity)
 {
-    if (granularity != ScrollGranularity::Page || orientation == ScrollbarOrientation::Horizontal)
+    if (granularity != ScrollGranularity::Page || axis == ScrollEventAxis::Horizontal)
         return step;
 
     TrackedRendererListHashSet* positionedObjects = nullptr;

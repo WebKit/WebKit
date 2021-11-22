@@ -66,15 +66,15 @@ public:
     KeyboardScrollingAnimator *keyboardScrollingAnimator() const final { return m_keyboardScrollingAnimator.get(); }
 
     enum ScrollBehavior {
-        DoDirectionalSnapping = 1 << 0,
-        NeverAnimate = 1 << 1,
+        RespectScrollSnap   = 1 << 0,
+        NeverAnimate        = 1 << 1,
     };
 
     // Computes a scroll destination for the given parameters.  Returns false if
-    // already at the destination.  Otherwise, starts scrolling towards the
-    // destination and returns true.  Scrolling may be immediate or animated.
+    // already at the destination. Otherwise, starts scrolling towards the
+    // destination and returns true. Scrolling may be immediate or animated.
     // The base class implementation always scrolls immediately, never animates.
-    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>);
+    bool singleAxisScroll(ScrollEventAxis, float delta, OptionSet<ScrollBehavior>);
 
     virtual bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     bool scrollToPositionWithAnimation(const FloatPoint&);
@@ -170,8 +170,6 @@ private:
 #if PLATFORM(GTK) || USE(NICOSIA)
     bool scrollAnimationEnabled() const final;
 #endif
-
-    static FloatSize deltaFromStep(ScrollbarOrientation, float step, float multiplier);
 
 protected:
     ScrollableArea& m_scrollableArea;

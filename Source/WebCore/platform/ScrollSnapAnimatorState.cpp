@@ -83,7 +83,7 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
 {
     auto snapOffsets = snapOffsetsForAxis(axis);
     if (!snapOffsets.size())
-        return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
+        return valueForAxis(destinationOffset, axis);
 
     std::optional<LayoutUnit> originalOffsetInLayoutUnits;
     if (originalOffset)

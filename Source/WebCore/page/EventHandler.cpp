@@ -4300,11 +4300,7 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent& event)
 
 float EventHandler::scrollDistance(ScrollDirection direction, ScrollGranularity granularity)
 {
-    auto scrollbar = [&] {
-        if (direction == ScrollDirection::ScrollUp || direction == ScrollDirection::ScrollDown)
-            return m_frame.view()->verticalScrollbar();
-        return m_frame.view()->horizontalScrollbar();
-    }();
+    auto scrollbar = m_frame.view()->scrollbarForDirection(direction);
 
     switch (granularity) {
     case ScrollGranularity::Line:

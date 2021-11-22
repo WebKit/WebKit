@@ -63,28 +63,22 @@ ScrollAnimator::~ScrollAnimator()
     m_scrollController.stopAllTimers();
 }
 
-bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, OptionSet<ScrollBehavior> behavior)
+bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, OptionSet<ScrollBehavior> behavior)
 {
     m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
 
-    auto delta = deltaFromStep(orientation, step, multiplier);
-    if (behavior.contains(ScrollBehavior::DoDirectionalSnapping)) {
-        behavior.remove(ScrollBehavior::DoDirectionalSnapping);
-        if (!m_scrollController.usesScrollSnap())
-            return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
+    auto delta = setValueForAxis(FloatSize { }, axis, scrollDelta);
 
-        auto currentOffset = offsetFromPosition(currentPosition());
-        auto newOffset = currentOffset + delta;
-        if (orientation == ScrollbarOrientation::Horizontal)
-            newOffset.setX(m_scrollController.adjustedScrollDestination(ScrollEventAxis::Horizontal, newOffset, multiplier, currentOffset.x()));
-        else
-            newOffset.setY(m_scrollController.adjustedScrollDestination(ScrollEventAxis::Vertical, newOffset, multiplier, currentOffset.y()));
-
-        auto newDelta = newOffset - currentOffset;
-        if (orientation == ScrollbarOrientation::Horizontal)
-            return scroll(ScrollbarOrientation::Horizontal, granularity, newDelta.width(), 1.0, behavior);
-
-        return scroll(ScrollbarOrientation::Vertical, granularity, newDelta.height(), 1.0, behavior);
+    if (behavior.contains(ScrollBehavior::RespectScrollSnap)) {
+        behavior.remove(ScrollBehavior::RespectScrollSnap);
+        if (m_scrollController.usesScrollSnap()) {
+            auto currentOffset = offsetFromPosition(currentPosition());
+            auto newOffset = currentOffset + delta;
+            auto velocity = copysignf(1.0f, scrollDelta);
+            auto newOffsetOnAxis = m_scrollController.adjustedScrollDestination(axis, newOffset, velocity, valueForAxis(currentOffset, axis));
+            newOffset = setValueForAxis(newOffset, axis, newOffsetOnAxis);
+            delta = newOffset - currentOffset;
+        }
     }
 
     if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
@@ -139,16 +133,6 @@ FloatPoint ScrollAnimator::offsetFromPosition(const FloatPoint& position) const
 FloatPoint ScrollAnimator::positionFromOffset(const FloatPoint& offset) const
 {
     return ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
-}
-
-FloatSize ScrollAnimator::deltaFromStep(ScrollbarOrientation orientation, float step, float multiplier)
-{
-    FloatSize delta;
-    if (orientation == ScrollbarOrientation::Horizontal)
-        delta.setWidth(step * multiplier);
-    else
-        delta.setHeight(step * multiplier);
-    return delta;
 }
 
 bool ScrollAnimator::activeScrollSnapIndexDidChange() const
@@ -206,28 +190,24 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
         handled = true;
 
-        OptionSet<ScrollBehavior> behavior(ScrollBehavior::DoDirectionalSnapping);
+        OptionSet<ScrollBehavior> behavior = { ScrollBehavior::RespectScrollSnap };
         if (e.hasPreciseScrollingDeltas())
             behavior.add(ScrollBehavior::NeverAnimate);
 
         if (deltaY) {
-            if (e.granularity() == ScrollByPageWheelEvent) {
-                bool negative = deltaY < 0;
-                deltaY = Scrollbar::pageStepDelta(m_scrollableArea.visibleHeight());
-                if (negative)
-                    deltaY = -deltaY;
-            }
-            scroll(ScrollbarOrientation::Vertical, ScrollGranularity::Pixel, verticalScrollbar->pixelStep(), -deltaY, behavior);
+            if (e.granularity() == ScrollByPageWheelEvent)
+                deltaY = std::copysign(Scrollbar::pageStepDelta(m_scrollableArea.visibleHeight()), deltaY);
+
+            auto scrollDelta = verticalScrollbar->pixelStep() * -deltaY; // Wheel deltas are reversed from scrolling direction.
+            singleAxisScroll(ScrollEventAxis::Vertical, scrollDelta, behavior);
         }
 
         if (deltaX) {
-            if (e.granularity() == ScrollByPageWheelEvent) {
-                bool negative = deltaX < 0;
-                deltaX = Scrollbar::pageStepDelta(m_scrollableArea.visibleWidth());
-                if (negative)
-                    deltaX = -deltaX;
-            }
-            scroll(ScrollbarOrientation::Horizontal, ScrollGranularity::Pixel, horizontalScrollbar->pixelStep(), -deltaX, behavior);
+            if (e.granularity() == ScrollByPageWheelEvent)
+                deltaX = std::copysign(Scrollbar::pageStepDelta(m_scrollableArea.visibleWidth()), deltaX);
+
+            auto scrollDelta = horizontalScrollbar->pixelStep() * -deltaX; // Wheel deltas are reversed from scrolling direction.
+            singleAxisScroll(ScrollEventAxis::Horizontal, scrollDelta, behavior);
         }
     }
     return handled;

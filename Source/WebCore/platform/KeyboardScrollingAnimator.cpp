@@ -147,12 +147,7 @@ void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime curre
 
 float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, ScrollGranularity granularity) const
 {
-    auto scrollbar = [&] {
-        if (direction == ScrollDirection::ScrollUp || direction == ScrollDirection::ScrollDown)
-            return m_scrollAnimator.scrollableArea().verticalScrollbar();
-        return m_scrollAnimator.scrollableArea().horizontalScrollbar();
-    }();
-
+    auto scrollbar = m_scrollAnimator.scrollableArea().scrollbarForDirection(direction);
     if (scrollbar) {
         switch (granularity) {
         case ScrollGranularity::Line:

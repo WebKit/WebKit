@@ -91,23 +91,14 @@ void ScrollableArea::setScrollOrigin(const IntPoint& origin)
     }
 }
 
-float ScrollableArea::adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity)
+float ScrollableArea::adjustScrollStepForFixedContent(float step, ScrollEventAxis, ScrollGranularity)
 {
     return step;
 }
 
-bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
+bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granularity, unsigned stepCount)
 {
-    ScrollbarOrientation orientation;
-    Scrollbar* scrollbar;
-    if (direction == ScrollUp || direction == ScrollDown) {
-        orientation = ScrollbarOrientation::Vertical;
-        scrollbar = verticalScrollbar();
-    } else {
-        orientation = ScrollbarOrientation::Horizontal;
-        scrollbar = horizontalScrollbar();
-    }
-
+    auto* scrollbar = scrollbarForDirection(direction);
     if (!scrollbar)
         return false;
 
@@ -127,11 +118,14 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
         break;
     }
 
+    auto axis = axisFromDirection(direction);
+    step = adjustScrollStepForFixedContent(step, axis, granularity);
+    auto scrollDelta = step * stepCount;
+    
     if (direction == ScrollUp || direction == ScrollLeft)
-        multiplier = -multiplier;
+        scrollDelta = -scrollDelta;
 
-    step = adjustScrollStepForFixedContent(step, orientation, granularity);
-    return scrollAnimator().scroll(orientation, granularity, step, multiplier, ScrollAnimator::ScrollBehavior::DoDirectionalSnapping);
+    return scrollAnimator().singleAxisScroll(axis, scrollDelta, ScrollAnimator::ScrollBehavior::RespectScrollSnap);
 }
 
 void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)

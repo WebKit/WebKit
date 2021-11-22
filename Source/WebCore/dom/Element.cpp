@@ -1119,12 +1119,11 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
         return;
 
     ScrollDirection direction = ScrollDown;
-    if (units < 0) {
+    if (units < 0)
         direction = ScrollUp;
-        units = -units;
-    }
-    Element* stopElement = this;
-    downcast<RenderBox>(*renderer).scroll(direction, granularity, units, &stopElement);
+
+    auto* stopElement = this;
+    downcast<RenderBox>(*renderer).scroll(direction, granularity, std::abs(units), &stopElement);
 }
 
 void Element::scrollByLines(int lines)

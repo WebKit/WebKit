@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "FloatPoint.h"
+#include "FloatSize.h"
 #include <wtf/EnumTraits.h>
 
 namespace WTF {
@@ -168,6 +170,60 @@ enum class ScrollEventAxis : uint8_t {
     Horizontal,
     Vertical
 };
+
+inline constexpr ScrollEventAxis axisFromDirection(ScrollDirection direction)
+{
+    switch (direction) {
+    case ScrollUp: return ScrollEventAxis::Vertical;
+    case ScrollDown: return ScrollEventAxis::Vertical;
+    case ScrollLeft: return ScrollEventAxis::Horizontal;
+    case ScrollRight: return ScrollEventAxis::Horizontal;
+    }
+    return ScrollEventAxis::Vertical;
+}
+
+inline float valueForAxis(FloatSize size, ScrollEventAxis axis)
+{
+    switch (axis) {
+    case ScrollEventAxis::Horizontal: return size.width();
+    case ScrollEventAxis::Vertical: return size.height();
+    }
+    return 0;
+}
+
+inline FloatSize setValueForAxis(FloatSize size, ScrollEventAxis axis, float value)
+{
+    switch (axis) {
+    case ScrollEventAxis::Horizontal:
+        size.setWidth(value);
+        return size;
+    case ScrollEventAxis::Vertical:
+        size.setHeight(value);
+        return size;
+    }
+    return size;
+}
+
+inline float valueForAxis(FloatPoint point, ScrollEventAxis axis)
+{
+    switch (axis) {
+    case ScrollEventAxis::Horizontal: return point.x();
+    case ScrollEventAxis::Vertical: return point.y();
+    }
+    return 0;
+}
+
+inline FloatPoint setValueForAxis(FloatPoint point, ScrollEventAxis axis, float value)
+{
+    switch (axis) {
+    case ScrollEventAxis::Horizontal:
+        point.setX(value);
+        return point;
+    case ScrollEventAxis::Vertical: point.setY(value);
+        return point;
+    }
+    return point;
+}
 
 enum ScrollbarControlStateMask {
     ActiveScrollbarState = 1,

@@ -396,24 +396,24 @@ void RenderTextControlSingleLine::setScrollTop(int newTop, const ScrollPositionC
         innerTextElement()->setScrollTop(newTop);
 }
 
-bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement, RenderBox* startBox, const IntPoint& wheelEventAbsolutePoint)
+bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, unsigned stepCount, Element** stopElement, RenderBox* startBox, const IntPoint& wheelEventAbsolutePoint)
 {
     auto* renderer = innerTextElement()->renderer();
     if (!renderer)
         return false;
     auto* scrollableArea = renderer->layer() ? renderer->layer()->scrollableArea() : nullptr;
-    if (scrollableArea && scrollableArea->scroll(direction, granularity, multiplier))
+    if (scrollableArea && scrollableArea->scroll(direction, granularity, stepCount))
         return true;
-    return RenderBlockFlow::scroll(direction, granularity, multiplier, stopElement, startBox, wheelEventAbsolutePoint);
+    return RenderBlockFlow::scroll(direction, granularity, stepCount, stopElement, startBox, wheelEventAbsolutePoint);
 }
 
-bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
+bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, unsigned stepCount, Element** stopElement)
 {
     auto* layer = innerTextElement()->renderer()->layer();
     auto* scrollableArea = layer ? layer->scrollableArea() : nullptr;
-    if (scrollableArea && scrollableArea->scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, multiplier))
+    if (scrollableArea && scrollableArea->scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, stepCount))
         return true;
-    return RenderBlockFlow::logicalScroll(direction, granularity, multiplier, stopElement);
+    return RenderBlockFlow::logicalScroll(direction, granularity, stepCount, stopElement);
 }
 
 HTMLInputElement& RenderTextControlSingleLine::inputElement() const
