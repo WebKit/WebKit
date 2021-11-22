@@ -1,3 +1,12 @@
+2021-11-22  Alejandro G. Castro  <alex@igalia.com>
+
+        Add alexg's GitHub username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=233425
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Workaround for failing mips tests

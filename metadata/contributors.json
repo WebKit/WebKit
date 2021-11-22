@@ -292,9 +292,10 @@
          "alex@webkit.org"
       ],
       "expertise" : "WebKitGTK, Cairo graphics backend, ShadowBlur rendering, Epiphany/WebKit Contributor",
+      "github" : "alexgcastro",
       "name" : "Alejandro G. Castro",
       "nicks" : [
-         "alexg__"
+         "alexg"
       ],
       "status" : "reviewer"
    },
