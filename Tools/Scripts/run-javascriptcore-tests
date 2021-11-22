@@ -763,6 +763,7 @@ sub runJSCStressTests
             "JSTests/exceptionFuzz.yaml",
             "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
             "PerformanceTests/SunSpider/shadow-chicken.yaml",
+            "PerformanceTests/SunSpider/with-baseline-code-sharing.yaml",
             "PerformanceTests/SunSpider/tests/v8-v6",
             "JSTests/stress",
             "JSTests/microbenchmarks",

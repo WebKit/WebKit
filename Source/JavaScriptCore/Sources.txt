@@ -661,7 +661,6 @@ jit/JITOpcodes32_64.cpp
 jit/JITOperations.cpp
 jit/JITPlan.cpp
 jit/JITPropertyAccess.cpp
-jit/JITPropertyAccess32_64.cpp
 jit/JITRightShiftGenerator.cpp
 jit/JITSafepoint.cpp
 jit/JITSizeStatistics.cpp

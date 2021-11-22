@@ -532,7 +532,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDataIC, false, Normal, nullptr) \
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
-    v(Bool, useBaselineJITCodeSharing, true, Normal, nullptr) \
+    v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \
     \
     /* Feature Flags */\
     \

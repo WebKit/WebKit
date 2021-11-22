@@ -43,18 +43,12 @@
 namespace JSC {
 
 namespace {
-#if USE(JSVALUE64)
-    constexpr JSValueRegs returnValueJSR { GPRInfo::returnValueGPR };
-    constexpr JSValueRegs calleeJSR { GPRInfo::regT0 };
-#elif USE(JSVALUE32_64)
-    constexpr JSValueRegs returnValueJSR { GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR };
-    constexpr JSValueRegs calleeJSR { GPRInfo::regT1, GPRInfo::regT0 };
-#endif
+    constexpr JSValueRegs calleeJSR = JSRInfo::jsRegT10;
 }
 
 void JIT::emit_op_ret(const Instruction* currentInstruction)
 {
-    static_assert(!returnValueJSR.uses(callFrameRegister));
+    static_assert(noOverlap(returnValueJSR, callFrameRegister));
 
     // Return the result in returnValueGPR (returnValueGPR2/returnValueGPR on 32-bit).
     auto bytecode = currentInstruction->as<OpRet>();
@@ -145,20 +139,14 @@ JIT::compileSetupFrame(const Op& bytecode)
 #endif
 
     {
-#if USE(JSVALUE64)
-        constexpr JSValueRegs argumentsJSR { regT2 };
-#elif USE(JSVALUE32_64)
-        constexpr JSValueRegs argumentsJSR { regT3, regT2 };
-#endif
-
-        emitGetVirtualRegister(arguments, argumentsJSR);
+        emitGetVirtualRegister(arguments, jsRegT32);
         F_JITOperation_GFJZZ setupOperation;
         if (Op::opcodeID == op_tail_call_forward_arguments)
             setupOperation = operationSetupForwardArgumentsFrame;
         else
             setupOperation = operationSetupVarargsFrame;
         loadGlobalObject(regT4);
-        callOperation(setupOperation, regT4, regT1, argumentsJSR, firstVarArgOffset, regT0);
+        callOperation(setupOperation, regT4, regT1, jsRegT32, firstVarArgOffset, regT0);
         move(returnValueGPR, regT5);
     }
 
@@ -171,7 +159,7 @@ JIT::compileSetupFrame(const Op& bytecode)
     notBiggest.link(this);
     
     // Initialize 'this'.
-    constexpr JSValueRegs thisJSR = calleeJSR; // Used as temporary register
+    constexpr JSValueRegs thisJSR = jsRegT10;
     emitGetVirtualRegister(thisValue, thisJSR);
     storeValue(thisJSR, Address(regT5, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
 
@@ -288,7 +276,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 
 #if USE(JSVALUE32_64)
     // We need this on JSVALUE32_64 only as on JSVALUE64 a pointer comparison in the DataIC fast
-    // patch catches this.
+    // path catches this.
     addSlowCase(branchIfNotCell(calleeJSR));
 #endif
 
@@ -453,7 +441,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     using BaselineGetByIdRegisters::resultJSR;
     using BaselineGetByIdRegisters::stubInfoGPR;
 
-    static_assert(!returnValueJSR.uses(stubInfoGPR));
+    static_assert(noOverlap(returnValueJSR, stubInfoGPR));
     static_assert(returnValueJSR == baseJSR); // Otherwise will need move(returnValueJSR, baseJSR)
     static_assert(baseJSR == resultJSR);
 
@@ -558,7 +546,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
     advanceToNextCheckpoint();
 
     // call result ({ done, value } JSObject) in regT0  (regT1/regT0 or 32-bit)
-    static_assert(!returnValueJSR.uses(stubInfoGPR));
+    static_assert(noOverlap(resultJSR, stubInfoGPR));
 
     constexpr JSValueRegs iterCallResultJSR = dontClobberJSR;
     moveValueRegs(returnValueJSR, iterCallResultJSR);

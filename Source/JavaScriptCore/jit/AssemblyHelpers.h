@@ -276,7 +276,17 @@ public:
         move(TrustedImm32(value.payload()), regs.payloadGPR());
 #endif
     }
-    
+
+    void storeValue(JSValue value, Address address)
+    {
+#if USE(JSVALUE64)
+        store64(Imm64(JSValue::encode(value)), address);
+#elif USE(JSVALUE32_64)
+        store32(Imm32(value.tag()), address.withOffset(TagOffset));
+        store32(Imm32(value.payload()), address.withOffset(PayloadOffset));
+#endif
+    }
+
     void storeTrustedValue(JSValue value, Address address)
     {
 #if USE(JSVALUE64)
@@ -1063,6 +1073,24 @@ public:
 #endif
     }
 
+    void isNull(JSValueRegs regs, GPRReg dst)
+    {
+#if USE(JSVALUE64)
+        compare64(Equal, regs.payloadGPR(), TrustedImm32(JSValue::ValueNull), dst);
+#elif USE(JSVALUE32_64)
+        compare32(Equal, regs.tagGPR(), TrustedImm32(JSValue::NullTag), dst);
+#endif
+    }
+
+    void isNotNull(JSValueRegs regs, GPRReg dst)
+    {
+#if USE(JSVALUE64)
+        compare64(NotEqual, regs.payloadGPR(), TrustedImm32(JSValue::ValueNull), dst);
+#elif USE(JSVALUE32_64)
+        compare32(NotEqual, regs.tagGPR(), TrustedImm32(JSValue::NullTag), dst);
+#endif
+    }
+
     Jump branchIfNull(GPRReg gpr)
     {
 #if USE(JSVALUE64)
@@ -1130,6 +1158,17 @@ public:
     Jump branchIfNotRopeStringImpl(GPRReg stringImplGPR)
     {
         return branchTestPtr(Zero, stringImplGPR, TrustedImm32(JSString::isRopeInPointer));
+    }
+
+    void emitTurnUndefinedIntoNull(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        static_assert((JSValue::ValueUndefined & ~JSValue::UndefinedTag) == JSValue::ValueNull);
+        and64(TrustedImm32(~JSValue::UndefinedTag), regs.payloadGPR());
+#elif USE(JSVALUE32_64)
+        static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag);
+        or32(TrustedImm32(1), regs.tagGPR());
+#endif
     }
 
     static Address addressForByteOffset(ptrdiff_t byteOffset)
@@ -1862,6 +1901,49 @@ public:
     static bool loadWasmContextInstanceNeedsMacroScratchRegister();
     static bool storeWasmContextInstanceNeedsMacroScratchRegister();
 #endif
+
+    // Checks that the given list of GPRRegs and JSValueRegs do not overlap. Use this in static
+    // assertions to ensure that register aliases live at the same point do not map to the same
+    // architectural register.
+    template <typename... Args>
+    static constexpr bool noOverlap(Args... args) { return noOverlapImpl(0, args...); }
+
+private:
+    // Base case
+    template <typename... Args>
+    static constexpr bool noOverlapImpl(uint64_t) { return true; }
+
+    // GPRReg case
+    template <typename... Args>
+    static constexpr bool noOverlapImpl(uint64_t used, RegisterID gpr, Args... args)
+    {
+        unsigned mask = noOverlapImplRegMask(gpr);
+        if (used & mask)
+            return false;
+        return noOverlapImpl(used | mask, args...);
+    }
+
+    // JSValueRegs case
+    template <typename... Args>
+    static constexpr bool noOverlapImpl(uint64_t used, JSValueRegs jsr, Args... args)
+    {
+        unsigned mask = noOverlapImplRegMask(jsr.payloadGPR());
+#if USE(JSVALUE32_64)
+        mask |= noOverlapImplRegMask(jsr.tagGPR());
+#endif
+        if (used & mask)
+            return false;
+        return noOverlapImpl(used | mask, args...);
+    }
+
+    static constexpr unsigned noOverlapImplRegMask(RegisterID gpr)
+    {
+        if (gpr == InvalidGPRReg)
+            return 0ULL;
+        unsigned bit = static_cast<unsigned>(gpr);
+        RELEASE_ASSERT(bit < sizeof(uint64_t) * CHAR_BIT);
+        return 1ULL << bit;
+    }
 
 protected:
     void copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);

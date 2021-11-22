@@ -210,7 +210,8 @@ void JIT::emit_compareAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsi
         return;
     }
 
-    emitGetVirtualRegisters(op1, regT0, op2, regT1);
+    emitGetVirtualRegister(op1, regT0);
+    emitGetVirtualRegister(op2, regT1);
     emitJumpSlowCaseIfNotInt(regT0);
     emitJumpSlowCaseIfNotInt(regT1);
 
@@ -238,7 +239,8 @@ void JIT::emit_compareUnsignedAndJumpImpl(VirtualRegister op1, VirtualRegister o
         int32_t op1imm = getOperandConstantInt(op1);
         addJump(branch32(commute(condition), regT1, Imm32(op1imm)), target);
     } else {
-        emitGetVirtualRegisters(op1, regT0, op2, regT1);
+        emitGetVirtualRegister(op1, regT0);
+        emitGetVirtualRegister(op2, regT1);
         addJump(branch32(condition, regT0, regT1), target);
     }
 }
@@ -264,7 +266,8 @@ void JIT::emit_compareUnsignedImpl(VirtualRegister dst, VirtualRegister op1, Vir
         int32_t op1imm = getOperandConstantInt(op1);
         compare32(commute(condition), regT0, Imm32(op1imm), regT0);
     } else {
-        emitGetVirtualRegisters(op1, regT0, op2, regT1);
+        emitGetVirtualRegister(op1, regT0);
+        emitGetVirtualRegister(op2, regT1);
         compare32(condition, regT0, regT1, regT0);
     }
     boxBoolean(regT0, JSValueRegs { regT0 });
@@ -422,7 +425,8 @@ void JIT::emit_op_mod(const Instruction* currentInstruction)
     ASSERT(regT4 != edx);
     ASSERT(regT4 != ecx);
 
-    emitGetVirtualRegisters(op1, regT4, op2, ecx);
+    emitGetVirtualRegister(op1, regT4);
+    emitGetVirtualRegister(op2, ecx);
     emitJumpSlowCaseIfNotInt(regT4);
     emitJumpSlowCaseIfNotInt(ecx);
 
@@ -480,7 +484,7 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
 
     // Character less.
     if (isOperandConstantChar(op1)) {
-        emitLoad(op2, regT1, regT0);
+        emitGetVirtualRegister(op2, regT1, regT0);
         addSlowCase(branchIfNotCell(regT1));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
@@ -489,7 +493,7 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
         return;
     }
     if (isOperandConstantChar(op2)) {
-        emitLoad(op1, regT1, regT0);
+        emitGetVirtualRegister(op1, regT1, regT0);
         addSlowCase(branchIfNotCell(regT1));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
@@ -498,15 +502,16 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
         return;
     } 
     if (isOperandConstantInt(op1)) {
-        emitLoad(op2, regT3, regT2);
+        emitGetVirtualRegister(op2, regT3, regT2);
         notInt32Op2.append(branchIfNotInt32(regT3));
         addJump(branch32(commute(condition), regT2, Imm32(getConstantOperand(op1).asInt32())), target);
     } else if (isOperandConstantInt(op2)) {
-        emitLoad(op1, regT1, regT0);
+        emitGetVirtualRegister(op1, regT1, regT0);
         notInt32Op1.append(branchIfNotInt32(regT1));
         addJump(branch32(condition, regT0, Imm32(getConstantOperand(op2).asInt32())), target);
     } else {
-        emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+        emitGetVirtualRegister(op1, regT1, regT0);
+        emitGetVirtualRegister(op2, regT3, regT2);
         notInt32Op1.append(branchIfNotInt32(regT1));
         notInt32Op2.append(branchIfNotInt32(regT3));
         addJump(branch32(condition, regT0, regT2), target);
@@ -533,13 +538,14 @@ void JIT::emit_compareUnsignedAndJump(const Instruction* instruction, Relational
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
 
     if (isOperandConstantInt(op1)) {
-        emitLoad(op2, regT3, regT2);
+        emitGetVirtualRegister(op2, regT3, regT2);
         addJump(branch32(commute(condition), regT2, Imm32(getConstantOperand(op1).asInt32())), target);
     } else if (isOperandConstantInt(op2)) {
-        emitLoad(op1, regT1, regT0);
+        emitGetVirtualRegister(op1, regT1, regT0);
         addJump(branch32(condition, regT0, Imm32(getConstantOperand(op2).asInt32())), target);
     } else {
-        emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+        emitGetVirtualRegister(op1, regT1, regT0);
+        emitGetVirtualRegister(op2, regT3, regT2);
         addJump(branch32(condition, regT0, regT2), target);
     }
 }
@@ -553,13 +559,14 @@ void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalConditi
     VirtualRegister op2 = bytecode.m_rhs;
 
     if (isOperandConstantInt(op1)) {
-        emitLoad(op2, regT3, regT2);
+        emitGetVirtualRegister(op2, regT3, regT2);
         compare32(commute(condition), regT2, Imm32(getConstantOperand(op1).asInt32()), regT0);
     } else if (isOperandConstantInt(op2)) {
-        emitLoad(op1, regT1, regT0);
+        emitGetVirtualRegister(op1, regT1, regT0);
         compare32(condition, regT0, Imm32(getConstantOperand(op2).asInt32()), regT0);
     } else {
-        emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+        emitGetVirtualRegister(op1, regT1, regT0);
+        emitGetVirtualRegister(op2, regT3, regT2);
         compare32(condition, regT0, regT2, regT0);
     }
     emitStoreBool(dst, regT0);
@@ -575,8 +582,8 @@ void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleConditio
 
     linkAllSlowCases(iter);
 
-    emitLoad(op1, regT1, regT0);
-    emitLoad(op2, regT3, regT2);
+    emitGetVirtualRegister(op1, regT1, regT0);
+    emitGetVirtualRegister(op2, regT3, regT2);
     loadGlobalObject(regT4);
     callOperation(operation, regT4, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
     emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
@@ -604,7 +611,7 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
             addSlowCase(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)));
 
         if (!op2IsInRegisters)
-            emitLoad(op2, regT3, regT2);
+            emitGetVirtualRegister(op2, regT3, regT2);
 
         Jump doubleOp2 = branch32(Below, regT3, TrustedImm32(JSValue::LowestTag));
 
@@ -668,7 +675,7 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
         ASSERT(op2IsInRegisters);
 
         if (!op1IsInRegisters)
-            emitLoadPayload(op1, regT0);
+            emitGetVirtualRegisterPayload(op1, regT0);
 
         convertInt32ToDouble(regT0, fpRegT0);
 

@@ -41,8 +41,6 @@
 
 namespace JSC {
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-
 MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
 {
     CCallHelpers jit;
@@ -61,6 +59,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleException");
 }
 
+#if ENABLE(EXTRA_CTI_THUNKS)
+
 MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM& vm)
 {
     CCallHelpers jit;
@@ -77,14 +77,20 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenera
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback");
 }
 
+#endif
+
 MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM& vm)
 {
     CCallHelpers jit;
 
 #if CPU(X86_64)
     jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(CPURegister)), X86Registers::esp);
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(ARM_THUMB2)
     jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#elif CPU(MIPS)
+    jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::returnAddressRegister);
+#else
+#   error "Not implemented on platform"
 #endif
 
     CCallHelpers::Jump continuation = jit.jump();
@@ -94,6 +100,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
     patchBuffer.link(continuation, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
 }
+
+#if ENABLE(EXTRA_CTI_THUNKS)
 
 MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
 {

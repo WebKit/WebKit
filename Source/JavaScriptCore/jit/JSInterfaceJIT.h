@@ -36,7 +36,7 @@
 #if ENABLE(JIT)
 
 namespace JSC {
-    class JSInterfaceJIT : public CCallHelpers, public GPRInfo, public FPRInfo {
+    class JSInterfaceJIT : public CCallHelpers, public GPRInfo, public JSRInfo, public FPRInfo {
     public:
 
         JSInterfaceJIT(VM* vm = nullptr, CodeBlock* codeBlock = nullptr)

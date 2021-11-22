@@ -1,3 +1,16 @@
+2021-11-22  Geza Lore  <glore@igalia.com>
+
+        [JSC] Make sharing of unlinked baseline code possible on JSVALUE32_64
+        https://bugs.webkit.org/show_bug.cgi?id=232624
+
+        Reviewed by Yusuke Suzuki.
+
+        Add extra SunSpider run on 32-bit platforms exerciseing baseline JIT
+        code sharing.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2021-11-22  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Move detection of flaky JSC tests to run-jsc-stress-tests

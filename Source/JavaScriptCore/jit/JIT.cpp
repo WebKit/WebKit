@@ -641,9 +641,6 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_del_by_val)
         DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
-#if !ENABLE(EXTRA_CTI_THUNKS)
-        DEFINE_SLOWCASE_OP(op_get_from_scope)
-#endif
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
         DEFINE_SLOWCASE_OP(op_iterator_open)
@@ -812,13 +809,8 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
                 if (m_unlinkedCodeBlock->isConstructor() && !argument)
                     continue;
                 int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
-#if USE(JSVALUE64)
-                constexpr JSValueRegs resultRegs { regT0 };
-#elif USE(JSVALUE32_64)
-                constexpr JSValueRegs resultRegs { regT1, regT0 };
-#endif
-                loadValue(Address(callFrameRegister, offset), resultRegs);
-                storeValue(resultRegs, Address(regT2, argument * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket()));
+                loadValue(Address(callFrameRegister, offset), jsRegT10);
+                storeValue(jsRegT10, Address(regT2, argument * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket()));
             }
         }
     }
@@ -1015,11 +1007,7 @@ void JIT::link()
     m_jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();
     m_jitCode->adoptMathICs(m_mathICs);
     m_jitCode->m_constantPool = WTFMove(m_constantPool);
-#if USE(JSVALUE64)
     m_jitCode->m_isShareable = m_isShareable;
-#else
-    m_jitCode->m_isShareable = false;
-#endif
 
     if (JITInternal::verbose)
         dataLogF("JIT generated code for %p at [%p, %p).\n", m_unlinkedCodeBlock, result.executableMemory()->start().untaggedPtr(), result.executableMemory()->end().untaggedPtr());
@@ -1076,7 +1064,6 @@ void JIT::privateCompileExceptionHandlers()
     }
 
     if (!m_exceptionChecks.empty()) {
-        m_exceptionHandler = label();
         m_exceptionChecks.link(this);
 
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);

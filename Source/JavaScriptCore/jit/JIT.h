@@ -253,7 +253,11 @@ namespace JSC {
         void loadConstant(unsigned constantIndex, GPRReg);
     private:
         void loadGlobalObject(GPRReg);
-        void loadCodeBlockConstant(VirtualRegister, GPRReg);
+        void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
+#if USE(JSVALUE32_64)
+        void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
+        void loadCodeBlockConstantTag(VirtualRegister, RegisterID);
+#endif
 
         void emitPutCodeBlockToFrameInPrologue(GPRReg result = regT0);
 
@@ -347,9 +351,8 @@ namespace JSC {
         template<typename Op>
         PrivateFieldPutKind privateFieldPutKind(Op);
 
-        enum FinalObjectMode { MayBeFinal, KnownNotFinal };
-
         void emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst);
+        void emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst);
         void emitPutVirtualRegister(VirtualRegister dst, JSValueRegs src);
         void emitStore(VirtualRegister, const JSValue constant, RegisterID base = callFrameRegister);
 
@@ -360,25 +363,18 @@ namespace JSC {
         bool getOperandConstantInt(VirtualRegister op1, VirtualRegister op2, VirtualRegister& op, int32_t& constant);
 
         void emitLoadDouble(VirtualRegister, FPRegisterID value);
-        void emitLoadTag(VirtualRegister, RegisterID tag);
-        void emitLoadPayload(VirtualRegister, RegisterID payload);
 
-        void emitLoad(const JSValue& v, RegisterID tag, RegisterID payload);
-        void emitLoad(VirtualRegister, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
-        void emitLoad2(VirtualRegister, RegisterID tag1, RegisterID payload1, VirtualRegister, RegisterID tag2, RegisterID payload2);
+        void emitGetVirtualRegister(VirtualRegister src, RegisterID tag, RegisterID payload);
+        void emitGetVirtualRegisterTag(VirtualRegister src, RegisterID dst);
 
         void emitStore(VirtualRegister, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
         void emitStoreInt32(VirtualRegister, RegisterID payload, bool indexIsInt32 = false);
-        void emitStoreInt32(VirtualRegister, TrustedImm32 payload, bool indexIsInt32 = false);
         void emitStoreCell(VirtualRegister, RegisterID payload, bool indexIsCell = false);
         void emitStoreBool(VirtualRegister, RegisterID payload, bool indexIsBool = false);
-        void emitStoreDouble(VirtualRegister, FPRegisterID value);
 
         void emitJumpSlowCaseIfNotJSCell(VirtualRegister);
         void emitJumpSlowCaseIfNotJSCell(VirtualRegister, RegisterID tag);
         void emitJumpSlowCaseIfNotJSCell(RegisterID);
-
-        void compileGetByIdHotPath(const Identifier*);
 
         // Arithmetic opcode helpers
         template <typename Op>
@@ -386,7 +382,6 @@ namespace JSC {
 
 #else // USE(JSVALUE32_64)
         void emitGetVirtualRegister(VirtualRegister src, RegisterID dst);
-        void emitGetVirtualRegisters(VirtualRegister src1, RegisterID dst1, VirtualRegister src2, RegisterID dst2);
         void emitPutVirtualRegister(VirtualRegister dst, RegisterID from = regT0);
         void emitStoreCell(VirtualRegister dst, RegisterID payload, bool /* only used in JSValue32_64 */ = false)
         {
@@ -402,9 +397,6 @@ namespace JSC {
         void emitJumpSlowCaseIfNotInt(RegisterID);
         void emitJumpSlowCaseIfNotNumber(RegisterID);
         void emitJumpSlowCaseIfNotInt(RegisterID, RegisterID, RegisterID scratch);
-
-        void compileGetByIdHotPath(VirtualRegister baseReg, const Identifier*);
-
 #endif // USE(JSVALUE32_64)
 
         void emitJumpSlowCaseIfNotJSCell(JSValueRegs);
@@ -646,9 +638,6 @@ namespace JSC {
         void emit_op_put_to_scope(const Instruction*);
         void emit_op_get_from_arguments(const Instruction*);
         void emit_op_put_to_arguments(const Instruction*);
-#if !ENABLE(EXTRA_CTI_THUNKS)
-        void emitSlow_op_get_from_scope(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-#endif
         void emitSlow_op_put_to_scope(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitSlowCaseCall(const Instruction*, Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
@@ -670,21 +659,8 @@ namespace JSC {
         void emitNewFuncExprCommon(const Instruction*);
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
-        void emitResolveClosure(VirtualRegister dst, VirtualRegister scope, bool needsVarInjectionChecks, unsigned depth);
-        void emitLoadWithStructureCheck(VirtualRegister scope, Structure** structureSlot);
-#if USE(JSVALUE64)
-        void emitGetVarFromPointer(JSValue* operand, GPRReg);
-        void emitGetVarFromIndirectPointer(JSValue** operand, GPRReg);
-#else
-        void emitGetVarFromIndirectPointer(JSValue** operand, GPRReg tag, GPRReg payload);
-        void emitGetVarFromPointer(JSValue* operand, GPRReg tag, GPRReg payload);
-#endif
-        void emitGetClosureVar(VirtualRegister scope, uintptr_t operand);
         void emitNotifyWrite(WatchpointSet*);
         void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
-        void emitPutGlobalVariable(JSValue* operand, VirtualRegister value, WatchpointSet*);
-        void emitPutGlobalVariableIndirect(JSValue** addressOfOperand, VirtualRegister value, WatchpointSet**);
-        void emitPutClosureVar(VirtualRegister scope, uintptr_t operand, VirtualRegister value, WatchpointSet*);
 
         void emitInitRegister(VirtualRegister);
 
@@ -735,14 +711,13 @@ namespace JSC {
 
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsFalseyGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsTruthyGenerator(VM&);
-
+#endif // ENABLE(EXTRA_CTI_THUNKS)
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&);
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
@@ -989,9 +964,6 @@ namespace JSC {
 
         JumpList m_exceptionChecks;
         JumpList m_exceptionChecksWithCallFrameRollback;
-#if !ENABLE(EXTRA_CTI_THUNKS)
-        Label m_exceptionHandler;
-#endif
 
         unsigned m_getByIdIndex { UINT_MAX };
         unsigned m_getByValIndex { UINT_MAX };

@@ -4787,7 +4787,6 @@
 		A7BFF3BF179868940002F462 /* DFGFiltrationResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFiltrationResult.h; path = dfg/DFGFiltrationResult.h; sourceTree = "<group>"; };
 		A7C0C4AA167C08CD0017011D /* JSScriptRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptRef.cpp; sourceTree = "<group>"; };
 		A7C0C4AB167C08CD0017011D /* JSScriptRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptRefPrivate.h; sourceTree = "<group>"; };
-		A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess32_64.cpp; sourceTree = "<group>"; };
 		A7C1EAEB17987AB600299DB2 /* CLoopStackInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLoopStackInlines.h; sourceTree = "<group>"; };
 		A7C1EAEC17987AB600299DB2 /* StackVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = StackVisitor.cpp; sourceTree = "<group>"; };
 		A7C1EAED17987AB600299DB2 /* StackVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackVisitor.h; sourceTree = "<group>"; };
@@ -6427,7 +6426,6 @@
 				726B91AF26581653008E6F82 /* JITPlan.h */,
 				72131BF626587EF2007114CF /* JITPlanStage.h */,
 				86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */,
-				A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */,
 				FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */,
 				FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */,
 				72131BF326587EF2007114CF /* JITSafepoint.cpp */,

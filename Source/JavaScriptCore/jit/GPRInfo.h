@@ -923,13 +923,43 @@ public:
 
 #endif // CPU(RISCV64)
 
+// To make some code generic over both JSVALUE64 and JSVALUE32_64 platforms, we use standard names
+// for certain JSValueRegs instances. On JSVALUE64, a JSValueRegs corresponds to a single 64-bit
+// architectural GPR, while on JSVALUE32_64, a JSValueRegs corresponds to a pair of 32-bit
+// architectural GPRs. Nevertheless, a lot of the difference between the targets can be abstracted
+// over using the following aliases. See AssemblyHelper::noOverlap for catching conflicting register
+// aliasing statically.
+class JSRInfo {
+public:
+    // Temporary registers.
+    // On JSVALUE64, jsRegT{2*n+1}{2*n} always maps one-to-one to GPR regT{2*n}
+    // On JSVALUE32_64, jsRegT{2*n+1}{2*n} always maps to the GPR pair regT{2*n+1} / regT{2*n}
+    // This mapping is deliberately simple to ease reasoning about aliasing. E.g.:
+    // Seeing 'jsRegT10' indicates that in general both 'regT1' and 'regT0' may be used.
+#if USE(JSVALUE64)
+    static constexpr JSValueRegs jsRegT10 { GPRInfo::regT0 };
+    static constexpr JSValueRegs jsRegT32 { GPRInfo::regT2 };
+#elif USE(JSVALUE32_64)
+    static constexpr JSValueRegs jsRegT10 { GPRInfo::regT1, GPRInfo::regT0 };
+    static constexpr JSValueRegs jsRegT32 { GPRInfo::regT3, GPRInfo::regT2 };
+#endif
+
+    // Return value register
+#if USE(JSVALUE64)
+    static constexpr JSValueRegs returnValueJSR { GPRInfo::returnValueGPR };
+#elif USE(JSVALUE32_64)
+    static constexpr JSValueRegs returnValueJSR { GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR };
+#endif
+};
+
 // The baseline JIT uses "accumulator" style execution with regT0 (for 64-bit)
 // and regT0 + regT1 (for 32-bit) serving as the accumulator register(s) for
 // passing results of one opcode to the next. Hence:
-COMPILE_ASSERT(GPRInfo::regT0 == GPRInfo::returnValueGPR, regT0_must_equal_returnValueGPR);
+static_assert(GPRInfo::regT0 == GPRInfo::returnValueGPR);
 #if USE(JSVALUE32_64)
-COMPILE_ASSERT(GPRInfo::regT1 == GPRInfo::returnValueGPR2, regT1_must_equal_returnValueGPR2);
+static_assert(GPRInfo::regT1 == GPRInfo::returnValueGPR2);
 #endif
+static_assert(JSRInfo::jsRegT10 == JSRInfo::returnValueJSR);
 
 inline GPRReg extractResult(GPRReg result) { return result; }
 #if USE(JSVALUE64)

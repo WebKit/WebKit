@@ -37,12 +37,12 @@ class VM;
 
 #if ENABLE(EXTRA_CTI_THUNKS)
 
-MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM&);
-MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM&);
 
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
+MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM&);
 

@@ -47,7 +47,7 @@ void JIT::emit_op_unsigned(const Instruction* currentInstruction)
     VirtualRegister result = bytecode.m_dst;
     VirtualRegister op1 = bytecode.m_operand;
     
-    emitLoad(op1, regT1, regT0);
+    emitGetVirtualRegister(op1, regT1, regT0);
     
     addSlowCase(branchIfNotInt32(regT1));
     addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
@@ -59,7 +59,7 @@ void JIT::emit_op_inc(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpInc>();
     VirtualRegister srcDst = bytecode.m_srcDst;
 
-    emitLoad(srcDst, regT1, regT0);
+    emitGetVirtualRegister(srcDst, regT1, regT0);
 
     addSlowCase(branchIfNotInt32(regT1));
     addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT0));
@@ -71,7 +71,7 @@ void JIT::emit_op_dec(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpDec>();
     VirtualRegister srcDst = bytecode.m_srcDst;
 
-    emitLoad(srcDst, regT1, regT0);
+    emitGetVirtualRegister(srcDst, regT1, regT0);
 
     addSlowCase(branchIfNotInt32(regT1));
     addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
