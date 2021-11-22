@@ -1,3 +1,15 @@
+2021-11-21  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance test][css-contain] Add case to test contain: layout inside a complex document
+        https://bugs.webkit.org/show_bug.cgi?id=232883
+
+        Reviewed by Rob Buis.
+
+        This case test the performance of changing the content of a layout containment which is
+        inside a complex document.
+
+        * Layout/css-contain-layout-size-inside-complex-document.html: Added.
+
 2021-11-19  Alan Bujtas  <zalan@apple.com>
 
         Add layout performance test for simple bidi content
