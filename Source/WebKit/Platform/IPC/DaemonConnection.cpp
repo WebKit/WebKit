@@ -36,6 +36,11 @@ namespace Daemon {
 #if !PLATFORM(COCOA)
 
 template<typename Traits>
+void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
+{
+}
+
+template<typename Traits>
 void ConnectionToMachService<Traits>::send(typename Traits::MessageType, EncodedMessage&&) const
 {
 }

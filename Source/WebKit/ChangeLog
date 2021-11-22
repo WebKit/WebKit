@@ -1,3 +1,21 @@
+2021-11-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] IPC\DaemonConnection.h(80): warning C4661: 'void WebKit::Daemon::ConnectionToMachService<WebKit::PCM::ConnectionTraits>::initializeConnectionIfNeeded(void) const': no suitable definition provided for explicit template instantiation request
+        https://bugs.webkit.org/show_bug.cgi?id=233413
+
+        Reviewed by Ross Kirsling.
+
+        WinCairo build reports the following warnings.
+
+        > Source\WebKit\Platform\IPC\DaemonConnection.h(80): warning C4661: 'void WebKit::Daemon::ConnectionToMachService<WebKit::PCM::ConnectionTraits>::initializeConnectionIfNeeded(void) const': no suitable definition provided for explicit template instantiation request
+        > Source\WebKit\Platform\IPC\DaemonConnection.h(77): note: see declaration of 'WebKit::Daemon::ConnectionToMachService<WebKit::PCM::ConnectionTraits>::initializeConnectionIfNeeded'
+        > Source\WebKit\Platform/IPC/DaemonConnection.cpp(40): warning C4661: 'void WebKit::Daemon::ConnectionToMachService<WebKit::PCM::ConnectionTraits>::initializeConnectionIfNeeded(void) const': no suitable definition provided for explicit template instantiation request
+        > Source\WebKit\Platform\IPC\DaemonConnection.h(77): note: see declaration of 'WebKit::Daemon::ConnectionToMachService<WebKit::PCM::ConnectionTraits>::initializeConnectionIfNeeded'
+
+        * Platform/IPC/DaemonConnection.cpp:
+        (WebKit::Daemon::ConnectionToMachService<Traits>::initializeConnectionIfNeeded const):
+        Added.
+
 2021-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Send WebGPU messages in the web process
