@@ -52,6 +52,7 @@
 #import "SVGElementInlines.h"
 #import "SVGNames.h"
 #import "SelectionGeometry.h"
+#import "SimpleRange.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKWindow.h"
@@ -1694,12 +1695,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     if (![self _prepareAccessibilityCall])
         return CGRectZero;
-    
-    auto document = self.axBackingObject->document();
-    if (!document || !document->view())
-        return CGRectZero;
-    auto rect = FloatRect(snappedIntRect(document->view()->unobscuredContentRect()));
-    return [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen];
+    return [self convertRectToSpace:self.axBackingObject->unobscuredContentRect() space:AccessibilityConversionSpace::Screen];
 }
 
 // The "center point" is where VoiceOver will "press" an object. This may not be the actual
@@ -1915,7 +1911,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
         });
     }
 
-    return convertToNSArray(accessibleElements);
+    return makeNSArray(accessibleElements);
 }
 
 - (NSArray *)accessibilityDetailsElements
@@ -2104,7 +2100,7 @@ static RenderObject* rendererForView(WAKView* view)
     AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(parameters);
     AccessibilityObject::AccessibilityChildrenVector results;
     self.axBackingObject->findMatchingObjects(&criteria, results);
-    return convertToNSArray(results);
+    return makeNSArray(results);
 }
 
 - (void)accessibilityModifySelection:(TextGranularity)granularity increase:(BOOL)increase
@@ -2209,47 +2205,6 @@ static RenderObject* rendererForView(WAKView* view)
     return range ? [self contentForSimpleRange:*range attributed:attributed] : nil;
 }
 
-// FIXME: No reason for this to be a method instead of a function.
-- (NSRange)_convertToNSRange:(const SimpleRange&)range
-{
-    auto& document = range.start.document();
-    auto* frame = document.frame();
-    if (!frame)
-        return NSMakeRange(NSNotFound, 0);
-
-    auto* rootEditableElement = frame->selection().selection().rootEditableElement();
-    auto* scope = rootEditableElement ? rootEditableElement : document.documentElement();
-    if (!scope)
-        return NSMakeRange(NSNotFound, 0);
-
-    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
-    // that is not inside the current editable region. These checks ensure we don't produce
-    // potentially invalid data when responding to such requests.
-    if (!scope->contains(range.start.container.ptr()) || !scope->contains(range.end.container.ptr()))
-        return NSMakeRange(NSNotFound, 0);
-
-    return NSMakeRange(characterCount({ { *scope, 0 }, range.start }), characterCount(range));
-}
-
-- (std::optional<SimpleRange>)_convertToDOMRange:(NSRange)range
-{
-    if (range.location == NSNotFound)
-        return std::nullopt;
-
-    // our critical assumption is that we are only called by input methods that
-    // concentrate on a given area containing the selection
-    // We have to do this because of text fields and textareas. The DOM for those is not
-    // directly in the document DOM, so serialization is problematic. Our solution is
-    // to use the root editable element of the selection start as the positional base.
-    // That fits with AppKit's idea of an input context.
-    auto document = self.axBackingObject->document();
-    auto selectionRoot = document->frame()->selection().selection().rootEditableElement();
-    auto scope = selectionRoot ? selectionRoot : document->documentElement();
-    if (!scope)
-        return std::nullopt;
-
-    return resolveCharacterRange(makeRangeSelectingNodeContents(*scope), range);
-}
 
 // This method is intended to take a text marker representing a VisiblePosition and convert it
 // into a normalized location within the document.
@@ -2267,7 +2222,7 @@ static RenderObject* rendererForView(WAKView* view)
         auto range = cache->rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
         if (!range)
             return NSNotFound;
-        return [self _convertToNSRange:*range].location;
+        return makeNSRange(range).location;
     }
     return NSNotFound;
 }
@@ -2346,7 +2301,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    auto range = [self _convertToDOMRange:NSMakeRange(position, 0)];
+    auto range = makeDOMRange(self.axBackingObject->document(), NSMakeRange(position, 0));
     if (!range)
         return nil;
 
@@ -2414,7 +2369,7 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    auto webRange = [self _convertToDOMRange:range];
+    auto webRange = makeDOMRange(self.axBackingObject->document(), range);
     if (!webRange)
         return nil;
     return self.axBackingObject->stringForRange(*webRange);
@@ -2598,6 +2553,17 @@ static RenderObject* rendererForView(WAKView* view)
     
     CharacterOffset start = [marker characterOffset];
     return [self previousMarkerForCharacterOffset:start];
+}
+
+- (CGRect)frameForRange:(NSRange)range
+{
+    if (![self _prepareAccessibilityCall])
+        return CGRectZero;
+    auto webRange = makeDOMRange(self.axBackingObject->document(), range);
+    if (!webRange)
+        return CGRectZero;
+    auto rect = self.axBackingObject->boundsForRange(*webRange);
+    return [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen];
 }
 
 // This method is intended to return the bounds of a text marker range in screen coordinates.
@@ -2931,7 +2897,7 @@ static RenderObject* rendererForView(WAKView* view)
         return nil;
 
     auto radicand = self.axBackingObject->mathRadicand();
-    return radicand ? convertToNSArray(*radicand) : nil;
+    return radicand ? makeNSArray(*radicand) : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathNumeratorObject

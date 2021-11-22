@@ -261,7 +261,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     }).autorelease();
 }
 
-NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
+NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
 {
     return createNSArray(children, [] (const auto& child) -> id {
         auto wrapper = child->wrapper();
@@ -462,6 +462,27 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     return convertedPath.autorelease();
 }
 
+// Determine the visible range by checking intersection of unobscuredContentRect and a range of text by
+// advancing forward by line from top and backwards by line from the bottom, until we have a visible range.
+- (NSRange)accessibilityVisibleCharacterRange
+{
+    return Accessibility::retrieveValueFromMainThread<NSRange>([protectedSelf = retainPtr(self)] () -> NSRange {
+        auto backingObject = protectedSelf.get().baseUpdateBackingStore;
+        if (!backingObject)
+            return NSMakeRange(NSNotFound, 0);
+
+        auto elementRange = makeNSRange(backingObject->elementRange());
+        if (elementRange.location == NSNotFound)
+            return elementRange;
+        
+        auto visibleRange = makeNSRange(backingObject->visibleCharacterRange());
+        if (visibleRange.location == NSNotFound)
+            return visibleRange;
+
+        return NSMakeRange(visibleRange.location - elementRange.location, visibleRange.length);
+    });
+}
+
 - (id)_accessibilityWebDocumentView
 {
     ASSERT_NOT_REACHED();
@@ -623,6 +644,49 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetLanguage(attrString, node->renderer(), attrStringRange);
 }
 
+NSRange makeNSRange(std::optional<SimpleRange> range)
+{
+    if (!range)
+        return NSMakeRange(NSNotFound, 0);
+    
+    auto& document = range->start.document();
+    auto* frame = document.frame();
+    if (!frame)
+        return NSMakeRange(NSNotFound, 0);
+
+    auto* rootEditableElement = frame->selection().selection().rootEditableElement();
+    auto* scope = rootEditableElement ? rootEditableElement : document.documentElement();
+    if (!scope)
+        return NSMakeRange(NSNotFound, 0);
+
+    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
+    // that is not inside the current editable region. These checks ensure we don't produce
+    // potentially invalid data when responding to such requests.
+    if (!scope->contains(range->start.container.ptr()) || !scope->contains(range->end.container.ptr()))
+        return NSMakeRange(NSNotFound, 0);
+
+    return NSMakeRange(characterCount({ { *scope, 0 }, range->start }), characterCount(*range));
+}
+
+std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
+{
+    if (range.location == NSNotFound)
+        return std::nullopt;
+
+    // our critical assumption is that we are only called by input methods that
+    // concentrate on a given area containing the selection
+    // We have to do this because of text fields and textareas. The DOM for those is not
+    // directly in the document DOM, so serialization is problematic. Our solution is
+    // to use the root editable element of the selection start as the positional base.
+    // That fits with AppKit's idea of an input context.
+    auto selectionRoot = document->frame()->selection().selection().rootEditableElement();
+    auto scope = selectionRoot ? selectionRoot : document->documentElement();
+    if (!scope)
+        return std::nullopt;
+
+    return resolveCharacterRange(makeRangeSelectingNodeContents(*scope), range);
+}
+
 // Returns an array of strings and AXObject wrappers corresponding to the text
 // runs and replacement nodes included in the given range.
 - (NSArray *)contentForSimpleRange:(const SimpleRange&)range attributed:(BOOL)attributed
@@ -676,18 +740,26 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return array.autorelease();
 }
 
-- (NSArray<NSDictionary *> *)lineRectsAndText
+- (WebCore::AXCoreObject*)baseUpdateBackingStore
 {
 #if PLATFORM(MAC)
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
-        return nil;
+        return nullptr;
 #else
     if (![self _prepareAccessibilityCall])
-        return nil;
+        return nullptr;
     auto* backingObject = self.axBackingObject;
 #endif
+    return backingObject;
+}
 
+- (NSArray<NSDictionary *> *)lineRectsAndText
+{
+    auto backingObject = self.baseUpdateBackingStore;
+    if (!backingObject)
+        return nil;
+    
     auto range = backingObject->elementRange();
     if (!range)
         return nil;

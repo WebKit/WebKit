@@ -704,6 +704,52 @@ std::optional<SimpleRange> AccessibilityObject::elementRange() const
     return AXObjectCache::rangeForNodeContents(*node);
 }
 
+std::optional<SimpleRange> AccessibilityObject::visibleCharacterRange() const
+{
+    auto range = elementRange();
+    if (!range)
+        return std::nullopt;
+
+    auto contentRect = unobscuredContentRect();
+    auto elementRect = snappedIntRect(this->elementRect());
+    if (!contentRect.intersects(elementRect))
+        return std::nullopt;
+
+    std::optional<BoundaryPoint> startBoundary = range->start;
+    std::optional<BoundaryPoint> endBoundary = range->end;
+
+    // Origin isn't contained in visible rect, start moving forward by line.
+    while (!contentRect.contains(elementRect.location())) {
+        auto nextLinePosition = nextLineEndPosition(VisiblePosition(makeContainerOffsetPosition(*startBoundary)));
+        std::optional<BoundaryPoint> testStartBoundary = makeBoundaryPoint(nextLinePosition);
+        if (!testStartBoundary || !contains(*range, *testStartBoundary))
+            break;
+        
+        startBoundary = testStartBoundary;
+        elementRect = boundsForRange(SimpleRange(*startBoundary, range->end));
+        if (elementRect.isEmpty())
+            break;
+    }
+
+    // End isn't contained in visible rect, start moving backwards by line.
+    while (!contentRect.contains(elementRect.location() + elementRect.size())) {
+        auto previousLinePosition = previousLineStartPosition(VisiblePosition(makeContainerOffsetPosition(*endBoundary)));
+        std::optional<BoundaryPoint> testEndBoundary = makeBoundaryPoint(previousLinePosition);
+        if (!testEndBoundary || !contains(*range, *testEndBoundary))
+            break;
+        
+        endBoundary = testEndBoundary;
+        elementRect = boundsForRange({ *startBoundary, *endBoundary });
+        if (elementRect.isEmpty())
+            break;
+    }
+
+    if (!startBoundary || !endBoundary)
+        return std::nullopt;
+    
+    return {{ *startBoundary, *endBoundary }};
+}
+
 std::optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection direction) const
 {
     std::optional<SimpleRange> found;
@@ -3180,6 +3226,14 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocu
     // Recursively make sure the scroll parent itself is visible.
     if (scrollParent->parentObject())
         scrollParent->scrollToMakeVisibleWithSubFocus(newSubfocus);
+}
+
+FloatRect AccessibilityObject::unobscuredContentRect() const
+{
+    auto document = this->document();
+    if (!document || !document->view())
+        return { };
+    return FloatRect(snappedIntRect(document->view()->unobscuredContentRect()));
 }
 
 void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const

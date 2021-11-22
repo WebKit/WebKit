@@ -2118,7 +2118,7 @@ webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 fast/dom/linkify-phone-numbers.html [ Pass ]
 
 accessibility/video-element-url-attribute.html [ Pass ]
-
+accessibility/visible-character-range.html [ Pass ]
 accessibility/ancestor-computation.html [ Pass ]
 
 # Enable "aria-current" tests for iOS.

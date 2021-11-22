@@ -808,7 +808,7 @@ protected:
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     virtual bool exposesTitleUIElement() const { return true; }
-
+    FloatRect unobscuredContentRect() const override;
     AccessibilityObject* radioGroupAncestor() const;
 
     bool allowsTextRanges() const;
@@ -821,6 +821,7 @@ private:
     std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
     std::optional<SimpleRange> selectionRange() const;
     std::optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
+    std::optional<SimpleRange> visibleCharacterRange() const override;
 
 protected: // FIXME: Make the data members private.
     bool childrenInitialized() const { return m_childrenInitialized; }

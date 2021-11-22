@@ -1,3 +1,17 @@
+2021-11-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit: need a method to get visible text and frame of an element on screen
+        https://bugs.webkit.org/show_bug.cgi?id=233336
+
+        Reviewed by Andres Gonzalez.
+
+        * accessibility/ios-simulator/visible-character-range-expected.txt: Added.
+        * accessibility/visible-character-range-expected.txt: Added.
+        * accessibility/visible-character-range.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-11-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Remove dirOverride

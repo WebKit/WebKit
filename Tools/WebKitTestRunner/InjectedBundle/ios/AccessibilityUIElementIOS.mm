@@ -108,6 +108,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)_accessibilityListAncestor;
 - (id)_accessibilityPhotoDescription;
 - (NSArray *)accessibilityImageOverlayElements;
+- (NSRange)accessibilityVisibleCharacterRange;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -394,6 +395,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef attribute)
 {
+    if (JSStringIsEqualToUTF8CString(attribute, "AXVisibleCharacterRange"))
+        return [NSStringFromRange([m_element accessibilityVisibleCharacterRange]) createJSStringRef];
+
     return createJSString();
 }
 

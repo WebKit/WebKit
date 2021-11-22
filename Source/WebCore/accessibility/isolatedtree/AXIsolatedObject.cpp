@@ -992,6 +992,13 @@ void AXIsolatedObject::updateBackingStore()
         tree->applyPendingChanges();
 }
 
+std::optional<SimpleRange> AXIsolatedObject::visibleCharacterRange() const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->visibleCharacterRange() : std::nullopt;
+}
+
 std::optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
 {
     ASSERT(isMainThread());
@@ -1468,6 +1475,15 @@ void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRang
 
     if (auto* object = associatedAXObject())
         object->setSelectedVisiblePositionRange(visiblePositionRange);
+}
+
+FloatRect AXIsolatedObject::unobscuredContentRect() const
+{
+    return Accessibility::retrieveValueFromMainThread<FloatRect>([this] () -> FloatRect {
+        if (auto* object = associatedAXObject())
+            return object->unobscuredContentRect();
+        return { };
+    });
 }
 
 std::optional<SimpleRange> AXIsolatedObject::elementRange() const
