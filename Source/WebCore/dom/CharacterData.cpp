@@ -23,6 +23,7 @@
 #include "CharacterData.h"
 
 #include "Attr.h"
+#include "ChildChangeInvalidation.h"
 #include "ElementTraversal.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
@@ -73,6 +74,16 @@ ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count
     return m_data.substring(offset, count);
 }
 
+static ContainerNode::ChildChange makeChildChange(CharacterData& characterData, ContainerNode::ChildChange::Source source)
+{
+    return {
+        ContainerNode::ChildChange::Type::TextChanged,
+        ElementTraversal::previousSibling(characterData),
+        ElementTraversal::nextSibling(characterData),
+        source
+    };
+}
+
 unsigned CharacterData::parserAppendData(const String& string, unsigned offset, unsigned lengthLimit)
 {
     unsigned oldLength = m_data.length();
@@ -95,6 +106,11 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (!characterLengthLimit)
         return 0;
 
+    auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::Parser);
+    std::optional<Style::ChildChangeInvalidation> styleInvalidation;
+    if (auto* parent = parentNode())
+        styleInvalidation.emplace(*parent, childChange);
+
     String oldData = m_data;
     if (string.is8Bit())
         m_data.append(string.characters8() + offset, characterLengthLimit);
@@ -105,7 +121,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (is<Text>(*this))
         downcast<Text>(*this).updateRendererAfterContentChange(oldLength, 0);
 
-    notifyParentAfterChange(ContainerNode::ChildChange::Source::Parser);
+    notifyParentAfterChange(childChange);
 
     auto mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(*this);
     if (UNLIKELY(mutationRecipients))
@@ -173,6 +189,12 @@ ExceptionOr<void> CharacterData::setNodeValue(const String& nodeValue)
 
 void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges shouldUpdateLiveRanges)
 {
+    auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::API);
+
+    std::optional<Style::ChildChangeInvalidation> styleInvalidation;
+    if (auto* parent = parentNode())
+        styleInvalidation.emplace(*parent, childChange);
+
     String oldData = m_data;
     m_data = newData;
 
@@ -191,26 +213,19 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     if (document().frame())
         document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
 
-    notifyParentAfterChange(ContainerNode::ChildChange::Source::API);
+    notifyParentAfterChange(childChange);
 
     dispatchModifiedEvent(oldData);
 }
 
-void CharacterData::notifyParentAfterChange(ContainerNode::ChildChange::Source source)
+void CharacterData::notifyParentAfterChange(const ContainerNode::ChildChange& childChange)
 {
     document().incDOMTreeVersion();
 
     if (!parentNode())
         return;
 
-    ContainerNode::ChildChange change = {
-        ContainerNode::ChildChange::Type::TextChanged,
-        ElementTraversal::previousSibling(*this),
-        ElementTraversal::nextSibling(*this),
-        source
-    };
-
-    parentNode()->childrenChanged(change);
+    parentNode()->childrenChanged(childChange);
 }
 
 void CharacterData::dispatchModifiedEvent(const String& oldData)
