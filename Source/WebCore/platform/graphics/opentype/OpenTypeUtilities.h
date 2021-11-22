@@ -54,7 +54,6 @@ private:
     Vector<uint8_t, 512> m_buffer;
 };
 
-bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength);
 bool renameFont(const SharedBuffer&, const String&, Vector<uint8_t>&);
 RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer&, const String&);
 
