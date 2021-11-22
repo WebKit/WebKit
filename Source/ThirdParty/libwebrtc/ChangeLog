@@ -1,3 +1,12 @@
+2021-11-22  Youenn Fablet  <youenn@apple.com>
+
+        Remove h264_bitstream_parser spurious logging
+        https://bugs.webkit.org/show_bug.cgi?id=233361
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/common_video/h264/h264_bitstream_parser.cc:
+
 2021-11-17  Youenn Fablet  <youenn@apple.com>
 
         Safari 15.1 H264 FullHD video encode/decode fails

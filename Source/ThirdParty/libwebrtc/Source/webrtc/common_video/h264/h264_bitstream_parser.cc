@@ -184,7 +184,9 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
   if ((pps_->weighted_pred_flag && (slice_type == H264::SliceType::kP ||
                                     slice_type == H264::SliceType::kSp)) ||
       (pps_->weighted_bipred_idc == 1 && slice_type == H264::SliceType::kB)) {
+#if !defined(WEBRTC_WEBKIT_BUILD) || !defined(WEBRTC_MAC)
     RTC_LOG(LS_ERROR) << "Streams with pred_weight_table unsupported.";
+#endif
     return kUnsupportedStream;
   }
   // if ((weighted_pred_flag && (slice_type == P || slice_type == SP)) ||
