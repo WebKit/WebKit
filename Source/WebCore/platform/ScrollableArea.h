@@ -378,7 +378,7 @@ protected:
     void setScrollOrigin(const IntPoint&);
     void resetScrollOriginChanged() { m_scrollOriginChanged = false; }
 
-    WEBCORE_EXPORT virtual float adjustScrollStepForFixedContent(float step, ScrollEventAxis, ScrollGranularity);
+    WEBCORE_EXPORT virtual float adjustVerticalPageScrollStepForFixedContent(float step);
     virtual void invalidateScrollbarRect(Scrollbar&, const IntRect&) = 0;
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
 

@@ -179,6 +179,7 @@ inline constexpr ScrollEventAxis axisFromDirection(ScrollDirection direction)
     case ScrollLeft: return ScrollEventAxis::Horizontal;
     case ScrollRight: return ScrollEventAxis::Horizontal;
     }
+    ASSERT_NOT_REACHED();
     return ScrollEventAxis::Vertical;
 }
 
@@ -188,6 +189,7 @@ inline float valueForAxis(FloatSize size, ScrollEventAxis axis)
     case ScrollEventAxis::Horizontal: return size.width();
     case ScrollEventAxis::Vertical: return size.height();
     }
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -201,6 +203,7 @@ inline FloatSize setValueForAxis(FloatSize size, ScrollEventAxis axis, float val
         size.setHeight(value);
         return size;
     }
+    ASSERT_NOT_REACHED();
     return size;
 }
 
@@ -210,6 +213,7 @@ inline float valueForAxis(FloatPoint point, ScrollEventAxis axis)
     case ScrollEventAxis::Horizontal: return point.x();
     case ScrollEventAxis::Vertical: return point.y();
     }
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -222,6 +226,7 @@ inline FloatPoint setValueForAxis(FloatPoint point, ScrollEventAxis axis, float 
     case ScrollEventAxis::Vertical: point.setY(value);
         return point;
     }
+    ASSERT_NOT_REACHED();
     return point;
 }
 

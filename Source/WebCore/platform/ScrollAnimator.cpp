@@ -69,16 +69,13 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, O
 
     auto delta = setValueForAxis(FloatSize { }, axis, scrollDelta);
 
-    if (behavior.contains(ScrollBehavior::RespectScrollSnap)) {
-        behavior.remove(ScrollBehavior::RespectScrollSnap);
-        if (m_scrollController.usesScrollSnap()) {
-            auto currentOffset = offsetFromPosition(currentPosition());
-            auto newOffset = currentOffset + delta;
-            auto velocity = copysignf(1.0f, scrollDelta);
-            auto newOffsetOnAxis = m_scrollController.adjustedScrollDestination(axis, newOffset, velocity, valueForAxis(currentOffset, axis));
-            newOffset = setValueForAxis(newOffset, axis, newOffsetOnAxis);
-            delta = newOffset - currentOffset;
-        }
+    if (behavior.contains(ScrollBehavior::RespectScrollSnap) && m_scrollController.usesScrollSnap()) {
+        auto currentOffset = offsetFromPosition(currentPosition());
+        auto newOffset = currentOffset + delta;
+        auto velocity = copysignf(1.0f, scrollDelta);
+        auto newOffsetOnAxis = m_scrollController.adjustedScrollDestination(axis, newOffset, velocity, valueForAxis(currentOffset, axis));
+        newOffset = setValueForAxis(newOffset, axis, newOffsetOnAxis);
+        delta = newOffset - currentOffset;
     }
 
     if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate)) {

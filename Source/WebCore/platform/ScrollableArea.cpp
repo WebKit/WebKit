@@ -91,7 +91,7 @@ void ScrollableArea::setScrollOrigin(const IntPoint& origin)
     }
 }
 
-float ScrollableArea::adjustScrollStepForFixedContent(float step, ScrollEventAxis, ScrollGranularity)
+float ScrollableArea::adjustVerticalPageScrollStepForFixedContent(float step)
 {
     return step;
 }
@@ -119,7 +119,10 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     }
 
     auto axis = axisFromDirection(direction);
-    step = adjustScrollStepForFixedContent(step, axis, granularity);
+
+    if (granularity == ScrollGranularity::Page && axis == ScrollEventAxis::Vertical)
+        step = adjustVerticalPageScrollStepForFixedContent(step);
+
     auto scrollDelta = step * stepCount;
     
     if (direction == ScrollUp || direction == ScrollLeft)

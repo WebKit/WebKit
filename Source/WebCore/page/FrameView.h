@@ -661,7 +661,7 @@ public:
     bool isScrollSnapInProgress() const final;
     void updateScrollingCoordinatorScrollSnapProperties() const;
 
-    float adjustScrollStepForFixedContent(float step, ScrollEventAxis, ScrollGranularity) final;
+    float adjustVerticalPageScrollStepForFixedContent(float step) final;
 
     void didChangeScrollOffset();
 

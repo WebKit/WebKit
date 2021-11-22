@@ -1118,10 +1118,7 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
     if (!renderer->hasNonVisibleOverflow())
         return;
 
-    ScrollDirection direction = ScrollDown;
-    if (units < 0)
-        direction = ScrollUp;
-
+    auto direction = units < 0 ? ScrollUp : ScrollDown;
     auto* stopElement = this;
     downcast<RenderBox>(*renderer).scroll(direction, granularity, std::abs(units), &stopElement);
 }
