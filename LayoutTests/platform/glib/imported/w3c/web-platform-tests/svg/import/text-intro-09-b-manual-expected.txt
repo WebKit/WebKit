@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (16,101) size 775x45
         RenderSVGText {text} at (10,60) size 465x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 465x27
-            chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 56 width 464.40 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+            chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 56 width 464.40: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
       RenderSVGText {text} at (10,124) size 316x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 316x19
           chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 45 width 315.60: "unicode-bidi=\"bidi-override\" direction=\"rtl\"."
       RenderSVGContainer {g} at (16,267) size 775x46
         RenderSVGText {text} at (10,160) size 465x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 465x27
-            chunk 1 (end anchor) text run 1 at (10.00,180.00) startOffset 0 endOffset 56 width 464.40 RTL override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+            chunk 1 (end anchor) text run 1 at (10.00,180.00) startOffset 0 endOffset 56 width 464.40 RTL: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
       RenderSVGText {text} at (10,224) size 275x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 275x19
           chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 38 width 274.20: "unicode-bidi=\"normal\" direction=\"rtl\"."

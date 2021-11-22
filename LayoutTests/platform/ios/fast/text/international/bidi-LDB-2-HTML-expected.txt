@@ -46,47 +46,47 @@ layer at (0,0) size 800x535
               text run at (63,0) width 29: "GHI"
           RenderBlock {P} at (4,64) size 92x20
             RenderText {#text} at (0,0) size 92x19
-              text run at (0,0) width 92 RTL override: "IHGFEDCBA"
+              text run at (0,0) width 92 RTL: "IHGFEDCBA"
           RenderBlock {P} at (4,84) size 92x20
             RenderText {#text} at (63,0) size 29x19
-              text run at (63,0) width 29 RTL override: "IHG"
+              text run at (63,0) width 29 RTL: "IHG"
             RenderInline {SPAN} at (0,0) size 32x19
               RenderText {#text} at (32,0) size 32x19
-                text run at (32,0) width 32 RTL override: "FED"
+                text run at (32,0) width 32 RTL: "FED"
             RenderText {#text} at (0,0) size 33x19
-              text run at (0,0) width 33 RTL override: "CBA"
+              text run at (0,0) width 33 RTL: "CBA"
           RenderBlock {P} at (4,104) size 92x20
             RenderText {#text} at (63,0) size 29x19
-              text run at (63,0) width 29 RTL override: "IHG"
+              text run at (63,0) width 29 RTL: "IHG"
             RenderInline {SPAN} at (0,0) size 32x19
               RenderText {#text} at (32,0) size 32x19
                 text run at (32,0) width 32: "DEF"
             RenderText {#text} at (0,0) size 33x19
-              text run at (0,0) width 33 RTL override: "CBA"
+              text run at (0,0) width 33 RTL: "CBA"
           RenderBlock {P} at (4,124) size 92x20
             RenderText {#text} at (63,0) size 29x19
-              text run at (63,0) width 29 RTL override: "IHG"
+              text run at (63,0) width 29 RTL: "IHG"
             RenderInline {BDO} at (0,0) size 32x19
               RenderText {#text} at (32,0) size 32x19
-                text run at (32,0) width 32 RTL override: "FED"
+                text run at (32,0) width 32 RTL: "FED"
             RenderText {#text} at (0,0) size 33x19
-              text run at (0,0) width 33 RTL override: "CBA"
+              text run at (0,0) width 33 RTL: "CBA"
           RenderBlock {P} at (4,144) size 92x20
             RenderText {#text} at (63,0) size 29x19
-              text run at (63,0) width 29 RTL override: "IHG"
+              text run at (63,0) width 29 RTL: "IHG"
             RenderInline {SPAN} at (0,0) size 32x19
               RenderText {#text} at (32,0) size 32x19
-                text run at (32,0) width 32 RTL override: "FED"
+                text run at (32,0) width 32 RTL: "FED"
             RenderText {#text} at (0,0) size 33x19
-              text run at (0,0) width 33 RTL override: "CBA"
+              text run at (0,0) width 33 RTL: "CBA"
           RenderBlock {P} at (4,164) size 92x20
             RenderText {#text} at (63,0) size 29x19
-              text run at (63,0) width 29 RTL override: "IHG"
+              text run at (63,0) width 29 RTL: "IHG"
             RenderInline {BDO} at (0,0) size 32x19
               RenderText {#text} at (32,0) size 32x19
-                text run at (32,0) width 32 LTR override: "DEF"
+                text run at (32,0) width 32: "DEF"
             RenderText {#text} at (0,0) size 33x19
-              text run at (0,0) width 33 RTL override: "CBA"
+              text run at (0,0) width 33 RTL: "CBA"
         RenderText {#text} at (105,86) size 5x19
           text run at (105,86) width 5: " "
         RenderBlock {DIV} at (112,53) size 29x88 [border: (1px solid #008000)]
@@ -110,7 +110,7 @@ layer at (0,0) size 800x535
               text run at (0,0) width 21 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           RenderBlock {P} at (4,64) size 21x20
             RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21 LTR override: "\x{5D2}\x{5D1}\x{5D0}"
+              text run at (0,0) width 21: "\x{5D2}\x{5D1}\x{5D0}"
         RenderText {#text} at (143,86) size 5x19
           text run at (143,86) width 5: " "
         RenderBlock {DIV} at (150,63) size 89x68 [border: (1px solid #008000)]
@@ -278,7 +278,7 @@ layer at (0,0) size 800x535
               text run at (56,0) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5} "
             RenderInline {BDO} at (0,0) size 57x19
               RenderText {#text} at (0,0) size 57x19
-                text run at (0,0) width 57 RTL override: "CBA \x{5D0}\x{5D1}\x{5D2}"
+                text run at (0,0) width 57 RTL: "CBA \x{5D0}\x{5D1}\x{5D2}"
             RenderText {#text} at (79,0) size 59x19
               text run at (79,0) width 39: " DEF "
               text run at (117,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
@@ -288,7 +288,7 @@ layer at (0,0) size 800x535
               text run at (20,0) width 5: " "
             RenderInline {BDO} at (0,0) size 56x19
               RenderText {#text} at (24,0) size 56x19
-                text run at (24,0) width 56 LTR override: "ABC \x{5D5}\x{5D4}\x{5D3}"
+                text run at (24,0) width 56: "ABC \x{5D5}\x{5D4}\x{5D3}"
             RenderText {#text} at (79,0) size 59x19
               text run at (79,0) width 40: " DEF "
               text run at (118,0) width 20 RTL: "\x{5D6}\x{5D7}\x{5D8}"
@@ -297,7 +297,7 @@ layer at (0,0) size 800x535
               text run at (114,0) width 24 RTL: "\x{5D6}\x{5D7}\x{5D8} "
             RenderInline {BDO} at (0,0) size 56x19
               RenderText {#text} at (24,0) size 56x19
-                text run at (24,0) width 56 LTR override: "ABC \x{5D5}\x{5D4}\x{5D3}"
+                text run at (24,0) width 56: "ABC \x{5D5}\x{5D4}\x{5D3}"
             RenderText {#text} at (0,0) size 115x19
               text run at (0,0) width 25 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (79,0) width 36: " DEF"
@@ -464,7 +464,7 @@ layer at (0,0) size 800x535
               text run at (89,0) width 26 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             RenderInline {BDO} at (0,0) size 90x19
               RenderText {#text} at (0,0) size 90x19
-                text run at (0,0) width 90 RTL override: "ABC \x{5D3}\x{5D4}\x{5D5} DEF"
+                text run at (0,0) width 90 RTL: "ABC \x{5D3}\x{5D4}\x{5D5} DEF"
             RenderText {#text} at (114,0) size 57x19
               text run at (114,0) width 37: " GHI "
               text run at (150,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
@@ -549,7 +549,7 @@ layer at (0,0) size 800x535
               text run at (20,0) width 42: " ABC "
             RenderInline {BDO} at (0,0) size 54x19
               RenderText {#text} at (61,0) size 54x19
-                text run at (61,0) width 54 RTL override: "\x{5D3}\x{5D4}\x{5D5} DEF"
+                text run at (61,0) width 54 RTL: "\x{5D3}\x{5D4}\x{5D5} DEF"
             RenderText {#text} at (114,0) size 57x19
               text run at (114,0) width 37: " GHI "
               text run at (150,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"

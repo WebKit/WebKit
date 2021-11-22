@@ -106,14 +106,14 @@ layer at (0,0) size 800x1840
       RenderBlock {P} at (0,1336) size 784x20 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 81x19
           RenderText {#text} at (160,0) size 81x19
-            text run at (160,0) width 81 RTL override: "Hello, world"
+            text run at (160,0) width 81 RTL: "Hello, world"
       RenderBlock {P} at (0,1372) size 784x20 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 411x19
           text run at (0,0) width 411: "The next line should be slightly spaced out (wider than normal)."
       RenderBlock {P} at (0,1408) size 784x20 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 177x19
           RenderText {#text} at (160,0) size 177x19
-            text run at (160,0) width 177 RTL override: "Hello, world"
+            text run at (160,0) width 177 RTL: "Hello, world"
       RenderBlock {P} at (0,1444) size 784x20 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 485x19
           text run at (0,0) width 353: "The next line should be crammed backwards, just as if "
@@ -121,7 +121,7 @@ layer at (0,0) size 800x1840
       RenderBlock {P} at (0,1480) size 784x20 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x19
           RenderText {#text} at (160,0) size 0x19
-            text run at (160,0) width 0 RTL override: "Hello, world"
+            text run at (160,0) width 0 RTL: "Hello, world"
       RenderBlock {P} at (0,1516) size 784x20 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 471x19
           text run at (0,0) width 338: "The next line tests a large negative line spacing, and "
@@ -129,7 +129,7 @@ layer at (0,0) size 800x1840
       RenderBlock {P} at (0,1552) size 784x20 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x19
           RenderText {#text} at (160,0) size 0x19
-            text run at (160,0) width 0 RTL override: "Hello, world"
+            text run at (160,0) width 0 RTL: "Hello, world"
       RenderBlock {P} at (0,1588) size 784x40 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 745x39
           text run at (0,0) width 148: "Now, opacity as well - "
@@ -178,12 +178,12 @@ layer at (8,1244) size 0x19
 layer at (8,1660) size 177x19
   RenderInline {SPAN} at (0,0) size 177x19 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 177x19
-      text run at (160,0) width 177 RTL override: "Hello, world"
+      text run at (160,0) width 177 RTL: "Hello, world"
 layer at (8,1732) size 0x19
   RenderInline {SPAN} at (0,0) size 0x19 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 0x19
-      text run at (160,0) width 0 RTL override: "Hello, world"
+      text run at (160,0) width 0 RTL: "Hello, world"
 layer at (8,1804) size 0x19
   RenderInline {SPAN} at (0,0) size 0x19 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 0x19
-      text run at (160,0) width 0 RTL override: "Hello, world"
+      text run at (160,0) width 0 RTL: "Hello, world"

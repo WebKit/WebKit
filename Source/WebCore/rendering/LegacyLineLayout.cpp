@@ -325,14 +325,12 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
             parentBox->addToLine(box);
         }
 
-        bool visuallyOrdered = r->renderer().style().rtlOrdering() == Order::Visual;
         box->setBidiLevel(r->level());
 
         if (is<LegacyInlineTextBox>(*box)) {
             auto& textBox = downcast<LegacyInlineTextBox>(*box);
             textBox.setStart(r->m_start);
             textBox.setLen(r->m_stop - r->m_start);
-            textBox.setDirOverride(r->dirOverride(visuallyOrdered));
             if (r->m_hasHyphen)
                 textBox.setHasHyphen(true);
         }

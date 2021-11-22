@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,33) size 126x21 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 126x21
           RenderSVGInlineText {#text} at (0,0) size 126x21
-            chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 17 width 126.00 LTR override: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} W3C"
+            chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 17 width 126.00: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} W3C"
       RenderSVGText {text} at (10,63) size 123x21 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 123x21
           RenderSVGInlineText {#text} at (0,0) size 123x21

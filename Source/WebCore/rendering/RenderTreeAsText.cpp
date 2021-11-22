@@ -548,11 +548,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
             y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
 
         ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
-        if (!textRun.isLeftToRightDirection() || textRun.dirOverride()) {
-            ts << (!textRun.isLeftToRightDirection() ? " RTL" : " LTR");
-            if (textRun.dirOverride())
-                ts << " override";
-        }
+        if (!textRun.isLeftToRightDirection())
+            ts << " RTL";
         ts << ": "
             << quoteAndEscapeNonPrintables(textRun.text());
         if (textRun.hasHyphen())

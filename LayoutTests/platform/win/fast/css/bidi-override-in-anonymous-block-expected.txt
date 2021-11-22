@@ -11,14 +11,14 @@ layer at (0,0) size 785x1225
           text run at (0,0) width 64: "Single div"
       RenderBlock {DIV} at (1,68) size 767x21 [border: (1.42px solid #000000)]
         RenderText {#text} at (742,1) size 23x18
-          text run at (742,1) width 23 RTL override: "abc"
+          text run at (742,1) width 23 RTL: "abc"
       RenderBlock {P} at (0,104) size 769x19
         RenderText {#text} at (0,0) size 410x18
           text run at (0,0) width 410: "The following 2 lines should be identical, ignorning whitespaces:"
       RenderBlock {DIV} at (1,138) size 767x40 [border: (1.42px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 764x19
           RenderText {#text} at (741,0) size 23x18
-            text run at (741,0) width 23 RTL override: "abc"
+            text run at (741,0) width 23 RTL: "abc"
         RenderBlock {DIV} at (1,19) size 764x19
           RenderText {#text} at (741,0) size 23x18
             text run at (741,0) width 23: "cba"
@@ -27,10 +27,10 @@ layer at (0,0) size 785x1225
           text run at (0,0) width 417: "The following 2 textes should be identical, ignorning whitespaces:"
       RenderBlock {DIV} at (1,227) size 767x22 [border: (1.42px solid #000000)]
         RenderText {#text} at (738,1) size 27x18
-          text run at (738,1) width 27 RTL override: "abc "
+          text run at (738,1) width 27 RTL: "abc "
         RenderInline {SPAN} at (0,0) size 23x18
           RenderText {#text} at (716,1) size 23x18
-            text run at (716,1) width 23 RTL override: "abc"
+            text run at (716,1) width 23 RTL: "abc"
       RenderBlock {P} at (0,264) size 769x19
         RenderText {#text} at (0,0) size 410x18
           text run at (0,0) width 410: "The following 2 lines should be identical, ignorning whitespaces:"
@@ -40,23 +40,23 @@ layer at (0,0) size 785x1225
             text run at (741,0) width 23: "cba"
         RenderBlock (anonymous) at (1,19) size 764x19
           RenderText {#text} at (741,0) size 23x18
-            text run at (741,0) width 23 RTL override: "abc"
+            text run at (741,0) width 23 RTL: "abc"
       RenderBlock {P} at (0,353) size 769x19
         RenderText {#text} at (0,0) size 417x18
           text run at (0,0) width 417: "The following 2 textes should be identical, ignorning whitespaces:"
       RenderBlock {DIV} at (1,387) size 767x22 [border: (1.42px solid #000000)]
         RenderInline {SPAN} at (0,0) size 27x18
           RenderText {#text} at (738,1) size 27x18
-            text run at (738,1) width 27 RTL override: "abc "
+            text run at (738,1) width 27 RTL: "abc "
         RenderText {#text} at (716,1) size 23x18
-          text run at (716,1) width 23 RTL override: "abc"
+          text run at (716,1) width 23 RTL: "abc"
       RenderBlock {P} at (0,424) size 769x19
         RenderText {#text} at (0,0) size 73x18
           text run at (0,0) width 73: "Single span"
       RenderBlock (anonymous) at (0,458) size 769x19
         RenderInline {SPAN} at (0,0) size 26x22 [border: (1.42px solid #000000)]
           RenderText {#text} at (2,0) size 23x18
-            text run at (2,0) width 23 RTL override: "abc"
+            text run at (2,0) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,492) size 769x19
         RenderText {#text} at (0,0) size 417x18
@@ -64,10 +64,10 @@ layer at (0,0) size 785x1225
       RenderBlock (anonymous) at (0,526) size 769x19
         RenderInline {SPAN} at (0,0) size 52x22 [border: (1.42px solid #000000)]
           RenderText {#text} at (24,0) size 27x18
-            text run at (24,0) width 27 RTL override: "abc "
+            text run at (24,0) width 27 RTL: "abc "
           RenderInline {SPAN} at (0,0) size 23x18
             RenderText {#text} at (2,0) size 23x18
-              text run at (2,0) width 23 RTL override: "abc"
+              text run at (2,0) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,560) size 769x19
         RenderText {#text} at (0,0) size 417x18
@@ -76,9 +76,9 @@ layer at (0,0) size 785x1225
         RenderInline {SPAN} at (0,0) size 52x22 [border: (1.42px solid #000000)]
           RenderInline {SPAN} at (0,0) size 27x18
             RenderText {#text} at (24,0) size 27x18
-              text run at (24,0) width 27 RTL override: "abc "
+              text run at (24,0) width 27 RTL: "abc "
           RenderText {#text} at (2,0) size 23x18
-            text run at (2,0) width 23 RTL override: "abc"
+            text run at (2,0) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,628) size 769x19
         RenderText {#text} at (0,0) size 417x18
@@ -86,7 +86,7 @@ layer at (0,0) size 785x1225
       RenderBlock (anonymous) at (0,662) size 769x19
         RenderInline {SPAN} at (0,0) size 24x22 [border: (1.42px solid #000000)]
           RenderText {#text} at (0,0) size 22x18
-            text run at (0,0) width 22 RTL override: "abc"
+            text run at (0,0) width 22 RTL: "abc"
       RenderBlock (anonymous) at (0,680) size 769x19
         RenderBlock {DIV} at (0,0) size 769x18
           RenderText {#text} at (747,0) size 22x18
@@ -106,7 +106,7 @@ layer at (0,0) size 785x1225
       RenderBlock (anonymous) at (0,802) size 769x19
         RenderInline {SPAN} at (0,0) size 24x22 [border: (1.42px solid #000000)]
           RenderText {#text} at (2,0) size 23x18
-            text run at (2,0) width 23 RTL override: "abc"
+            text run at (2,0) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,836) size 769x19
         RenderText {#text} at (0,0) size 29x18
@@ -119,24 +119,24 @@ layer at (0,0) size 785x1225
                 text run at (5,0) width 12: "def"
             RenderRubyBase (anonymous) at (0,0) size 22x18
               RenderText {#text} at (0,0) size 22x18
-                text run at (0,0) width 22 RTL override: "abc"
+                text run at (0,0) width 22 RTL: "abc"
         RenderText {#text} at (160,11) size 5x19
           text run at (160,11) width 5 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x19
           RenderRubyRun (anonymous) at (137,11) size 23x19
             RenderRubyText {RT} at (0,-10) size 22x10
               RenderText {#text} at (5,0) size 12x10
-                text run at (5,0) width 12 RTL override: "def"
+                text run at (5,0) width 12 RTL: "def"
             RenderRubyBase (anonymous) at (0,0) size 22x18
               RenderText {#text} at (0,0) size 22x18
-                text run at (0,0) width 22 RTL override: "abc"
+                text run at (0,0) width 22 RTL: "abc"
         RenderText {#text} at (131,11) size 5x19
           text run at (131,11) width 5 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x19
           RenderRubyRun (anonymous) at (108,11) size 23x19
             RenderRubyBase (anonymous) at (0,0) size 22x18
               RenderText {#text} at (0,0) size 22x18
-                text run at (0,0) width 22 RTL override: "abc"
+                text run at (0,0) width 22 RTL: "abc"
         RenderText {#text} at (102,11) size 5x19
           text run at (102,11) width 5 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 13x19
@@ -151,7 +151,7 @@ layer at (0,0) size 785x1225
             RenderRubyBase (anonymous) at (0,0) size 22x18
               RenderInline {RB} at (0,0) size 22x18
                 RenderText {#text} at (0,0) size 22x18
-                  text run at (0,0) width 22 RTL override: "abc"
+                  text run at (0,0) width 22 RTL: "abc"
         RenderText {#text} at (55,11) size 5x19
           text run at (55,11) width 5 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x19
@@ -162,7 +162,7 @@ layer at (0,0) size 785x1225
             RenderRubyBase (anonymous) at (0,0) size 22x18
               RenderInline {RB} at (0,0) size 22x18
                 RenderText {#text} at (0,0) size 22x18
-                  text run at (0,0) width 22 RTL override: "abc"
+                  text run at (0,0) width 22 RTL: "abc"
         RenderText {#text} at (26,11) size 5x19
           text run at (26,11) width 5 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x19
@@ -173,7 +173,7 @@ layer at (0,0) size 785x1225
             RenderRubyBase (anonymous) at (0,0) size 22x18
               RenderInline {RB} at (0,0) size 22x18
                 RenderText {#text} at (0,0) size 22x18
-                  text run at (0,0) width 22 RTL override: "abc"
+                  text run at (0,0) width 22 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,917) size 769x19
         RenderText {#text} at (0,0) size 417x18
@@ -225,16 +225,16 @@ layer at (0,0) size 785x1225
             RenderTableRow {DIV} at (0,0) size 24x18
               RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,0) size 22x18
-                  text run at (2,0) width 22 RTL override: "abc"
+                  text run at (2,0) width 22 RTL: "abc"
             RenderTableRow (anonymous) at (0,18) size 24x18
               RenderTableCell {DIV} at (0,18) size 24x18 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (4,0) size 20x18
-                  text run at (4,0) width 20 RTL override: "def"
+                  text run at (4,0) width 20 RTL: "def"
           RenderBlock {DIV} at (0,0) size 24x18
             RenderText {#text} at (8,0) size 16x18
-              text run at (8,0) width 16 RTL override: "hij"
+              text run at (8,0) width 16 RTL: "hij"
           RenderTableSection {DIV} at (0,54) size 24x18
             RenderTableRow (anonymous) at (0,0) size 24x18
               RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 24x18
-                  text run at (0,0) width 24 RTL override: "opq"
+                  text run at (0,0) width 24 RTL: "opq"

@@ -386,7 +386,7 @@ TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTe
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
                 , AllowRightExpansion
                 , direction()
-                , dirOverride() || style.rtlOrdering() == Order::Visual /* directionalOverride */);
+                , style.rtlOrdering() == Order::Visual /* directionalOverride */);
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();

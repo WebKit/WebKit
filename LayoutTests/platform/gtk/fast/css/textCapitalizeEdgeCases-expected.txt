@@ -11,12 +11,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (20,74) size 744x115 [border: (5px solid #FF0000)]
         RenderBlock {DIV} at (25,25) size 694x18
           RenderText {#text} at (664,0) size 30x17
-            text run at (664,0) width 30 RTL override: "Capi"
+            text run at (664,0) width 30 RTL: "Capi"
           RenderInline {SPAN} at (0,0) size 15x17
             RenderText {#text} at (649,0) size 15x17
-              text run at (649,0) width 15 RTL override: "tal"
+              text run at (649,0) width 15 RTL: "tal"
           RenderText {#text} at (632,0) size 17x17
-            text run at (632,0) width 17 RTL override: "ise"
+            text run at (632,0) width 17 RTL: "ise"
         RenderBlock {DIV} at (25,43) size 694x47
           RenderBlock (anonymous) at (0,0) size 694x29
             RenderText {#text} at (0,11) size 31x17

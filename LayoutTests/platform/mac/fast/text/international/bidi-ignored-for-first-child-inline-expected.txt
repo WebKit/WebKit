@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 32x18
           RenderText {#text} at (32,0) size 32x18
-            text run at (32,0) width 32 RTL override: "FED"
+            text run at (32,0) width 32 RTL: "FED"
         RenderText {#text} at (63,0) size 29x18
           text run at (63,0) width 29: "GHI"
       RenderBlock {P} at (0,138) size 784x18
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 32x18
           RenderInline {SPAN} at (0,0) size 32x18
             RenderText {#text} at (32,0) size 32x18
-              text run at (32,0) width 32 RTL override: "FED"
+              text run at (32,0) width 32 RTL: "FED"
         RenderText {#text} at (63,0) size 29x18
           text run at (63,0) width 29: "GHI"
       RenderBlock {P} at (0,172) size 784x18
@@ -38,10 +38,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 32x18
           RenderText {#text} at (54,0) size 10x18
-            text run at (54,0) width 10 RTL override: "F"
+            text run at (54,0) width 10 RTL: "F"
           RenderInline {SPAN} at (0,0) size 23x18
             RenderText {#text} at (32,0) size 23x18
-              text run at (32,0) width 23 RTL override: "ED"
+              text run at (32,0) width 23 RTL: "ED"
         RenderText {#text} at (63,0) size 29x18
           text run at (63,0) width 29: "GHI"
       RenderBlock {P} at (0,206) size 784x18
@@ -49,12 +49,12 @@ layer at (0,0) size 800x600
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 32x18
           RenderText {#text} at (54,0) size 10x18
-            text run at (54,0) width 10 RTL override: "F"
+            text run at (54,0) width 10 RTL: "F"
           RenderInline {SPAN} at (0,0) size 11x18
             RenderText {#text} at (44,0) size 11x18
-              text run at (44,0) width 11 RTL override: "E"
+              text run at (44,0) width 11 RTL: "E"
           RenderText {#text} at (32,0) size 13x18
-            text run at (32,0) width 13 RTL override: "D"
+            text run at (32,0) width 13 RTL: "D"
         RenderText {#text} at (63,0) size 29x18
           text run at (63,0) width 29: "GHI"
       RenderBlock {P} at (0,240) size 784x18
@@ -63,20 +63,20 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 32x18
           RenderInline {SPAN} at (0,0) size 20x18
             RenderText {#text} at (44,0) size 20x18
-              text run at (44,0) width 20 RTL override: "FE"
+              text run at (44,0) width 20 RTL: "FE"
           RenderText {#text} at (32,0) size 13x18
-            text run at (32,0) width 13 RTL override: "D"
+            text run at (32,0) width 13 RTL: "D"
         RenderText {#text} at (63,0) size 29x18
           text run at (63,0) width 29: "GHI"
       RenderBlock {P} at (0,274) size 784x18
         RenderInline {SPAN} at (0,0) size 92x18
           RenderText {#text} at (0,0) size 92x18
-            text run at (0,0) width 92 RTL override: "IHGFEDCBA"
+            text run at (0,0) width 92 RTL: "IHGFEDCBA"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,308) size 784x18
         RenderInline {SPAN} at (0,0) size 92x18
           RenderText {#text} at (0,0) size 92x18
-            text run at (0,0) width 92 RTL override: "IHGFEDCBA"
+            text run at (0,0) width 92 RTL: "IHGFEDCBA"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,342) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,352) size 784x18

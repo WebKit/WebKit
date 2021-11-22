@@ -62,32 +62,32 @@ layer at (8,1161) size 27x310 clip at (9,1162) size 25x308 scrollHeight 762
 layer at (8,1532) size 20x310 clip at (9,1533) size 18x308 scrollY 429 scrollHeight 737
   RenderBlock {DIV} at (0,1523) size 20x311 [border: (1px solid #000000)]
     RenderText {#text} at (1,-427) size 18x737
-      text run at (1,-427) width 737 RTL override: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+      text run at (1,-427) width 737 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
 layer at (8,1902) size 74x310 clip at (9,1903) size 72x308
   RenderBlock {DIV} at (0,1894) size 74x311 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 18x737
-      text run at (1,1) width 737 RTL override: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+      text run at (1,1) width 737 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
     RenderBR {BR} at (0,0) size 0x0
     RenderText {#text} at (19,1) size 18x727
-      text run at (19,1) width 727 RTL override: "orem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+      text run at (19,1) width 727 RTL: "orem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
     RenderBR {BR} at (0,0) size 0x0
     RenderText {#text} at (37,1) size 18x719
-      text run at (37,1) width 719 RTL override: "rem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+      text run at (37,1) width 719 RTL: "rem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
     RenderBR {BR} at (0,0) size 0x0
     RenderText {#text} at (55,1) size 18x714
-      text run at (55,1) width 714 RTL override: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+      text run at (55,1) width 714 RTL: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
     RenderBR {BR} at (0,0) size 0x0
 layer at (8,2273) size 27x310 clip at (9,2274) size 25x308 scrollY 458 scrollHeight 766
   RenderBlock {DIV} at (0,2265) size 27x311 [border: (1px solid #000000)]
     RenderText {#text} at (5,123) size 18x186
-      text run at (5,123) width 186 RTL override: "Lorem ipsum dolor sit amet, "
+      text run at (5,123) width 186 RTL: "Lorem ipsum dolor sit amet, "
     RenderImage {IMG} at (1,98) size 25x26
     RenderText {#text} at (5,-456) size 18x556
-      text run at (5,-456) width 555 RTL override: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+      text run at (5,-456) width 555 RTL: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
 layer at (8,2644) size 27x310 clip at (9,2645) size 25x308 scrollY 454 scrollHeight 762
   RenderBlock {DIV} at (0,2635) size 27x311 [border: (1px solid #000000)]
     RenderText {#text} at (5,31) size 18x278
-      text run at (5,31) width 278 RTL override: "Lorem ipsum dolor sit amet, consectetur ad"
+      text run at (5,31) width 278 RTL: "Lorem ipsum dolor sit amet, consectetur ad"
     RenderImage {IMG} at (1,6) size 25x26
     RenderText {#text} at (5,-452) size 18x460
-      text run at (5,-452) width 459 RTL override: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+      text run at (5,-452) width 459 RTL: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."

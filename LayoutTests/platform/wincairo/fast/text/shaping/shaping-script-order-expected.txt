@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 260: "The following two lines should be the same:"
       RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 66x19
-          text run at (0,0) width 66 LTR override: "abc\x{5D2}\x{5D1}\x{5D0}\x{661}\x{662}\x{663}"
+          text run at (0,0) width 66: "abc\x{5D2}\x{5D1}\x{5D0}\x{661}\x{662}\x{663}"
       RenderBlock {P} at (0,72) size 784x20
         RenderText {#text} at (0,0) size 66x19
-          text run at (0,0) width 66 LTR override: "abc\x{5D2}\x{5D1}\x{5D0}\x{661}\x{662}\x{663}"
+          text run at (0,0) width 66: "abc\x{5D2}\x{5D1}\x{5D0}\x{661}\x{662}\x{663}"

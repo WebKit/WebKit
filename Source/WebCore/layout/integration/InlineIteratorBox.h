@@ -70,7 +70,6 @@ public:
     float logicalHeight() const { return isHorizontal() ? rect().height() : rect().width(); }
 
     bool isHorizontal() const;
-    bool dirOverride() const;
     bool isLineBreak() const;
 
     unsigned minimumCaretOffset() const;
@@ -195,13 +194,6 @@ inline bool Box::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isHorizontal();
-    });
-}
-
-inline bool Box::dirOverride() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.dirOverride();
     });
 }
 

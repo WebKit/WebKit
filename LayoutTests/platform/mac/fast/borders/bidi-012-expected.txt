@@ -33,8 +33,8 @@ layer at (0,0) size 800x447
               text run at (30,26) width 26: "aaa "
               text run at (55,26) width 29: "bbb "
               text run at (83,26) width 26: "ccc "
-              text run at (108,26) width 29 RTL override: "ddd "
-              text run at (136,26) width 30 RTL override: "\x{202E} eee "
+              text run at (108,26) width 29 RTL: "ddd "
+              text run at (136,26) width 30 RTL: "\x{202E} eee "
             RenderBR {BR} at (0,0) size 0x0
             RenderText {#text} at (11,74) size 20x18
               text run at (11,74) width 20: "fff "

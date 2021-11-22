@@ -56,40 +56,40 @@ layer at (0,0) size 800x615
           RenderBlock {P} at (4,64) size 92x20
             RenderText {#text} at (0,0) size 92x19
               text run at (0,0) width 0 RTL: "\x{202C}"
-              text run at (0,0) width 92 RTL override: "\x{202E}IHGFEDCBA"
+              text run at (0,0) width 92 RTL: "\x{202E}IHGFEDCBA"
           RenderBlock {P} at (4,84) size 92x20
             RenderText {#text} at (63,0) size 29x19
-              text run at (63,0) width 29 RTL override: "\x{202E}IHG"
+              text run at (63,0) width 29 RTL: "\x{202E}IHG"
             RenderInline {SPAN} at (0,0) size 32x19
               RenderText {#text} at (32,0) size 32x19
-                text run at (32,0) width 32 RTL override: "FED"
+                text run at (32,0) width 32 RTL: "FED"
             RenderText {#text} at (0,0) size 33x19
               text run at (0,0) width 0 RTL: "\x{202C}"
-              text run at (0,0) width 33 RTL override: "CBA"
+              text run at (0,0) width 33 RTL: "CBA"
           RenderBlock {P} at (4,104) size 92x20
             RenderText {#text} at (0,0) size 92x19
               text run at (0,0) width 0 RTL: "\x{202C}"
-              text run at (0,0) width 33 RTL override: "\x{202C}CBA"
+              text run at (0,0) width 33 RTL: "\x{202C}CBA"
               text run at (32,0) width 32: "\x{202B}DEF"
-              text run at (63,0) width 29 RTL override: "\x{202E}IHG"
+              text run at (63,0) width 29 RTL: "\x{202E}IHG"
           RenderBlock {P} at (4,124) size 92x20
             RenderText {#text} at (0,0) size 92x19
               text run at (0,0) width 0 RTL: "\x{202C}"
-              text run at (0,0) width 33 RTL override: "\x{202C}CBA"
-              text run at (32,0) width 32 RTL override: "\x{202E}FED"
-              text run at (63,0) width 29 RTL override: "\x{202E}IHG"
+              text run at (0,0) width 33 RTL: "\x{202C}CBA"
+              text run at (32,0) width 32 RTL: "\x{202E}FED"
+              text run at (63,0) width 29 RTL: "\x{202E}IHG"
           RenderBlock {P} at (4,144) size 92x20
             RenderText {#text} at (0,0) size 92x19
               text run at (0,0) width 0 RTL: "\x{202C}"
-              text run at (0,0) width 33 RTL override: "\x{202C}CBA"
-              text run at (32,0) width 32 RTL override: "\x{202E}FED"
-              text run at (63,0) width 29 RTL override: "\x{202E}IHG"
+              text run at (0,0) width 33 RTL: "\x{202C}CBA"
+              text run at (32,0) width 32 RTL: "\x{202E}FED"
+              text run at (63,0) width 29 RTL: "\x{202E}IHG"
           RenderBlock {P} at (4,164) size 92x20
             RenderText {#text} at (0,0) size 92x19
               text run at (0,0) width 0 RTL: "\x{202C}"
-              text run at (0,0) width 33 RTL override: "\x{202C}CBA"
-              text run at (32,0) width 32 LTR override: "\x{202D}DEF"
-              text run at (63,0) width 29 RTL override: "\x{202E}IHG"
+              text run at (0,0) width 33 RTL: "\x{202C}CBA"
+              text run at (32,0) width 32: "\x{202D}DEF"
+              text run at (63,0) width 29 RTL: "\x{202E}IHG"
         RenderText {#text} at (105,86) size 5x19
           text run at (105,86) width 5: " "
         RenderBlock {DIV} at (112,53) size 29x88 [border: (1px solid #008000)]
@@ -283,7 +283,7 @@ layer at (0,0) size 800x615
           RenderBlock {P} at (4,164) size 139x20
             RenderText {#text} at (0,0) size 138x19
               text run at (0,0) width 25 RTL: " \x{5D0}\x{5D1}\x{5D2}"
-              text run at (24,0) width 56 LTR override: "\x{202D}ABC \x{5D5}\x{5D4}\x{5D3}"
+              text run at (24,0) width 56: "\x{202D}ABC \x{5D5}\x{5D4}\x{5D3}"
               text run at (79,0) width 36: "\x{202C} DEF"
               text run at (114,0) width 24 RTL: "\x{5D6}\x{5D7}\x{5D8} "
         RenderText {#text} at (397,86) size 5x19

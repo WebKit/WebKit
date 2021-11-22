@@ -50,7 +50,6 @@ public:
     FloatRect rect() const { return m_inlineBox->frameRect(); }
 
     bool isHorizontal() const { return m_inlineBox->isHorizontal(); }
-    bool dirOverride() const { return m_inlineBox->dirOverride(); }
     bool isLineBreak() const { return m_inlineBox->isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return m_inlineBox->caretMinOffset(); }

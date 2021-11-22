@@ -353,11 +353,8 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
         else
             ts << " width " << fragment.width;
 
-        if (!textBox->isLeftToRightDirection() || textBox->dirOverride()) {
-            ts << (textBox->isLeftToRightDirection() ? " LTR" : " RTL");
-            if (textBox->dirOverride())
-                ts << " override";
-        }
+        if (!textBox->isLeftToRightDirection())
+            ts << " RTL";
 
         ts << ": " << quoteAndEscapeNonPrintables(text.substring(fragment.characterOffset, fragment.length)) << "\n";
     }

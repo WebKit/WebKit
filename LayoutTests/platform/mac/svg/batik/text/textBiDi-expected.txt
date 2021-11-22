@@ -11,7 +11,7 @@ layer at (0,0) size 450x500
           chunk 1 (middle anchor) text run 1 at (67.50,125.00) startOffset 0 endOffset 15 width 85.00: "Some text goes "
         RenderSVGTSpan {tspan} at (0,0) size 70x15
           RenderSVGInlineText {#text} at (85,-12) size 70x15
-            chunk 1 (middle anchor) text run 2 at (152.50,125.00) startOffset 0 endOffset 15 width 69.00 RTL override: "(right to left)"
+            chunk 1 (middle anchor) text run 2 at (152.50,125.00) startOffset 0 endOffset 15 width 69.00 RTL: "(right to left)"
         RenderSVGInlineText {#text} at (154,-12) size 162x15
           chunk 1 (middle anchor) text run 3 at (221.50,125.00) startOffset 0 endOffset 34 width 161.00: ", other text goes (left to right)."
       RenderSVGText {text} at (150,150) size 150x15 contains 1 chunk(s)

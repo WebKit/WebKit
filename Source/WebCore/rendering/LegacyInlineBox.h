@@ -252,9 +252,6 @@ public:
     bool knownToHaveNoOverflow() const { return m_bitfields.knownToHaveNoOverflow(); }
     void clearKnownToHaveNoOverflow();
 
-    bool dirOverride() const { return m_bitfields.dirOverride(); }
-    void setDirOverride(bool dirOverride) { m_bitfields.setDirOverride(dirOverride); }
-
     void setExpansion(float newExpansion)
     {
         m_logicalWidth -= m_expansion;
@@ -309,7 +306,6 @@ private:
             , m_canHaveRightExpansion(false)
             , m_knownToHaveNoOverflow(true)  
             , m_hasEllipsisBoxOrHyphen(false)
-            , m_dirOverride(false)
             , m_behavesLikeText(false)
             , m_forceRightExpansion(false)
             , m_forceLeftExpansion(false)
@@ -342,7 +338,6 @@ private:
         ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
         ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
         // for LegacyInlineTextBox
-        ADD_BOOLEAN_BITFIELD(dirOverride, DirOverride);
         ADD_BOOLEAN_BITFIELD(behavesLikeText, BehavesLikeText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes, br.
         ADD_BOOLEAN_BITFIELD(forceRightExpansion, ForceRightExpansion);
         ADD_BOOLEAN_BITFIELD(forceLeftExpansion, ForceLeftExpansion);
