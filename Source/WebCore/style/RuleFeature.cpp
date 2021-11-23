@@ -43,16 +43,31 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::IndirectSibling:
     case MatchElement::DirectSibling:
     case MatchElement::AnySibling:
+    case MatchElement::HasSibling:
     case MatchElement::Host:
         return true;
     case MatchElement::Parent:
     case MatchElement::Ancestor:
     case MatchElement::ParentSibling:
     case MatchElement::AncestorSibling:
+    case MatchElement::HasChild:
+    case MatchElement::HasDescendant:
         return false;
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+static bool isHasPseudoClassMatchElement(MatchElement matchElement)
+{
+    switch (matchElement) {
+    case MatchElement::HasSibling:
+    case MatchElement::HasChild:
+    case MatchElement::HasDescendant:
+        return true;
+    default:
+        return false;
+    }
 }
 
 RuleFeature::RuleFeature(const RuleData& ruleData, std::optional<MatchElement> matchElement)
@@ -67,6 +82,9 @@ RuleFeature::RuleFeature(const RuleData& ruleData, std::optional<MatchElement> m
 
 MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
 {
+    if (isHasPseudoClassMatchElement(matchElement))
+        return matchElement;
+
     if (isSiblingOrSubject(matchElement)) {
         switch (relation) {
         case CSSSelector::Subselector:
@@ -111,10 +129,8 @@ MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, 
     return matchElement;
 };
 
-MatchElement RuleFeatureSet::computeSubSelectorMatchElement(MatchElement matchElement, const CSSSelector& selector)
+MatchElement RuleFeatureSet::computeSubSelectorMatchElement(MatchElement matchElement, const CSSSelector& selector, const CSSSelector& childSelector)
 {
-    ASSERT(selector.selectorList());
-
     if (selector.match() == CSSSelector::PseudoClass) {
         auto type = selector.pseudoClassType();
         // For :nth-child(n of .some-subselector) where an element change may affect other elements similar to sibling combinators.
@@ -124,6 +140,18 @@ MatchElement RuleFeatureSet::computeSubSelectorMatchElement(MatchElement matchEl
         // Similarly for :host().
         if (type == CSSSelector::PseudoClassHost)
             return MatchElement::Host;
+
+        if (type == CSSSelector::PseudoClassHas) {
+            auto hasMatchElement = MatchElement::Subject;
+            for (auto* simpleSelector = &childSelector; simpleSelector->tagHistory(); simpleSelector = simpleSelector->tagHistory())
+                hasMatchElement = computeNextMatchElement(hasMatchElement, simpleSelector->relation());
+
+            if (hasMatchElement == MatchElement::Parent)
+                return MatchElement::HasChild;
+            if (isSiblingOrSubject(hasMatchElement))
+                return MatchElement::HasSibling;
+            return MatchElement::HasDescendant;
+        }
     }
     if (selector.match() == CSSSelector::PseudoElement) {
         // Similarly for ::slotted().
@@ -168,9 +196,8 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             selectorFeatures.hasSiblingSelector = true;
 
         if (const CSSSelectorList* selectorList = selector->selectorList()) {
-            auto subSelectorMatchElement = computeSubSelectorMatchElement(matchElement, *selector);
-
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                auto subSelectorMatchElement = computeSubSelectorMatchElement(matchElement, *selector, *subSelector);
                 if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
                     selectorFeatures.hasSiblingSelector = true;
                 recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement);

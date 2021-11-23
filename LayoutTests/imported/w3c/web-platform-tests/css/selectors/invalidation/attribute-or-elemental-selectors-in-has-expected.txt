@@ -2,15 +2,15 @@
 PASS initial_color: div#div_subject.color
 PASS initial_color: div#div_child.color
 PASS initial_color: div#div_grandchild.color
-FAIL add .child to #div_child: div#div_subject.color assert_equals: expected "rgb(255, 0, 0)" but got "rgb(128, 128, 128)"
+PASS add .child to #div_child: div#div_subject.color
 PASS remove .child from #div_child: div#div_subject.color
 PASS add .child to #div_grandchild: div#div_subject.color
 PASS remove .child from #div_grandchild: div#div_subject.color
-FAIL add .descendant to #div_child: div#div_subject.color assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
+PASS add .descendant to #div_child: div#div_subject.color
 PASS remove .descendant from #div_child: div#div_subject.color
-FAIL add .descendant to #div_grandchild: div#div_subject.color assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
+PASS add .descendant to #div_grandchild: div#div_subject.color
 PASS remove .descendant from #div_grandchild: div#div_subject.color
-FAIL set descendant to #div_grandchild[attrname]: div#div_subject.color assert_equals: expected "rgb(0, 0, 255)" but got "rgb(128, 128, 128)"
+PASS set descendant to #div_grandchild[attrname]: div#div_subject.color
 PASS clear #div_grandchild[attrname]: div#div_subject.color
 FAIL change #div_grandchild to #div_descendant: div#div_subject.color assert_equals: expected "rgb(255, 255, 0)" but got "rgb(128, 128, 128)"
 PASS change #div_descendant to #div_grandchild: div#div_subject.color

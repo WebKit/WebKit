@@ -36,7 +36,7 @@ namespace Style {
 
 class RuleData;
 
-enum class MatchElement : uint8_t { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, Host };
+enum class MatchElement : uint8_t { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, HasChild, HasDescendant, HasSibling, Host };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
 struct RuleFeature {
@@ -87,7 +87,7 @@ struct RuleFeatureSet {
 
 private:
     static MatchElement computeNextMatchElement(MatchElement, CSSSelector::RelationType);
-    static MatchElement computeSubSelectorMatchElement(MatchElement, const CSSSelector&);
+    static MatchElement computeSubSelectorMatchElement(MatchElement, const CSSSelector&, const CSSSelector& childSelector);
 
     struct SelectorFeatures {
         bool hasSiblingSelector { false };

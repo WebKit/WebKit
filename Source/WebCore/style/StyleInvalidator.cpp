@@ -304,6 +304,31 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
+    case MatchElement::HasChild: {
+        if (auto* parent = element.parentElement())
+            invalidateIfNeeded(*parent, nullptr);
+        break;
+    }
+    case MatchElement::HasDescendant: {
+        Vector<Element*, 16> ancestors;
+        for (auto* parent = element.parentElement(); parent; parent = parent->parentElement())
+            ancestors.append(parent);
+
+        SelectorMatchingState selectorMatchingState;
+        for (auto* ancestor : makeReversedRange(ancestors)) {
+            invalidateIfNeeded(*ancestor, &selectorMatchingState);
+            selectorMatchingState.selectorFilter.pushParent(ancestor);
+        }
+        break;
+    }
+    case MatchElement::HasSibling: {
+        SelectorMatchingState selectorMatchingState;
+        for (auto* sibling = element.previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+            selectorMatchingState.selectorFilter.popParentsUntil(element.parentElement());
+            invalidateStyleForDescendants(*sibling, &selectorMatchingState);
+        }
+        break;
+    }
     case MatchElement::Host:
         invalidateInShadowTreeIfNeeded(element);
         break;

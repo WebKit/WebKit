@@ -1,3 +1,12 @@
+2021-11-23  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Basic invalidation support
+        https://bugs.webkit.org/show_bug.cgi?id=233443
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has-expected.txt:
+
 2021-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Report the initiating url instead of the redirected one
