@@ -26,6 +26,7 @@
 #pragma once
 
 #include "HeapCellType.h"
+#include <wtf/PtrTag.h>
 
 namespace JSC {
 

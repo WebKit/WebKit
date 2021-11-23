@@ -39,6 +39,10 @@
 #include "RenderLineBreak.h"
 #include "TextUtil.h"
 
+#if ENABLE(TREE_DEBUGGING)
+#include "LayoutIntegrationLineLayout.h"
+#endif
+
 namespace WebCore {
 namespace LayoutIntegration {
 

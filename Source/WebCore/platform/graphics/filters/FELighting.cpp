@@ -30,6 +30,7 @@
 
 #include "ColorConversion.h"
 #include "FELightingNEON.h"
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
 

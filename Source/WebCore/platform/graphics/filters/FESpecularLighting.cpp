@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FESpecularLighting.h"
 
+#include "ImageBuffer.h"
 #include "LightSource.h"
 #include <wtf/text/TextStream.h>
 

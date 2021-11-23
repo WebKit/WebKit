@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderSVGResourceRadialGradient.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGRadialGradientElement.h"
 
 namespace WebCore {

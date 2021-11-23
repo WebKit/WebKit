@@ -25,8 +25,8 @@
 
 #pragma once
 
-
 #include "RenderSVGResourceMarker.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGMarkerElement.h"
 
 namespace WebCore {

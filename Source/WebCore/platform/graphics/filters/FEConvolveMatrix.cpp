@@ -24,6 +24,7 @@
 #include "config.h"
 #include "FEConvolveMatrix.h"
 
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
 #include <wtf/WorkQueue.h>

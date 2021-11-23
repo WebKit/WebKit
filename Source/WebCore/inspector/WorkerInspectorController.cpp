@@ -49,6 +49,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 #include "InspectorClient.h"
+#include "InspectorController.h"
 #include "Page.h"
 #include "ServiceWorkerAgent.h"
 #include "ServiceWorkerGlobalScope.h"

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ChildChangeInvalidation.h"
 
+#include "ElementTraversal.h"
 #include "NodeRenderStyle.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"

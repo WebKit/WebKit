@@ -39,6 +39,10 @@ class RenderBoxModelObject;
 
 namespace LayoutIntegration {
 
+#if ENABLE(TREE_DEBUGGING)
+struct InlineContent;
+#endif
+
 class BoxTree {
 public:
     BoxTree(RenderBlockFlow&);

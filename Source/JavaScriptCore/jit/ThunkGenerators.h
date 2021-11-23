@@ -32,6 +32,7 @@
 namespace JSC {
 
 class CallLinkInfo;
+enum class CallMode;
 template<PtrTag> class MacroAssemblerCodeRef;
 class VM;
 

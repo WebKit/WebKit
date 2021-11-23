@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ProcessIdentifier.h"
+#include "ProcessQualified.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
 #include <variant>

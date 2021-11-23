@@ -25,6 +25,7 @@
 #include "FEComponentTransfer.h"
 
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>

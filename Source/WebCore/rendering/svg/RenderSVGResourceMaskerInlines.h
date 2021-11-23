@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderSVGResourceMasker.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGMaskElement.h"
 
 namespace WebCore {

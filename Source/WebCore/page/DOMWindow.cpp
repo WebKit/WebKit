@@ -77,6 +77,7 @@
 #include "JSDOMWindowBase.h"
 #include "JSExecState.h"
 #include "Location.h"
+#include "Logging.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
 #include "MessageEvent.h"

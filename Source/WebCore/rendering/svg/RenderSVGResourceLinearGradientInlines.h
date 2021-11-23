@@ -25,8 +25,8 @@
 
 #pragma once
 
-
 #include "RenderSVGResourceLinearGradient.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGLinearGradientElement.h"
 
 namespace WebCore {

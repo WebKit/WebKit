@@ -31,6 +31,7 @@
 #include "RemoteBindGroupLayout.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPUObjectRegistry.h"
+#include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
 #include <pal/graphics/WebGPU/WebGPURenderPipeline.h>
 
 namespace WebKit {
