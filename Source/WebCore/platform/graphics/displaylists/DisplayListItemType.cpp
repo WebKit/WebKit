@@ -132,10 +132,6 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(FillEllipse);
     case ItemType::FlushContext:
         return sizeof(FlushContext);
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-        return sizeof(MetaCommandChangeDestinationImageBuffer);
-    case ItemType::MetaCommandChangeItemBuffer:
-        return sizeof(MetaCommandChangeItemBuffer);
     case ItemType::GetPixelBuffer:
         return sizeof(GetPixelBuffer);
     case ItemType::PutPixelBuffer:
@@ -200,8 +196,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::EndClipToDrawingCommands:
     case ItemType::ConcatenateCTM:
     case ItemType::FlushContext:
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-    case ItemType::MetaCommandChangeItemBuffer:
     case ItemType::Restore:
     case ItemType::Rotate:
     case ItemType::Save:
@@ -343,8 +337,6 @@ bool isInlineItem(ItemType type)
 #endif
     case ItemType::FillRect:
     case ItemType::FlushContext:
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-    case ItemType::MetaCommandChangeItemBuffer:
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
 #endif

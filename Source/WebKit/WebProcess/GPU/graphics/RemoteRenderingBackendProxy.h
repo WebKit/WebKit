@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessConnection.h"
-#include "GPUProcessWakeupMessageArguments.h"
 #include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"

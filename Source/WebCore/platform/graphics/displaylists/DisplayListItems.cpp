@@ -1034,18 +1034,6 @@ static TextStream& operator<<(TextStream& ts, const FlushContext& item)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const MetaCommandChangeItemBuffer& item)
-{
-    ts.dumpProperty("identifier", item.identifier());
-    return ts;
-}
-
-static TextStream& operator<<(TextStream& ts, const MetaCommandChangeDestinationImageBuffer& item)
-{
-    ts.dumpProperty("identifier", item.identifier());
-    return ts;
-}
-
 static TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1098,8 +1086,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
     case ItemType::FlushContext: ts << "flush-context"; break;
-    case ItemType::MetaCommandChangeDestinationImageBuffer: ts << "meta-command-change-destination-image-buffer"; break;
-    case ItemType::MetaCommandChangeItemBuffer: ts << "meta-command-change-item-buffer"; break;
     case ItemType::GetPixelBuffer: ts << "get-pixel-buffer"; break;
     case ItemType::PutPixelBuffer: ts << "put-pixel-buffer"; break;
 #if ENABLE(VIDEO)
@@ -1268,12 +1254,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::FlushContext:
         ts << item.get<FlushContext>();
-        break;
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-        ts << item.get<MetaCommandChangeDestinationImageBuffer>();
-        break;
-    case ItemType::MetaCommandChangeItemBuffer:
-        ts << item.get<MetaCommandChangeItemBuffer>();
         break;
     case ItemType::GetPixelBuffer:
         ts << item.get<GetPixelBuffer>();

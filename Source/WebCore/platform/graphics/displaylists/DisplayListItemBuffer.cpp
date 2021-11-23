@@ -191,9 +191,6 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::FlushContext:
         get<FlushContext>().apply(context);
         return;
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-    case ItemType::MetaCommandChangeItemBuffer:
-        return;
     case ItemType::GetPixelBuffer:
     case ItemType::PutPixelBuffer:
         // Should already be handled by the delegate.
@@ -392,12 +389,6 @@ void ItemHandle::destroy()
     case ItemType::FlushContext:
         static_assert(std::is_trivially_destructible<FlushContext>::value);
         return;
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-        static_assert(std::is_trivially_destructible<MetaCommandChangeDestinationImageBuffer>::value);
-        return;
-    case ItemType::MetaCommandChangeItemBuffer:
-        static_assert(std::is_trivially_destructible<MetaCommandChangeItemBuffer>::value);
-        return;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         static_assert(std::is_trivially_destructible<PaintFrameForMedia>::value);
@@ -590,10 +581,6 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<FillRect>(itemOffset, *this);
     case ItemType::FlushContext:
         return copyInto<FlushContext>(itemOffset, *this);
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-        return copyInto<MetaCommandChangeDestinationImageBuffer>(itemOffset, *this);
-    case ItemType::MetaCommandChangeItemBuffer:
-        return copyInto<MetaCommandChangeItemBuffer>(itemOffset, *this);
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return copyInto<PaintFrameForMedia>(itemOffset, *this);
@@ -725,14 +712,12 @@ void ItemBuffer::shrinkToFit()
 
 DidChangeItemBuffer ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 {
-    auto sizeForBufferSwitchItem = paddedSizeOfTypeAndItemInBytes(ItemType::MetaCommandChangeItemBuffer);
-    if (m_writtenNumberOfBytes + numberOfBytes + sizeForBufferSwitchItem <= m_writableBuffer.capacity)
+    if (m_writtenNumberOfBytes + numberOfBytes <= m_writableBuffer.capacity)
         return DidChangeItemBuffer::No;
 
-    auto nextBuffer = createItemBuffer(numberOfBytes + sizeForBufferSwitchItem);
+    auto nextBuffer = createItemBuffer(numberOfBytes);
     bool hadPreviousBuffer = m_writableBuffer && m_writableBuffer.identifier != nextBuffer.identifier;
     if (hadPreviousBuffer) {
-        uncheckedAppend<MetaCommandChangeItemBuffer>(DidChangeItemBuffer::No, nextBuffer.identifier);
         m_writableBuffer.capacity = m_writtenNumberOfBytes;
         m_readOnlyBuffers.append(m_writableBuffer);
     }

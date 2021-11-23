@@ -1,3 +1,31 @@
+2021-11-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove old concurrent display list logic that's no longer necessary
+        https://bugs.webkit.org/show_bug.cgi?id=233433
+
+        Reviewed by Sam Weinig.
+
+        See WebCore ChangeLog for more details.
+
+        * GPUProcess/graphics/DisplayListReaderHandle.cpp: Removed.
+        * GPUProcess/graphics/DisplayListReaderHandle.h: Removed.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackendState.h: Removed.
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp:
+
+        Add missing include to fix the build with unified sources.
+
+        * Shared/GPUProcessWakeupMessageArguments.h: Removed.
+        * Shared/SharedDisplayListHandle.h: Removed.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.cpp: Removed.
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.h: Removed.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/Network/webrtc/LibWebRTCNetworkManager.h:
+
+        Add another missing include to fix the build with unified sources.
+
 2021-11-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [MSVC] IPC\DaemonConnection.h(80): warning C4661: 'void WebKit::Daemon::ConnectionToMachService<WebKit::PCM::ConnectionTraits>::initializeConnectionIfNeeded(void) const': no suitable definition provided for explicit template instantiation request

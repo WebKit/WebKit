@@ -31,6 +31,7 @@
 #include "RemoteRenderBundle.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPUObjectRegistry.h"
+#include <pal/graphics/WebGPU/WebGPURenderBundle.h>
 #include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
 
 namespace WebKit {

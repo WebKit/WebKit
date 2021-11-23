@@ -2391,44 +2391,6 @@ private:
     GraphicsContextFlushIdentifier m_identifier;
 };
 
-// FIXME: This should be refactored so that the command to "switch to the next item buffer"
-// is not itself a display list item.
-class MetaCommandChangeItemBuffer {
-public:
-    static constexpr ItemType itemType = ItemType::MetaCommandChangeItemBuffer;
-    static constexpr bool isInlineItem = true;
-    static constexpr bool isDrawingItem = false;
-
-    explicit MetaCommandChangeItemBuffer(ItemBufferIdentifier identifier)
-        : m_identifier(identifier)
-    {
-    }
-
-    ItemBufferIdentifier identifier() const { return m_identifier; }
-    bool isValid() const { return m_identifier.isValid(); }
-
-private:
-    ItemBufferIdentifier m_identifier;
-};
-
-class MetaCommandChangeDestinationImageBuffer {
-public:
-    static constexpr ItemType itemType = ItemType::MetaCommandChangeDestinationImageBuffer;
-    static constexpr bool isInlineItem = true;
-    static constexpr bool isDrawingItem = false;
-
-    explicit MetaCommandChangeDestinationImageBuffer(RenderingResourceIdentifier identifier)
-        : m_identifier(identifier)
-    {
-    }
-
-    RenderingResourceIdentifier identifier() const { return m_identifier; }
-    bool isValid() const { return m_identifier.isValid(); }
-
-private:
-    RenderingResourceIdentifier m_identifier;
-};
-
 using DisplayListItem = std::variant
     < ApplyDeviceScaleFactor
     , BeginClipToDrawingCommands
@@ -2465,8 +2427,6 @@ using DisplayListItem = std::variant
     , FillRoundedRect
     , FlushContext
     , GetPixelBuffer
-    , MetaCommandChangeDestinationImageBuffer
-    , MetaCommandChangeItemBuffer
     , PutPixelBuffer
     , Restore
     , Rotate
@@ -2570,8 +2530,6 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
     WebCore::DisplayList::ItemType::FlushContext,
-    WebCore::DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer,
-    WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer,
     WebCore::DisplayList::ItemType::GetPixelBuffer,
     WebCore::DisplayList::ItemType::PutPixelBuffer,
 #if ENABLE(VIDEO)

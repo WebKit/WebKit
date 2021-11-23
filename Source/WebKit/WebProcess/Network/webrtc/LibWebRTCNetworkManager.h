@@ -29,6 +29,7 @@
 
 #include "WebRTCMonitor.h"
 #include <WebCore/LibWebRTCProvider.h>
+#include <WebCore/ProcessQualified.h>
 #include <WebCore/RTCNetworkManager.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 

@@ -1,3 +1,15 @@
+2021-11-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove old concurrent display list logic that's no longer necessary
+        https://bugs.webkit.org/show_bug.cgi?id=233433
+
+        Reviewed by Sam Weinig.
+
+        See WebCore ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-11-22  Geza Lore  <glore@igalia.com>
 
         [JSC] Make sharing of unlinked baseline code possible on JSVALUE32_64

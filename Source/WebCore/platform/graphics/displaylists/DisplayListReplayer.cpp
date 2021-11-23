@@ -225,13 +225,6 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
 
         LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
 
-        if (item.is<MetaCommandChangeDestinationImageBuffer>()) {
-            result.numberOfBytesRead += itemSizeInBuffer;
-            result.reasonForStopping = StopReplayReason::ChangeDestinationImageBuffer;
-            result.nextDestinationImageBuffer = item.get<MetaCommandChangeDestinationImageBuffer>().identifier();
-            break;
-        }
-
         if (auto [reasonForStopping, missingCachedResourceIdentifier] = applyItem(item); reasonForStopping) {
             result.reasonForStopping = *reasonForStopping;
             result.missingCachedResourceIdentifier = WTFMove(missingCachedResourceIdentifier);

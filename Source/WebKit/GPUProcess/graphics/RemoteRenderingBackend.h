@@ -34,7 +34,6 @@
 #include "MessageSender.h"
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteDisplayListRecorder.h"
-#include "RemoteRenderingBackendState.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"

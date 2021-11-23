@@ -295,10 +295,6 @@ void DisplayList::append(ItemHandle item)
         return append<FillEllipse>(item.get<FillEllipse>());
     case ItemType::FlushContext:
         return append<FlushContext>(item.get<FlushContext>());
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-        return append<MetaCommandChangeDestinationImageBuffer>(item.get<MetaCommandChangeDestinationImageBuffer>());
-    case ItemType::MetaCommandChangeItemBuffer:
-        return append<MetaCommandChangeItemBuffer>(item.get<MetaCommandChangeItemBuffer>());
     case ItemType::GetPixelBuffer:
         return append<GetPixelBuffer>(item.get<GetPixelBuffer>());
     case ItemType::PutPixelBuffer:
