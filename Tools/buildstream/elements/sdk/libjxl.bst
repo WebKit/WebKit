@@ -31,6 +31,16 @@ variables:
     -DJPEGXL_FORCE_SYSTEM_GTEST=ON \
     -DJPEGXL_FORCE_SYSTEM_HWY=ON
 
+config:
+  # libhwy is used only internally and linked statically, yet the
+  # generated .pc files will wrongly list it as a requirement.
+  # Append a build command that edits the files to reflect reality.
+  build-commands:
+    (>):
+      - |
+        find '%{build-dir}' -name '*.pc' -print -execdir \
+          sed -i -e '/^Requires\.private:/s/libhwy[[:space:]]*//' '{}' ';'
+
 sources:
 - kind: tar
   url: https://github.com/libjxl/libjxl/archive/refs/tags/v0.6.1.tar.gz
