@@ -101,7 +101,6 @@ static bool dumpPixelsForAllTests = false;
 static bool dumpPixelsForCurrentTest = false;
 static bool threaded = false;
 static bool dumpTree = true;
-static bool forceComplexText = false;
 static bool dumpAllPixels;
 static bool useAcceleratedDrawing = true; // Not used
 // FIXME: gcBetweenTests should initially be false, but we currently set it to true, to make sure
@@ -1400,7 +1399,6 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
         return nullptr;
 
     viewPrivate->setShouldApplyMacFontAscentHack(TRUE);
-    viewPrivate->setAlwaysUsesComplexTextCodePath(forceComplexText);
     viewPrivate->setCustomBackingScaleFactor(1.0);
 
     _bstr_t pluginPath = _bstr_t(exePath().data()) + TestPluginDir;
@@ -1487,11 +1485,6 @@ static Vector<const char*> initializeGlobalsFromCommandLineOptions(int argc, con
 
         if (!stricmp(argv[i], "--threaded")) {
             threaded = true;
-            continue;
-        }
-
-        if (!stricmp(argv[i], "--complex-text")) {
-            forceComplexText = true;
             continue;
         }
 

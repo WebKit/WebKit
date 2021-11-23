@@ -545,8 +545,6 @@ Could be worth adding to the API.
 
 + (NSString *)_decodeData:(NSData *)data;
 
-+ (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f;
-
 #if !TARGET_OS_IPHONE
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
 #endif

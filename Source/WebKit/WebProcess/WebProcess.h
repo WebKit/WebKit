@@ -431,7 +431,6 @@ private:
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
 
     void setDefaultRequestTimeoutInterval(double);
-    void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
     void setResourceLoadStatisticsEnabled(bool);
     void clearResourceLoadStatistics();

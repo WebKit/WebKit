@@ -157,9 +157,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT setTransparent([in] BOOL transparent);
     HRESULT transparent([out, retval] BOOL* transparent);
 
-    HRESULT setAlwaysUsesComplexTextCodePath([in] BOOL complex);
-    HRESULT alwaysUsesComplexTextCodePath([out, retval] BOOL* complex);
-
     HRESULT setCookieEnabled([in] BOOL enable);
     HRESULT cookieEnabled([out, retval] BOOL* enabled);
 

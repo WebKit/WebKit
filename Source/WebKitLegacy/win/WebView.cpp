@@ -6574,22 +6574,6 @@ HRESULT WebView::globalHistoryItem(_COM_Outptr_opt_ IWebHistoryItem** item)
     return S_OK;
 }
 
-HRESULT WebView::setAlwaysUsesComplexTextCodePath(BOOL complex)
-{
-    WebCoreSetAlwaysUsesComplexTextCodePath(complex);
-
-    return S_OK;
-}
-
-HRESULT WebView::alwaysUsesComplexTextCodePath(_Out_ BOOL* complex)
-{
-    if (!complex)
-        return E_POINTER;
-
-    *complex = WebCoreAlwaysUsesComplexTextCodePath();
-    return S_OK;
-}
-
 HRESULT WebView::registerEmbeddedViewMIMEType(_In_ BSTR mimeType)
 {
     if (!mimeType)

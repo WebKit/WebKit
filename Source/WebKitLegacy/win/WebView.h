@@ -329,8 +329,6 @@ public:
     HRESULT STDMETHODCALLTYPE setDefersCallbacks(BOOL) override;
     HRESULT STDMETHODCALLTYPE defersCallbacks(_Out_ BOOL*) override;
     HRESULT STDMETHODCALLTYPE globalHistoryItem(_COM_Outptr_opt_ IWebHistoryItem**) override;
-    HRESULT STDMETHODCALLTYPE setAlwaysUsesComplexTextCodePath(BOOL) override;
-    HRESULT STDMETHODCALLTYPE alwaysUsesComplexTextCodePath(_Out_ BOOL*) override;
     HRESULT STDMETHODCALLTYPE setCookieEnabled(BOOL) override;
     HRESULT STDMETHODCALLTYPE cookieEnabled(_Out_ BOOL*) override;
     HRESULT STDMETHODCALLTYPE setMediaVolume(float) override;

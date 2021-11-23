@@ -264,7 +264,6 @@ static bool dumpPixelsForCurrentTest;
 static int threaded;
 static int dumpTree = YES;
 static int useTimeoutWatchdog = YES;
-static int forceComplexText;
 static int useAcceleratedDrawing;
 static int gcBetweenTests;
 static int allowAnyHTTPSCertificateForAllowedHosts;
@@ -998,7 +997,6 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"pixel-tests", no_argument, &dumpPixelsForAllTests, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
-        {"complex-text", no_argument, &forceComplexText, YES},
         {"accelerated-drawing", no_argument, &useAcceleratedDrawing, YES},
         {"gc-between-tests", no_argument, &gcBetweenTests, YES},
         {"no-timeout", no_argument, &useTimeoutWatchdog, NO},
@@ -1171,9 +1169,6 @@ void dumpRenderTree(int argc, const char *argv[])
     JSC::initialize();
     WTF::initializeMainThread();
     WebCoreTestSupport::populateJITOperations();
-
-    if (forceComplexText)
-        [WebView _setAlwaysUsesComplexTextCodePath:YES];
 
 #if USE(APPKIT)
     [NSSound _setAlertType:0];

@@ -564,8 +564,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setBackForwardCacheCapacity(parameters.backForwardCacheCapacity);
 
-    setAlwaysUsesComplexTextCodePath(parameters.shouldAlwaysUseComplexTextCodePath);
-
     setShouldUseFontSmoothing(parameters.shouldUseFontSmoothing);
 
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
@@ -770,11 +768,6 @@ void WebProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& url
 void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {
     ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);
-}
-
-void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
-{
-    WebCore::FontCascade::setCodePath(alwaysUseComplexText ? WebCore::FontCascade::CodePath::Complex : WebCore::FontCascade::CodePath::Auto);
 }
 
 void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)

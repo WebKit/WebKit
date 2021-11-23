@@ -63,12 +63,6 @@ namespace WebKit {
 
 void WebProcessPool::platformInitialize()
 {
-#if PLATFORM(GTK)
-    m_alwaysUsesComplexTextCodePath = true;
-#endif
-    if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
-        m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
-
 #if OS(LINUX)
     if (!MemoryPressureMonitor::disabled())
         installMemoryPressureHandler();
