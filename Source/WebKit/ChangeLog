@@ -1,5 +1,20 @@
 2021-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Many network process crashes when running WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=232629
+
+        Reviewed by Martin Robinson.
+
+        For some reason there's a runtime critical warning coming from GLib under flatpak when trying to inherit the
+        current thread scheduler settings in newly created ones. As a workaround we don't use QOS::Background for
+        network cache background IO queue when running under flatpak.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::qosForBackgroundIOQueue):
+        (WebKit::NetworkCache::Storage::Storage):
+
+2021-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Change hardware-acceleration-policy setting default value to always
         https://bugs.webkit.org/show_bug.cgi?id=233418
 
