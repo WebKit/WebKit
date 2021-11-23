@@ -173,6 +173,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
                 break;
             case CSSSelector::PseudoClassDirectFocus:
             case CSSSelector::PseudoClassFocus:
+            case CSSSelector::PseudoClassFocusVisible:
                 focusSelector = selector;
                 break;
             case CSSSelector::PseudoClassHost:
