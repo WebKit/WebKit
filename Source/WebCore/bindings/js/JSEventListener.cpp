@@ -126,8 +126,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         JSDOMWindow* window = jsCast<JSDOMWindow*>(globalObject);
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
-        if (wasCreatedFromMarkup() && !scriptExecutionContext.contentSecurityPolicy()->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code()))
-            return;
+        if (wasCreatedFromMarkup()) {
+            Element* element = event.target()->isNode() && !downcast<Node>(*event.target()).isDocumentNode() && is<Element>(*event.target()) ? downcast<Element>(event.target()) : nullptr;
+            if (!scriptExecutionContext.contentSecurityPolicy()->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code(), element))
+                return;
+        }
         // FIXME: Is this check needed for other contexts?
         ScriptController& script = window->wrapped().frame()->script();
         if (!script.canExecuteScripts(AboutToExecuteScript) || script.isPaused())

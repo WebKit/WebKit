@@ -88,6 +88,7 @@ struct KeyframeAnimationOptions;
 struct ResizeObserverData;
 struct ScrollIntoViewOptions;
 struct ScrollToOptions;
+struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
 namespace Style {
@@ -570,6 +571,8 @@ public:
     void dispatchWebKitImageReadyEventForTesting();
 
     WEBCORE_EXPORT bool dispatchMouseForceWillBegin();
+
+    void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&);
 
     virtual void willRecalcStyle(Style::Change);
     virtual void didRecalcStyle(Style::Change);

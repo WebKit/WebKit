@@ -131,7 +131,8 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (!document.frame())
         return nullptr;
 
-    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line, m_code))
+    Element* element = m_originalNode && !m_originalNode->isDocumentNode() && is<Element>(*m_originalNode) ? downcast<Element>(m_originalNode.get()) : nullptr;
+    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line, m_code, element))
         return nullptr;
 
     auto& script = document.frame()->script();

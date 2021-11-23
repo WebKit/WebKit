@@ -53,6 +53,7 @@
 #include "ElementRareData.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusController.h"
 #include "FocusEvent.h"
@@ -110,6 +111,7 @@
 #include "ScriptDisallowedScope.h"
 #include "ScrollIntoViewOptions.h"
 #include "ScrollLatchingController.h"
+#include "SecurityPolicyViolationEvent.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRootInit.h"
@@ -3196,6 +3198,13 @@ bool Element::dispatchMouseForceWillBegin()
 #endif
 
     return false;
+}
+
+void Element::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
+{
+    document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }, event = SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes)] {
+        dispatchEvent(event);
+    });
 }
 
 ExceptionOr<void> Element::mergeWithNextTextNode(Text& node)
