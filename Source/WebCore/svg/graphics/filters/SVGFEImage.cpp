@@ -76,10 +76,7 @@ void FEImage::determineAbsolutePaintRect(const Filter& filter)
 
 bool FEImage::platformApplySoftware(const Filter& filter)
 {
-    // FEImage results are always in DestinationColorSpace::SRGB()
-    setResultColorSpace(DestinationColorSpace::SRGB());
-
-    ImageBuffer* resultImage = createImageBufferResult();
+    auto resultImage = imageBufferResult();
     if (!resultImage)
         return false;
 

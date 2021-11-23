@@ -475,22 +475,23 @@ bool FELighting::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
-    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
-
-    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     setIsAlphaImage(false);
 
     IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    in->copyPremultipliedResult(destinationPixelArray, effectDrawingRect, operatingColorSpace());
+    in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
+
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange
     // output for various kernelUnitLengths, and I am not sure they are reliable.
     // Anyway, feConvolveMatrix should also use the implementation
 
     IntSize absolutePaintSize = absolutePaintRect().size();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
+
     drawLighting(destinationPixelArray, absolutePaintSize.width(), absolutePaintSize.height());
     return true;
 }

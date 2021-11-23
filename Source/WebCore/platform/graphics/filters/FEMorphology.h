@@ -53,7 +53,7 @@ private:
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
-    bool platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY);
+    bool isDegenerate(int radiusX, int radiusY) const;
 
     struct PaintingData {
         const Uint8ClampedArray* srcPixelArray;

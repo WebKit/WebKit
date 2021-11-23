@@ -44,6 +44,9 @@ public:
 private:
     FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 
+    // FEImage results are always in DestinationColorSpace::SRGB()
+    void setOperatingColorSpace(const DestinationColorSpace&) override { }
+
     void determineAbsolutePaintRect(const Filter&) final;
 
     bool platformApplySoftware(const Filter&) final;

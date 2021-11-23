@@ -229,47 +229,47 @@ void FEMorphology::platformApply(const PaintingData& paintingData)
     platformApplyGeneric(paintingData, 0, paintingData.height);
 }
 
-bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY)
+bool FEMorphology::isDegenerate(int radiusX, int radiusY) const
 {
-    if (radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY)) {
-        FilterEffect* in = inputEffect(0);
-        in->copyPremultipliedResult(dstPixelArray, imageRect, operatingColorSpace());
-        return true;
-    }
-    return false;
+    return radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY);
 }
 
 bool FEMorphology::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
-    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
-
-    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
 
     IntSize radius = flooredIntSize(FloatSize(m_radiusX, m_radiusY));
-    if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radius.width(), radius.height()))
+    if (isDegenerate(radius.width(), radius.height())) {
+        in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
         return true;
-
-    auto sourcePixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
-    if (!sourcePixelArray)
-        return false;
+    }
 
     radius = flooredIntSize(filter.scaledByFilterScale({ m_radiusX, m_radiusY }));
     int radiusX = std::min(effectDrawingRect.width() - 1, radius.width());
     int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
 
-    if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radiusX, radiusY))
+    if (isDegenerate(radiusX, radiusY)) {
+        in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
         return true;
-    
+    }
+
+    auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectDrawingRect, operatingColorSpace());
+    if (!sourcePixelBuffer)
+        return false;
+
+    auto& sourcePixelArray = sourcePixelBuffer->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
+
     PaintingData paintingData;
-    paintingData.srcPixelArray = sourcePixelArray.get();
+    paintingData.srcPixelArray = &sourcePixelArray;
     paintingData.dstPixelArray = &destinationPixelArray;
     paintingData.width = ceilf(effectDrawingRect.width());
     paintingData.height = ceilf(effectDrawingRect.height());

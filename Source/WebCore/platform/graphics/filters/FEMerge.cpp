@@ -43,14 +43,14 @@ bool FEMerge::platformApplySoftware(const Filter&)
     unsigned size = numberOfEffectInputs();
     ASSERT(size > 0);
 
-    ImageBuffer* resultImage = createImageBufferResult();
+    auto resultImage = imageBufferResult();
     if (!resultImage)
         return false;
 
     GraphicsContext& filterContext = resultImage->context();
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
-        if (ImageBuffer* inBuffer = in->imageBufferResult())
+        if (auto inBuffer = in->imageBufferResult())
             filterContext.drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
     }
 

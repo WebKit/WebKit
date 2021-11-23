@@ -59,16 +59,16 @@ bool FEBlend::platformApplySoftware(const Filter&)
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
 
-    ImageBuffer* resultImage = createImageBufferResult();
+    auto resultImage = imageBufferResult();
     if (!resultImage)
         return false;
-    GraphicsContext& filterContext = resultImage->context();
 
-    ImageBuffer* imageBuffer = in->imageBufferResult();
-    ImageBuffer* imageBuffer2 = in2->imageBufferResult();
+    auto imageBuffer = in->imageBufferResult();
+    auto imageBuffer2 = in2->imageBufferResult();
     if (!imageBuffer || !imageBuffer2)
         return false;
 
+    GraphicsContext& filterContext = resultImage->context();
     filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
     filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, { CompositeOperator::SourceOver, m_mode });
     return true;

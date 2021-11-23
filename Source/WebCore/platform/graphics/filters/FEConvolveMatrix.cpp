@@ -365,26 +365,23 @@ bool FEConvolveMatrix::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
-    auto& destinationPixelBuffer = m_preserveAlpha ? createUnmultipliedImageResult() : createPremultipliedImageResult();
+    auto alphaFormat = m_preserveAlpha ? AlphaPremultiplication::Unpremultiplied : AlphaPremultiplication::Premultiplied;
+    auto destinationPixelBuffer = pixelBufferResult(alphaFormat);
     if (!destinationPixelBuffer)
         return false;
 
-    auto& destinationPixelArray = destinationPixelBuffer->data();
-
     IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-
-    RefPtr<Uint8ClampedArray> sourcePixelArray;
-    if (m_preserveAlpha)
-        sourcePixelArray = in->unmultipliedResult(effectDrawingRect, operatingColorSpace());
-    else
-        sourcePixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
-    if (!sourcePixelArray)
+    auto sourcePixelBuffer = in->getPixelBufferResult(alphaFormat, effectDrawingRect, operatingColorSpace());
+    if (!sourcePixelBuffer)
         return false;
+
+    auto& sourcePixelArray = sourcePixelBuffer->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     IntSize paintSize = absolutePaintRect().size();
     
     PaintingData paintingData = {
-        *sourcePixelArray,
+        sourcePixelArray,
         destinationPixelArray,
         paintSize.width(),
         paintSize.height(),

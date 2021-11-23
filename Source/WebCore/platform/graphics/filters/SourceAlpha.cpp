@@ -47,7 +47,7 @@ void SourceAlpha::determineAbsolutePaintRect(const Filter& filter)
 
 bool SourceAlpha::platformApplySoftware(const Filter&)
 {
-    ImageBuffer* resultImage = createImageBufferResult();
+    ImageBuffer* resultImage = imageBufferResult();
     if (!resultImage)
         return false;
     

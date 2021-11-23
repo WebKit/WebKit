@@ -68,13 +68,13 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
-void FEDisplacementMap::setResultColorSpace(const DestinationColorSpace&)
+const DestinationColorSpace& FEDisplacementMap::resultColorSpace() const
 {
     // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image
     // and does not apply to the 'in' source image. The 'in' source image must remain in its
     // current color space.
-    // The result is in that smae color space because it is a displacement of the 'in' image.
-    FilterEffect::setResultColorSpace(inputEffect(0)->resultColorSpace());
+    // The result is in that same color space because it is a displacement of the 'in' image.
+    return inputEffect(0)->resultColorSpace();
 }
 
 void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int index)
@@ -98,23 +98,25 @@ bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
     ASSERT(m_xChannelSelector != CHANNEL_UNKNOWN);
     ASSERT(m_yChannelSelector != CHANNEL_UNKNOWN);
 
-    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
     IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    auto inputImage = in->premultipliedResult(effectADrawingRect);
+    auto inputPixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
     // The calculations using the pixel values from ‘in2’ are performed using non-premultiplied color values.
-    auto displacementImage = in2->unmultipliedResult(effectBDrawingRect);
+    auto displacementPixelBuffer = in2->getPixelBufferResult(AlphaPremultiplication::Unpremultiplied, effectBDrawingRect);
     
-    if (!inputImage || !displacementImage)
+    if (!inputPixelBuffer || !displacementPixelBuffer)
         return false;
 
-    ASSERT(inputImage->length() == displacementImage->length());
+    auto& inputImage = inputPixelBuffer->data();
+    auto& displacementImage = displacementPixelBuffer->data();
+    ASSERT(inputImage.length() == displacementImage.length());
 
     IntSize paintSize = absolutePaintRect().size();
 
@@ -135,8 +137,8 @@ bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
         for (int x = 0; x < paintSize.width(); ++x) {
             int destinationIndex = lineStartOffset + x * 4;
             
-            int srcX = x + static_cast<int>(scaleForColorX * displacementImage->item(destinationIndex + displacementChannelX) + scaledOffsetX);
-            int srcY = y + static_cast<int>(scaleForColorY * displacementImage->item(destinationIndex + displacementChannelY) + scaledOffsetY);
+            int srcX = x + static_cast<int>(scaleForColorX * displacementImage.item(destinationIndex + displacementChannelX) + scaledOffsetX);
+            int srcY = y + static_cast<int>(scaleForColorY * displacementImage.item(destinationIndex + displacementChannelY) + scaledOffsetY);
 
             unsigned* destinationPixelPtr = reinterpret_cast<unsigned*>(destinationPixelArray.data() + destinationIndex);
             if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height()) {
@@ -144,7 +146,7 @@ bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
                 continue;
             }
 
-            *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputImage->data() + byteOffsetOfPixel(srcX, srcY, rowBytes));
+            *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputImage.data() + byteOffsetOfPixel(srcX, srcY, rowBytes));
         }
     }
 

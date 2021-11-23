@@ -105,11 +105,9 @@ bool FEComponentTransfer::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
-    auto& destinationPixelBuffer = createUnmultipliedImageResult();
+    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
-
-    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     LookupTable redTable;
     LookupTable greenTable;
@@ -118,9 +116,12 @@ bool FEComponentTransfer::platformApplySoftware(const Filter&)
     computeLookupTables(redTable, greenTable, blueTable, alphaTable);
 
     IntRect drawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    in->copyUnmultipliedResult(destinationPixelArray, drawingRect, operatingColorSpace());
-    unsigned destinationPixelArrayLength = destinationPixelArray.length();
+    in->copyPixelBufferResult(*destinationPixelBuffer, drawingRect);
+    
+    auto& destinationPixelArray = destinationPixelBuffer->data();
     uint8_t* data = destinationPixelArray.data();
+    unsigned destinationPixelArrayLength = destinationPixelArray.length();
+
     for (unsigned pixelOffset = 0; pixelOffset < destinationPixelArrayLength; pixelOffset += 4) {
         data[pixelOffset] = redTable[data[pixelOffset]];
         data[pixelOffset + 1] = greenTable[data[pixelOffset + 1]];

@@ -87,14 +87,6 @@ bool FEComposite::setK4(float k4)
     return true;
 }
 
-void FEComposite::correctFilterResultIfNeeded()
-{
-    if (m_type != FECOMPOSITE_OPERATOR_ARITHMETIC)
-        return;
-
-    forceValidPreMultipliedPixels();
-}
-    
 static unsigned char clampByte(int c)
 {
     unsigned char buff[] = { static_cast<unsigned char>(c), 255, 0 };
@@ -229,33 +221,34 @@ bool FEComposite::platformApplySoftware(const Filter&)
     FilterEffect* in2 = inputEffect(1);
 
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
-        auto& destinationPixelBuffer = createPremultipliedImageResult();
+        auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
         if (!destinationPixelBuffer)
             return false;
         
-        auto& destinationPixelArray = destinationPixelBuffer->data();
-
         IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-        auto sourcePixelArray = in->premultipliedResult(effectADrawingRect, operatingColorSpace());
-        if (!sourcePixelArray)
+        auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect, operatingColorSpace());
+        if (!sourcePixelBuffer)
             return false;
 
         IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
-        in2->copyPremultipliedResult(destinationPixelArray, effectBDrawingRect, operatingColorSpace());
+        in2->copyPixelBufferResult(*destinationPixelBuffer, effectBDrawingRect);
 
-        platformArithmeticSoftware(*sourcePixelArray, destinationPixelArray, m_k1, m_k2, m_k3, m_k4);
+        auto& sourcePixelArray = sourcePixelBuffer->data();
+        auto& destinationPixelArray = destinationPixelBuffer->data();
+        platformArithmeticSoftware(sourcePixelArray, destinationPixelArray, m_k1, m_k2, m_k3, m_k4);
         return true;
     }
 
-    ImageBuffer* resultImage = createImageBufferResult();
+    auto resultImage = imageBufferResult();
     if (!resultImage)
         return false;
-    GraphicsContext& filterContext = resultImage->context();
 
-    ImageBuffer* imageBuffer = in->imageBufferResult();
-    ImageBuffer* imageBuffer2 = in2->imageBufferResult();
+    auto imageBuffer = in->imageBufferResult();
+    auto imageBuffer2 = in2->imageBufferResult();
     if (!imageBuffer || !imageBuffer2)
         return false;
+
+    GraphicsContext& filterContext = resultImage->context();
 
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:

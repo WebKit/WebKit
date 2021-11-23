@@ -395,7 +395,7 @@ void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 
 bool FETurbulence::platformApplySoftware(const Filter& filter)
 {
-    auto& destinationPixelBuffer = createUnmultipliedImageResult();
+    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 

@@ -73,7 +73,7 @@ bool FEDropShadow::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
-    ImageBuffer* resultImage = createImageBufferResult();
+    auto resultImage = imageBufferResult();
     if (!resultImage)
         return false;
 
@@ -84,7 +84,7 @@ bool FEDropShadow::platformApplySoftware(const Filter& filter)
     FloatRect drawingRegionWithOffset(drawingRegion);
     drawingRegionWithOffset.move(offset);
 
-    ImageBuffer* sourceImage = in->imageBufferResult();
+    auto sourceImage = in->imageBufferResult();
     if (!sourceImage)
         return false;
 

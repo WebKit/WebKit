@@ -60,7 +60,7 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
 
 bool FEFlood::platformApplySoftware(const Filter&)
 {
-    ImageBuffer* resultImage = createImageBufferResult();
+    auto resultImage = imageBufferResult();
     if (!resultImage)
         return false;
 

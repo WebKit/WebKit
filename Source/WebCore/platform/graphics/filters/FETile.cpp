@@ -44,11 +44,10 @@ FETile::FETile()
 
 bool FETile::platformApplySoftware(const Filter& filter)
 {
-// FIXME: See bug 47315. This is a hack to work around a compile failure, but is incorrect behavior otherwise.
     FilterEffect* in = inputEffect(0);
 
-    ImageBuffer* resultImage = createImageBufferResult();
-    ImageBuffer* inBuffer = in->imageBufferResult();
+    auto resultImage = imageBufferResult();
+    auto inBuffer = in->imageBufferResult();
     if (!resultImage || !inBuffer)
         return false;
 

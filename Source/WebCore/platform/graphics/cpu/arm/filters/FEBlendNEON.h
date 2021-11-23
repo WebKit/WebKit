@@ -111,17 +111,17 @@ bool FEBlend::platformApplySoftware(const Filter&)
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
 
-    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    auto& destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
     IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    auto sourcePixelArrayA = in->premultipliedResult(effectADrawingRect);
+    auto sourcePixelArrayA = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
-    auto sourcePixelArrayB = in2->premultipliedResult(effectBDrawingRect);
+    auto sourcePixelArrayB = in2->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectBDrawingRect);
 
     unsigned sourcePixelArrayLength = sourcePixelArrayA->length();
     ASSERT(pixelArrayLength == sourcePixelArrayB->length());

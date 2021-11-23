@@ -241,7 +241,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         if (!lastEffect->hasResult()) {
             filterData.state = FilterData::Applying;
             filterData.filter->apply();
-            lastEffect->correctFilterResultIfNeeded();
+            lastEffect->correctPremultipliedResultIfNeeded();
             lastEffect->transformResultColorSpace(DestinationColorSpace::SRGB());
         }
         filterData.state = FilterData::Built;

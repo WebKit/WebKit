@@ -277,11 +277,11 @@ bool FEColorMatrix::platformApplySoftware(const Filter&)
 {
     FilterEffect* in = inputEffect(0);
 
-    ImageBuffer* resultImage = createImageBufferResult();
+    auto resultImage = imageBufferResult();
     if (!resultImage)
         return false;
 
-    ImageBuffer* inBuffer = in->imageBufferResult();
+    auto inBuffer = in->imageBufferResult();
     if (inBuffer)
         resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
 

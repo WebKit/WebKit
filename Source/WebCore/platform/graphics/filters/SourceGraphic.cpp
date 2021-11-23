@@ -34,7 +34,6 @@ Ref<SourceGraphic> SourceGraphic::create()
 SourceGraphic::SourceGraphic()
     : FilterEffect(FilterEffect::Type::SourceGraphic)
 {
-    setOperatingColorSpace(DestinationColorSpace::SRGB());
 }
 
 void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
@@ -45,7 +44,7 @@ void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
 
 bool SourceGraphic::platformApplySoftware(const Filter& filter)
 {
-    ImageBuffer* resultImage = createImageBufferResult();
+    ImageBuffer* resultImage = imageBufferResult();
     ImageBuffer* sourceImage = filter.sourceImage();
     if (!resultImage || !sourceImage)
         return false;

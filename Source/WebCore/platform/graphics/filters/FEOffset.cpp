@@ -68,8 +68,8 @@ bool FEOffset::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
-    ImageBuffer* resultImage = createImageBufferResult();
-    ImageBuffer* inBuffer = in->imageBufferResult();
+    auto resultImage = imageBufferResult();
+    auto inBuffer = in->imageBufferResult();
     if (!resultImage || !inBuffer)
         return false;
 

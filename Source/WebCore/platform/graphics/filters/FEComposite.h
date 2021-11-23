@@ -59,11 +59,9 @@ public:
 private:
     FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4);
 
-    void correctFilterResultIfNeeded() override;
-
-    bool requiresValidPreMultipliedPixels() override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
-
     void determineAbsolutePaintRect(const Filter&) override;
+
+    bool mayProduceInvalidPremultipliedPixels() const override { return m_type == FECOMPOSITE_OPERATOR_ARITHMETIC; }
 
     bool platformApplySoftware(const Filter&) override;
 

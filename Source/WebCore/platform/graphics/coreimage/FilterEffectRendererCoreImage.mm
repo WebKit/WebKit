@@ -116,7 +116,6 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::connectCIFilters(const Filter&
         inputImages.append(inputImage);
     }
     effect.determineAbsolutePaintRect(filter);
-    effect.setResultColorSpace(effect.operatingColorSpace());
     
     if (effect.absolutePaintRect().isEmpty() || ImageBuffer::sizeNeedsClamping(effect.absolutePaintRect().size()))
         return nullptr;

@@ -523,16 +523,14 @@ bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
 {
     FilterEffect* in = inputEffect(0);
 
-    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
-
-    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    in->copyPremultipliedResult(destinationPixelArray, effectDrawingRect, operatingColorSpace());
+    in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
     if (!m_stdX && !m_stdY)
         return true;
 
@@ -543,6 +541,7 @@ bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
     if (!tmpImageData)
         return false;
 
+    auto& destinationPixelArray = destinationPixelBuffer->data();
     platformApply(destinationPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
     return true;
 }

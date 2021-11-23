@@ -47,18 +47,18 @@ public:
     float scale() const { return m_scale; }
     bool setScale(float);
 
-    void setResultColorSpace(const DestinationColorSpace&) override;
-    void transformResultColorSpace(FilterEffect*, const int) override;
-
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    bool platformApplySoftware(const Filter&) override;
+    int xChannelIndex() const { return m_xChannelSelector - 1; }
+    int yChannelIndex() const { return m_yChannelSelector - 1; }
 
     void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    int xChannelIndex() const { return m_xChannelSelector - 1; }
-    int yChannelIndex() const { return m_yChannelSelector - 1; }
+    const DestinationColorSpace& resultColorSpace() const override;
+    void transformResultColorSpace(FilterEffect*, const int) override;
+
+    bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
