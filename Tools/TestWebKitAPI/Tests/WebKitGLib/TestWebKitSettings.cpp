@@ -340,14 +340,14 @@ static void testWebKitSettings(Test*, gconstpointer)
 
 #if PLATFORM(GTK)
 #if !USE(GTK4)
-    // Ondemand is the default hardware acceleration policy.
-    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+    // Always is the default hardware acceleration policy.
+    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
-    webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
-    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+    webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
+    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
 #endif
 
     // Back-forward navigation gesture is disabled by default

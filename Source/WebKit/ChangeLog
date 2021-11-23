@@ -1,3 +1,13 @@
+2021-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Change hardware-acceleration-policy setting default value to always
+        https://bugs.webkit.org/show_bug.cgi?id=233418
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+
 2021-11-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove old concurrent display list logic that's no longer necessary

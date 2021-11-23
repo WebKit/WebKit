@@ -1488,7 +1488,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Hardware Acceleration Policy"),
             _("The policy to decide how to enable and disable hardware acceleration"),
             WEBKIT_TYPE_HARDWARE_ACCELERATION_POLICY,
-            WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
+            WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS,
             readWriteConstructParamFlags);
 
     /**
