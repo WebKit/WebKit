@@ -86,7 +86,7 @@ private:
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteDeviceProxy> m_parent;
     std::optional<Vector<uint8_t>> m_data;
-    PAL::WebGPU::MapModeFlags m_mapModeFlags { 0 };
+    PAL::WebGPU::MapModeFlags m_mapModeFlags;
 };
 
 } // namespace WebKit::WebGPU

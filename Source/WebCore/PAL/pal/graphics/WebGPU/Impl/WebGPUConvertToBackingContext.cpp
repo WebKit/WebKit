@@ -689,25 +689,25 @@ WGPUVertexStepMode ConvertToBackingContext::convertToBacking(VertexStepMode vert
 WGPUBufferUsageFlags ConvertToBackingContext::convertBufferUsageFlagsToBacking(BufferUsageFlags bufferUsageFlags)
 {
     WGPUBufferUsageFlags result = 0;
-    if (bufferUsageFlags & BufferUsage::MAP_READ)
+    if (bufferUsageFlags.contains(BufferUsage::MapRead))
         result |= WGPUBufferUsage_MapRead;
-    if (bufferUsageFlags & BufferUsage::MAP_WRITE)
+    if (bufferUsageFlags.contains(BufferUsage::MapWrite))
         result |= WGPUBufferUsage_MapWrite;
-    if (bufferUsageFlags & BufferUsage::COPY_SRC)
+    if (bufferUsageFlags.contains(BufferUsage::CopySource))
         result |= WGPUBufferUsage_CopySrc;
-    if (bufferUsageFlags & BufferUsage::COPY_DST)
+    if (bufferUsageFlags.contains(BufferUsage::CopyDestination))
         result |= WGPUBufferUsage_CopyDst;
-    if (bufferUsageFlags & BufferUsage::INDEX)
+    if (bufferUsageFlags.contains(BufferUsage::Index))
         result |= WGPUBufferUsage_Index;
-    if (bufferUsageFlags & BufferUsage::VERTEX)
+    if (bufferUsageFlags.contains(BufferUsage::Vertex))
         result |= WGPUBufferUsage_Vertex;
-    if (bufferUsageFlags & BufferUsage::UNIFORM)
+    if (bufferUsageFlags.contains(BufferUsage::Uniform))
         result |= WGPUBufferUsage_Uniform;
-    if (bufferUsageFlags & BufferUsage::STORAGE)
+    if (bufferUsageFlags.contains(BufferUsage::Storage))
         result |= WGPUBufferUsage_Storage;
-    if (bufferUsageFlags & BufferUsage::INDIRECT)
+    if (bufferUsageFlags.contains(BufferUsage::Indirect))
         result |= WGPUBufferUsage_Indirect;
-    if (bufferUsageFlags & BufferUsage::QUERY_RESOLVE)
+    if (bufferUsageFlags.contains(BufferUsage::QueryResolve))
         result |= WGPUBufferUsage_QueryResolve;
     return result;
 }
@@ -715,13 +715,13 @@ WGPUBufferUsageFlags ConvertToBackingContext::convertBufferUsageFlagsToBacking(B
 WGPUColorWriteMaskFlags ConvertToBackingContext::convertColorWriteFlagsToBacking(ColorWriteFlags colorWriteFlags)
 {
     WGPUColorWriteMaskFlags result = 0;
-    if (colorWriteFlags & ColorWrite::RED)
+    if (colorWriteFlags.contains(ColorWrite::Red))
         result |= WGPUColorWriteMask_Red;
-    if (colorWriteFlags & ColorWrite::GREEN)
+    if (colorWriteFlags.contains(ColorWrite::Green))
         result |= WGPUColorWriteMask_Green;
-    if (colorWriteFlags & ColorWrite::BLUE)
+    if (colorWriteFlags.contains(ColorWrite::Blue))
         result |= WGPUColorWriteMask_Blue;
-    if (colorWriteFlags & ColorWrite::ALPHA)
+    if (colorWriteFlags.contains(ColorWrite::Alpha))
         result |= WGPUColorWriteMask_Alpha;
     return result;
 }
@@ -729,9 +729,9 @@ WGPUColorWriteMaskFlags ConvertToBackingContext::convertColorWriteFlagsToBacking
 WGPUMapModeFlags ConvertToBackingContext::convertMapModeFlagsToBacking(MapModeFlags mapModeFlags)
 {
     WGPUMapModeFlags result = 0;
-    if (mapModeFlags & MapMode::READ)
+    if (mapModeFlags.contains(MapMode::Read))
         result |= WGPUMapMode_Read;
-    if (mapModeFlags & MapMode::WRITE)
+    if (mapModeFlags.contains(MapMode::Write))
         result |= WGPUMapMode_Write;
     return result;
 }
@@ -739,11 +739,11 @@ WGPUMapModeFlags ConvertToBackingContext::convertMapModeFlagsToBacking(MapModeFl
 WGPUShaderStageFlags ConvertToBackingContext::convertShaderStageFlagsToBacking(ShaderStageFlags shaderStageFlags)
 {
     WGPUShaderStageFlags result = 0;
-    if (shaderStageFlags & ShaderStage::VERTEX)
+    if (shaderStageFlags.contains(ShaderStage::Vertex))
         result |= WGPUShaderStage_Vertex;
-    if (shaderStageFlags & ShaderStage::FRAGMENT)
+    if (shaderStageFlags.contains(ShaderStage::Fragment))
         result |= WGPUShaderStage_Fragment;
-    if (shaderStageFlags & ShaderStage::COMPUTE)
+    if (shaderStageFlags.contains(ShaderStage::Compute))
         result |= WGPUShaderStage_Compute;
     return result;
 }
@@ -751,15 +751,15 @@ WGPUShaderStageFlags ConvertToBackingContext::convertShaderStageFlagsToBacking(S
 WGPUTextureUsageFlags ConvertToBackingContext::convertTextureUsageFlagsToBacking(TextureUsageFlags textureUsageFlags)
 {
     WGPUTextureUsageFlags result = 0;
-    if (textureUsageFlags & TextureUsage::COPY_SRC)
+    if (textureUsageFlags.contains(TextureUsage::CopySource))
         result |= WGPUTextureUsage_CopySrc;
-    if (textureUsageFlags & TextureUsage::COPY_DST)
+    if (textureUsageFlags.contains(TextureUsage::CopyDestination))
         result |= WGPUTextureUsage_CopyDst;
-    if (textureUsageFlags & TextureUsage::TEXTURE_BINDING)
+    if (textureUsageFlags.contains(TextureUsage::TextureBinding))
         result |= WGPUTextureUsage_TextureBinding;
-    if (textureUsageFlags & TextureUsage::STORAGE_BINDING)
+    if (textureUsageFlags.contains(TextureUsage::StorageBinding))
         result |= WGPUTextureUsage_StorageBinding;
-    if (textureUsageFlags & TextureUsage::RENDER_ATTACHMENT)
+    if (textureUsageFlags.contains(TextureUsage::RenderAttachment))
         result |= WGPUTextureUsage_RenderAttachment;
     return result;
 }

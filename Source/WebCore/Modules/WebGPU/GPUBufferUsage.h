@@ -50,27 +50,27 @@ public:
 
 inline PAL::WebGPU::BufferUsageFlags convertBufferUsageFlagsToBacking(GPUBufferUsageFlags bufferUsageFlags)
 {
-    PAL::WebGPU::BufferUsageFlags result = 0;
+    PAL::WebGPU::BufferUsageFlags result;
     if (bufferUsageFlags & GPUBufferUsage::MAP_READ)
-        result |= PAL::WebGPU::BufferUsage::MAP_READ;
+        result.add(PAL::WebGPU::BufferUsage::MapRead);
     if (bufferUsageFlags & GPUBufferUsage::MAP_WRITE)
-        result |= PAL::WebGPU::BufferUsage::MAP_WRITE;
+        result.add(PAL::WebGPU::BufferUsage::MapWrite);
     if (bufferUsageFlags & GPUBufferUsage::COPY_SRC)
-        result |= PAL::WebGPU::BufferUsage::COPY_SRC;
+        result.add(PAL::WebGPU::BufferUsage::CopySource);
     if (bufferUsageFlags & GPUBufferUsage::COPY_DST)
-        result |= PAL::WebGPU::BufferUsage::COPY_DST;
+        result.add(PAL::WebGPU::BufferUsage::CopyDestination);
     if (bufferUsageFlags & GPUBufferUsage::INDEX)
-        result |= PAL::WebGPU::BufferUsage::INDEX;
+        result.add(PAL::WebGPU::BufferUsage::Index);
     if (bufferUsageFlags & GPUBufferUsage::VERTEX)
-        result |= PAL::WebGPU::BufferUsage::VERTEX;
+        result.add(PAL::WebGPU::BufferUsage::Vertex);
     if (bufferUsageFlags & GPUBufferUsage::UNIFORM)
-        result |= PAL::WebGPU::BufferUsage::UNIFORM;
+        result.add(PAL::WebGPU::BufferUsage::Uniform);
     if (bufferUsageFlags & GPUBufferUsage::STORAGE)
-        result |= PAL::WebGPU::BufferUsage::STORAGE;
+        result.add(PAL::WebGPU::BufferUsage::Storage);
     if (bufferUsageFlags & GPUBufferUsage::INDIRECT)
-        result |= PAL::WebGPU::BufferUsage::INDIRECT;
+        result.add(PAL::WebGPU::BufferUsage::Indirect);
     if (bufferUsageFlags & GPUBufferUsage::QUERY_RESOLVE)
-        result |= PAL::WebGPU::BufferUsage::QUERY_RESOLVE;
+        result.add(PAL::WebGPU::BufferUsage::QueryResolve);
     return result;
 }
 

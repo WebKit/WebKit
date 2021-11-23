@@ -27,16 +27,29 @@
 
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
-#include <wtf/RefCounted.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 
 namespace PAL::WebGPU {
 
-using ShaderStageFlags = uint32_t;
-class ShaderStage : public RefCounted<ShaderStage> {
-public:
-    static constexpr FlagsConstant VERTEX   = 0x1;
-    static constexpr FlagsConstant FRAGMENT = 0x2;
-    static constexpr FlagsConstant COMPUTE  = 0x4;
+enum class ShaderStage : uint8_t {
+    Vertex   = 1 << 0,
+    Fragment = 1 << 1,
+    Compute  = 1 << 2,
 };
+using ShaderStageFlags = OptionSet<ShaderStage>;
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::ShaderStage> {
+    using values = EnumValues<
+        PAL::WebGPU::ShaderStage,
+        PAL::WebGPU::ShaderStage::Vertex,
+        PAL::WebGPU::ShaderStage::Fragment,
+        PAL::WebGPU::ShaderStage::Compute
+    >;
+};
+
+} // namespace WTF

@@ -27,15 +27,28 @@
 
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
-#include <wtf/RefCounted.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 
 namespace PAL::WebGPU {
 
-using MapModeFlags = uint32_t;
-class MapMode : public RefCounted<MapMode> {
-public:
-    static constexpr FlagsConstant READ  = 0x0001;
-    static constexpr FlagsConstant WRITE = 0x0002;
+enum class MapMode : uint8_t {
+    Read  = 1 << 0,
+    Write = 1 << 1,
 };
+using MapModeFlags = OptionSet<MapMode>;
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::MapMode> {
+    using values = EnumValues<
+        PAL::WebGPU::MapMode,
+        PAL::WebGPU::MapMode::Read,
+        PAL::WebGPU::MapMode::Write
+    >;
+};
+
+} // namespace WTF
+

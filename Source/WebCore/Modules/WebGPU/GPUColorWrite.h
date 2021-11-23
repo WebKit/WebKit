@@ -45,15 +45,15 @@ public:
 
 inline PAL::WebGPU::ColorWriteFlags convertColorWriteFlagsToBacking(GPUColorWriteFlags colorWriteFlags)
 {
-    PAL::WebGPU::ColorWriteFlags result = 0;
+    PAL::WebGPU::ColorWriteFlags result;
     if (colorWriteFlags & GPUColorWrite::RED)
-        result |= PAL::WebGPU::ColorWrite::RED;
+        result.add(PAL::WebGPU::ColorWrite::Red);
     if (colorWriteFlags & GPUColorWrite::GREEN)
-        result |= PAL::WebGPU::ColorWrite::GREEN;
+        result.add(PAL::WebGPU::ColorWrite::Green);
     if (colorWriteFlags & GPUColorWrite::BLUE)
-        result |= PAL::WebGPU::ColorWrite::BLUE;
+        result.add(PAL::WebGPU::ColorWrite::Blue);
     if (colorWriteFlags & GPUColorWrite::ALPHA)
-        result |= PAL::WebGPU::ColorWrite::ALPHA;
+        result.add(PAL::WebGPU::ColorWrite::Alpha);
     return result;
 }
 

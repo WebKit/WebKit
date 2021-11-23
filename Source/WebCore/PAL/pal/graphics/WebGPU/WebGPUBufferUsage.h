@@ -25,25 +25,45 @@
 
 #pragma once
 
-#include "WebGPUIntegralTypes.h"
 #include <cstdint>
-#include <wtf/RefCounted.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 
 namespace PAL::WebGPU {
 
-using BufferUsageFlags = uint32_t;
-class BufferUsage : public RefCounted<BufferUsage> {
-public:
-    static constexpr FlagsConstant MAP_READ      = 0x0001;
-    static constexpr FlagsConstant MAP_WRITE     = 0x0002;
-    static constexpr FlagsConstant COPY_SRC      = 0x0004;
-    static constexpr FlagsConstant COPY_DST      = 0x0008;
-    static constexpr FlagsConstant INDEX         = 0x0010;
-    static constexpr FlagsConstant VERTEX        = 0x0020;
-    static constexpr FlagsConstant UNIFORM       = 0x0040;
-    static constexpr FlagsConstant STORAGE       = 0x0080;
-    static constexpr FlagsConstant INDIRECT      = 0x0100;
-    static constexpr FlagsConstant QUERY_RESOLVE = 0x0200;
+enum class BufferUsage : uint16_t {
+    MapRead         = 1 << 0,
+    MapWrite        = 1 << 1,
+    CopySource      = 1 << 2,
+    CopyDestination = 1 << 3,
+    Index           = 1 << 4,
+    Vertex          = 1 << 5,
+    Uniform         = 1 << 6,
+    Storage         = 1 << 7,
+    Indirect        = 1 << 8,
+    QueryResolve    = 1 << 9,
 };
+using BufferUsageFlags = OptionSet<BufferUsage>;
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::BufferUsage> {
+    using values = EnumValues<
+        PAL::WebGPU::BufferUsage,
+        PAL::WebGPU::BufferUsage::MapRead,
+        PAL::WebGPU::BufferUsage::MapWrite,
+        PAL::WebGPU::BufferUsage::CopySource,
+        PAL::WebGPU::BufferUsage::CopyDestination,
+        PAL::WebGPU::BufferUsage::Index,
+        PAL::WebGPU::BufferUsage::Vertex,
+        PAL::WebGPU::BufferUsage::Uniform,
+        PAL::WebGPU::BufferUsage::Storage,
+        PAL::WebGPU::BufferUsage::Indirect,
+        PAL::WebGPU::BufferUsage::QueryResolve
+
+    >;
+};
+
+} // namespace WTF

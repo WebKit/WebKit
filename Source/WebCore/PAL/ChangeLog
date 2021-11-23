@@ -1,3 +1,22 @@
+2021-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Use OptionSet where it makes sense to
+        https://bugs.webkit.org/show_bug.cgi?id=233434
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp:
+        (PAL::WebGPU::ConvertToBackingContext::convertBufferUsageFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertColorWriteFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertMapModeFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertShaderStageFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertTextureUsageFlagsToBacking):
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h:
+        * pal/graphics/WebGPU/WebGPUColorWrite.h:
+        * pal/graphics/WebGPU/WebGPUMapMode.h:
+        * pal/graphics/WebGPU/WebGPUShaderStage.h:
+        * pal/graphics/WebGPU/WebGPUTextureUsage.h:
+
 2021-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add converters from serializable descriptors to interface descriptors

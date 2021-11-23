@@ -34,18 +34,17 @@
 #include <pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h>
 #include <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
 #include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
+#include <pal/graphics/WebGPU/WebGPUTextureUsage.h>
 #include <wtf/Ref.h>
 
 namespace WebKit::WebGPU {
 
 class Device;
 
-using TextureUsageFlags = uint32_t; // FIXME: This doesn't need to be here.
-
 struct CanvasConfiguration {
     WebGPUIdentifier device;
     PAL::WebGPU::TextureFormat format;
-    TextureUsageFlags usage; // TextureUsage.RENDER_ATTACHMENT
+    PAL::WebGPU::TextureUsageFlags usage; // TextureUsage.RENDER_ATTACHMENT
     PAL::WebGPU::PredefinedColorSpace colorSpace;
     PAL::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode;
     std::optional<Extent3D> size;
@@ -72,7 +71,7 @@ struct CanvasConfiguration {
         if (!format)
             return std::nullopt;
 
-        std::optional<TextureUsageFlags> usage;
+        std::optional<PAL::WebGPU::TextureUsageFlags> usage;
         decoder >> usage;
         if (!usage)
             return std::nullopt;

@@ -59,7 +59,7 @@ void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optiona
     m_backing->mapAsync(mapModeFlags, offset, size, [mapModeFlags, offset, size, strongThis = Ref<RemoteBuffer>(*this), callback = WTFMove(callback)] () mutable {
         auto mappedRange = strongThis->m_backing->getMappedRange(offset, size);
         strongThis->m_mappedRange = mappedRange;
-        if (mapModeFlags & PAL::WebGPU::MapMode::READ)
+        if (mapModeFlags.contains(PAL::WebGPU::MapMode::Read))
             callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
         else
             callback({ { } });
@@ -72,12 +72,12 @@ void RemoteBuffer::unmap(Vector<uint8_t>&& data)
         return;
     ASSERT(m_isMapped);
 
-    if (m_mapModeFlags & PAL::WebGPU::MapMode::WRITE)
+    if (m_mapModeFlags.contains(PAL::WebGPU::MapMode::Write))
         memcpy(m_mappedRange->source, data.data(), data.size());
 
     m_isMapped = false;
     m_mappedRange = std::nullopt;
-    m_mapModeFlags = 0;
+    m_mapModeFlags = { };
 }
 
 void RemoteBuffer::destroy()

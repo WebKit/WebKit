@@ -29,18 +29,32 @@
 #include "WebGPUBlendOperation.h"
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
-#include <wtf/RefCounted.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 
 namespace PAL::WebGPU {
 
-using ColorWriteFlags = uint32_t;
-class ColorWrite : public RefCounted<ColorWrite> {
-public:
-    static constexpr FlagsConstant RED   = 0x1;
-    static constexpr FlagsConstant GREEN = 0x2;
-    static constexpr FlagsConstant BLUE  = 0x4;
-    static constexpr FlagsConstant ALPHA = 0x8;
-    static constexpr FlagsConstant ALL   = 0xF;
+enum class ColorWrite : uint8_t {
+    Red   = 1 << 0,
+    Green = 1 << 1,
+    Blue  = 1 << 2,
+    Alpha = 1 << 3,
+    All   = Red | Green | Blue | Alpha,
 };
+using ColorWriteFlags = OptionSet<ColorWrite>;
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::ColorWrite> {
+    using values = EnumValues<
+        PAL::WebGPU::ColorWrite,
+        PAL::WebGPU::ColorWrite::Red,
+        PAL::WebGPU::ColorWrite::Green,
+        PAL::WebGPU::ColorWrite::Blue,
+        PAL::WebGPU::ColorWrite::Alpha
+    >;
+};
+
+} // namespace WTF

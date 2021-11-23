@@ -42,11 +42,11 @@ public:
 
 inline PAL::WebGPU::MapModeFlags convertMapModeFlagsToBacking(GPUMapModeFlags mapModeFlags)
 {
-    PAL::WebGPU::MapModeFlags result = 0;
+    PAL::WebGPU::MapModeFlags result;
     if (mapModeFlags & GPUMapMode::READ)
-        result |= PAL::WebGPU::MapMode::READ;
+        result.add(PAL::WebGPU::MapMode::Read);
     if (mapModeFlags & GPUMapMode::WRITE)
-        result |= PAL::WebGPU::MapMode::WRITE;
+        result.add(PAL::WebGPU::MapMode::Write);
     return result;
 }
 

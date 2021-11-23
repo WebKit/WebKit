@@ -76,13 +76,13 @@ void RemoteBufferProxy::unmap()
         return;
 
     Vector<uint8_t> data;
-    if (m_mapModeFlags & PAL::WebGPU::MapMode::WRITE)
+    if (m_mapModeFlags.contains(PAL::WebGPU::MapMode::Write))
         data = WTFMove(*m_data);
     auto sendResult = send(Messages::RemoteBuffer::Unmap(WTFMove(data)));
     UNUSED_VARIABLE(sendResult);
 
     m_data = std::nullopt;
-    m_mapModeFlags = 0;
+    m_mapModeFlags = { };
 }
 
 void RemoteBufferProxy::destroy()

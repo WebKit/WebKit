@@ -27,18 +27,34 @@
 
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
-#include <wtf/RefCounted.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 
 namespace PAL::WebGPU {
 
-using TextureUsageFlags = uint32_t;
-class TextureUsage : public RefCounted<TextureUsage> {
-public:
-    static constexpr FlagsConstant COPY_SRC          = 0x01;
-    static constexpr FlagsConstant COPY_DST          = 0x02;
-    static constexpr FlagsConstant TEXTURE_BINDING   = 0x04;
-    static constexpr FlagsConstant STORAGE_BINDING   = 0x08;
-    static constexpr FlagsConstant RENDER_ATTACHMENT = 0x10;
+enum class TextureUsage : uint8_t {
+    CopySource       = 1 << 0,
+    CopyDestination  = 1 << 1,
+    TextureBinding   = 1 << 2,
+    StorageBinding   = 1 << 3,
+    RenderAttachment = 1 << 4,
 };
+using TextureUsageFlags = OptionSet<TextureUsage>;
 
 } // namespace PAL::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<PAL::WebGPU::TextureUsage> {
+    using values = EnumValues<
+        PAL::WebGPU::TextureUsage,
+        PAL::WebGPU::TextureUsage::CopySource,
+        PAL::WebGPU::TextureUsage::CopyDestination,
+        PAL::WebGPU::TextureUsage::TextureBinding,
+        PAL::WebGPU::TextureUsage::StorageBinding,
+        PAL::WebGPU::TextureUsage::RenderAttachment
+    >;
+};
+
+} // namespace WTF
+

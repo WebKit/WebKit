@@ -82,7 +82,7 @@ private:
     WebGPUIdentifier m_identifier;
     bool m_isMapped { false };
     std::optional<PAL::WebGPU::Buffer::MappedRange> m_mappedRange;
-    PAL::WebGPU::MapModeFlags m_mapModeFlags { 0 };
+    PAL::WebGPU::MapModeFlags m_mapModeFlags;
 };
 
 } // namespace WebKit

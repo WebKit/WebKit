@@ -42,13 +42,13 @@ public:
 
 inline PAL::WebGPU::ShaderStageFlags convertShaderStageFlagsToBacking(GPUShaderStageFlags shaderStageFlags)
 {
-    PAL::WebGPU::ShaderStageFlags result = 0;
+    PAL::WebGPU::ShaderStageFlags result;
     if (shaderStageFlags & GPUShaderStage::VERTEX)
-        result |= PAL::WebGPU::ShaderStage::VERTEX;
+        result.add(PAL::WebGPU::ShaderStage::Vertex);
     if (shaderStageFlags & GPUShaderStage::FRAGMENT)
-        result |= PAL::WebGPU::ShaderStage::FRAGMENT;
+        result.add(PAL::WebGPU::ShaderStage::Fragment);
     if (shaderStageFlags & GPUShaderStage::COMPUTE)
-        result |= PAL::WebGPU::ShaderStage::COMPUTE;
+        result.add(PAL::WebGPU::ShaderStage::Compute);
     return result;
 }
 

@@ -44,17 +44,17 @@ public:
 
 inline PAL::WebGPU::TextureUsageFlags convertTextureUsageFlagsToBacking(GPUTextureUsageFlags textureUsageFlags)
 {
-    PAL::WebGPU::TextureUsageFlags result = 0;
+    PAL::WebGPU::TextureUsageFlags result;
     if (textureUsageFlags & GPUTextureUsage::COPY_SRC)
-        result |= PAL::WebGPU::TextureUsage::COPY_SRC;
+        result.add(PAL::WebGPU::TextureUsage::CopySource);
     if (textureUsageFlags & GPUTextureUsage::COPY_DST)
-        result |= PAL::WebGPU::TextureUsage::COPY_DST;
+        result.add(PAL::WebGPU::TextureUsage::CopyDestination);
     if (textureUsageFlags & GPUTextureUsage::TEXTURE_BINDING)
-        result |= PAL::WebGPU::TextureUsage::TEXTURE_BINDING;
+        result.add(PAL::WebGPU::TextureUsage::TextureBinding);
     if (textureUsageFlags & GPUTextureUsage::STORAGE_BINDING)
-        result |= PAL::WebGPU::TextureUsage::STORAGE_BINDING;
+        result.add(PAL::WebGPU::TextureUsage::StorageBinding);
     if (textureUsageFlags & GPUTextureUsage::RENDER_ATTACHMENT)
-        result |= PAL::WebGPU::TextureUsage::RENDER_ATTACHMENT;
+        result.add(PAL::WebGPU::TextureUsage::RenderAttachment);
     return result;
 }
 
