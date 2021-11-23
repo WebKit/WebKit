@@ -1,3 +1,12 @@
+2021-11-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Allow enabling JPEG-XL support at build time
+        https://bugs.webkit.org/show_bug.cgi?id=233325
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/glib/TestExpectations: Unskip JPEG-XL tests for the GTK and WPE ports.
+
 2021-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         rem in media queries should be calculated using font-size:initial, not root element font-size

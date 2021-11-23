@@ -1,3 +1,16 @@
+2021-11-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Allow enabling JPEG-XL support at build time
+        https://bugs.webkit.org/show_bug.cgi?id=233325
+
+        Reviewed by Michael Catanzaro.
+
+        Adds a new USE_JPEGXL build option, disabled by default for release builds and
+        enabled for developer builds.
+
+        * Source/cmake/OptionsGTK.cmake: Add USE_JPEGXL build option.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2021-11-22  Alejandro G. Castro  <alex@igalia.com>
 
         Add alexg's GitHub username to contributors.json
