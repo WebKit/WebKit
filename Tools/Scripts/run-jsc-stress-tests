@@ -81,6 +81,7 @@ PARALLEL_REMOTE_STATE_LOST_MARKER = "709fb7a77c45231918eb118a"
 ITERATION_LIMITS = OpenStruct.new(:infraIterationsFloor => 3,
                                   :iterationsCeiling => 10)
 
+REMOTE_TIMEOUT = 120
 begin
     require 'shellwords'
 rescue Exception => e
@@ -2601,12 +2602,40 @@ def forEachRemote(remoteHosts, options={}, &blk)
         }
     }
 
+    etime = nil
+    if options.has_key?(:timeout)
+        etime = Time.now + options[:timeout]
+    end
     liveRemotes = []
     threads.each_index {
         | index |
         thread = threads[index]
         begin
-            thread.join
+            if options.has_key?(:timeout)
+                if etime.nil?
+                    # If a timeout has been requested and etime is nil,
+                    # that means the timeout has expired and we shouldn't
+                    # wait at all.
+                    timeout = 0
+                else
+                    timeout = etime - Time.now
+                    if timeout < 0
+                        timeout = 0
+                    end
+                end
+                if thread.join(timeout).nil?
+                    if $verbosity > 0
+                        $stderr.puts("Timeout joining thread for remote #{remoteHosts[index]}")
+                    end
+                    # Timeout expired, so we can't block waiting for
+                    # any other threads. Either they're done or
+                    # they've also timed out.
+                    etime = nil
+                    raise CommandExecutionFailed
+                end
+            else
+                thread.join # No timeout requested, just block.
+            end
             liveRemotes << remoteHosts[index]
         rescue CommandExecutionFailed
             if options[:dropOnFailure]
@@ -2694,7 +2723,7 @@ def withGnuParallelSshLoginFile(remoteHosts, &blk)
 end
 
 def unpackBundleGnuParallel(remoteHosts)
-    forEachRemote(remoteHosts, :dropOnFailure => true) {
+    forEachRemote(remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) {
         | _, remoteHost |
         mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + 
                (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + 
@@ -2863,7 +2892,7 @@ class GnuParallelTestsExecutor < BaseRemoteTestsExecutor
         # list. Otherwise, if it comes back online in the middle of an
         # iteration, we'll try to run test jobs on it, possibly using
         # an unrelated bundle from a previous run.
-        remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true}) {
+        remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true, :timeout => REMOTE_TIMEOUT}) {
             | _, remoteHost |
             getRemoteDirectoryIfNeeded(remoteHost)
             copyBundleToRemote(remoteHost)

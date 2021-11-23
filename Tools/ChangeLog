@@ -1,3 +1,24 @@
+2021-11-23  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Fix buildbot command timeout issue for remote tests
+        https://bugs.webkit.org/show_bug.cgi?id=233309
+
+        Reviewed by Adrian Perez de Castro.
+
+        Occasionally, buildbots that execute the JSC tests on remote devices
+        would stop producing any output and eventually get killed due to a timeout.
+
+        The issue is that run-jsc-stress-tests would start an ssh command
+        (overwhelmingly likely, the command to copy over the payload), then the remote
+        board would stop responding.
+
+        Introduce a timeout option to forEachRemote and bound the waiting time.
+        Could also do this for each command individually (and this would make it
+        straightforward to GC zombie processes) but seems way more fragile than
+        doing it at the thread level.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-11-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove old concurrent display list logic that's no longer necessary
