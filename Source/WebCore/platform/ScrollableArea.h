@@ -236,7 +236,7 @@ public:
     virtual ScrollPosition minimumScrollPosition() const;
     virtual ScrollPosition maximumScrollPosition() const;
 
-    ScrollPosition constrainScrollPosition(const ScrollPosition& position) const
+    ScrollPosition constrainedScrollPosition(const ScrollPosition& position) const
     {
         return position.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     }

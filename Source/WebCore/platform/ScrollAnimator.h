@@ -76,13 +76,12 @@ public:
     // The base class implementation always scrolls immediately, never animates.
     bool singleAxisScroll(ScrollEventAxis, float delta, OptionSet<ScrollBehavior>);
 
-    virtual bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
-    bool scrollToPositionWithAnimation(const FloatPoint&);
+    bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
+    bool scrollToPositionWithAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     void retargetRunningAnimation(const FloatPoint& newPosition);
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
-
     virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }
 
     void stopKeyboardScrollAnimation();
@@ -95,7 +94,7 @@ public:
     virtual bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
-    virtual void cancelAnimations();
+    void cancelAnimations();
 
     virtual bool isRubberBandInProgress() const { return false; }
 

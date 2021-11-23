@@ -124,7 +124,7 @@ void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime curre
             force.setHeight(0);
     }
 
-    ScrollPosition idealPosition = m_scrollAnimator.scrollableArea().constrainScrollPosition(IntPoint(m_currentKeyboardScroll ? m_scrollAnimator.currentPosition() : m_idealPosition));
+    ScrollPosition idealPosition = m_scrollAnimator.scrollableArea().constrainedScrollPosition(IntPoint(m_currentKeyboardScroll ? m_scrollAnimator.currentPosition() : m_idealPosition));
     FloatSize displacement = m_scrollAnimator.currentPosition() - idealPosition;
 
     auto springForce = -displacement.scaled(params.springStiffness) - m_velocity.scaled(params.springDamping);
@@ -317,7 +317,7 @@ void KeyboardScrollingAnimator::stopKeyboardScrollAnimation()
     // for an instantaneous tap, move the settling position of the spring
     // out to that point.
     ScrollPosition farthestPoint = farthestPointInDirection(m_scrollAnimator.currentPosition() + displacement, m_idealPositionForMinimumTravel, m_currentKeyboardScroll->direction);
-    m_idealPosition = m_scrollAnimator.scrollableArea().constrainScrollPosition(farthestPoint);
+    m_idealPosition = m_scrollAnimator.scrollableArea().constrainedScrollPosition(farthestPoint);
 
     m_currentKeyboardScroll = std::nullopt;
 }

@@ -107,13 +107,14 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
     return true;
 }
 
-bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition)
+bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
-    bool positionChanged = newPosition != currentPosition();
+    auto adjustedPosition = clamping == ScrollClamping::Clamped ? position.constrainedBetween(scrollableArea().minimumScrollPosition(), scrollableArea().maximumScrollPosition()) : position;
+    bool positionChanged = adjustedPosition != currentPosition();
     if (!positionChanged && !scrollableArea().scrollOriginChanged())
         return false;
 
-    return m_scrollController.startAnimatedScrollToDestination(offsetFromPosition(m_currentPosition), offsetFromPosition(newPosition));
+    return m_scrollController.startAnimatedScrollToDestination(offsetFromPosition(m_currentPosition), offsetFromPosition(adjustedPosition));
 }
 
 void ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
@@ -309,7 +310,7 @@ void ScrollAnimator::adjustScrollPositionToBoundsIfNecessary()
     m_scrollableArea.setScrollClamping(ScrollClamping::Clamped);
 
     auto currentScrollPosition = m_scrollableArea.scrollPosition();
-    auto constrainedPosition = m_scrollableArea.constrainScrollPosition(currentScrollPosition);
+    auto constrainedPosition = m_scrollableArea.constrainedScrollPosition(currentScrollPosition);
     immediateScrollBy(constrainedPosition - currentScrollPosition);
 
     m_scrollableArea.setScrollClamping(previousClamping);
@@ -320,7 +321,7 @@ FloatPoint ScrollAnimator::adjustScrollPositionIfNecessary(const FloatPoint& pos
     if (m_scrollableArea.scrollClamping() == ScrollClamping::Unclamped)
         return position;
 
-    return m_scrollableArea.constrainScrollPosition(ScrollPosition(position));
+    return m_scrollableArea.constrainedScrollPosition(ScrollPosition(position));
 }
 
 void ScrollAnimator::immediateScrollBy(const FloatSize& delta, ScrollClamping clamping)

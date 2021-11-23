@@ -143,7 +143,7 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, S
 
     bool startedAnimation = requestAnimatedScrollToPosition(roundedIntPoint(position), clamping);
     if (!startedAnimation)
-        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position);
+        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, clamping);
 
     if (startedAnimation)
         setScrollAnimationStatus(ScrollAnimationStatus::Animating);
