@@ -49,6 +49,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleFontSizeFunctions.h"
 #include "Theme.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -926,9 +927,17 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
 
     if (!document.documentElement())
         return false;
+
+    auto defaultStyle = RenderStyle::create();
+    auto fontDescription = defaultStyle.fontDescription();
+    auto size = Style::fontSizeForKeyword(CSSValueMedium, false, document);
+    fontDescription.setComputedSize(size);
+    fontDescription.setSpecifiedSize(size);
+    defaultStyle.setFontDescription(WTFMove(fontDescription));
+    defaultStyle.fontCascade().update();
     
     // Pass `nullptr` for `parentStyle` because we are in the context of a media query.
-    return function(expression.value(), { m_style, document.documentElement()->renderStyle(), nullptr, document.renderView(), 1, std::nullopt }, *frame, NoPrefix);
+    return function(expression.value(), { m_style, &defaultStyle, nullptr, document.renderView(), 1, std::nullopt }, *frame, NoPrefix);
 }
 
 bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
