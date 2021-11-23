@@ -1,3 +1,12 @@
+2021-11-23  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Inflate ink overflow with box-shadow
+        https://bugs.webkit.org/show_bug.cgi?id=233437
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/fast/box-shadow/basic-shadows-expected.txt:
+
 2021-11-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Allow enabling JPEG-XL support at build time

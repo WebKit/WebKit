@@ -68,6 +68,7 @@ public:
     void expandVertically(InlineLayoutUnit delta) { expand({ }, delta); }
     void expandVerticallyToContain(const InlineRect&);
     void inflate(InlineLayoutUnit);
+    void inflate(InlineLayoutUnit top, InlineLayoutUnit right, InlineLayoutUnit bottom, InlineLayoutUnit left);
 
     operator InlineLayoutRect() const;
 
@@ -286,6 +287,15 @@ inline void InlineRect::inflate(InlineLayoutUnit inflate)
 {
     ASSERT(hasValidGeometry());
     m_rect.inflate(inflate);
+}
+
+inline void InlineRect::inflate(InlineLayoutUnit top, InlineLayoutUnit right, InlineLayoutUnit bottom, InlineLayoutUnit left)
+{
+    ASSERT(hasValidGeometry());
+    m_rect.setX(m_rect.x() - left);
+    m_rect.setY(m_rect.y() - top);
+    m_rect.setWidth(m_rect.width() + left + right);
+    m_rect.setHeight(m_rect.height() + top + bottom);
 }
 
 inline InlineRect::operator InlineLayoutRect() const

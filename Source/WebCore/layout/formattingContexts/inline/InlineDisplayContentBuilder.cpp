@@ -67,6 +67,18 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     return boxes;
 }
 
+static inline void addBoxShadowInkOverflow(const RenderStyle& style, InlineRect& inkOverflow)
+{
+    auto topBoxShadow = LayoutUnit { };
+    auto bottomBoxShadow = LayoutUnit { };
+    style.getBoxShadowBlockDirectionExtent(topBoxShadow, bottomBoxShadow);
+
+    auto leftBoxShadow = LayoutUnit { };
+    auto rightBoxShadow = LayoutUnit { };
+    style.getBoxShadowInlineDirectionExtent(leftBoxShadow, rightBoxShadow);
+    inkOverflow.inflate(InlineLayoutUnit { topBoxShadow }, InlineLayoutUnit { rightBoxShadow }, InlineLayoutUnit { bottomBoxShadow }, InlineLayoutUnit { leftBoxShadow });
+}
+
 void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, DisplayBoxes& boxes)
 {
     // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
@@ -205,7 +217,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                     return;
                 }
                 RELEASE_ASSERT(m_inlineBoxIndexMap.contains(&parentInlineBox));
-                boxes[m_inlineBoxIndexMap.get(&parentInlineBox)].adjustInkOverflow(borderBoxRect);
+                auto boxInkOverflow = borderBoxRect;
+                addBoxShadowInkOverflow(style, boxInkOverflow);
+                boxes[m_inlineBoxIndexMap.get(&parentInlineBox)].adjustInkOverflow(boxInkOverflow);
             };
             adjustParentInlineBoxInkOverflow();
             continue;
@@ -216,13 +230,18 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             auto inlineBoxBorderBox = displayBoxRect();
             contentRightInVisualOrder += lineRun.logicalWidth();
             if (lineBox.hasContent()) {
+                auto inkOverflow = [&] {
+                    auto inkOverflow = inlineBoxBorderBox;
+                    addBoxShadowInkOverflow(style, inkOverflow);
+                    return inkOverflow;
+                };
                 // FIXME: It's expected to not have any boxes on empty lines. We should reconsider this.
                 m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
 
                 auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
                 ASSERT(inlineBox.isInlineBox());
                 ASSERT(inlineBox.isFirstBox());
-                boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, lineRun.bidiLevel(), inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineBox.hasContent(), isFirstLastBox(inlineBox) });
+                boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, lineRun.bidiLevel(), inlineBoxBorderBox, inkOverflow(), { }, { }, inlineBox.hasContent(), isFirstLastBox(inlineBox) });
             }
 
             auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
@@ -242,13 +261,20 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                 continue;
             }
             m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
-
-            auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             auto inlineBoxBorderBox = displayBoxRect();
+
+            auto inkOverflow = [&] {
+                auto inkOverflow = inlineBoxBorderBox;
+                addBoxShadowInkOverflow(style, inkOverflow);
+                return inkOverflow;
+            };
+
             // The content right edge should not include the entire inline box here (including its content and right edge).
             contentRightInVisualOrder += lineRun.logicalWidth();
+
+            auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(!inlineBox.isFirstBox());
-            boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, lineRun.bidiLevel(), inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineBox.hasContent(), isFirstLastBox(inlineBox) });
+            boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, lineRun.bidiLevel(), inlineBoxBorderBox, inkOverflow(), { }, { }, inlineBox.hasContent(), isFirstLastBox(inlineBox) });
 
             auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
             auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };

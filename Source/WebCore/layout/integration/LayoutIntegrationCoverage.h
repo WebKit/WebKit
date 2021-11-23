@@ -95,7 +95,7 @@ enum class AvoidanceReason : uint64_t {
     UnsupportedFieldset                          = 1LLU  << 54,
     ChildBoxIsFloatingOrPositioned               = 1LLU  << 55,
     ContentIsSVG                                 = 1LLU  << 56,
-    ChildBoxHasUnsupportedStyle                  = 1LLU  << 57,
+    ChildBoxIsNotInlineBlock                     = 1LLU  << 57,
     UnsupportedImageMap                          = 1LLU  << 58,
     InlineBoxNeedsLayer                          = 1LLU  << 59,
     BoxDecorationBreakClone                      = 1LLU  << 60,

@@ -200,8 +200,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
         break;
-    case AvoidanceReason::ChildBoxHasUnsupportedStyle:
-        stream << "child box has unsupported style";
+    case AvoidanceReason::ChildBoxIsNotInlineBlock:
+        stream << "child box has unsupported display type";
         break;
     case AvoidanceReason::UnsupportedImageMap:
         stream << "image map";
@@ -477,8 +477,8 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
         SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
 
     auto& style = renderInline.style();
-    if (style.boxShadow() || !style.hangingPunctuation().isEmpty())
-        SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
+    if (!style.hangingPunctuation().isEmpty())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
         SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
@@ -528,14 +528,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedFieldset, reasons, includeReasons)
     }
 
-    auto isSupportedStyle = [] (const auto& style) {
-        if (style.boxShadow())
-            return false;
-        if (!style.hangingPunctuation().isEmpty())
-            return false;
-        return true;
-    };
-
     if (is<RenderReplaced>(child)) {
         auto& replaced = downcast<RenderReplaced>(child);
         if (replaced.isFloating() || replaced.isPositioned())
@@ -543,9 +535,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
         if (replaced.isSVGRoot())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
-
-        if (!isSupportedStyle(replaced.style()))
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons);
 
         if (is<RenderImage>(replaced)) {
             auto& image = downcast<RenderImage>(replaced);
@@ -566,10 +555,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
 
         auto& style = block.style();
-        if (!isSupportedStyle(style))
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
+        if (!style.hangingPunctuation().isEmpty())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
         if (style.display() != DisplayType::InlineBlock)
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsNotInlineBlock, reasons, includeReasons)
 
         return reasons;
     }
