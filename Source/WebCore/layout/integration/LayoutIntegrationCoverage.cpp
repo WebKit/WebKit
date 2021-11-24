@@ -161,7 +161,7 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowTextIsRenderCounter:
         stream << "RenderCounter";
         break;
-    case AvoidanceReason::FlowTextIsRenderQuote:
+    case AvoidanceReason::ContentIsRenderQuote:
         stream << "RenderQuote";
         break;
     case AvoidanceReason::FlowTextIsTextFragment:
@@ -406,8 +406,6 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
         if (textRenderer.isCounter())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
-        if (textRenderer.isQuote())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderQuote, reasons, includeReasons);
         if (textRenderer.isTextFragment())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (textRenderer.isSVGInlineText())
@@ -471,8 +469,10 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
 
     if (renderInline.isSVGInline())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
-    if (renderInline.isRubyInline() || renderInline.isQuote())
+    if (renderInline.isRubyInline())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+    if (renderInline.isQuote())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRenderQuote, reasons, includeReasons);
     if (renderInline.requiresLayer())
         SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
 
