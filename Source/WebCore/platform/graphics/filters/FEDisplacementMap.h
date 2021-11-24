@@ -50,15 +50,12 @@ public:
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    int xChannelIndex() const { return m_xChannelSelector - 1; }
-    int yChannelIndex() const { return m_yChannelSelector - 1; }
-
-    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    bool platformApplySoftware(const Filter&) override;
 
     const DestinationColorSpace& resultColorSpace() const override;
     void transformResultColorSpace(FilterEffect*, const int) override;
 
-    bool platformApplySoftware(const Filter&) override;
+    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

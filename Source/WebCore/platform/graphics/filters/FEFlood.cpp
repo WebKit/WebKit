@@ -24,6 +24,7 @@
 #include "FEFlood.h"
 
 #include "ColorSerialization.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
@@ -58,16 +59,31 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     return true;
 }
 
-bool FEFlood::platformApplySoftware(const Filter&)
+// FIXME: Move the class FEDropShadowSoftwareApplier to separate source and header files.
+class FEFloodSoftwareApplier : public FilterEffectConcreteApplier<FEFlood> {
+    using Base = FilterEffectConcreteApplier<FEFlood>;
+
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+};
+
+bool FEFloodSoftwareApplier::apply(const Filter&, const FilterEffectVector&)
 {
-    auto resultImage = imageBufferResult();
+    auto resultImage = m_effect.imageBufferResult();
     if (!resultImage)
         return false;
 
-    auto color = floodColor().colorWithAlphaMultipliedBy(floodOpacity());
-    resultImage->context().fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color);
+    auto color = m_effect.floodColor().colorWithAlphaMultipliedBy(m_effect.floodOpacity());
+    resultImage->context().fillRect(FloatRect(FloatPoint(), m_effect.absolutePaintRect().size()), color);
 
     return true;
+}
+
+bool FEFlood::platformApplySoftware(const Filter& filter)
+{
+    return FEFloodSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 TextStream& FEFlood::externalRepresentation(TextStream& ts, RepresentationType representation) const

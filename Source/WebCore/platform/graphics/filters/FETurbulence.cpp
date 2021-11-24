@@ -27,26 +27,13 @@
 #include "FETurbulence.h"
 
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/ParallelJobs.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-
-/*
-    Produces results in the range [1, 2**31 - 2]. Algorithm is:
-    r = (a * r) mod m where a = randAmplitude = 16807 and
-    m = randMaximum = 2**31 - 1 = 2147483647, r = seed.
-    See [Park & Miller], CACM vol. 31 no. 10 p. 1195, Oct. 1988
-    To test: the algorithm should produce the result 1043618065
-    as the 10,000th generated number if the original seed is 1.
-*/
-static const int s_perlinNoise = 4096;
-static const long s_randMaximum = 2147483647; // 2**31 - 1
-static const int s_randAmplitude = 16807; // 7**5; primitive root of m
-static const int s_randQ = 127773; // m / a
-static const int s_randR = 2836; // m % a
 
 Ref<FETurbulence> FETurbulence::create(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
 {
@@ -115,29 +102,89 @@ bool FETurbulence::setStitchTiles(bool stitch)
 // The turbulence calculation code is an adapted version of what appears in the SVG 1.1 specification:
 // http://www.w3.org/TR/SVG11/filters.html#feTurbulence
 
-// Compute pseudo random number.
-inline long FETurbulence::PaintingData::random()
-{
-    long result = s_randAmplitude * (seed % s_randQ) - s_randR * (seed / s_randQ);
-    if (result <= 0)
-        result += s_randMaximum;
-    seed = result;
-    return result;
-}
+// FIXME: Move the class FETurbulenceSoftwareApplier to separate source and header files.
+class FETurbulenceSoftwareApplier : public FilterEffectConcreteApplier<FETurbulence> {
+    using Base = FilterEffectConcreteApplier<FETurbulence>;
 
-inline float smoothCurve(float t)
-{
-    return t * t * (3 - 2 * t);
-}
+public:
+    using Base::Base;
 
-inline float linearInterpolation(float t, float a, float b)
-{
-    return a + t * (b - a);
-}
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
 
-void FETurbulence::initPaint(PaintingData& paintingData)
+private:
+    // Produces results in the range [1, 2**31 - 2]. Algorithm is:
+    // r = (a * r) mod m where a = s_randAmplitude = 16807 and
+    // m = s_randMaximum = 2**31 - 1 = 2147483647, r = seed.
+    // See [Park & Miller], CACM vol. 31 no. 10 p. 1195, Oct. 1988
+    // To test: the algorithm should produce the result 1043618065
+    // as the 10,000th generated number if the original seed is 1.
+    static const int s_perlinNoise = 4096;
+    static const long s_randMaximum = 2147483647; // 2**31 - 1
+    static const int s_randAmplitude = 16807; // 7**5; primitive root of m
+    static const int s_randQ = 127773; // m / a
+    static const int s_randR = 2836; // m % a
+
+    static const int s_blockSize = 256;
+    static const int s_blockMask = s_blockSize - 1;
+
+    struct PaintingData {
+        // Compute pseudo random number.
+        long random()
+        {
+            long result = s_randAmplitude * (seed % s_randQ) - s_randR * (seed / s_randQ);
+            if (result <= 0)
+                result += s_randMaximum;
+            seed = result;
+            return result;
+        }
+
+        TurbulenceType type;
+        float baseFrequencyX;
+        float baseFrequencyY;
+        int numOctaves;
+        long seed;
+        bool stitchTiles;
+        IntSize paintingSize;
+
+        int latticeSelector[2 * s_blockSize + 2];
+        float gradient[4][2 * s_blockSize + 2][2];
+    };
+
+    struct StitchData {
+        int width { 0 }; // How much to subtract to wrap for stitching.
+        int wrapX { 0 }; // Minimum value to wrap.
+        int height { 0 };
+        int wrapY { 0 };
+    };
+
+    struct ApplyParameters {
+        IntRect filterRegion;
+        FloatSize filterScale;
+        Uint8ClampedArray* pixelArray;
+        PaintingData* paintingData;
+        StitchData stitchData;
+        int startY;
+        int endY;
+    };
+
+    static inline float smoothCurve(float t) { return t * t * (3 - 2 * t); }
+    static inline float linearInterpolation(float t, float a, float b) { return a + t * (b - a); }
+
+    static PaintingData initPaintingData(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, long seed, bool stitchTiles, const IntSize& paintingSize);
+    static StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY, bool stitchTiles);
+
+    static ColorComponents<float, 4> noise2D(const PaintingData&, const StitchData&, const FloatPoint& noiseVector);
+    static ColorComponents<uint8_t, 4> toIntBasedColorComponents(const ColorComponents<float, 4>& floatComponents);
+    static ColorComponents<uint8_t, 4> calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&);
+
+    static void applyPlatformGeneric(const IntRect& filterRegion, const FloatSize& filterScale, Uint8ClampedArray& pixelArray, const PaintingData&, StitchData, int startY, int endY);
+    static void applyPlatformWorker(ApplyParameters*);
+    static void applyPlatform(const IntRect& filterRegion, const FloatSize& filterScale, Uint8ClampedArray& pixelArray, PaintingData&, StitchData&);
+};
+
+FETurbulenceSoftwareApplier::PaintingData FETurbulenceSoftwareApplier::initPaintingData(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, long seed, bool stitchTiles, const IntSize& paintingSize)
 {
-    float normalizationFactor;
+    PaintingData paintingData { type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles, paintingSize, { }, { } };
 
     // The seed value clamp to the range [1, s_randMaximum - 1].
     if (paintingData.seed <= 0)
@@ -154,7 +201,7 @@ void FETurbulence::initPaint(PaintingData& paintingData)
                 gradient[0] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
                 gradient[1] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
             } while (!gradient[0] && !gradient[1]);
-            normalizationFactor = std::hypot(gradient[0], gradient[1]);
+            float normalizationFactor = std::hypot(gradient[0], gradient[1]);
             gradient[0] /= normalizationFactor;
             gradient[1] /= normalizationFactor;
         }
@@ -176,11 +223,13 @@ void FETurbulence::initPaint(PaintingData& paintingData)
             paintingData.gradient[channel][s_blockSize + i][1] = paintingData.gradient[channel][i][1];
         }
     }
+
+    return paintingData;
 }
 
-FETurbulence::StitchData FETurbulence::computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const
+FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY, bool stitchTiles)
 {
-    if (!m_stitchTiles)
+    if (!stitchTiles)
         return { };
 
     float tileWidth = tileSize.width();
@@ -217,7 +266,7 @@ FETurbulence::StitchData FETurbulence::computeStitching(IntSize tileSize, float&
 }
 
 // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
-ColorComponents<float, 4> FETurbulence::noise2D(const PaintingData& paintingData, const StitchData& stitchData, const FloatPoint& noiseVector) const
+ColorComponents<float, 4> FETurbulenceSoftwareApplier::noise2D(const PaintingData& paintingData, const StitchData& stitchData, const FloatPoint& noiseVector)
 {
     struct NoisePosition {
         int index; // bx0, by0 in the spec text.
@@ -254,7 +303,7 @@ ColorComponents<float, 4> FETurbulence::noise2D(const PaintingData& paintingData
     NoisePosition noiseY(noiseVector.y());
 
     // If stitching, adjust lattice points accordingly.
-    if (m_stitchTiles) {
+    if (paintingData.stitchTiles) {
         noiseX.stitch(stitchData.width, stitchData.wrapX);
         noiseY.stitch(stitchData.height, stitchData.wrapY);
     }
@@ -323,7 +372,7 @@ ColorComponents<float, 4> FETurbulence::noise2D(const PaintingData& paintingData
 
 // https://www.w3.org/TR/SVG/filters.html#feTurbulenceElement describes this conversion to color components.
 // FIXME: This should use colorConvert<SRGBA<uint8>>(SRGBA<float>) to get the same behavior.
-static inline ColorComponents<uint8_t, 4> toIntBasedColorComponents(const ColorComponents<float, 4>& floatComponents)
+ColorComponents<uint8_t, 4> FETurbulenceSoftwareApplier::toIntBasedColorComponents(const ColorComponents<float, 4>& floatComponents)
 {
     return {
         std::clamp<uint8_t>(static_cast<int>(floatComponents[0] * 255), 0, 255),
@@ -333,13 +382,13 @@ static inline ColorComponents<uint8_t, 4> toIntBasedColorComponents(const ColorC
     };
 }
 
-ColorComponents<uint8_t, 4> FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData stitchData, const FloatPoint& point) const
+ColorComponents<uint8_t, 4> FETurbulenceSoftwareApplier::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData stitchData, const FloatPoint& point)
 {
     ColorComponents<float, 4> turbulenceFunctionResult;
     FloatPoint noiseVector(point.x() * paintingData.baseFrequencyX, point.y() * paintingData.baseFrequencyY);
     float ratio = 1;
-    for (int octave = 0; octave < m_numOctaves; ++octave) {
-        if (m_type == TurbulenceType::FractalNoise)
+    for (int octave = 0; octave < paintingData.numOctaves; ++octave) {
+        if (paintingData.type == TurbulenceType::FractalNoise)
             turbulenceFunctionResult += noise2D(paintingData, stitchData, noiseVector) / ratio;
         else
             turbulenceFunctionResult += noise2D(paintingData, stitchData, noiseVector).abs() / ratio;
@@ -348,7 +397,7 @@ ColorComponents<uint8_t, 4> FETurbulence::calculateTurbulenceValueForPoint(const
         noiseVector.setY(noiseVector.y() * 2);
         ratio *= 2;
 
-        if (m_stitchTiles) {
+        if (paintingData.stitchTiles) {
             // Update stitch values. Subtracting s_perlinNoise before the multiplication and
             // adding it afterward simplifies to subtracting it once.
             stitchData.width *= 2;
@@ -360,20 +409,19 @@ ColorComponents<uint8_t, 4> FETurbulence::calculateTurbulenceValueForPoint(const
 
     // The value of turbulenceFunctionResult comes from ((turbulenceFunctionResult * 255) + 255) / 2 by fractalNoise
     // and (turbulenceFunctionResult * 255) by turbulence.
-    if (m_type == TurbulenceType::FractalNoise)
+    if (paintingData.type == TurbulenceType::FractalNoise)
         turbulenceFunctionResult = turbulenceFunctionResult * 0.5f + 0.5f;
 
     return toIntBasedColorComponents(turbulenceFunctionResult);
 }
 
-void FETurbulence::fillRegion(const Filter& filter, Uint8ClampedArray& pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY) const
+void FETurbulenceSoftwareApplier::applyPlatformGeneric(const IntRect& filterRegion, const FloatSize& filterScale, Uint8ClampedArray& pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY)
 {
     ASSERT(endY > startY);
 
-    IntRect filterRegion = absolutePaintRect();
     FloatPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
-    FloatSize inverseScale = { 1 / filter.filterScale().width(), 1 / filter.filterScale().height() };
+    FloatSize inverseScale = { 1 / filterScale.width(), 1 / filterScale.height() };
 
     for (int y = startY; y < endY; ++y) {
         point.setY(point.y() + 1);
@@ -388,45 +436,22 @@ void FETurbulence::fillRegion(const Filter& filter, Uint8ClampedArray& pixelArra
     }
 }
 
-void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
+void FETurbulenceSoftwareApplier::applyPlatformWorker(ApplyParameters* parameters)
 {
-    parameters->effect->fillRegion(*parameters->filter, *parameters->pixelArray, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
+    applyPlatformGeneric(parameters->filterRegion, parameters->filterScale, *parameters->pixelArray, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
 }
 
-bool FETurbulence::platformApplySoftware(const Filter& filter)
+void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, const FloatSize& filterScale, Uint8ClampedArray& pixelArray, PaintingData& paintingData, StitchData& stitchData)
 {
-    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
-    if (!destinationPixelBuffer)
-        return false;
+    int height = filterRegion.height();
+    unsigned area = filterRegion.area();
 
-    auto& destinationPixelArray = destinationPixelBuffer->data();
+    static const int minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs.
+    unsigned maxNumThreads = filterRegion.height() / 8;
+    unsigned optimalThreadNumber = std::min<unsigned>(area / minimalRectDimension, maxNumThreads);
 
-    IntSize resultSize(absolutePaintRect().size());
-
-    if (resultSize.isEmpty()) {
-        destinationPixelArray.zeroFill();
-        return true;
-    }
-
-    IntSize tileSize = roundedIntSize(filterPrimitiveSubregion().size());
-
-    float baseFrequencyX = m_baseFrequencyX;
-    float baseFrequencyY = m_baseFrequencyY;
-    StitchData stitchData = computeStitching(tileSize, baseFrequencyX, baseFrequencyY);
-
-    PaintingData paintingData(m_seed, tileSize, baseFrequencyX, baseFrequencyY);
-    initPaint(paintingData);
-
-    auto area = resultSize.area();
-    if (area.hasOverflowed())
-        return false;
-
-    int height = resultSize.height();
-
-    unsigned maxNumThreads = height / 8;
-    unsigned optimalThreadNumber = std::min<unsigned>(area / s_minimalRectDimension, maxNumThreads);
     if (optimalThreadNumber > 1) {
-        ParallelJobs<FillRegionParameters> parallelJobs(&WebCore::FETurbulence::fillRegionWorker, optimalThreadNumber);
+        ParallelJobs<ApplyParameters> parallelJobs(&applyPlatformWorker, optimalThreadNumber);
 
         // Fill the parameter array
         auto numJobs = parallelJobs.numberOfJobs();
@@ -437,10 +462,10 @@ bool FETurbulence::platformApplySoftware(const Filter& filter)
             unsigned startY = 0;
 
             for (unsigned i = 0; i < numJobs; ++i) {
-                FillRegionParameters& params = parallelJobs.parameter(i);
-                params.filter = &filter;
-                params.effect = this;
-                params.pixelArray = &destinationPixelArray;
+                ApplyParameters& params = parallelJobs.parameter(i);
+                params.filterRegion = filterRegion;
+                params.filterScale = filterScale;
+                params.pixelArray = &pixelArray;
                 params.paintingData = &paintingData;
                 params.stitchData = stitchData;
                 params.startY = startY;
@@ -451,13 +476,46 @@ bool FETurbulence::platformApplySoftware(const Filter& filter)
             }
 
             parallelJobs.execute();
-            return true;
+            return;
         }
     }
 
     // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
-    fillRegion(filter, destinationPixelArray, paintingData, stitchData, 0, height);
+    applyPlatformGeneric(filterRegion, filterScale, pixelArray, paintingData, stitchData, 0, height);
+}
+
+bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterEffectVector&)
+{
+    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
+    if (!destinationPixelBuffer)
+        return false;
+
+    IntSize resultSize(m_effect.absolutePaintRect().size());
+    if (resultSize.area().hasOverflowed())
+        return false;
+
+    auto& destinationPixelArray = destinationPixelBuffer->data();
+
+    if (resultSize.isEmpty()) {
+        destinationPixelArray.zeroFill();
+        return true;
+    }
+
+    auto tileSize = roundedIntSize(m_effect.filterPrimitiveSubregion().size());
+
+    float baseFrequencyX = m_effect.baseFrequencyX();
+    float baseFrequencyY = m_effect.baseFrequencyY();
+    auto stitchData = computeStitching(tileSize, baseFrequencyX, baseFrequencyY, m_effect.stitchTiles());
+
+    auto paintingData = initPaintingData(m_effect.type(), baseFrequencyX, baseFrequencyY, m_effect.numOctaves(), m_effect.seed(), m_effect.stitchTiles(), tileSize);
+
+    applyPlatform(m_effect.absolutePaintRect(), filter.filterScale(), destinationPixelArray, paintingData, stitchData);
     return true;
+}
+
+bool FETurbulence::platformApplySoftware(const Filter& filter)
+{
+    return FETurbulenceSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 static TextStream& operator<<(TextStream& ts, TurbulenceType type)

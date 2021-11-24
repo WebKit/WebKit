@@ -23,6 +23,7 @@
 
 #include "AffineTransform.h"
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Pattern.h"
@@ -42,22 +43,32 @@ FETile::FETile()
 {
 }
 
-bool FETile::platformApplySoftware(const Filter& filter)
-{
-    FilterEffect* in = inputEffect(0);
+// FIXME: Move the class FETileSoftwareApplier to separate source and header files.
+class FETileSoftwareApplier : public FilterEffectConcreteApplier<FETile> {
+    using Base = FilterEffectConcreteApplier<FETile>;
 
-    auto resultImage = imageBufferResult();
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+};
+
+bool FETileSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
+{
+    FilterEffect* in = inputEffects[0].get();
+
+    auto resultImage = m_effect.imageBufferResult();
     auto inBuffer = in->imageBufferResult();
     if (!resultImage || !inBuffer)
         return false;
 
-    setIsAlphaImage(in->isAlphaImage());
+    m_effect.setIsAlphaImage(in->isAlphaImage());
 
     // Source input needs more attention. It has the size of the filterRegion but gives the
     // size of the cutted sourceImage back. This is part of the specification and optimization.
     FloatRect tileRect = in->maxEffectRect();
     FloatPoint inMaxEffectLocation = tileRect.location();
-    FloatPoint maxEffectLocation = maxEffectRect().location();
+    FloatPoint maxEffectLocation = m_effect.maxEffectRect().location();
     if (in->filterType() == FilterEffect::Type::SourceGraphic || in->filterType() == FilterEffect::Type::SourceAlpha) {
         tileRect = filter.filterRegion();
         tileRect.scale(filter.filterScale());
@@ -82,9 +93,14 @@ bool FETile::platformApplySoftware(const Filter& filter)
 
     GraphicsContext& filterContext = resultImage->context();
     filterContext.setFillPattern(WTFMove(pattern));
-    filterContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
+    filterContext.fillRect(FloatRect(FloatPoint(), m_effect.absolutePaintRect().size()));
 
     return true;
+}
+
+bool FETile::platformApplySoftware(const Filter& filter)
+{
+    return FETileSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 TextStream& FETile::externalRepresentation(TextStream& ts, RepresentationType representation) const

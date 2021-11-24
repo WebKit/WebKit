@@ -24,6 +24,7 @@
 #include "config.h"
 #include "FEComponentTransfer.h"
 
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
@@ -47,18 +48,41 @@ FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFun
 {
 }
 
-void FEComponentTransfer::computeIdentityTable(LookupTable&, const ComponentTransferFunction&)
+// FIXME: Move the class FEComponentTransferSoftwareApplier to separate source and header files.
+class FEComponentTransferSoftwareApplier : public FilterEffectConcreteApplier<FEComponentTransfer> {
+    using Base = FilterEffectConcreteApplier<FEComponentTransfer>;
+
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+
+private:
+    using LookupTable = std::array<uint8_t, 256>;
+
+    static void computeIdentityTable(LookupTable&, const ComponentTransferFunction&);
+    static void computeTabularTable(LookupTable&, const ComponentTransferFunction&);
+    static void computeDiscreteTable(LookupTable&, const ComponentTransferFunction&);
+    static void computeLinearTable(LookupTable&, const ComponentTransferFunction&);
+    static void computeGammaTable(LookupTable&, const ComponentTransferFunction&);
+
+    static LookupTable computeLookupTable(const ComponentTransferFunction&);
+
+    void applyPlatform(PixelBuffer&) const;
+};
+
+void FEComponentTransferSoftwareApplier::computeIdentityTable(LookupTable&, const ComponentTransferFunction&)
 {
 }
 
-void FEComponentTransfer::computeTabularTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransferSoftwareApplier::computeTabularTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
     const Vector<float>& tableValues = transferFunction.tableValues;
     unsigned n = tableValues.size();
     if (n < 1)
-        return;            
+        return;
     for (unsigned i = 0; i < values.size(); ++i) {
-        double c = i / 255.0;                
+        double c = i / 255.0;
         unsigned k = static_cast<unsigned>(c * (n - 1));
         double v1 = tableValues[k];
         double v2 = tableValues[std::min((k + 1), (n - 1))];
@@ -68,7 +92,7 @@ void FEComponentTransfer::computeTabularTable(LookupTable& values, const Compone
     }
 }
 
-void FEComponentTransfer::computeDiscreteTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransferSoftwareApplier::computeDiscreteTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
     const Vector<float>& tableValues = transferFunction.tableValues;
     unsigned n = tableValues.size();
@@ -83,7 +107,7 @@ void FEComponentTransfer::computeDiscreteTable(LookupTable& values, const Compon
     }
 }
 
-void FEComponentTransfer::computeLinearTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransferSoftwareApplier::computeLinearTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
     for (unsigned i = 0; i < values.size(); ++i) {
         double val = transferFunction.slope * i + 255 * transferFunction.intercept;
@@ -92,7 +116,7 @@ void FEComponentTransfer::computeLinearTable(LookupTable& values, const Componen
     }
 }
 
-void FEComponentTransfer::computeGammaTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransferSoftwareApplier::computeGammaTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
     for (unsigned i = 0; i < values.size(); ++i) {
         double exponent = transferFunction.exponent; // RCVT doesn't like passing a double and a float to pow, so promote this to double
@@ -102,41 +126,12 @@ void FEComponentTransfer::computeGammaTable(LookupTable& values, const Component
     }
 }
 
-bool FEComponentTransfer::platformApplySoftware(const Filter&)
+FEComponentTransferSoftwareApplier::LookupTable FEComponentTransferSoftwareApplier::computeLookupTable(const ComponentTransferFunction& function)
 {
-    FilterEffect* in = inputEffect(0);
+    LookupTable table;
 
-    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
-    if (!destinationPixelBuffer)
-        return false;
-
-    LookupTable redTable;
-    LookupTable greenTable;
-    LookupTable blueTable;
-    LookupTable alphaTable;
-    computeLookupTables(redTable, greenTable, blueTable, alphaTable);
-
-    IntRect drawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    in->copyPixelBufferResult(*destinationPixelBuffer, drawingRect);
-    
-    auto& destinationPixelArray = destinationPixelBuffer->data();
-    uint8_t* data = destinationPixelArray.data();
-    unsigned destinationPixelArrayLength = destinationPixelArray.length();
-
-    for (unsigned pixelOffset = 0; pixelOffset < destinationPixelArrayLength; pixelOffset += 4) {
-        data[pixelOffset] = redTable[data[pixelOffset]];
-        data[pixelOffset + 1] = greenTable[data[pixelOffset + 1]];
-        data[pixelOffset + 2] = blueTable[data[pixelOffset + 2]];
-        data[pixelOffset + 3] = alphaTable[data[pixelOffset + 3]];
-    }
-
-    return true;
-}
-
-void FEComponentTransfer::computeLookupTables(LookupTable& redTable, LookupTable& greenTable, LookupTable& blueTable, LookupTable& alphaTable)
-{
-    for (unsigned i = 0; i < redTable.size(); ++i)
-        redTable[i] = greenTable[i] = blueTable[i] = alphaTable[i] = i;
+    for (unsigned i = 0; i < table.size(); ++i)
+        table[i] = i;
 
     using TransferType = void (*)(LookupTable&, const ComponentTransferFunction&);
     TransferType callEffect[] = {
@@ -148,15 +143,49 @@ void FEComponentTransfer::computeLookupTables(LookupTable& redTable, LookupTable
         computeGammaTable       // FECOMPONENTTRANSFER_TYPE_GAMMA
     };
 
-    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_redFunction.type) < WTF_ARRAY_LENGTH(callEffect));
-    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_greenFunction.type) < WTF_ARRAY_LENGTH(callEffect));
-    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_blueFunction.type) < WTF_ARRAY_LENGTH(callEffect));
-    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_alphaFunction.type) < WTF_ARRAY_LENGTH(callEffect));
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(function.type) < WTF_ARRAY_LENGTH(callEffect));
+    callEffect[function.type](table, function);
 
-    callEffect[m_redFunction.type](redTable, m_redFunction);
-    callEffect[m_greenFunction.type](greenTable, m_greenFunction);
-    callEffect[m_blueFunction.type](blueTable, m_blueFunction);
-    callEffect[m_alphaFunction.type](alphaTable, m_alphaFunction);
+    return table;
+}
+
+void FEComponentTransferSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
+{
+    auto& pixelArray = pixelBuffer.data();
+    unsigned pixelArrayLength = pixelArray.length();
+    uint8_t* data = pixelArray.data();
+
+    auto redTable   = computeLookupTable(m_effect.redFunction());
+    auto greenTable = computeLookupTable(m_effect.greenFunction());
+    auto blueTable  = computeLookupTable(m_effect.blueFunction());
+    auto alphaTable = computeLookupTable(m_effect.alphaFunction());
+
+    for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
+        data[pixelOffset]     = redTable[data[pixelOffset]];
+        data[pixelOffset + 1] = greenTable[data[pixelOffset + 1]];
+        data[pixelOffset + 2] = blueTable[data[pixelOffset + 2]];
+        data[pixelOffset + 3] = alphaTable[data[pixelOffset + 3]];
+    }
+}
+
+bool FEComponentTransferSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+{
+    FilterEffect* in = inputEffects[0].get();
+    
+    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
+    if (!destinationPixelBuffer)
+        return false;
+
+    auto drawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    in->copyPixelBufferResult(*destinationPixelBuffer, drawingRect);
+
+    applyPlatform(*destinationPixelBuffer);
+    return true;
+}
+
+bool FEComponentTransfer::platformApplySoftware(const Filter& filter)
+{
+    return FEComponentTransferSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 static TextStream& operator<<(TextStream& ts, ComponentTransferType type)

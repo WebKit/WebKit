@@ -64,16 +64,6 @@ public:
     bool setPreserveAlpha(bool);
 
 private:
-
-    struct PaintingData {
-        const Uint8ClampedArray& srcPixelArray;
-        Uint8ClampedArray& dstPixelArray;
-        int width;
-        int height;
-        float bias;
-        Vector<float> kernelMatrix;
-    };
-
     FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
 
     void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
@@ -81,21 +71,6 @@ private:
     bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
-
-    template<bool preserveAlphaValues>
-    ALWAYS_INLINE void fastSetInteriorPixels(PaintingData&, int clipRight, int clipBottom, int yStart, int yEnd);
-
-    ALWAYS_INLINE int getPixelValue(PaintingData&, int x, int y);
-
-    template<bool preserveAlphaValues>
-    void fastSetOuterPixels(PaintingData&, int x1, int y1, int x2, int y2);
-
-    // Wrapper functions
-    ALWAYS_INLINE void setInteriorPixels(PaintingData&, int clipRight, int clipBottom, int yStart, int yEnd);
-    ALWAYS_INLINE void setOuterPixels(PaintingData&, int x1, int y1, int x2, int y2);
-
-    // Parallelization parts
-    static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs
 
     IntSize m_kernelSize;
     float m_divisor;

@@ -25,6 +25,7 @@
 #include "FEOffset.h"
 
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
@@ -64,22 +65,37 @@ void FEOffset::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-bool FEOffset::platformApplySoftware(const Filter& filter)
-{
-    FilterEffect* in = inputEffect(0);
+// FIXME: Move the class FEOffsetSoftwareApplier to separate source and header files.
+class FEOffsetSoftwareApplier : public FilterEffectConcreteApplier<FEOffset> {
+    using Base = FilterEffectConcreteApplier<FEOffset>;
 
-    auto resultImage = imageBufferResult();
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+};
+
+bool FEOffsetSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
+{
+    FilterEffect* in = inputEffects[0].get();
+
+    auto resultImage = m_effect.imageBufferResult();
     auto inBuffer = in->imageBufferResult();
     if (!resultImage || !inBuffer)
         return false;
 
-    setIsAlphaImage(in->isAlphaImage());
+    m_effect.setIsAlphaImage(in->isAlphaImage());
 
-    FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
-    drawingRegion.move(filter.scaledByFilterScale({ m_dx, m_dy }));
+    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(in->absolutePaintRect());
+    drawingRegion.move(filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() }));
     resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
 
     return true;
+}
+
+bool FEOffset::platformApplySoftware(const Filter& filter)
+{
+    return FEOffsetSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 TextStream& FEOffset::externalRepresentation(TextStream& ts, RepresentationType representation) const

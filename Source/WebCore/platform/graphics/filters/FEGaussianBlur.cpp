@@ -28,56 +28,20 @@
 
 #include "FEGaussianBlurNEON.h"
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "PixelBuffer.h"
+#include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
+#else
+#include <JavaScriptCore/TypedArrayInlines.h>
+#include <wtf/ParallelJobs.h>
 #endif
 
-#include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/TypedArrayInlines.h>
-#include <JavaScriptCore/Uint8ClampedArray.h>
-#include <wtf/MathExtras.h>
-#include <wtf/ParallelJobs.h>
-
-static inline float gaussianKernelFactor()
-{
-    return 3 / 4.f * sqrtf(2 * piFloat);
-}
-
-static const int gMaxKernelSize = 500;
-
 namespace WebCore {
-
-inline void kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, int& deltaRight)
-{
-    // Check http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement for details.
-    switch (blurIteration) {
-    case 0:
-        if (!(radius % 2)) {
-            deltaLeft = radius / 2 - 1;
-            deltaRight = radius - deltaLeft;
-        } else {
-            deltaLeft = radius / 2;
-            deltaRight = radius - deltaLeft;
-        }
-        break;
-    case 1:
-        if (!(radius % 2)) {
-            deltaLeft++;
-            deltaRight--;
-        }
-        break;
-    case 2:
-        if (!(radius % 2)) {
-            deltaRight++;
-            radius++;
-        }
-        break;
-    }
-}
 
 Ref<FEGaussianBlur> FEGaussianBlur::create(float x, float y, EdgeModeType edgeMode)
 {
@@ -107,9 +71,136 @@ void FEGaussianBlur::setEdgeMode(EdgeModeType edgeMode)
     m_edgeMode = edgeMode;
 }
 
+static inline float gaussianKernelFactor()
+{
+    return 3 / 4.f * sqrtf(2 * piFloat);
+}
+
+static int clampedToKernelSize(float value)
+{
+    static constexpr unsigned maxKernelSize = 500;
+
+    // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
+    // inflates the absolute paint rect too much. This is compatible with Firefox' behavior.
+    unsigned size = std::max<unsigned>(2, static_cast<unsigned>(floorf(value * gaussianKernelFactor() + 0.5f)));
+    return clampTo<int>(std::min(size, maxKernelSize));
+}
+    
+IntSize FEGaussianBlur::calculateUnscaledKernelSize(FloatSize stdDeviation)
+{
+    ASSERT(stdDeviation.width() >= 0 && stdDeviation.height() >= 0);
+    IntSize kernelSize;
+
+    if (stdDeviation.width())
+        kernelSize.setWidth(clampedToKernelSize(stdDeviation.width()));
+
+    if (stdDeviation.height())
+        kernelSize.setHeight(clampedToKernelSize(stdDeviation.height()));
+
+    return kernelSize;
+}
+
+IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, FloatSize stdDeviation)
+{
+    return calculateUnscaledKernelSize(filter.scaledByFilterScale(stdDeviation));
+}
+
+IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
+{
+    auto kernelSize = calculateUnscaledKernelSize(stdDeviation);
+
+    // We take the half kernel size and multiply it with three, because we run box blur three times.
+    return { 3 * kernelSize.width() / 2, 3 * kernelSize.height() / 2 };
+}
+
+void FEGaussianBlur::determineAbsolutePaintRect(const Filter& filter)
+{
+    IntSize kernelSize = calculateKernelSize(filter, { m_stdX, m_stdY });
+
+    FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
+    // Edge modes other than 'none' do not inflate the affected paint rect.
+    if (m_edgeMode != EDGEMODE_NONE) {
+        setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
+        return;
+    }
+
+    // We take the half kernel size and multiply it with three, because we run box blur three times.
+    absolutePaintRect.inflateX(3 * kernelSize.width() * 0.5f);
+    absolutePaintRect.inflateY(3 * kernelSize.height() * 0.5f);
+
+    if (clipsToBounds())
+        absolutePaintRect.intersect(maxEffectRect());
+    else
+        absolutePaintRect.unite(maxEffectRect());
+
+    setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
+}
+
+// FIXME: Move the class FEGaussianBlurSoftwareApplier to separate source and header files.
+class FEGaussianBlurSoftwareApplier : public FilterEffectConcreteApplier<FEGaussianBlur> {
+    using Base = FilterEffectConcreteApplier<FEGaussianBlur>;
+
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+
+private:
+    struct ApplyParameters {
+        RefPtr<Uint8ClampedArray> ioPixelArray;
+        RefPtr<Uint8ClampedArray> tmpPixelArray;
+        int width;
+        int height;
+        unsigned kernelSizeX;
+        unsigned kernelSizeY;
+        bool isAlphaImage;
+        EdgeModeType edgeMode;
+    };
+
+    static inline void kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, int& deltaRight);
+
+    static inline void boxBlurAlphaOnly(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize);
+    static inline void boxBlur(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType);
+
+    static inline void boxBlurAccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight);
+    static inline void boxBlurUnaccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
+
+    static inline void boxBlurGeneric(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
+    static inline void boxBlurWorker(ApplyParameters*);
+
+    static inline void applyPlatform(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
+};
+
+inline void FEGaussianBlurSoftwareApplier::kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, int& deltaRight)
+{
+    // Check http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement for details.
+    switch (blurIteration) {
+    case 0:
+        if (!(radius % 2)) {
+            deltaLeft = radius / 2 - 1;
+            deltaRight = radius - deltaLeft;
+        } else {
+            deltaLeft = radius / 2;
+            deltaRight = radius - deltaLeft;
+        }
+        break;
+    case 1:
+        if (!(radius % 2)) {
+            deltaLeft++;
+            deltaRight--;
+        }
+        break;
+    case 2:
+        if (!(radius % 2)) {
+            deltaRight++;
+            radius++;
+        }
+        break;
+    }
+}
+
 // This function only operates on Alpha channel.
-inline void boxBlurAlphaOnly(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray,
-    unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize)
+inline void FEGaussianBlurSoftwareApplier::boxBlurAlphaOnly(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize)
 {
     const uint8_t* srcData = srcPixelArray.data();
     uint8_t* dstData = dstPixelArray.data();
@@ -149,8 +240,7 @@ inline void boxBlurAlphaOnly(const Uint8ClampedArray& srcPixelArray, Uint8Clampe
     }
 }
 
-inline void boxBlur(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray,
-    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType edgeMode)
+inline void FEGaussianBlurSoftwareApplier::boxBlur(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType edgeMode)
 {
     const int maxKernelSize = std::min(dxRight, effectWidth);
     if (alphaImage)
@@ -280,7 +370,7 @@ inline void boxBlur(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& d
 }
 
 #if USE(ACCELERATE)
-inline void accelerateBoxBlur(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight)
+inline void FEGaussianBlurSoftwareApplier::boxBlurAccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight)
 {
     if (!ioBuffer.data() || !tempBuffer.data()) {
         ASSERT_NOT_REACHED();
@@ -326,7 +416,7 @@ inline void accelerateBoxBlur(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& te
 }
 #endif
 
-inline void standardBoxBlur(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
+inline void FEGaussianBlurSoftwareApplier::boxBlurUnaccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
 {
     int dxLeft = 0;
     int dxRight = 0;
@@ -371,35 +461,39 @@ inline void standardBoxBlur(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& temp
     }
 }
 
-inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
+inline void FEGaussianBlurSoftwareApplier::boxBlurGeneric(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
 {
     int stride = 4 * paintSize.width();
 
 #if USE(ACCELERATE)
-    if (kernelSizeX == kernelSizeY && (m_edgeMode == EDGEMODE_NONE || m_edgeMode == EDGEMODE_DUPLICATE)) {
-        accelerateBoxBlur(ioBuffer, tmpPixelArray, kernelSizeX, stride, paintSize.width(), paintSize.height());
+    if (kernelSizeX == kernelSizeY && (edgeMode == EDGEMODE_NONE || edgeMode == EDGEMODE_DUPLICATE)) {
+        boxBlurAccelerated(ioBuffer, tmpPixelArray, kernelSizeX, stride, paintSize.width(), paintSize.height());
         return;
     }
 #endif
 
-    standardBoxBlur(ioBuffer, tmpPixelArray, kernelSizeX, kernelSizeY, stride, paintSize, isAlphaImage(), m_edgeMode);
+    boxBlurUnaccelerated(ioBuffer, tmpPixelArray, kernelSizeX, kernelSizeY, stride, paintSize, isAlphaImage, edgeMode);
 }
 
-void FEGaussianBlur::platformApplyWorker(PlatformApplyParameters* parameters)
+#if !USE(ACCELERATE)
+inline void FEGaussianBlurSoftwareApplier::boxBlurWorker(ApplyParameters* parameters)
 {
     IntSize paintSize(parameters->width, parameters->height);
-    parameters->filter->platformApplyGeneric(*parameters->ioPixelArray, *parameters->tmpPixelArray, parameters->kernelSizeX, parameters->kernelSizeY, paintSize);
+    boxBlurGeneric(*parameters->ioPixelArray, *parameters->tmpPixelArray, parameters->kernelSizeX, parameters->kernelSizeY, paintSize, parameters->isAlphaImage, parameters->edgeMode);
 }
+#endif
 
-inline void FEGaussianBlur::platformApply(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
+inline void FEGaussianBlurSoftwareApplier::applyPlatform(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
 {
 #if !USE(ACCELERATE)
     int scanline = 4 * paintSize.width();
     int extraHeight = 3 * kernelSizeY * 0.5f;
-    int optimalThreadNumber = (paintSize.width() * paintSize.height()) / (s_minimalRectDimension + extraHeight * paintSize.width());
+
+    static constexpr int minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
+    int optimalThreadNumber = (paintSize.width() * paintSize.height()) / (minimalRectDimension + extraHeight * paintSize.width());
 
     if (optimalThreadNumber > 1) {
-        ParallelJobs<PlatformApplyParameters> parallelJobs(&platformApplyWorker, optimalThreadNumber);
+        ParallelJobs<ApplyParameters> parallelJobs(&boxBlurWorker, optimalThreadNumber);
 
         int jobs = parallelJobs.numberOfJobs();
         if (jobs > 1) {
@@ -410,8 +504,7 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray& ioBuffer, Uint8Clam
 
             int currentY = 0;
             for (int job = 0; job < jobs; job++) {
-                PlatformApplyParameters& params = parallelJobs.parameter(job);
-                params.filter = this;
+                ApplyParameters& params = parallelJobs.parameter(job);
 
                 int startY = !job ? 0 : currentY - extraHeight;
                 currentY += job < jobsWithExtra ? blockHeight + 1 : blockHeight;
@@ -431,6 +524,8 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray& ioBuffer, Uint8Clam
                 params.height = endY - startY;
                 params.kernelSizeX = kernelSizeX;
                 params.kernelSizeY = kernelSizeY;
+                params.isAlphaImage = isAlphaImage;
+                params.edgeMode = edgeMode;
             }
 
             parallelJobs.execute();
@@ -438,7 +533,7 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray& ioBuffer, Uint8Clam
             // Copy together the parts of the image.
             currentY = 0;
             for (int job = 1; job < jobs; job++) {
-                PlatformApplyParameters& params = parallelJobs.parameter(job);
+                ApplyParameters& params = parallelJobs.parameter(job);
                 int sourceOffset;
                 int destinationOffset;
                 int size;
@@ -458,92 +553,39 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray& ioBuffer, Uint8Clam
 #endif
 
     // The selection here eventually should happen dynamically on some platforms.
-    platformApplyGeneric(ioBuffer, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
+    boxBlurGeneric(ioBuffer, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize, isAlphaImage, edgeMode);
 }
 
-static int clampedToKernelSize(float value)
+bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
 {
-    // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
-    // inflates the absolute paint rect too much. This is compatible with Firefox' behavior.
-    unsigned size = std::max<unsigned>(2, static_cast<unsigned>(floorf(value * gaussianKernelFactor() + 0.5f)));
-    return clampTo<int>(std::min(size, static_cast<unsigned>(gMaxKernelSize)));
-}
-    
-IntSize FEGaussianBlur::calculateUnscaledKernelSize(FloatSize stdDeviation)
-{
-    ASSERT(stdDeviation.width() >= 0 && stdDeviation.height() >= 0);
-    IntSize kernelSize;
+    FilterEffect* in = inputEffects[0].get();
 
-    if (stdDeviation.width())
-        kernelSize.setWidth(clampedToKernelSize(stdDeviation.width()));
-
-    if (stdDeviation.height())
-        kernelSize.setHeight(clampedToKernelSize(stdDeviation.height()));
-
-    return kernelSize;
-}
-
-IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, FloatSize stdDeviation)
-{
-    return calculateUnscaledKernelSize(filter.scaledByFilterScale(stdDeviation));
-}
-
-IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
-{
-    auto kernelSize = calculateUnscaledKernelSize(stdDeviation);
-
-    // We take the half kernel size and multiply it with three, because we run box blur three times.
-    return { 3 * kernelSize.width() / 2, 3 * kernelSize.height() / 2 };
-}
-
-void FEGaussianBlur::determineAbsolutePaintRect(const Filter& filter)
-{
-    IntSize kernelSize = calculateKernelSize(filter, { m_stdX, m_stdY });
-
-    FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
-    // Edge modes other than 'none' do not inflate the affected paint rect.
-    if (m_edgeMode != EDGEMODE_NONE) {
-        setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
-        return;
-    }
-
-    // We take the half kernel size and multiply it with three, because we run box blur three times.
-    absolutePaintRect.inflateX(3 * kernelSize.width() * 0.5f);
-    absolutePaintRect.inflateY(3 * kernelSize.height() * 0.5f);
-
-    if (clipsToBounds())
-        absolutePaintRect.intersect(maxEffectRect());
-    else
-        absolutePaintRect.unite(maxEffectRect());
-
-    setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
-}
-
-bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
-{
-    FilterEffect* in = inputEffect(0);
-
-    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
-    setIsAlphaImage(in->isAlphaImage());
+    m_effect.setIsAlphaImage(in->isAlphaImage());
 
-    IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    auto effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
     in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
-    if (!m_stdX && !m_stdY)
+    if (!m_effect.stdDeviationX() && !m_effect.stdDeviationY())
         return true;
 
-    IntSize kernelSize = calculateKernelSize(filter, { m_stdX, m_stdY });
+    auto kernelSize = m_effect.calculateKernelSize(filter, { m_effect.stdDeviationX(), m_effect.stdDeviationY() });
 
-    IntSize paintSize = absolutePaintRect().size();
+    IntSize paintSize = m_effect.absolutePaintRect().size();
     auto tmpImageData = Uint8ClampedArray::tryCreateUninitialized(paintSize.area() * 4);
     if (!tmpImageData)
         return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
-    platformApply(destinationPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
+    applyPlatform(destinationPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize, m_effect.isAlphaImage(), m_effect.edgeMode());
     return true;
+}
+
+bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
+{
+    return FEGaussianBlurSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 IntOutsets FEGaussianBlur::outsets() const

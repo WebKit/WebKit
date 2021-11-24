@@ -41,7 +41,7 @@ namespace WebCore {
 // according to the SVG 1.1 SE light regression tests
 static const float antiAliasTreshold = 0.016f;
 
-void SpotLightSource::initPaintingData(const FilterEffect& filterEffect, PaintingData& paintingData)
+void SpotLightSource::initPaintingData(const FilterEffect& filterEffect, PaintingData& paintingData) const
 {
     m_bufferPosition.setXY(filterEffect.mapPointFromUserSpaceToBuffer(m_userSpacePosition.xy()));
     // To scale Z, map a point offset from m_userSpacePosition in the x direction by z.

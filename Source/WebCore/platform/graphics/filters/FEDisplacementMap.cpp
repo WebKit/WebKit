@@ -25,6 +25,7 @@
 #include "FEDisplacementMap.h"
 
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "PixelBuffer.h"
 #include <wtf/text/TextStream.h>
@@ -84,30 +85,48 @@ void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int in
         in->transformResultColorSpace(operatingColorSpace());
 }
 
-static inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
+// FIXME: Move the class FECompositeSoftwareApplier to separate source and header files.
+class FEDisplacementMapSoftwareApplier : public FilterEffectConcreteApplier<FEDisplacementMap> {
+    using Base = FilterEffectConcreteApplier<FEDisplacementMap>;
+
+public:
+    FEDisplacementMapSoftwareApplier(FEDisplacementMap&);
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+
+private:
+    static inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
+    {
+        const unsigned bytesPerPixel = 4;
+        return x * bytesPerPixel + y * rowBytes;
+    }
+
+    int xChannelIndex() const { return m_effect.xChannelSelector() - 1; }
+    int yChannelIndex() const { return m_effect.yChannelSelector() - 1; }
+};
+
+FEDisplacementMapSoftwareApplier::FEDisplacementMapSoftwareApplier(FEDisplacementMap& effect)
+    : Base(effect)
 {
-    const unsigned bytesPerPixel = 4;
-    return x * bytesPerPixel + y * rowBytes;
+    ASSERT(m_effect.xChannelSelector() != CHANNEL_UNKNOWN);
+    ASSERT(m_effect.yChannelSelector() != CHANNEL_UNKNOWN);
 }
 
-bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
+bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
 {
-    FilterEffect* in = inputEffect(0);
-    FilterEffect* in2 = inputEffect(1);
+    FilterEffect* in = inputEffects[0].get();
+    FilterEffect* in2 = inputEffects[1].get();
 
-    ASSERT(m_xChannelSelector != CHANNEL_UNKNOWN);
-    ASSERT(m_yChannelSelector != CHANNEL_UNKNOWN);
-
-    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
-    IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    auto effectADrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
     auto inputPixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
-    IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
+    auto effectBDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
     // The calculations using the pixel values from ‘in2’ are performed using non-premultiplied color values.
     auto displacementPixelBuffer = in2->getPixelBufferResult(AlphaPremultiplication::Unpremultiplied, effectBDrawingRect);
     
@@ -118,9 +137,9 @@ bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
     auto& displacementImage = displacementPixelBuffer->data();
     ASSERT(inputImage.length() == displacementImage.length());
 
-    IntSize paintSize = absolutePaintRect().size();
+    IntSize paintSize = m_effect.absolutePaintRect().size();
 
-    FloatSize scale = filter.scaledByFilterScale({ m_scale, m_scale });
+    FloatSize scale = filter.scaledByFilterScale({ m_effect.scale(), m_effect.scale() });
     float scaleForColorX = scale.width() / 255.0;
     float scaleForColorY = scale.height() / 255.0;
     float scaledOffsetX = 0.5 - scale.width() * 0.5;
@@ -151,6 +170,11 @@ bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
     }
 
     return true;
+}
+
+bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
+{
+    return FEDisplacementMapSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 static TextStream& operator<<(TextStream& ts, const ChannelSelectorType& type)

@@ -41,6 +41,9 @@ public:
     SourceImage& sourceImage() { return m_sourceImage; }
     void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
+    FloatRect sourceImageRect() const { return m_sourceImageRect; }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio; }
+
 private:
     FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 

@@ -26,10 +26,10 @@
 #include "FEBlend.h"
 
 #include "FEBlendNEON.h"
+#include "FilterEffectApplier.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -53,13 +53,23 @@ bool FEBlend::setBlendMode(BlendMode mode)
     return true;
 }
 
-#if !HAVE(ARM_NEON_INTRINSICS)
-bool FEBlend::platformApplySoftware(const Filter&)
-{
-    FilterEffect* in = inputEffect(0);
-    FilterEffect* in2 = inputEffect(1);
+// FIXME: Move the class FEBlendSoftwareApplier to separate source and header files.
+class FEBlendSoftwareApplier : public FilterEffectConcreteApplier<FEBlend> {
+    using Base = FilterEffectConcreteApplier<FEBlend>;
 
-    auto resultImage = imageBufferResult();
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+};
+
+#if !HAVE(ARM_NEON_INTRINSICS)
+bool FEBlendSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+{
+    FilterEffect* in = inputEffects[0].get();
+    FilterEffect* in2 = inputEffects[1].get();
+
+    auto resultImage = m_effect.imageBufferResult();
     if (!resultImage)
         return false;
 
@@ -69,11 +79,16 @@ bool FEBlend::platformApplySoftware(const Filter&)
         return false;
 
     GraphicsContext& filterContext = resultImage->context();
-    filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-    filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, { CompositeOperator::SourceOver, m_mode });
+    filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
+    filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, { CompositeOperator::SourceOver, m_effect.blendMode() });
     return true;
 }
 #endif
+
+bool FEBlend::platformApplySoftware(const Filter& filter)
+{
+    return FEBlendSoftwareApplier(*this).apply(filter, inputEffects());
+}
 
 TextStream& FEBlend::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {

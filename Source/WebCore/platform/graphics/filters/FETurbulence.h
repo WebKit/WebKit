@@ -58,64 +58,13 @@ public:
     bool setStitchTiles(bool);
 
 private:
-    static const int s_blockSize = 256;
-    static const int s_blockMask = s_blockSize - 1;
-
-    static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs.
-
-    struct PaintingData {
-        PaintingData(long paintingSeed, const IntSize& paintingSize, float baseFrequencyX, float baseFrequencyY)
-            : seed(paintingSeed)
-            , filterSize(paintingSize)
-            , baseFrequencyX(baseFrequencyX)
-            , baseFrequencyY(baseFrequencyY)
-        {
-        }
-
-        long seed;
-        int latticeSelector[2 * s_blockSize + 2];
-        float gradient[4][2 * s_blockSize + 2][2];
-        IntSize filterSize;
-        float baseFrequencyX;
-        float baseFrequencyY;
-
-        inline long random();
-    };
-
-    struct StitchData {
-        StitchData() = default;
-
-        int width { 0 }; // How much to subtract to wrap for stitching.
-        int wrapX { 0 }; // Minimum value to wrap.
-        int height { 0 };
-        int wrapY { 0 };
-    };
-
-    struct FillRegionParameters {
-        const Filter* filter;
-        FETurbulence* effect;
-        Uint8ClampedArray* pixelArray;
-        PaintingData* paintingData;
-        StitchData stitchData;
-        int startY;
-        int endY;
-    };
-
-    static void fillRegionWorker(FillRegionParameters*);
-
     FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
     void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+
     bool platformApplySoftware(const Filter&) override;
+
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
-
-    void initPaint(PaintingData&);
-    StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const;
-    ColorComponents<float, 4> noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
-    ColorComponents<uint8_t, 4> calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&) const;
-    void fillRegion(const Filter&, Uint8ClampedArray&, const PaintingData&, StitchData, int startY, int endY) const;
-
-    static void fillRegionWorker(void*);
 
     TurbulenceType m_type;
     float m_baseFrequencyX;

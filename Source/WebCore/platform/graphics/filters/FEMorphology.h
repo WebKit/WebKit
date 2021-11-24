@@ -53,29 +53,6 @@ private:
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
-    bool isDegenerate(int radiusX, int radiusY) const;
-
-    struct PaintingData {
-        const Uint8ClampedArray* srcPixelArray;
-        Uint8ClampedArray* dstPixelArray;
-        int width;
-        int height;
-        int radiusX;
-        int radiusY;
-    };
-
-    struct PlatformApplyParameters {
-        FEMorphology* filter;
-        int startY;
-        int endY;
-        const PaintingData* paintingData;
-    };
-
-    static void platformApplyWorker(PlatformApplyParameters*);
-
-    void platformApply(const PaintingData&);
-    void platformApplyGeneric(const PaintingData&, int startY, int endY);
-
     MorphologyOperatorType m_type;
     float m_radiusX;
     float m_radiusY;

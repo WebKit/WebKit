@@ -21,6 +21,7 @@
 #include "SourceGraphic.h"
 
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
 
@@ -42,15 +43,30 @@ void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-bool SourceGraphic::platformApplySoftware(const Filter& filter)
+// FIXME: Move the class SourceGraphicSoftwareApplier to separate source and header files.
+class SourceGraphicSoftwareApplier : public FilterEffectConcreteApplier<SourceGraphic> {
+    using Base = FilterEffectConcreteApplier<SourceGraphic>;
+
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+};
+
+bool SourceGraphicSoftwareApplier::apply(const Filter& filter, const FilterEffectVector&)
 {
-    ImageBuffer* resultImage = imageBufferResult();
-    ImageBuffer* sourceImage = filter.sourceImage();
+    auto resultImage = m_effect.imageBufferResult();
+    auto sourceImage = filter.sourceImage();
     if (!resultImage || !sourceImage)
         return false;
 
     resultImage->context().drawImageBuffer(*sourceImage, IntPoint());
     return true;
+}
+
+bool SourceGraphic::platformApplySoftware(const Filter& filter)
+{
+    return SourceGraphicSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 TextStream& SourceGraphic::externalRepresentation(TextStream& ts, RepresentationType) const

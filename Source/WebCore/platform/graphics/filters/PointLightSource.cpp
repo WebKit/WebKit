@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-void PointLightSource::initPaintingData(const FilterEffect& filterEffect, PaintingData&)
+void PointLightSource::initPaintingData(const FilterEffect& filterEffect, PaintingData&) const
 {
     m_bufferPosition.setXY(filterEffect.mapPointFromUserSpaceToBuffer(m_userSpacePosition.xy()));
     // To scale Z, map a point offset from m_userSpacePosition in the x direction by z.

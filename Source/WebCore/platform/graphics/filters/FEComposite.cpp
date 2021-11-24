@@ -25,6 +25,7 @@
 #include "FEComposite.h"
 
 #include "FECompositeArithmeticNEON.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
@@ -87,15 +88,61 @@ bool FEComposite::setK4(float k4)
     return true;
 }
 
-static unsigned char clampByte(int c)
+void FEComposite::determineAbsolutePaintRect(const Filter& filter)
 {
-    unsigned char buff[] = { static_cast<unsigned char>(c), 255, 0 };
+    switch (m_type) {
+    case FECOMPOSITE_OPERATOR_IN:
+    case FECOMPOSITE_OPERATOR_ATOP:
+        // For In and Atop the first effect just influences the result of
+        // the second effect. So just use the absolute paint rect of the second effect here.
+        setAbsolutePaintRect(inputEffect(1)->absolutePaintRect());
+        clipAbsolutePaintRect();
+        return;
+    case FECOMPOSITE_OPERATOR_ARITHMETIC:
+        // Arithmetic may influnce the compele filter primitive region. So we can't
+        // optimize the paint region here.
+        setAbsolutePaintRect(enclosingIntRect(maxEffectRect()));
+        return;
+    default:
+        // Take the union of both input effects.
+        FilterEffect::determineAbsolutePaintRect(filter);
+        return;
+    }
+}
+
+// FIXME: Move the class FECompositeSoftwareApplier to separate source and header files.
+class FECompositeSoftwareApplier : public FilterEffectConcreteApplier<FEComposite> {
+    using Base = FilterEffectConcreteApplier<FEComposite>;
+
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+
+private:
+    static uint8_t clampByte(int);
+
+    template <int b1, int b4>
+    static inline void computeArithmeticPixels(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
+
+    template <int b1, int b4>
+    static inline void computeArithmeticPixelsUnclamped(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
+
+    static inline void applyPlatformArithmetic(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
+
+    bool applyArithmetic(FilterEffect* in, FilterEffect* in2);
+    bool applyNonArithmetic(FilterEffect* in, FilterEffect* in2);
+};
+
+uint8_t FECompositeSoftwareApplier::clampByte(int c)
+{
+    uint8_t buff[] = { static_cast<uint8_t>(c), 255, 0 };
     unsigned uc = static_cast<unsigned>(c);
     return buff[!!(uc & ~0xff) + !!(uc & ~(~0u >> 1))];
 }
 
 template <int b1, int b4>
-static inline void computeArithmeticPixels(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareApplier::computeArithmeticPixels(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float scaledK1;
     float scaledK4;
@@ -122,7 +169,7 @@ static inline void computeArithmeticPixels(unsigned char* source, unsigned char*
 // computeArithmeticPixelsUnclamped is a faster version of computeArithmeticPixels for the common case where clamping
 // is not necessary. This enables aggresive compiler optimizations such as auto-vectorization.
 template <int b1, int b4>
-static inline void computeArithmeticPixelsUnclamped(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareApplier::computeArithmeticPixelsUnclamped(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float scaledK1;
     float scaledK4;
@@ -147,7 +194,7 @@ static inline void computeArithmeticPixelsUnclamped(unsigned char* source, unsig
 }
 
 #if !HAVE(ARM_NEON_INTRINSICS)
-static inline void arithmeticSoftware(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FECompositeSoftwareApplier::applyPlatformArithmetic(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float upperLimit = std::max(0.0f, k1) + std::max(0.0f, k2) + std::max(0.0f, k3) + k4;
     float lowerLimit = std::min(0.0f, k1) + std::min(0.0f, k2) + std::min(0.0f, k3) + k4;
@@ -180,66 +227,32 @@ static inline void arithmeticSoftware(unsigned char* source, unsigned char* dest
 }
 #endif
 
-inline void FEComposite::platformArithmeticSoftware(const Uint8ClampedArray& source, Uint8ClampedArray& destination, float k1, float k2, float k3, float k4)
+bool FECompositeSoftwareApplier::applyArithmetic(FilterEffect* in, FilterEffect* in2)
 {
-    int length = source.length();
-    ASSERT(length == static_cast<int>(destination.length()));
-    // The selection here eventually should happen dynamically.
-#if HAVE(ARM_NEON_INTRINSICS)
-    ASSERT(!(length & 0x3));
-    platformArithmeticNeon(source.data(), destination.data(), length, k1, k2, k3, k4);
-#else
-    arithmeticSoftware(source.data(), destination.data(), length, k1, k2, k3, k4);
-#endif
+    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
+    if (!destinationPixelBuffer)
+        return false;
+
+    IntRect effectADrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect.operatingColorSpace());
+    if (!sourcePixelBuffer)
+        return false;
+
+    IntRect effectBDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
+    in2->copyPixelBufferResult(*destinationPixelBuffer, effectBDrawingRect);
+
+    auto& sourcePixelArray = sourcePixelBuffer->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
+
+    int length = sourcePixelArray.length();
+    ASSERT(length == static_cast<int>(destinationPixelArray.length()));
+    applyPlatformArithmetic(sourcePixelArray.data(), destinationPixelArray.data(), length, m_effect.k1(), m_effect.k2(), m_effect.k3(), m_effect.k4());
+    return true;
 }
 
-void FEComposite::determineAbsolutePaintRect(const Filter& filter)
+bool FECompositeSoftwareApplier::applyNonArithmetic(FilterEffect* in, FilterEffect* in2)
 {
-    switch (m_type) {
-    case FECOMPOSITE_OPERATOR_IN:
-    case FECOMPOSITE_OPERATOR_ATOP:
-        // For In and Atop the first effect just influences the result of
-        // the second effect. So just use the absolute paint rect of the second effect here.
-        setAbsolutePaintRect(inputEffect(1)->absolutePaintRect());
-        clipAbsolutePaintRect();
-        return;
-    case FECOMPOSITE_OPERATOR_ARITHMETIC:
-        // Arithmetic may influnce the compele filter primitive region. So we can't
-        // optimize the paint region here.
-        setAbsolutePaintRect(enclosingIntRect(maxEffectRect()));
-        return;
-    default:
-        // Take the union of both input effects.
-        FilterEffect::determineAbsolutePaintRect(filter);
-        return;
-    }
-}
-
-bool FEComposite::platformApplySoftware(const Filter&)
-{
-    FilterEffect* in = inputEffect(0);
-    FilterEffect* in2 = inputEffect(1);
-
-    if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
-        auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
-        if (!destinationPixelBuffer)
-            return false;
-        
-        IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-        auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect, operatingColorSpace());
-        if (!sourcePixelBuffer)
-            return false;
-
-        IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
-        in2->copyPixelBufferResult(*destinationPixelBuffer, effectBDrawingRect);
-
-        auto& sourcePixelArray = sourcePixelBuffer->data();
-        auto& destinationPixelArray = destinationPixelBuffer->data();
-        platformArithmeticSoftware(sourcePixelArray, destinationPixelArray, m_k1, m_k2, m_k3, m_k4);
-        return true;
-    }
-
-    auto resultImage = imageBufferResult();
+    auto resultImage = m_effect.imageBufferResult();
     if (!resultImage)
         return false;
 
@@ -248,48 +261,73 @@ bool FEComposite::platformApplySoftware(const Filter&)
     if (!imageBuffer || !imageBuffer2)
         return false;
 
-    GraphicsContext& filterContext = resultImage->context();
+    auto& filterContext = resultImage->context();
 
-    switch (m_type) {
+    switch (m_effect.operation()) {
+    case FECOMPOSITE_OPERATOR_UNKNOWN:
+        return false;
+
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
         break;
+
     case FECOMPOSITE_OPERATOR_IN: {
         // Applies only to the intersected region.
         IntRect destinationRect = in->absolutePaintRect();
         destinationRect.intersect(in2->absolutePaintRect());
-        destinationRect.intersect(absolutePaintRect());
+        destinationRect.intersect(m_effect.absolutePaintRect());
         if (destinationRect.isEmpty())
             break;
-        IntRect adjustedDestinationRect = destinationRect - absolutePaintRect().location();
+        IntRect adjustedDestinationRect = destinationRect - m_effect.absolutePaintRect().location();
         IntRect sourceRect = destinationRect - in->absolutePaintRect().location();
         IntRect source2Rect = destinationRect - in2->absolutePaintRect().location();
         filterContext.drawImageBuffer(*imageBuffer2, FloatRect(adjustedDestinationRect), FloatRect(source2Rect));
         filterContext.drawImageBuffer(*imageBuffer, FloatRect(adjustedDestinationRect), FloatRect(sourceRect), { CompositeOperator::SourceIn });
         break;
     }
+
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()), { { }, imageBuffer2->logicalSize() }, CompositeOperator::DestinationOut);
+        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()), { { }, imageBuffer2->logicalSize() }, CompositeOperator::DestinationOut);
         break;
+
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::SourceAtop);
+        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::SourceAtop);
         break;
+
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::XOR);
+        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::XOR);
         break;
+
+    case FECOMPOSITE_OPERATOR_ARITHMETIC:
+        ASSERT_NOT_REACHED();
+        return false;
+
     case FECOMPOSITE_OPERATOR_LIGHTER:
-        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::PlusLighter);
-        break;
-    default:
+        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::PlusLighter);
         break;
     }
 
     return true;
+}
+
+bool FECompositeSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+{
+    FilterEffect* in = inputEffects[0].get();
+    FilterEffect* in2 = inputEffects[1].get();
+
+    if (m_effect.operation() == FECOMPOSITE_OPERATOR_ARITHMETIC)
+        return applyArithmetic(in, in2);
+    return applyNonArithmetic(in, in2);
+}
+
+bool FEComposite::platformApplySoftware(const Filter& filter)
+{
+    return FECompositeSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type)

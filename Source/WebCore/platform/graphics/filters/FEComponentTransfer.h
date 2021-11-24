@@ -61,16 +61,6 @@ public:
 private:
     FEComponentTransfer(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
-    using LookupTable = std::array<uint8_t, 256>;
-
-    static void computeIdentityTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeTabularTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeDiscreteTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeLinearTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeGammaTable(LookupTable&, const ComponentTransferFunction&);
-
-    void computeLookupTables(LookupTable& redTable, LookupTable& greenTable, LookupTable& blueTable, LookupTable& alphaTable);
-
     bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;

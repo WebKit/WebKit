@@ -46,29 +46,13 @@ public:
 private:
     FEGaussianBlur(float x, float y, EdgeModeType);
 
-    static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
-
-    struct PlatformApplyParameters {
-        FEGaussianBlur* filter;
-        RefPtr<Uint8ClampedArray> ioPixelArray;
-        RefPtr<Uint8ClampedArray> tmpPixelArray;
-        int width;
-        int height;
-        unsigned kernelSizeX;
-        unsigned kernelSizeY;
-    };
-
     void determineAbsolutePaintRect(const Filter&) override;
-
-    bool platformApplySoftware(const Filter&) override;
 
     IntOutsets outsets() const override;
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    bool platformApplySoftware(const Filter&) override;
 
-    static void platformApplyWorker(PlatformApplyParameters*);
-    void platformApply(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
-    void platformApplyGeneric(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     float m_stdX;
     float m_stdY;

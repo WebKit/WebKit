@@ -22,6 +22,7 @@
 
 #include "Color.h"
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
 
@@ -45,23 +46,40 @@ void SourceAlpha::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(inputEffect(0)->absolutePaintRect());
 }
 
-bool SourceAlpha::platformApplySoftware(const Filter&)
+// FIXME: Move the class SourceAlphaSoftwareApplier to separate source and header files.
+class SourceAlphaSoftwareApplier : public FilterEffectConcreteApplier<SourceAlpha> {
+    using Base = FilterEffectConcreteApplier<SourceAlpha>;
+
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+};
+
+bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
 {
-    ImageBuffer* resultImage = imageBufferResult();
+    FilterEffect* in = inputEffects[0].get();
+
+    auto resultImage = m_effect.imageBufferResult();
     if (!resultImage)
         return false;
     
-    ImageBuffer* imageBuffer = inputEffect(0)->imageBufferResult();
+    auto imageBuffer = in->imageBufferResult();
     if (!imageBuffer)
         return false;
 
-    FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
+    FloatRect imageRect(FloatPoint(), m_effect.absolutePaintRect().size());
     GraphicsContext& filterContext = resultImage->context();
 
     filterContext.fillRect(imageRect, Color::black);
     filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeOperator::DestinationIn);
 
     return true;
+}
+
+bool SourceAlpha::platformApplySoftware(const Filter& filter)
+{
+    return SourceAlphaSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationType) const

@@ -28,6 +28,7 @@
 #include "ColorComponents.h"
 #include "ColorTypes.h"
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
 #include <wtf/Vector.h>
@@ -83,23 +84,48 @@ void FEMorphology::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-static inline int pixelArrayIndex(int x, int y, int width)
-{
-    return (y * width + x) * 4;
-}
+// FIXME: Move the class FEMorphologySoftwareApplier to separate source and header files.
+class FEMorphologySoftwareApplier : public FilterEffectConcreteApplier<FEMorphology> {
+    using Base = FilterEffectConcreteApplier<FEMorphology>;
 
-inline ColorComponents<uint8_t, 4> makeColorComponentsfromPixelValue(PackedColor::RGBA pixel)
-{
-    return asColorComponents(asSRGBA(pixel));
-}
+public:
+    using Base::Base;
 
-inline PackedColor::RGBA makePixelValueFromColorComponents(const ColorComponents<uint8_t, 4>& components)
-{
-    return PackedColor::RGBA { makeFromComponents<SRGBA<uint8_t>>(components) };
-}
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
 
-template<MorphologyOperatorType type>
-ALWAYS_INLINE ColorComponents<uint8_t, 4> minOrMax(const ColorComponents<uint8_t, 4>& a, const ColorComponents<uint8_t, 4>& b)
+private:
+    using ColumnExtrema = Vector<ColorComponents<uint8_t, 4>, 16>;
+
+    struct PaintingData {
+        MorphologyOperatorType type;
+        int radiusX;
+        int radiusY;
+        const Uint8ClampedArray* srcPixelArray;
+        Uint8ClampedArray* dstPixelArray;
+        int width;
+        int height;
+    };
+
+    struct ApplyParameters {
+        const PaintingData* paintingData;
+        int startY;
+        int endY;
+    };
+
+    static inline int pixelArrayIndex(int x, int y, int width) { return (y * width + x) * 4; }
+    static inline PackedColor::RGBA makePixelValueFromColorComponents(const ColorComponents<uint8_t, 4>& components) { return PackedColor::RGBA { makeFromComponents<SRGBA<uint8_t>>(components) }; }
+
+    static inline ColorComponents<uint8_t, 4> makeColorComponentsfromPixelValue(PackedColor::RGBA pixel) { return asColorComponents(asSRGBA(pixel)); }
+    static inline ColorComponents<uint8_t, 4> minOrMax(const ColorComponents<uint8_t, 4>& a, const ColorComponents<uint8_t, 4>& b, MorphologyOperatorType);
+    static inline ColorComponents<uint8_t, 4> columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width, MorphologyOperatorType);
+    static inline ColorComponents<uint8_t, 4> kernelExtremum(const ColumnExtrema& kernel, MorphologyOperatorType);
+
+    static void applyPlatformGeneric(const PaintingData&, int startY, int endY);
+    static void applyPlatformWorker(ApplyParameters*);
+    static void applyPlatform(const PaintingData&);
+};
+
+inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::minOrMax(const ColorComponents<uint8_t, 4>& a, const ColorComponents<uint8_t, 4>& b, MorphologyOperatorType type)
 {
     if (type == FEMORPHOLOGY_OPERATOR_ERODE)
         return perComponentMin(a, b);
@@ -107,47 +133,27 @@ ALWAYS_INLINE ColorComponents<uint8_t, 4> minOrMax(const ColorComponents<uint8_t
     return perComponentMax(a, b);
 }
 
-template<MorphologyOperatorType type>
-ALWAYS_INLINE ColorComponents<uint8_t, 4> columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width)
+inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width, MorphologyOperatorType type)
 {
     auto extremum = makeColorComponentsfromPixelValue(PackedColor::RGBA { *reinterpret_cast<const unsigned*>(srcPixelArray.data() + pixelArrayIndex(x, yStart, width)) });
 
     for (int y = yStart + 1; y < yEnd; ++y) {
         auto pixel = makeColorComponentsfromPixelValue(PackedColor::RGBA { *reinterpret_cast<const unsigned*>(srcPixelArray.data() + pixelArrayIndex(x, y, width)) });
-        extremum = minOrMax<type>(extremum, pixel);
+        extremum = minOrMax(extremum, pixel, type);
     }
     return extremum;
 }
 
-ALWAYS_INLINE ColorComponents<uint8_t, 4> columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width, MorphologyOperatorType type)
-{
-    if (type == FEMORPHOLOGY_OPERATOR_ERODE)
-        return columnExtremum<FEMORPHOLOGY_OPERATOR_ERODE>(srcPixelArray, x, yStart, yEnd, width);
-
-    return columnExtremum<FEMORPHOLOGY_OPERATOR_DILATE>(srcPixelArray, x, yStart, yEnd, width);
-}
-
-using ColumnExtrema = Vector<ColorComponents<uint8_t, 4>, 16>;
-
-template<MorphologyOperatorType type>
-ALWAYS_INLINE ColorComponents<uint8_t, 4> kernelExtremum(const ColumnExtrema& kernel)
+inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::kernelExtremum(const ColumnExtrema& kernel, MorphologyOperatorType type)
 {
     auto extremum = kernel[0];
     for (size_t i = 1; i < kernel.size(); ++i)
-        extremum = minOrMax<type>(extremum, kernel[i]);
+        extremum = minOrMax(extremum, kernel[i], type);
 
     return extremum;
 }
 
-ALWAYS_INLINE ColorComponents<uint8_t, 4> kernelExtremum(const ColumnExtrema& kernel, MorphologyOperatorType type)
-{
-    if (type == FEMORPHOLOGY_OPERATOR_ERODE)
-        return kernelExtremum<FEMORPHOLOGY_OPERATOR_ERODE>(kernel);
-
-    return kernelExtremum<FEMORPHOLOGY_OPERATOR_DILATE>(kernel);
-}
-
-void FEMorphology::platformApplyGeneric(const PaintingData& paintingData, int startY, int endY)
+void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paintingData, int startY, int endY)
 {
     ASSERT(endY > startY);
 
@@ -173,28 +179,28 @@ void FEMorphology::platformApplyGeneric(const PaintingData& paintingData, int st
 
         // We start at the left edge, so compute extreme for the radiusX columns.
         for (int x = 0; x < radiusX; ++x)
-            extrema.append(columnExtremum(srcPixelArray, x, yRadiusStart, yRadiusEnd, width, m_type));
+            extrema.append(columnExtremum(srcPixelArray, x, yRadiusStart, yRadiusEnd, width, paintingData.type));
 
         // Kernel is filled, get extrema of next column
         for (int x = 0; x < width; ++x) {
             if (x < width - radiusX)
-                extrema.append(columnExtremum(srcPixelArray, x + radiusX, yRadiusStart, yRadiusEnd, width, m_type));
+                extrema.append(columnExtremum(srcPixelArray, x + radiusX, yRadiusStart, yRadiusEnd, width, paintingData.type));
 
             if (x > radiusX)
                 extrema.remove(0);
 
             unsigned* destPixel = reinterpret_cast<unsigned*>(dstPixelArray.data() + pixelArrayIndex(x, y, width));
-            *destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, m_type)).value;
+            *destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, paintingData.type)).value;
         }
     }
 }
 
-void FEMorphology::platformApplyWorker(PlatformApplyParameters* param)
+void FEMorphologySoftwareApplier::applyPlatformWorker(ApplyParameters* params)
 {
-    param->filter->platformApplyGeneric(*param->paintingData, param->startY, param->endY);
+    applyPlatformGeneric(*params->paintingData, params->startY, params->endY);
 }
 
-void FEMorphology::platformApply(const PaintingData& paintingData)
+void FEMorphologySoftwareApplier::applyPlatform(const PaintingData& paintingData)
 {
     // Empirically, runtime is approximately linear over reasonable kernel sizes with a slope of about 0.65.
     float kernelFactor = sqrt(paintingData.radiusX * paintingData.radiusY) * 0.65;
@@ -204,7 +210,7 @@ void FEMorphology::platformApply(const PaintingData& paintingData)
     unsigned maxNumThreads = paintingData.height / 8;
     unsigned optimalThreadNumber = std::min<unsigned>((paintingData.width * paintingData.height * kernelFactor) / minimalArea, maxNumThreads);
     if (optimalThreadNumber > 1) {
-        ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
+        ParallelJobs<ApplyParameters> parallelJobs(&applyPlatformWorker, optimalThreadNumber);
         auto numOfThreads = parallelJobs.numberOfJobs();
         if (numOfThreads > 1) {
             // Split the job into "jobSize"-sized jobs but there a few jobs that need to be slightly larger since
@@ -213,8 +219,7 @@ void FEMorphology::platformApply(const PaintingData& paintingData)
             int jobsWithExtra = paintingData.height % numOfThreads;
             int currentY = 0;
             for (int job = numOfThreads - 1; job >= 0; --job) {
-                PlatformApplyParameters& param = parallelJobs.parameter(job);
-                param.filter = this;
+                ApplyParameters& param = parallelJobs.parameter(job);
                 param.startY = currentY;
                 currentY += job < jobsWithExtra ? jobSize + 1 : jobSize;
                 param.endY = currentY;
@@ -226,33 +231,32 @@ void FEMorphology::platformApply(const PaintingData& paintingData)
         // Fallback to single thread model
     }
 
-    platformApplyGeneric(paintingData, 0, paintingData.height);
+    applyPlatformGeneric(paintingData, 0, paintingData.height);
 }
 
-bool FEMorphology::isDegenerate(int radiusX, int radiusY) const
+bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
 {
-    return radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY);
-}
+    FilterEffect* in = inputEffects[0].get();
 
-bool FEMorphology::platformApplySoftware(const Filter& filter)
-{
-    FilterEffect* in = inputEffect(0);
-
-    auto destinationPixelBuffer = pixelBufferResult(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
-    setIsAlphaImage(in->isAlphaImage());
+    m_effect.setIsAlphaImage(in->isAlphaImage());
 
-    IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    auto isDegenerate = [](int radiusX, int radiusY) -> bool {
+        return radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY);
+    };
 
-    IntSize radius = flooredIntSize(FloatSize(m_radiusX, m_radiusY));
+    IntRect effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    IntSize radius = flooredIntSize(FloatSize(m_effect.radiusX(), m_effect.radiusY()));
+
     if (isDegenerate(radius.width(), radius.height())) {
         in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
-    radius = flooredIntSize(filter.scaledByFilterScale({ m_radiusX, m_radiusY }));
+    radius = flooredIntSize(filter.scaledByFilterScale({ m_effect.radiusX(), m_effect.radiusY() }));
     int radiusX = std::min(effectDrawingRect.width() - 1, radius.width());
     int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
 
@@ -261,7 +265,7 @@ bool FEMorphology::platformApplySoftware(const Filter& filter)
         return true;
     }
 
-    auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectDrawingRect, operatingColorSpace());
+    auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect.operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
@@ -269,6 +273,7 @@ bool FEMorphology::platformApplySoftware(const Filter& filter)
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
     PaintingData paintingData;
+    paintingData.type = m_effect.morphologyOperator();
     paintingData.srcPixelArray = &sourcePixelArray;
     paintingData.dstPixelArray = &destinationPixelArray;
     paintingData.width = ceilf(effectDrawingRect.width());
@@ -276,8 +281,13 @@ bool FEMorphology::platformApplySoftware(const Filter& filter)
     paintingData.radiusX = ceilf(radiusX);
     paintingData.radiusY = ceilf(radiusY);
 
-    platformApply(paintingData);
+    applyPlatform(paintingData);
     return true;
+}
+
+bool FEMorphology::platformApplySoftware(const Filter& filter)
+{
+    return FEMorphologySoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type)

@@ -50,7 +50,7 @@ public:
     bool setSpecularExponent(float) override;
     bool setLimitingConeAngle(float) override;
 
-    void initPaintingData(const FilterEffect&, PaintingData&) override;
+    void initPaintingData(const FilterEffect&, PaintingData&) const override;
     ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
@@ -68,7 +68,7 @@ private:
     FloatPoint3D m_userSpacePosition;
     FloatPoint3D m_userSpacePointsAt;
 
-    FloatPoint3D m_bufferPosition;
+    mutable FloatPoint3D m_bufferPosition;
 
     float m_specularExponent;
     float m_limitingConeAngle;

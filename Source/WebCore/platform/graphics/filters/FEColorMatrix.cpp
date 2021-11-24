@@ -23,6 +23,7 @@
 #include "config.h"
 #include "FEColorMatrix.h"
 
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
@@ -63,32 +64,103 @@ bool FEColorMatrix::setValues(const Vector<float> &values)
     return true;
 }
 
-inline void matrix(float& red, float& green, float& blue, float& alpha, const Vector<float>& values)
+void FEColorMatrix::calculateSaturateComponents(float* components, float value)
+{
+    components[0] = (0.213 + 0.787 * value);
+    components[1] = (0.715 - 0.715 * value);
+    components[2] = (0.072 - 0.072 * value);
+    components[3] = (0.213 - 0.213 * value);
+    components[4] = (0.715 + 0.285 * value);
+    components[5] = (0.072 - 0.072 * value);
+    components[6] = (0.213 - 0.213 * value);
+    components[7] = (0.715 - 0.715 * value);
+    components[8] = (0.072 + 0.928 * value);
+}
+
+void FEColorMatrix::calculateHueRotateComponents(float* components, float value)
+{
+    float cosHue = cos(value * piFloat / 180);
+    float sinHue = sin(value * piFloat / 180);
+    components[0] = 0.213 + cosHue * 0.787 - sinHue * 0.213;
+    components[1] = 0.715 - cosHue * 0.715 - sinHue * 0.715;
+    components[2] = 0.072 - cosHue * 0.072 + sinHue * 0.928;
+    components[3] = 0.213 - cosHue * 0.213 + sinHue * 0.143;
+    components[4] = 0.715 + cosHue * 0.285 + sinHue * 0.140;
+    components[5] = 0.072 - cosHue * 0.072 - sinHue * 0.283;
+    components[6] = 0.213 - cosHue * 0.213 - sinHue * 0.787;
+    components[7] = 0.715 - cosHue * 0.715 + sinHue * 0.715;
+    components[8] = 0.072 + cosHue * 0.928 + sinHue * 0.072;
+}
+
+Vector<float> FEColorMatrix::normalizedFloats(const Vector<float>& values)
+{
+    Vector<float> normalizedValues(values.size());
+    for (size_t i = 0; i < values.size(); ++i)
+        normalizedValues[i] = normalizedFloat(values[i]);
+    return normalizedValues;
+}
+
+// FIXME: Move the class FEColorMatrixSoftwareApplier to separate source and header files.
+class FEColorMatrixSoftwareApplier : public FilterEffectConcreteApplier<FEColorMatrix> {
+    using Base = FilterEffectConcreteApplier<FEColorMatrix>;
+
+public:
+    FEColorMatrixSoftwareApplier(FEColorMatrix&);
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+
+private:
+    inline void matrix(float& red, float& green, float& blue, float& alpha) const;
+    inline void saturateAndHueRotate(float& red, float& green, float& blue) const;
+    inline void luminance(float& red, float& green, float& blue, float& alpha) const;
+
+#if USE(ACCELERATE)
+    void applyPlatformAccelerated(PixelBuffer&) const;
+#endif
+    void applyPlatformUnaccelerated(PixelBuffer&) const;
+
+    void applyPlatform(PixelBuffer&) const;
+
+    float m_components[9];
+};
+
+FEColorMatrixSoftwareApplier::FEColorMatrixSoftwareApplier(FEColorMatrix& effect)
+    : Base(effect)
+{
+    if (m_effect.type() == FECOLORMATRIX_TYPE_SATURATE)
+        FEColorMatrix::calculateSaturateComponents(m_components, m_effect.values()[0]);
+    else if (m_effect.type() == FECOLORMATRIX_TYPE_HUEROTATE)
+        FEColorMatrix::calculateHueRotateComponents(m_components, m_effect.values()[0]);
+}
+
+inline void FEColorMatrixSoftwareApplier::matrix(float& red, float& green, float& blue, float& alpha) const
 {
     float r = red;
     float g = green;
     float b = blue;
     float a = alpha;
 
-    red     = values[ 0] * r + values[ 1] * g + values[ 2] * b + values[ 3] * a + values[ 4] * 255;
-    green   = values[ 5] * r + values[ 6] * g + values [7] * b + values[ 8] * a + values[ 9] * 255;
-    blue    = values[10] * r + values[11] * g + values[12] * b + values[13] * a + values[14] * 255;
-    alpha   = values[15] * r + values[16] * g + values[17] * b + values[18] * a + values[19] * 255;
+    const auto& values = m_effect.values();
+
+    red   = values[ 0] * r + values[ 1] * g + values[ 2] * b + values[ 3] * a + values[ 4] * 255;
+    green = values[ 5] * r + values[ 6] * g + values[ 7] * b + values[ 8] * a + values[ 9] * 255;
+    blue  = values[10] * r + values[11] * g + values[12] * b + values[13] * a + values[14] * 255;
+    alpha = values[15] * r + values[16] * g + values[17] * b + values[18] * a + values[19] * 255;
 }
 
-inline void saturateAndHueRotate(float& red, float& green, float& blue, const float* components)
+inline void FEColorMatrixSoftwareApplier::saturateAndHueRotate(float& red, float& green, float& blue) const
 {
     float r = red;
     float g = green;
     float b = blue;
 
-    red     = r * components[0] + g * components[1] + b * components[2];
-    green   = r * components[3] + g * components[4] + b * components[5];
-    blue    = r * components[6] + g * components[7] + b * components[8];
+    red     = r * m_components[0] + g * m_components[1] + b * m_components[2];
+    green   = r * m_components[3] + g * m_components[4] + b * m_components[5];
+    blue    = r * m_components[6] + g * m_components[7] + b * m_components[8];
 }
 
 // FIXME: this should use the luminance(...) function in ColorLuminance.h.
-inline void luminance(float& red, float& green, float& blue, float& alpha)
+inline void FEColorMatrixSoftwareApplier::luminance(float& red, float& green, float& blue, float& alpha) const
 {
     alpha = 0.2125 * red + 0.7154 * green + 0.0721 * blue;
     red = 0;
@@ -97,18 +169,13 @@ inline void luminance(float& red, float& green, float& blue, float& alpha)
 }
 
 #if USE(ACCELERATE)
-template<ColorMatrixType filterType>
-bool effectApplyAccelerated(Uint8ClampedArray& pixelArray, const Vector<float>& values, float components[9], IntSize bufferSize)
+void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBuffer) const
 {
+    auto& pixelArray = pixelBuffer.data();
+    auto bufferSize = pixelBuffer.size();
+
     ASSERT(pixelArray.length() == bufferSize.area() * 4);
     
-    if (filterType == FECOLORMATRIX_TYPE_MATRIX) {
-        // vImageMatrixMultiply_ARGB8888 takes a 4x4 matrix, if any value in the last column of the FEColorMatrix 5x4 matrix
-        // is not zero, fall back to non-vImage code.
-        if (values[4] != 0 || values[9] != 0 || values[14] != 0 || values[19] != 0)
-            return false;
-    }
-
     const int32_t divisor = 256;
     uint8_t* data = pixelArray.data();
 
@@ -124,8 +191,13 @@ bool effectApplyAccelerated(Uint8ClampedArray& pixelArray, const Vector<float>& 
     dest.rowBytes = bufferSize.width() * 4;
     dest.data = data;
 
-    switch (filterType) {
+    switch (m_effect.type()) {
+    case FECOLORMATRIX_TYPE_UNKNOWN:
+        break;
+
     case FECOLORMATRIX_TYPE_MATRIX: {
+        const auto& values = m_effect.values();
+
         const int16_t matrix[4 * 4] = {
             static_cast<int16_t>(roundf(values[ 0] * divisor)),
             static_cast<int16_t>(roundf(values[ 5] * divisor)),
@@ -154,19 +226,19 @@ bool effectApplyAccelerated(Uint8ClampedArray& pixelArray, const Vector<float>& 
     case FECOLORMATRIX_TYPE_SATURATE:
     case FECOLORMATRIX_TYPE_HUEROTATE: {
         const int16_t matrix[4 * 4] = {
-            static_cast<int16_t>(roundf(components[0] * divisor)),
-            static_cast<int16_t>(roundf(components[3] * divisor)),
-            static_cast<int16_t>(roundf(components[6] * divisor)),
+            static_cast<int16_t>(roundf(m_components[0] * divisor)),
+            static_cast<int16_t>(roundf(m_components[3] * divisor)),
+            static_cast<int16_t>(roundf(m_components[6] * divisor)),
             0,
 
-            static_cast<int16_t>(roundf(components[1] * divisor)),
-            static_cast<int16_t>(roundf(components[4] * divisor)),
-            static_cast<int16_t>(roundf(components[7] * divisor)),
+            static_cast<int16_t>(roundf(m_components[1] * divisor)),
+            static_cast<int16_t>(roundf(m_components[4] * divisor)),
+            static_cast<int16_t>(roundf(m_components[7] * divisor)),
             0,
 
-            static_cast<int16_t>(roundf(components[2] * divisor)),
-            static_cast<int16_t>(roundf(components[5] * divisor)),
-            static_cast<int16_t>(roundf(components[8] * divisor)),
+            static_cast<int16_t>(roundf(m_components[2] * divisor)),
+            static_cast<int16_t>(roundf(m_components[5] * divisor)),
+            static_cast<int16_t>(roundf(m_components[8] * divisor)),
             0,
 
             0,
@@ -203,38 +275,25 @@ bool effectApplyAccelerated(Uint8ClampedArray& pixelArray, const Vector<float>& 
         break;
     }
     }
-    
-    return true;
 }
 #endif
 
-template<ColorMatrixType filterType>
-void effectType(Uint8ClampedArray& pixelArray, const Vector<float>& values, IntSize bufferSize)
+void FEColorMatrixSoftwareApplier::applyPlatformUnaccelerated(PixelBuffer& pixelBuffer) const
 {
-    float components[9];
-
-    if (filterType == FECOLORMATRIX_TYPE_SATURATE)
-        FEColorMatrix::calculateSaturateComponents(components, values[0]);
-    else if (filterType == FECOLORMATRIX_TYPE_HUEROTATE)
-        FEColorMatrix::calculateHueRotateComponents(components, values[0]);
-
+    auto& pixelArray = pixelBuffer.data();
     unsigned pixelArrayLength = pixelArray.length();
 
-#if USE(ACCELERATE)
-    if (effectApplyAccelerated<filterType>(pixelArray, values, components, bufferSize))
-        return;
-#else
-    UNUSED_PARAM(bufferSize);
-#endif
+    switch (m_effect.type()) {
+    case FECOLORMATRIX_TYPE_UNKNOWN:
+        break;
 
-    switch (filterType) {
     case FECOLORMATRIX_TYPE_MATRIX:
         for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
             float red = pixelArray.item(pixelByteOffset);
             float green = pixelArray.item(pixelByteOffset + 1);
             float blue = pixelArray.item(pixelByteOffset + 2);
             float alpha = pixelArray.item(pixelByteOffset + 3);
-            matrix(red, green, blue, alpha, values);
+            matrix(red, green, blue, alpha);
             pixelArray.set(pixelByteOffset, red);
             pixelArray.set(pixelByteOffset + 1, green);
             pixelArray.set(pixelByteOffset + 2, blue);
@@ -249,7 +308,7 @@ void effectType(Uint8ClampedArray& pixelArray, const Vector<float>& values, IntS
             float green = pixelArray.item(pixelByteOffset + 1);
             float blue = pixelArray.item(pixelByteOffset + 2);
             float alpha = pixelArray.item(pixelByteOffset + 3);
-            saturateAndHueRotate(red, green, blue, components);
+            saturateAndHueRotate(red, green, blue);
             pixelArray.set(pixelByteOffset, red);
             pixelArray.set(pixelByteOffset + 1, green);
             pixelArray.set(pixelByteOffset + 2, blue);
@@ -273,49 +332,50 @@ void effectType(Uint8ClampedArray& pixelArray, const Vector<float>& values, IntS
     }
 }
 
-bool FEColorMatrix::platformApplySoftware(const Filter&)
+void FEColorMatrixSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
 {
-    FilterEffect* in = inputEffect(0);
+#if USE(ACCELERATE)
+    const auto& values = m_effect.values();
 
-    auto resultImage = imageBufferResult();
+    // vImageMatrixMultiply_ARGB8888 takes a 4x4 matrix, if any value in the last column of the FEColorMatrix 5x4 matrix
+    // is not zero, fall back to non-vImage code.
+    if (m_effect.type() != FECOLORMATRIX_TYPE_MATRIX || (!values[4] && !values[9] && !values[14] && !values[19])) {
+        applyPlatformAccelerated(pixelBuffer);
+        return;
+    }
+#endif
+    applyPlatformUnaccelerated(pixelBuffer);
+}
+
+bool FEColorMatrixSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+{
+    auto in = inputEffects[0].get();
+
+    auto resultImage = m_effect.imageBufferResult();
     if (!resultImage)
         return false;
 
     auto inBuffer = in->imageBufferResult();
     if (inBuffer)
-        resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
+        resultImage->context().drawImageBuffer(*inBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, resultColorSpace() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, m_effect.resultColorSpace() };
     IntRect imageRect(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, imageRect);
     if (!pixelBuffer)
         return false;
 
-    auto& pixelArray = pixelBuffer->data();
-    auto pixelArrayDimensions = pixelBuffer->size();
+    if (m_effect.type() == FECOLORMATRIX_TYPE_LUMINANCETOALPHA)
+        m_effect.setIsAlphaImage(true);
 
-    Vector<float> values = normalizedFloats(m_values);
-    
-    switch (m_type) {
-    case FECOLORMATRIX_TYPE_UNKNOWN:
-        break;
-    case FECOLORMATRIX_TYPE_MATRIX:
-        effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray, values, pixelArrayDimensions);
-        break;
-    case FECOLORMATRIX_TYPE_SATURATE: 
-        effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray, values, pixelArrayDimensions);
-        break;
-    case FECOLORMATRIX_TYPE_HUEROTATE:
-        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray, values, pixelArrayDimensions);
-        break;
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray, values, pixelArrayDimensions);
-        setIsAlphaImage(true);
-        break;
-    }
-
+    applyPlatform(*pixelBuffer);
     resultImage->putPixelBuffer(*pixelBuffer, imageRect);
     return true;
+}
+
+bool FEColorMatrix::platformApplySoftware(const Filter& filter)
+{
+    return FEColorMatrixSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

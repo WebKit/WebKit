@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FEMerge.h"
 
+#include "FilterEffectApplier.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
@@ -38,23 +39,39 @@ FEMerge::FEMerge()
 {
 }
 
-bool FEMerge::platformApplySoftware(const Filter&)
-{
-    unsigned size = numberOfEffectInputs();
-    ASSERT(size > 0);
+// FIXME: Move the class FEMergeSoftwareApplier to separate source and header files.
+class FEMergeSoftwareApplier : public FilterEffectConcreteApplier<FEMerge> {
+    using Base = FilterEffectConcreteApplier<FEMerge>;
 
-    auto resultImage = imageBufferResult();
+public:
+    using Base::Base;
+
+    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+};
+
+bool FEMergeSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+{
+    ASSERT(inputEffects.size() > 0);
+
+    auto resultImage = m_effect.imageBufferResult();
     if (!resultImage)
         return false;
 
-    GraphicsContext& filterContext = resultImage->context();
-    for (unsigned i = 0; i < size; ++i) {
-        FilterEffect* in = inputEffect(i);
-        if (auto inBuffer = in->imageBufferResult())
-            filterContext.drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
+    auto& filterContext = resultImage->context();
+
+    for (auto& in : inputEffects) {
+        auto inBuffer = in->imageBufferResult();
+        if (!inBuffer)
+            continue;
+        filterContext.drawImageBuffer(*inBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
     }
 
     return true;
+}
+
+bool FEMerge::platformApplySoftware(const Filter& filter)
+{
+    return FEMergeSoftwareApplier(*this).apply(filter, inputEffects());
 }
 
 TextStream& FEMerge::externalRepresentation(TextStream& ts, RepresentationType representation) const
