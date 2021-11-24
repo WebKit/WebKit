@@ -1681,7 +1681,7 @@ void FontCache::prewarmGlobally()
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
         return;
 
-    Vector<String> families = std::initializer_list<String> {
+    Vector<String> families {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         ".SF NS Text"_s,
         ".SF NS Display"_s,
