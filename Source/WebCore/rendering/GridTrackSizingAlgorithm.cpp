@@ -1165,6 +1165,7 @@ void GridTrackSizingAlgorithm::initializeTrackSizes()
     ASSERT(m_flexibleSizedTracksIndex.isEmpty());
     ASSERT(m_autoSizedTracksForStretchIndex.isEmpty());
     ASSERT(!m_hasPercentSizedRowsIndefiniteHeight);
+    ASSERT(!m_hasFlexibleMaxTrackBreadth);
 
     Vector<GridTrack>& allTracks = tracks(m_direction);
     const bool indefiniteHeight = m_direction == ForRows && !m_renderGrid->hasDefiniteLogicalHeight();
@@ -1187,9 +1188,14 @@ void GridTrackSizingAlgorithm::initializeTrackSizes()
         if (trackSize.hasAutoMaxTrackBreadth() && !trackSize.isFitContent())
             m_autoSizedTracksForStretchIndex.append(i);
 
-        if (!m_hasPercentSizedRowsIndefiniteHeight && indefiniteHeight) {
+        if (indefiniteHeight) {
             auto& rawTrackSize = rawGridTrackSize(m_direction, i);
-            if (rawTrackSize.minTrackBreadth().isPercentage() || rawTrackSize.maxTrackBreadth().isPercentage())
+            // Set the flag for repeating the track sizing algorithm. For flexible tracks, as per spec https://drafts.csswg.org/css-grid/#algo-flex-tracks,
+            // in clause "if the free space is an indefinite length:", it states that "If using this flex fraction would cause the grid to be smaller than
+            // the grid container’s min-width/height (or larger than the grid container’s max-width/height), then redo this step".
+            if (!m_hasFlexibleMaxTrackBreadth && rawTrackSize.maxTrackBreadth().isFlex())
+                m_hasFlexibleMaxTrackBreadth = true;
+            if (!m_hasPercentSizedRowsIndefiniteHeight && (rawTrackSize.minTrackBreadth().isPercentage() || rawTrackSize.maxTrackBreadth().isPercentage()))
                 m_hasPercentSizedRowsIndefiniteHeight = true;
         }
     }
@@ -1361,6 +1367,7 @@ void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigne
 
     m_needsSetup = false;
     m_hasPercentSizedRowsIndefiniteHeight = false;
+    m_hasFlexibleMaxTrackBreadth = false;
 
     computeBaselineAlignmentContext();
 }
@@ -1432,6 +1439,7 @@ void GridTrackSizingAlgorithm::reset()
     setAvailableSpace(ForRows, std::nullopt);
     setAvailableSpace(ForColumns, std::nullopt);
     m_hasPercentSizedRowsIndefiniteHeight = false;
+    m_hasFlexibleMaxTrackBreadth = false;
 }
 
 #if ASSERT_ENABLED

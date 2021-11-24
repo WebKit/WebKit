@@ -207,6 +207,7 @@ private:
     bool m_hasAnyOrthogonalItem {false};
     bool m_hasAspectRatioBlockSizeDependentItem { false };
     bool m_baselineItemsCached {false};
+    bool m_hasAnyBaselineAlignmentItem { false };
 };
 
 } // namespace WebCore

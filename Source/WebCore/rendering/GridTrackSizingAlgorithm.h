@@ -143,6 +143,8 @@ public:
     LayoutUnit computeTrackBasedSize() const;
 
     bool hasAnyPercentSizedRowsIndefiniteHeight() const { return m_hasPercentSizedRowsIndefiniteHeight; }
+    bool hasAnyFlexibleMaxTrackBreadth() const { return m_hasFlexibleMaxTrackBreadth; }
+    bool hasAnyBaselineAlignmentItem() const { return !m_columnBaselineItemsMap.isEmpty() || !m_rowBaselineItemsMap.isEmpty(); }
 
 #if ASSERT_ENABLED
     bool tracksAreWiderThanMinTrackBreadth() const;
@@ -199,6 +201,7 @@ private:
     bool wasSetup() const { return !!m_strategy; }
     bool m_needsSetup { true };
     bool m_hasPercentSizedRowsIndefiniteHeight { false };
+    bool m_hasFlexibleMaxTrackBreadth { false };
     std::optional<LayoutUnit> m_availableSpaceRows;
     std::optional<LayoutUnit> m_availableSpaceColumns;
 
