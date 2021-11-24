@@ -251,6 +251,7 @@
     macro(toLocaleString) \
     macro(toPrecision) \
     macro(toString) \
+    macro(toTemporalInstant) \
     macro(trailingZeroDisplay) \
     macro(type) \
     macro(uid) \

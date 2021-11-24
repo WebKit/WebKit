@@ -1,3 +1,15 @@
+2021-11-24  Aditi Singh  <asingh@igalia.com>
+
+        [JSC] Implement Date.prototype.toTemporalInstant()
+        https://bugs.webkit.org/show_bug.cgi?id=232075
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-11-23  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, mid November 2021 edition

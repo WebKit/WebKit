@@ -34,6 +34,7 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSString.h"
+#include "TemporalInstant.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -79,6 +80,7 @@ static JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToTimeString);
 static JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToUTCString);
 static JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToISOString);
 static JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToJSON);
+static JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToTemporalInstant);
 
 }
 
@@ -282,6 +284,11 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, dateProtoFuncToPrimitiveSymbol, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 
+    if (Options::useTemporal()) {
+        Identifier toTemporalInstantName = Identifier::fromString(vm, "toTemporalInstant"_s);
+        JSFunction* toTemporalInstantFunction = JSFunction::create(vm, globalObject, 0, toTemporalInstantName.string(), dateProtoFuncToTemporalInstant);
+        putDirectWithoutTransition(vm, toTemporalInstantName, toTemporalInstantFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
     // The constructor will be added later, after DateConstructor has been built.
 }
 
@@ -902,6 +909,24 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToJSON, (JSGlobalObject* globalObject, Cal
     JSValue result = call(globalObject, asObject(toISOValue), callData, object, *vm.emptyList);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result);
+}
+
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToTemporalInstant, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue thisValue = callFrame->thisValue();
+    auto* thisDateObj = jsDynamicCast<DateInstance*>(vm, thisValue);
+    if (UNLIKELY(!thisDateObj))
+        return throwVMTypeError(globalObject, scope);
+
+    double epochMilliseconds = thisDateObj->internalNumber();
+    if (!isInteger(epochMilliseconds)) 
+        return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid integer number of Epoch Millseconds"_s));
+
+    ASSERT(epochMilliseconds >= std::numeric_limits<int64_t>::min() && epochMilliseconds <= std::numeric_limits<int64_t>::max());
+    ISO8601::ExactTime exactTime = ISO8601::ExactTime::fromEpochMilliseconds(epochMilliseconds);
+    return JSValue::encode(TemporalInstant::create(vm, globalObject->instantStructure(), exactTime));
 }
 
 } // namespace JSC
