@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,9 +26,7 @@
 #include "FEOffset.h"
 
 #include "Filter.h"
-#include "FilterEffectApplier.h"
-#include "GraphicsContext.h"
-#include "ImageBuffer.h"
+#include "FEOffsetSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -63,34 +62,6 @@ void FEOffset::determineAbsolutePaintRect(const Filter& filter)
     else
         paintRect.unite(maxEffectRect());
     setAbsolutePaintRect(enclosingIntRect(paintRect));
-}
-
-// FIXME: Move the class FEOffsetSoftwareApplier to separate source and header files.
-class FEOffsetSoftwareApplier : public FilterEffectConcreteApplier<FEOffset> {
-    using Base = FilterEffectConcreteApplier<FEOffset>;
-
-public:
-    using Base::Base;
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-};
-
-bool FEOffsetSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
-{
-    FilterEffect* in = inputEffects[0].get();
-
-    auto resultImage = m_effect.imageBufferResult();
-    auto inBuffer = in->imageBufferResult();
-    if (!resultImage || !inBuffer)
-        return false;
-
-    m_effect.setIsAlphaImage(in->isAlphaImage());
-
-    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(in->absolutePaintRect());
-    drawingRegion.move(filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() }));
-    resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
-
-    return true;
 }
 
 bool FEOffset::platformApplySoftware(const Filter& filter)

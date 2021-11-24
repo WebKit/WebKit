@@ -27,19 +27,19 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<EdgeModeType> {
-    static unsigned highestEnumValue() { return EDGEMODE_NONE; }
-    static EdgeModeType initialValue() { return EDGEMODE_NONE; }
+    static unsigned highestEnumValue() { return static_cast<unsigned>(EdgeModeType::None); }
+    static EdgeModeType initialValue() { return EdgeModeType::None; }
 
     static String toString(EdgeModeType type)
     {
         switch (type) {
-        case EDGEMODE_UNKNOWN:
+        case EdgeModeType::Unknown:
             return emptyString();
-        case EDGEMODE_DUPLICATE:
+        case EdgeModeType::Duplicate:
             return "duplicate"_s;
-        case EDGEMODE_WRAP:
+        case EdgeModeType::Wrap:
             return "wrap"_s;
-        case EDGEMODE_NONE:
+        case EdgeModeType::None:
             return "none"_s;
         }
 
@@ -50,12 +50,12 @@ struct SVGPropertyTraits<EdgeModeType> {
     static EdgeModeType fromString(const String& value)
     {
         if (value == "duplicate")
-            return EDGEMODE_DUPLICATE;
+            return EdgeModeType::Duplicate;
         if (value == "wrap")
-            return EDGEMODE_WRAP;
+            return EdgeModeType::Wrap;
         if (value == "none")
-            return EDGEMODE_NONE;
-        return EDGEMODE_UNKNOWN;
+            return EdgeModeType::None;
+        return EdgeModeType::Unknown;
     }
 };
 
@@ -114,7 +114,7 @@ private:
     Ref<SVGAnimatedNumber> m_bias { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedInteger> m_targetX { SVGAnimatedInteger::create(this) };
     Ref<SVGAnimatedInteger> m_targetY { SVGAnimatedInteger::create(this) };
-    Ref<SVGAnimatedEnumeration> m_edgeMode { SVGAnimatedEnumeration::create(this, EDGEMODE_DUPLICATE) };
+    Ref<SVGAnimatedEnumeration> m_edgeMode { SVGAnimatedEnumeration::create(this, EdgeModeType::Duplicate) };
     Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedBoolean> m_preserveAlpha { SVGAnimatedBoolean::create(this) };

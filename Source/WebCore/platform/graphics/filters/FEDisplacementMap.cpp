@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +25,7 @@
 #include "config.h"
 #include "FEDisplacementMap.h"
 
-#include "Filter.h"
-#include "FilterEffectApplier.h"
-#include "GraphicsContext.h"
-#include "PixelBuffer.h"
+#include "FEDisplacementMapSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -83,93 +81,6 @@ void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int in
     // Do not transform the first primitive input, as per the spec.
     if (index)
         in->transformResultColorSpace(operatingColorSpace());
-}
-
-// FIXME: Move the class FECompositeSoftwareApplier to separate source and header files.
-class FEDisplacementMapSoftwareApplier : public FilterEffectConcreteApplier<FEDisplacementMap> {
-    using Base = FilterEffectConcreteApplier<FEDisplacementMap>;
-
-public:
-    FEDisplacementMapSoftwareApplier(FEDisplacementMap&);
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-
-private:
-    static inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
-    {
-        const unsigned bytesPerPixel = 4;
-        return x * bytesPerPixel + y * rowBytes;
-    }
-
-    int xChannelIndex() const { return m_effect.xChannelSelector() - 1; }
-    int yChannelIndex() const { return m_effect.yChannelSelector() - 1; }
-};
-
-FEDisplacementMapSoftwareApplier::FEDisplacementMapSoftwareApplier(FEDisplacementMap& effect)
-    : Base(effect)
-{
-    ASSERT(m_effect.xChannelSelector() != CHANNEL_UNKNOWN);
-    ASSERT(m_effect.yChannelSelector() != CHANNEL_UNKNOWN);
-}
-
-bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
-{
-    FilterEffect* in = inputEffects[0].get();
-    FilterEffect* in2 = inputEffects[1].get();
-
-    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
-    if (!destinationPixelBuffer)
-        return false;
-
-    auto& destinationPixelArray = destinationPixelBuffer->data();
-
-    auto effectADrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    auto inputPixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect);
-
-    auto effectBDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
-    // The calculations using the pixel values from ‘in2’ are performed using non-premultiplied color values.
-    auto displacementPixelBuffer = in2->getPixelBufferResult(AlphaPremultiplication::Unpremultiplied, effectBDrawingRect);
-    
-    if (!inputPixelBuffer || !displacementPixelBuffer)
-        return false;
-
-    auto& inputImage = inputPixelBuffer->data();
-    auto& displacementImage = displacementPixelBuffer->data();
-    ASSERT(inputImage.length() == displacementImage.length());
-
-    IntSize paintSize = m_effect.absolutePaintRect().size();
-
-    FloatSize scale = filter.scaledByFilterScale({ m_effect.scale(), m_effect.scale() });
-    float scaleForColorX = scale.width() / 255.0;
-    float scaleForColorY = scale.height() / 255.0;
-    float scaledOffsetX = 0.5 - scale.width() * 0.5;
-    float scaledOffsetY = 0.5 - scale.height() * 0.5;
-    
-    int displacementChannelX = xChannelIndex();
-    int displacementChannelY = yChannelIndex();
-
-    int rowBytes = paintSize.width() * 4;
-
-    for (int y = 0; y < paintSize.height(); ++y) {
-        int lineStartOffset = y * rowBytes;
-
-        for (int x = 0; x < paintSize.width(); ++x) {
-            int destinationIndex = lineStartOffset + x * 4;
-            
-            int srcX = x + static_cast<int>(scaleForColorX * displacementImage.item(destinationIndex + displacementChannelX) + scaledOffsetX);
-            int srcY = y + static_cast<int>(scaleForColorY * displacementImage.item(destinationIndex + displacementChannelY) + scaledOffsetY);
-
-            unsigned* destinationPixelPtr = reinterpret_cast<unsigned*>(destinationPixelArray.data() + destinationIndex);
-            if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height()) {
-                *destinationPixelPtr = 0;
-                continue;
-            }
-
-            *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputImage.data() + byteOffsetOfPixel(srcX, srcY, rowBytes));
-        }
-    }
-
-    return true;
 }
 
 bool FEDisplacementMap::platformApplySoftware(const Filter& filter)

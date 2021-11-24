@@ -60,7 +60,7 @@ void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const Ato
 {
     if (name == SVGNames::operatorAttr) {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);
-        if (propertyValue > 0)
+        if (propertyValue != MorphologyOperatorType::Unknown)
             m_svgOperator->setBaseValInternal<MorphologyOperatorType>(propertyValue);
         return;
     }

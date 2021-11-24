@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,9 +25,7 @@
 #include "FEFlood.h"
 
 #include "ColorSerialization.h"
-#include "FilterEffectApplier.h"
-#include "GraphicsContext.h"
-#include "ImageBuffer.h"
+#include "FEFloodSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -56,28 +55,6 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     if (m_floodOpacity == floodOpacity)
         return false;
     m_floodOpacity = floodOpacity;
-    return true;
-}
-
-// FIXME: Move the class FEDropShadowSoftwareApplier to separate source and header files.
-class FEFloodSoftwareApplier : public FilterEffectConcreteApplier<FEFlood> {
-    using Base = FilterEffectConcreteApplier<FEFlood>;
-
-public:
-    using Base::Base;
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-};
-
-bool FEFloodSoftwareApplier::apply(const Filter&, const FilterEffectVector&)
-{
-    auto resultImage = m_effect.imageBufferResult();
-    if (!resultImage)
-        return false;
-
-    auto color = m_effect.floodColor().colorWithAlphaMultipliedBy(m_effect.floodOpacity());
-    resultImage->context().fillRect(FloatRect(FloatPoint(), m_effect.absolutePaintRect().size()), color);
-
     return true;
 }
 

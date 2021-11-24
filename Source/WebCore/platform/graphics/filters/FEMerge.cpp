@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) Apple Inc. 2021 All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,9 +23,7 @@
 #include "config.h"
 #include "FEMerge.h"
 
-#include "FilterEffectApplier.h"
-#include "GraphicsContext.h"
-#include "ImageBuffer.h"
+#include "FEMergeSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -37,36 +36,6 @@ Ref<FEMerge> FEMerge::create()
 FEMerge::FEMerge()
     : FilterEffect(FilterEffect::Type::FEMerge)
 {
-}
-
-// FIXME: Move the class FEMergeSoftwareApplier to separate source and header files.
-class FEMergeSoftwareApplier : public FilterEffectConcreteApplier<FEMerge> {
-    using Base = FilterEffectConcreteApplier<FEMerge>;
-
-public:
-    using Base::Base;
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-};
-
-bool FEMergeSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
-{
-    ASSERT(inputEffects.size() > 0);
-
-    auto resultImage = m_effect.imageBufferResult();
-    if (!resultImage)
-        return false;
-
-    auto& filterContext = resultImage->context();
-
-    for (auto& in : inputEffects) {
-        auto inBuffer = in->imageBufferResult();
-        if (!inBuffer)
-            continue;
-        filterContext.drawImageBuffer(*inBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
-    }
-
-    return true;
 }
 
 bool FEMerge::platformApplySoftware(const Filter& filter)

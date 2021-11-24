@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,10 +21,8 @@
 #include "config.h"
 #include "SourceAlpha.h"
 
-#include "Color.h"
 #include "Filter.h"
-#include "FilterEffectApplier.h"
-#include "GraphicsContext.h"
+#include "SourceAlphaSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -44,37 +43,6 @@ void SourceAlpha::determineAbsolutePaintRect(const Filter& filter)
 {
     inputEffect(0)->determineAbsolutePaintRect(filter);
     setAbsolutePaintRect(inputEffect(0)->absolutePaintRect());
-}
-
-// FIXME: Move the class SourceAlphaSoftwareApplier to separate source and header files.
-class SourceAlphaSoftwareApplier : public FilterEffectConcreteApplier<SourceAlpha> {
-    using Base = FilterEffectConcreteApplier<SourceAlpha>;
-
-public:
-    using Base::Base;
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-};
-
-bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
-{
-    FilterEffect* in = inputEffects[0].get();
-
-    auto resultImage = m_effect.imageBufferResult();
-    if (!resultImage)
-        return false;
-    
-    auto imageBuffer = in->imageBufferResult();
-    if (!imageBuffer)
-        return false;
-
-    FloatRect imageRect(FloatPoint(), m_effect.absolutePaintRect().size());
-    GraphicsContext& filterContext = resultImage->context();
-
-    filterContext.fillRect(imageRect, Color::black);
-    filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeOperator::DestinationIn);
-
-    return true;
 }
 
 bool SourceAlpha::platformApplySoftware(const Filter& filter)

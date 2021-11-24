@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,8 +22,7 @@
 #include "SourceGraphic.h"
 
 #include "Filter.h"
-#include "FilterEffectApplier.h"
-#include "GraphicsContext.h"
+#include "SourceGraphicSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -41,27 +41,6 @@ void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
 {
     FloatRect paintRect = filter.sourceImageRect();
     setAbsolutePaintRect(enclosingIntRect(paintRect));
-}
-
-// FIXME: Move the class SourceGraphicSoftwareApplier to separate source and header files.
-class SourceGraphicSoftwareApplier : public FilterEffectConcreteApplier<SourceGraphic> {
-    using Base = FilterEffectConcreteApplier<SourceGraphic>;
-
-public:
-    using Base::Base;
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-};
-
-bool SourceGraphicSoftwareApplier::apply(const Filter& filter, const FilterEffectVector&)
-{
-    auto resultImage = m_effect.imageBufferResult();
-    auto sourceImage = filter.sourceImage();
-    if (!resultImage || !sourceImage)
-        return false;
-
-    resultImage->context().drawImageBuffer(*sourceImage, IntPoint());
-    return true;
 }
 
 bool SourceGraphic::platformApplySoftware(const Filter& filter)

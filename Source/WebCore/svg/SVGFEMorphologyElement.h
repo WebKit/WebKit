@@ -27,16 +27,16 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<MorphologyOperatorType> {
-    static unsigned highestEnumValue() { return FEMORPHOLOGY_OPERATOR_DILATE; }
+    static unsigned highestEnumValue() { return static_cast<unsigned>(MorphologyOperatorType::Dilate); }
 
     static String toString(MorphologyOperatorType type)
     {
         switch (type) {
-        case FEMORPHOLOGY_OPERATOR_UNKNOWN:
+        case MorphologyOperatorType::Unknown:
             return emptyString();
-        case FEMORPHOLOGY_OPERATOR_ERODE:
+        case MorphologyOperatorType::Erode:
             return "erode"_s;
-        case FEMORPHOLOGY_OPERATOR_DILATE:
+        case MorphologyOperatorType::Dilate:
             return "dilate"_s;
         }
 
@@ -47,10 +47,10 @@ struct SVGPropertyTraits<MorphologyOperatorType> {
     static MorphologyOperatorType fromString(const String& value)
     {
         if (value == "erode")
-            return FEMORPHOLOGY_OPERATOR_ERODE;
+            return MorphologyOperatorType::Erode;
         if (value == "dilate")
-            return FEMORPHOLOGY_OPERATOR_DILATE;
-        return FEMORPHOLOGY_OPERATOR_UNKNOWN;
+            return MorphologyOperatorType::Dilate;
+        return MorphologyOperatorType::Unknown;
     }
 };
 
@@ -85,7 +85,7 @@ private:
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    Ref<SVGAnimatedEnumeration> m_svgOperator { SVGAnimatedEnumeration::create(this, FEMORPHOLOGY_OPERATOR_ERODE) };
+    Ref<SVGAnimatedEnumeration> m_svgOperator { SVGAnimatedEnumeration::create(this, MorphologyOperatorType::Erode) };
     Ref<SVGAnimatedNumber> m_radiusX { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_radiusY { SVGAnimatedNumber::create(this) };
 };

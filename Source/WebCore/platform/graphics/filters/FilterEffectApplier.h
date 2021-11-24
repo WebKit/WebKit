@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include "FilterEffectVector.h"
+
 namespace WebCore {
+
+class Filter;
 
 class FilterEffectApplier {
 public:

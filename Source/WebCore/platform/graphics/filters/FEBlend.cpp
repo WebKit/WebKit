@@ -5,6 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,10 +27,7 @@
 #include "FEBlend.h"
 
 #include "FEBlendNEON.h"
-#include "FilterEffectApplier.h"
-#include "FloatPoint.h"
-#include "GraphicsContext.h"
-#include "ImageBuffer.h"
+#include "FEBlendSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -52,38 +50,6 @@ bool FEBlend::setBlendMode(BlendMode mode)
     m_mode = mode;
     return true;
 }
-
-// FIXME: Move the class FEBlendSoftwareApplier to separate source and header files.
-class FEBlendSoftwareApplier : public FilterEffectConcreteApplier<FEBlend> {
-    using Base = FilterEffectConcreteApplier<FEBlend>;
-
-public:
-    using Base::Base;
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-};
-
-#if !HAVE(ARM_NEON_INTRINSICS)
-bool FEBlendSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
-{
-    FilterEffect* in = inputEffects[0].get();
-    FilterEffect* in2 = inputEffects[1].get();
-
-    auto resultImage = m_effect.imageBufferResult();
-    if (!resultImage)
-        return false;
-
-    auto imageBuffer = in->imageBufferResult();
-    auto imageBuffer2 = in2->imageBufferResult();
-    if (!imageBuffer || !imageBuffer2)
-        return false;
-
-    GraphicsContext& filterContext = resultImage->context();
-    filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
-    filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, { CompositeOperator::SourceOver, m_effect.blendMode() });
-    return true;
-}
-#endif
 
 bool FEBlend::platformApplySoftware(const Filter& filter)
 {

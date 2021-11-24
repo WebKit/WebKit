@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,14 +22,8 @@
 #include "config.h"
 #include "FETile.h"
 
-#include "AffineTransform.h"
-#include "Filter.h"
-#include "FilterEffectApplier.h"
+#include "FETileSoftwareApplier.h"
 #include "GraphicsContext.h"
-#include "ImageBuffer.h"
-#include "Pattern.h"
-#include "RenderTreeAsText.h"
-#include "SVGRenderingContext.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -41,61 +36,6 @@ Ref<FETile> FETile::create()
 FETile::FETile()
     : FilterEffect(FilterEffect::Type::FETile)
 {
-}
-
-// FIXME: Move the class FETileSoftwareApplier to separate source and header files.
-class FETileSoftwareApplier : public FilterEffectConcreteApplier<FETile> {
-    using Base = FilterEffectConcreteApplier<FETile>;
-
-public:
-    using Base::Base;
-
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
-};
-
-bool FETileSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
-{
-    FilterEffect* in = inputEffects[0].get();
-
-    auto resultImage = m_effect.imageBufferResult();
-    auto inBuffer = in->imageBufferResult();
-    if (!resultImage || !inBuffer)
-        return false;
-
-    m_effect.setIsAlphaImage(in->isAlphaImage());
-
-    // Source input needs more attention. It has the size of the filterRegion but gives the
-    // size of the cutted sourceImage back. This is part of the specification and optimization.
-    FloatRect tileRect = in->maxEffectRect();
-    FloatPoint inMaxEffectLocation = tileRect.location();
-    FloatPoint maxEffectLocation = m_effect.maxEffectRect().location();
-    if (in->filterType() == FilterEffect::Type::SourceGraphic || in->filterType() == FilterEffect::Type::SourceAlpha) {
-        tileRect = filter.filterRegion();
-        tileRect.scale(filter.filterScale());
-    }
-
-    auto tileImage = SVGRenderingContext::createImageBuffer(tileRect, tileRect, DestinationColorSpace::SRGB(), filter.renderingMode());
-    if (!tileImage)
-        return false;
-
-    GraphicsContext& tileImageContext = tileImage->context();
-    tileImageContext.translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
-    tileImageContext.drawImageBuffer(*inBuffer, in->absolutePaintRect().location());
-
-    auto tileImageCopy = ImageBuffer::sinkIntoNativeImage(WTFMove(tileImage));
-    if (!tileImageCopy)
-        return false;
-
-    AffineTransform patternTransform;
-    patternTransform.translate(inMaxEffectLocation - maxEffectLocation);
-
-    auto pattern = Pattern::create(tileImageCopy.releaseNonNull(), { true, true, patternTransform });
-
-    GraphicsContext& filterContext = resultImage->context();
-    filterContext.setFillPattern(WTFMove(pattern));
-    filterContext.fillRect(FloatRect(FloatPoint(), m_effect.absolutePaintRect().size()));
-
-    return true;
 }
 
 bool FETile::platformApplySoftware(const Filter& filter)
