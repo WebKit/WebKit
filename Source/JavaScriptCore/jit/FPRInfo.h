@@ -334,29 +334,27 @@ public:
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static constexpr unsigned numberOfRegisters = 20;
+    static constexpr unsigned numberOfRegisters = 18;
     static constexpr unsigned numberOfArgumentRegisters = 8;
 
-    static constexpr FPRReg fpRegT0 = RISCV64Registers::f0;
-    static constexpr FPRReg fpRegT1 = RISCV64Registers::f1;
-    static constexpr FPRReg fpRegT2 = RISCV64Registers::f2;
-    static constexpr FPRReg fpRegT3 = RISCV64Registers::f3;
-    static constexpr FPRReg fpRegT4 = RISCV64Registers::f4;
-    static constexpr FPRReg fpRegT5 = RISCV64Registers::f5;
-    static constexpr FPRReg fpRegT6 = RISCV64Registers::f6;
-    static constexpr FPRReg fpRegT7 = RISCV64Registers::f7;
-    static constexpr FPRReg fpRegT8 = RISCV64Registers::f10;
-    static constexpr FPRReg fpRegT9 = RISCV64Registers::f11;
-    static constexpr FPRReg fpRegT10 = RISCV64Registers::f12;
-    static constexpr FPRReg fpRegT11 = RISCV64Registers::f13;
-    static constexpr FPRReg fpRegT12 = RISCV64Registers::f14;
-    static constexpr FPRReg fpRegT13 = RISCV64Registers::f15;
-    static constexpr FPRReg fpRegT14 = RISCV64Registers::f16;
-    static constexpr FPRReg fpRegT15 = RISCV64Registers::f17;
+    static constexpr FPRReg fpRegT0 = RISCV64Registers::f10;
+    static constexpr FPRReg fpRegT1 = RISCV64Registers::f11;
+    static constexpr FPRReg fpRegT2 = RISCV64Registers::f12;
+    static constexpr FPRReg fpRegT3 = RISCV64Registers::f13;
+    static constexpr FPRReg fpRegT4 = RISCV64Registers::f14;
+    static constexpr FPRReg fpRegT5 = RISCV64Registers::f15;
+    static constexpr FPRReg fpRegT6 = RISCV64Registers::f16;
+    static constexpr FPRReg fpRegT7 = RISCV64Registers::f17;
+    static constexpr FPRReg fpRegT8 = RISCV64Registers::f0;
+    static constexpr FPRReg fpRegT9 = RISCV64Registers::f1;
+    static constexpr FPRReg fpRegT10 = RISCV64Registers::f2;
+    static constexpr FPRReg fpRegT11 = RISCV64Registers::f3;
+    static constexpr FPRReg fpRegT12 = RISCV64Registers::f4;
+    static constexpr FPRReg fpRegT13 = RISCV64Registers::f5;
+    static constexpr FPRReg fpRegT14 = RISCV64Registers::f6;
+    static constexpr FPRReg fpRegT15 = RISCV64Registers::f7;
     static constexpr FPRReg fpRegT16 = RISCV64Registers::f28;
     static constexpr FPRReg fpRegT17 = RISCV64Registers::f29;
-    static constexpr FPRReg fpRegT18 = RISCV64Registers::f30;
-    static constexpr FPRReg fpRegT19 = RISCV64Registers::f31;
 
     static constexpr FPRReg fpRegCS0 = RISCV64Registers::f8;
     static constexpr FPRReg fpRegCS1 = RISCV64Registers::f9;
@@ -371,16 +369,16 @@ public:
     static constexpr FPRReg fpRegCS10 = RISCV64Registers::f26;
     static constexpr FPRReg fpRegCS11 = RISCV64Registers::f27;
 
-    static constexpr FPRReg argumentFPR0 = RISCV64Registers::f10; // fpRegT8
-    static constexpr FPRReg argumentFPR1 = RISCV64Registers::f11; // fpRegT9
-    static constexpr FPRReg argumentFPR2 = RISCV64Registers::f12; // fpRegT10
-    static constexpr FPRReg argumentFPR3 = RISCV64Registers::f13; // fpRegT11
-    static constexpr FPRReg argumentFPR4 = RISCV64Registers::f14; // fpRegT12
-    static constexpr FPRReg argumentFPR5 = RISCV64Registers::f15; // fpRegT13
-    static constexpr FPRReg argumentFPR6 = RISCV64Registers::f16; // fpRegT14
-    static constexpr FPRReg argumentFPR7 = RISCV64Registers::f17; // fpRegT15
+    static constexpr FPRReg argumentFPR0 = RISCV64Registers::f10; // fpRegT0
+    static constexpr FPRReg argumentFPR1 = RISCV64Registers::f11; // fpRegT1
+    static constexpr FPRReg argumentFPR2 = RISCV64Registers::f12; // fpRegT2
+    static constexpr FPRReg argumentFPR3 = RISCV64Registers::f13; // fpRegT3
+    static constexpr FPRReg argumentFPR4 = RISCV64Registers::f14; // fpRegT4
+    static constexpr FPRReg argumentFPR5 = RISCV64Registers::f15; // fpRegT5
+    static constexpr FPRReg argumentFPR6 = RISCV64Registers::f16; // fpRegT6
+    static constexpr FPRReg argumentFPR7 = RISCV64Registers::f17; // fpRegT7
 
-    static constexpr FPRReg returnValueFPR = RISCV64Registers::f10; // fpRegT8
+    static constexpr FPRReg returnValueFPR = RISCV64Registers::f10; // fpRegT0
 
     static FPRReg toRegister(unsigned index)
     {
@@ -388,7 +386,7 @@ public:
         static const FPRReg registerForIndex[numberOfRegisters] = {
             fpRegT0, fpRegT1, fpRegT2, fpRegT3, fpRegT4, fpRegT5, fpRegT6, fpRegT7,
             fpRegT8, fpRegT9, fpRegT10, fpRegT11, fpRegT12, fpRegT13, fpRegT14, fpRegT15,
-            fpRegT16, fpRegT17, fpRegT18, fpRegT19,
+            fpRegT16, fpRegT17,
         };
         return registerForIndex[index];
     }
@@ -408,10 +406,10 @@ public:
         ASSERT(reg != InvalidFPRReg);
         ASSERT(static_cast<int>(reg) < 32);
         static const unsigned indexForRegister[32] = {
-            0, 1, 2, 3, 4, 5, 6, 7,
-            InvalidIndex, InvalidIndex, 8, 9, 10, 11, 12, 13,
-            14, 15, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
-            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 16, 17, 18, 19,
+            8, 9, 10, 11, 12, 13, 14, 15,
+            InvalidIndex, InvalidIndex, 0, 1, 2, 3, 4, 5,
+            6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 16, 17, InvalidIndex, InvalidIndex,
         };
         return indexForRegister[reg];
     }

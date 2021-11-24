@@ -1,3 +1,18 @@
+2021-11-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Fix floating-point register listings in FPRInfo.h
+        https://bugs.webkit.org/show_bug.cgi?id=233243
+
+        Reviewed by Yusuke Suzuki.
+
+        As with general-purpose registers, fpRegT0 to fpRegT7 assignments have
+        to match the argument registers. Index-to-FPRReg mapping functions are
+        updated accordingly.
+
+        * jit/FPRInfo.h:
+        (JSC::FPRInfo::toRegister):
+        (JSC::FPRInfo::toIndex):
+
 2021-11-24  Aditi Singh  <asingh@igalia.com>
 
         [JSC] Implement Date.prototype.toTemporalInstant()
