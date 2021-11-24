@@ -1,3 +1,16 @@
+2021-11-24  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Implement submitting samples in violation reports
+        https://bugs.webkit.org/show_bug.cgi?id=233398
+
+        Reviewed by Kate Cheney.
+
+        Update expectations with more passes.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/script-sample-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/script-sample-no-opt-in-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/style-sample-expected.txt:
+
 2021-11-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Import 2 new :focus-visible tests from WPT

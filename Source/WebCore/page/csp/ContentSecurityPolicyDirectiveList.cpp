@@ -642,4 +642,15 @@ bool ContentSecurityPolicyDirectiveList::strictDynamicIncluded()
     return directive && directive->allowNonParserInsertedScripts();
 }
 
+bool ContentSecurityPolicyDirectiveList::shouldReportSample(const String& violatedDirective) const
+{
+    ContentSecurityPolicySourceListDirective* directive = nullptr;
+    if (violatedDirective.startsWith(ContentSecurityPolicyDirectiveNames::styleSrc))
+        directive = m_styleSrc.get();
+    else if (violatedDirective.startsWith(ContentSecurityPolicyDirectiveNames::scriptSrc))
+        directive = m_scriptSrc.get();
+
+    return directive && directive->shouldReportSample();
+}
+
 } // namespace WebCore

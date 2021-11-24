@@ -36,6 +36,7 @@ class FormData;
 struct CSPInfo {
     String documentURI;
     String sourceFile;
+    String sample;
     int lineNumber { 0 };
     int columnNumber { 0 };
 };

@@ -45,6 +45,7 @@ public:
     bool allowInline() const { return m_sourceList.allowInline(); }
     bool allowEval() const { return m_sourceList.allowEval(); }
     bool allowNonParserInsertedScripts() const { return m_sourceList.allowNonParserInsertedScripts(); }
+    bool shouldReportSample() const { return m_sourceList.shouldReportSample(); }
 
     OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsUsed() const { return m_sourceList.hashAlgorithmsUsed(); }
 

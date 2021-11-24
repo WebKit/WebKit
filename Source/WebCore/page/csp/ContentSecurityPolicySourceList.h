@@ -55,6 +55,7 @@ public:
     bool isNone() const { return m_isNone; }
     bool allowNonParserInsertedScripts() const { return m_allowNonParserInsertedScripts; }
     bool allowUnsafeHashes() const { return m_allowUnsafeHashes; }
+    bool shouldReportSample() const { return m_reportSample; }
 
 private:
     struct Host {
@@ -96,6 +97,7 @@ private:
     bool m_isNone { false };
     bool m_allowNonParserInsertedScripts { false };
     bool m_allowUnsafeHashes { false };
+    bool m_reportSample { false };
 };
 
 } // namespace WebCore

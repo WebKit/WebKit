@@ -1,4 +1,4 @@
 
-FAIL Inline style blocks should have a sample. assert_equals: expected "p { omg: yay !important; }" but got ""
-FAIL Inline style attributes should have a sample. assert_equals: expected "omg: yay !important;" but got ""
+PASS Inline style blocks should have a sample.
+PASS Inline style attributes should have a sample.
 

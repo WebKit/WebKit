@@ -248,6 +248,11 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
+    if (skipExactlyIgnoringASCIICase(buffer, "'report-sample'")) {
+        m_reportSample = true;
+        return source;
+    }
+
     auto begin = buffer.position();
     auto beginHost = begin;
     auto beginPath = buffer.end();
