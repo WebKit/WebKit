@@ -1,3 +1,13 @@
+2021-11-24  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Skip new stress test get-array-length-reuse.js if memory-limited
+        https://bugs.webkit.org/show_bug.cgi?id=233299
+        rdar://85502079
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/get-array-length-reuse.js:
+
 2021-11-24  Aditi Singh  <asingh@igalia.com>
 
         [JSC] Implement Date.prototype.toTemporalInstant()

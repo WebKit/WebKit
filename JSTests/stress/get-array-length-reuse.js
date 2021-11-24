@@ -1,3 +1,5 @@
+//@ skip if $memoryLimited
+
 function foo(a) {
   arguments;
   a.length;
