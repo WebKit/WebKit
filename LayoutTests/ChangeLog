@@ -1,3 +1,13 @@
+2021-11-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Import 2 new :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=233446
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios/TestExpectations: Skip one test in iOS.
+        * tests-options.json:
+
 2021-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         CSP: security policy violation event is always using document as target
