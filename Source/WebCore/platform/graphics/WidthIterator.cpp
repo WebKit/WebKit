@@ -76,11 +76,6 @@ struct OriginalAdvancesForCharacterTreatedAsSpace {
     float advanceAtCharacter;
 };
 
-static inline bool isSoftBankEmoji(UChar32 codepoint)
-{
-    return codepoint >= 0xE001 && codepoint <= 0xE537;
-}
-
 inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, const Font& font, CharactersTreatedAsSpace& charactersTreatedAsSpace) -> ApplyFontTransformsResult
 {
     auto glyphBufferSize = glyphBuffer.size();
