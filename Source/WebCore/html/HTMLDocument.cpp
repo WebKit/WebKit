@@ -89,11 +89,11 @@ using namespace HTMLNames;
 
 Ref<HTMLDocument> HTMLDocument::createSynthesizedDocument(Frame& frame, const URL& url)
 {
-    return adoptRef(*new HTMLDocument(&frame, frame.settings(), url, HTMLDocumentClass, Synthesized));
+    return adoptRef(*new HTMLDocument(&frame, frame.settings(), url, { DocumentClass::HTML }, Synthesized));
 }
 
-HTMLDocument::HTMLDocument(Frame* frame, const Settings& settings, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
-    : Document(frame, settings, url, documentClasses | HTMLDocumentClass, constructionFlags)
+HTMLDocument::HTMLDocument(Frame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, unsigned constructionFlags)
+    : Document(frame, settings, url, documentClasses | DocumentClasses(DocumentClass::HTML), constructionFlags)
 {
     clearXMLVersion();
 }

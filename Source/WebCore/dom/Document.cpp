@@ -607,7 +607,7 @@ static Ref<CachedResourceLoader> createCachedResourceLoader(Frame* frame)
     return CachedResourceLoader::create(nullptr);
 }
 
-Document::Document(Frame* frame, const Settings& settings, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
+Document::Document(Frame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , FrameDestructionObserver(frame)
@@ -687,7 +687,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
 
 Ref<Document> Document::create(Document& contextDocument)
 {
-    auto document = adoptRef(*new Document(nullptr, contextDocument.m_settings, URL()));
+    auto document = adoptRef(*new Document(nullptr, contextDocument.m_settings, URL(), { }));
     document->setContextDocument(contextDocument);
     document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
     return document;
@@ -695,7 +695,7 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
 {
-    return adoptRef(*new Document(&frame, frame.settings(), url, DefaultDocumentClass, NonRenderedPlaceholder));
+    return adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
 }
 
 Document::~Document()

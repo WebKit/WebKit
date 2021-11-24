@@ -54,7 +54,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(Frame*, const Settings&, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
+    HTMLDocument(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0);
 
 private:
     bool isFrameSet() const final;
@@ -67,7 +67,7 @@ private:
 
 inline Ref<HTMLDocument> HTMLDocument::create(Frame* frame, const Settings& settings, const URL& url)
 {
-    return adoptRef(*new HTMLDocument(frame, settings, url, HTMLDocumentClass));
+    return adoptRef(*new HTMLDocument(frame, settings, url, { DocumentClass::HTML }));
 }
 
 } // namespace WebCore
