@@ -1332,8 +1332,8 @@ static const GActionEntry actions[] = {
 
 static void browser_window_init(BrowserWindow *window)
 {
-    window->backgroundColor.red = window->backgroundColor.green = window->backgroundColor.blue = 255;
-    window->backgroundColor.alpha = 1;
+    window->backgroundColor.red = window->backgroundColor.green = window->backgroundColor.blue = 1.0;
+    window->backgroundColor.alpha = 1.0;
 
     gtk_window_set_title(GTK_WINDOW(window), defaultWindowTitle);
     gtk_window_set_default_size(GTK_WINDOW(window), 1024, 768);

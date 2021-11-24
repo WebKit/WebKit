@@ -1,3 +1,19 @@
+2021-11-23  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] GdkRGBA expects colors to be in the 0.0 to 1.0 range
+        https://bugs.webkit.org/show_bug.cgi?id=233452
+
+        Reviewed by Michael Catanzaro.
+
+        GTK4 debug was hitting assertInRange inside ColorTypes.h due to 255
+        being used as the max value, while GdkRGBA expects the value to be
+        between 0.0 and 1.0, per the official docs [1][2].
+
+        [1] https://docs.gtk.org/gdk3/struct.RGBA.html
+        [2] https://docs.gtk.org/gdk4/struct.RGBA.html
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+
 2021-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Change hardware-acceleration-policy setting default value to always
