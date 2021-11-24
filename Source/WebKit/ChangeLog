@@ -1,3 +1,16 @@
+2021-11-23  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Effective appearance doesn't update on the old process after PSON
+        https://bugs.webkit.org/show_bug.cgi?id=233451
+
+        Reviewed by Michael Catanzaro.
+
+        When reinitializing a WebPage, we get effective appearance from the page creation
+        parameters. Actually apply them.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+
 2021-10-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.34.1 release

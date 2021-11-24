@@ -977,6 +977,8 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
 #endif
 
+    effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
+
     platformReinitialize();
 }
 
