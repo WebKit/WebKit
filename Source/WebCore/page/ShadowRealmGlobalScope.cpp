@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ShadowRealmGlobalScope.h"
 
+#include "JSDOMGlobalObject.h"
 #include "CSSFontSelector.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -42,8 +43,10 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
+#include "ScriptModuleLoader.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
+#include "ShadowRealmScriptController.h"
 #include "SocketProvider.h"
 #include "WorkerFontLoadRequest.h"
 #include "WorkerLoaderProxy.h"
@@ -63,433 +66,166 @@
 namespace WebCore {
 using namespace Inspector;
 
-static Lock allWorkerGlobalScopeIdentifiersLock;
-static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers() WTF_REQUIRES_LOCK(allWorkerGlobalScopeIdentifiersLock)
-{
-    static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;
-    ASSERT(allWorkerGlobalScopeIdentifiersLock.isLocked());
-    return identifiers;
-}
-
 WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRealmGlobalScope);
 
-ShadowRealmGlobalScope::ShadowRealmGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, SocketProvider* socketProvider)
-    : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread)
-    , m_url(params.scriptURL)
-    , m_identifier(params.identifier)
-    , m_userAgent(params.userAgent)
-    , m_isOnline(params.isOnline)
-    , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
-    , m_topOrigin(WTFMove(topOrigin))
-    , m_socketProvider(socketProvider)
-    , m_referrerPolicy(params.referrerPolicy)
-    , m_settingsValues(params.settingsValues)
-    , m_workerType(params.workerType)
-    , m_credentials(params.credentials)
-{
-    {
-        Locker locker { allWorkerGlobalScopeIdentifiersLock };
-        allWorkerGlobalScopeIdentifiers().add(contextIdentifier());
-    }
-
-    if (m_topOrigin->hasUniversalAccess())
-        origin->grantUniversalAccess();
-    if (m_topOrigin->needsStorageAccessFromFileURLsQuirk())
-        origin->grantStorageAccessFromFileURLsQuirk();
-
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(origin)));
-    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
-    setCrossOriginEmbedderPolicy(params.crossOriginEmbedderPolicy);
+RefPtr<ShadowRealmGlobalScope> ShadowRealmGlobalScope::tryCreate(JSC::VM& vm, JSDOMGlobalObject* wrapper) {
+    return adoptRef(new ShadowRealmGlobalScope(vm, wrapper));
 }
 
-ShadowRealmGlobalScope::~ShadowRealmGlobalScope()
+ShadowRealmGlobalScope::ShadowRealmGlobalScope(JSC::VM& vm, JSDOMGlobalObject* wrapper)
+    : m_vm(&vm)
+    , m_incubatingWrapper(vm, wrapper)
 {
-    ASSERT(thread().thread() == &Thread::current());
-    // We need to remove from the contexts map very early in the destructor so that calling postTask() on this ShadowRealmGlobalScope from another thread is safe.
-    removeFromContextsMap();
-
-    {
-        Locker locker { allWorkerGlobalScopeIdentifiersLock };
-        allWorkerGlobalScopeIdentifiers().remove(contextIdentifier());
-    }
-
-    // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
-    thread().workerReportingProxy().workerGlobalScopeDestroyed();
+    // m_scriptController is initialized in `JSShadowRealmGlobalScopeBase::finishCreation`
+    // which .......
+    // ..... is not ideal
+    //
+    // probably we should emulate WorkerOrWorkletGlobalScope and its
+    // *ScriptController and have the scriptcontroller mediate creation of the
+    // wrapper...
+    m_moduleLoader = std::make_unique<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::ShadowRealm);
 }
 
-String ShadowRealmGlobalScope::origin() const
+ScriptExecutionContext* ShadowRealmGlobalScope::enclosingContext() const
 {
-    auto* securityOrigin = this->securityOrigin();
-    return securityOrigin ? securityOrigin->toString() : emptyString();
+    return m_incubatingWrapper->scriptExecutionContext();
 }
 
-void ShadowRealmGlobalScope::prepareForDestruction()
-{
-    WorkerOrWorkletGlobalScope::prepareForDestruction();
+Document* ShadowRealmGlobalScope::responsibleDocument() {
+    // TODO(jgriego) this should really probably be a method on ScriptExecutionContext
+    auto context = enclosingContext();
+    ASSERT(is<Document>(context)); // FIXME this assert will fail if the shadow realm is created by a worker
+    return downcast<Document>(context);
 }
 
-void ShadowRealmGlobalScope::removeAllEventListeners()
+
+// TODO(jgriego) we currently delegate everything to the enclosing
+// ScriptExecutionContext--this probably needs to change for at least some of
+// these ...
+
+const URL& ShadowRealmGlobalScope::url() const
 {
-    WorkerOrWorkletGlobalScope::removeAllEventListeners();
+    return enclosingContext()->url();
 }
 
-bool ShadowRealmGlobalScope::isSecureContext() const
+URL ShadowRealmGlobalScope::completeURL(const String& s, ForceUTF8 f) const
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().secureContextChecksEnabled())
-        return true;
-
-    return securityOrigin() && securityOrigin()->isPotentiallyTrustworthy();
+    return enclosingContext()->completeURL(s, f);
 }
 
-void ShadowRealmGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
+String ShadowRealmGlobalScope::userAgent(const URL& url) const
 {
-    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
-}
-
-URL ShadowRealmGlobalScope::completeURL(const String& url, ForceUTF8) const
-{
-    // Always return a null URL when passed a null string.
-    // FIXME: Should we change the URL constructor to have this behavior?
-    if (url.isNull())
-        return URL();
-    // Always use UTF-8 in Workers.
-    return URL(m_url, url);
-}
-
-String ShadowRealmGlobalScope::userAgent(const URL&) const
-{
-    return m_userAgent;
-}
-
-SocketProvider* ShadowRealmGlobalScope::socketProvider()
-{
-    return m_socketProvider.get();
-}
-
-RefPtr<RTCDataChannelRemoteHandlerConnection> ShadowRealmGlobalScope::createRTCDataChannelRemoteHandlerConnection()
-{
-    RefPtr<RTCDataChannelRemoteHandlerConnection> connection;
-    callOnMainThreadAndWait([workerThread = Ref { thread() }, &connection]() mutable {
-        connection = workerThread->workerLoaderProxy().createRTCDataChannelRemoteHandlerConnection();
-    });
-    ASSERT(connection);
-
-    return connection;
-}
-
-WorkerLocation& ShadowRealmGlobalScope::location() const
-{
-    if (!m_location)
-        m_location = WorkerLocation::create(URL { m_url }, origin());
-    return *m_location;
-}
-
-void ShadowRealmGlobalScope::close()
-{
-    if (isClosing())
-        return;
-
-    // Let current script run to completion but prevent future script evaluations.
-    // After m_closing is set, all the tasks in the queue continue to be fetched but only
-    // tasks with isCleanupTask()==true will be executed.
-    markAsClosing();
-    postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
-        ASSERT_WITH_SECURITY_IMPLICATION(is<ShadowRealmGlobalScope>(context));
-        ShadowRealmGlobalScope& workerGlobalScope = downcast<ShadowRealmGlobalScope>(context);
-        // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-        workerGlobalScope.thread().workerReportingProxy().workerGlobalScopeClosed();
-    } });
-}
-
-WorkerNavigator& ShadowRealmGlobalScope::navigator()
-{
-    if (!m_navigator)
-        m_navigator = WorkerNavigator::create(*this, m_userAgent, m_isOnline);
-    return *m_navigator;
-}
-
-void ShadowRealmGlobalScope::setIsOnline(bool isOnline)
-{
-    m_isOnline = isOnline;
-    if (m_navigator)
-        m_navigator->setIsOnline(isOnline);
-}
-
-ExceptionOr<int> ShadowRealmGlobalScope::setTimeout(JSC::JSGlobalObject& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
-{
-    // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
-    if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
-            return 0;
-    }
-
-    action->addArguments(WTFMove(arguments));
-
-    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), true);
-}
-
-void ShadowRealmGlobalScope::clearTimeout(int timeoutId)
-{
-    DOMTimer::removeById(*this, timeoutId);
-}
-
-ExceptionOr<int> ShadowRealmGlobalScope::setInterval(JSC::JSGlobalObject& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
-{
-    // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
-    if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
-            return 0;
-    }
-
-    action->addArguments(WTFMove(arguments));
-
-    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), false);
-}
-
-void ShadowRealmGlobalScope::clearInterval(int timeoutId)
-{
-    DOMTimer::removeById(*this, timeoutId);
-}
-
-ExceptionOr<void> ShadowRealmGlobalScope::importScripts(const Vector<String>& urls)
-{
-    ASSERT(contentSecurityPolicy());
-
-    // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries
-    // 1. If worker global scope's type is "module", throw a TypeError exception.
-    if (m_workerType == WorkerType::Module)
-        return Exception { TypeError, "importScripts cannot be used if worker type is \"module\""_s };
-
-    Vector<URL> completedURLs;
-    completedURLs.reserveInitialCapacity(urls.size());
-    for (auto& entry : urls) {
-        URL url = completeURL(entry);
-        if (!url.isValid())
-            return Exception { SyntaxError };
-        completedURLs.uncheckedAppend(WTFMove(url));
-    }
-
-    FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;
-
-    for (auto& url : completedURLs) {
-        // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-        bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
-        if (!shouldBypassMainWorldContentSecurityPolicy && !contentSecurityPolicy()->allowScriptFromSource(url))
-            return Exception { NetworkError };
-
-        auto scriptLoader = WorkerScriptLoader::create();
-        auto cspEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
-        if (auto exception = scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, cachePolicy, cspEnforcement, resourceRequestIdentifier()))
-            return WTFMove(*exception);
-
-        InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script().toString());
-
-        WeakPtr<ScriptBufferSourceProvider> sourceProvider;
-        {
-            NakedPtr<JSC::Exception> exception;
-            ScriptSourceCode sourceCode(scriptLoader->script(), URL(scriptLoader->responseURL()));
-            sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
-            script()->evaluate(sourceCode, exception);
-            if (exception) {
-                script()->setException(exception);
-                return { };
-            }
-        }
-        if (sourceProvider)
-            addImportedScriptSourceProvider(url, *sourceProvider);
-    }
-
-    return { };
-}
-
-EventTarget* ShadowRealmGlobalScope::errorEventTarget()
-{
-    return this;
-}
-
-void ShadowRealmGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&&)
-{
-    thread().workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
-}
-
-void ShadowRealmGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
-{
-    if (!isContextThread()) {
-        postTask(AddConsoleMessageTask(message->source(), message->level(), message->message()));
-        return;
-    }
-
-    InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
-}
-
-void ShadowRealmGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
-{
-    addMessage(source, level, message, { }, 0, 0, nullptr, nullptr, requestIdentifier);
-}
-
-void ShadowRealmGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
-{
-    if (!isContextThread()) {
-        postTask(AddConsoleMessageTask(source, level, messageText));
-        return;
-    }
-
-    std::unique_ptr<Inspector::ConsoleMessage> message;
-    if (callStack)
-        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, callStack.releaseNonNull(), requestIdentifier);
-    else
-        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
-    InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
-}
-
-void ShadowRealmGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
-{
-    ImageBitmap::createPromise(*this, WTFMove(source), WTFMove(options), WTFMove(promise));
-}
-
-void ShadowRealmGlobalScope::createImageBitmap(ImageBitmap::Source&& source, int sx, int sy, int sw, int sh, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
-{
-    ImageBitmap::createPromise(*this, WTFMove(source), WTFMove(options), sx, sy, sw, sh, WTFMove(promise));
-}
-
-CSSValuePool& ShadowRealmGlobalScope::cssValuePool()
-{
-    if (!m_cssValuePool)
-        m_cssValuePool = makeUnique<CSSValuePool>();
-    return *m_cssValuePool;
-}
-
-CSSFontSelector* ShadowRealmGlobalScope::cssFontSelector()
-{
-    if (!m_cssFontSelector)
-        m_cssFontSelector = CSSFontSelector::create(*this);
-    return m_cssFontSelector.get();
-}
-
-FontCache& ShadowRealmGlobalScope::fontCache()
-{
-    if (!m_fontCache)
-        m_fontCache = FontCache::create();
-    return *m_fontCache;
-}
-
-Ref<FontFaceSet> ShadowRealmGlobalScope::fonts()
-{
-    ASSERT(cssFontSelector());
-    return cssFontSelector()->fontFaceSet();
-}
-
-std::unique_ptr<FontLoadRequest> ShadowRealmGlobalScope::fontLoadRequest(String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
-{
-    return makeUnique<WorkerFontLoadRequest>(completeURL(url), loadedFromOpaqueSource);
-}
-
-void ShadowRealmGlobalScope::beginLoadingFontSoon(FontLoadRequest& request)
-{
-    ASSERT(is<WorkerFontLoadRequest>(request));
-    // TODO PLM:
-    /* downcast<WorkerFontLoadRequest>(request).load(*this); */
+    return enclosingContext()->userAgent(url);
 }
 
 ReferrerPolicy ShadowRealmGlobalScope::referrerPolicy() const
 {
-    return m_referrerPolicy;
+    return enclosingContext()->referrerPolicy();
 }
 
-WorkerThread& ShadowRealmGlobalScope::thread() const
+const Settings::Values& ShadowRealmGlobalScope::settingsValues() const
 {
-    return *static_cast<WorkerThread*>(workerOrWorkletThread());
+    return enclosingContext()->settingsValues();
 }
 
-void ShadowRealmGlobalScope::releaseMemory(Synchronous synchronous)
+bool ShadowRealmGlobalScope::isSecureContext() const
 {
-    ASSERT(isContextThread());
-    deleteJSCodeAndGC(synchronous);
-    clearDecodedScriptData();
+    return enclosingContext()->isSecureContext();
 }
 
-void ShadowRealmGlobalScope::deleteJSCodeAndGC(Synchronous synchronous)
+bool ShadowRealmGlobalScope::isJSExecutionForbidden() const
 {
-    ASSERT(isContextThread());
-
-    JSC::JSLockHolder lock(vm());
-    vm().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
-
-    if (synchronous == Synchronous::Yes) {
-        if (!vm().heap.isCurrentThreadBusy()) {
-            vm().heap.collectNow(JSC::Sync, JSC::CollectionScope::Full);
-            WTF::releaseFastMallocFreeMemory();
-            return;
-        }
-    }
-#if PLATFORM(IOS_FAMILY)
-    if (!vm().heap.isCurrentThreadBusy()) {
-        vm().heap.collectNowFullIfNotDoneRecently(JSC::Async);
-        return;
-    }
-#endif
-#if USE(CF) || USE(GLIB)
-    vm().heap.reportAbandonedObjectGraph();
-#else
-    vm().heap.collectNow(JSC::Async, JSC::CollectionScope::Full);
-#endif
+    return enclosingContext()->isJSExecutionForbidden();
 }
 
-void ShadowRealmGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
+EventLoopTaskGroup& ShadowRealmGlobalScope::eventLoop()
 {
-    Locker locker { allWorkerGlobalScopeIdentifiersLock };
-    for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers()) {
-        postTaskTo(globalScopeIdentifier, [synchronous](auto& context) {
-            downcast<ShadowRealmGlobalScope>(context).releaseMemory(synchronous);
-        });
-    }
+    return enclosingContext()->eventLoop();
 }
 
-void ShadowRealmGlobalScope::setMainScriptSourceProvider(ScriptBufferSourceProvider& provider)
+void ShadowRealmGlobalScope::disableEval(const String& msg)
 {
-    ASSERT(!m_mainScriptSourceProvider);
-    m_mainScriptSourceProvider = provider;
+    enclosingContext()->disableEval(msg);
 }
 
-void ShadowRealmGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBufferSourceProvider& provider)
+void ShadowRealmGlobalScope::disableWebAssembly(const String& msg)
 {
-    m_importedScriptsSourceProviders.ensure(url, [] {
-        return WeakHashSet<ScriptBufferSourceProvider> { };
-    }).iterator->value.add(provider);
+    enclosingContext()->disableWebAssembly(msg);
 }
 
-void ShadowRealmGlobalScope::clearDecodedScriptData()
+IDBClient::IDBConnectionProxy* ShadowRealmGlobalScope::idbConnectionProxy()
 {
-    ASSERT(isContextThread());
-
-    if (m_mainScriptSourceProvider)
-        m_mainScriptSourceProvider->clearDecodedData();
-
-    for (auto& sourceProviders : m_importedScriptsSourceProviders.values()) {
-        for (auto& sourceProvider : sourceProviders)
-            sourceProvider.clearDecodedData();
-    }
+    return enclosingContext()->idbConnectionProxy();
 }
 
-bool ShadowRealmGlobalScope::crossOriginIsolated() const
+SocketProvider* ShadowRealmGlobalScope::socketProvider()
 {
-    return ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
+    return enclosingContext()->socketProvider();
 }
 
-void ShadowRealmGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts)
+
+void ShadowRealmGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& msg)
 {
-    ASSERT(isContextThread());
-
-    if (mainScript && m_mainScriptSourceProvider)
-        m_mainScriptSourceProvider->tryReplaceScriptBuffer(mainScript);
-
-    for (auto& pair : importedScripts) {
-        auto it = m_importedScriptsSourceProviders.find(pair.key);
-        if (it == m_importedScriptsSourceProviders.end())
-            continue;
-        for (auto& sourceProvider : it->value)
-            sourceProvider.tryReplaceScriptBuffer(pair.value);
-    }
+    enclosingContext()->addConsoleMessage(WTFMove(msg));
 }
 
+void ShadowRealmGlobalScope::addConsoleMessage(MessageSource src, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    enclosingContext()->addConsoleMessage(src, level, message, requestIdentifier);
+}
+
+SecurityOrigin& ShadowRealmGlobalScope::topOrigin() const
+{
+    return enclosingContext()->topOrigin();
+}
+
+JSC::VM& ShadowRealmGlobalScope::vm()
+{
+    return enclosingContext()->vm();
+}
+
+EventTarget* ShadowRealmGlobalScope::errorEventTarget()
+{
+    return enclosingContext()->errorEventTarget();
+}
+
+bool ShadowRealmGlobalScope::wrapCryptoKey(const Vector<uint8_t>& in, Vector<uint8_t>& out)
+{
+    return enclosingContext()->wrapCryptoKey(in, out);
+}
+
+bool ShadowRealmGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& in, Vector<uint8_t>& out)
+{
+    return enclosingContext()->unwrapCryptoKey(in, out);
+}
+
+void ShadowRealmGlobalScope::addMessage(MessageSource src, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& stack, JSC::JSGlobalObject* global, unsigned long requestIdentifier)
+{
+    enclosingContext()->addMessage(src, level, message, sourceURL,
+lineNumber, columnNumber, WTFMove(stack), global, requestIdentifier );
+}
+
+void ShadowRealmGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&& stack)
+{
+    enclosingContext()->logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(stack));
+}
+
+
+void ShadowRealmGlobalScope::postTask(Task&& task)
+{
+    enclosingContext()->postTask(WTFMove(task));
+}
+
+
+void ShadowRealmGlobalScope::refScriptExecutionContext()
+{
+    ref();
+}
+
+void ShadowRealmGlobalScope::derefScriptExecutionContext()
+{
+    deref();
+}
+
+ShadowRealmGlobalScope::~ShadowRealmGlobalScope() {}
 } // namespace WebCore

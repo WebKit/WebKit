@@ -30,8 +30,10 @@
 #include "EventLoop.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDOMGuardedObject.h"
+#include "JSShadowRealmGlobalScope.h"
 #include "JSMicrotaskCallback.h"
 #include "ShadowRealmGlobalScope.h"
+#include "ShadowRealmScriptController.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -81,6 +83,13 @@ void JSShadowRealmGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
 {
     m_proxy.set(vm, this, proxy);
 
+    // TODO(jgriego) definitely _not_ an ideal solution
+    ASSERT(inherits<JSShadowRealmGlobalScope>(vm));
+    ASSERT(!m_wrapped->m_scriptController);
+    m_wrapped->m_scriptController = std::make_unique<ShadowRealmScriptController>(Ref(vm),
+                                                                                 jsCast<JSShadowRealmGlobalScope*>(this));
+
+
     Base::finishCreation(vm, m_proxy.get());
     ASSERT(inherits(vm, info()));
 }
@@ -124,7 +133,9 @@ bool JSShadowRealmGlobalScopeBase::shouldInterruptScriptBeforeTimeout(const JSGl
 RuntimeFlags JSShadowRealmGlobalScopeBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
     const JSShadowRealmGlobalScopeBase *thisObject = jsCast<const JSShadowRealmGlobalScopeBase*>(object);
-    return thisObject->m_wrapped->thread().runtimeFlags();
+    auto const incubatingGlobalObj = thisObject->m_wrapped->m_incubatingWrapper;
+
+    return incubatingGlobalObj->globalObjectMethodTable()->javaScriptRuntimeFlags(incubatingGlobalObj.get());
 }
 
 JSC::ScriptExecutionStatus JSShadowRealmGlobalScopeBase::scriptExecutionStatus(JSC::JSGlobalObject* globalObject, JSC::JSObject* owner)
@@ -143,25 +154,27 @@ void JSShadowRealmGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& obj
     JSShadowRealmGlobalScopeBase& thisObject = static_cast<JSShadowRealmGlobalScopeBase&>(object);
 
     auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
-    auto& context = thisObject.wrapped();
-    context.eventLoop().queueMicrotask([callback = WTFMove(callback)]() mutable {
+    auto context = thisObject.wrapped().enclosingContext();
+    context->eventLoop().queueMicrotask([callback = WTFMove(callback)]() mutable {
         callback->call();
     });
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, ShadowRealmGlobalScope& workerGlobalScope)
 {
-    return toJS(lexicalGlobalObject, workerGlobalScope);
+    CRASH();
+    //return toJS(lexicalGlobalObject, workerGlobalScope);
 }
 
 JSValue toJS(JSGlobalObject*, ShadowRealmGlobalScope& workerGlobalScope)
 {
-    auto* script = workerGlobalScope.script();
-    if (!script)
-        return jsNull();
-    auto* contextWrapper = script->globalScopeWrapper();
-    ASSERT(contextWrapper);
-    return &contextWrapper->proxy();
+    CRASH();
+    //auto* script = workerGlobalScope.script();
+    //if (!script)
+    //return jsNull();
+    //auto* contextWrapper = script->globalScopeWrapper();
+    //ASSERT(contextWrapper);
+    //return &contextWrapper->proxy();
 }
 
 } // namespace WebCore

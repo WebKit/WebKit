@@ -26,17 +26,17 @@
 
 [
     Exposed=ShadowRealm,
-    JSCustomMarkFunction,
+    // JSCustomMarkFunction,
     JSLegacyParent=JSShadowRealmGlobalScopeBase,
     Global=ShadowRealm,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
-    JSGenerateToNativeObject,
+    // JSGenerateToNativeObject,
 ] interface ShadowRealmGlobalScope : EventTarget {
     readonly attribute ShadowRealmGlobalScope self;
     /* readonly attribute WorkerLocation location; */
     /* readonly attribute WorkerNavigator navigator; */
-    undefined importScripts(USVString... urls);
+    // undefined importScripts(USVString... urls);
 
     // FIXME: The spec 'onerror' should be of type 'OnErrorEventHandler'.
     /* attribute EventHandler onerror; */
@@ -46,27 +46,27 @@
     /* attribute EventHandler ononline; */
     /* attribute EventHandler onrejectionhandled; */
     /* attribute EventHandler onunhandledrejection; */
-    [Replaceable] readonly attribute USVString origin;
+    // [Replaceable] readonly attribute USVString origin;
     readonly attribute boolean isSecureContext;
 
-    [EnabledBySetting=CrossOriginOpenerPolicyEnabled] readonly attribute boolean crossOriginIsolated;
+  // [EnabledBySetting=CrossOriginOpenerPolicyEnabled] readonly attribute boolean crossOriginIsolated;
 
-    [CallWith=GlobalObject] undefined reportError(any error);
+  // [CallWith=GlobalObject] undefined reportError(any error);
 
     // Base64 utility methods.
-    DOMString atob(DOMString string);
-    DOMString btoa(DOMString string);
+    // DOMString atob(DOMString string);
+    // DOMString btoa(DOMString string);
 
     // Timers.
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
-    [CallWith=GlobalObject] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
-    undefined clearTimeout(optional long handle = 0);
+    // [CallWith=GlobalObject] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
+  // undefined clearTimeout(optional long handle = 0);
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
-    [CallWith=GlobalObject] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
-    undefined clearInterval(optional long handle = 0);
+    // [CallWith=GlobalObject] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
+    // undefined clearInterval(optional long handle = 0);
 
     // microtask queuing.
-    [Custom] undefined queueMicrotask(VoidCallback callback);
+    // [Custom] undefined queueMicrotask(VoidCallback callback);
 };
 
 /* ShadowRealmGlobalScope includes WindowOrWorkerGlobalScope; */

@@ -47,6 +47,7 @@
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
 #include "JSShadowRealmGlobalScopeBase.h"
+#include "JSShadowRealmGlobalScope.h"
 #include "JSWritableStream.h"
 #include "RejectedPromiseTracker.h"
 #include "RuntimeEnabledFeatures.h"
@@ -359,11 +360,20 @@ void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlo
     reportException(jsGlobalObject, exception);
 }
 
-JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& vm, const JSC::JSGlobalObject* globalObject)
+JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
 {
-    // TODO PLM: create JSShadowRealmScopeBase
-    /* return JSShadowRealmGlobalScope::create(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), jsCast<const JSDOMGlobalObject*>(globalObject)); */
-    return JSC::JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), &s_shadowRealmGlobalObjectMethodTable);
+    auto domGlobalObject = jsCast<JSDOMGlobalObject*>(globalObject);
+    ASSERT(domGlobalObject);
+    auto scope = ShadowRealmGlobalScope::tryCreate(vm, domGlobalObject).releaseNonNull();
+
+    Structure* contextProtoStructure = JSShadowRealmGlobalScopePrototype::createStructure(vm, nullptr, jsNull());
+    auto contextProto = JSShadowRealmGlobalScopePrototype::create(vm, nullptr, contextProtoStructure);
+    Structure* structure = JSShadowRealmGlobalScope::createStructure(vm, nullptr, contextProto);
+
+    auto proxyStructure = JSProxy::createStructure(vm, nullptr, jsNull());
+    auto proxy = JSProxy::create(vm, proxyStructure);
+
+    return JSShadowRealmGlobalScope::create(vm, structure, WTFMove(scope), proxy);
 }
 
 void JSDOMGlobalObject::clearDOMGuardedObjects() const
@@ -544,7 +554,6 @@ static ScriptModuleLoader* scriptModuleLoader(const JSDOMGlobalObject* globalObj
     if (globalObject->inherits<JSRemoteDOMWindowBase>(vm))
         return nullptr;
     if (globalObject->inherits<JSShadowRealmGlobalScopeBase>(vm))
-        // TODO PLM:
         return &jsCast<const JSShadowRealmGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSWorkerGlobalScopeBase>(vm))
         return &jsCast<const JSWorkerGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();

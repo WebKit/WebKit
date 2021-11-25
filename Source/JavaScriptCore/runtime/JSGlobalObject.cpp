@@ -2642,7 +2642,7 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
     ASSERT(type() == GlobalObjectType);
 }
 
-JSGlobalObject* JSGlobalObject::deriveShadowRealmGlobalObject(VM& vm) const
+JSGlobalObject* JSGlobalObject::deriveShadowRealmGlobalObject(VM& vm)
 {
   return m_globalObjectMethodTable->deriveShadowRealmGlobalObject(vm, this);
 }

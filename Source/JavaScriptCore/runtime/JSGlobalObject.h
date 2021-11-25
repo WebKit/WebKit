@@ -266,7 +266,7 @@ struct GlobalObjectMethodTable {
     typedef JSPromise* (*InstantiateStreamingPtr)(JSGlobalObject*, JSValue, JSObject*);
     InstantiateStreamingPtr instantiateStreaming;
 
-    typedef JSGlobalObject* (*DeriveShadowRealmGlobalFunctionPtr)(VM&, const JSGlobalObject*);
+    typedef JSGlobalObject* (*DeriveShadowRealmGlobalFunctionPtr)(VM&, JSGlobalObject*);
     DeriveShadowRealmGlobalFunctionPtr deriveShadowRealmGlobalObject;
 };
 
@@ -568,7 +568,7 @@ public:
     bool isStringPrototypeIteratorProtocolFastAndNonObservable();
     bool isMapPrototypeSetFastAndNonObservable();
     bool isSetPrototypeAddFastAndNonObservable();
-    JSGlobalObject* deriveShadowRealmGlobalObject(VM&) const;
+    JSGlobalObject* deriveShadowRealmGlobalObject(VM&);
 
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
@@ -1078,7 +1078,7 @@ public:
 
     static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
-    static JSGlobalObject* deriveShadowRealmGlobalObject(VM& vm, const JSGlobalObject* globalObject)
+    static JSGlobalObject* deriveShadowRealmGlobalObject(VM& vm, JSGlobalObject* globalObject)
     {
         return JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, jsNull()), globalObject->globalObjectMethodTable());
     }

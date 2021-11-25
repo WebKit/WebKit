@@ -57,7 +57,7 @@ void ShadowRealmObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(ShadowRealmObject);
 
-ShadowRealmObject* ShadowRealmObject::create(VM& vm, Structure* structure, const JSGlobalObject* globalObject)
+ShadowRealmObject* ShadowRealmObject::create(VM& vm, Structure* structure, JSGlobalObject* globalObject)
 {
     ShadowRealmObject* object = new (NotNull, allocateCell<ShadowRealmObject>(vm)) ShadowRealmObject(vm, structure);
     object->finishCreation(vm);

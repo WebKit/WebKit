@@ -1,3 +1,5 @@
+#include "ShadowRealmScriptController.h"
+
 /*
  * Copyright (C) 2021 Igalia S.L.
  *
@@ -23,41 +25,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "ShadowRealmScriptController.h"
 
-#include "JSCJSValueInlines.h"
-#include "JSObject.h"
+#include "JSShadowRealmGlobalScope.h"
 
-namespace JSC {
+#include <JavaScriptCore/JSModuleRecord.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/VM.h>
 
-class ShadowRealmObject final : public JSNonFinalObject {
-public:
-    using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags;
+namespace WebCore {
 
-    template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.shadowRealmSpace<mode>();
-    }
+using JSC::VM;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ShadowRealmType, StructureFlags), info());
-    }
+ShadowRealmScriptController::ShadowRealmScriptController(Ref<JSC::VM>&& vm,
+                                                         JSShadowRealmGlobalScope* wrapper)
+    : m_vm(WTFMove(vm))
+    , m_scope(JSShadowRealmGlobalScope::toWrapped(m_vm, wrapper))
+    , m_scopeWrapper(m_vm, wrapper) {}
 
-    DECLARE_INFO;
+JSC::JSValue ShadowRealmScriptController::evaluateModule(JSC::JSModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
+{
+    auto globalObject = static_cast<JSC::JSGlobalObject*>(m_scopeWrapper.get());
+    //VM& vm = globalObject.vm();
+    // FIXME(jgriego) do we actually need any locking?
+    // JSLockHolder lock { vm };
 
-    static ShadowRealmObject* create(VM&, Structure*, JSGlobalObject*);
+    return moduleRecord.evaluate(globalObject, awaitedValue, resumeMode);
+}
 
-    JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
-private:
-    ShadowRealmObject(VM&, Structure*);
-    void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
+}
 
-    WriteBarrier<JSGlobalObject> m_globalObject;
-};
-
-} // namespace JSC

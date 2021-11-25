@@ -49,147 +49,86 @@ namespace WebCore {
 class CSSFontSelector;
 class CSSValuePool;
 class ContentSecurityPolicyResponseHeaders;
+class Document;
 class FontFaceSet;
 class Performance;
 class ScheduledAction;
+class ShadowRealmScriptController;
 class WorkerLocation;
 class WorkerNavigator;
 class WorkerSWClientConnection;
+class JSDOMGlobalScope;
 struct WorkerParameters;
 
-class ShadowRealmGlobalScope : public Supplementable<ShadowRealmGlobalScope>, public Base64Utilities
-                               , public WindowOrWorkerGlobalScope, public WorkerOrWorkletGlobalScope
-  {
+class ShadowRealmGlobalScope : public ScriptExecutionContext, public RefCounted<ShadowRealmGlobalScope>
+{
+    friend class JSShadowRealmGlobalScopeBase; // TODO(jgriego) not elegant
+
     WTF_MAKE_ISO_ALLOCATED(ShadowRealmGlobalScope);
 public:
+    // we need to be refcounted, but ScriptExecutionContext also exposes `ref`
+    // and `deref` using the virtual implementations--we pick the RefCounted
+    // ones to avoid ambiguity (and unnecessary virtual dispatch)
+    using RefCounted<ShadowRealmGlobalScope>::ref;
+    using RefCounted<ShadowRealmGlobalScope>::deref;
+
+    static RefPtr<ShadowRealmGlobalScope> tryCreate(JSC::VM& vm, JSDOMGlobalObject*);
     ~ShadowRealmGlobalScope();
 
-    virtual bool isDedicatedWorkerGlobalScope() const { return false; }
-    virtual bool isSharedWorkerGlobalScope() const { return false; }
-    virtual bool isServiceWorkerGlobalScope() const { return false; }
+    bool isShadowRealmGlobalScope() const final override { return true; }
 
-    const URL& url() const final { return m_url; }
-    String origin() const;
-    const String& identifier() const { return m_identifier; }
+    // other ScriptExecutionContext obligations
+    const URL& url() const final override;
+    URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final override;
+    String userAgent(const URL&) const final override;
+    ReferrerPolicy referrerPolicy() const final override;
+    const Settings::Values& settingsValues() const final override;
+    bool isSecureContext() const;
+    bool isJSExecutionForbidden() const final override;
+    EventLoopTaskGroup& eventLoop() final override;
+    void disableEval(const String&) final override;
+    void disableWebAssembly(const String&) final override;
+    IDBClient::IDBConnectionProxy* idbConnectionProxy() final override;
+    SocketProvider* socketProvider() final override;
 
-    using WeakValueType = EventTarget::WeakValueType;
-    using EventTarget::weakPtrFactory;
+    void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final override;
+    void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final override;
+    SecurityOrigin& topOrigin() const final override;
+    JSC::VM& vm() final override;
+    EventTarget* errorEventTarget() final override;
+    bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final override;
+    bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final override;
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier) final override;
+    void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final override;
 
-    WorkerThread& thread() const;
+    void postTask(Task&&) final override;
 
-    using ScriptExecutionContext::hasPendingActivity;
+    void refScriptExecutionContext() final override;
+    void derefScriptExecutionContext() final override;
 
     ShadowRealmGlobalScope& self() { return *this; }
-    WorkerLocation& location() const;
-    void close();
 
-    virtual ExceptionOr<void> importScripts(const Vector<String>& urls);
-    WorkerNavigator& navigator();
+    ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
 
-    void setIsOnline(bool);
+    ShadowRealmScriptController* script() { return m_scriptController.get(); }
 
-    ExceptionOr<int> setTimeout(JSC::JSGlobalObject&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
-    void clearTimeout(int timeoutId);
-    ExceptionOr<int> setInterval(JSC::JSGlobalObject&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
-    void clearInterval(int timeoutId);
 
-    bool isSecureContext() const final;
-    bool crossOriginIsolated() const;
-
-    WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
-    WorkerLocation* optionalLocation() const { return m_location.get(); }
-
-    void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
-
-    SecurityOrigin& topOrigin() const final { return m_topOrigin.get(); }
-
-    Performance& performance() const;
-
-    void prepareForDestruction() override;
-
-    void removeAllEventListeners() final;
-
-    void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
-    void createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
-
-    CSSValuePool& cssValuePool() final;
-    CSSFontSelector* cssFontSelector() final;
-    FontCache& fontCache() final;
-    Ref<FontFaceSet> fonts();
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
-    void beginLoadingFontSoon(FontLoadRequest&) final;
-
-    ReferrerPolicy referrerPolicy() const final;
-
-    const Settings::Values& settingsValues() const final { return m_settingsValues; }
-
-    FetchOptions::Credentials credentials() const { return m_credentials; }
-
-    void releaseMemory(Synchronous);
-    static void releaseMemoryInWorkers(Synchronous);
-
-    void setMainScriptSourceProvider(ScriptBufferSourceProvider&);
-    void addImportedScriptSourceProvider(const URL&, ScriptBufferSourceProvider&);
+    Document* responsibleDocument();
 
 protected:
-    ShadowRealmGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, SocketProvider*);
+    ShadowRealmGlobalScope(JSC::VM& vm, JSDOMGlobalObject*);
 
-    void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
-    void updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts);
+    ScriptExecutionContext* enclosingContext() const;
 
 private:
-    void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
-
-    // The following addMessage and addConsoleMessage functions are deprecated.
-    // Callers should try to create the ConsoleMessage themselves.
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier) final;
-    void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
-
-    bool isShadowRealmGlobalScope() const final { return true; }
-
-    void deleteJSCodeAndGC(Synchronous);
-    void clearDecodedScriptData();
-
-    URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
-    String userAgent(const URL&) const final;
-
-    EventTarget* errorEventTarget() final;
-    String resourceRequestIdentifier() const final { return m_identifier; }
-    SocketProvider* socketProvider() final;
-    RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
-
-    bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
-
-    URL m_url;
-    String m_identifier;
-    String m_userAgent;
-
-    mutable RefPtr<WorkerLocation> m_location;
-    mutable RefPtr<WorkerNavigator> m_navigator;
-
-    bool m_isOnline;
-    bool m_shouldBypassMainWorldContentSecurityPolicy;
-
-    Ref<SecurityOrigin> m_topOrigin;
-
-    RefPtr<SocketProvider> m_socketProvider;
-
-    RefPtr<Performance> m_performance;
-
-    WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;
-    HashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
-
-    std::unique_ptr<CSSValuePool> m_cssValuePool;
-    RefPtr<CSSFontSelector> m_cssFontSelector;
-    RefPtr<FontCache> m_fontCache;
-    ReferrerPolicy m_referrerPolicy;
-    Settings::Values m_settingsValues;
-    WorkerType m_workerType;
-    FetchOptions::Credentials m_credentials;
+    RefPtr<JSC::VM> m_vm;
+    JSC::Strong<JSDOMGlobalObject> m_incubatingWrapper;
+    std::unique_ptr<ShadowRealmScriptController> m_scriptController{};
+    std::unique_ptr<ScriptModuleLoader> m_moduleLoader{};
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ShadowRealmGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isShadowRealmGlobalScope(); }
+static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isShadowRealmGlobalScope(); }
 SPECIALIZE_TYPE_TRAITS_END()
