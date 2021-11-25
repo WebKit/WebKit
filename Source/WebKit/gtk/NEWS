@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.35.1
+================
+
+What's new in WebKitGTK 2.35.1?
+
+  - Make user interactive threads (event handler, scrolling, ...) real time in linux.
+  - Add new API to set HTTP response information to custom uri schemes.
+  - Add support for media session.
+  - Change hardware-acceleration-policy setting default value to always.
+  - Fix jsc_value_object_define_property_accessor() to work with objects not having a wrapped instance.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.33.3
 ================
 
