@@ -1097,7 +1097,6 @@ media/video-timeupdate-reverse-play.html [ Skip ] # Timeout
 # HTTP Timeouts
 http/tests/media/hls/video-cookie.html [ Skip ] # Timeout
 http/tests/media/video-buffered-range-contains-currentTime.html [ Skip ] # Timeout
-http/tests/media/video-play-waiting.html [ Skip ] # Timeout
 
 # Extra whitespace in the output
 #media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]

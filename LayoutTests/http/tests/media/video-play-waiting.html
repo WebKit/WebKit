@@ -9,7 +9,11 @@
     waitForEvent('durationchange');
     waitForEvent('loadedmetadata');
     waitForEvent('loadeddata');
-    waitForEventAndEnd('waiting');
+    waitForEventAndEnd('waiting', function() {
+        // TestRunner waits for the complete frame download before finishing, so having the video load stalled
+        // prevents TestRunner from finishing. Changing the src will abort the download and let the test finish.
+        video.src = "";
+    });
 
     waitForEvent('canplay', function () {
         run("video.play()");

@@ -1,3 +1,23 @@
+2021-11-25  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Layout Test http/tests/media/video-play-waiting.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=142489
+
+        Reviewed by Philippe Normand.
+
+        The test was failing with a timeout even after properly calling TestRunner.notifyDone()
+        internally because there was still an injectedBundle.topLoadingFrame() in InjectedBundlePage,
+        which means that the web page hadn't completely finished to be downloaded. This was caused
+        by the stalled video download that the test wants to exercise.
+
+        The solution is to set the video src to empty in order to convince TestRunner that the page
+        has finished downloading.
+
+        * http/tests/media/video-play-waiting.html: Set the video src to empty.
+        * platform/mac/TestExpectations: The test now just fails (for reasons unrelated to this fix) on mac instead of timing out.
+        * platform/glib/TestExpectations: Unskipped test.
+        * platform/win/TestExpectations: Unskipped test.
+
 2021-11-24  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Track sizing algorithm not repeated even if used flex fraction would change
