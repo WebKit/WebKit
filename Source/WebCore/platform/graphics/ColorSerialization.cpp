@@ -75,6 +75,10 @@ static String serializationForCSS(const XYZA<float, WhitePoint::D50>&, bool useC
 static String serializationForHTML(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
 static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
 
+static String serializationForCSS(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
+static String serializationForHTML(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
+static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
+
 
 String serializationForCSS(const Color& color)
 {
@@ -109,7 +113,7 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
     case ColorSpace::Lab:
         return "lab"_s;
     case ColorSpace::LinearSRGB:
-        return "linear-srgb"_s;
+        return "srgb-linear"_s;
     case ColorSpace::ProPhotoRGB:
         return "prophoto-rgb"_s;
     case ColorSpace::Rec2020:
@@ -117,7 +121,9 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
     case ColorSpace::SRGB:
         return "srgb"_s;
     case ColorSpace::XYZ_D50:
-        return "xyz"_s;
+        return "xyz-d50"_s;
+    case ColorSpace::XYZ_D65:
+        return "xyz-d65"_s;
     }
 
     ASSERT_NOT_REACHED();
@@ -367,6 +373,23 @@ String serializationForHTML(const XYZA<float, WhitePoint::D50>& color, bool)
 }
 
 String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+// MARK: XYZA<float, WhitePoint::D65> overloads
+
+String serializationForCSS(const XYZA<float, WhitePoint::D65>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+String serializationForHTML(const XYZA<float, WhitePoint::D65>& color, bool)
+{
+    return serializationUsingColorFunction(color);
+}
+
+String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D65>& color, bool)
 {
     return serializationUsingColorFunction(color);
 }

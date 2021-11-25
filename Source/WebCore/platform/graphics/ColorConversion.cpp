@@ -297,6 +297,8 @@ ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, Colo
             return asColorComponents(convertColor<SRGBA<float>>(inputColor));
         case ColorSpace::XYZ_D50:
             return asColorComponents(convertColor<XYZA<float, WhitePoint::D50>>(inputColor));
+        case ColorSpace::XYZ_D65:
+            return asColorComponents(convertColor<XYZA<float, WhitePoint::D65>>(inputColor));
         }
 
         ASSERT_NOT_REACHED();

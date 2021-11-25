@@ -65,7 +65,7 @@ WEBCORE_EXPORT CGColorSpaceRef ROMMRGBColorSpaceRef();
 #endif
 
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
-WEBCORE_EXPORT CGColorSpaceRef xyzColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef xyzD50ColorSpaceRef();
 #endif
 
 std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef);
@@ -115,10 +115,15 @@ static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
         return sRGBColorSpaceRef();
     case ColorSpace::XYZ_D50:
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
-        return xyzColorSpaceRef();
+        return xyzD50ColorSpaceRef();
 #else
         return nullptr;
 #endif
+    case ColorSpace::XYZ_D65:
+        // FIXME: Add support for this once we have figured out how to create the CoreGraphics representation.
+        return nullptr;
+
+
     }
     ASSERT_NOT_REACHED();
     return nullptr;

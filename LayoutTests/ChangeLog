@@ -1,3 +1,19 @@
+2021-11-25  Sam Weinig  <weinig@apple.com>
+
+        [CSS Color 4] Add support for new srgb-linear, xyz-d50 and xyz-d65 colorspaces
+        https://bugs.webkit.org/show_bug.cgi?id=233475
+
+        Reviewed by Dean Jackson.
+
+        Update tests for new srgb-linear, xyz-d50 and xyz-d65 colorspaces
+
+        * fast/css/parsing-color-function-expected.txt:
+        * fast/css/parsing-color-function.html:
+        * fast/css/parsing-color-mix-expected.txt:
+        * fast/css/parsing-color-mix.html:
+        * fast/css/parsing-relative-color-syntax-expected.txt:
+        * fast/css/parsing-relative-color-syntax.html:
+
 2021-11-25  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Layout Test http/tests/media/video-play-waiting.html is timing out

@@ -1469,7 +1469,10 @@ display-p3
 prophoto-rgb
 // rec2020
 // sRGB
+srgb-linear
 xyz
+xyz-d50
+xyz-d65
 
 // color-contast()
 color-contrast

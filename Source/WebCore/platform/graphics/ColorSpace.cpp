@@ -58,7 +58,10 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
         ts << "sRGB";
         break;
     case ColorSpace::XYZ_D50:
-        ts << "XYZ";
+        ts << "XYZ-D50";
+        break;
+    case ColorSpace::XYZ_D65:
+        ts << "XYZ-D50";
         break;
     }
     return ts;

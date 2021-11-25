@@ -1,3 +1,49 @@
+2021-11-25  Sam Weinig  <weinig@apple.com>
+
+        [CSS Color 4] Add support for new srgb-linear, xyz-d50 and xyz-d65 colorspaces
+        https://bugs.webkit.org/show_bug.cgi?id=233475
+
+        Reviewed by Dean Jackson.
+
+        Update existing color(xyz ...) tests for new d65 whitepoint and add new tests
+        for color(srgb-linear ...), color(xyz-d50 ...) and color(xyz-d65 ...).
+
+        * web-platform-tests/css/css-color/predefined-016.html:
+        * web-platform-tests/css/css-color/srgb-linear-001-expected.html: Added.
+        * web-platform-tests/css/css-color/srgb-linear-001.html: Added.
+        * web-platform-tests/css/css-color/srgb-linear-002-expected.html: Added.
+        * web-platform-tests/css/css-color/srgb-linear-002.html: Added.
+        * web-platform-tests/css/css-color/srgb-linear-003-expected.html: Added.
+        * web-platform-tests/css/css-color/srgb-linear-003.html: Added.
+        * web-platform-tests/css/css-color/srgb-linear-004-expected.html: Added.
+        * web-platform-tests/css/css-color/srgb-linear-004.html: Added.
+        * web-platform-tests/css/css-color/xyz-001.html:
+        * web-platform-tests/css/css-color/xyz-003-expected.html:
+        * web-platform-tests/css/css-color/xyz-003.html:
+        * web-platform-tests/css/css-color/xyz-004-expected.html:
+        * web-platform-tests/css/css-color/xyz-004.html:
+        * web-platform-tests/css/css-color/xyz-005.html:
+        * web-platform-tests/css/css-color/xyz-d50-001-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-001.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-002-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-002.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-003-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-003.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-004-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-004.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-005-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d50-005.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-001-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-001.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-002-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-002.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-003-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-003.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-004-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-004.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-005-expected.html: Added.
+        * web-platform-tests/css/css-color/xyz-d65-005.html: Added.
+
 2021-11-24  Tim Nguyen  <ntim@apple.com>
 
         Re-import html/semantics/interactive-elements/the-dialog-element WPT

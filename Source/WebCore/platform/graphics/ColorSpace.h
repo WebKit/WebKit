@@ -42,6 +42,7 @@ enum class ColorSpace : uint8_t {
     Rec2020,
     SRGB,
     XYZ_D50,
+    XYZ_D65,
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ColorSpace);
@@ -57,6 +58,7 @@ template<typename T> struct ColorSpaceMapping<ProPhotoRGB<T>> { static constexpr
 template<typename T> struct ColorSpaceMapping<Rec2020<T>> { static constexpr auto colorSpace { ColorSpace::Rec2020 }; };
 template<typename T> struct ColorSpaceMapping<SRGBA<T>> { static constexpr auto colorSpace { ColorSpace::SRGB }; };
 template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D50>> { static constexpr auto colorSpace { ColorSpace::XYZ_D50 }; };
+template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D65>> { static constexpr auto colorSpace { ColorSpace::XYZ_D65 }; };
 
 template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<ColorType>::colorSpace;
 
@@ -82,6 +84,8 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
     case ColorSpace::XYZ_D50:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<XYZA<T, WhitePoint::D50>>(components));
+    case ColorSpace::XYZ_D65:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<XYZA<T, WhitePoint::D65>>(components));
     }
 
     ASSERT_NOT_REACHED();
@@ -104,7 +108,8 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
         WebCore::ColorSpace::ProPhotoRGB,
         WebCore::ColorSpace::Rec2020,
         WebCore::ColorSpace::SRGB,
-        WebCore::ColorSpace::XYZ_D50
+        WebCore::ColorSpace::XYZ_D50,
+        WebCore::ColorSpace::XYZ_D65
     >;
 };
 

@@ -444,7 +444,7 @@
     testComputed(`lch(from lch(70% 45 30) l g b)`, `rgba(0, 0, 0, 0)`);
 
 
-    for (const color of [ "srgb", "a98-rgb", "rec2020", "prophoto-rgb" ]) {
+    for (const color of [ "srgb", "srgb-linear", "a98-rgb", "rec2020", "prophoto-rgb" ]) {
         debug('');
         debug('color(from ... ${color} ...)');
 
@@ -515,70 +515,73 @@
         testComputed(`color(from color(${color} 0.7 0.5 0.3) ${color} l g b)`,                              `rgba(0, 0, 0, 0)`);
     }
 
-    debug('');
-    debug('color(from ... xyz ...)');
+    for (const color of [ "xyz", "xyz-d50", "xyz-d65" ]) {
+	    debug('');
+	    debug(`color(from ... ${color} ...)`);
 
-    // Testing no modifications.
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y z)`,                              `color(xyz 7 -20.5 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y z / alpha)`,                      `color(xyz 7 -20.5 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x y z)`,                        `color(xyz 7 -20.5 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x y z / alpha)`,                `color(xyz 7 -20.5 100 / 0.4)`);
+  	  	const resultColorSpace = color == "xyz" ? "xyz-d65" : color; 
 
-    // Test nesting relative colors.
-    testComputed(`color(from color(from color(xyz 7 -20.5 100) xyz x y z) xyz x y z)`,        `color(xyz 7 -20.5 100)`);
+	    // Testing no modifications.
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y z)`,                              `color(${resultColorSpace} 7 -20.5 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y z / alpha)`,                      `color(${resultColorSpace} 7 -20.5 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x y z)`,                        `color(${resultColorSpace} 7 -20.5 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x y z / alpha)`,                `color(${resultColorSpace} 7 -20.5 100 / 0.4)`);
 
-    // Testing replacement with 0.
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz 0 0 0)`,                              `color(xyz 0 0 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz 0 0 0)`,                              `color(xyz 0 0 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz 0 0 0 / 0)`,                          `color(xyz 0 0 0 / 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz 0 0 0 / 0)`,                          `color(xyz 0 0 0 / 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz 0 y z / alpha)`,                      `color(xyz 0 -20.5 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x 0 z / alpha)`,                      `color(xyz 7 0 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y 0 / alpha)`,                      `color(xyz 7 -20.5 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y z / 0)`,                          `color(xyz 7 -20.5 100 / 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz 0 y z / alpha)`,                `color(xyz 0 -20.5 100 / 0.4)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x 0 z / alpha)`,                `color(xyz 7 0 100 / 0.4)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x y 0 / alpha)`,                `color(xyz 7 -20.5 0 / 0.4)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x y z / 0)`,                    `color(xyz 7 -20.5 100 / 0)`);
+	    // Test nesting relative colors.
+	    testComputed(`color(from color(from color(${color} 7 -20.5 100) ${color} x y z) ${color} x y z)`,        `color(${resultColorSpace} 7 -20.5 100)`);
 
-    // Testing replacement with a constant.
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz 0.2 y z / alpha)`,                    `color(xyz 0.2 -20.5 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x 0.2 z / alpha)`,                    `color(xyz 7 0.2 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y 0.2 / alpha)`,                    `color(xyz 7 -20.5 0.2)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y z / 0.2)`,                        `color(xyz 7 -20.5 100 / 0.2)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y z / 20%)`,                        `color(xyz 7 -20.5 100 / 0.2)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz 0.2 y z / alpha)`,              `color(xyz 0.2 -20.5 100 / 0.4)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x 0.2 z / alpha)`,              `color(xyz 7 0.2 100 / 0.4)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x y 0.2 / alpha)`,              `color(xyz 7 -20.5 0.2 / 0.4)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x y z / 0.2)`,                  `color(xyz 7 -20.5 100 / 0.2)`);
+	    // Testing replacement with 0.
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} 0 0 0)`,                              `color(${resultColorSpace} 0 0 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} 0 0 0)`,                              `color(${resultColorSpace} 0 0 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} 0 0 0 / 0)`,                          `color(${resultColorSpace} 0 0 0 / 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} 0 0 0 / 0)`,                          `color(${resultColorSpace} 0 0 0 / 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} 0 y z / alpha)`,                      `color(${resultColorSpace} 0 -20.5 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x 0 z / alpha)`,                      `color(${resultColorSpace} 7 0 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y 0 / alpha)`,                      `color(${resultColorSpace} 7 -20.5 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y z / 0)`,                          `color(${resultColorSpace} 7 -20.5 100 / 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} 0 y z / alpha)`,                `color(${resultColorSpace} 0 -20.5 100 / 0.4)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x 0 z / alpha)`,                `color(${resultColorSpace} 7 0 100 / 0.4)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x y 0 / alpha)`,                `color(${resultColorSpace} 7 -20.5 0 / 0.4)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x y z / 0)`,                    `color(${resultColorSpace} 7 -20.5 100 / 0)`);
 
-    // Testing valid permutation (types match).
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz y z x)`,                              `color(xyz -20.5 100 7)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x x x / x)`,                          `color(xyz 7 7 7)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz y z x)`,                        `color(xyz -20.5 100 7)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz x x x / x)`,                    `color(xyz 7 7 7)`);
+	    // Testing replacement with a constant.
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} 0.2 y z / alpha)`,                    `color(${resultColorSpace} 0.2 -20.5 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x 0.2 z / alpha)`,                    `color(${resultColorSpace} 7 0.2 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y 0.2 / alpha)`,                    `color(${resultColorSpace} 7 -20.5 0.2)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y z / 0.2)`,                        `color(${resultColorSpace} 7 -20.5 100 / 0.2)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y z / 20%)`,                        `color(${resultColorSpace} 7 -20.5 100 / 0.2)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} 0.2 y z / alpha)`,              `color(${resultColorSpace} 0.2 -20.5 100 / 0.4)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x 0.2 z / alpha)`,              `color(${resultColorSpace} 7 0.2 100 / 0.4)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x y 0.2 / alpha)`,              `color(${resultColorSpace} 7 -20.5 0.2 / 0.4)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x y z / 0.2)`,                  `color(${resultColorSpace} 7 -20.5 100 / 0.2)`);
 
-    // Testing invalid permutation (types don't match).
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz z alpha x / y)`,                      `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz alpha alpha alpha / alpha)`,          `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz z alpha x / y)`,                `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz alpha alpha alpha / alpha)`,    `rgba(0, 0, 0, 0)`);
+	    // Testing valid permutation (types match).
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} y z x)`,                              `color(${resultColorSpace} -20.5 100 7)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x x x / x)`,                          `color(${resultColorSpace} 7 7 7)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} y z x)`,                        `color(${resultColorSpace} -20.5 100 7)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} x x x / x)`,                    `color(${resultColorSpace} 7 7 7)`);
 
-    // Testing with calc().
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz calc(x) calc(y) calc(z))`,                        `color(xyz 7 -20.5 100)`);
-    testComputed(`color(from color(xyz 7 -20.5 100 / 40%) xyz calc(x) calc(y) calc(z) / calc(alpha))`,    `color(xyz 7 -20.5 100 / 0.4)`);
+	    // Testing invalid permutation (types don't match).
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} z alpha x / y)`,                      `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} alpha alpha alpha / alpha)`,          `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} z alpha x / y)`,                `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} alpha alpha alpha / alpha)`,    `rgba(0, 0, 0, 0)`);
 
-    // Testing invalid values.
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz 10deg y z)`,                          `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x 10deg z)`,                          `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y 10deg)`,                          `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz x y z / 10deg)`,                      `rgba(0, 0, 0, 0)`);
+	    // Testing with calc().
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} calc(x) calc(y) calc(z))`,                        `color(${resultColorSpace} 7 -20.5 100)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100 / 40%) ${color} calc(x) calc(y) calc(z) / calc(alpha))`,    `color(${resultColorSpace} 7 -20.5 100 / 0.4)`);
 
-    // Testing invalid component names
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz red y)`,                              `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz r y z)`,                              `rgba(0, 0, 0, 0)`);
-    testComputed(`color(from color(xyz 7 -20.5 100) xyz l y z)`,                              `rgba(0, 0, 0, 0)`);
+	    // Testing invalid values.
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} 10deg y z)`,                          `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x 10deg z)`,                          `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y 10deg)`,                          `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} x y z / 10deg)`,                      `rgba(0, 0, 0, 0)`);
 
+	    // Testing invalid component names
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} red y)`,                              `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} r y z)`,                              `rgba(0, 0, 0, 0)`);
+	    testComputed(`color(from color(${color} 7 -20.5 100) ${color} l y z)`,                              `rgba(0, 0, 0, 0)`);
+	}
 
     debug('');
     debug('Spec Examples');

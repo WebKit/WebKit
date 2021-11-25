@@ -2013,10 +2013,10 @@ static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args, ConsumerFo
 
 template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(CSSParserTokenRange& args, Color originColor, const CSSParserContext& context)
 {
-    ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB);
+    ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB || args.peek().id() == CSSValueSrgbLinear);
 
     // Support sRGB and Display-P3 regardless of the setting as we have shipped support for them for a while.
-    if (!context.cssColor4 && (args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020))
+    if (!context.cssColor4 && (args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSrgbLinear))
         return { };
 
     consumeIdentRaw(args);
@@ -2038,10 +2038,10 @@ template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(
 
 template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB);
+    ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB || args.peek().id() == CSSValueSrgbLinear);
 
     // Support sRGB and Display-P3 regardless of the setting as we have shipped support for them for a while.
-    if (!context.cssColor4 && (args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020))
+    if (!context.cssColor4 && (args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSrgbLinear))
         return { };
 
     consumeIdentRaw(args);
@@ -2052,8 +2052,8 @@ template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParse
     return parseColorFunctionForRGBTypes<ColorType>(args, WTFMove(consumeRGB), WTFMove(consumeAlpha));
 }
 
-template<typename ConsumerForXYZ, typename ConsumerForAlpha>
-static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args, ConsumerForXYZ&& xyzConsumer, ConsumerForAlpha&& alphaConsumer)
+template<typename ColorType, typename ConsumerForXYZ, typename ConsumerForAlpha>
+static Color parseColorFunctionForXYZTypes(CSSParserTokenRange& args, ConsumerForXYZ&& xyzConsumer, ConsumerForAlpha&& alphaConsumer)
 {
     double channels[3] = { 0, 0, 0 };
     for (auto& channel : channels) {
@@ -2070,19 +2070,19 @@ static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args, Consu
     if (!args.atEnd())
         return { };
 
-    return { XYZA<float, WhitePoint::D50> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
+    return { ColorType { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
-static Color parseRelativeColorFunctionForXYZParameters(CSSParserTokenRange& args, Color originColor, const CSSParserContext& context)
+template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(CSSParserTokenRange& args, Color originColor, const CSSParserContext& context)
 {
-    ASSERT(args.peek().id() == CSSValueXyz);
+    ASSERT(args.peek().id() == CSSValueXyz || args.peek().id() == CSSValueXyzD50 || args.peek().id() == CSSValueXyzD65);
 
     if (!context.cssColor4)
         return { };
 
     consumeIdentRaw(args);
 
-    auto originColorAsXYZ = originColor.toColorTypeLossy<XYZA<float, WhitePoint::D50>>();
+    auto originColorAsXYZ = originColor.toColorTypeLossy<ColorType>();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueX, CSSUnitType::CSS_NUMBER, originColorAsXYZ.x },
@@ -2094,12 +2094,12 @@ static Color parseRelativeColorFunctionForXYZParameters(CSSParserTokenRange& arg
     auto consumeXYZ = [&symbolTable](auto& args) { return consumeNumberAllowingSymbolTableIdent(args, symbolTable); };
     auto consumeAlpha = [&symbolTable](auto& args) { return consumeOptionalAlphaAllowingSymbolTableIdent(args, symbolTable); };
 
-    return parseColorFunctionForXYZParameters(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
+    return parseColorFunctionForXYZTypes<ColorType>(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
 }
 
-static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+template<typename ColorType> static Color parseColorFunctionForXYZTypes(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    ASSERT(args.peek().id() == CSSValueXyz);
+    ASSERT(args.peek().id() == CSSValueXyz || args.peek().id() == CSSValueXyzD50 || args.peek().id() == CSSValueXyzD65);
 
     if (!context.cssColor4)
         return { };
@@ -2109,7 +2109,7 @@ static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args, const
     auto consumeXYZ = [](auto& args) { return consumeNumberRaw(args); };
     auto consumeAlpha = [](auto& args) { return consumeOptionalAlpha(args); };
 
-    return parseColorFunctionForXYZParameters(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
+    return parseColorFunctionForXYZTypes<ColorType>(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
 }
 
 static Color parseRelativeColorFunctionParameters(CSSParserTokenRange& args, const CSSParserContext& context)
@@ -2132,8 +2132,13 @@ static Color parseRelativeColorFunctionParameters(CSSParserTokenRange& args, con
         return parseRelativeColorFunctionForRGBTypes<Rec2020<float>>(args, WTFMove(originColor), context);
     case CSSValueSRGB:
         return parseRelativeColorFunctionForRGBTypes<SRGBA<float>>(args, WTFMove(originColor), context);
+    case CSSValueSrgbLinear:
+        return parseRelativeColorFunctionForRGBTypes<LinearSRGBA<float>>(args, WTFMove(originColor), context);
+    case CSSValueXyzD50:
+        return parseRelativeColorFunctionForXYZTypes<XYZA<float, WhitePoint::D50>>(args, WTFMove(originColor), context);
     case CSSValueXyz:
-        return parseRelativeColorFunctionForXYZParameters(args, WTFMove(originColor), context);
+    case CSSValueXyzD65:
+        return parseRelativeColorFunctionForXYZTypes<XYZA<float, WhitePoint::D65>>(args, WTFMove(originColor), context);
     default:
         return { };
     }
@@ -2155,8 +2160,13 @@ static Color parseNonRelativeColorFunctionParameters(CSSParserTokenRange& args, 
         return parseColorFunctionForRGBTypes<Rec2020<float>>(args, context);
     case CSSValueSRGB:
         return parseColorFunctionForRGBTypes<SRGBA<float>>(args, context);
+    case CSSValueSrgbLinear:
+        return parseColorFunctionForRGBTypes<LinearSRGBA<float>>(args, context);
+    case CSSValueXyzD50:
+        return parseColorFunctionForXYZTypes<XYZA<float, WhitePoint::D50>>(args, context);
     case CSSValueXyz:
-        return parseColorFunctionForXYZParameters(args, context);
+    case CSSValueXyzD65:
+        return parseColorFunctionForXYZTypes<XYZA<float, WhitePoint::D65>>(args, context);
     default:
         return { };
     }
@@ -2275,12 +2285,13 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
 }
 
 enum class ColorMixColorSpace {
-    Srgb,
     Hsl,
     Hwb,
-    Xyz,
     Lab,
-    Lch
+    Lch,
+    Srgb,
+    XyzD50,
+    XyzD65
 };
 
 static std::optional<ColorMixColorSpace> consumeColorMixColorSpaceAndComma(CSSParserTokenRange& args)
@@ -2297,14 +2308,17 @@ static std::optional<ColorMixColorSpace> consumeColorMixColorSpaceAndComma(CSSPa
         return consumeIdentAndComma(args, ColorMixColorSpace::Hsl);
     case CSSValueHwb:
         return consumeIdentAndComma(args, ColorMixColorSpace::Hwb);
-    case CSSValueLch:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Lch);
     case CSSValueLab:
         return consumeIdentAndComma(args, ColorMixColorSpace::Lab);
-    case CSSValueXyz:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Xyz);
+    case CSSValueLch:
+        return consumeIdentAndComma(args, ColorMixColorSpace::Lch);
     case CSSValueSRGB:
         return consumeIdentAndComma(args, ColorMixColorSpace::Srgb);
+    case CSSValueXyzD50:
+        return consumeIdentAndComma(args, ColorMixColorSpace::XyzD50);
+    case CSSValueXyz:
+    case CSSValueXyzD65:
+        return consumeIdentAndComma(args, ColorMixColorSpace::XyzD65);
     default:
         return std::nullopt;
     }
@@ -2449,14 +2463,16 @@ static Color mixColorComponents(ColorMixColorSpace colorSpace, const ColorMixCom
         return mixColorComponentsInColorSpace<HSLA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
     case ColorMixColorSpace::Hwb:
         return mixColorComponentsInColorSpace<HWBA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Lch:
-        return mixColorComponentsInColorSpace<LCHA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
     case ColorMixColorSpace::Lab:
         return mixColorComponentsInColorSpace<Lab<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Xyz:
-        return mixColorComponentsInColorSpace<XYZA<float, WhitePoint::D50>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::Lch:
+        return mixColorComponentsInColorSpace<LCHA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
     case ColorMixColorSpace::Srgb:
         return mixColorComponentsInColorSpace<SRGBA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::XyzD50:
+        return mixColorComponentsInColorSpace<XYZA<float, WhitePoint::D50>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::XyzD65:
+        return mixColorComponentsInColorSpace<XYZA<float, WhitePoint::D65>>(mixPercentages, mixComponents1.color, mixComponents2.color);
     }
 
     RELEASE_ASSERT_NOT_REACHED();

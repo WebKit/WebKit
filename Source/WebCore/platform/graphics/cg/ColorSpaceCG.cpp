@@ -102,10 +102,13 @@ CGColorSpaceRef ROMMRGBColorSpaceRef()
 #endif
 
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
-CGColorSpaceRef xyzColorSpaceRef()
+CGColorSpaceRef xyzD50ColorSpaceRef()
 {
     return namedColorSpace<kCGColorSpaceGenericXYZ>();
 }
+
+// FIXME: Figure out how to create a CoreGraphics XYZ-D65 color space and add a xyzD65ColorSpaceRef().
+
 #endif
 
 std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
@@ -123,8 +126,6 @@ std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
         return ColorSpace::DisplayP3;
 #endif
 
-    // FIXME: labColorSpaceRef() not implemented.
-
 #if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
     if (CGColorSpaceEqualToColorSpace(colorSpace, linearSRGBColorSpaceRef()))
         return ColorSpace::LinearSRGB;
@@ -141,9 +142,11 @@ std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
 #endif
 
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, xyzColorSpaceRef()))
+    if (CGColorSpaceEqualToColorSpace(colorSpace, xyzD50ColorSpaceRef()))
         return ColorSpace::XYZ_D50;
 #endif
+
+    // FIXME: Add support for ColorSpace::Lab ColorSpace::XYZ_D65 to support more direct conversions.
 
     return std::nullopt;
 }

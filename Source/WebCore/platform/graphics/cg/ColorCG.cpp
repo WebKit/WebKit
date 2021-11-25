@@ -92,7 +92,7 @@ Color Color::createAndLosslesslyConvertToSupportedColorSpace(CGColorRef color, O
 {
     auto sourceCGColorSpace = CGColorGetColorSpace(color);
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
-    auto destinationCGColorSpace = xyzColorSpaceRef();
+    auto destinationCGColorSpace = xyzD50ColorSpaceRef();
     auto destinationColorSpace = ColorSpace::XYZ_D50;
 #else
     auto destinationCGColorSpace = sRGBColorSpaceRef();
