@@ -1,5 +1,11 @@
 2021-11-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [libpas] Unreviewed, speculative libpas Linux fix, libpas requires libatomic in Linux etc., part 2
+
+        * CMakeLists.txt:
+
+2021-11-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [libpas] Unreviewed, libpas requires libatomic in Linux etc.
 
         * CMakeLists.txt:

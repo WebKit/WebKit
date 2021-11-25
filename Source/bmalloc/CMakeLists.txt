@@ -639,6 +639,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     )
 endif ()
 
+set(bmalloc_LIBRARIES
+    ${CMAKE_DL_LIBS}
+)
+
 if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND bmalloc_LIBRARIES atomic)
 endif ()
