@@ -803,26 +803,6 @@ public:
         load8(Address(dest), dest);
     }
 
-    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        DataLabel32 label = moveWithPatch(TrustedImm32(address.offset), dataTempRegister);
-        load32(ArmAddress(address.base, dataTempRegister), dest);
-        return label;
-    }
-    
-    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        padBeforePatch();
-
-        RegisterID base = address.base;
-        
-        DataLabelCompact label(this);
-        ASSERT(isCompactPtrAlignedAddressOffset(address.offset));
-
-        m_assembler.ldr(dest, base, address.offset, true, false);
-        return label;
-    }
-
     void load16(const void* address, RegisterID dest)
     {
         move(TrustedImmPtr(address), addressTempRegister);
@@ -871,13 +851,6 @@ public:
             load32(Address(src, offset.m_value), dest1);
             load32(Address(src, offset.m_value + 4), dest2);
         }
-    }
-
-    DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
-    {
-        DataLabel32 label = moveWithPatch(TrustedImm32(address.offset), dataTempRegister);
-        store32(src, ArmAddress(address.base, dataTempRegister));
-        return label;
     }
 
     void store32(RegisterID src, Address address)

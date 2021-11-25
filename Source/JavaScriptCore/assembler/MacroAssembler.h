@@ -735,16 +735,6 @@ public:
     }
 #endif
 
-    DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        return load32WithAddressOffsetPatch(address, dest);
-    }
-    
-    DataLabelCompact loadPtrWithCompactAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        return load32WithCompactAddressOffsetPatch(address, dest);
-    }
-    
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         compare32(cond, left, right, dest);
@@ -793,11 +783,6 @@ public:
     void storePtr(TrustedImmPtr imm, BaseIndex address)
     {
         store32(TrustedImm32(imm), address);
-    }
-
-    DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
-    {
-        return store32WithAddressOffsetPatch(src, address);
     }
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)
@@ -1088,16 +1073,6 @@ public:
     }
 #endif
 
-    DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        return load64WithAddressOffsetPatch(address, dest);
-    }
-    
-    DataLabelCompact loadPtrWithCompactAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        return load64WithCompactAddressOffsetPatch(address, dest);
-    }
-
     void storePtr(RegisterID src, Address address)
     {
         store64(src, address);
@@ -1126,11 +1101,6 @@ public:
     void storePtr(TrustedImmPtr imm, BaseIndex address)
     {
         store64(TrustedImm64(imm), address);
-    }
-
-    DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
-    {
-        return store64WithAddressOffsetPatch(src, address);
     }
 
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)

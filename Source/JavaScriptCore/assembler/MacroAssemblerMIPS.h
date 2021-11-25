@@ -1192,30 +1192,6 @@ public:
         }
     }
 
-    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        m_fixedWidth = true;
-        /*
-            lui addrTemp, address.offset >> 16
-            ori addrTemp, addrTemp, address.offset & 0xffff
-            addu        addrTemp, addrTemp, address.base
-            lw  dest, 0(addrTemp)
-        */
-        DataLabel32 dataLabel(this);
-        move(TrustedImm32(address.offset), addrTempRegister);
-        m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-        m_assembler.lw(dest, addrTempRegister, 0);
-        m_fixedWidth = false;
-        return dataLabel;
-    }
-    
-    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        DataLabelCompact dataLabel(this);
-        load32WithAddressOffsetPatch(address, dest);
-        return dataLabel;
-    }
-
     void load16(const void* address, RegisterID dest)
     {
         if (m_fixedWidth) {
@@ -1353,23 +1329,6 @@ public:
             load32(Address(src, offset.m_value), dest1);
             load32(Address(src, offset.m_value + 4), dest2);
         }
-    }
-
-    DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
-    {
-        m_fixedWidth = true;
-        /*
-            lui addrTemp, address.offset >> 16
-            ori addrTemp, addrTemp, address.offset & 0xffff
-            addu        addrTemp, addrTemp, address.base
-            sw  src, 0(addrTemp)
-        */
-        DataLabel32 dataLabel(this);
-        move(TrustedImm32(address.offset), addrTempRegister);
-        m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-        m_assembler.sw(src, addrTempRegister, 0);
-        m_fixedWidth = false;
-        return dataLabel;
     }
 
     void store8(RegisterID src, Address address)

@@ -1715,22 +1715,6 @@ public:
         m_assembler.ldr<32>(dest, src.base, PostIndex(src.index));
     }
 
-    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        DataLabel32 label(this);
-        signExtend32ToPtrWithFixedWidth(address.offset, getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.ldr<32>(dest, address.base, memoryTempRegister, Assembler::SXTW, 0);
-        return label;
-    }
-    
-    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        ASSERT(isCompactPtrAlignedAddressOffset(address.offset));
-        DataLabelCompact label(this);
-        m_assembler.ldr<32>(dest, address.base, address.offset);
-        return label;
-    }
-
     void load32WithUnalignedHalfWords(BaseIndex address, RegisterID dest)
     {
         load32(address, dest);
@@ -2113,14 +2097,6 @@ public:
     void store32(RegisterID src, PostIndexAddress dest)
     {
         m_assembler.str<32>(src, dest.base, PostIndex(dest.index));
-    }
-
-    DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
-    {
-        DataLabel32 label(this);
-        signExtend32ToPtrWithFixedWidth(address.offset, getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.str<32>(src, address.base, memoryTempRegister, Assembler::SXTW, 0);
-        return label;
     }
 
     void store16(RegisterID src, Address address)
