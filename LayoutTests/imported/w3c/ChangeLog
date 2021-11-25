@@ -1,3 +1,18 @@
+2021-11-24  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=233482
+
+        Reviewed by Cameron McCormack.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/71c864f8bd7f855f12c81bfc7a1fc3ebf18657f3
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-delegatesfocus-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-delegatesfocus.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+
 2021-11-24  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Implement submitting samples in violation reports

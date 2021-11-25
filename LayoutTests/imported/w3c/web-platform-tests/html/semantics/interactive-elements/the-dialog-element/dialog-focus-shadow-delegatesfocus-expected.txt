@@ -1,0 +1,4 @@
+
+FAIL show() assert_equals: document.activeElement expected Element node <div></div> but got Element node <button tabindex="-1">Focusable</button>
+FAIL showModal() assert_equals: document.activeElement expected Element node <div></div> but got Element node <button tabindex="-1">Focusable</button>
+
