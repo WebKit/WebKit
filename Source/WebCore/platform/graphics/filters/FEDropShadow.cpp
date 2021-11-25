@@ -68,7 +68,7 @@ void FEDropShadow::determineAbsolutePaintRect(const Filter& filter)
 
 bool FEDropShadow::platformApplySoftware(const Filter& filter)
 {
-    return FEDropShadowSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEDropShadowSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
     
 IntOutsets FEDropShadow::outsets() const

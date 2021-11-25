@@ -37,14 +37,16 @@
 
 namespace WebCore {
 
-RefPtr<FilterImage> FilterImage::create(const IntRect& absoluteImageRect, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()));
-    return adoptRef(new FilterImage(absoluteImageRect, renderingMode, colorSpace));
+    return adoptRef(new FilterImage(primitiveSubregion, absoluteImageRect, isAlphaImage, renderingMode, colorSpace));
 }
 
-FilterImage::FilterImage(const IntRect& absoluteImageRect, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
-    : m_absoluteImageRect(absoluteImageRect)
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+    : m_primitiveSubregion(primitiveSubregion)
+    , m_absoluteImageRect(absoluteImageRect)
+    , m_isAlphaImage(isAlphaImage)
     , m_renderingMode(renderingMode)
     , m_colorSpace(colorSpace)
 {

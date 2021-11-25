@@ -60,7 +60,7 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
 
 bool FEFlood::platformApplySoftware(const Filter& filter)
 {
-    return FEFloodSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEFloodSoftwareApplier(*this).apply(filter, { }, *filterImage());
 }
 
 TextStream& FEFlood::externalRepresentation(TextStream& ts, RepresentationType representation) const

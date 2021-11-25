@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-bool FEFloodSoftwareApplier::apply(const Filter&, const FilterEffectVector&)
+bool FEFloodSoftwareApplier::apply(const Filter&, const FilterImageVector&, FilterImage& result)
 {
-    auto resultImage = m_effect.imageBufferResult();
+    auto resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
     auto color = m_effect.floodColor().colorWithAlphaMultipliedBy(m_effect.floodOpacity());
-    resultImage->context().fillRect(FloatRect(FloatPoint(), m_effect.absolutePaintRect().size()), color);
+    resultImage->context().fillRect(FloatRect(FloatPoint(), result.absoluteImageRect().size()), color);
 
     return true;
 }

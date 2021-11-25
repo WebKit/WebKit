@@ -26,6 +26,7 @@
 #include "FilterEffectVector.h"
 #include "FilterFunction.h"
 #include "FilterImage.h"
+#include "FilterImageVector.h"
 #include "IntRect.h"
 #include <wtf/Vector.h>
 
@@ -40,16 +41,13 @@ class ImageBuffer;
 
 class FilterEffect : public FilterFunction {
 public:
-    bool createResult();
     void clearResult() override;
     void clearResultsRecursive();
-
     bool hasResult() const { return m_filterImage; }
 
-    ImageBuffer* imageBufferResult();
-    PixelBuffer* pixelBufferResult(AlphaPremultiplication);
-    std::optional<PixelBuffer> getPixelBufferResult(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
-    void copyPixelBufferResult(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect) const;
+    FilterImage* filterImage() const { return m_filterImage.get(); }
+    FilterImageVector inputFilterImages() const;
+
     void correctPremultipliedResultIfNeeded();
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
@@ -61,10 +59,6 @@ public:
     
     // Recurses on inputs.
     FloatRect determineFilterPrimitiveSubregion(const Filter&);
-
-    // Solid black image with different alpha values.
-    bool isAlphaImage() const { return m_alphaImage; }
-    void setIsAlphaImage(bool alphaImage) { m_alphaImage = alphaImage; }
 
     IntRect absolutePaintRect() const { return m_absolutePaintRect; }
     void setAbsolutePaintRect(const IntRect& absolutePaintRect) { m_absolutePaintRect = absolutePaintRect; }
@@ -114,19 +108,13 @@ public:
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
 
+    // Solid black image with different alpha values.
+    virtual bool resultIsAlphaImage() const { return false; }
     virtual const DestinationColorSpace& resultColorSpace() const { return m_operatingColorSpace; }
 
     virtual void transformResultColorSpace(FilterEffect* in, const int) { in->transformResultColorSpace(m_operatingColorSpace); }
     void transformResultColorSpace(const DestinationColorSpace&);
     
-    static Vector<float> normalizedFloats(const Vector<float>& values)
-    {
-        Vector<float> normalizedValues(values.size());
-        for (size_t i = 0; i < values.size(); ++i)
-            normalizedValues[i] = normalizedFloat(values[i]);
-        return normalizedValues;
-    }
-
 protected:
     using FilterFunction::FilterFunction;
 
@@ -158,7 +146,6 @@ private:
     // filterPrimitiveSubregion mapped to absolute coordinates before clipping.
     FloatRect m_absoluteUnclippedSubregion;
 
-    bool m_alphaImage { false };
     bool m_hasX { false };
     bool m_hasY { false };
     bool m_hasWidth { false };

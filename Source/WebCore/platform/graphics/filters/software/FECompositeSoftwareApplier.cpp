@@ -126,19 +126,19 @@ inline void FECompositeSoftwareApplier::applyPlatformArithmetic(unsigned char* s
 }
 #endif
 
-bool FECompositeSoftwareApplier::applyArithmetic(FilterEffect* in, FilterEffect* in2)
+bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result)
 {
-    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
-    IntRect effectADrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect.operatingColorSpace());
+    IntRect effectADrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect.operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
-    IntRect effectBDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
-    in2->copyPixelBufferResult(*destinationPixelBuffer, effectBDrawingRect);
+    IntRect effectBDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input2.absoluteImageRect());
+    input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
     auto& sourcePixelArray = sourcePixelBuffer->data();
     auto& destinationPixelArray = destinationPixelBuffer->data();
@@ -149,15 +149,15 @@ bool FECompositeSoftwareApplier::applyArithmetic(FilterEffect* in, FilterEffect*
     return true;
 }
 
-bool FECompositeSoftwareApplier::applyNonArithmetic(FilterEffect* in, FilterEffect* in2)
+bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result)
 {
-    auto resultImage = m_effect.imageBufferResult();
+    auto resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
-    auto imageBuffer = in->imageBufferResult();
-    auto imageBuffer2 = in2->imageBufferResult();
-    if (!imageBuffer || !imageBuffer2)
+    auto inputImage = input.imageBuffer();
+    auto inputImage2 = input2.imageBuffer();
+    if (!inputImage || !inputImage2)
         return false;
 
     auto& filterContext = resultImage->context();
@@ -167,38 +167,38 @@ bool FECompositeSoftwareApplier::applyNonArithmetic(FilterEffect* in, FilterEffe
         return false;
 
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
+        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()));
         break;
 
     case FECOMPOSITE_OPERATOR_IN: {
         // Applies only to the intersected region.
-        IntRect destinationRect = in->absolutePaintRect();
-        destinationRect.intersect(in2->absolutePaintRect());
-        destinationRect.intersect(m_effect.absolutePaintRect());
+        IntRect destinationRect = input.absoluteImageRect();
+        destinationRect.intersect(input2.absoluteImageRect());
+        destinationRect.intersect(result.absoluteImageRect());
         if (destinationRect.isEmpty())
             break;
-        IntRect adjustedDestinationRect = destinationRect - m_effect.absolutePaintRect().location();
-        IntRect sourceRect = destinationRect - in->absolutePaintRect().location();
-        IntRect source2Rect = destinationRect - in2->absolutePaintRect().location();
-        filterContext.drawImageBuffer(*imageBuffer2, FloatRect(adjustedDestinationRect), FloatRect(source2Rect));
-        filterContext.drawImageBuffer(*imageBuffer, FloatRect(adjustedDestinationRect), FloatRect(sourceRect), { CompositeOperator::SourceIn });
+        IntRect adjustedDestinationRect = destinationRect - result.absoluteImageRect().location();
+        IntRect sourceRect = destinationRect - input.absoluteImageRect().location();
+        IntRect source2Rect = destinationRect - input2.absoluteImageRect().location();
+        filterContext.drawImageBuffer(*inputImage2, FloatRect(adjustedDestinationRect), FloatRect(source2Rect));
+        filterContext.drawImageBuffer(*inputImage, FloatRect(adjustedDestinationRect), FloatRect(sourceRect), { CompositeOperator::SourceIn });
         break;
     }
 
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()), { { }, imageBuffer2->logicalSize() }, CompositeOperator::DestinationOut);
+        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()));
+        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()), { { }, inputImage2->logicalSize() }, CompositeOperator::DestinationOut);
         break;
 
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::SourceAtop);
+        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
+        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()), { { }, inputImage->logicalSize() }, CompositeOperator::SourceAtop);
         break;
 
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::XOR);
+        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
+        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()), { { }, inputImage->logicalSize() }, CompositeOperator::XOR);
         break;
 
     case FECOMPOSITE_OPERATOR_ARITHMETIC:
@@ -206,22 +206,22 @@ bool FECompositeSoftwareApplier::applyNonArithmetic(FilterEffect* in, FilterEffe
         return false;
 
     case FECOMPOSITE_OPERATOR_LIGHTER:
-        filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, CompositeOperator::PlusLighter);
+        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
+        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()), { { }, inputImage->logicalSize() }, CompositeOperator::PlusLighter);
         break;
     }
 
     return true;
 }
 
-bool FECompositeSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
-    FilterEffect* in2 = inputEffects[1].get();
+    auto& input = inputs[0].get();
+    auto& input2 = inputs[1].get();
 
     if (m_effect.operation() == FECOMPOSITE_OPERATOR_ARITHMETIC)
-        return applyArithmetic(in, in2);
-    return applyNonArithmetic(in, in2);
+        return applyArithmetic(input, input2, result);
+    return applyNonArithmetic(input, input2, result);
 }
 
 } // namespace WebCore

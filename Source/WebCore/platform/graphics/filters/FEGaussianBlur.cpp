@@ -125,15 +125,20 @@ void FEGaussianBlur::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
-{
-    return FEGaussianBlurSoftwareApplier(*this).apply(filter, inputEffects());
-}
-
 IntOutsets FEGaussianBlur::outsets() const
 {
     IntSize outsetSize = calculateOutsetSize({ m_stdX, m_stdY });
     return { outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width() };
+}
+
+bool FEGaussianBlur::resultIsAlphaImage() const
+{
+    return inputEffect(0)->resultIsAlphaImage();
+}
+
+bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
+{
+    return FEGaussianBlurSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, RepresentationType representation) const

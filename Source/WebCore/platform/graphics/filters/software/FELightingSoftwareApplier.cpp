@@ -391,27 +391,25 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data)
     }
 }
 
-bool FELightingSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+bool FELightingSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
+    auto& input = inputs[0].get();
 
-    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
-    m_effect.setIsAlphaImage(false);
-
-    auto effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
+    auto effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
 
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange
     // output for various kernelUnitLengths, and I am not sure they are reliable.
     // Anyway, feConvolveMatrix should also use the implementation
 
-    IntSize size = IntSize(m_effect.absolutePaintRect().size());
+    IntSize size = IntSize(result.absoluteImageRect().size());
 
     // FIXME: do something if width or height (or both) is 1 pixel.
     // The W3 spec does not define this case. Now the filter just returns.

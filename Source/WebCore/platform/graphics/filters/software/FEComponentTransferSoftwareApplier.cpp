@@ -131,16 +131,16 @@ void FEComponentTransferSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer)
     }
 }
 
-bool FEComponentTransferSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+bool FEComponentTransferSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
+    auto& input = inputs[0].get();
     
-    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 
-    auto drawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    in->copyPixelBufferResult(*destinationPixelBuffer, drawingRect);
+    auto drawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    input.copyPixelBuffer(*destinationPixelBuffer, drawingRect);
 
     applyPlatform(*destinationPixelBuffer);
     return true;

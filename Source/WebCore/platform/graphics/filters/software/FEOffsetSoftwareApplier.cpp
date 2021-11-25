@@ -32,21 +32,19 @@
 
 namespace WebCore {
 
-bool FEOffsetSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
+bool FEOffsetSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
+    auto& input = inputs[0].get();
 
-    auto resultImage = m_effect.imageBufferResult();
-    auto inBuffer = in->imageBufferResult();
-    if (!resultImage || !inBuffer)
+    auto resultImage = result.imageBuffer();
+    auto inputImage = input.imageBuffer();
+    if (!resultImage || !inputImage)
         return false;
 
-    m_effect.setIsAlphaImage(in->isAlphaImage());
-
-    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(in->absolutePaintRect());
+    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(input.absoluteImageRect());
     drawingRegion.move(filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() }));
-    resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
 
+    resultImage->context().drawImageBuffer(*inputImage, drawingRegion);
     return true;
 }
 

@@ -35,7 +35,7 @@ class FEComponentTransferSoftwareApplier : public FilterEffectConcreteApplier<FE
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 
 private:
     using LookupTable = std::array<uint8_t, 256>;

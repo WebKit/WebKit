@@ -23,7 +23,6 @@
 #include "FETile.h"
 
 #include "FETileSoftwareApplier.h"
-#include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -38,9 +37,14 @@ FETile::FETile()
 {
 }
 
+bool FETile::resultIsAlphaImage() const
+{
+    return inputEffect(0)->resultIsAlphaImage();
+}
+
 bool FETile::platformApplySoftware(const Filter& filter)
 {
-    return FETileSoftwareApplier(*this).apply(filter, inputEffects());
+    return FETileSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 TextStream& FETile::externalRepresentation(TextStream& ts, RepresentationType representation) const

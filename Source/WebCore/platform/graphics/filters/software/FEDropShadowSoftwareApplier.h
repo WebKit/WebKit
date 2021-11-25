@@ -32,7 +32,7 @@ class FEDropShadowSoftwareApplier : public FilterEffectConcreteApplier<FEDropSha
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 };
 
 } // namespace WebCore

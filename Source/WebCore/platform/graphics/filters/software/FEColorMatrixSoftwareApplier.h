@@ -34,7 +34,7 @@ class FEColorMatrixSoftwareApplier : public FilterEffectConcreteApplier<FEColorM
 public:
     FEColorMatrixSoftwareApplier(FEColorMatrix&);
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 
 private:
     inline void matrix(float& red, float& green, float& blue, float& alpha) const;

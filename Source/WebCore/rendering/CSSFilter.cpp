@@ -442,8 +442,11 @@ ImageBuffer* CSSFilter::output()
 {
     if (m_filterRenderer && m_filterRenderer->hasResult())
         return m_filterRenderer->output();
-    
-    return lastEffect()->imageBufferResult();
+
+    if (auto result = lastEffect()->filterImage())
+        return result->imageBuffer();
+
+    return nullptr;
 }
 
 void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)

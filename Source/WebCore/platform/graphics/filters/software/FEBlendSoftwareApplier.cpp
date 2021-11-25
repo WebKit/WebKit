@@ -34,23 +34,23 @@
 namespace WebCore {
 
 #if !HAVE(ARM_NEON_INTRINSICS)
-bool FEBlendSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+bool FEBlendSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
-    FilterEffect* in2 = inputEffects[1].get();
+    auto& input = inputs[0].get();
+    auto& input2 = inputs[1].get();
 
-    auto resultImage = m_effect.imageBufferResult();
+    auto resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
-    auto imageBuffer = in->imageBufferResult();
-    auto imageBuffer2 = in2->imageBufferResult();
-    if (!imageBuffer || !imageBuffer2)
+    auto inputImage = input.imageBuffer();
+    auto inputImage2 = input2.imageBuffer();
+    if (!inputImage || !inputImage2)
         return false;
 
-    GraphicsContext& filterContext = resultImage->context();
-    filterContext.drawImageBuffer(*imageBuffer2, m_effect.drawingRegionOfInputImage(in2->absolutePaintRect()));
-    filterContext.drawImageBuffer(*imageBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, { CompositeOperator::SourceOver, m_effect.blendMode() });
+    auto& filterContext = resultImage->context();
+    filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
+    filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()), { { }, inputImage->logicalSize() }, { CompositeOperator::SourceOver, m_effect.blendMode() });
     return true;
 }
 #endif

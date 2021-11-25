@@ -79,9 +79,14 @@ void FEMorphology::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
+bool FEMorphology::resultIsAlphaImage() const
+{
+    return inputEffect(0)->resultIsAlphaImage();
+}
+
 bool FEMorphology::platformApplySoftware(const Filter& filter)
 {
-    return FEMorphologySoftwareApplier(*this).apply(filter, inputEffects());
+    return FEMorphologySoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type)

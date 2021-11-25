@@ -45,7 +45,7 @@ void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
 
 bool SourceGraphic::platformApplySoftware(const Filter& filter)
 {
-    return SourceGraphicSoftwareApplier(*this).apply(filter, inputEffects());
+    return SourceGraphicSoftwareApplier(*this).apply(filter, { }, *filterImage());
 }
 
 TextStream& SourceGraphic::externalRepresentation(TextStream& ts, RepresentationType) const

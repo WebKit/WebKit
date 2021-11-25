@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FilterEffectVector.h"
+#include "FilterImageVector.h"
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ public:
     FilterEffectApplier() = default;
     virtual ~FilterEffectApplier() = default;
     
-    virtual bool apply(const Filter&, const FilterEffectVector& inputs) = 0;
+    virtual bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) = 0;
 };
 
 template<typename FilterEffectType>

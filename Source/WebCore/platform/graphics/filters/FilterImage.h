@@ -38,10 +38,12 @@ class PixelBuffer;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:
-    static RefPtr<FilterImage> create(const IntRect& absoluteImageRect, RenderingMode, const DestinationColorSpace&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
 
+    FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
     IntRect absoluteImageRect() const { return m_absoluteImageRect; }
 
+    bool isAlphaImage() const { return m_isAlphaImage; }
     RenderingMode renderingMode() const { return m_renderingMode; }
     const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
 
@@ -55,14 +57,16 @@ public:
     void transformToColorSpace(const DestinationColorSpace&);
 
 private:
-    FilterImage(const IntRect& absoluteImageRect, RenderingMode, const DestinationColorSpace&);
+    FilterImage(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
 
     std::optional<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
 
+    FloatRect m_primitiveSubregion;
     IntRect m_absoluteImageRect;
 
+    bool m_isAlphaImage { false };
     RenderingMode m_renderingMode;
     DestinationColorSpace m_colorSpace;
 

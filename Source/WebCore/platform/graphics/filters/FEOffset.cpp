@@ -64,9 +64,14 @@ void FEOffset::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
+bool FEOffset::resultIsAlphaImage() const
+{
+    return inputEffect(0)->resultIsAlphaImage();
+}
+
 bool FEOffset::platformApplySoftware(const Filter& filter)
 {
-    return FEOffsetSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEOffsetSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 TextStream& FEOffset::externalRepresentation(TextStream& ts, RepresentationType representation) const

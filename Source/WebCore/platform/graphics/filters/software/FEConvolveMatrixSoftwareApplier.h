@@ -37,7 +37,7 @@ class FEConvolveMatrixSoftwareApplier : public FilterEffectConcreteApplier<FECon
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 
 private:
     struct PaintingData {

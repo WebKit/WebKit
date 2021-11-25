@@ -52,6 +52,8 @@ public:
 private:
     FEColorMatrix(ColorMatrixType, Vector<float>&&);
 
+    bool resultIsAlphaImage() const override;
+
     bool platformApplySoftware(const Filter&) override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;

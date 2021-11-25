@@ -27,24 +27,23 @@
 
 namespace WebCore {
 
-bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
+    auto& input = inputs[0].get();
 
-    auto resultImage = m_effect.imageBufferResult();
+    auto resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
     
-    auto imageBuffer = in->imageBufferResult();
-    if (!imageBuffer)
+    auto inputImage = input.imageBuffer();
+    if (!inputImage)
         return false;
 
-    FloatRect imageRect(FloatPoint(), m_effect.absolutePaintRect().size());
-    GraphicsContext& filterContext = resultImage->context();
+    FloatRect imageRect(FloatPoint(), result.absoluteImageRect().size());
+    auto& filterContext = resultImage->context();
 
     filterContext.fillRect(imageRect, Color::black);
-    filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeOperator::DestinationIn);
-
+    filterContext.drawImageBuffer(*inputImage, IntPoint(), CompositeOperator::DestinationIn);
     return true;
 }
 

@@ -85,7 +85,7 @@ void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int in
 
 bool FEDisplacementMap::platformApplySoftware(const Filter& filter)
 {
-    return FEDisplacementMapSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEDisplacementMapSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 static TextStream& operator<<(TextStream& ts, const ChannelSelectorType& type)

@@ -30,33 +30,33 @@
 
 namespace WebCore {
 
-bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
+bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
+    auto& input = inputs[0].get();
 
-    auto resultImage = m_effect.imageBufferResult();
+    auto resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
     FloatSize blurRadius = 2 * filter.scaledByFilterScale({ m_effect.stdDeviationX(), m_effect.stdDeviationY() });
     FloatSize offset = filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() });
 
-    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(in->absolutePaintRect());
+    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(input.absoluteImageRect());
     FloatRect drawingRegionWithOffset(drawingRegion);
     drawingRegionWithOffset.move(offset);
 
-    auto sourceImage = in->imageBufferResult();
-    if (!sourceImage)
+    auto inputImage = input.imageBuffer();
+    if (!inputImage)
         return false;
 
     GraphicsContext& resultContext = resultImage->context();
     resultContext.setAlpha(m_effect.shadowOpacity());
-    resultContext.drawImageBuffer(*sourceImage, drawingRegionWithOffset);
+    resultContext.drawImageBuffer(*inputImage, drawingRegionWithOffset);
     resultContext.setAlpha(1);
 
     ShadowBlur contextShadow(blurRadius, offset, m_effect.shadowColor());
 
-    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, m_effect.resultColorSpace() };
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, result.colorSpace() };
     IntRect shadowArea(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, shadowArea);
     if (!pixelBuffer)
@@ -68,10 +68,10 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterEffect
     resultImage->putPixelBuffer(*pixelBuffer, shadowArea);
 
     resultContext.setCompositeOperation(CompositeOperator::SourceIn);
-    resultContext.fillRect(FloatRect(FloatPoint(), m_effect.absolutePaintRect().size()), m_effect.shadowColor());
+    resultContext.fillRect(FloatRect(FloatPoint(), result.absoluteImageRect().size()), m_effect.shadowColor());
     resultContext.setCompositeOperation(CompositeOperator::DestinationOver);
 
-    resultImage->context().drawImageBuffer(*sourceImage, drawingRegion);
+    resultImage->context().drawImageBuffer(*inputImage, drawingRegion);
     return true;
 }
 

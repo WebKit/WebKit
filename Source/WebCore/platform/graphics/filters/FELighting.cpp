@@ -83,7 +83,7 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
 
 bool FELighting::platformApplySoftware(const Filter& filter)
 {
-    return FELightingSoftwareApplier(*this).apply(filter, inputEffects());
+    return FELightingSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 } // namespace WebCore

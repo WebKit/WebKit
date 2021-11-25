@@ -46,7 +46,7 @@ FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFun
 
 bool FEComponentTransfer::platformApplySoftware(const Filter& filter)
 {
-    return FEComponentTransferSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEComponentTransferSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 static TextStream& operator<<(TextStream& ts, ComponentTransferType type)

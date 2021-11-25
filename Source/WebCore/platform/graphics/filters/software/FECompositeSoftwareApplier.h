@@ -34,7 +34,7 @@ class FECompositeSoftwareApplier : public FilterEffectConcreteApplier<FEComposit
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 
 private:
     static uint8_t clampByte(int);
@@ -47,8 +47,8 @@ private:
 
     static inline void applyPlatformArithmetic(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
 
-    bool applyArithmetic(FilterEffect* in, FilterEffect* in2);
-    bool applyNonArithmetic(FilterEffect* in, FilterEffect* in2);
+    bool applyArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result);
+    bool applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result);
 };
 
 } // namespace WebCore

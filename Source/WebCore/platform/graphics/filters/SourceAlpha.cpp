@@ -47,7 +47,7 @@ void SourceAlpha::determineAbsolutePaintRect(const Filter& filter)
 
 bool SourceAlpha::platformApplySoftware(const Filter& filter)
 {
-    return SourceAlphaSoftwareApplier(*this).apply(filter, inputEffects());
+    return SourceAlphaSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationType) const

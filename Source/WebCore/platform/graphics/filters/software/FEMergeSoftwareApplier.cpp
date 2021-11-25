@@ -29,21 +29,21 @@
 
 namespace WebCore {
 
-bool FEMergeSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+bool FEMergeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
 {
-    ASSERT(inputEffects.size() > 0);
+    ASSERT(inputs.size() == m_effect.numberOfEffectInputs());
 
-    auto resultImage = m_effect.imageBufferResult();
+    auto resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
     auto& filterContext = resultImage->context();
 
-    for (auto& in : inputEffects) {
-        auto inBuffer = in->imageBufferResult();
-        if (!inBuffer)
+    for (auto& input : inputs) {
+        auto inputImage = input->imageBuffer();
+        if (!inputImage)
             continue;
-        filterContext.drawImageBuffer(*inBuffer, m_effect.drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input->absoluteImageRect()));
     }
 
     return true;

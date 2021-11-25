@@ -41,7 +41,7 @@ class FELightingSoftwareApplier : public FilterEffectConcreteApplier<FELighting>
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 
 private:
     static constexpr int cPixelSize = 4;

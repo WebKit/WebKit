@@ -82,16 +82,16 @@ class FEImageSoftwareApplier : public FilterEffectConcreteApplier<FEImage> {
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 };
 
-bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterEffectVector&)
+bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result)
 {
-    auto resultImage = m_effect.imageBufferResult();
+    auto resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
-    auto primitiveSubregion = m_effect.filterPrimitiveSubregion();
+    auto primitiveSubregion = result.primitiveSubregion();
     auto& context = resultImage->context();
 
     WTF::switchOn(m_effect.sourceImage(),
@@ -117,7 +117,7 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterEffectVecto
 
 bool FEImage::platformApplySoftware(const Filter& filter)
 {
-    return FEImageSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEImageSoftwareApplier(*this).apply(filter, { }, *filterImage());
 }
 
 TextStream& FEImage::externalRepresentation(TextStream& ts, RepresentationType representation) const

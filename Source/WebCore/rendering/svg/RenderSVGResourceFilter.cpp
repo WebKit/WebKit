@@ -246,10 +246,10 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         }
         filterData.state = FilterData::Built;
 
-        ImageBuffer* resultImage = lastEffect->imageBufferResult();
-        if (resultImage) {
+        if (auto result = lastEffect->filterImage()) {
+            auto resultImage = result->imageBuffer();
             context->scale(FloatSize(1 / filterData.filter->filterScale().width(), 1 / filterData.filter->filterScale().height()));
-            context->drawImageBuffer(*resultImage, lastEffect->absolutePaintRect());
+            context->drawImageBuffer(*resultImage, result->absoluteImageRect());
             context->scale(filterData.filter->filterScale());
         }
     }

@@ -41,7 +41,7 @@ class FETurbulenceSoftwareApplier : public FilterEffectConcreteApplier<FETurbule
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 
 private:
     // Produces results in the range [1, 2**31 - 2]. Algorithm is:

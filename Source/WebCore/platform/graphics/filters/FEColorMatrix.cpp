@@ -93,9 +93,14 @@ Vector<float> FEColorMatrix::normalizedFloats(const Vector<float>& values)
     return normalizedValues;
 }
 
+bool FEColorMatrix::resultIsAlphaImage() const
+{
+    return m_type == FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
+}
+
 bool FEColorMatrix::platformApplySoftware(const Filter& filter)
 {
-    return FEColorMatrixSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEColorMatrixSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

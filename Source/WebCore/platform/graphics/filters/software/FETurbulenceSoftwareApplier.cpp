@@ -339,13 +339,13 @@ void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, con
     applyPlatformGeneric(filterRegion, filterScale, pixelArray, paintingData, stitchData, 0, height);
 }
 
-bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterEffectVector&)
+bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result)
 {
-    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Unpremultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 
-    IntSize resultSize(m_effect.absolutePaintRect().size());
+    IntSize resultSize(result.absoluteImageRect().size());
     if (resultSize.area().hasOverflowed())
         return false;
 
@@ -356,7 +356,7 @@ bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterEffect
         return true;
     }
 
-    auto tileSize = roundedIntSize(m_effect.filterPrimitiveSubregion().size());
+    auto tileSize = roundedIntSize(result.primitiveSubregion().size());
 
     float baseFrequencyX = m_effect.baseFrequencyX();
     float baseFrequencyY = m_effect.baseFrequencyY();
@@ -364,7 +364,7 @@ bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterEffect
 
     auto paintingData = initPaintingData(m_effect.type(), baseFrequencyX, baseFrequencyY, m_effect.numOctaves(), m_effect.seed(), m_effect.stitchTiles(), tileSize);
 
-    applyPlatform(m_effect.absolutePaintRect(), filter.filterScale(), destinationPixelArray, paintingData, stitchData);
+    applyPlatform(result.absoluteImageRect(), filter.filterScale(), destinationPixelArray, paintingData, stitchData);
     return true;
 }
 

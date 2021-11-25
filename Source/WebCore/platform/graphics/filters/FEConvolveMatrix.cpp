@@ -115,7 +115,7 @@ bool FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
 
 bool FEConvolveMatrix::platformApplySoftware(const Filter& filter)
 {
-    return FEConvolveMatrixSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEConvolveMatrixSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 static TextStream& operator<<(TextStream& ts, const EdgeModeType& type)

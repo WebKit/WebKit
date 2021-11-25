@@ -40,7 +40,7 @@ FEMerge::FEMerge()
 
 bool FEMerge::platformApplySoftware(const Filter& filter)
 {
-    return FEMergeSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEMergeSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 TextStream& FEMerge::externalRepresentation(TextStream& ts, RepresentationType representation) const

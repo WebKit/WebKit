@@ -53,7 +53,7 @@ bool FEBlend::setBlendMode(BlendMode mode)
 
 bool FEBlend::platformApplySoftware(const Filter& filter)
 {
-    return FEBlendSoftwareApplier(*this).apply(filter, inputEffects());
+    return FEBlendSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
 }
 
 TextStream& FEBlend::externalRepresentation(TextStream& ts, RepresentationType representation) const

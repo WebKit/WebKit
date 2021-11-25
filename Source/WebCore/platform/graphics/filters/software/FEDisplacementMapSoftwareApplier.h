@@ -34,7 +34,7 @@ class FEDisplacementMapSoftwareApplier : public FilterEffectConcreteApplier<FEDi
 public:
     FEDisplacementMapSoftwareApplier(FEDisplacementMap&);
 
-    bool apply(const Filter&, const FilterEffectVector& inputEffects) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
 
 private:
     static inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)

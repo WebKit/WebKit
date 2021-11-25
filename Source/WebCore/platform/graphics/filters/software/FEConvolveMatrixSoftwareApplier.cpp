@@ -286,24 +286,24 @@ void FEConvolveMatrixSoftwareApplier::applyPlatform(PaintingData& paintingData) 
         setOuterPixels(paintingData, clipRight, paintingData.targetOffset.y(), paintingData.width, clipBottom);
 }
 
-bool FEConvolveMatrixSoftwareApplier::apply(const Filter&, const FilterEffectVector& inputEffects)
+bool FEConvolveMatrixSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
+    auto& input = inputs[0].get();
 
     auto alphaFormat = m_effect.preserveAlpha() ? AlphaPremultiplication::Unpremultiplied : AlphaPremultiplication::Premultiplied;
-    auto destinationPixelBuffer = m_effect.pixelBufferResult(alphaFormat);
+    auto destinationPixelBuffer = result.pixelBuffer(alphaFormat);
     if (!destinationPixelBuffer)
         return false;
 
-    auto effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    auto sourcePixelBuffer = in->getPixelBufferResult(alphaFormat, effectDrawingRect, m_effect.operatingColorSpace());
+    auto effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    auto sourcePixelBuffer = input.getPixelBuffer(alphaFormat, effectDrawingRect, m_effect.operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
     auto& sourcePixelArray = sourcePixelBuffer->data();
     auto& destinationPixelArray = destinationPixelBuffer->data();
     
-    auto paintSize = m_effect.absolutePaintRect().size();
+    auto paintSize = result.absoluteImageRect().size();
 
     PaintingData paintingData = {
         sourcePixelArray,

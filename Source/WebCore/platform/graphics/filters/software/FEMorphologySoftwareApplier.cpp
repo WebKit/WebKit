@@ -141,25 +141,23 @@ void FEMorphologySoftwareApplier::applyPlatform(const PaintingData& paintingData
     applyPlatformGeneric(paintingData, 0, paintingData.height);
 }
 
-bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterEffectVector& inputEffects)
+bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result)
 {
-    FilterEffect* in = inputEffects[0].get();
+    auto& input = inputs[0].get();
 
-    auto destinationPixelBuffer = m_effect.pixelBufferResult(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
-
-    m_effect.setIsAlphaImage(in->isAlphaImage());
 
     auto isDegenerate = [](int radiusX, int radiusY) -> bool {
         return radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY);
     };
 
-    IntRect effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    IntRect effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
     IntSize radius = flooredIntSize(FloatSize(m_effect.radiusX(), m_effect.radiusY()));
 
     if (isDegenerate(radius.width(), radius.height())) {
-        in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
+        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
@@ -168,11 +166,11 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterEffect
     int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
 
     if (isDegenerate(radiusX, radiusY)) {
-        in->copyPixelBufferResult(*destinationPixelBuffer, effectDrawingRect);
+        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
-    auto sourcePixelBuffer = in->getPixelBufferResult(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect.operatingColorSpace());
+    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect.operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 

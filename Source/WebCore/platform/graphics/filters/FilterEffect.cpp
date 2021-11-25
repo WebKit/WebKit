@@ -158,18 +158,13 @@ bool FilterEffect::apply(const Filter& filter)
         for (auto& in : m_inputEffects)
             in->correctPremultipliedResultIfNeeded();
     }
-    
-    if (!createResult())
+
+    m_filterImage = FilterImage::create(m_filterPrimitiveSubregion, m_absolutePaintRect, resultIsAlphaImage(), filter.renderingMode(), resultColorSpace());
+    if (!m_filterImage)
         return false;
 
     // Add platform specific apply functions here and return earlier.
     return platformApplySoftware(filter);
-}
-
-bool FilterEffect::createResult()
-{
-    m_filterImage = FilterImage::create(m_absolutePaintRect, RenderingMode::Unaccelerated, resultColorSpace());
-    return m_filterImage;
 }
 
 void FilterEffect::clearResult()
@@ -186,30 +181,14 @@ void FilterEffect::clearResultsRecursive()
         effect->clearResultsRecursive();
 }
 
-ImageBuffer* FilterEffect::imageBufferResult()
+FilterImageVector FilterEffect::inputFilterImages() const
 {
-    if (!hasResult())
-        return nullptr;
-    return m_filterImage->imageBuffer();
-}
+    FilterImageVector filterImages;
 
-PixelBuffer* FilterEffect::pixelBufferResult(AlphaPremultiplication alphaFormat)
-{
-    if (!hasResult())
-        return nullptr;
-    return m_filterImage->pixelBuffer(alphaFormat);
-}
+    for (auto& inputEffect : m_inputEffects)
+        filterImages.append(*inputEffect->filterImage());
 
-std::optional<PixelBuffer> FilterEffect::getPixelBufferResult(AlphaPremultiplication alphaFormat, const IntRect& sourceRect, std::optional<DestinationColorSpace> colorSpace)
-{
-    ASSERT(hasResult());
-    return m_filterImage->getPixelBuffer(alphaFormat, sourceRect, colorSpace);
-}
-
-void FilterEffect::copyPixelBufferResult(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect) const
-{
-    ASSERT(hasResult());
-    m_filterImage->copyPixelBuffer(destinationPixelBuffer, sourceRect);
+    return filterImages;
 }
 
 void FilterEffect::correctPremultipliedResultIfNeeded()
@@ -233,7 +212,7 @@ TextStream& FilterEffect::externalRepresentation(TextStream& ts, RepresentationT
     
     if (representationType == RepresentationType::Debugging) {
         TextStream::IndentScope indentScope(ts);
-        ts.dumpProperty("alpha image", m_alphaImage);
+        ts.dumpProperty("alpha image", resultIsAlphaImage());
         ts.dumpProperty("operating colorspace", operatingColorSpace());
         ts.dumpProperty("result colorspace", resultColorSpace());
         ts << "\n" << indent;
