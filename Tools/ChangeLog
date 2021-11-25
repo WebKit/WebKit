@@ -1,3 +1,29 @@
+2021-11-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal: The memory backing IOSurfaces of former client buffer pbuffers is leaked
+        https://bugs.webkit.org/show_bug.cgi?id=233328
+        <rdar://problem/85563187>
+
+        Reviewed by Antti Koivisto.
+
+        Add tests testing Cocoa GraphicsContextGLOpenGL drawing buffer
+        recycling behavior.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/Sources.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ImageBufferTests.cpp:
+        (TestWebKitAPI::imageBufferPixelIs):
+        (TestWebKitAPI::memoryFootprintChangedBy): Deleted.
+        * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLOpenGLCocoa.mm:
+        (TestWebKitAPI::createDefaultTestContext):
+        (TestWebKitAPI::changeContextContents):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/TestUtilities.h: Added.
+        * TestWebKitAPI/TestUtilities.cpp: Added.
+        Add few useful functions to TestUtilities.h so that different
+        tests can use them.
+
 2021-11-23  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] GdkRGBA expects colors to be in the 0.0 to 1.0 range

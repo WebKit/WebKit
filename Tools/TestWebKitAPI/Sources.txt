@@ -25,4 +25,5 @@ DeprecatedGlobalValues.cpp
 JavaScriptTest.cpp
 PlatformUtilities.cpp
 TestsController.cpp
+TestUtilities.cpp
 

@@ -47,9 +47,8 @@ GraphicsContextGLIOSurfaceSwapChain::Buffer GraphicsContextGLIOSurfaceSwapChain:
     if (m_spareBuffer.surface) {
         if (m_spareBuffer.surface->isInUse())
             m_spareBuffer.surface.reset();
-        return WTFMove(m_spareBuffer);
     }
-    return { };
+    return std::exchange(m_spareBuffer, { });
 }
 
 void* GraphicsContextGLIOSurfaceSwapChain::detachClient()
@@ -60,6 +59,8 @@ void* GraphicsContextGLIOSurfaceSwapChain::detachClient()
 
 void GraphicsContextGLIOSurfaceSwapChain::present(Buffer&& buffer)
 {
+    ASSERT(!m_spareBuffer.surface);
+    ASSERT(!m_spareBuffer.handle);
     m_spareBuffer = std::exchange(m_displayBuffer, WTFMove(buffer));
     if (m_displayBufferInUse) {
         m_displayBufferInUse = false;

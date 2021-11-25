@@ -1,3 +1,16 @@
+2021-11-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal: The memory backing IOSurfaces of former client buffer pbuffers is leaked
+        https://bugs.webkit.org/show_bug.cgi?id=233328
+        <rdar://problem/85563187>
+
+        Reviewed by Antti Koivisto.
+
+        Add prototype for IOSurfaceIncrementUseCount.
+        Currently used for a test, in simulating CA behavior.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
 2021-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Use OptionSet where it makes sense to
