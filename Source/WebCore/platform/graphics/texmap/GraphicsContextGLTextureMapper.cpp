@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGLTextureMapper.h"
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
@@ -66,6 +66,20 @@
 
 namespace WebCore {
 
+RefPtr<GraphicsContextGLTextureMapper> GraphicsContextGLTextureMapper::create(GraphicsContextGLAttributes&& attributes)
+{
+    return adoptRef(*new GraphicsContextGLTextureMapper(WTFMove(attributes)));
+}
+
+GraphicsContextGLTextureMapper::~GraphicsContextGLTextureMapper() = default;
+
+GraphicsContextGLTextureMapper::GraphicsContextGLTextureMapper(GraphicsContextGLAttributes&& attributes)
+    : GraphicsContextGLOpenGL(WTFMove(attributes))
+{
+}
+
+// FIXME: Below functionality should be moved to GraphicsContextGLTextureMapper to simplify the base class.
+
 RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow*)
 {
     static bool initialized = false;
@@ -85,7 +99,7 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
         return nullptr;
 
     // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
-    auto context = adoptRef(new GraphicsContextGLOpenGL(attributes));
+    auto context = GraphicsContextGLTextureMapper::create(GraphicsContextGLAttributes { attributes });
 
 #if USE(LIBEPOXY) && USE(OPENGL_ES) && ENABLE(WEBGL2)
     // Bail if GLES3 was requested but cannot be provided.

@@ -374,8 +374,8 @@ platform/graphics/cocoa/FontDescriptionCocoa.cpp
 platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
 platform/graphics/cocoa/FontPlatformDataCocoa.mm
 platform/graphics/cocoa/GraphicsContextCocoa.mm
+platform/graphics/cocoa/GraphicsContextGLCocoa.mm
 platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.cpp
-platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm
 platform/graphics/cocoa/HEVCUtilitiesCocoa.mm
 platform/graphics/cocoa/IOSurface.mm
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
@@ -391,7 +391,7 @@ platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebGLLayer.mm
-platform/graphics/cocoa/WebProcessGraphicsContextGLOpenGLCocoa.mm
+platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
 platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp
 platform/graphics/coretext/FontCascadeCoreText.cpp

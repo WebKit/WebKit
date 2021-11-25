@@ -24,6 +24,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/ANGLEContext.h
     platform/graphics/texmap/BitmapTexture.h
     platform/graphics/texmap/ClipStack.h
+    platform/graphics/texmap/GraphicsContextGLTextureMapper.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h
     platform/graphics/texmap/TextureMapper.h
     platform/graphics/texmap/TextureMapperBackingStore.h

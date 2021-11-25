@@ -52,7 +52,7 @@
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
 #include "ANGLEHeaders.h"
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGLCocoa.h"
 #endif
 
 namespace WebCore {
@@ -104,7 +104,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     auto& gl = *m_context.graphicsContextGL();
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
+    auto gCGL = static_cast<GraphicsContextGLCocoa*>(m_context.graphicsContextGL());
     GCGLenum textureTarget = gCGL->drawingBufferTextureTarget();
     GCGLenum textureTargetBinding = gCGL->drawingBufferTextureTargetQueryForDrawingTarget(textureTarget);
 #else
@@ -155,7 +155,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         auto size = data.surface->size();
         if (!size.width() || !size.height())
             return;
-        m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLOpenGL::PbufferAttachmentUsage::Write, GL::BGRA, size.width(), size.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
+        m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLCocoa::PbufferAttachmentUsage::Write, GL::BGRA, size.width(), size.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
         m_ioSurfaceTextureHandleIsShared = false;
     }
 
@@ -235,7 +235,7 @@ void WebXROpaqueFramebuffer::endFrame()
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     if (m_ioSurfaceTextureHandle) {
-        auto gCGL = static_cast<GraphicsContextGLOpenGL*>(&gl);
+        auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
         if (m_ioSurfaceTextureHandleIsShared) {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
             gCGL->detachIOSurfaceFromSharedTexture(m_ioSurfaceTextureHandle);

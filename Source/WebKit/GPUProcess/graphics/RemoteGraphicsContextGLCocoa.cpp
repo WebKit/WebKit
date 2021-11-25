@@ -71,7 +71,7 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(m_streamThread);
-    m_context = GPUProcessGraphicsContextGLOpenGL::create(WTFMove(attributes));
+    m_context = GraphicsContextGLCocoa::create(WTFMove(attributes));
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)

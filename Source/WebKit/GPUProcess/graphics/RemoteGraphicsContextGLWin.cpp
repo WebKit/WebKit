@@ -28,11 +28,10 @@
 #include "RemoteGraphicsContextGL.h"
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(WIN)
-
 #include "GPUConnectionToWebProcess.h"
+#include <WebCore/GraphicsContextGLTextureMapper.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 class RemoteGraphicsContextGLWin final : public RemoteGraphicsContextGL {
 public:
@@ -43,7 +42,7 @@ public:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
 };
 
-Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
+Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
     auto instance = adoptRef(*new RemoteGraphicsContextGLWin(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream)));
     instance->initialize(WTFMove(attributes));
@@ -57,7 +56,7 @@ RemoteGraphicsContextGLWin::RemoteGraphicsContextGLWin(GPUConnectionToWebProcess
 
 void RemoteGraphicsContextGLWin::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    m_context = GPUProcessGraphicsContextGLOpenGL::create(WTFMove(attributes));
+    m_context = WebCore::GraphicsContextGLTextureMapper::create(WTFMove(attributes));
 }
 
 void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& completionHandler)

@@ -29,16 +29,22 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
-#include "GPUProcessGraphicsContextGL.h"
 #include "GraphicsContextGLIdentifier.h"
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "ScopedWebGLRenderingResourcesRequest.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
+#include <WebCore/ExtensionsGL.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/WeakPtr.h>
+
+#if PLATFORM(COCOA)
+#include <WebCore/GraphicsContextGLCocoa.h>
+#else
+#include <WebCore/GraphicsContextGLTextureMapper.h>
+#endif
 
 #if PLATFORM(MAC)
 #include <CoreGraphics/CGDisplayConfiguration.h>
@@ -113,7 +119,13 @@ private:
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
-    RefPtr<GPUProcessGraphicsContextGLOpenGL> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
+#if PLATFORM(COCOA)
+    using PlatformGraphicsContextGL = WebCore::GraphicsContextGLCocoa;
+#else
+    using PlatformGraphicsContextGL = WebCore::GraphicsContextGLTextureMapper;
+#endif
+    
+    RefPtr<PlatformGraphicsContextGL> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;

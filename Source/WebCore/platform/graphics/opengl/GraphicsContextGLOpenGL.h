@@ -522,18 +522,6 @@ public:
 
     static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
 
-#if PLATFORM(COCOA)
-    enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
-    // Returns a handle which, if non-null, must be released via the
-    // detach call below.
-    void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
-    void destroyPbufferAndDetachIOSurface(void* handle);
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    void* attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
-    void detachIOSurfaceFromSharedTexture(void* handle);
-#endif
-#endif
-
 #if USE(ANGLE)
     constexpr static EGLNativeDisplayType defaultDisplay = EGL_DEFAULT_DISPLAY;
 #if PLATFORM(COCOA)
@@ -544,10 +532,14 @@ public:
 
 protected:
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes);
-    bool isValid() const;
 #if PLATFORM(COCOA)
     GraphicsContextGLIOSurfaceSwapChain m_swapChain;
+    EGLDisplay m_displayObj { nullptr };
+    PlatformGraphicsContextGL m_contextObj { nullptr };
+    PlatformGraphicsContextGLConfig m_configObj { nullptr };
 #endif
+    GCGLuint m_texture { 0 };
+
 private:
     // Called once by all the public entry points that eventually call OpenGL.
     // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
@@ -587,18 +579,6 @@ private:
 #endif
     // Platform specific behavior for releaseResources();
     static void platformReleaseThreadResources();
-
-
-#if PLATFORM(COCOA)
-    // TODO: this should be removed once the context draws to a image buffer. See https://bugs.webkit.org/show_bug.cgi?id=218179 .
-    EGLDisplay m_displayObj { nullptr };
-    PlatformGraphicsContextGL m_contextObj { nullptr };
-    PlatformGraphicsContextGLConfig m_configObj { nullptr };
-#endif // PLATFORM(COCOA)
-
-#if PLATFORM(WIN) && USE(CA)
-    RefPtr<PlatformCALayer> m_webGLLayer;
-#endif
 
 #if !USE(ANGLE)
     typedef HashMap<String, UniqueRef<sh::ShaderVariable>> ShaderSymbolMap;
@@ -688,7 +668,6 @@ private:
     ANGLEWebKitBridge m_compiler;
 #endif
 
-    GCGLuint m_texture { 0 };
     GCGLuint m_fbo { 0 };
 #if USE(COORDINATED_GRAPHICS)
     GCGLuint m_compositorTexture { 0 };
