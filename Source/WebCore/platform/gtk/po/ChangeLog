@@ -1,3 +1,16 @@
+2021-11-24  David Kilzer  <ddkilzer@apple.com>
+
+        Compiler should be able to check localized format strings for consistency
+        <https://webkit.org/b/232686>
+        <rdar://problem/84994345>
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        (add_custom_command: xgettext):
+        - Add WEB_UI_FORMAT_STRING to list of macros containing
+          localizable strings.
+
 2021-09-13  Piotr Drąg  <piotrdrag@gmail.com>
 
         [GTK][l10n] Updated Polish translation of WebKitGTK for 2.34

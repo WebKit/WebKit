@@ -1,3 +1,17 @@
+2021-11-24  David Kilzer  <ddkilzer@apple.com>
+
+        Compiler should be able to check localized format strings for consistency
+        <https://webkit.org/b/232686>
+        <rdar://problem/84994345>
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebLocalizableStringsInternal.mm:
+        (WebLocalizedStringInternal):
+        - Use localizedNSString() instead of localizedString() to
+          eliminate the need to convert from
+          CFString -> String -> NSString.
+
 2021-11-16  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Rename TextDecoration to TextDecorationLine

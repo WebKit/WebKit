@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2006, 2007, 2009, 2010, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -118,6 +118,8 @@ for my $dir (@directoriesToSkip) {
 
 my @files = ( split "\n", `find $quotedDirectoriesString \\( -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.c" -o -name "*.cpp" \\)` );
 
+sub isFormatMacro($) { return ($_[0] =~ /(WEB_)?UI_FORMAT_/); }
+
 for my $file (sort @files) {
     next if $file =~ /\/\w+LocalizableStrings\w*\.h$/ || $file =~ /\/LocalizedStrings\.h$/;
 
@@ -133,6 +135,7 @@ for my $file (sort @files) {
     my $UIString;
     my $key;
     my $comment;
+    my $isFormat;
     my $mnemonic;
     
     my $string;
@@ -186,12 +189,14 @@ handleString:
                         # FIXME: Validate UTF-8 here?
                         $UIString = $string;
                         $expected = ",";
-                    } elsif (($macro =~ /(WEB_)?UI_(CF)?STRING_KEY(_INTERNAL)?$/) and !defined $key) {
+                    } elsif (($macro =~ /(WEB_)?UI_(FORMAT_)?(CF)?STRING_KEY(_INTERNAL)?$/) and !defined $key) {
                         # FIXME: Validate UTF-8 here?
                         $key = $string;
+                        $isFormat = isFormatMacro($macro);
                         $expected = ",";
                     } elsif (($macro =~ /WEB_UI_STRING_WITH_MNEMONIC$/) and !defined $mnemonic) {
                         $mnemonic = $string;
+                        $isFormat = 0;
                         $expected = ",";
                     } elsif (!defined $comment) {
                         # FIXME: Validate UTF-8 here?
@@ -241,11 +246,11 @@ handleString:
                     $_ = "";
                 }
             } else {
-                if ($expected and $expected ne $token) {
+                if ((!$isFormat and $expected and $expected ne $token) or ($isFormat and $expected eq ")" and $token ne ",")) {
                     emitError($file, $., "found $token but expected $expected");
                     $expected = "";
                 }
-                if (($token =~ /(WEB_)?UI_(CF)?STRING(_KEY)?(_INTERNAL)?$/) || ($token =~ /WEB_UI_NSSTRING$/) || ($token =~ /WEB_UI_STRING_WITH_MNEMONIC$/)) {
+                if (($token =~ /(WEB_)?UI_(FORMAT_)?(CF)?STRING(_KEY)?(_INTERNAL)?$/) || ($token =~ /WEB_UI_NSSTRING$/) || ($token =~ /WEB_UI_STRING_WITH_MNEMONIC$/)) {
                     $expected = "(";
                     $macro = $token;
                     $UIString = undef;
@@ -253,6 +258,7 @@ handleString:
                     $comment = undef;
                     $mnemonic = undef;
                     $macroLine = $.;
+                    $isFormat = isFormatMacro($token);
                 } elsif ($token eq "(" or $token eq "[") {
                     ++$nestingLevel if defined $nestingLevel;
                     $expected = "a quoted string" if $expected;

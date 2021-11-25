@@ -25,6 +25,7 @@ add_custom_command(
             --package-name="webkitgtk"
             --keyword=_
             --keyword=N_
+            --keyword=WEB_UI_FORMAT_STRING:1
             --keyword=WEB_UI_STRING:1
             --keyword=WEB_UI_STRING_KEY:3c,1
             --keyword=WEB_UI_STRING_WITH_MNEMONIC:2

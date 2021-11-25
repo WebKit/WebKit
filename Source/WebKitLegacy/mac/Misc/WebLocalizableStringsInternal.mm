@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,11 @@
 #import "WebLocalizableStringsInternal.h"
 
 #import <WebCore/LocalizedStrings.h>
-#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
 NSString *WebLocalizedStringInternal(const char* key)
 {
-    return localizedString(key);
+    auto keyString = adoptCF(CFStringCreateWithCStringNoCopy(0, key, kCFStringEncodingUTF8, kCFAllocatorNull));
+    return localizedNSString(bridge_cast(keyString.get()));
 }
