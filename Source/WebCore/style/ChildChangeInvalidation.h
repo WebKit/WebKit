@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Element.h"
+#include "StyleInvalidator.h"
 
 namespace WebCore {
 namespace Style {
@@ -40,6 +41,10 @@ public:
 private:
     void invalidateAfterChange();
     void checkForSiblingStyleChanges();
+    void invalidateForChangedElement(Element&);
+
+    template<typename Function> void traverseRemovedElements(Function&&);
+    template<typename Function> void traverseAddedElements(Function&&);
 
     Element& parentElement() { return *m_parentElement; }
 

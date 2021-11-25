@@ -30,6 +30,9 @@
 #include "NodeRenderStyle.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
+#include "StyleResolver.h"
+#include "StyleScopeRuleSets.h"
+#include "TypedElementDescendantIterator.h"
 
 namespace WebCore::Style {
 
@@ -38,7 +41,12 @@ ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container, const
     , m_isEnabled(m_parentElement ? m_parentElement->needsStyleInvalidation() : false)
     , m_childChange(childChange)
 {
-    // FIXME: Do smarter invalidation similar to ClassChangeInvalidation.
+    if (!m_isEnabled)
+        return;
+
+    traverseRemovedElements([&](auto& changedElement) {
+        invalidateForChangedElement(changedElement);
+    });
 }
 
 ChildChangeInvalidation::~ChildChangeInvalidation()
@@ -46,7 +54,115 @@ ChildChangeInvalidation::~ChildChangeInvalidation()
     if (!m_isEnabled)
         return;
 
+    traverseAddedElements([&](auto& changedElement) {
+        invalidateForChangedElement(changedElement);
+    });
+    
     invalidateAfterChange();
+}
+
+void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement)
+{
+    auto& ruleSets = parentElement().styleResolver().ruleSets();
+
+    Invalidator::MatchElementRuleSets matchElementRuleSets;
+
+    auto addHasInvalidation = [&](const Vector<InvalidationRuleSet>* invalidationRuleSets)  {
+        if (!invalidationRuleSets)
+            return;
+        for (auto& invalidationRuleSet : *invalidationRuleSets) {
+            if (isHasPseudoClassMatchElement(invalidationRuleSet.matchElement))
+                Invalidator::addToMatchElementRuleSets(matchElementRuleSets, invalidationRuleSet);
+        }
+    };
+
+    auto tagName = changedElement.localName().convertToASCIILowercase();
+    addHasInvalidation(ruleSets.tagInvalidationRuleSets(tagName));
+
+    if (changedElement.hasAttributes()) {
+        for (auto& attribute : changedElement.attributesIterator()) {
+            auto attributeName = attribute.localName().convertToASCIILowercase();
+            addHasInvalidation(ruleSets.attributeInvalidationRuleSets(attributeName));
+        }
+    }
+
+    if (changedElement.hasClass()) {
+        auto count = changedElement.classNames().size();
+        for (size_t i = 0; i < count; ++i) {
+            auto& className = changedElement.classNames()[i];
+            addHasInvalidation(ruleSets.classInvalidationRuleSets(className));
+        }
+    }
+
+    Invalidator::invalidateWithMatchElementRuleSets(changedElement, matchElementRuleSets);
+}
+
+static bool needsTraversal(const RuleFeatureSet& features, const ContainerNode::ChildChange& childChange)
+{
+    if (features.usesMatchElement(MatchElement::HasChild))
+        return true;
+    if (features.usesMatchElement(MatchElement::HasDescendant))
+        return true;
+    return features.usesMatchElement(MatchElement::HasSibling) && childChange.previousSiblingElement;
+};
+
+static bool needsDescendantTraversal(const RuleFeatureSet& features)
+{
+    return features.usesMatchElement(MatchElement::HasDescendant);
+};
+
+template<typename Function>
+void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
+{
+    if (m_childChange.isInsertion() && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
+        return;
+
+    auto& features = parentElement().styleResolver().ruleSets().features();
+    if (!needsTraversal(features, m_childChange))
+        return;
+
+    bool needsDescendantTraversal = Style::needsDescendantTraversal(features);
+
+    auto* toRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
+    for (; toRemove != m_childChange.nextSiblingElement; toRemove = toRemove->nextElementSibling()) {
+        function(*toRemove);
+
+        if (!needsDescendantTraversal)
+            continue;
+
+        for (auto& descendant : descendantsOfType<Element>(*toRemove))
+            function(descendant);
+    }
+}
+
+template<typename Function>
+void ChildChangeInvalidation::traverseAddedElements(Function&& function)
+{
+    if (!m_childChange.isInsertion())
+        return;
+
+    auto* newElement = [&] {
+        auto* previous = m_childChange.previousSiblingElement;
+        auto* candidate = previous ? ElementTraversal::nextSibling(*previous) : ElementTraversal::firstChild(parentElement());
+        if (candidate == m_childChange.nextSiblingElement)
+            candidate = nullptr;
+        return candidate;
+    }();
+
+    if (!newElement)
+        return;
+
+    auto& features = parentElement().styleResolver().ruleSets().features();
+    if (!needsTraversal(features, m_childChange))
+        return;
+
+    function(*newElement);
+
+    if (!needsDescendantTraversal(features))
+        return;
+
+    for (auto& descendant : descendantsOfType<Element>(*newElement))
+        function(descendant);
 }
 
 static void checkForEmptyStyleChange(Element& element)

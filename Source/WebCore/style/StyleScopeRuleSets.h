@@ -63,9 +63,12 @@ public:
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
 
+    const Vector<InvalidationRuleSet>* tagInvalidationRuleSets(const AtomString& tagName) const;
     const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString& className) const;
     const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomString& attributeName) const;
     const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(CSSSelector::PseudoClassType) const;
+
+    const Vector<InvalidationRuleSet>* invalidationRuleSetsForChildChange(const Element&);
 
     bool hasComplexSelectorsForStyleAttribute() const;
 
@@ -98,6 +101,7 @@ private:
     mutable RuleFeatureSet m_features;
     mutable RefPtr<RuleSet> m_siblingRuleSet;
     mutable RefPtr<RuleSet> m_uncommonAttributeRuleSet;
+    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_tagInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
     mutable HashMap<CSSSelector::PseudoClassType, std::unique_ptr<Vector<InvalidationRuleSet>>, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> m_pseudoClassInvalidationRuleSets;

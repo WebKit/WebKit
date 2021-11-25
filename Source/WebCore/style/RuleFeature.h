@@ -67,6 +67,9 @@ struct RuleFeatureSet {
     void collectFeatures(const RuleData&);
     void registerContentAttribute(const AtomString&);
 
+    bool usesMatchElement(MatchElement matchElement) const  { return usedMatchElements[static_cast<uint8_t>(matchElement)]; }
+    void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[static_cast<uint8_t>(matchElement)] = true; }
+
     HashSet<AtomString> idsInRules;
     HashSet<AtomString> idsMatchingAncestorsInRules;
     HashSet<AtomString> attributeCanonicalLocalNamesInRules;
@@ -74,13 +77,16 @@ struct RuleFeatureSet {
     HashSet<AtomString> contentAttributeNamesInRules;
     RuleFeatureVector siblingRules;
     RuleFeatureVector uncommonAttributeRules;
-    
+
+    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> tagRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
     HashMap<CSSSelector::PseudoClassType, std::unique_ptr<RuleFeatureVector>, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassRules;
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassesAffectingHost;
+
+    std::array<bool, matchElementCount> usedMatchElements;
 
     bool usesFirstLineRules { false };
     bool usesFirstLetterRules { false };
@@ -92,12 +98,15 @@ private:
     struct SelectorFeatures {
         bool hasSiblingSelector { false };
 
+        Vector<std::pair<AtomString, MatchElement>, 32> tags;
         Vector<std::pair<AtomString, MatchElement>, 32> classes;
         Vector<std::pair<const CSSSelector*, MatchElement>, 32> attributes;
         Vector<std::pair<CSSSelector::PseudoClassType, MatchElement>, 32> pseudoClasses;
     };
     void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject);
 };
+
+bool isHasPseudoClassMatchElement(MatchElement);
 
 } // namespace Style
 } // namespace WebCore

@@ -1,3 +1,15 @@
+2021-11-25  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Invalidation support for adding and removing nodes
+        https://bugs.webkit.org/show_bug.cgi?id=233489
+
+        Reviewed by Alan Bujtas.
+
+        Add some additional cases to an existing test.
+
+        * web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has-expected.txt:
+        * web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has.html:
+
 2021-11-25  Sam Weinig  <weinig@apple.com>
 
         [CSS Color 4] Add support for new srgb-linear, xyz-d50 and xyz-d65 colorspaces
