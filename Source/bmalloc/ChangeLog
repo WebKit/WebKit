@@ -1,3 +1,9 @@
+2021-11-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Unreviewed, libpas requires libatomic in Linux etc.
+
+        * CMakeLists.txt:
+
 2021-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Unreviewed, build fix for relatively old clang on oss-fuzz

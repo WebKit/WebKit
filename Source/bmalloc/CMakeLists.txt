@@ -639,15 +639,8 @@ if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     )
 endif ()
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set(bmalloc_LIBRARIES
-        ${CMAKE_DL_LIBS}
-        atomic
-    )
-else ()
-    set(bmalloc_LIBRARIES
-        ${CMAKE_DL_LIBS}
-    )
+if (ATOMICS_REQUIRE_LIBATOMIC)
+    list(APPEND bmalloc_LIBRARIES atomic)
 endif ()
 
 set(bmalloc_INTERFACE_LIBRARIES bmalloc)
