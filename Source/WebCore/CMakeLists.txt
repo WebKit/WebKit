@@ -1700,6 +1700,7 @@ endif ()
 
 set(WebCoreTestSupport_FRAMEWORKS ${WebCore_FRAMEWORKS})
 set(WebCoreTestSupport_DEPENDENCIES WebCoreTestSupportBindings)
+set(WebCoreTestSupport_PRIVATE_HEADERS testing/js/WebCoreTestSupport.h)
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
@@ -2424,7 +2425,7 @@ endif ()
 
 WEBKIT_COPY_FILES(Copy_WebCoreTestSupportPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
-    FILES testing/js/WebCoreTestSupport.h testing/cocoa/WebArchiveDumpSupport.h
+    FILES ${WebCoreTestSupport_PRIVATE_HEADERS}
     FLATTENED
 )
 list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES Copy_WebCoreTestSupportPrivateHeaders)

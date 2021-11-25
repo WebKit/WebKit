@@ -914,6 +914,7 @@ add_custom_command(
     VERBATIM)
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
+list(APPEND WebCoreTestSupport_PRIVATE_HEADERS testing/cocoa/WebArchiveDumpSupport.h)
 list(APPEND WebCoreTestSupport_SOURCES
     testing/Internals.mm
     testing/MockApplePaySetupFeature.cpp
