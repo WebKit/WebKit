@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Test that focusing steps do not run when dialog is inert</title>
+<title>Test focusing steps when dialog is inert</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 </head>
@@ -24,12 +24,13 @@ function test_focusing_steps_with_inert_dialog(isModal) {
 
   if (isModal) {
     dialog.showModal();
+    assert_equals(document.activeElement, document.body,
+      "dialog.showModal(): focusing steps should apply focus fixup rule when dialog is inert");
   } else {
     dialog.show();
+    assert_equals(document.activeElement, outerInput,
+      "dialog.show(): focusing steps should not change focus when dialog is inert");
   }
-
-  assert_equals(document.activeElement, outerInput,
-    "Dialog focusing steps should not run when dialog is inert");
 
   // Clean up
   dialog.close();
@@ -38,8 +39,11 @@ function test_focusing_steps_with_inert_dialog(isModal) {
 
 test(() => {
   test_focusing_steps_with_inert_dialog(false);
+}, "dialog.show(): focusing steps should not change focus when dialog is inert");
+
+test(() => {
   test_focusing_steps_with_inert_dialog(true);
-}, "Dialog focusing steps should not run when dialog is inert");
+}, "dialog.showModal(): focusing steps should apply focus fixup rule when dialog is inert");
 </script>
 </body>
 </html>

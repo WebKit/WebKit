@@ -1,3 +1,18 @@
+2021-11-26  Tim Nguyen  <ntim@apple.com>
+
+        Update dialog focusing steps inert/disconnected handling
+        https://bugs.webkit.org/show_bug.cgi?id=233514
+
+        Reviewed by Antti Koivisto.
+
+        Updated tests to reflect new behavior.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-disconnected-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-disconnected.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-inert-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-inert.html:
+
 2021-11-25  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Invalidation support for adding and removing nodes

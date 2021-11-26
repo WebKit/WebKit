@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Test that focusing steps do not run when dialog is disconnected</title>
+<title>Test focusing steps when dialog is disconnected</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 </head>
@@ -23,17 +23,17 @@ test(() => {
 
   dialog.show();
 
-  assert_equals(document.activeElement, outerInput, "Focusing steps should not run");
+  assert_equals(document.activeElement, outerInput, "Focusing steps should not change focus");
 
   // Clean up
   dialog.close();
-}, "dialog.show(): focusing steps should not run on disconnected <dialog>");
+}, "dialog.show(): focusing steps should not change focus on disconnected <dialog>");
 
 test(() => {
   assert_throws_dom("InvalidStateError", () => {
     document.createElement("dialog").showModal();
-  }, "dialog.showModal() should throw on disconnected <dialog>");
-});
+  });
+}, "dialog.showModal() should throw on disconnected <dialog>");
 </script>
 </body>
 </html>

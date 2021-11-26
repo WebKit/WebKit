@@ -123,14 +123,6 @@ void HTMLDialogElement::queueCancelTask()
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-focusing-steps
 void HTMLDialogElement::runFocusingSteps()
 {
-    if (!isConnected())
-        return;
-
-    // Ensure renderer and inert style are up-to-date.
-    document().updateStyleIfNeeded();
-    if (renderer() && renderer()->style().effectiveInert())
-        return;
-
     RefPtr<Element> control;
     for (auto& element : descendantsOfType<Element>(*this)) {
         if (!element.isFocusable())
@@ -151,8 +143,8 @@ void HTMLDialogElement::runFocusingSteps()
 
     if (control->isFocusable())
         control->runFocusingStepsForAutofocus();
-    else
-        document().setFocusedElement(nullptr);
+    else if (m_isModal)
+        document().setFocusedElement(nullptr); // Focus fixup rule
 
     if (!control->document().isSameOriginAsTopDocument())
         return;

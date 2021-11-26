@@ -7,9 +7,7 @@ FAIL showModal: When autofocus is not present, the first focusable shadow-includ
 <dialog data-description="When autofocus is not p...
 FAIL show: autofocus outside a shadow tree must take precedence over earlier in-shadow-tree focusable elements assert_equals: expected Element node <div></div> but got Element node <button tabindex="-1" autofocus="">Focusable</button>
 FAIL showModal: autofocus outside a shadow tree must take precedence over earlier in-shadow-tree focusable elements assert_equals: expected Element node <div></div> but got Element node <button tabindex="-1" autofocus="">Focusable</button>
-FAIL show: autofocus inside a shadow tree must be ignored: no focusable elements outside the shadow tree assert_equals: expected Element node <div></div> but got Element node <body>
-
-<dialog data-description="When autofocus is not p...
+FAIL show: autofocus inside a shadow tree must be ignored: no focusable elements outside the shadow tree assert_equals: expected Element node <div></div> but got Element node <button tabindex="-1" autofocus="">Focusable</button>
 FAIL showModal: autofocus inside a shadow tree must be ignored: no focusable elements outside the shadow tree assert_equals: expected Element node <div></div> but got Element node <body>
 
 <dialog data-description="When autofocus is not p...
