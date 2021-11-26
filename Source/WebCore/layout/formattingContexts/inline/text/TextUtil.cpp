@@ -141,12 +141,15 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run, c
 
 TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
+    return breakWord(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), textWidth, availableWidth, contentLogicalLeft, fontCascade);
+}
+
+TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, size_t startPosition, size_t length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft, const FontCascade& fontCascade)
+{
     ASSERT(availableWidth >= 0);
-    auto startPosition = inlineTextItem.start();
-    auto length = inlineTextItem.length();
     ASSERT(length);
 
-    auto text = inlineTextItem.inlineTextBox().content();
+    auto text = inlineTextBox.content();
     auto surrogatePairAwareIndex = [&] (auto index) {
         // We should never break in the middle of a surrogate pair. They are considered one joint entity.
         auto offset = index + 1;
@@ -166,7 +169,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem
     auto leftSideWidth = InlineLayoutUnit { 0 };
     while (left < right) {
         auto middle = surrogatePairAwareIndex((left + right) / 2);
-        auto width = TextUtil::width(inlineTextItem, fontCascade, startPosition, middle + 1, contentLogicalLeft);
+        auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, middle + 1, contentLogicalLeft);
         if (width < availableWidth) {
             left = middle + 1;
             leftSideWidth = width;

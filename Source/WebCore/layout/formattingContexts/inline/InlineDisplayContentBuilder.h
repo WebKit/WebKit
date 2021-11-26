@@ -41,10 +41,11 @@ class InlineDisplayContentBuilder {
 public:
     InlineDisplayContentBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState&);
 
-    DisplayBoxes build(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex);
+    DisplayBoxes build(const LineBuilder::LineContent&, const LineBox&, const InlineRect& lineBoxLogicalRect, const size_t lineIndex);
 
 private:
     void createBoxesAndUpdateGeometryForLineContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, DisplayBoxes&);
+    void processOverflownRunsForEllipsis(DisplayBoxes&, InlineLayoutUnit lineBoxLogicalRight, const size_t lineIndex);
     void collectInkOverflowForInlineBoxes(const LineBox&, DisplayBoxes&);
 
     const ContainerBox& root() const { return m_formattingContextRoot; }

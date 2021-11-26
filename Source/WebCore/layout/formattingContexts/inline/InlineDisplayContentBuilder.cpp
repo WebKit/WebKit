@@ -32,6 +32,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "RuntimeEnabledFeatures.h"
+#include "TextUtil.h"
 
 namespace WebCore {
 namespace Layout {
@@ -52,17 +53,18 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ContainerBox& for
 {
 }
 
-DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex)
+DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineRect& lineBoxLogicalRect, const size_t lineIndex)
 {
     DisplayBoxes boxes;
     boxes.reserveInitialCapacity(lineContent.runs.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
 
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-    rootInlineBoxRect.moveBy(lineBoxLogicalTopLeft);
+    rootInlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
     boxes.append({ lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), UBIDI_DEFAULT_LTR, rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
 
-    createBoxesAndUpdateGeometryForLineContent(lineContent, lineBox, lineBoxLogicalTopLeft, lineIndex, boxes);
+    createBoxesAndUpdateGeometryForLineContent(lineContent, lineBox, lineBoxLogicalRect.topLeft(), lineIndex, boxes);
+    processOverflownRunsForEllipsis(boxes, lineBoxLogicalRect.right(), lineIndex);
     collectInkOverflowForInlineBoxes(lineBox, boxes);
     return boxes;
 }
@@ -294,6 +296,70 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
         }
         ASSERT(lineRun.isWordBreakOpportunity());
     }
+}
+
+void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxLogicalRight, const size_t lineIndex)
+{
+    if (root().style().textOverflow() != TextOverflow::Ellipsis)
+        return;
+    auto& rootInlineBox = boxes[0];
+    ASSERT(rootInlineBox.isRootInlineBox());
+
+    auto rootInlineBoxRect = rootInlineBox.logicalRect();
+    if (rootInlineBoxRect.right() <= lineBoxLogicalRight) {
+        ASSERT(boxes.last().logicalRight() <= lineBoxLogicalRight);
+        return;
+    }
+
+    static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
+    auto ellipsisRun = WebCore::TextRun { ellipsisStr->string() };
+    auto ellipsisWidth = !lineIndex ? root().firstLineStyle().fontCascade().width(ellipsisRun) : root().style().fontCascade().width(ellipsisRun);
+    auto firstTruncatedBoxIndex = boxes.size();
+
+    for (auto index = boxes.size(); index--;) {
+        auto& displayBox = boxes[index];
+
+        if (displayBox.logicalLeft() >= lineBoxLogicalRight) {
+            // Fully overflown boxes are collapsed.
+            displayBox.truncate();
+            continue;
+        }
+
+        // We keep truncating content until after we can accommodate the ellipsis content
+        // 1. fully truncate in case of inline level boxes (ie non-text content) or if ellipsis content is wider than the overflowing one.
+        // 2. partially truncated to make room for the ellipsis box.
+        auto availableRoomForEllipsis = lineBoxLogicalRight - displayBox.logicalLeft();
+        if (availableRoomForEllipsis <= ellipsisWidth) {
+            // Can't accommodate the ellipsis content here. We need to truncate non-overflowing boxes too.
+            displayBox.truncate();
+            continue;
+        }
+
+        auto truncatedWidth = InlineLayoutUnit { };
+        if (displayBox.isText()) {
+            auto text = *displayBox.text();
+            // FIXME: Check if it needs adjustment for RTL direction.
+            truncatedWidth = TextUtil::breakWord(downcast<InlineTextBox>(displayBox.layoutBox()), text.start(), text.length(), displayBox.logicalWidth(), availableRoomForEllipsis - ellipsisWidth, { }, displayBox.style().fontCascade()).logicalWidth;
+        }
+        displayBox.truncate(truncatedWidth);
+        firstTruncatedBoxIndex = index;
+        break;
+    }
+    ASSERT(firstTruncatedBoxIndex < boxes.size());
+    // Collapse truncated runs.
+    auto contentRight = boxes[firstTruncatedBoxIndex].logicalRight();
+    for (auto index = firstTruncatedBoxIndex + 1; index < boxes.size(); ++index)
+        boxes[index].moveHorizontally(contentRight - boxes[index].logicalLeft());
+    // And append the ellipsis box as the trailing item.
+    auto ellispisBoxRect = InlineRect { rootInlineBoxRect.top(), contentRight, ellipsisWidth, rootInlineBoxRect.height() };
+    boxes.append({ lineIndex
+        , InlineDisplay::Box::Type::Ellipsis
+        , root()
+        , UBIDI_DEFAULT_LTR
+        , ellispisBoxRect
+        , ellispisBoxRect
+        , { }
+        , InlineDisplay::Box::Text { 0, 1, ellipsisStr->string() } });
 }
 
 void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(const LineBox& lineBox, DisplayBoxes& boxes)

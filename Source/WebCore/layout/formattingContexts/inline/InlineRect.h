@@ -54,6 +54,7 @@ public:
     void setTop(InlineLayoutUnit);
     void setBottom(InlineLayoutUnit);
     void setLeft(InlineLayoutUnit);
+    void setRight(InlineLayoutUnit);
     void setTopLeft(const InlineLayoutPoint&);
     void setWidth(InlineLayoutUnit);
     void setHeight(InlineLayoutUnit);
@@ -220,6 +221,15 @@ inline void InlineRect::setLeft(InlineLayoutUnit left)
     m_hasValidLeft = true;
 #endif
     m_rect.setX(left);
+}
+
+inline void InlineRect::setRight(InlineLayoutUnit right)
+{
+#if ASSERT_ENABLED
+    m_hasValidLeft = true;
+    m_hasValidWidth = true;
+#endif
+    m_rect.shiftMaxXEdgeTo(right);
 }
 
 inline void InlineRect::setWidth(InlineLayoutUnit width)

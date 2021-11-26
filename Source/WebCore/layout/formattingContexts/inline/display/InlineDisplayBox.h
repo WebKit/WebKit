@@ -61,6 +61,7 @@ struct Box {
 
     enum class Type {
         Text,
+        Ellipsis,
         SoftLineBreak,
         LineBreakBox,
         AtomicInlineLevelBox,
@@ -76,6 +77,7 @@ struct Box {
     Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { PositionWithinInlineLevelBox::First, PositionWithinInlineLevelBox::Last });
 
     bool isText() const { return m_type == Type::Text; }
+    bool isEllipsis() const { return m_type == Type::Ellipsis; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
     bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
     bool isLineBreak() const { return isSoftLineBreak() || isLineBreakBox(); }
@@ -104,7 +106,9 @@ struct Box {
     Layout::InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
 
     void moveVertically(Layout::InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+    void moveHorizontally(Layout::InlineLayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
     void adjustInkOverflow(const Layout::InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
+    void truncate(Layout::InlineLayoutUnit truncatedwidth = 0.f);
 
     std::optional<Text>& text() { return m_text; }
     const std::optional<Text>& text() const { return m_text; }
@@ -160,6 +164,12 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
     , m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)
 {
+}
+
+inline void Box::truncate(Layout::InlineLayoutUnit truncatedwidth)
+{
+    m_logicalRect.setWidth(truncatedwidth);
+    m_inkOverflow.setRight(m_logicalRect.right());
 }
 
 }
