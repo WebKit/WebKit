@@ -32,106 +32,11 @@
 
 #include "ExtensionsGL.h"
 #include "ImageBuffer.h"
-#include "MediaPlayerPrivate.h"
 #include "PixelBuffer.h"
 #include <memory>
 #include <wtf/UniqueArray.h>
 
-#if USE(AVFOUNDATION)
-#include "GraphicsContextGLCV.h"
-#endif
-
-#if !PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-#include "MediaSample.h"
-#endif
-
-#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
-#include "MediaSampleGStreamer.h"
-#endif
-
 namespace WebCore {
-
-void GraphicsContextGLOpenGL::resetBuffersToAutoClear()
-{
-    GCGLuint buffers = GraphicsContextGL::COLOR_BUFFER_BIT;
-    // The GraphicsContextGL's attributes (as opposed to
-    // WebGLRenderingContext's) indicate whether there is an
-    // implicitly-allocated stencil buffer, for example.
-    auto attrs = contextAttributes();
-    if (attrs.depth)
-        buffers |= GraphicsContextGL::DEPTH_BUFFER_BIT;
-    if (attrs.stencil)
-        buffers |= GraphicsContextGL::STENCIL_BUFFER_BIT;
-    setBuffersToAutoClear(buffers);
-}
-
-void GraphicsContextGLOpenGL::setBuffersToAutoClear(GCGLbitfield buffers)
-{
-    auto attrs = contextAttributes();
-    if (!attrs.preserveDrawingBuffer)
-        m_buffersToAutoClear = buffers;
-    else
-        ASSERT(!m_buffersToAutoClear);
-}
-
-GCGLbitfield GraphicsContextGLOpenGL::getBuffersToAutoClear() const
-{
-    return m_buffersToAutoClear;
-}
-
-#if !USE(ANGLE)
-bool GraphicsContextGLOpenGL::releaseThreadResources(ReleaseThreadResourceBehavior)
-{
-    return false;
-}
-
-void GraphicsContextGLOpenGL::platformReleaseThreadResources()
-{
-}
-#endif
-
-#if !USE(ANGLE)
-bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
-{
-    ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
-    UniqueArray<unsigned char> zero;
-    unsigned size = 0;
-    if (width > 0 && height > 0) {
-        PixelStoreParams params;
-        params.alignment = unpackAlignment;
-        GCGLenum error = computeImageSizeInBytes(format, type, width, height, 1, params, &size, nullptr, nullptr);
-        if (error != GraphicsContextGL::NO_ERROR) {
-            synthesizeGLError(error);
-            return false;
-        }
-        zero = makeUniqueArray<unsigned char>(size);
-        if (!zero) {
-            synthesizeGLError(GraphicsContextGL::INVALID_VALUE);
-            return false;
-        }
-        memset(zero.get(), 0, size);
-    }
-    texImage2D(target, level, internalformat, width, height, border, format, type, makeGCGLSpan(zero.get(), size));
-    return true;
-}
-#endif
-
-
-#if !PLATFORM(COCOA)
-void GraphicsContextGLOpenGL::setContextVisibility(bool)
-{
-}
-
-void GraphicsContextGLOpenGL::simulateEventForTesting(SimulatedEventForTesting event)
-{
-    if (event == SimulatedEventForTesting::GPUStatusFailure)
-        m_failNextStatusCheck = true;
-}
-
-void GraphicsContextGLOpenGL::prepareForDisplay()
-{
-}
-#endif
 
 void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer& imageBuffer)
 {
@@ -180,17 +85,6 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixel
     return results;
 }
 
-#if !PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
-{
-#if USE(GSTREAMER)
-    if (auto pixelBuffer = readCompositedResults())
-        return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
-#endif
-    return nullptr;
-}
-#endif
-
 std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
@@ -208,34 +102,6 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPain
         return std::nullopt;
     return readCompositedResults();
 }
-
-#if !PLATFORM(COCOA)
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
-{
-    return readRenderingResults();
-}
-#endif
-
-#if ENABLE(VIDEO)
-bool GraphicsContextGLOpenGL::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
-{
-#if USE(AVFOUNDATION)
-    auto pixelBuffer = player.pixelBufferForCurrentTime();
-    if (!pixelBuffer)
-        return false;
-
-    auto contextCV = asCV();
-    if (!contextCV)
-        return false;
-
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyPixelBufferToTexture(pixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
-#else
-    return player.copyVideoTextureToPlatformTexture(this, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
-#endif
-}
-#endif
 
 } // namespace WebCore
 

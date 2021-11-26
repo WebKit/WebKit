@@ -47,8 +47,9 @@
 #import "WebCoreThread.h"
 #endif
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if ENABLE(VIDEO)
 #include "GraphicsContextGLCVANGLE.h"
+#include "MediaPlayerPrivate.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -762,7 +763,7 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 }
 
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if ENABLE(VIDEO)
 GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
 {
     if (!m_cv)
@@ -822,6 +823,23 @@ void GraphicsContextGLOpenGL::platformReleaseThreadResources()
 {
     currentContext = nullptr;
 }
+
+#if ENABLE(VIDEO)
+bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+{
+    auto pixelBuffer = player.pixelBufferForCurrentTime();
+    if (!pixelBuffer)
+        return false;
+
+    auto contextCV = asCV();
+    if (!contextCV)
+        return false;
+
+    UNUSED_VARIABLE(premultiplyAlpha);
+    ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
+    return contextCV->copyPixelBufferToTexture(pixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
+}
+#endif
 
 }
 

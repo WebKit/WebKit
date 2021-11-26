@@ -2153,25 +2153,6 @@ void GraphicsContextGLOpenGL::synthesizeGLError(GCGLenum error)
     m_syntheticErrors.add(error);
 }
 
-void GraphicsContextGLOpenGL::markContextChanged()
-{
-    m_layerComposited = false;
-}
-
-void GraphicsContextGLOpenGL::markLayerComposited()
-{
-    m_layerComposited = true;
-    resetBuffersToAutoClear();
-
-    for (auto* client : copyToVector(m_clients))
-        client->didComposite();
-}
-
-bool GraphicsContextGLOpenGL::layerComposited() const
-{
-    return m_layerComposited;
-}
-
 void GraphicsContextGLOpenGL::forceContextLost()
 {
     for (auto* client : copyToVector(m_clients))

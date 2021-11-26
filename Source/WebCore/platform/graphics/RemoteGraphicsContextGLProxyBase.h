@@ -50,10 +50,6 @@ public:
     void setContextVisibility(bool) final;
     bool isGLES2Compliant() const final;
     void markContextChanged() final;
-    bool layerComposited() const final;
-    void setBuffersToAutoClear(GCGLbitfield) final;
-    GCGLbitfield getBuffersToAutoClear() const final;
-    void markLayerComposited() final;
 
     // Other ExtensionGL overrides.
     using ExtensionsGL::isEnabled;
@@ -79,10 +75,6 @@ private:
     HashSet<String> m_requestableExtensions;
 
     HashSet<String> m_enabledExtensions;
-
-    // FIXME: Drawing buffer clear tracking should be moved to the client.
-    bool m_layerComposited = false;
-    GCGLbitfield m_buffersToAutoClear = { 0 };
 };
 
 }

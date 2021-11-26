@@ -113,7 +113,6 @@ public:
 #endif
 #if USE(ANGLE)
     GCGLenum drawingBufferTextureTarget();
-#endif
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLOpenGL calls done in the thread.
         ReleaseCurrentContext,
@@ -124,6 +123,7 @@ public:
         TerminateAndReleaseThreadResources
     };
     static bool releaseThreadResources(ReleaseThreadResourceBehavior);
+#endif
 
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
@@ -442,18 +442,8 @@ public:
     void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) override;
 
     // Helper methods.
-    void markContextChanged() final;
-    void markLayerComposited() final;
-    bool layerComposited() const final;
     void forceContextLost();
     void recycleContext();
-
-    // Maintenance of auto-clearing of color/depth/stencil buffers. The
-    // reset method is present to keep calling code simpler, so it
-    // doesn't have to know which buffers were allocated.
-    void resetBuffersToAutoClear();
-    void setBuffersToAutoClear(GCGLbitfield) final;
-    GCGLbitfield getBuffersToAutoClear() const final;
 
     void dispatchContextChangedNotification();
 
@@ -466,10 +456,6 @@ public:
 
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();
-
-#if ENABLE(VIDEO)
-    bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
-#endif
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     void primitiveRestartIndex(GCGLuint);
@@ -576,9 +562,10 @@ private:
 #if USE(ANGLE)
     // Returns false if context should be lost due to timeout.
     bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
-#endif
+
     // Platform specific behavior for releaseResources();
     static void platformReleaseThreadResources();
+#endif
 
 #if !USE(ANGLE)
     typedef HashMap<String, UniqueRef<sh::ShaderVariable>> ShaderSymbolMap;
@@ -680,7 +667,6 @@ private:
 #endif
     GCGLuint m_depthStencilBuffer { 0 };
 
-    bool m_layerComposited { false };
     GCGLuint m_internalColorFormat { 0 };
 #if USE(ANGLE)
     GCGLuint m_internalDepthStencilFormat { 0 };
@@ -740,11 +726,6 @@ private:
     EGLint m_drawingBufferTextureTarget { -1 };
 
 #endif
-
-    // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
-    // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
-    // auto-cleared.
-    GCGLbitfield m_buffersToAutoClear { 0 };
 
     // Errors raised by synthesizeGLError().
     ListHashSet<GCGLenum> m_syntheticErrors;

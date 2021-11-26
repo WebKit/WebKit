@@ -2106,25 +2106,6 @@ void GraphicsContextGLOpenGL::synthesizeGLError(GCGLenum error)
     m_syntheticErrors.add(error);
 }
 
-void GraphicsContextGLOpenGL::markContextChanged()
-{
-    m_layerComposited = false;
-}
-
-void GraphicsContextGLOpenGL::markLayerComposited()
-{
-    m_layerComposited = true;
-    resetBuffersToAutoClear();
-
-    for (auto* client : copyToVector(m_clients))
-        client->didComposite();
-}
-
-bool GraphicsContextGLOpenGL::layerComposited() const
-{
-    return m_layerComposited;
-}
-
 void GraphicsContextGLOpenGL::forceContextLost()
 {
     for (auto* client : copyToVector(m_clients))
@@ -2872,6 +2853,30 @@ void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpan<const GC
 void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+}
+
+bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
+{
+    ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
+    UniqueArray<unsigned char> zero;
+    unsigned size = 0;
+    if (width > 0 && height > 0) {
+        PixelStoreParams params;
+        params.alignment = unpackAlignment;
+        GCGLenum error = computeImageSizeInBytes(format, type, width, height, 1, params, &size, nullptr, nullptr);
+        if (error != GraphicsContextGL::NO_ERROR) {
+            synthesizeGLError(error);
+            return false;
+        }
+        zero = makeUniqueArray<unsigned char>(size);
+        if (!zero) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE);
+            return false;
+        }
+        memset(zero.get(), 0, size);
+    }
+    texImage2D(target, level, internalformat, width, height, border, format, type, makeGCGLSpan(zero.get(), size));
+    return true;
 }
 
 }

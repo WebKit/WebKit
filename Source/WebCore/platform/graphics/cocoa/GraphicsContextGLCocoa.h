@@ -49,6 +49,11 @@ public:
     void detachIOSurfaceFromSharedTexture(void* handle);
 #endif
 
+    // GraphicsContextGLOpenGL overrides.
+#if ENABLE(VIDEO)
+    bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+#endif
+
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&);
     bool isValid() const;

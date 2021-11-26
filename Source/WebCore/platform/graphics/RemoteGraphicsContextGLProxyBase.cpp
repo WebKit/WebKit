@@ -68,40 +68,10 @@ bool RemoteGraphicsContextGLProxyBase::isGLES2Compliant() const
 void RemoteGraphicsContextGLProxyBase::markContextChanged()
 {
     // FIXME: The caller should track this state.
-    if (m_layerComposited)
+    if (m_layerComposited) {
         notifyMarkContextChanged();
-    m_layerComposited = false;
-}
-
-void RemoteGraphicsContextGLProxyBase::markLayerComposited()
-{
-    m_layerComposited = true;
-    auto attrs = contextAttributes();
-    if (!attrs.preserveDrawingBuffer) {
-        m_buffersToAutoClear = GraphicsContextGL::COLOR_BUFFER_BIT;
-        if (attrs.depth)
-            m_buffersToAutoClear |= GraphicsContextGL::DEPTH_BUFFER_BIT;
-        if (attrs.stencil)
-            m_buffersToAutoClear |= GraphicsContextGL::STENCIL_BUFFER_BIT;
+        GraphicsContextGL::markContextChanged();
     }
-    for (auto* client : copyToVector(m_clients))
-        client->didComposite();
-}
-
-bool RemoteGraphicsContextGLProxyBase::layerComposited() const
-{
-    return m_layerComposited;
-}
-
-void RemoteGraphicsContextGLProxyBase::setBuffersToAutoClear(GCGLbitfield buffers)
-{
-    if (!contextAttributes().preserveDrawingBuffer)
-        m_buffersToAutoClear = buffers;
-}
-
-GCGLbitfield RemoteGraphicsContextGLProxyBase::getBuffersToAutoClear() const
-{
-    return m_buffersToAutoClear;
 }
 
 bool RemoteGraphicsContextGLProxyBase::supports(const String& name)

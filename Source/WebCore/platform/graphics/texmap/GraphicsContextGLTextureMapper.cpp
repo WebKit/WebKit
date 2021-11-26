@@ -33,6 +33,7 @@
 
 #include "GLContext.h"
 #include "GraphicsContextGLOpenGLManager.h"
+#include "PixelBuffer.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
@@ -62,6 +63,18 @@
 #else
 #include "NicosiaGCGLLayer.h"
 #endif
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include "MediaSample.h"
+#endif
+
+#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#include "MediaSampleGStreamer.h"
+#endif
+
+#if ENABLE(VIDEO)
+#include "MediaPlayerPrivate.h"
 #endif
 
 namespace WebCore {
@@ -452,6 +465,43 @@ ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
 #endif
     }
     return *m_extensions;
+}
+#endif
+
+void GraphicsContextGLOpenGL::setContextVisibility(bool)
+{
+}
+
+void GraphicsContextGLOpenGL::simulateEventForTesting(SimulatedEventForTesting event)
+{
+    if (event == SimulatedEventForTesting::GPUStatusFailure)
+        m_failNextStatusCheck = true;
+}
+
+void GraphicsContextGLOpenGL::prepareForDisplay()
+{
+}
+
+#if ENABLE(MEDIA_STREAM)
+RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
+{
+#if USE(GSTREAMER)
+    if (auto pixelBuffer = readCompositedResults())
+        return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
+#endif
+    return nullptr;
+}
+#endif
+
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
+{
+    return readRenderingResults();
+}
+
+#if ENABLE(VIDEO)
+bool GraphicsContextGLTextureMapper::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+{
+    return player.copyVideoTextureToPlatformTexture(this, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }
 #endif
 
