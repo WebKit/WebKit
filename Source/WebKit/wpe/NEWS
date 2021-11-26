@@ -1,4 +1,22 @@
 =================
+WPE WebKit 2.35.1
+=================
+
+What's new in WPE WebKit 2.35.1?
+
+  - Make user interactive threads (event handler, scrolling, etc.) real time
+    on Linux.
+  - Add new API to set HTTP response information to custom URI schemes.
+  - Add support for the MediaSession API.
+  - Add initial support, disabled by default at build time, for the JPEG-XL
+	image format.
+  - Make the WPE Qt API use only public WPE library symbols, which makes
+    it possible to build it separately from the rest of WebKit.
+  - Fix jsc_value_object_define_property_accessor() to work with objects
+    not having a wrapped instance.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.33.2
 =================
 
