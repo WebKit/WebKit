@@ -1,3 +1,22 @@
+2021-11-25  Jean-Yves Avenard  <jya@apple.com>
+
+        Avoid flattening a SharedBuffer when reading reading it through SharedBufferChunkReader.
+        https://bugs.webkit.org/show_bug.cgi?id=233481
+        rdar://problem/85733358
+
+        Reviewed by Cameron McCormack.
+
+        Add API tests.
+        API tests original data come from the original bug that added
+        SharedBufferChunkReader (bug 59946) and then expanded.
+
+        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp:
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::readAllChunks):
+        (TestWebKitAPI::checkChunks):
+        (TestWebKitAPI::checkDataInRange):
+        * TestWebKitAPI/Tests/WebCore/SharedBufferTest.h:
+
 2021-11-25  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening API test authentication-success flaky timeout

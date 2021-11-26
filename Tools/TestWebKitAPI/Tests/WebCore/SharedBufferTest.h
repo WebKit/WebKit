@@ -43,4 +43,9 @@ private:
     String m_tempEmptyFilePath;
 };
 
+#if ENABLE(MHTML)
+class SharedBufferChunkReaderTest : public testing::Test {
+};
+#endif
+
 } // namespace TestWebKitAPI

@@ -1171,6 +1171,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SerializedPlatformDataCue.h
     platform/SerializedPlatformDataCueValue.h
     platform/SharedBuffer.h
+    platform/SharedBufferChunkReader.h
     platform/SharedStringHash.h
     platform/SleepDisabler.h
     platform/SleepDisablerClient.h

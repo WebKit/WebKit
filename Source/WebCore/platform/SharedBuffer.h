@@ -102,6 +102,7 @@ public:
     const uint8_t* data() const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
     Vector<uint8_t> copyData() const;
+    Vector<uint8_t> read(size_t offset, size_t length) const;
 
     // Similar to copyData() but avoids copying and will take the data instead when it is safe (The SharedBuffer is not shared).
     Vector<uint8_t> extractData();
@@ -244,7 +245,9 @@ private:
 
     // Combines all the segments into a Vector and returns that vector after clearing the SharedBuffer.
     Vector<uint8_t> takeData();
-    
+
+    const DataSegmentVectorEntry* getSegmentForPosition(size_t positition) const;
+
     static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
 
     size_t m_size { 0 };

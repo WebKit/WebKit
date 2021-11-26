@@ -156,13 +156,19 @@ Vector<uint8_t> SharedBuffer::takeData()
 
 SharedBufferDataView SharedBuffer::getSomeData(size_t position) const
 {
+    const DataSegmentVectorEntry* element = getSegmentForPosition(position);
+    return { element->segment.copyRef(), position - element->beginPosition };
+}
+
+const SharedBuffer::DataSegmentVectorEntry* SharedBuffer::getSegmentForPosition(size_t position) const
+{
     RELEASE_ASSERT(position < m_size);
     auto comparator = [](const size_t& position, const DataSegmentVectorEntry& entry) {
         return position < entry.beginPosition;
     };
     const DataSegmentVectorEntry* element = std::upper_bound(m_segments.begin(), m_segments.end(), position, comparator);
     element--; // std::upper_bound gives a pointer to the element that is greater than position. We want the element just before that.
-    return { element->segment.copyRef(), position - element->beginPosition };
+    return element;
 }
 
 String SharedBuffer::toHexString() const
@@ -275,6 +281,33 @@ bool SharedBuffer::startsWith(const Span<const uint8_t>& prefix) const
         prefixPtr += amountToCompareThisTime;
     }
     return false;
+}
+
+Vector<uint8_t> SharedBuffer::read(size_t offset, size_t length) const
+{
+    Vector<uint8_t> data;
+    if (offset >= size())
+        return data;
+    auto remaining = std::min(length, size() - offset);
+    if (!remaining)
+        return data;
+
+    data.reserveInitialCapacity(remaining);
+    auto* currentSegment = getSegmentForPosition(offset);
+    size_t offsetInSegment = offset - currentSegment->beginPosition;
+    size_t availableInSegment = std::min(currentSegment->segment->size() - offsetInSegment, remaining);
+    data.append(currentSegment->segment->data() + offsetInSegment, availableInSegment);
+
+    remaining -= availableInSegment;
+
+    auto* afterLastSegment = end();
+
+    while (remaining && ++currentSegment != afterLastSegment) {
+        size_t lengthInSegment = std::min(currentSegment->segment->size(), remaining);
+        data.append(currentSegment->segment->data(), lengthInSegment);
+        remaining -= lengthInSegment;
+    }
+    return data;
 }
 
 void SharedBuffer::copyTo(void* destination, size_t length) const
