@@ -191,12 +191,14 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 {
     auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::API);
 
-    std::optional<Style::ChildChangeInvalidation> styleInvalidation;
-    if (auto* parent = parentNode())
-        styleInvalidation.emplace(*parent, childChange);
-
     String oldData = m_data;
-    m_data = newData;
+    {
+        std::optional<Style::ChildChangeInvalidation> styleInvalidation;
+        if (auto* parent = parentNode())
+            styleInvalidation.emplace(*parent, childChange);
+
+        m_data = newData;
+    }
 
     if (oldLength && shouldUpdateLiveRanges != UpdateLiveRanges::No)
         document().textRemoved(*this, offsetOfReplacedData, oldLength);

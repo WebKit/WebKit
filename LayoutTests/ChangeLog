@@ -1,3 +1,14 @@
+2021-11-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r286112): Style invalidation for text mutation happening after event dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=233501
+        <rdar://problem/85754810>
+
+        Reviewed by Alan Bujtas.
+
+        * fast/events/mutation-in-DOMCharacterDataModified-expected.txt: Added.
+        * fast/events/mutation-in-DOMCharacterDataModified.html: Added.
+
 2021-11-25  Sam Weinig  <weinig@apple.com>
 
         [CSS Color 4] Add support for new srgb-linear, xyz-d50 and xyz-d65 colorspaces
