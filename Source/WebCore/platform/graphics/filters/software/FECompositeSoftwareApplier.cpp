@@ -132,12 +132,12 @@ bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage
     if (!destinationPixelBuffer)
         return false;
 
-    IntRect effectADrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    IntRect effectADrawingRect = result.absoluteImageRectRelativeTo(input);
     auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect.operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
-    IntRect effectBDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input2.absoluteImageRect());
+    IntRect effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
     auto& sourcePixelArray = sourcePixelBuffer->data();
@@ -161,14 +161,16 @@ bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterIm
         return false;
 
     auto& filterContext = resultImage->context();
+    auto inputImageRect = input.absoluteImageRectRelativeTo(result);
+    auto inputImageRect2 = input2.absoluteImageRectRelativeTo(result);
 
     switch (m_effect.operation()) {
     case FECOMPOSITE_OPERATOR_UNKNOWN:
         return false;
 
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
-        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()));
+        filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
+        filterContext.drawImageBuffer(*inputImage, inputImageRect);
         break;
 
     case FECOMPOSITE_OPERATOR_IN: {
@@ -187,18 +189,18 @@ bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterIm
     }
 
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()));
-        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()), { { }, inputImage2->logicalSize() }, CompositeOperator::DestinationOut);
+        filterContext.drawImageBuffer(*inputImage, inputImageRect);
+        filterContext.drawImageBuffer(*inputImage2, inputImageRect2, { { }, inputImage2->logicalSize() }, CompositeOperator::DestinationOut);
         break;
 
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
-        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()), { { }, inputImage->logicalSize() }, CompositeOperator::SourceAtop);
+        filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
+        filterContext.drawImageBuffer(*inputImage, inputImageRect, { { }, inputImage->logicalSize() }, CompositeOperator::SourceAtop);
         break;
 
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
-        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()), { { }, inputImage->logicalSize() }, CompositeOperator::XOR);
+        filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
+        filterContext.drawImageBuffer(*inputImage, inputImageRect, { { }, inputImage->logicalSize() }, CompositeOperator::XOR);
         break;
 
     case FECOMPOSITE_OPERATOR_ARITHMETIC:
@@ -206,8 +208,8 @@ bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterIm
         return false;
 
     case FECOMPOSITE_OPERATOR_LIGHTER:
-        filterContext.drawImageBuffer(*inputImage2, m_effect.drawingRegionOfInputImage(input2.absoluteImageRect()));
-        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()), { { }, inputImage->logicalSize() }, CompositeOperator::PlusLighter);
+        filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
+        filterContext.drawImageBuffer(*inputImage, inputImageRect, { { }, inputImage->logicalSize() }, CompositeOperator::PlusLighter);
         break;
     }
 

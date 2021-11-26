@@ -268,8 +268,10 @@ bool FEColorMatrixSoftwareApplier::apply(const Filter&, const FilterImageVector&
         return false;
 
     auto inputImage = input.imageBuffer();
-    if (inputImage)
-        resultImage->context().drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input.absoluteImageRect()));
+    if (inputImage) {
+        auto inputImageRect = input.absoluteImageRectRelativeTo(result);
+        resultImage->context().drawImageBuffer(*inputImage, inputImageRect);
+    }
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, result.colorSpace() };
     IntRect imageRect(IntPoint(), resultImage->truncatedLogicalSize());

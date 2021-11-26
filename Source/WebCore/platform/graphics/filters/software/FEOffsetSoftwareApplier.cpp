@@ -41,10 +41,10 @@ bool FEOffsetSoftwareApplier::apply(const Filter& filter, const FilterImageVecto
     if (!resultImage || !inputImage)
         return false;
 
-    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(input.absoluteImageRect());
-    drawingRegion.move(filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() }));
+    FloatRect inputImageRect = input.absoluteImageRectRelativeTo(result);
+    inputImageRect.move(filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() }));
 
-    resultImage->context().drawImageBuffer(*inputImage, drawingRegion);
+    resultImage->context().drawImageBuffer(*inputImage, inputImageRect);
     return true;
 }
 

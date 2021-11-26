@@ -60,10 +60,10 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
 
     auto& destinationPixelArray = destinationPixelBuffer->data();
 
-    auto effectADrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    auto effectADrawingRect = result.absoluteImageRectRelativeTo(input);
     auto inputPixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
-    auto effectBDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input2.absoluteImageRect());
+    auto effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     // The calculations using the pixel values from ‘in2’ are performed using non-premultiplied color values.
     auto displacementPixelBuffer = input2.getPixelBuffer(AlphaPremultiplication::Unpremultiplied, effectBDrawingRect);
     
@@ -74,9 +74,9 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
     auto& displacementPixelArray = displacementPixelBuffer->data();
     ASSERT(inputPixelArray.length() == displacementPixelArray.length());
 
-    IntSize paintSize = result.absoluteImageRect().size();
+    auto paintSize = result.absoluteImageRect().size();
+    auto scale = filter.scaledByFilterScale({ m_effect.scale(), m_effect.scale() });
 
-    FloatSize scale = filter.scaledByFilterScale({ m_effect.scale(), m_effect.scale() });
     float scaleForColorX = scale.width() / 255.0;
     float scaleForColorY = scale.height() / 255.0;
     float scaledOffsetX = 0.5 - scale.width() * 0.5;

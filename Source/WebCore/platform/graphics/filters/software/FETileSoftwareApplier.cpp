@@ -42,10 +42,10 @@ bool FETileSoftwareApplier::apply(const Filter& filter, const FilterImageVector&
     auto inputImageRect = input.absoluteImageRect();
     auto resultImageRect = result.absoluteImageRect();
 
-    auto tileRect = filter.maxEffectRect(input.primitiveSubregion());
+    auto tileRect = input.maxEffectRect(filter);
     tileRect.scale(filter.filterScale());
 
-    auto maxResultRect = filter.maxEffectRect(result.primitiveSubregion());
+    auto maxResultRect = result.maxEffectRect(filter);
     maxResultRect.scale(filter.filterScale());
 
     auto tileImage = ImageBuffer::create(tileRect.size(), filter.renderingMode(), 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);

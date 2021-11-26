@@ -43,7 +43,9 @@ bool FEMergeSoftwareApplier::apply(const Filter&, const FilterImageVector& input
         auto inputImage = input->imageBuffer();
         if (!inputImage)
             continue;
-        filterContext.drawImageBuffer(*inputImage, m_effect.drawingRegionOfInputImage(input->absoluteImageRect()));
+
+        auto inputImageRect = input->absoluteImageRectRelativeTo(result);
+        filterContext.drawImageBuffer(*inputImage, inputImageRect);
     }
 
     return true;

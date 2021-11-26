@@ -53,10 +53,7 @@ public:
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
-    
-    FloatRect drawingRegionOfInputImage(const IntRect&) const;
-    IntRect requestedRegionOfInputPixelBuffer(const IntRect&) const;
-    
+
     // Recurses on inputs.
     FloatRect determineFilterPrimitiveSubregion(const Filter&);
 

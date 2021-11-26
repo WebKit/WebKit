@@ -41,7 +41,10 @@ public:
     static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
 
     FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
+    FloatRect maxEffectRect(const Filter&) const;
+
     IntRect absoluteImageRect() const { return m_absoluteImageRect; }
+    IntRect absoluteImageRectRelativeTo(const FilterImage& origin) const;
 
     bool isAlphaImage() const { return m_isAlphaImage; }
     RenderingMode renderingMode() const { return m_renderingMode; }

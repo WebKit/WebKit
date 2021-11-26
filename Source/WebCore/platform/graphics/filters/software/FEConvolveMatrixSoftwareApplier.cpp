@@ -295,7 +295,7 @@ bool FEConvolveMatrixSoftwareApplier::apply(const Filter&, const FilterImageVect
     if (!destinationPixelBuffer)
         return false;
 
-    auto effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
     auto sourcePixelBuffer = input.getPixelBuffer(alphaFormat, effectDrawingRect, m_effect.operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;

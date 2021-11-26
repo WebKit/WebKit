@@ -58,25 +58,6 @@ FloatPoint FilterEffect::mapPointFromUserSpaceToBuffer(FloatPoint userSpacePoint
     return absolutePoint;
 }
 
-IntRect FilterEffect::requestedRegionOfInputPixelBuffer(const IntRect& effectRect) const
-{
-    IntPoint location = m_absolutePaintRect.location();
-    location.moveBy(-effectRect.location());
-    return IntRect(location, m_absolutePaintRect.size());
-}
-
-FloatRect FilterEffect::drawingRegionOfInputImage(const IntRect& srcRect) const
-{
-    ASSERT(hasResult());
-
-    FloatSize scale;
-    ImageBuffer::clampedSize(m_absolutePaintRect.size(), scale);
-
-    AffineTransform transform;
-    transform.scale(scale).translate(-m_absolutePaintRect.location());
-    return transform.mapRect(srcRect);
-}
-
 FloatRect FilterEffect::determineFilterPrimitiveSubregion(const Filter& filter)
 {
     // FETile, FETurbulence, FEFlood don't have input effects, take the filter region as unite rect.

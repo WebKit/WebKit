@@ -139,7 +139,7 @@ bool FEComponentTransferSoftwareApplier::apply(const Filter&, const FilterImageV
     if (!destinationPixelBuffer)
         return false;
 
-    auto drawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    auto drawingRect = result.absoluteImageRectRelativeTo(input);
     input.copyPixelBuffer(*destinationPixelBuffer, drawingRect);
 
     applyPlatform(*destinationPixelBuffer);

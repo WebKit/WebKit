@@ -153,8 +153,8 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageV
         return radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY);
     };
 
-    IntRect effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
-    IntSize radius = flooredIntSize(FloatSize(m_effect.radiusX(), m_effect.radiusY()));
+    auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
+    auto radius = flooredIntSize(FloatSize(m_effect.radiusX(), m_effect.radiusY()));
 
     if (isDegenerate(radius.width(), radius.height())) {
         input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);

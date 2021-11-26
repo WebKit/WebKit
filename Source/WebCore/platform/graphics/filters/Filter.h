@@ -53,11 +53,6 @@ public:
     RenderingMode renderingMode() const { return m_renderingMode; }
     void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
 
-    FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const
-    {
-        return intersection(primitiveSubregion, m_filterRegion);
-    }
-
 protected:
     Filter(Filter::Type filterType, const FloatSize& filterScale)
         : FilterFunction(filterType)

@@ -41,17 +41,17 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageV
     FloatSize blurRadius = 2 * filter.scaledByFilterScale({ m_effect.stdDeviationX(), m_effect.stdDeviationY() });
     FloatSize offset = filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() });
 
-    FloatRect drawingRegion = m_effect.drawingRegionOfInputImage(input.absoluteImageRect());
-    FloatRect drawingRegionWithOffset(drawingRegion);
-    drawingRegionWithOffset.move(offset);
+    FloatRect inputImageRect = input.absoluteImageRectRelativeTo(result);
+    FloatRect inputImageRectWithOffset(inputImageRect);
+    inputImageRectWithOffset.move(offset);
 
     auto inputImage = input.imageBuffer();
     if (!inputImage)
         return false;
 
-    GraphicsContext& resultContext = resultImage->context();
+    auto& resultContext = resultImage->context();
     resultContext.setAlpha(m_effect.shadowOpacity());
-    resultContext.drawImageBuffer(*inputImage, drawingRegionWithOffset);
+    resultContext.drawImageBuffer(*inputImage, inputImageRectWithOffset);
     resultContext.setAlpha(1);
 
     ShadowBlur contextShadow(blurRadius, offset, m_effect.shadowColor());
@@ -71,7 +71,7 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageV
     resultContext.fillRect(FloatRect(FloatPoint(), result.absoluteImageRect().size()), m_effect.shadowColor());
     resultContext.setCompositeOperation(CompositeOperator::DestinationOver);
 
-    resultImage->context().drawImageBuffer(*inputImage, drawingRegion);
+    resultImage->context().drawImageBuffer(*inputImage, inputImageRect);
     return true;
 }
 

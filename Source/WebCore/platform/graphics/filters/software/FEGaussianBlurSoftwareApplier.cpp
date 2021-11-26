@@ -433,7 +433,7 @@ bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, const FilterImag
     if (!destinationPixelBuffer)
         return false;
 
-    auto effectDrawingRect = m_effect.requestedRegionOfInputPixelBuffer(input.absoluteImageRect());
+    auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
     input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
     if (!m_effect.stdDeviationX() && !m_effect.stdDeviationY())
         return true;

@@ -472,7 +472,7 @@ IntRect CSSFilter::outputRect()
     auto effect = lastEffect();
 
     if (effect->hasResult() || (m_filterRenderer && m_filterRenderer->hasResult()))
-        return effect->requestedRegionOfInputPixelBuffer(IntRect { filterRegion() });
+        return effect->absolutePaintRect() - IntPoint(filterRegion().location());
 
     return { };
 }

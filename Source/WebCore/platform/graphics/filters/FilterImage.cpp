@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FilterImage.h"
 
+#include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
@@ -50,6 +51,16 @@ FilterImage::FilterImage(const FloatRect& primitiveSubregion, const IntRect& abs
     , m_renderingMode(renderingMode)
     , m_colorSpace(colorSpace)
 {
+}
+
+FloatRect FilterImage::maxEffectRect(const Filter& filter) const
+{
+    return intersection(m_primitiveSubregion, filter.filterRegion());
+}
+
+IntRect FilterImage::absoluteImageRectRelativeTo(const FilterImage& origin) const
+{
+    return m_absoluteImageRect - origin.absoluteImageRect().location();
 }
 
 ImageBuffer* FilterImage::imageBuffer()
