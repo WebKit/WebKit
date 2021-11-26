@@ -92,9 +92,6 @@ struct RuleFeatureSet {
     bool usesFirstLetterRules { false };
 
 private:
-    static MatchElement computeNextMatchElement(MatchElement, CSSSelector::RelationType);
-    static MatchElement computeSubSelectorMatchElement(MatchElement, const CSSSelector&, const CSSSelector& childSelector);
-
     struct SelectorFeatures {
         bool hasSiblingSelector { false };
 
@@ -107,6 +104,7 @@ private:
 };
 
 bool isHasPseudoClassMatchElement(MatchElement);
+MatchElement computeHasPseudoClassMatchElement(const CSSSelector&);
 
 } // namespace Style
 } // namespace WebCore

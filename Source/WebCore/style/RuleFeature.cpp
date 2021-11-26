@@ -80,7 +80,7 @@ RuleFeature::RuleFeature(const RuleData& ruleData, std::optional<MatchElement> m
     ASSERT(selectorListIndex == ruleData.selectorListIndex());
 }
 
-MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
+static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
 {
     if (isHasPseudoClassMatchElement(matchElement))
         return matchElement;
@@ -129,7 +129,38 @@ MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, 
     return matchElement;
 };
 
-MatchElement RuleFeatureSet::computeSubSelectorMatchElement(MatchElement matchElement, const CSSSelector& selector, const CSSSelector& childSelector)
+MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
+{
+    auto hasMatchElement = MatchElement::Subject;
+    for (auto* simpleSelector = &hasSelector; simpleSelector->tagHistory(); simpleSelector = simpleSelector->tagHistory())
+        hasMatchElement = computeNextMatchElement(hasMatchElement, simpleSelector->relation());
+
+    if (hasMatchElement == MatchElement::Parent)
+        return MatchElement::HasChild;
+
+    switch (hasMatchElement) {
+    case MatchElement::Parent:
+    case MatchElement::Subject:
+        return MatchElement::HasChild;
+    case MatchElement::Ancestor:
+        return MatchElement::HasDescendant;
+    case MatchElement::IndirectSibling:
+    case MatchElement::DirectSibling:
+    case MatchElement::ParentSibling:
+    case MatchElement::AncestorSibling:
+    case MatchElement::AnySibling:
+        return MatchElement::HasSibling;
+    case MatchElement::HasChild:
+    case MatchElement::HasDescendant:
+    case MatchElement::HasSibling:
+    case MatchElement::Host:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return MatchElement::HasChild;
+}
+
+static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, const CSSSelector& selector, const CSSSelector& childSelector)
 {
     if (selector.match() == CSSSelector::PseudoClass) {
         auto type = selector.pseudoClassType();
@@ -141,17 +172,8 @@ MatchElement RuleFeatureSet::computeSubSelectorMatchElement(MatchElement matchEl
         if (type == CSSSelector::PseudoClassHost)
             return MatchElement::Host;
 
-        if (type == CSSSelector::PseudoClassHas) {
-            auto hasMatchElement = MatchElement::Subject;
-            for (auto* simpleSelector = &childSelector; simpleSelector->tagHistory(); simpleSelector = simpleSelector->tagHistory())
-                hasMatchElement = computeNextMatchElement(hasMatchElement, simpleSelector->relation());
-
-            if (hasMatchElement == MatchElement::Parent)
-                return MatchElement::HasChild;
-            if (isSiblingOrSubject(hasMatchElement))
-                return MatchElement::HasSibling;
-            return MatchElement::HasDescendant;
-        }
+        if (type == CSSSelector::PseudoClassHas)
+            return computeHasPseudoClassMatchElement(childSelector);
     }
     if (selector.match() == CSSSelector::PseudoElement) {
         // Similarly for ::slotted().

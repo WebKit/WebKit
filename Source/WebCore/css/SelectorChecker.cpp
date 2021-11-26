@@ -43,6 +43,7 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "RenderElement.h"
+#include "RuleFeature.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "ShadowRoot.h"
 #include "StyleScope.h"
@@ -861,28 +862,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 return hasMatchedAnything;
             }
         case CSSSelector::PseudoClassHas: {
-            // FIXME: This is the worst possible implementation in terms of performance.
-            auto checkRelative = [&](auto& elementToCheck) {
-                for (auto* subselector = selector.selectorList()->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-                    SelectorChecker selectorChecker(element.document());
-                    CheckingContext selectorCheckingContext(SelectorChecker::Mode::ResolvingStyle);
-                    selectorCheckingContext.scope = &element;
-                    if (selectorChecker.match(*subselector, elementToCheck, selectorCheckingContext))
-                        return true;
-                }
-                return false;
-            };
-            for (auto& descendant : descendantsOfType<Element>(element)) {
-                if (checkRelative(descendant))
+            for (auto* hasSelector = selector.selectorList()->first(); hasSelector; hasSelector = CSSSelectorList::next(hasSelector)) {
+                if (matchHasPseudoClass(checkingContext, element, *hasSelector))
                     return true;
-            }
-            for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-                if (checkRelative(*sibling))
-                    return true;
-                for (auto& descendant : descendantsOfType<Element>(*sibling)) {
-                    if (checkRelative(descendant))
-                        return true;
-                }
             }
             return false;
         }
@@ -1256,6 +1238,51 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
         }
     }
     return hasMatchedAnything;
+}
+
+bool SelectorChecker::matchHasPseudoClass(CheckingContext&, const Element& element, const CSSSelector& hasSelector) const
+{
+    // FIXME: This is almost the worst possible implementation in terms of performance.
+
+    SelectorChecker hasChecker(element.document());
+
+    auto checkRelative = [&](auto& elementToCheck) {
+        CheckingContext hasCheckingContext(SelectorChecker::Mode::ResolvingStyle);
+        hasCheckingContext.scope = &element;
+        return hasChecker.match(hasSelector, elementToCheck, hasCheckingContext);
+    };
+
+    auto matchElement = Style::computeHasPseudoClassMatchElement(hasSelector);
+
+    switch (matchElement) {
+    case Style::MatchElement::HasChild:
+        for (auto& child : childrenOfType<Element>(element)) {
+            if (checkRelative(child))
+                return true;
+        }
+        break;
+    case Style::MatchElement::HasDescendant:
+        for (auto& descendant : descendantsOfType<Element>(element)) {
+            if (checkRelative(descendant))
+                return true;
+        }
+        break;
+    case Style::MatchElement::HasSibling:
+        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+            if (checkRelative(*sibling))
+                return true;
+            for (auto& descendant : descendantsOfType<Element>(*sibling)) {
+                if (checkRelative(descendant))
+                    return true;
+            }
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return false;
 }
 
 bool SelectorChecker::checkScrollbarPseudoClass(const CheckingContext& checkingContext, const Element& element, const CSSSelector& selector) const
