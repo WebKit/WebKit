@@ -97,6 +97,9 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
     if (coreObject.isImage())
         interfaces.add(Interface::Image);
 
+    if (coreObject.canHaveSelectedChildren())
+        interfaces.add(Interface::Selection);
+
     return interfaces;
 }
 
@@ -495,6 +498,8 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_document_interface), &s_documentFunctions });
         if (m_interfaces.contains(Interface::Image))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_image_interface), &s_imageFunctions });
+        if (m_interfaces.contains(Interface::Selection))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_selection_interface), &s_selectionFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -656,6 +661,12 @@ CString AccessibilityObjectAtspi::name() const
     RELEASE_ASSERT(!isMainThread());
     if (!m_axObject)
         return "";
+
+    if (m_axObject->roleValue() == AccessibilityRole::ListBoxOption || m_axObject->roleValue() == AccessibilityRole::MenuListOption) {
+        auto value = m_axObject->stringValue();
+        if (!value.isEmpty())
+            return value.utf8();
+    }
 
     Vector<AccessibilityText> textOrder;
     m_axObject->accessibilityText(textOrder);
@@ -1139,6 +1150,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_document_interface.name);
     if (m_interfaces.contains(Interface::Image))
         g_variant_builder_add(builder, "s", webkit_image_interface.name);
+    if (m_interfaces.contains(Interface::Selection))
+        g_variant_builder_add(builder, "s", webkit_selection_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const

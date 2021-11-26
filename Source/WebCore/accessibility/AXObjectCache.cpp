@@ -3432,6 +3432,8 @@ void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element& selectElement)
 
     if (rendererNeedsDeferredUpdate(*selectElement.renderer())) {
         m_deferredSelectedChildredChangedList.add(selectElement);
+        if (!m_performCacheUpdateTimer.isActive())
+            m_performCacheUpdateTimer.startOneShot(0_s);
         return;
     }
     selectedChildrenChanged(&selectElement);

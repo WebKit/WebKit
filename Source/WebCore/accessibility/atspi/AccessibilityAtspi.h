@@ -66,6 +66,8 @@ public:
 
     void valueChanged(AccessibilityObjectAtspi&, double);
 
+    void selectionChanged(AccessibilityObjectAtspi&);
+
     static const char* localizedRoleName(AccessibilityRole);
 
 private:

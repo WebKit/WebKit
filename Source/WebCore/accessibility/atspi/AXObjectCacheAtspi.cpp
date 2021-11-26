@@ -84,6 +84,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXSelectedChildrenChanged:
     case AXMenuListValueChanged:
+        wrapper->selectionChanged();
         break;
     case AXValueChanged:
         if (wrapper->interfaces().contains(AccessibilityObjectAtspi::Interface::Value))

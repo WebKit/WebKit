@@ -51,7 +51,8 @@ public:
         Hypertext = 1 << 5,
         Action = 1 << 6,
         Document = 1 << 7,
-        Image = 1 << 8
+        Image = 1 << 8,
+        Selection = 1 << 9
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -131,6 +132,12 @@ public:
 
     WEBCORE_EXPORT String documentAttribute(const String&) const;
 
+    WEBCORE_EXPORT unsigned selectionCount() const;
+    WEBCORE_EXPORT AccessibilityObjectAtspi* selectedChild(unsigned) const;
+    WEBCORE_EXPORT bool setChildSelected(unsigned, bool) const;
+    WEBCORE_EXPORT bool clearSelection() const;
+    void selectionChanged();
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
@@ -178,6 +185,10 @@ private:
 
     String imageDescription() const;
 
+    bool deselectSelectedChild(unsigned) const;
+    bool isChildSelected(unsigned) const;
+    bool selectAll() const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
@@ -189,6 +200,7 @@ private:
     static GDBusInterfaceVTable s_actionFunctions;
     static GDBusInterfaceVTable s_documentFunctions;
     static GDBusInterfaceVTable s_imageFunctions;
+    static GDBusInterfaceVTable s_selectionFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

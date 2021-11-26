@@ -256,6 +256,18 @@ void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, dou
     });
 }
 
+void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "SelectionChanged",
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
+}
+
 struct RoleNameEntry {
     const char* name;
     const char* localizedName;
@@ -336,6 +348,8 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::MenuItem, { "menu item", N_("menu item") } },
     { AccessibilityRole::MenuItemCheckbox, { "check menu item", N_("check menu item") } },
     { AccessibilityRole::MenuItemRadio, { "radio menu item", N_("radio menu item") } },
+    { AccessibilityRole::MenuListPopup, { "menu", N_("menu") } },
+    { AccessibilityRole::MenuListOption, { "menu item", N_("menu item") } },
     { AccessibilityRole::Meter, { "level bar", N_("level bar") } },
     { AccessibilityRole::Outline, { "tree", N_("tree") } },
     { AccessibilityRole::Paragraph, { "paragraph", N_("paragraph") } },

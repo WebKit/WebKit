@@ -161,12 +161,20 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
 {
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Selection))
+        return nullptr;
+
+    if (auto* selectedChild = m_element->selectedChild(index))
+        return AccessibilityUIElement::create(selectedChild);
     return nullptr;
 }
 
 unsigned AccessibilityUIElement::selectedChildrenCount() const
 {
-    return 0;
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Selection))
+        return 0;
+
+    return m_element->selectionCount();
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned index)
@@ -1110,14 +1118,26 @@ void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) c
 
 void AccessibilityUIElement::setSelectedChildAtIndex(unsigned index) const
 {
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Selection))
+        return;
+
+    m_element->setChildSelected(index, true);
 }
 
 void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
 {
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Selection))
+        return;
+
+    m_element->setChildSelected(index, false);
 }
 
 void AccessibilityUIElement::clearSelectedChildren() const
 {
+    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Selection))
+        return;
+
+    m_element->clearSelection();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
