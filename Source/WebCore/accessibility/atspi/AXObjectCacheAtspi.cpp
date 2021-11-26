@@ -80,12 +80,20 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
             wrapper->stateChanged("checked", coreObject->isChecked());
         break;
     case AXSelectedStateChanged:
+    case AXMenuListItemSelected:
         wrapper->stateChanged("selected", coreObject->isSelected());
         break;
     case AXSelectedChildrenChanged:
-    case AXMenuListValueChanged:
         wrapper->selectionChanged();
         break;
+    case AXMenuListValueChanged: {
+        const auto& children = coreObject->children();
+        if (children.size() == 1) {
+            if (auto* childWrapper = children[0]->wrapper())
+                childWrapper->selectionChanged();
+        }
+        break;
+    }
     case AXValueChanged:
         if (wrapper->interfaces().contains(AccessibilityObjectAtspi::Interface::Value))
             wrapper->valueChanged(coreObject->valueForRange());
@@ -159,8 +167,6 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
     case AXLiveRegionCreated:
         break;
     case AXLiveRegionChanged:
-        break;
-    case AXMenuListItemSelected:
         break;
     case AXMenuClosed:
         break;

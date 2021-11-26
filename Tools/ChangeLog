@@ -1,5 +1,19 @@
 2021-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][a11y] MenuListPopup elements should implement selection interface too when building with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=233519
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a test case for menu list.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (testSelectionListBox):
+        (testSelectionMenuList):
+        (beforeAll):
+
+2021-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][a11y] Add implementation of selection interface when building with ATSPI
         https://bugs.webkit.org/show_bug.cgi?id=233494
 

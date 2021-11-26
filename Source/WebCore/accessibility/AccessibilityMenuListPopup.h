@@ -56,6 +56,8 @@ private:
     void addChildren() override;
     void handleChildrenChanged();
     bool computeAccessibilityIsIgnored() const override;
+    bool canHaveSelectedChildren() const override;
+    void selectedChildren(AccessibilityChildrenVector&) override;
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
 };

@@ -68,6 +68,30 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
     return accessibilityIsIgnoredByDefault();
 }
 
+bool AccessibilityMenuListPopup::canHaveSelectedChildren() const
+{
+#if USE(ATSPI)
+    return true;
+#else
+    return false;
+#endif
+}
+
+void AccessibilityMenuListPopup::selectedChildren(AccessibilityChildrenVector& result)
+{
+    ASSERT(result.isEmpty());
+    if (!canHaveSelectedChildren())
+        return;
+
+    if (!childrenInitialized())
+        addChildren();
+
+    for (const auto& child : m_children) {
+        if (child->isMenuListOption() && child->isSelected())
+            result.append(child.get());
+    }
+}
+
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const
 {
     if (!element || !element->inRenderedDocument())

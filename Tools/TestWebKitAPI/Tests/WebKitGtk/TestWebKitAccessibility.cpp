@@ -2049,7 +2049,6 @@ static void testImageBasic(AccessibilityTest* test, gconstpointer)
 static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
 {
     test->showInWindow(800, 600);
-    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
     test->loadHtml(
         "<html>"
         "  <body>"
@@ -2065,7 +2064,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
         "    </select>"
         "  </body>"
         "</html>",
-        baseDir.get());
+        nullptr);
     test->waitUntilLoadFinished();
 
     auto testApp = test->findTestApplication();
@@ -2179,6 +2178,74 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 2, nullptr));
 }
 
+static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
+{
+#if !USE(ATSPI)
+    g_test_skip("MenuList work differently with ATK");
+#else
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <select id='combo'>"
+        "      <option>Option 1</option>"
+        "      <option selected>Option 2</option>"
+        "      <option>Option 3</option>"
+        "      <option disabled>Option 4</option>"
+        "      <option>Option 5</option>"
+        "    </select>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
+    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
+    g_assert_cmpint(atspi_accessible_get_child_count(panel.get(), nullptr), ==, 1);
+
+    auto combo = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(combo.get()));
+    g_assert_cmpint(atspi_accessible_get_role(combo.get(), nullptr), ==, ATSPI_ROLE_COMBO_BOX);
+    g_assert_cmpint(atspi_accessible_get_child_count(combo.get(), nullptr), ==, 1);
+
+    auto menuList = adoptGRef(atspi_accessible_get_child_at_index(combo.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_SELECTION(menuList.get()));
+    g_assert_cmpint(atspi_accessible_get_role(menuList.get(), nullptr), ==, ATSPI_ROLE_MENU);
+    g_assert_cmpint(atspi_accessible_get_child_count(menuList.get(), nullptr), ==, 5);
+
+    g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(menuList.get()), nullptr), ==, 1);
+    g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(menuList.get()), 1, nullptr));
+    g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(menuList.get()), 2, nullptr));
+    g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(menuList.get()), 3, nullptr));
+    g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(menuList.get()), 4, nullptr));
+    auto selectedChild = adoptGRef(atspi_selection_get_selected_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(selectedChild.get()));
+    auto option2 = adoptGRef(atspi_accessible_get_child_at_index(menuList.get(), 1, nullptr));
+    g_assert_true(selectedChild.get() == option2.get());
+    g_assert_false(atspi_selection_select_child(ATSPI_SELECTION(menuList.get()), 3, nullptr));
+    test->startEventMonitor(menuList.get(), { "object:selection-changed" });
+    g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    auto events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:selection-changed");
+    events = { };
+    g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    g_assert_false(atspi_selection_deselect_selected_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    g_assert_false(atspi_selection_deselect_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    g_assert_false(atspi_selection_select_all(ATSPI_SELECTION(menuList.get()), nullptr));
+    g_assert_false(atspi_selection_clear_selection(ATSPI_SELECTION(menuList.get()), nullptr));
+#endif
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -2206,6 +2273,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "document/basic", testDocumentBasic);
     AccessibilityTest::add("WebKitAccessibility", "image/basic", testImageBasic);
     AccessibilityTest::add("WebKitAccessibility", "selection/listbox", testSelectionListBox);
+    AccessibilityTest::add("WebKitAccessibility", "selection/menulist", testSelectionMenuList);
 }
 
 void afterAll()
