@@ -1,3 +1,14 @@
+2021-11-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening API test WebKit.OnDeviceChangedCrash as flaky timeout
+
+        Unreviewed test gardening.
+
+        Flakiness seems to have been introduced between 243131@main and
+        243249@main.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] MenuListPopup elements should implement selection interface too when building with ATSPI
