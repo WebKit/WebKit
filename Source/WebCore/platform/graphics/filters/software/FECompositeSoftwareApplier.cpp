@@ -126,7 +126,7 @@ inline void FECompositeSoftwareApplier::applyPlatformArithmetic(unsigned char* s
 }
 #endif
 
-bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result)
+bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result) const
 {
     auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
@@ -149,7 +149,7 @@ bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage
     return true;
 }
 
-bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result)
+bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result) const
 {
     auto resultImage = result.imageBuffer();
     if (!resultImage)
@@ -216,7 +216,7 @@ bool FECompositeSoftwareApplier::applyNonArithmetic(FilterImage& input, FilterIm
     return true;
 }
 
-bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
+bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
     auto& input2 = inputs[1].get();

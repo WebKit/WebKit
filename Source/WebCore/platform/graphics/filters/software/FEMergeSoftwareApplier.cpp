@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-bool FEMergeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
+bool FEMergeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     ASSERT(inputs.size() == m_effect.numberOfEffectInputs());
 

@@ -38,12 +38,13 @@ namespace WebCore {
 class FELighting;
 
 class FELightingSoftwareApplier : public FilterEffectConcreteApplier<FELighting> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FELighting>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     static constexpr int cPixelSize = 4;
@@ -92,8 +93,7 @@ private:
 
     struct LightingData {
         // This structure contains only read-only (SMP safe) data
-        FELighting* effect;
-        FilterEffect::Type filterType;
+        const FELighting* effect;
         Color lightingColor;
         float surfaceScale;
         float diffuseConstant;

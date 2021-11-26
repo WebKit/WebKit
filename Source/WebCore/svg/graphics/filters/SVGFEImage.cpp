@@ -77,15 +77,16 @@ void FEImage::determineAbsolutePaintRect(const Filter& filter)
 
 // FIXME: Move the class FEImageSoftwareApplier to separate source and header files.
 class FEImageSoftwareApplier : public FilterEffectConcreteApplier<FEImage> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEImage>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 };
 
-bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result)
+bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result) const
 {
     auto resultImage = result.imageBuffer();
     if (!resultImage)
@@ -115,9 +116,9 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector
     return true;
 }
 
-bool FEImage::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEImage::createApplier(const Filter&) const
 {
-    return FEImageSoftwareApplier(*this).apply(filter, { }, *filterImage());
+    return FilterEffectApplier::create<FEImageSoftwareApplier>(*this);
 }
 
 TextStream& FEImage::externalRepresentation(TextStream& ts, RepresentationType representation) const

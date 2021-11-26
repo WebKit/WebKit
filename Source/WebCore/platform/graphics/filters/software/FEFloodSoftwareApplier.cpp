@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-bool FEFloodSoftwareApplier::apply(const Filter&, const FilterImageVector&, FilterImage& result)
+bool FEFloodSoftwareApplier::apply(const Filter&, const FilterImageVector&, FilterImage& result) const
 {
     auto resultImage = result.imageBuffer();
     if (!resultImage)

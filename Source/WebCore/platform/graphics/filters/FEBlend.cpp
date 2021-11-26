@@ -51,9 +51,9 @@ bool FEBlend::setBlendMode(BlendMode mode)
     return true;
 }
 
-bool FEBlend::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEBlend::createApplier(const Filter&) const
 {
-    return FEBlendSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FEBlendSoftwareApplier>(*this);
 }
 
 TextStream& FEBlend::externalRepresentation(TextStream& ts, RepresentationType representation) const

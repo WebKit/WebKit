@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-bool SourceGraphicSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result)
+bool SourceGraphicSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result) const
 {
     auto resultImage = result.imageBuffer();
     auto sourceImage = filter.sourceImage();

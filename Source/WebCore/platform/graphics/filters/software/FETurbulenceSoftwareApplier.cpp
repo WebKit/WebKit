@@ -339,7 +339,7 @@ void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, con
     applyPlatformGeneric(filterRegion, filterScale, pixelArray, paintingData, stitchData, 0, height);
 }
 
-bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result)
+bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result) const
 {
     auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)

@@ -37,6 +37,7 @@ class TextStream;
 namespace WebCore {
 
 class Filter;
+class FilterEffectApplier;
 class ImageBuffer;
 
 class FilterEffect : public FilterFunction {
@@ -116,12 +117,12 @@ protected:
     using FilterFunction::FilterFunction;
 
     virtual bool mayProduceInvalidPremultipliedPixels() const { return false; }
+    
+    virtual std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const = 0;
 
     void clipAbsolutePaintRect();
 
 private:
-    virtual bool platformApplySoftware(const Filter&) = 0;
-
     FilterEffectVector m_inputEffects;
 
     RefPtr<FilterImage> m_filterImage;

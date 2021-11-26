@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-FEDisplacementMapSoftwareApplier::FEDisplacementMapSoftwareApplier(FEDisplacementMap& effect)
+FEDisplacementMapSoftwareApplier::FEDisplacementMapSoftwareApplier(const FEDisplacementMap& effect)
     : Base(effect)
 {
     ASSERT(m_effect.xChannelSelector() != CHANNEL_UNKNOWN);
@@ -49,7 +49,7 @@ int FEDisplacementMapSoftwareApplier::yChannelIndex() const
     return m_effect.yChannelSelector() - 1;
 }
 
-bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result)
+bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
     auto& input2 = inputs[1].get();

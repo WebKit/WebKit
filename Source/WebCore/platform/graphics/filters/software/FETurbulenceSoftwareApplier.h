@@ -36,12 +36,13 @@ class FETurbulence;
 enum class TurbulenceType;
 
 class FETurbulenceSoftwareApplier : public FilterEffectConcreteApplier<FETurbulence> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FETurbulence>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     // Produces results in the range [1, 2**31 - 2]. Algorithm is:

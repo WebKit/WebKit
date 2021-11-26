@@ -107,9 +107,9 @@ void FEComposite::determineAbsolutePaintRect(const Filter& filter)
     }
 }
 
-bool FEComposite::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEComposite::createApplier(const Filter&) const
 {
-    return FECompositeSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FECompositeSoftwareApplier>(*this);
 }
 
 static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type)

@@ -95,9 +95,9 @@ bool FETurbulence::setStitchTiles(bool stitch)
     return true;
 }
 
-bool FETurbulence::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FETurbulence::createApplier(const Filter&) const
 {
-    return FETurbulenceSoftwareApplier(*this).apply(filter, { }, *filterImage());
+    return FilterEffectApplier::create<FETurbulenceSoftwareApplier>(*this);
 }
 
 static TextStream& operator<<(TextStream& ts, TurbulenceType type)

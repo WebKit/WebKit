@@ -33,12 +33,13 @@ class FEMorphology;
 enum class MorphologyOperatorType;
 
 class FEMorphologySoftwareApplier : public FilterEffectConcreteApplier<FEMorphology> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEMorphology>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     using ColumnExtrema = Vector<ColorComponents<uint8_t, 4>, 16>;

@@ -30,12 +30,13 @@ class FEColorMatrix;
 class PixelBuffer;
 
 class FEColorMatrixSoftwareApplier : public FilterEffectConcreteApplier<FEColorMatrix> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEColorMatrix>;
 
 public:
-    FEColorMatrixSoftwareApplier(FEColorMatrix&);
+    FEColorMatrixSoftwareApplier(const FEColorMatrix&);
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     inline void matrix(float& red, float& green, float& blue, float& alpha) const;

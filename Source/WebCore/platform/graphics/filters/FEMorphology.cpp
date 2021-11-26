@@ -84,9 +84,9 @@ bool FEMorphology::resultIsAlphaImage() const
     return inputEffect(0)->resultIsAlphaImage();
 }
 
-bool FEMorphology::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEMorphology::createApplier(const Filter&) const
 {
-    return FEMorphologySoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FEMorphologySoftwareApplier>(*this);
 }
 
 static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type)

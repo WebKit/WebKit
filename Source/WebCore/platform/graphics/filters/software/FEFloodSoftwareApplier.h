@@ -29,12 +29,13 @@ namespace WebCore {
 class FEFlood;
 
 class FEFloodSoftwareApplier : public FilterEffectConcreteApplier<FEFlood> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEFlood>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 };
 
 } // namespace WebCore

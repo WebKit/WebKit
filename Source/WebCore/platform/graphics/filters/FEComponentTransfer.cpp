@@ -26,6 +26,7 @@
 #include "FEComponentTransfer.h"
 
 #include "FEComponentTransferSoftwareApplier.h"
+#include "Filter.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -44,9 +45,14 @@ FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFun
 {
 }
 
-bool FEComponentTransfer::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createApplier(const Filter& filter) const
 {
-    return FEComponentTransferSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+#if USE(CORE_IMAGE)
+    // FIXME: return FEComponentTransferCoreImageApplier.
+    if (filter.renderingMode() == RenderingMode::Accelerated)
+        return nullptr;
+#endif
+    return FilterEffectApplier::create<FEComponentTransferSoftwareApplier>(*this);
 }
 
 static TextStream& operator<<(TextStream& ts, ComponentTransferType type)

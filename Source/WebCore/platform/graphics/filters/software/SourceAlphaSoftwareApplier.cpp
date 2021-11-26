@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
+bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 

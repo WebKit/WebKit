@@ -26,10 +26,10 @@
 
 #include "Color.h"
 #include "Filter.h"
+#include "FilterEffectApplier.h"
 #include "GeometryUtilities.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
-#include "PixelBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -144,8 +144,11 @@ bool FilterEffect::apply(const Filter& filter)
     if (!m_filterImage)
         return false;
 
-    // Add platform specific apply functions here and return earlier.
-    return platformApplySoftware(filter);
+    auto applier = createApplier(filter);
+    if (!applier)
+        return false;
+
+    return applier->apply(filter, inputFilterImages(), *m_filterImage);
 }
 
 void FilterEffect::clearResult()

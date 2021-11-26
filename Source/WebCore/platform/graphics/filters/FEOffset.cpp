@@ -69,9 +69,9 @@ bool FEOffset::resultIsAlphaImage() const
     return inputEffect(0)->resultIsAlphaImage();
 }
 
-bool FEOffset::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEOffset::createApplier(const Filter&) const
 {
-    return FEOffsetSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FEOffsetSoftwareApplier>(*this);
 }
 
 TextStream& FEOffset::externalRepresentation(TextStream& ts, RepresentationType representation) const

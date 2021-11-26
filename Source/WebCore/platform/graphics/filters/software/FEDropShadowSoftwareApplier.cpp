@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result)
+bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 

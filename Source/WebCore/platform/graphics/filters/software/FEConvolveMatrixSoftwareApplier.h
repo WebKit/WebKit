@@ -35,12 +35,13 @@ class FEConvolveMatrix;
 enum class EdgeModeType;
 
 class FEConvolveMatrixSoftwareApplier : public FilterEffectConcreteApplier<FEConvolveMatrix> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEConvolveMatrix>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     struct PaintingData {

@@ -425,7 +425,7 @@ inline void FEGaussianBlurSoftwareApplier::applyPlatform(Uint8ClampedArray& ioBu
     boxBlurGeneric(ioBuffer, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize, isAlphaImage, edgeMode);
 }
 
-bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result)
+bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 

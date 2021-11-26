@@ -45,9 +45,9 @@ void SourceAlpha::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(inputEffect(0)->absolutePaintRect());
 }
 
-bool SourceAlpha::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> SourceAlpha::createApplier(const Filter&) const
 {
-    return SourceAlphaSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<SourceAlphaSoftwareApplier>(*this);
 }
 
 TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationType) const

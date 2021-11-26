@@ -391,7 +391,7 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data)
     }
 }
 
-bool FELightingSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
+bool FELightingSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 
@@ -418,7 +418,6 @@ bool FELightingSoftwareApplier::apply(const Filter&, const FilterImageVector& in
 
     LightingData data;
     data.effect = &m_effect;
-    data.filterType = m_effect.filterType();
     data.lightingColor = m_effect.lightingColor();
     data.surfaceScale = m_effect.surfaceScale() / 255.0f;
     data.diffuseConstant = m_effect.diffuseConstant();

@@ -136,9 +136,9 @@ bool FEGaussianBlur::resultIsAlphaImage() const
     return inputEffect(0)->resultIsAlphaImage();
 }
 
-bool FEGaussianBlur::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createApplier(const Filter&) const
 {
-    return FEGaussianBlurSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FEGaussianBlurSoftwareApplier>(*this);
 }
 
 TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, RepresentationType representation) const

@@ -27,12 +27,13 @@ namespace WebCore {
 class FEDropShadow;
 
 class FEDropShadowSoftwareApplier : public FilterEffectConcreteApplier<FEDropShadow> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEDropShadow>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 };
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ public:
     static Ref<FEImage> create(Ref<Image>&&, const SVGPreserveAspectRatioValue&);
     static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 
-    SourceImage& sourceImage() { return m_sourceImage; }
+    const SourceImage& sourceImage() const { return m_sourceImage; }
     void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
@@ -52,7 +52,7 @@ private:
 
     void determineAbsolutePaintRect(const Filter&) final;
 
-    bool platformApplySoftware(const Filter&) final;
+    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const final;
 

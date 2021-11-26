@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-FEColorMatrixSoftwareApplier::FEColorMatrixSoftwareApplier(FEColorMatrix& effect)
+FEColorMatrixSoftwareApplier::FEColorMatrixSoftwareApplier(const FEColorMatrix& effect)
     : Base(effect)
 {
     if (m_effect.type() == FECOLORMATRIX_TYPE_SATURATE)
@@ -259,7 +259,7 @@ void FEColorMatrixSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
     applyPlatformUnaccelerated(pixelBuffer);
 }
 
-bool FEColorMatrixSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
+bool FEColorMatrixSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 

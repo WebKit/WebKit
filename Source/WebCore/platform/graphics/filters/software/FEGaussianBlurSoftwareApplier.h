@@ -32,12 +32,13 @@ class FEGaussianBlur;
 enum class EdgeModeType;
 
 class FEGaussianBlurSoftwareApplier : public FilterEffectConcreteApplier<FEGaussianBlur> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEGaussianBlur>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     struct ApplyParameters {

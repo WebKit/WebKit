@@ -43,9 +43,14 @@ void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-bool SourceGraphic::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> SourceGraphic::createApplier(const Filter& filter) const
 {
-    return SourceGraphicSoftwareApplier(*this).apply(filter, { }, *filterImage());
+#if USE(CORE_IMAGE)
+    // FIXME: return SourceGraphicCoreImageApplier.
+    if (filter.renderingMode() == RenderingMode::Accelerated)
+        return nullptr;
+#endif
+    return FilterEffectApplier::create<SourceGraphicSoftwareApplier>(*this);
 }
 
 TextStream& SourceGraphic::externalRepresentation(TextStream& ts, RepresentationType) const

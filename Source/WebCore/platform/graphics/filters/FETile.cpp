@@ -42,9 +42,9 @@ bool FETile::resultIsAlphaImage() const
     return inputEffect(0)->resultIsAlphaImage();
 }
 
-bool FETile::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FETile::createApplier(const Filter&) const
 {
-    return FETileSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FETileSoftwareApplier>(*this);
 }
 
 TextStream& FETile::externalRepresentation(TextStream& ts, RepresentationType representation) const

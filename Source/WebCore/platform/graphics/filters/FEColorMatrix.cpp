@@ -25,6 +25,7 @@
 #include "FEColorMatrix.h"
 
 #include "FEColorMatrixSoftwareApplier.h"
+#include "Filter.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -98,9 +99,14 @@ bool FEColorMatrix::resultIsAlphaImage() const
     return m_type == FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
 }
 
-bool FEColorMatrix::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEColorMatrix::createApplier(const Filter& filter) const
 {
-    return FEColorMatrixSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+#if USE(CORE_IMAGE)
+    // FIXME: return FEColorMatrixCoreImageApplier.
+    if (filter.renderingMode() == RenderingMode::Accelerated)
+        return nullptr;
+#endif
+    return FilterEffectApplier::create<FEColorMatrixSoftwareApplier>(*this);
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

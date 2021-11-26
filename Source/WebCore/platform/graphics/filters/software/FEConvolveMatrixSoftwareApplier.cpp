@@ -286,7 +286,7 @@ void FEConvolveMatrixSoftwareApplier::applyPlatform(PaintingData& paintingData) 
         setOuterPixels(paintingData, clipRight, paintingData.targetOffset.y(), paintingData.width, clipBottom);
 }
 
-bool FEConvolveMatrixSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result)
+bool FEConvolveMatrixSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 

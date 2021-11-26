@@ -29,12 +29,13 @@ namespace WebCore {
 class FEComposite;
 
 class FECompositeSoftwareApplier : public FilterEffectConcreteApplier<FEComposite> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEComposite>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     static uint8_t clampByte(int);
@@ -47,8 +48,8 @@ private:
 
     static inline void applyPlatformArithmetic(unsigned char* source, unsigned char* destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
 
-    bool applyArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result);
-    bool applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result);
+    bool applyArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result) const;
+    bool applyNonArithmetic(FilterImage& input, FilterImage& input2, FilterImage& result) const;
 };
 
 } // namespace WebCore

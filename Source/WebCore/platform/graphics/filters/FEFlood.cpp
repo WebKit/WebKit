@@ -58,9 +58,9 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     return true;
 }
 
-bool FEFlood::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEFlood::createApplier(const Filter&) const
 {
-    return FEFloodSoftwareApplier(*this).apply(filter, { }, *filterImage());
+    return FilterEffectApplier::create<FEFloodSoftwareApplier>(*this);
 }
 
 TextStream& FEFlood::externalRepresentation(TextStream& ts, RepresentationType representation) const

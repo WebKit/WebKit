@@ -36,7 +36,7 @@ private:
 
     void determineAbsolutePaintRect(const Filter&) override;
 
-    bool platformApplySoftware(const Filter&) override;
+    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 };

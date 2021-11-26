@@ -38,9 +38,9 @@ FEMerge::FEMerge()
 {
 }
 
-bool FEMerge::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FEMerge::createApplier(const Filter&) const
 {
-    return FEMergeSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FEMergeSoftwareApplier>(*this);
 }
 
 TextStream& FEMerge::externalRepresentation(TextStream& ts, RepresentationType representation) const

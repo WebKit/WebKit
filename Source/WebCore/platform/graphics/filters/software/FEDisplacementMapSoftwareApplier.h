@@ -29,12 +29,13 @@ namespace WebCore {
 class FEDisplacementMap;
 
 class FEDisplacementMapSoftwareApplier : public FilterEffectConcreteApplier<FEDisplacementMap> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEDisplacementMap>;
 
 public:
-    FEDisplacementMapSoftwareApplier(FEDisplacementMap&);
+    FEDisplacementMapSoftwareApplier(const FEDisplacementMap&);
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
 private:
     static inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)

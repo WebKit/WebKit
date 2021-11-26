@@ -66,11 +66,6 @@ void FEDropShadow::determineAbsolutePaintRect(const Filter& filter)
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-bool FEDropShadow::platformApplySoftware(const Filter& filter)
-{
-    return FEDropShadowSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
-}
-    
 IntOutsets FEDropShadow::outsets() const
 {
     IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ m_stdX, m_stdY });
@@ -82,6 +77,11 @@ IntOutsets FEDropShadow::outsets() const
     };
 }
 
+std::unique_ptr<FilterEffectApplier> FEDropShadow::createApplier(const Filter&) const
+{
+    return FilterEffectApplier::create<FEDropShadowSoftwareApplier>(*this);
+}
+    
 TextStream& FEDropShadow::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent <<"[feDropShadow";

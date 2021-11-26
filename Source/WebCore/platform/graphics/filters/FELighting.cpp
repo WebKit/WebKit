@@ -81,9 +81,9 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
     return true;
 }
 
-bool FELighting::platformApplySoftware(const Filter& filter)
+std::unique_ptr<FilterEffectApplier> FELighting::createApplier(const Filter&) const
 {
-    return FELightingSoftwareApplier(*this).apply(filter, inputFilterImages(), *filterImage());
+    return FilterEffectApplier::create<FELightingSoftwareApplier>(*this);
 }
 
 } // namespace WebCore

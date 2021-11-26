@@ -28,12 +28,13 @@ namespace WebCore {
 class SourceGraphic;
 
 class SourceGraphicSoftwareApplier : public FilterEffectConcreteApplier<SourceGraphic> {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<SourceGraphic>;
 
 public:
     using Base::Base;
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) override;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 };
 
 } // namespace WebCore
