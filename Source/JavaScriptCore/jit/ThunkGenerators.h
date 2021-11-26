@@ -25,10 +25,12 @@
 
 #pragma once
 
+#if ENABLE(JIT)
+
+#include "CallMode.h"
 #include "CodeSpecializationKind.h"
 #include "JSCPtrTag.h"
 
-#if ENABLE(JIT)
 namespace JSC {
 
 class CallLinkInfo;

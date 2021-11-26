@@ -28,7 +28,9 @@
 #pragma once
 
 #include "Color.h"
+#include "FilterEffect.h"
 #include "FilterEffectApplier.h"
+#include "FilterImageVector.h"
 #include "LightSource.h"
 
 namespace WebCore {

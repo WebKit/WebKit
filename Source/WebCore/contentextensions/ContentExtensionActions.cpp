@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionError.h"
+#include "ResourceRequest.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>

@@ -24,6 +24,9 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include "IntPoint.h"
+#include "IntSize.h"
+#include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

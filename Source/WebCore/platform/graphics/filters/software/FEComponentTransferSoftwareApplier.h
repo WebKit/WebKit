@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class FEComponentTransfer;
+class PixelBuffer;
 struct ComponentTransferFunction;
 
 class FEComponentTransferSoftwareApplier : public FilterEffectConcreteApplier<FEComponentTransfer> {

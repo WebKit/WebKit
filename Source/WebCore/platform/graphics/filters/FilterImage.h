@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class Filter;
+class FloatRect;
 class ImageBuffer;
 class PixelBuffer;
 

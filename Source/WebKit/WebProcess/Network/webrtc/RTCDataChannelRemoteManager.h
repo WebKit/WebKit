@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "DataReference.h"
+#include <WebCore/ProcessQualified.h>
 #include <WebCore/RTCDataChannelRemoteHandler.h>
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSource.h>

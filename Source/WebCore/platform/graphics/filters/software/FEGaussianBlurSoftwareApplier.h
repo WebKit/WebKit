@@ -23,6 +23,7 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include "IntSize.h"
 #include <JavaScriptCore/Forward.h>
 
 namespace WebCore {

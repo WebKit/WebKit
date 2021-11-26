@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class FEColorMatrix;
+class PixelBuffer;
 
 class FEColorMatrixSoftwareApplier : public FilterEffectConcreteApplier<FEColorMatrix> {
     using Base = FilterEffectConcreteApplier<FEColorMatrix>;

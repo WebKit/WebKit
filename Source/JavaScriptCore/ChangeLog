@@ -1,3 +1,13 @@
+2021-11-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late November 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=233493
+
+        Unreviewed non-unified build fixes.
+
+        * jit/ThunkGenerators.h: Add missing inclusion of CallMode.h header, move header
+        inclusions inside the ENABLE(JIT) guard.
+
 2021-11-24  Zan Dobersek  <zdobersek@igalia.com>
 
         MacroAssembler: remove unused load/store methods for addresses with patchable offsets
