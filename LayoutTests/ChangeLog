@@ -1,3 +1,11 @@
+2021-11-26  Tim Nguyen  <ntim@apple.com>
+
+        Remove focus-after-close-expected.txt for glib as it is identical as the cross-platform file
+
+        Unreviewed test gardening
+
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt: Removed.
+
 2021-11-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r286112): Style invalidation for text mutation happening after event dispatch
