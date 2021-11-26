@@ -8,7 +8,10 @@
                 "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             },
             "/webkit/Authentication/authentication-success": {
-                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
+                "expected": {
+                        "all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"},
+                        "gtk@Release": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/233509"}
+                }
             }
         }
     },

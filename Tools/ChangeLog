@@ -1,3 +1,11 @@
+2021-11-25  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening API test authentication-success flaky timeout
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-11-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GraphicsContextGL implementations should have separate class definitions
