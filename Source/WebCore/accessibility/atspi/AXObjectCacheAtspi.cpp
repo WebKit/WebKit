@@ -80,9 +80,15 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
             wrapper->stateChanged("checked", coreObject->isChecked());
         break;
     case AXSelectedStateChanged:
-    case AXMenuListItemSelected:
         wrapper->stateChanged("selected", coreObject->isSelected());
         break;
+    case AXMenuListItemSelected: {
+        // Menu list popup items are handled by AXSelectedStateChanged.
+        auto* parent = coreObject->parentObjectUnignored();
+        if (parent && !parent->isMenuListPopup())
+            wrapper->stateChanged("selected", coreObject->isSelected());
+        break;
+    }
     case AXSelectedChildrenChanged:
         wrapper->selectionChanged();
         break;

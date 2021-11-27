@@ -27,7 +27,9 @@
 #include "config.h"
 #include "HTMLOptionElement.h"
 
+#include "AXObjectCache.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementAncestorIterator.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
@@ -234,6 +236,11 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
     m_isSelected = selected;
     invalidateStyleForSubtree();
+
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+    if (auto* cache = document().existingAXObjectCache())
+        cache->postNotification(this, AXObjectCache::AXSelectedStateChanged);
+#endif
 }
 
 void HTMLOptionElement::childrenChanged(const ChildChange& change)

@@ -152,6 +152,12 @@ public:
         return length;
     }
 
+    static bool isSelected(AtspiAccessible* element)
+    {
+        GRefPtr<AtspiStateSet> set = adoptGRef(atspi_accessible_get_state_set(element));
+        return atspi_state_set_contains(set.get(), ATSPI_STATE_SELECTED);
+    }
+
 private:
     AtspiAccessible* m_eventSource { nullptr };
 
@@ -668,13 +674,15 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
 
 static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
 {
-    test->showInWindow();
+    test->showInWindow(800, 600);
     test->loadHtml(
         "<html>"
         "  <body>"
         "    <input id='check' type='checkbox'/>Checkbox"
         "    <button id='toggle' aria-pressed='true'>Toggle button</button>"
         "    <input id='entry' value='Entry'>"
+        "    <select id='list' size='2'><option>1</option><option>2</option></select>"
+        "    <select id='combo'><option>1</option><option>2</option></select>"
         "  </body>"
         "</html>",
         nullptr);
@@ -689,7 +697,7 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
 
     auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
-    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 3);
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 5);
 
     unsigned nextChild = 0;
     auto checkbox = adoptGRef(atspi_accessible_get_child_at_index(section.get(), nextChild++, nullptr));
@@ -741,6 +749,66 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     } else
         g_assert_not_reached();
     events = { };
+
+#if USE(ATSPI)
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('list').focus();", nullptr);
+    auto listBox = adoptGRef(atspi_accessible_get_child_at_index(section.get(), nextChild++, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(listBox.get()));
+    auto option1 = adoptGRef(atspi_accessible_get_child_at_index(listBox.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(option1.get()));
+    auto option2 = adoptGRef(atspi_accessible_get_child_at_index(listBox.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(option2.get()));
+    g_assert_false(AccessibilityTest::isSelected(option1.get()));
+    g_assert_false(AccessibilityTest::isSelected(option2.get()));
+    test->startEventMonitor(option1.get(), { "object:state-changed" });
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('list').selectedIndex = 0;", nullptr);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:selected");
+    g_assert_cmpuint(events[0]->detail1, ==, 1);
+    events = { };
+    g_assert_true(AccessibilityTest::isSelected(option1.get()));
+    g_assert_false(AccessibilityTest::isSelected(option2.get()));
+    test->startEventMonitor(option1.get(), { "object:state-changed" });
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('list').selectedIndex = 1;", nullptr);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:selected");
+    g_assert_cmpuint(events[0]->detail1, ==, 0);
+    events = { };
+    g_assert_false(AccessibilityTest::isSelected(option1.get()));
+    g_assert_true(AccessibilityTest::isSelected(option2.get()));
+
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').focus();", nullptr);
+    auto combo = adoptGRef(atspi_accessible_get_child_at_index(section.get(), nextChild++, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(combo.get()));
+    auto menuList = adoptGRef(atspi_accessible_get_child_at_index(combo.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(menuList.get()));
+    option1 = adoptGRef(atspi_accessible_get_child_at_index(menuList.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(option1.get()));
+    option2 = adoptGRef(atspi_accessible_get_child_at_index(menuList.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(option2.get()));
+    g_assert_true(AccessibilityTest::isSelected(option1.get()));
+    g_assert_false(AccessibilityTest::isSelected(option2.get()));
+    test->startEventMonitor(option2.get(), { "object:state-changed" });
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').selectedIndex = 1;", nullptr);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:selected");
+    g_assert_cmpuint(events[0]->detail1, ==, 1);
+    events = { };
+    g_assert_true(AccessibilityTest::isSelected(option2.get()));
+    g_assert_false(AccessibilityTest::isSelected(option1.get()));
+    test->startEventMonitor(option2.get(), { "object:state-changed" });
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').selectedIndex = 0", nullptr);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:selected");
+    g_assert_cmpuint(events[0]->detail1, ==, 0);
+    events = { };
+    g_assert_true(AccessibilityTest::isSelected(option1.get()));
+    g_assert_false(AccessibilityTest::isSelected(option2.get()));
+#endif
 }
 
 static void testComponentHitTest(AccessibilityTest* test, gconstpointer)
@@ -2104,6 +2172,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(selectedChild.get()));
     auto option1 = adoptGRef(atspi_accessible_get_child_at_index(listBox.get(), 0, nullptr));
     g_assert_true(selectedChild.get() == option1.get());
+    g_assert_true(AccessibilityTest::isSelected(option1.get()));
     test->startEventMonitor(listBox.get(), { "object:selection-changed" });
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 2, nullptr));
     events = test->stopEventMonitor(1);
@@ -2116,12 +2185,16 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(selectedChild.get()));
     auto option3 = adoptGRef(atspi_accessible_get_child_at_index(listBox.get(), 2, nullptr));
     g_assert_true(selectedChild.get() == option3.get());
+    g_assert_true(AccessibilityTest::isSelected(option3.get()));
+    g_assert_false(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(atspi_selection_deselect_selected_child(ATSPI_SELECTION(listBox.get()), 1, nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 1);
     g_assert_true(atspi_selection_deselect_selected_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 0);
     g_assert_false(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 2, nullptr));
     g_assert_false(atspi_selection_select_all(ATSPI_SELECTION(listBox.get()), nullptr));
+    g_assert_false(AccessibilityTest::isSelected(option1.get()));
+    g_assert_false(AccessibilityTest::isSelected(option3.get()));
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 1);
     g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 0, nullptr));
@@ -2148,6 +2221,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(selectedChild.get()));
     auto option2 = adoptGRef(atspi_accessible_get_child_at_index(listBox.get(), 1, nullptr));
     g_assert_true(selectedChild.get() == option2.get());
+    g_assert_true(AccessibilityTest::isSelected(option2.get()));
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
     g_assert_cmpint(atspi_selection_get_n_selected_children(ATSPI_SELECTION(listBox.get()), nullptr), ==, 2);
     g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(listBox.get()), 0, nullptr));
@@ -2155,6 +2229,8 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     selectedChild = adoptGRef(atspi_selection_get_selected_child(ATSPI_SELECTION(listBox.get()), 0, nullptr));
     option1 = adoptGRef(atspi_accessible_get_child_at_index(listBox.get(), 0, nullptr));
     g_assert_true(selectedChild.get() == option1.get());
+    g_assert_true(AccessibilityTest::isSelected(option1.get()));
+    g_assert_true(AccessibilityTest::isSelected(option2.get()));
     selectedChild = adoptGRef(atspi_selection_get_selected_child(ATSPI_SELECTION(listBox.get()), 1, nullptr));
     g_assert_true(selectedChild.get() == option2.get());
     g_assert_true(atspi_selection_deselect_child(ATSPI_SELECTION(listBox.get()), 1, nullptr));
@@ -2211,6 +2287,8 @@ static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
     g_assert_cmpint(atspi_accessible_get_child_count(panel.get(), nullptr), ==, 1);
 
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').focus();", nullptr);
+
     auto combo = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(combo.get()));
     g_assert_cmpint(atspi_accessible_get_role(combo.get(), nullptr), ==, ATSPI_ROLE_COMBO_BOX);
@@ -2231,6 +2309,9 @@ static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(selectedChild.get()));
     auto option2 = adoptGRef(atspi_accessible_get_child_at_index(menuList.get(), 1, nullptr));
     g_assert_true(selectedChild.get() == option2.get());
+    g_assert_true(AccessibilityTest::isSelected(option2.get()));
+    auto option1 = adoptGRef(atspi_accessible_get_child_at_index(menuList.get(), 0, nullptr));
+    g_assert_false(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(atspi_selection_select_child(ATSPI_SELECTION(menuList.get()), 3, nullptr));
     test->startEventMonitor(menuList.get(), { "object:selection-changed" });
     g_assert_true(atspi_selection_select_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
@@ -2239,6 +2320,11 @@ static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(events[0]->type, ==, "object:selection-changed");
     events = { };
     g_assert_true(atspi_selection_is_child_selected(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    selectedChild = adoptGRef(atspi_selection_get_selected_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(selectedChild.get()));
+    g_assert_true(selectedChild.get() == option1.get());
+    g_assert_true(AccessibilityTest::isSelected(option1.get()));
+    g_assert_false(AccessibilityTest::isSelected(option2.get()));
     g_assert_false(atspi_selection_deselect_selected_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
     g_assert_false(atspi_selection_deselect_child(ATSPI_SELECTION(menuList.get()), 0, nullptr));
     g_assert_false(atspi_selection_select_all(ATSPI_SELECTION(menuList.get()), nullptr));

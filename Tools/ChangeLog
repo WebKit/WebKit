@@ -1,3 +1,18 @@
+2021-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Signal state-changed:selected is not emitted for listbox elements when building with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=233521
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add test cases to check that the signal is now emitted as expected.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (AccessibilityTest::isSelected):
+        (testAccessibleStateChanged):
+        (testSelectionListBox):
+        (testSelectionMenuList):
+
 2021-11-26  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening API test WebKit.OnDeviceChangedCrash as flaky timeout
