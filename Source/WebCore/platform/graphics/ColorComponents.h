@@ -135,7 +135,7 @@ template<size_t Start, size_t End>
 constexpr ColorComponents<T, End - Start> ColorComponents<T, N>::subset() const
 {
     ColorComponents<T, End - Start> result;
-    for (std::remove_const_t<decltype(T::Size)> i = Start; i < End; ++i)
+    for (size_t i = Start; i < End; ++i)
         result[i - Start] = components[i];
     return result;
 }

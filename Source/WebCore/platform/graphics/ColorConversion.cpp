@@ -33,6 +33,36 @@
 
 namespace WebCore {
 
+// MARK: Lab-Like to LCH-Like conversion utilities.
+
+template<typename LCHLike, typename LabLike>
+LCHLike convertToPolarForm(const LabLike& color)
+{
+    // https://drafts.csswg.org/css-color/#lab-to-lch
+    float hue = rad2deg(atan2(color.b, color.a));
+
+    return {
+        color.lightness,
+        std::hypot(color.a, color.b),
+        hue >= 0 ? hue : hue + 360,
+        color.alpha
+    };
+}
+
+template<typename LabLike, typename LCHLike>
+LabLike convertToRectangularForm(const LCHLike& color)
+{
+    // https://drafts.csswg.org/css-color/#lch-to-lab
+    float hueAngleRadians = deg2rad(color.hue);
+
+    return {
+        color.lightness,
+        color.chroma * std::cos(hueAngleRadians),
+        color.chroma * std::sin(hueAngleRadians),
+        color.alpha
+    };
+}
+
 // MARK: HSL conversions.
 
 struct HSLHueCalculationResult {
@@ -244,33 +274,99 @@ Lab<float> ColorConversion<Lab<float>, XYZA<float, WhitePoint::D50>>::convert(co
     return { lightness, a, b, color.alpha };
 }
 
-
 // MARK: LCH conversions.
 
 LCHA<float> ColorConversion<LCHA<float>, Lab<float>>::convert(const Lab<float>& color)
 {
-    // https://www.w3.org/TR/css-color-4/#lab-to-lch
-    float hue = rad2deg(atan2(color.b, color.a));
-
-    return {
-        color.lightness,
-        std::hypot(color.a, color.b),
-        hue >= 0 ? hue : hue + 360,
-        color.alpha
-    };
+    return convertToPolarForm<LCHA<float>>(color);
 }
 
 Lab<float> ColorConversion<Lab<float>, LCHA<float>>::convert(const LCHA<float>& color)
 {
-    // https://www.w3.org/TR/css-color-4/#lch-to-lab
-    float hueAngleRadians = deg2rad(color.hue);
+    return convertToRectangularForm<Lab<float>>(color);
+}
 
-    return {
-        color.lightness,
-        color.chroma * std::cos(hueAngleRadians),
-        color.chroma * std::sin(hueAngleRadians),
-        color.alpha
+// MARK: OKLab conversions.
+
+XYZA<float, WhitePoint::D65> ColorConversion<XYZA<float, WhitePoint::D65>, OKLab<float>>::convert(const OKLab<float>& color)
+{
+    // FIXME: This could be optimized for when we are not explicitly converting to XYZ-D65 by pre-multiplying the 'LMSToXYZD65'
+    // matrix with any subsequent matrices in the conversion. This would mean teaching the main conversion about this matrix
+    // and adding new logic for this transform.
+
+    // https://bottosson.github.io/posts/oklab/ with XYZ <-> LMS matrices recalculated for consistent reference white in https://github.com/w3c/csswg-drafts/issues/6642#issuecomment-943521484
+
+    static constexpr ColorMatrix<3, 3> LinearLMSToXYZD65 {
+        1.2268798733741557f,  -0.5578149965554813f,  0.28139105017721583f,
+       -0.04057576262431372f,  1.1122868293970594f, -0.07171106666151701f,
+       -0.07637294974672142f, -0.4214933239627914f,  1.5869240244272418f
     };
+
+    static constexpr ColorMatrix<3, 3> OKLabToNonLinearLMS {
+        0.99999999845051981432f,  0.39633779217376785678f,   0.21580375806075880339f,
+        1.0000000088817607767f,  -0.1055613423236563494f,   -0.063854174771705903402f,
+        1.0000000546724109177f,  -0.089484182094965759684f, -1.2914855378640917399f
+    };
+
+    // 1. Transform from precentage lightness to unit lightness.
+    auto components = asColorComponents(color).subset<0, 3>();
+    components[0] = components[0] / 100.0f;
+
+    // 2. Transform from Lab-coordinates into non-linear LMS "approximate cone responses".
+    auto nonLinearLMS = OKLabToNonLinearLMS.transformedColorComponents(components);
+
+    // 3. Apply linearity.
+    auto linearLMS = nonLinearLMS.map([] (float v) { return v * v * v; });
+
+    // 4. Convert to XYZ.
+    auto [x, y, z] = LinearLMSToXYZD65.transformedColorComponents(linearLMS);
+
+    return { x, y, z, color.alpha };
+}
+
+OKLab<float> ColorConversion<OKLab<float>, XYZA<float, WhitePoint::D65>>::convert(const XYZA<float, WhitePoint::D65>& color)
+{
+    // FIXME: This could be optimized for when we are not explicitly converting from XYZ-D65 by pre-multiplying the 'XYZD65ToLMS'
+    // matrix with any previous matrices in the conversion. This would mean teaching the main conversion about this matrix
+    // and adding new logic for this transform.
+
+    // https://bottosson.github.io/posts/oklab/ with XYZ <-> LMS matrices recalculated for consistent reference white in https://github.com/w3c/csswg-drafts/issues/6642#issuecomment-943521484
+
+    static constexpr ColorMatrix<3, 3> XYZD65ToLinearLMS {
+        0.8190224432164319f,   0.3619062562801221f, -0.12887378261216414f,
+        0.0329836671980271f,   0.9292868468965546f,  0.03614466816999844f,
+        0.048177199566046255f, 0.26423952494422764f, 0.6335478258136937f
+    };
+
+    static constexpr ColorMatrix<3, 3> NonLinearLMSToOKLab {
+        0.2104542553f,  0.7936177850f, -0.0040720468f,
+        1.9779984951f, -2.4285922050f,  0.4505937099f,
+        0.0259040371f,  0.7827717662f, -0.8086757660f
+    };
+
+    // 1. Convert XYZ into LMS "approximate cone responses".
+    auto linearLMS = XYZD65ToLinearLMS.transformedColorComponents(asColorComponents(color).subset<0, 3>());
+
+    // 2. Apply non-linearity.
+    auto nonLinearLMS = linearLMS.map([] (float v) { return std::cbrt(v); });
+
+    // 3. Transform into Lab-coordinates.
+    auto [lightness, a, b] = NonLinearLMSToOKLab.transformedColorComponents(nonLinearLMS);
+
+    // 4. Transform lightness from unit lightness to percentage lightness.
+    return { lightness * 100.0f, a, b, color.alpha };
+}
+
+// MARK: OKLCH conversions.
+
+OKLCHA<float> ColorConversion<OKLCHA<float>, OKLab<float>>::convert(const OKLab<float>& color)
+{
+    return convertToPolarForm<OKLCHA<float>>(color);
+}
+
+OKLab<float> ColorConversion<OKLab<float>, OKLCHA<float>>::convert(const OKLCHA<float>& color)
+{
+    return convertToRectangularForm<OKLab<float>>(color);
 }
 
 // MARK: Conversion functions for raw color components with associated color spaces.
@@ -289,6 +385,10 @@ ColorComponents<float, 4> convertColorComponents(ColorSpace inputColorSpace, Col
             return asColorComponents(convertColor<Lab<float>>(inputColor));
         case ColorSpace::LinearSRGB:
             return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor));
+        case ColorSpace::OKLCH:
+            return asColorComponents(convertColor<OKLCHA<float>>(inputColor));
+        case ColorSpace::OKLab:
+            return asColorComponents(convertColor<OKLab<float>>(inputColor));
         case ColorSpace::ProPhotoRGB:
             return asColorComponents(convertColor<ProPhotoRGB<float>>(inputColor));
         case ColorSpace::Rec2020:

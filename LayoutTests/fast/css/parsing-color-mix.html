@@ -58,57 +58,43 @@
     // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
     testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) -10%, hwb(30deg 30% 40%))`, `rgb(148, 105, 82)`);
     
+    for (const colorSpace of [ "lch", "oklch" ]) {
+        debug('');
+        debug(`color-mix(in ${colorSpace}, ...)`);
 
-    debug('');
-    debug('color-mix(in lch, ...)');
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4), ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(30% 40 50 / 0.6)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 25%, ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(40% 50 60 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, 25% ${colorSpace}(10% 20 30deg / .4), ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(40% 50 60 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4), 25% ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(20% 30 40 / 0.5)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4), ${colorSpace}(50% 60 70deg / .8) 25%)`, `${colorSpace}(20% 30 40 / 0.5)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 25%, ${colorSpace}(50% 60 70deg / .8) 75%)`, `${colorSpace}(40% 50 60 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 50%, ${colorSpace}(50% 60 70deg / .8) 150%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale down > 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 12.5%, ${colorSpace}(50% 60 70deg / .8) 37.5%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale up < 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 0%, ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(50% 60 70 / 0.8)`);
 
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4), lch(50% 60 70deg / .8))`, `lch(30% 40 50 / 0.6)`);
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4) 25%, lch(50% 60 70deg / .8))`, `lch(40% 50 60 / 0.7)`);
-    testComputed(`color-mix(in lch, 25% lch(10% 20 30deg / .4), lch(50% 60 70deg / .8))`, `lch(40% 50 60 / 0.7)`);
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4), 25% lch(50% 60 70deg / .8))`, `lch(20% 30 40 / 0.5)`);
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4), lch(50% 60 70deg / .8) 25%)`, `lch(20% 30 40 / 0.5)`);
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4) 25%, lch(50% 60 70deg / .8) 75%)`, `lch(40% 50 60 / 0.7)`);
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4) 50%, lch(50% 60 70deg / .8) 150%)`, `lch(40% 50 60 / 0.7)`); // Scale down > 100% sum.
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4) 12.5%, lch(50% 60 70deg / .8) 37.5%)`, `lch(40% 50 60 / 0.7)`); // Scale up < 100% sum.
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4) 0%, lch(50% 60 70deg / .8))`, `lch(50% 60 70 / 0.8)`);
+        // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) -10%, ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(54% 64 74 / 0.84000003)`);
+    }
 
-    // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-    testComputed(`color-mix(in lch, lch(10% 20 30deg / .4) -10%, lch(50% 60 70deg / .8))`, `lch(54% 64 74 / 0.84000003)`);
+    for (const colorSpace of [ "lab", "oklab" ]) {
+        debug('');
+        debug(`color-mix(in ${colorSpace}, ...)`);
 
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4), ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(30% 40 50 / 0.6)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 25%, ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(40% 50 60 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, 25% ${colorSpace}(10% 20 30 / .4), ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(40% 50 60 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4), 25% ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(20% 30 40 / 0.5)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4), ${colorSpace}(50% 60 70 / .8) 25%)`, `${colorSpace}(20% 30 40 / 0.5)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 25%, ${colorSpace}(50% 60 70 / .8) 75%)`, `${colorSpace}(40% 50 60 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 50%, ${colorSpace}(50% 60 70 / .8) 150%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale down > 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 12.5%, ${colorSpace}(50% 60 70 / .8) 37.5%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale up < 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 0%, ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(50% 60 70 / 0.8)`);
 
-    debug('');
-    debug('color-mix(in lab, ...)');
-
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4), lab(50% 60 70 / .8))`, `lab(30% 40 50 / 0.6)`);
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4) 25%, lab(50% 60 70 / .8))`, `lab(40% 50 60 / 0.7)`);
-    testComputed(`color-mix(in lab, 25% lab(10% 20 30 / .4), lab(50% 60 70 / .8))`, `lab(40% 50 60 / 0.7)`);
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4), 25% lab(50% 60 70 / .8))`, `lab(20% 30 40 / 0.5)`);
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4), lab(50% 60 70 / .8) 25%)`, `lab(20% 30 40 / 0.5)`);
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4) 25%, lab(50% 60 70 / .8) 75%)`, `lab(40% 50 60 / 0.7)`);
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4) 50%, lab(50% 60 70 / .8) 150%)`, `lab(40% 50 60 / 0.7)`); // Scale down > 100% sum.
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4) 12.5%, lab(50% 60 70 / .8) 37.5%)`, `lab(40% 50 60 / 0.7)`); // Scale up < 100% sum.
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4) 0%, lab(50% 60 70 / .8))`, `lab(50% 60 70 / 0.8)`);
-
-    // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-    testComputed(`color-mix(in lab, lab(10% 20 30 / .4) -10%, lab(50% 60 70 / .8))`, `lab(54% 64 74 / 0.84000003)`);
+        // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) -10%, ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(54% 64 74 / 0.84000003)`);
+    }
  
-    debug('');
-    debug('color-mix(in srgb, ...)');
-
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4), color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.4 0.5 / 0.6)`);
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4) 25%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.4 0.5 0.6 / 0.7)`);
-    testComputed(`color-mix(in srgb, 25% color(srgb .1 .2 .3 / .4), color(srgb .5 .6 .7 / .8))`, `color(srgb 0.4 0.5 0.6 / 0.7)`);
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4), 25% color(srgb .5 .6 .7 / .8))`, `color(srgb 0.2 0.3 0.4 / 0.5)`);
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4), color(srgb .5 .6 .7 / .8) 25%)`, `color(srgb 0.2 0.3 0.4 / 0.5)`);
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4) 25%, color(srgb .5 .6 .7 / .8) 75%)`, `color(srgb 0.4 0.5 0.6 / 0.7)`);
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4) 50%, color(srgb .5 .6 .7 / .8) 150%)`, `color(srgb 0.4 0.5 0.6 / 0.7)`); // Scale down > 100% sum.
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4) 12.5%, color(srgb .5 .6 .7 / .8) 37.5%)`, `color(srgb 0.4 0.5 0.6 / 0.7)`); // Scale up < 100% sum.
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4) 0%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.5 0.6 0.7 / 0.8)`);
-
-    // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-    testComputed(`color-mix(in srgb, color(srgb .1 .2 .3 / .4) -10%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.54 0.64000005 0.74 / 0.84000003)`);
-
-    for (const colorSpace of [ "xyz", "xyz-d50", "xyz-d65" ]) {
+    for (const colorSpace of [ "srgb", "xyz", "xyz-d50", "xyz-d65" ]) {
         debug('');
         debug(`color-mix(in ${colorSpace}, ...)`);
   

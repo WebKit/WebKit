@@ -72,6 +72,8 @@ template<> struct ExtendedRGBModel<float> {
     static constexpr bool isInvertible = false;
 };
 
+template<typename ColorType> inline constexpr bool UsesExtendedRGBModel = std::is_same_v<typename ColorType::Model, ExtendedRGBModel<typename ColorType::ComponentType>>;
+
 template<> struct HSLModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
         { 0, 360, ColorComponentType::Angle },
@@ -80,6 +82,8 @@ template<> struct HSLModel<float> {
     } };
     static constexpr bool isInvertible = false;
 };
+
+template<typename ColorType> inline constexpr bool UsesHSLModel = std::is_same_v<typename ColorType::Model, HSLModel<typename ColorType::ComponentType>>;
 
 template<> struct HWBModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
@@ -90,6 +94,8 @@ template<> struct HWBModel<float> {
     static constexpr bool isInvertible = false;
 };
 
+template<typename ColorType> inline constexpr bool UsesHWBModel = std::is_same_v<typename ColorType::Model, HWBModel<typename ColorType::ComponentType>>;
+
 template<> struct LabModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
         { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
@@ -99,6 +105,8 @@ template<> struct LabModel<float> {
     static constexpr bool isInvertible = false;
 };
 
+template<typename ColorType> inline constexpr bool UsesLabModel = std::is_same_v<typename ColorType::Model, LabModel<typename ColorType::ComponentType>>;
+
 template<> struct LCHModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
         { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
@@ -107,6 +115,8 @@ template<> struct LCHModel<float> {
     } };
     static constexpr bool isInvertible = false;
 };
+
+template<typename ColorType> inline constexpr bool UsesLCHModel = std::is_same_v<typename ColorType::Model, LCHModel<typename ColorType::ComponentType>>;
 
 template<> struct RGBModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
@@ -126,6 +136,8 @@ template<> struct RGBModel<uint8_t> {
     static constexpr bool isInvertible = true;
 };
 
+template<typename ColorType> inline constexpr bool UsesRGBModel = std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>;
+
 template<> struct XYZModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
         { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
@@ -134,5 +146,7 @@ template<> struct XYZModel<float> {
     } };
     static constexpr bool isInvertible = false;
 };
+
+template<typename ColorType> inline constexpr bool UsesXYZModel = std::is_same_v<typename ColorType::Model, XYZModel<typename ColorType::ComponentType>>;
 
 }

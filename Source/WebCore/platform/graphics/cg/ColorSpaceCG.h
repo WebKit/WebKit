@@ -85,8 +85,6 @@ static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 #else
         return nullptr;
 #endif
-    case ColorSpace::LCH:
-        return nullptr;
     case ColorSpace::Lab:
 #if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
         return labColorSpaceRef();
@@ -119,8 +117,12 @@ static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 #else
         return nullptr;
 #endif
+
+    // FIXME: Add support for these once CoreGraphics supports it.
+    case ColorSpace::LCH:
+    case ColorSpace::OKLCH:
+    case ColorSpace::OKLab:
     case ColorSpace::XYZ_D65:
-        // FIXME: Add support for this once we have figured out how to create the CoreGraphics representation.
         return nullptr;
 
 

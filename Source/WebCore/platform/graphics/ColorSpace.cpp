@@ -34,7 +34,7 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 {
     switch (colorSpace) {
     case ColorSpace::A98RGB:
-        ts << "a98-rgb";
+        ts << "A98-RGB";
         break;
     case ColorSpace::DisplayP3:
         ts << "DisplayP3";
@@ -43,10 +43,16 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
         ts << "LCH";
         break;
     case ColorSpace::Lab:
-        ts << "L*a*b";
+        ts << "Lab";
         break;
     case ColorSpace::LinearSRGB:
         ts << "LinearSRGB";
+        break;
+    case ColorSpace::OKLCH:
+        ts << "OKLCH";
+        break;
+    case ColorSpace::OKLab:
+        ts << "OKLab";
         break;
     case ColorSpace::ProPhotoRGB:
         ts << "ProPhotoRGB";

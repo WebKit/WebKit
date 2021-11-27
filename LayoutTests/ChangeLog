@@ -1,3 +1,21 @@
+2021-11-27  Sam Weinig  <weinig@apple.com>
+
+        [CSS Color 4] Add support for oklab() and oklch() colors
+        https://bugs.webkit.org/show_bug.cgi?id=233507
+
+        Reviewed by Cameron McCormack.
+
+        Update existing tests for lab() and lch() to also test oklab() and oklch().
+        As they have the same parsing rules, this is mostly done by templatizing
+        the tests and running them in a loop.
+
+        * fast/css/parsing-color-mix-expected.txt:
+        * fast/css/parsing-color-mix.html:
+        * fast/css/parsing-lab-colors-expected.txt:
+        * fast/css/parsing-lab-colors.html:
+        * fast/css/parsing-relative-color-syntax-expected.txt:
+        * fast/css/parsing-relative-color-syntax.html:
+
 2021-11-26  Tim Nguyen  <ntim@apple.com>
 
         Remove focus-after-close-expected.txt for glib as it is identical as the cross-platform file

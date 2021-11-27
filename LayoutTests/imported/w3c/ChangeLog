@@ -1,3 +1,46 @@
+2021-11-27  Sam Weinig  <weinig@apple.com>
+
+        [CSS Color 4] Add support for oklab() and oklch() colors
+        https://bugs.webkit.org/show_bug.cgi?id=233507
+
+        Reviewed by Cameron McCormack.
+
+        Add new tests for oklab() and oklch() based on the existing lab()
+        and lch() tests.
+
+        * web-platform-tests/css/css-color/oklab-001-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-001.html: Added.
+        * web-platform-tests/css/css-color/oklab-002-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-002.html: Added.
+        * web-platform-tests/css/css-color/oklab-003-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-003.html: Added.
+        * web-platform-tests/css/css-color/oklab-004-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-004.html: Added.
+        * web-platform-tests/css/css-color/oklab-005-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-005.html: Added.
+        * web-platform-tests/css/css-color/oklab-006-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-006.html: Added.
+        * web-platform-tests/css/css-color/oklab-007-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-007.html: Added.
+        * web-platform-tests/css/css-color/oklab-008-expected.html: Added.
+        * web-platform-tests/css/css-color/oklab-008.html: Added.
+        * web-platform-tests/css/css-color/oklch-001-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-001.html: Added.
+        * web-platform-tests/css/css-color/oklch-002-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-002.html: Added.
+        * web-platform-tests/css/css-color/oklch-003-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-003.html: Added.
+        * web-platform-tests/css/css-color/oklch-004-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-004.html: Added.
+        * web-platform-tests/css/css-color/oklch-005-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-005.html: Added.
+        * web-platform-tests/css/css-color/oklch-006-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-006.html: Added.
+        * web-platform-tests/css/css-color/oklch-007-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-007.html: Added.
+        * web-platform-tests/css/css-color/oklch-008-expected.html: Added.
+        * web-platform-tests/css/css-color/oklch-008.html: Added.
+
 2021-11-26  Tim Nguyen  <ntim@apple.com>
 
         Update dialog focusing steps inert/disconnected handling

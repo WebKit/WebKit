@@ -42,8 +42,8 @@ template<typename> struct HSLA;
 template<typename> struct HWBA;
 template<typename> struct LCHA;
 template<typename> struct Lab;
-template<typename> struct Oklab;
-template<typename> struct Oklch;
+template<typename> struct OKLCHA;
+template<typename> struct OKLab;
 template<typename, WhitePoint> struct XYZA;
 
 // MARK: Make functions.
@@ -195,7 +195,7 @@ template<typename T, typename D, typename ColorType, typename M, typename TF> st
     using Model = M;
     using TransferFunction = TF;
     using Descriptor = D;
-    static constexpr WhitePoint whitePoint = D::whitePoint;
+    static constexpr auto whitePoint = D::whitePoint;
 
     constexpr RGBAType(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
         : red { red }
@@ -299,7 +299,7 @@ template<typename ColorType1, typename ColorType2> inline constexpr bool IsSameR
 
 struct SRGBADescriptor {
     template<typename T, TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    static constexpr auto whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
     static constexpr ColorMatrix<3, 3> xyzToLinear {
@@ -322,7 +322,7 @@ template<typename T> using LinearExtendedSRGBA = ExtendedLinearEncoded<T, SRGBAD
 
 struct A98RGBDescriptor {
     template<typename T, TransferFunctionMode Mode> using TransferFunction = A98RGBTransferFunction<T, Mode>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    static constexpr auto whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
     static constexpr ColorMatrix<3, 3> xyzToLinear {
@@ -343,7 +343,7 @@ template<typename T> using LinearA98RGB = BoundedLinearEncoded<T, A98RGBDescript
 
 struct DisplayP3Descriptor {
     template<typename T, TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    static constexpr auto whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
     static constexpr ColorMatrix<3, 3> xyzToLinear {
@@ -364,7 +364,7 @@ template<typename T> using LinearDisplayP3 = BoundedLinearEncoded<T, DisplayP3De
 
 struct ProPhotoRGBDescriptor {
     template<typename T, TransferFunctionMode Mode> using TransferFunction = ProPhotoRGBTransferFunction<T, Mode>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D50;
+    static constexpr auto whitePoint = WhitePoint::D50;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
     static constexpr ColorMatrix<3, 3> xyzToLinear {
@@ -385,7 +385,7 @@ template<typename T> using LinearProPhotoRGB = BoundedLinearEncoded<T, ProPhotoR
 
 struct Rec2020Descriptor {
     template<typename T, TransferFunctionMode Mode> using TransferFunction = Rec2020TransferFunction<T, Mode>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    static constexpr auto whitePoint = WhitePoint::D65;
 
     // https://drafts.csswg.org/css-color/#color-conversion-code
     static constexpr ColorMatrix<3, 3> xyzToLinear {
@@ -409,8 +409,8 @@ template<typename T> using LinearRec2020 = BoundedLinearEncoded<T, Rec2020Descri
 template<typename T> struct Lab : ColorWithAlphaHelper<Lab<T>> {
     using ComponentType = T;
     using Model = LabModel<T>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D50;
-    using Reference =  XYZA<T, whitePoint>;
+    static constexpr auto whitePoint = WhitePoint::D50;
+    using Reference = XYZA<T, whitePoint>;
 
     constexpr Lab(T lightness, T a, T b, T alpha = AlphaTraits<T>::opaque)
         : lightness { lightness }
@@ -444,7 +444,7 @@ template<typename ColorType> inline constexpr bool IsLab = std::is_same_v<Lab<ty
 template<typename T> struct LCHA : ColorWithAlphaHelper<LCHA<T>> {
     using ComponentType = T;
     using Model = LCHModel<T>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D50;
+    static constexpr auto whitePoint = WhitePoint::D50;
     using Reference = Lab<T>;
 
     constexpr LCHA(T lightness, T chroma, T hue, T alpha = AlphaTraits<T>::opaque)
@@ -474,13 +474,83 @@ template<typename T> constexpr ColorComponents<T, 4> asColorComponents(const LCH
 
 template<typename ColorType> inline constexpr bool IsLCHA = std::is_same_v<LCHA<typename ColorType::ComponentType>, ColorType>;
 
+// MARK: - OKLab Color Type.
+
+template<typename T> struct OKLab : ColorWithAlphaHelper<OKLab<T>> {
+    using ComponentType = T;
+    using Model = LabModel<T>;
+    static constexpr auto whitePoint = WhitePoint::D65;
+    using Reference = XYZA<T, whitePoint>;
+
+    constexpr OKLab(T lightness, T a, T b, T alpha = AlphaTraits<T>::opaque)
+        : lightness { lightness }
+        , a { a }
+        , b { b }
+        , alpha { alpha }
+    {
+        assertInRange(*this);
+    }
+
+    constexpr OKLab()
+        : OKLab { 0, 0, 0, 0 }
+    {
+    }
+
+    T lightness;
+    T a;
+    T b;
+    T alpha;
+};
+
+template<typename T> constexpr ColorComponents<T, 4> asColorComponents(const OKLab<T>& c)
+{
+    return { c.lightness, c.a, c.b, c.alpha };
+}
+
+template<typename ColorType> inline constexpr bool IsOKLab = std::is_same_v<OKLab<typename ColorType::ComponentType>, ColorType>;
+
+// MARK: - OKLCHA Color Type.
+
+template<typename T> struct OKLCHA : ColorWithAlphaHelper<OKLCHA<T>> {
+    using ComponentType = T;
+    using Model = LCHModel<T>;
+    static constexpr auto whitePoint = WhitePoint::D65;
+    using Reference = OKLab<T>;
+
+    constexpr OKLCHA(T lightness, T chroma, T hue, T alpha = AlphaTraits<T>::opaque)
+        : lightness { lightness }
+        , chroma { chroma }
+        , hue { hue }
+        , alpha { alpha }
+    {
+        assertInRange(*this);
+    }
+
+    constexpr OKLCHA()
+        : OKLCHA { 0, 0, 0, 0 }
+    {
+    }
+
+    T lightness;
+    T chroma;
+    T hue;
+    T alpha;
+};
+
+template<typename T> constexpr ColorComponents<T, 4> asColorComponents(const OKLCHA<T>& c)
+{
+    return { c.lightness, c.chroma, c.hue, c.alpha };
+}
+
+template<typename ColorType> inline constexpr bool IsOKLCHA = std::is_same_v<OKLCHA<typename ColorType::ComponentType>, ColorType>;
+
 
 // MARK: - HSLA Color Type.
 
 template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
     using ComponentType = T;
     using Model = HSLModel<T>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    static constexpr auto whitePoint = WhitePoint::D65;
     using Reference = SRGBA<T>;
 
     constexpr HSLA(T hue, T saturation, T lightness, T alpha = AlphaTraits<T>::opaque)
@@ -515,7 +585,7 @@ template<typename ColorType> inline constexpr bool IsHSLA = std::is_same_v<HSLA<
 template<typename T> struct HWBA : ColorWithAlphaHelper<HWBA<T>> {
     using ComponentType = T;
     using Model = HWBModel<T>;
-    static constexpr WhitePoint whitePoint = WhitePoint::D65;
+    static constexpr auto whitePoint = WhitePoint::D65;
     using Reference = SRGBA<T>;
 
     constexpr HWBA(T hue, T whiteness, T blackness, T alpha = AlphaTraits<T>::opaque)
@@ -551,7 +621,7 @@ template<typename T, WhitePoint W> struct XYZA : ColorWithAlphaHelper<XYZA<T, W>
     using ComponentType = T;
     using Model = XYZModel<T>;
     using ReferenceXYZ = XYZA<T, W>;
-    static constexpr WhitePoint whitePoint = W;
+    static constexpr auto whitePoint = W;
 
     constexpr XYZA(T x, T y, T z, T alpha = AlphaTraits<T>::opaque)
         : x { x }

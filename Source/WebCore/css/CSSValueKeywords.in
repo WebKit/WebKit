@@ -1284,6 +1284,8 @@ hsla
 hwb
 lab
 lch
+oklab
+oklch
 //color
 
 // relative color identifiers
@@ -1465,7 +1467,6 @@ sRGB
 // color() function
 a98-rgb
 display-p3
-// lab
 prophoto-rgb
 // rec2020
 // sRGB
