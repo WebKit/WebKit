@@ -86,7 +86,7 @@ struct RuleFeatureSet {
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassesAffectingHost;
 
-    std::array<bool, matchElementCount> usedMatchElements;
+    std::array<bool, matchElementCount> usedMatchElements { };
 
     bool usesFirstLineRules { false };
     bool usesFirstLetterRules { false };
