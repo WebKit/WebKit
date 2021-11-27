@@ -275,7 +275,7 @@ Lab<float> ColorConversion<Lab<float>, LCHA<float>>::convert(const LCHA<float>& 
 
 // MARK: Conversion functions for raw color components with associated color spaces.
 
-ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace)
+ColorComponents<float, 4> convertColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace)
 {
     return callWithColorType(inputColorComponents, inputColorSpace, [outputColorSpace] (const auto& inputColor) {
         switch (outputColorSpace) {
@@ -306,7 +306,7 @@ ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, Colo
     });
 }
 
-ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)
+ColorComponents<float, 4> convertColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)
 {
 #if USE(CG)
     return platformConvertColorComponents(inputColorSpace, inputColorComponents, outputColorSpace);

@@ -165,13 +165,13 @@ Color Color::semanticColor() const
 ColorComponents<float, 4> Color::toColorComponentsInColorSpace(ColorSpace outputColorSpace) const
 {
     auto [inputColorSpace, components] = colorSpaceAndComponents();
-    return converColorComponents(inputColorSpace, components, outputColorSpace);
+    return convertColorComponents(inputColorSpace, components, outputColorSpace);
 }
 
 ColorComponents<float, 4> Color::toColorComponentsInColorSpace(const DestinationColorSpace& outputColorSpace) const
 {
     auto [inputColorSpace, components] = colorSpaceAndComponents();
-    return converColorComponents(inputColorSpace, components, outputColorSpace);
+    return convertColorComponents(inputColorSpace, components, outputColorSpace);
 }
 
 std::pair<ColorSpace, ColorComponents<float, 4>> Color::colorSpaceAndComponents() const
