@@ -1485,7 +1485,25 @@ AAA-large
 
 // color-mix()
 color-mix
+
+// color-space-interpolation
 in
+// srgb
+// lab
+// oklab
+// xyz
+// xyz-d50
+// xyz-d65
+// hsl
+// hwb
+// lch
+// oklch
+shorter
+longer
+increasing
+decreasing
+specified
+// hue
 
 // prefers-default-appearance
 prefers

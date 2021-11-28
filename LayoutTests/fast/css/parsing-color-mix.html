@@ -26,6 +26,12 @@
         testComputedProperty("background-color", value, expected);
     }
 
+    function testComputedComputingResult(value, expected)
+    {
+        let computedExpected = computedStyle("background-color", expected)
+        testComputedProperty("background-color", value, computedExpected);
+    }
+
     debug('color-mix(in hsl, ...)');
 
     testComputed(`color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%))`, `rgb(84, 92, 61)`); // hsl(75deg 20% 30%)
@@ -34,13 +40,62 @@
     testComputed(`color-mix(in hsl, hsl(120deg 10% 20%), 25% hsl(30deg 30% 40%))`, `rgb(61, 73, 54)`);
     testComputed(`color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) 25%)`, `rgb(61, 73, 54)`);
     testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%) 75%)`, `rgb(112, 106, 67)`);
-    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 50%, hsl(30deg 30% 40%) 150%)`, `rgb(112, 106, 67)`); // Scale down > 100% sum.
-    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 12.5%, hsl(30deg 30% 40%) 37.5%)`, `rgb(112, 106, 67)`); // Scale up < 100% sum.
+    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 30%, hsl(30deg 30% 40%) 90%)`, `rgb(112, 106, 67)`); // Scale down > 100% sum.
+    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 12.5%, hsl(30deg 30% 40%) 37.5%)`, `rgba(112, 106, 67, 0.5)`); // Scale up < 100% sum, causes alpha multiplication.
     testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%))`, `rgb(133, 102, 71)`);
 
-    // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) -10%, hsl(30deg 30% 40%))`, `rgb(142, 97, 72)`);
+    debug(`-> no hue method specified, defaults to shorter`)
+    testComputedComputingResult(`color-mix(in hsl, hsl(40deg 50% 50%), hsl(60deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl, hsl(60deg 50% 50%), hsl(40deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl, hsl(50deg 50% 50%), hsl(330deg 50% 50%))`, `hsl(10deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl, hsl(330deg 50% 50%), hsl(50deg 50% 50%))`, `hsl(10deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl, hsl(20deg 50% 50%), hsl(320deg 50% 50%))`, `hsl(350deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl, hsl(320deg 50% 50%), hsl(20deg 50% 50%))`, `hsl(350deg 50% 50%)`);
 
+    debug(`-> shorter hue`)
+    testComputedComputingResult(`color-mix(in hsl shorter hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl shorter hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl shorter hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))`, `hsl(10deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl shorter hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))`, `hsl(10deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl shorter hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))`, `hsl(350deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl shorter hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))`, `hsl(350deg 50% 50%)`);
+
+    debug(`-> longer hue`)
+    testComputedComputingResult(`color-mix(in hsl longer hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))`, `hsl(230deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl longer hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))`, `hsl(230deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl longer hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))`, `hsl(190deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl longer hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))`, `hsl(190deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl longer hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))`, `hsl(170deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl longer hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))`, `hsl(170deg 50% 50%)`);
+
+    debug(`-> increasing hue`)
+    testComputedComputingResult(`color-mix(in hsl increasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl increasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))`, `hsl(230deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl increasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))`, `hsl(190deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl increasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))`, `hsl(10deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl increasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))`, `hsl(170deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl increasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))`, `hsl(350deg 50% 50%)`);
+
+    debug(`-> decreasing hue`)
+    testComputedComputingResult(`color-mix(in hsl decreasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))`, `hsl(230deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl decreasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl decreasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))`, `hsl(10deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl decreasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))`, `hsl(190deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl decreasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))`, `hsl(350deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl decreasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))`, `hsl(170deg 50% 50%)`);
+
+    debug(`-> specified hue`)
+    testComputedComputingResult(`color-mix(in hsl specified hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl specified hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))`, `hsl(50deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl specified hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))`, `hsl(190deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl specified hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))`, `hsl(190deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl specified hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))`, `hsl(170deg 50% 50%)`);
+    testComputedComputingResult(`color-mix(in hsl specified hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))`, `hsl(170deg 50% 50%)`);
+
+    debug('-> Invalid examples');
+    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) -10%, hsl(30deg 30% 40%))`, `rgba(0, 0, 0, 0)`); // Percentages less than 0 are not valid.
+    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 150%, hsl(30deg 30% 40%))`, `rgba(0, 0, 0, 0)`); // Percentages greater than 100 are not valid.
+    testComputed(`color-mix(in hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%) 0%)`, `rgba(0, 0, 0, 0)`); // Sum of percengates cannot be 0%.
 
     debug('');
     debug('color-mix(in hwb, ...)');
@@ -51,12 +106,62 @@
     testComputed(`color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40%))`, `rgb(96, 191, 39)`);
     testComputed(`color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) 25%)`, `rgb(96, 191, 39)`);
     testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%) 75%)`, `rgb(166, 153, 64)`);
-    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 50%, hwb(30deg 30% 40%) 150%)`, `rgb(166, 153, 64)`); // Scale down > 100% sum.
-    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 12.5%, hwb(30deg 30% 40%) 37.5%)`, `rgb(166, 153, 64)`); // Scale up < 100% sum.
+    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 30%, hwb(30deg 30% 40%) 90%)`, `rgb(166, 153, 64)`); // Scale down > 100% sum.
+    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 12.5%, hwb(30deg 30% 40%) 37.5%)`, `rgba(166, 153, 64, 0.5)`); // Scale up < 100% sum, causes alpha multiplication.
     testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%))`, `rgb(153, 115, 77)`);
 
-    // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) -10%, hwb(30deg 30% 40%))`, `rgb(148, 105, 82)`);
+    debug(`-> no hue method specified, defaults to shorter`)
+    testComputedComputingResult(`color-mix(in hwb, hwb(40deg 30% 40%), hwb(60deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb, hwb(60deg 30% 40%), hwb(40deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb, hwb(50deg 30% 40%), hwb(330deg 30% 40%))`, `hwb(10deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb, hwb(330deg 30% 40%), hwb(50deg 30% 40%))`, `hwb(10deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb, hwb(20deg 30% 40%), hwb(320deg 30% 40%))`, `hwb(350deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb, hwb(320deg 30% 40%), hwb(20deg 30% 40%))`, `hwb(350deg 30% 40%)`);
+
+    debug(`-> shorter hue`)
+    testComputedComputingResult(`color-mix(in hwb shorter hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb shorter hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb shorter hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))`, `hwb(10deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb shorter hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))`, `hwb(10deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb shorter hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))`, `hwb(350deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb shorter hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))`, `hwb(350deg 30% 40%)`);
+
+    debug(`-> longer hue`)
+    testComputedComputingResult(`color-mix(in hwb longer hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))`, `hwb(230deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb longer hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))`, `hwb(230deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb longer hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))`, `hwb(190deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb longer hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))`, `hwb(190deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb longer hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))`, `hwb(170deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb longer hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))`, `hwb(170deg 30% 40%)`);
+
+    debug(`-> increasing hue`)
+    testComputedComputingResult(`color-mix(in hwb increasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb increasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))`, `hwb(230deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb increasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))`, `hwb(190deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb increasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))`, `hwb(10deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb increasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))`, `hwb(170deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb increasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))`, `hwb(350deg 30% 40%)`);
+
+    debug(`-> decreasing hue`)
+    testComputedComputingResult(`color-mix(in hwb decreasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))`, `hwb(230deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb decreasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb decreasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))`, `hwb(10deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb decreasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))`, `hwb(190deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb decreasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))`, `hwb(350deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb decreasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))`, `hwb(170deg 30% 40%)`);
+
+    debug(`-> specified hue`)
+    testComputedComputingResult(`color-mix(in hwb specified hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb specified hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))`, `hwb(50deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb specified hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))`, `hwb(190deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb specified hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))`, `hwb(190deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb specified hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))`, `hwb(170deg 30% 40%)`);
+    testComputedComputingResult(`color-mix(in hwb specified hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))`, `hwb(170deg 30% 40%)`);
+
+    debug('-> Invalid examples');
+    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) -10%, hwb(30deg 30% 40%))`, `rgba(0, 0, 0, 0)`); // Percentages less than 0 are not valid.
+    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 150%, hwb(30deg 30% 40%))`, `rgba(0, 0, 0, 0)`); // Percentages greater than 100 are not valid.
+    testComputed(`color-mix(in hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%) 0%)`, `rgba(0, 0, 0, 0)`); // Sum of percengates cannot be 0%.
     
     for (const colorSpace of [ "lch", "oklch" ]) {
         debug('');
@@ -68,12 +173,62 @@
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4), 25% ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(20% 30 40 / 0.5)`);
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4), ${colorSpace}(50% 60 70deg / .8) 25%)`, `${colorSpace}(20% 30 40 / 0.5)`);
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 25%, ${colorSpace}(50% 60 70deg / .8) 75%)`, `${colorSpace}(40% 50 60 / 0.7)`);
-        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 50%, ${colorSpace}(50% 60 70deg / .8) 150%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale down > 100% sum.
-        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 12.5%, ${colorSpace}(50% 60 70deg / .8) 37.5%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale up < 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 30%, ${colorSpace}(50% 60 70deg / .8) 90%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale down > 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 12.5%, ${colorSpace}(50% 60 70deg / .8) 37.5%)`, `${colorSpace}(40% 50 60 / 0.35)`); // Scale up < 100% sum
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 0%, ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(50% 60 70 / 0.8)`);
 
-        // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) -10%, ${colorSpace}(50% 60 70deg / .8))`, `${colorSpace}(54% 64 74 / 0.84000003)`);
+        debug(`-> no hue method specified, defaults to shorter`)
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(100% 0 40deg), ${colorSpace}(100% 0 60deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(100% 0 60deg), ${colorSpace}(100% 0 40deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(100% 0 50deg), ${colorSpace}(100% 0 330deg))`, `${colorSpace}(100% 0 10)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(100% 0 330deg), ${colorSpace}(100% 0 50deg))`, `${colorSpace}(100% 0 10)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(100% 0 20deg), ${colorSpace}(100% 0 320deg))`, `${colorSpace}(100% 0 350)`);
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(100% 0 320deg), ${colorSpace}(100% 0 20deg))`, `${colorSpace}(100% 0 350)`);
+
+        debug(`-> shorter hue`)
+        testComputed(`color-mix(in ${colorSpace} shorter hue, ${colorSpace}(100% 0 40deg), ${colorSpace}(100% 0 60deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace} shorter hue, ${colorSpace}(100% 0 60deg), ${colorSpace}(100% 0 40deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace} shorter hue, ${colorSpace}(100% 0 50deg), ${colorSpace}(100% 0 330deg))`, `${colorSpace}(100% 0 10)`);
+        testComputed(`color-mix(in ${colorSpace} shorter hue, ${colorSpace}(100% 0 330deg), ${colorSpace}(100% 0 50deg))`, `${colorSpace}(100% 0 10)`);
+        testComputed(`color-mix(in ${colorSpace} shorter hue, ${colorSpace}(100% 0 20deg), ${colorSpace}(100% 0 320deg))`, `${colorSpace}(100% 0 350)`);
+        testComputed(`color-mix(in ${colorSpace} shorter hue, ${colorSpace}(100% 0 320deg), ${colorSpace}(100% 0 20deg))`, `${colorSpace}(100% 0 350)`);
+
+        debug(`-> longer hue`)
+        testComputed(`color-mix(in ${colorSpace} longer hue, ${colorSpace}(100% 0 40deg), ${colorSpace}(100% 0 60deg))`, `${colorSpace}(100% 0 230)`);
+        testComputed(`color-mix(in ${colorSpace} longer hue, ${colorSpace}(100% 0 60deg), ${colorSpace}(100% 0 40deg))`, `${colorSpace}(100% 0 230)`);
+        testComputed(`color-mix(in ${colorSpace} longer hue, ${colorSpace}(100% 0 50deg), ${colorSpace}(100% 0 330deg))`, `${colorSpace}(100% 0 190)`);
+        testComputed(`color-mix(in ${colorSpace} longer hue, ${colorSpace}(100% 0 330deg), ${colorSpace}(100% 0 50deg))`, `${colorSpace}(100% 0 190)`);
+        testComputed(`color-mix(in ${colorSpace} longer hue, ${colorSpace}(100% 0 20deg), ${colorSpace}(100% 0 320deg))`, `${colorSpace}(100% 0 170)`);
+        testComputed(`color-mix(in ${colorSpace} longer hue, ${colorSpace}(100% 0 320deg), ${colorSpace}(100% 0 20deg))`, `${colorSpace}(100% 0 170)`);
+
+        debug(`-> increasing hue`)
+        testComputed(`color-mix(in ${colorSpace} increasing hue, ${colorSpace}(100% 0 40deg), ${colorSpace}(100% 0 60deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace} increasing hue, ${colorSpace}(100% 0 60deg), ${colorSpace}(100% 0 40deg))`, `${colorSpace}(100% 0 230)`);
+        testComputed(`color-mix(in ${colorSpace} increasing hue, ${colorSpace}(100% 0 50deg), ${colorSpace}(100% 0 330deg))`, `${colorSpace}(100% 0 190)`);
+        testComputed(`color-mix(in ${colorSpace} increasing hue, ${colorSpace}(100% 0 330deg), ${colorSpace}(100% 0 50deg))`, `${colorSpace}(100% 0 10)`);
+        testComputed(`color-mix(in ${colorSpace} increasing hue, ${colorSpace}(100% 0 20deg), ${colorSpace}(100% 0 320deg))`, `${colorSpace}(100% 0 170)`);
+        testComputed(`color-mix(in ${colorSpace} increasing hue, ${colorSpace}(100% 0 320deg), ${colorSpace}(100% 0 20deg))`, `${colorSpace}(100% 0 350)`);
+
+        debug(`-> decreasing hue`)
+        testComputed(`color-mix(in ${colorSpace} decreasing hue, ${colorSpace}(100% 0 40deg), ${colorSpace}(100% 0 60deg))`, `${colorSpace}(100% 0 230)`);
+        testComputed(`color-mix(in ${colorSpace} decreasing hue, ${colorSpace}(100% 0 60deg), ${colorSpace}(100% 0 40deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace} decreasing hue, ${colorSpace}(100% 0 50deg), ${colorSpace}(100% 0 330deg))`, `${colorSpace}(100% 0 10)`);
+        testComputed(`color-mix(in ${colorSpace} decreasing hue, ${colorSpace}(100% 0 330deg), ${colorSpace}(100% 0 50deg))`, `${colorSpace}(100% 0 190)`);
+        testComputed(`color-mix(in ${colorSpace} decreasing hue, ${colorSpace}(100% 0 20deg), ${colorSpace}(100% 0 320deg))`, `${colorSpace}(100% 0 350)`);
+        testComputed(`color-mix(in ${colorSpace} decreasing hue, ${colorSpace}(100% 0 320deg), ${colorSpace}(100% 0 20deg))`, `${colorSpace}(100% 0 170)`);
+    
+        debug(`-> specified hue`)
+        testComputed(`color-mix(in ${colorSpace} specified hue, ${colorSpace}(100% 0 40deg), ${colorSpace}(100% 0 60deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace} specified hue, ${colorSpace}(100% 0 60deg), ${colorSpace}(100% 0 40deg))`, `${colorSpace}(100% 0 50)`);
+        testComputed(`color-mix(in ${colorSpace} specified hue, ${colorSpace}(100% 0 50deg), ${colorSpace}(100% 0 330deg))`, `${colorSpace}(100% 0 190)`);
+        testComputed(`color-mix(in ${colorSpace} specified hue, ${colorSpace}(100% 0 330deg), ${colorSpace}(100% 0 50deg))`, `${colorSpace}(100% 0 190)`);
+        testComputed(`color-mix(in ${colorSpace} specified hue, ${colorSpace}(100% 0 20deg), ${colorSpace}(100% 0 320deg))`, `${colorSpace}(100% 0 170)`);
+        testComputed(`color-mix(in ${colorSpace} specified hue, ${colorSpace}(100% 0 320deg), ${colorSpace}(100% 0 20deg))`, `${colorSpace}(100% 0 170)`);
+
+        debug('-> Invalid examples');
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) -10%, ${colorSpace}(50% 60 70deg / .8))`, `rgba(0, 0, 0, 0)`); // Percentages less than 0 are not valid.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 150%, ${colorSpace}(50% 60 70deg / .8))`, `rgba(0, 0, 0, 0)`); // Percentages greater than 100 are not valid.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30deg / .4) 0%, ${colorSpace}(50% 60 70deg / .8) 0%)`, `rgba(0, 0, 0, 0)`); // Sum of percengates cannot be 0%.
     }
 
     for (const colorSpace of [ "lab", "oklab" ]) {
@@ -86,33 +241,37 @@
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4), 25% ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(20% 30 40 / 0.5)`);
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4), ${colorSpace}(50% 60 70 / .8) 25%)`, `${colorSpace}(20% 30 40 / 0.5)`);
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 25%, ${colorSpace}(50% 60 70 / .8) 75%)`, `${colorSpace}(40% 50 60 / 0.7)`);
-        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 50%, ${colorSpace}(50% 60 70 / .8) 150%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale down > 100% sum.
-        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 12.5%, ${colorSpace}(50% 60 70 / .8) 37.5%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale up < 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 30%, ${colorSpace}(50% 60 70 / .8) 90%)`, `${colorSpace}(40% 50 60 / 0.7)`); // Scale down > 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 12.5%, ${colorSpace}(50% 60 70 / .8) 37.5%)`, `${colorSpace}(40% 50 60 / 0.35)`); // Scale up < 100% sum, causes alpha multiplication.
         testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 0%, ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(50% 60 70 / 0.8)`);
 
-        // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) -10%, ${colorSpace}(50% 60 70 / .8))`, `${colorSpace}(54% 64 74 / 0.84000003)`);
+        debug('-> Invalid examples');
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) -10%, ${colorSpace}(50% 60 70 / .8))`, `rgba(0, 0, 0, 0)`); // Percentages less than 0 are not valid.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 150%, ${colorSpace}(50% 60 70 / .8))`, `rgba(0, 0, 0, 0)`); // Percentages greater than 100 are not valid.
+        testComputed(`color-mix(in ${colorSpace}, ${colorSpace}(10% 20 30 / .4) 0%, ${colorSpace}(50% 60 70 / .8) 0%)`, `rgba(0, 0, 0, 0)`); // Sum of percengates cannot be 0%.
     }
- 
+
     for (const colorSpace of [ "srgb", "xyz", "xyz-d50", "xyz-d65" ]) {
         debug('');
         debug(`color-mix(in ${colorSpace}, ...)`);
   
-  	  	const resultColorSpace = colorSpace == "xyz" ? "xyz-d65" : colorSpace; 
+        const resultColorSpace = colorSpace == "xyz" ? "xyz-d65" : colorSpace; 
 
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4), color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.3 0.4 0.5 / 0.6)`);
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 25%, color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`);
-	    testComputed(`color-mix(in ${colorSpace}, 25% color(${colorSpace} .1 .2 .3 / .4), color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`);
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4), color(${colorSpace} .5 .6 .7 / .8) 25%)`, `color(${resultColorSpace} 0.2 0.3 0.4 / 0.5)`);
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4), 25% color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.2 0.3 0.4 / 0.5)`);
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 25%, color(${colorSpace} .5 .6 .7 / .8) 75%)`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`);
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 50%, color(${colorSpace} .5 .6 .7 / .8) 150%)`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`); // Scale down > 100% sum.
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 12.5%, color(${colorSpace} .5 .6 .7 / .8) 37.5%)`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`); // Scale up < 100% sum.
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 0%, color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.5 0.6 0.7 / 0.8)`);
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4), color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.3 0.4 0.5 / 0.6)`);
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 25%, color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, 25% color(${colorSpace} .1 .2 .3 / .4), color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4), color(${colorSpace} .5 .6 .7 / .8) 25%)`, `color(${resultColorSpace} 0.2 0.3 0.4 / 0.5)`);
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4), 25% color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.2 0.3 0.4 / 0.5)`);
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 25%, color(${colorSpace} .5 .6 .7 / .8) 75%)`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`);
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 30%, color(${colorSpace} .5 .6 .7 / .8) 90%)`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.7)`); // Scale down > 100% sum.
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 12.5%, color(${colorSpace} .5 .6 .7 / .8) 37.5%)`, `color(${resultColorSpace} 0.4 0.5 0.6 / 0.35)`); // Scale up < 100% sum, causes alpha multiplication.
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 0%, color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.5 0.6 0.7 / 0.8)`);
 
-	    // What should happen if you provide a negative percent? https://github.com/w3c/csswg-drafts/issues/6047
-	    testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) -10%, color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.54 0.64000005 0.74 / 0.84000003)`);
-	}
+        debug('-> Invalid examples');
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) -10%, color(${colorSpace} .5 .6 .7 / .8))`, `rgba(0, 0, 0, 0)`); // Percentages less than 0 are not valid.
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 150%, color(${colorSpace} .5 .6 .7 / .8))`, `rgba(0, 0, 0, 0)`); // Percentages greater than 100 are not valid.
+        testComputed(`color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 0%, color(${colorSpace} .5 .6 .7 / .8) 0%)`, `rgba(0, 0, 0, 0)`); // Sum of percengates cannot be 0%.
+    }
 </script>
     
 <script src="../../resources/js-test-post.js"></script>

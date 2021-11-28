@@ -44,6 +44,7 @@
 #include "CSSValuePool.h"
 #include "CalculationCategory.h"
 #include "ColorConversion.h"
+#include "ColorInterpolation.h"
 #include "ColorLuminance.h"
 #include "Logging.h"
 #include "Pair.h"
@@ -2290,49 +2291,87 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
     return selectFirstColorWithHighestContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst));
 }
 
-enum class ColorMixColorSpace {
-    Hsl,
-    Hwb,
-    Lab,
-    Lch,
-    Oklab,
-    Oklch,
-    Srgb,
-    XyzD50,
-    XyzD65
-};
-
-static std::optional<ColorMixColorSpace> consumeColorMixColorSpaceAndComma(CSSParserTokenRange& args)
+static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSParserTokenRange& args)
 {
-    auto consumeIdentAndComma = [](CSSParserTokenRange& args, ColorMixColorSpace colorSpace) -> std::optional<ColorMixColorSpace> {
-        consumeIdentRaw(args);
-        if (!consumeCommaIncludingWhitespace(args))
-            return std::nullopt;
-        return colorSpace;
+    switch (args.peek().id()) {
+    case CSSValueShorter:
+        args.consumeIncludingWhitespace();
+        return HueInterpolationMethod::Shorter;
+    case CSSValueLonger:
+        args.consumeIncludingWhitespace();
+        return HueInterpolationMethod::Longer;
+    case CSSValueIncreasing:
+        args.consumeIncludingWhitespace();
+        return HueInterpolationMethod::Increasing;
+    case CSSValueDecreasing:
+        args.consumeIncludingWhitespace();
+        return HueInterpolationMethod::Decreasing;
+    case CSSValueSpecified:
+        args.consumeIncludingWhitespace();
+        return HueInterpolationMethod::Specified;
+    default:
+        return { };
+    }
+}
+
+static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args)
+{
+    // <rectangular-color-space> = srgb | lab | oklab | xyz | xyz-d50 | xyz-d65
+    // <polar-color-space> = hsl | hwb | lch | oklch
+    // <hue-interpolation-method> = [ shorter | longer | increasing | decreasing | specified ] hue
+    // <color-interpolation-method> = in [ <rectangular-color-space> | <polar-color-space> <hue-interpolation-method>? ]
+
+    if (!consumeIdentRaw<CSSValueIn>(args))
+        return { };
+
+    auto consumePolarColorSpace = [](CSSParserTokenRange& args, auto colorInterpolationMethod) -> std::optional<ColorInterpolationMethod> {
+        // Consume the color space identifier.
+        args.consumeIncludingWhitespace();
+
+        // <hue-interpolation-method> is optional, so if it is not provided, we just use the default value
+        // specified in the passed in 'colorInterpolationMethod' parameter.
+        auto hueInterpolationMethod = consumeHueInterpolationMethod(args);
+        if (!hueInterpolationMethod)
+            return {{ colorInterpolationMethod }};
+        
+        // If the hue-interpolation-method was provided it must be followed immediately by the 'hue' identifier.
+        if (!consumeIdentRaw<CSSValueHue>(args))
+            return { };
+
+        colorInterpolationMethod.hueInterpolationMethod = *hueInterpolationMethod;
+
+        return {{ colorInterpolationMethod }};
+    };
+
+    auto consumeRectangularColorSpace = [](CSSParserTokenRange& args, auto colorInterpolationMethod) -> std::optional<ColorInterpolationMethod> {
+        // Consume the color space identifier.
+        args.consumeIncludingWhitespace();
+
+        return {{ colorInterpolationMethod }};
     };
 
     switch (args.peek().id()) {
     case CSSValueHsl:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Hsl);
+        return consumePolarColorSpace(args, ColorInterpolationMethod::HSL { });
     case CSSValueHwb:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Hwb);
-    case CSSValueLab:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Lab);
+        return consumePolarColorSpace(args, ColorInterpolationMethod::HWB { });
     case CSSValueLch:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Lch);
-    case CSSValueOklab:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Oklab);
+        return consumePolarColorSpace(args, ColorInterpolationMethod::LCH { });
+    case CSSValueLab:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::Lab { });
     case CSSValueOklch:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Oklch);
+        return consumePolarColorSpace(args, ColorInterpolationMethod::OKLCH { });
+    case CSSValueOklab:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::OKLab { });
     case CSSValueSRGB:
-        return consumeIdentAndComma(args, ColorMixColorSpace::Srgb);
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::SRGB { });
     case CSSValueXyzD50:
-        return consumeIdentAndComma(args, ColorMixColorSpace::XyzD50);
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::XYZD50 { });
     case CSSValueXyz:
     case CSSValueXyzD65:
-        return consumeIdentAndComma(args, ColorMixColorSpace::XyzD65);
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::XYZD65 { });
     default:
-        return std::nullopt;
+        return { };
     }
 }
 
@@ -2345,16 +2384,22 @@ static std::optional<ColorMixComponent> consumeColorMixComponent(CSSParserTokenR
 {
     ColorMixComponent result;
 
-    if (auto percentage = consumePercentRaw(args))
+    if (auto percentage = consumePercentRaw(args)) {
+        if (*percentage < 0.0 || *percentage > 100.0)
+            return { };
         result.percentage = percentage;
+    }
 
     result.color = consumeOriginColor(args, context);
     if (!result.color.isValid())
         return std::nullopt;
 
     if (!result.percentage) {
-        if (auto percentage = consumePercentRaw(args))
+        if (auto percentage = consumePercentRaw(args)) {
+            if (*percentage < 0.0 || *percentage > 100.0)
+                return { };
             result.percentage = percentage;
+        }
     }
 
     return result;
@@ -2363,9 +2408,10 @@ static std::optional<ColorMixComponent> consumeColorMixComponent(CSSParserTokenR
 struct ColorMixPercentages {
     double p1;
     double p2;
+    std::optional<double> alphaMultiplier = std::nullopt;
 };
 
-static ColorMixPercentages normalizedMixPercentages(const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
+static std::optional<ColorMixPercentages> normalizedMixPercentages(const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
 {
     // The percentages are normalized as follows:
 
@@ -2373,7 +2419,7 @@ static ColorMixPercentages normalizedMixPercentages(const ColorMixComponent& mix
 
     // 2. If both percentages are omitted, they each default to 50% (an equal mix of the two colors).
     if (!mixComponents1.percentage && !mixComponents2.percentage)
-        return { 50.0, 50.0 };
+        return {{ 50.0, 50.0 }};
     
     ColorMixPercentages result;
 
@@ -2392,22 +2438,29 @@ static ColorMixPercentages normalizedMixPercentages(const ColorMixComponent& mix
 
     auto sum = result.p1 + result.p2;
 
-    // 5. If the percentages sum to zero do something, tbd. (FIXME: We just use 50 / 50 for this case for now).
+    // 5.If the percentages sum to zero, the function is invalid.
     if (sum == 0)
-        return { 50.0, 50.0 };
+        return { };
 
-    if (sum != 100.0) {
+    if (sum > 100.0) {
         // 6. Otherwise, if both are provided but do not add up to 100%, they are scaled accordingly so that they
-        //    add up to 100%. This means that p1 becomes p1 / (p1 + p2) and p2 becomes p2 / (p1 + p2).
+        //    add up to 100%.
         result.p1 *= 100.0 / sum;
         result.p2 *= 100.0 / sum;
+    } else if (sum < 100.0) {
+        // 7. Otherwise, if both are provided and add up to less than 100%, the sum is saved as an alpha multiplier.
+        //    They are then scaled accordingly so that they add up to 100%.
+        result.p1 *= 100.0 / sum;
+        result.p2 *= 100.0 / sum;
+        result.alphaMultiplier = sum;
     }
 
     return result;
 }
 
-// Normalization is special cased for HWBA, which needs to normalize the whiteness and blackness components and convert to sRGB
-// and HSLA, which just needs to be converted to sRGB. All other color types can go through this non-specialized case.
+// Normalization is special cased for for all polar color spaces to renormalize the hue, with additional normalization needed
+// for HWBA to normalize the whiteness and blackness components. Furthermore, HWBA and HSLA also get converted to SRGBA which
+// is their canonical form.
 
 template<typename ColorType> inline Color makeColorTypeByNormalizingComponentsAfterMix(const ColorComponents<float, 4>& colorComponents)
 {
@@ -2418,96 +2471,88 @@ template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>
 {
     auto [hue, whiteness, blackness, alpha] = colorComponents;
     auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness, blackness);
+    float normalizedHue = normalizeHue(hue);
 
-    return convertColor<SRGBA<uint8_t>>(HWBA<float> { hue, normalizedWhitness, normalizedBlackness, alpha });
+    return convertColor<SRGBA<uint8_t>>(HWBA<float> { normalizedHue, normalizedWhitness, normalizedBlackness, alpha });
 }
 
 template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>(const ColorComponents<float, 4>& colorComponents)
 {
-    return convertColor<SRGBA<uint8_t>>(makeFromComponents<HSLA<float>>(colorComponents));
+    auto [hue, saturation, lightness, alpha] = colorComponents;
+    float normalizedHue = normalizeHue(hue);
+
+    return convertColor<SRGBA<uint8_t>>(HSLA<float> { normalizedHue, saturation, lightness, alpha });
 }
 
-template<size_t I, typename ComponentType> static void fixupHueComponentsPriorToMix(ColorComponents<ComponentType, 4>& colorComponents1, ColorComponents<ComponentType, 4>& colorComponents2)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<LCHA<float>>(const ColorComponents<float, 4>& colorComponents)
 {
-    auto normalizeAnglesUsingShorterAlgorithm = [] (auto theta1, auto theta2) -> std::pair<ComponentType, ComponentType> {
-        // https://drafts.csswg.org/css-color-4/#hue-shorter
-        auto difference = theta2 - theta1;
-        if (difference > 180.0)
-            return { theta1 + 360.0, theta2 };
-        if (difference < -180.0)
-            return { theta1, theta2 + 360.0 };
-        return { theta1, theta2 };
-    };
+    auto [lightness, chroma, hue, alpha] = colorComponents;
+    float normalizedHue = normalizeHue(hue);
 
-    // As no other interpolation type was specified, all angles should be normalized to use the "shorter" algorithm.
-    auto [theta1, theta2] = normalizeAnglesUsingShorterAlgorithm(colorComponents1[I], colorComponents2[I]);
-    colorComponents1[I] = theta1;
-    colorComponents2[I] = theta2;
+    return LCHA<float> { lightness, chroma, normalizedHue, alpha };
 }
 
-template<typename ColorType> static Color mixColorComponentsInColorSpace(ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<OKLCHA<float>>(const ColorComponents<float, 4>& colorComponents)
 {
+    auto [lightness, chroma, hue, alpha] = colorComponents;
+    float normalizedHue = normalizeHue(hue);
+
+    return OKLCHA<float> { lightness, chroma, normalizedHue, alpha };
+}
+
+template<typename Method> static Color mixColorComponentsUsingColorInterpolationMethod(Method colorInterpolationMethod, ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
+{
+    using ColorType = typename Method::ColorType;
+
+    // 1. Both colors are converted to the specified <color-space>. If the specified color space has a smaller gamut than
+    //    the one in which the color to be adjusted is specified, gamut mapping will occur.
     auto colorComponents1 = asColorComponents(color1.template toColorTypeLossy<ColorType>());
     auto colorComponents2 = asColorComponents(color2.template toColorTypeLossy<ColorType>());
 
-    // Perform fixups on any hue/angle components.
-    constexpr auto componentInfo = ColorType::Model::componentInfo;
-    if constexpr (componentInfo[0].type == ColorComponentType::Angle)
-        fixupHueComponentsPriorToMix<0>(colorComponents1, colorComponents2);
-    if constexpr (componentInfo[1].type == ColorComponentType::Angle)
-        fixupHueComponentsPriorToMix<1>(colorComponents1, colorComponents2);
-    if constexpr (componentInfo[2].type == ColorComponentType::Angle)
-        fixupHueComponentsPriorToMix<2>(colorComponents1, colorComponents2);
+    // 2. Colors are then interpolated in the specified color space, as described in CSS Color 4 § 13 Interpolation. [...]
+    auto [normalizedColorComponents1, normalizedColorComponents2] = preInterpolationNormalization(colorInterpolationMethod, colorComponents1, colorComponents2);
 
-    auto colorComponentsMixed = mapColorComponents([&] (auto componentFromColor1, auto componentFromColor2) -> float {
+    auto mixedColorComponents = mapColorComponents([&] (auto componentFromColor1, auto componentFromColor2) -> float {
         return (componentFromColor1 * mixPercentages.p1 / 100.0) + (componentFromColor2 * mixPercentages.p2 / 100.0);
-    }, colorComponents1, colorComponents2);
+    }, normalizedColorComponents1, normalizedColorComponents2);
 
-    return makeColorTypeByNormalizingComponentsAfterMix<ColorType>(colorComponentsMixed);
+    // 3. If an alpha multiplier was produced during percentage normalization, the alpha component of the interpolated result
+    //    is multiplied by the alpha multiplier.
+    if (mixPercentages.alphaMultiplier)
+        mixedColorComponents[3] *= (*mixPercentages.alphaMultiplier / 100.0);
+
+    return makeColorTypeByNormalizingComponentsAfterMix<ColorType>(mixedColorComponents);
 }
 
-static Color mixColorComponents(ColorMixColorSpace colorSpace, const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
+static Color mixColorComponents(ColorInterpolationMethod colorInterpolationMethod, const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
 {
     auto mixPercentages = normalizedMixPercentages(mixComponents1, mixComponents2);
+    if (!mixPercentages)
+        return { };
 
-    switch (colorSpace) {
-    case ColorMixColorSpace::Hsl:
-        return mixColorComponentsInColorSpace<HSLA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Hwb:
-        return mixColorComponentsInColorSpace<HWBA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Lab:
-        return mixColorComponentsInColorSpace<Lab<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Lch:
-        return mixColorComponentsInColorSpace<LCHA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Oklab:
-        return mixColorComponentsInColorSpace<OKLab<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Oklch:
-        return mixColorComponentsInColorSpace<OKLCHA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::Srgb:
-        return mixColorComponentsInColorSpace<SRGBA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::XyzD50:
-        return mixColorComponentsInColorSpace<XYZA<float, WhitePoint::D50>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    case ColorMixColorSpace::XyzD65:
-        return mixColorComponentsInColorSpace<XYZA<float, WhitePoint::D65>>(mixPercentages, mixComponents1.color, mixComponents2.color);
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
+    return WTF::switchOn(colorInterpolationMethod.value,
+        [&] (auto method) {
+            return mixColorComponentsUsingColorInterpolationMethod<decltype(method)>(method, *mixPercentages, mixComponents1.color, mixComponents2.color);
+        }
+    );
 }
 
 static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
+    // color-mix() = color-mix( <color-interpolation-method> , [ <color> && <percentage [0,100]>? ]#{2})
+
     ASSERT(range.peek().functionId() == CSSValueColorMix);
 
     if (!context.colorMixEnabled)
         return { };
 
     auto args = consumeFunction(range);
-
-    if (!consumeIdentRaw<CSSValueIn>(args))
-        return { };
     
-    auto colorSpace = consumeColorMixColorSpaceAndComma(args);
-    if (!colorSpace)
+    auto colorInterpolationMethod = consumeColorInterpolationMethod(args);
+    if (!colorInterpolationMethod)
+        return { };
+
+    if (!consumeCommaIncludingWhitespace(args))
         return { };
 
     auto mixComponent1 = consumeColorMixComponent(args, context);
@@ -2524,7 +2569,7 @@ static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const C
     if (!args.atEnd())
         return { };
 
-    return mixColorComponents(*colorSpace, *mixComponent1, *mixComponent2);
+    return mixColorComponents(*colorInterpolationMethod, *mixComponent1, *mixComponent2);
 }
 
 static std::optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)

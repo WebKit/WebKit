@@ -1,3 +1,15 @@
+2021-11-28  Sam Weinig  <weinig@apple.com>
+
+        [CSS Color 5] Update color-mix() to latest spec (again)
+        https://bugs.webkit.org/show_bug.cgi?id=233527
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/parsing-color-mix-expected.txt:
+        * fast/css/parsing-color-mix.html:
+        Update tests to include testing of hue interpolation methods, new
+        restrictions on percentage ranges and the new alpha multiplier.
+
 2021-11-28  Philippe Normand  <pnormand@igalia.com>
 
         Weird JS usage in webrtc/multi-video.html
