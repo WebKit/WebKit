@@ -96,6 +96,9 @@ private:
     Ref<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);
     RefPtr<CSSValueList> getCSSPropertyValuesFor2SidesShorthand(const StylePropertyShorthand&);
     RefPtr<CSSValueList> getCSSPropertyValuesFor4SidesShorthand(const StylePropertyShorthand&);
+
+    size_t getLayerCount(CSSPropertyID);
+    Ref<CSSValueList> getFillLayerPropertyShorthandValue(CSSPropertyID, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty);
     Ref<CSSValueList> getBackgroundShorthandValue();
     Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
 

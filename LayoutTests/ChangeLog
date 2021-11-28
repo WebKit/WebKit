@@ -1,3 +1,13 @@
+2021-11-28  Matt Woodrow  <matt.woodrow@gmail.com>
+
+        Serialize computed style of background shorthand with multiple layers correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=111121
+
+        Reviewed by Cameron McCormack.
+
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand.html:
+
 2021-11-28  Sihui Liu  <sihui_liu@apple.com>
 
         Convert error to string before passing to testFailed() in FileSystemAccess layout tests

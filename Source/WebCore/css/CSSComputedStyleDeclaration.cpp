@@ -4447,15 +4447,76 @@ ExceptionOr<void> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID
     return Exception { NoModificationAllowedError };
 }
 
+size_t ComputedStyleExtractor::getLayerCount(CSSPropertyID property)
+{
+    ASSERT(property == CSSPropertyBackground || property == CSSPropertyMask);
+    if (!styledElement())
+        return 0;
+
+    std::unique_ptr<RenderStyle> ownedStyle;
+    const RenderStyle* style = computeRenderStyleForProperty(*styledElement(), m_pseudoElementSpecifier, property, ownedStyle);
+    if (!style)
+        return 0;
+
+    auto& layers = property == CSSPropertyMask ? style->maskLayers() : style->backgroundLayers();
+
+    size_t layerCount = 0;
+    for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+        layerCount++;
+    return layerCount;
+}
+
+Ref<CSSValueList> ComputedStyleExtractor::getFillLayerPropertyShorthandValue(CSSPropertyID property, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty)
+{
+    ASSERT(property == CSSPropertyBackground || property == CSSPropertyMask);
+    size_t layerCount = getLayerCount(property);
+    ASSERT(layerCount);
+
+    auto lastValue = lastLayerProperty != CSSPropertyInvalid ? propertyValue(lastLayerProperty, DoNotUpdateLayout) : nullptr;
+    auto before = getCSSPropertyValuesForShorthandProperties(propertiesBeforeSlashSeparator);
+    auto after = getCSSPropertyValuesForShorthandProperties(propertiesAfterSlashSeparator);
+
+    // The computed properties are returned as lists of properties, with a list of layers in each.
+    // We want to swap that around to have a list of layers, with a list of properties in each.
+
+    auto layers = CSSValueList::createCommaSeparated();
+
+    for (size_t i = 0; i < layerCount; i++) {
+        auto list = CSSValueList::createSlashSeparated();
+        auto beforeList = CSSValueList::createSpaceSeparated();
+
+        if (i == layerCount - 1 && lastValue)
+            beforeList->append(*lastValue);
+
+        for (size_t j = 0; j < propertiesBeforeSlashSeparator.length(); j++) {
+            auto& value = *before->item(j);
+            beforeList->append(layerCount == 1 ? value : *downcast<CSSValueList>(value).item(i));
+        }
+        list->append(beforeList);
+
+        auto afterList = CSSValueList::createSpaceSeparated();
+        for (size_t j = 0; j < propertiesAfterSlashSeparator.length(); j++) {
+            auto& value = *after->item(j);
+            afterList->append(layerCount == 1 ? value : *downcast<CSSValueList>(value).item(i));
+        }
+        list->append(afterList);
+
+        if (layerCount == 1)
+            return list;
+
+        layers->append(list);
+    }
+
+    return layers;
+}
+
+
 Ref<CSSValueList> ComputedStyleExtractor::getBackgroundShorthandValue()
 {
-    static const CSSPropertyID propertiesBeforeSlashSeperator[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition };
-    static const CSSPropertyID propertiesAfterSlashSeperator[3] = { CSSPropertyBackgroundSize, CSSPropertyBackgroundOrigin, CSSPropertyBackgroundClip };
+    static const CSSPropertyID propertiesBeforeSlashSeparator[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition };
+    static const CSSPropertyID propertiesAfterSlashSeparator[] = { CSSPropertyBackgroundSize, CSSPropertyBackgroundOrigin, CSSPropertyBackgroundClip };
 
-    auto list = CSSValueList::createSlashSeparated();
-    list->append(getCSSPropertyValuesForShorthandProperties(StylePropertyShorthand(CSSPropertyBackground, propertiesBeforeSlashSeperator)));
-    list->append(getCSSPropertyValuesForShorthandProperties(StylePropertyShorthand(CSSPropertyBackground, propertiesAfterSlashSeperator)));
-    return list;
+    return getFillLayerPropertyShorthandValue(CSSPropertyBackground, StylePropertyShorthand(CSSPropertyBackground, propertiesBeforeSlashSeparator), StylePropertyShorthand(CSSPropertyBackground, propertiesAfterSlashSeparator), CSSPropertyBackgroundColor);
 }
 
 } // namespace WebCore
