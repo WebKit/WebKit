@@ -30,6 +30,7 @@
 #import "PlatformWheelEvent.h"
 #import "ScrollAnimationRubberBand.h"
 #import "ScrollExtents.h"
+#import "ScrollableArea.h"
 #import "WheelEventDeltaFilter.h"
 #import <pal/spi/mac/NSScrollViewSPI.h>
 #import <sys/sysctl.h>

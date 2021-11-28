@@ -54,14 +54,16 @@ public:
     void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
 
 protected:
-    Filter(Filter::Type filterType, const FloatSize& filterScale)
+    Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale)
         : FilterFunction(filterType)
+        , m_renderingMode(renderingMode)
         , m_filterScale(filterScale)
     {
     }
 
-    Filter(Filter::Type filterType, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion)
+    Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion)
         : FilterFunction(filterType)
+        , m_renderingMode(renderingMode)
         , m_filterScale(filterScale)
         , m_sourceImageRect(sourceImageRect)
         , m_filterRegion(filterRegion)
@@ -69,12 +71,13 @@ protected:
     }
 
 private:
+    RenderingMode m_renderingMode;
+
     FloatSize m_filterScale;
     FloatRect m_sourceImageRect;
     FloatRect m_filterRegion;
 
     RefPtr<ImageBuffer> m_sourceImage;
-    RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
 };
 
 } // namespace WebCore

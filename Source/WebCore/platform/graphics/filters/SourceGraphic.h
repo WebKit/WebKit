@@ -34,6 +34,10 @@ public:
 private:
     SourceGraphic();
 
+#if USE(CORE_IMAGE)
+    bool supportsCoreImageRendering() const override { return true; }
+#endif
+
     void determineAbsolutePaintRect(const Filter&) override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;

@@ -28,21 +28,21 @@
 
 namespace WebCore {
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect)
 {
-    return create(filterElement, builder, filterScale, sourceImageRect, filterRegion, filterRegion, &previousEffect);
+    return create(filterElement, builder, renderingMode, filterScale, sourceImageRect, filterRegion, filterRegion, &previousEffect);
 }
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox)
 {
-    return create(filterElement, builder, filterScale, sourceImageRect, filterRegion, targetBoundingBox, nullptr);
+    return create(filterElement, builder, renderingMode, filterScale, sourceImageRect, filterRegion, targetBoundingBox, nullptr);
 }
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect)
 {
     bool primitiveBoundingBoxMode = filterElement.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    auto filter = adoptRef(*new SVGFilter(filterScale, sourceImageRect, filterRegion, targetBoundingBox, primitiveBoundingBoxMode));
+    auto filter = adoptRef(*new SVGFilter(renderingMode, filterScale, sourceImageRect, filterRegion, targetBoundingBox, primitiveBoundingBoxMode));
 
     if (!previousEffect)
         builder.setupBuiltinEffects(SourceGraphic::create());
@@ -62,11 +62,17 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
 
     ASSERT(!expression.isEmpty());
     filter->setExpression(WTFMove(expression));
+    
+#if USE(CORE_IMAGE)
+    if (!filter->supportsCoreImageRendering())
+        filter->setRenderingMode(RenderingMode::Unaccelerated);
+#endif
+
     return filter;
 }
 
-SVGFilter::SVGFilter(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, bool effectBBoxMode)
-    : Filter(Filter::Type::SVGFilter, filterScale, sourceImageRect, filterRegion)
+SVGFilter::SVGFilter(RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, bool effectBBoxMode)
+    : Filter(Filter::Type::SVGFilter, renderingMode, filterScale, sourceImageRect, filterRegion)
     , m_targetBoundingBox(targetBoundingBox)
     , m_effectBBoxMode(effectBBoxMode)
 {
@@ -79,6 +85,22 @@ FloatSize SVGFilter::scaledByFilterScale(FloatSize size) const
 
     return Filter::scaledByFilterScale(size);
 }
+
+#if USE(CORE_IMAGE)
+bool SVGFilter::supportsCoreImageRendering() const
+{
+    if (renderingMode() == RenderingMode::Unaccelerated)
+        return false;
+
+    ASSERT(!m_expression.isEmpty());
+    for (auto& effect : m_expression) {
+        if (!effect->supportsCoreImageRendering())
+            return false;
+    }
+
+    return true;
+}
+#endif
 
 bool SVGFilter::apply(const Filter& filter)
 {

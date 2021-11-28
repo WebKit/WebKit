@@ -2101,7 +2101,6 @@ platform/graphics/filters/FESpecularLighting.cpp
 platform/graphics/filters/FETile.cpp
 platform/graphics/filters/FETurbulence.cpp
 platform/graphics/filters/FilterEffect.cpp
-platform/graphics/filters/FilterEffectRenderer.cpp
 platform/graphics/filters/FilterFunction.cpp
 platform/graphics/filters/FilterImage.cpp
 platform/graphics/filters/FilterOperation.cpp

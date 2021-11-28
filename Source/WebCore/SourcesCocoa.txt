@@ -402,7 +402,10 @@ platform/graphics/cv/CVUtilities.mm
 platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/GraphicsContextGLCVANGLE.cpp
-platform/graphics/coreimage/FilterEffectRendererCoreImage.mm
+platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm
+platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm
+platform/graphics/coreimage/FilterImageCoreImage.mm
+platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm
 platform/graphics/gpu/cocoa/GPUPrewarmingMetal.mm
 platform/graphics/ios/DisplayRefreshMonitorIOS.mm
 platform/graphics/ios/IconIOS.mm

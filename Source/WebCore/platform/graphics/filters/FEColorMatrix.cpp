@@ -28,6 +28,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEColorMatrixCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values)
@@ -94,6 +98,13 @@ Vector<float> FEColorMatrix::normalizedFloats(const Vector<float>& values)
     return normalizedValues;
 }
 
+#if USE(CORE_IMAGE)
+bool FEColorMatrix::supportsCoreImageRendering() const
+{
+    return FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this);
+}
+#endif
+
 bool FEColorMatrix::resultIsAlphaImage() const
 {
     return m_type == FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
@@ -102,9 +113,8 @@ bool FEColorMatrix::resultIsAlphaImage() const
 std::unique_ptr<FilterEffectApplier> FEColorMatrix::createApplier(const Filter& filter) const
 {
 #if USE(CORE_IMAGE)
-    // FIXME: return FEColorMatrixCoreImageApplier.
     if (filter.renderingMode() == RenderingMode::Accelerated)
-        return nullptr;
+        return FilterEffectApplier::create<FEColorMatrixCoreImageApplier>(*this);
 #endif
     return FilterEffectApplier::create<FEColorMatrixSoftwareApplier>(*this);
 }

@@ -65,6 +65,15 @@ IntRect FilterImage::absoluteImageRectRelativeTo(const FilterImage& origin) cons
 
 ImageBuffer* FilterImage::imageBuffer()
 {
+#if USE(CORE_IMAGE)
+    if (m_ciImage)
+        return imageBufferFromCIImage();
+#endif
+    return imageBufferFromPixelBuffer();
+}
+
+ImageBuffer* FilterImage::imageBufferFromPixelBuffer()
+{
     if (m_imageBuffer)
         return m_imageBuffer.get();
 

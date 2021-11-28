@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class FilterEffect;
-class FilterEffectRenderer;
 class FilterOperations;
 class GraphicsContext;
 class ReferenceFilterOperation;
@@ -71,7 +70,11 @@ public:
     LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
 private:
-    CSSFilter(bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin, float scaleFactor);
+    CSSFilter(RenderingMode, float scaleFactor, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
+
+#if USE(CORE_IMAGE)
+    bool supportsCoreImageRendering() const override;
+#endif
 
     bool m_graphicsBufferAttached { false };
     bool m_hasFilterThatMovesPixels { false };
@@ -80,8 +83,6 @@ private:
     Vector<Ref<FilterFunction>> m_functions;
 
     mutable IntOutsets m_outsets;
-
-    std::unique_ptr<FilterEffectRenderer> m_filterRenderer;
 };
 
 } // namespace WebCore

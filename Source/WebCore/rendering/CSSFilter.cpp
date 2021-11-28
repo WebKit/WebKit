@@ -32,7 +32,6 @@
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
 #include "FEMerge.h"
-#include "FilterEffectRenderer.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "LengthFunctions.h"
@@ -55,14 +54,11 @@ RefPtr<CSSFilter> CSSFilter::create(const FilterOperations& operations, Renderin
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
-    auto filter = adoptRef(*new CSSFilter(hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin, scaleFactor));
-
-    filter->setRenderingMode(renderingMode);
-    return filter;
+    return adoptRef(*new CSSFilter(renderingMode, scaleFactor, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 }
 
-CSSFilter::CSSFilter(bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin, float scaleFactor)
-    : Filter(Filter::Type::CSSFilter, FloatSize { scaleFactor, scaleFactor })
+CSSFilter::CSSFilter(RenderingMode renderingMode, float scaleFactor, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
+    : Filter(Filter::Type::CSSFilter, renderingMode, FloatSize { scaleFactor, scaleFactor })
     , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
     , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
 {
@@ -225,7 +221,7 @@ static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilte
     }
 
     SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.filterScale(), filter.sourceImageRect(), filter.filterRegion(), previousEffect);
+    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.sourceImageRect(), filter.filterRegion(), previousEffect);
 }
 
 static void setupLastEffectProperties(FilterEffect& effect, FilterConsumer consumer)
@@ -329,9 +325,10 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
     m_functions.shrinkToFit();
 
 #if USE(CORE_IMAGE)
-    if (!m_filterRenderer)
-        m_filterRenderer = FilterEffectRenderer::tryCreate(renderer.settings().coreImageAcceleratedFilterRenderEnabled(), *lastEffect());
+    if (!supportsCoreImageRendering())
+        setRenderingMode(RenderingMode::Unaccelerated);
 #endif
+
     return true;
 }
 
@@ -367,8 +364,7 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
         setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 #else
         UNUSED_PARAM(targetContext);
-        RenderingMode mode = m_filterRenderer ? RenderingMode::Accelerated : renderingMode();
-        setSourceImage(ImageBuffer::create(logicalSize, mode, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 #endif
         if (auto context = inputContext())
             context->scale(filterScale());
@@ -388,6 +384,21 @@ RefPtr<FilterEffect> CSSFilter::lastEffect()
 
     return downcast<FilterEffect>(function.ptr());
 }
+
+#if USE(CORE_IMAGE)
+bool CSSFilter::supportsCoreImageRendering() const
+{
+    if (renderingMode() == RenderingMode::Unaccelerated)
+        return false;
+
+    for (auto& function : m_functions) {
+        if (!function->supportsCoreImageRendering())
+            return false;
+    }
+
+    return true;
+}
+#endif
 
 void CSSFilter::determineFilterPrimitiveSubregion()
 {
@@ -410,21 +421,12 @@ void CSSFilter::clearIntermediateResults()
 
 bool CSSFilter::apply()
 {
-    auto effect = lastEffect();
-    if (m_filterRenderer) {
-        m_filterRenderer->applyEffects(*this, *effect);
-        if (m_filterRenderer->hasResult()) {
-            effect->transformResultColorSpace(DestinationColorSpace::SRGB());
-            return true;
-        }
-    }
-
     for (auto& function : m_functions) {
         if (!function->apply(*this))
             return false;
     }
 
-    effect->transformResultColorSpace(DestinationColorSpace::SRGB());
+    lastEffect()->transformResultColorSpace(DestinationColorSpace::SRGB());
     return true;
 }
 
@@ -440,9 +442,6 @@ LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filte
 
 ImageBuffer* CSSFilter::output()
 {
-    if (m_filterRenderer && m_filterRenderer->hasResult())
-        return m_filterRenderer->output();
-
     if (auto result = lastEffect()->filterImage())
         return result->imageBuffer();
 
@@ -471,8 +470,8 @@ IntRect CSSFilter::outputRect()
 {
     auto effect = lastEffect();
 
-    if (effect->hasResult() || (m_filterRenderer && m_filterRenderer->hasResult()))
-        return effect->absolutePaintRect() - IntPoint(filterRegion().location());
+    if (auto result = effect->filterImage())
+        return result->absoluteImageRect() - IntPoint(filterRegion().location());
 
     return { };
 }

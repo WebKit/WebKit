@@ -26,6 +26,7 @@
 #import "config.h"
 #import "CVUtilities.h"
 
+#import "ColorSpaceCG.h"
 #import <wtf/StdLibExtras.h>
 #import "CoreVideoSoftLink.h"
 

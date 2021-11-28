@@ -25,6 +25,10 @@
 #include "SourceGraphicSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "SourceGraphicCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<SourceGraphic> SourceGraphic::create()
@@ -48,7 +52,7 @@ std::unique_ptr<FilterEffectApplier> SourceGraphic::createApplier(const Filter& 
 #if USE(CORE_IMAGE)
     // FIXME: return SourceGraphicCoreImageApplier.
     if (filter.renderingMode() == RenderingMode::Accelerated)
-        return nullptr;
+        return FilterEffectApplier::create<SourceGraphicCoreImageApplier>(*this);
 #endif
     return FilterEffectApplier::create<SourceGraphicSoftwareApplier>(*this);
 }

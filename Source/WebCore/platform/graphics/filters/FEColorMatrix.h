@@ -52,6 +52,10 @@ public:
 private:
     FEColorMatrix(ColorMatrixType, Vector<float>&&);
 
+#if USE(CORE_IMAGE)
+    bool supportsCoreImageRendering() const override;
+#endif
+    
     bool resultIsAlphaImage() const override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;

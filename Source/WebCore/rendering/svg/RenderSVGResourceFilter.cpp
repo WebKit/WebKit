@@ -126,9 +126,12 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     absoluteDrawingRegion.scale(filterScale);
     ImageBuffer::sizeNeedsClamping(absoluteDrawingRegion.size(), filterScale);
 
+    // Set the rendering mode from the page's settings.
+    auto renderingMode = renderer.settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+
     // Create the SVGFilter object.
     filterData->builder = makeUnique<SVGFilterBuilder>();
-    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, filterScale, absoluteDrawingRegion, filterData->boundaries, targetBoundingBox);
+    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, absoluteDrawingRegion, filterData->boundaries, targetBoundingBox);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -160,22 +163,18 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // Change the coordinate transformation applied to the filtered element to reflect the resolution of the filter.
     AffineTransform effectiveTransform = AffineTransform(filterScale.width(), 0, 0, filterScale.height(), 0, 0);
 
-    auto renderingMode = renderer.settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     auto colorSpace = DestinationColorSpace::LinearSRGB();
 #else
     auto colorSpace = DestinationColorSpace::SRGB();
 #endif
-    auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, colorSpace, renderingMode, context);
+    auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, colorSpace, filterData->filter->renderingMode(), context);
     if (!sourceGraphic) {
         ASSERT(m_rendererFilterDataMap.contains(&renderer));
         filterData->savedContext = context;
         return false;
     }
     
-    // Set the rendering mode from the page's settings.
-    filterData->filter->setRenderingMode(renderingMode);
-
     GraphicsContext& sourceGraphicContext = sourceGraphic->context();
   
     filterData->sourceGraphicBuffer = WTFMove(sourceGraphic);

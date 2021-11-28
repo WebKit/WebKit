@@ -31,6 +31,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+#if USE(CORE_IMAGE)
+OBJC_CLASS CIImage;
+#endif
+
 namespace WebCore {
 
 class Filter;
@@ -61,10 +65,21 @@ public:
     void correctPremultipliedPixelBuffer();
     void transformToColorSpace(const DestinationColorSpace&);
 
+#if USE(CORE_IMAGE)
+    RetainPtr<CIImage> ciImage() const { return m_ciImage; }
+    void setCIImage(RetainPtr<CIImage>&&);
+#endif
+
 private:
     FilterImage(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
 
     std::optional<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
+
+    ImageBuffer* imageBufferFromPixelBuffer();
+
+#if USE(CORE_IMAGE)
+    ImageBuffer* imageBufferFromCIImage();
+#endif
 
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
 
@@ -78,6 +93,10 @@ private:
     RefPtr<ImageBuffer> m_imageBuffer;
     std::optional<PixelBuffer> m_unpremultipliedPixelBuffer;
     std::optional<PixelBuffer> m_premultipliedPixelBuffer;
+
+#if USE(CORE_IMAGE)
+    RetainPtr<CIImage> m_ciImage;
+#endif
 };
 
 } // namespace WebCore

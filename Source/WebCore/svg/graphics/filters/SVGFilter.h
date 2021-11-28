@@ -33,9 +33,9 @@ class SVGFilterElement;
 
 class SVGFilter final : public Filter {
 public:
-    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect);
-    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox);
-    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect);
 
     FloatSize scaledByFilterScale(FloatSize) const final;
 
@@ -46,7 +46,11 @@ public:
     RefPtr<FilterEffect> lastEffect() const { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
 
 private:
-    SVGFilter(const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
+    SVGFilter(RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
+
+#if USE(CORE_IMAGE)
+    bool supportsCoreImageRendering() const override;
+#endif
 
     bool apply(const Filter&) override;
     IntOutsets outsets() const override;

@@ -29,6 +29,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEComponentTransferCoreImageApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
@@ -45,12 +49,18 @@ FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFun
 {
 }
 
+#if USE(CORE_IMAGE)
+bool FEComponentTransfer::supportsCoreImageRendering() const
+{
+    return FEComponentTransferCoreImageApplier::supportsCoreImageRendering(*this);
+}
+#endif
+
 std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createApplier(const Filter& filter) const
 {
 #if USE(CORE_IMAGE)
-    // FIXME: return FEComponentTransferCoreImageApplier.
     if (filter.renderingMode() == RenderingMode::Accelerated)
-        return nullptr;
+        return FilterEffectApplier::create<FEComponentTransferCoreImageApplier>(*this);
 #endif
     return FilterEffectApplier::create<FEComponentTransferSoftwareApplier>(*this);
 }
