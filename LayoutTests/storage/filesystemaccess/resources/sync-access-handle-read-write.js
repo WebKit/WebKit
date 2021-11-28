@@ -1,21 +1,12 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('shared.js');
 }
 
 description("This test checks read and write capabilities of FileSystemSyncAccessHandle.");
 
 var accessHandle, fileSize, writeBuffer, writeSize, readBuffer, readSize, readText, readError;
 var totalReadSize = 0, totalWriteSize = 0;
-
-var testString;
-
-function finishTest(error)
-{
-    if (error) {
-        testFailed(error);
-    }
-    finishJSTest();
-}
 
 function arrayBufferToString(buffer)
 {
@@ -50,7 +41,8 @@ function read(accessHandle, offset, size, expectedString)
     return readSize;
 }
 
-async function test() {
+async function test() 
+{
     try {
         var rootHandle = await navigator.storage.getDirectory();
         // Create a new file for this test.

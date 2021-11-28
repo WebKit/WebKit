@@ -1,20 +1,14 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('shared.js');
 }
 
 description("This test checks basic funtionalities of FileSystemSyncAccessHandle.");
 
 var rootHandle, fileHandle, accessHandle1, accessHandle2, createError;
 
-function finishTest(error)
+function getDirectory() 
 {
-    if (error) {
-        testFailed(error);
-    }
-    finishJSTest();
-}
-
-function getDirectory() {
     navigator.storage.getDirectory().then((handle) => {
         rootHandle = handle;
         rootHandle.removeEntry("sync-access-handle.txt").then(() => {
@@ -27,7 +21,8 @@ function getDirectory() {
     });
 }
 
-function createFileHandle(fromHandle) {
+function createFileHandle(fromHandle) 
+{
     fromHandle.getFileHandle("sync-access-handle.txt", { "create" : true }).then((handle) => {
         fileHandle = handle;
         shouldBeEqualToString("fileHandle.name", "sync-access-handle.txt");
@@ -38,7 +33,8 @@ function createFileHandle(fromHandle) {
     });
 }
 
-function createSyncAccessHandle(fromHandle) {
+function createSyncAccessHandle(fromHandle) 
+{
     fromHandle.createSyncAccessHandle().then((handle) => {
         accessHandle1 = handle;
         debug("accessHandle1 is created");
@@ -48,7 +44,8 @@ function createSyncAccessHandle(fromHandle) {
     });
 }
 
-function getSize(accessHandle) {
+function getSize(accessHandle) 
+{
     accessHandle.getSize().then((result) => {
         size = result;
         shouldBe("size", "0");
@@ -58,7 +55,8 @@ function getSize(accessHandle) {
     });
 }
 
-function createSecondSyncAcessHandle(fromHandle) {
+function createSecondSyncAcessHandle(fromHandle) 
+{
     fromHandle.createSyncAccessHandle().then((handle) => {
         accessHandle2 = handle;
         // Second creation should succeed.
@@ -73,7 +71,8 @@ function createSecondSyncAcessHandle(fromHandle) {
     });
 }
 
-function close() {
+function close() 
+{
     accessHandle1.close().then((result) => {
         debug("accessHandle1 is closed");
         createSecondSyncAcessHandle(fileHandle);

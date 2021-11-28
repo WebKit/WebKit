@@ -1,20 +1,14 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('shared.js');
 }
 
 description("This test checks basic funtionalities of FileSystemDirectoryHandle.");
 
 var rootHandle, dirHandle, fileHandle, isSameEntry, handleNames, createError;
 
-function finishTest(error)
+function getDirectory() 
 {
-    if (error) {
-        testFailed(error);
-    }
-    finishJSTest();
-}
-
-function getDirectory() {
     navigator.storage.getDirectory().then((handle) => {
         rootHandle = handle;
         shouldBeEqualToString("rootHandle.name", "");
@@ -25,7 +19,8 @@ function getDirectory() {
     });
 }
 
-function createDirectoryHandle(fromHandle) {
+function createDirectoryHandle(fromHandle) 
+{
     fromHandle.getDirectoryHandle("dir", { "create" : true }).then((handle) => {
         dirHandle = handle;
         shouldBeEqualToString("dirHandle.name", "dir");
@@ -47,7 +42,8 @@ function checkIfSameEntry(handle1, handle2)
     });
 }
 
-function createFileHandle(fromHandle, create) {
+function createFileHandle(fromHandle, create) 
+{
     let options = { "create" : create };
     fromHandle.getFileHandle("file", options).then((handle) => {
         fileHandle = handle;
@@ -65,7 +61,8 @@ function createFileHandle(fromHandle, create) {
     });
 }
 
-function resolvePath() {
+function resolvePath() 
+{
     rootHandle.resolve(fileHandle).then((result) => {
         handleNames = result;
         shouldBe("handleNames.length", "2");
@@ -77,7 +74,8 @@ function resolvePath() {
     });
 }
 
-function removeEntry(fromHandle, name) {
+function removeEntry(fromHandle, name) 
+{
     fromHandle.removeEntry(name).then((result) => {
         // No error means it is removed.
         createFileHandle(dirHandle, false);

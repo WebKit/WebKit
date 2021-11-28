@@ -1,5 +1,6 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('shared.js');
 }
 
 description("This test checks close() of FileSystemSyncAccessHandle");
@@ -13,14 +14,6 @@ var functions = [
     { name : "read", args : [buffer, options], sync : true },
     { name : "write", args : [buffer, options], sync : true },
 ];
-
-function finishTest(error)
-{
-    if (error) {
-        testFailed(error);
-    }
-    finishJSTest();
-}
 
 function testSyncFunction(currentFunction)
 {

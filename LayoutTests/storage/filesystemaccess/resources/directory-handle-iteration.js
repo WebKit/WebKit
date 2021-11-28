@@ -1,5 +1,6 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('shared.js');
 }
 
 description('This test checks iteration on FileSystemDirectoryHandle.');
@@ -7,14 +8,6 @@ description('This test checks iteration on FileSystemDirectoryHandle.');
 const handleTypes = ['directory', 'directory', 'file', 'file'];
 const handleNames = ['dir1', 'dir2', 'file1', 'file2'];
 var index, isEqual, iterator, prototype, descriptor, resultKeys, resultValuesName, resultValuesType, resultEntries, nextResults, expectedResults, nextResultsEnd;
-
-function finishTest(error)
-{
-    if (error) {
-        testFailed(error);
-    }
-    finishJSTest();
-}
 
 function testPrototype(it)
 {

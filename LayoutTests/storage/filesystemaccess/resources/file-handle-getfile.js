@@ -1,20 +1,14 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('shared.js');
 }
 
 description("This test checks getFile() of FileSystemFileHandle.");
 
 var rootHandle, fileHandle, fileObject, writeSize, writeBuffer, fileContent;
 
-function finishTest(error)
+async function read(file) 
 {
-    if (error) {
-        testFailed(error);
-    }
-    finishJSTest();
-}
-
-async function read(file) {
     return new Promise((resolve, reject) => {
         var reader = new FileReader();
         reader.readAsText(file);
@@ -27,7 +21,8 @@ async function read(file) {
     });
 }
 
-async function test() {
+async function test() 
+{
     try {
         var rootHandle = await navigator.storage.getDirectory();
         // Create a new file for this test.
