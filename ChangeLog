@@ -1,3 +1,14 @@
+2021-11-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add WebGPU to the "All Source" scheme in WebKit.xcworkspace
+        https://bugs.webkit.org/show_bug.cgi?id=233542
+
+        Reviewed by Dean Jackson.
+
+        This scheme should build WebGPU.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2021-11-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, update atomics detection to make libpas built on Linux
