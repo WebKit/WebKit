@@ -1,3 +1,13 @@
+2021-11-28  Philippe Normand  <pnormand@igalia.com>
+
+        Weird JS usage in webrtc/multi-video.html
+        https://bugs.webkit.org/show_bug.cgi?id=233540
+
+        Reviewed by Youenn Fablet.
+
+        * webrtc/multi-video.html: MediaStream.getVideoTracks() accepts no argument and returns a
+        sequence. The MediaStream constructor needs a sequence of tracks.
+
 2021-11-27  Sam Weinig  <weinig@apple.com>
 
         [CSS Color 4] Add support for oklab() and oklch() colors

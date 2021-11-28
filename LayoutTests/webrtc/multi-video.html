@@ -71,12 +71,13 @@ promise_test((test) => {
             setTimeout(() => reject("Test timed out"), 5000);
         });
     }).then((stream) => {
-        video1.srcObject = new MediaStream(stream.getVideoTracks([0]));
-        video2.srcObject = new MediaStream(stream.getVideoTracks([1]));
-        video3.srcObject = new MediaStream(stream.getVideoTracks([2]));
-        video4.srcObject = new MediaStream(stream.getVideoTracks([3]));
-        video5.srcObject = new MediaStream(stream.getVideoTracks([4]));
-        video6.srcObject = new MediaStream(stream.getVideoTracks([5]));
+        var tracks = stream.getVideoTracks();
+        video1.srcObject = new MediaStream([tracks[0]]);
+        video2.srcObject = new MediaStream([tracks[1]]);
+        video3.srcObject = new MediaStream([tracks[2]]);
+        video4.srcObject = new MediaStream([tracks[3]]);
+        video5.srcObject = new MediaStream([tracks[4]]);
+        video6.srcObject = new MediaStream([tracks[5]]);
         return Promise.all([video1.play(), video2.play(), video3.play(), video4.play(), video5.play(), video6.play()]);
     }).then(() => {
         return waitFor(100);
