@@ -4635,6 +4635,15 @@
    },
    {
       "emails" : [
+         "mattwoodrow@apple.com"
+      ],
+      "name" : "Matt Woodrow",
+      "nicks" : [
+         "mattwoodrow"
+      ]
+   },
+   {
+      "emails" : [
          "mmirman@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",

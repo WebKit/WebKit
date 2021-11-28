@@ -1,3 +1,12 @@
+2021-11-28  Matt Woodrow  <matt.woodrow@gmail.com>
+
+        Add mattwoodrow to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=233301
+
+        Reviewed by Cameron McCormack.
+
+        * metadata/contributors.json:
+
 2021-11-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add WebGPU to the "All Source" scheme in WebKit.xcworkspace
