@@ -288,20 +288,89 @@ endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
     set(ATOMIC_TEST_SOURCE "
-        #include <atomic>
-        int main() {
-          std::atomic<bool> y (false);
-          std::atomic<uint64_t> x (0);
-          bool expected = true;
-          bool j = y.compare_exchange_weak(expected,false);
-          x++;
-          return 0;
-        }
+#include <stdbool.h>
+#include <stdint.h>
+
+#define COMPILER(FEATURE) (defined COMPILER_##FEATURE  && COMPILER_##FEATURE)
+
+#if defined(__clang__)
+#define COMPILER_CLANG 1
+#endif
+
+#if defined(__GNUC__)
+#define COMPILER_GCC_COMPATIBLE 1
+#endif
+
+#if COMPILER(GCC_COMPATIBLE) && !COMPILER(CLANG)
+#define COMPILER_GCC 1
+#endif
+
+#if defined(_MSC_VER)
+#define COMPILER_MSVC 1
+#endif
+
+#define CPU(_FEATURE) (defined CPU_##_FEATURE && CPU_##_FEATURE)
+
+
+#if COMPILER(GCC_COMPATIBLE)
+/* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
+#if __SIZEOF_POINTER__ == 8
+#define CPU_ADDRESS64 1
+#elif __SIZEOF_POINTER__ == 4
+#define CPU_ADDRESS32 1
+#endif
+#endif
+
+static inline bool compare_and_swap_bool_weak(bool* ptr, bool old_value, bool new_value)
+{
+#if COMPILER(CLANG)
+    return __c11_atomic_compare_exchange_weak((_Atomic bool*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((bool*)ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
+}
+
+#if CPU(ADDRESS64)
+
+typedef __uint128_t pair;
+
+static inline bool compare_and_swap_pair_weak(void* raw_ptr, pair old_value, pair new_value)
+{
+#if COMPILER(CLANG)
+    return __c11_atomic_compare_exchange_weak((_Atomic pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((pair*)raw_ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
+}
+#endif
+
+static inline bool compare_and_swap_uint64_weak(uint64_t* ptr, uint64_t old_value, uint64_t new_value)
+{
+#if COMPILER(CLANG)
+    return __c11_atomic_compare_exchange_weak((_Atomic uint64_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((uint64_t*)ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
+}
+
+int main() {
+    bool y = false;
+    bool expected = true;
+    bool j = compare_and_swap_bool_weak(&y, expected, false);
+#if CPU(ADDRESS64)
+    pair x = 42;
+    bool k = compare_and_swap_pair_weak(&x, 42, 55);
+#endif
+    uint64_t z = 42;
+    bool l = compare_and_swap_uint64_weak(&z, 42, 56);
+    int result = (j || k || l) ? 0 : 1;
+    return result;
+}
     ")
-    check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_ARE_BUILTIN)
+    check_c_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_ARE_BUILTIN)
     if (NOT ATOMICS_ARE_BUILTIN)
         set(CMAKE_REQUIRED_LIBRARIES atomic)
-        check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_REQUIRE_LIBATOMIC)
+        check_c_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_REQUIRE_LIBATOMIC)
         unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
 

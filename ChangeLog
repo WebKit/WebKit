@@ -1,3 +1,9 @@
+2021-11-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, update atomics detection to make libpas built on Linux
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2021-11-26  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.35.1 release
