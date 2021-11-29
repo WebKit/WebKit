@@ -73,11 +73,6 @@ void UNumberRangeFormatterDeleter::operator()(UNumberRangeFormatter* formatter)
 }
 #endif
 
-struct IntlNumberFormatField {
-    int32_t type;
-    size_t size;
-};
-
 IntlNumberFormat* IntlNumberFormat::create(VM& vm, Structure* structure)
 {
     IntlNumberFormat* format = new (NotNull, allocateCell<IntlNumberFormat>(vm)) IntlNumberFormat(vm, structure);
@@ -895,6 +890,361 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, IntlMathemat
 }
 #endif
 
+static constexpr int32_t literalField = -1;
+struct IntlNumberFormatField {
+    int32_t m_field;
+    WTF::Range<int32_t> m_range;
+};
+
+static Vector<IntlNumberFormatField> flattenFields(Vector<IntlNumberFormatField>&& fields, int32_t formattedStringLength)
+{
+    // ICU generates sequence of nested fields, but ECMA402 requires non-overlapping sequence of parts.
+    // This function flattens nested fields into sequence of non-overlapping parts.
+    //
+    // Formatted string: "100,000–20,000,000"
+    //                    |  |  | | |   |  |
+    //                    |  B  | | E   F  |
+    //                    |     | |        |
+    //                    +--C--+ +---G----+
+    //                    +--A--+ +---D----+
+    //
+    // Ranges ICU generates:
+    //     A:    (0, 7)   UFIELD_CATEGORY_NUMBER_RANGE_SPAN startRange
+    //     B:    (3, 4)   UFIELD_CATEGORY_NUMBER group ","
+    //     C:    (0, 7)   UFIELD_CATEGORY_NUMBER integer
+    //     D:    (8, 18)  UFIELD_CATEGORY_NUMBER_RANGE_SPAN endRange
+    //     E:    (10, 11) UFIELD_CATEGORY_NUMBER group ","
+    //     F:    (14, 15) UFIELD_CATEGORY_NUMBER group ","
+    //     G:    (8, 18)  UFIELD_CATEGORY_NUMBER integer
+    //
+    // Then, we need to generate:
+    //     A:    (0, 3)   startRange integer
+    //     B:    (3, 4)   startRange group ","
+    //     C:    (4, 7)   startRange integer
+    //     D:    (7, 8)   shared     literal "-"
+    //     E:    (8, 10)  endRange   integer
+    //     F:    (10, 11) endRange   group ","
+    //     G:    (11, 14) endRange   integer
+    //     H:    (14, 15) endRange   group ","
+    //     I:    (15, 18) endRange   integer
+
+    std::sort(fields.begin(), fields.end(), [](auto& lhs, auto& rhs) {
+        if (lhs.m_range.begin() < rhs.m_range.begin())
+            return true;
+        if (lhs.m_range.begin() > rhs.m_range.begin())
+            return false;
+        if (lhs.m_range.end() < rhs.m_range.end())
+            return false;
+        if (lhs.m_range.end() > rhs.m_range.end())
+            return true;
+        return lhs.m_field < rhs.m_field;
+    });
+
+    Vector<IntlNumberFormatField> flatten;
+    Vector<IntlNumberFormatField> stack;
+    // Top-level field covers entire parts, which makes parts "literal".
+    stack.append(IntlNumberFormatField { literalField, { 0, formattedStringLength } });
+
+    unsigned cursor = 0;
+    int32_t begin = 0;
+    while (cursor < fields.size()) {
+        const auto& field = fields[cursor];
+
+        // If the new field is out of the current top-most field, roll up and insert a flatten field.
+        // Because the top-level field in the stack covers all index range, this condition always becomes false
+        // if stack size is 1.
+        while (stack.last().m_range.end() < field.m_range.begin()) {
+            if (begin < stack.last().m_range.end()) {
+                IntlNumberFormatField flattenField { stack.last().m_field, { begin, stack.last().m_range.end() } };
+                flatten.append(flattenField);
+                begin = flattenField.m_range.end();
+            }
+            stack.removeLast();
+        }
+        ASSERT(!stack.isEmpty()); // At least, top-level field exists.
+
+        // If the new field is starting with the same index, diving into the new field by adding it into stack.
+        if (begin == field.m_range.begin()) {
+            stack.append(field);
+            ++cursor;
+            continue;
+        }
+
+        // If there is a room between the current top-most field and the new field, insert a flatten field.
+        if (begin < field.m_range.begin()) {
+            IntlNumberFormatField flattenField { stack.last().m_field, { begin, field.m_range.begin() } };
+            flatten.append(flattenField);
+            stack.append(field);
+            begin = field.m_range.begin();
+            ++cursor;
+            continue;
+        }
+    }
+
+    // Roll up the nested field at the end of the formatted string sequence.
+    // For example,
+    //
+    //      <------------A-------------->
+    //      <--------B------------>
+    //      <---C---->
+    //
+    // Then, after C finishes, we should insert remaining B and A.
+    while (!stack.isEmpty()) {
+        if (begin < stack.last().m_range.end()) {
+            IntlNumberFormatField flattenField { stack.last().m_field, { begin, stack.last().m_range.end() } };
+            flatten.append(flattenField);
+            begin = flattenField.m_range.end();
+        }
+        stack.removeLast();
+    }
+
+    return flatten;
+}
+
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS)
+static bool numberFieldsPracticallyEqual(const UFormattedValue* formattedValue, UErrorCode& status)
+{
+    auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
+    if (U_FAILURE(status))
+        return false;
+
+    // We only care about UFIELD_CATEGORY_NUMBER_RANGE_SPAN category.
+    ucfpos_constrainCategory(iterator.get(), UFIELD_CATEGORY_NUMBER_RANGE_SPAN, &status);
+    if (U_FAILURE(status))
+        return false;
+
+    bool hasSpan = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
+    if (U_FAILURE(status))
+        return false;
+
+    return !hasSpan;
+}
+
+void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, Style style, IntlMathematicalValue&& start, IntlMathematicalValue&& end, const UFormattedValue* formattedValue, JSArray* parts)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    UErrorCode status = U_ZERO_ERROR;
+
+    int32_t formattedStringLength = 0;
+    const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format number range"_s);
+        return;
+    }
+    String resultString(formattedStringPointer, formattedStringLength);
+
+    // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
+    // So we do not constraint iterator.
+    auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format number range"_s);
+        return;
+    }
+
+    auto sharedString = jsNontrivialString(vm, "shared"_s);
+    auto startRangeString = jsNontrivialString(vm, "startRange"_s);
+    auto endRangeString = jsNontrivialString(vm, "endRange"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_s);
+
+    WTF::Range<int32_t> startRange { -1, -1 };
+    WTF::Range<int32_t> endRange { -1, -1 };
+    Vector<IntlNumberFormatField> fields;
+
+    while (true) {
+        bool next = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format number range"_s);
+            return;
+        }
+        if (!next)
+            break;
+
+        int32_t category = ucfpos_getCategory(iterator.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format number range"_s);
+            return;
+        }
+
+        int32_t fieldType = ucfpos_getField(iterator.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format number range"_s);
+            return;
+        }
+
+        int32_t beginIndex = 0;
+        int32_t endIndex = 0;
+        ucfpos_getIndexes(iterator.get(), &beginIndex, &endIndex, &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format number interval"_s);
+            return;
+        }
+
+        dataLogLnIf(IntlNumberFormatInternal::verbose, category, " ", fieldType, " (", beginIndex, ", ", endIndex, ")");
+
+        if (category != UFIELD_CATEGORY_NUMBER && category != UFIELD_CATEGORY_NUMBER_RANGE_SPAN)
+            continue;
+        if (category == UFIELD_CATEGORY_NUMBER && fieldType < 0)
+            continue;
+
+        if (category == UFIELD_CATEGORY_NUMBER_RANGE_SPAN) {
+            // > The special field category UFIELD_CATEGORY_NUMBER_RANGE_SPAN is used to indicate which number
+            // > primitives came from which arguments: 0 means start, and 1 means end. The span category
+            // > will always occur before the corresponding fields in UFIELD_CATEGORY_NUMBER in the nextPosition() iterator.
+            // from ICU comment. So, field 0 is startRange, field 1 is endRange.
+            if (!fieldType)
+                startRange = WTF::Range<int32_t>(beginIndex, endIndex);
+            else {
+                ASSERT(fieldType == 1);
+                endRange = WTF::Range<int32_t>(beginIndex, endIndex);
+            }
+            continue;
+        }
+
+        ASSERT(category == UFIELD_CATEGORY_NUMBER);
+
+        fields.append(IntlNumberFormatField { fieldType, { beginIndex, endIndex } });
+    }
+
+    auto flatten = flattenFields(WTFMove(fields), formattedStringLength);
+
+    auto createPart = [&] (JSString* type, int32_t beginIndex, int32_t length) {
+        auto sourceType = [&](int32_t index) -> JSString* {
+            if (startRange.contains(index))
+                return startRangeString;
+            if (endRange.contains(index))
+                return endRangeString;
+            return sharedString;
+        };
+
+        auto value = jsString(vm, resultString.substring(beginIndex, length));
+        JSObject* part = constructEmptyObject(globalObject);
+        part->putDirect(vm, vm.propertyNames->type, type);
+        part->putDirect(vm, vm.propertyNames->value, value);
+        part->putDirect(vm, vm.propertyNames->source, sourceType(beginIndex));
+        return part;
+    };
+
+    for (auto& field : flatten) {
+        bool sign = false;
+        IntlMathematicalValue::NumberType numberType = start.numberType();
+        if (startRange.contains(field.m_range.begin())) {
+            numberType = start.numberType();
+            sign = start.sign();
+        } else {
+            numberType = end.numberType();
+            sign = end.sign();
+        }
+        auto fieldType = field.m_field;
+        auto partType = fieldType == literalField ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
+        JSObject* part = createPart(partType, field.m_range.begin(), field.m_range.distance());
+        parts->push(globalObject, part);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+}
+
+JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, double start, double end) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(m_numberRangeFormatter);
+
+    if (std::isnan(start) || std::isnan(end))
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+
+    if (end < start)
+        return throwRangeError(globalObject, scope, "start is larger than end"_s);
+
+    if (isNegativeZero(end) && start >= 0)
+        return throwRangeError(globalObject, scope, "start is larger than end"_s);
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto range = std::unique_ptr<UFormattedNumberRange, ICUDeleter<unumrf_closeResult>>(unumrf_openResult(&status));
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to format a range"_s);
+
+    unumrf_formatDoubleRange(m_numberRangeFormatter.get(), start, end, range.get(), &status);
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to format a range"_s);
+
+    auto* formattedValue = unumrf_resultAsValue(range.get(), &status);
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to format a range"_s);
+
+    bool equal = numberFieldsPracticallyEqual(formattedValue, status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format number range"_s);
+        return { };
+    }
+
+    if (equal)
+        RELEASE_AND_RETURN(scope, formatToParts(globalObject, start, jsNontrivialString(vm, "shared"_s)));
+
+    JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+    if (!parts) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    formatRangeToPartsInternal(globalObject, m_style, IntlMathematicalValue(start), IntlMathematicalValue(end), formattedValue, parts);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return parts;
+}
+
+JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, IntlMathematicalValue&& start, IntlMathematicalValue&& end) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(m_numberRangeFormatter);
+
+    if (start.numberType() == IntlMathematicalValue::NumberType::NaN || end.numberType() == IntlMathematicalValue::NumberType::NaN)
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+
+    start.ensureNonDouble();
+    const auto& startString = start.getString();
+
+    end.ensureNonDouble();
+    const auto& endString = end.getString();
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto range = std::unique_ptr<UFormattedNumberRange, ICUDeleter<unumrf_closeResult>>(unumrf_openResult(&status));
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to format a range"_s);
+
+    unumrf_formatDecimalRange(m_numberRangeFormatter.get(), startString.data(), startString.length(), endString.data(), endString.length(), range.get(), &status);
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to format a range"_s);
+
+    auto* formattedValue = unumrf_resultAsValue(range.get(), &status);
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to format a range"_s);
+
+    bool equal = numberFieldsPracticallyEqual(formattedValue, status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format number range"_s);
+        return { };
+    }
+
+    if (equal)
+        RELEASE_AND_RETURN(scope, formatToParts(globalObject, WTFMove(start), jsNontrivialString(vm, "shared"_s)));
+
+    JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+    if (!parts) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    formatRangeToPartsInternal(globalObject, m_style, WTFMove(start), WTFMove(end), formattedValue, parts);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return parts;
+}
+#endif
+
 ASCIILiteral IntlNumberFormat::styleString(Style style)
 {
     switch (style) {
@@ -1124,63 +1474,55 @@ void IntlNumberFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
-void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, Style style, bool sign, IntlMathematicalValue::NumberType numberType, const String& formatted, IntlFieldIterator& iterator, JSArray* parts, JSString* unit)
+void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, Style style, bool sign, IntlMathematicalValue::NumberType numberType, const String& formatted, IntlFieldIterator& iterator, JSArray* parts, JSString* sourceType, JSString* unit)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto stringLength = formatted.length();
 
-    int32_t literalFieldType = -1;
-    IntlNumberFormatField literalField { literalFieldType, stringLength };
-    Vector<IntlNumberFormatField, 32> fields(stringLength, literalField);
-    int32_t beginIndex = 0;
-    int32_t endIndex = 0;
-    UErrorCode status = U_ZERO_ERROR;
-    auto fieldType = iterator.next(beginIndex, endIndex, status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to iterate field position iterator"_s);
-        return;
-    }
-    while (fieldType >= 0) {
-        size_t size = endIndex - beginIndex;
-        for (auto i = beginIndex; i < endIndex; ++i) {
-            // Only override previous value if new value is more specific.
-            if (fields[i].size >= size)
-                fields[i] = IntlNumberFormatField { fieldType, size };
-        }
-        fieldType = iterator.next(beginIndex, endIndex, status);
+    Vector<IntlNumberFormatField> fields;
+
+    while (true) {
+        int32_t beginIndex = 0;
+        int32_t endIndex = 0;
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t fieldType = iterator.next(beginIndex, endIndex, status);
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "Failed to iterate field position iterator"_s);
             return;
         }
+        if (fieldType < 0)
+            break;
+
+        fields.append(IntlNumberFormatField { fieldType, { beginIndex, endIndex } });
     }
+
+    auto flatten = flattenFields(WTFMove(fields), stringLength);
 
     auto literalString = jsNontrivialString(vm, "literal"_s);
     Identifier unitName;
     if (unit)
         unitName = Identifier::fromString(vm, "unit");
 
-    size_t currentIndex = 0;
-    while (currentIndex < stringLength) {
-        auto startIndex = currentIndex;
-        auto fieldType = fields[currentIndex].type;
-        while (currentIndex < stringLength && fields[currentIndex].type == fieldType)
-            ++currentIndex;
-        auto partType = fieldType == literalFieldType ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
-        auto partValue = jsSubstring(vm, formatted, startIndex, currentIndex - startIndex);
+    for (auto& field : flatten) {
+        auto fieldType = field.m_field;
+        auto partType = fieldType == literalField ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
+        auto partValue = jsSubstring(vm, formatted, field.m_range.begin(), field.m_range.distance());
         JSObject* part = constructEmptyObject(globalObject);
         part->putDirect(vm, vm.propertyNames->type, partType);
         part->putDirect(vm, vm.propertyNames->value, partValue);
         if (unit)
             part->putDirect(vm, unitName, unit);
+        if (sourceType)
+            part->putDirect(vm, vm.propertyNames->source, sourceType);
         parts->push(globalObject, part);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }
 
 // https://tc39.github.io/ecma402/#sec-formatnumbertoparts
-JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double value) const
+JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double value, JSString* sourceType) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1220,14 +1562,14 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
     if (!parts)
         return throwOutOfMemoryError(globalObject, scope);
 
-    formatToPartsInternal(globalObject, m_style, std::signbit(value), IntlMathematicalValue::numberTypeFromDouble(value), resultString, iterator, parts);
+    formatToPartsInternal(globalObject, m_style, std::signbit(value), IntlMathematicalValue::numberTypeFromDouble(value), resultString, iterator, parts, sourceType, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     return parts;
 }
 
 #if HAVE(ICU_U_NUMBER_FORMATTER)
-JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathematicalValue&& value) const
+JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathematicalValue&& value, JSString* sourceType) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1266,7 +1608,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathem
     if (!parts)
         return throwOutOfMemoryError(globalObject, scope);
 
-    formatToPartsInternal(globalObject, m_style, value.sign(), value.numberType(), resultString, iterator, parts);
+    formatToPartsInternal(globalObject, m_style, value.sign(), value.numberType(), resultString, iterator, parts, sourceType, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     return parts;

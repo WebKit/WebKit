@@ -50,8 +50,13 @@ function shouldNotThrow(func) {
 const validRanges = [[-12345, -5678], [-12345, 56789], [12345, 56789]];
 
 const nf = new Intl.NumberFormat("en", {signDisplay: "exceptZero"});
-if (nf.formatRange) {
-    ['formatRange'].forEach(function(method) {
+if (nf.formatRange || nf.formatRangeToParts) {
+    let methods = [];
+    if (nf.formatRange)
+        methods.push("formatRange");
+    if (nf.formatRangeToParts)
+        methods.push("formatRangeToParts");
+    methods.forEach(function(method) {
         shouldBe("function", typeof nf[method]);
 
         // 2. Perform ? RequireInternalSlot(nf, [[InitializedNumberFormat]]).
@@ -127,10 +132,9 @@ if (nf.formatRange) {
                 const formatted_X_y = nf[method](X, y);
                 const formatted_x_Y = nf[method](x, Y);
                 const formatted_X_Y = nf[method](X, Y);
-                shouldBe(formatted_x_y, formatted_X_y);
-                shouldBe(formatted_x_y, formatted_x_Y);
-                shouldBe(formatted_x_y, formatted_X_Y);
-
+                shouldBe(JSON.stringify(formatted_x_y), JSON.stringify(formatted_X_y));
+                shouldBe(JSON.stringify(formatted_x_y), JSON.stringify(formatted_x_Y));
+                shouldBe(JSON.stringify(formatted_x_y), JSON.stringify(formatted_X_Y));
             });
     });
 }

@@ -43,6 +43,10 @@ static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatFuncFormat);
 static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRange);
 #endif
 
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS)
+static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRangeToParts);
+#endif
+
 }
 
 #include "IntlNumberFormatPrototype.lut.h"
@@ -84,6 +88,9 @@ void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     UNUSED_PARAM(globalObject);
 #if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRange", intlNumberFormatPrototypeFuncFormatRange, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+#endif
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS)
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts", intlNumberFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 #endif
 }
 
@@ -192,6 +199,38 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts, (JSGlobalOb
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, value)));
 #endif
 }
+
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS)
+JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRangeToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Do not use unwrapForOldFunctions.
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
+    if (UNLIKELY(!numberFormat))
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatRangeToParts called on value that's not a NumberFormat"_s));
+
+    JSValue startValue = callFrame->argument(0);
+    JSValue endValue = callFrame->argument(1);
+
+    if (startValue.isUndefined() || endValue.isUndefined())
+        return throwVMTypeError(globalObject, scope, "start or end is undefined"_s);
+
+    auto start = toIntlMathematicalValue(globalObject, startValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto end = toIntlMathematicalValue(globalObject, endValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (auto startNumber = start.tryGetDouble()) {
+        if (auto endNumber = end.tryGetDouble())
+            RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRangeToParts(globalObject, startNumber.value(), endNumber.value())));
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRangeToParts(globalObject, WTFMove(start), WTFMove(end))));
+}
+#endif
 
 JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

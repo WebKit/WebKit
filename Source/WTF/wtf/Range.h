@@ -105,6 +105,8 @@ public:
     Type begin() const { return m_begin; }
     Type end() const { return m_end; }
 
+    Type distance() const { return end() - begin(); }
+
     bool overlaps(const Range& other) const
     {
         return WTF::rangesOverlap(m_begin, m_end, other.m_begin, other.m_end);

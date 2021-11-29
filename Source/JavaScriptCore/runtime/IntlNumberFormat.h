@@ -46,6 +46,13 @@
 #endif
 #endif
 
+#if !defined(HAVE_ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS)
+#if U_ICU_VERSION_MAJOR_NUM >= 69
+#define HAVE_ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS 1
+#endif
+#endif
+
+struct UFormattedValue;
 struct UNumberFormatter;
 struct UNumberRangeFormatter;
 
@@ -170,9 +177,9 @@ public:
     void initializeNumberFormat(JSGlobalObject*, JSValue locales, JSValue optionsValue);
     JSValue format(JSGlobalObject*, double) const;
     JSValue format(JSGlobalObject*, IntlMathematicalValue&&) const;
-    JSValue formatToParts(JSGlobalObject*, double) const;
+    JSValue formatToParts(JSGlobalObject*, double, JSString* sourceType = nullptr) const;
 #if HAVE(ICU_U_NUMBER_FORMATTER)
-    JSValue formatToParts(JSGlobalObject*, IntlMathematicalValue&&) const;
+    JSValue formatToParts(JSGlobalObject*, IntlMathematicalValue&&, JSString* sourceType = nullptr) const;
 #endif
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
@@ -181,12 +188,18 @@ public:
     JSValue formatRange(JSGlobalObject*, IntlMathematicalValue&&, IntlMathematicalValue&&) const;
 #endif
 
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS)
+    JSValue formatRangeToParts(JSGlobalObject*, double, double) const;
+    JSValue formatRangeToParts(JSGlobalObject*, IntlMathematicalValue&&, IntlMathematicalValue&&) const;
+#endif
+
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
     enum class Style : uint8_t { Decimal, Percent, Currency, Unit };
 
-    static void formatToPartsInternal(JSGlobalObject*, Style, bool sign, IntlMathematicalValue::NumberType, const String& formatted, IntlFieldIterator&, JSArray*, JSString* unit = nullptr);
+    static void formatToPartsInternal(JSGlobalObject*, Style, bool sign, IntlMathematicalValue::NumberType, const String& formatted, IntlFieldIterator&, JSArray*, JSString* sourceType, JSString* unit);
+    static void formatRangeToPartsInternal(JSGlobalObject*, Style, IntlMathematicalValue&&, IntlMathematicalValue&&, const UFormattedValue*, JSArray*);
 
     template<typename IntlType>
     friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);

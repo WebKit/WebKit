@@ -1,5 +1,25 @@
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add Intl.NumberFormat.formatRangeToParts
+        https://bugs.webkit.org/show_bug.cgi?id=233539
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-numberformat-format-large.js:
+        (nf.formatRangeToParts.shouldBe.JSON.stringify.nf.formatRangeToParts):
+        (nf.formatRangeToParts.shouldBe.JSON.stringify.nf2.formatRangeToParts):
+        * stress/intl-numberformat-format-range-v3.js:
+        (nf.formatRange.nf.formatRangeToParts.methods.forEach):
+        (nf.formatRange.string_appeared_here.forEach): Deleted.
+        * stress/intl-numberformat-format-string-v3.js:
+        (nf.formatRangeToParts.shouldBe.JSON.stringify.nf.formatRangeToParts):
+        (nf.formatRangeToParts.shouldBe.JSON.stringify.nf2.formatRangeToParts):
+        * stress/intl-numberformat-format-string.js:
+        (nf.formatRangeToParts.shouldBe.JSON.stringify.nf.formatRangeToParts):
+        (nf.formatRangeToParts.shouldBe.JSON.stringify.nf2.formatRangeToParts):
+
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Public Class Field initialization is slow
         https://bugs.webkit.org/show_bug.cgi?id=232479
 

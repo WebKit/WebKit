@@ -318,7 +318,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
         }
 
         IntlFieldIterator fieldIterator(*iterator.get());
-        IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, std::signbit(absValue), IntlMathematicalValue::numberTypeFromDouble(absValue), formattedNumber, fieldIterator, parts, jsString(vm, singularUnit(unit).toString()));
+        IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, std::signbit(absValue), IntlMathematicalValue::numberTypeFromDouble(absValue), formattedNumber, fieldIterator, parts, nullptr, jsString(vm, singularUnit(unit).toString()));
         RETURN_IF_EXCEPTION(scope, { });
     }
 
