@@ -1,0 +1,6 @@
+
+RUN(video.src = "content/invalid-size.webm")
+EVENT(error)
+Properly failed to load media OK
+END OF TEST
+
