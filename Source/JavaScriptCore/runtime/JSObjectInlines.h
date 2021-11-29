@@ -282,9 +282,9 @@ ALWAYS_INLINE bool JSObject::putInlineFast(JSGlobalObject* globalObject, Propert
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // FIXME: For a failure due to non-extensible structure, the error message is misleading
-    if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
-        return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+    auto error = putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
+    if (!error.isNull())
+        return typeError(globalObject, scope, slot.isStrictMode(), error);
     return true;
 }
 
@@ -319,7 +319,7 @@ ALWAYS_INLINE bool JSObject::hasOwnProperty(JSGlobalObject* globalObject, unsign
 }
 
 template<JSObject::PutMode mode>
-ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
+ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
 {
     ASSERT(value);
     ASSERT(value.isGetterSetter() == !!(attributes & PropertyAttribute::Accessor));
@@ -335,26 +335,26 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         unsigned currentAttributes;
         PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
         if (offset != invalidOffset) {
-            if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
-                return false;
+            if ((mode == PutModePut || mode == PutModeDefineOwnProperty) && currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
+                return ReadonlyPropertyChangeError;
 
             putDirect(vm, offset, value);
             structure->didReplaceProperty(offset);
 
             // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
             // https://bugs.webkit.org/show_bug.cgi?id=214342
-            if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue)))
+            if ((mode == PutModeDefineOwnProperty || mode == PutModeDefineOwnPropertyIgnoringExtensibility) && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue)))
                 setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
             else {
                 ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
                 slot.setExistingProperty(this, offset);
             }
 
-            return true;
+            return ASCIILiteral::null();
         }
 
-        if ((mode == PutModePut) && !isStructureExtensible(vm))
-            return false;
+        if ((mode == PutModePut || mode == PutModeDefineOwnProperty) && !isStructureExtensible(vm))
+            return NonExtensibleObjectPropertyDefineError;
 
         offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
         validateOffset(offset);
@@ -362,7 +362,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         slot.setNewProperty(this, offset);
         if (attributes & PropertyAttribute::ReadOnly)
             this->structure(vm)->setContainsReadOnlyProperties();
-        return true;
+        return ASCIILiteral::null();
     }
 
     PropertyOffset offset;
@@ -386,21 +386,21 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         putDirect(vm, offset, value);
         setStructure(vm, newStructure);
         slot.setNewProperty(this, offset);
-        return true;
+        return ASCIILiteral::null();
     }
 
     unsigned currentAttributes;
     offset = structure->get(vm, propertyName, currentAttributes);
     if (offset != invalidOffset) {
-        if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
-            return false;
+        if ((mode == PutModePut || mode == PutModeDefineOwnProperty) && currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
+            return ReadonlyPropertyChangeError;
 
         structure->didReplaceProperty(offset);
         putDirect(vm, offset, value);
 
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
         // https://bugs.webkit.org/show_bug.cgi?id=214342
-        if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+        if ((mode == PutModeDefineOwnProperty || mode == PutModeDefineOwnPropertyIgnoringExtensibility) && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
             // We want the structure transition watchpoint to fire after this object has switched structure.
             // This allows adaptive watchpoints to observe if the new structure is the one we want.
             DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
@@ -410,11 +410,11 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
             slot.setExistingProperty(this, offset);
         }
 
-        return true;
+        return ASCIILiteral::null();
     }
 
-    if ((mode == PutModePut) && !isStructureExtensible(vm))
-        return false;
+    if ((mode == PutModePut || mode == PutModeDefineOwnProperty) && !isStructureExtensible(vm))
+        return NonExtensibleObjectPropertyDefineError;
     
     // We want the structure transition watchpoint to fire after this object has switched structure.
     // This allows adaptive watchpoints to observe if the new structure is the one we want.
@@ -439,7 +439,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     slot.setNewProperty(this, offset);
     if (attributes & PropertyAttribute::ReadOnly)
         newStructure->setContainsReadOnlyProperties();
-    return true;
+    return ASCIILiteral::null();
 }
 
 inline bool JSObject::mayBePrototype() const
@@ -573,7 +573,7 @@ inline void JSObject::validatePutOwnDataProperty(VM& vm, PropertyName propertyNa
 inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     validatePutOwnDataProperty(vm, propertyName, value);
-    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
+    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot).isNull();
 }
 
 inline bool JSObject::putOwnDataPropertyMayBeIndex(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -583,7 +583,7 @@ inline bool JSObject::putOwnDataPropertyMayBeIndex(JSGlobalObject* globalObject,
     if (std::optional<uint32_t> index = parseIndex(propertyName))
         return putDirectIndex(globalObject, index.value(), value, 0, PutDirectIndexLikePutDirect);
 
-    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
+    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot).isNull();
 }
 
 ALWAYS_INLINE CallData getCallData(VM& vm, JSCell* cell)

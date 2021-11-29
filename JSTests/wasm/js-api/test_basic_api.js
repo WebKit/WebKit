@@ -86,7 +86,7 @@ for (const c in constructorProperties) {
         assert.eq(Symbol.iterator in instance.exports, false);
         assert.eq(Symbol.toStringTag in instance.exports, false);
         assert.eq(Object.getOwnPropertySymbols(instance.exports).length, 0);
-        assert.throws(() => instance.exports[Symbol.toStringTag] = 42, TypeError, `Attempted to assign to readonly property.`);
+        assert.throws(() => instance.exports[Symbol.toStringTag] = 42, TypeError, `Attempting to define property on object that is not extensible.`);
         break;
     case "Memory":
         new WebAssembly.Memory({initial: 20});

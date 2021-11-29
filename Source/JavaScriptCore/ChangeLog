@@ -1,5 +1,42 @@
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Public Class Field initialization is slow
+        https://bugs.webkit.org/show_bug.cgi?id=232479
+
+        Reviewed by Alexey Shvayka.
+
+        Class public field implementation did not have optimization for initializing class fields: using
+        runtime call to initialize fields instead of IC. This patch leverages put_by_id / put_by_val with
+        direct flag so that we can enable IC.
+
+        Currently, we are not changing original putDirect semantics since it is out of this patch's scope.
+        We will look into it and probably changing it in a separate patch, but not in this patch.
+
+                                                             ToT                     Patched
+
+        class-fields-classic-constructor-assignments
+                                                       17.1491+-2.6327           15.0906+-0.6795          might be 1.1364x faster
+        class-fields-public-fields                    409.4328+-8.3140     ^     20.2752+-2.0835        ^ definitely 20.1938x faster
+        class-fields-private-fields                    27.2621+-1.3858           25.1810+-3.9873          might be 1.0826x faster
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::DefineFieldNode::emitBytecode):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::putDirectWithReify):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectCustomAccessor):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectRespectingExtensibility):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putInlineFast):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putOwnDataProperty):
+        (JSC::JSObject::putOwnDataPropertyMayBeIndex):
+
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] private name operation should use RETURN_IF_EXCEPTION
         https://bugs.webkit.org/show_bug.cgi?id=233577
         rdar://85813869

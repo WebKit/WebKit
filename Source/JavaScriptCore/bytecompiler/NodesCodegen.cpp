@@ -5039,10 +5039,12 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
     switch (m_type) {
     case DefineFieldNode::Type::Name: {
-        // FIXME: Improve performance of public class fields
-        // https://bugs.webkit.org/show_bug.cgi?id=198330
-        RefPtr<RegisterID> propertyName = generator.emitLoad(nullptr, *m_ident);
-        generator.emitCallDefineProperty(generator.thisRegister(), propertyName.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable | BytecodeGenerator::PropertyEnumerable, m_position);
+        StrictModeScope strictModeScope(generator);
+        if (auto index = parseIndex(*m_ident)) {
+            RefPtr<RegisterID> propertyName = generator.emitLoad(nullptr, jsNumber(index.value()));
+            generator.emitDirectPutByVal(generator.thisRegister(), propertyName.get(), value.get());
+        } else
+            generator.emitDirectPutById(generator.thisRegister(), *m_ident, value.get());
         break;
     }
     case DefineFieldNode::Type::PrivateName: {
@@ -5057,9 +5059,6 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         break;
     }
     case DefineFieldNode::Type::ComputedName: {
-        // FIXME: Improve performance of public class fields
-        // https://bugs.webkit.org/show_bug.cgi?id=198330
-
         // For ComputedNames, the expression has already been evaluated earlier during evaluation of a ClassExprNode.
         // Here, `m_ident` refers to private symbol ID in a class lexical scope, containing the value already converted to an Expression.
         Variable var = generator.variable(*m_ident);
@@ -5072,7 +5071,10 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         if (shouldSetFunctionName)
             generator.emitSetFunctionName(value.get(), privateName.get());
         generator.emitProfileType(privateName.get(), var, m_position, m_position + m_ident->length());
-        generator.emitCallDefineProperty(generator.thisRegister(), privateName.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable | BytecodeGenerator::PropertyEnumerable, m_position);
+        {
+            StrictModeScope strictModeScope(generator);
+            generator.emitDirectPutByVal(generator.thisRegister(), privateName.get(), value.get());
+        }
         break;
     }
     }

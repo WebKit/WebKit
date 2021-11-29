@@ -125,7 +125,7 @@ for (const [object, key] of testCases()) {
     const heir = Object.create(object);
     Object.preventExtensions(heir);
 
-    shouldThrow(() => { heir[key] = testValue; }, "TypeError: Attempted to assign to readonly property.", key);
+    shouldThrow(() => { heir[key] = testValue; }, "TypeError: Attempting to define property on object that is not extensible.", key);
     assert(heir[key] !== testValue, key);
     assert(object[key] !== testValue, key);
 }

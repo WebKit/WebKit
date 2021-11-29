@@ -180,6 +180,6 @@ function checkProperty(object, name, value, attributes = { writable: true, enume
     let object = Object.preventExtensions({ foo: 1 });
     shouldThrow(() => {
         Object.assign(object, { bar: 2 });
-    }, `TypeError: Attempted to assign to readonly property.`);
+    }, `TypeError: Attempting to define property on object that is not extensible.`);
     shouldBe(object.bar, undefined);
 }

@@ -49,6 +49,8 @@ public:
         return ASCIILiteral { nullptr };
     }
 
+    constexpr bool isNull() const { return !m_characters; }
+
     constexpr const char* characters() const { return m_characters; }
     const LChar* characters8() const { return bitwise_cast<const LChar*>(m_characters); }
     size_t length() const { return strlen(m_characters); }

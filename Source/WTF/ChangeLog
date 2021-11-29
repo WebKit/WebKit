@@ -1,5 +1,14 @@
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Public Class Field initialization is slow
+        https://bugs.webkit.org/show_bug.cgi?id=232479
+
+        Reviewed by Alexey Shvayka.
+
+        * wtf/text/ASCIILiteral.h:
+
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Move m_incomingPolymorphicCalls out of CodeBlock::JITData
         https://bugs.webkit.org/show_bug.cgi?id=233415
 

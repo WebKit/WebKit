@@ -100,9 +100,10 @@ class JSObject : public JSCell {
     friend class MarkedBlock;
     JS_EXPORT_PRIVATE friend bool setUpStaticFunctionSlot(VM&, const HashTableValue*, JSObject*, PropertyName, PropertySlot&);
 
-    enum PutMode {
+    enum PutMode : uint8_t {
         PutModePut,
         PutModeDefineOwnProperty,
+        PutModeDefineOwnPropertyIgnoringExtensibility,
     };
 
 public:
@@ -685,6 +686,7 @@ public:
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
+    ASCIILiteral putDirectRespectingExtensibility(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
     void putDirectNonIndexAccessorWithoutTransition(VM&, PropertyName, GetterSetter*, unsigned attributes);
@@ -1156,7 +1158,7 @@ private:
     ArrayStorage* enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(VM&, ArrayStorage*);
         
     template<PutMode>
-    bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
+    ASCIILiteral putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
 
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
@@ -1582,21 +1584,28 @@ inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
     ASSERT(!value.isGetterSetter() && !(attributes & PropertyAttribute::Accessor));
     ASSERT(!value.isCustomGetterSetter() && !(attributes & PropertyAttribute::CustomAccessorOrValue));
     PutPropertySlot slot(this);
-    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
+    return putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, attributes, slot).isNull();
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
 {
     ASSERT(!value.isGetterSetter());
     ASSERT(!value.isCustomGetterSetter());
-    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
+    return putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, attributes, slot).isNull();
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     ASSERT(!value.isGetterSetter());
     ASSERT(!value.isCustomGetterSetter());
-    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot);
+    return putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, 0, slot).isNull();
+}
+
+inline ASCIILiteral JSObject::putDirectRespectingExtensibility(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
+{
+    ASSERT(!value.isGetterSetter());
+    ASSERT(!value.isCustomGetterSetter());
+    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
 }
 
 constexpr inline intptr_t offsetInButterfly(PropertyOffset offset)
