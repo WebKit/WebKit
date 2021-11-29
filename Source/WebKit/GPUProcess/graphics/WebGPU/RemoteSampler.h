@@ -44,6 +44,7 @@ class ObjectRegistry;
 }
 
 class RemoteSampler final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteSampler> create(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

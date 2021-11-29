@@ -36,7 +36,10 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class GPUImpl final : public GPU {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    PAL_EXPORT static RefPtr<GPUImpl> create();
+
     static Ref<GPUImpl> create(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
     {
         return adoptRef(*new GPUImpl(instance, convertToBackingContext));

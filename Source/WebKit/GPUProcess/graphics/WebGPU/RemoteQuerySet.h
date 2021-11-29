@@ -44,6 +44,7 @@ class ObjectRegistry;
 }
 
 class RemoteQuerySet final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteQuerySet> create(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

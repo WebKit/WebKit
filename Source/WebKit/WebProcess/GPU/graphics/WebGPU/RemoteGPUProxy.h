@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUProcessConnection.h"
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
@@ -36,13 +37,17 @@ namespace WebKit {
 class GPUProcessConnection;
 }
 
-namespace WebKit::WebGPU {
+namespace WebKit {
 
+namespace WebGPU {
 class ConvertToBackingContext;
+class DowncastConvertToBackingContext;
+}
 
 class RemoteGPUProxy final : public PAL::WebGPU::GPU {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteGPUProxy> create(GPUProcessConnection& gpuProcessConnection, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteGPUProxy> create(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteGPUProxy(gpuProcessConnection, convertToBackingContext, identifier));
     }
@@ -54,9 +59,9 @@ public:
     IPC::StreamClientConnection& streamClientConnection() { return m_streamConnection; }
 
 private:
-    friend class DowncastConvertToBackingContext;
+    friend class WebGPU::DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(GPUProcessConnection&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteGPUProxy(GPUProcessConnection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
     RemoteGPUProxy(RemoteGPUProxy&&) = delete;
@@ -82,10 +87,10 @@ private:
     Deque<WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
-    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
     IPC::StreamClientConnection m_streamConnection;
 };
 
-} // namespace WebKit::WebGPU
+} // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

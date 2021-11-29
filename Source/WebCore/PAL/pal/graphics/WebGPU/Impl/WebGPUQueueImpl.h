@@ -36,6 +36,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class QueueImpl final : public Queue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<QueueImpl> create(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext)
     {

@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class ShaderModuleImpl final : public ShaderModule {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ShaderModuleImpl> create(WGPUShaderModule shaderModule, ConvertToBackingContext& convertToBackingContext)
     {

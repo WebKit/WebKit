@@ -44,6 +44,7 @@ class ObjectRegistry;
 }
 
 class RemoteExternalTexture final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteExternalTexture> create(PAL::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

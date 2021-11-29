@@ -44,6 +44,7 @@ class ObjectRegistry;
 }
 
 class RemoteTextureView final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteTextureView> create(PAL::WebGPU::TextureView& textureView, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

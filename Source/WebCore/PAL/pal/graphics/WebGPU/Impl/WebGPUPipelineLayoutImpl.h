@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class PipelineLayoutImpl final : public PipelineLayout {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<PipelineLayoutImpl> create(WGPUPipelineLayout pipelineLayout, ConvertToBackingContext& convertToBackingContext)
     {

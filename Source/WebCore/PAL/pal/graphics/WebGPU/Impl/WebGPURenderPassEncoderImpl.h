@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class RenderPassEncoderImpl final : public RenderPassEncoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RenderPassEncoderImpl> create(WGPURenderPassEncoder renderPassEncoder, ConvertToBackingContext& convertToBackingContext)
     {

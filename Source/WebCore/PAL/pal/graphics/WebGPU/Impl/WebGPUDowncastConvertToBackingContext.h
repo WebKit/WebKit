@@ -32,6 +32,7 @@
 namespace PAL::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<DowncastConvertToBackingContext> create()
     {

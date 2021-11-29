@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class RenderBundleImpl final : public RenderBundle {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RenderBundleImpl> create(WGPURenderBundle renderBundle, ConvertToBackingContext& convertToBackingContext)
     {

@@ -32,7 +32,13 @@
 namespace WebKit::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<DowncastConvertToBackingContext> create()
+    {
+        return adoptRef(*new DowncastConvertToBackingContext());
+    }
+
     virtual ~DowncastConvertToBackingContext() = default;
 
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::Adapter&) final;
@@ -57,6 +63,9 @@ public:
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::ShaderModule&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::Texture&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::TextureView&) final;
+
+private:
+    DowncastConvertToBackingContext() = default;
 };
 
 } // namespace WebKit::WebGPU

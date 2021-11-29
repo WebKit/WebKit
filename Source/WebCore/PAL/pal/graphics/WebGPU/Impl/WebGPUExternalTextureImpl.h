@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class ExternalTextureImpl final : public ExternalTexture {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ExternalTextureImpl> create(ConvertToBackingContext& convertToBackingContext)
     {

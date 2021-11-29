@@ -51,6 +51,7 @@ struct RenderPassDescriptor;
 }
 
 class RemoteCommandEncoder final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteCommandEncoder> create(PAL::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

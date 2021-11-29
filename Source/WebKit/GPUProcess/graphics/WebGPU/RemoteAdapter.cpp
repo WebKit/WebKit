@@ -63,8 +63,10 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
     }
 
     m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (Ref<PAL::WebGPU::Device>&& device) mutable {
-        if (!weakObjectHeap)
+        if (!weakObjectHeap) {
+            callback({ { } }, { });
             return;
+        }
         auto remoteDevice = RemoteDevice::create(device, objectRegistry, *weakObjectHeap, identifier);
         weakObjectHeap->addObject(remoteDevice);
         const auto& features = device->features();

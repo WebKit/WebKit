@@ -35,11 +35,11 @@
 #include <pal/graphics/WebGPU/WebGPUSupportedFeatures.h>
 #include <pal/graphics/WebGPU/WebGPUSupportedLimits.h>
 
-namespace WebKit::WebGPU {
+namespace WebKit {
 
 static constexpr size_t defaultStreamSize = 1 << 21;
 
-RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_streamConnection(gpuProcessConnection.connection(), defaultStreamSize)
@@ -54,17 +54,21 @@ void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& op
 {
     auto convertedOptions = m_convertToBackingContext->convertToBacking(options);
     ASSERT(convertedOptions);
-    if (!convertedOptions)
+    if (!convertedOptions) {
+        callback(nullptr);
         return;
+    }
 
     auto identifier = WebGPUIdentifier::generate();
     String name;
-    SupportedFeatures supportedFeatures;
-    SupportedLimits supportedLimits;
+    WebGPU::SupportedFeatures supportedFeatures;
+    WebGPU::SupportedLimits supportedLimits;
     bool isFallbackAdapter;
     auto sendResult = sendSync(Messages::RemoteGPU::RequestAdapter(*convertedOptions, identifier), { name, supportedFeatures, supportedLimits, isFallbackAdapter });
-    if (!sendResult)
+    if (!sendResult) {
+        callback(nullptr);
         return;
+    }
 
     auto resultSupportedFeatures = PAL::WebGPU::SupportedFeatures::create(WTFMove(supportedFeatures.features));
     auto resultSupportedLimits = PAL::WebGPU::SupportedLimits::create(
@@ -95,9 +99,9 @@ void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& op
         supportedLimits.maxComputeWorkgroupSizeZ,
         supportedLimits.maxComputeWorkgroupsPerDimension
     );
-    callback(RemoteAdapterProxy::create(WTFMove(name), WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), isFallbackAdapter, *this, m_convertToBackingContext, identifier));
+    callback(WebGPU::RemoteAdapterProxy::create(WTFMove(name), WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), isFallbackAdapter, *this, m_convertToBackingContext, identifier));
 }
 
-} // namespace WebKit::WebGPU
+} // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

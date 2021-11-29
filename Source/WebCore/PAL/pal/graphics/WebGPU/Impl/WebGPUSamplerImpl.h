@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class SamplerImpl final : public Sampler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<SamplerImpl> create(WGPUSampler sampler, ConvertToBackingContext& convertToBackingContext)
     {

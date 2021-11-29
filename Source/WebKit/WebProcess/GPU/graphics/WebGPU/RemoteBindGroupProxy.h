@@ -36,6 +36,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteBindGroupProxy final : public PAL::WebGPU::BindGroup {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteBindGroupProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -45,7 +46,7 @@ public:
     virtual ~RemoteBindGroupProxy();
 
     RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->parent().parent(); }
+    RemoteGPUProxy& root() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;

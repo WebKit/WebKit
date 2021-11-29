@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class ComputePipelineImpl final : public ComputePipeline {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ComputePipelineImpl> create(WGPUComputePipeline computePipeline, ConvertToBackingContext& convertToBackingContext)
     {

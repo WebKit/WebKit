@@ -53,6 +53,7 @@ class ObjectRegistry;
 }
 
 class RemoteQueue final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteQueue> create(PAL::WebGPU::Queue& queue, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

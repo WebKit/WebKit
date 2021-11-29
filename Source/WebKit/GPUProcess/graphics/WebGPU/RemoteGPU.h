@@ -47,6 +47,7 @@ struct RequestAdapterOptions;
 }
 
 class RemoteGPU final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteGPU> create(PAL::WebGPU::GPU& gpu, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

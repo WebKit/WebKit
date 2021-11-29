@@ -47,6 +47,7 @@ struct SupportedLimits;
 }
 
 class RemoteAdapter final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteAdapter> create(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

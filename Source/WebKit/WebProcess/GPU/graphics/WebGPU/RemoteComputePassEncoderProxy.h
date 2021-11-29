@@ -36,6 +36,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteComputePassEncoderProxy final : public PAL::WebGPU::ComputePassEncoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteComputePassEncoderProxy> create(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -45,7 +46,7 @@ public:
     virtual ~RemoteComputePassEncoderProxy();
 
     RemoteCommandEncoderProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->parent().parent().parent(); }
+    RemoteGPUProxy& root() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;

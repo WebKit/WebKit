@@ -36,6 +36,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteTextureViewProxy final : public PAL::WebGPU::TextureView {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteTextureViewProxy> create(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -45,7 +46,7 @@ public:
     virtual ~RemoteTextureViewProxy();
 
     RemoteTextureProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->parent().parent().parent(); }
+    RemoteGPUProxy& root() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;

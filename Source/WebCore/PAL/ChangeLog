@@ -1,3 +1,41 @@
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] IPC class refactorings
+        https://bugs.webkit.org/show_bug.cgi?id=233546
+
+        Reviewed by Dean Jackson.
+
+        Make classes fast allocated.
+
+        GPUImpl gets a create() function with no arguments, for ease of callers.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp:
+        (PAL::WebGPU::GPUImpl::create):
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.h:
+
 2021-11-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal: The memory backing IOSurfaces of former client buffer pbuffers is leaked

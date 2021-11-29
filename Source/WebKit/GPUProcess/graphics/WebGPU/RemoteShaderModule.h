@@ -47,6 +47,7 @@ class ObjectRegistry;
 }
 
 class RemoteShaderModule final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteShaderModule> create(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

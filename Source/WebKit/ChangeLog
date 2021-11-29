@@ -1,3 +1,74 @@
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] IPC class refactorings
+        https://bugs.webkit.org/show_bug.cgi?id=233546
+
+        Reviewed by Dean Jackson.
+
+        Make classes fast allocated. Also, make the root() function recursive, instead of hardcoding
+        each class's distance from the root.
+
+        RemoteGPUProxy has to be in the WebKit namespace, rather than the WebKit::WebGPU namespace,
+        because it will be a message receiver, and our code generator doesn't know anything about the
+        nested namespace.
+
+        Also make sure that async functions call their callbacks in every codepath.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/WebGPU/RemoteAdapter.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroup.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteDevice.h:
+        * GPUProcess/graphics/WebGPU/RemoteExternalTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteGPU.h:
+        * GPUProcess/graphics/WebGPU/RemotePipelineLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteQuerySet.h:
+        * GPUProcess/graphics/WebGPU/RemoteQueue.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundle.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteSampler.h:
+        * GPUProcess/graphics/WebGPU/RemoteShaderModule.h:
+        * GPUProcess/graphics/WebGPU/RemoteTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteTextureView.h:
+        * GPUProcess/graphics/WebGPU/WebGPUObjectHeap.h:
+        * GPUProcess/graphics/WebGPU/WebGPUObjectRegistry.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePipelineProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteExternalTextureProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp:
+        (WebKit::RemoteGPUProxy::requestAdapter):
+        (WebKit::WebGPU::RemoteGPUProxy::RemoteGPUProxy): Deleted.
+        (WebKit::WebGPU::RemoteGPUProxy::~RemoteGPUProxy): Deleted.
+        (WebKit::WebGPU::RemoteGPUProxy::requestAdapter): Deleted.
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemotePipelineLayoutProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteQuerySetProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.h:
+
 2021-11-29  Brent Fulgham  <bfulgham@apple.com>
 
         Create a new XPC service with specific entitlements to support Captive Portal use cases

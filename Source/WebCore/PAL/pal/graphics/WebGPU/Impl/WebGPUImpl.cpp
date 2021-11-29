@@ -29,10 +29,28 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUAdapterImpl.h"
-#include "WebGPUConvertToBackingContext.h"
+#include "WebGPUDowncastConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/darwin/WeakLinking.h>
+
+WTF_WEAK_LINK_FORCE_IMPORT(wgpuCreateInstance);
+#endif
+
 namespace PAL::WebGPU {
+
+RefPtr<GPUImpl> GPUImpl::create()
+{
+    WGPUInstanceDescriptor descriptor = { nullptr };
+    if (!&wgpuCreateInstance)
+        return nullptr;
+    auto instance = wgpuCreateInstance(&descriptor);
+    if (!instance)
+        return nullptr;
+    auto convertToBackingContext = DowncastConvertToBackingContext::create();
+    return create(instance, convertToBackingContext);
+}
 
 GPUImpl::GPUImpl(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
     : m_backing(instance)

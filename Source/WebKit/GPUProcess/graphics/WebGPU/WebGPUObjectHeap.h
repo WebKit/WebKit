@@ -62,6 +62,7 @@ class RemoteTextureView;
 namespace WebKit::WebGPU {
 
 class ObjectHeap final : public CanMakeWeakPtr<ObjectHeap> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjectHeap();
     ~ObjectHeap();

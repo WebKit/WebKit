@@ -38,6 +38,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class TextureImpl final : public Texture {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<TextureImpl> create(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     {

@@ -47,6 +47,7 @@ class ObjectRegistry;
 }
 
 class RemoteRenderPassEncoder final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteRenderPassEncoder> create(PAL::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

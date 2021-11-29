@@ -36,6 +36,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class AdapterImpl final : public Adapter {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<AdapterImpl> create(WGPUAdapter adapter, ConvertToBackingContext& convertToBackingContext)
     {

@@ -49,6 +49,7 @@ class ObjectRegistry;
 }
 
 class RemoteBuffer final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteBuffer> create(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

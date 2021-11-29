@@ -37,6 +37,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteQueueProxy final : public PAL::WebGPU::Queue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteQueueProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -46,7 +47,7 @@ public:
     virtual ~RemoteQueueProxy();
 
     RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->parent().parent(); }
+    RemoteGPUProxy& root() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;

@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class QuerySetImpl final : public QuerySet {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<QuerySetImpl> create(WGPUQuerySet querySet, ConvertToBackingContext& convertToBackingContext)
     {

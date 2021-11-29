@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class CommandBufferImpl final : public CommandBuffer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<CommandBufferImpl> create(WGPUCommandBuffer commandBuffer, ConvertToBackingContext& convertToBackingContext)
     {

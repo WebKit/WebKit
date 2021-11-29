@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class TextureViewImpl final : public TextureView {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<TextureViewImpl> create(WGPUTextureView textureView, ConvertToBackingContext& convertToBackingContext)
     {

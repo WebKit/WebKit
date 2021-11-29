@@ -93,6 +93,7 @@ enum class VertexFormat : uint8_t;
 enum class VertexStepMode : uint8_t;
 
 class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ConvertToBackingContext() = default;
 

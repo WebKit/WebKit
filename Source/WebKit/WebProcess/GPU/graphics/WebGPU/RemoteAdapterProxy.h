@@ -32,12 +32,16 @@
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
 #include <wtf/Deque.h>
 
+namespace WebKit {
+class RemoteGPUProxy;
+}
+
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
-class RemoteGPUProxy;
 
 class RemoteAdapterProxy final : public PAL::WebGPU::Adapter {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteAdapterProxy> create(String&& name, PAL::WebGPU::SupportedFeatures& features, PAL::WebGPU::SupportedLimits& limits, bool isFallbackAdapter, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -47,7 +51,7 @@ public:
     virtual ~RemoteAdapterProxy();
 
     RemoteGPUProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;

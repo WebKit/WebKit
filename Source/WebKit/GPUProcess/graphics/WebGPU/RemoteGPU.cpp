@@ -61,7 +61,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
 
     m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
         if (!weakObjectHeap || !adapter) {
-            // FIXME: Deal with failure here.
+            callback(StringImpl::empty(), { { } }, { }, false);
             return;
         }
         auto remoteAdapter = RemoteAdapter::create(*adapter, objectRegistry, *weakObjectHeap, identifier);

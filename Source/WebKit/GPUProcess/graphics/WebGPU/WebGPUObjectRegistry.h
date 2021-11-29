@@ -61,6 +61,7 @@ class TextureView;
 namespace WebKit::WebGPU {
 
 class ObjectRegistry final : public WebGPU::ConvertFromBackingContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjectRegistry();
     ~ObjectRegistry();

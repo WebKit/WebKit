@@ -44,6 +44,7 @@ class ObjectRegistry;
 }
 
 class RemoteRenderBundle final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteRenderBundle> create(PAL::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

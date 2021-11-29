@@ -35,6 +35,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class BindGroupImpl final : public BindGroup {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<BindGroupImpl> create(WGPUBindGroup bindGroup, ConvertToBackingContext& convertToBackingContext)
     {

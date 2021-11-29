@@ -44,6 +44,7 @@ class ObjectRegistry;
 }
 
 class RemoteComputePipeline final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteComputePipeline> create(PAL::WebGPU::ComputePipeline& computePipeline, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

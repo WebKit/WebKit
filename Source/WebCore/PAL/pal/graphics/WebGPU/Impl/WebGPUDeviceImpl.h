@@ -36,6 +36,7 @@ namespace PAL::WebGPU {
 class ConvertToBackingContext;
 
 class DeviceImpl final : public Device {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<DeviceImpl> create(WGPUDevice device, Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits, ConvertToBackingContext& convertToBackingContext)
     {

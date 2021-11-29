@@ -44,6 +44,7 @@ class ObjectRegistry;
 }
 
 class RemoteBindGroupLayout final : public IPC::StreamMessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteBindGroupLayout> create(PAL::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {

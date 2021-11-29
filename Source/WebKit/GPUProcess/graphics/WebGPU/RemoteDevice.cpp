@@ -226,8 +226,10 @@ void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescr
     }
 
     m_backing->createComputePipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (Ref<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
-        if (!weakObjectHeap)
+        if (!weakObjectHeap) {
+            callback();
             return;
+        }
         auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline, objectRegistry, *weakObjectHeap, identifier);
         weakObjectHeap->addObject(remoteComputePipeline);
         callback();
@@ -244,8 +246,10 @@ void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescrip
     }
 
     m_backing->createRenderPipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (Ref<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
-        if (!weakObjectHeap)
+        if (!weakObjectHeap) {
+            callback();
             return;
+        }
         auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline, objectRegistry, *weakObjectHeap, identifier);
         weakObjectHeap->addObject(remoteRenderPipeline);
         callback();
