@@ -82,14 +82,6 @@ JSShadowRealmGlobalScopeBase::JSShadowRealmGlobalScopeBase(JSC::VM& vm, JSC::Str
 void JSShadowRealmGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
 {
     m_proxy.set(vm, this, proxy);
-
-    // TODO(jgriego) definitely _not_ an ideal solution
-    ASSERT(inherits<JSShadowRealmGlobalScope>(vm));
-    ASSERT(!m_wrapped->m_scriptController);
-    m_wrapped->m_scriptController = std::make_unique<ShadowRealmScriptController>(Ref(vm),
-                                                                                 jsCast<JSShadowRealmGlobalScope*>(this));
-
-
     Base::finishCreation(vm, m_proxy.get());
     ASSERT(inherits(vm, info()));
 }
@@ -133,9 +125,7 @@ bool JSShadowRealmGlobalScopeBase::shouldInterruptScriptBeforeTimeout(const JSGl
 RuntimeFlags JSShadowRealmGlobalScopeBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
     const JSShadowRealmGlobalScopeBase *thisObject = jsCast<const JSShadowRealmGlobalScopeBase*>(object);
-    auto const incubatingGlobalObj = thisObject->m_wrapped->m_incubatingWrapper;
-
-    return incubatingGlobalObj->globalObjectMethodTable()->javaScriptRuntimeFlags(incubatingGlobalObj.get());
+    return thisObject->m_wrapped->javaScriptRuntimeFlags();
 }
 
 JSC::ScriptExecutionStatus JSShadowRealmGlobalScopeBase::scriptExecutionStatus(JSC::JSGlobalObject* globalObject, JSC::JSObject* owner)
@@ -156,25 +146,23 @@ void JSShadowRealmGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& obj
     auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
     auto context = thisObject.wrapped().enclosingContext();
     context->eventLoop().queueMicrotask([callback = WTFMove(callback)]() mutable {
-        callback->call();
+    callback->call();
     });
 }
 
-JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, ShadowRealmGlobalScope& workerGlobalScope)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, ShadowRealmGlobalScope& realmGlobalScope)
 {
-    CRASH();
-    //return toJS(lexicalGlobalObject, workerGlobalScope);
+    return toJS(lexicalGlobalObject, realmGlobalScope);
 }
 
-JSValue toJS(JSGlobalObject*, ShadowRealmGlobalScope& workerGlobalScope)
+JSValue toJS(JSGlobalObject*, ShadowRealmGlobalScope& realmGlobalScope)
 {
-    CRASH();
-    //auto* script = workerGlobalScope.script();
-    //if (!script)
-    //return jsNull();
-    //auto* contextWrapper = script->globalScopeWrapper();
-    //ASSERT(contextWrapper);
-    //return &contextWrapper->proxy();
+    auto* script = realmGlobalScope.script();
+    if (!script)
+        return jsNull();
+    auto* contextWrapper = script->globalScopeWrapper();
+    ASSERT(contextWrapper);
+    return &contextWrapper->proxy();
 }
 
 } // namespace WebCore

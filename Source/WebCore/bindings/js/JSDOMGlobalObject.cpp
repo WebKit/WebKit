@@ -52,6 +52,7 @@
 #include "RejectedPromiseTracker.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptModuleLoader.h"
+#include "ShadowRealmScriptController.h"
 #include "StructuredClone.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
@@ -292,9 +293,7 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
     if (inherits<JSRemoteDOMWindowBase>(vm()))
         return nullptr;
     if (inherits<JSShadowRealmGlobalScopeBase>(vm()))
-        // TODO PLM
         return jsCast<const JSShadowRealmGlobalScopeBase*>(this)->scriptExecutionContext();
-        return nullptr;
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkletGlobalScopeBase>(vm()))
@@ -365,15 +364,7 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& v
     auto domGlobalObject = jsCast<JSDOMGlobalObject*>(globalObject);
     ASSERT(domGlobalObject);
     auto scope = ShadowRealmGlobalScope::tryCreate(vm, domGlobalObject).releaseNonNull();
-
-    Structure* contextProtoStructure = JSShadowRealmGlobalScopePrototype::createStructure(vm, nullptr, jsNull());
-    auto contextProto = JSShadowRealmGlobalScopePrototype::create(vm, nullptr, contextProtoStructure);
-    Structure* structure = JSShadowRealmGlobalScope::createStructure(vm, nullptr, contextProto);
-
-    auto proxyStructure = JSProxy::createStructure(vm, nullptr, jsNull());
-    auto proxy = JSProxy::create(vm, proxyStructure);
-
-    return JSShadowRealmGlobalScope::create(vm, structure, WTFMove(scope), proxy);
+    return scope->script()->globalScopeWrapper();
 }
 
 void JSDOMGlobalObject::clearDOMGuardedObjects() const

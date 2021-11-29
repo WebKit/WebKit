@@ -1,2 +1,7 @@
-var value = 6;
-export { value };
+var value = isSecureContext;
+
+var setValue = function (newValue) {
+    value = newValue;
+}
+
+export { value, setValue };

@@ -76,13 +76,7 @@ ShadowRealmGlobalScope::ShadowRealmGlobalScope(JSC::VM& vm, JSDOMGlobalObject* w
     : m_vm(&vm)
     , m_incubatingWrapper(vm, wrapper)
 {
-    // m_scriptController is initialized in `JSShadowRealmGlobalScopeBase::finishCreation`
-    // which .......
-    // ..... is not ideal
-    //
-    // probably we should emulate WorkerOrWorkletGlobalScope and its
-    // *ScriptController and have the scriptcontroller mediate creation of the
-    // wrapper...
+    m_scriptController = std::make_unique<ShadowRealmScriptController>(Ref(*m_vm.get()), this);
     m_moduleLoader = std::make_unique<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::ShadowRealm);
 }
 
@@ -91,11 +85,18 @@ ScriptExecutionContext* ShadowRealmGlobalScope::enclosingContext() const
     return m_incubatingWrapper->scriptExecutionContext();
 }
 
-Document* ShadowRealmGlobalScope::responsibleDocument() {
+Document* ShadowRealmGlobalScope::responsibleDocument()
+{
     // TODO(jgriego) this should really probably be a method on ScriptExecutionContext
     auto context = enclosingContext();
     ASSERT(is<Document>(context)); // FIXME this assert will fail if the shadow realm is created by a worker
     return downcast<Document>(context);
+}
+
+JSC::RuntimeFlags ShadowRealmGlobalScope::javaScriptRuntimeFlags() const
+{
+    auto const incubatingGlobalObj = m_incubatingWrapper;
+    return incubatingGlobalObj->globalObjectMethodTable()->javaScriptRuntimeFlags(incubatingGlobalObj.get());
 }
 
 
@@ -213,7 +214,7 @@ void ShadowRealmGlobalScope::logExceptionToConsole(const String& errorMessage, c
 
 void ShadowRealmGlobalScope::postTask(Task&& task)
 {
-    enclosingContext()->postTask(WTFMove(task));
+    CRASH();
 }
 
 

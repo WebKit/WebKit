@@ -1,5 +1,3 @@
-#include "ShadowRealmScriptController.h"
-
 /*
  * Copyright (C) 2021 Igalia S.L.
  *
@@ -32,25 +30,39 @@
 #include <JavaScriptCore/JSModuleRecord.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/Structure.h>
+#include <JavaScriptCore/JSProxy.h>
 
 namespace WebCore {
 
 using JSC::VM;
+using JSC::Structure;
+using JSC::JSProxy;
 
 ShadowRealmScriptController::ShadowRealmScriptController(Ref<JSC::VM>&& vm,
-                                                         JSShadowRealmGlobalScope* wrapper)
+                                                         ShadowRealmGlobalScope* scope)
     : m_vm(WTFMove(vm))
-    , m_scope(JSShadowRealmGlobalScope::toWrapped(m_vm, wrapper))
-    , m_scopeWrapper(m_vm, wrapper) {}
+    , m_scope(scope) {}
 
 JSC::JSValue ShadowRealmScriptController::evaluateModule(JSC::JSModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
-    auto globalObject = static_cast<JSC::JSGlobalObject*>(m_scopeWrapper.get());
-    //VM& vm = globalObject.vm();
-    // FIXME(jgriego) do we actually need any locking?
-    // JSLockHolder lock { vm };
+    return moduleRecord.evaluate(globalScopeWrapper(), awaitedValue, resumeMode);
+}
 
-    return moduleRecord.evaluate(globalObject, awaitedValue, resumeMode);
+void ShadowRealmScriptController::initScope() {
+    ASSERT(!m_scopeWrapper);
+
+    auto& vm = m_vm;
+
+    Structure* contextProtoStructure = JSShadowRealmGlobalScopePrototype::createStructure(vm, nullptr, JSC::jsNull());
+    auto contextProto = JSShadowRealmGlobalScopePrototype::create(vm, nullptr, contextProtoStructure);
+    Structure* structure = JSShadowRealmGlobalScope::createStructure(vm, nullptr, contextProto);
+
+    auto proxyStructure = JSProxy::createStructure(vm, nullptr, JSC::jsNull());
+    auto proxy = JSProxy::create(vm, proxyStructure);
+
+    auto wrapper = JSShadowRealmGlobalScope::create(vm, structure, Ref(*m_scope), proxy);
+    m_scopeWrapper = JSC::Strong<JSShadowRealmGlobalScope>(vm, wrapper);
 }
 
 

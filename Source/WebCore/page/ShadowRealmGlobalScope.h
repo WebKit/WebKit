@@ -37,6 +37,7 @@
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/RuntimeFlags.h>
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -62,8 +63,6 @@ struct WorkerParameters;
 
 class ShadowRealmGlobalScope : public ScriptExecutionContext, public RefCounted<ShadowRealmGlobalScope>
 {
-    friend class JSShadowRealmGlobalScopeBase; // TODO(jgriego) not elegant
-
     WTF_MAKE_ISO_ALLOCATED(ShadowRealmGlobalScope);
 public:
     // we need to be refcounted, but ScriptExecutionContext also exposes `ref`
@@ -75,50 +74,47 @@ public:
     static RefPtr<ShadowRealmGlobalScope> tryCreate(JSC::VM& vm, JSDOMGlobalObject*);
     ~ShadowRealmGlobalScope();
 
-    bool isShadowRealmGlobalScope() const final override { return true; }
+    bool isShadowRealmGlobalScope() const final { return true; }
+
+    JSC::RuntimeFlags javaScriptRuntimeFlags() const;
+    ScriptExecutionContext* enclosingContext() const;
 
     // other ScriptExecutionContext obligations
-    const URL& url() const final override;
-    URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final override;
-    String userAgent(const URL&) const final override;
-    ReferrerPolicy referrerPolicy() const final override;
-    const Settings::Values& settingsValues() const final override;
+    const URL& url() const final;
+    URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
+    String userAgent(const URL&) const final;
+    ReferrerPolicy referrerPolicy() const final;
+    const Settings::Values& settingsValues() const final;
     bool isSecureContext() const;
-    bool isJSExecutionForbidden() const final override;
-    EventLoopTaskGroup& eventLoop() final override;
-    void disableEval(const String&) final override;
-    void disableWebAssembly(const String&) final override;
-    IDBClient::IDBConnectionProxy* idbConnectionProxy() final override;
-    SocketProvider* socketProvider() final override;
+    bool isJSExecutionForbidden() const final;
+    EventLoopTaskGroup& eventLoop() final;
+    void disableEval(const String&) final;
+    void disableWebAssembly(const String&) final;
+    IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
+    SocketProvider* socketProvider() final;
 
-    void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final override;
-    void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final override;
-    SecurityOrigin& topOrigin() const final override;
-    JSC::VM& vm() final override;
-    EventTarget* errorEventTarget() final override;
-    bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final override;
-    bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final override;
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier) final override;
-    void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final override;
+    void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
+    void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
+    SecurityOrigin& topOrigin() const final;
+    JSC::VM& vm() final;
+    EventTarget* errorEventTarget() final;
+    bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final;
+    bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final;
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier) final;
+    void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
 
-    void postTask(Task&&) final override;
+    void postTask(Task&&) final;
 
-    void refScriptExecutionContext() final override;
-    void derefScriptExecutionContext() final override;
+    void refScriptExecutionContext() final;
+    void derefScriptExecutionContext() final;
 
     ShadowRealmGlobalScope& self() { return *this; }
-
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
-
     ShadowRealmScriptController* script() { return m_scriptController.get(); }
-
-
     Document* responsibleDocument();
 
 protected:
     ShadowRealmGlobalScope(JSC::VM& vm, JSDOMGlobalObject*);
-
-    ScriptExecutionContext* enclosingContext() const;
 
 private:
     RefPtr<JSC::VM> m_vm;

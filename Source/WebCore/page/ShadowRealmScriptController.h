@@ -44,16 +44,28 @@ class ShadowRealmScriptController {
     WTF_MAKE_NONCOPYABLE(ShadowRealmScriptController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ShadowRealmScriptController(Ref<JSC::VM>&&, JSShadowRealmGlobalScope*);
+    ShadowRealmScriptController(Ref<JSC::VM>&&, ShadowRealmGlobalScope*);
     ~ShadowRealmScriptController() = default;
 
-
     JSC::JSValue evaluateModule(JSC::JSModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
+
+    JSShadowRealmGlobalScope* globalScopeWrapper() {
+        initScopeIfNeeded();
+        return m_scopeWrapper.get();
+    }
+
+private:
+    void initScopeIfNeeded() {
+        if (!m_scopeWrapper)
+            initScope();
+    }
+
+    void initScope();
 
 private:
     Ref<JSC::VM> m_vm;
     ShadowRealmGlobalScope* m_scope;
-    JSC::Strong<JSShadowRealmGlobalScope> m_scopeWrapper;
+    JSC::Strong<JSShadowRealmGlobalScope> m_scopeWrapper{};
 };
 
 }

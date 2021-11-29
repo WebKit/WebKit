@@ -299,7 +299,7 @@ public:
     template<typename T> using Initializer = typename LazyProperty<JSGlobalObject, T>::Initializer;
 
     Register m_deprecatedCallFrameForDebugger[CallFrame::headerSizeInRegisters];
-
+    
     WriteBarrier<JSObject> m_globalThis;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
