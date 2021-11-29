@@ -47,6 +47,7 @@ public:
     virtual void cancel() = 0;
     virtual void pause() = 0;
     virtual void resume() = 0;
+    virtual void resetState() = 0;
 
 };
 

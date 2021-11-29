@@ -1818,6 +1818,7 @@ public:
     void speechSynthesisCancel();
     void speechSynthesisPause(CompletionHandler<void()>&&);
     void speechSynthesisResume(CompletionHandler<void()>&&);
+    void speechSynthesisResetState();
 #endif
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);

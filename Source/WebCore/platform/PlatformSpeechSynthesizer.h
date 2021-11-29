@@ -72,8 +72,8 @@ public:
     virtual void pause();
     virtual void resume();
     virtual void cancel();
+    virtual void resetState();
 
-    void resetState();
     PlatformSpeechSynthesizerClient* client() const { return m_speechSynthesizerClient; }
 
 protected:

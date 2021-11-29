@@ -1208,9 +1208,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 # <rdar://problem/64700658> imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html is a flaky timeout and flaky failure
 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html [ Pass Failure Timeout ]
 
-# rdar://66701815 (REGRESSION (20A2321a-20A2348b): fast/speechsynthesis/speech-synthesis-speak-empty-string.html is a flaky failure)
-[ BigSur+ ] fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
-
 # rdar://66703773 (REGRESSION (20A2316-20A2348b): http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html is a constant failure)
 [ arm64 ] http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html [ Skip ]
 

@@ -544,6 +544,7 @@ messages -> WebPageProxy {
     SpeechSynthesisCancel()
     SpeechSynthesisPause() -> () Async
     SpeechSynthesisResume() -> () Async
+    SpeechSynthesisResetState()
 #endif
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

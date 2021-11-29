@@ -1,3 +1,22 @@
+2021-11-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Unify speech synthesizer platform usage for Mac/iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231895
+        <rdar://problem/84372479>
+
+        Reviewed by Andres Gonzalez.
+
+        Create a new message for resetting speech synthesis state when the DOMWindow changes
+        but the Page (and its referenced speech synthesis) stays the same.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::speechSynthesisResetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp:
+        (WebKit::WebSpeechSynthesisClient::resetState):
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.h:
+
 2021-11-29  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(286219): Build fix.

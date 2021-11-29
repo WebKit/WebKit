@@ -55,6 +55,11 @@ WebCore::SpeechSynthesisClientObserver* WebSpeechSynthesisClient::corePageObserv
     return nullptr;
 }
 
+void WebSpeechSynthesisClient::resetState()
+{
+    m_page.send(Messages::WebPageProxy::SpeechSynthesisResetState());
+}
+
 void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance)
 {
     WTF::CompletionHandler<void()> startedCompletionHandler = [this, weakThis = WeakPtr { *this }]() mutable {

@@ -10515,6 +10515,11 @@ void WebPageProxy::speechSynthesisCancel()
     speechSynthesisData().synthesizer->cancel();
 }
 
+void WebPageProxy::speechSynthesisResetState()
+{
+    speechSynthesisData().synthesizer->resetState();
+}
+
 void WebPageProxy::speechSynthesisPause(CompletionHandler<void()>&& completionHandler)
 {
     speechSynthesisData().speakingPausedCompletionHandler = WTFMove(completionHandler);

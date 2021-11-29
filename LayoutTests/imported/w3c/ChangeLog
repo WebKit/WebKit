@@ -1,3 +1,15 @@
+2021-11-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Unify speech synthesizer platform usage for Mac/iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231895
+        <rdar://problem/84372479>
+
+        Reviewed by Andres Gonzalez.
+
+        Update expectations now that the test passes.
+
+        * web-platform-tests/speech-api/SpeechSynthesis-speak-events-expected.txt:
+
 2021-11-29  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] id invalidation support
