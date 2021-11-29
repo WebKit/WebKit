@@ -1,3 +1,12 @@
+2021-11-29  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] 2.35.1 fails to build for Fedora: undefined reference to 'llint_link_call'
+        https://bugs.webkit.org/show_bug.cgi?id=233574
+
+        Unreviewed, add missing attributes.
+
+        * llint/LLIntSlowPaths.h:
+
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Public Class Field initialization is slow
