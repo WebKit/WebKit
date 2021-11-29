@@ -960,8 +960,6 @@ int webProcessThroughputQOS()
     return qos;
 }
 
-#if PLATFORM(IOS_FAMILY)
-
 bool captivePortalModeEnabledBySystem()
 {
     static std::optional<bool> cachedCaptivePortalModeEnabledGlobally;
@@ -972,6 +970,8 @@ bool captivePortalModeEnabledBySystem()
     }
     return *cachedCaptivePortalModeEnabledGlobally;
 }
+
+#if PLATFORM(IOS_FAMILY)
 
 void WebProcessPool::applicationIsAboutToSuspend()
 {

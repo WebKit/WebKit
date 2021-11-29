@@ -1,3 +1,15 @@
+2021-11-29  Chris Dumez  <cdumez@apple.com>
+
+        Make WebKitCaptivePortalModeEnabled user default work on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=233560
+
+        Reviewed by Anders Carlsson.
+
+        Make WebKitCaptivePortalModeEnabled user default work on macOS, not just iOS. This helps with testing.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/WebProcessPool.cpp:
+
 2021-11-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GPUP GraphicsContextGL creation failure cannot be detected

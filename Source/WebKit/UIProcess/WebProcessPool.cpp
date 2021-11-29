@@ -2122,7 +2122,7 @@ bool WebProcessPool::hasServiceWorkerBackgroundActivityForTesting() const
 }
 #endif
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA)
 bool captivePortalModeEnabledBySystem()
 {
     return false;
