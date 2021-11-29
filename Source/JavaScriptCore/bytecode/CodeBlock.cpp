@@ -2134,10 +2134,7 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 void CodeBlock::linkIncomingPolymorphicCall(CallFrame* callerFrame, PolymorphicCallNode* incoming)
 {
     noticeIncomingCall(callerFrame);
-    {
-        ConcurrentJSLocker locker(m_lock);
-        ensureJITData(locker).m_incomingPolymorphicCalls.push(incoming);
-    }
+    m_incomingPolymorphicCalls.push(incoming);
 }
 #endif // ENABLE(JIT)
 
@@ -2149,19 +2146,12 @@ void CodeBlock::linkIncomingCall(CallFrame* callerFrame, CallLinkInfo* incoming)
 
 void CodeBlock::unlinkIncomingCalls()
 {
-    while (m_incomingCalls.begin() != m_incomingCalls.end())
+    while (!m_incomingCalls.isEmpty())
         m_incomingCalls.begin()->unlink(vm());
 #if ENABLE(JIT)
-    JITData* jitData = nullptr;
-    {
-        ConcurrentJSLocker locker(m_lock);
-        jitData = m_jitData.get();
-    }
-    if (jitData) {
-        while (jitData->m_incomingPolymorphicCalls.begin() != jitData->m_incomingPolymorphicCalls.end())
-            jitData->m_incomingPolymorphicCalls.begin()->unlink(vm());
-    }
-#endif // ENABLE(JIT)
+    while (!m_incomingPolymorphicCalls.isEmpty())
+        m_incomingPolymorphicCalls.begin()->unlink(vm());
+#endif
 }
 
 CodeBlock* CodeBlock::newReplacement()

@@ -80,7 +80,12 @@ template <typename T, typename RawNode = T> class SentinelLinkedList {
 public:
     typedef T* iterator;
 
-    SentinelLinkedList();
+    SentinelLinkedList()
+        : m_sentinel(Sentinel)
+    {
+        m_sentinel.setPrev(&m_sentinel);
+        m_sentinel.setNext(&m_sentinel);
+    }
 
     // Pushes to the front of the list. It's totally backwards from what you'd expect.
     void push(T*);
@@ -112,8 +117,7 @@ public:
     void takeFrom(SentinelLinkedList<T, RawNode>&);
     
 private:
-    RawNode m_headSentinel;
-    RawNode m_tailSentinel;
+    RawNode m_sentinel;
 };
 
 template <typename T, typename PtrTraits> void BasicRawSentinelNode<T, PtrTraits>::remove()
@@ -133,25 +137,14 @@ template <typename T, typename PtrTraits> void BasicRawSentinelNode<T, PtrTraits
         static_cast<T*>(this), static_cast<T*>(node));
 }
 
-template <typename T, typename RawNode> inline SentinelLinkedList<T, RawNode>::SentinelLinkedList()
-    : m_headSentinel(Sentinel)
-    , m_tailSentinel(Sentinel)
-{
-    m_headSentinel.setNext(&m_tailSentinel);
-    m_headSentinel.setPrev(nullptr);
-
-    m_tailSentinel.setPrev(&m_headSentinel);
-    m_tailSentinel.setNext(nullptr);
-}
-
 template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::begin()
 {
-    return static_cast<T*>(m_headSentinel.next());
+    return static_cast<T*>(m_sentinel.next());
 }
 
 template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::end()
 {
-    return static_cast<T*>(&m_tailSentinel);
+    return static_cast<T*>(&m_sentinel);
 }
 
 template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNode>::push(T* node)
@@ -160,8 +153,8 @@ template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNod
     ASSERT(!node->prev());
     ASSERT(!node->next());
     
-    RawNode* prev = &m_headSentinel;
-    RawNode* next = m_headSentinel.next();
+    RawNode* prev = &m_sentinel;
+    RawNode* next = m_sentinel.next();
 
     node->setPrev(prev);
     node->setNext(next);
@@ -176,8 +169,8 @@ template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNod
     ASSERT(!node->prev());
     ASSERT(!node->next());
     
-    RawNode* prev = m_tailSentinel.prev();
-    RawNode* next = &m_tailSentinel;
+    RawNode* prev = m_sentinel.prev();
+    RawNode* next = &m_sentinel;
 
     node->setPrev(prev);
     node->setNext(next);
@@ -258,15 +251,15 @@ inline void SentinelLinkedList<T, RawNode>::takeFrom(SentinelLinkedList<T, RawNo
 {
     if (other.isEmpty())
         return;
-    
-    m_tailSentinel.prev()->setNext(other.m_headSentinel.next());
-    other.m_headSentinel.next()->setPrev(m_tailSentinel.prev());
-    
-    m_tailSentinel.setPrev(other.m_tailSentinel.prev());
-    m_tailSentinel.prev()->setNext(&m_tailSentinel);
 
-    other.m_headSentinel.setNext(&other.m_tailSentinel);
-    other.m_tailSentinel.setPrev(&other.m_headSentinel);
+    m_sentinel.prev()->setNext(other.m_sentinel.next());
+    other.m_sentinel.next()->setPrev(m_sentinel.prev());
+
+    m_sentinel.setPrev(other.m_sentinel.prev());
+    m_sentinel.prev()->setNext(&m_sentinel);
+
+    other.m_sentinel.setNext(&other.m_sentinel);
+    other.m_sentinel.setPrev(&other.m_sentinel);
 }
 
 template<typename T>

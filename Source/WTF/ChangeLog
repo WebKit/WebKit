@@ -1,3 +1,21 @@
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Move m_incomingPolymorphicCalls out of CodeBlock::JITData
+        https://bugs.webkit.org/show_bug.cgi?id=233415
+
+        Reviewed by Mark Lam and Darin Adler.
+
+        Make sizeof(SentinelLinkedList) small. We do not need to have two sentinel for the list.
+
+        * wtf/SentinelLinkedList.h:
+        (WTF::SentinelLinkedList::SentinelLinkedList):
+        (WTF::RawNode>::begin):
+        (WTF::RawNode>::end):
+        (WTF::RawNode>::push):
+        (WTF::RawNode>::append):
+        (WTF::RawNode>::takeFrom):
+        (WTF::RawNode>::SentinelLinkedList): Deleted.
+
 2021-11-24  Antoine Quint  <graouts@webkit.org>
 
         [Model] clean up compile-time flags and condition IDL methods behind them

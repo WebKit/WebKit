@@ -1,5 +1,20 @@
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Move m_incomingPolymorphicCalls out of CodeBlock::JITData
+        https://bugs.webkit.org/show_bug.cgi?id=233415
+
+        Reviewed by Mark Lam and Darin Adler.
+
+        This patch moves m_incomingPolymorphicCalls from CodeBlock::JITData to CodeBlock since it is now used
+        in LLInt too if JIT is enabled. To keep CodeBlock small, this patch shrinks sizeof(SentinelLinkedList).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::linkIncomingPolymorphicCall):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        * bytecode/CodeBlock.h:
+
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] GetTypedArrayLengthAsInt52 can get Array::Generic ArrayMode
         https://bugs.webkit.org/show_bug.cgi?id=233571
         rdar://85812164

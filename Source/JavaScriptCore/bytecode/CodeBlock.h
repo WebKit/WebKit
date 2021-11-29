@@ -260,7 +260,6 @@ public:
         friend class LLIntOffsetsExtractor;
 
         FixedVector<StructureStubInfo> m_stubInfos;
-        SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
         bool m_hasCalleeSaveRegisters { false };
         RegisterAtOffsetList m_calleeSaveRegisters;
 
@@ -954,6 +953,9 @@ private:
 
     const void* m_instructionsRawPointer { nullptr };
     SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
+#if ENABLE(JIT)
+    SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
+#endif
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)

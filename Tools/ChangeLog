@@ -1,3 +1,19 @@
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Move m_incomingPolymorphicCalls out of CodeBlock::JITData
+        https://bugs.webkit.org/show_bug.cgi?id=233415
+
+        Reviewed by Mark Lam and Darin Adler.
+
+        Add tests for SentinelLinkedList.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/SentinelLinkedList.cpp: Added.
+        (TestWebKitAPI::TestNode::TestNode):
+        (TestWebKitAPI::TestNode::value const):
+        (TestWebKitAPI::TEST):
+
 2021-11-29  Lauro Moura  <lmoura@igalia.com>
 
         [webkitflaskpy] Make sure flask is registered before importing webkitflaskpy
