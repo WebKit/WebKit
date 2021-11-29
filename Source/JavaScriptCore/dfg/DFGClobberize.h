@@ -1456,7 +1456,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
 
         default:
-            ASSERT(mode.isSomeTypedArrayView());
+            DFG_ASSERT(graph, node, mode.isSomeTypedArrayView());
             read(MiscFields);
             def(HeapLocation(ArrayLengthLoc, MiscFields, node->child1()), LazyNode(node));
             return;
@@ -1465,10 +1465,16 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case GetTypedArrayLengthAsInt52: {
         ArrayMode mode = node->arrayMode();
-        RELEASE_ASSERT(mode.isSomeTypedArrayView());
-        read(MiscFields);
-        def(HeapLocation(TypedArrayLengthInt52Loc, MiscFields, node->child1()), LazyNode(node));
-        return;
+        DFG_ASSERT(graph, node, mode.isSomeTypedArrayView() || mode.type() == Array::ForceExit);
+        switch (mode.type()) {
+        case Array::ForceExit:
+            write(SideState);
+            return;
+        default:
+            read(MiscFields);
+            def(HeapLocation(TypedArrayLengthInt52Loc, MiscFields, node->child1()), LazyNode(node));
+            return;
+        }
     }
 
     case GetVectorLength: {
