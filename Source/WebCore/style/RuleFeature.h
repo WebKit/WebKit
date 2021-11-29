@@ -79,6 +79,7 @@ struct RuleFeatureSet {
     RuleFeatureVector uncommonAttributeRules;
 
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> tagRules;
+    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
     HashMap<CSSSelector::PseudoClassType, std::unique_ptr<RuleFeatureVector>, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassRules;
@@ -96,6 +97,7 @@ private:
         bool hasSiblingSelector { false };
 
         Vector<std::pair<AtomString, MatchElement>, 32> tags;
+        Vector<std::pair<AtomString, MatchElement>, 32> ids;
         Vector<std::pair<AtomString, MatchElement>, 32> classes;
         Vector<std::pair<const CSSSelector*, MatchElement>, 32> attributes;
         Vector<std::pair<CSSSelector::PseudoClassType, MatchElement>, 32> pseudoClasses;

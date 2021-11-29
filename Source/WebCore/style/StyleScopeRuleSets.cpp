@@ -221,6 +221,7 @@ void ScopeRuleSets::collectFeatures() const
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 
     m_tagInvalidationRuleSets.clear();
+    m_idInvalidationRuleSets.clear();
     m_classInvalidationRuleSets.clear();
     m_attributeInvalidationRuleSets.clear();
     m_pseudoClassInvalidationRuleSets.clear();
@@ -277,6 +278,11 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
 const Vector<InvalidationRuleSet>* ScopeRuleSets::tagInvalidationRuleSets(const AtomString& tagName) const
 {
     return ensureInvalidationRuleSets(tagName, m_tagInvalidationRuleSets, m_features.tagRules);
+}
+
+const Vector<InvalidationRuleSet>* ScopeRuleSets::idInvalidationRuleSets(const AtomString& id) const
+{
+    return ensureInvalidationRuleSets(id, m_idInvalidationRuleSets, m_features.idRules);
 }
 
 const Vector<InvalidationRuleSet>* ScopeRuleSets::classInvalidationRuleSets(const AtomString& className) const

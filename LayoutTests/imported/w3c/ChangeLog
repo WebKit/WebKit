@@ -1,3 +1,12 @@
+2021-11-29  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] id invalidation support
+        https://bugs.webkit.org/show_bug.cgi?id=233557
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has-expected.txt:
+
 2021-11-29  Andreu Botella  <andreu@andreubotella.com>
 
         Form payloads with text/plain enctype should have a final \r\n

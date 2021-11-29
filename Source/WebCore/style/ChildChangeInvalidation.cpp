@@ -67,17 +67,25 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
 
     Invalidator::MatchElementRuleSets matchElementRuleSets;
 
+    bool isDescendant = changedElement.parentElement() != &parentElement();
+
     auto addHasInvalidation = [&](const Vector<InvalidationRuleSet>* invalidationRuleSets)  {
         if (!invalidationRuleSets)
             return;
         for (auto& invalidationRuleSet : *invalidationRuleSets) {
-            if (isHasPseudoClassMatchElement(invalidationRuleSet.matchElement))
-                Invalidator::addToMatchElementRuleSets(matchElementRuleSets, invalidationRuleSet);
+            if (!isHasPseudoClassMatchElement(invalidationRuleSet.matchElement))
+                continue;
+            if (isDescendant && invalidationRuleSet.matchElement != MatchElement::HasDescendant)
+                continue;
+            Invalidator::addToMatchElementRuleSets(matchElementRuleSets, invalidationRuleSet);
         }
     };
 
     auto tagName = changedElement.localName().convertToASCIILowercase();
     addHasInvalidation(ruleSets.tagInvalidationRuleSets(tagName));
+
+    if (changedElement.hasID())
+        addHasInvalidation(ruleSets.idInvalidationRuleSets(changedElement.idForStyleResolution()));
 
     if (changedElement.hasAttributes()) {
         for (auto& attribute : changedElement.attributesIterator()) {

@@ -12,7 +12,7 @@ PASS add .descendant to #div_grandchild: div#div_subject.color
 PASS remove .descendant from #div_grandchild: div#div_subject.color
 PASS set descendant to #div_grandchild[attrname]: div#div_subject.color
 PASS clear #div_grandchild[attrname]: div#div_subject.color
-FAIL change #div_grandchild to #div_descendant: div#div_subject.color assert_equals: expected "rgb(255, 255, 0)" but got "rgb(128, 128, 128)"
+PASS change #div_grandchild to #div_descendant: div#div_subject.color
 PASS change #div_descendant to #div_grandchild: div#div_subject.color
 PASS add descendant to #div_subject: div#div_subject.color
 PASS remove descendant from #div_subject: div#div_subject.color
@@ -22,9 +22,9 @@ PASS add div.child to #div_subject: div#div_subject.color
 PASS remove div.child from #div_subject: div#div_subject.color
 PASS add "div > div.descendant" to #div_subject: div#div_subject.color
 PASS remove "div > div.descendant" from #div_subject: div#div_subject.color
-FAIL add div#div_descendant to #div_subject: div#div_subject.color assert_equals: expected "rgb(255, 255, 0)" but got "rgb(128, 128, 128)"
+PASS add div#div_descendant to #div_subject: div#div_subject.color
 PASS remove div#div_descendant from #div_subject: div#div_subject.color
-FAIL add "div#div_descendant" to #div_subject: div#div_subject.color assert_equals: expected "rgb(255, 255, 0)" but got "rgb(128, 128, 128)"
+PASS add "div#div_descendant" to #div_subject: div#div_subject.color
 PASS remove "div#div_descendant" from #div_subject: div#div_subject.color
 PASS add div[attrname] to #div_subject: div#div_subject.color
 PASS remove div[attrname] from #div_subject: div#div_subject.color
