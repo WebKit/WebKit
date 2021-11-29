@@ -1,3 +1,16 @@
+2021-11-29  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Fix ATOMICS_REQUIRE_LIBATOMIC testcase on 32-bits
+        https://bugs.webkit.org/show_bug.cgi?id=233551
+
+        Unreviewed build fix.
+
+        There's a syntax error when compiling the test program
+        on 32-bits. This was not an issue on ARM as atomics are
+        built in on that platform, but broke the MIPS build.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2021-11-29  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Add runtime flag for Layer-based SVG engine (LBSE)

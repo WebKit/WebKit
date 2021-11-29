@@ -363,7 +363,11 @@ int main() {
 #endif
     uint64_t z = 42;
     bool l = compare_and_swap_uint64_weak(&z, 42, 56);
-    int result = (j || k || l) ? 0 : 1;
+    int result = (j ||
+#if CPU(ADDRESS64)
+                  k ||
+#endif
+                  l) ? 0 : 1;
     return result;
 }
     ")
