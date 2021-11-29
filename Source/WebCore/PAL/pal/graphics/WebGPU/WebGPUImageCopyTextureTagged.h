@@ -31,8 +31,8 @@
 namespace PAL::WebGPU {
 
 struct ImageCopyTextureTagged : public ImageCopyTexture {
-    PredefinedColorSpace colorSpace;
-    bool premultipliedAlpha;
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    bool premultipliedAlpha { false };
 };
 
 } // namespace PAL::WebGPU

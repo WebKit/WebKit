@@ -31,7 +31,7 @@
 namespace PAL::WebGPU {
 
 struct ImageDataLayout {
-    Size64 offset;
+    Size64 offset { 0 };
     std::optional<Size32> bytesPerRow;
     std::optional<Size32> rowsPerImage;
 };

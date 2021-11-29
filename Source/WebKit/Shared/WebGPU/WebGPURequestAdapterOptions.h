@@ -34,7 +34,7 @@ namespace WebKit::WebGPU {
 
 struct RequestAdapterOptions {
     std::optional<PAL::WebGPU::PowerPreference> powerPreference;
-    bool forceFallbackAdapter;
+    bool forceFallbackAdapter { false };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

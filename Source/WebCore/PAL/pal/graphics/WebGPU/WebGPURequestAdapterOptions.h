@@ -32,7 +32,7 @@ namespace PAL::WebGPU {
 
 struct RequestAdapterOptions {
     std::optional<PowerPreference> powerPreference;
-    bool forceFallbackAdapter;
+    bool forceFallbackAdapter { false };
 };
 
 } // namespace PAL::WebGPU

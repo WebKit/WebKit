@@ -35,16 +35,16 @@
 namespace PAL::WebGPU {
 
 struct SamplerDescriptor : public ObjectDescriptorBase {
-    AddressMode addressModeU;
-    AddressMode addressModeV;
-    AddressMode addressModeW;
-    FilterMode magFilter;
-    FilterMode minFilter;
-    FilterMode mipmapFilter;
-    float lodMinClamp;
-    float lodMaxClamp;
+    AddressMode addressModeU { AddressMode::ClampToEdge };
+    AddressMode addressModeV { AddressMode::ClampToEdge };
+    AddressMode addressModeW { AddressMode::ClampToEdge };
+    FilterMode magFilter { FilterMode::Nearest };
+    FilterMode minFilter { FilterMode::Nearest };
+    FilterMode mipmapFilter { FilterMode::Nearest };
+    float lodMinClamp { 0 };
+    float lodMaxClamp { 32 };
     std::optional<CompareFunction> compare;
-    uint16_t maxAnisotropy;
+    uint16_t maxAnisotropy { 1 };
 };
 
 } // namespace PAL::WebGPU

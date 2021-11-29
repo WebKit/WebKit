@@ -33,7 +33,7 @@
 namespace WebKit::WebGPU {
 
 struct SamplerBindingLayout {
-    PAL::WebGPU::SamplerBindingType type;
+    PAL::WebGPU::SamplerBindingType type { PAL::WebGPU::SamplerBindingType::Filtering };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

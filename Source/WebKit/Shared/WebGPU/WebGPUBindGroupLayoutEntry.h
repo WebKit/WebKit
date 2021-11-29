@@ -39,7 +39,7 @@
 namespace WebKit::WebGPU {
 
 struct BindGroupLayoutEntry {
-    PAL::WebGPU::Index32 binding;
+    PAL::WebGPU::Index32 binding { 0 };
     PAL::WebGPU::ShaderStageFlags visibility;
 
     std::optional<BufferBindingLayout> buffer;

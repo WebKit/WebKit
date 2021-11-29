@@ -32,9 +32,9 @@
 namespace PAL::WebGPU {
 
 struct Extent3DDict {
-    IntegerCoordinate width;
-    IntegerCoordinate height;
-    IntegerCoordinate depthOrArrayLayers;
+    IntegerCoordinate width { 0 };
+    IntegerCoordinate height { 0 };
+    IntegerCoordinate depthOrArrayLayers { 0 };
 };
 
 using Extent3D = std::variant<Vector<IntegerCoordinate>, Extent3DDict>;

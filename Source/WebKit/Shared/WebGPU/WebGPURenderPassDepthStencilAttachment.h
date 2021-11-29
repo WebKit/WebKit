@@ -41,12 +41,12 @@ struct RenderPassDepthStencilAttachment {
     WebGPUIdentifier view;
 
     std::variant<PAL::WebGPU::LoadOp, float> depthLoadValue;
-    PAL::WebGPU::StoreOp depthStoreOp;
-    bool depthReadOnly;
+    PAL::WebGPU::StoreOp depthStoreOp { PAL::WebGPU::StoreOp::Store };
+    bool depthReadOnly { false };
 
     std::variant<PAL::WebGPU::LoadOp, PAL::WebGPU::StencilValue> stencilLoadValue;
-    PAL::WebGPU::StoreOp stencilStoreOp;
-    bool stencilReadOnly;
+    PAL::WebGPU::StoreOp stencilStoreOp { PAL::WebGPU::StoreOp::Store };
+    bool stencilReadOnly { false };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

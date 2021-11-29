@@ -33,10 +33,10 @@
 namespace PAL::WebGPU {
 
 struct ColorTargetState {
-    TextureFormat format;
+    TextureFormat format { TextureFormat::R8unorm };
 
     std::optional<BlendState> blend;
-    ColorWriteFlags writeMask;
+    ColorWriteFlags writeMask { ColorWrite::All };
 };
 
 } // namespace PAL::WebGPU

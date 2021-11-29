@@ -33,8 +33,8 @@
 namespace PAL::WebGPU {
 
 struct VertexBufferLayout {
-    Size64 arrayStride;
-    VertexStepMode stepMode;
+    Size64 arrayStride { 0 };
+    VertexStepMode stepMode { VertexStepMode::Vertex };
     Vector<VertexAttribute> attributes;
 };
 

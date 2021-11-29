@@ -37,10 +37,10 @@
 namespace WebKit::WebGPU {
 
 struct PrimitiveState {
-    PAL::WebGPU::PrimitiveTopology topology;
+    PAL::WebGPU::PrimitiveTopology topology { PAL::WebGPU::PrimitiveTopology::TriangleList };
     std::optional<PAL::WebGPU::IndexFormat> stripIndexFormat;
-    PAL::WebGPU::FrontFace frontFace;
-    PAL::WebGPU::CullMode cullMode;
+    PAL::WebGPU::FrontFace frontFace { PAL::WebGPU::FrontFace::CCW };
+    PAL::WebGPU::CullMode cullMode { PAL::WebGPU::CullMode::None };
 
     // Requires "depth-clip-control" feature.
     bool unclippedDepth;

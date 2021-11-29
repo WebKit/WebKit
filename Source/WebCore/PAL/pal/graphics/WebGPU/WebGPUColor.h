@@ -32,10 +32,10 @@
 namespace PAL::WebGPU {
 
 struct ColorDict {
-    double r;
-    double g;
-    double b;
-    double a;
+    double r { 0 };
+    double g { 0 };
+    double b { 0 };
+    double a { 0 };
 };
 
 using Color = std::variant<Vector<double>, ColorDict>;

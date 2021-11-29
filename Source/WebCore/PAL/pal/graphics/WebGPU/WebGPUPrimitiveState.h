@@ -35,13 +35,13 @@
 namespace PAL::WebGPU {
 
 struct PrimitiveState {
-    PrimitiveTopology topology;
+    PrimitiveTopology topology { PrimitiveTopology::TriangleList };
     std::optional<IndexFormat> stripIndexFormat;
-    FrontFace frontFace;
-    CullMode cullMode;
+    FrontFace frontFace { FrontFace::CCW };
+    CullMode cullMode { CullMode::None };
 
     // Requires "depth-clip-control" feature.
-    bool unclippedDepth;
+    bool unclippedDepth { false };
 };
 
 } // namespace PAL::WebGPU

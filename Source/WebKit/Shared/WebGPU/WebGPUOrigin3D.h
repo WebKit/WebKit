@@ -35,9 +35,9 @@
 namespace WebKit::WebGPU {
 
 struct Origin3DDict {
-    PAL::WebGPU::IntegerCoordinate x;
-    PAL::WebGPU::IntegerCoordinate y;
-    PAL::WebGPU::IntegerCoordinate z;
+    PAL::WebGPU::IntegerCoordinate x { 0 };
+    PAL::WebGPU::IntegerCoordinate y { 0 };
+    PAL::WebGPU::IntegerCoordinate z { 0 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

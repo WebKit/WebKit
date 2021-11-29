@@ -35,10 +35,10 @@
 namespace WebKit::WebGPU {
 
 struct ColorTargetState {
-    PAL::WebGPU::TextureFormat format;
+    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
 
     std::optional<BlendState> blend;
-    PAL::WebGPU::ColorWriteFlags writeMask;
+    PAL::WebGPU::ColorWriteFlags writeMask { PAL::WebGPU::ColorWrite::All };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

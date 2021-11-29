@@ -1,3 +1,58 @@
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Provide default values for descriptor struct members
+        https://bugs.webkit.org/show_bug.cgi?id=233431
+
+        Reviewed by Alex Christensen.
+
+        The purpose of this is to be defensive. Ideally these wouldn't actually be used, but it's
+        a good idea to be safe and have them specified anyway.
+
+        I didn't provide default values for members whose types already have something well-defined,
+        like variants or optionals. But I did for ints and enums.
+
+        Where possible, I've matched the default values listed in the spec.
+
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h:
+        * pal/graphics/WebGPU/WebGPUBlendComponent.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUColor.h:
+        * pal/graphics/WebGPU/WebGPUColorTargetState.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPUDepthStencilState.h:
+        * pal/graphics/WebGPU/WebGPUExtent3D.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h:
+        * pal/graphics/WebGPU/WebGPUImageDataLayout.h:
+        * pal/graphics/WebGPU/WebGPUMultisampleState.h:
+        * pal/graphics/WebGPU/WebGPUOrigin2D.h:
+        * pal/graphics/WebGPU/WebGPUOrigin3D.h:
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveState.h:
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPURequestAdapterOptions.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUSamplerDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUStencilFaceState.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUVertexAttribute.h:
+        * pal/graphics/WebGPU/WebGPUVertexBufferLayout.h:
+
 2021-11-24  Antoine Quint  <graouts@webkit.org>
 
         [Model] clean up compile-time flags and condition IDL methods behind them

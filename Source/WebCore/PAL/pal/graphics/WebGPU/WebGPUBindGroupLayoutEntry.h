@@ -37,7 +37,7 @@
 namespace PAL::WebGPU {
 
 struct BindGroupLayoutEntry {
-    Index32 binding;
+    Index32 binding { 0 };
     ShaderStageFlags visibility;
 
     std::optional<BufferBindingLayout> buffer;

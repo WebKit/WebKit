@@ -36,10 +36,10 @@
 namespace WebKit::WebGPU {
 
 struct DepthStencilState {
-    PAL::WebGPU::TextureFormat format;
+    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
 
-    bool depthWriteEnabled;
-    PAL::WebGPU::CompareFunction depthCompare;
+    bool depthWriteEnabled { false };
+    PAL::WebGPU::CompareFunction depthCompare { PAL::WebGPU::CompareFunction::Always };
 
     StencilFaceState stencilFront;
     StencilFaceState stencilBack;
@@ -47,9 +47,9 @@ struct DepthStencilState {
     std::optional<PAL::WebGPU::StencilValue> stencilReadMask;
     std::optional<PAL::WebGPU::StencilValue> stencilWriteMask;
 
-    PAL::WebGPU::DepthBias depthBias;
-    float depthBiasSlopeScale;
-    float depthBiasClamp;
+    PAL::WebGPU::DepthBias depthBias { 0 };
+    float depthBiasSlopeScale { 0 };
+    float depthBiasClamp { 0 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

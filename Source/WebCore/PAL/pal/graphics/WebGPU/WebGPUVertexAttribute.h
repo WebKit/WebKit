@@ -31,10 +31,10 @@
 namespace PAL::WebGPU {
 
 struct VertexAttribute {
-    VertexFormat format;
-    Size64 offset;
+    VertexFormat format { VertexFormat::Uint8x2 };
+    Size64 offset { 0 };
 
-    Index32 shaderLocation;
+    Index32 shaderLocation { 0 };
 };
 
 } // namespace PAL::WebGPU

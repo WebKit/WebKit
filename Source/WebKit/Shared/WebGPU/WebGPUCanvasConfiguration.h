@@ -43,10 +43,10 @@ class Device;
 
 struct CanvasConfiguration {
     WebGPUIdentifier device;
-    PAL::WebGPU::TextureFormat format;
-    PAL::WebGPU::TextureUsageFlags usage; // TextureUsage.RENDER_ATTACHMENT
-    PAL::WebGPU::PredefinedColorSpace colorSpace;
-    PAL::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode;
+    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
+    PAL::WebGPU::TextureUsageFlags usage { PAL::WebGPU::TextureUsage::RenderAttachment };
+    PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
+    PAL::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode { PAL::WebGPU::CanvasCompositingAlphaMode::Opaque };
     std::optional<Extent3D> size;
 
     template<class Encoder> void encode(Encoder& encoder) const

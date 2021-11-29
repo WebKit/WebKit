@@ -36,7 +36,7 @@ namespace PAL::WebGPU {
 struct RenderPassLayout : public ObjectDescriptorBase {
     Vector<TextureFormat> colorFormats;
     std::optional<TextureFormat> depthStencilFormat;
-    Size32 sampleCount;
+    Size32 sampleCount { 1 };
 };
 
 } // namespace PAL::WebGPU

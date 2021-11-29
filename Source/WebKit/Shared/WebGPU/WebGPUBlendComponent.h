@@ -34,9 +34,9 @@
 namespace WebKit::WebGPU {
 
 struct BlendComponent {
-    PAL::WebGPU::BlendOperation operation;
-    PAL::WebGPU::BlendFactor srcFactor;
-    PAL::WebGPU::BlendFactor dstFactor;
+    PAL::WebGPU::BlendOperation operation { PAL::WebGPU::BlendOperation::Add };
+    PAL::WebGPU::BlendFactor srcFactor { PAL::WebGPU::BlendFactor::One };
+    PAL::WebGPU::BlendFactor dstFactor { PAL::WebGPU::BlendFactor::Zero };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

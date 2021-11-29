@@ -35,9 +35,9 @@
 namespace WebKit::WebGPU {
 
 struct BufferDescriptor : public ObjectDescriptorBase {
-    PAL::WebGPU::Size64 size;
+    PAL::WebGPU::Size64 size { 0 };
     PAL::WebGPU::BufferUsageFlags usage;
-    bool mappedAtCreation;
+    bool mappedAtCreation { false };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

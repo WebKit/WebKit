@@ -31,9 +31,9 @@
 namespace PAL::WebGPU {
 
 struct BufferBindingLayout {
-    BufferBindingType type;
-    bool hasDynamicOffset;
-    Size64 minBindingSize;
+    BufferBindingType type { BufferBindingType::Uniform };
+    bool hasDynamicOffset { false };
+    Size64 minBindingSize { 0 };
 };
 
 } // namespace PAL::WebGPU

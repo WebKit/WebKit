@@ -30,8 +30,8 @@
 namespace PAL::WebGPU {
 
 struct RenderBundleEncoderDescriptor : public RenderPassLayout {
-    bool depthReadOnly;
-    bool stencilReadOnly;
+    bool depthReadOnly { false };
+    bool stencilReadOnly { false };
 };
 
 } // namespace PAL::WebGPU

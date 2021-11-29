@@ -33,7 +33,7 @@
 namespace WebKit::WebGPU {
 
 struct ImageDataLayout {
-    PAL::WebGPU::Size64 offset;
+    PAL::WebGPU::Size64 offset { 0 };
     std::optional<PAL::WebGPU::Size32> bytesPerRow;
     std::optional<PAL::WebGPU::Size32> rowsPerImage;
 

@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 struct RenderPassLayout : public ObjectDescriptorBase {
     Vector<PAL::WebGPU::TextureFormat> colorFormats;
     std::optional<PAL::WebGPU::TextureFormat> depthStencilFormat;
-    PAL::WebGPU::Size32 sampleCount;
+    PAL::WebGPU::Size32 sampleCount { 1 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

@@ -32,9 +32,9 @@
 namespace PAL::WebGPU {
 
 struct BufferDescriptor : public ObjectDescriptorBase {
-    Size64 size;
+    Size64 size { 0 };
     BufferUsageFlags usage;
-    bool mappedAtCreation;
+    bool mappedAtCreation { false };
 };
 
 } // namespace PAL::WebGPU

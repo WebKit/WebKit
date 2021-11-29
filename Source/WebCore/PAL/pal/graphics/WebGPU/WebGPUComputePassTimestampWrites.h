@@ -36,8 +36,8 @@ class QuerySet;
 
 struct ComputePassTimestampWrite {
     QuerySet& querySet;
-    Size32 queryIndex;
-    ComputePassTimestampLocation location;
+    Size32 queryIndex { 0 };
+    ComputePassTimestampLocation location { ComputePassTimestampLocation::Beginning };
 };
 
 using ComputePassTimestampWrites = Vector<ComputePassTimestampWrite>;

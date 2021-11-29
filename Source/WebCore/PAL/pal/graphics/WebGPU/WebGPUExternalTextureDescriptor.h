@@ -31,7 +31,7 @@
 namespace PAL::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
-    PredefinedColorSpace colorSpace;
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
 };
 
 } // namespace PAL::WebGPU

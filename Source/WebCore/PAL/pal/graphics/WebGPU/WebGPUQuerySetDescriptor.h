@@ -34,8 +34,8 @@
 namespace PAL::WebGPU {
 
 struct QuerySetDescriptor : public ObjectDescriptorBase {
-    QueryType type;
-    Size32 count;
+    QueryType type { QueryType::Occlusion };
+    Size32 count { 0 };
     Vector<PipelineStatisticName> pipelineStatistics;
 };
 

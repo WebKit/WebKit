@@ -31,9 +31,9 @@
 namespace PAL::WebGPU {
 
 struct BlendComponent {
-    BlendOperation operation;
-    BlendFactor srcFactor;
-    BlendFactor dstFactor;
+    BlendOperation operation { BlendOperation::Add };
+    BlendFactor srcFactor { BlendFactor::One };
+    BlendFactor dstFactor { BlendFactor::Zero };
 };
 
 } // namespace PAL::WebGPU

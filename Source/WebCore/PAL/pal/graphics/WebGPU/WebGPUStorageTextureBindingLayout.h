@@ -32,9 +32,9 @@
 namespace PAL::WebGPU {
 
 struct StorageTextureBindingLayout {
-    StorageTextureAccess access;
-    TextureFormat format;
-    TextureViewDimension viewDimension;
+    StorageTextureAccess access { StorageTextureAccess::WriteOnly };
+    TextureFormat format { TextureFormat::R8unorm };
+    TextureViewDimension viewDimension { TextureViewDimension::_2d };
 };
 
 } // namespace PAL::WebGPU

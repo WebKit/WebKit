@@ -34,10 +34,10 @@
 namespace WebKit::WebGPU {
 
 struct VertexAttribute {
-    PAL::WebGPU::VertexFormat format;
-    PAL::WebGPU::Size64 offset;
+    PAL::WebGPU::VertexFormat format { PAL::WebGPU::VertexFormat::Uint8x2 };
+    PAL::WebGPU::Size64 offset { 0 };
 
-    PAL::WebGPU::Index32 shaderLocation;
+    PAL::WebGPU::Index32 shaderLocation { 0 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

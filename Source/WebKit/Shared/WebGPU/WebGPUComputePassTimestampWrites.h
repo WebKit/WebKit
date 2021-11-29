@@ -38,8 +38,8 @@ namespace WebKit::WebGPU {
 
 struct ComputePassTimestampWrite {
     WebGPUIdentifier querySet;
-    PAL::WebGPU::Size32 queryIndex;
-    PAL::WebGPU::ComputePassTimestampLocation location;
+    PAL::WebGPU::Size32 queryIndex { 0 };
+    PAL::WebGPU::ComputePassTimestampLocation location { PAL::WebGPU::ComputePassTimestampLocation::Beginning };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

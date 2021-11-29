@@ -34,9 +34,9 @@
 namespace WebKit::WebGPU {
 
 struct TextureBindingLayout {
-    PAL::WebGPU::TextureSampleType sampleType;
-    PAL::WebGPU::TextureViewDimension viewDimension;
-    bool multisampled;
+    PAL::WebGPU::TextureSampleType sampleType { PAL::WebGPU::TextureSampleType::Float };
+    PAL::WebGPU::TextureViewDimension viewDimension { PAL::WebGPU::TextureViewDimension::_2d };
+    bool multisampled { false };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

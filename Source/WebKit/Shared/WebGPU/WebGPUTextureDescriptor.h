@@ -39,10 +39,10 @@ namespace WebKit::WebGPU {
 
 struct TextureDescriptor : public ObjectDescriptorBase {
     Extent3D size;
-    PAL::WebGPU::IntegerCoordinate mipLevelCount;
-    PAL::WebGPU::Size32 sampleCount;
-    PAL::WebGPU::TextureDimension dimension;
-    PAL::WebGPU::TextureFormat format;
+    PAL::WebGPU::IntegerCoordinate mipLevelCount { 1 };
+    PAL::WebGPU::Size32 sampleCount { 1 };
+    PAL::WebGPU::TextureDimension dimension { PAL::WebGPU::TextureDimension::_2d };
+    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
     PAL::WebGPU::TextureUsageFlags usage;
 
     template<class Encoder> void encode(Encoder& encoder) const

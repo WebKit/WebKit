@@ -36,10 +36,10 @@ namespace PAL::WebGPU {
 
 struct TextureDescriptor : public ObjectDescriptorBase {
     Extent3D size;
-    IntegerCoordinate mipLevelCount;
-    Size32 sampleCount;
-    TextureDimension dimension;
-    TextureFormat format;
+    IntegerCoordinate mipLevelCount { 1 };
+    Size32 sampleCount { 1 };
+    TextureDimension dimension { TextureDimension::_2d };
+    TextureFormat format { TextureFormat::R8unorm };
     TextureUsageFlags usage;
 };
 

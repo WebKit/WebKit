@@ -34,10 +34,10 @@
 namespace PAL::WebGPU {
 
 struct DepthStencilState {
-    TextureFormat format;
+    TextureFormat format { TextureFormat::R8unorm };
 
-    bool depthWriteEnabled;
-    CompareFunction depthCompare;
+    bool depthWriteEnabled { false };
+    CompareFunction depthCompare { CompareFunction::Always };
 
     StencilFaceState stencilFront;
     StencilFaceState stencilBack;
@@ -45,9 +45,9 @@ struct DepthStencilState {
     std::optional<StencilValue> stencilReadMask;
     std::optional<StencilValue> stencilWriteMask;
 
-    DepthBias depthBias;
-    float depthBiasSlopeScale;
-    float depthBiasClamp;
+    DepthBias depthBias { 0 };
+    float depthBiasSlopeScale { 0 };
+    float depthBiasClamp { 0 };
 };
 
 } // namespace PAL::WebGPU

@@ -39,12 +39,12 @@ struct RenderPassDepthStencilAttachment {
     TextureView& view;
 
     std::variant<LoadOp, float> depthLoadValue;
-    StoreOp depthStoreOp;
-    bool depthReadOnly;
+    StoreOp depthStoreOp { StoreOp::Store };
+    bool depthReadOnly { false };
 
     std::variant<LoadOp, StencilValue> stencilLoadValue;
-    StoreOp stencilStoreOp;
-    bool stencilReadOnly;
+    StoreOp stencilStoreOp { StoreOp::Store };
+    bool stencilReadOnly { false };
 };
 
 } // namespace PAL::WebGPU

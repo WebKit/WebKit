@@ -43,10 +43,10 @@ enum class BindingResourceType : uint8_t {
 };
 
 struct BindGroupEntry {
-    PAL::WebGPU::Index32 binding;
+    PAL::WebGPU::Index32 binding { 0 };
     BufferBinding bufferBinding;
     WebGPUIdentifier identifier;
-    BindingResourceType type;
+    BindingResourceType type { BindingResourceType::Sampler };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

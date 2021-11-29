@@ -34,7 +34,7 @@
 namespace WebKit::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
-    PAL::WebGPU::PredefinedColorSpace colorSpace;
+    PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

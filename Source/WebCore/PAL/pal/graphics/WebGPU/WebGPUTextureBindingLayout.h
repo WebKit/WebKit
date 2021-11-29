@@ -31,9 +31,9 @@
 namespace PAL::WebGPU {
 
 struct TextureBindingLayout {
-    TextureSampleType sampleType;
-    TextureViewDimension viewDimension;
-    bool multisampled;
+    TextureSampleType sampleType { TextureSampleType::Float };
+    TextureViewDimension viewDimension { TextureViewDimension::_2d };
+    bool multisampled { false };
 };
 
 } // namespace PAL::WebGPU

@@ -32,9 +32,9 @@
 namespace PAL::WebGPU {
 
 struct Origin3DDict {
-    IntegerCoordinate x;
-    IntegerCoordinate y;
-    IntegerCoordinate z;
+    IntegerCoordinate x { 0 };
+    IntegerCoordinate y { 0 };
+    IntegerCoordinate z { 0 };
 };
 
 using Origin3D = std::variant<Vector<IntegerCoordinate>, Origin3DDict>;

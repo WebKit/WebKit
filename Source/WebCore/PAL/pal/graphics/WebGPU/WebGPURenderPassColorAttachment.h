@@ -38,10 +38,10 @@ class TextureView;
 
 struct RenderPassColorAttachment {
     TextureView& view;
-    TextureView* resolveTarget;
+    TextureView* resolveTarget { nullptr };
 
     std::variant<LoadOp, Vector<double>, ColorDict> loadValue;
-    StoreOp storeOp;
+    StoreOp storeOp { StoreOp::Store };
 };
 
 } // namespace PAL::WebGPU

@@ -1,3 +1,50 @@
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Provide default values for descriptor struct members
+        https://bugs.webkit.org/show_bug.cgi?id=233431
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there is no behavior change.
+
+        * Shared/WebGPU/WebGPUBindGroupEntry.h:
+        * Shared/WebGPU/WebGPUBindGroupLayoutEntry.h:
+        * Shared/WebGPU/WebGPUBlendComponent.h:
+        * Shared/WebGPU/WebGPUBufferBinding.h:
+        * Shared/WebGPU/WebGPUBufferBindingLayout.h:
+        * Shared/WebGPU/WebGPUBufferDescriptor.h:
+        * Shared/WebGPU/WebGPUCanvasConfiguration.h:
+        * Shared/WebGPU/WebGPUColor.h:
+        * Shared/WebGPU/WebGPUColorTargetState.h:
+        * Shared/WebGPU/WebGPUCompilationMessage.h:
+        * Shared/WebGPU/WebGPUComputePassTimestampWrites.h:
+        * Shared/WebGPU/WebGPUDepthStencilState.h:
+        * Shared/WebGPU/WebGPUExtent3D.h:
+        * Shared/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * Shared/WebGPU/WebGPUImageCopyTexture.h:
+        * Shared/WebGPU/WebGPUImageCopyTextureTagged.h:
+        * Shared/WebGPU/WebGPUImageDataLayout.h:
+        * Shared/WebGPU/WebGPUMultisampleState.h:
+        * Shared/WebGPU/WebGPUOrigin2D.h:
+        * Shared/WebGPU/WebGPUOrigin3D.h:
+        * Shared/WebGPU/WebGPUPrimitiveState.h:
+        * Shared/WebGPU/WebGPUQuerySetDescriptor.h:
+        * Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.h:
+        * Shared/WebGPU/WebGPURenderPassColorAttachment.h:
+        * Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * Shared/WebGPU/WebGPURenderPassLayout.h:
+        * Shared/WebGPU/WebGPURenderPassTimestampWrites.h:
+        * Shared/WebGPU/WebGPURequestAdapterOptions.h:
+        * Shared/WebGPU/WebGPUSamplerBindingLayout.h:
+        * Shared/WebGPU/WebGPUSamplerDescriptor.h:
+        * Shared/WebGPU/WebGPUStencilFaceState.h:
+        * Shared/WebGPU/WebGPUStorageTextureBindingLayout.h:
+        * Shared/WebGPU/WebGPUTextureBindingLayout.h:
+        * Shared/WebGPU/WebGPUTextureDescriptor.h:
+        * Shared/WebGPU/WebGPUTextureViewDescriptor.h:
+        * Shared/WebGPU/WebGPUVertexAttribute.h:
+        * Shared/WebGPU/WebGPUVertexBufferLayout.h:
+
 2021-11-29  Chris Dumez  <cdumez@apple.com>
 
         Make support for WebKitAdditions in Framework headers conditional based on deployment target

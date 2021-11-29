@@ -32,8 +32,8 @@
 namespace PAL::WebGPU {
 
 struct Origin2DDict {
-    IntegerCoordinate x;
-    IntegerCoordinate y;
+    IntegerCoordinate x { 0 };
+    IntegerCoordinate y { 0 };
 };
 
 using Origin2D = std::variant<Vector<IntegerCoordinate>, Origin2DDict>;

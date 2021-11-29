@@ -35,9 +35,9 @@
 namespace WebKit::WebGPU {
 
 struct StorageTextureBindingLayout {
-    PAL::WebGPU::StorageTextureAccess access;
-    PAL::WebGPU::TextureFormat format;
-    PAL::WebGPU::TextureViewDimension viewDimension;
+    PAL::WebGPU::StorageTextureAccess access { PAL::WebGPU::StorageTextureAccess::WriteOnly };
+    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
+    PAL::WebGPU::TextureViewDimension viewDimension { PAL::WebGPU::TextureViewDimension::_2d };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

@@ -37,10 +37,10 @@ namespace PAL::WebGPU {
 struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<TextureFormat> format;
     std::optional<TextureViewDimension> dimension;
-    TextureAspect aspect;
-    IntegerCoordinate baseMipLevel;
+    TextureAspect aspect { TextureAspect::All };
+    IntegerCoordinate baseMipLevel { 0 };
     std::optional<IntegerCoordinate> mipLevelCount;
-    IntegerCoordinate baseArrayLayer;
+    IntegerCoordinate baseArrayLayer { 0 };
     std::optional<IntegerCoordinate> arrayLayerCount;
 };
 

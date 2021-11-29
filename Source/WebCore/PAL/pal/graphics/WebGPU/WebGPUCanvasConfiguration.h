@@ -40,10 +40,10 @@ class Device;
 
 struct CanvasConfiguration {
     Device& device;
-    TextureFormat format;
-    TextureUsageFlags usage; // TextureUsage.RENDER_ATTACHMENT
-    PredefinedColorSpace colorSpace;
-    CanvasCompositingAlphaMode compositingAlphaMode;
+    TextureFormat format { TextureFormat::R8unorm };
+    TextureUsageFlags usage { TextureUsage::RenderAttachment };
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    CanvasCompositingAlphaMode compositingAlphaMode { CanvasCompositingAlphaMode::Opaque };
     std::optional<Extent3D> size;
 };
 

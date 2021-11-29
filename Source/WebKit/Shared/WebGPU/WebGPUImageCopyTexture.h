@@ -38,9 +38,9 @@ namespace WebKit::WebGPU {
 
 struct ImageCopyTexture {
     WebGPUIdentifier texture;
-    PAL::WebGPU::IntegerCoordinate mipLevel;
+    PAL::WebGPU::IntegerCoordinate mipLevel { 0 };
     std::optional<Origin3D> origin;
-    PAL::WebGPU::TextureAspect aspect;
+    PAL::WebGPU::TextureAspect aspect { PAL::WebGPU::TextureAspect::All };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

@@ -37,16 +37,16 @@
 namespace WebKit::WebGPU {
 
 struct SamplerDescriptor : public ObjectDescriptorBase {
-    PAL::WebGPU::AddressMode addressModeU;
-    PAL::WebGPU::AddressMode addressModeV;
-    PAL::WebGPU::AddressMode addressModeW;
-    PAL::WebGPU::FilterMode magFilter;
-    PAL::WebGPU::FilterMode minFilter;
-    PAL::WebGPU::FilterMode mipmapFilter;
-    float lodMinClamp;
-    float lodMaxClamp;
+    PAL::WebGPU::AddressMode addressModeU { PAL::WebGPU::AddressMode::ClampToEdge };
+    PAL::WebGPU::AddressMode addressModeV { PAL::WebGPU::AddressMode::ClampToEdge };
+    PAL::WebGPU::AddressMode addressModeW { PAL::WebGPU::AddressMode::ClampToEdge };
+    PAL::WebGPU::FilterMode magFilter { PAL::WebGPU::FilterMode::Nearest };
+    PAL::WebGPU::FilterMode minFilter { PAL::WebGPU::FilterMode::Nearest };
+    PAL::WebGPU::FilterMode mipmapFilter { PAL::WebGPU::FilterMode::Nearest };
+    float lodMinClamp { 0 };
+    float lodMaxClamp { 32 };
     std::optional<PAL::WebGPU::CompareFunction> compare;
-    uint16_t maxAnisotropy;
+    uint16_t maxAnisotropy { 1 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

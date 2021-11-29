@@ -33,9 +33,9 @@
 namespace WebKit::WebGPU {
 
 struct MultisampleState {
-    PAL::WebGPU::Size32 count;
-    PAL::WebGPU::SampleMask mask;
-    bool alphaToCoverageEnabled;
+    PAL::WebGPU::Size32 count { 1 };
+    PAL::WebGPU::SampleMask mask { 0xFFFFFFFF };
+    bool alphaToCoverageEnabled { false };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

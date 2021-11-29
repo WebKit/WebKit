@@ -33,8 +33,8 @@
 namespace WebKit::WebGPU {
 
 struct RenderBundleEncoderDescriptor : public RenderPassLayout {
-    bool depthReadOnly;
-    bool stencilReadOnly;
+    bool depthReadOnly { false };
+    bool stencilReadOnly { false };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

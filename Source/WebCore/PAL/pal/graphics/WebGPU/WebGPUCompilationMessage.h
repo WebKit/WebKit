@@ -79,11 +79,11 @@ private:
     CompilationMessage& operator=(CompilationMessage&&) = delete;
 
     String m_message;
-    CompilationMessageType m_type;
-    uint64_t m_lineNum;
-    uint64_t m_linePos;
-    uint64_t m_offset;
-    uint64_t m_length;
+    CompilationMessageType m_type { CompilationMessageType::Error };
+    uint64_t m_lineNum { 0 };
+    uint64_t m_linePos { 0 };
+    uint64_t m_offset { 0 };
+    uint64_t m_length { 0 };
 };
 
 } // namespace PAL::WebGPU

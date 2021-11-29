@@ -37,8 +37,8 @@
 namespace WebKit::WebGPU {
 
 struct QuerySetDescriptor : public ObjectDescriptorBase {
-    PAL::WebGPU::QueryType type;
-    PAL::WebGPU::Size32 count;
+    PAL::WebGPU::QueryType type { PAL::WebGPU::QueryType::Occlusion };
+    PAL::WebGPU::Size32 count { 0 };
     Vector<PAL::WebGPU::PipelineStatisticName> pipelineStatistics;
 
     template<class Encoder> void encode(Encoder& encoder) const

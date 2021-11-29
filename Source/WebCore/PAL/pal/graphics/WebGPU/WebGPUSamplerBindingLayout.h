@@ -30,7 +30,7 @@
 namespace PAL::WebGPU {
 
 struct SamplerBindingLayout {
-    SamplerBindingType type;
+    SamplerBindingType type { SamplerBindingType::Filtering };
 };
 
 } // namespace PAL::WebGPU

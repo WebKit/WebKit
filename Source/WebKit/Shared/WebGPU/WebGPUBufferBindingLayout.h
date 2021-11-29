@@ -34,9 +34,9 @@
 namespace WebKit::WebGPU {
 
 struct BufferBindingLayout {
-    PAL::WebGPU::BufferBindingType type;
-    bool hasDynamicOffset;
-    PAL::WebGPU::Size64 minBindingSize;
+    PAL::WebGPU::BufferBindingType type { PAL::WebGPU::BufferBindingType::Uniform };
+    bool hasDynamicOffset { false };
+    PAL::WebGPU::Size64 minBindingSize { 0 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

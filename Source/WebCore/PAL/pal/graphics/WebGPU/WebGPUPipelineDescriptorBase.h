@@ -32,7 +32,7 @@ namespace PAL::WebGPU {
 class PipelineLayout;
 
 struct PipelineDescriptorBase : public ObjectDescriptorBase {
-    PipelineLayout* layout;
+    PipelineLayout* layout { nullptr };
 };
 
 } // namespace PAL::WebGPU

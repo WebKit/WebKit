@@ -38,7 +38,7 @@ namespace PAL::WebGPU {
 struct RenderPassDescriptor : public ObjectDescriptorBase {
     Vector<RenderPassColorAttachment> colorAttachments;
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
-    QuerySet* occlusionQuerySet;
+    QuerySet* occlusionQuerySet { nullptr };
     RenderPassTimestampWrites timestampWrites;
 };
 

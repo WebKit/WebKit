@@ -37,9 +37,9 @@ class Texture;
 
 struct ImageCopyTexture {
     Texture& texture;
-    IntegerCoordinate mipLevel;
+    IntegerCoordinate mipLevel { 0 };
     std::optional<Origin3D> origin;
-    TextureAspect aspect;
+    TextureAspect aspect { TextureAspect::All };
 };
 
 } // namespace PAL::WebGPU

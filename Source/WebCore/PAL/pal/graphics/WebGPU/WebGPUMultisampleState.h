@@ -30,9 +30,9 @@
 namespace PAL::WebGPU {
 
 struct MultisampleState {
-    Size32 count;
-    SampleMask mask;
-    bool alphaToCoverageEnabled;
+    Size32 count { 1 };
+    SampleMask mask { 0xFFFFFFFF };
+    bool alphaToCoverageEnabled { false };
 };
 
 } // namespace PAL::WebGPU

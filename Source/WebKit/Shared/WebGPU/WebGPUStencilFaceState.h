@@ -34,10 +34,10 @@
 namespace WebKit::WebGPU {
 
 struct StencilFaceState {
-    PAL::WebGPU::CompareFunction compare;
-    PAL::WebGPU::StencilOperation failOp;
-    PAL::WebGPU::StencilOperation depthFailOp;
-    PAL::WebGPU::StencilOperation passOp;
+    PAL::WebGPU::CompareFunction compare { PAL::WebGPU::CompareFunction::Always };
+    PAL::WebGPU::StencilOperation failOp { PAL::WebGPU::StencilOperation::Keep };
+    PAL::WebGPU::StencilOperation depthFailOp { PAL::WebGPU::StencilOperation::Keep };
+    PAL::WebGPU::StencilOperation passOp { PAL::WebGPU::StencilOperation::Keep };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

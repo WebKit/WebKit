@@ -36,8 +36,8 @@ class QuerySet;
 
 struct RenderPassTimestampWrite {
     QuerySet& querySet;
-    Size32 queryIndex;
-    RenderPassTimestampLocation location;
+    Size32 queryIndex { 0 };
+    RenderPassTimestampLocation location { RenderPassTimestampLocation::Beginning };
 };
 
 using RenderPassTimestampWrites = Vector<RenderPassTimestampWrite>;

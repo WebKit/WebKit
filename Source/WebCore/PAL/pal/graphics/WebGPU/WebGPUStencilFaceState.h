@@ -31,10 +31,10 @@
 namespace PAL::WebGPU {
 
 struct StencilFaceState {
-    CompareFunction compare;
-    StencilOperation failOp;
-    StencilOperation depthFailOp;
-    StencilOperation passOp;
+    CompareFunction compare { CompareFunction::Always };
+    StencilOperation failOp { StencilOperation::Keep };
+    StencilOperation depthFailOp { StencilOperation::Keep };
+    StencilOperation passOp { StencilOperation::Keep };
 };
 
 } // namespace PAL::WebGPU

@@ -34,8 +34,8 @@
 namespace WebKit::WebGPU {
 
 struct ImageCopyTextureTagged : public ImageCopyTexture {
-    PAL::WebGPU::PredefinedColorSpace colorSpace;
-    bool premultipliedAlpha;
+    PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
+    bool premultipliedAlpha { false };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

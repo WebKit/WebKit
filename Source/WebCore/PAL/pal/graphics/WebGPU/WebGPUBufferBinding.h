@@ -35,7 +35,7 @@ class Buffer;
 
 struct BufferBinding {
     Buffer& buffer;
-    Size64 offset;
+    Size64 offset { 0 };
     std::optional<Size64> size;
 };
 

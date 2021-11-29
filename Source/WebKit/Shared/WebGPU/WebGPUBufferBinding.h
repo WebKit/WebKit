@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 struct BufferBinding {
     WebGPUIdentifier buffer;
-    PAL::WebGPU::Size64 offset;
+    PAL::WebGPU::Size64 offset { 0 };
     std::optional<PAL::WebGPU::Size64> size;
 
     template<class Encoder> void encode(Encoder& encoder) const

@@ -35,9 +35,9 @@
 namespace WebKit::WebGPU {
 
 struct Extent3DDict {
-    PAL::WebGPU::IntegerCoordinate width;
-    PAL::WebGPU::IntegerCoordinate height;
-    PAL::WebGPU::IntegerCoordinate depthOrArrayLayers;
+    PAL::WebGPU::IntegerCoordinate width { 0 };
+    PAL::WebGPU::IntegerCoordinate height { 0 };
+    PAL::WebGPU::IntegerCoordinate depthOrArrayLayers { 0 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

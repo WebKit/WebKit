@@ -43,7 +43,7 @@ struct RenderPassColorAttachment {
     WebGPUIdentifier resolveTarget;
 
     std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict> loadValue;
-    PAL::WebGPU::StoreOp storeOp;
+    PAL::WebGPU::StoreOp storeOp { PAL::WebGPU::StoreOp::Store };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

@@ -36,8 +36,8 @@
 namespace WebKit::WebGPU {
 
 struct VertexBufferLayout {
-    PAL::WebGPU::Size64 arrayStride;
-    PAL::WebGPU::VertexStepMode stepMode;
+    PAL::WebGPU::Size64 arrayStride { 0 };
+    PAL::WebGPU::VertexStepMode stepMode { PAL::WebGPU::VertexStepMode::Vertex };
     Vector<VertexAttribute> attributes;
 
     template<class Encoder> void encode(Encoder& encoder) const

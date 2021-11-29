@@ -39,10 +39,10 @@ namespace WebKit::WebGPU {
 struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<PAL::WebGPU::TextureFormat> format;
     std::optional<PAL::WebGPU::TextureViewDimension> dimension;
-    PAL::WebGPU::TextureAspect aspect;
-    PAL::WebGPU::IntegerCoordinate baseMipLevel;
+    PAL::WebGPU::TextureAspect aspect { PAL::WebGPU::TextureAspect::All };
+    PAL::WebGPU::IntegerCoordinate baseMipLevel { 0 };
     std::optional<PAL::WebGPU::IntegerCoordinate> mipLevelCount;
-    PAL::WebGPU::IntegerCoordinate baseArrayLayer;
+    PAL::WebGPU::IntegerCoordinate baseArrayLayer { 0 };
     std::optional<PAL::WebGPU::IntegerCoordinate> arrayLayerCount;
 
     template<class Encoder> void encode(Encoder& encoder) const

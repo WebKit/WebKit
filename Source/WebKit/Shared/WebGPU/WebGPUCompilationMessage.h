@@ -36,11 +36,11 @@ namespace WebKit::WebGPU {
 
 struct CompilationMessage {
     String message;
-    PAL::WebGPU::CompilationMessageType type;
-    uint64_t lineNum;
-    uint64_t linePos;
-    uint64_t offset;
-    uint64_t length;
+    PAL::WebGPU::CompilationMessageType type { PAL::WebGPU::CompilationMessageType::Error };
+    uint64_t lineNum { 0 };
+    uint64_t linePos { 0 };
+    uint64_t offset { 0 };
+    uint64_t length { 0 };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {
