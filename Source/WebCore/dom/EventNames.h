@@ -327,16 +327,10 @@ namespace WebCore {
     macro(webkitnetworkinfochange) \
     macro(webkitplaybacktargetavailabilitychanged) \
     macro(webkitpresentationmodechanged) \
-    macro(webkitregionoversetchange) \
     macro(webkitremovesourcebuffer) \
     macro(webkitsourceclose) \
     macro(webkitsourceended) \
     macro(webkitsourceopen) \
-    macro(webkitspeechchange) \
-    macro(webkitwillrevealbottom) \
-    macro(webkitwillrevealleft) \
-    macro(webkitwillrevealright) \
-    macro(webkitwillrevealtop) \
     macro(wheel) \
     macro(write) \
     macro(writeend) \

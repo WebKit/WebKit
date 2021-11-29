@@ -347,13 +347,11 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("webkitplaybacktargetavailabilitychanged", "Playback Target Availability Changed");
         nameMap.set("webkitpointerlockchange", "Pointer Lock Change");
         nameMap.set("webkitpointerlockerror", "Pointer Lock Error");
-        nameMap.set("webkitregionoversetchange", "Region Overset Change");
         nameMap.set("webkitremovesourcebuffer", "Remove Source Buffer");
         nameMap.set("webkitresourcetimingbufferfull", "Resource Timing Buffer Full");
         nameMap.set("webkitsourceclose", "Source Close");
         nameMap.set("webkitsourceended", "Source Ended");
         nameMap.set("webkitsourceopen", "Source Open");
-        nameMap.set("webkitspeechchange", "Speech Change");
         nameMap.set("writeend", "Write End");
         nameMap.set("writestart", "Write Start");
 

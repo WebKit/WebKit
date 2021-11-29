@@ -125,10 +125,6 @@ HTMLElement::EventHandlerNameMap HTMLBodyElement::createWindowEventHandlerNameMa
         &onwebkitmouseforcedownAttr.get(),
         &onwebkitmouseforceupAttr.get(),
         &onwebkitmouseforcewillbeginAttr.get(),
-        &onwebkitwillrevealbottomAttr.get(),
-        &onwebkitwillrevealleftAttr.get(),
-        &onwebkitwillrevealrightAttr.get(),
-        &onwebkitwillrevealtopAttr.get(),
     };
 
     EventHandlerNameMap map;

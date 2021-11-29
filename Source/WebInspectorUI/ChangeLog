@@ -1,3 +1,13 @@
+2021-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some unused event names
+        https://bugs.webkit.org/show_bug.cgi?id=233485
+
+        Reviewed by Sam Weinig.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.EventType.displayName):
+
 2021-11-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add a swatch for align-content

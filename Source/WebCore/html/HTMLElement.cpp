@@ -360,10 +360,6 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &onwebkitneedkeyAttr.get(),
         &onwebkitplaybacktargetavailabilitychangedAttr.get(),
         &onwebkitpresentationmodechangedAttr.get(),
-        &onwebkitwillrevealbottomAttr.get(),
-        &onwebkitwillrevealleftAttr.get(),
-        &onwebkitwillrevealrightAttr.get(),
-        &onwebkitwillrevealtopAttr.get(),
         &onwheelAttr.get(),
     };
 
