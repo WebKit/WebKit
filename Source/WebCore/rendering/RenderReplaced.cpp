@@ -475,6 +475,14 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
     return finalRect;
 }
 
+double RenderReplaced::computeIntrinsicAspectRatio() const
+{
+    double intrinsicRatio;
+    FloatSize intrinsicSize;
+    computeAspectRatioInformationForRenderBox(embeddedContentBox(), intrinsicSize, intrinsicRatio);
+    return intrinsicRatio;
+}
+
 RoundedRect RenderReplaced::roundedContentBoxRect() const
 {
     return style().getRoundedInnerBorderFor(borderBoxRect(),

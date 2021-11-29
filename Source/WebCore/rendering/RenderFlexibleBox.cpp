@@ -37,7 +37,10 @@
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderObjectEnums.h"
+#include "RenderReplaced.h"
 #include "RenderStyleConstants.h"
+#include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "WritingMode.h"
 #include <limits>
@@ -614,9 +617,21 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
     return std::max(0_lu, computedValues.m_extent - borderPaddingAndScrollbar);
 }
 
+// FIXME: consider adding this check to RenderBox::hasIntrinsicAspectRatio(). We could even make it
+// virtual returning false by default. RenderReplaced will overwrite it with the current implementation
+// plus this extra check. See wkb.ug/231955.
+static bool isRenderReplacedWithIntrinsicAspectRatio(const RenderBox& child)
+{
+    if (!is<RenderReplaced>(child))
+        return false;
+    // It's common for some replaced elements, such as SVGs, to have intrinsic aspect ratios but no intrinsic sizes.
+    // That's why it isn't enough just to check for intrinsic sizes in those cases.
+    return downcast<RenderReplaced>(child).computeIntrinsicAspectRatio() > 0;
+};
+
 static bool childHasAspectRatio(const RenderBox& child)
 {
-    return child.hasIntrinsicAspectRatio() || child.style().hasAspectRatio();
+    return child.hasIntrinsicAspectRatio() || child.style().hasAspectRatio() || isRenderReplacedWithIntrinsicAspectRatio(child);
 }
 
 std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox& child, SizeType sizeType, const Length& size)
@@ -883,13 +898,17 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
             return 0_lu;
     }
 
-    const LayoutSize& childIntrinsicSize = child.intrinsicSize();
     double ratio;
-    if (child.style().aspectRatioType() == AspectRatioType::Ratio || (child.style().aspectRatioType() == AspectRatioType::AutoAndRatio && childIntrinsicSize.isEmpty()))
-        ratio = child.style().aspectRatioWidth() / child.style().aspectRatioHeight();
+    if (is<RenderReplaced>(child))
+        ratio = downcast<RenderReplaced>(child).computeIntrinsicAspectRatio();
     else {
-        ASSERT(childIntrinsicSize.height());
-        ratio = childIntrinsicSize.width().toFloat() / childIntrinsicSize.height().toFloat();
+        auto childIntrinsicSize = child.intrinsicSize();
+        if (child.style().aspectRatioType() == AspectRatioType::Ratio || (child.style().aspectRatioType() == AspectRatioType::AutoAndRatio && childIntrinsicSize.isEmpty()))
+            ratio = child.style().aspectRatioWidth() / child.style().aspectRatioHeight();
+        else {
+            ASSERT(childIntrinsicSize.height());
+            ratio = childIntrinsicSize.width().toFloat() / childIntrinsicSize.height().toFloat();
+        }
     }
     if (isHorizontalFlow())
         return LayoutUnit(crossSize.value() * ratio);
@@ -934,7 +953,7 @@ bool RenderFlexibleBox::childHasComputableAspectRatio(const RenderBox& child) co
 {
     if (!childHasAspectRatio(child))
         return false;
-    return child.intrinsicSize().height() || child.style().hasAspectRatio();
+    return child.intrinsicSize().height() || child.style().hasAspectRatio() || isRenderReplacedWithIntrinsicAspectRatio(child);
 }
 
 bool RenderFlexibleBox::childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox& child)
