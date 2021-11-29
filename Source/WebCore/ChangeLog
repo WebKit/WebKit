@@ -1,5 +1,9 @@
 2021-11-12  Russell Epstein  <repstein@apple.com>
 
+        Revert r285691. rdar://problem/83381842
+
+2021-11-12  Russell Epstein  <repstein@apple.com>
+
         Revert r285680. rdar://problem/85004449
 
 2021-11-11  Alan Coon  <alancoon@apple.com>
