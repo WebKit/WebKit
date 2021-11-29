@@ -38,6 +38,7 @@ class Environment(object):
         self._mapping = dict()
         self.path = path
         self._divider = divider
+        self._paths = set()
 
     def load(self, *prefixes):
         if not self.path:
@@ -46,6 +47,7 @@ class Environment(object):
             prefix, key = file.split(self._divider, 1) if self._divider in file else (None, file)
             if prefix and prefix not in prefixes:
                 continue
+            self._paths.add(os.path.join(self.path, file))
             with open(os.path.join(self.path, file), 'r') as fl:
                 self._mapping[key] = fl.read().rstrip('\n')
         return self
@@ -54,6 +56,19 @@ class Environment(object):
         if key in os.environ:
             return os.environ[key]
         return self._mapping.get(key)
+
+    def secure(self, *extra_paths):
+        '''Delete unused environment files in self.path along with the provided extra paths'''
+
+        for file in os.listdir(self.path):
+            path = os.path.join(self.path, file)
+            if path not in self._paths:
+                os.remove(path)
+        for path in extra_paths:
+            if os.path.isfile(path):
+                os.remove(path)
+            if os.path.exists(path):
+                raise OSError("Failed to delete '{}' when securing credentials".format(path))
 
     def __getitem__(self, key):
         result = self.get(key)

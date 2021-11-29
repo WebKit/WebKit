@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -70,5 +70,26 @@ class TestEnvironment(testing.PathTestCase):
                 sorted(list(Environment.instance(self.path).items())),
                 sorted([('KEY_A', 'value_a'), ('KEY_B', 'value_b')] + list(os.environ.items())),
             )
+        finally:
+            Environment._instance = None
+
+    def test_secure(self):
+        try:
+            with open(os.path.join(self.path, 'KEY'), 'w') as file:
+                file.write('value ')
+            with open(os.path.join(self.path, 'scope___KEY_A'), 'w') as file:
+                file.write('value_a')
+            with open(os.path.join(self.path, 'other___KEY_B'), 'w') as file:
+                file.write('value_b')
+            with open(os.path.join(self.path, 'KEY_C'), 'w') as file:
+                file.write('value_c')
+
+            Environment.instance(self.path).load('scope')
+            Environment.instance(self.path).secure(os.path.join(self.path, 'KEY_C'))
+
+            self.assertTrue(os.path.isfile(os.path.join(self.path, 'KEY')))
+            self.assertTrue(os.path.isfile(os.path.join(self.path, 'scope___KEY_A')))
+            self.assertFalse(os.path.isfile(os.path.join(self.path, 'other___KEY_B')))
+            self.assertFalse(os.path.isfile(os.path.join(self.path, 'KEY_C')))
         finally:
             Environment._instance = None

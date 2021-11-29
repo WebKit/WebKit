@@ -1,3 +1,20 @@
+2021-11-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Delete unused environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=233565
+        <rdar://problem/85820306>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/environment.py:
+        (Environment.__init__): Keep track of sure environment files.
+        (Environment.load): Ditto.
+        (Environment.secure): Delete all unused environment files, since they may contain credentials.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/environment_unittest.py:
+        (TestEnvironment.test_secure):
+
 2021-11-29  Lauro Moura  <lmoura@igalia.com>
 
         [webkitcorepy] Environment: Sort values before comparing in unittest
