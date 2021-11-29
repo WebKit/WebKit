@@ -1323,8 +1323,13 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
 
     Length min = mainSizeLengthForChild(MinSize, child);
     // Intrinsic sizes in child's block axis are handled by the min-size:auto code path.
-    if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child)))
-        return { computeMainAxisExtentForChild(child, MinSize, min).value_or(0_lu), maxExtent.value_or(LayoutUnit::max()) };
+    if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child))) {
+        auto minExtent = computeMainAxisExtentForChild(child, MinSize, min).value_or(0_lu);
+        // We must never return a min size smaller than the min preferred size for tables.
+        if (child.isTable() && mainAxisIsChildInlineAxis(child))
+            minExtent = std::max(minExtent, child.minPreferredLogicalWidth());
+        return { minExtent, maxExtent.value_or(LayoutUnit::max()) };
+    }
     
     if (shouldApplyMinSizeAutoForChild(child)) {
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and

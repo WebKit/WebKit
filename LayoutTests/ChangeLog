@@ -1,5 +1,14 @@
 2021-10-27  Sergio Villar Senin  <svillar@igalia.com>
 
+        [css-flexbox] Do not shrink tables bellow their intrinsic sizes
+        https://bugs.webkit.org/show_bug.cgi?id=232383
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Unskip table-as-item-fixed-min-width-3.html which works fine now.
+
+2021-10-27  Sergio Villar Senin  <svillar@igalia.com>
+
         [css-flexbox] Add support for replaced elements with intrinsic ratio and no intrinsic size
         https://bugs.webkit.org/show_bug.cgi?id=231952
         <rdar://problem/84662305>
