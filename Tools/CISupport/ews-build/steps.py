@@ -417,6 +417,7 @@ class CheckPatchRelevance(AnalyzePatch):
         re.compile(rb'JSTests/', re.IGNORECASE),
         re.compile(rb'Source/WTF/', re.IGNORECASE),
         re.compile(rb'Source/bmalloc/', re.IGNORECASE),
+        re.compile(rb'Source/cmake/', re.IGNORECASE),
         re.compile(rb'.*Makefile.*', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/build-webkit', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/webkitdirs.pm', re.IGNORECASE),

@@ -1,3 +1,15 @@
+2021-11-29  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Consider Source/cmake relevant for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=233552
+
+        Reviewed by Aakash Jain.
+
+        Changes in Source/cmake may well be relevant for JSC.
+
+        * CISupport/ews-build/steps.py:
+        (CheckPatchRelevance):
+
 2021-11-29  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Add runtime flag for Layer-based SVG engine (LBSE)
