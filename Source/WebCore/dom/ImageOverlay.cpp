@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderImage.h"
+#include "RenderText.h"
 #include "ShadowRoot.h"
 #include "SimpleRange.h"
 #include "Text.h"
@@ -498,6 +499,25 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
     }
 #endif // ENABLE(DATA_DETECTION)
 
+    constexpr float minScaleForFontSize = 0;
+    constexpr float initialScaleForFontSize = 0.8;
+    constexpr float maxScaleForFontSize = 1;
+    constexpr unsigned iterationLimit = 10;
+    constexpr float minTargetScore = 0.9;
+    constexpr float maxTargetScore = 1.02;
+
+    struct FontSizeAdjustmentState {
+        Ref<HTMLElement> container;
+        float targetHeight;
+        float scale { initialScaleForFontSize };
+        float minScale { minScaleForFontSize };
+        float maxScale { maxScaleForFontSize };
+        bool mayRequireAdjustment { true };
+    };
+
+    Vector<FontSizeAdjustmentState> elementsToAdjust;
+    elementsToAdjust.reserveInitialCapacity(result.blocks.size());
+
     ASSERT(result.blocks.size() == elements.blocks.size());
     for (size_t index = 0; index < result.blocks.size(); ++index) {
         auto& block = result.blocks[index];
@@ -506,9 +526,53 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
         auto blockContainer = elements.blocks[index];
         auto bounds = fitElementToQuad(blockContainer.get(), convertToContainerCoordinates(block.normalizedQuad));
-        // FIXME: We'll need a smarter algorithm here that chooses the largest font size for the container without
-        // vertically overflowing the container.
-        blockContainer->setInlineStyleProperty(CSSPropertyFontSize, std::round(0.8 * bounds.size.height()), CSSUnitType::CSS_PX);
+        blockContainer->setInlineStyleProperty(CSSPropertyFontSize, initialScaleForFontSize * bounds.size.height(), CSSUnitType::CSS_PX);
+        elementsToAdjust.uncheckedAppend({ WTFMove(blockContainer), bounds.size.height() });
+    }
+
+    unsigned currentIteration = 0;
+    while (!elementsToAdjust.isEmpty()) {
+        document->updateLayoutIgnorePendingStylesheets();
+
+        for (auto& state : elementsToAdjust) {
+            RefPtr textNode = state.container->firstChild();
+            if (!is<Text>(textNode)) {
+                ASSERT_NOT_REACHED();
+                state.mayRequireAdjustment = false;
+                continue;
+            }
+
+            auto* textRenderer = downcast<Text>(*textNode).renderer();
+            if (!textRenderer) {
+                ASSERT_NOT_REACHED();
+                state.mayRequireAdjustment = false;
+                continue;
+            }
+
+            auto currentScore = textRenderer->linesBoundingBox().height() / state.targetHeight;
+            if (currentScore < minTargetScore)
+                state.minScale = state.scale;
+            else if (currentScore > maxTargetScore)
+                state.maxScale = state.scale;
+            else {
+                state.mayRequireAdjustment = false;
+                continue;
+            }
+
+            state.scale = (state.minScale + state.maxScale) / 2;
+            state.container->setInlineStyleProperty(CSSPropertyFontSize, state.targetHeight * state.scale, CSSUnitType::CSS_PX);
+        }
+
+        elementsToAdjust.removeAllMatching([](auto& state) {
+            return !state.mayRequireAdjustment;
+        });
+
+        if (++currentIteration > iterationLimit) {
+            // Fall back to the largest font size that still vertically fits within the container.
+            for (auto& state : elementsToAdjust)
+                state.container->setInlineStyleProperty(CSSPropertyFontSize, state.targetHeight * state.minScale, CSSUnitType::CSS_PX);
+            break;
+        }
     }
 
     if (RefPtr frame = document->frame())

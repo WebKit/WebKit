@@ -5753,6 +5753,7 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
 
 Internals::ImageOverlayLine::~ImageOverlayLine() = default;
 Internals::ImageOverlayText::~ImageOverlayText() = default;
+Internals::ImageOverlayBlock::~ImageOverlayBlock() = default;
 
 #if ENABLE(IMAGE_ANALYSIS)
 
@@ -5801,7 +5802,7 @@ RefPtr<Element> Internals::textRecognitionCandidate() const
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines)
+void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines, Vector<ImageOverlayBlock>&& blocks)
 {
     if (!is<HTMLElement>(element))
         return;
@@ -5814,9 +5815,12 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
 #if ENABLE(DATA_DETECTION)
         , Vector<TextRecognitionDataDetector>()
 #endif
-        , Vector<TextRecognitionBlockData>()
+        , blocks.map([] (auto& block) {
+            return TextRecognitionBlockData { block.text, getQuad<ImageOverlayBlock>(block) };
+        })
     });
 #else
+    UNUSED_PARAM(blocks);
     UNUSED_PARAM(lines);
 #endif
 }
