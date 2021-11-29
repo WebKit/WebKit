@@ -528,7 +528,7 @@ JSC_DEFINE_JIT_OPERATION(operationHasPrivateNameOptimize, EncodedJSValue, (JSGlo
     JSValue propertyValue = JSValue::decode(encodedProperty);
     ASSERT(propertyValue.isSymbol());
     auto property = propertyValue.toPropertyKey(globalObject);
-    EXCEPTION_ASSERT(!scope.exception());
+    RETURN_IF_EXCEPTION(scope, { });
 
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
     bool found = JSObject::getPrivateFieldSlot(baseObject, globalObject, property, slot);
@@ -562,7 +562,7 @@ JSC_DEFINE_JIT_OPERATION(operationHasPrivateNameGeneric, EncodedJSValue, (JSGlob
     JSValue propertyValue = JSValue::decode(encodedProperty);
     ASSERT(propertyValue.isSymbol());
     auto property = propertyValue.toPropertyKey(globalObject);
-    EXCEPTION_ASSERT(!scope.exception());
+    RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property)));
 }
@@ -1324,7 +1324,7 @@ static ALWAYS_INLINE void putPrivateNameOptimize(JSGlobalObject* globalObject, C
     RETURN_IF_EXCEPTION(scope, void());
 
     auto propertyName = subscript.toPropertyKey(globalObject);
-    EXCEPTION_ASSERT(!scope.exception());
+    RETURN_IF_EXCEPTION(scope, void());
 
     // Private fields can only be accessed within class lexical scope
     // and class methods are always in strict mode
@@ -1358,7 +1358,7 @@ static ALWAYS_INLINE void putPrivateName(JSGlobalObject* globalObject, JSValue b
     RETURN_IF_EXCEPTION(scope, void());
 
     auto propertyName = subscript.toPropertyKey(globalObject);
-    EXCEPTION_ASSERT(!scope.exception());
+    RETURN_IF_EXCEPTION(scope, void());
 
     scope.release();
 
