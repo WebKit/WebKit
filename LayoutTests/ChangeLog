@@ -1,3 +1,56 @@
+2021-11-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285728. rdar://problem/85236241
+
+    [Web Animations] Accelerated animations with a single keyframe don't account for prior forward-filling animations
+    https://bugs.webkit.org/show_bug.cgi?id=233041
+    <rdar://problem/85236241>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Test: webanimations/accelerated-animation-after-forward-filling-animation.html
+    
+    When starting an accelerated animation, we would fill any implicit keyframes based on the unanimated style.
+    We now also apply all animations below this animation in the target's effect stack such that a previous
+    forward-filling animation is accounted for.
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+    
+    LayoutTests:
+    
+    Add a new test that runs a forward-filling animation for `transform`, waits for its completion,
+    then runs another `transform` animation with an implicit initial keyframe, ensuring that the
+    result of the first forward-filling animation is accounted for when computing the initial
+    keyframe.
+    
+    This test would fail prior to this patch.
+    
+    * webanimations/accelerated-animation-after-forward-filling-animation-expected.html: Added.
+    * webanimations/accelerated-animation-after-forward-filling-animation.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285728 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-12  Antoine Quint  <graouts@webkit.org>
+
+            [Web Animations] Accelerated animations with a single keyframe don't account for prior forward-filling animations
+            https://bugs.webkit.org/show_bug.cgi?id=233041
+            <rdar://problem/85236241>
+
+            Reviewed by Dean Jackson.
+
+            Add a new test that runs a forward-filling animation for `transform`, waits for its completion,
+            then runs another `transform` animation with an implicit initial keyframe, ensuring that the
+            result of the first forward-filling animation is accounted for when computing the initial
+            keyframe.
+
+            This test would fail prior to this patch.
+
+            * webanimations/accelerated-animation-after-forward-filling-animation-expected.html: Added.
+            * webanimations/accelerated-animation-after-forward-filling-animation.html: Added.
+
 2021-11-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r285565. rdar://problem/83159358
