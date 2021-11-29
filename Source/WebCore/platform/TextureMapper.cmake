@@ -10,6 +10,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp
+    platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
     platform/graphics/texmap/TextureMapperFPSCounter.cpp

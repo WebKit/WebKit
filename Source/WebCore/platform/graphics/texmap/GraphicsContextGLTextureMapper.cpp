@@ -441,17 +441,6 @@ PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
 #endif
 }
 
-#if USE(ANGLE)
-GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
-{
-#if PLATFORM(WIN)
-    return GL_TEXTURE_2D;
-#else
-    return GL_TEXTURE_RECTANGLE_ANGLE;
-#endif
-}
-#endif
-
 #if PLATFORM(GTK) && !USE(ANGLE)
 ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
 {

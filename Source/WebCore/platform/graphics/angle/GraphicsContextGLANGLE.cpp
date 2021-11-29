@@ -76,6 +76,47 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 }
 #endif
 
+
+GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
+{
+    if (m_drawingBufferTextureTarget == -1)
+        EGL_GetConfigAttrib(platformDisplay(), platformConfig(), EGL_BIND_TO_TEXTURE_TARGET_ANGLE, &m_drawingBufferTextureTarget);
+
+    switch (m_drawingBufferTextureTarget) {
+    case EGL_TEXTURE_2D:
+        return TEXTURE_2D;
+    case EGL_TEXTURE_RECTANGLE_ANGLE:
+        return TEXTURE_RECTANGLE_ARB;
+
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid enum returned from EGL_GetConfigAttrib");
+    return 0;
+}
+
+GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget)
+{
+    switch (drawingTarget) {
+    case TEXTURE_2D:
+        return TEXTURE_BINDING_2D;
+    case TEXTURE_RECTANGLE_ARB:
+        return TEXTURE_BINDING_RECTANGLE_ARB;
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
+    return -1;
+}
+
+GCGLint GraphicsContextGLOpenGL::EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget)
+{
+    switch (drawingTarget) {
+    case TEXTURE_2D:
+        return EGL_TEXTURE_2D;
+    case TEXTURE_RECTANGLE_ARB:
+        return EGL_TEXTURE_RECTANGLE_ANGLE;
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
+    return 0;
+}
+
 bool GraphicsContextGLOpenGL::releaseThreadResources(ReleaseThreadResourceBehavior releaseBehavior)
 {
     platformReleaseThreadResources();
@@ -119,12 +160,6 @@ bool GraphicsContextGLOpenGL::releaseThreadResources(ReleaseThreadResourceBehavi
     // Unset the EGL current context by releasing whole EGL thread state.
     return EGL_ReleaseThread();
 }
-
-#if !PLATFORM(COCOA)
-void GraphicsContextGLOpenGL::platformReleaseThreadResources()
-{
-}
-#endif
 
 std::optional<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 {
@@ -201,7 +236,6 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     // resize regular FBO
     gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-#if PLATFORM(COCOA)
     if (!reshapeDisplayBufferBacking()) {
         RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", width, height);
         forceContextLost();
@@ -224,23 +258,6 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     } else
         gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
-#else
-    GLenum textureTarget = drawingBufferTextureTarget();
-    GLuint internalColorFormat = textureTarget == GL_TEXTURE_2D ? colorFormat : m_internalColorFormat;
-    gl::BindTexture(textureTarget, m_texture);
-    gl::TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
-#if USE(COORDINATED_GRAPHICS)
-    if (m_compositorTexture) {
-        gl::BindTexture(textureTarget, m_compositorTexture);
-        gl::TexImage2D(textureTarget, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-        gl::BindTexture(textureTarget, 0);
-        gl::BindTexture(textureTarget, m_intermediateTexture);
-        gl::TexImage2D(textureTarget, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-        gl::BindTexture(textureTarget, 0);
-    }
-#endif
-#endif // PLATFORM(COCOA)
 
     attachDepthAndStencilBufferIfNeeded(m_internalDepthStencilFormat, width, height);
 

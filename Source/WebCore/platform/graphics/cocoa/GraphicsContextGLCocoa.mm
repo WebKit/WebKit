@@ -467,46 +467,6 @@ PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
     return nullptr;
 }
 
-GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
-{
-    if (m_drawingBufferTextureTarget == -1)
-        EGL_GetConfigAttrib(m_displayObj, m_configObj, EGL_BIND_TO_TEXTURE_TARGET_ANGLE, &m_drawingBufferTextureTarget);
-
-    switch (m_drawingBufferTextureTarget) {
-    case EGL_TEXTURE_2D:
-        return TEXTURE_2D;
-    case EGL_TEXTURE_RECTANGLE_ANGLE:
-        return TEXTURE_RECTANGLE_ARB;
-
-    }
-    ASSERT_WITH_MESSAGE(false, "Invalid enum returned from EGL_GetConfigAttrib");
-    return 0;
-}
-
-GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget)
-{
-    switch (drawingTarget) {
-    case TEXTURE_2D:
-        return TEXTURE_BINDING_2D;
-    case TEXTURE_RECTANGLE_ARB:
-        return TEXTURE_BINDING_RECTANGLE_ARB;
-    }
-    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
-    return -1;
-}
-
-GCGLint GraphicsContextGLOpenGL::EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget)
-{
-    switch (drawingTarget) {
-    case TEXTURE_2D:
-        return EGL_TEXTURE_2D;
-    case TEXTURE_RECTANGLE_ARB:
-        return EGL_TEXTURE_RECTANGLE_ANGLE;
-    }
-    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
-    return 0;
-}
-
 bool GraphicsContextGLOpenGL::makeContextCurrent()
 {
     if (!m_contextObj)
@@ -619,7 +579,7 @@ bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
 bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer)
 {
     GCGLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(drawingBufferTextureTarget()), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     gl::BindTexture(textureTarget, m_texture);
     if (!EGL_BindTexImage(m_displayObj, pbuffer, EGL_BACK_BUFFER)) {
         EGL_DestroySurface(m_displayObj, pbuffer);
@@ -840,6 +800,16 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
     return contextCV->copyPixelBufferToTexture(pixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
 }
 #endif
+
+PlatformGraphicsContextGLDisplay GraphicsContextGLOpenGL::platformDisplay() const
+{
+    return m_displayObj;
+}
+
+PlatformGraphicsContextGLConfig GraphicsContextGLOpenGL::platformConfig() const
+{
+    return m_configObj;
+}
 
 }
 

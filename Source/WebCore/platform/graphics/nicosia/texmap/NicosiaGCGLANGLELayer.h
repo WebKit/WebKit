@@ -63,12 +63,15 @@ public:
         bool makeContextCurrent();
 #if ENABLE(WEBGL)
         PlatformGraphicsContextGL platformContext() const;
+        PlatformGraphicsContextGLDisplay platformDisplay() const;
+        PlatformGraphicsContextGLConfig platformConfig() const;
 #endif
 
     private:
-        ANGLEContext(EGLDisplay, EGLContext, EGLSurface);
+        ANGLEContext(EGLDisplay, EGLConfig, EGLContext, EGLSurface);
 
         EGLDisplay m_display { nullptr };
+        EGLConfig m_config { nullptr };
         EGLContext m_context { nullptr };
         EGLSurface m_surface { nullptr };
     };
@@ -78,7 +81,8 @@ public:
 
     bool makeContextCurrent() override;
     PlatformGraphicsContextGL platformContext() const override;
-
+    PlatformGraphicsContextGLDisplay platformDisplay() const;
+    PlatformGraphicsContextGLConfig platformConfig() const;
 private:
     std::unique_ptr<ANGLEContext> m_angleContext;
 };

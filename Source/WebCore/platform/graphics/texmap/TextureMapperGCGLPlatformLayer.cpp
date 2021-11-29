@@ -68,6 +68,18 @@ PlatformGraphicsContextGL TextureMapperGCGLPlatformLayer::platformContext() cons
     return m_glContext->platformContext();
 }
 
+PlatformGraphicsContextGLDisplay TextureMapperGCGLPlatformLayer::platformDisplay() const
+{
+    ASSERT(m_glContext);
+    return m_glContext->platformDisplay();
+}
+
+PlatformGraphicsContextGLConfig TextureMapperGCGLPlatformLayer::platformConfig() const
+{
+    ASSERT(m_glContext);
+    return m_glContext->platformConfig();
+}
+
 #if USE(COORDINATED_GRAPHICS)
 RefPtr<TextureMapperPlatformLayerProxy> TextureMapperGCGLPlatformLayer::proxy() const
 {

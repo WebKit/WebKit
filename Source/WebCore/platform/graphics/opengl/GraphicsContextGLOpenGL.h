@@ -102,17 +102,13 @@ class WEBCORE_EXPORT GraphicsContextGLOpenGL : public GraphicsContextGL
 public:
     static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*);
     virtual ~GraphicsContextGLOpenGL();
-#if PLATFORM(COCOA)
     PlatformLayer* platformLayer() const override;
-    PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
-    PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
+#if USE(ANGLE)
+    PlatformGraphicsContextGLDisplay platformDisplay() const;
+    PlatformGraphicsContextGLConfig platformConfig() const;
+    GCGLenum drawingBufferTextureTarget();
     static GCGLenum drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget);
     static GCGLint EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
-#else
-    PlatformLayer* platformLayer() const final;
-#endif
-#if USE(ANGLE)
-    GCGLenum drawingBufferTextureTarget();
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLOpenGL calls done in the thread.
         ReleaseCurrentContext,
@@ -552,8 +548,10 @@ private:
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 
-#if PLATFORM(COCOA)
+#if USE(ANGLE)
     bool reshapeDisplayBufferBacking();
+#endif
+#if PLATFORM(COCOA)
     bool allocateAndBindDisplayBufferBacking();
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
     static bool makeCurrent(PlatformGraphicsContextGLDisplay, PlatformGraphicsContextGL);
