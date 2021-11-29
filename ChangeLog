@@ -1,3 +1,11 @@
+2021-11-29  Tyler Wilcock  <tyler_w@apple.com>
+
+        Mark myself (Tyler Wilcock) as committer
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-11-29  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Fix ATOMICS_REQUIRE_LIBATOMIC testcase on 32-bits
