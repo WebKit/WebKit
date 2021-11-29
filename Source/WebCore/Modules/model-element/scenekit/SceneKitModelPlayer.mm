@@ -88,6 +88,7 @@ void SceneKitModelPlayer::handleMouseUp(const LayoutPoint&, MonotonicTime)
 {
 }
 
+#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
 void SceneKitModelPlayer::getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&)
 {
 }
@@ -95,7 +96,9 @@ void SceneKitModelPlayer::getCamera(CompletionHandler<void(std::optional<HTMLMod
 void SceneKitModelPlayer::setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&)
 {
 }
+#endif
 
+#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
 void SceneKitModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
@@ -123,7 +126,9 @@ void SceneKitModelPlayer::animationCurrentTime(CompletionHandler<void(std::optio
 void SceneKitModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&)
 {
 }
+#endif
 
+#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
 void SceneKitModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
@@ -135,6 +140,7 @@ void SceneKitModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>
 void SceneKitModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
 {
 }
+#endif
 
 // MARK: - SceneKitModelLoaderClient overrides.
 

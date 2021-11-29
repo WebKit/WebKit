@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ARKitInlinePreviewModelPlayerIOS.h"
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#if HAVE(ASV_INLINE_PREVIEW_IOS)
 
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"

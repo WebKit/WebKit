@@ -145,7 +145,7 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#if HAVE(ASV_INLINE_PREVIEW_MAC)
 #include "ARKitInlinePreviewModelPlayerMac.h"
 #endif
 
@@ -603,7 +603,7 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#if HAVE(ASV_INLINE_PREVIEW_MAC)
     if (!parameters.modelElementCacheDirectory.isEmpty())
         ARKitInlinePreviewModelPlayerMac::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
 #endif

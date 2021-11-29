@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#if HAVE(ASV_INLINE_PREVIEW_MAC)
 
 #include "ARKitInlinePreviewModelPlayer.h"
 #include <WebCore/ModelPlayer.h>

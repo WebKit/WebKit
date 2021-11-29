@@ -1,3 +1,56 @@
+2021-11-24  Antoine Quint  <graouts@webkit.org>
+
+        [Model] clean up compile-time flags and condition IDL methods behind them
+        https://bugs.webkit.org/show_bug.cgi?id=233407
+
+        Reviewed by Tim Horton.
+
+        On top of adopting the changes made to flags in wtf/PlatformEnableCocoa.h and wtf/PlatformHave.h,
+        we condition the definition of code related to IDL methods recently added to HTMLModelElement by
+        the new set of ENABLE_MODEL_ELEMENT_XXX_CONTROL flags, uncluding WebPageProxy messages allowing
+        for this feature to work.
+
+        * Shared/ModelIdentifier.h:
+        (WebKit::ModelIdentifier::encode const):
+        (WebKit::ModelIdentifier::decode):
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::previewHasCameraSupport):
+        (WebKit::ModelElementController::getCameraForModelElement):
+        (WebKit::ModelElementController::setCameraForModelElement):
+        (WebKit::previewHasAnimationSupport):
+        (WebKit::ModelElementController::isPlayingAnimationForModelElement):
+        (WebKit::ModelElementController::setAnimationIsPlayingForModelElement):
+        (WebKit::ModelElementController::isLoopingAnimationForModelElement):
+        (WebKit::ModelElementController::setIsLoopingAnimationForModelElement):
+        (WebKit::ModelElementController::animationDurationForModelElement):
+        (WebKit::ModelElementController::animationCurrentTimeForModelElement):
+        (WebKit::ModelElementController::setAnimationCurrentTimeForModelElement):
+        (WebKit::previewHasAudioSupport):
+        (WebKit::ModelElementController::hasAudioForModelElement):
+        (WebKit::ModelElementController::isMutedForModelElement):
+        (WebKit::ModelElementController::setIsMutedForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKModelInteractionGestureRecognizer.h:
+        * UIProcess/ios/WKModelInteractionGestureRecognizer.mm:
+        * UIProcess/ios/WKModelView.h:
+        * UIProcess/ios/WKModelView.mm:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        * WebProcess/Model/WebModelPlayerProvider.cpp:
+        (WebKit::WebModelPlayerProvider::createModelPlayer):
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.h:
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+
 2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] IPC class refactorings

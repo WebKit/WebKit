@@ -10833,6 +10833,7 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
 void WebPageProxy::modelElementGetCamera(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, ResourceError>)>&& completionHandler)
 {
     modelElementController()->getCameraForModelElement(modelIdentifier, WTFMove(completionHandler));
@@ -10842,7 +10843,9 @@ void WebPageProxy::modelElementSetCamera(ModelIdentifier modelIdentifier, WebCor
 {
     modelElementController()->setCameraForModelElement(modelIdentifier, camera, WTFMove(completionHandler));
 }
+#endif
 
+#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
 void WebPageProxy::modelElementIsPlayingAnimation(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
 {
     modelElementController()->isPlayingAnimationForModelElement(modelIdentifier, WTFMove(completionHandler));
@@ -10877,7 +10880,9 @@ void WebPageProxy::modelElementSetAnimationCurrentTime(ModelIdentifier modelIden
 {
     modelElementController()->setAnimationCurrentTimeForModelElement(modelIdentifier, currentTime, WTFMove(completionHandler));
 }
+#endif
 
+#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
 void WebPageProxy::modelElementHasAudio(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
 {
     modelElementController()->hasAudioForModelElement(modelIdentifier, WTFMove(completionHandler));
@@ -10893,15 +10898,16 @@ void WebPageProxy::modelElementSetIsMuted(ModelIdentifier modelIdentifier, bool 
     modelElementController()->setIsMutedForModelElement(modelIdentifier, isMuted, WTFMove(completionHandler));
 }
 #endif
+#endif // ENABLE(ARKIT_INLINE_PREVIEW)
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#if HAVE(ASV_INLINE_PREVIEW_IOS)
 void WebPageProxy::takeModelElementFullscreen(ModelIdentifier modelIdentifier)
 {
     modelElementController()->takeModelElementFullscreen(modelIdentifier);
 }
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#if HAVE(ASV_INLINE_PREVIEW_MAC)
 void WebPageProxy::modelElementDidCreatePreview(const URL& url, const String& uuid, const FloatSize& size, CompletionHandler<void(Expected<std::pair<String, uint32_t>, ResourceError>)>&& completionHandler)
 {
     modelElementController()->modelElementDidCreatePreview(url, uuid, size, WTFMove(completionHandler));

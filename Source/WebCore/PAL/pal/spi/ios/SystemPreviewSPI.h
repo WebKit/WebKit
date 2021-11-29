@@ -33,7 +33,7 @@
 #import <AssetViewer/ASVThumbnailView.h>
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#if HAVE(ASV_INLINE_PREVIEW_IOS)
 #import <AssetViewer/ASVInlinePreview.h>
 #endif
 
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#if HAVE(ASV_INLINE_PREVIEW_IOS)
 
 #import <simd/simd.h>
 

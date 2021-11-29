@@ -55,6 +55,7 @@ void ARKitInlinePreviewModelPlayer::enterFullscreen()
 {
 }
 
+#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
 void ARKitInlinePreviewModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&& completionHandler)
 {
     auto modelIdentifier = this->modelIdentifier();
@@ -101,7 +102,9 @@ void ARKitInlinePreviewModelPlayer::setCamera(WebCore::HTMLModelElementCamera ca
 
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetCamera(*modelIdentifier, camera), WTFMove(remoteCompletionHandler));
 }
+#endif // ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
 
+#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
 void ARKitInlinePreviewModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
     auto modelIdentifier = this->modelIdentifier();
@@ -268,7 +271,9 @@ void ARKitInlinePreviewModelPlayer::setAnimationCurrentTime(Seconds currentTime,
 
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetAnimationCurrentTime(*modelIdentifier, currentTime), WTFMove(remoteCompletionHandler));
 }
+#endif // ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
 
+#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
 void ARKitInlinePreviewModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
     auto modelIdentifier = this->modelIdentifier();
@@ -341,6 +346,7 @@ void ARKitInlinePreviewModelPlayer::setIsMuted(bool isMuted, CompletionHandler<v
 
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsMuted(*modelIdentifier, isMuted), WTFMove(remoteCompletionHandler));
 }
+#endif // ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
 
 }
 

@@ -29,14 +29,14 @@ namespace WebKit {
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 
-#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#if HAVE(ASV_INLINE_PREVIEW_IOS)
 #import <WebCore/GraphicsLayer.h>
 #endif
 
 struct ModelIdentifier {
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#if HAVE(ASV_INLINE_PREVIEW_MAC)
     String uuid;
-#elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#elif HAVE(ASV_INLINE_PREVIEW_IOS)
     WebCore::GraphicsLayer::PlatformLayerID layerIdentifier;
 #endif
 
@@ -46,22 +46,22 @@ struct ModelIdentifier {
 
 template<class Encoder> void ModelIdentifier::encode(Encoder& encoder) const
 {
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#if HAVE(ASV_INLINE_PREVIEW_MAC)
     encoder << uuid;
-#elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#elif HAVE(ASV_INLINE_PREVIEW_IOS)
     encoder << layerIdentifier;
 #endif
 }
 
 template<class Decoder> std::optional<ModelIdentifier> ModelIdentifier::decode(Decoder& decoder)
 {
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#if HAVE(ASV_INLINE_PREVIEW_MAC)
     std::optional<String> uuid;
     decoder >> uuid;
     if (!uuid)
         return std::nullopt;
     return { { WTFMove(*uuid) } };
-#elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#elif HAVE(ASV_INLINE_PREVIEW_IOS)
     std::optional<WebCore::GraphicsLayer::PlatformLayerID> layerIdentifier;
     decoder >> layerIdentifier;
     if (!layerIdentifier)

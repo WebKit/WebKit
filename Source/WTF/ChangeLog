@@ -1,3 +1,36 @@
+2021-11-24  Antoine Quint  <graouts@webkit.org>
+
+        [Model] clean up compile-time flags and condition IDL methods behind them
+        https://bugs.webkit.org/show_bug.cgi?id=233407
+
+        Reviewed by Tim Horton.
+
+        We refactor and augment the flags related to the <model> element. First, we change the
+        following existing flags from ENABLE to HAVE since they are about the availability of
+        specific APIs in ARKit, and more specific ASVInlinePreview. The changes are as follows:
+
+            ENABLE_ARKIT_INLINE_PREVIEW_IOS => HAVE_ASV_INLINE_PREVIEW_IOS
+            ENABLE_ARKIT_INLINE_PREVIEW_MAC => HAVE_ASV_INLINE_PREVIEW_MAC
+            ENABLE_ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM => HAVE_ASV_INLINE_PREVIEW_CAMERA_CONTROL
+            ENABLE_ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL => HAVE_ASV_INLINE_PREVIEW_ANIMATION_CONTROL
+            ENABLE_ARKIT_INLINE_PREVIEW_AUDIO_CONTROL => HAVE_ASV_INLINE_PREVIEW_AUDIO_CONTROL
+
+        We retain the ENABLE_ARKIT_INLINE_PREVIEW flag however as, even when the ASVInlinePreview API is
+        available, we may elect to not use this API.
+
+        Then, we add three new flags to specify whether some <model> features exposed to the Web are enabled,
+        all currently conditioned by the matching HAVE_ASV_INLINE_PREVIEW_ flags, but those could be subject
+        to more complex rules when other <model> backends expose supporting APIs for these features.
+
+            ENABLE_MODEL_ELEMENT_CAMERA_CONTROL
+            ENABLE_MODEL_ELEMENT_ANIMATION_CONTROL
+            ENABLE_MODEL_ELEMENT_AUDIO_CONTROL
+
+        Finally, we modify the macOS version used to define the HAVE_ASV_INLINE_PREVIEW_XXX_CONTROL flags.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
 2021-11-29  Youenn Fablet  <youenn@apple.com>
 
         Apply WebPreferences on ServiceWorker settings

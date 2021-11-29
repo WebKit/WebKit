@@ -34,21 +34,21 @@
 
     undefined enterFullscreen();
 
-    Promise<HTMLModelElementCamera> getCamera();
-    Promise<undefined> setCamera(HTMLModelElementCamera camera);
+    [Conditional=MODEL_ELEMENT_CAMERA_CONTROL] Promise<HTMLModelElementCamera> getCamera();
+    [Conditional=MODEL_ELEMENT_CAMERA_CONTROL] Promise<undefined> setCamera(HTMLModelElementCamera camera);
 
-    Promise<boolean> isPlayingAnimation();
-    Promise<undefined> playAnimation();
-    Promise<undefined> pauseAnimation();
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<boolean> isPlayingAnimation();
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<undefined> playAnimation();
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<undefined> pauseAnimation();
 
-    Promise<boolean> isLoopingAnimation();
-    Promise<undefined> setIsLoopingAnimation(boolean looping);
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<boolean> isLoopingAnimation();
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<undefined> setIsLoopingAnimation(boolean looping);
 
-    Promise<double> animationDuration();
-    Promise<double> animationCurrentTime();
-    Promise<undefined> setAnimationCurrentTime(double currentTime);
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<double> animationDuration();
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<double> animationCurrentTime();
+    [Conditional=MODEL_ELEMENT_ANIMATION_CONTROL] Promise<undefined> setAnimationCurrentTime(double currentTime);
 
-    Promise<boolean> hasAudio();
-    Promise<boolean> isMuted();
-    Promise<undefined> setIsMuted(boolean isMuted);
+    [Conditional=MODEL_ELEMENT_AUDIO_CONTROL] Promise<boolean> hasAudio();
+    [Conditional=MODEL_ELEMENT_AUDIO_CONTROL] Promise<boolean> isMuted();
+    [Conditional=MODEL_ELEMENT_AUDIO_CONTROL] Promise<undefined> setIsMuted(boolean isMuted);
 };

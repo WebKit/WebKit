@@ -50,8 +50,11 @@ public:
     virtual void handleMouseDown(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseUp(const LayoutPoint&, MonotonicTime) = 0;
+#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
     virtual void getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) = 0;
     virtual void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) = 0;
+#endif
+#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
     virtual void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) = 0;
     virtual void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
@@ -59,9 +62,12 @@ public:
     virtual void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) = 0;
     virtual void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) = 0;
     virtual void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) = 0;
+#endif
+#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
     virtual void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void setIsMuted(bool, CompletionHandler<void(bool success)>&&) = 0;
+#endif
 };
 
 }
