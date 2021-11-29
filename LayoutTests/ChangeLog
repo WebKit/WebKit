@@ -1,3 +1,12 @@
+2021-11-29  Andreu Botella  <andreu@andreubotella.com>
+
+        Form payloads with text/plain enctype should have a final \r\n
+        https://bugs.webkit.org/show_bug.cgi?id=220783
+
+        Reviewed by Darin Adler.
+
+        * http/tests/misc/resources/form-post-textplain.py:
+
 2021-11-29  Rob Buis  <rbuis@igalia.com>
 
         Only handle ident tokens in consumeWillChange

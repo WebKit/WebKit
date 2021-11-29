@@ -1,3 +1,15 @@
+2021-11-29  Andreu Botella  <andreu@andreubotella.com>
+
+        Form payloads with text/plain enctype should have a final \r\n
+        https://bugs.webkit.org/show_bug.cgi?id=220783
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-empty-file.window-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/text-plain.window-expected.txt:
+
 2021-11-29  Youenn Fablet  <youenn@apple.com>
 
         Apply WebPreferences on ServiceWorker settings

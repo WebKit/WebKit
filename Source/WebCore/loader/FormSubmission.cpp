@@ -70,7 +70,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
 
     if (equalLettersIgnoringASCIICase(encodingType, "text/plain")) {
         // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
-        body = decodeURLEscapeSequences(makeString(body.replaceWithLiteral('&', "\r\n").replace('+', ' '), "\r\n"));
+        body = decodeURLEscapeSequences(body.replaceWithLiteral('&', "\r\n").replace('+', ' '));
     }
 
     Vector<char> bodyData;

@@ -196,11 +196,10 @@ void finishMultiPartHeader(Vector<char>& buffer)
 void addKeyValuePairAsFormData(Vector<char>& buffer, const Vector<uint8_t>& key, const Vector<uint8_t>& value, FormData::EncodingType encodingType)
 {
     if (encodingType == FormData::TextPlain) {
-        if (!buffer.isEmpty())
-            append(buffer, "\r\n");
         append(buffer, key);
         append(buffer, '=');
         append(buffer, value);
+        append(buffer, "\r\n");
     } else {
         if (!buffer.isEmpty())
             append(buffer, '&');
