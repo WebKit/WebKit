@@ -76,6 +76,7 @@ PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEv
 
 #if PLATFORM(COCOA)
     platformWheelEvent.m_ioHIDEventTimestamp = platformWheelEvent.m_timestamp;
+    platformWheelEvent.m_rawPlatformDelta = platformWheelEvent.m_rawPlatformDelta;
     platformWheelEvent.m_unacceleratedScrollingDeltaY = deltaY;
 #endif // PLATFORM(COCOA)
 

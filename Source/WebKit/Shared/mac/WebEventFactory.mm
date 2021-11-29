@@ -411,24 +411,36 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     auto modifiers = modifiersForEvent(event);
     auto timestamp = WebCore::eventTimeStampSince1970(event.timestamp);
 
-    auto ioHIDEventTimestamp = [](NSEvent *event) {
+    auto ioHIDEventTimestamp = [&]() {
         auto cgEvent = event.CGEvent;
         if (!cgEvent)
             return event.timestamp;
 
-        auto iohidEvent = adoptCF(CGEventCopyIOHIDEvent(cgEvent));
-        if (!iohidEvent)
+        auto ioHIDEvent = adoptCF(CGEventCopyIOHIDEvent(cgEvent));
+        if (!ioHIDEvent)
             return event.timestamp;
 
-        auto ioHIDEventTimestamp = IOHIDEventGetTimeStamp(iohidEvent.get()); // IOEventRef timestamp is mach_absolute_time units.
+        auto ioHIDEventTimestamp = IOHIDEventGetTimeStamp(ioHIDEvent.get()); // IOEventRef timestamp is mach_absolute_time units.
         return MonotonicTime::fromMachAbsoluteTime(ioHIDEventTimestamp).secondsSinceEpoch().seconds();
-    }(event);
+    }();
+
+    auto rawPlatformDelta = [&]() -> std::optional<WebCore::FloatSize> {
+        auto cgEvent = event.CGEvent;
+        if (!cgEvent)
+            return std::nullopt;
+
+        auto ioHIDEvent = adoptCF(CGEventCopyIOHIDEvent(cgEvent));
+        if (!ioHIDEvent)
+            return std::nullopt;
+        
+        return { WebCore::FloatSize(-IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollX), -IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollY)) };
+    }();
 
     auto ioHIDEventWallTime = WebCore::eventTimeStampSince1970(ioHIDEventTimestamp);
 
     return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
         granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
-        scrollCount, unacceleratedScrollingDelta, modifiers, timestamp, ioHIDEventWallTime);
+        scrollCount, unacceleratedScrollingDelta, modifiers, timestamp, ioHIDEventWallTime, rawPlatformDelta);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)

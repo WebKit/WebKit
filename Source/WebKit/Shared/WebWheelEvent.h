@@ -53,7 +53,7 @@ public:
 
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, OptionSet<Modifier>, WallTime timestamp);
 #if PLATFORM(COCOA)
-    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, OptionSet<Modifier>, WallTime timestamp, WallTime ioHIDEventTimestamp);
+    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, OptionSet<Modifier>, WallTime timestamp, WallTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta);
 #elif PLATFORM(GTK) || USE(LIBWPE)
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Phase, Phase momentumPhase, Granularity, bool hasPreciseScrollingDeltas, OptionSet<Modifier>, WallTime timestamp);
 #endif
@@ -71,6 +71,7 @@ public:
 #endif
 #if PLATFORM(COCOA)
     WallTime ioHIDEventTimestamp() const { return m_ioHIDEventTimestamp; }
+    std::optional<WebCore::FloatSize> rawPlatformDelta() const { return m_rawPlatformDelta; }
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
@@ -95,6 +96,7 @@ private:
 #endif
 #if PLATFORM(COCOA)
     WallTime m_ioHIDEventTimestamp;
+    std::optional<WebCore::FloatSize> m_rawPlatformDelta;
     uint32_t m_scrollCount { 0 };
     WebCore::FloatSize m_unacceleratedScrollingDelta;
 #endif
