@@ -18,6 +18,7 @@
 				5CAF7AA926F93F9F0003F19E /* PBXTargetDependency */,
 				5742A2FA2535619D00B7BA14 /* PBXTargetDependency */,
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
+				7A7E8DFC27483A1200DCC97A /* PBXTargetDependency */,
 				372EBB492017E6CF00085064 /* PBXTargetDependency */,
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
 				2D9FB22C2375245C0049F936 /* PBXTargetDependency */,
@@ -1297,6 +1298,12 @@
 		7A41E9FB21F81DAD00B88CDB /* ShouldGrandfatherStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */; };
 		7A78FF32224191960096483E /* WKStorageAccessAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A78FF2E224191750096483E /* WKStorageAccessAlert.h */; };
 		7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A78FF2F224191760096483E /* WKStorageAccessAlert.mm */; };
+		7A7E8DE92748392500DCC97A /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
+		7A7E8DEA2748392500DCC97A /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		7A7E8DEC2748392500DCC97A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
+		7A7E8DED2748392500DCC97A /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
+		7A7E8DEF2748392500DCC97A /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
+		7A7E8DF12748392500DCC97A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7A821F4C1E2F673900604577 /* LegacyCustomProtocolManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A821F4B1E2F664800604577 /* LegacyCustomProtocolManagerClient.h */; };
 		7A821F501E2F7A7500604577 /* APICustomProtocolManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A821F4F1E2F7A5C00604577 /* APICustomProtocolManagerClient.h */; };
 		7A8A9D581EF119B0009801AE /* APIInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8A9D571EF119AA009801AE /* APIInjectedBundleClient.h */; };
@@ -2156,6 +2163,34 @@
 			remoteGlobalIDString = 5CAF7A9926F93A750003F19E;
 			remoteInfo = PCMDaemon;
 		};
+		7A7E8DE32748392500DCC97A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		7A7E8DE52748392500DCC97A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		7A7E8DE72748392500DCC97A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A16E65FF2581930800EE1749;
+			remoteInfo = MediaFormatReader;
+		};
+		7A7E8DFB27483A1200DCC97A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A7E8DE12748392500DCC97A;
+			remoteInfo = WebContent.CaptivePortal;
+		};
 		A15797402582AE7300528236 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2292,6 +2327,17 @@
 			files = (
 			);
 			name = "Copy Shims";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A7E8DF02748392500DCC97A /* Copy Plug-ins */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7A7E8DF12748392500DCC97A /* MediaFormatReader.bundle in Copy Plug-ins */,
+			);
+			name = "Copy Plug-ins";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A15797632582B1A500528236 /* Copy Plug-ins */ = {
@@ -4890,6 +4936,8 @@
 		7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShouldGrandfatherStatistics.h; path = Classifier/ShouldGrandfatherStatistics.h; sourceTree = "<group>"; };
 		7A78FF2E224191750096483E /* WKStorageAccessAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStorageAccessAlert.h; sourceTree = "<group>"; };
 		7A78FF2F224191760096483E /* WKStorageAccessAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKStorageAccessAlert.mm; sourceTree = "<group>"; };
+		7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; name = com.apple.WebKit.WebContent.xpc; path = com.apple.WebKit.WebContent.CaptivePortal.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.CaptivePortal.xcconfig; sourceTree = "<group>"; };
 		7A821F491E2F65DD00604577 /* LegacyCustomProtocolManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyCustomProtocolManagerProxy.cpp; path = CustomProtocols/LegacyCustomProtocolManagerProxy.cpp; sourceTree = "<group>"; };
 		7A821F4B1E2F664800604577 /* LegacyCustomProtocolManagerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCustomProtocolManagerClient.h; sourceTree = "<group>"; };
 		7A821F4D1E2F679E00604577 /* LegacyCustomProtocolManagerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyCustomProtocolManagerClient.mm; sourceTree = "<group>"; };
@@ -6381,6 +6429,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A7E8DEB2748392500DCC97A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A7E8DEC2748392500DCC97A /* Foundation.framework in Frameworks */,
+				7A7E8DED2748392500DCC97A /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -6439,6 +6496,7 @@
 				5742A2F72535613F00B7BA14 /* com.apple.WebKit.WebAuthn.xpc */,
 				372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
+				7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.xpc */,
 				CD95493526159004008372D9 /* libWebKitSwift.dylib */,
 				A16E66002581930800EE1749 /* MediaFormatReader.bundle */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
@@ -6828,6 +6886,7 @@
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				57A9FF07252BE6E0006A2040 /* WebAuthnService.xcconfig */,
+				7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */,
 				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
@@ -13902,6 +13961,29 @@
 			productReference = 5CAF7AA426F93A750003F19E /* adattributiond */;
 			productType = "com.apple.product-type.tool";
 		};
+		7A7E8DE12748392500DCC97A /* WebContent.CaptivePortal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A7E8DF42748392500DCC97A /* Build configuration list for PBXNativeTarget "WebContent.CaptivePortal" */;
+			buildPhases = (
+				7A7E8DE82748392500DCC97A /* Sources */,
+				7A7E8DEB2748392500DCC97A /* Frameworks */,
+				7A7E8DEE2748392500DCC97A /* Resources */,
+				7A7E8DF02748392500DCC97A /* Copy Plug-ins */,
+				7A7E8DF22748392500DCC97A /* Process WebContent entitlements */,
+				7A7E8DF32748392500DCC97A /* Copy Custom WebContent Resources to Framework Private Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7A7E8DE22748392500DCC97A /* PBXTargetDependency */,
+				7A7E8DE42748392500DCC97A /* PBXTargetDependency */,
+				7A7E8DE62748392500DCC97A /* PBXTargetDependency */,
+			);
+			name = WebContent.CaptivePortal;
+			productName = WebKit2Service;
+			productReference = 7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
 		8DC2EF4F0486A6940098B216 /* WebKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WebKit" */;
@@ -14083,6 +14165,7 @@
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				A16E65FF2581930800EE1749 /* MediaFormatReader */,
 				BC3DE46515A91763008D26FC /* WebContent */,
+				7A7E8DE12748392500DCC97A /* WebContent.CaptivePortal */,
 				372EBB382017E64300085064 /* WebContent.Development */,
 				BC8283B016B4BF7700A278FE /* Networking */,
 				2D9FB216237523830049F936 /* GPU */,
@@ -14117,6 +14200,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A7E8DEE2748392500DCC97A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A7E8DEF2748392500DCC97A /* WebContentProcess.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14593,6 +14684,40 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
 		};
+		7A7E8DF22748392500DCC97A /* Process WebContent entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process WebContent entitlements";
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		7A7E8DF32748392500DCC97A /* Copy Custom WebContent Resources to Framework Private Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			inputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/Resources/WebContentProcess.xib",
+			);
+			name = "Copy Custom WebContent Resources to Framework Private Headers";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/WebContent.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/Info-WebContent.plist",
+				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/WebContentProcess.xib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/copy-webcontent-resources-to-private-headers.sh\n";
+		};
 		7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -14849,6 +14974,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CAF7AA726F93AB00003F19E /* adattributiond.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A7E8DE82748392500DCC97A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A7E8DE92748392500DCC97A /* AuxiliaryProcessMain.cpp in Sources */,
+				7A7E8DEA2748392500DCC97A /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15406,6 +15540,26 @@
 			target = 5CAF7A9926F93A750003F19E /* adattributiond */;
 			targetProxy = 5CAF7AA826F93F9F0003F19E /* PBXContainerItemProxy */;
 		};
+		7A7E8DE22748392500DCC97A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 7A7E8DE32748392500DCC97A /* PBXContainerItemProxy */;
+		};
+		7A7E8DE42748392500DCC97A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 7A7E8DE52748392500DCC97A /* PBXContainerItemProxy */;
+		};
+		7A7E8DE62748392500DCC97A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A16E65FF2581930800EE1749 /* MediaFormatReader */;
+			targetProxy = 7A7E8DE72748392500DCC97A /* PBXContainerItemProxy */;
+		};
+		7A7E8DFC27483A1200DCC97A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A7E8DE12748392500DCC97A /* WebContent.CaptivePortal */;
+			targetProxy = 7A7E8DFB27483A1200DCC97A /* PBXContainerItemProxy */;
+		};
 		A15797412582AE7300528236 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
@@ -15724,6 +15878,27 @@
 			};
 			name = Production;
 		};
+		7A7E8DF52748392500DCC97A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7A7E8DF62748392500DCC97A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7A7E8DF72748392500DCC97A /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		942DB233257EE6D4009BD80A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -16029,6 +16204,16 @@
 				5CAF7AA126F93A750003F19E /* Debug */,
 				5CAF7AA226F93A750003F19E /* Release */,
 				5CAF7AA326F93A750003F19E /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		7A7E8DF42748392500DCC97A /* Build configuration list for PBXNativeTarget "WebContent.CaptivePortal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A7E8DF52748392500DCC97A /* Debug */,
+				7A7E8DF62748392500DCC97A /* Release */,
+				7A7E8DF72748392500DCC97A /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -41,6 +41,42 @@ function mac_process_webcontent_entitlements()
     mac_process_webcontent_or_plugin_entitlements
 }
 
+function mac_process_webcontent_captiveportal_entitlements()
+{
+    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
+    then
+        plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
+        plistbuddy Add :com.apple.rootless.storage.WebKitWebContentSandbox bool YES
+        plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+
+        plistbuddy Add :com.apple.imageio.allowabletypes array
+        plistbuddy Add :com.apple.imageio.allowabletypes:0 string org.webmproject.webp
+        plistbuddy Add :com.apple.imageio.allowabletypes:1 string public.jpeg
+        plistbuddy Add :com.apple.imageio.allowabletypes:2 string public.png
+        plistbuddy Add :com.apple.imageio.allowabletypes:3 string com.compuserve.gif
+
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+        then
+            plistbuddy Add :com.apple.developer.videotoolbox.client-sandboxed-decoder bool YES
+            plistbuddy Add :com.apple.pac.shared_region_id string WebContent
+            plistbuddy Add :com.apple.private.pac.exception bool YES
+            plistbuddy Add :com.apple.private.security.message-filter bool YES
+            plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
+            plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
+        fi
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+        then
+            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
+        fi
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+        then
+            plistbuddy Add :com.apple.private.gpu-restricted bool YES
+        fi
+    fi
+
+    mac_process_webcontent_or_plugin_entitlements
+}
+
 function mac_process_gpu_entitlements()
 {
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
@@ -215,6 +251,42 @@ function maccatalyst_process_webcontent_entitlements()
     fi
 }
 
+function maccatalyst_process_webcontent_captiveportal_entitlements()
+{
+    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
+    plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+
+    plistbuddy Add :com.apple.imageio.allowabletypes array
+    plistbuddy Add :com.apple.imageio.allowabletypes:0 string org.webmproject.webp
+    plistbuddy Add :com.apple.imageio.allowabletypes:1 string public.jpeg
+    plistbuddy Add :com.apple.imageio.allowabletypes:2 string public.png
+    plistbuddy Add :com.apple.imageio.allowabletypes:3 string com.compuserve.gif
+
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+    then
+        plistbuddy Add :com.apple.pac.shared_region_id string WebContent
+        plistbuddy Add :com.apple.private.pac.exception bool YES
+        plistbuddy Add :com.apple.private.security.message-filter bool YES
+        plistbuddy Add :com.apple.UIKit.view-service-wants-custom-idiom-and-scale bool YES
+        plistbuddy Add :com.apple.QuartzCore.webkit-limited-types bool YES
+    fi
+
+    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
+    then
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+        then
+            plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
+        fi
+    fi
+
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+    then
+        plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :com.apple.security.cs.single-jit bool YES
+    fi
+}
+
 function maccatalyst_process_gpu_entitlements()
 {
     plistbuddy Add :com.apple.security.network.client bool YES
@@ -302,6 +374,41 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :dynamic-codesigning bool YES
+
+    plistbuddy Add :com.apple.tcc.delegated-services array
+    plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
+    plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
+
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.WebContent
+}
+
+function ios_family_process_webcontent_captiveportal_entitlements()
+{
+    plistbuddy Add :com.apple.QuartzCore.secure-mode bool YES
+    plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+    plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
+    plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
+    plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
+    plistbuddy Add :com.apple.pac.shared_region_id string WebContent
+    plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
+    plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
+    plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
+    plistbuddy Add :com.apple.private.gpu-restricted bool YES
+    plistbuddy Add :com.apple.private.memorystatus bool YES
+    plistbuddy Add :com.apple.private.network.socket-delegate bool YES
+    plistbuddy Add :com.apple.private.pac.exception bool YES
+    plistbuddy Add :com.apple.private.security.message-filter bool YES
+    plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
+    plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
+    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
+    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+
+    plistbuddy Add :com.apple.imageio.allowabletypes array
+    plistbuddy Add :com.apple.imageio.allowabletypes:0 string org.webmproject.webp
+    plistbuddy Add :com.apple.imageio.allowabletypes:1 string public.jpeg
+    plistbuddy Add :com.apple.imageio.allowabletypes:2 string public.png
+    plistbuddy Add :com.apple.imageio.allowabletypes:3 string com.compuserve.gif
 
     plistbuddy Add :com.apple.tcc.delegated-services array
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
@@ -447,6 +554,7 @@ then
 
     if [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development ]]; then mac_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then mac_process_webcontent_entitlements
+    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then mac_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then mac_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then mac_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then mac_process_gpu_entitlements
@@ -459,6 +567,7 @@ then
 
     if [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development ]]; then maccatalyst_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then maccatalyst_process_webcontent_entitlements
+    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then maccatalyst_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then maccatalyst_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then maccatalyst_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then maccatalyst_process_gpu_entitlements
@@ -470,6 +579,7 @@ elif [[ "${WK_PLATFORM_NAME}" == iphoneos ||
 then
     if [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development ]]; then true
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then ios_family_process_webcontent_entitlements
+    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then ios_family_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then ios_family_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then ios_family_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then ios_family_process_gpu_entitlements
