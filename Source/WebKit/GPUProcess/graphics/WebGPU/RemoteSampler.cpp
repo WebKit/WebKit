@@ -29,24 +29,18 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUSampler.h>
 
 namespace WebKit {
 
-RemoteSampler::RemoteSampler(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteSampler::RemoteSampler(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(sampler)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteSampler::~RemoteSampler()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteSampler::~RemoteSampler() = default;
 
 void RemoteSampler::setLabel(String&& label)
 {

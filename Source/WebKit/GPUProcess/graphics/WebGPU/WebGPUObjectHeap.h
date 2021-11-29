@@ -27,12 +27,38 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "WebGPUObjectRegistry.h"
+#include "ScopedActiveMessageReceiveQueue.h"
+#include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUIdentifier.h"
 #include <functional>
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
-#include <wtf/WeakPtr.h>
+
+namespace PAL::WebGPU {
+class Adapter;
+class BindGroup;
+class BindGroupLayout;
+class Buffer;
+class CommandBuffer;
+class CommandEncoder;
+class ComputePassEncoder;
+class ComputePipeline;
+class Device;
+class ExternalTexture;
+class GPU;
+class PipelineLayout;
+class QuerySet;
+class Queue;
+class RenderBundleEncoder;
+class RenderBundle;
+class RenderPassEncoder;
+class RenderPipeline;
+class Sampler;
+class ShaderModule;
+class Texture;
+class TextureView;
+}
 
 namespace WebKit {
 class RemoteAdapter;
@@ -45,7 +71,6 @@ class RemoteComputePassEncoder;
 class RemoteComputePipeline;
 class RemoteDevice;
 class RemoteExternalTexture;
-class RemoteGPU;
 class RemotePipelineLayout;
 class RemoteQuerySet;
 class RemoteQueue;
@@ -61,59 +86,65 @@ class RemoteTextureView;
 
 namespace WebKit::WebGPU {
 
-class ObjectHeap final : public CanMakeWeakPtr<ObjectHeap> {
+class ObjectHeap final : public RefCounted<ObjectHeap>, public WebGPU::ConvertFromBackingContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ObjectHeap();
+    static Ref<ObjectHeap> create()
+    {
+        return adoptRef(*new ObjectHeap());
+    }
+
     ~ObjectHeap();
 
-    void addObject(RemoteAdapter&);
-    void addObject(RemoteBindGroup&);
-    void addObject(RemoteBindGroupLayout&);
-    void addObject(RemoteBuffer&);
-    void addObject(RemoteCommandBuffer&);
-    void addObject(RemoteCommandEncoder&);
-    void addObject(RemoteComputePassEncoder&);
-    void addObject(RemoteComputePipeline&);
-    void addObject(RemoteDevice&);
-    void addObject(RemoteExternalTexture&);
-    void addObject(RemoteGPU&);
-    void addObject(RemotePipelineLayout&);
-    void addObject(RemoteQuerySet&);
-    void addObject(RemoteQueue&);
-    void addObject(RemoteRenderBundleEncoder&);
-    void addObject(RemoteRenderBundle&);
-    void addObject(RemoteRenderPassEncoder&);
-    void addObject(RemoteRenderPipeline&);
-    void addObject(RemoteSampler&);
-    void addObject(RemoteShaderModule&);
-    void addObject(RemoteTexture&);
-    void addObject(RemoteTextureView&);
+    void addObject(WebGPUIdentifier, RemoteAdapter&);
+    void addObject(WebGPUIdentifier, RemoteBindGroup&);
+    void addObject(WebGPUIdentifier, RemoteBindGroupLayout&);
+    void addObject(WebGPUIdentifier, RemoteBuffer&);
+    void addObject(WebGPUIdentifier, RemoteCommandBuffer&);
+    void addObject(WebGPUIdentifier, RemoteCommandEncoder&);
+    void addObject(WebGPUIdentifier, RemoteComputePassEncoder&);
+    void addObject(WebGPUIdentifier, RemoteComputePipeline&);
+    void addObject(WebGPUIdentifier, RemoteDevice&);
+    void addObject(WebGPUIdentifier, RemoteExternalTexture&);
+    void addObject(WebGPUIdentifier, RemotePipelineLayout&);
+    void addObject(WebGPUIdentifier, RemoteQuerySet&);
+    void addObject(WebGPUIdentifier, RemoteQueue&);
+    void addObject(WebGPUIdentifier, RemoteRenderBundleEncoder&);
+    void addObject(WebGPUIdentifier, RemoteRenderBundle&);
+    void addObject(WebGPUIdentifier, RemoteRenderPassEncoder&);
+    void addObject(WebGPUIdentifier, RemoteRenderPipeline&);
+    void addObject(WebGPUIdentifier, RemoteSampler&);
+    void addObject(WebGPUIdentifier, RemoteShaderModule&);
+    void addObject(WebGPUIdentifier, RemoteTexture&);
+    void addObject(WebGPUIdentifier, RemoteTextureView&);
 
-    void removeObject(RemoteAdapter&);
-    void removeObject(RemoteBindGroup&);
-    void removeObject(RemoteBindGroupLayout&);
-    void removeObject(RemoteBuffer&);
-    void removeObject(RemoteCommandBuffer&);
-    void removeObject(RemoteCommandEncoder&);
-    void removeObject(RemoteComputePassEncoder&);
-    void removeObject(RemoteComputePipeline&);
-    void removeObject(RemoteDevice&);
-    void removeObject(RemoteExternalTexture&);
-    void removeObject(RemoteGPU&);
-    void removeObject(RemotePipelineLayout&);
-    void removeObject(RemoteQuerySet&);
-    void removeObject(RemoteQueue&);
-    void removeObject(RemoteRenderBundleEncoder&);
-    void removeObject(RemoteRenderBundle&);
-    void removeObject(RemoteRenderPassEncoder&);
-    void removeObject(RemoteRenderPipeline&);
-    void removeObject(RemoteSampler&);
-    void removeObject(RemoteShaderModule&);
-    void removeObject(RemoteTexture&);
-    void removeObject(RemoteTextureView&);
+    void removeObject(WebGPUIdentifier);
+
+    PAL::WebGPU::Adapter* convertAdapterFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::BindGroup* convertBindGroupFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::BindGroupLayout* convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::Buffer* convertBufferFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::CommandBuffer* convertCommandBufferFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::CommandEncoder* convertCommandEncoderFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::ComputePassEncoder* convertComputePassEncoderFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::ExternalTexture* convertExternalTextureFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::PipelineLayout* convertPipelineLayoutFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::QuerySet* convertQuerySetFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::Queue* convertQueueFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::RenderBundleEncoder* convertRenderBundleEncoderFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::RenderBundle* convertRenderBundleFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::RenderPassEncoder* convertRenderPassEncoderFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::RenderPipeline* convertRenderPipelineFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::Sampler* convertSamplerFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
 
 private:
+    ObjectHeap();
+
     using Object = std::variant<
         std::monostate,
         Ref<RemoteAdapter>,
@@ -126,7 +157,6 @@ private:
         Ref<RemoteComputePipeline>,
         Ref<RemoteDevice>,
         Ref<RemoteExternalTexture>,
-        Ref<RemoteGPU>,
         Ref<RemotePipelineLayout>,
         Ref<RemoteQuerySet>,
         Ref<RemoteQueue>,
@@ -139,9 +169,7 @@ private:
         Ref<RemoteTexture>,
         Ref<RemoteTextureView>
     >;
-    HashMap<void*, Object> m_objects;
-
-    ObjectRegistry m_objectRegistry;
+    HashMap<WebGPUIdentifier, Object> m_objects;
 };
 
 } // namespace WebKit::WebGPU

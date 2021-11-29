@@ -30,29 +30,23 @@
 
 #include "RemoteRenderBundle.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPURenderBundle.h>
 #include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
 
 namespace WebKit {
 
-RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(renderBundleEncoder)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder() = default;
 
 void RemoteRenderBundleEncoder::setPipeline(WebGPUIdentifier renderPipeline)
 {
-    auto convertedRenderPipeline = m_objectRegistry.convertRenderPipelineFromBacking(renderPipeline);
+    auto convertedRenderPipeline = m_objectHeap.convertRenderPipelineFromBacking(renderPipeline);
     ASSERT(convertedRenderPipeline);
     if (!convertedRenderPipeline)
         return;
@@ -62,7 +56,7 @@ void RemoteRenderBundleEncoder::setPipeline(WebGPUIdentifier renderPipeline)
 
 void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, PAL::WebGPU::IndexFormat indexFormat, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
 {
-    auto convertedBuffer = m_objectRegistry.convertBufferFromBacking(buffer);
+    auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -72,7 +66,7 @@ void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, PAL::Web
 
 void RemoteRenderBundleEncoder::setVertexBuffer(PAL::WebGPU::Index32 slot, WebGPUIdentifier buffer, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
 {
-    auto convertedBuffer = m_objectRegistry.convertBufferFromBacking(buffer);
+    auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -96,7 +90,7 @@ void RemoteRenderBundleEncoder::drawIndexed(PAL::WebGPU::Size32 indexCount, PAL:
 
 void RemoteRenderBundleEncoder::drawIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = m_objectRegistry.convertBufferFromBacking(indirectBuffer);
+    auto convertedIndirectBuffer = m_objectHeap.convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -106,7 +100,7 @@ void RemoteRenderBundleEncoder::drawIndirect(WebGPUIdentifier indirectBuffer, PA
 
 void RemoteRenderBundleEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = m_objectRegistry.convertBufferFromBacking(indirectBuffer);
+    auto convertedIndirectBuffer = m_objectHeap.convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -117,7 +111,7 @@ void RemoteRenderBundleEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuf
 void RemoteRenderBundleEncoder::setBindGroup(PAL::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
     std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&& dynamicOffsets)
 {
-    auto convertedBindGroup = m_objectRegistry.convertBindGroupFromBacking(bindGroup);
+    auto convertedBindGroup = m_objectHeap.convertBindGroupFromBacking(bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;
@@ -142,14 +136,14 @@ void RemoteRenderBundleEncoder::insertDebugMarker(String&& markerLabel)
 
 void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto renderBundle = m_backing->finish(*convertedDescriptor);
-    auto remoteRenderBundle = RemoteRenderBundle::create(renderBundle, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteRenderBundle);
+    auto remoteRenderBundle = RemoteRenderBundle::create(renderBundle, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteRenderBundle);
 }
 
 void RemoteRenderBundleEncoder::setLabel(String&& label)

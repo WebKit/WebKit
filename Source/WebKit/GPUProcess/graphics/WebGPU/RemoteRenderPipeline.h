@@ -40,28 +40,29 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
-class ObjectRegistry;
 }
 
 class RemoteRenderPipeline final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteRenderPipeline> create(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderPipeline> create(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderPipeline(renderPipeline, objectRegistry, objectHeap, identifier));
+        return adoptRef(*new RemoteRenderPipeline(renderPipeline, objectHeap, identifier));
     }
 
     virtual ~RemoteRenderPipeline();
 
 private:
-    friend class ObjectRegistry;
+    friend class WebGPU::ObjectHeap;
 
-    RemoteRenderPipeline(PAL::WebGPU::RenderPipeline&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteRenderPipeline(PAL::WebGPU::RenderPipeline&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteRenderPipeline(const RemoteRenderPipeline&) = delete;
     RemoteRenderPipeline(RemoteRenderPipeline&&) = delete;
     RemoteRenderPipeline& operator=(const RemoteRenderPipeline&) = delete;
     RemoteRenderPipeline& operator=(RemoteRenderPipeline&&) = delete;
+
+    PAL::WebGPU::RenderPipeline& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
@@ -70,7 +71,6 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::RenderPipeline> m_backing;
-    WebGPU::ObjectRegistry& m_objectRegistry;
     WebGPU::ObjectHeap& m_objectHeap;
     WebGPUIdentifier m_identifier;
 };

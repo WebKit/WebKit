@@ -29,24 +29,18 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUTextureView.h>
 
 namespace WebKit {
 
-RemoteTextureView::RemoteTextureView(PAL::WebGPU::TextureView& textureView, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteTextureView::RemoteTextureView(PAL::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(textureView)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteTextureView::~RemoteTextureView()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteTextureView::~RemoteTextureView() = default;
 
 void RemoteTextureView::setLabel(String&& label)
 {

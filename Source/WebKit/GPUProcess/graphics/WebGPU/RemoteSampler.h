@@ -40,35 +40,35 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
-class ObjectRegistry;
 }
 
 class RemoteSampler final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteSampler> create(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteSampler> create(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteSampler(sampler, objectRegistry, objectHeap, identifier));
+        return adoptRef(*new RemoteSampler(sampler, objectHeap, identifier));
     }
 
     virtual ~RemoteSampler();
 
 private:
-    friend class ObjectRegistry;
+    friend class WebGPU::ObjectHeap;
 
-    RemoteSampler(PAL::WebGPU::Sampler&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteSampler(PAL::WebGPU::Sampler&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteSampler(const RemoteSampler&) = delete;
     RemoteSampler(RemoteSampler&&) = delete;
     RemoteSampler& operator=(const RemoteSampler&) = delete;
     RemoteSampler& operator=(RemoteSampler&&) = delete;
 
+    PAL::WebGPU::Sampler& backing() { return m_backing; }
+
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Sampler> m_backing;
-    WebGPU::ObjectRegistry& m_objectRegistry;
     WebGPU::ObjectHeap& m_objectHeap;
     WebGPUIdentifier m_identifier;
 };

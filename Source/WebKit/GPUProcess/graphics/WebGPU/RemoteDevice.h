@@ -49,7 +49,6 @@ struct CommandEncoderDescriptor;
 struct ComputePipelineDescriptor;
 struct ExternalTextureDescriptor;
 class ObjectHeap;
-class ObjectRegistry;
 struct PipelineLayoutDescriptor;
 struct QuerySetDescriptor;
 struct RenderBundleEncoderDescriptor;
@@ -62,22 +61,24 @@ struct TextureDescriptor;
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDevice> create(PAL::WebGPU::Device& device, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteDevice> create(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteDevice(device, objectRegistry, objectHeap, identifier));
+        return adoptRef(*new RemoteDevice(device, objectHeap, identifier));
     }
 
     ~RemoteDevice();
 
 private:
-    friend class ObjectRegistry;
+    friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(PAL::WebGPU::Device&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteDevice(PAL::WebGPU::Device&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
     RemoteDevice& operator=(const RemoteDevice&) = delete;
     RemoteDevice& operator=(RemoteDevice&&) = delete;
+
+    PAL::WebGPU::Device& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
@@ -109,7 +110,6 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Device> m_backing;
-    WebGPU::ObjectRegistry& m_objectRegistry;
     WebGPU::ObjectHeap& m_objectHeap;
     WebGPUIdentifier m_identifier;
 };

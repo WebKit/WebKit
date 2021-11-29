@@ -46,29 +46,30 @@ struct ComputePassDescriptor;
 struct ImageCopyBuffer;
 struct ImageCopyTexture;
 class ObjectHeap;
-class ObjectRegistry;
 struct RenderPassDescriptor;
 }
 
 class RemoteCommandEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteCommandEncoder> create(PAL::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandEncoder> create(PAL::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandEncoder(commandEncoder, objectRegistry, objectHeap, identifier));
+        return adoptRef(*new RemoteCommandEncoder(commandEncoder, objectHeap, identifier));
     }
 
     virtual ~RemoteCommandEncoder();
 
 private:
-    friend class ObjectRegistry;
+    friend class WebGPU::ObjectHeap;
 
-    RemoteCommandEncoder(PAL::WebGPU::CommandEncoder&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteCommandEncoder(PAL::WebGPU::CommandEncoder&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteCommandEncoder(const RemoteCommandEncoder&) = delete;
     RemoteCommandEncoder(RemoteCommandEncoder&&) = delete;
     RemoteCommandEncoder& operator=(const RemoteCommandEncoder&) = delete;
     RemoteCommandEncoder& operator=(RemoteCommandEncoder&&) = delete;
+
+    PAL::WebGPU::CommandEncoder& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
@@ -120,7 +121,6 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::CommandEncoder> m_backing;
-    WebGPU::ObjectRegistry& m_objectRegistry;
     WebGPU::ObjectHeap& m_objectHeap;
     WebGPUIdentifier m_identifier;
 };

@@ -42,29 +42,30 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
-class ObjectRegistry;
 struct RenderBundleDescriptor;
 }
 
 class RemoteRenderBundleEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteRenderBundleEncoder> create(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderBundleEncoder> create(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderBundleEncoder(renderBundleEncoder, objectRegistry, objectHeap, identifier));
+        return adoptRef(*new RemoteRenderBundleEncoder(renderBundleEncoder, objectHeap, identifier));
     }
 
     ~RemoteRenderBundleEncoder();
 
 private:
-    friend class ObjectRegistry;
+    friend class WebGPU::ObjectHeap;
 
-    RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteRenderBundleEncoder(const RemoteRenderBundleEncoder&) = delete;
     RemoteRenderBundleEncoder(RemoteRenderBundleEncoder&&) = delete;
     RemoteRenderBundleEncoder& operator=(const RemoteRenderBundleEncoder&) = delete;
     RemoteRenderBundleEncoder& operator=(RemoteRenderBundleEncoder&&) = delete;
+
+    PAL::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
@@ -95,7 +96,6 @@ private:
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::RenderBundleEncoder> m_backing;
-    WebGPU::ObjectRegistry& m_objectRegistry;
     WebGPU::ObjectHeap& m_objectHeap;
     WebGPUIdentifier m_identifier;
 };

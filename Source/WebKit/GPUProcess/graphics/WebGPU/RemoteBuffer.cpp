@@ -29,23 +29,17 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 
 namespace WebKit {
 
-RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(buffer)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteBuffer::~RemoteBuffer()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteBuffer::~RemoteBuffer() = default;
 
 void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {

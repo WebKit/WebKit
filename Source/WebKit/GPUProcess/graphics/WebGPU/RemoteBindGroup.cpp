@@ -29,24 +29,18 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroup.h>
 
 namespace WebKit {
 
-RemoteBindGroup::RemoteBindGroup(PAL::WebGPU::BindGroup& bindGroup, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteBindGroup::RemoteBindGroup(PAL::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(bindGroup)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteBindGroup::~RemoteBindGroup()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteBindGroup::~RemoteBindGroup() = default;
 
 void RemoteBindGroup::setLabel(String&& label)
 {

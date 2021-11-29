@@ -33,42 +33,36 @@
 #include "RemoteRenderPassEncoder.h"
 #include "WebGPUComputePassDescriptor.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUCommandEncoder.h>
 
 namespace WebKit {
 
-RemoteCommandEncoder::RemoteCommandEncoder(PAL::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteCommandEncoder::RemoteCommandEncoder(PAL::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(commandEncoder)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteCommandEncoder::~RemoteCommandEncoder()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteCommandEncoder::~RemoteCommandEncoder() = default;
 
 void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto renderPassEncoder = m_backing->beginRenderPass(*convertedDescriptor);
-    auto remoteRenderPassEncoder = RemoteRenderPassEncoder::create(renderPassEncoder, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteRenderPassEncoder);
+    auto remoteRenderPassEncoder = RemoteRenderPassEncoder::create(renderPassEncoder, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteRenderPassEncoder);
 }
 
 void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>& descriptor, WebGPUIdentifier identifier)
 {
     std::optional<PAL::WebGPU::ComputePassDescriptor> convertedDescriptor;
     if (descriptor) {
-        auto resultDescriptor = m_objectRegistry.convertFromBacking(*descriptor);
+        auto resultDescriptor = m_objectHeap.convertFromBacking(*descriptor);
         ASSERT(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
         if (!convertedDescriptor)
@@ -76,8 +70,8 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
     }
 
     auto computePassEncoder = m_backing->beginComputePass(*convertedDescriptor);
-    auto computeRenderPassEncoder = RemoteComputePassEncoder::create(computePassEncoder, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(computeRenderPassEncoder);
+    auto computeRenderPassEncoder = RemoteComputePassEncoder::create(computePassEncoder, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, computeRenderPassEncoder);
 }
 
 void RemoteCommandEncoder::copyBufferToBuffer(
@@ -87,9 +81,9 @@ void RemoteCommandEncoder::copyBufferToBuffer(
     PAL::WebGPU::Size64 destinationOffset,
     PAL::WebGPU::Size64 size)
 {
-    auto convertedSource = m_objectRegistry.convertBufferFromBacking(source);
+    auto convertedSource = m_objectHeap.convertBufferFromBacking(source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectRegistry.convertBufferFromBacking(source);
+    auto convertedDestination = m_objectHeap.convertBufferFromBacking(source);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;
@@ -102,11 +96,11 @@ void RemoteCommandEncoder::copyBufferToTexture(
     const WebGPU::ImageCopyTexture& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectRegistry.convertFromBacking(source);
+    auto convertedSource = m_objectHeap.convertFromBacking(source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectRegistry.convertFromBacking(destination);
+    auto convertedDestination = m_objectHeap.convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedCopySize = m_objectRegistry.convertFromBacking(copySize);
+    auto convertedCopySize = m_objectHeap.convertFromBacking(copySize);
     ASSERT(convertedCopySize);
     if (!convertedSource || !convertedDestination || !convertedCopySize)
         return;
@@ -119,11 +113,11 @@ void RemoteCommandEncoder::copyTextureToBuffer(
     const WebGPU::ImageCopyBuffer& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectRegistry.convertFromBacking(source);
+    auto convertedSource = m_objectHeap.convertFromBacking(source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectRegistry.convertFromBacking(destination);
+    auto convertedDestination = m_objectHeap.convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedCopySize = m_objectRegistry.convertFromBacking(copySize);
+    auto convertedCopySize = m_objectHeap.convertFromBacking(copySize);
     ASSERT(convertedCopySize);
     if (!convertedSource || !convertedDestination || !convertedCopySize)
         return;
@@ -136,11 +130,11 @@ void RemoteCommandEncoder::copyTextureToTexture(
     const WebGPU::ImageCopyTexture& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectRegistry.convertFromBacking(source);
+    auto convertedSource = m_objectHeap.convertFromBacking(source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectRegistry.convertFromBacking(destination);
+    auto convertedDestination = m_objectHeap.convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedCopySize = m_objectRegistry.convertFromBacking(copySize);
+    auto convertedCopySize = m_objectHeap.convertFromBacking(copySize);
     ASSERT(convertedCopySize);
     if (!convertedSource || !convertedDestination || !convertedCopySize)
         return;
@@ -153,7 +147,7 @@ void RemoteCommandEncoder::fillBuffer(
     PAL::WebGPU::Size64 destinationOffset,
     PAL::WebGPU::Size64 size)
 {
-    auto convertedDestination = m_objectRegistry.convertBufferFromBacking(destination);
+    auto convertedDestination = m_objectHeap.convertBufferFromBacking(destination);
     ASSERT(convertedDestination);
     if (!convertedDestination)
         return;
@@ -178,7 +172,7 @@ void RemoteCommandEncoder::insertDebugMarker(String&& markerLabel)
 
 void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, PAL::WebGPU::Size32 queryIndex)
 {
-    auto convertedQuerySet = m_objectRegistry.convertQuerySetFromBacking(querySet);
+    auto convertedQuerySet = m_objectHeap.convertQuerySetFromBacking(querySet);
     ASSERT(convertedQuerySet);
     if (!convertedQuerySet)
         return;
@@ -193,9 +187,9 @@ void RemoteCommandEncoder::resolveQuerySet(
     WebGPUIdentifier destination,
     PAL::WebGPU::Size64 destinationOffset)
 {
-    auto convertedQuerySet = m_objectRegistry.convertQuerySetFromBacking(querySet);
+    auto convertedQuerySet = m_objectHeap.convertQuerySetFromBacking(querySet);
     ASSERT(convertedQuerySet);
-    auto convertedDestination = m_objectRegistry.convertBufferFromBacking(destination);
+    auto convertedDestination = m_objectHeap.convertBufferFromBacking(destination);
     ASSERT(convertedDestination);
     if (!convertedQuerySet || !convertedDestination)
         return;
@@ -205,14 +199,14 @@ void RemoteCommandEncoder::resolveQuerySet(
 
 void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto commandBuffer = m_backing->finish(*convertedDescriptor);
-    auto remoteCommandBuffer = RemoteCommandBuffer::create(commandBuffer, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteCommandBuffer);
+    auto remoteCommandBuffer = RemoteCommandBuffer::create(commandBuffer, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteCommandBuffer);
 }
 
 void RemoteCommandEncoder::setLabel(String&& label)

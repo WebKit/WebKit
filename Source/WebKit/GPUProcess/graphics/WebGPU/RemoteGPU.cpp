@@ -30,42 +30,36 @@
 
 #include "RemoteAdapter.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
 
 namespace WebKit {
 
-RemoteGPU::RemoteGPU(PAL::WebGPU::GPU& gpu, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteGPU::RemoteGPU(PAL::WebGPU::GPU& gpu, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(gpu)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteGPU::~RemoteGPU()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteGPU::~RemoteGPU() = default;
 
 void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&, bool)>&& callback)
 {
-    auto convertedOptions = m_objectRegistry.convertFromBacking(options);
+    auto convertedOptions = m_objectHeap->convertFromBacking(options);
     ASSERT(convertedOptions);
     if (!convertedOptions) {
         callback(StringImpl::empty(), { { } }, { }, false);
         return;
     }
 
-    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
-        if (!weakObjectHeap || !adapter) {
+    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), objectHeap = m_objectHeap.copyRef(), identifier] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
+        if (!adapter) {
             callback(StringImpl::empty(), { { } }, { }, false);
             return;
         }
-        auto remoteAdapter = RemoteAdapter::create(*adapter, objectRegistry, *weakObjectHeap, identifier);
-        weakObjectHeap->addObject(remoteAdapter);
+        auto remoteAdapter = RemoteAdapter::create(*adapter, objectHeap, identifier);
+        objectHeap->addObject(identifier, remoteAdapter);
         auto name = adapter->name();
         const auto& features = adapter->features();
         const auto& limits = adapter->limits();

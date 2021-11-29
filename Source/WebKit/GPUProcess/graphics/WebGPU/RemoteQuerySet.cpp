@@ -29,24 +29,18 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUQuerySet.h>
 
 namespace WebKit {
 
-RemoteQuerySet::RemoteQuerySet(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteQuerySet::RemoteQuerySet(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(querySet)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteQuerySet::~RemoteQuerySet()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteQuerySet::~RemoteQuerySet() = default;
 
 void RemoteQuerySet::destroy()
 {

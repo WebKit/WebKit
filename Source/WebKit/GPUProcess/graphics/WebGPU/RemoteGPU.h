@@ -42,24 +42,23 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
-class ObjectRegistry;
 struct RequestAdapterOptions;
 }
 
 class RemoteGPU final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteGPU> create(PAL::WebGPU::GPU& gpu, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteGPU> create(PAL::WebGPU::GPU& gpu, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteGPU(gpu, objectRegistry, objectHeap, identifier));
+        return adoptRef(*new RemoteGPU(gpu, objectHeap, identifier));
     }
 
     virtual ~RemoteGPU();
 
 private:
-    friend class ObjectRegistry;
+    friend class WebGPU::ObjectHeap;
 
-    RemoteGPU(PAL::WebGPU::GPU&, WebGPU::ObjectRegistry&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteGPU(PAL::WebGPU::GPU&, WebGPU::ObjectHeap&, WebGPUIdentifier);
 
     RemoteGPU(const RemoteGPU&) = delete;
     RemoteGPU(RemoteGPU&&) = delete;
@@ -71,8 +70,7 @@ private:
     void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, WTF::CompletionHandler<void(String&&, WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&, bool)>&&);
 
     Ref<PAL::WebGPU::GPU> m_backing;
-    WebGPU::ObjectRegistry& m_objectRegistry;
-    WebGPU::ObjectHeap& m_objectHeap;
+    Ref<WebGPU::ObjectHeap> m_objectHeap;
     WebGPUIdentifier m_identifier;
 };
 

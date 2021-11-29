@@ -30,31 +30,25 @@
 
 #include "RemoteBindGroupLayout.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
 #include <pal/graphics/WebGPU/WebGPURenderPipeline.h>
 
 namespace WebKit {
 
-RemoteRenderPipeline::RemoteRenderPipeline(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteRenderPipeline::RemoteRenderPipeline(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(renderPipeline)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteRenderPipeline::~RemoteRenderPipeline()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteRenderPipeline::~RemoteRenderPipeline() = default;
 
 void RemoteRenderPipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier identifier)
 {
     auto bindGroupLayout = m_backing->getBindGroupLayout(index);
-    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteBindGroupLayout);
+    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteBindGroupLayout);
 }
 
 void RemoteRenderPipeline::setLabel(String&& label)

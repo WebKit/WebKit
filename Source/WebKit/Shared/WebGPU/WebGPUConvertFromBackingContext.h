@@ -274,7 +274,6 @@ public:
     virtual PAL::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::ExternalTexture* convertExternalTextureFromBacking(WebGPUIdentifier) = 0;
-    virtual PAL::WebGPU::GPU* convertGPUFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::PipelineLayout* convertPipelineLayoutFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::QuerySet* convertQuerySetFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::Queue* convertQueueFromBacking(WebGPUIdentifier) = 0;

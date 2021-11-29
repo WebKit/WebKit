@@ -43,7 +43,6 @@
 #include "RemoteTexture.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUValidationError.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroup.h>
@@ -77,19 +76,14 @@
 
 namespace WebKit {
 
-RemoteDevice::RemoteDevice(PAL::WebGPU::Device& device, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteDevice::RemoteDevice(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(device)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteDevice::~RemoteDevice()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteDevice::~RemoteDevice() = default;
 
 void RemoteDevice::destroy()
 {
@@ -98,160 +92,152 @@ void RemoteDevice::destroy()
 
 void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto buffer = m_backing->createBuffer(*convertedDescriptor);
-    auto remoteBuffer = RemoteBuffer::create(buffer, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteBuffer);
+    auto remoteBuffer = RemoteBuffer::create(buffer, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteBuffer);
 }
 
 void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto texture = m_backing->createTexture(*convertedDescriptor);
-    auto remoteTexture = RemoteTexture::create(texture, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteTexture);
+    auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteTexture);
 }
 
 void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto sampler = m_backing->createSampler(*convertedDescriptor);
-    auto remoteSampler = RemoteSampler::create(sampler, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteSampler);
+    auto remoteSampler = RemoteSampler::create(sampler, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteSampler);
 }
 
 void RemoteDevice::importExternalTexture(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto externalTexture = m_backing->importExternalTexture(*convertedDescriptor);
-    auto remoteExternalTexture = RemoteExternalTexture::create(externalTexture, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteExternalTexture);
+    auto remoteExternalTexture = RemoteExternalTexture::create(externalTexture, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteExternalTexture);
 }
 
 void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto bindGroupLayout = m_backing->createBindGroupLayout(*convertedDescriptor);
-    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteBindGroupLayout);
+    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteBindGroupLayout);
 }
 
 void RemoteDevice::createPipelineLayout(const WebGPU::PipelineLayoutDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto pipelineLayout = m_backing->createPipelineLayout(*convertedDescriptor);
-    auto remotePipelineLayout = RemotePipelineLayout::create(pipelineLayout, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remotePipelineLayout);
+    auto remotePipelineLayout = RemotePipelineLayout::create(pipelineLayout, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remotePipelineLayout);
 }
 
 void RemoteDevice::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto bindGroup = m_backing->createBindGroup(*convertedDescriptor);
-    auto remoteBindGroup = RemoteBindGroup::create(bindGroup, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteBindGroup);
+    auto remoteBindGroup = RemoteBindGroup::create(bindGroup, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteBindGroup);
 }
 
 void RemoteDevice::createShaderModule(const WebGPU::ShaderModuleDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto shaderModule = m_backing->createShaderModule(*convertedDescriptor);
-    auto remoteShaderModule = RemoteShaderModule::create(shaderModule, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteShaderModule);
+    auto remoteShaderModule = RemoteShaderModule::create(shaderModule, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteShaderModule);
 }
 
 void RemoteDevice::createComputePipeline(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto computePipeline = m_backing->createComputePipeline(*convertedDescriptor);
-    auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteComputePipeline);
+    auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteComputePipeline);
 }
 
 void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto renderPipeline = m_backing->createRenderPipeline(*convertedDescriptor);
-    auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteRenderPipeline);
+    auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteRenderPipeline);
 }
 
 void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, WTF::CompletionHandler<void()>&& callback)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
         callback();
         return;
     }
 
-    m_backing->createComputePipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (Ref<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
-        if (!weakObjectHeap) {
-            callback();
-            return;
-        }
-        auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline, objectRegistry, *weakObjectHeap, identifier);
-        weakObjectHeap->addObject(remoteComputePipeline);
+    m_backing->createComputePipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, identifier] (Ref<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
+        auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline, objectHeap, identifier);
+        objectHeap->addObject(identifier, remoteComputePipeline);
         callback();
     });
 }
 
 void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, WTF::CompletionHandler<void()>&& callback)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
         callback();
         return;
     }
 
-    m_backing->createRenderPipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), weakObjectHeap = WeakPtr<WebGPU::ObjectHeap>(m_objectHeap), objectRegistry = m_objectRegistry, identifier] (Ref<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
-        if (!weakObjectHeap) {
-            callback();
-            return;
-        }
-        auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline, objectRegistry, *weakObjectHeap, identifier);
-        weakObjectHeap->addObject(remoteRenderPipeline);
+    m_backing->createRenderPipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, identifier] (Ref<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
+        auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline, objectHeap, identifier);
+        objectHeap->addObject(identifier, remoteRenderPipeline);
         callback();
     });
 }
@@ -260,39 +246,39 @@ void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncod
 {
     std::optional<PAL::WebGPU::CommandEncoderDescriptor> convertedDescriptor;
     if (descriptor) {
-        auto resultDescriptor = m_objectRegistry.convertFromBacking(*descriptor);
+        auto resultDescriptor = m_objectHeap.convertFromBacking(*descriptor);
         ASSERT(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
         if (!convertedDescriptor)
             return;
     }
     auto commandEncoder = m_backing->createCommandEncoder(*convertedDescriptor);
-    auto remoteCommandEncoder = RemoteCommandEncoder::create(commandEncoder, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteCommandEncoder);
+    auto remoteCommandEncoder = RemoteCommandEncoder::create(commandEncoder, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteCommandEncoder);
 }
 
 void RemoteDevice::createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto renderBundleEncoder = m_backing->createRenderBundleEncoder(*convertedDescriptor);
-    auto remoteRenderBundleEncoder = RemoteRenderBundleEncoder::create(renderBundleEncoder, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteRenderBundleEncoder);
+    auto remoteRenderBundleEncoder = RemoteRenderBundleEncoder::create(renderBundleEncoder, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteRenderBundleEncoder);
 }
 
 void RemoteDevice::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectRegistry.convertFromBacking(descriptor);
+    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
     auto querySet = m_backing->createQuerySet(*convertedDescriptor);
-    auto remoteQuerySet = RemoteQuerySet::create(querySet, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteQuerySet);
+    auto remoteQuerySet = RemoteQuerySet::create(querySet, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteQuerySet);
 }
 
 void RemoteDevice::pushErrorScope(PAL::WebGPU::ErrorFilter errorFilter)

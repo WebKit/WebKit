@@ -29,31 +29,25 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUQueue.h>
 
 namespace WebKit {
 
-RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(queue)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteQueue::~RemoteQueue()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteQueue::~RemoteQueue() = default;
 
 void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
 {
     Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>> convertedCommandBuffers;
     convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
     for (WebGPUIdentifier identifier : commandBuffers) {
-        auto convertedCommandBuffer = m_objectRegistry.convertCommandBufferFromBacking(identifier);
+        auto convertedCommandBuffer = m_objectHeap.convertCommandBufferFromBacking(identifier);
         ASSERT(convertedCommandBuffer);
         if (!convertedCommandBuffer)
             return;
@@ -74,7 +68,7 @@ void RemoteQueue::writeBuffer(
     PAL::WebGPU::Size64 bufferOffset,
     Vector<uint8_t>&& data)
 {
-    auto convertedBuffer = m_objectRegistry.convertBufferFromBacking(buffer);
+    auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -88,11 +82,11 @@ void RemoteQueue::writeTexture(
     const WebGPU::ImageDataLayout& dataLayout,
     const WebGPU::Extent3D& size)
 {
-    auto convertedDestination = m_objectRegistry.convertFromBacking(destination);
+    auto convertedDestination = m_objectHeap.convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedDataLayout = m_objectRegistry.convertFromBacking(dataLayout);
+    auto convertedDataLayout = m_objectHeap.convertFromBacking(dataLayout);
     ASSERT(convertedDestination);
-    auto convertedSize = m_objectRegistry.convertFromBacking(size);
+    auto convertedSize = m_objectHeap.convertFromBacking(size);
     ASSERT(convertedSize);
     if (!convertedDestination || !convertedDestination || !convertedSize)
         return;
@@ -105,11 +99,11 @@ void RemoteQueue::copyExternalImageToTexture(
     const WebGPU::ImageCopyTextureTagged& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectRegistry.convertFromBacking(source);
+    auto convertedSource = m_objectHeap.convertFromBacking(source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectRegistry.convertFromBacking(destination);
+    auto convertedDestination = m_objectHeap.convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedCopySize = m_objectRegistry.convertFromBacking(copySize);
+    auto convertedCopySize = m_objectHeap.convertFromBacking(copySize);
     ASSERT(convertedCopySize);
     if (!convertedDestination || !convertedDestination || !convertedCopySize)
         return;

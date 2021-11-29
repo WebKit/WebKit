@@ -1,5 +1,216 @@
 2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Delete ObjectRegistry in favor of ObjectHeap
+        https://bugs.webkit.org/show_bug.cgi?id=233549
+
+        Reviewed by Dean Jackson.
+
+        Originally, I made these two classes distinct because I thought there were two separate use cases:
+        1. ObjectHeap is the object that owns all WebGPU objects in the GPU process
+        2. ObjectRegistry is the object that can map between WebGPUIdentifiers and their full objects. This
+               is needed when we receive a message that contains a WebGPUIdentifier, and we need to look up
+               its represented object.
+
+        The original idea was for ObjectHeap to own the objects, and each object would hold a reference to the
+        shared ObjectRegistry. However, this turns out not to be necessary, because new objects are created
+        via creation routines on _other objects_. This means that every object is going to have to know about
+        its owning ObjectHeap anyway (to be able to add newly created objects to it), so there aren't any
+        separation-of-concerns benefits to be had. If the ObjectHeap owned all the objects by just storing
+        them in a HashMap<WebGPUIdentifier, Ref<Object>> map, that would allow it to do double duty - it could
+        own all the objects _and_ be able to look up which WebGPUIdentifier is associated with which object.
+        So there's no point in having two distinct objects, when just one is sufficient.
+
+        So, accepting that, this patch is fairly straightforward, despite being large:
+        - Before, we were doing m_objectRegistry.addObject(m_identifier, m_backing) and
+              m_objectHeap.addObject(remoteRenderPassEncoder). Now, we just do
+              m_objectHeap.addObject(identifier, remoteRenderPassEncoder) instead.
+        - convertFromBacking() calls go from m_objectRegistry.convertFromBacking() to
+              m_objectHeap.convertFromBacking().
+        - objectRegistry.removeObject() calls can be entirely deleted, because the ObjectHeap already knows
+              when objects are deleted, because it owns them in the first place.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/WebGPU/RemoteAdapter.cpp:
+        (WebKit::RemoteAdapter::RemoteAdapter):
+        (WebKit::RemoteAdapter::requestDevice):
+        (WebKit::RemoteAdapter::~RemoteAdapter): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteAdapter.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp:
+        (WebKit::RemoteBindGroup::RemoteBindGroup):
+        (WebKit::RemoteBindGroup::~RemoteBindGroup): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteBindGroup.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp:
+        (WebKit::RemoteBindGroupLayout::RemoteBindGroupLayout):
+        (WebKit::RemoteBindGroupLayout::~RemoteBindGroupLayout): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.cpp:
+        (WebKit::RemoteBuffer::RemoteBuffer):
+        (WebKit::RemoteBuffer::~RemoteBuffer): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandBuffer.cpp:
+        (WebKit::RemoteCommandBuffer::RemoteCommandBuffer):
+        (WebKit::RemoteCommandBuffer::~RemoteCommandBuffer): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteCommandBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.cpp:
+        (WebKit::RemoteCommandEncoder::RemoteCommandEncoder):
+        (WebKit::RemoteCommandEncoder::beginRenderPass):
+        (WebKit::RemoteCommandEncoder::beginComputePass):
+        (WebKit::RemoteCommandEncoder::copyBufferToBuffer):
+        (WebKit::RemoteCommandEncoder::copyBufferToTexture):
+        (WebKit::RemoteCommandEncoder::copyTextureToBuffer):
+        (WebKit::RemoteCommandEncoder::copyTextureToTexture):
+        (WebKit::RemoteCommandEncoder::fillBuffer):
+        (WebKit::RemoteCommandEncoder::writeTimestamp):
+        (WebKit::RemoteCommandEncoder::resolveQuerySet):
+        (WebKit::RemoteCommandEncoder::finish):
+        (WebKit::RemoteCommandEncoder::~RemoteCommandEncoder): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.cpp:
+        (WebKit::RemoteComputePassEncoder::RemoteComputePassEncoder):
+        (WebKit::RemoteComputePassEncoder::setPipeline):
+        (WebKit::RemoteComputePassEncoder::dispatchIndirect):
+        (WebKit::RemoteComputePassEncoder::beginPipelineStatisticsQuery):
+        (WebKit::RemoteComputePassEncoder::setBindGroup):
+        (WebKit::RemoteComputePassEncoder::~RemoteComputePassEncoder): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePipeline.cpp:
+        (WebKit::RemoteComputePipeline::RemoteComputePipeline):
+        (WebKit::RemoteComputePipeline::getBindGroupLayout):
+        (WebKit::RemoteComputePipeline::~RemoteComputePipeline): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteComputePipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteDevice.cpp:
+        (WebKit::RemoteDevice::RemoteDevice):
+        (WebKit::RemoteDevice::createBuffer):
+        (WebKit::RemoteDevice::createTexture):
+        (WebKit::RemoteDevice::createSampler):
+        (WebKit::RemoteDevice::importExternalTexture):
+        (WebKit::RemoteDevice::createBindGroupLayout):
+        (WebKit::RemoteDevice::createPipelineLayout):
+        (WebKit::RemoteDevice::createBindGroup):
+        (WebKit::RemoteDevice::createShaderModule):
+        (WebKit::RemoteDevice::createComputePipeline):
+        (WebKit::RemoteDevice::createRenderPipeline):
+        (WebKit::RemoteDevice::createComputePipelineAsync):
+        (WebKit::RemoteDevice::createRenderPipelineAsync):
+        (WebKit::RemoteDevice::createCommandEncoder):
+        (WebKit::RemoteDevice::createRenderBundleEncoder):
+        (WebKit::RemoteDevice::createQuerySet):
+        (WebKit::RemoteDevice::~RemoteDevice): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteDevice.h:
+        * GPUProcess/graphics/WebGPU/RemoteExternalTexture.cpp:
+        (WebKit::RemoteExternalTexture::RemoteExternalTexture):
+        (WebKit::RemoteExternalTexture::~RemoteExternalTexture): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteExternalTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteGPU.cpp:
+        (WebKit::RemoteGPU::RemoteGPU):
+        (WebKit::RemoteGPU::requestAdapter):
+        (WebKit::RemoteGPU::~RemoteGPU): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteGPU.h:
+        * GPUProcess/graphics/WebGPU/RemotePipelineLayout.cpp:
+        (WebKit::RemotePipelineLayout::RemotePipelineLayout):
+        (WebKit::RemotePipelineLayout::~RemotePipelineLayout): Deleted.
+        * GPUProcess/graphics/WebGPU/RemotePipelineLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteQuerySet.cpp:
+        (WebKit::RemoteQuerySet::RemoteQuerySet):
+        (WebKit::RemoteQuerySet::~RemoteQuerySet): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteQuerySet.h:
+        * GPUProcess/graphics/WebGPU/RemoteQueue.cpp:
+        (WebKit::RemoteQueue::RemoteQueue):
+        (WebKit::RemoteQueue::submit):
+        (WebKit::RemoteQueue::writeBuffer):
+        (WebKit::RemoteQueue::writeTexture):
+        (WebKit::RemoteQueue::copyExternalImageToTexture):
+        (WebKit::RemoteQueue::~RemoteQueue): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteQueue.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundle.cpp:
+        (WebKit::RemoteRenderBundle::RemoteRenderBundle):
+        (WebKit::RemoteRenderBundle::~RemoteRenderBundle): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundle.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp:
+        (WebKit::RemoteRenderBundleEncoder::RemoteRenderBundleEncoder):
+        (WebKit::RemoteRenderBundleEncoder::setPipeline):
+        (WebKit::RemoteRenderBundleEncoder::setIndexBuffer):
+        (WebKit::RemoteRenderBundleEncoder::setVertexBuffer):
+        (WebKit::RemoteRenderBundleEncoder::drawIndirect):
+        (WebKit::RemoteRenderBundleEncoder::drawIndexedIndirect):
+        (WebKit::RemoteRenderBundleEncoder::setBindGroup):
+        (WebKit::RemoteRenderBundleEncoder::finish):
+        (WebKit::RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp:
+        (WebKit::RemoteRenderPassEncoder::RemoteRenderPassEncoder):
+        (WebKit::RemoteRenderPassEncoder::setPipeline):
+        (WebKit::RemoteRenderPassEncoder::setIndexBuffer):
+        (WebKit::RemoteRenderPassEncoder::setVertexBuffer):
+        (WebKit::RemoteRenderPassEncoder::drawIndirect):
+        (WebKit::RemoteRenderPassEncoder::drawIndexedIndirect):
+        (WebKit::RemoteRenderPassEncoder::setBindGroup):
+        (WebKit::RemoteRenderPassEncoder::setBlendConstant):
+        (WebKit::RemoteRenderPassEncoder::beginPipelineStatisticsQuery):
+        (WebKit::RemoteRenderPassEncoder::executeBundles):
+        (WebKit::RemoteRenderPassEncoder::~RemoteRenderPassEncoder): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp:
+        (WebKit::RemoteRenderPipeline::RemoteRenderPipeline):
+        (WebKit::RemoteRenderPipeline::getBindGroupLayout):
+        (WebKit::RemoteRenderPipeline::~RemoteRenderPipeline): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteRenderPipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteSampler.cpp:
+        (WebKit::RemoteSampler::RemoteSampler):
+        (WebKit::RemoteSampler::~RemoteSampler): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteSampler.h:
+        * GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp:
+        (WebKit::RemoteShaderModule::RemoteShaderModule):
+        (WebKit::RemoteShaderModule::~RemoteShaderModule): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteShaderModule.h:
+        * GPUProcess/graphics/WebGPU/RemoteTexture.cpp:
+        (WebKit::RemoteTexture::RemoteTexture):
+        (WebKit::RemoteTexture::createView):
+        (WebKit::RemoteTexture::~RemoteTexture): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteTextureView.cpp:
+        (WebKit::RemoteTextureView::RemoteTextureView):
+        (WebKit::RemoteTextureView::~RemoteTextureView): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteTextureView.h:
+        * GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp:
+        (WebKit::WebGPU::ObjectHeap::addObject):
+        (WebKit::WebGPU::ObjectHeap::removeObject):
+        (WebKit::WebGPU::ObjectHeap::convertAdapterFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBindGroupFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBindGroupLayoutFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBufferFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertCommandBufferFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertCommandEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertComputePassEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertComputePipelineFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertDeviceFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertExternalTextureFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertPipelineLayoutFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertQuerySetFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertQueueFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderBundleEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderBundleFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderPassEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderPipelineFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertSamplerFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertShaderModuleFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertTextureFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertTextureViewFromBacking):
+        * GPUProcess/graphics/WebGPU/WebGPUObjectHeap.h:
+        * GPUProcess/graphics/WebGPU/WebGPUObjectRegistry.cpp: Removed.
+        * GPUProcess/graphics/WebGPU/WebGPUObjectRegistry.h: Removed.
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.cpp:
+        (WebKit::RemoteAudioSourceProviderProxy::create):
+        (WebKit::RemoteAudioSourceProviderProxy::createRingBuffer):
+        (WebKit::RemoteAudioSourceProviderProxy::storageChanged):
+        * Platform/IPC/ScopedActiveMessageReceiveQueue.h:
+        * Shared/WebGPU/WebGPUConvertFromBackingContext.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Provide default values for descriptor struct members
         https://bugs.webkit.org/show_bug.cgi?id=233431
 

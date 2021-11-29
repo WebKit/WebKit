@@ -29,24 +29,18 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUExternalTexture.h>
 
 namespace WebKit {
 
-RemoteExternalTexture::RemoteExternalTexture(PAL::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteExternalTexture::RemoteExternalTexture(PAL::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(externalTexture)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteExternalTexture::~RemoteExternalTexture()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteExternalTexture::~RemoteExternalTexture() = default;
 
 void RemoteExternalTexture::setLabel(String&& label)
 {

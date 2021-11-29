@@ -30,7 +30,6 @@
 
 #include "RemoteTextureView.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include "WebGPUTextureViewDescriptor.h"
 #include <pal/graphics/WebGPU/WebGPUTexture.h>
 #include <pal/graphics/WebGPU/WebGPUTextureView.h>
@@ -38,25 +37,20 @@
 
 namespace WebKit {
 
-RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(texture)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteTexture::~RemoteTexture()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteTexture::~RemoteTexture() = default;
 
 void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor>& descriptor, WebGPUIdentifier identifier)
 {
     std::optional<PAL::WebGPU::TextureViewDescriptor> convertedDescriptor;
     if (descriptor) {
-        auto resultDescriptor = m_objectRegistry.convertFromBacking(*descriptor);
+        auto resultDescriptor = m_objectHeap.convertFromBacking(*descriptor);
         ASSERT(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
         if (!convertedDescriptor)
@@ -64,8 +58,8 @@ void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor
     }
     ASSERT(convertedDescriptor);
     auto textureView = m_backing->createView(*convertedDescriptor);
-    auto remoteTextureView = RemoteTextureView::create(textureView, m_objectRegistry, m_objectHeap, identifier);
-    m_objectHeap.addObject(remoteTextureView);
+    auto remoteTextureView = RemoteTextureView::create(textureView, m_objectHeap, identifier);
+    m_objectHeap.addObject(identifier, remoteTextureView);
 }
 
 void RemoteTexture::destroy()

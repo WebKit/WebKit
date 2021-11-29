@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <utility>
+#include <wtf/HashTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 

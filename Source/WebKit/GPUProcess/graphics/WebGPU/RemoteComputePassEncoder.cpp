@@ -29,28 +29,22 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectHeap.h"
-#include "WebGPUObjectRegistry.h"
 #include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
 
 namespace WebKit {
 
-RemoteComputePassEncoder::RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectRegistry& objectRegistry, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteComputePassEncoder::RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
     : m_backing(computePassEncoder)
-    , m_objectRegistry(objectRegistry)
     , m_objectHeap(objectHeap)
     , m_identifier(identifier)
 {
-    m_objectRegistry.addObject(m_identifier, m_backing);
 }
 
-RemoteComputePassEncoder::~RemoteComputePassEncoder()
-{
-    m_objectRegistry.removeObject(m_identifier);
-}
+RemoteComputePassEncoder::~RemoteComputePassEncoder() = default;
 
 void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
 {
-    auto convertedComputePipeline = m_objectRegistry.convertComputePipelineFromBacking(computePipeline);
+    auto convertedComputePipeline = m_objectHeap.convertComputePipelineFromBacking(computePipeline);
     ASSERT(convertedComputePipeline);
     if (!convertedComputePipeline)
         return;
@@ -65,7 +59,7 @@ void RemoteComputePassEncoder::dispatch(PAL::WebGPU::Size32 x, std::optional<PAL
 
 void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = m_objectRegistry.convertBufferFromBacking(indirectBuffer);
+    auto convertedIndirectBuffer = m_objectHeap.convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -75,7 +69,7 @@ void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer,
 
 void RemoteComputePassEncoder::beginPipelineStatisticsQuery(WebGPUIdentifier querySet, PAL::WebGPU::Size32 queryIndex)
 {
-    auto convertedQuerySet = m_objectRegistry.convertQuerySetFromBacking(querySet);
+    auto convertedQuerySet = m_objectHeap.convertQuerySetFromBacking(querySet);
     ASSERT(convertedQuerySet);
     if (!convertedQuerySet)
         return;
@@ -96,7 +90,7 @@ void RemoteComputePassEncoder::endPass()
 void RemoteComputePassEncoder::setBindGroup(PAL::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
     std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&& offsets)
 {
-    auto convertedBindGroup = m_objectRegistry.convertBindGroupFromBacking(bindGroup);
+    auto convertedBindGroup = m_objectHeap.convertBindGroupFromBacking(bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;
