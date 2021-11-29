@@ -1999,3 +1999,7 @@ editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.htm
 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure ]
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Failure ]
+
+# On iOS15+, CFNetwork does full NSURLSession partitioning based on first-party domains and ITP session partitioning is thus disabled.
+http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py [ Skip ]
+http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Skip ]

@@ -345,8 +345,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
 
-    overrideAttributionContext(mutableRequest.get());
-
     if (parameters.pcmDataCarried)
         processPCMRequest(*parameters.pcmDataCarried, mutableRequest.get());
 

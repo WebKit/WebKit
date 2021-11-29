@@ -1,5 +1,75 @@
 2021-11-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r285565. rdar://problem/83159358
+
+    [macOS] Enable NSURLSession partitioning based on first-party domain at CFNetwork level
+    https://bugs.webkit.org/show_bug.cgi?id=230750
+    <rdar://problem/83159358>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+    (overrideAttributionContext): Deleted.
+    Stop disabling CFNetwork NSURLSession partitioning based on first-party domain on
+    macOS.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+    (WebKit::NetworkSessionCocoa::hasIsolatedSession const):
+    (WebKit::NetworkSessionCocoa::clearIsolatedSessions):
+    (WebKit::NetworkSessionCocoa::invalidateAndCancelSessionSet):
+    Disable ITP session partitioning of certain prevalent domains on platforms where
+    CFNetwork already does full partitioning of all domains (now that it is enabled
+    on macOS 12+ and iOS15+).
+    
+    Source/WTF:
+    
+    Add HAVE(CFNETWORK_SESSION_PARTITIONING_BASED_ON_FIRST_PARTY_DOMAIN) build time flag that is true
+    on newer Apple OSes where CFNetwork does NSURLSession partitioning based on first-party domain for
+    us.
+    
+    * wtf/PlatformHave.h:
+    
+    LayoutTests:
+    
+    Skip a few ITP session partitioning tests on newer OSes now that session partitioning
+    happens for all first-party domains at CFNetwork level on these OSes.
+    
+    * platform/ios-wk2/TestExpectations:
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285565 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-09  Chris Dumez  <cdumez@apple.com>
+
+            [macOS] Enable NSURLSession partitioning based on first-party domain at CFNetwork level
+            https://bugs.webkit.org/show_bug.cgi?id=230750
+            <rdar://problem/83159358>
+
+            Reviewed by Alex Christensen.
+
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            (overrideAttributionContext): Deleted.
+            Stop disabling CFNetwork NSURLSession partitioning based on first-party domain on
+            macOS.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+            (WebKit::NetworkSessionCocoa::hasIsolatedSession const):
+            (WebKit::NetworkSessionCocoa::clearIsolatedSessions):
+            (WebKit::NetworkSessionCocoa::invalidateAndCancelSessionSet):
+            Disable ITP session partitioning of certain prevalent domains on platforms where
+            CFNetwork already does full partitioning of all domains (now that it is enabled
+            on macOS 12+ and iOS15+).
+
+2021-11-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r285550. rdar://problem/85075538
 
     REGRESSION (Safari 15): AudioContext.currentTime speeds up (and audio won't play) when Bluetooth speaker connected
