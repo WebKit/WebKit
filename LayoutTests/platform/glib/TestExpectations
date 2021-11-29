@@ -603,6 +603,8 @@ webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values
 webkit.org/b/231516 fast/css/calc-parsing.html [ Pass Failure ]
 webkit.org/b/231516 imported/w3c/web-platform-tests/css/css-values/hypot-pow-sqrt-invalid.html [ Pass Failure ]
 
+webkit.org/b/233478 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-child-will-change-transform.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1233,6 +1235,8 @@ webkit.org/b/219885 fast/mediastream/getUserMedia-webaudio.html [ Failure Pass ]
 webkit.org/b/229219 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
 
 webkit.org/b/232726 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
+
+webkit.org/b/233529 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs

@@ -1,3 +1,13 @@
+2021-11-29  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=233530
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-inline-value-expected.txt: Added.
+        * platform/glib/storage/domstorage/sessionstorage/blocked-file-access-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-11-29  Andreu Botella  <andreu@andreubotella.com>
 
         Form payloads with text/plain enctype should have a final \r\n
