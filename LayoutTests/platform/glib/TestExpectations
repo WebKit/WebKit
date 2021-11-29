@@ -1236,8 +1236,6 @@ webkit.org/b/229219 http/tests/security/webaudio-render-remote-audio-allowed-cro
 
 webkit.org/b/232726 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
 
-webkit.org/b/233529 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
