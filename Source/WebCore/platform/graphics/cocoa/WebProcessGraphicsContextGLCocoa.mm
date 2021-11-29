@@ -63,7 +63,7 @@ private:
     }
     RetainPtr<WebGLLayer> m_webGLLayer;
 
-    friend class GraphicsContextGLOpenGL;
+    friend RefPtr<GraphicsContextGL> WebCore::createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&);
 };
 
 void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
@@ -80,19 +80,19 @@ void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
 
 }
 
-RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow*)
+RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
     // Make space for the incoming context if we're full.
     GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
     if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
         return nullptr;
-    auto context = adoptRef(new WebProcessGraphicsContextGLCocoa(WTFMove(attributes)));
+    auto context = adoptRef(new WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes { attributes }));
     if (!context->isValid())
         return nullptr;
     GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
-
     return context;
 }
+
 }
 
 #endif

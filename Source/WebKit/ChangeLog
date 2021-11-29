@@ -1,3 +1,21 @@
+2021-11-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GPUP GraphicsContextGL creation failure cannot be detected
+        https://bugs.webkit.org/show_bug.cgi?id=233517
+
+        Reviewed by Antti Koivisto.
+
+        If GPUP `GraphicsContextGL` creation fails, return nullptr instead of
+        trying to create a in-process context.
+
+        Enable `WebChromeClient::createGraphicsContextGL()` call for non-GPU process
+        compilation, as the function is now always called. Returning nullptr signifies failure
+        to create the context, not a signal to retry some other type.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createGraphicsContextGL const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2021-11-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add WebKit DerivedSources to Xcode project

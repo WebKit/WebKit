@@ -93,7 +93,7 @@ GraphicsContextGLTextureMapper::GraphicsContextGLTextureMapper(GraphicsContextGL
 
 // FIXME: Below functionality should be moved to GraphicsContextGLTextureMapper to simplify the base class.
 
-RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow*)
+RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
     static bool initialized = false;
     static bool success = true;

@@ -351,16 +351,6 @@ GraphicsContextGL::Client::Client() = default;
 
 GraphicsContextGL::Client::~Client() = default;
 
-RefPtr<GraphicsContextGL> GraphicsContextGL::create(const GraphicsContextGLAttributes& attributes, HostWindow* hostWindow)
-{
-    RefPtr<GraphicsContextGL> result;
-    if (hostWindow)
-        result = hostWindow->createGraphicsContextGL(attributes);
-    if (!result)
-        result = GraphicsContextGLOpenGL::create(attributes, hostWindow);
-    return result;
-}
-
 GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs)
     : m_attrs(attrs)
 {

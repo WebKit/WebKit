@@ -109,7 +109,7 @@ void SimulatedXRDevice::initializeTrackingAndRendering(PlatformXR::SessionMode)
     attributes.depth = false;
     attributes.stencil = false;
     attributes.antialias = false;
-    m_gl = GraphicsContextGL::create(attributes, nullptr);
+    m_gl = createWebProcessGraphicsContextGL(attributes);
 
     if (m_trackingAndRenderingClient) {
         // WebXR FakeDevice waits for simulateInputConnection calls to add input sources-

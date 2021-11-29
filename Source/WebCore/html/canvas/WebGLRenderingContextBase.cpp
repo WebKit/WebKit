@@ -55,6 +55,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "HostWindow.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -859,7 +860,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         renderingContext->suspendIfNeeded();
         return renderingContext;
     }
-    auto context = GraphicsContextGL::create(attributes, hostWindow);
+    auto context = hostWindow->createGraphicsContextGL(attributes);
     if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
@@ -7755,7 +7756,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!hostWindow)
         return;
 
-    RefPtr<GraphicsContextGL> context(GraphicsContextGLOpenGL::create(m_attributes, hostWindow));
+    RefPtr<GraphicsContextGL> context = hostWindow->createGraphicsContextGL(m_attributes);
     if (!context) {
         if (m_contextLostMode == RealLostContext)
             m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);

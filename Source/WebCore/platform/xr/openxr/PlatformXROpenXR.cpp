@@ -25,7 +25,6 @@
 #include "OpenXRExtensions.h"
 #include "OpenXRInput.h"
 #include "OpenXRInputSource.h"
-
 #include <wtf/NeverDestroyed.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -114,7 +113,7 @@ void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
         attributes.stencil = false;
         attributes.antialias = false;
 
-        m_gl = GraphicsContextGL::create(attributes, nullptr);
+        m_gl = createWebProcessGraphicsContextGL(attributes);
         if (!m_gl) {
             LOG(XR, "Failed to create a valid GraphicsContextGL");
             return;

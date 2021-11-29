@@ -100,7 +100,6 @@ typedef HashMap<CString, uint64_t> ShaderNameHash;
 class WEBCORE_EXPORT GraphicsContextGLOpenGL : public GraphicsContextGL
 {
 public:
-    static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*);
     virtual ~GraphicsContextGLOpenGL();
     PlatformLayer* platformLayer() const override;
 #if USE(ANGLE)

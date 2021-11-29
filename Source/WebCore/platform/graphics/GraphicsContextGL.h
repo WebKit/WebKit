@@ -911,10 +911,6 @@ public:
         GCGLint size;
     };
 
-    // Creates a GraphicsContextGL instance to render into offscreen destination in context of HostWindow.
-    // HostWindow might affect the decision which backend is to be used.
-    WEBCORE_EXPORT static RefPtr<GraphicsContextGL> create(const GraphicsContextGLAttributes&, HostWindow*);
-
     WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);
     WEBCORE_EXPORT virtual ~GraphicsContextGL();
 
@@ -1368,6 +1364,8 @@ protected:
 private:
     GraphicsContextGLAttributes m_attrs;
 };
+
+WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&);
 
 inline GCGLfloat GraphicsContextGL::getFloat(GCGLenum pname)
 {
