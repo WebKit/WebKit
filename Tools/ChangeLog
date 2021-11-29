@@ -1,3 +1,17 @@
+2021-11-29  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitflaskpy] Make sure flask is registered before importing webkitflaskpy
+        https://bugs.webkit.org/show_bug.cgi?id=233561
+
+        Reviewed by Jonathan Bedard.
+
+        bug233339 moved AuthedBlueprint to webkitflaskpy, but flask needs to
+        be registered before being imported to make sure AutoInstall takes
+        care of it. This avoids `ModuleNotFound: flask` errors running the
+        tests from a clean tree.
+
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/__init__.py:
+
 2021-11-29  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Consider Source/cmake relevant for JSC
