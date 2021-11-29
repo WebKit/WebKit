@@ -113,10 +113,12 @@ private:
             status = noErr;
         }
 
-        for (unsigned i = 0; i < numberOfFrames; i += WebCore::AudioUtilities::renderQuantumSize) {
+        unsigned requestedSamplesCount = m_extraRequestedFrames;
+        for (; requestedSamplesCount < numberOfFrames; requestedSamplesCount += WebCore::AudioUtilities::renderQuantumSize) {
             // Ask the audio thread in the WebContent process to render a quantum.
             m_renderSemaphore.signal();
         }
+        m_extraRequestedFrames = requestedSamplesCount - numberOfFrames;
 
         return status;
     }
@@ -129,6 +131,7 @@ private:
 
     UniqueRef<WebCore::CARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
+    unsigned m_extraRequestedFrames { 0 };
 #endif
     IPC::Semaphore m_renderSemaphore;
 
