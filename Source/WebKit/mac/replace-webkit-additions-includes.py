@@ -86,8 +86,7 @@ def main(argv=None):
         return 1
 
     # We currently only support WebKitAdditions in Framework headers on macOS 13+ and iOS 16+.
-    if not is_supported_os():
-        return 0
+    should_do_replacement = is_supported_os()
 
     additions_import_pattern = re.compile(r"\#if USE\(APPLE_INTERNAL_SDK\)\n#import <WebKitAdditions/(.*)>\n#endif")
     try:
@@ -95,7 +94,10 @@ def main(argv=None):
             header_contents = header.read()
             match = additions_import_pattern.search(header_contents)
             while match:
-                header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0]) + header_contents[match.end():]
+                if should_do_replacement:
+                    header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0]) + header_contents[match.end():]
+                else:
+                    header_contents = header_contents[:match.start()] + header_contents[match.end():]
                 match = additions_import_pattern.search(header_contents)
             try:
                 with open(header_path, "w") as header:

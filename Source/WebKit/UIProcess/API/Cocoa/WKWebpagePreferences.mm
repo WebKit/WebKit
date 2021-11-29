@@ -460,4 +460,8 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return WebKit::mouseEventPolicy(_websitePolicies->mouseEventPolicy());
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebpagePreferencesAdditions.mm>
+#endif
+
 @end
