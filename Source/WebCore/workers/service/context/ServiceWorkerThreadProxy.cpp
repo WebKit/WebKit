@@ -56,7 +56,7 @@ static URL topOriginURL(const SecurityOrigin& origin)
     return URL { URL { }, origin.toRawString() };
 }
 
-static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, StorageBlockingPolicy storageBlockingPolicy)
+UniqueRef<Page> ServiceWorkerThreadProxy::createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, StorageBlockingPolicy storageBlockingPolicy)
 {
     auto page = makeUniqueRef<Page>(WTFMove(configuration));
 
@@ -94,8 +94,8 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
     return set;
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, CacheStorageProvider& cacheStorageProvider, StorageBlockingPolicy storageBlockingPolicy)
-    : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), contextData, storageBlockingPolicy))
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, CacheStorageProvider& cacheStorageProvider)
+    : m_page(WTFMove(page))
     , m_document(*m_page->mainFrame().document())
 #if ENABLE(REMOTE_INSPECTOR)
     , m_remoteDebuggable(makeUnique<ServiceWorkerDebuggable>(*this, contextData))

@@ -23,7 +23,7 @@
  */
 
 [
-    EnabledAtRuntime=WebLocksAPIEnabled,
+    EnabledBySetting=WebLocksAPIEnabled,
     SecureContext
 ] interface mixin NavigatorLocks {
     readonly attribute WebLockManager locks;

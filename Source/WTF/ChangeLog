@@ -1,3 +1,12 @@
+2021-11-29  Youenn Fablet  <youenn@apple.com>
+
+        Apply WebPreferences on ServiceWorker settings
+        https://bugs.webkit.org/show_bug.cgi?id=233466
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-11-29  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Add runtime flag for Layer-based SVG engine (LBSE)

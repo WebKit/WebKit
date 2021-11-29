@@ -35,6 +35,7 @@
 #include "ShareableResource.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebPreferencesStore.h"
 #include "WebSWContextManagerConnectionMessagesReplies.h"
 #include <WebCore/EmptyFrameLoaderClient.h>
 #include <WebCore/SWContextManager.h>
@@ -57,7 +58,6 @@ namespace WebKit {
 
 class ServiceWorkerFrameLoaderClient;
 struct ServiceWorkerInitializationData;
-struct WebPreferencesStore;
 class WebUserContentController;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
@@ -123,6 +123,7 @@ private:
     String m_userAgent;
     bool m_isThrottleable { true };
     Ref<WebUserContentController> m_userContentController;
+    std::optional<WebPreferencesStore> m_preferencesStore;
 };
 
 class ServiceWorkerFrameLoaderClient final : public WebCore::EmptyFrameLoaderClient {

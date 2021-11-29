@@ -1539,7 +1539,6 @@ WebLocksAPIEnabled:
   type: bool
   humanReadableName: "Web Locks API"
   humanReadableDescription: "Web Locks API"
-  webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
       default: false

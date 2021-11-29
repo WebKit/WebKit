@@ -1,3 +1,13 @@
+2021-11-29  Youenn Fablet  <youenn@apple.com>
+
+        Apply WebPreferences on ServiceWorker settings
+        https://bugs.webkit.org/show_bug.cgi?id=233466
+        <rdar://problem/85719388>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https-expected.txt:
+
 2021-11-27  Sam Weinig  <weinig@apple.com>
 
         [CSS Color 4] Add support for oklab() and oklch() colors

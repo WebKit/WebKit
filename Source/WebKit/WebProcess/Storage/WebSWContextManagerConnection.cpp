@@ -132,7 +132,8 @@ void WebSWContextManagerConnection::establishConnection(CompletionHandler<void()
 void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesStore& store)
 {
     WebPage::updatePreferencesGenerated(store);
-
+    m_preferencesStore = store;
+    // FIXME: Remove this specific handling and use page settings instead.
     m_storageBlockingPolicy = static_cast<StorageBlockingPolicy>(store.getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey()));
     setShouldUseShortTimeout(store.getBoolValueForKey(WebPreferencesKey::shouldUseServiceWorkerShortTimeoutKey()));
 }
@@ -166,7 +167,10 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 #endif
     
     auto lastNavigationWasAppInitiated = contextData.lastNavigationWasAppInitiated;
-    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
+    auto page = ServiceWorkerThreadProxy::createPageForServiceWorker(WTFMove(pageConfiguration), contextData, m_storageBlockingPolicy);
+    if (m_preferencesStore)
+        WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
+    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(page), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider());
 
     if (lastNavigationWasAppInitiated)
         serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);

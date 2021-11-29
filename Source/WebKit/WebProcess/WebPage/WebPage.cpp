@@ -3926,9 +3926,10 @@ bool WebPage::isParentProcessAWebBrowser() const
 void WebPage::updatePreferences(const WebPreferencesStore& store)
 {
     updatePreferencesGenerated(store);
-    updateSettingsGenerated(store);
 
     Settings& settings = m_page->settings();
+
+    updateSettingsGenerated(store, settings);
 
 #if !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION)
     if (!settings.acceleratedCompositingEnabled()) {

@@ -1448,6 +1448,7 @@ public:
 #endif
 
     static void updatePreferencesGenerated(const WebPreferencesStore&);
+    static void updateSettingsGenerated(const WebPreferencesStore&, WebCore::Settings&);
 
     void synchronizeCORSDisablingPatternsWithNetworkProcess();
 
@@ -1700,7 +1701,6 @@ private:
 
     void preferencesDidChange(const WebPreferencesStore&);
     void updatePreferences(const WebPreferencesStore&);
-    void updateSettingsGenerated(const WebPreferencesStore&);
 
 #if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;

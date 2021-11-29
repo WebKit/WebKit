@@ -54,6 +54,8 @@ enum class WorkerThreadMode : bool;
 
 class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorkerThreadProxy>, public WorkerLoaderProxy, public WorkerDebuggerProxy {
 public:
+    WEBCORE_EXPORT static UniqueRef<Page> createPageForServiceWorker(PageConfiguration&&, const ServiceWorkerContextData&, StorageBlockingPolicy);
+
     template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)
     {
         return adoptRef(*new ServiceWorkerThreadProxy(std::forward<Args>(args)...));
@@ -90,7 +92,7 @@ public:
     WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, StorageBlockingPolicy);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(UniqueRef<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 
