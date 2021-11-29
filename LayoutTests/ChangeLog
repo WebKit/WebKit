@@ -1,3 +1,13 @@
+2021-11-29  Rob Buis  <rbuis@igalia.com>
+
+        Only handle ident tokens in consumeWillChange
+        https://bugs.webkit.org/show_bug.cgi?id=233459
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/variables/will-change-variable-resolve-crash-expected.txt: Added.
+        * fast/css/variables/will-change-variable-resolve-crash.html: Added.
+
 2021-10-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Do not shrink tables bellow their intrinsic sizes

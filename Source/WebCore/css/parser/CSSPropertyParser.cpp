@@ -508,6 +508,8 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
         case CSSValueAuto:
             return nullptr;
         default:
+            if (range.peek().type() != IdentToken)
+                return nullptr;
             CSSPropertyID propertyID = cssPropertyID(range.peek().value());
             if (propertyID == CSSPropertyWillChange)
                 return nullptr;
