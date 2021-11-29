@@ -4,8 +4,8 @@ layer at (0,0) size 800x844
   RenderBlock {HTML} at (0,0) size 800x844
     RenderBody {BODY} at (8,8) size 784x820
       RenderBlock {H2} at (0,0) size 784x24
-        RenderText {#text} at (0,1) size 119x22
-          text run at (0,1) width 119: "Normal Weight"
+        RenderText {#text} at (0,1) size 118x22
+          text run at (0,1) width 118: "Normal Weight"
       RenderBlock {P} at (0,40) size 784x20
         RenderText {#text} at (0,0) size 670x20
           text run at (0,0) width 670: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
@@ -40,8 +40,8 @@ layer at (0,0) size 800x844
         RenderText {#text} at (0,0) size 685x20
           text run at (0,0) width 685: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {H2} at (0,456) size 784x24
-        RenderText {#text} at (0,1) size 97x22
-          text run at (0,1) width 97: "Bold Weight"
+        RenderText {#text} at (0,1) size 96x22
+          text run at (0,1) width 96: "Bold Weight"
       RenderBlock {P} at (0,496) size 784x20
         RenderText {#text} at (0,0) size 716x20
           text run at (0,0) width 716: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
