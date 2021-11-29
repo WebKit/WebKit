@@ -59,16 +59,16 @@ class TestEnvironment(testing.PathTestCase):
 
             Environment.instance(self.path).load()
             self.assertEqual(
-                list(Environment.instance(self.path).keys()),
-                ['KEY_A', 'KEY_B'] + list(os.environ.keys()),
+                sorted(list(Environment.instance(self.path).keys())),
+                sorted(['KEY_A', 'KEY_B'] + list(os.environ.keys())),
             )
             self.assertEqual(
-                list(Environment.instance(self.path).values()),
-                ['value_a', 'value_b'] + list(os.environ.values()),
+                sorted(list(Environment.instance(self.path).values())),
+                sorted(['value_a', 'value_b'] + list(os.environ.values())),
             )
             self.assertEqual(
-                list(Environment.instance(self.path).items()),
-                [('KEY_A', 'value_a'), ('KEY_B', 'value_b')] + list(os.environ.items()),
+                sorted(list(Environment.instance(self.path).items())),
+                sorted([('KEY_A', 'value_a'), ('KEY_B', 'value_b')] + list(os.environ.items())),
             )
         finally:
             Environment._instance = None

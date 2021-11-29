@@ -1,3 +1,20 @@
+2021-11-29  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitcorepy] Environment: Sort values before comparing in unittest
+        https://bugs.webkit.org/show_bug.cgi?id=233582
+
+        Reviewed by Jonathan Bedard.
+
+        While Python3.6+'s dicts happen to keep insertion order, `os.listdir`
+        does not guarantee the order of the listed items[1]. This may cause
+        the Environment unittest to fail when comparing to the fixed expected
+        data, as it has been happending in some GTK/WPE bots.
+
+        [1] https://docs.python.org/3/library/os.html#os.listdir
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/environment_unittest.py:
+        (TestEnvironment.test_list):
+
 2021-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKContentView should allow -captureTextFromCamera: with a caret selection unless the sender is the callout bar
