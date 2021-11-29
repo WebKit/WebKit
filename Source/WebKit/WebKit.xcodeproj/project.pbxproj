@@ -2937,72 +2937,72 @@
 		1C20935E22318CB000026A39 /* NSAttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSAttributedString.h; sourceTree = "<group>"; };
 		1C20935F22318CB000026A39 /* NSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedString.mm; sourceTree = "<group>"; };
 		1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringPrivate.h; sourceTree = "<group>"; };
-		1C55A572275457C300EB7E95 /* RemoteQuerySetMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteQuerySetMessagesReplies.h; path = RemoteQuerySetMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A573275457C400EB7E95 /* RemoteTextureMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteTextureMessages.h; path = RemoteTextureMessages.h; sourceTree = "<group>"; };
-		1C55A574275457C400EB7E95 /* RemoteRenderPipelineMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteRenderPipelineMessageReceiver.cpp; path = RemoteRenderPipelineMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A575275457C400EB7E95 /* RemotePipelineLayoutMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemotePipelineLayoutMessagesReplies.h; path = RemotePipelineLayoutMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A576275457C400EB7E95 /* RemoteRenderPipelineMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderPipelineMessagesReplies.h; path = RemoteRenderPipelineMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A577275457C400EB7E95 /* RemoteComputePipelineMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteComputePipelineMessageReceiver.cpp; path = RemoteComputePipelineMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A578275457C400EB7E95 /* RemoteRenderBundleMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderBundleMessagesReplies.h; path = RemoteRenderBundleMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A579275457C400EB7E95 /* RemoteRenderBundleEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderBundleEncoderMessagesReplies.h; path = RemoteRenderBundleEncoderMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A57A275457C500EB7E95 /* RemoteExternalTextureMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteExternalTextureMessages.h; path = RemoteExternalTextureMessages.h; sourceTree = "<group>"; };
-		1C55A57B275457C500EB7E95 /* RemoteComputePassEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteComputePassEncoderMessages.h; path = RemoteComputePassEncoderMessages.h; sourceTree = "<group>"; };
-		1C55A57C275457C500EB7E95 /* RemoteDeviceMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteDeviceMessages.h; path = RemoteDeviceMessages.h; sourceTree = "<group>"; };
-		1C55A57D275457C500EB7E95 /* RemoteRenderBundleEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteRenderBundleEncoderMessageReceiver.cpp; path = RemoteRenderBundleEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A57E275457C500EB7E95 /* RemoteExternalTextureMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteExternalTextureMessageReceiver.cpp; path = RemoteExternalTextureMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A57F275457C500EB7E95 /* RemoteRenderPassEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteRenderPassEncoderMessageReceiver.cpp; path = RemoteRenderPassEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A580275457C600EB7E95 /* RemoteTextureViewMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteTextureViewMessagesReplies.h; path = RemoteTextureViewMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A581275457C600EB7E95 /* RemoteRenderBundleEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderBundleEncoderMessages.h; path = RemoteRenderBundleEncoderMessages.h; sourceTree = "<group>"; };
-		1C55A582275457C600EB7E95 /* RemoteBindGroupLayoutMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteBindGroupLayoutMessageReceiver.cpp; path = RemoteBindGroupLayoutMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A583275457C600EB7E95 /* RemoteSamplerMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteSamplerMessagesReplies.h; path = RemoteSamplerMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A584275457C600EB7E95 /* RemoteTextureMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteTextureMessageReceiver.cpp; path = RemoteTextureMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A585275457C600EB7E95 /* RemoteExternalTextureMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteExternalTextureMessagesReplies.h; path = RemoteExternalTextureMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A586275457C700EB7E95 /* RemoteComputePipelineMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteComputePipelineMessages.h; path = RemoteComputePipelineMessages.h; sourceTree = "<group>"; };
-		1C55A587275457C700EB7E95 /* RemoteShaderModuleMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteShaderModuleMessageReceiver.cpp; path = RemoteShaderModuleMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A588275457C700EB7E95 /* RemoteDeviceMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteDeviceMessageReceiver.cpp; path = RemoteDeviceMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A589275457C700EB7E95 /* RemoteCommandBufferMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteCommandBufferMessagesReplies.h; path = RemoteCommandBufferMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A58A275457C700EB7E95 /* RemoteComputePipelineMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteComputePipelineMessagesReplies.h; path = RemoteComputePipelineMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A58B275457C700EB7E95 /* RemoteShaderModuleMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteShaderModuleMessagesReplies.h; path = RemoteShaderModuleMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A58C275457C800EB7E95 /* RemoteQuerySetMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteQuerySetMessageReceiver.cpp; path = RemoteQuerySetMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A58D275457C800EB7E95 /* RemoteQuerySetMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteQuerySetMessages.h; path = RemoteQuerySetMessages.h; sourceTree = "<group>"; };
-		1C55A58E275457C800EB7E95 /* RemoteAdapterMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteAdapterMessagesReplies.h; path = RemoteAdapterMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A58F275457C800EB7E95 /* RemoteGPUMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteGPUMessages.h; path = RemoteGPUMessages.h; sourceTree = "<group>"; };
-		1C55A590275457C800EB7E95 /* RemoteShaderModuleMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteShaderModuleMessages.h; path = RemoteShaderModuleMessages.h; sourceTree = "<group>"; };
-		1C55A591275457C800EB7E95 /* RemoteBindGroupLayoutMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteBindGroupLayoutMessages.h; path = RemoteBindGroupLayoutMessages.h; sourceTree = "<group>"; };
-		1C55A592275457C900EB7E95 /* RemoteCommandEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteCommandEncoderMessages.h; path = RemoteCommandEncoderMessages.h; sourceTree = "<group>"; };
-		1C55A593275457C900EB7E95 /* RemoteAdapterMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteAdapterMessageReceiver.cpp; path = RemoteAdapterMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A594275457C900EB7E95 /* RemoteBufferMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteBufferMessagesReplies.h; path = RemoteBufferMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A595275457C900EB7E95 /* RemotePipelineLayoutMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemotePipelineLayoutMessages.h; path = RemotePipelineLayoutMessages.h; sourceTree = "<group>"; };
-		1C55A596275457C900EB7E95 /* RemoteRenderPassEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderPassEncoderMessages.h; path = RemoteRenderPassEncoderMessages.h; sourceTree = "<group>"; };
-		1C55A597275457C900EB7E95 /* RemoteSamplerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteSamplerMessages.h; path = RemoteSamplerMessages.h; sourceTree = "<group>"; };
-		1C55A598275457CA00EB7E95 /* RemoteSamplerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteSamplerMessageReceiver.cpp; path = RemoteSamplerMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A599275457CA00EB7E95 /* RemoteBufferMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteBufferMessages.h; path = RemoteBufferMessages.h; sourceTree = "<group>"; };
-		1C55A59A275457CA00EB7E95 /* RemoteBufferMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteBufferMessageReceiver.cpp; path = RemoteBufferMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A59B275457CA00EB7E95 /* RemoteCommandEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteCommandEncoderMessageReceiver.cpp; path = RemoteCommandEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A59C275457CA00EB7E95 /* RemoteQueueMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteQueueMessagesReplies.h; path = RemoteQueueMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A59D275457CA00EB7E95 /* RemoteGPUMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteGPUMessageReceiver.cpp; path = RemoteGPUMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A59E275457CA00EB7E95 /* RemoteDeviceMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteDeviceMessagesReplies.h; path = RemoteDeviceMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A59F275457CB00EB7E95 /* RemoteBindGroupMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteBindGroupMessageReceiver.cpp; path = RemoteBindGroupMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A5A0275457CB00EB7E95 /* RemoteQueueMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteQueueMessageReceiver.cpp; path = RemoteQueueMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A5A1275457CB00EB7E95 /* RemotePipelineLayoutMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemotePipelineLayoutMessageReceiver.cpp; path = RemotePipelineLayoutMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A5A2275457CB00EB7E95 /* RemoteComputePassEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteComputePassEncoderMessagesReplies.h; path = RemoteComputePassEncoderMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A5A3275457CB00EB7E95 /* RemoteBindGroupLayoutMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteBindGroupLayoutMessagesReplies.h; path = RemoteBindGroupLayoutMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A5A4275457CB00EB7E95 /* RemoteRenderPipelineMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderPipelineMessages.h; path = RemoteRenderPipelineMessages.h; sourceTree = "<group>"; };
-		1C55A5A5275457CC00EB7E95 /* RemoteQueueMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteQueueMessages.h; path = RemoteQueueMessages.h; sourceTree = "<group>"; };
-		1C55A5A6275457CC00EB7E95 /* RemoteCommandBufferMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteCommandBufferMessageReceiver.cpp; path = RemoteCommandBufferMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A5A7275457CC00EB7E95 /* RemoteTextureViewMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteTextureViewMessageReceiver.cpp; path = RemoteTextureViewMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A5A8275457CC00EB7E95 /* RemoteRenderBundleMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderBundleMessages.h; path = RemoteRenderBundleMessages.h; sourceTree = "<group>"; };
-		1C55A5A9275457CC00EB7E95 /* RemoteRenderPassEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteRenderPassEncoderMessagesReplies.h; path = RemoteRenderPassEncoderMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A5AA275457CC00EB7E95 /* RemoteTextureMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteTextureMessagesReplies.h; path = RemoteTextureMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A5AB275457CD00EB7E95 /* RemoteCommandEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteCommandEncoderMessagesReplies.h; path = RemoteCommandEncoderMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A5AC275457CD00EB7E95 /* RemoteTextureViewMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteTextureViewMessages.h; path = RemoteTextureViewMessages.h; sourceTree = "<group>"; };
-		1C55A5AD275457CD00EB7E95 /* RemoteBindGroupMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteBindGroupMessagesReplies.h; path = RemoteBindGroupMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A5AE275457CD00EB7E95 /* RemoteComputePassEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteComputePassEncoderMessageReceiver.cpp; path = RemoteComputePassEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
-		1C55A5AF275457CD00EB7E95 /* RemoteGPUMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteGPUMessagesReplies.h; path = RemoteGPUMessagesReplies.h; sourceTree = "<group>"; };
-		1C55A5B0275457CD00EB7E95 /* RemoteBindGroupMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteBindGroupMessages.h; path = RemoteBindGroupMessages.h; sourceTree = "<group>"; };
-		1C55A5B1275457CD00EB7E95 /* RemoteAdapterMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteAdapterMessages.h; path = RemoteAdapterMessages.h; sourceTree = "<group>"; };
-		1C55A5B2275457CE00EB7E95 /* RemoteCommandBufferMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteCommandBufferMessages.h; path = RemoteCommandBufferMessages.h; sourceTree = "<group>"; };
-		1C55A5B3275457CE00EB7E95 /* RemoteRenderBundleMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteRenderBundleMessageReceiver.cpp; path = RemoteRenderBundleMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A572275457C300EB7E95 /* RemoteQuerySetMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteQuerySetMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A573275457C400EB7E95 /* RemoteTextureMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureMessages.h; sourceTree = "<group>"; };
+		1C55A574275457C400EB7E95 /* RemoteRenderPipelineMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderPipelineMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A575275457C400EB7E95 /* RemotePipelineLayoutMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePipelineLayoutMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A576275457C400EB7E95 /* RemoteRenderPipelineMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPipelineMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A577275457C400EB7E95 /* RemoteComputePipelineMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteComputePipelineMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A578275457C400EB7E95 /* RemoteRenderBundleMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderBundleMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A579275457C400EB7E95 /* RemoteRenderBundleEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderBundleEncoderMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A57A275457C500EB7E95 /* RemoteExternalTextureMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteExternalTextureMessages.h; sourceTree = "<group>"; };
+		1C55A57B275457C500EB7E95 /* RemoteComputePassEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteComputePassEncoderMessages.h; sourceTree = "<group>"; };
+		1C55A57C275457C500EB7E95 /* RemoteDeviceMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDeviceMessages.h; sourceTree = "<group>"; };
+		1C55A57D275457C500EB7E95 /* RemoteRenderBundleEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderBundleEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A57E275457C500EB7E95 /* RemoteExternalTextureMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteExternalTextureMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A57F275457C500EB7E95 /* RemoteRenderPassEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderPassEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A580275457C600EB7E95 /* RemoteTextureViewMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureViewMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A581275457C600EB7E95 /* RemoteRenderBundleEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderBundleEncoderMessages.h; sourceTree = "<group>"; };
+		1C55A582275457C600EB7E95 /* RemoteBindGroupLayoutMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBindGroupLayoutMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A583275457C600EB7E95 /* RemoteSamplerMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSamplerMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A584275457C600EB7E95 /* RemoteTextureMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextureMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A585275457C600EB7E95 /* RemoteExternalTextureMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteExternalTextureMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A586275457C700EB7E95 /* RemoteComputePipelineMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteComputePipelineMessages.h; sourceTree = "<group>"; };
+		1C55A587275457C700EB7E95 /* RemoteShaderModuleMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteShaderModuleMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A588275457C700EB7E95 /* RemoteDeviceMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDeviceMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A589275457C700EB7E95 /* RemoteCommandBufferMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCommandBufferMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A58A275457C700EB7E95 /* RemoteComputePipelineMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteComputePipelineMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A58B275457C700EB7E95 /* RemoteShaderModuleMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteShaderModuleMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A58C275457C800EB7E95 /* RemoteQuerySetMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteQuerySetMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A58D275457C800EB7E95 /* RemoteQuerySetMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteQuerySetMessages.h; sourceTree = "<group>"; };
+		1C55A58E275457C800EB7E95 /* RemoteAdapterMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAdapterMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A58F275457C800EB7E95 /* RemoteGPUMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGPUMessages.h; sourceTree = "<group>"; };
+		1C55A590275457C800EB7E95 /* RemoteShaderModuleMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteShaderModuleMessages.h; sourceTree = "<group>"; };
+		1C55A591275457C800EB7E95 /* RemoteBindGroupLayoutMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBindGroupLayoutMessages.h; sourceTree = "<group>"; };
+		1C55A592275457C900EB7E95 /* RemoteCommandEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCommandEncoderMessages.h; sourceTree = "<group>"; };
+		1C55A593275457C900EB7E95 /* RemoteAdapterMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAdapterMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A594275457C900EB7E95 /* RemoteBufferMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBufferMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A595275457C900EB7E95 /* RemotePipelineLayoutMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePipelineLayoutMessages.h; sourceTree = "<group>"; };
+		1C55A596275457C900EB7E95 /* RemoteRenderPassEncoderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPassEncoderMessages.h; sourceTree = "<group>"; };
+		1C55A597275457C900EB7E95 /* RemoteSamplerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSamplerMessages.h; sourceTree = "<group>"; };
+		1C55A598275457CA00EB7E95 /* RemoteSamplerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSamplerMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A599275457CA00EB7E95 /* RemoteBufferMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBufferMessages.h; sourceTree = "<group>"; };
+		1C55A59A275457CA00EB7E95 /* RemoteBufferMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBufferMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A59B275457CA00EB7E95 /* RemoteCommandEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A59C275457CA00EB7E95 /* RemoteQueueMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteQueueMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A59D275457CA00EB7E95 /* RemoteGPUMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGPUMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A59E275457CA00EB7E95 /* RemoteDeviceMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDeviceMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A59F275457CB00EB7E95 /* RemoteBindGroupMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBindGroupMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A5A0275457CB00EB7E95 /* RemoteQueueMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteQueueMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A5A1275457CB00EB7E95 /* RemotePipelineLayoutMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePipelineLayoutMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A5A2275457CB00EB7E95 /* RemoteComputePassEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteComputePassEncoderMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A5A3275457CB00EB7E95 /* RemoteBindGroupLayoutMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBindGroupLayoutMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A5A4275457CB00EB7E95 /* RemoteRenderPipelineMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPipelineMessages.h; sourceTree = "<group>"; };
+		1C55A5A5275457CC00EB7E95 /* RemoteQueueMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteQueueMessages.h; sourceTree = "<group>"; };
+		1C55A5A6275457CC00EB7E95 /* RemoteCommandBufferMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandBufferMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A5A7275457CC00EB7E95 /* RemoteTextureViewMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextureViewMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A5A8275457CC00EB7E95 /* RemoteRenderBundleMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderBundleMessages.h; sourceTree = "<group>"; };
+		1C55A5A9275457CC00EB7E95 /* RemoteRenderPassEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderPassEncoderMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A5AA275457CC00EB7E95 /* RemoteTextureMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A5AB275457CD00EB7E95 /* RemoteCommandEncoderMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCommandEncoderMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A5AC275457CD00EB7E95 /* RemoteTextureViewMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureViewMessages.h; sourceTree = "<group>"; };
+		1C55A5AD275457CD00EB7E95 /* RemoteBindGroupMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBindGroupMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A5AE275457CD00EB7E95 /* RemoteComputePassEncoderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteComputePassEncoderMessageReceiver.cpp; sourceTree = "<group>"; };
+		1C55A5AF275457CD00EB7E95 /* RemoteGPUMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGPUMessagesReplies.h; sourceTree = "<group>"; };
+		1C55A5B0275457CD00EB7E95 /* RemoteBindGroupMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBindGroupMessages.h; sourceTree = "<group>"; };
+		1C55A5B1275457CD00EB7E95 /* RemoteAdapterMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAdapterMessages.h; sourceTree = "<group>"; };
+		1C55A5B2275457CE00EB7E95 /* RemoteCommandBufferMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCommandBufferMessages.h; sourceTree = "<group>"; };
+		1C55A5B3275457CE00EB7E95 /* RemoteRenderBundleMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderBundleMessageReceiver.cpp; sourceTree = "<group>"; };
 		1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource101.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource101.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource102.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource102.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource103.cpp; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource103.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -13966,7 +13966,6 @@
 				7A7E8DEE2748392500DCC97A /* Resources */,
 				7A7E8DF02748392500DCC97A /* Copy Plug-ins */,
 				7A7E8DF22748392500DCC97A /* Process WebContent entitlements */,
-				7A7E8DF32748392500DCC97A /* Copy Custom WebContent Resources to Framework Private Headers */,
 			);
 			buildRules = (
 			);
@@ -14695,24 +14694,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
-		};
-		7A7E8DF32748392500DCC97A /* Copy Custom WebContent Resources to Framework Private Headers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			inputPaths = (
-				"$(WK_PROCESSED_XCENT_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-				"$(SRCROOT)/Resources/WebContentProcess.xib",
-			);
-			name = "Copy Custom WebContent Resources to Framework Private Headers";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/WebContent.entitlements",
-				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/Info-WebContent.plist",
-				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/WebContentProcess.xib",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "Scripts/copy-webcontent-resources-to-private-headers.sh\n";
 		};
 		7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -1,3 +1,14 @@
+2021-11-29  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(286219): Build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=233388
+        <rdar://problem/84481565>
+
+        Unreviewed build fix after r286219.
+
+        * WebKit.xcodeproj/project.pbxproj: Don't make duplicate copies of WebContent resources when building
+          the CaptivePortal version of the WCP.
+
 2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Delete ObjectRegistry in favor of ObjectHeap
