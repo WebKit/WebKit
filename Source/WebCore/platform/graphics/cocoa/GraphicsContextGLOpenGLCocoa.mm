@@ -147,24 +147,25 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     }
 
     LOG(WebGL, "Attempting to use ANGLE's %s backend.", attrs.useMetal ? "Metal" : "OpenGL");
+    EGLNativeDisplayType nativeDisplay = GraphicsContextGLOpenGL::defaultDisplay;
     if (attrs.useMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
-    }
-
-    if (attrs.powerPreference != GraphicsContextGLAttributes::PowerPreference::Default || attrs.forceRequestForHighPerformanceGPU) {
-        displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
-        if (attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower && !attrs.forceRequestForHighPerformanceGPU) {
-            LOG(WebGL, "Requesting low power GPU.");
+        // These properties are defined for EGL_ANGLE_power_preference as EGLContext attributes,
+        // but Metal backend uses EGLDisplay attributes.
+        auto powerPreference = attrs.forceRequestForHighPerformanceGPU ? GraphicsContextGLAttributes::PowerPreference::HighPerformance : attrs.powerPreference;
+        if (powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower) {
+            displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_LOW_POWER_ANGLE);
-        } else {
-            ASSERT(attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance || attrs.forceRequestForHighPerformanceGPU);
-            LOG(WebGL, "Requesting high power GPU if available.");
+            nativeDisplay = GraphicsContextGLOpenGL::lowPowerDisplay;
+        } else if (powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance) {
+            displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
+            nativeDisplay = GraphicsContextGLOpenGL::highPerformanceDisplay;
         }
     }
     displayAttributes.append(EGL_NONE);
-    display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
+    display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(nativeDisplay), displayAttributes.data());
 
     if (EGL_Initialize(display, &majorVersion, &minorVersion) == EGL_FALSE) {
         LOG(WebGL, "EGLDisplay Initialization failed.");
@@ -173,7 +174,7 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
     if (shouldInitializeWithVolatileContextSupport) {
         // After initialization, EGL_DEFAULT_DISPLAY will return the platform-customized display.
-        ASSERT(display == EGL_GetDisplay(EGL_DEFAULT_DISPLAY));
+        ASSERT(display == EGL_GetDisplay(nativeDisplay));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_eagl", "EGL_ANGLE_device_eagl", EGL_EAGL_CONTEXT_ANGLE));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
     }
@@ -241,16 +242,25 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     if (!m_displayObj)
         return;
 
-    bool supportsPowerPreference = false;
 #if PLATFORM(MAC)
-    const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
-    m_supportsPowerPreference = strstr(displayExtensions, "EGL_ANGLE_power_preference");
-    supportsPowerPreference = m_supportsPowerPreference;
-#endif
-    if (!supportsPowerPreference && attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
-        attrs.powerPreference = GraphicsContextGLPowerPreference::Default;
-        setContextAttributes(attrs);
+    if (!attrs.useMetal) {
+        // For OpenGL, EGL_ANGLE_power_preference is used. The context is initialized with the
+        // default, low-power device. For high-performance contexts, we request the high-performance
+        // GPU in setContextVisibility. When the request is fullfilled by the system, we get the
+        // display reconfiguration callback. Upon this, we update the CGL contexts inside ANGLE.
+        const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
+        bool supportsPowerPreference = strstr(displayExtensions, "EGL_ANGLE_power_preference");
+        if (supportsPowerPreference) {
+            m_switchesGPUOnDisplayReconfiguration = attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance
+                || attrs.forceRequestForHighPerformanceGPU;
+        } else {
+            if (attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
+                attrs.powerPreference = GraphicsContextGLPowerPreference::Default;
+                setContextAttributes(attrs);
+            }
+        }
     }
+#endif
 
     EGLint configAttributes[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
@@ -535,7 +545,7 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
 void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
 {
 #if PLATFORM(MAC)
-    if (contextAttributes().powerPreference != GraphicsContextGLPowerPreference::HighPerformance)
+    if (!m_switchesGPUOnDisplayReconfiguration)
         return;
     if (isVisible)
         m_highPerformanceGPURequest = ScopedHighPerformanceGPURequest::acquire();
@@ -549,7 +559,7 @@ void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
 void GraphicsContextGLOpenGL::displayWasReconfigured()
 {
 #if PLATFORM(MAC)
-    if (m_supportsPowerPreference)
+    if (m_switchesGPUOnDisplayReconfiguration)
         EGL_HandleGPUSwitchANGLE(m_displayObj);
 #endif
     dispatchContextChangedNotification();
