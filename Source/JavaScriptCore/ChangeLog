@@ -1,3 +1,145 @@
+2021-11-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Populate RISCV64Assembler with instruction-generation methods
+        https://bugs.webkit.org/show_bug.cgi?id=233256
+
+        Reviewed by Yusuke Suzuki.
+
+        Sprinkle RISCV64Assembler class with helper methods for generating the
+        desired instruction values.
+
+        Immediate types from the RISCV64Instructions namespace are introduced
+        into the class for easier usage here and in the MacroAssemblerRISCV64
+        class. Instruction-generating methods roughly match the different
+        instruction types in the RISCV64Instructions namespace.
+
+        A few optimizations are done around floating-point instructions. We can
+        use one base method which expects the desired FP size as a template
+        parameter, and the appropriate RISCV64Instructions type can then be
+        selected based on that size value. Different combinations for FP move
+        and conversion instructions are also grouped behind a single method,
+        with thorough compile-time validation done to prevent generating
+        invalid instructions.
+
+        A few helper methods intended for masking, sign-extension and
+        zero-extension are also added. The Condition enum is fixed to list only
+        RISCV-viable conditions, with the values ordered so that a simple
+        XOR-by-one of a given value will produce the value of the inverted
+        condition.
+
+        * assembler/RISCV64Assembler.h:
+        (JSC::RISCV64Assembler::invert):
+        (JSC::RISCV64Assembler::luiInsn):
+        (JSC::RISCV64Assembler::auipcInsn):
+        (JSC::RISCV64Assembler::jalInsn):
+        (JSC::RISCV64Assembler::jalrInsn):
+        (JSC::RISCV64Assembler::beqInsn):
+        (JSC::RISCV64Assembler::bneInsn):
+        (JSC::RISCV64Assembler::bltInsn):
+        (JSC::RISCV64Assembler::bgeInsn):
+        (JSC::RISCV64Assembler::bltuInsn):
+        (JSC::RISCV64Assembler::bgeuInsn):
+        (JSC::RISCV64Assembler::lbInsn):
+        (JSC::RISCV64Assembler::lhInsn):
+        (JSC::RISCV64Assembler::lwInsn):
+        (JSC::RISCV64Assembler::ldInsn):
+        (JSC::RISCV64Assembler::lbuInsn):
+        (JSC::RISCV64Assembler::lhuInsn):
+        (JSC::RISCV64Assembler::lwuInsn):
+        (JSC::RISCV64Assembler::sbInsn):
+        (JSC::RISCV64Assembler::shInsn):
+        (JSC::RISCV64Assembler::swInsn):
+        (JSC::RISCV64Assembler::sdInsn):
+        (JSC::RISCV64Assembler::addiInsn):
+        (JSC::RISCV64Assembler::sltiInsn):
+        (JSC::RISCV64Assembler::sltiuInsn):
+        (JSC::RISCV64Assembler::xoriInsn):
+        (JSC::RISCV64Assembler::oriInsn):
+        (JSC::RISCV64Assembler::andiInsn):
+        (JSC::RISCV64Assembler::slliInsn):
+        (JSC::RISCV64Assembler::srliInsn):
+        (JSC::RISCV64Assembler::sraiInsn):
+        (JSC::RISCV64Assembler::addInsn):
+        (JSC::RISCV64Assembler::subInsn):
+        (JSC::RISCV64Assembler::sllInsn):
+        (JSC::RISCV64Assembler::sltInsn):
+        (JSC::RISCV64Assembler::sltuInsn):
+        (JSC::RISCV64Assembler::xorInsn):
+        (JSC::RISCV64Assembler::srlInsn):
+        (JSC::RISCV64Assembler::sraInsn):
+        (JSC::RISCV64Assembler::orInsn):
+        (JSC::RISCV64Assembler::andInsn):
+        (JSC::RISCV64Assembler::ecallInsn):
+        (JSC::RISCV64Assembler::ebreakInsn):
+        (JSC::RISCV64Assembler::addiwInsn):
+        (JSC::RISCV64Assembler::slliwInsn):
+        (JSC::RISCV64Assembler::srliwInsn):
+        (JSC::RISCV64Assembler::sraiwInsn):
+        (JSC::RISCV64Assembler::addwInsn):
+        (JSC::RISCV64Assembler::subwInsn):
+        (JSC::RISCV64Assembler::sllwInsn):
+        (JSC::RISCV64Assembler::srlwInsn):
+        (JSC::RISCV64Assembler::srawInsn):
+        (JSC::RISCV64Assembler::mulInsn):
+        (JSC::RISCV64Assembler::mulhInsn):
+        (JSC::RISCV64Assembler::mulhsuInsn):
+        (JSC::RISCV64Assembler::mulhuInsn):
+        (JSC::RISCV64Assembler::divInsn):
+        (JSC::RISCV64Assembler::divuInsn):
+        (JSC::RISCV64Assembler::remInsn):
+        (JSC::RISCV64Assembler::remuInsn):
+        (JSC::RISCV64Assembler::mulwInsn):
+        (JSC::RISCV64Assembler::divwInsn):
+        (JSC::RISCV64Assembler::divuwInsn):
+        (JSC::RISCV64Assembler::remwInsn):
+        (JSC::RISCV64Assembler::remuwInsn):
+        (JSC::RISCV64Assembler::flwInsn):
+        (JSC::RISCV64Assembler::fldInsn):
+        (JSC::RISCV64Assembler::fswInsn):
+        (JSC::RISCV64Assembler::fsdInsn):
+        (JSC::RISCV64Assembler::fmaddInsn):
+        (JSC::RISCV64Assembler::fmsubInsn):
+        (JSC::RISCV64Assembler::fnmsubInsn):
+        (JSC::RISCV64Assembler::fnmaddInsn):
+        (JSC::RISCV64Assembler::faddInsn):
+        (JSC::RISCV64Assembler::fsubInsn):
+        (JSC::RISCV64Assembler::fmulInsn):
+        (JSC::RISCV64Assembler::fdivInsn):
+        (JSC::RISCV64Assembler::fsqrtInsn):
+        (JSC::RISCV64Assembler::fsgnjInsn):
+        (JSC::RISCV64Assembler::fsgnjnInsn):
+        (JSC::RISCV64Assembler::fsgnjxInsn):
+        (JSC::RISCV64Assembler::fminInsn):
+        (JSC::RISCV64Assembler::fmaxInsn):
+        (JSC::RISCV64Assembler::feqInsn):
+        (JSC::RISCV64Assembler::fltInsn):
+        (JSC::RISCV64Assembler::fleInsn):
+        (JSC::RISCV64Assembler::fclassInsn):
+        (JSC::RISCV64Assembler::fcvtInsn):
+        (JSC::RISCV64Assembler::fmvInsn):
+        (JSC::RISCV64Assembler::fenceInsn):
+        (JSC::RISCV64Assembler::lrwInsn):
+        (JSC::RISCV64Assembler::scwInsn):
+        (JSC::RISCV64Assembler::lrdInsn):
+        (JSC::RISCV64Assembler::scdInsn):
+        (JSC::RISCV64Assembler::amoswapwInsn):
+        (JSC::RISCV64Assembler::amoaddwInsn):
+        (JSC::RISCV64Assembler::amoxorwInsn):
+        (JSC::RISCV64Assembler::amoandwInsn):
+        (JSC::RISCV64Assembler::amoorwInsn):
+        (JSC::RISCV64Assembler::amoswapdInsn):
+        (JSC::RISCV64Assembler::amoadddInsn):
+        (JSC::RISCV64Assembler::amoxordInsn):
+        (JSC::RISCV64Assembler::amoanddInsn):
+        (JSC::RISCV64Assembler::amoordInsn):
+        (JSC::RISCV64Assembler::nop):
+        (JSC::RISCV64Assembler::maskRegister):
+        (JSC::RISCV64Assembler::signExtend):
+        (JSC::RISCV64Assembler::zeroExtend):
+        (JSC::RISCV64Assembler::insn):
+        (JSC::RISCV64Assembler::insnFP):
+        (JSC::RISCV64Assembler::isValidShiftAmount):
+
 2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Stop linking JavaScriptCore.framework with libz because it doesn't use any symbols from it
