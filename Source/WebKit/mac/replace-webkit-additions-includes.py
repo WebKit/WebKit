@@ -42,6 +42,26 @@ def read_content_from_webkit_additions(built_products_directory, sdk_root_direct
             return ""
 
 
+def is_supported_os():
+    os_version_string = os.environ.get("MACOSX_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 13.0
+    os_version_string = os.environ.get("IPHONEOS_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 16.0
+    os_version_string = os.environ.get("WATCHOS_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 9.0
+    os_version_string = os.environ.get("TVOS_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 16.0
+    raise RuntimeError('Unrecognized deployment target')
+
+
 def main(argv=None):
     if not argv:
         argv = sys.argv
@@ -64,6 +84,10 @@ def main(argv=None):
     if not len(sdk_root_directory):
         print("(%s): SDK root directory unspecified" % argv[0])
         return 1
+
+    # We currently only support WebKitAdditions in Framework headers on macOS 13+ and iOS 16+.
+    if not is_supported_os():
+        return 0
 
     additions_import_pattern = re.compile(r"\#if USE\(APPLE_INTERNAL_SDK\)\n#import <WebKitAdditions/(.*)>\n#endif")
     try:
