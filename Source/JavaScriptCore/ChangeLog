@@ -1,3 +1,17 @@
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Stop linking JavaScriptCore.framework with libz because it doesn't use any symbols from it
+        https://bugs.webkit.org/show_bug.cgi?id=233550
+
+        Reviewed by Anders Carlsson.
+
+        Every compile produces a message like:
+
+        Ld /Users/mmaxfield/Build/Products/Debug/JavaScriptCore.framework/Versions/A/JavaScriptCore normal (in target 'JavaScriptCore' from project 'JavaScriptCore')
+        ld: warning: linking with (/usr/lib/libz.1.dylib) but not using any symbols from it
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2021-11-26  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late November 2021 edition
