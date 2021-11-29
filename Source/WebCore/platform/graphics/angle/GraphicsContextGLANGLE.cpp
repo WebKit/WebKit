@@ -79,8 +79,12 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 
 GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
 {
+#if PLATFORM(WIN)
+    m_drawingBufferTextureTarget = EGL_TEXTURE_2D;
+#else
     if (m_drawingBufferTextureTarget == -1)
         EGL_GetConfigAttrib(platformDisplay(), platformConfig(), EGL_BIND_TO_TEXTURE_TARGET_ANGLE, &m_drawingBufferTextureTarget);
+#endif
 
     switch (m_drawingBufferTextureTarget) {
     case EGL_TEXTURE_2D:
