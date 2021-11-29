@@ -23,6 +23,7 @@
 
 #include "Color.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "SourceAlpha.h"
 
 namespace WebCore {

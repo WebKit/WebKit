@@ -42,6 +42,8 @@ class DrawingContext;
 struct ItemBufferHandle;
 }
 
+class Filter;
+
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
 public:
     // Will return a null pointer on allocation failure.
@@ -107,6 +109,7 @@ public:
 
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const = 0;
+    virtual RefPtr<Image> filteredImage(Filter&) = 0;
 
     // Create an image buffer compatible with the context and copy rect from this buffer into this new one.
     RefPtr<ImageBuffer> copyRectToBuffer(const FloatRect&, const DestinationColorSpace&, const GraphicsContext&);

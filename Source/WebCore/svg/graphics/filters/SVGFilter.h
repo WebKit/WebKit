@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +29,7 @@
 
 namespace WebCore {
 
+class FilterImage;
 class SVGFilterBuilder;
 class SVGFilterElement;
 
@@ -37,13 +39,14 @@ public:
     static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox);
     static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect);
 
-    FloatSize scaledByFilterScale(FloatSize) const final;
-
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
-    bool apply() override;
 
     void setExpression(FilterEffectVector&& expression) { m_expression = WTFMove(expression); }
     RefPtr<FilterEffect> lastEffect() const { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
+
+    FloatSize scaledByFilterScale(FloatSize) const final;
+
+    RefPtr<FilterImage> apply() override;
 
 private:
     SVGFilter(RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);

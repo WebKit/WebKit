@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -332,11 +332,6 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
     return true;
 }
 
-GraphicsContext* CSSFilter::inputContext()
-{
-    return sourceImage() ? &sourceImage()->context() : nullptr;
-}
-
 bool CSSFilter::updateBackingStoreRect(const FloatRect& filterRect)
 {
     if (filterRect.isEmpty() || ImageBuffer::sizeNeedsClamping(filterRect.size()))
@@ -347,30 +342,6 @@ bool CSSFilter::updateBackingStoreRect(const FloatRect& filterRect)
 
     setSourceImageRect(filterRect);
     return true;
-}
-
-void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContext)
-{
-    // At this point the effect chain has been built, and the
-    // source image sizes set. We just need to attach the graphic
-    // buffer if we have not yet done so.
-
-    if (m_graphicsBufferAttached)
-        return;
-
-    auto logicalSize = sourceImageRect().size();
-    if (!sourceImage() || sourceImage()->logicalSize() != logicalSize) {
-#if USE(DIRECT2D)
-        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
-#else
-        UNUSED_PARAM(targetContext);
-        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
-#endif
-        if (auto context = inputContext())
-            context->scale(filterScale());
-    }
-
-    m_graphicsBufferAttached = true;
 }
 
 RefPtr<FilterEffect> CSSFilter::lastEffect()
@@ -419,15 +390,13 @@ void CSSFilter::clearIntermediateResults()
         function->clearResult();
 }
 
-bool CSSFilter::apply()
+RefPtr<FilterImage> CSSFilter::apply()
 {
     for (auto& function : m_functions) {
         if (!function->apply(*this))
-            return false;
+            return nullptr;
     }
-
-    lastEffect()->transformResultColorSpace(DestinationColorSpace::SRGB());
-    return true;
+    return lastEffect()->filterImage();
 }
 
 LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)
@@ -438,14 +407,6 @@ LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filte
         rectForRepaint += outsets();
     rectForRepaint.intersect(filterBoxRect);
     return rectForRepaint;
-}
-
-ImageBuffer* CSSFilter::output()
-{
-    if (auto result = lastEffect()->filterImage())
-        return result->imageBuffer();
-
-    return nullptr;
 }
 
 void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)
@@ -462,18 +423,6 @@ void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)
             downcast<SVGFilter>(function.ptr())->setSourceImageRect(scaledSourceImageRect);
         }
     }
-
-    m_graphicsBufferAttached = false;
-}
-
-IntRect CSSFilter::outputRect()
-{
-    auto effect = lastEffect();
-
-    if (auto result = effect->filterImage())
-        return result->absoluteImageRect() - IntPoint(filterRegion().location());
-
-    return { };
 }
 
 IntOutsets CSSFilter::outsets() const

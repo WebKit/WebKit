@@ -2,6 +2,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,14 +109,14 @@ bool SVGFilter::apply(const Filter& filter)
     return apply();
 }
 
-bool SVGFilter::apply()
+RefPtr<FilterImage> SVGFilter::apply()
 {
     ASSERT(!m_expression.isEmpty());
     for (auto& effect : m_expression) {
         if (!effect->apply(*this))
-            return false;
+            return nullptr;
     }
-    return true;
+    return lastEffect()->filterImage();
 }
 
 IntOutsets SVGFilter::outsets() const

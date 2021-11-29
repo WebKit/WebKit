@@ -69,12 +69,15 @@ public:
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
+    GraphicsContext* inputContext();
+    void allocateBackingStore(const GraphicsContext& targetContext);
 
     RenderLayer& m_layer;
 
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
 
+    RefPtr<ImageBuffer> m_sourceImage;
     RefPtr<CSSFilter> m_filter;
     LayoutRect m_dirtySourceRect;
     

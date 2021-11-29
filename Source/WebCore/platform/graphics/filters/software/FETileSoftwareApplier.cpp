@@ -26,6 +26,7 @@
 #include "FETile.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "Pattern.h"
 
 namespace WebCore {

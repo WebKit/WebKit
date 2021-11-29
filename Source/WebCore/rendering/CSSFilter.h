@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,18 +54,12 @@ public:
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
 
     RefPtr<FilterEffect> lastEffect();
-    GraphicsContext* inputContext();
     IntOutsets outsets() const override;
 
     void clearIntermediateResults();
-    bool apply() override;
-
-    ImageBuffer* output();
+    RefPtr<FilterImage> apply() override;
 
     bool updateBackingStoreRect(const FloatRect& filterRect);
-    void allocateBackingStoreIfNeeded(const GraphicsContext&);
-
-    IntRect outputRect();
 
     LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
@@ -76,7 +70,6 @@ private:
     bool supportsCoreImageRendering() const override;
 #endif
 
-    bool m_graphicsBufferAttached { false };
     bool m_hasFilterThatMovesPixels { false };
     bool m_hasFilterThatShouldBeRestrictedBySecurityOrigin { false };
 

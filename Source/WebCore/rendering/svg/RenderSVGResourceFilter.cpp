@@ -227,31 +227,13 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         break;
     }
 
-    auto lastEffect = filterData.filter->lastEffect();
-
-    if (lastEffect && !filterData.boundaries.isEmpty() && !lastEffect->filterPrimitiveSubregion().isEmpty()) {
-        // This is the real filtering of the object. It just needs to be called on the
-        // initial filtering process. We just take the stored filter result on a
-        // second drawing.
-        if (filterData.state != FilterData::Built)
-            filterData.filter->setSourceImage(WTFMove(filterData.sourceGraphicBuffer));
-
-        // Always true if filterData is just built (filterData->state == FilterData::Built).
-        if (!lastEffect->hasResult()) {
-            filterData.state = FilterData::Applying;
-            filterData.filter->apply();
-            lastEffect->correctPremultipliedResultIfNeeded();
-            lastEffect->transformResultColorSpace(DestinationColorSpace::SRGB());
-        }
+    if (!filterData.boundaries.isEmpty()) {
         filterData.state = FilterData::Built;
-
-        if (auto result = lastEffect->filterImage()) {
-            auto resultImage = result->imageBuffer();
-            context->scale(FloatSize(1 / filterData.filter->filterScale().width(), 1 / filterData.filter->filterScale().height()));
-            context->drawImageBuffer(*resultImage, result->absoluteImageRect());
-            context->scale(filterData.filter->filterScale());
-        }
+        context->scale(FloatSize(1 / filterData.filter->filterScale().width(), 1 / filterData.filter->filterScale().height()));
+        context->drawFilteredImageBuffer(filterData.sourceGraphicBuffer.get(), *filterData.filter);
+        context->scale(filterData.scale);
     }
+
     filterData.sourceGraphicBuffer = nullptr;
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");

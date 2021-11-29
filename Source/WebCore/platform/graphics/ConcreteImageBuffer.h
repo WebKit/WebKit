@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "Filter.h"
+#include "FilterImage.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 
@@ -135,6 +137,24 @@ protected:
             return backend->copyImage(copyBehavior, preserveResolution);
         }
         return nullptr;
+    }
+
+    RefPtr<Image> filteredImage(Filter& filter) override
+    {
+        auto* backend = ensureBackendCreated();
+        if (!backend)
+            return nullptr;
+
+        const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
+        auto result = filter.apply(this);
+        if (!result)
+            return nullptr;
+
+        auto imageBuffer = result->imageBuffer();
+        if (!imageBuffer)
+            return nullptr;
+
+        return imageBuffer->copyImage();
     }
 
     void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override

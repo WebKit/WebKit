@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "ImageBuffer.h"
+#include "IntRect.h"
 #include "PixelBuffer.h"
+#include "RenderingMode.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -40,7 +41,6 @@ namespace WebCore {
 class Filter;
 class FloatRect;
 class ImageBuffer;
-class PixelBuffer;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:
@@ -56,7 +56,7 @@ public:
     RenderingMode renderingMode() const { return m_renderingMode; }
     const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
 
-    ImageBuffer* imageBuffer();
+    WEBCORE_EXPORT ImageBuffer* imageBuffer();
     PixelBuffer* pixelBuffer(AlphaPremultiplication);
 
     std::optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);

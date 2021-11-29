@@ -130,14 +130,10 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement& renderer, const FloatSiz
     if (!cssFilter->buildFilterFunctions(renderer, m_filterOperations, FilterConsumer::FilterFunction))
         return &Image::nullImage();
 
-    cssFilter->setSourceImage(WTFMove(sourceImage));
-    cssFilter->apply();
+    if (auto image = sourceImage->filteredImage(*cssFilter))
+        return image;
 
-    auto* output = cssFilter->output();
-    if (!output)
-        return &Image::nullImage();
-
-    return output->copyImage();
+    return &Image::nullImage();
 }
 
 void CSSFilterImageValue::filterImageChanged(const IntRect&)

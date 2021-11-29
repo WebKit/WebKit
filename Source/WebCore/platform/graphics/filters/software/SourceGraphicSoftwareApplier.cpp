@@ -23,6 +23,7 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "SourceGraphic.h"
 
 namespace WebCore {

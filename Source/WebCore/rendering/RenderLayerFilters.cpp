@@ -124,6 +124,28 @@ void RenderLayerFilters::buildFilter(RenderElement& renderer, float scaleFactor,
     m_filter = CSSFilter::create(renderer.style().filter(), renderingMode, scaleFactor);
 }
 
+GraphicsContext* RenderLayerFilters::inputContext()
+{
+    return m_sourceImage ? &m_sourceImage->context() : nullptr;
+}
+
+void RenderLayerFilters::allocateBackingStore(const GraphicsContext& targetContext)
+{
+    auto& filter = *m_filter;
+    auto logicalSize = filter.sourceImageRect().size();
+    
+    if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize) {
+#if USE(DIRECT2D)
+        m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), &targetContext, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+#else
+        UNUSED_PARAM(targetContext);
+        m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+#endif
+        if (auto context = inputContext())
+            context->scale(filter.filterScale());
+    }
+}
+
 GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinationContext, RenderElement& renderer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
     if (!m_filter)
@@ -160,8 +182,10 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
 
     filter.determineFilterPrimitiveSubregion();
 
-    filter.allocateBackingStoreIfNeeded(destinationContext);
-    auto* sourceGraphicsContext = filter.inputContext();
+    if (hasUpdatedBackingStore)
+        allocateBackingStore(destinationContext);
+
+    auto* sourceGraphicsContext = inputContext();
     if (!sourceGraphicsContext || filter.filterRegion().isEmpty() || ImageBuffer::sizeNeedsClamping(filter.filterRegion().size()))
         return nullptr;
 
@@ -176,24 +200,17 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
 
 void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
 {
-    ASSERT(m_filter->inputContext());
+    ASSERT(inputContext());
 
     LOG_WITH_STREAM(Filters, stream << "\nRenderLayerFilters " << this << " applyFilterEffect");
 
+    inputContext()->restore();
+
     auto& filter = *m_filter;
-    filter.inputContext()->restore();
 
-    filter.apply();
-
-    // Get the filtered output and draw it in place.
-    LayoutRect destRect = filter.outputRect();
-    destRect.move(m_paintOffset.x(), m_paintOffset.y());
-
-    if (auto* outputBuffer = filter.output()) {
-        destinationContext.scale({ 1 / filter.filterScale().width(), 1 / filter.filterScale().height() });
-        destinationContext.drawImageBuffer(*outputBuffer, snapRectToDevicePixels(destRect, m_layer.renderer().document().deviceScaleFactor()));
-        destinationContext.scale(filter.filterScale());
-    }
+    destinationContext.scale({ 1 / filter.filterScale().width(), 1 / filter.filterScale().height() });
+    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), filter);
+    destinationContext.scale(filter.filterScale());
 
     filter.clearIntermediateResults();
 

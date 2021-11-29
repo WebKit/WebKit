@@ -1423,6 +1423,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/cv/ImageTransferSessionVT.h
 
+    platform/graphics/filters/Filter.h
+    platform/graphics/filters/FilterFunction.h
+    platform/graphics/filters/FilterImage.h
     platform/graphics/filters/FilterOperation.h
     platform/graphics/filters/FilterOperations.h
 

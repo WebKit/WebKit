@@ -28,6 +28,8 @@
 
 #include "BidiResolver.h"
 #include "BitmapImage.h"
+#include "Filter.h"
+#include "FilterImage.h"
 #include "FloatRoundedRect.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
@@ -627,6 +629,19 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
         return;
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, options);
+}
+
+void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, Filter& filter)
+{
+    auto result = filter.apply(sourceImage);
+    if (!result)
+        return;
+    
+    auto imageBuffer = result->imageBuffer();
+    if (!imageBuffer)
+        return;
+
+    drawImageBuffer(*imageBuffer, result->absoluteImageRect());
 }
 
 void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)

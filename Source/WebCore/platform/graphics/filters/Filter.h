@@ -29,12 +29,15 @@
 
 namespace WebCore {
 
-class FilterEffect;
+class FilterImage;
 
 class Filter : public FilterFunction {
     using FilterFunction::apply;
 
 public:
+    RenderingMode renderingMode() const { return m_renderingMode; }
+    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
+    
     FloatSize filterScale() const { return m_filterScale; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
 
@@ -44,31 +47,17 @@ public:
     FloatRect filterRegion() const { return m_filterRegion; }
     void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
 
-    virtual FloatSize scaledByFilterScale(FloatSize size) const { return size * m_filterScale; }
-    virtual bool apply() = 0;
-
     ImageBuffer* sourceImage() const { return m_sourceImage.get(); }
     void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
-    RenderingMode renderingMode() const { return m_renderingMode; }
-    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
+    virtual FloatSize scaledByFilterScale(FloatSize size) const { return size * m_filterScale; }
+
+    virtual RefPtr<FilterImage> apply() = 0;
+    WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage);
 
 protected:
-    Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale)
-        : FilterFunction(filterType)
-        , m_renderingMode(renderingMode)
-        , m_filterScale(filterScale)
-    {
-    }
-
-    Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion)
-        : FilterFunction(filterType)
-        , m_renderingMode(renderingMode)
-        , m_filterScale(filterScale)
-        , m_sourceImageRect(sourceImageRect)
-        , m_filterRegion(filterRegion)
-    {
-    }
+    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale);
+    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion);
 
 private:
     RenderingMode m_renderingMode;
