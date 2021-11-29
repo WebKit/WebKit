@@ -46,95 +46,99 @@
 
 namespace WebGPU {
 
-BindGroup Device::createBindGroup(const WGPUBindGroupDescriptor* descriptor)
+Device::Device() = default;
+
+Device::~Device() = default;
+
+Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return BindGroup::create();
 }
 
-BindGroupLayout Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor* descriptor)
+Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return BindGroupLayout::create();
 }
 
-Buffer Device::createBuffer(const WGPUBufferDescriptor* descriptor)
+Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return Buffer::create();
 }
 
-CommandEncoder Device::createCommandEncoder(const WGPUCommandEncoderDescriptor* descriptor)
+Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return CommandEncoder::create();
 }
 
-ComputePipeline Device::createComputePipeline(const WGPUComputePipelineDescriptor* descriptor)
+Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return ComputePipeline::create();
 }
 
-void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* descriptor, std::function<void(WGPUCreatePipelineAsyncStatus, ComputePipeline&&, const char* message)>&& callback)
-{
-    UNUSED_PARAM(descriptor);
-    UNUSED_PARAM(callback);
-}
-
-PipelineLayout Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return { };
-}
-
-QuerySet Device::createQuerySet(const WGPUQuerySetDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return { };
-}
-
-RenderBundleEncoder Device::createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return { };
-}
-
-RenderPipeline Device::createRenderPipeline(const WGPURenderPipelineDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return { };
-}
-
-void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor* descriptor, std::function<void(WGPUCreatePipelineAsyncStatus, RenderPipeline&&, const char* message)>&& callback)
+void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, const char* message)>&& callback)
 {
     UNUSED_PARAM(descriptor);
     UNUSED_PARAM(callback);
 }
 
-Sampler Device::createSampler(const WGPUSamplerDescriptor* descriptor)
+Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return PipelineLayout::create();
 }
 
-ShaderModule Device::createShaderModule(const WGPUShaderModuleDescriptor* descriptor)
+Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return QuerySet::create();
 }
 
-SwapChain Device::createSwapChain(const Surface& surface, const WGPUSwapChainDescriptor* descriptor)
+Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor* descriptor)
+{
+    UNUSED_PARAM(descriptor);
+    return RenderBundleEncoder::create();
+}
+
+Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor* descriptor)
+{
+    UNUSED_PARAM(descriptor);
+    return RenderPipeline::create();
+}
+
+void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, const char* message)>&& callback)
+{
+    UNUSED_PARAM(descriptor);
+    UNUSED_PARAM(callback);
+}
+
+Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor* descriptor)
+{
+    UNUSED_PARAM(descriptor);
+    return Sampler::create();
+}
+
+Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor* descriptor)
+{
+    UNUSED_PARAM(descriptor);
+    return ShaderModule::create();
+}
+
+Ref<SwapChain> Device::createSwapChain(const Surface& surface, const WGPUSwapChainDescriptor* descriptor)
 {
     UNUSED_PARAM(surface);
     UNUSED_PARAM(descriptor);
-    return { };
+    return SwapChain::create();
 }
 
-Texture Device::createTexture(const WGPUTextureDescriptor* descriptor)
+Ref<Texture> Device::createTexture(const WGPUTextureDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return Texture::create();
 }
 
 void Device::destroy()
@@ -147,12 +151,12 @@ bool Device::getLimits(WGPUSupportedLimits* limits)
     return false;
 }
 
-Queue Device::getQueue()
+Ref<Queue> Device::getQueue()
 {
-    return { };
+    return Queue::create();
 }
 
-bool Device::popErrorScope(std::function<void(WGPUErrorType, const char*)>&& callback)
+bool Device::popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback)
 {
     UNUSED_PARAM(callback);
     return false;
@@ -163,12 +167,12 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
     UNUSED_PARAM(filter);
 }
 
-void Device::setDeviceLostCallback(std::function<void(WGPUDeviceLostReason, const char*)>&& callback)
+void Device::setDeviceLostCallback(WTF::Function<void(WGPUDeviceLostReason, const char*)>&& callback)
 {
     UNUSED_PARAM(callback);
 }
 
-void Device::setUncapturedErrorCallback(std::function<void(WGPUErrorType, const char*)>&& callback)
+void Device::setUncapturedErrorCallback(WTF::Function<void(WGPUErrorType, const char*)>&& callback)
 {
     UNUSED_PARAM(callback);
 }
@@ -187,113 +191,113 @@ void wgpuDeviceRelease(WGPUDevice device)
 
 WGPUBindGroup wgpuDeviceCreateBindGroup(WGPUDevice device, const WGPUBindGroupDescriptor* descriptor)
 {
-    return new WGPUBindGroupImpl { device->device.createBindGroup(descriptor) };
+    return new WGPUBindGroupImpl { device->device->createBindGroup(descriptor) };
 }
 
 WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice device, const WGPUBindGroupLayoutDescriptor* descriptor)
 {
-    return new WGPUBindGroupLayoutImpl { device->device.createBindGroupLayout(descriptor) };
+    return new WGPUBindGroupLayoutImpl { device->device->createBindGroupLayout(descriptor) };
 }
 
 WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor* descriptor)
 {
-    return new WGPUBufferImpl { device->device.createBuffer(descriptor) };
+    return new WGPUBufferImpl { device->device->createBuffer(descriptor) };
 }
 
 WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, const WGPUCommandEncoderDescriptor* descriptor)
 {
-    return new WGPUCommandEncoderImpl { device->device.createCommandEncoder(descriptor) };
+    return new WGPUCommandEncoderImpl { device->device->createCommandEncoder(descriptor) };
 }
 
 WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor)
 {
-    return new WGPUComputePipelineImpl { device->device.createComputePipeline(descriptor) };
+    return new WGPUComputePipelineImpl { device->device->createComputePipeline(descriptor) };
 }
 
 void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor, WGPUCreateComputePipelineAsyncCallback callback, void* userdata)
 {
-    device->device.createComputePipelineAsync(descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, WebGPU::ComputePipeline&& pipeline, const char* message) {
+    device->device->createComputePipelineAsync(descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::ComputePipeline>&& pipeline, const char* message) {
         callback(status, new WGPUComputePipelineImpl { WTFMove(pipeline) }, message, userdata);
     });
 }
 
 WGPUPipelineLayout wgpuDeviceCreatePipelineLayout(WGPUDevice device, const WGPUPipelineLayoutDescriptor* descriptor)
 {
-    return new WGPUPipelineLayoutImpl { device->device.createPipelineLayout(descriptor) };
+    return new WGPUPipelineLayoutImpl { device->device->createPipelineLayout(descriptor) };
 }
 
 WGPUQuerySet wgpuDeviceCreateQuerySet(WGPUDevice device, const WGPUQuerySetDescriptor* descriptor)
 {
-    return new WGPUQuerySetImpl { device->device.createQuerySet(descriptor) };
+    return new WGPUQuerySetImpl { device->device->createQuerySet(descriptor) };
 }
 
 WGPURenderBundleEncoder wgpuDeviceCreateRenderBundleEncoder(WGPUDevice device, const WGPURenderBundleEncoderDescriptor* descriptor)
 {
-    return new WGPURenderBundleEncoderImpl { device->device.createRenderBundleEncoder(descriptor) };
+    return new WGPURenderBundleEncoderImpl { device->device->createRenderBundleEncoder(descriptor) };
 }
 
 WGPURenderPipeline wgpuDeviceCreateRenderPipeline(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor)
 {
-    return new WGPURenderPipelineImpl { device->device.createRenderPipeline(descriptor) };
+    return new WGPURenderPipelineImpl { device->device->createRenderPipeline(descriptor) };
 }
 
 void wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor, WGPUCreateRenderPipelineAsyncCallback callback, void* userdata)
 {
-    device->device.createRenderPipelineAsync(descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, WebGPU::RenderPipeline&& pipeline, const char* message) {
+    device->device->createRenderPipelineAsync(descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::RenderPipeline>&& pipeline, const char* message) {
         callback(status, new WGPURenderPipelineImpl { WTFMove(pipeline) }, message, userdata);
     });
 }
 
 WGPUSampler wgpuDeviceCreateSampler(WGPUDevice device, const WGPUSamplerDescriptor* descriptor)
 {
-    return new WGPUSamplerImpl { device->device.createSampler(descriptor) };
+    return new WGPUSamplerImpl { device->device->createSampler(descriptor) };
 }
 
 WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShaderModuleDescriptor* descriptor)
 {
-    return new WGPUShaderModuleImpl { device->device.createShaderModule(descriptor) };
+    return new WGPUShaderModuleImpl { device->device->createShaderModule(descriptor) };
 }
 
 WGPUSwapChain wgpuDeviceCreateSwapChain(WGPUDevice device, WGPUSurface surface, const WGPUSwapChainDescriptor* descriptor)
 {
-    return new WGPUSwapChainImpl { device->device.createSwapChain(surface->surface, descriptor) };
+    return new WGPUSwapChainImpl { device->device->createSwapChain(surface->surface, descriptor) };
 }
 
 WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device, const WGPUTextureDescriptor* descriptor)
 {
-    return new WGPUTextureImpl { device->device.createTexture(descriptor) };
+    return new WGPUTextureImpl { device->device->createTexture(descriptor) };
 }
 
 void wgpuDeviceDestroy(WGPUDevice device)
 {
-    device->device.destroy();
+    device->device->destroy();
 }
 
 bool wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits* limits)
 {
-    return device->device.getLimits(limits);
+    return device->device->getLimits(limits);
 }
 
 WGPUQueue wgpuDeviceGetQueue(WGPUDevice device)
 {
-    return new WGPUQueueImpl { device->device.getQueue() };
+    return new WGPUQueueImpl { device->device->getQueue() };
 }
 
 bool wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback callback, void* userdata)
 {
-    return device->device.popErrorScope([callback, userdata] (WGPUErrorType type, const char* message) {
+    return device->device->popErrorScope([callback, userdata] (WGPUErrorType type, const char* message) {
         callback(type, message, userdata);
     });
 }
 
 void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter)
 {
-    device->device.pushErrorScope(filter);
+    device->device->pushErrorScope(filter);
 }
 
 void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata)
 {
-    return device->device.setDeviceLostCallback([callback, userdata] (WGPUDeviceLostReason reason, const char* message) {
+    return device->device->setDeviceLostCallback([callback, userdata] (WGPUDeviceLostReason reason, const char* message) {
         if (callback)
             callback(reason, message, userdata);
     });
@@ -301,7 +305,7 @@ void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback c
 
 void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback callback, void* userdata)
 {
-    return device->device.setUncapturedErrorCallback([callback, userdata] (WGPUErrorType type, const char* message) {
+    return device->device->setUncapturedErrorCallback([callback, userdata] (WGPUErrorType type, const char* message) {
         if (callback)
             callback(type, message, userdata);
     });
@@ -309,5 +313,5 @@ void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback c
 
 void wgpuDeviceSetLabel(WGPUDevice device, const char* label)
 {
-    device->device.setLabel(label);
+    device->device->setLabel(label);
 }

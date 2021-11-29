@@ -30,6 +30,10 @@
 
 namespace WebGPU {
 
+ShaderModule::ShaderModule() = default;
+
+ShaderModule::~ShaderModule() = default;
+
 void ShaderModule::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -44,6 +48,6 @@ void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, const char* label)
 {
-    shaderModule->shaderModule.setLabel(label);
+    shaderModule->shaderModule->setLabel(label);
 }
 

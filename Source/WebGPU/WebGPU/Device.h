@@ -26,7 +26,10 @@
 #pragma once
 
 #import "WebGPU.h"
-#import <functional>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
@@ -46,35 +49,46 @@ class SwapChain;
 class Texture;
 class Queue;
 
-class Device {
+class Device : public RefCounted<Device> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    BindGroup createBindGroup(const WGPUBindGroupDescriptor*);
-    BindGroupLayout createBindGroupLayout(const WGPUBindGroupLayoutDescriptor*);
-    Buffer createBuffer(const WGPUBufferDescriptor*);
-    CommandEncoder createCommandEncoder(const WGPUCommandEncoderDescriptor*);
-    ComputePipeline createComputePipeline(const WGPUComputePipelineDescriptor*);
-    void createComputePipelineAsync(const WGPUComputePipelineDescriptor*, std::function<void(WGPUCreatePipelineAsyncStatus, ComputePipeline&&, const char* message)>&& callback);
-    PipelineLayout createPipelineLayout(const WGPUPipelineLayoutDescriptor*);
-    QuerySet createQuerySet(const WGPUQuerySetDescriptor*);
-    RenderBundleEncoder createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor*);
-    RenderPipeline createRenderPipeline(const WGPURenderPipelineDescriptor*);
-    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor*, std::function<void(WGPUCreatePipelineAsyncStatus, RenderPipeline&&, const char* message)>&& callback);
-    Sampler createSampler(const WGPUSamplerDescriptor*);
-    ShaderModule createShaderModule(const WGPUShaderModuleDescriptor*);
-    SwapChain createSwapChain(const Surface&, const WGPUSwapChainDescriptor*);
-    Texture createTexture(const WGPUTextureDescriptor*);
+    static Ref<Device> create()
+    {
+        return adoptRef(*new Device());
+    }
+
+    ~Device();
+
+    Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor*);
+    Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor*);
+    Ref<Buffer> createBuffer(const WGPUBufferDescriptor*);
+    Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor*);
+    Ref<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor*);
+    void createComputePipelineAsync(const WGPUComputePipelineDescriptor*, WTF::Function<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, const char* message)>&& callback);
+    Ref<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor*);
+    Ref<QuerySet> createQuerySet(const WGPUQuerySetDescriptor*);
+    Ref<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor*);
+    Ref<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor*);
+    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor*, WTF::Function<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, const char* message)>&& callback);
+    Ref<Sampler> createSampler(const WGPUSamplerDescriptor*);
+    Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor*);
+    Ref<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor*);
+    Ref<Texture> createTexture(const WGPUTextureDescriptor*);
     void destroy();
     bool getLimits(WGPUSupportedLimits*);
-    Queue getQueue();
-    bool popErrorScope(std::function<void(WGPUErrorType, const char*)>&& callback);
+    Ref<Queue> getQueue();
+    bool popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback);
     void pushErrorScope(WGPUErrorFilter);
-    void setDeviceLostCallback(std::function<void(WGPUDeviceLostReason, const char*)>&&);
-    void setUncapturedErrorCallback(std::function<void(WGPUErrorType, const char*)>&&);
+    void setDeviceLostCallback(WTF::Function<void(WGPUDeviceLostReason, const char*)>&&);
+    void setUncapturedErrorCallback(WTF::Function<void(WGPUErrorType, const char*)>&&);
     void setLabel(const char*);
+
+private:
+    Device();
 };
 
 } // namespace WebGPU
 
 struct WGPUDeviceImpl {
-    WebGPU::Device device;
+    Ref<WebGPU::Device> device;
 };

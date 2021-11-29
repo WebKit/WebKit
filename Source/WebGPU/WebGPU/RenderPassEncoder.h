@@ -26,7 +26,10 @@
 #pragma once
 
 #import "WebGPU.h"
-#import <functional>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
 
 namespace WebGPU {
@@ -37,8 +40,16 @@ class QuerySet;
 class RenderBundle;
 class RenderPipeline;
 
-class RenderPassEncoder {
+class RenderPassEncoder : public RefCounted<RenderPassEncoder> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<RenderPassEncoder> create()
+    {
+        return adoptRef(*new RenderPassEncoder());
+    }
+
+    ~RenderPassEncoder();
+
     void beginOcclusionQuery(uint32_t queryIndex);
     void beginPipelineStatisticsQuery(const QuerySet&, uint32_t queryIndex);
     void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
@@ -62,10 +73,13 @@ public:
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
     void setLabel(const char*);
+
+private:
+    RenderPassEncoder();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPURenderPassEncoderImpl {
-    WebGPU::RenderPassEncoder renderPassEncoder;
+    Ref<WebGPU::RenderPassEncoder> renderPassEncoder;
 };

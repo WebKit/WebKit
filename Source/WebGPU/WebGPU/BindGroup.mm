@@ -30,6 +30,10 @@
 
 namespace WebGPU {
 
+BindGroup::BindGroup() = default;
+
+BindGroup::~BindGroup() = default;
+
 void BindGroup::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -44,5 +48,5 @@ void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 
 void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, const char* label)
 {
-    bindGroup->bindGroup.setLabel(label);
+    bindGroup->bindGroup->setLabel(label);
 }

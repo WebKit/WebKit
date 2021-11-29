@@ -30,6 +30,10 @@
 
 namespace WebGPU {
 
+CommandBuffer::CommandBuffer() = default;
+
+CommandBuffer::~CommandBuffer() = default;
+
 void CommandBuffer::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -44,5 +48,5 @@ void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 
 void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, const char* label)
 {
-    commandBuffer->commandBuffer.setLabel(label);
+    commandBuffer->commandBuffer->setLabel(label);
 }

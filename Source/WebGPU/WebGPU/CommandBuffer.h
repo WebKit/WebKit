@@ -26,16 +26,30 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
-class CommandBuffer {
+class CommandBuffer : public RefCounted<CommandBuffer> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<CommandBuffer> create()
+    {
+        return adoptRef(*new CommandBuffer());
+    }
+
+    ~CommandBuffer();
+
     void setLabel(const char*);
+
+private:
+    CommandBuffer();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUCommandBufferImpl {
-    WebGPU::CommandBuffer commandBuffer;
+    Ref<WebGPU::CommandBuffer> commandBuffer;
 };

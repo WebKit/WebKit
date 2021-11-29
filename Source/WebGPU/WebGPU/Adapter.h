@@ -26,23 +26,37 @@
 #pragma once
 
 #import "WebGPU.h"
-#import <functional>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
 class Device;
 
-class Adapter {
+class Adapter : public RefCounted<Adapter> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<Adapter> create()
+    {
+        return adoptRef(*new Adapter());
+    }
+
+    ~Adapter();
+
     bool getLimits(WGPUSupportedLimits*);
     void getProperties(WGPUAdapterProperties*);
     bool hasFeature(WGPUFeatureName);
     WGPUFeatureName getFeatureAtIndex(size_t);
-    void requestDevice(const WGPUDeviceDescriptor*, std::function<void(WGPURequestDeviceStatus, Device&&, const char*)>&& callback);
+    void requestDevice(const WGPUDeviceDescriptor*, WTF::Function<void(WGPURequestDeviceStatus, Ref<Device>&&, const char*)>&& callback);
+
+private:
+    Adapter();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUAdapterImpl {
-    WebGPU::Adapter adapter;
+    Ref<WebGPU::Adapter> adapter;
 };

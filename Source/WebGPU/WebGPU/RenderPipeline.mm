@@ -31,10 +31,14 @@
 
 namespace WebGPU {
 
-BindGroupLayout RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
+RenderPipeline::RenderPipeline() = default;
+
+RenderPipeline::~RenderPipeline() = default;
+
+Ref<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     UNUSED_PARAM(groupIndex);
-    return { };
+    return BindGroupLayout::create();
 }
 
 void RenderPipeline::setLabel(const char* label)
@@ -51,11 +55,11 @@ void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
-    return new WGPUBindGroupLayoutImpl { renderPipeline->renderPipeline.getBindGroupLayout(groupIndex) };
+    return new WGPUBindGroupLayoutImpl { renderPipeline->renderPipeline->getBindGroupLayout(groupIndex) };
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* label)
 {
-    renderPipeline->renderPipeline.setLabel(label);
+    renderPipeline->renderPipeline->setLabel(label);
 }
 

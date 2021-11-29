@@ -26,22 +26,36 @@
 #pragma once
 
 #import "WebGPU.h"
-#import <functional>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
-class Buffer {
+class Buffer : public RefCounted<Buffer> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<Buffer> create()
+    {
+        return adoptRef(*new Buffer());
+    }
+
+    ~Buffer();
+
     void destroy();
     const void* getConstMappedRange(size_t offset, size_t);
     void* getMappedRange(size_t offset, size_t);
-    void mapAsync(WGPUMapModeFlags, size_t offset, size_t, std::function<void(WGPUBufferMapAsyncStatus)>&& callback);
+    void mapAsync(WGPUMapModeFlags, size_t offset, size_t, WTF::Function<void(WGPUBufferMapAsyncStatus)>&& callback);
     void unmap();
     void setLabel(const char*);
+
+private:
+    Buffer();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUBufferImpl {
-    WebGPU::Buffer buffer;
+    Ref<WebGPU::Buffer> buffer;
 };

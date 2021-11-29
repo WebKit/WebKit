@@ -32,7 +32,11 @@
 
 namespace WebGPU {
 
-void Queue::onSubmittedWorkDone(uint64_t signalValue, std::function<void(WGPUQueueWorkDoneStatus)>&& callback)
+Queue::Queue() = default;
+
+Queue::~Queue() = default;
+
+void Queue::onSubmittedWorkDone(uint64_t signalValue, WTF::Function<void(WGPUQueueWorkDoneStatus)>&& callback)
 {
     UNUSED_PARAM(signalValue);
     UNUSED_PARAM(callback);
@@ -74,7 +78,7 @@ void wgpuQueueRelease(WGPUQueue queue)
 
 void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneCallback callback, void* userdata)
 {
-    queue->queue.onSubmittedWorkDone(signalValue, [callback, userdata] (WGPUQueueWorkDoneStatus status) {
+    queue->queue->onSubmittedWorkDone(signalValue, [callback, userdata] (WGPUQueueWorkDoneStatus status) {
         callback(status, userdata);
     });
 }
@@ -84,21 +88,21 @@ void wgpuQueueSubmit(WGPUQueue queue, uint32_t commandCount, const WGPUCommandBu
     Vector<std::reference_wrapper<const WebGPU::CommandBuffer>> commandsToForward;
     for (uint32_t i = 0; i < commandCount; ++i)
         commandsToForward.append(commands[i]->commandBuffer);
-    queue->queue.submit(WTFMove(commandsToForward));
+    queue->queue->submit(WTFMove(commandsToForward));
 }
 
 void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, const void* data, size_t size)
 {
-    queue->queue.writeBuffer(buffer->buffer, bufferOffset, data, size);
+    queue->queue->writeBuffer(buffer->buffer, bufferOffset, data, size);
 }
 
 void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUImageCopyTexture* destination, const void* data, size_t dataSize, const WGPUTextureDataLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
-    queue->queue.writeTexture(destination, data, dataSize, dataLayout, writeSize);
+    queue->queue->writeTexture(destination, data, dataSize, dataLayout, writeSize);
 }
 
 void wgpuQueueSetLabel(WGPUQueue queue, const char* label)
 {
-    queue->queue.setLabel(label);
+    queue->queue->setLabel(label);
 }
 

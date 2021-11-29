@@ -31,9 +31,13 @@
 
 namespace WebGPU {
 
-TextureView SwapChain::getCurrentTextureView()
+SwapChain::SwapChain() = default;
+
+SwapChain::~SwapChain() = default;
+
+Ref<TextureView> SwapChain::getCurrentTextureView()
 {
-    return { };
+    return TextureView::create();
 }
 
 void SwapChain::present()
@@ -49,11 +53,11 @@ void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 
 WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
 {
-    return new WGPUTextureViewImpl { swapChain->swapChain.getCurrentTextureView() };
+    return new WGPUTextureViewImpl { swapChain->swapChain->getCurrentTextureView() };
 }
 
 void wgpuSwapChainPresent(WGPUSwapChain swapChain)
 {
-    swapChain->swapChain.present();
+    swapChain->swapChain->present();
 }
 

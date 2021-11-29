@@ -30,6 +30,10 @@
 
 namespace WebGPU {
 
+RenderBundle::RenderBundle() = default;
+
+RenderBundle::~RenderBundle() = default;
+
 void RenderBundle::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -44,5 +48,5 @@ void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 
 void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, const char* label)
 {
-    renderBundle->renderBundle.setLabel(label);
+    renderBundle->renderBundle->setLabel(label);
 }

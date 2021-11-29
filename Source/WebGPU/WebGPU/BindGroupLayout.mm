@@ -30,6 +30,10 @@
 
 namespace WebGPU {
 
+BindGroupLayout::BindGroupLayout() = default;
+
+BindGroupLayout::~BindGroupLayout() = default;
+
 void BindGroupLayout::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -44,5 +48,5 @@ void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 
 void wgpuBindGroupLayoutSetLabel(WGPUBindGroupLayout bindGroupLayout, const char* label)
 {
-    bindGroupLayout->bindGroupLayout.setLabel(label);
+    bindGroupLayout->bindGroupLayout->setLabel(label);
 }

@@ -26,16 +26,30 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
-class RenderBundle {
+class RenderBundle : public RefCounted<RenderBundle> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<RenderBundle> create()
+    {
+        return adoptRef(*new RenderBundle());
+    }
+
+    ~RenderBundle();
+
     void setLabel(const char*);
+
+private:
+    RenderBundle();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPURenderBundleImpl {
-    WebGPU::RenderBundle renderBundle;
+    Ref<WebGPU::RenderBundle> renderBundle;
 };

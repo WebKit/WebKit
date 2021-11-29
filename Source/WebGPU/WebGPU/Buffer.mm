@@ -30,6 +30,10 @@
 
 namespace WebGPU {
 
+Buffer::Buffer() = default;
+
+Buffer::~Buffer() = default;
+
 void Buffer::destroy()
 {
 }
@@ -48,7 +52,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     return nullptr;
 }
 
-void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, std::function<void(WGPUBufferMapAsyncStatus)>&& callback)
+void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, WTF::Function<void(WGPUBufferMapAsyncStatus)>&& callback)
 {
     UNUSED_PARAM(mode);
     UNUSED_PARAM(offset);
@@ -74,32 +78,32 @@ void wgpuBufferRelease(WGPUBuffer buffer)
 
 void wgpuBufferDestroy(WGPUBuffer buffer)
 {
-    buffer->buffer.destroy();
+    buffer->buffer->destroy();
 }
 
 const void* wgpuBufferGetConstMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return buffer->buffer.getConstMappedRange(offset, size);
+    return buffer->buffer->getConstMappedRange(offset, size);
 }
 
 void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return buffer->buffer.getMappedRange(offset, size);
+    return buffer->buffer->getMappedRange(offset, size);
 }
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
-    buffer->buffer.mapAsync(mode, offset, size, [callback, userdata] (WGPUBufferMapAsyncStatus status) {
+    buffer->buffer->mapAsync(mode, offset, size, [callback, userdata] (WGPUBufferMapAsyncStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuBufferUnmap(WGPUBuffer buffer)
 {
-    buffer->buffer.unmap();
+    buffer->buffer->unmap();
 }
 
 void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
 {
-    buffer->buffer.setLabel(label);
+    buffer->buffer->setLabel(label);
 }

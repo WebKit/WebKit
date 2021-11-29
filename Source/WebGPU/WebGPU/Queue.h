@@ -26,7 +26,10 @@
 #pragma once
 
 #import "WebGPU.h"
-#import <functional>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
 
 namespace WebGPU {
@@ -34,17 +37,28 @@ namespace WebGPU {
 class Buffer;
 class CommandBuffer;
 
-class Queue {
+class Queue : public RefCounted<Queue> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    void onSubmittedWorkDone(uint64_t signalValue, std::function<void(WGPUQueueWorkDoneStatus)>&& callback);
+    static Ref<Queue> create()
+    {
+        return adoptRef(*new Queue());
+    }
+
+    ~Queue();
+
+    void onSubmittedWorkDone(uint64_t signalValue, WTF::Function<void(WGPUQueueWorkDoneStatus)>&& callback);
     void submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands);
     void writeBuffer(const Buffer&, uint64_t bufferOffset, const void* data, size_t);
     void writeTexture(const WGPUImageCopyTexture* destination, const void* data, size_t dataSize, const WGPUTextureDataLayout*, const WGPUExtent3D* writeSize);
     void setLabel(const char*);
+
+private:
+    Queue();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUQueueImpl {
-    WebGPU::Queue queue;
+    Ref<WebGPU::Queue> queue;
 };

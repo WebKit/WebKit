@@ -26,19 +26,33 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
 class BindGroupLayout;
 
-class RenderPipeline {
+class RenderPipeline : public RefCounted<RenderPipeline> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    BindGroupLayout getBindGroupLayout(uint32_t groupIndex);
+    static Ref<RenderPipeline> create()
+    {
+        return adoptRef(*new RenderPipeline());
+    }
+
+    ~RenderPipeline();
+
+    Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
     void setLabel(const char*);
+
+private:
+    RenderPipeline();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPURenderPipelineImpl {
-    WebGPU::RenderPipeline renderPipeline;
+    Ref<WebGPU::RenderPipeline> renderPipeline;
 };

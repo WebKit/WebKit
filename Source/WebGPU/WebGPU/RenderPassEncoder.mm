@@ -35,6 +35,10 @@
 
 namespace WebGPU {
 
+RenderPassEncoder::RenderPassEncoder() = default;
+
+RenderPassEncoder::~RenderPassEncoder() = default;
+
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
     UNUSED_PARAM(queryIndex);
@@ -187,47 +191,47 @@ void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 
 void wgpuRenderPassEncoderBeginOcclusionQuery(WGPURenderPassEncoder renderPassEncoder, uint32_t queryIndex)
 {
-    renderPassEncoder->renderPassEncoder.beginOcclusionQuery(queryIndex);
+    renderPassEncoder->renderPassEncoder->beginOcclusionQuery(queryIndex);
 }
 
 void wgpuRenderPassEncoderBeginPipelineStatisticsQuery(WGPURenderPassEncoder renderPassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
-    renderPassEncoder->renderPassEncoder.beginPipelineStatisticsQuery(querySet->querySet, queryIndex);
+    renderPassEncoder->renderPassEncoder->beginPipelineStatisticsQuery(querySet->querySet, queryIndex);
 }
 
 void wgpuRenderPassEncoderDraw(WGPURenderPassEncoder renderPassEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    renderPassEncoder->renderPassEncoder.draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    renderPassEncoder->renderPassEncoder->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void wgpuRenderPassEncoderDrawIndexed(WGPURenderPassEncoder renderPassEncoder, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    renderPassEncoder->renderPassEncoder.drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    renderPassEncoder->renderPassEncoder->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void wgpuRenderPassEncoderDrawIndexedIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    renderPassEncoder->renderPassEncoder.drawIndexedIndirect(indirectBuffer->buffer, indirectOffset);
+    renderPassEncoder->renderPassEncoder->drawIndexedIndirect(indirectBuffer->buffer, indirectOffset);
 }
 
 void wgpuRenderPassEncoderDrawIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    renderPassEncoder->renderPassEncoder.drawIndirect(indirectBuffer->buffer, indirectOffset);
+    renderPassEncoder->renderPassEncoder->drawIndirect(indirectBuffer->buffer, indirectOffset);
 }
 
 void wgpuRenderPassEncoderEndOcclusionQuery(WGPURenderPassEncoder renderPassEncoder)
 {
-    renderPassEncoder->renderPassEncoder.endOcclusionQuery();
+    renderPassEncoder->renderPassEncoder->endOcclusionQuery();
 }
 
 void wgpuRenderPassEncoderEndPass(WGPURenderPassEncoder renderPassEncoder)
 {
-    renderPassEncoder->renderPassEncoder.endPass();
+    renderPassEncoder->renderPassEncoder->endPass();
 }
 
 void wgpuRenderPassEncoderEndPipelineStatisticsQuery(WGPURenderPassEncoder renderPassEncoder)
 {
-    renderPassEncoder->renderPassEncoder.endPipelineStatisticsQuery();
+    renderPassEncoder->renderPassEncoder->endPipelineStatisticsQuery();
 }
 
 void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder, uint32_t bundlesCount, const WGPURenderBundle* bundles)
@@ -235,70 +239,70 @@ void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder
     Vector<std::reference_wrapper<const WebGPU::RenderBundle>> bundlesToForward;
     for (uint32_t i = 0; i < bundlesCount; ++i)
         bundlesToForward.append(bundles[i]->renderBundle);
-    renderPassEncoder->renderPassEncoder.executeBundles(WTFMove(bundlesToForward));
+    renderPassEncoder->renderPassEncoder->executeBundles(WTFMove(bundlesToForward));
 }
 
 void wgpuRenderPassEncoderInsertDebugMarker(WGPURenderPassEncoder renderPassEncoder, const char* markerLabel)
 {
-    renderPassEncoder->renderPassEncoder.insertDebugMarker(markerLabel);
+    renderPassEncoder->renderPassEncoder->insertDebugMarker(markerLabel);
 }
 
 void wgpuRenderPassEncoderPopDebugGroup(WGPURenderPassEncoder renderPassEncoder)
 {
-    renderPassEncoder->renderPassEncoder.popDebugGroup();
+    renderPassEncoder->renderPassEncoder->popDebugGroup();
 }
 
 void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder, const char* groupLabel)
 {
-    renderPassEncoder->renderPassEncoder.pushDebugGroup(groupLabel);
+    renderPassEncoder->renderPassEncoder->pushDebugGroup(groupLabel);
 }
 
 void wgpuRenderPassEncoderSetBindGroup(WGPURenderPassEncoder renderPassEncoder, uint32_t groupIndex, WGPUBindGroup group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    renderPassEncoder->renderPassEncoder.setBindGroup(groupIndex, group->bindGroup, dynamicOffsetCount, dynamicOffsets);
+    renderPassEncoder->renderPassEncoder->setBindGroup(groupIndex, group->bindGroup, dynamicOffsetCount, dynamicOffsets);
 }
 
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, const WGPUColor* color)
 {
-    renderPassEncoder->renderPassEncoder.setBlendConstant(color);
+    renderPassEncoder->renderPassEncoder->setBlendConstant(color);
 }
 
 void wgpuRenderPassEncoderSetIndexBuffer(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
-    renderPassEncoder->renderPassEncoder.setIndexBuffer(buffer->buffer, format, offset, size);
+    renderPassEncoder->renderPassEncoder->setIndexBuffer(buffer->buffer, format, offset, size);
 }
 
 void wgpuRenderPassEncoderSetPipeline(WGPURenderPassEncoder renderPassEncoder, WGPURenderPipeline pipeline)
 {
-    renderPassEncoder->renderPassEncoder.setPipeline(pipeline->renderPipeline);
+    renderPassEncoder->renderPassEncoder->setPipeline(pipeline->renderPipeline);
 }
 
 void wgpuRenderPassEncoderSetScissorRect(WGPURenderPassEncoder renderPassEncoder, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
-    renderPassEncoder->renderPassEncoder.setScissorRect(x, y, width, height);
+    renderPassEncoder->renderPassEncoder->setScissorRect(x, y, width, height);
 }
 
 void wgpuRenderPassEncoderSetStencilReference(WGPURenderPassEncoder renderPassEncoder, uint32_t reference)
 {
-    renderPassEncoder->renderPassEncoder.setStencilReference(reference);
+    renderPassEncoder->renderPassEncoder->setStencilReference(reference);
 }
 
 void wgpuRenderPassEncoderSetVertexBuffer(WGPURenderPassEncoder renderPassEncoder, uint32_t slot, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    renderPassEncoder->renderPassEncoder.setVertexBuffer(slot, buffer->buffer, offset, size);
+    renderPassEncoder->renderPassEncoder->setVertexBuffer(slot, buffer->buffer, offset, size);
 }
 
 void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, float x, float y, float width, float height, float minDepth, float maxDepth)
 {
-    renderPassEncoder->renderPassEncoder.setViewport(x, y, width, height, minDepth, maxDepth);
+    renderPassEncoder->renderPassEncoder->setViewport(x, y, width, height, minDepth, maxDepth);
 }
 
 void wgpuRenderPassEncoderWriteTimestamp(WGPURenderPassEncoder renderPassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
-    renderPassEncoder->renderPassEncoder.writeTimestamp(querySet->querySet, queryIndex);
+    renderPassEncoder->renderPassEncoder->writeTimestamp(querySet->querySet, queryIndex);
 }
 
 void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, const char* label)
 {
-    renderPassEncoder->renderPassEncoder.setLabel(label);
+    renderPassEncoder->renderPassEncoder->setLabel(label);
 }

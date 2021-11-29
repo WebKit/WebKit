@@ -26,6 +26,9 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
@@ -35,26 +38,37 @@ class ComputePassEncoder;
 class QuerySet;
 class RenderPassEncoder;
 
-class CommandEncoder {
+class CommandEncoder : public RefCounted<CommandEncoder> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    ComputePassEncoder beginComputePass(const WGPUComputePassDescriptor*);
-    RenderPassEncoder beginRenderPass(const WGPURenderPassDescriptor*);
+    static Ref<CommandEncoder> create()
+    {
+        return adoptRef(*new CommandEncoder());
+    }
+
+    ~CommandEncoder();
+
+    Ref<ComputePassEncoder> beginComputePass(const WGPUComputePassDescriptor*);
+    Ref<RenderPassEncoder> beginRenderPass(const WGPURenderPassDescriptor*);
     void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
     void copyBufferToTexture(const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
     void copyTextureToBuffer(const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize);
     void copyTextureToTexture(const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
     void fillBuffer(const Buffer& destination, uint64_t destinationOffset, uint64_t size);
-    CommandBuffer finish(const WGPUCommandBufferDescriptor*);
+    Ref<CommandBuffer> finish(const WGPUCommandBufferDescriptor*);
     void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
     void pushDebugGroup(const char* groupLabel);
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
     void setLabel(const char*);
+
+private:
+    CommandEncoder();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUCommandEncoderImpl {
-    WebGPU::CommandEncoder commandEncoder;
+    Ref<WebGPU::CommandEncoder> commandEncoder;
 };

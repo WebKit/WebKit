@@ -26,16 +26,30 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
-class BindGroup {
+class BindGroup : public RefCounted<BindGroup> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<BindGroup> create()
+    {
+        return adoptRef(*new BindGroup());
+    }
+
+    ~BindGroup();
+
     void setLabel(const char*);
+
+private:
+    BindGroup();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUBindGroupImpl {
-    WebGPU::BindGroup bindGroup;
+    Ref<WebGPU::BindGroup> bindGroup;
 };

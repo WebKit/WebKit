@@ -31,10 +31,14 @@
 
 namespace WebGPU {
 
-TextureView Texture::createView(const WGPUTextureViewDescriptor* descriptor)
+Texture::Texture() = default;
+
+Texture::~Texture() = default;
+
+Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return TextureView::create();
 }
 
 void Texture::destroy()
@@ -55,15 +59,15 @@ void wgpuTextureRelease(WGPUTexture texture)
 
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
-    return new WGPUTextureViewImpl { texture->texture.createView(descriptor) };
+    return new WGPUTextureViewImpl { texture->texture->createView(descriptor) };
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)
 {
-    texture->texture.destroy();
+    texture->texture->destroy();
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, const char* label)
 {
-    texture->texture.setLabel(label);
+    texture->texture->setLabel(label);
 }

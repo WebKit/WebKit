@@ -26,17 +26,31 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
-class QuerySet {
+class QuerySet : public RefCounted<QuerySet> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<QuerySet> create()
+    {
+        return adoptRef(*new QuerySet());
+    }
+
+    ~QuerySet();
+
     void destroy();
     void setLabel(const char*);
+
+private:
+    QuerySet();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUQuerySetImpl {
-    WebGPU::QuerySet querySet;
+    Ref<WebGPU::QuerySet> querySet;
 };

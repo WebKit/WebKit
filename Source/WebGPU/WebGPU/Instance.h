@@ -26,22 +26,36 @@
 #pragma once
 
 #import "WebGPU.h"
-#import <functional>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
 class Adapter;
 class Surface;
 
-class Instance {
+class Instance : public RefCounted<Instance> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    Surface createSurface(const WGPUSurfaceDescriptor*);
+    static Ref<Instance> create()
+    {
+        return adoptRef(*new Instance());
+    }
+
+    ~Instance();
+
+    Ref<Surface> createSurface(const WGPUSurfaceDescriptor*);
     void processEvents();
-    void requestAdapter(const WGPURequestAdapterOptions*, std::function<void(WGPURequestAdapterStatus, Adapter&&, const char*)>&& callback);
+    void requestAdapter(const WGPURequestAdapterOptions*, WTF::Function<void(WGPURequestAdapterStatus, Ref<Adapter>&&, const char*)>&& callback);
+
+private:
+    Instance();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUInstanceImpl {
-    WebGPU::Instance instance;
+    Ref<WebGPU::Instance> instance;
 };

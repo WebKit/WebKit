@@ -26,20 +26,34 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
 class TextureView;
 
-class Texture {
+class Texture : public RefCounted<Texture> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureView createView(const WGPUTextureViewDescriptor*);
+    static Ref<Texture> create()
+    {
+        return adoptRef(*new Texture());
+    }
+
+    ~Texture();
+
+    Ref<TextureView> createView(const WGPUTextureViewDescriptor*);
     void destroy();
     void setLabel(const char*);
+
+private:
+    Texture();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUTextureImpl {
-    WebGPU::Texture texture;
+    Ref<WebGPU::Texture> texture;
 };

@@ -26,16 +26,30 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
-class Sampler {
+class Sampler : public RefCounted<Sampler> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<Sampler> create()
+    {
+        return adoptRef(*new Sampler());
+    }
+
+    ~Sampler();
+
     void setLabel(const char*);
+
+private:
+    Sampler();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUSamplerImpl {
-    WebGPU::Sampler sampler;
+    Ref<WebGPU::Sampler> sampler;
 };

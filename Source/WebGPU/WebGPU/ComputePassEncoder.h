@@ -26,6 +26,9 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
@@ -34,8 +37,16 @@ class Buffer;
 class ComputePipeline;
 class QuerySet;
 
-class ComputePassEncoder {
+class ComputePassEncoder : public RefCounted<ComputePassEncoder> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<ComputePassEncoder> create()
+    {
+        return adoptRef(*new ComputePassEncoder());
+    }
+
+    ~ComputePassEncoder();
+
     void beginPipelineStatisticsQuery(const QuerySet&, uint32_t queryIndex);
     void dispatch(uint32_t x, uint32_t y, uint32_t z);
     void dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
@@ -48,10 +59,13 @@ public:
     void setPipeline(const ComputePipeline&);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
     void setLabel(const char*);
+
+private:
+    ComputePassEncoder();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUComputePassEncoderImpl {
-    WebGPU::ComputePassEncoder computePassEncoder;
+    Ref<WebGPU::ComputePassEncoder> computePassEncoder;
 };

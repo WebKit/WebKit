@@ -26,6 +26,9 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
@@ -34,13 +37,21 @@ class Buffer;
 class RenderBundle;
 class RenderPipeline;
 
-class RenderBundleEncoder {
+class RenderBundleEncoder : public RefCounted<RenderBundleEncoder> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<RenderBundleEncoder> create()
+    {
+        return adoptRef(*new RenderBundleEncoder());
+    }
+
+    ~RenderBundleEncoder();
+
     void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
     void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
-    RenderBundle finish(const WGPURenderBundleDescriptor*);
+    Ref<RenderBundle> finish(const WGPURenderBundleDescriptor*);
     void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
     void pushDebugGroup(const char* groupLabel);
@@ -49,10 +60,13 @@ public:
     void setPipeline(const RenderPipeline&);
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
     void setLabel(const char*);
+
+private:
+    RenderBundleEncoder();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPURenderBundleEncoderImpl {
-    WebGPU::RenderBundleEncoder renderBundleEncoder;
+    Ref<WebGPU::RenderBundleEncoder> renderBundleEncoder;
 };

@@ -26,18 +26,32 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
 class Adapter;
 
-class Surface {
+class Surface : public RefCounted<Surface> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<Surface> create()
+    {
+        return adoptRef(*new Surface());
+    }
+
+    ~Surface();
+
     WGPUTextureFormat getPreferredFormat(const Adapter&);
+
+private:
+    Surface();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUSurfaceImpl {
-    WebGPU::Surface surface;
+    Ref<WebGPU::Surface> surface;
 };

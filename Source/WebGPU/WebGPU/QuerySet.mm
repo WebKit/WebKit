@@ -30,6 +30,10 @@
 
 namespace WebGPU {
 
+QuerySet::QuerySet() = default;
+
+QuerySet::~QuerySet() = default;
+
 void QuerySet::destroy()
 {
 }
@@ -48,10 +52,10 @@ void wgpuQuerySetRelease(WGPUQuerySet querySet)
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 {
-    querySet->querySet.destroy();
+    querySet->querySet->destroy();
 }
 
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
 {
-    querySet->querySet.setLabel(label);
+    querySet->querySet->setLabel(label);
 }

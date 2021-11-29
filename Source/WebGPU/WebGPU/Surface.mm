@@ -31,6 +31,10 @@
 
 namespace WebGPU {
 
+Surface::Surface() = default;
+
+Surface::~Surface() = default;
+
 WGPUTextureFormat Surface::getPreferredFormat(const Adapter& adapter)
 {
     UNUSED_PARAM(adapter);
@@ -46,6 +50,6 @@ void wgpuSurfaceRelease(WGPUSurface surface)
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)
 {
-    return surface->surface.getPreferredFormat(adapter->adapter);
+    return surface->surface->getPreferredFormat(adapter->adapter);
 }
 

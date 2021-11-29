@@ -34,17 +34,21 @@
 
 namespace WebGPU {
 
-Surface Instance::createSurface(const WGPUSurfaceDescriptor* descriptor)
+Instance::Instance() = default;
+
+Instance::~Instance() = default;
+
+Ref<Surface> Instance::createSurface(const WGPUSurfaceDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return { };
+    return Surface::create();
 }
 
 void Instance::processEvents()
 {
 }
 
-void Instance::requestAdapter(const WGPURequestAdapterOptions* options, std::function<void(WGPURequestAdapterStatus, Adapter&&, const char*)>&& callback)
+void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Function<void(WGPURequestAdapterStatus, Ref<Adapter>&&, const char*)>&& callback)
 {
     UNUSED_PARAM(options);
     UNUSED_PARAM(callback);
@@ -370,17 +374,17 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
-    return new WGPUSurfaceImpl { instance->instance.createSurface(descriptor) };
+    return new WGPUSurfaceImpl { instance->instance->createSurface(descriptor) };
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)
 {
-    instance->instance.processEvents();
+    instance->instance->processEvents();
 }
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    return instance->instance.requestAdapter(options, [callback, userdata] (WGPURequestAdapterStatus status, WebGPU::Adapter&& adapter, const char* message) {
+    return instance->instance->requestAdapter(options, [callback, userdata] (WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, const char* message) {
         callback(status, new WGPUAdapterImpl { WTFMove(adapter) }, message, userdata);
     });
 }

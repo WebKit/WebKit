@@ -26,19 +26,33 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
 class TextureView;
 
-class SwapChain {
+class SwapChain : public RefCounted<SwapChain> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureView getCurrentTextureView();
+    static Ref<SwapChain> create()
+    {
+        return adoptRef(*new SwapChain());
+    }
+
+    ~SwapChain();
+
+    Ref<TextureView> getCurrentTextureView();
     void present();
+
+private:
+    SwapChain();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUSwapChainImpl {
-    WebGPU::SwapChain swapChain;
+    Ref<WebGPU::SwapChain> swapChain;
 };

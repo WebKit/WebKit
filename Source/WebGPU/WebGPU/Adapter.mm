@@ -32,6 +32,10 @@
 
 namespace WebGPU {
 
+Adapter::Adapter() = default;
+
+Adapter::~Adapter() = default;
+
 bool Adapter::getLimits(WGPUSupportedLimits* limits)
 {
     UNUSED_PARAM(limits);
@@ -55,7 +59,7 @@ WGPUFeatureName Adapter::getFeatureAtIndex(size_t index)
     return WGPUFeatureName_Undefined;
 }
 
-void Adapter::requestDevice(const WGPUDeviceDescriptor* descriptor, std::function<void(WGPURequestDeviceStatus, Device&&, const char*)>&& callback)
+void Adapter::requestDevice(const WGPUDeviceDescriptor* descriptor, WTF::Function<void(WGPURequestDeviceStatus, Ref<Device>&&, const char*)>&& callback)
 {
     UNUSED_PARAM(descriptor);
     UNUSED_PARAM(callback);
@@ -70,27 +74,27 @@ void wgpuAdapterRelease(WGPUAdapter adapter)
 
 bool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
 {
-    return adapter->adapter.getLimits(limits);
+    return adapter->adapter->getLimits(limits);
 }
 
 void wgpuAdapterGetProperties(WGPUAdapter adapter, WGPUAdapterProperties* properties)
 {
-    adapter->adapter.getProperties(properties);
+    adapter->adapter->getProperties(properties);
 }
 
 bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
-    return adapter->adapter.hasFeature(feature);
+    return adapter->adapter->hasFeature(feature);
 }
 
 WGPUFeatureName wgpuAdapterGetFeatureAtIndex(WGPUAdapter adapter, size_t index)
 {
-    return adapter->adapter.getFeatureAtIndex(index);
+    return adapter->adapter->getFeatureAtIndex(index);
 }
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
-    adapter->adapter.requestDevice(descriptor, [callback, userdata] (WGPURequestDeviceStatus status, WebGPU::Device&& device, const char* message) {
+    adapter->adapter->requestDevice(descriptor, [callback, userdata] (WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, const char* message) {
         callback(status, new WGPUDeviceImpl { WTFMove(device) }, message, userdata);
     });
 }

@@ -26,16 +26,30 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
-class ShaderModule {
+class ShaderModule : public RefCounted<ShaderModule> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<ShaderModule> create()
+    {
+        return adoptRef(*new ShaderModule());
+    }
+
+    ~ShaderModule();
+
     void setLabel(const char*);
+
+private:
+    ShaderModule();
 };
 
-}
+} // namespace WebGPU
 
 struct WGPUShaderModuleImpl {
-    WebGPU::ShaderModule shaderModule;
+    Ref<WebGPU::ShaderModule> shaderModule;
 };

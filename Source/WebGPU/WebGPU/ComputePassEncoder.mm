@@ -34,6 +34,10 @@
 
 namespace WebGPU {
 
+ComputePassEncoder::ComputePassEncoder() = default;
+
+ComputePassEncoder::~ComputePassEncoder() = default;
+
 void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)
 {
     UNUSED_PARAM(querySet);
@@ -108,60 +112,60 @@ void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 
 void wgpuComputePassEncoderBeginPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
-    computePassEncoder->computePassEncoder.beginPipelineStatisticsQuery(querySet->querySet, queryIndex);
+    computePassEncoder->computePassEncoder->beginPipelineStatisticsQuery(querySet->querySet, queryIndex);
 }
 
 void wgpuComputePassEncoderDispatch(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
-    computePassEncoder->computePassEncoder.dispatch(x, y, z);
+    computePassEncoder->computePassEncoder->dispatch(x, y, z);
 }
 
 void wgpuComputePassEncoderDispatchIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    computePassEncoder->computePassEncoder.dispatchIndirect(indirectBuffer->buffer, indirectOffset);
+    computePassEncoder->computePassEncoder->dispatchIndirect(indirectBuffer->buffer, indirectOffset);
 }
 
 void wgpuComputePassEncoderEndPass(WGPUComputePassEncoder computePassEncoder)
 {
-    computePassEncoder->computePassEncoder.endPass();
+    computePassEncoder->computePassEncoder->endPass();
 }
 
 void wgpuComputePassEncoderEndPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder)
 {
-    computePassEncoder->computePassEncoder.endPipelineStatisticsQuery();
+    computePassEncoder->computePassEncoder->endPipelineStatisticsQuery();
 }
 
 void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, const char* markerLabel)
 {
-    computePassEncoder->computePassEncoder.insertDebugMarker(markerLabel);
+    computePassEncoder->computePassEncoder->insertDebugMarker(markerLabel);
 }
 
 void wgpuComputePassEncoderPopDebugGroup(WGPUComputePassEncoder computePassEncoder)
 {
-    computePassEncoder->computePassEncoder.popDebugGroup();
+    computePassEncoder->computePassEncoder->popDebugGroup();
 }
 
 void wgpuComputePassEncoderPushDebugGroup(WGPUComputePassEncoder computePassEncoder, const char* groupLabel)
 {
-    computePassEncoder->computePassEncoder.pushDebugGroup(groupLabel);
+    computePassEncoder->computePassEncoder->pushDebugGroup(groupLabel);
 }
 
 void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncoder, uint32_t groupIndex, WGPUBindGroup group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    computePassEncoder->computePassEncoder.setBindGroup(groupIndex, group->bindGroup, dynamicOffsetCount, dynamicOffsets);
+    computePassEncoder->computePassEncoder->setBindGroup(groupIndex, group->bindGroup, dynamicOffsetCount, dynamicOffsets);
 }
 
 void wgpuComputePassEncoderSetPipeline(WGPUComputePassEncoder computePassEncoder, WGPUComputePipeline pipeline)
 {
-    computePassEncoder->computePassEncoder.setPipeline(pipeline->computePipeline);
+    computePassEncoder->computePassEncoder->setPipeline(pipeline->computePipeline);
 }
 
 void wgpuComputePassEncoderWriteTimestamp(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
-    computePassEncoder->computePassEncoder.writeTimestamp(querySet->querySet, queryIndex);
+    computePassEncoder->computePassEncoder->writeTimestamp(querySet->querySet, queryIndex);
 }
 
 void wgpuComputePassEncoderSetLabel(WGPUComputePassEncoder computePassEncoder, const char* label)
 {
-    computePassEncoder->computePassEncoder.setLabel(label);
+    computePassEncoder->computePassEncoder->setLabel(label);
 }
