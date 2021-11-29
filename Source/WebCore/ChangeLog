@@ -1,5 +1,29 @@
 2021-11-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r285531. rdar://problem/83381842
+
+    Fix macCatalyst build after r285509
+    https://bugs.webkit.org/show_bug.cgi?id=232863
+    
+    Unreviewed.
+    
+    
+    * Modules/speech/cocoa/SpeechRecognizerCocoa.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285531 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-09  Sihui Liu  <sihui_liu@apple.com>
+
+            Fix macCatalyst build after r285509
+            https://bugs.webkit.org/show_bug.cgi?id=232863
+
+            Unreviewed.
+
+            * Modules/speech/cocoa/SpeechRecognizerCocoa.mm:
+
+2021-11-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r285330. rdar://problem/85004449
 
     Nested run loops under MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange can cause hang when timeout fires
