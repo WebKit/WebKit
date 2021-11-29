@@ -44,6 +44,7 @@
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Ref.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
