@@ -1,3 +1,74 @@
+2021-11-16  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r285823. rdar://problem/85236459
+
+    `Cross-Origin-Embedder-Policy: require-corp` prevents loading of data URL images
+    https://bugs.webkit.org/show_bug.cgi?id=233131
+    <rdar://85236459>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    When doing an initial data URL <img> load, we properly wouldn't perform a cross-origin resource policy check.
+    This is per the Fetch specification that says to use a scheme fetch [1] when the request URL is a data URL.
+    When the protocol is data, the scheme fetch algorithm would return a response without performing an HTTP
+    Fetch. The HTTP check [2] is the algorithm that actually performs a cross-origin resource policy check, at
+    step 7.
+    
+    The issue with our implementation was that data URL <img> loads would perform a cross-origin resource policy
+    check in the case where the image is loaded from our memory cache, due to a check we had in
+    CachedResourceLoader::requestResource(). As a result, data URL <img> loads would fail when served from the
+    memory cache, when CORP is enforced. To address the issue and match the specification, we now disable this
+    CORP check when the request URL is a data URL.
+    
+    [1] https://fetch.spec.whatwg.org/#scheme-fetch
+    [2] https://fetch.spec.whatwg.org/#concept-http-fetch
+    
+    Test: http/wpt/html/cross-origin-embedder-policy/require-corp-data-url.html
+    
+    * loader/cache/CachedResourceLoader.cpp:
+    (WebCore::CachedResourceLoader::requestResource):
+    
+    LayoutTests:
+    
+    Add layout test coverage. This test is based on a reduce test case from Cameron McCormack.
+    
+    * http/wpt/html/cross-origin-embedder-policy/require-corp-data-url-expected.txt: Added.
+    * http/wpt/html/cross-origin-embedder-policy/require-corp-data-url.html: Added.
+    * http/wpt/html/cross-origin-embedder-policy/require-corp-data-url.html.headers: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285823 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-15  Chris Dumez  <cdumez@apple.com>
+
+            `Cross-Origin-Embedder-Policy: require-corp` prevents loading of data URL images
+            https://bugs.webkit.org/show_bug.cgi?id=233131
+            <rdar://85236459>
+
+            Reviewed by Geoffrey Garen.
+
+            When doing an initial data URL <img> load, we properly wouldn't perform a cross-origin resource policy check.
+            This is per the Fetch specification that says to use a scheme fetch [1] when the request URL is a data URL.
+            When the protocol is data, the scheme fetch algorithm would return a response without performing an HTTP
+            Fetch. The HTTP check [2] is the algorithm that actually performs a cross-origin resource policy check, at
+            step 7.
+
+            The issue with our implementation was that data URL <img> loads would perform a cross-origin resource policy
+            check in the case where the image is loaded from our memory cache, due to a check we had in
+            CachedResourceLoader::requestResource(). As a result, data URL <img> loads would fail when served from the
+            memory cache, when CORP is enforced. To address the issue and match the specification, we now disable this
+            CORP check when the request URL is a data URL.
+
+            [1] https://fetch.spec.whatwg.org/#scheme-fetch
+            [2] https://fetch.spec.whatwg.org/#concept-http-fetch
+
+            Test: http/wpt/html/cross-origin-embedder-policy/require-corp-data-url.html
+
+            * loader/cache/CachedResourceLoader.cpp:
+            (WebCore::CachedResourceLoader::requestResource):
+
 2021-11-15  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/83971417
