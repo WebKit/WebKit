@@ -1,3 +1,15 @@
+2021-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKContentView should allow -captureTextFromCamera: with a caret selection unless the sender is the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=233378
+        rdar://85478344
+
+        Reviewed by Tim Horton.
+
+        Adjust an API test to exercise the changes. See WebKit/ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Move m_incomingPolymorphicCalls out of CodeBlock::JITData

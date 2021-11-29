@@ -1,3 +1,24 @@
+2021-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKContentView should allow -captureTextFromCamera: with a caret selection unless the sender is the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=233378
+        rdar://85478344
+
+        Reviewed by Tim Horton.
+
+        Allow clients to query whether or not the "capture text from camera" action should be enabled on WKWebView in
+        contexts outside of the callout bar. Currently, WKContentView returns NO for this action when there is a non-
+        collapsed selection range, but this behavior is only intended for the callout bar; in the case where the action
+        is (for instance) triggered by a button in the web view chrome, it doesn't make sense to only enable it when the
+        selection is a caret.
+
+        Additionally, adjust the check to use focused element information instead of editor state, such that WebKit
+        clients can easily query this API (`-canPerformAction:withSender:`) inside of input delegate callbacks when
+        beginning an input session to know whether or not "capture text from camera" should be allowed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2021-11-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Unify speech synthesizer platform usage for Mac/iOS

@@ -30,6 +30,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestInputDelegate.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
@@ -115,23 +116,35 @@ TEST(WebKit, CaptureTextFromCamera)
     gCanPerformActionWithSenderResult = YES;
     InstanceMethodSwizzler swizzler { UIResponder.class, @selector(canPerformAction:withSender:), reinterpret_cast<IMP>(canPerformActionWithSender) };
 
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setInputDelegate:inputDelegate.get()];
     auto contentView = [webView textInputContentView];
 
-    [webView synchronouslyLoadHTMLString:@"<input value='foo' autofocus>"];
+    [webView synchronouslyLoadHTMLString:@"<input value='foo' autofocus><input value='bar' readonly>"];
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ([webView targetForAction:@selector(captureTextFromCamera:) withSender:nil], contentView);
     EXPECT_TRUE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
 
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
-    EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+    EXPECT_TRUE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+    EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:UIMenuController.sharedMenuController]);
 
     [webView collapseToEnd];
     [webView waitForNextPresentationUpdate];
     EXPECT_TRUE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
 
     gCanPerformActionWithSenderResult = NO;
+    EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+
+    gCanPerformActionWithSenderResult = YES;
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('input[readonly]').focus()"];
+    [webView waitForNextPresentationUpdate];
     EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
 }
 

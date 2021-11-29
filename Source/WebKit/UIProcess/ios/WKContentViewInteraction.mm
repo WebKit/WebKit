@@ -3939,9 +3939,14 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (action == @selector(captureTextFromCamera:) && (!editorState.isContentEditable || editorState.selectionIsRange))
-        return NO;
-#endif
+    if (action == @selector(captureTextFromCamera:)) {
+        if (!mayContainSelectableText(_focusedElementInformation.elementType) || _focusedElementInformation.isReadOnly)
+            return NO;
+
+        if ([sender isKindOfClass:UIMenuController.class] && editorState.selectionIsRange)
+            return NO;
+    }
+#endif // ENABLE(IMAGE_ANALYSIS)
 
     return [super canPerformAction:action withSender:sender];
 }
