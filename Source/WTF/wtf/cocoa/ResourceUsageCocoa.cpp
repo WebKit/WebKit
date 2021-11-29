@@ -72,28 +72,32 @@ void logFootprintComparison(const std::array<TagInfo, 256>& before, const std::a
 const char* displayNameForVMTag(unsigned tag)
 {
     switch (tag) {
-    case VM_MEMORY_IOKIT: return "IOKit";
-    case VM_MEMORY_LAYERKIT: return "CoreAnimation";
-    case VM_MEMORY_IMAGEIO: return "ImageIO";
     case VM_MEMORY_CGIMAGE: return "CG image";
+    case VM_MEMORY_COREGRAPHICS_DATA: return "CG raster data";
+    case VM_MEMORY_CORESERVICES: return "CoreServices";
+    case VM_MEMORY_DYLIB: return "dylib";
+    case VM_MEMORY_FOUNDATION: return "Foundation";
+    case VM_MEMORY_IMAGEIO: return "ImageIO";
+    case VM_MEMORY_IOACCELERATOR: return "IOAccelerator";
+    case VM_MEMORY_IOSURFACE: return "IOSurface";
+    case VM_MEMORY_IOKIT: return "IOKit";
     case VM_MEMORY_JAVASCRIPT_CORE: return "Gigacage";
     case VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR: return "JSC JIT";
     case VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE: return "IsoHeap";
+    case VM_MEMORY_LAYERKIT: return "CoreAnimation";
+    case VM_MEMORY_LIBDISPATCH: return "libdispatch";
     case VM_MEMORY_MALLOC: return "malloc";
     case VM_MEMORY_MALLOC_HUGE: return "malloc (huge)";
     case VM_MEMORY_MALLOC_LARGE: return "malloc (large)";
+    case VM_MEMORY_MALLOC_MEDIUM: return "malloc (medium)";
+    case VM_MEMORY_MALLOC_NANO: return "malloc (nano)";
     case VM_MEMORY_MALLOC_SMALL: return "malloc (small)";
     case VM_MEMORY_MALLOC_TINY: return "malloc (tiny)";
-    case VM_MEMORY_MALLOC_NANO: return "malloc (nano)";
-    case VM_MEMORY_TCMALLOC: return "bmalloc";
-    case VM_MEMORY_FOUNDATION: return "Foundation";
-    case VM_MEMORY_STACK: return "Stack";
-    case VM_MEMORY_SQLITE: return "SQLite";
-    case VM_MEMORY_UNSHARED_PMAP: return "pmap (unshared)";
-    case VM_MEMORY_DYLIB: return "dylib";
-    case VM_MEMORY_CORESERVICES: return "CoreServices";
     case VM_MEMORY_OS_ALLOC_ONCE: return "os_alloc_once";
-    case VM_MEMORY_LIBDISPATCH: return "libdispatch";
+    case VM_MEMORY_SQLITE: return "SQLite";
+    case VM_MEMORY_STACK: return "Stack";
+    case VM_MEMORY_TCMALLOC: return "bmalloc";
+    case VM_MEMORY_UNSHARED_PMAP: return "pmap (unshared)";
     default: return nullptr;
     }
 }
@@ -115,6 +119,8 @@ std::array<TagInfo, 256> pagesPerVMTag()
         if (kr != KERN_SUCCESS)
             break;
 
+        tags[info.user_tag].regionCount++;
+
         tags[info.user_tag].reserved += size / vmPageSize();
 
         if (purgeableState == VM_PURGABLE_VOLATILE) {
@@ -127,12 +133,13 @@ std::array<TagInfo, 256> pagesPerVMTag()
             continue;
         }
 
+        // This calculates the footprint of a VM region in a manner similar to what footprint(1) does in the legacy --vmObjectDirty mode.
         bool anonymous = !info.external_pager;
         if (anonymous) {
-            tags[info.user_tag].dirty += info.pages_resident - info.pages_reusable;
+            tags[info.user_tag].dirty += info.pages_resident - info.pages_reusable + info.pages_swapped_out;
             tags[info.user_tag].reclaimable += info.pages_reusable;
         } else
-            tags[info.user_tag].dirty += info.pages_dirtied;
+            tags[info.user_tag].dirty += info.pages_dirtied + info.pages_swapped_out;
     }
 
     return tags;
