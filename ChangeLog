@@ -1,3 +1,26 @@
+2021-11-29  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Add runtime flag for Layer-based SVG engine (LBSE)
+        https://bugs.webkit.org/show_bug.cgi?id=233211
+        <rdar://problem/85711597>
+
+        Reviewed by Sam Weinig.
+
+        Add build option ('build-webkit --(no-)layer-based-svg-engine') and
+        runtime flag ('LayerBasedSVGEngineEnabled' in LBSE enabled builds) to
+        switch between the SVG engines.
+
+        The actual SVG code changes will follow in subsequent patches,
+        this just adds the infrastructure for LBSE.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-11-28  Matt Woodrow  <matt.woodrow@gmail.com>
 
         Add mattwoodrow to contributors.json

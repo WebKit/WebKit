@@ -1,3 +1,20 @@
+2021-11-29  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Add runtime flag for Layer-based SVG engine (LBSE)
+        https://bugs.webkit.org/show_bug.cgi?id=233211
+        <rdar://problem/85711597>
+
+        Reviewed by Sam Weinig.
+
+        Add build option ('build-webkit --(no-)layer-based-svg-engine') and
+        runtime flag ('LayerBasedSVGEngineEnabled' in LBSE enabled builds) to
+        switch between the SVG engines.
+
+        The actual SVG code changes will follow in subsequent patches,
+        this just adds the infrastructure for LBSE.
+
+        * Scripts/webkitperl/FeatureList.pm: Add mapping from 'layer-based-svg-engine' -> 'ENABLE_LAYER_BASED_SVG_ENGINE'.
+
 2021-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Signal state-changed:selected is not emitted for listbox elements when building with ATSPI

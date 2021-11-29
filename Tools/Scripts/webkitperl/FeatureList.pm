@@ -106,6 +106,7 @@ my (
     $iosGestureEventsSupport,
     $iosTouchEventsSupport,
     $jitSupport,
+    $layerBasedSVGEngineSupport,
     $layoutFormattingContextSupport,
     $legacyCustomProtocolManagerSupport,
     $legacyEncryptedMediaSupport,
@@ -350,6 +351,9 @@ my @features = (
 
     { option => "jit", desc => "Toggle JustInTime JavaScript support",
       define => "ENABLE_JIT", value => \$jitSupport },
+
+    { option => "layer-based-svg-engine", desc => "Toggle Layer Based SVG Engine support",
+      define => "ENABLE_LAYER_BASED_SVG_ENGINE", value => \$layerBasedSVGEngineSupport },
 
     { option => "layout-formatting-context", desc => "Toggle Layout Formatting Context support",
       define => "ENABLE_LAYOUT_FORMATTING_CONTEXT", value => \$layoutFormattingContextSupport },
