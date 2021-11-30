@@ -25,11 +25,20 @@
 #pragma once
 
 #include "SelectorFilter.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore::Style {
 
+using HasPseudoClassCacheKey = std::pair<const CSSSelector*, const Element*>;
+
 struct SelectorMatchingState {
     SelectorFilter selectorFilter;
+    HashSet<HasPseudoClassCacheKey> hasPseudoClassDescendantFailureCache;
 };
+
+inline HasPseudoClassCacheKey makeHasPseudoClassCacheKey(const CSSSelector& selector, const Element& element)
+{
+    return { &selector, &element };
+}
 
 }

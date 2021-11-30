@@ -441,7 +441,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.scrollbarState = m_pseudoElementRequest.scrollbarState;
     context.nameForHightlightPseudoElement = m_pseudoElementRequest.highlightName;
     context.styleScopeOrdinal = styleScopeOrdinal;
-
+    context.selectorMatchingState = m_selectorMatchingState;
+    
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)
     if (compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
