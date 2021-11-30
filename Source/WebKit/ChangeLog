@@ -1,3 +1,18 @@
+2021-11-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGL should have ANGLE-specific subclass
+        https://bugs.webkit.org/show_bug.cgi?id=233522
+
+        Reviewed by Antti Koivisto.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::paintPixelBufferToImageBuffer):
+        Function paintToCanvas was moved to GraphicsContextGL.
+
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp:
+        (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+        Use static functions from GraphicsContextGLANGLE.
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         Preload navigation request if the service worker is not immediately ready to handle the navigation request fetch event

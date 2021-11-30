@@ -177,7 +177,7 @@ PlatformGraphicsContextGLConfig GCGLANGLELayer::ANGLEContext::platformConfig() c
     return m_config;
 }
 
-GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLOpenGL& context)
+GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLANGLE& context)
     : GCGLLayer(context)
     , m_angleContext(ANGLEContext::createContext())
 {

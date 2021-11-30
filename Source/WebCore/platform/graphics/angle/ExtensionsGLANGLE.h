@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-class GraphicsContextGLOpenGL;
+class GraphicsContextGLANGLE;
 
 class ExtensionsGLANGLE : public ExtensionsGL {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // This class only needs to be instantiated by GraphicsContextGLOpenGL implementations.
-    explicit ExtensionsGLANGLE(GraphicsContextGLOpenGL*);
+    // This class only needs to be instantiated by GraphicsContextGLANGLE implementations.
+    explicit ExtensionsGLANGLE(GraphicsContextGLANGLE*);
     virtual ~ExtensionsGLANGLE();
 
     // ExtensionsGL methods.
@@ -64,8 +64,8 @@ private:
     HashSet<String> m_requestableExtensions;
     HashSet<String> m_enabledExtensions;
 
-    // Weak pointer back to GraphicsContextGLOpenGL.
-    GraphicsContextGLOpenGL* m_context;
+    // Weak pointer back to GraphicsContextGLANGLE.
+    GraphicsContextGLANGLE* m_context;
 
     // Whether the WebGL 1.0-related floating-point renderability extensions have been enabled.
     bool m_webglColorBufferFloatRGB { false };

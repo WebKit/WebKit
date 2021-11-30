@@ -30,7 +30,7 @@
 
 #include "RemoteGraphicsContextGL.h"
 #include "StreamConnectionWorkQueue.h"
-#include <WebCore/GraphicsContextGL.h>
+#include <WebCore/GraphicsContextGLANGLE.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 
@@ -56,7 +56,7 @@ void ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources()
     if (s_requests)
         return;
     remoteGraphicsContextGLStreamWorkQueue().dispatch([] {
-        WebCore::GraphicsContextGLOpenGL::releaseThreadResources(WebCore::GraphicsContextGLOpenGL::ReleaseThreadResourceBehavior::TerminateAndReleaseThreadResources);
+        WebCore::GraphicsContextGLANGLE::releaseThreadResources(WebCore::GraphicsContextGLANGLE::ReleaseThreadResourceBehavior::TerminateAndReleaseThreadResources);
     });
 }
 

@@ -36,15 +36,25 @@ namespace WebCore {
 
 const unsigned MaxContexts = 16;
 
+#if USE(ANGLE)
+class GraphicsContextGLANGLE;
+#else
 class GraphicsContextGLOpenGL;
+#endif
 
 class GraphicsContextGLOpenGLManager {
     friend NeverDestroyed<GraphicsContextGLOpenGLManager>;
 public:
+#if USE(ANGLE)
+    using GraphicsContextGLType = GraphicsContextGLANGLE;
+#else
+    using GraphicsContextGLType = GraphicsContextGLOpenGL;
+#endif
+
     static GraphicsContextGLOpenGLManager& sharedManager();
     
-    void addContext(GraphicsContextGLOpenGL*);
-    void removeContext(GraphicsContextGLOpenGL*);
+    void addContext(GraphicsContextGLType*);
+    void removeContext(GraphicsContextGLType*);
     
     void recycleContextIfNecessary();
     bool hasTooManyContexts() const { return m_contexts.size() >= MaxContexts; }
@@ -59,7 +69,7 @@ public:
 private:
     GraphicsContextGLOpenGLManager() = default;
 
-    Vector<GraphicsContextGLOpenGL*> m_contexts;
+    Vector<GraphicsContextGLType*> m_contexts;
 };
 
 }

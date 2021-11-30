@@ -48,7 +48,7 @@
 #endif
 
 #if ENABLE(VIDEO)
-#include "GraphicsContextGLCVANGLE.h"
+#include "GraphicsContextGLCVCocoa.h"
 #include "MediaPlayerPrivate.h"
 #endif
 
@@ -70,7 +70,7 @@ bool platformIsANGLEAvailable()
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
 // and it always contains nullptr and nullptr is always written to it.
-static GraphicsContextGLOpenGL* currentContext;
+static GraphicsContextGLANGLE* currentContext;
 
 static bool isCurrentContextPredictable()
 {
@@ -147,7 +147,7 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     }
 
     LOG(WebGL, "Attempting to use ANGLE's %s backend.", attrs.useMetal ? "Metal" : "OpenGL");
-    EGLNativeDisplayType nativeDisplay = GraphicsContextGLOpenGL::defaultDisplay;
+    EGLNativeDisplayType nativeDisplay = GraphicsContextGLANGLE::defaultDisplay;
     if (attrs.useMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
@@ -157,11 +157,11 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         if (powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower) {
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_LOW_POWER_ANGLE);
-            nativeDisplay = GraphicsContextGLOpenGL::lowPowerDisplay;
+            nativeDisplay = GraphicsContextGLANGLE::lowPowerDisplay;
         } else if (powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance) {
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
-            nativeDisplay = GraphicsContextGLOpenGL::highPerformanceDisplay;
+            nativeDisplay = GraphicsContextGLANGLE::highPerformanceDisplay;
         }
     }
     displayAttributes.append(EGL_NONE);
@@ -215,13 +215,13 @@ void GraphicsContextGLCocoa::markDisplayBufferInUse()
 }
 
 GraphicsContextGLCocoa::GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&& attributes)
-    : GraphicsContextGLOpenGL(WTFMove(attributes))
+    : GraphicsContextGLANGLE(WTFMove(attributes))
 {
 }
 
 // FIXME: Below is functionality that should be moved to GraphicsContextGLCocoa to simplify the base class.
 
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs)
+GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs)
     : GraphicsContextGL(attrs)
 {
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
@@ -356,7 +356,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         extensions.ensureEnabled(extension);
     }
     if (contextAttributes().useMetal) {
-        // GraphicsContextGLOpenGL uses sync objects to throttle display on Metal implementations.
+        // GraphicsContextGLANGLE uses sync objects to throttle display on Metal implementations.
         // OpenGL sync objects are not signaling upon completion on Catalina-era drivers, so
         // OpenGL cannot use this method of throttling. OpenGL drivers typically implement
         // some sort of internal throttling.
@@ -410,10 +410,10 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
     gl::ClearColor(0, 0, 0, 0);
 
-    LOG(WebGL, "Created a GraphicsContextGLOpenGL (%p).", this);
+    LOG(WebGL, "Created a GraphicsContextGLANGLE (%p).", this);
 }
 
-GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
+GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
     GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     if (makeContextCurrent()) {
@@ -454,7 +454,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     }
     ASSERT(currentContext != this);
     m_drawingBufferTextureTarget = -1;
-    LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
+    LOG(WebGL, "Destroyed a GraphicsContextGLANGLE (%p).", this);
 }
 
 bool GraphicsContextGLCocoa::isValid() const
@@ -462,12 +462,12 @@ bool GraphicsContextGLCocoa::isValid() const
     return m_texture;
 }
 
-PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
+PlatformLayer* GraphicsContextGLCocoa::platformLayer() const
 {
     return nullptr;
 }
 
-bool GraphicsContextGLOpenGL::makeContextCurrent()
+bool GraphicsContextGLANGLE::makeContextCurrent()
 {
     if (!m_contextObj)
         return false;
@@ -485,7 +485,7 @@ bool GraphicsContextGLOpenGL::makeContextCurrent()
     return true;
 }
 
-void GraphicsContextGLOpenGL::checkGPUStatus()
+void GraphicsContextGLANGLE::checkGPUStatus()
 {
     if (m_failNextStatusCheck) {
         LOG(WebGL, "Pretending the GPU has reset (%p). Lose the context.", this);
@@ -506,7 +506,7 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
     restartStatus = 0;
 }
 
-void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
+void GraphicsContextGLANGLE::setContextVisibility(bool isVisible)
 {
 #if PLATFORM(MAC)
     if (!m_switchesGPUOnDisplayReconfiguration)
@@ -520,7 +520,7 @@ void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
 #endif
 }
 
-void GraphicsContextGLOpenGL::displayWasReconfigured()
+void GraphicsContextGLANGLE::displayWasReconfigured()
 {
 #if PLATFORM(MAC)
     if (m_switchesGPUOnDisplayReconfiguration)
@@ -529,7 +529,7 @@ void GraphicsContextGLOpenGL::displayWasReconfigured()
     dispatchContextChangedNotification();
 }
 
-bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
+bool GraphicsContextGLANGLE::reshapeDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
     // Reset the current backbuffer now before allocating a new one in order to slightly reduce memory pressure.
@@ -547,7 +547,7 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
     return allocateAndBindDisplayBufferBacking();
 }
 
-bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
+bool GraphicsContextGLANGLE::allocateAndBindDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
     auto backing = IOSurface::create(getInternalFramebufferSize(), DestinationColorSpace::SRGB());
@@ -576,7 +576,7 @@ bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
     return bindDisplayBufferBacking(WTFMove(backing), pbuffer);
 }
 
-bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer)
+bool GraphicsContextGLANGLE::bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer)
 {
     GCGLenum textureTarget = drawingBufferTextureTarget();
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
@@ -590,7 +590,7 @@ bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface
     return true;
 }
 
-bool GraphicsContextGLOpenGL::makeCurrent(PlatformGraphicsContextGLDisplay display, PlatformGraphicsContextGL context)
+bool GraphicsContextGLANGLE::makeCurrent(PlatformGraphicsContextGLDisplay display, PlatformGraphicsContextGL context)
 {
     currentContext = nullptr;
     return EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context);
@@ -598,7 +598,7 @@ bool GraphicsContextGLOpenGL::makeCurrent(PlatformGraphicsContextGLDisplay displ
 
 void* GraphicsContextGLCocoa::createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage usage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
 {
-    if (target != GraphicsContextGLOpenGL::drawingBufferTextureTarget()) {
+    if (target != GraphicsContextGLANGLE::drawingBufferTextureTarget()) {
         LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
         return nullptr;
     }
@@ -667,24 +667,7 @@ void GraphicsContextGLCocoa::detachIOSurfaceFromSharedTexture(void* handle)
 }
 #endif
 
-bool GraphicsContextGLOpenGL::isGLES2Compliant() const
-{
-    return m_isForWebGL2;
-}
-
-void GraphicsContextGLOpenGL::simulateEventForTesting(SimulatedEventForTesting event)
-{
-    if (event == SimulatedEventForTesting::ContextChange) {
-        GraphicsContextGLOpenGLManager::sharedManager().displayWasReconfigured();
-        return;
-    }
-    if (event == SimulatedEventForTesting::GPUStatusFailure) {
-        m_failNextStatusCheck = true;
-        return;
-    }
-}
-
-void GraphicsContextGLOpenGL::prepareForDisplay()
+void GraphicsContextGLANGLE::prepareForDisplay()
 {
     if (m_layerComposited)
         return;
@@ -724,15 +707,15 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 
 
 #if ENABLE(VIDEO)
-GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
+GraphicsContextGLCV* GraphicsContextGLCocoa::asCV()
 {
     if (!m_cv)
-        m_cv = GraphicsContextGLCVANGLE::create(*this);
+        m_cv = GraphicsContextGLCVCocoa::create(*this);
     return m_cv.get();
 }
 #endif
 
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
+std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
 {
     auto& displayBuffer = m_swapChain.displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)
@@ -764,7 +747,7 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 }
 
 #if ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
+RefPtr<MediaSample> GraphicsContextGLCocoa::paintCompositedResultsToMediaSample()
 {
     auto &displayBuffer = m_swapChain.displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)
@@ -779,7 +762,7 @@ RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample
 }
 #endif
 
-void GraphicsContextGLOpenGL::platformReleaseThreadResources()
+void GraphicsContextGLANGLE::platformReleaseThreadResources()
 {
     currentContext = nullptr;
 }
@@ -801,12 +784,12 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
 }
 #endif
 
-PlatformGraphicsContextGLDisplay GraphicsContextGLOpenGL::platformDisplay() const
+PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 {
     return m_displayObj;
 }
 
-PlatformGraphicsContextGLConfig GraphicsContextGLOpenGL::platformConfig() const
+PlatformGraphicsContextGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
     return m_configObj;
 }

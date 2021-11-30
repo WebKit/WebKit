@@ -1894,7 +1894,7 @@ if (ENABLE_WEBGL)
             platform/graphics/ANGLEWebKitBridge.cpp
 
             platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
-            platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
+            platform/graphics/opengl/GraphicsContextGLOpenGL.cpp
             platform/graphics/opengl/TemporaryOpenGLSetting.cpp
         )
 

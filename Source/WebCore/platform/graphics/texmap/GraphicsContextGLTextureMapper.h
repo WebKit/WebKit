@@ -27,18 +27,34 @@
 
 #if ENABLE(WEBGL)
 
+#if USE(ANGLE)
+#include "GraphicsContextGLANGLE.h"
+#else
 #include "GraphicsContextGLOpenGL.h"
+#endif
 
 namespace WebCore {
 
-class WEBCORE_EXPORT GraphicsContextGLTextureMapper : public GraphicsContextGLOpenGL {
+#if USE(ANGLE)
+using GraphicsContextGLTextureMapperBase = GraphicsContextGLANGLE;
+#else
+using GraphicsContextGLTextureMapperBase = GraphicsContextGLOpenGL;
+#endif
+
+class WEBCORE_EXPORT GraphicsContextGLTextureMapper : public GraphicsContextGLTextureMapperBase {
 public:
     static RefPtr<GraphicsContextGLTextureMapper> create(WebCore::GraphicsContextGLAttributes&&);
     ~GraphicsContextGLTextureMapper();
 
+    // GraphicsContextGLTextureMapperBase overrides.
+    PlatformLayer* platformLayer() const final;
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
 #endif
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
+#endif
+
 protected:
     GraphicsContextGLTextureMapper(WebCore::GraphicsContextGLAttributes&&);
 };

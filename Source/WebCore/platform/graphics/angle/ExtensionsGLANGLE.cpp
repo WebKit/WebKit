@@ -29,11 +29,11 @@
 #include "ExtensionsGLANGLE.h"
 
 #include "ANGLEHeaders.h"
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGLANGLE.h"
 
 namespace WebCore {
 
-ExtensionsGLANGLE::ExtensionsGLANGLE(GraphicsContextGLOpenGL* context)
+ExtensionsGLANGLE::ExtensionsGLANGLE(GraphicsContextGLANGLE* context)
     : m_initializedAvailableExtensions(false)
     , m_context(context)
 {

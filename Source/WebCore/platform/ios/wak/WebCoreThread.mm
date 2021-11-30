@@ -30,7 +30,7 @@
 
 #import "CommonVM.h"
 #import "FloatingPointEnvironment.h"
-#import "GraphicsContextGLOpenGL.h"
+#import "GraphicsContextGLANGLE.h"
 #import "Logging.h"
 #import "RuntimeApplicationChecks.h"
 #import "ThreadGlobalData.h"
@@ -77,13 +77,13 @@ void ReleaseWebThreadGlobalState()
     // In single-threaded environments we do not need to unset the context, as there should not be access from
     // multiple threads.
     ASSERT(WebThreadIsEnabled());
-    using ReleaseThreadResourceBehavior = WebCore::GraphicsContextGLOpenGL::ReleaseThreadResourceBehavior;
+    using ReleaseThreadResourceBehavior = WebCore::GraphicsContextGLANGLE::ReleaseThreadResourceBehavior;
     // For web thread, just release the context as we know we will see calls to it again.
     // For non-web threads, e.g. third-party client threads, we don't know if we ever see another call from the
     // thread, so we also release the thread resources.
     ReleaseThreadResourceBehavior releaseBehavior =
         WebThreadIsCurrent() ? ReleaseThreadResourceBehavior::ReleaseCurrentContext : ReleaseThreadResourceBehavior::ReleaseThreadResources;
-    WebCore::GraphicsContextGLOpenGL::releaseThreadResources(releaseBehavior);
+    WebCore::GraphicsContextGLANGLE::releaseThreadResources(releaseBehavior);
 }
 
 }

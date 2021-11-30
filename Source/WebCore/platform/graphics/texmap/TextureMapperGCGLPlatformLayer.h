@@ -21,7 +21,7 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGLANGLE.h"
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
@@ -34,7 +34,7 @@ class TextureMapperPlatformLayerProxy;
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperGCGLPlatformLayer(GraphicsContextGLOpenGL&);
+    TextureMapperGCGLPlatformLayer(GraphicsContextGLANGLE&);
     virtual ~TextureMapperGCGLPlatformLayer();
 
     bool makeContextCurrent();
@@ -50,7 +50,7 @@ public:
 #endif
 
 private:
-    GraphicsContextGLOpenGL& m_context;
+    GraphicsContextGLANGLE& m_context;
     std::unique_ptr<ANGLEContext> m_glContext;
 
 #if USE(COORDINATED_GRAPHICS)

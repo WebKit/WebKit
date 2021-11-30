@@ -47,7 +47,7 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context)
+GCGLLayer::GCGLLayer(GraphicsContextGLType& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {

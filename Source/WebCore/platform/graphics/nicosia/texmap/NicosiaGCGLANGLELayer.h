@@ -76,7 +76,7 @@ public:
         EGLSurface m_surface { nullptr };
     };
 
-    GCGLANGLELayer(WebCore::GraphicsContextGLOpenGL&);
+    GCGLANGLELayer(WebCore::GraphicsContextGLANGLE&);
     virtual ~GCGLANGLELayer();
 
     bool makeContextCurrent() override;

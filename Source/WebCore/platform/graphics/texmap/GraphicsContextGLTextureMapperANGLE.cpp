@@ -31,6 +31,9 @@
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
+#include "ExtensionsGLANGLE.h"
+#include "GraphicsContextGLOpenGLManager.h"
+#include "PixelBuffer.h"
 
 #if USE(NICOSIA)
 #include "NicosiaGCGLANGLELayer.h"
@@ -40,7 +43,105 @@
 
 namespace WebCore {
 
-PlatformGraphicsContextGLDisplay GraphicsContextGLOpenGL::platformDisplay() const
+GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attributes)
+    : GraphicsContextGL(attributes)
+{
+#if ENABLE(WEBGL2)
+    m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+#endif
+#if USE(NICOSIA)
+    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
+#else
+    m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
+#endif
+    bool success = makeContextCurrent();
+    ASSERT_UNUSED(success, success);
+
+    validateAttributes();
+    attributes = contextAttributes(); // They may have changed during validation.
+
+    GLenum textureTarget = drawingBufferTextureTarget();
+    // Create a texture to render into.
+    gl::GenTextures(1, &m_texture);
+    gl::BindTexture(textureTarget, m_texture);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::BindTexture(textureTarget, 0);
+
+    // Create an FBO.
+    gl::GenFramebuffers(1, &m_fbo);
+    gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+#if USE(COORDINATED_GRAPHICS)
+    gl::GenTextures(1, &m_compositorTexture);
+    gl::BindTexture(textureTarget, m_compositorTexture);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    gl::GenTextures(1, &m_intermediateTexture);
+    gl::BindTexture(textureTarget, m_intermediateTexture);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    gl::BindTexture(textureTarget, 0);
+#endif
+
+    // Create a multisample FBO.
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attributes.antialias) {
+        gl::GenFramebuffers(1, &m_multisampleFBO);
+        gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
+        gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
+        if (attributes.stencil || attributes.depth)
+            gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+    } else {
+        // Bind canvas FBO.
+        gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
+        if (attributes.stencil || attributes.depth)
+            gl::GenRenderbuffers(1, &m_depthStencilBuffer);
+    }
+
+    gl::ClearColor(0, 0, 0, 0);
+}
+
+GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
+{
+    GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
+    bool success = makeContextCurrent();
+    ASSERT_UNUSED(success, success);
+    if (m_texture)
+        gl::DeleteTextures(1, &m_texture);
+#if USE(COORDINATED_GRAPHICS)
+    if (m_compositorTexture)
+        gl::DeleteTextures(1, &m_compositorTexture);
+#endif
+
+    auto attributes = contextAttributes();
+
+    if (attributes.antialias) {
+        gl::DeleteRenderbuffers(1, &m_multisampleColorBuffer);
+        if (attributes.stencil || attributes.depth)
+            gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        gl::DeleteFramebuffers(1, &m_multisampleFBO);
+    } else if (attributes.stencil || attributes.depth) {
+        if (m_depthStencilBuffer)
+            gl::DeleteRenderbuffers(1, &m_depthStencilBuffer);
+    }
+    gl::DeleteFramebuffers(1, &m_fbo);
+#if USE(COORDINATED_GRAPHICS)
+    gl::DeleteTextures(1, &m_intermediateTexture);
+#endif
+}
+
+PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer->platformDisplay();
@@ -49,7 +150,7 @@ PlatformGraphicsContextGLDisplay GraphicsContextGLOpenGL::platformDisplay() cons
 #endif
 }
 
-PlatformGraphicsContextGLConfig GraphicsContextGLOpenGL::platformConfig() const
+PlatformGraphicsContextGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer->platformConfig();
@@ -58,7 +159,28 @@ PlatformGraphicsContextGLConfig GraphicsContextGLOpenGL::platformConfig() const
 #endif
 }
 
-bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
+bool GraphicsContextGLANGLE::makeContextCurrent()
+{
+#if USE(NICOSIA)
+    return m_nicosiaLayer->makeContextCurrent();
+#else
+    return m_texmapLayer->makeContextCurrent();
+#endif
+}
+
+void GraphicsContextGLANGLE::checkGPUStatus()
+{
+}
+
+void GraphicsContextGLANGLE::setContextVisibility(bool)
+{
+}
+
+void GraphicsContextGLANGLE::prepareForDisplay()
+{
+}
+
+bool GraphicsContextGLANGLE::reshapeDisplayBufferBacking()
 {
     auto attrs = contextAttributes();
     const auto size = getInternalFramebufferSize();
@@ -82,8 +204,13 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
     return true;
 }
 
-void GraphicsContextGLOpenGL::platformReleaseThreadResources()
+void GraphicsContextGLANGLE::platformReleaseThreadResources()
 {
+}
+
+std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
+{
+    return readRenderingResults();
 }
 
 }

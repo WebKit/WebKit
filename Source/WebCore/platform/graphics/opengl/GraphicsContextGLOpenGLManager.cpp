@@ -28,9 +28,13 @@
 #if ENABLE(WEBGL)
 #include "GraphicsContextGLOpenGLManager.h"
 
-#include "GraphicsContextGLOpenGL.h"
 #include "Logging.h"
 
+#if USE(ANGLE)
+#include "GraphicsContextGLANGLE.h"
+#else
+#include "GraphicsContextGLOpenGL.h"
+#endif
 namespace WebCore {
 
 GraphicsContextGLOpenGLManager& GraphicsContextGLOpenGLManager::sharedManager()
@@ -56,7 +60,7 @@ void GraphicsContextGLOpenGLManager::displayWasReconfigured()
 }
 #endif
 
-void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context)
+void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLType* context)
 {
     ASSERT(context);
     if (!context)
@@ -66,7 +70,7 @@ void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context
     m_contexts.append(context);
 }
 
-void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLOpenGL* context)
+void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLType* context)
 {
     if (!m_contexts.contains(context))
         return;

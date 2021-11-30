@@ -236,7 +236,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.
             if (pixelBuffer)
-                GraphicsContextGLOpenGL::paintToCanvas(contextAttributes, WTFMove(*pixelBuffer), imageBuffer->backendSize(), imageBuffer->context());
+                GraphicsContextGL::paintToCanvas(contextAttributes, WTFMove(*pixelBuffer), imageBuffer->backendSize(), imageBuffer->context());
             else
                 imageBuffer->context().clearRect({ IntPoint(), imageBuffer->backendSize() });
             // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.

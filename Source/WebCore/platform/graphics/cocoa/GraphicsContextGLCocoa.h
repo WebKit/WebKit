@@ -27,12 +27,18 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGLANGLE.h"
 #include "IOSurface.h"
+
+#if ENABLE(VIDEO)
+namespace WebCore {
+class GraphicsContextGLCVCocoa;
+}
+#endif
 
 namespace WebCore {
 
-class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLOpenGL {
+class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&);
     ~GraphicsContextGLCocoa();
@@ -49,14 +55,26 @@ public:
     void detachIOSurfaceFromSharedTexture(void* handle);
 #endif
 
-    // GraphicsContextGLOpenGL overrides.
+    // GraphicsContextGLANGLE overrides.
+    PlatformLayer* platformLayer() const override;
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+#endif
+#if ENABLE(VIDEO)
+    GraphicsContextGLCV* asCV() final;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
 #endif
 
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&);
     bool isValid() const;
+
+#if ENABLE(VIDEO)
+    std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
+#endif
+    friend class GraphicsContextGLCVCocoa;
 };
 
 }
