@@ -1,3 +1,25 @@
+2021-11-30  Kyle Piddington  <kpiddington@apple.com>
+
+        Hardware PCF filtering does not work on iOS 15 when using WebGL2
+        https://bugs.webkit.org/show_bug.cgi?id=232071
+
+	Lower restrictions on sampling D32F formats, and allow filtering
+	of Depth16F on iOS hardware, as it was previously restricted.
+	
+        Reviewed by Kenneth Russell.
+
+        * include/platform/FeaturesMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeFeatures):
+        (rx::DisplayMtl::supports32BitFloatFiltering const):
+        (rx::DisplayMtl::supportsDepth24Stencil8PixelFormat const):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::ensureSamplerStateCreated):
+        * src/libANGLE/renderer/metal/mtl_format_map.json:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::FormatTable::initNativeFormatCapsAutogen):
+
 2021-11-17  Dean Jackson  <dino@apple.com>
 
         ANGLE build failure - sprintf is deprecated

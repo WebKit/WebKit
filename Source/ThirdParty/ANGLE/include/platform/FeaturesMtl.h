@@ -21,11 +21,6 @@ struct FeaturesMtl : FeatureSetBase
         "has_base_vertex_instanced_draw", FeatureCategory::MetalFeatures,
         "The renderer supports base vertex instanced draw", &members};
 
-    // Support depth texture filtering
-    Feature hasDepthTextureFiltering = {
-        "has_depth_texture_filtering", FeatureCategory::MetalFeatures,
-        "The renderer supports depth texture's filtering other than nearest", &members};
-
     // Support explicit memory barrier
     Feature hasExplicitMemBarrier = {"has_explicit_mem_barrier", FeatureCategory::MetalFeatures,
                                      "The renderer supports explicit memory barrier", &members};

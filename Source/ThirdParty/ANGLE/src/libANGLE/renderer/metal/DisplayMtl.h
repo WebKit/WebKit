@@ -122,6 +122,8 @@ class DisplayMtl : public DisplayImpl
     bool supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) const;
     bool supportsIOSGPUFamily(uint8_t iOSFamily) const;
     bool supportsMacGPUFamily(uint8_t macFamily) const;
+    bool supportsDepth24Stencil8PixelFormat() const;
+    bool supports32BitFloatFiltering() const;
     bool isAMD() const;
     bool isIntel() const;
     bool isNVIDIA() const;

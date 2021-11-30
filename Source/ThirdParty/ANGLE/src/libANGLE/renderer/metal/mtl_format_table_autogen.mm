@@ -3143,9 +3143,9 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
 
     setFormatCaps(MTLPixelFormatBGRA8Unorm_sRGB, /** filterable*/ true, /** writable*/ display->supportsIOSGPUFamily(2), /** blendable*/ true, /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true, /** depthRenderable*/ false);
 
-    setFormatCaps(MTLPixelFormatDepth32Float, /** filterable*/ display->supportsMacGPUFamily(1), /** writable*/ false, /** blendable*/ false, /** multisample*/ true, /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false, /** depthRenderable*/ true);
+    setFormatCaps(MTLPixelFormatDepth32Float, /** filterable*/  display->supports32BitFloatFiltering(), /** writable*/ false, /** blendable*/ false, /** multisample*/ true, /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false, /** depthRenderable*/ true);
 
-    setFormatCaps(MTLPixelFormatDepth32Float_Stencil8, /** filterable*/ display->supportsMacGPUFamily(1), /** writable*/ false, /** blendable*/ false, /** multisample*/ true, /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false, /** depthRenderable*/ true);
+    setFormatCaps(MTLPixelFormatDepth32Float_Stencil8, /** filterable*/  display->supports32BitFloatFiltering(), /** writable*/ false, /** blendable*/ false, /** multisample*/ true, /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false, /** depthRenderable*/ true);
 
     setFormatCaps(MTLPixelFormatR16Float, /** filterable*/ true, /** writable*/ true, /** blendable*/ true, /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true, /** depthRenderable*/ false);
 
@@ -3262,7 +3262,7 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
 
     setFormatCaps(MTLPixelFormatDepth16Unorm, /** filterable*/ true, /** writable*/ false, /** blendable*/ false, /** multisample*/ true, /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false, /** depthRenderable*/ true);
 
-    setFormatCaps(MTLPixelFormatDepth24Unorm_Stencil8, /** filterable*/ display->supportsMacGPUFamily(1), /** writable*/ false, /** blendable*/ false, /** multisample*/ true, /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false, /** depthRenderable*/ display->supportsMacGPUFamily(1));
+    setFormatCaps(MTLPixelFormatDepth24Unorm_Stencil8, /** filterable*/ display->supportsMacGPUFamily(1) && display->supportsDepth24Stencil8PixelFormat(), /** writable*/ false, /** blendable*/ false, /** multisample*/ true, /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false, /** depthRenderable*/ display->supportsMacGPUFamily(1));
 
 #elif !TARGET_OS_SIMULATOR && (TARGET_OS_IOS || TARGET_OS_TV)  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
     setFormatCaps(MTLPixelFormatA1BGR5Unorm, /** filterable*/ true, /** writable*/ false, /** blendable*/ true, /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true, /** depthRenderable*/ false);

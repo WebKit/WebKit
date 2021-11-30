@@ -795,7 +795,7 @@ angle::Result TextureMtl::ensureSamplerStateCreated(const gl::Context *context)
     mtl::SamplerDesc samplerDesc(mState.getSamplerState());
 
     if (mFormat.actualAngleFormat().depthBits &&
-        !displayMtl->getFeatures().hasDepthTextureFiltering.enabled)
+        !mFormat.getCaps().filterable)
     {
         // On devices not supporting filtering for depth textures, we need to convert to nearest
         // here.
