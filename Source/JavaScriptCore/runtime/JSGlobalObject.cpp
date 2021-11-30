@@ -522,7 +522,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
     &supportsRichSourceInfo,
     &shouldInterruptScript,
     &javaScriptRuntimeFlags,
-    nullptr, // queueTaskToEventLoop
+    nullptr, // queueMicrotaskToEventLoop
     &shouldInterruptScriptBeforeTimeout,
     nullptr, // moduleLoaderImportModule
     nullptr, // moduleLoaderResolve
@@ -2554,8 +2554,8 @@ void JSGlobalObject::bumpGlobalLexicalBindingEpoch(VM& vm)
 
 void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
 {
-    if (globalObjectMethodTable()->queueTaskToEventLoop) {
-        globalObjectMethodTable()->queueTaskToEventLoop(*this, WTFMove(task));
+    if (globalObjectMethodTable()->queueMicrotaskToEventLoop) {
+        globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, WTFMove(task));
         return;
     }
 
