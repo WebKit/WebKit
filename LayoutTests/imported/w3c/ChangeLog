@@ -1,3 +1,56 @@
+2021-11-29  Chris Dumez  <cdumez@apple.com>
+
+        Add initial implementation for the Web Lock API
+        https://bugs.webkit.org/show_bug.cgi?id=233289
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline Web Locks WPT tests now that they are all passing.
+
+        * web-platform-tests/web-locks/acquire.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/acquire.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/acquire.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/clientids.tentative.https-expected.txt:
+        * web-platform-tests/web-locks/frames.tentative.https-expected.txt:
+        * web-platform-tests/web-locks/held.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/held.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/held.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/idlharness.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/idlharness.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/idlharness.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/ifAvailable.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/ifAvailable.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/ifAvailable.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/lock-attributes.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/lock-attributes.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/lock-attributes.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/mode-exclusive.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/mode-exclusive.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/mode-exclusive.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/mode-mixed.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/mode-mixed.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/mode-mixed.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/mode-shared.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/mode-shared.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/mode-shared.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/opaque-origin.tentative.https-expected.txt:
+        * web-platform-tests/web-locks/query-empty.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/query-empty.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/query-empty.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/query-ordering.tentative.https-expected.txt:
+        * web-platform-tests/web-locks/query.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/query.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/resource-names.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/resource-names.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/resource-names.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/signal.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/signal.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/signal.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/steal.tentative.https.any-expected.txt:
+        * web-platform-tests/web-locks/steal.tentative.https.any.serviceworker-expected.txt:
+        * web-platform-tests/web-locks/steal.tentative.https.any.worker-expected.txt:
+        * web-platform-tests/web-locks/workers.tentative.https-expected.txt:
+
 2021-11-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Unify speech synthesizer platform usage for Mac/iOS

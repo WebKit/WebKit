@@ -543,6 +543,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/web-locks/WebLock.idl \
     $(WebCore)/Modules/web-locks/WebLockGrantedCallback.idl \
     $(WebCore)/Modules/web-locks/WebLockManager.idl \
+    $(WebCore)/Modules/web-locks/WebLockManagerSnapshot.idl \
     $(WebCore)/Modules/web-locks/WebLockMode.idl \
     $(WebCore)/Modules/webaudio/AnalyserNode.idl \
     $(WebCore)/Modules/webaudio/AnalyserOptions.idl \

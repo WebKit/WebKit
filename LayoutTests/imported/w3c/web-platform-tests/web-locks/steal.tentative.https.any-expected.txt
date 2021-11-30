@@ -1,7 +1,7 @@
 
-FAIL Lock available promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Lock not available promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Broken lock's release promise rejects promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Requested lock's release promise is deferred promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Last caller wins promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Lock available
+PASS Lock not available
+PASS Broken lock's release promise rejects
+PASS Requested lock's release promise is deferred
+PASS Last caller wins
 

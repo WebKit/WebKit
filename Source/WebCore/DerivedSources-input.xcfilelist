@@ -640,6 +640,7 @@ $(PROJECT_DIR)/Modules/web-locks/NavigatorLocks.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLock.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLockGrantedCallback.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLockManager.idl
+$(PROJECT_DIR)/Modules/web-locks/WebLockManagerSnapshot.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLockMode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserOptions.idl

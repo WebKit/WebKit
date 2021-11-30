@@ -23,10 +23,10 @@
  */
 
 [
+    ActiveDOMObject,
     EnabledBySetting=WebLocksAPIEnabled,
     Exposed=(Window,Worker),
     InterfaceName=LockManager,
-    ImplementationLacksVTable,
     SecureContext
 ] interface WebLockManager {
     Promise<any> request(DOMString name, WebLockGrantedCallback grantedCallback);
@@ -40,15 +40,4 @@ dictionary WebLockOptions {
     boolean ifAvailable = false;
     boolean steal = false;
     AbortSignal signal;
-};
-
-dictionary WebLockManagerSnapshot {
-    sequence<WebLockInfo> held;
-    sequence<WebLockInfo> pending;
-};
-
-dictionary WebLockInfo {
-    DOMString name;
-    WebLockMode mode;
-    DOMString clientId;
 };

@@ -1,4 +1,4 @@
 
 
-FAIL Client IDs match between Locks API and Service Workers assert_equals: clientIds should match, but are different expected "15-85" but got "NotSupportedError: The operation is not supported."
+PASS Client IDs match between Locks API and Service Workers
 

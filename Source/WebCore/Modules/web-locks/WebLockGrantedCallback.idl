@@ -22,4 +22,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback WebLockGrantedCallback = Promise<any> (WebLock? webLock);
+[
+    RethrowException
+] callback WebLockGrantedCallback = Promise<any> (WebLock? webLock);

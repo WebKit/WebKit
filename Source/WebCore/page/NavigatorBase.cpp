@@ -153,7 +153,7 @@ StorageManager& NavigatorBase::storage()
 WebLockManager& NavigatorBase::locks()
 {
     if (!m_webLockManager)
-        m_webLockManager = WebLockManager::create();
+        m_webLockManager = WebLockManager::create(*this);
 
     return *m_webLockManager;
 }

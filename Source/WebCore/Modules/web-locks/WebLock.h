@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "ProcessQualified.h"
+#include "WebLockIdentifier.h"
 #include "WebLockMode.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -32,14 +34,16 @@ namespace WebCore {
 
 class WebLock : public RefCounted<WebLock> {
 public:
-    static Ref<WebLock> create(const String& name, WebLockMode);
+    static Ref<WebLock> create(WebLockIdentifier, const String& name, WebLockMode);
 
+    WebLockIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
     WebLockMode mode() const { return m_mode; }
 
 private:
-    WebLock(const String& name, WebLockMode);
+    WebLock(WebLockIdentifier, const String& name, WebLockMode);
 
+    WebLockIdentifier m_identifier;
     String m_name;
     WebLockMode m_mode;
 };

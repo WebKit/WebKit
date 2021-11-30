@@ -288,6 +288,7 @@ Modules/streams/ReadableStreamSource.cpp
 Modules/streams/WritableStream.cpp
 Modules/web-locks/WebLock.cpp
 Modules/web-locks/WebLockManager.cpp
+Modules/web-locks/WebLockRegistry.cpp
 Modules/webaudio/AnalyserNode.cpp
 Modules/webaudio/AsyncAudioDecoder.cpp
 Modules/webaudio/AudioBasicInspectorNode.cpp
@@ -3999,6 +4000,7 @@ JSWebKitTransitionEvent.cpp
 JSWebLock.cpp
 JSWebLockGrantedCallback.cpp
 JSWebLockManager.cpp
+JSWebLockManagerSnapshot.cpp
 JSWebLockMode.cpp
 JSWebSocket.cpp
 JSWebXRBoundedReferenceSpace.cpp

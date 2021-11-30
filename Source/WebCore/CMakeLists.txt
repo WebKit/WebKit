@@ -560,6 +560,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/web-locks/WebLock.idl
     Modules/web-locks/WebLockGrantedCallback.idl
     Modules/web-locks/WebLockManager.idl
+    Modules/web-locks/WebLockManagerSnapshot.idl
     Modules/web-locks/WebLockMode.idl
 
     Modules/webaudio/AnalyserNode.idl

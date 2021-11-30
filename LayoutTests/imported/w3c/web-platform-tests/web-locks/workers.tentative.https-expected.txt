@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Window and Worker - shared mode Test timed out
-NOTRUN Window and Worker - exclusive mode
-NOTRUN Worker and Worker - exclusive mode
-NOTRUN Terminated Worker - exclusive mode
+PASS Window and Worker - shared mode
+PASS Window and Worker - exclusive mode
+PASS Worker and Worker - exclusive mode
+PASS Terminated Worker - exclusive mode
 

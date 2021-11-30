@@ -2713,6 +2713,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockGrantedCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockGrantedCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockManager.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockManagerSnapshot.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockManagerSnapshot.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebSocket.cpp

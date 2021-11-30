@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Requests appear in state in order made. Test timed out
+PASS Requests appear in state in order made.
 

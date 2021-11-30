@@ -1,4 +1,4 @@
 
-FAIL Lock requests are granted in order promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Requests for distinct resources can be granted promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Lock requests are granted in order
+PASS Requests for distinct resources can be granted
 

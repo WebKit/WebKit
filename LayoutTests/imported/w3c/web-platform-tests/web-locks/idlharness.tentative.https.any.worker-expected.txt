@@ -39,10 +39,10 @@ PASS Lock interface: existence and properties of interface prototype object's "c
 PASS Lock interface: existence and properties of interface prototype object's @@unscopables property
 PASS Lock interface: attribute name
 PASS Lock interface: attribute mode
-FAIL Lock must be primary interface of lock assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
-FAIL Stringification of lock assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
-FAIL Lock interface: lock must inherit property "name" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
-FAIL Lock interface: lock must inherit property "mode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
+PASS Lock must be primary interface of lock
+PASS Stringification of lock
+PASS Lock interface: lock must inherit property "name" with the proper type
+PASS Lock interface: lock must inherit property "mode" with the proper type
 PASS WorkerNavigator interface: attribute locks
 PASS WorkerNavigator interface: navigator must inherit property "locks" with the proper type
 

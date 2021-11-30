@@ -1,18 +1,11 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
-
-Harness Error (FAIL), message = Unhandled rejection: The operation is not supported.
 
 PASS The signal option must be an AbortSignal
-FAIL Passing an already aborted signal aborts promise_rejects_dom: Request should reject with AbortError function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
-FAIL An aborted request results in AbortError promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Abort after a timeout promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Signal that is not aborted promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Synchronously signaled abort promise_rejects_dom: Request should abort function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
-TIMEOUT Abort signaled after lock granted Test timed out
-NOTRUN Abort signaled after lock released
-NOTRUN Abort should process the next pending lock request
+PASS Passing an already aborted signal aborts
+PASS An aborted request results in AbortError
+PASS Abort after a timeout
+PASS Signal that is not aborted
+PASS Synchronously signaled abort
+PASS Abort signaled after lock granted
+PASS Abort signaled after lock released
+PASS Abort should process the next pending lock request
 

@@ -25,17 +25,26 @@
 #pragma once
 
 #include "AbortSignal.h"
+#include "ActiveDOMObject.h"
+#include "ClientOrigin.h"
+#include "WebLockIdentifier.h"
 #include "WebLockMode.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class DeferredPromise;
+class NavigatorBase;
 class WebLockGrantedCallback;
 
-class WebLockManager : public RefCounted<WebLockManager> {
+struct ClientOrigin;
+struct WebLockManagerSnapshot;
+
+class WebLockManager : public RefCounted<WebLockManager>, public CanMakeWeakPtr<WebLockManager>, public ActiveDOMObject {
 public:
-    static Ref<WebLockManager> create();
+    static Ref<WebLockManager> create(NavigatorBase&);
+    ~WebLockManager();
 
     struct Options {
         WebLockMode mode { WebLockMode::Exclusive };
@@ -44,24 +53,35 @@ public:
         RefPtr<AbortSignal> signal;
     };
 
-    struct Info {
-        String name;
-        WebLockMode mode { WebLockMode::Exclusive };
-        String clientId;
-    };
-
-    struct Snapshot {
-        Vector<Info> held;
-        Vector<Info> pending;
-    };
+    using Snapshot = WebLockManagerSnapshot;
 
     void request(const String& name, Ref<WebLockGrantedCallback>&&, Ref<DeferredPromise>&&);
     void request(const String& name, Options&&, Ref<WebLockGrantedCallback>&&, Ref<DeferredPromise>&&);
-
     void query(Ref<DeferredPromise>&&);
 
 private:
-    WebLockManager();
+    explicit WebLockManager(NavigatorBase&);
+
+    void requestLockOnMainThread(WebLockIdentifier, const String& name, const Options&, Function<void(bool)>&&, Function<void(Exception&&)>&& releaseHandler);
+    void releaseLockOnMainThread(WebLockIdentifier, const String& name);
+    void abortLockRequestOnMainThread(WebLockIdentifier, const String& name, CompletionHandler<void(bool)>&&);
+    void queryOnMainThread(CompletionHandler<void(Snapshot&&)>&&);
+
+    void didCompleteLockRequest(WebLockIdentifier, bool success);
+    void settleReleasePromise(WebLockIdentifier, ExceptionOr<JSC::JSValue>&&);
+    void signalToAbortTheRequest(WebLockIdentifier);
+    void clientIsGoingAway();
+
+    // ActiveDOMObject.
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
+
+    const std::optional<ClientOrigin> m_clientOrigin;
+    HashMap<WebLockIdentifier, RefPtr<DeferredPromise>> m_releasePromises;
+
+    struct LockRequest;
+    HashMap<WebLockIdentifier, LockRequest> m_pendingRequests;
 };
 
 } // namespace WebCore

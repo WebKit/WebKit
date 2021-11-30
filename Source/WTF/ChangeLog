@@ -1,3 +1,16 @@
+2021-11-29  Chris Dumez  <cdumez@apple.com>
+
+        Add initial implementation for the Web Lock API
+        https://bugs.webkit.org/show_bug.cgi?id=233289
+
+        Reviewed by Geoff Garen.
+
+        Update Deque::removeAllMatching() to return the number of items removed, similarly
+        to the corresponding API on Vector.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::removeAllMatching):
+
 2021-11-29  David Kilzer  <ddkilzer@apple.com>
 
         Disable experimental web features on platforms without UI to enable them
