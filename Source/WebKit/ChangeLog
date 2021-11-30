@@ -1,3 +1,17 @@
+2021-11-29  David Kilzer  <ddkilzer@apple.com>
+
+        Disable experimental web features on platforms without UI to enable them
+        <https://webkit.org/b/233152>
+        <rdar://problem/85430643>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm:
+        - Fix build when ENABLE(MODEL_ELEMENT) is false.
+
 2021-11-29  Tim Horton  <timothy_horton@apple.com>
 
         Plumb raw platform scrolling deltas along in wheel events

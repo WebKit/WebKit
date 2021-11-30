@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PlatformCALayerRemoteModelHosting.h"
 
+#if ENABLE(MODEL_ELEMENT)
+
 #import "RemoteLayerTreeContext.h"
 #import "WebProcess.h"
 #import <WebCore/GraphicsLayerCA.h>
@@ -73,3 +75,5 @@ void PlatformCALayerRemoteModelHosting::dumpAdditionalProperties(TextStream& ts,
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(MODEL_ELEMENT)

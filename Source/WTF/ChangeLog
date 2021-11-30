@@ -1,3 +1,28 @@
+2021-11-29  David Kilzer  <ddkilzer@apple.com>
+
+        Disable experimental web features on platforms without UI to enable them
+        <https://webkit.org/b/233152>
+        <rdar://problem/85430643>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformEnableCocoa.h:
+        (ENABLE_CORE_IMAGE_ACCELERATED_FILTER_RENDER):
+        (ENABLE_CSS_PAINTING_API):
+        (ENABLE_CSS_TYPED_OM):
+        (ENABLE_MODEL_ELEMENT):
+        (ENABLE_SEPARATED_MODEL):
+        - Disable if HAVE(EXPERIMENTAL_WEB_FEATURES_UI) is defined.
+        * wtf/PlatformHave.h:
+        (HAVE_EXPERIMENTAL_WEB_FEATURES_UI): Add.
+        - Define for tvOS and watchOS, which don't have UI to enable
+          experimental web features.
+        (HAVE_CELESTIAL):
+        (HAVE_CFNETWORK_ALTERNATIVE_SERVICE):
+        (HAVE_NETWORK_LOADER):
+        (HAVE_AVSAMPLEBUFFERVIDEOOUTPUT):
+        - Disable if HAVE(EXPERIMENTAL_WEB_FEATURES_UI) is defined.
+
 2021-11-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Unify speech synthesizer platform usage for Mac/iOS

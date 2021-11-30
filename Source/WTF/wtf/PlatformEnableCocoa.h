@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -171,7 +171,7 @@
 #define ENABLE_CONTEXT_MENU_EVENT 0
 #endif
 
-#if !defined(ENABLE_CORE_IMAGE_ACCELERATED_FILTER_RENDER)
+#if !defined(ENABLE_CORE_IMAGE_ACCELERATED_FILTER_RENDER) && HAVE(EXPERIMENTAL_WEB_FEATURES_UI)
 #define ENABLE_CORE_IMAGE_ACCELERATED_FILTER_RENDER 1
 #endif
 
@@ -184,7 +184,7 @@
 #define ENABLE_CSS_CONIC_GRADIENTS 1
 #endif
 
-#if !defined(ENABLE_CSS_PAINTING_API)
+#if !defined(ENABLE_CSS_PAINTING_API) && HAVE(EXPERIMENTAL_WEB_FEATURES_UI)
 #define ENABLE_CSS_PAINTING_API 1
 #endif
 
@@ -196,7 +196,7 @@
 #define ENABLE_CSS_TRAILING_WORD 1
 #endif
 
-#if !defined(ENABLE_CSS_TYPED_OM)
+#if !defined(ENABLE_CSS_TYPED_OM) && HAVE(EXPERIMENTAL_WEB_FEATURES_UI)
 #define ENABLE_CSS_TYPED_OM 1
 #endif
 
@@ -405,7 +405,7 @@
 #define ENABLE_META_VIEWPORT 1
 #endif
 
-#if !defined(ENABLE_MODEL_ELEMENT)
+#if !defined(ENABLE_MODEL_ELEMENT) && HAVE(EXPERIMENTAL_WEB_FEATURES_UI)
 #define ENABLE_MODEL_ELEMENT 1
 #endif
 
@@ -704,7 +704,7 @@
 #define ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D 1
 #endif
 
-#if !defined(ENABLE_SEPARATED_MODEL) && HAVE(UIKIT_WEBKIT_INTERNALS) && HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+#if !defined(ENABLE_SEPARATED_MODEL) && HAVE(UIKIT_WEBKIT_INTERNALS) && HAVE(CORE_ANIMATION_SEPARATED_LAYERS) && HAVE(EXPERIMENTAL_WEB_FEATURES_UI)
 #define ENABLE_SEPARATED_MODEL 1
 #endif
 

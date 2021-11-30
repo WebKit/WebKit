@@ -95,7 +95,8 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
             return makeWithView(adoptNS([[WKChildScrollView alloc] init]));
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
         return makeWithView(adoptNS([[UIView alloc] init]));
-            
+
+#if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerTypeModelLayer:
 #if ENABLE(SEPARATED_MODEL)
         return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*properties.model]));
@@ -104,6 +105,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #else
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 #endif
+#endif // ENABLE(MODEL_ELEMENT)
 
     default:
         ASSERT_NOT_REACHED();
