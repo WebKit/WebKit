@@ -1,3 +1,13 @@
+2021-11-30  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        Update test expectations for a number of newly-passing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=233638
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+
 2021-11-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline a few WPT tests on iOS after r286316.

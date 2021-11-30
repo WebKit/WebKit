@@ -387,37 +387,9 @@ webkit.org/b/232256 accessibility/auto-fill-crash.html [ Failure ]
 # Cairo-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/233611 fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
-webkit.org/b/233611 imported/mozilla/svg/filter-bounds-02.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
-webkit.org/b/233611 imported/mozilla/svg/filters-and-group-opacity-01.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 imported/mozilla/svg/filters/feBlend-1.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 imported/mozilla/svg/filters/feConvolveMatrix-1.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 imported/mozilla/svg/filters/feGaussianBlur-2.svg [ ImageOnlyFailure ]
-# This one below was [ Pass ] before
-webkit.org/b/233611 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 imported/mozilla/svg/text/filter-applied.svg [ ImageOnlyFailure ]
 # This one needs a [Pass] after fixed, due to root expectation being ImageOnlyFailure. Was passing after r277073.
 webkit.org/b/233611 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ ImageOnlyFailure ]
 webkit.org/b/233611 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix.html [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feComposite-background-rect-control-operators.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feDisplacementMap-color-interpolation-filters.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feFlood-color-interpolation.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feFlood-with-alpha-color.html [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feImage-image-primitive-subregion.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feMorphology-radius-cases.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feMorphology-zero-radius-one-axis.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/fePointLight-coordinates.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feSpecularLighting-fePointLight-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feSpotLight-coordinates.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feTurbulence-parallel-jobs.html [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feTurbulence-stitchTiles.html [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/feTurbulence_bad_seeds.html [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/hidpi/fePointLight-coordinates.svg [ ImageOnlyFailure ]
-webkit.org/b/233611 svg/filters/hidpi/feSpotLight-coordinates.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Cairo-related bugs
@@ -2325,8 +2297,6 @@ webkit.org/b/224115 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/224116 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Failure Pass ]
 
 webkit.org/b/224737 fast/overflow/line-clamp-crash.html [ Failure Pass ]
-
-webkit.org/b/224738 imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-composition.html [ Failure ]
 
 webkit.org/b/127743 media/video-restricted-no-preload-auto.html [ Failure ]
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
