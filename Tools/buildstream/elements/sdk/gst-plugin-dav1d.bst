@@ -26,7 +26,7 @@ public:
   bst:
     integration-commands:
     - |
-      gst-inspect-1.0 rsdav1d
+      PAGER=this-is-not-a-pager gst-inspect-1.0 rsdav1d
 
 sources:
 - kind: tar

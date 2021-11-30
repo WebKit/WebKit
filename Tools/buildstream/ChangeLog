@@ -1,3 +1,33 @@
+2021-11-30  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 21.08.6 release
+        https://bugs.webkit.org/show_bug.cgi?id=233570
+
+        Reviewed by Adrian Perez de Castro.
+
+        - update to FDO SDK 21.08.6 release, including ccache 4.5.
+        - update to GStreamer 1.18.5
+        - update internal pipenv used by bst to pygobject 3.42 (needed for f35 host)
+        - minor drive-by fixes in gst recipes correcting docker image export, for some reason a
+          manual export of the repo to a docker image triggers gst-inspect-1.0 calls that are
+          expecting user input, so force a non-existant pager as a workaround. This doesn't happen
+          when exporting the repo to flatpak runtimes...
+
+        * Pipfile:
+        * Pipfile.lock:
+        * elements/freedesktop-sdk.bst:
+        * elements/sdk/gst-libav.bst:
+        * elements/sdk/gst-plugin-closedcaption.bst:
+        * elements/sdk/gst-plugin-dav1d.bst:
+        * elements/sdk/gst-plugins-bad.bst:
+        * elements/sdk/gst-plugins-base.bst:
+        * elements/sdk/gst-plugins-good.bst:
+        * elements/sdk/gstreamer.bst:
+        * patches/fdo-sdk-0001-Bump-ccache-to-4.4.2.patch: Removed.
+        * patches/gst-plugins-base-0001-gst-don-t-use-volatile-to-mean-atomic.patch: Removed.
+        * patches/gst-plugins-base-0001-gstgl-Fix-build-when-Meson-0.58.0rc1.patch: Removed.
+        * patches/gst-plugins-good-0001-gst-don-t-use-volatile-to-mean-atomic.patch: Removed.
+
 2021-11-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Flatpak SDK] Add build recipe for libjxl, fix after r286057

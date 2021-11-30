@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.4.tar.xz
-  ref: 74e806bc5595b18c70e9ca93571e27e79dfb808e5d2e7967afa952b52e99c85f
+  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.5.tar.xz
+  ref: a164923b94f0d08578a6fcaeaac6e0c05da788a46903a1086870e9ca45ad678e
 # Should be shipped in GStreamer 1.20. https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2125
 - kind: patch
   path: patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch
@@ -116,7 +116,6 @@ variables:
     -Dx265=disabled
     -Dzbar=disabled
     -Dzxing=disabled
-
 public:
   bst:
     split-rules:

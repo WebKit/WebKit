@@ -8,4 +8,4 @@ verify_ssl = true
 [packages]
 buildstream = "==1.6.3"
 buildstream-external = "*"
-pygobject = "==3.36"
+pygobject = "==3.42"

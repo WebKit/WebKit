@@ -1,11 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-good/gst-plugins-good-1.18.4.tar.xz
-  ref: b6e50e3a9bbcd56ee6ec71c33aa8332cc9c926b0c1fae995aac8b3040ebe39b0
-# These patches are upstream already, to be released in 1.18.5.
-- kind: patch
-  path: patches/gst-plugins-good-0001-gst-don-t-use-volatile-to-mean-atomic.patch
+  url: gst_downloads:gst-plugins-good/gst-plugins-good-1.18.5.tar.xz
+  ref: 3aaeeea7765fbf8801acce4a503a9b05f73f04e8a35352e9d00232cfd555796b
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:

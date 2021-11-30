@@ -25,7 +25,7 @@ public:
   bst:
     integration-commands:
     - |
-      gst-inspect-1.0 cea608tott
+      PAGER=this-is-not-a-pager gst-inspect-1.0 cea608tott
 
 sources:
 - kind: tar
