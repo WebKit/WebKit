@@ -262,11 +262,6 @@ private:
     FloatSize m_momentumVelocity;
 
     FloatSize m_scrollingVelocityForScrollSnap;
-#if !LOG_DISABLED
-    FloatPoint m_eventDrivenScrollMomentumStartOffset;
-    FloatPoint m_eventDrivenScrollOffset;
-    WallTime m_momentumBeganEventTime;
-#endif
 
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };

@@ -31,7 +31,6 @@
 #import "ScrollAnimationRubberBand.h"
 #import "ScrollExtents.h"
 #import "ScrollableArea.h"
-#import "WheelEventDeltaFilter.h"
 #import <pal/spi/mac/NSScrollViewSPI.h>
 #import <sys/sysctl.h>
 #import <sys/time.h>
@@ -111,63 +110,15 @@ static std::optional<BoxSide> affectedSideOnDominantAxis(FloatSize delta)
     return ScrollableArea::targetSideForScrollDelta(delta, dominantAxis);
 }
 
-#if !LOG_DISABLED
-static const char* phaseToString(PlatformWheelEventPhase phase)
-{
-    switch (phase) {
-    case PlatformWheelEventPhase::None: return "none";
-    case PlatformWheelEventPhase::Began: return "began";
-    case PlatformWheelEventPhase::Stationary: return "stationary";
-    case PlatformWheelEventPhase::Changed: return "changed";
-    case PlatformWheelEventPhase::Ended: return "ended";
-    case PlatformWheelEventPhase::Cancelled: return "cancelled";
-    case PlatformWheelEventPhase::MayBegin: return "mayBegin";
-    }
-    return "";
-}
-#endif
-
-static FloatSize adjustedVelocity(FloatSize velocity)
-{
-    auto applyCurve = ^(float originalValue) {
-        if (!originalValue)
-            return originalValue;
-
-        float value = fabs(originalValue);
-        float powerLow = 6.7 * pow(value, -.166);
-        float powerHigh = 36.3 * pow(value, -.392);
-        const float transitionVelocity = 2000;
-
-        auto interpolate = ^(float v0, float v1, float t) {
-            return (1 - t) * v0 + t * v1;
-        };
-        
-        float multiplier = interpolate(powerLow, powerHigh, std::min(value, transitionVelocity) / transitionVelocity);
-        return copysign(value * multiplier, originalValue);
-    };
-
-    return { applyCurve(velocity.width()), applyCurve(velocity.height()) };
-}
-
 bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (processWheelEventForScrollSnap(wheelEvent))
         return true;
 
-    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled) {
-        if (momentumScrollingAnimatorEnabled()) {
-            LOG(ScrollAnimations, "Event (%s, %s): stopping animated scroll", phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()));
-            stopAnimatedScroll();
-        }
-        return true;
-    }
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
+        return false;
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
-        if (momentumScrollingAnimatorEnabled()) {
-            LOG(ScrollAnimations, "Event (%s, %s): stopping animated scroll", phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()));
-            stopAnimatedScroll();
-        }
-
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
         auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
         if (horizontalSide && m_client.isPinnedOnSide(*horizontalSide) && !shouldRubberBandOnSide(*horizontalSide))
@@ -199,24 +150,6 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         return true;
     }
 
-#if !LOG_DISABLED
-    if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Began)
-        m_momentumBeganEventTime = wheelEvent.timestamp();
-#endif
-
-    if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended && momentumScrollingAnimatorEnabled()) {
-#if !LOG_DISABLED
-        auto timeSinceStart = wheelEvent.timestamp() - m_momentumBeganEventTime;
-        auto distance = m_eventDrivenScrollOffset - m_eventDrivenScrollMomentumStartOffset;
-#endif
-        // FIXME: We can't distinguish between the natural end of a momentum sequence, and a two-finger tap on the trackpad (rdar://85414238),
-        // so we always have to end the animation here.
-        LOG(ScrollAnimations, "Event (%s, %s): stopping event scroll duration %.2fms distance %.2f %.2f",
-            phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()), timeSinceStart.milliseconds(),
-            fabs(distance.width()), fabs(distance.height()));
-        stopAnimatedNonRubberbandingScroll();
-    }
-
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhase::None);
     if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_isAnimatingRubberBand)) {
         if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended) {
@@ -244,25 +177,8 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     delta = deltaAlignedToDominantAxis(delta);
 
     auto momentumPhase = wheelEvent.momentumPhase();
-    if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed)) {
+    if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
         m_momentumScrollInProgress = true;
-        if (momentumScrollingAnimatorEnabled()) {
-            startMomentumScrollWithInitialVelocity(m_client.scrollOffset(), -adjustedVelocity(wheelEvent.scrollingVelocity()), -wheelEvent.delta(), [](const FloatPoint& targetOffset) { return targetOffset; });
-#if !LOG_DISABLED
-            m_eventDrivenScrollOffset = m_client.scrollOffset();
-            m_eventDrivenScrollMomentumStartOffset = m_eventDrivenScrollOffset;
-#endif
-        }
-    }
-
-    if (momentumPhase == PlatformWheelEventPhase::Changed && momentumScrollingAnimatorEnabled()) {
-#if !LOG_DISABLED
-        m_eventDrivenScrollOffset -= wheelEvent.delta();
-#endif
-        LOG(ScrollAnimations, "Event (%s, %s): ignoring - would have scrolled to %.2f,%.2f", phaseToString(wheelEvent.phase()), phaseToString(wheelEvent.momentumPhase()),
-            m_eventDrivenScrollOffset.x(), m_eventDrivenScrollOffset.y());
-        return true;
-    }
 
     bool shouldStretch = false;
     auto timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
@@ -477,11 +393,6 @@ void ScrollingEffectsController::stopRubberBanding()
 
 bool ScrollingEffectsController::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
 {
-    if (is<ScrollAnimationMomentum>(m_currentAnimation) && m_currentAnimation->isActive()) {
-        LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimation() - momentum animation is present");
-        return false;
-    }
-
     if (m_currentAnimation)
         m_currentAnimation->stop();
 

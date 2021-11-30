@@ -1,3 +1,18 @@
+2021-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert changes related to using a scroll animator for momentum scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=233585
+
+        Reviewed by Tim Horton.
+
+        We can keep the tests but they don't need to change the setting any more.
+
+        * fast/scrolling/mac/momentum-animator-end-event-stops.html:
+        * fast/scrolling/mac/momentum-animator-in-overflow.html:
+        * fast/scrolling/mac/momentum-animator-maybegin-stops.html:
+        * fast/scrolling/mac/momentum-animator.html:
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a basic heuristic for sizing text in image overlay blocks
