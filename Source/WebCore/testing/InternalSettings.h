@@ -94,6 +94,7 @@ public:
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
 
     bool vp9DecoderEnabled() const;
+    bool mediaSourceInlinePaintingEnabled() const;
 
     // DeprecatedGlobalSettings.
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);

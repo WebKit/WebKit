@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "MediaPlayerPrivate.h"
 #include "SourceBufferPrivateClient.h"
+#include <CoreMedia/CMTime.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -275,6 +276,11 @@ private:
     bool pauseAtHostTime(const MonotonicTime&) final;
 #endif
 
+    void startVideoFrameMetadataGathering() final;
+    void stopVideoFrameMetadataGathering() final;
+    std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
+    void checkNewVideoFrameMetadata(CMTime);
+
     friend class MediaSourcePrivateAVFObjC;
 
     struct PendingSeek {
@@ -345,6 +351,11 @@ private:
     const void* m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
     Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
+    uint64_t m_sampleCount { 0 };
+    RetainPtr<id> m_videoFrameMetadataGatheringObserver;
+    bool m_isGatheringVideoFrameMetadata { false };
+    std::optional<VideoFrameMetadata> m_videoFrameMetadata;
+    uint64_t m_lastConvertedSampleCount { 0 };
 };
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState);

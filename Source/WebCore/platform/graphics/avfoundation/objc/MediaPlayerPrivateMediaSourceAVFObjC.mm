@@ -187,6 +187,8 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
         [m_synchronizer removeTimeObserver:m_timeChangedObserver.get()];
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
+    if (m_videoFrameMetadataGatheringObserver)
+        [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
     flushPendingSizeChanges();
 
     destroyLayer();
@@ -680,7 +682,13 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
 {
-    if (!updateLastPixelBuffer())
+    if (m_isGatheringVideoFrameMetadata) {
+        if (!m_lastPixelBuffer)
+            return false;
+        if (m_sampleCount == m_lastConvertedSampleCount)
+            return false;
+        m_lastConvertedSampleCount = m_sampleCount;
+    } else if (!updateLastPixelBuffer())
         return false;
 
     ASSERT(m_lastPixelBuffer);
@@ -723,10 +731,8 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferFor
         acceleratedRenderingStateChanged();
     }
 
-    if (updateLastPixelBuffer()) {
-        if (!m_lastPixelBuffer)
-            return nullptr;
-    }
+    if (!m_isGatheringVideoFrameMetadata)
+        updateLastPixelBuffer();
 
     return m_lastPixelBuffer;
 }
@@ -1387,6 +1393,49 @@ void MediaPlayerPrivateMediaSourceAVFObjC::audioOutputDeviceChanged()
             renderer.audioOutputDeviceUniqueID = deviceId;
     }
 #endif
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::startVideoFrameMetadataGathering()
+{
+    ASSERT(!m_videoFrameMetadataGatheringObserver || m_synchronizer);
+    m_isGatheringVideoFrameMetadata = true;
+
+    // FIXME: We should use a CADisplayLink to get updates on rendering, for now we emulate with addPeriodicTimeObserverForInterval.
+    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentTime) {
+        ensureOnMainThread([weakThis, currentTime] {
+            if (weakThis)
+                weakThis->checkNewVideoFrameMetadata(currentTime);
+        });
+    }];
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(CMTime currentTime)
+{
+    if (!m_player)
+        return;
+
+    if (!updateLastPixelBuffer())
+        return;
+
+    VideoFrameMetadata metadata;
+    metadata.width = m_naturalSize.width();
+    metadata.height = m_naturalSize.height();
+    metadata.presentedFrames = ++m_sampleCount;
+    metadata.presentationTime = PAL::CMTimeGetSeconds(currentTime);
+
+    m_videoFrameMetadata = metadata;
+    m_player->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()
+{
+    m_isGatheringVideoFrameMetadata = false;
+    m_videoFrameMetadata = { };
+
+    ASSERT(m_videoFrameMetadataGatheringObserver);
+    if (m_videoFrameMetadataGatheringObserver)
+        [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
+    m_videoFrameMetadataGatheringObserver = nil;
 }
 
 WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const

@@ -438,6 +438,15 @@ bool InternalSettings::vp9DecoderEnabled() const
 #endif
 }
 
+bool InternalSettings::mediaSourceInlinePaintingEnabled() const
+{
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    return RuntimeEnabledFeatures::sharedFeatures().mediaSourceInlinePaintingEnabled();
+#else
+    return false;
+#endif
+}
+
 ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
 {
     if (!m_page)
