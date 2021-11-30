@@ -1,5 +1,17 @@
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
+        Move TransformStreamAPIEnabled flag to Settings
+        https://bugs.webkit.org/show_bug.cgi?id=233524
+
+        Reviewed by Chris Dumez.
+
+        * platform/win/streams/reference-implementation/transform-stream-errors-expected.txt: Removed.
+        * platform/win/streams/reference-implementation/transform-stream-expected.txt: Removed.
+        * platform/wincairo/streams/reference-implementation/transform-stream-errors-expected.txt: Removed.
+        * platform/wincairo/streams/reference-implementation/transform-stream-expected.txt: Removed.
+
+2021-11-30  Youenn Fablet  <youenn@apple.com>
+
         ServiceWorkerContainer does not respond well to network process crash
         https://bugs.webkit.org/show_bug.cgi?id=233626
 

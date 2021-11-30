@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=TransformStreamAPIEnabled,
+    EnabledBySetting=TransformStreamAPIEnabled,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     PrivateIdentifier,

@@ -1334,8 +1334,9 @@ TransformStreamAPIEnabled:
   type: bool
   humanReadableName: "TransformStream API"
   humanReadableDescription: "Enable Transform Stream API"
-  webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
+    WebCore:
+      default: true
     WebKitLegacy:
       default: true
     WebKit:

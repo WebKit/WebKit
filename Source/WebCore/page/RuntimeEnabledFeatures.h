@@ -167,8 +167,6 @@ public:
 
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
-    void setTransformStreamAPIEnabled(bool isEnabled) { m_isTransformStreamAPIEnabled = isEnabled; }
-    bool transformStreamAPIEnabled() const { return m_isTransformStreamAPIEnabled; }
 
 #if ENABLE(SERVICE_WORKER)
     bool pushAPIEnabled() const { return m_pushAPIEnabled; }
@@ -332,7 +330,6 @@ private:
 #endif
 
     bool m_isReadableByteStreamAPIEnabled { false };
-    bool m_isTransformStreamAPIEnabled { false };
 
 #if ENABLE(SERVICE_WORKER)
     bool m_pushAPIEnabled { false };
