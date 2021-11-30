@@ -1,3 +1,16 @@
+2021-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Webpage translation] Avoid translating text inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=233225
+        rdar://85713734
+
+        Reviewed by Aditya Keerthi.
+
+        Add a test to verify that `translate` is `false` on the image overlay root container element.
+
+        * fast/images/text-recognition/image-overlay-do-not-translate-expected.txt: Added.
+        * fast/images/text-recognition/image-overlay-do-not-translate.html: Added.
+
 2021-11-29  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening SVG filter failures after r286203

@@ -303,6 +303,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
     if (!elements.root) {
         auto rootContainer = HTMLDivElement::create(document.get());
         rootContainer->setIdAttribute(imageOverlayElementIdentifier());
+        rootContainer->setTranslate(false);
         if (document->isImageDocument())
             rootContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
 
