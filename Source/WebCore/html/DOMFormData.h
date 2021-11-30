@@ -80,7 +80,6 @@ public:
 private:
     explicit DOMFormData(const TextEncoding& = UTF8Encoding());
 
-    Item createFileEntry(const String& name, Blob&, const String& filename);
     void set(const String& name, Item&&);
 
     TextEncoding m_encoding;
