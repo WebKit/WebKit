@@ -1,3 +1,11 @@
+2021-11-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline a few WPT tests on iOS after r286316.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch-expected.txt:
+
 2021-11-30  Robert Jenner  <Jenner@apple.com>
 
         [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html is consistently failing
