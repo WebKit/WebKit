@@ -28,7 +28,7 @@
 
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGImage.h>
-#include <ImageIO/CGImageDestination.h>
+#include <ImageIO/ImageIO.h>
 #include <algorithm>
 #include <stdio.h>
 
@@ -71,18 +71,43 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 namespace ImageDiff {
 
+static std::unique_ptr<PlatformImage> createImageFromDataProvider(CGDataProviderRef dataProvider)
+{
+    double scaleFactor = 1;
+
+    auto imageSource = CGImageSourceCreateWithDataProvider(dataProvider, 0);
+    if (auto properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nullptr)) {
+        auto resolutionXProperty = (CFNumberRef)CFDictionaryGetValue(properties, kCGImagePropertyDPIWidth);
+        auto resolutionYProperty = (CFNumberRef)CFDictionaryGetValue(properties, kCGImagePropertyDPIHeight);
+        if (resolutionXProperty && resolutionYProperty) {
+            double resolutionX, resolutionY;
+            if (CFNumberGetValue(resolutionXProperty, kCFNumberDoubleType, &resolutionX) && CFNumberGetValue(resolutionYProperty, kCFNumberDoubleType, &resolutionY)) {
+                if (resolutionX != resolutionY)
+                    fprintf(stderr, "Image has different horizontal and vertical resolutions, which is not supported");
+
+                scaleFactor = resolutionX / 72.0;
+            }
+        }
+        CFRelease(properties);
+    }
+
+    auto image = CGImageSourceCreateImageAtIndex(imageSource, 0, nullptr);
+    CFRelease(imageSource);
+    if (!image)
+        return nullptr;
+
+    return std::make_unique<PlatformImage>(image, scaleFactor);
+}
+
 std::unique_ptr<PlatformImage> PlatformImage::createFromFile(const char* filePath)
 {
     auto dataProvider = CGDataProviderCreateWithFilename(filePath);
     if (!dataProvider)
         return nullptr;
 
-    auto image = CGImageCreateWithPNGDataProvider(dataProvider, 0, false, kCGRenderingIntentDefault);
+    auto result = createImageFromDataProvider(dataProvider);
     CGDataProviderRelease(dataProvider);
-    if (!image)
-        return nullptr;
-
-    return std::make_unique<PlatformImage>(image);
+    return result;
 }
 
 std::unique_ptr<PlatformImage> PlatformImage::createFromStdin(size_t imageSize)
@@ -99,10 +124,10 @@ std::unique_ptr<PlatformImage> PlatformImage::createFromStdin(size_t imageSize)
     }
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(data);
     CFRelease(data);
-    CGImageRef image = CGImageCreateWithPNGDataProvider(dataProvider, 0, false, kCGRenderingIntentDefault);
-    CFRelease(dataProvider);
 
-    return std::make_unique<PlatformImage>(image);
+    auto result = createImageFromDataProvider(dataProvider);
+    CGDataProviderRelease(dataProvider);
+    return result;
 }
 
 std::unique_ptr<PlatformImage> PlatformImage::createFromDiffData(void* data, size_t width, size_t height)
@@ -117,8 +142,9 @@ std::unique_ptr<PlatformImage> PlatformImage::createFromDiffData(void* data, siz
     return std::make_unique<PlatformImage>(image);
 }
 
-PlatformImage::PlatformImage(CGImageRef image)
+PlatformImage::PlatformImage(CGImageRef image, double scaleFactor)
     : m_image(image)
+    , m_scaleFactor(scaleFactor)
 {
 }
 

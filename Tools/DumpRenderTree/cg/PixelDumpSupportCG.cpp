@@ -33,7 +33,7 @@
 
 #include "DumpRenderTree.h"
 #include "PixelDumpSupport.h"
-#include <ImageIO/CGImageDestination.h>
+#include <ImageIO/ImageIO.h>
 #include <algorithm>
 #include <ctype.h>
 #include <wtf/Assertions.h>
@@ -57,11 +57,20 @@ using namespace std;
 static const CFStringRef kUTTypePNG = CFSTR("public.png");
 #endif
 
-static void printPNG(CGImageRef image, const char* checksum)
+static void printPNG(CGImageRef image, const char* checksum, double scaleFactor)
 {
-    RetainPtr<CFMutableDataRef> imageData = adoptCF(CFDataCreateMutable(0, 0));
-    RetainPtr<CGImageDestinationRef> imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
-    CGImageDestinationAddImage(imageDest.get(), image, 0);
+    auto imageData = adoptCF(CFDataCreateMutable(0, 0));
+    auto imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
+
+    auto propertiesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    double resolutionWidth = 72.0 * scaleFactor;
+    double resolutionHeight = 72.0 * scaleFactor;
+    auto resolutionWidthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &resolutionWidth));
+    auto resolutionHeightNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &resolutionHeight));
+    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIWidth, resolutionWidthNumber.get());
+    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIHeight, resolutionHeightNumber.get());
+
+    CGImageDestinationAddImage(imageDest.get(), image, propertiesDictionary.get());
     CGImageDestinationFinalize(imageDest.get());
 
     const UInt8* data = CFDataGetBytePtr(imageData.get());
@@ -110,7 +119,7 @@ void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashStri
 void dumpBitmap(BitmapContext* context, const char* checksum)
 {
     RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(context->cgContext()));
-    printPNG(image.get(), checksum);
+    printPNG(image.get(), checksum, context->scaleFactor());
 }
 
 #if PLATFORM(COCOA)

@@ -63,6 +63,9 @@ public:
     }
 
     CGContextRef cgContext() const { return m_context.get(); }
+    
+    double scaleFactor() const { return m_scaleFactor; }
+    void setScaleFactor(double scaleFactor) { m_scaleFactor = scaleFactor; }
 
 private:
 
@@ -74,7 +77,7 @@ private:
 
     PlatformBitmapBuffer m_buffer;
     RetainPtr<CGContextRef> m_context;
-
+    double m_scaleFactor { 1.0 };
 };
 
 #if PLATFORM(COCOA)

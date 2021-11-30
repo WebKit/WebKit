@@ -151,7 +151,7 @@ int main(int argc, const char* argv[])
             }
             
             if (verbose)
-                fprintf(stderr, "Comparing files actual: %s and baseline: %s\n", file1Path, file2Path);
+                fprintf(stderr, "Comparing files actual: %s (resolution %.1f) and baseline: %s (resolution %.1f)\n", file1Path, actualImage->scaleFactor(), file2Path, baselineImage->scaleFactor());
 
             return processImages(std::move(actualImage), std::move(baselineImage), exact, printDifference);
         }
@@ -199,6 +199,9 @@ int main(int argc, const char* argv[])
         }
 
         if (actualImage && baselineImage) {
+            if (verbose)
+                fprintf(stderr, "Actual image resolution: %.1f, baseline image resolution: %.1f\n", actualImage->scaleFactor(), baselineImage->scaleFactor());
+
             auto result = processImages(std::exchange(actualImage, { }), std::exchange(baselineImage, { }), exact, printDifference);
             if (result != EXIT_SUCCESS)
                 return result;

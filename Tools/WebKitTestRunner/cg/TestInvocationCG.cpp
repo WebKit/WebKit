@@ -29,7 +29,7 @@
 #include "PixelDumpSupport.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include <ImageIO/CGImageDestination.h>
+#include <ImageIO/ImageIO.h>
 #include <WebKit/WKImageCG.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SHA1.h>
@@ -107,12 +107,21 @@ void computeSHA1HashStringForContext(CGContextRef bitmapContext, char hashString
         snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
 }
 
-static void dumpBitmap(CGContextRef bitmapContext, const char* checksum)
+static void dumpBitmap(CGContextRef bitmapContext, const char* checksum, WKSize imageSize, WKSize windowSize)
 {
     auto image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
     auto imageData = adoptCF(CFDataCreateMutable(0, 0));
     auto imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
-    CGImageDestinationAddImage(imageDest.get(), image.get(), 0);
+
+    auto propertiesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    double resolutionWidth = 72.0 * imageSize.width / windowSize.width;
+    double resolutionHeight = 72.0 * imageSize.height / windowSize.height;
+    auto resolutionWidthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &resolutionWidth));
+    auto resolutionHeightNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &resolutionHeight));
+    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIWidth, resolutionWidthNumber.get());
+    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIHeight, resolutionHeightNumber.get());
+
+    CGImageDestinationAddImage(imageDest.get(), image.get(), propertiesDictionary.get());
     CGImageDestinationFinalize(imageDest.get());
 
     const unsigned char* data = CFDataGetBytePtr(imageData.get());
@@ -181,10 +190,12 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
     if (repaintRects)
         paintRepaintRectOverlay(context.get(), imageSize, repaintRects);
 
+    auto windowSize = TestController::singleton().mainWebView()->windowFrame().size;
+
     char actualHash[33];
     computeSHA1HashStringForContext(context.get(), actualHash);
     if (!compareActualHashToExpectedAndDumpResults(actualHash))
-        dumpBitmap(context.get(), actualHash);
+        dumpBitmap(context.get(), actualHash, imageSize, windowSize);
 }
 
 } // namespace WTR

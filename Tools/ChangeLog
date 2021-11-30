@@ -1,3 +1,44 @@
+2021-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Store image resolution in layout test snapshots, and have ImageDiff read it
+        https://bugs.webkit.org/show_bug.cgi?id=233609
+
+        Reviewed by Darin Adler.
+
+        On the way to fixing bug 232525, we need to communicate to ImageDiff the resolution of
+        layout test snapshots so that it can account for the resolution when computing pixel
+        tolerance values, which should be reported in CSS pixels.
+
+        So have DumpRenderTree and WebKitTestRunner, on Cocoa platforms, add image resolution
+        metadata, where a 2x snapshot (i.e. a hidpi test) reports a horizontal and vertical
+        resolution of 144dpi.
+
+        Change ImageDiff to read these values and store them in PlatformImage; a future patch will
+        make use of the data.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (printPNG):
+        (dumpBitmap):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+        (BitmapContext::scaleFactor const):
+        (BitmapContext::setScaleFactor):
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+        * ImageDiff/ImageDiff.cpp:
+        (main):
+        * ImageDiff/PlatformImage.h:
+        (ImageDiff::PlatformImage::scaleFactor const):
+        * ImageDiff/cg/PlatformImageCG.cpp:
+        (ImageDiff::createImageFromDataProvider):
+        (ImageDiff::PlatformImage::createFromFile):
+        (ImageDiff::PlatformImage::createFromStdin):
+        (ImageDiff::PlatformImage::PlatformImage):
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::dumpBitmap):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2021-11-29  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Guard git-webkit with __name__
