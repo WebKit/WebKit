@@ -48,7 +48,7 @@ shouldBe('stepMismatchFor("1.0", "0.3333333333333333", "")', 'false');
 debug('Rounding');
 shouldBe('stepMismatchFor("5.005", "0.005", "4")', 'false');
 debug('Disabled');
-shouldBe('stepMismatchFor("1", "2", "0", true)', 'false');
+shouldBe('stepMismatchFor("1", "2", "0", true)', 'true');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

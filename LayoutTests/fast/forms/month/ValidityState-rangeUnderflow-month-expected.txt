@@ -14,7 +14,7 @@ PASS The value "" sanitized from "foo" doesn't underflow the minimum value "2011
 PASS The value "2010-01" undeflows the minimum value "2010-02".
 PASS The value "9999-01" undeflows the minimum value "10000-12".
 PASS The value "2010-01" undeflows the minimum value "2010-02".
-PASS The value "9999-01" doesn't underflow the minimum value "10000-12" when disabled.
+PASS The value "9999-01" undeflows the minimum value "10000-12" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

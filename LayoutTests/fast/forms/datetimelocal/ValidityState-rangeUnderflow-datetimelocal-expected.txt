@@ -14,7 +14,7 @@ PASS The value "" sanitized from "foo" doesn't underflow the minimum value "2011
 PASS The value "2010-01-27T12:34" undeflows the minimum value "2010-01-27T13:00".
 PASS The value "9999-01-01T12:00" undeflows the minimum value "10000-12-31T12:00".
 PASS The value "2010-01-27T12:00" undeflows the minimum value "2010-02-01T12:00".
-PASS The value "9999-01-01T12:00" doesn't underflow the minimum value "10000-12-31T12:00" when disabled.
+PASS The value "9999-01-01T12:00" undeflows the minimum value "10000-12-31T12:00" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

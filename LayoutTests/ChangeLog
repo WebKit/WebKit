@@ -1,3 +1,16 @@
+2021-11-30  Chris Dumez  <cdumez@apple.com>
+
+        Several WPT tests under html/semantics/forms/constraints are failing due to extraneous willValidate() checks
+        https://bugs.webkit.org/show_bug.cgi?id=233604
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch-expected.txt:
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         Add support for rvfc to MediaPlayerPrivateMediaSourceAVFObjC

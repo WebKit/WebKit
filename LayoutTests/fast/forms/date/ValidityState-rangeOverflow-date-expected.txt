@@ -14,7 +14,7 @@ PASS The value "2010-01-27" doesn't overflow the maximum value "0000-01-01".
 PASS The value "2010-01-27" overflows the maximum value "2010-01-26".
 PASS The value "9999-01-01" overflows the maximum value "2010-12-31".
 PASS The value "2010-01-27" overflows the maximum value "2010-01-26".
-PASS The value "9999-01-01" doesn't overflow the maximum value "2010-12-31" when disabled.
+PASS The value "9999-01-01" overflows the maximum value "2010-12-31" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

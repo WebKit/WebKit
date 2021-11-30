@@ -286,17 +286,17 @@ bool HTMLInputElement::isValidValue(const String& value) const
 
 bool HTMLInputElement::tooShort() const
 {
-    return willValidate() && tooShort(value(), CheckDirtyFlag);
+    return tooShort(value(), CheckDirtyFlag);
 }
 
 bool HTMLInputElement::tooLong() const
 {
-    return willValidate() && tooLong(value(), CheckDirtyFlag);
+    return tooLong(value(), CheckDirtyFlag);
 }
 
 bool HTMLInputElement::typeMismatch() const
 {
-    return willValidate() && m_inputType->typeMismatch();
+    return m_inputType->typeMismatch();
 }
 
 bool HTMLInputElement::valueMissing() const
@@ -306,7 +306,7 @@ bool HTMLInputElement::valueMissing() const
 
 bool HTMLInputElement::hasBadInput() const
 {
-    return willValidate() && m_inputType->hasBadInput();
+    return m_inputType->hasBadInput();
 }
 
 bool HTMLInputElement::patternMismatch() const
@@ -355,12 +355,12 @@ bool HTMLInputElement::tooLong(StringView value, NeedsToCheckDirtyFlag check) co
 
 bool HTMLInputElement::rangeUnderflow() const
 {
-    return willValidate() && m_inputType->rangeUnderflow(value());
+    return m_inputType->rangeUnderflow(value());
 }
 
 bool HTMLInputElement::rangeOverflow() const
 {
-    return willValidate() && m_inputType->rangeOverflow(value());
+    return m_inputType->rangeOverflow(value());
 }
 
 String HTMLInputElement::validationMessage() const
@@ -386,7 +386,7 @@ double HTMLInputElement::maximum() const
 
 bool HTMLInputElement::stepMismatch() const
 {
-    return willValidate() && m_inputType->stepMismatch(value());
+    return m_inputType->stepMismatch(value());
 }
 
 bool HTMLInputElement::isValid() const

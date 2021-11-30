@@ -32,7 +32,7 @@ PASS stepMismatchFor("2010-02-10T12:34", "foo", "2010-02-09T12:34") is false
 Special step value
 PASS stepMismatchFor("2010-02-09T12:34", "any", "2010-02-09T12:34") is false
 Disabled
-PASS stepMismatchFor("2010-02-09T12:34:55.001", "1", "2010-02-09T12:34:56", true) is false
+PASS stepMismatchFor("2010-02-09T12:34:55.001", "1", "2010-02-09T12:34:56", true) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -14,7 +14,7 @@ PASS The value "" sanitized from "foo" doesn't underflow the minimum value "2011
 PASS The value "2010-W01" undeflows the minimum value "2010-W02".
 PASS The value "9999-W01" undeflows the minimum value "10000-W12".
 PASS The value "2010-W01" undeflows the minimum value "2010-W02".
-PASS The value "9999-W01" doesn't underflow the minimum value "10000-W12" when disabled.
+PASS The value "9999-W01" undeflows the minimum value "10000-W12" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE
