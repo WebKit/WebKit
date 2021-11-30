@@ -60,7 +60,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 
     size_t totalBytesRead = 0;
     ssize_t bytesRead;
-    while ((bytesRead = read(fd, buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
+    while ((bytesRead = ::read(fd, buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
         totalBytesRead += bytesRead;
 
     close(fd);
