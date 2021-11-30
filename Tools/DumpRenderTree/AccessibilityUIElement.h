@@ -31,6 +31,10 @@
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC)
+OBJC_CLASS NSString;
+#endif
+
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(WIN)
@@ -109,8 +113,13 @@ public:
     JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);
     double numberAttributeValue(JSStringRef attribute);
     void uiElementArrayAttributeValue(JSStringRef attribute, Vector<AccessibilityUIElement>& elements) const;
-    AccessibilityUIElement uiElementAttributeValue(JSStringRef attribute) const;    
+    AccessibilityUIElement uiElementAttributeValue(JSStringRef attribute) const;
     bool boolAttributeValue(JSStringRef attribute);
+#if PLATFORM(MAC)
+    bool boolAttributeValue(NSString *attribute) const;
+    JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;
+    double numberAttributeValue(NSString *attribute) const;
+#endif
     void setBoolAttributeValue(JSStringRef attribute, bool value);
     bool isAttributeSupported(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);

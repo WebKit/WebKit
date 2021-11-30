@@ -1,3 +1,85 @@
+2021-11-30  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Reduce repetition in retrieving typed attribute values in AccessibilityUIElementMac
+        https://bugs.webkit.org/show_bug.cgi?id=233603
+
+        Reviewed by Chris Fleizach.
+
+        We have a lot of functions in both the WebKitTestRunner and DumpRenderTree versions of
+        AccessibilityUIElementMac that repeat the same logic for getting a typed attribute value.
+        We can make this simpler.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::stringAttributeValue):
+        Move core logic to new stringAttributeValue(NSString* attribute) function.
+        (AccessibilityUIElement::stringAttributeValue const): Added.
+
+        (AccessibilityUIElement::numberAttributeValue):
+        Move core logic to new numberAttributeValue(NSString* attribute) function.
+        (AccessibilityUIElement::numberAttributeValue const): Added.
+
+        (AccessibilityUIElement::boolAttributeValue const): Added.
+        (AccessibilityUIElement::boolAttributeValue):
+        Move core logic to new boolAttributeValue(NSString* attribute) function.
+
+        (AccessibilityUIElement::domIdentifier const):
+        (AccessibilityUIElement::intValue const):
+        (AccessibilityUIElement::minValue):
+        (AccessibilityUIElement::maxValue):
+        (AccessibilityUIElement::isEnabled):
+        (AccessibilityUIElement::isRequired const):
+        (AccessibilityUIElement::isFocused const):
+        (AccessibilityUIElement::isSelected const):
+        (AccessibilityUIElement::isExpanded const):
+        (AccessibilityUIElement::ariaIsGrabbed const):
+        (AccessibilityUIElement::documentEncoding):
+        (AccessibilityUIElement::documentURI):
+        (AccessibilityUIElement::isOnScreen const):
+        (AccessibilityUIElement::hasPopup const):
+        (AccessibilityUIElement::popupValue const):
+        (AccessibilityUIElement::hasDocumentRoleAncestor const):
+        (AccessibilityUIElement::hasWebApplicationAncestor const):
+        (AccessibilityUIElement::isInDescriptionListDetail const):
+        (AccessibilityUIElement::isInDescriptionListTerm const):
+        (AccessibilityUIElement::isInCell const):
+        Refactor to use new `NSString *attribute` convenience functions.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        Move core logic to new stringAttributeValue(NSString* attribute) function.
+        (WTR::AccessibilityUIElement::stringAttributeValue const): Added.
+
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+        Move core logic to new numberAttributeValue(NSString* attribute) function.
+        (WTR::AccessibilityUIElement::numberAttributeValue const): Added.
+        (WTR::AccessibilityUIElement::boolAttributeValue const): Added.
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+        Move core logic to new boolAttributeValue(NSString* attribute) function.
+
+        (WTR::AccessibilityUIElement::domIdentifier const):
+        (WTR::AccessibilityUIElement::intValue const):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        (WTR::AccessibilityUIElement::isEnabled):
+        (WTR::AccessibilityUIElement::isRequired const):
+        (WTR::AccessibilityUIElement::isFocused const):
+        (WTR::AccessibilityUIElement::isExpanded const):
+        (WTR::AccessibilityUIElement::currentStateValue const):
+        (WTR::AccessibilityUIElement::sortDirection const):
+        (WTR::AccessibilityUIElement::ariaIsGrabbed const):
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+        (WTR::AccessibilityUIElement::hasPopup const):
+        (WTR::AccessibilityUIElement::popupValue const):
+        (WTR::AccessibilityUIElement::hasDocumentRoleAncestor const):
+        (WTR::AccessibilityUIElement::hasWebApplicationAncestor const):
+        (WTR::AccessibilityUIElement::isInDescriptionListDetail const):
+        (WTR::AccessibilityUIElement::isInDescriptionListTerm const):
+        (WTR::AccessibilityUIElement::isInCell const):
+        Refactor to use new `NSString *attribute` convenience functions.
+
 2021-11-29  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Use info log level instead of warning
