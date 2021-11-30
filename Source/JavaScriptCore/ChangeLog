@@ -1,3 +1,21 @@
+2021-11-29  Saam Barati  <sbarati@apple.com>
+
+        FTL's implementation of HasIndexedProperty for InBounds accesses checks the inverse of what it should be checking when exiting by seeing a hole
+        https://bugs.webkit.org/show_bug.cgi?id=233408
+        <rdar://problem/85787251>
+
+        Reviewed by Mark Lam.
+
+        The implementation of an InBounds HasIndexedProperty in FTL, when speculating, we
+        would exit when we did not see a hole, not when we did see a hole. This is
+        the inverse of what we need to do, we should exit when we do see a hole.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] slice should be aware of TerminationException

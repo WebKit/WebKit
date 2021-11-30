@@ -13322,15 +13322,15 @@ IGNORE_CLANG_WARNINGS_END
             } else
                 lastNext = m_out.insertNewBlocksBefore(slowCase);
 
-            LValue checkHoleResultValue =
-                m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1))));
-            ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
+            LValue isHole =
+                m_out.isZero64(m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1))));
+            ValueFromBlock checkHoleResult = m_out.anchor(m_out.logicalNot(isHole));
             if (mode.isInBoundsSaneChain())
                 m_out.jump(continuation);
             else if (!mode.isInBounds())
-                m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+                m_out.branch(isHole, rarely(slowCase), usually(continuation));
             else
-                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, checkHoleResultValue);
+                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, isHole);
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
@@ -13360,14 +13360,14 @@ IGNORE_CLANG_WARNINGS_END
                 lastNext = m_out.insertNewBlocksBefore(slowCase);
 
             LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
-            LValue checkHoleResultValue = m_out.doubleEqual(doubleValue, doubleValue);
-            ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
+            LValue notHole = m_out.doubleEqual(doubleValue, doubleValue);
+            ValueFromBlock checkHoleResult = m_out.anchor(notHole);
             if (mode.isInBoundsSaneChain())
                 m_out.jump(continuation);
             else if (!mode.isInBounds())
-                m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+                m_out.branch(notHole, usually(continuation), rarely(slowCase));
             else
-                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, checkHoleResultValue);
+                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, m_out.logicalNot(notHole));
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
@@ -13395,15 +13395,15 @@ IGNORE_CLANG_WARNINGS_END
             } else
                 lastNext = m_out.insertNewBlocksBefore(slowCase);
 
-            LValue checkHoleResultValue =
-                m_out.notZero64(m_out.load64(baseIndex(m_heaps.ArrayStorage_vector, storage, index, m_graph.varArgChild(m_node, 1))));
-            ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
+            LValue isHole =
+                m_out.isZero64(m_out.load64(baseIndex(m_heaps.ArrayStorage_vector, storage, index, m_graph.varArgChild(m_node, 1))));
+            ValueFromBlock checkHoleResult = m_out.anchor(m_out.logicalNot(isHole));
             if (mode.isInBoundsSaneChain())
                 m_out.jump(continuation);
             else if (!mode.isInBounds())
-                m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+                m_out.branch(isHole, rarely(slowCase), usually(continuation));
             else
-                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, checkHoleResultValue);
+                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, isHole);
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(

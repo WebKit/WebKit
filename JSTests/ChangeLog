@@ -1,3 +1,15 @@
+2021-11-29  Saam Barati  <sbarati@apple.com>
+
+        FTL's implementation of HasIndexedProperty for InBounds accesses checks the inverse of what it should be checking when exiting by seeing a hole
+        https://bugs.webkit.org/show_bug.cgi?id=233408
+        <rdar://problem/85787251>
+
+        Reviewed by Mark Lam.
+
+        * stress/in-by-val-has-indexed-property-ftl-3.js: Added.
+        * stress/in-by-val-has-indexed-property-ftl-2.js: Added.
+        * stress/in-by-val-has-indexed-property-ftl.js: Added.
+
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] slice should be aware of TerminationException
