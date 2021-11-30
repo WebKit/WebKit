@@ -105,7 +105,7 @@ bool FEColorMatrix::supportsCoreImageRendering() const
 }
 #endif
 
-bool FEColorMatrix::resultIsAlphaImage() const
+bool FEColorMatrix::resultIsAlphaImage(const FilterImageVector&) const
 {
     return m_type == FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
 }

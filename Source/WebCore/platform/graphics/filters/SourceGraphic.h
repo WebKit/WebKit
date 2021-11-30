@@ -38,7 +38,7 @@ private:
     bool supportsCoreImageRendering() const override { return true; }
 #endif
 
-    void determineAbsolutePaintRect(const Filter&) override;
+    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 

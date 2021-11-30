@@ -29,6 +29,7 @@
 #include "FELighting.h"
 
 #include "FELightingSoftwareApplier.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -79,6 +80,11 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
 
     m_kernelUnitLengthY = kernelUnitLengthY;
     return true;
+}
+
+FloatRect FELighting::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+{
+    return filter.maxEffectRect(primitiveSubregion);
 }
 
 std::unique_ptr<FilterEffectApplier> FELighting::createApplier(const Filter&) const

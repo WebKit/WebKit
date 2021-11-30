@@ -56,7 +56,7 @@ private:
     bool supportsCoreImageRendering() const override;
 #endif
     
-    bool resultIsAlphaImage() const override;
+    bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +40,7 @@ public:
     bool setY(float) override;
     bool setZ(float) override;
 
-    void initPaintingData(const FilterEffect&, PaintingData&) const override;
+    void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
     ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;

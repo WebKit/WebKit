@@ -49,25 +49,25 @@
 
 namespace WebCore {
 
-RefPtr<CSSFilter> CSSFilter::create(const FilterOperations& operations, RenderingMode renderingMode, float scaleFactor)
+RefPtr<CSSFilter> CSSFilter::create(const FilterOperations& operations, RenderingMode renderingMode, float scaleFactor, ClipOperation clipOperation)
 {
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
-    return adoptRef(*new CSSFilter(renderingMode, scaleFactor, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
+    return adoptRef(*new CSSFilter(renderingMode, scaleFactor, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 }
 
-CSSFilter::CSSFilter(RenderingMode renderingMode, float scaleFactor, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
-    : Filter(Filter::Type::CSSFilter, renderingMode, FloatSize { scaleFactor, scaleFactor })
+CSSFilter::CSSFilter(RenderingMode renderingMode, float scaleFactor, ClipOperation clipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
+    : Filter(Filter::Type::CSSFilter, renderingMode, FloatSize { scaleFactor, scaleFactor }, clipOperation)
     , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
     , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
 {
 }
 
-static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation, FilterConsumer consumer)
+static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation, Filter::ClipOperation clipOperation)
 {
     float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-    return FEGaussianBlur::create(stdDeviation, stdDeviation, consumer == FilterConsumer::FilterProperty ? EdgeModeType::None : EdgeModeType::Duplicate);
+    return FEGaussianBlur::create(stdDeviation, stdDeviation, clipOperation == Filter::ClipOperation::Unite ? EdgeModeType::None : EdgeModeType::Duplicate);
 }
 
 static RefPtr<FilterEffect> createBrightnessEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
@@ -221,18 +221,10 @@ static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilte
     }
 
     SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.sourceImageRect(), filter.filterRegion(), previousEffect);
+    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.sourceImageRect(), filter.filterRegion(), filter.clipOperation(), previousEffect);
 }
 
-static void setupLastEffectProperties(FilterEffect& effect, FilterConsumer consumer)
-{
-    // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
-    // property applied here should not clip to their primitive subregions.
-    effect.setClipsToBounds(consumer == FilterConsumer::FilterFunction);
-    effect.setOperatingColorSpace(DestinationColorSpace::SRGB());
-}
-
-bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, FilterConsumer consumer)
+bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations)
 {
     m_functions.clear();
     m_outsets = { };
@@ -249,7 +241,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::BLUR:
-            effect = createBlurEffect(downcast<BlurFilterOperation>(*operation), consumer);
+            effect = createBlurEffect(downcast<BlurFilterOperation>(*operation), clipOperation());
             break;
 
         case FilterOperation::BRIGHTNESS:
@@ -304,14 +296,14 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
         
         if (filter) {
             effect = filter->lastEffect();
-            setupLastEffectProperties(*effect, consumer);
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
             m_functions.append(filter.releaseNonNull());
             previousEffect = WTFMove(effect);
             continue;
         }
 
         if (effect) {
-            setupLastEffectProperties(*effect, consumer);
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
             effect->inputEffects() = { WTFMove(previousEffect) };
             m_functions.append({ *effect });
             previousEffect = WTFMove(effect);
@@ -411,16 +403,13 @@ LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filte
 
 void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)
 {
-    auto scaledSourceImageRect = sourceImageRect;
-    scaledSourceImageRect.scale(filterScale());
-
     Filter::setFilterRegion(sourceImageRect);
-    Filter::setSourceImageRect(scaledSourceImageRect);
+    Filter::setSourceImageRect(sourceImageRect);
 
     for (auto& function : m_functions) {
         if (function->isSVGFilter()) {
             downcast<SVGFilter>(function.ptr())->setFilterRegion(sourceImageRect);
-            downcast<SVGFilter>(function.ptr())->setSourceImageRect(scaledSourceImageRect);
+            downcast<SVGFilter>(function.ptr())->setSourceImageRect(sourceImageRect);
         }
     }
 }

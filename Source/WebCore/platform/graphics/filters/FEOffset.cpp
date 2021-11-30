@@ -53,20 +53,16 @@ void FEOffset::setDy(float dy)
     m_dy = dy;
 }
 
-void FEOffset::determineAbsolutePaintRect(const Filter& filter)
+FloatRect FEOffset::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
 {
-    FloatRect paintRect = inputEffect(0)->absolutePaintRect();
-    paintRect.move(filter.scaledByFilterScale({ m_dx, m_dy }));
-    if (clipsToBounds())
-        paintRect.intersect(maxEffectRect());
-    else
-        paintRect.unite(maxEffectRect());
-    setAbsolutePaintRect(enclosingIntRect(paintRect));
+    auto imageRect = inputs[0]->imageRect();
+    imageRect.move(filter.resolvedSize({ m_dx, m_dy }));
+    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-bool FEOffset::resultIsAlphaImage() const
+bool FEOffset::resultIsAlphaImage(const FilterImageVector& inputs) const
 {
-    return inputEffect(0)->resultIsAlphaImage();
+    return inputs[0]->isAlphaImage();
 }
 
 std::unique_ptr<FilterEffectApplier> FEOffset::createApplier(const Filter&) const

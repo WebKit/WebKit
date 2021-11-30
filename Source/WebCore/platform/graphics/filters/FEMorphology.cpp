@@ -68,20 +68,16 @@ bool FEMorphology::setRadiusY(float radiusY)
     return true;
 }
 
-void FEMorphology::determineAbsolutePaintRect(const Filter& filter)
+FloatRect FEMorphology::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
 {
-    FloatRect paintRect = inputEffect(0)->absolutePaintRect();
-    paintRect.inflate(filter.scaledByFilterScale({ m_radiusX, m_radiusY }));
-    if (clipsToBounds())
-        paintRect.intersect(maxEffectRect());
-    else
-        paintRect.unite(maxEffectRect());
-    setAbsolutePaintRect(enclosingIntRect(paintRect));
+    auto imageRect = inputs[0]->imageRect();
+    imageRect.inflate(filter.resolvedSize({ m_radiusX, m_radiusY }));
+    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-bool FEMorphology::resultIsAlphaImage() const
+bool FEMorphology::resultIsAlphaImage(const FilterImageVector& inputs) const
 {
-    return inputEffect(0)->resultIsAlphaImage();
+    return inputs[0]->isAlphaImage();
 }
 
 std::unique_ptr<FilterEffectApplier> FEMorphology::createApplier(const Filter&) const

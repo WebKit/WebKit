@@ -50,10 +50,8 @@ FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect, co
 {
 }
 
-void FEImage::determineAbsolutePaintRect(const Filter& filter)
+FloatRect FEImage::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
 {
-    auto primitiveSubregion = filterPrimitiveSubregion();
-
     auto imageRect = WTF::switchOn(m_sourceImage,
         [&] (const Ref<Image>&) {
             auto imageRect = primitiveSubregion;
@@ -65,14 +63,7 @@ void FEImage::determineAbsolutePaintRect(const Filter& filter)
             return primitiveSubregion;
         }
     );
-
-    imageRect.scale(filter.filterScale());
-
-    if (clipsToBounds())
-        imageRect.intersect(maxEffectRect());
-    else
-        imageRect.unite(maxEffectRect());
-    setAbsolutePaintRect(enclosingIntRect(imageRect));
+    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
 // FIXME: Move the class FEImageSoftwareApplier to separate source and header files.

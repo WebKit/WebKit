@@ -127,7 +127,7 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement& renderer, const FloatSiz
     auto cssFilter = CSSFilter::create(m_filterOperations, renderingMode);
 
     cssFilter->setSourceImageRect(sourceImageRect);
-    if (!cssFilter->buildFilterFunctions(renderer, m_filterOperations, FilterConsumer::FilterFunction))
+    if (!cssFilter->buildFilterFunctions(renderer, m_filterOperations))
         return &Image::nullImage();
 
     if (auto image = sourceImage->filteredImage(*cssFilter))

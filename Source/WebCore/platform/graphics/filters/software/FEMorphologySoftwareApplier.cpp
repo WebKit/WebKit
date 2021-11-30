@@ -149,23 +149,24 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageV
     if (!destinationPixelBuffer)
         return false;
 
-    auto isDegenerate = [](int radiusX, int radiusY) -> bool {
-        return radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY);
+    auto isDegenerate = [](const IntSize& absoluteRadius) -> bool {
+        return absoluteRadius.width() < 0 || absoluteRadius.height() < 0 || absoluteRadius.isZero();
     };
 
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
-    auto radius = flooredIntSize(FloatSize(m_effect.radiusX(), m_effect.radiusY()));
 
-    if (isDegenerate(radius.width(), radius.height())) {
+    auto radius = filter.resolvedSize({ m_effect.radiusX(), m_effect.radiusY() });
+    auto absoluteRadius = flooredIntSize(filter.scaledByFilterScale(radius));
+
+    if (isDegenerate(absoluteRadius)) {
         input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
-    radius = flooredIntSize(filter.scaledByFilterScale({ m_effect.radiusX(), m_effect.radiusY() }));
-    int radiusX = std::min(effectDrawingRect.width() - 1, radius.width());
-    int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
+    int radiusX = std::min(effectDrawingRect.width() - 1, absoluteRadius.width());
+    int radiusY = std::min(effectDrawingRect.height() - 1, absoluteRadius.height());
 
-    if (isDegenerate(radiusX, radiusY)) {
+    if (isDegenerate({ radiusX, radiusY })) {
         input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }

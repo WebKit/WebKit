@@ -38,14 +38,15 @@
 
 namespace WebCore {
 
-RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()));
-    return adoptRef(new FilterImage(primitiveSubregion, absoluteImageRect, isAlphaImage, renderingMode, colorSpace));
+    return adoptRef(new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, renderingMode, colorSpace));
 }
 
-FilterImage::FilterImage(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
     : m_primitiveSubregion(primitiveSubregion)
+    , m_imageRect(imageRect)
     , m_absoluteImageRect(absoluteImageRect)
     , m_isAlphaImage(isAlphaImage)
     , m_renderingMode(renderingMode)
@@ -55,12 +56,17 @@ FilterImage::FilterImage(const FloatRect& primitiveSubregion, const IntRect& abs
 
 FloatRect FilterImage::maxEffectRect(const Filter& filter) const
 {
-    return intersection(m_primitiveSubregion, filter.filterRegion());
+    return filter.maxEffectRect(m_primitiveSubregion);
 }
 
 IntRect FilterImage::absoluteImageRectRelativeTo(const FilterImage& origin) const
 {
     return m_absoluteImageRect - origin.absoluteImageRect().location();
+}
+
+FloatPoint FilterImage::mappedAbsolutePoint(const FloatPoint& point) const
+{
+    return FloatPoint(point - m_absoluteImageRect.location());
 }
 
 ImageBuffer* FilterImage::imageBuffer()

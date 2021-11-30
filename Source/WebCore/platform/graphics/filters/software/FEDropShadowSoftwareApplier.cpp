@@ -38,12 +38,15 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageV
     if (!resultImage)
         return false;
 
-    FloatSize blurRadius = 2 * filter.scaledByFilterScale({ m_effect.stdDeviationX(), m_effect.stdDeviationY() });
-    FloatSize offset = filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() });
+    auto stdDeviation = filter.resolvedSize({ m_effect.stdDeviationX(), m_effect.stdDeviationY() });
+    auto blurRadius = 2 * filter.scaledByFilterScale(stdDeviation);
+    
+    auto offset = filter.resolvedSize({ m_effect.dx(), m_effect.dy() });
+    auto absoluteOffset = filter.scaledByFilterScale(offset);
 
     FloatRect inputImageRect = input.absoluteImageRectRelativeTo(result);
     FloatRect inputImageRectWithOffset(inputImageRect);
-    inputImageRectWithOffset.move(offset);
+    inputImageRectWithOffset.move(absoluteOffset);
 
     auto inputImage = input.imageBuffer();
     if (!inputImage)
@@ -54,7 +57,7 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageV
     resultContext.drawImageBuffer(*inputImage, inputImageRectWithOffset);
     resultContext.setAlpha(1);
 
-    ShadowBlur contextShadow(blurRadius, offset, m_effect.shadowColor());
+    ShadowBlur contextShadow(blurRadius, absoluteOffset, m_effect.shadowColor());
 
     PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, result.colorSpace() };
     IntRect shadowArea(IntPoint(), resultImage->truncatedLogicalSize());

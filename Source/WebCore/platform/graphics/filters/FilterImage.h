@@ -44,13 +44,17 @@ class ImageBuffer;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
 
+    // The return values are in filter coordinates.
     FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
     FloatRect maxEffectRect(const Filter&) const;
+    FloatRect imageRect() const { return m_imageRect; }
 
+    // The return values are in user-space coordinates.
     IntRect absoluteImageRect() const { return m_absoluteImageRect; }
     IntRect absoluteImageRectRelativeTo(const FilterImage& origin) const;
+    FloatPoint mappedAbsolutePoint(const FloatPoint&) const;
 
     bool isAlphaImage() const { return m_isAlphaImage; }
     RenderingMode renderingMode() const { return m_renderingMode; }
@@ -71,7 +75,7 @@ public:
 #endif
 
 private:
-    FilterImage(const FloatRect& primitiveSubregion, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
 
     std::optional<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
@@ -84,6 +88,7 @@ private:
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
 
     FloatRect m_primitiveSubregion;
+    FloatRect m_imageRect;
     IntRect m_absoluteImageRect;
 
     bool m_isAlphaImage { false };

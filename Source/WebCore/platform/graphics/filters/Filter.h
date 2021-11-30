@@ -35,6 +35,8 @@ class Filter : public FilterFunction {
     using FilterFunction::apply;
 
 public:
+    enum class ClipOperation { Intersect, Unite };
+
     RenderingMode renderingMode() const { return m_renderingMode; }
     void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
     
@@ -50,14 +52,23 @@ public:
     ImageBuffer* sourceImage() const { return m_sourceImage.get(); }
     void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
-    virtual FloatSize scaledByFilterScale(FloatSize size) const { return size * m_filterScale; }
+    ClipOperation clipOperation() const { return m_clipOperation; }
+
+    virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
+
+    FloatPoint scaledByFilterScale(const FloatPoint&) const;
+    FloatSize scaledByFilterScale(const FloatSize&) const;
+    FloatRect scaledByFilterScale(const FloatRect&) const;
+
+    FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const;
+    FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
 
     virtual RefPtr<FilterImage> apply() = 0;
     WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage);
 
 protected:
-    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale);
-    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion);
+    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, ClipOperation = ClipOperation::Intersect);
+    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation = ClipOperation::Intersect);
 
 private:
     RenderingMode m_renderingMode;
@@ -67,6 +78,8 @@ private:
     FloatRect m_filterRegion;
 
     RefPtr<ImageBuffer> m_sourceImage;
+
+    ClipOperation m_clipOperation;
 };
 
 } // namespace WebCore

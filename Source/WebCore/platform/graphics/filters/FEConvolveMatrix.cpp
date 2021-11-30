@@ -26,6 +26,7 @@
 #include "FEConvolveMatrix.h"
 
 #include "FEConvolveMatrixSoftwareApplier.h"
+#include "Filter.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -111,6 +112,11 @@ bool FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
         return false;
     m_preserveAlpha = preserveAlpha;
     return true;
+}
+
+FloatRect FEConvolveMatrix::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+{
+    return filter.maxEffectRect(primitiveSubregion);
 }
 
 std::unique_ptr<FilterEffectApplier> FEConvolveMatrix::createApplier(const Filter&) const

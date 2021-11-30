@@ -93,7 +93,9 @@ private:
 
     struct LightingData {
         // This structure contains only read-only (SMP safe) data
-        const FELighting* effect;
+        const Filter* filter;
+        const FilterImage* result;
+        FilterEffect::Type filterType;
         Color lightingColor;
         float surfaceScale;
         float diffuseConstant;

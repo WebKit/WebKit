@@ -45,25 +45,20 @@ FEDropShadow::FEDropShadow(float stdX, float stdY, float dx, float dy, const Col
 {
 }
 
-void FEDropShadow::determineAbsolutePaintRect(const Filter& filter)
+FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
 {
-    FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
-    FloatRect absoluteOffsetPaintRect(absolutePaintRect);
-    absoluteOffsetPaintRect.move(filter.scaledByFilterScale({ m_dx, m_dy }));
-    absolutePaintRect.unite(absoluteOffsetPaintRect);
+    auto imageRect = inputs[0]->imageRect();
+    auto imageRectWithOffset(imageRect);
+    imageRectWithOffset.move(filter.resolvedSize({ m_dx, m_dy }));
+    imageRect.unite(imageRectWithOffset);
 
-    IntSize kernelSize = FEGaussianBlur::calculateKernelSize(filter, { m_stdX, m_stdY });
+    auto kernelSize = FEGaussianBlur::calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
 
     // We take the half kernel size and multiply it with three, because we run box blur three times.
-    absolutePaintRect.inflateX(3 * kernelSize.width() * 0.5f);
-    absolutePaintRect.inflateY(3 * kernelSize.height() * 0.5f);
+    imageRect.inflateX(3 * kernelSize.width() * 0.5f);
+    imageRect.inflateY(3 * kernelSize.height() * 0.5f);
 
-    if (clipsToBounds())
-        absolutePaintRect.intersect(maxEffectRect());
-    else
-        absolutePaintRect.unite(maxEffectRect());
-
-    setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
+    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
 IntOutsets FEDropShadow::outsets() const

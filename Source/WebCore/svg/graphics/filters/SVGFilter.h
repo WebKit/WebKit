@@ -24,6 +24,7 @@
 #include "Filter.h"
 #include "FilterEffectVector.h"
 #include "FloatRect.h"
+#include "SVGUnitTypes.h"
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 
@@ -35,21 +36,21 @@ class SVGFilterElement;
 
 class SVGFilter final : public Filter {
 public:
-    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation, FilterEffect& previousEffect);
     static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox);
-    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation, const FloatRect& targetBoundingBox, FilterEffect* previousEffect);
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
     void setExpression(FilterEffectVector&& expression) { m_expression = WTFMove(expression); }
     RefPtr<FilterEffect> lastEffect() const { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
 
-    FloatSize scaledByFilterScale(FloatSize) const final;
+    FloatSize resolvedSize(const FloatSize&) const final;
 
     RefPtr<FilterImage> apply() override;
 
 private:
-    SVGFilter(RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
+    SVGFilter(RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
 
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const override;
@@ -60,7 +61,7 @@ private:
     void clearResult() override;
 
     FloatRect m_targetBoundingBox;
-    bool m_effectBBoxMode;
+    SVGUnitTypes::SVGUnitType m_primitiveUnits;
 
     FilterEffectVector m_expression;
 };

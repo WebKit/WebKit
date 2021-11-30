@@ -42,7 +42,11 @@ bool FEOffsetSoftwareApplier::apply(const Filter& filter, const FilterImageVecto
         return false;
 
     FloatRect inputImageRect = input.absoluteImageRectRelativeTo(result);
-    inputImageRect.move(filter.scaledByFilterScale({ m_effect.dx(), m_effect.dy() }));
+
+    auto offset = filter.resolvedSize({ m_effect.dx(), m_effect.dy() });
+    auto absoluteOffset = filter.scaledByFilterScale(offset);
+
+    inputImageRect.move(absoluteOffset);
 
     resultImage->context().drawImageBuffer(*inputImage, inputImageRect);
     return true;

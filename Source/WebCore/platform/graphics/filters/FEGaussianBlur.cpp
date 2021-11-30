@@ -91,6 +91,7 @@ IntSize FEGaussianBlur::calculateUnscaledKernelSize(FloatSize stdDeviation)
 
 IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, FloatSize stdDeviation)
 {
+    stdDeviation = filter.resolvedSize(stdDeviation);
     return calculateUnscaledKernelSize(filter.scaledByFilterScale(stdDeviation));
 }
 
@@ -102,27 +103,21 @@ IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
     return { 3 * kernelSize.width() / 2, 3 * kernelSize.height() / 2 };
 }
 
-void FEGaussianBlur::determineAbsolutePaintRect(const Filter& filter)
+FloatRect FEGaussianBlur::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
 {
-    IntSize kernelSize = calculateKernelSize(filter, { m_stdX, m_stdY });
+    auto imageRect = inputs[0]->imageRect();
 
-    FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     // Edge modes other than 'none' do not inflate the affected paint rect.
-    if (m_edgeMode != EdgeModeType::None) {
-        setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
-        return;
-    }
+    if (m_edgeMode != EdgeModeType::None)
+        return enclosingIntRect(imageRect);
+
+    auto kernelSize = calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
 
     // We take the half kernel size and multiply it with three, because we run box blur three times.
-    absolutePaintRect.inflateX(3 * kernelSize.width() * 0.5f);
-    absolutePaintRect.inflateY(3 * kernelSize.height() * 0.5f);
+    imageRect.inflateX(3 * kernelSize.width() * 0.5f);
+    imageRect.inflateY(3 * kernelSize.height() * 0.5f);
 
-    if (clipsToBounds())
-        absolutePaintRect.intersect(maxEffectRect());
-    else
-        absolutePaintRect.unite(maxEffectRect());
-
-    setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
+    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
 IntOutsets FEGaussianBlur::outsets() const
@@ -131,9 +126,9 @@ IntOutsets FEGaussianBlur::outsets() const
     return { outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width() };
 }
 
-bool FEGaussianBlur::resultIsAlphaImage() const
+bool FEGaussianBlur::resultIsAlphaImage(const FilterImageVector& inputs) const
 {
-    return inputEffect(0)->resultIsAlphaImage();
+    return inputs[0]->isAlphaImage();
 }
 
 std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createApplier(const Filter&) const

@@ -26,6 +26,7 @@
 #include "FEDisplacementMap.h"
 
 #include "FEDisplacementMapSoftwareApplier.h"
+#include "Filter.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -81,6 +82,11 @@ void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int in
     // Do not transform the first primitive input, as per the spec.
     if (index)
         in->transformResultColorSpace(operatingColorSpace());
+}
+
+FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+{
+    return filter.maxEffectRect(primitiveSubregion);
 }
 
 std::unique_ptr<FilterEffectApplier> FEDisplacementMap::createApplier(const Filter&) const

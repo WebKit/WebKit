@@ -54,7 +54,7 @@ private:
     const DestinationColorSpace& resultColorSpace() const override;
     void transformResultColorSpace(FilterEffect*, const int) override;
 
-    void determineAbsolutePaintRect(const Filter&) override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 

@@ -121,7 +121,7 @@ void RenderLayerFilters::buildFilter(RenderElement& renderer, float scaleFactor,
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
     // FIXME: this rebuilds the entire effects chain even if the filter style didn't change.
-    m_filter = CSSFilter::create(renderer.style().filter(), renderingMode, scaleFactor);
+    m_filter = CSSFilter::create(renderer.style().filter(), renderingMode, scaleFactor, Filter::ClipOperation::Unite);
 }
 
 GraphicsContext* RenderLayerFilters::inputContext()
@@ -132,8 +132,8 @@ GraphicsContext* RenderLayerFilters::inputContext()
 void RenderLayerFilters::allocateBackingStore(const GraphicsContext& targetContext)
 {
     auto& filter = *m_filter;
-    auto logicalSize = filter.sourceImageRect().size();
-    
+    auto logicalSize = filter.scaledByFilterScale(filter.sourceImageRect().size());
+
     if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize) {
 #if USE(DIRECT2D)
         m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), &targetContext, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
@@ -162,10 +162,10 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
     if (hasUpdatedBackingStore || !m_filter->lastEffect()) {
         // If the filter fails to build, remove it from the layer. It will still attempt to
         // go through regular processing (e.g. compositing), but never apply anything.
-        if (!m_filter->buildFilterFunctions(renderer, renderer.style().filter(), FilterConsumer::FilterProperty))
+        if (!m_filter->buildFilterFunctions(renderer, renderer.style().filter()))
             return nullptr;
     }
-    
+
     if (!filter.hasFilterThatMovesPixels())
         m_repaintRect = dirtyRect;
     else {
@@ -200,18 +200,14 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
 
 void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
 {
-    ASSERT(inputContext());
-
     LOG_WITH_STREAM(Filters, stream << "\nRenderLayerFilters " << this << " applyFilterEffect");
 
+    ASSERT(inputContext());
     inputContext()->restore();
 
     auto& filter = *m_filter;
 
-    destinationContext.scale({ 1 / filter.filterScale().width(), 1 / filter.filterScale().height() });
     destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), filter);
-    destinationContext.scale(filter.filterScale());
-
     filter.clearIntermediateResults();
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");

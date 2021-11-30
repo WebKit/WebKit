@@ -60,7 +60,7 @@ public:
 private:
     FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4);
 
-    void determineAbsolutePaintRect(const Filter&) override;
+    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
     bool mayProduceInvalidPremultipliedPixels() const override { return m_type == FECOMPOSITE_OPERATOR_ARITHMETIC; }
 

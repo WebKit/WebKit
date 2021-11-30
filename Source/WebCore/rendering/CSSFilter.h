@@ -39,15 +39,13 @@ class ReferenceFilterOperation;
 class RenderElement;
 class SourceGraphic;
 
-enum class FilterConsumer { FilterProperty, FilterFunction };
-
 class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<CSSFilter> create(const FilterOperations&, RenderingMode, float scaleFactor = 1);
+    static RefPtr<CSSFilter> create(const FilterOperations&, RenderingMode, float scaleFactor = 1, ClipOperation = ClipOperation::Intersect);
 
     void setSourceImageRect(const FloatRect&);
-    bool buildFilterFunctions(RenderElement&, const FilterOperations&, FilterConsumer);
+    bool buildFilterFunctions(RenderElement&, const FilterOperations&);
     void determineFilterPrimitiveSubregion();
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
@@ -64,7 +62,7 @@ public:
     LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
 private:
-    CSSFilter(RenderingMode, float scaleFactor, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
+    CSSFilter(RenderingMode, float scaleFactor, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
 
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const override;

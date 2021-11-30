@@ -26,6 +26,7 @@
 
 #include "ColorSerialization.h"
 #include "FEFloodSoftwareApplier.h"
+#include "Filter.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -56,6 +57,11 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
         return false;
     m_floodOpacity = floodOpacity;
     return true;
+}
+
+FloatRect FEFlood::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+{
+    return filter.maxEffectRect(primitiveSubregion);
 }
 
 std::unique_ptr<FilterEffectApplier> FEFlood::createApplier(const Filter&) const

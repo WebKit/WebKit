@@ -41,10 +41,9 @@ SourceGraphic::SourceGraphic()
 {
 }
 
-void SourceGraphic::determineAbsolutePaintRect(const Filter& filter)
+FloatRect SourceGraphic::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect&) const
 {
-    FloatRect paintRect = filter.sourceImageRect();
-    setAbsolutePaintRect(enclosingIntRect(paintRect));
+    return filter.sourceImageRect();
 }
 
 std::unique_ptr<FilterEffectApplier> SourceGraphic::createApplier(const Filter& filter) const

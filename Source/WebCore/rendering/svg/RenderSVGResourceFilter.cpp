@@ -131,7 +131,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     // Create the SVGFilter object.
     filterData->builder = makeUnique<SVGFilterBuilder>();
-    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, absoluteDrawingRegion, filterData->boundaries, targetBoundingBox);
+    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, filterData->drawingRegion, filterData->boundaries, targetBoundingBox);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -229,9 +229,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
 
     if (!filterData.boundaries.isEmpty()) {
         filterData.state = FilterData::Built;
-        context->scale(FloatSize(1 / filterData.filter->filterScale().width(), 1 / filterData.filter->filterScale().height()));
         context->drawFilteredImageBuffer(filterData.sourceGraphicBuffer.get(), *filterData.filter);
-        context->scale(filterData.scale);
     }
 
     filterData.sourceGraphicBuffer = nullptr;

@@ -187,7 +187,7 @@ void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData&
     float lightStrength;
     if (normal2DVector.isZero()) {
         // Normal vector is (0, 0, 1). This is a quite frequent case.
-        if (data.effect->filterType() == FilterEffect::Type::FEDiffuseLighting)
+        if (data.filterType == FilterEffect::Type::FEDiffuseLighting)
             lightStrength = data.diffuseConstant * lightingData.lightVector.z() / lightingData.lightVectorLength;
         else {
             FloatPoint3D halfwayVector = {
@@ -209,7 +209,7 @@ void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData&
         };
         float normalVectorLength = normalVector.length();
 
-        if (data.effect->filterType() == FilterEffect::Type::FEDiffuseLighting)
+        if (data.filterType == FilterEffect::Type::FEDiffuseLighting)
             lightStrength = data.diffuseConstant * (normalVector * lightingData.lightVector) / (normalVectorLength * lightingData.lightVectorLength);
         else {
             FloatPoint3D halfwayVector = {
@@ -329,7 +329,7 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data)
     auto [r, g, b, a] = data.lightingColor.toColorComponentsInColorSpace(*data.operatingColorSpace);
     paintingData.initialLightingData.colorVector = FloatPoint3D(r, g, b);
 
-    data.lightSource->initPaintingData(*data.effect, paintingData);
+    data.lightSource->initPaintingData(*data.filter, *data.result, paintingData);
 
     // Top left.
     int offset = 0;
@@ -377,7 +377,7 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data)
     }
 
     int lastPixel = data.widthMultipliedByPixelSize * data.height;
-    if (data.effect->filterType() == FilterEffect::Type::FEDiffuseLighting) {
+    if (data.filterType == FilterEffect::Type::FEDiffuseLighting) {
         for (int i = cAlphaChannelOffset; i < lastPixel; i += cPixelSize)
             data.pixels->set(i, cOpaqueAlpha);
     } else {
@@ -391,7 +391,7 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data)
     }
 }
 
-bool FELightingSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
+bool FELightingSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 
@@ -417,7 +417,9 @@ bool FELightingSoftwareApplier::apply(const Filter&, const FilterImageVector& in
         return true;
 
     LightingData data;
-    data.effect = &m_effect;
+    data.filter = &filter;
+    data.result = &result;
+    data.filterType = m_effect.filterType();
     data.lightingColor = m_effect.lightingColor();
     data.surfaceScale = m_effect.surfaceScale() / 255.0f;
     data.diffuseConstant = m_effect.diffuseConstant();

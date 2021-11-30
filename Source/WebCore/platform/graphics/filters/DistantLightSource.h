@@ -41,7 +41,7 @@ public:
     bool setAzimuth(float) override;
     bool setElevation(float) override;
 
-    void initPaintingData(const FilterEffect&, PaintingData&) const override;
+    void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
     ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;

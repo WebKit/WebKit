@@ -75,12 +75,13 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
     ASSERT(inputPixelArray.length() == displacementPixelArray.length());
 
     auto paintSize = result.absoluteImageRect().size();
-    auto scale = filter.scaledByFilterScale({ m_effect.scale(), m_effect.scale() });
+    auto scale = filter.resolvedSize({ m_effect.scale(), m_effect.scale() });
+    auto absoluteScale = filter.scaledByFilterScale(scale);
 
-    float scaleForColorX = scale.width() / 255.0;
-    float scaleForColorY = scale.height() / 255.0;
-    float scaledOffsetX = 0.5 - scale.width() * 0.5;
-    float scaledOffsetY = 0.5 - scale.height() * 0.5;
+    float scaleForColorX = absoluteScale.width() / 255.0;
+    float scaleForColorY = absoluteScale.height() / 255.0;
+    float scaledOffsetX = 0.5 - absoluteScale.width() * 0.5;
+    float scaledOffsetY = 0.5 - absoluteScale.height() * 0.5;
     
     int displacementChannelX = xChannelIndex();
     int displacementChannelY = yChannelIndex();

@@ -27,6 +27,7 @@
 #include "FETurbulence.h"
 
 #include "FETurbulenceSoftwareApplier.h"
+#include "Filter.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -93,6 +94,11 @@ bool FETurbulence::setStitchTiles(bool stitch)
         return false;
     m_stitchTiles = stitch;
     return true;
+}
+
+FloatRect FETurbulence::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+{
+    return filter.maxEffectRect(primitiveSubregion);
 }
 
 std::unique_ptr<FilterEffectApplier> FETurbulence::createApplier(const Filter&) const

@@ -29,21 +29,19 @@
 
 namespace WebCore {
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, FilterEffect& previousEffect)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation clipOperation, FilterEffect& previousEffect)
 {
-    return create(filterElement, builder, renderingMode, filterScale, sourceImageRect, filterRegion, filterRegion, &previousEffect);
+    return create(filterElement, builder, renderingMode, filterScale, sourceImageRect, filterRegion, clipOperation, filterRegion, &previousEffect);
 }
 
 RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox)
 {
-    return create(filterElement, builder, renderingMode, filterScale, sourceImageRect, filterRegion, targetBoundingBox, nullptr);
+    return create(filterElement, builder, renderingMode, filterScale, sourceImageRect, filterRegion, ClipOperation::Intersect, targetBoundingBox, nullptr);
 }
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation clipOperation, const FloatRect& targetBoundingBox, FilterEffect* previousEffect)
 {
-    bool primitiveBoundingBoxMode = filterElement.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
-
-    auto filter = adoptRef(*new SVGFilter(renderingMode, filterScale, sourceImageRect, filterRegion, targetBoundingBox, primitiveBoundingBoxMode));
+    auto filter = adoptRef(*new SVGFilter(renderingMode, filterScale, sourceImageRect, filterRegion, clipOperation, targetBoundingBox, filterElement.primitiveUnits()));
 
     if (!previousEffect)
         builder.setupBuiltinEffects(SourceGraphic::create());
@@ -72,19 +70,16 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     return filter;
 }
 
-SVGFilter::SVGFilter(RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, bool effectBBoxMode)
-    : Filter(Filter::Type::SVGFilter, renderingMode, filterScale, sourceImageRect, filterRegion)
+SVGFilter::SVGFilter(RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation clipOperation, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
+    : Filter(Filter::Type::SVGFilter, renderingMode, filterScale, sourceImageRect, filterRegion, clipOperation)
     , m_targetBoundingBox(targetBoundingBox)
-    , m_effectBBoxMode(effectBBoxMode)
+    , m_primitiveUnits(primitiveUnits)
 {
 }
 
-FloatSize SVGFilter::scaledByFilterScale(FloatSize size) const
+FloatSize SVGFilter::resolvedSize(const FloatSize& size) const
 {
-    if (m_effectBBoxMode)
-        size = size * m_targetBoundingBox.size();
-
-    return Filter::scaledByFilterScale(size);
+    return m_primitiveUnits == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX ? size * m_targetBoundingBox.size() : size;
 }
 
 #if USE(CORE_IMAGE)

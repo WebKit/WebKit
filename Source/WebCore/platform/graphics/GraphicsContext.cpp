@@ -641,7 +641,9 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, Filter& 
     if (!imageBuffer)
         return;
 
+    scale({ 1 / filter.filterScale().width(), 1 / filter.filterScale().height() });
     drawImageBuffer(*imageBuffer, result->absoluteImageRect());
+    scale(filter.filterScale());
 }
 
 void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)

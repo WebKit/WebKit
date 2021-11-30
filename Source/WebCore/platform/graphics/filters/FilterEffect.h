@@ -58,9 +58,6 @@ public:
     // Recurses on inputs.
     FloatRect determineFilterPrimitiveSubregion(const Filter&);
 
-    IntRect absolutePaintRect() const { return m_absolutePaintRect; }
-    void setAbsolutePaintRect(const IntRect& absolutePaintRect) { m_absolutePaintRect = absolutePaintRect; }
-
     FloatRect maxEffectRect() const { return m_maxEffectRect; }
     void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; }
 
@@ -70,8 +67,6 @@ public:
     // This method is used to ensure valid pixel values on filter inputs and the final result.
     // Only the arithmetic composite filter ever needs to perform correction.
     virtual void correctFilterResultIfNeeded() { }
-
-    virtual void determineAbsolutePaintRect(const Filter&);
 
     enum class RepresentationType { TestOutput, Debugging };
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType = RepresentationType::TestOutput) const;
@@ -96,18 +91,13 @@ public:
     FloatRect effectBoundaries() const { return m_effectBoundaries; }
     void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
     
-    void setUnclippedAbsoluteSubregion(const FloatRect& r) { m_absoluteUnclippedSubregion = r; }
-    
-    FloatPoint mapPointFromUserSpaceToBuffer(FloatPoint) const;
-    
-    bool clipsToBounds() const { return m_clipsToBounds; }
-    void setClipsToBounds(bool value) { m_clipsToBounds = value; }
+    virtual FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const;
 
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
 
     // Solid black image with different alpha values.
-    virtual bool resultIsAlphaImage() const { return false; }
+    virtual bool resultIsAlphaImage(const FilterImageVector&) const { return false; }
     virtual const DestinationColorSpace& resultColorSpace() const { return m_operatingColorSpace; }
 
     virtual void transformResultColorSpace(FilterEffect* in, const int) { in->transformResultColorSpace(m_operatingColorSpace); }
@@ -120,15 +110,11 @@ protected:
     
     virtual std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const = 0;
 
-    void clipAbsolutePaintRect();
-
 private:
     FilterEffectVector m_inputEffects;
 
     RefPtr<FilterImage> m_filterImage;
 
-    IntRect m_absolutePaintRect;
-    
     // The maximum size of a filter primitive. In SVG this is the primitive subregion in absolute coordinate space.
     // The absolute paint rect should never be bigger than m_maxEffectRect.
     FloatRect m_maxEffectRect;
@@ -141,16 +127,10 @@ private:
     // filter primitive on a later step.
     FloatRect m_effectBoundaries;
     
-    // filterPrimitiveSubregion mapped to absolute coordinates before clipping.
-    FloatRect m_absoluteUnclippedSubregion;
-
     bool m_hasX { false };
     bool m_hasY { false };
     bool m_hasWidth { false };
     bool m_hasHeight { false };
-
-    // Should the effect clip to its primitive region, or expand to use the combined region of its inputs.
-    bool m_clipsToBounds { true };
 
     DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::SRGB() };
 };

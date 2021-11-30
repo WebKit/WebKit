@@ -39,9 +39,9 @@ public:
 private:
     FEOffset(float dx, float dy);
 
-    void determineAbsolutePaintRect(const Filter&) override;
+    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    bool resultIsAlphaImage() const override;
+    bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 
