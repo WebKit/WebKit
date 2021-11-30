@@ -1,3 +1,13 @@
+2021-11-30  Robert Jenner  <Jenner@apple.com>
+
+        [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=221230
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-11-30  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         nullptr deref in InbandChapterTrackPrivateAVFObjC::processChapters
