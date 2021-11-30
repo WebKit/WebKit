@@ -1,3 +1,13 @@
+2021-11-30  Martin Robinson  <mrobinson@webkit.org>
+
+        Transition from perspective(500px) to 'none' is probably wrong
+        https://bugs.webkit.org/show_bug.cgi?id=52700
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-001-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-perspective-composition-expected.txt:
+
 2021-11-29  Chris Dumez  <cdumez@apple.com>
 
         Add initial implementation for the Web Lock API

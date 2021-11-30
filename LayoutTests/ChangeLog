@@ -1,3 +1,14 @@
+2021-11-30  Martin Robinson  <mrobinson@webkit.org>
+
+        Transition from perspective(500px) to 'none' is probably wrong
+        https://bugs.webkit.org/show_bug.cgi?id=52700
+
+        Reviewed by Simon Fraser.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-001-expected.txt: Removed.
+        * animations/3d/animate-to-transform-perpective-to-none-expected.html: Added.
+        * animations/3d/animate-to-transform-perpective-to-none.html: Added.
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         Preload navigation request if the service worker is not immediately ready to handle the navigation request fetch event

@@ -56,10 +56,17 @@ private:
 
     bool operator==(const TransformOperation&) const override;
 
+    std::optional<float> floatValue() const
+    {
+        if (!m_p)
+            return { };
+        return floatValueForLength(*m_p, 1.0);
+    }
+
     bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
-        if (m_p)
-            transform.applyPerspective(floatValueForLength(*m_p, 1));
+        if (auto value = floatValue())
+            transform.applyPerspective(*value);
         return false;
     }
 
