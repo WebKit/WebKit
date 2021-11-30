@@ -210,7 +210,7 @@ void FormAssociatedElement::formAttributeChanged()
 
 bool FormAssociatedElement::customError() const
 {
-    return willValidate() && !m_customValidationMessage.isEmpty();
+    return !m_customValidationMessage.isEmpty();
 }
 
 bool FormAssociatedElement::hasBadInput() const
@@ -272,7 +272,7 @@ String FormAssociatedElement::customValidationMessage() const
 
 String FormAssociatedElement::validationMessage() const
 {
-    return customError() ? m_customValidationMessage : String();
+    return willValidate() ? m_customValidationMessage : String();
 }
 
 void FormAssociatedElement::setCustomValidity(const String& error)

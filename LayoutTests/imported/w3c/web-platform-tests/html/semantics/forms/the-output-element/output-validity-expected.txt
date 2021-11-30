@@ -1,4 +1,4 @@
 
 
-FAIL :valid and :invalid pseudo-class on output element assert_true: should have a custom error expected true got false
+PASS :valid and :invalid pseudo-class on output element
 
