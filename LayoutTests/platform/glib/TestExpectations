@@ -135,7 +135,6 @@ imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pas
 
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
-imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
 inspector/page/setScreenSizeOverride.html [ Pass ]
 
@@ -258,7 +257,6 @@ webaudio/Panner/hrtf-database.html [ Timeout Pass ]
 webaudio/Panner/panner-loop.html [ Timeout Pass ]
 
 # CSS backgrounds. Passing after WPT re-import in r277073.
-imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-overlapping-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ Pass ]
@@ -388,6 +386,38 @@ webkit.org/b/232256 accessibility/auto-fill-crash.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # Cairo-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/233611 fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/mozilla/svg/filter-bounds-02.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/mozilla/svg/filters-and-group-opacity-01.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/mozilla/svg/filters/feBlend-1.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/mozilla/svg/filters/feConvolveMatrix-1.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/mozilla/svg/filters/feGaussianBlur-2.svg [ ImageOnlyFailure ]
+# This one below was [ Pass ] before
+webkit.org/b/233611 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/mozilla/svg/text/filter-applied.svg [ ImageOnlyFailure ]
+# This one needs a [Pass] after fixed, due to root expectation being ImageOnlyFailure. Was passing after r277073.
+webkit.org/b/233611 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ ImageOnlyFailure ]
+webkit.org/b/233611 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix.html [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feComposite-background-rect-control-operators.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feDisplacementMap-color-interpolation-filters.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feFlood-color-interpolation.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feFlood-with-alpha-color.html [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feImage-image-primitive-subregion.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feMorphology-radius-cases.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feMorphology-zero-radius-one-axis.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/fePointLight-coordinates.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feSpecularLighting-fePointLight-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feSpotLight-coordinates.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feTurbulence-parallel-jobs.html [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feTurbulence-stitchTiles.html [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/feTurbulence_bad_seeds.html [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/hidpi/fePointLight-coordinates.svg [ ImageOnlyFailure ]
+webkit.org/b/233611 svg/filters/hidpi/feSpotLight-coordinates.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Cairo-related bugs
