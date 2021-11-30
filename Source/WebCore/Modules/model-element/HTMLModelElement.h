@@ -70,13 +70,10 @@ public:
 
     void enterFullscreen();
 
-#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
     using CameraPromise = DOMPromiseDeferred<IDLDictionary<HTMLModelElementCamera>>;
     void getCamera(CameraPromise&&);
     void setCamera(HTMLModelElementCamera, DOMPromiseDeferred<void>&&);
-#endif
 
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
     using IsPlayingAnimationPromise = DOMPromiseDeferred<IDLBoolean>;
     void isPlayingAnimation(IsPlayingAnimationPromise&&);
     void playAnimation(DOMPromiseDeferred<void>&&);
@@ -91,15 +88,12 @@ public:
     using CurrentTimePromise = DOMPromiseDeferred<IDLDouble>;
     void animationCurrentTime(CurrentTimePromise&&);
     void setAnimationCurrentTime(double, DOMPromiseDeferred<void>&&);
-#endif
 
-#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
     using HasAudioPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasAudio(HasAudioPromise&&);
     using IsMutedPromise = DOMPromiseDeferred<IDLBoolean>;
     void isMuted(IsMutedPromise&&);
     void setIsMuted(bool, DOMPromiseDeferred<void>&&);
-#endif
 
     bool isDraggableIgnoringAttributes() const final { return true; }
 
@@ -131,9 +125,7 @@ private:
     void dragDidChange(MouseEvent&);
     void dragDidEnd(MouseEvent&);
 
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
-#endif
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;

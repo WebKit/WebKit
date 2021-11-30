@@ -61,11 +61,8 @@ private:
     void handleMouseDown(const LayoutPoint&, MonotonicTime) override;
     void handleMouseMove(const LayoutPoint&, MonotonicTime) override;
     void handleMouseUp(const LayoutPoint&, MonotonicTime) override;
-#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
     void getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) override;
     void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) override;
-#endif
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
     void isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void setAnimationIsPlaying(bool, CompletionHandler<void(bool success)>&&) override;
     void isLoopingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&) override;
@@ -73,12 +70,9 @@ private:
     void animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
     void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
     void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) override;
-#endif
-#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
     void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void setIsMuted(bool, CompletionHandler<void(bool success)>&&) override;
-#endif
 
     // SceneKitModelLoaderClient overrides.
     virtual void didFinishLoading(SceneKitModelLoader&, Ref<SceneKitModel>) override;

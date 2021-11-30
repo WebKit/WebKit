@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ARKitInlinePreviewModelPlayerMac.h"
 
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
@@ -179,7 +179,7 @@ PlatformLayer* ARKitInlinePreviewModelPlayerMac::layer()
 
 bool ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction()
 {
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     return true;
 #endif
     return false;

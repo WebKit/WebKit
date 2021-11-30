@@ -70,7 +70,6 @@ void DummyModelPlayer::handleMouseUp(const LayoutPoint&, MonotonicTime)
 {
 }
 
-#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
 void DummyModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&)
 {
 }
@@ -78,9 +77,7 @@ void DummyModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::H
 void DummyModelPlayer::setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&)
 {
 }
-#endif
 
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
 void DummyModelPlayer::isPlayingAnimation(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
@@ -108,9 +105,7 @@ void DummyModelPlayer::animationCurrentTime(CompletionHandler<void(std::optional
 void DummyModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&)
 {
 }
-#endif
 
-#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
 void DummyModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
 {
 }
@@ -122,6 +117,5 @@ void DummyModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&&)
 void DummyModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
 {
 }
-#endif
 
 }

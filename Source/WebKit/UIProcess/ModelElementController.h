@@ -36,7 +36,7 @@
 
 OBJC_CLASS ASVInlinePreview;
 
-#if HAVE(ASV_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 OBJC_CLASS WKModelView;
 #endif
 
@@ -52,11 +52,8 @@ public:
     WebPageProxy& page() { return m_webPageProxy; }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
     void getCameraForModelElement(ModelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)>&&);
     void setCameraForModelElement(ModelIdentifier, WebCore::HTMLModelElementCamera, CompletionHandler<void(bool)>&&);
-#endif
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
     void isPlayingAnimationForModelElement(ModelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&&);
     void setAnimationIsPlayingForModelElement(ModelIdentifier, bool, CompletionHandler<void(bool)>&&);
     void isLoopingAnimationForModelElement(ModelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&&);
@@ -64,17 +61,14 @@ public:
     void animationDurationForModelElement(ModelIdentifier, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)>&&);
     void animationCurrentTimeForModelElement(ModelIdentifier, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)>&&);
     void setAnimationCurrentTimeForModelElement(ModelIdentifier, Seconds, CompletionHandler<void(bool)>&&);
-#endif
-#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
     void hasAudioForModelElement(ModelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&&);
     void isMutedForModelElement(ModelIdentifier, CompletionHandler<void(Expected<bool, WebCore::ResourceError>)>&&);
     void setIsMutedForModelElement(ModelIdentifier, bool, CompletionHandler<void(bool)>&&);
 #endif
-#endif // ENABLE(ARKIT_INLINE_PREVIEW)
-#if HAVE(ASV_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     void takeModelElementFullscreen(ModelIdentifier);
 #endif
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(URL, String, WebCore::FloatSize, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);
     void handleMouseDownForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
     void handleMouseMoveForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
@@ -86,12 +80,12 @@ private:
     ASVInlinePreview * previewForModelIdentifier(ModelIdentifier);
 #endif
 
-#if HAVE(ASV_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     WKModelView * modelViewForModelIdentifier(ModelIdentifier);
 #endif
 
     WebPageProxy& m_webPageProxy;
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     RetainPtr<ASVInlinePreview> previewForUUID(const String&);
     HashMap<String, RetainPtr<ASVInlinePreview>> m_inlinePreviews;
 #endif

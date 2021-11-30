@@ -33,14 +33,11 @@
 #import <WebCore/LayoutPoint.h>
 #import <WebCore/LayoutUnit.h>
 #import <WebCore/ResourceError.h>
+#import <simd/simd.h>
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 
-#if HAVE(ASV_INLINE_PREVIEW_CAMERA_CONTROL)
-#import <simd/simd.h>
-#endif
-
-#if HAVE(ASV_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 #import "APIUIClient.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeHost.h"
@@ -50,7 +47,7 @@
 #import <pal/spi/ios/SystemPreviewSPI.h>
 #endif
 
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 #import <pal/spi/mac/SystemPreviewSPI.h>
 #endif
 
@@ -59,7 +56,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 
 namespace WebKit {
 
-#if HAVE(ASV_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 WKModelView * ModelElementController::modelViewForModelIdentifier(ModelIdentifier modelIdentifier)
 {
@@ -136,7 +133,7 @@ void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIde
 
 #endif
 
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdentifier modelIdentifier)
 {
@@ -234,11 +231,11 @@ void ModelElementController::handleMouseUpForModelElement(const String& uuid, co
 
 #endif
 
-#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
 
 static bool previewHasCameraSupport(ASVInlinePreview *preview)
 {
-#if HAVE(ASV_INLINE_PREVIEW_CAMERA_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM)
     return [preview respondsToSelector:@selector(getCameraTransform:)];
 #else
     return false;
@@ -253,7 +250,7 @@ void ModelElementController::getCameraForModelElement(ModelIdentifier modelIdent
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_CAMERA_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM)
     [preview getCameraTransform:makeBlockPtr([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (simd_float3 cameraTransform, NSError *error) mutable {
         if (error) {
             callOnMainRunLoop([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)] () mutable {
@@ -281,7 +278,7 @@ void ModelElementController::setCameraForModelElement(ModelIdentifier modelIdent
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_CAMERA_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM)
     [preview setCameraTransform:simd_make_float3(camera.pitch, camera.yaw, camera.scale)];
     completionHandler(true);
 #else
@@ -289,13 +286,9 @@ void ModelElementController::setCameraForModelElement(ModelIdentifier modelIdent
 #endif
 }
 
-#endif // ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
-
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
-
 static bool previewHasAnimationSupport(ASVInlinePreview *preview)
 {
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     return [preview respondsToSelector:@selector(isPlaying)];
 #else
     return false;
@@ -310,7 +303,7 @@ void ModelElementController::isPlayingAnimationForModelElement(ModelIdentifier m
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     completionHandler([preview isPlaying]);
 #else
     ASSERT_NOT_REACHED();
@@ -325,7 +318,7 @@ void ModelElementController::setAnimationIsPlayingForModelElement(ModelIdentifie
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     [preview setIsPlaying:isPlaying reply:makeBlockPtr([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (BOOL, NSError *error) mutable {
         callOnMainRunLoop([error, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)] () mutable {
             if (weakThis)
@@ -345,7 +338,7 @@ void ModelElementController::isLoopingAnimationForModelElement(ModelIdentifier m
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     completionHandler([preview isLooping]);
 #else
     ASSERT_NOT_REACHED();
@@ -360,7 +353,7 @@ void ModelElementController::setIsLoopingAnimationForModelElement(ModelIdentifie
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     preview.isLooping = isLooping;
     completionHandler(true);
 #else
@@ -376,7 +369,7 @@ void ModelElementController::animationDurationForModelElement(ModelIdentifier mo
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     completionHandler(Seconds([preview duration]));
 #else
     ASSERT_NOT_REACHED();
@@ -391,7 +384,7 @@ void ModelElementController::animationCurrentTimeForModelElement(ModelIdentifier
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     completionHandler(Seconds([preview currentTime]));
 #else
     ASSERT_NOT_REACHED();
@@ -406,7 +399,7 @@ void ModelElementController::setAnimationCurrentTimeForModelElement(ModelIdentif
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_ANIMATION_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL)
     preview.currentTime = currentTime.seconds();
     completionHandler(true);
 #else
@@ -414,13 +407,9 @@ void ModelElementController::setAnimationCurrentTimeForModelElement(ModelIdentif
 #endif
 }
 
-#endif // ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
-
-#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
-
 static bool previewHasAudioSupport(ASVInlinePreview *preview)
 {
-#if HAVE(ASV_INLINE_PREVIEW_AUDIO_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
     return [preview respondsToSelector:@selector(hasAudio)];
 #else
     return false;
@@ -435,7 +424,7 @@ void ModelElementController::hasAudioForModelElement(ModelIdentifier modelIdenti
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_AUDIO_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
     completionHandler([preview hasAudio]);
 #else
     ASSERT_NOT_REACHED();
@@ -450,7 +439,7 @@ void ModelElementController::isMutedForModelElement(ModelIdentifier modelIdentif
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_AUDIO_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
     completionHandler([preview isMuted]);
 #else
     ASSERT_NOT_REACHED();
@@ -465,7 +454,7 @@ void ModelElementController::setIsMutedForModelElement(ModelIdentifier modelIden
         return;
     }
 
-#if HAVE(ASV_INLINE_PREVIEW_AUDIO_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW_AUDIO_CONTROL)
     preview.isMuted = isMuted;
     completionHandler(true);
 #else
@@ -473,8 +462,8 @@ void ModelElementController::setIsMutedForModelElement(ModelIdentifier modelIden
 #endif
 }
 
-#endif // ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
+#endif
 
 }
 
-#endif // ENABLE(ARKIT_INLINE_PREVIEW)
+#endif

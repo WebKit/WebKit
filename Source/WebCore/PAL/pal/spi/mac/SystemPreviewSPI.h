@@ -25,13 +25,13 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 #import <AssetViewer/ASVInlinePreview.h>
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #import <simd/simd.h>
 
@@ -72,6 +72,6 @@ typedef void (^ASVSetIsPlayingReplyBlock) (BOOL isPlaying, NSError * _Nullable e
 
 NS_ASSUME_NONNULL_END
 
-#endif // HAVE(ASV_INLINE_PREVIEW_MAC)
+#endif // ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #endif // USE(APPLE_INTERNAL_SDK)

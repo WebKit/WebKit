@@ -358,7 +358,6 @@ void HTMLModelElement::dragDidEnd(MouseEvent& event)
 
 // MARK: - Camera support.
 
-#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
 void HTMLModelElement::getCamera(CameraPromise&& promise)
 {
     if (!m_modelPlayer) {
@@ -388,11 +387,9 @@ void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferr
             promise.reject();
     });
 }
-#endif // ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
 
 // MARK: - Animations support.
 
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
 void HTMLModelElement::isPlayingAnimation(IsPlayingAnimationPromise&& promise)
 {
     if (!m_modelPlayer) {
@@ -507,11 +504,9 @@ void HTMLModelElement::setAnimationCurrentTime(double currentTime, DOMPromiseDef
             promise.reject();
     });
 }
-#endif // ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
 
 // MARK: - Audio support.
 
-#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
 void HTMLModelElement::hasAudio(HasAudioPromise&& promise)
 {
     if (!m_modelPlayer) {
@@ -556,7 +551,6 @@ void HTMLModelElement::setIsMuted(bool isMuted, DOMPromiseDeferred<void>&& promi
             promise.reject();
     });
 }
-#endif // ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
 
 }
 

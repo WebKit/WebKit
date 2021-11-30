@@ -586,20 +586,18 @@ messages -> WebPageProxy {
     ChangeUniversalAccessZoomFocus(WebCore::IntRect viewRect, WebCore::IntRect caretRect)
 #endif
 
-#if HAVE(ASV_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     TakeModelElementFullscreen(struct WebKit::ModelIdentifier modelIdentifier)
 #endif
-#if HAVE(ASV_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     ModelElementDidCreatePreview(URL url, String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result) Async
     HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint locationInPageCoordinates, MonotonicTime timestamp)
     HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint locationInPageCoordinates, MonotonicTime timestamp)
     HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint locationInPageCoordinates, MonotonicTime timestamp)
 #endif
-#if ENABLE(MODEL_ELEMENT_CAMERA_CONTROL)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
     ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result) Async
     ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success) Async
-#endif
-#if ENABLE(MODEL_ELEMENT_ANIMATION_CONTROL)
     ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
     ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success) Async
     ModelElementIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
@@ -607,8 +605,6 @@ messages -> WebPageProxy {
     ModelElementAnimationDuration(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result) Async
     ModelElementAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result) Async
     ModelElementSetAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier, Seconds currentTime) -> (bool success) Async
-#endif
-#if ENABLE(MODEL_ELEMENT_AUDIO_CONTROL)
     ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
     ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
     ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success) Async

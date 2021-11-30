@@ -55,7 +55,9 @@
 #ifdef __OBJC__
 typedef struct _CARenderContext CARenderContext;
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 @class CAFenceHandle;
+#endif
 
 @interface CAContext : NSObject
 @end
@@ -90,7 +92,9 @@ typedef struct _CARenderContext CARenderContext;
 @property CGColorSpaceRef colorSpace;
 @property (readonly) CARenderContext* renderContext;
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 -(BOOL)addFence:(CAFenceHandle *)handle;
+#endif
 
 @end
 
