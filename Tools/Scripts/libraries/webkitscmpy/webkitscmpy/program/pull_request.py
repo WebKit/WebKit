@@ -64,7 +64,7 @@ class PullRequest(Command):
 
         # Next, add all modified file
         for file in set(modified) - set(repository.modified(staged=True)):
-            log.warning('    Adding {}...'.format(file))
+            log.info('    Adding {}...'.format(file))
             if run([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to add '{}'\n".format(file))
                 return 1
@@ -72,14 +72,14 @@ class PullRequest(Command):
         # Then, see if we already have a commit associated with this branch we need to modify
         has_commit = repository.commit(include_log=False, include_identifier=False).branch == repository.branch and repository.branch != repository.default_branch
         if not modified and has_commit:
-            log.warning('Using committed changes...')
+            log.info('Using committed changes...')
             return 0
 
         # Otherwise, we need to create a commit
         if not modified:
             sys.stderr.write('No modified files\n')
             return 1
-        log.warning('Amending commit...' if has_commit else 'Creating commit...')
+        log.info('Amending commit...' if has_commit else 'Creating commit...')
         if run([repository.executable(), 'commit', '--date=now'] + (['--amend'] if has_commit else []), cwd=repository.root_path).returncode:
             sys.stderr.write('Failed to generate commit\n')
             return 1
@@ -114,11 +114,11 @@ class PullRequest(Command):
 
         branch_point = Branch.branch_point(repository)
         if args.rebase or (args.rebase is None and repository.config().get('pull.rebase')):
-            log.warning("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
+            log.info("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
             if repository.pull(rebase=True, branch=branch_point.branch):
                 sys.stderr.write("Failed to rebase '{}' on '{},' please resolve conflicts\n".format(repository.branch, branch_point.branch))
                 return 1
-            log.warning("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
+            log.info("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
             branch_point = Branch.branch_point(repository)
 
         rmt = repository.remote()
@@ -126,7 +126,7 @@ class PullRequest(Command):
             sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
             return 1
         target = 'fork' if isinstance(rmt, remote.GitHub) else 'origin'
-        log.warning("Pushing '{}' to '{}'...".format(repository.branch, target))
+        log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
         if run([repository.executable(), 'push', '-f', target, repository.branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to push '{}' to '{}'\n".format(repository.branch, target))
             return 1
@@ -148,7 +148,7 @@ class PullRequest(Command):
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
 
         if existing_pr:
-            log.warning("Updating pull-request for '{}'...".format(repository.branch))
+            log.info("Updating pull-request for '{}'...".format(repository.branch))
             pr = rmt.pull_requests.update(
                 pull_request=existing_pr,
                 title=cls.title_for(commits),
@@ -160,9 +160,9 @@ class PullRequest(Command):
             if not pr:
                 sys.stderr.write("Failed to update pull-request '{}'\n".format(candidates[0]))
                 return 1
-            log.warning("Updated '{}'!".format(pr))
+            print("Updated '{}'!".format(pr))
         else:
-            log.warning("Creating pull-request for '{}'...".format(repository.branch))
+            log.info("Creating pull-request for '{}'...".format(repository.branch))
             pr = rmt.pull_requests.create(
                 title=cls.title_for(commits),
                 commits=commits,
@@ -172,6 +172,6 @@ class PullRequest(Command):
             if not pr:
                 sys.stderr.write("Failed to create pull-request for '{}'\n".format(repository.branch))
                 return 1
-            log.warning("Created '{}'!".format(pr))
+            print("Created '{}'!".format(pr))
 
         return 0

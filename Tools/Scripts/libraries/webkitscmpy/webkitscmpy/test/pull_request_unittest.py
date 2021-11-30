@@ -20,13 +20,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import sys
 import unittest
 
-from webkitcorepy import OutputCapture, testing
+from webkitcorepy import OutputCapture, testing, log as wcplog
 from webkitcorepy.mocks import Terminal as MockTerminal
-from webkitscmpy import Contributor, Commit, PullRequest, local, program, mocks, remote
+from webkitscmpy import Contributor, Commit, PullRequest, local, program, mocks, remote, log as wsplog
 
 
 class TestPullRequest(unittest.TestCase):
@@ -255,7 +256,7 @@ class TestDoPullRequest(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_svn(self):
-        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path):
             self.assertEqual(1, program.main(
                 args=('pull-request',),
                 path=self.path,
@@ -264,19 +265,19 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
 
     def test_no_modified(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn():
             self.assertEqual(1, program.main(
-                args=('pull-request', '-i', 'pr-branch'),
+                args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n")
         self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
 
     def test_staged(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
             repo.staged['added.txt'] = 'added'
             self.assertEqual(1, program.main(
-                args=('pull-request', '-i', 'pr-branch'),
+                args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
             self.assertDictEqual(repo.staged, {})
@@ -290,13 +291,14 @@ Creating commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
     Found 1 commit...""")
+        self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/pr-branch'!\n")
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
 
     def test_modified(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
             repo.modified['modified.txt'] = 'diff'
             self.assertEqual(1, program.main(
-                args=('pull-request', '-i', 'pr-branch'),
+                args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
             self.assertDictEqual(repo.modified, dict())
@@ -315,15 +317,20 @@ Rebased 'eng/pr-branch' on 'main!'
     Found 1 commit...""")
 
     def test_github(self):
-        with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
                 mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
-                args=('pull-request', '-i', 'pr-branch'),
+                args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
 
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/pr-branch'!\n"
+            "Created 'PR 1 | Created commit'!\n",
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -336,7 +343,6 @@ Rebased 'eng/pr-branch' on 'main!'
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Creating pull-request for 'eng/pr-branch'...",
-                "Created 'PR 1 | Created commit'!",
             ],
         )
 
@@ -349,13 +355,14 @@ Rebased 'eng/pr-branch' on 'main!'
                     path=self.path,
                 ))
 
-            with OutputCapture() as captured:
+            with OutputCapture(level=logging.INFO) as captured:
                 repo.staged['added.txt'] = 'diff'
                 self.assertEqual(0, program.main(
-                    args=('pull-request',),
+                    args=('pull-request', '-v'),
                     path=self.path,
                 ))
 
+        self.assertEqual(captured.stdout.getvalue(), "Updated 'PR 1 | Amended commit'!\n")
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -367,7 +374,6 @@ Rebased 'eng/pr-branch' on 'main!'
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Updating pull-request for 'eng/pr-branch'...",
-                "Updated 'PR 1 | Amended commit'!",
             ],
         )
 
@@ -383,15 +389,21 @@ Rebased 'eng/pr-branch' on 'main!'
             local.Git(self.path).remote().pull_requests.get(1).close()
             self.assertFalse(local.Git(self.path).remote().pull_requests.get(1).opened)
 
-            with OutputCapture() as captured, MockTerminal.input('n'):
+            with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('n'):
                 repo.staged['added.txt'] = 'diff'
                 self.assertEqual(0, program.main(
-                    args=('pull-request',),
+                    args=('pull-request', '-v'),
                     path=self.path,
                 ))
 
             self.assertTrue(local.Git(self.path).remote().pull_requests.get(1).opened)
 
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "'eng/pr-branch' is already associated with 'PR 1 | Created commit', which is closed.\n"
+            'Would you like to create a new pull-request? (Yes/[No]): \n'
+            "Updated 'PR 1 | Amended commit'!\n",
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -403,21 +415,25 @@ Rebased 'eng/pr-branch' on 'main!'
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Updating pull-request for 'eng/pr-branch'...",
-                "Updated 'PR 1 | Amended commit'!",
             ],
         )
 
     def test_bitbucket(self):
-        with OutputCapture() as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
         )) as repo, mocks.local.Svn():
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
-                args=('pull-request', '-i', 'pr-branch'),
+                args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
 
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/pr-branch'!\n"
+            "Created 'PR 1 | Created commit'!\n",
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -430,7 +446,6 @@ Rebased 'eng/pr-branch' on 'main!'
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Creating pull-request for 'eng/pr-branch'...",
-                "Created 'PR 1 | Created commit'!",
             ],
         )
 
@@ -445,13 +460,14 @@ Rebased 'eng/pr-branch' on 'main!'
                     path=self.path,
                 ))
 
-            with OutputCapture() as captured:
+            with OutputCapture(level=logging.INFO) as captured:
                 repo.staged['added.txt'] = 'diff'
                 self.assertEqual(0, program.main(
-                    args=('pull-request',),
+                    args=('pull-request', '-v'),
                     path=self.path,
                 ))
 
+        self.assertEqual(captured.stdout.getvalue(), "Updated 'PR 1 | Amended commit'!\n")
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -463,7 +479,6 @@ Rebased 'eng/pr-branch' on 'main!'
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
-                "Updated 'PR 1 | Amended commit'!",
             ],
         )
 
@@ -481,15 +496,21 @@ Rebased 'eng/pr-branch' on 'main!'
             local.Git(self.path).remote().pull_requests.get(1).close()
             self.assertFalse(local.Git(self.path).remote().pull_requests.get(1).opened)
 
-            with OutputCapture() as captured, MockTerminal.input('n'):
+            with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('n'):
                 repo.staged['added.txt'] = 'diff'
                 self.assertEqual(0, program.main(
-                    args=('pull-request',),
+                    args=('pull-request', '-v'),
                     path=self.path,
                 ))
 
             self.assertTrue(local.Git(self.path).remote().pull_requests.get(1).opened)
 
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "'eng/pr-branch' is already associated with 'PR 1 | Created commit', which is closed.\n"
+            'Would you like to create a new pull-request? (Yes/[No]): \n'
+            "Updated 'PR 1 | Amended commit'!\n",
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -501,7 +522,6 @@ Rebased 'eng/pr-branch' on 'main!'
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
-                "Updated 'PR 1 | Amended commit'!",
             ],
         )
 

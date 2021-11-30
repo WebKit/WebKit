@@ -1,3 +1,41 @@
+2021-11-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Use info log level instead of warning
+        https://bugs.webkit.org/show_bug.cgi?id=233607
+        <rdar://problem/85840831>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py:
+        (Branch.branch_point): Log to info instead of warning.
+        (Branch.main): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/checkout.py:
+        (Checkout.main): Log to info instead of warning.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py:
+        (Land.main): Log to info instead of warning.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.create_commit): Log to info instead of warning.
+        (PullRequest.main): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.github): Log to info instead of warning.
+        (Setup.git): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/branch_unittest.py:
+        (TestBranch.test_basic_git):
+        (TestBranch.test_prompt_git):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py:
+        (TestLand.test_non_editable):
+        (TestLand.test_with_oops):
+        (TestLand.test_default):
+        (TestLand.test_canonicalize):
+        (TestLand.test_no_svn_canonical_svn):
+        (TestLand.test_svn):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+        (TestSetup.test_svn):
+        (TestSetup.test_github):
+
 2021-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Store image resolution in layout test snapshots, and have ImageDiff read it

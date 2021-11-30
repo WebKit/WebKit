@@ -66,7 +66,7 @@ class Checkout(Command):
                 target = '{}:{}'.format(pr.author.github, pr.head)
             else:
                 target = pr.head
-            log.warning("Found associated branch '{}' for '{}'".format(target, pr))
+            log.info("Found associated branch '{}' for '{}'".format(target, pr))
 
         try:
             commit = repository.checkout(target)

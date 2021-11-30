@@ -111,7 +111,7 @@ class Land(Command):
                 string_utils.join([p.name for p in pull_request.approvers]),
                 's' if len(pull_request.approvers) > 1 else '',
             ), default='Yes') == 'Yes'):
-                log.warning("Setting {} as reviewer{}".format(
+                log.info("Setting {} as reviewer{}".format(
                     string_utils.join([p.name for p in pull_request.approvers]),
                     's' if len(pull_request.approvers) > 1 else '',
                 ))
@@ -143,14 +143,14 @@ class Land(Command):
                     return 1
 
         target = pull_request.base if pull_request else branch_point.branch
-        log.warning("Rebasing '{}' from '{}' to '{}'...".format(source_branch, branch_point.branch, target))
+        log.info("Rebasing '{}' from '{}' to '{}'...".format(source_branch, branch_point.branch, target))
         if repository.fetch(branch=target, remote=cls.REMOTE):
             sys.stderr.write("Failed to fetch '{}' from '{}'\n".format(target, cls.REMOTE))
             return 1
         if repository.rebase(target=target, base=branch_point.branch, head=source_branch):
             sys.stderr.write("Failed to rebase '{}' onto '{}', please resolve conflicts\n".format(source_branch, target))
             return 1
-        log.warning("Rebased '{}' from '{}' to '{}'!".format(source_branch, branch_point.branch, target))
+        log.info("Rebased '{}' from '{}' to '{}'!".format(source_branch, branch_point.branch, target))
 
         if run([repository.executable(), 'branch', '-f', target, source_branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to move '{}' ref\n".format(target))
@@ -187,7 +187,7 @@ class Land(Command):
                 if time.time() - started > cls.MIRROR_TIMEOUT:
                     sys.stderr.write("Timed out waiting for the git-svn mirror, '{}' landed but not closed\n".format(pull_request or source_branch))
                     return 1
-                log.warning('    Verifying mirror processesed change')
+                log.info('    Verifying mirror processesed change')
                 time.sleep(5)
                 run([repository.executable(), 'pull'], cwd=repository.root_path)
                 latest = repository.find('HEAD', include_log=False, include_identifier=False)
@@ -205,7 +205,7 @@ class Land(Command):
 
         else:
             if pull_request:
-                log.warning("Updating '{}' to match landing commits...".format(pull_request))
+                log.info("Updating '{}' to match landing commits...".format(pull_request))
                 commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path)
                 rmt.pull_requests.update(

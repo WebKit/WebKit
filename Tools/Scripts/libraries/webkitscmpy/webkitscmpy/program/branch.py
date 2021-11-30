@@ -63,9 +63,9 @@ class Branch(Command):
             cnt += 1
             commit = repository.find(argument='HEAD~{}'.format(cnt), include_log=False, include_identifier=False)
             if cnt > 1 or commit.branch != repository.branch or cls.editable(commit.branch, repository=repository):
-                log.warning('    Found {}...'.format(string_utils.pluralize(cnt, 'commit')))
+                log.info('    Found {}...'.format(string_utils.pluralize(cnt, 'commit')))
             else:
-                log.warning('    No commits on editable branch')
+                log.info('    No commits on editable branch')
 
         return commit
 
@@ -89,7 +89,7 @@ class Branch(Command):
                 sys.stderr.write("'{}' already exists\n".format(args.issue))
                 return 1
 
-        log.warning("Creating the local development branch '{}'...".format(args.issue))
+        log.info("Creating the local development branch '{}'...".format(args.issue))
         if run([repository.executable(), 'checkout', '-b', args.issue], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to create '{}'\n".format(args.issue))
             return 1

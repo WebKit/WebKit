@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import sys
 
@@ -37,17 +38,17 @@ class TestSetup(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_svn(self):
-        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path):
             self.assertEqual(1, program.main(
-                args=('setup',),
+                args=('setup', '-v'),
                 path=self.path,
             ))
         self.assertEqual(captured.stderr.getvalue(), 'No setup required for {}\n'.format(self.path))
 
     def test_github(self):
-        with OutputCapture() as captured, MockTerminal.input('y'), mocks.remote.GitHub() as remote:
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y'), mocks.remote.GitHub() as remote:
             self.assertEqual(0, program.main(
-                args=('-C', 'https://{}'.format(remote.remote), 'setup'),
+                args=('-C', 'https://{}'.format(remote.remote), 'setup', '-v'),
                 path=self.path,
             ))
 
@@ -63,9 +64,9 @@ Created a private fork of 'WebKit' belonging to 'username'!
         )
 
     def test_git(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
             self.assertEqual(0, program.main(
-                args=('setup', '--defaults'),
+                args=('setup', '--defaults', '-v'),
                 path=self.path,
             ))
 
@@ -94,14 +95,14 @@ Using the default git editor
         )
 
     def test_github_checkout(self):
-        with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', '1', 'y', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo:
 
             self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
             self.assertEqual(0, program.main(
-                args=('setup',),
+                args=('setup', '-v'),
                 path=self.path,
             ))
 
@@ -154,9 +155,9 @@ Fetching 'git@github.example.com:username/WebKit.git'
         )
 
     def test_commit_message(self):
-        with OutputCapture(), mocks.local.Git(self.path) as git, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path) as git, mocks.local.Svn():
             self.assertEqual(0, program.main(
-                args=('setup', '--defaults'),
+                args=('setup', '--defaults', '-v'),
                 path=self.path,
                 hooks=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'hooks')
             ))

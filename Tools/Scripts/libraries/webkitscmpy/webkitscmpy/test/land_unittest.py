@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import time
 
@@ -53,9 +54,9 @@ class TestLand(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_non_editable(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn():
             self.assertEqual(1, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '5@main')
@@ -69,9 +70,9 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_with_oops(self):
-        with OutputCapture() as captured, repository(self.path), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path), mocks.local.Svn():
             self.assertEqual(1, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
@@ -90,9 +91,9 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_default(self):
-        with OutputCapture() as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '6@main')
@@ -116,9 +117,9 @@ class TestLand(testing.PathTestCase):
         )
 
     def test_canonicalize(self):
-        with OutputCapture() as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
                 identifier_template='Canonical link: https://commits.webkit.org/{}',
             ))
@@ -139,6 +140,7 @@ class TestLand(testing.PathTestCase):
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
                 '1 commit to be editted...',
+                'Base commit is 5@main (ref d8bce26fa65c6fc8f39c17927abb77f69fab82fc)',
             ],
         )
         self.assertEqual(
@@ -148,15 +150,16 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             'Rewrite a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd (1/1) (--- seconds passed, remaining --- predicted)\n'
+            'Overwriting a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd\n'
             '1 commit successfully canonicalized!\n'
             'Landed https://commits.webkit.org/6@main (a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd)!\n'
             "Delete branch 'eng/example'? ([Yes]/No): \n",
         )
 
     def test_no_svn_canonical_svn(self):
-        with OutputCapture() as captured, repository(self.path, has_oops=False), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False), mocks.local.Svn():
             self.assertEqual(1, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path, canonical_svn=True,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
@@ -168,9 +171,9 @@ class TestLand(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_svn(self):
-        with MockTime, OutputCapture() as captured, repository(self.path, has_oops=False, git_svn=True), mocks.local.Svn(), MockTerminal.input('n'):
+        with MockTime, OutputCapture(level=logging.INFO) as captured, repository(self.path, has_oops=False, git_svn=True), mocks.local.Svn(), MockTerminal.input('n'):
             self.assertEqual(0, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path, canonical_svn=True,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '6@main')
@@ -242,11 +245,11 @@ class TestLandGitHub(testing.PathTestCase):
         return result
 
     def test_no_reviewer(self):
-        with OutputCapture() as captured, self.webserver() as remote, \
+        with OutputCapture(level=logging.INFO) as captured, self.webserver() as remote, \
                 repository(self.path, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
 
             self.assertEqual(1, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
@@ -264,11 +267,11 @@ class TestLandGitHub(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_blocking_reviewer(self):
-        with OutputCapture() as captured, self.webserver(approved=False) as remote, \
+        with OutputCapture(level=logging.INFO) as captured, self.webserver(approved=False) as remote, \
                 repository(self.path, has_oops=False, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
 
             self.assertEqual(1, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
@@ -286,10 +289,10 @@ class TestLandGitHub(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_insert_review(self):
-        with OutputCapture() as captured, MockTerminal.input('y', 'n'), self.webserver(approved=True) as remote, \
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(approved=True) as remote, \
                 repository(self.path, has_oops=True, remote='https://{}'.format(remote.remote)), mocks.local.Svn():
             self.assertEqual(0, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
 
@@ -365,13 +368,13 @@ class TestLandBitBucket(testing.PathTestCase):
         return result
 
     def test_no_reviewer(self):
-        with OutputCapture() as captured, self.webserver() as remote, repository(
+        with OutputCapture(level=logging.INFO) as captured, self.webserver() as remote, repository(
                 self.path, remote='ssh://git@{}/{}/{}.git'.format(
                     remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
                 )), mocks.local.Svn():
 
             self.assertEqual(1, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
@@ -389,13 +392,13 @@ class TestLandBitBucket(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_blocking_reviewer(self):
-        with OutputCapture() as captured, self.webserver(approved=False) as remote, repository(
+        with OutputCapture(level=logging.INFO) as captured, self.webserver(approved=False) as remote, repository(
                 self.path, has_oops=False, remote='ssh://git@{}/{}/{}.git'.format(
                     remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
                 )), mocks.local.Svn():
 
             self.assertEqual(1, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             self.assertEqual(str(local.Git(self.path).commit()), '3.1@eng/example')
@@ -413,13 +416,13 @@ class TestLandBitBucket(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_insert_review(self):
-        with OutputCapture() as captured, MockTerminal.input('y', 'n'), self.webserver(approved=True) as remote, repository(
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(approved=True) as remote, repository(
                 self.path, has_oops=True, remote='ssh://git@{}/{}/{}.git'.format(
                     remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
                 )), mocks.local.Svn():
 
             self.assertEqual(0, program.main(
-                args=('land',),
+                args=('land', '-v'),
                 path=self.path,
             ))
             repo = local.Git(self.path)
