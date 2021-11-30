@@ -1,5 +1,16 @@
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] slice should be aware of TerminationException
+        https://bugs.webkit.org/show_bug.cgi?id=233593
+        rdar://85823844
+
+        Reviewed by Mark Lam.
+
+        * stress/slice-termination-exception.js: Added.
+        (async infiniteLoop):
+
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add Intl.NumberFormat.formatRangeToParts
         https://bugs.webkit.org/show_bug.cgi?id=233539
 
