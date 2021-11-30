@@ -1,3 +1,17 @@
+2021-11-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r286272.
+        https://bugs.webkit.org/show_bug.cgi?id=233641
+
+        Wrong approach to disabling experimental features.
+
+        Reverted changeset:
+
+        "Disable experimental web features on platforms without UI to
+        enable them"
+        https://bugs.webkit.org/show_bug.cgi?id=233152
+        https://commits.webkit.org/r286272
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         Move TransformStreamAPIEnabled flag to Settings
