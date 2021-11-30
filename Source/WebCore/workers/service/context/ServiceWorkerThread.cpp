@@ -103,7 +103,7 @@ ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData,
     , m_contextData(crossThreadCopy(WTFMove(contextData)))
     , m_workerData(crossThreadCopy(WTFMove(workerData)))
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())
-    , m_heartBeatTimeout(SWContextManager::singleton().connection()->shouldUseShortTimeout() ? heartBeatTimeoutForTest : heartBeatTimeout)
+    , m_heartBeatTimeout(settingsValues.shouldUseServiceWorkerShortTimeout ? heartBeatTimeoutForTest : heartBeatTimeout)
     , m_heartBeatTimer { *this, &ServiceWorkerThread::heartBeatTimerFired }
 {
     ASSERT(isMainThread());

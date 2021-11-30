@@ -56,13 +56,9 @@ static URL topOriginURL(const SecurityOrigin& origin)
     return URL { URL { }, origin.toRawString() };
 }
 
-UniqueRef<Page> ServiceWorkerThreadProxy::createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, StorageBlockingPolicy storageBlockingPolicy)
+void ServiceWorkerThreadProxy::setupPageForServiceWorker(Page& page, const ServiceWorkerContextData& data)
 {
-    auto page = makeUniqueRef<Page>(WTFMove(configuration));
-
-    page->settings().setStorageBlockingPolicy(storageBlockingPolicy);
-
-    auto& mainFrame = page->mainFrame();
+    auto& mainFrame = page.mainFrame();
     mainFrame.loader().initForSynthesizedDocument({ });
     auto document = Document::createNonRenderedPlaceholder(mainFrame, data.scriptURL);
     document->createDOMWindow();
@@ -70,7 +66,7 @@ UniqueRef<Page> ServiceWorkerThreadProxy::createPageForServiceWorker(PageConfigu
     document->storageBlockingStateDidChange();
 
     auto origin = data.registration.key.topOrigin().securityOrigin();
-    origin->setStorageBlockingPolicy(storageBlockingPolicy);
+    origin->setStorageBlockingPolicy(page.settings().storageBlockingPolicy());
 
     document->setSiteForCookies(topOriginURL(origin));
     document->setFirstPartyForCookies(topOriginURL(origin));
@@ -80,7 +76,6 @@ UniqueRef<Page> ServiceWorkerThreadProxy::createPageForServiceWorker(PageConfigu
         document->setReferrerPolicy(*policy);
 
     mainFrame.setDocument(WTFMove(document));
-    return page;
 }
 
 static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& document)

@@ -133,9 +133,6 @@ void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesS
 {
     WebPage::updatePreferencesGenerated(store);
     m_preferencesStore = store;
-    // FIXME: Remove this specific handling and use page settings instead.
-    m_storageBlockingPolicy = static_cast<StorageBlockingPolicy>(store.getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey()));
-    setShouldUseShortTimeout(store.getBoolValueForKey(WebPreferencesKey::shouldUseServiceWorkerShortTimeoutKey()));
 }
 
 void WebSWContextManagerConnection::updateAppInitiatedValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
@@ -167,9 +164,10 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 #endif
     
     auto lastNavigationWasAppInitiated = contextData.lastNavigationWasAppInitiated;
-    auto page = ServiceWorkerThreadProxy::createPageForServiceWorker(WTFMove(pageConfiguration), contextData, m_storageBlockingPolicy);
+    auto page = makeUniqueRef<Page>(WTFMove(pageConfiguration));
     if (m_preferencesStore)
         WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
+    ServiceWorkerThreadProxy::setupPageForServiceWorker(page.get(), contextData);
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(page), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider());
 
     if (lastNavigationWasAppInitiated)

@@ -114,8 +114,6 @@ private:
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;
 
-    WebCore::StorageBlockingPolicy m_storageBlockingPolicy { WebCore::StorageBlockingPolicy::AllowAll };
-
     HashSet<std::unique_ptr<ServiceWorkerFrameLoaderClient>> m_loaders;
     HashMap<uint64_t, FindClientByIdentifierCallback> m_findClientByIdentifierRequests;
     HashMap<uint64_t, WebCore::ServiceWorkerClientsMatchAllCallback> m_matchAllRequests;
