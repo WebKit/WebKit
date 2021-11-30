@@ -1170,10 +1170,13 @@ RequestVideoFrameCallbackEnabled:
   humanReadableDescription: "Enable RequestVideoFrameCallback API"
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(COCOA) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)" : true
       default: false
     WebKit:
+      "PLATFORM(COCOA) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)" : true
       default: false
     WebCore:
+      "PLATFORM(COCOA) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)" : true
       default: false
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
