@@ -292,6 +292,9 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomHTMLToken&& t
     if (token.attributes().isEmpty())
         return;
 
+    if (!scriptingContentIsAllowed(m_parserContentPolicy))
+        element.stripScriptingAttributes(token.attributes());
+
     for (auto& tokenAttribute : token.attributes()) {
         if (!element.elementData() || !element.findAttributeByName(tokenAttribute.name()))
             element.setAttribute(tokenAttribute.name(), tokenAttribute.value());
