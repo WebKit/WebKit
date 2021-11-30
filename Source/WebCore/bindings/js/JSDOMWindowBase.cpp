@@ -95,6 +95,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     nullptr,
     nullptr,
 #endif
+    &deriveShadowRealmGlobalObject
 };
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)

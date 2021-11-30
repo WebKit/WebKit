@@ -66,6 +66,7 @@ const GlobalObjectMethodTable JSWorkletGlobalScopeBase::s_globalObjectMethodTabl
     nullptr,
     nullptr,
 #endif
+    nullptr, // deriveShadowRealmGlobalObject
 };
 
 JSWorkletGlobalScopeBase::JSWorkletGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, RefPtr<WorkletGlobalScope>&& impl)

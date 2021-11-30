@@ -1,0 +1,3 @@
+partial interface ShadowRealmGlobalScope {
+    attribute ShadowRealmGlobalScopeConstructor ShadowRealmGlobalScope;
+};

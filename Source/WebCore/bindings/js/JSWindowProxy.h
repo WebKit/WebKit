@@ -68,6 +68,7 @@ public:
     static WEBCORE_EXPORT WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
+    DOMWrapperWorld& world() const { return m_world; }
 
     void attachDebugger(JSC::Debugger*);
 

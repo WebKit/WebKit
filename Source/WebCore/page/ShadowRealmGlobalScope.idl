@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) 2021 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+[
+    Exposed=ShadowRealm,
+    // JSCustomMarkFunction,
+    JSLegacyParent=JSShadowRealmGlobalScopeBase,
+    Global=ShadowRealm,
+    IsImmutablePrototypeExoticObject,
+    IsImmutablePrototypeExoticObjectOnPrototype,
+    // JSGenerateToNativeObject,
+] interface ShadowRealmGlobalScope : EventTarget {
+    readonly attribute ShadowRealmGlobalScope self;
+    /* readonly attribute WorkerLocation location; */
+    /* readonly attribute WorkerNavigator navigator; */
+    // undefined importScripts(USVString... urls);
+
+    // FIXME: The spec 'onerror' should be of type 'OnErrorEventHandler'.
+    /* attribute EventHandler onerror; */
+    // FIXME: Implement 'onlanguagechange'.
+    // attribute EventHandler onlanguagechange;
+    /* attribute EventHandler onoffline; */
+    /* attribute EventHandler ononline; */
+    /* attribute EventHandler onrejectionhandled; */
+    /* attribute EventHandler onunhandledrejection; */
+    // [Replaceable] readonly attribute USVString origin;
+    readonly attribute boolean isSecureContext;
+
+  // [EnabledBySetting=CrossOriginOpenerPolicyEnabled] readonly attribute boolean crossOriginIsolated;
+
+  // [CallWith=GlobalObject] undefined reportError(any error);
+
+    // Base64 utility methods.
+    // DOMString atob(DOMString string);
+    // DOMString btoa(DOMString string);
+
+    // Timers.
+    // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
+    // [CallWith=GlobalObject] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
+  // undefined clearTimeout(optional long handle = 0);
+    // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
+    // [CallWith=GlobalObject] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
+    // undefined clearInterval(optional long handle = 0);
+
+    // microtask queuing.
+    // [Custom] undefined queueMicrotask(VoidCallback callback);
+};
+
+/* ShadowRealmGlobalScope includes WindowOrWorkerGlobalScope; */
+/* ShadowRealmGlobalScope includes FontFaceSource; */

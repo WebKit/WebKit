@@ -537,6 +537,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming
+    &deriveShadowRealmGlobalObject
 };
 
 /* Source for JSGlobalObject.lut.h
@@ -2639,6 +2640,11 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
     init(vm);
     setGlobalThis(vm, thisValue);
     ASSERT(type() == GlobalObjectType);
+}
+
+JSGlobalObject* JSGlobalObject::deriveShadowRealmGlobalObject(VM& vm)
+{
+  return m_globalObjectMethodTable->deriveShadowRealmGlobalObject(vm, this);
 }
 
 #ifdef JSC_GLIB_API_ENABLED

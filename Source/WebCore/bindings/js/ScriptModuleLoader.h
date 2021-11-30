@@ -51,7 +51,7 @@ class ScriptExecutionContext;
 class ScriptModuleLoader final : private ModuleScriptLoaderClient {
     WTF_MAKE_NONCOPYABLE(ScriptModuleLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class OwnerType : uint8_t { Document, WorkerOrWorklet };
+    enum class OwnerType : uint8_t { Document, WorkerOrWorklet, ShadowRealm };
     explicit ScriptModuleLoader(ScriptExecutionContext&, OwnerType);
     ~ScriptModuleLoader();
 

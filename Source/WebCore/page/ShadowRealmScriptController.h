@@ -25,39 +25,48 @@
 
 #pragma once
 
-#include "JSCJSValueInlines.h"
-#include "JSObject.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/FastMalloc.h>
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/JSCJSValue.h>
 
 namespace JSC {
+class VM;
+class JSModuleRecord;
+}
 
-class ShadowRealmObject final : public JSNonFinalObject {
+namespace WebCore {
+
+class JSShadowRealmGlobalScope;
+class ShadowRealmGlobalScope;
+
+class ShadowRealmScriptController {
+    WTF_MAKE_NONCOPYABLE(ShadowRealmScriptController);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags;
+    ShadowRealmScriptController(Ref<JSC::VM>&&, ShadowRealmGlobalScope*);
+    ~ShadowRealmScriptController() = default;
 
-    template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.shadowRealmSpace<mode>();
+    JSC::JSValue evaluateModule(JSC::JSModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
+
+    JSShadowRealmGlobalScope* globalScopeWrapper() {
+        initScopeIfNeeded();
+        return m_scopeWrapper.get();
     }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ShadowRealmType, StructureFlags), info());
-    }
-
-    DECLARE_INFO;
-
-    static ShadowRealmObject* create(VM&, Structure*, JSGlobalObject*);
-
-    JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
 private:
-    ShadowRealmObject(VM&, Structure*);
-    void finishCreation(VM&);
-    DECLARE_VISIT_CHILDREN;
+    void initScopeIfNeeded() {
+        if (!m_scopeWrapper)
+            initScope();
+    }
 
-    WriteBarrier<JSGlobalObject> m_globalObject;
+    void initScope();
+
+private:
+    Ref<JSC::VM> m_vm;
+    ShadowRealmGlobalScope* m_scope;
+    JSC::Strong<JSShadowRealmGlobalScope> m_scopeWrapper{};
 };
 
-} // namespace JSC
+}
+

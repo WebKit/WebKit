@@ -308,6 +308,8 @@ WebDOMTestTypedefs.h:
 JSTestVoidCallbackFunction.h: 
 DOMTestVoidCallbackFunction.h: 
 WebDOMTestVoidCallbackFunction.h: 
+JSShadowRealmGlobalScope.h: ShadowRealmGlobalScopeConstructors.idl
+ShadowRealmGlobalScopeConstructors.idl:
 JSWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl
 DOMWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl
 WebDOMWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl

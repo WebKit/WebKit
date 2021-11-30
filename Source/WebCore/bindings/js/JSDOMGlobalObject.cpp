@@ -46,10 +46,13 @@
 #include "JSRemoteDOMWindow.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
+#include "JSShadowRealmGlobalScopeBase.h"
+#include "JSShadowRealmGlobalScope.h"
 #include "JSWritableStream.h"
 #include "RejectedPromiseTracker.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptModuleLoader.h"
+#include "ShadowRealmScriptController.h"
 #include "StructuredClone.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
@@ -65,6 +68,7 @@
 #include <JavaScriptCore/VMTrapsInlines.h>
 #include <JavaScriptCore/WasmStreamingCompiler.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
+#include <wtf/Language.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -79,6 +83,28 @@ JSC_DECLARE_HOST_FUNCTION(whenSignalAborted);
 JSC_DECLARE_HOST_FUNCTION(isAbortSignal);
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMGlobalObject) };
+
+const GlobalObjectMethodTable JSDOMGlobalObject::s_shadowRealmGlobalObjectMethodTable = {
+    &JSGlobalObject::supportsRichSourceInfo,
+    &JSGlobalObject::shouldInterruptScript,
+    &JSGlobalObject::javaScriptRuntimeFlags,
+    nullptr,
+    &JSGlobalObject::shouldInterruptScriptBeforeTimeout,
+    &moduleLoaderImportModule,
+    &moduleLoaderResolve,
+    &moduleLoaderFetch,
+    &moduleLoaderCreateImportMetaProperties,
+    &moduleLoaderEvaluate,
+    &promiseRejectionTracker,
+    &reportUncaughtExceptionAtEventLoop,
+    &JSGlobalObject::currentScriptExecutionOwner,
+    &JSGlobalObject::scriptExecutionStatus,
+    &JSGlobalObject::reportViolationForUnsafeEval,
+    [] { return defaultLanguage(); },
+    nullptr,
+    nullptr,
+    &deriveShadowRealmGlobalObject
+};
 
 JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& world, const GlobalObjectMethodTable* globalObjectMethodTable)
     : JSGlobalObject(vm, structure, globalObjectMethodTable)
@@ -266,6 +292,8 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
     if (inherits<JSRemoteDOMWindowBase>(vm()))
         return nullptr;
+    if (inherits<JSShadowRealmGlobalScopeBase>(vm()))
+        return jsCast<const JSShadowRealmGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkletGlobalScopeBase>(vm()))
@@ -329,6 +357,14 @@ void JSDOMGlobalObject::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, 
 void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlobalObject, JSC::Exception* exception)
 {
     reportException(jsGlobalObject, exception);
+}
+
+JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
+{
+    auto domGlobalObject = jsCast<JSDOMGlobalObject*>(globalObject);
+    ASSERT(domGlobalObject);
+    auto scope = ShadowRealmGlobalScope::tryCreate(vm, domGlobalObject).releaseNonNull();
+    return scope->script()->globalScopeWrapper();
 }
 
 void JSDOMGlobalObject::clearDOMGuardedObjects() const
@@ -498,7 +534,7 @@ JSC::JSPromise* JSDOMGlobalObject::instantiateStreaming(JSC::JSGlobalObject* glo
 }
 #endif
 
-static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
+static ScriptModuleLoader* scriptModuleLoader(const JSDOMGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     if (globalObject->inherits<JSDOMWindowBase>(vm)) {
@@ -508,6 +544,8 @@ static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
     }
     if (globalObject->inherits<JSRemoteDOMWindowBase>(vm))
         return nullptr;
+    if (globalObject->inherits<JSShadowRealmGlobalScopeBase>(vm))
+        return &jsCast<const JSShadowRealmGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSWorkerGlobalScopeBase>(vm))
         return &jsCast<const JSWorkerGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSWorkletGlobalScopeBase>(vm))

@@ -39,6 +39,8 @@
 #include "ModuleFetchParameters.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "ShadowRealmGlobalScope.h"
+#include "ShadowRealmScriptController.h"
 #include "SubresourceIntegrity.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerModuleScriptLoader.h"
@@ -247,6 +249,10 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     if (m_ownerType == OwnerType::Document) {
         if (auto* frame = downcast<Document>(m_context).frame())
             RELEASE_AND_RETURN(scope, frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
+    } else if (m_ownerType == OwnerType::ShadowRealm) {
+        ASSERT(is<ShadowRealmGlobalScope>(m_context));
+        if (auto script = downcast<ShadowRealmGlobalScope>(m_context).script())
+            RELEASE_AND_RETURN(scope, script->evaluateModule(*moduleRecord, awaitedValue, resumeMode));
     } else {
         ASSERT(is<WorkerOrWorkletGlobalScope>(m_context));
         if (auto* script = downcast<WorkerOrWorkletGlobalScope>(m_context).script())

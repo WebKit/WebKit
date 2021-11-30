@@ -36,6 +36,7 @@
 #include "DocumentThreadableLoader.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
+#include "ShadowRealmGlobalScope.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThreadableLoader.h"
@@ -107,8 +108,11 @@ RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& contex
         return WorkerThreadableLoader::create(static_cast<WorkerOrWorkletGlobalScope&>(context), client, WTFMove(taskMode), WTFMove(request), options, WTFMove(referrer));
 
     Document* document = nullptr;
+
     if (is<WorkletGlobalScope>(context))
         document = downcast<WorkletGlobalScope>(context).responsibleDocument();
+    else if (is<ShadowRealmGlobalScope>(context))
+        document = downcast<ShadowRealmGlobalScope>(context).responsibleDocument();
     else
         document = &downcast<Document>(context);
 

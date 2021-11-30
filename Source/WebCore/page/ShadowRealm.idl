@@ -1,0 +1,7 @@
+[
+    Exposed=Window
+] interface ShadowRealm : EventTarget {
+
+};
+
+ShadowRealm includes ShadowRealmGlobalScope;
