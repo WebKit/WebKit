@@ -82,10 +82,8 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, O
         if (m_scrollController.retargetAnimatedScrollBy(delta))
             return true;
 
-        auto startOffset = offsetFromPosition(m_currentPosition);
-        auto extents = scrollExtents();
-        auto destinationOffset = (startOffset + delta).constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
-        return m_scrollController.startAnimatedScrollToDestination(startOffset, destinationOffset);
+        m_scrollableArea.scrollToPositionWithAnimation(m_currentPosition + delta);
+        return true;
     }
 
     return scrollToPositionWithoutAnimation(currentPosition() + delta);
