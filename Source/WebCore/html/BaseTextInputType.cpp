@@ -42,11 +42,21 @@ bool BaseTextInputType::patternMismatch(const String& value) const
     const AtomString& rawPattern = element()->attributeWithoutSynchronization(patternAttr);
     if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode).isValid())
         return false;
-    String pattern = "^(?:" + rawPattern + ")$";
-    int matchLength = 0;
-    int valueLength = value.length();
-    int matchOffset = JSC::Yarr::RegularExpression(pattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode).match(value, 0, &matchLength);
-    return matchOffset || matchLength != valueLength;
+
+    String pattern = makeString("^(?:", rawPattern, ")$");
+    JSC::Yarr::RegularExpression regex(pattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode);
+    auto valuePatternMismatch = [&regex](auto& value) {
+        int matchLength = 0;
+        int valueLength = value.length();
+        int matchOffset = regex.match(value, 0, &matchLength);
+        return matchOffset || matchLength != valueLength;
+    };
+
+    if (isEmailField() && element()->multiple()) {
+        auto values = value.split(',');
+        return values.findMatching(valuePatternMismatch) != notFound;
+    }
+    return valuePatternMismatch(value);
 }
 
 bool BaseTextInputType::supportsPlaceholder() const

@@ -311,7 +311,7 @@ bool HTMLInputElement::hasBadInput() const
 
 bool HTMLInputElement::patternMismatch() const
 {
-    return willValidate() && m_inputType->patternMismatch(value());
+    return m_inputType->patternMismatch(value());
 }
 
 bool HTMLInputElement::tooShort(StringView value, NeedsToCheckDirtyFlag check) const
