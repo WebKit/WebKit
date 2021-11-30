@@ -2426,3 +2426,5 @@ webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Pass Failure ]
 # FIXME: Remove these tests.
 platform/mac/plugins/testplugin-onnew-onpaint.html [ Skip ]
 platform/mac/plugins/convert-point.html [ Skip ]
+
+webkit.org/b/226826 [ Monterey ] http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
