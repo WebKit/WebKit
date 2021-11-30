@@ -1,3 +1,13 @@
+2021-11-30  Chris Dumez  <cdumez@apple.com>
+
+        [GLIB] REGRESSION(r268539): imported/w3c/web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=217845
+        <rdar://problem/85865551>
+
+        Unreviewed, unskip test as it appears it got fixed by r286264.
+
+        * platform/glib/TestExpectations:
+
 2021-11-30  Rob Buis  <rbuis@igalia.com>
 
         Null check in previousLinePosition
