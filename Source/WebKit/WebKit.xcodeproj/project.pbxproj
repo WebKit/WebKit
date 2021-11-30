@@ -4112,6 +4112,8 @@
 		41E242DF26E0C904009A8C64 /* NetworkRTCUtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCUtilitiesCocoa.mm; sourceTree = "<group>"; };
 		41E67A8C25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeAudioSource.h; sourceTree = "<group>"; };
 		41E67A8D25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeAudioSource.cpp; sourceTree = "<group>"; };
+		41EB4D3A274CE04500A9272B /* ServiceWorkerNavigationPreloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNavigationPreloader.h; sourceTree = "<group>"; };
+		41EB4D3B274CE04500A9272B /* ServiceWorkerNavigationPreloader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerNavigationPreloader.cpp; sourceTree = "<group>"; };
 		41F060DD1654317500F3281C /* WebSocketChannelMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketChannelMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSocketChannelMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		41F9FD1823ED8A810099B579 /* LibWebRTCResolverIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCResolverIdentifier.h; path = Network/webrtc/LibWebRTCResolverIdentifier.h; sourceTree = "<group>"; };
 		41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCache.h; sourceTree = "<group>"; };
@@ -10283,6 +10285,8 @@
 				41518536222704F6005430C6 /* ServiceWorkerFetchTask.cpp */,
 				41518535222704F5005430C6 /* ServiceWorkerFetchTask.h */,
 				4151853822270F53005430C6 /* ServiceWorkerFetchTask.messages.in */,
+				41EB4D3B274CE04500A9272B /* ServiceWorkerNavigationPreloader.cpp */,
+				41EB4D3A274CE04500A9272B /* ServiceWorkerNavigationPreloader.h */,
 				41D5C6D9238EB20E00B9B3CB /* ServiceWorkerSoftUpdateLoader.cpp */,
 				41D5C6D8238EB20D00B9B3CB /* ServiceWorkerSoftUpdateLoader.h */,
 				93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */,

@@ -29,6 +29,7 @@
 
 #include "MDNSRegisterIdentifier.h"
 #include "RTCNetwork.h"
+#include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>

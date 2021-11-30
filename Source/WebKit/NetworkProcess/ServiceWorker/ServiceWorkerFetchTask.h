@@ -40,6 +40,7 @@ namespace WebCore {
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class SWServerRegistration;
 }
 
 namespace IPC {
@@ -48,16 +49,21 @@ class Decoder;
 class FormDataReference;
 }
 
-namespace WebKit {
+namespace WebCore {
+class NetworkLoadMetrics;
+}
 
+namespace WebKit {
 class NetworkResourceLoader;
+class NetworkSession;
+class ServiceWorkerNavigationPreloader;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 
 class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, bool shouldSoftUpdate);
+    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
     ~ServiceWorkerFetchTask();
 
     void start(WebSWServerToContextConnection&);
@@ -76,18 +82,26 @@ public:
     void contextClosed();
 
 private:
+    enum class ShouldSetSource : bool { No, Yes };
     void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
     void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
+    void didFinishWithMetrics(const WebCore::NetworkLoadMetrics&);
     void didFail(const WebCore::ResourceError&);
     void didNotHandle();
+
+    void processRedirectResponse(WebCore::ResourceResponse&&, ShouldSetSource);
+    void processResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage, ShouldSetSource);
 
     void startFetch();
 
     void timeoutTimerFired();
     void softUpdateIfNeeded();
+    void loadResponseFromPreloader();
+    void loadBodyFromPreloader();
+    void cancelPreloadIfNecessary();
 
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);
@@ -100,10 +114,12 @@ private:
     WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     WebCore::ResourceRequest m_currentRequest;
     WebCore::Timer m_timeoutTimer;
+    WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
+    std::unique_ptr<ServiceWorkerNavigationPreloader> m_preloader;
     bool m_wasHandled { false };
     bool m_isDone { false };
-    WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
     bool m_shouldSoftUpdate { false };
+    bool m_isLoadingFromPreloader { false };
 };
 
 }

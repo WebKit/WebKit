@@ -184,9 +184,8 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
     }
 
     auto* registration = server().getRegistration(*serviceWorkerRegistrationIdentifier);
-    bool shouldSoftUpdate = registration && registration->shouldSoftUpdate(loader.parameters().options);
     if (worker->shouldSkipFetchEvent()) {
-        if (shouldSoftUpdate)
+        if (registration && registration->shouldSoftUpdate(loader.parameters().options))
             registration->scheduleSoftUpdate(loader.isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 
         return nullptr;
@@ -197,7 +196,8 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
         return nullptr;
     }
 
-    auto task = makeUnique<ServiceWorkerFetchTask>(*this, loader, ResourceRequest { request }, identifier(), worker->identifier(), *serviceWorkerRegistrationIdentifier, shouldSoftUpdate);
+    bool isWorkerReady = worker->isRunning() && worker->state() == ServiceWorkerState::Activated;
+    auto task = makeUnique<ServiceWorkerFetchTask>(*this, loader, ResourceRequest { request }, identifier(), worker->identifier(), *registration, session(), isWorkerReady);
     startFetch(*task, *worker);
     return task;
 }
@@ -503,7 +503,12 @@ PAL::SessionID WebSWServerConnection::sessionID() const
 {
     return server().sessionID();
 }
-    
+
+NetworkSession* WebSWServerConnection::session()
+{
+    return m_networkProcess->networkSession(sessionID());
+}
+
 template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, U&& message)
 {
     static_cast<WebSWServerToContextConnection&>(connection).send(WTFMove(message));

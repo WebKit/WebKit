@@ -81,6 +81,15 @@ inline bool isPotentialNavigationOrSubresourceRequest(FetchOptions::Destination 
         || destination == FetchOptions::Destination::Embed;
 }
 
+// https://fetch.spec.whatwg.org/#navigation-request
+inline bool isNavigationRequest(FetchOptions::Destination destination)
+{
+    return destination == FetchOptions::Destination::Document
+        || destination == FetchOptions::Destination::Iframe
+        || destination == FetchOptions::Destination::Object
+        || destination == FetchOptions::Destination::Embed;
+}
+
 // https://fetch.spec.whatwg.org/#non-subresource-request
 inline bool isNonSubresourceRequest(FetchOptions::Destination destination)
 {

@@ -1,0 +1,213 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ServiceWorkerNavigationPreloader.h"
+
+#if ENABLE(SERVICE_WORKER)
+
+#include "Logging.h"
+#include "NetworkCache.h"
+#include "NetworkLoad.h"
+#include "NetworkSession.h"
+
+namespace WebKit {
+
+using namespace WebCore;
+
+ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSession& session, NetworkLoadParameters&& parameters)
+    : m_session(session)
+{
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader %p", this);
+    if (session.cache()) {
+        NetworkCache::GlobalFrameID globalID { parameters.webPageProxyID, parameters.webPageID, parameters.webFrameID };
+        session.cache()->retrieve(parameters.request, globalID, parameters.isNavigatingToAppBoundDomain, [this, weakThis = WeakPtr { *this }, parameters = WTFMove(parameters)](auto&& entry, auto&&) mutable {
+            if (!weakThis || m_isCancelled)
+                return;
+            if (!m_session) {
+                didFailLoading(ResourceError { ResourceError::Type::Cancellation });
+                return;
+            }
+            if (entry && !entry->needsValidation()) {
+                loadWithCacheEntry(*entry);
+                return;
+            }
+
+            parameters.request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
+            if (entry) {
+                m_cacheEntry = WTFMove(entry);
+
+                auto eTag = m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
+                if (!eTag.isEmpty())
+                    parameters.request.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
+
+                auto lastModified = m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
+                if (!lastModified.isEmpty())
+                    parameters.request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
+            }
+            loadFromNetwork(*m_session, WTFMove(parameters));
+        });
+        return;
+    }
+    loadFromNetwork(session, WTFMove(parameters));
+}
+
+ServiceWorkerNavigationPreloader::~ServiceWorkerNavigationPreloader()
+{
+}
+
+void ServiceWorkerNavigationPreloader::cancel()
+{
+    m_isCancelled = true;
+    if (m_responseCompletionHandler)
+        m_responseCompletionHandler(PolicyAction::Ignore);
+    if (m_networkLoad)
+        m_networkLoad->cancel();
+}
+
+void ServiceWorkerNavigationPreloader::loadWithCacheEntry(NetworkCache::Entry& entry)
+{
+    didReceiveResponse(ResourceResponse { entry.response() }, [body = RefPtr { entry.buffer() }, weakThis = WeakPtr { *this }](auto) mutable {
+        if (!weakThis)
+            return;
+
+        if (body) {
+            auto size = body->size();
+            weakThis->didReceiveBuffer(body.releaseNonNull(), size);
+        }
+
+        if (!weakThis)
+            return;
+
+        NetworkLoadMetrics networkLoadMetrics;
+        networkLoadMetrics.markComplete();
+        networkLoadMetrics.responseBodyBytesReceived = 0;
+        networkLoadMetrics.responseBodyDecodedSize = 0;
+        weakThis->didFinishLoading(networkLoadMetrics);
+    });
+    didComplete();
+}
+
+void ServiceWorkerNavigationPreloader::loadFromNetwork(NetworkSession& session, NetworkLoadParameters&& parameters)
+{
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::loadFromNetwork %p", this);
+
+    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), session);
+    m_networkLoad->start();
+}
+
+void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response)
+{
+    didReceiveResponse(WTFMove(response), [](auto) { });
+    didComplete();
+}
+
+void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+{
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didReceiveResponse %p", this);
+
+    if (response.httpStatusCode() == 304 && m_cacheEntry) {
+        auto cacheEntry = WTFMove(m_cacheEntry);
+        loadWithCacheEntry(*cacheEntry);
+        completionHandler(PolicyAction::Ignore);
+        return;
+    }
+
+    m_response = WTFMove(response);
+    m_responseCompletionHandler = WTFMove(completionHandler);
+
+    if (auto callback = std::exchange(m_responseCallback, { }))
+        callback();
+}
+
+void ServiceWorkerNavigationPreloader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
+{
+    if (m_bodyCallback)
+        m_bodyCallback(WTFMove(buffer), reportedEncodedDataLength);
+}
+
+void ServiceWorkerNavigationPreloader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
+{
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didFinishLoading %p", this);
+
+    m_networkLoadMetrics = networkLoadMetrics;
+    didComplete();
+}
+
+void ServiceWorkerNavigationPreloader::didFailLoading(const ResourceError& error)
+{
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didFailLoading %p", this);
+
+    m_error = error;
+    didComplete();
+}
+
+void ServiceWorkerNavigationPreloader::didComplete()
+{
+    m_networkLoad = nullptr;
+
+    if (auto callback = std::exchange(m_responseCallback, { }))
+        callback();
+
+    if (m_bodyCallback)
+        m_bodyCallback({ }, 0);
+}
+
+void ServiceWorkerNavigationPreloader::waitForResponse(ResponseCallback&& callback)
+{
+    if (!m_error.isNull()) {
+        callback();
+        return;
+    }
+
+    if (m_responseCompletionHandler) {
+        callback();
+        return;
+    }
+
+    m_responseCallback = WTFMove(callback);
+}
+
+void ServiceWorkerNavigationPreloader::waitForBody(BodyCallback&& callback)
+{
+    if (!m_error.isNull()) {
+        callback({ }, 0);
+        return;
+    }
+
+    ASSERT(!m_response.isNull());
+    ASSERT(m_responseCompletionHandler || !m_networkLoad);
+    if (!m_networkLoad) {
+        callback({ }, 0);
+        return;
+    }
+    if (m_responseCompletionHandler)
+        m_responseCompletionHandler(PolicyAction::Use);
+    m_bodyCallback = WTFMove(callback);
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(SERVICE_WORKER)

@@ -1,5 +1,30 @@
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
+        Preload navigation request if the service worker is not immediately ready to handle the navigation request fetch event
+        https://bugs.webkit.org/show_bug.cgi?id=233471
+
+        Reviewed by Chris Dumez.
+
+        Launching a service worker might take time due to parsing and running the service worker script.
+        This might delay navigation loads, especially if the service worker is pass through on these loads.
+        To optimize this code path, we preload the navigation request in case service worker is not running or not yet activated.
+        We then wait for the service worker to handle the fetch event, which will tell us to either go to the network, in which
+        case we use the preload, or will provide its own response in which case we use it and cancel the preload.
+
+        Test: http/wpt/service-workers/service-worker-preload-when-not-activated.https.html
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp: Added.
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.h: Added.
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/webrtc/NetworkMDNSRegister.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-11-30  Youenn Fablet  <youenn@apple.com>
+
         Remove unnecessary service worker page settings handling
         https://bugs.webkit.org/show_bug.cgi?id=233468
 
