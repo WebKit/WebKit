@@ -28,19 +28,28 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteTextureViewMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPUTextureView.h>
 
 namespace WebKit {
 
-RemoteTextureView::RemoteTextureView(PAL::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteTextureView::RemoteTextureView(PAL::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(textureView)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteTextureView::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteTextureView::~RemoteTextureView() = default;
+
+void RemoteTextureView::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteTextureView::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteTextureView::setLabel(String&& label)
 {

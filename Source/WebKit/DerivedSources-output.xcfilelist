@@ -242,6 +242,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteExternalTextureMessagesReplie
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGPUMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGPUMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGPUMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGPUProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGPUProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGPUProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGraphicsContextGLMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGraphicsContextGLMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteGraphicsContextGLMessagesReplies.h

@@ -36,6 +36,10 @@ namespace PAL::WebGPU {
 class PipelineLayout;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -45,17 +49,19 @@ class ObjectHeap;
 class RemotePipelineLayout final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemotePipelineLayout> create(PAL::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemotePipelineLayout> create(PAL::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemotePipelineLayout(pipelineLayout, objectHeap, identifier));
+        return adoptRef(*new RemotePipelineLayout(pipelineLayout, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemotePipelineLayout();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemotePipelineLayout(PAL::WebGPU::PipelineLayout&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemotePipelineLayout(PAL::WebGPU::PipelineLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemotePipelineLayout(const RemotePipelineLayout&) = delete;
     RemotePipelineLayout(RemotePipelineLayout&&) = delete;
@@ -70,6 +76,7 @@ private:
 
     Ref<PAL::WebGPU::PipelineLayout> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

@@ -1,3 +1,217 @@
+2021-11-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Hook up StreamServerConnection to Remote*** classes
+        https://bugs.webkit.org/show_bug.cgi?id=233600
+
+        Reviewed by Kimmo Kinnunen.
+
+        In order for all the various Remote*** classes in the GPU process to be able to receive messages,
+        they have to be able to call streamConnection->startReceivingMessages(*this), and when they're done
+        receiving messages, they need to call streamConnection->stopReceivingMessages(). This means that
+        all the Remote*** objects have to have a Ref to the StreamServerConnection so they can call into it
+        when they're done receiving messages.
+
+        The object model for this matches the object model for RemoteRenderingBackend:
+        - RemoteGPU is the WebGPU analogue of RemoteRenderingBackend.
+        - WebGPU::ObjectHeap is the WebGPU analogue of RemoteResourceCache.
+        - The WebGPU::Remote*** objects are the WebGPU analogues of the ImageBuffers, NativeImages, and
+              Fonts retained by the RemoteResourceCache.
+
+        So, here's an ASCII-art diagram of the object model:
+
+                                    +-----------+
+                                    | RemoteGPU |
+                                    +-----------+
+                                   /     |
+                  ----------------       |
+                /                        | 
+               /              +--------------------+
+              /               | WebGPU::ObjectHeap |
+             /                +--------------------+
+            /                  /        |        \ 
+           /                  /         |         \ 
+          |                  /          |          \ 
+          |  +---------------+  +--------------+  +-------------+
+          |  | RemoteTexture |  | RemoteDevice |  | RemoteQueue | ... etc.
+          |  +---------------+  +--------------+  +-------------+
+           \                 \          |          /
+            \                 \         |         /
+              --------------   \        |        /
+                             \  \       |       /
+                           +------------------------+
+                           | StreamServerConnection |
+                           +------------------------+
+
+        Now that the StreamServerConnection is being hooked up, this patch mirrors the design of
+        RemoteGraphicsContextGL. In this design, the web process sends a create() message with the
+        StreamConnectionBuffer to the gpu process, which creates a RemoteGraphicsContextGL. The
+        RemoteGraphicsContextGL owns a StreamConnectionWorkQueue, and upon being created, it starts up the
+        work queue and enqueues an initialization task to the work queue, which then sends a reply to the web
+        process including the wakeUpSemaphore from the work queue. While the GPU process is busy doing this,
+        the web process is blocked, because it can't send any messages through the stream until it has
+        received the semaphore. Once it has received the semaphore, the connection has been established,
+        and messages can start flowing. This patch follows this model, except instead of
+        RemoteGraphicsContextGLProxy communicating with RemoteGraphicsContextGL, RemoteGPUProxy is
+        communicating with RemoteGPU.
+
+        There is one more patch to wire up all the pieces together before we can actually call our first
+        WebGPU command in Javascript.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/graphics/WebGPU/RemoteAdapter.cpp:
+        (WebKit::RemoteAdapter::RemoteAdapter):
+        (WebKit::RemoteAdapter::stopListeningForIPC):
+        (WebKit::RemoteAdapter::requestDevice):
+        * GPUProcess/graphics/WebGPU/RemoteAdapter.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp:
+        (WebKit::RemoteBindGroup::RemoteBindGroup):
+        (WebKit::RemoteBindGroup::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteBindGroup.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp:
+        (WebKit::RemoteBindGroupLayout::RemoteBindGroupLayout):
+        (WebKit::RemoteBindGroupLayout::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.cpp:
+        (WebKit::RemoteBuffer::RemoteBuffer):
+        (WebKit::RemoteBuffer::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandBuffer.cpp:
+        (WebKit::RemoteCommandBuffer::RemoteCommandBuffer):
+        (WebKit::RemoteCommandBuffer::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteCommandBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.cpp:
+        (WebKit::RemoteCommandEncoder::RemoteCommandEncoder):
+        (WebKit::RemoteCommandEncoder::stopListeningForIPC):
+        (WebKit::RemoteCommandEncoder::beginRenderPass):
+        (WebKit::RemoteCommandEncoder::beginComputePass):
+        (WebKit::RemoteCommandEncoder::finish):
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.cpp:
+        (WebKit::RemoteComputePassEncoder::RemoteComputePassEncoder):
+        (WebKit::RemoteComputePassEncoder::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePipeline.cpp:
+        (WebKit::RemoteComputePipeline::RemoteComputePipeline):
+        (WebKit::RemoteComputePipeline::stopListeningForIPC):
+        (WebKit::RemoteComputePipeline::getBindGroupLayout):
+        * GPUProcess/graphics/WebGPU/RemoteComputePipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteDevice.cpp:
+        (WebKit::RemoteDevice::RemoteDevice):
+        (WebKit::RemoteDevice::stopListeningForIPC):
+        (WebKit::RemoteDevice::createBuffer):
+        (WebKit::RemoteDevice::createTexture):
+        (WebKit::RemoteDevice::createSampler):
+        (WebKit::RemoteDevice::importExternalTexture):
+        (WebKit::RemoteDevice::createBindGroupLayout):
+        (WebKit::RemoteDevice::createPipelineLayout):
+        (WebKit::RemoteDevice::createBindGroup):
+        (WebKit::RemoteDevice::createShaderModule):
+        (WebKit::RemoteDevice::createComputePipeline):
+        (WebKit::RemoteDevice::createRenderPipeline):
+        (WebKit::RemoteDevice::createComputePipelineAsync):
+        (WebKit::RemoteDevice::createRenderPipelineAsync):
+        (WebKit::RemoteDevice::createCommandEncoder):
+        (WebKit::RemoteDevice::createRenderBundleEncoder):
+        (WebKit::RemoteDevice::createQuerySet):
+        * GPUProcess/graphics/WebGPU/RemoteDevice.h:
+        * GPUProcess/graphics/WebGPU/RemoteExternalTexture.cpp:
+        (WebKit::RemoteExternalTexture::RemoteExternalTexture):
+        (WebKit::RemoteExternalTexture::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteExternalTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteGPU.cpp:
+        (WebKit::RemoteGPU::RemoteGPU):
+        (WebKit::RemoteGPU::initialize):
+        (WebKit::RemoteGPU::stopListeningForIPC):
+        (WebKit::RemoteGPU::workQueueInitialize):
+        (WebKit::RemoteGPU::workQueueUninitialize):
+        (WebKit::RemoteGPU::requestAdapter):
+        * GPUProcess/graphics/WebGPU/RemoteGPU.h:
+        * GPUProcess/graphics/WebGPU/RemoteGPU.messages.in:
+        * GPUProcess/graphics/WebGPU/RemotePipelineLayout.cpp:
+        (WebKit::RemotePipelineLayout::RemotePipelineLayout):
+        (WebKit::RemotePipelineLayout::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemotePipelineLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteQuerySet.cpp:
+        (WebKit::RemoteQuerySet::RemoteQuerySet):
+        (WebKit::RemoteQuerySet::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteQuerySet.h:
+        * GPUProcess/graphics/WebGPU/RemoteQueue.cpp:
+        (WebKit::RemoteQueue::RemoteQueue):
+        (WebKit::RemoteQueue::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteQueue.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundle.cpp:
+        (WebKit::RemoteRenderBundle::RemoteRenderBundle):
+        (WebKit::RemoteRenderBundle::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundle.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp:
+        (WebKit::RemoteRenderBundleEncoder::RemoteRenderBundleEncoder):
+        (WebKit::RemoteRenderBundleEncoder::stopListeningForIPC):
+        (WebKit::RemoteRenderBundleEncoder::finish):
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp:
+        (WebKit::RemoteRenderPassEncoder::RemoteRenderPassEncoder):
+        (WebKit::RemoteRenderPassEncoder::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp:
+        (WebKit::RemoteRenderPipeline::RemoteRenderPipeline):
+        (WebKit::RemoteRenderPipeline::stopListeningForIPC):
+        (WebKit::RemoteRenderPipeline::getBindGroupLayout):
+        * GPUProcess/graphics/WebGPU/RemoteRenderPipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteSampler.cpp:
+        (WebKit::RemoteSampler::RemoteSampler):
+        (WebKit::RemoteSampler::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteSampler.h:
+        * GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp:
+        (WebKit::RemoteShaderModule::RemoteShaderModule):
+        (WebKit::RemoteShaderModule::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteShaderModule.h:
+        * GPUProcess/graphics/WebGPU/RemoteTexture.cpp:
+        (WebKit::RemoteTexture::RemoteTexture):
+        (WebKit::RemoteTexture::stopListeningForIPC):
+        (WebKit::RemoteTexture::createView):
+        * GPUProcess/graphics/WebGPU/RemoteTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteTextureView.cpp:
+        (WebKit::RemoteTextureView::RemoteTextureView):
+        (WebKit::RemoteTextureView::stopListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteTextureView.h:
+        * GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp:
+        (WebKit::WebGPU::ObjectHeap::addObject):
+        (WebKit::WebGPU::ObjectHeap::convertAdapterFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBindGroupFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBindGroupLayoutFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertBufferFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertCommandBufferFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertCommandEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertComputePassEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertComputePipelineFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertDeviceFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertExternalTextureFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertPipelineLayoutFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertQuerySetFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertQueueFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderBundleEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderBundleFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderPassEncoderFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertRenderPipelineFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertSamplerFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertShaderModuleFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertTextureFromBacking):
+        (WebKit::WebGPU::ObjectHeap::convertTextureViewFromBacking):
+        * GPUProcess/graphics/WebGPU/WebGPUObjectHeap.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp:
+        (WebKit::RemoteGPUProxy::RemoteGPUProxy):
+        (WebKit::RemoteGPUProxy::abandonGPUProcess):
+        (WebKit::RemoteGPUProxy::wasCreated):
+        (WebKit::RemoteGPUProxy::waitUntilInitialized):
+        (WebKit::RemoteGPUProxy::requestAdapter):
+        (WebKit::RemoteGPUProxy::~RemoteGPUProxy): Deleted.
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.messages.in: Added.
+
 2021-11-30  Ada Chan  <adachan@apple.com>
 
         [WebXR] Implement ChromeClient API to allow getting explicit consent from user on session features

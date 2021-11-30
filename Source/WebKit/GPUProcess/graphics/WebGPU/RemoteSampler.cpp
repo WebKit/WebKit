@@ -28,19 +28,28 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteSamplerMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPUSampler.h>
 
 namespace WebKit {
 
-RemoteSampler::RemoteSampler(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteSampler::RemoteSampler(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(sampler)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteSampler::~RemoteSampler() = default;
+
+void RemoteSampler::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteSampler::setLabel(String&& label)
 {

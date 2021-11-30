@@ -120,6 +120,8 @@ public:
 
     void removeObject(WebGPUIdentifier);
 
+    void clear();
+
     PAL::WebGPU::Adapter* convertAdapterFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::BindGroup* convertBindGroupFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::BindGroupLayout* convertBindGroupLayoutFromBacking(WebGPUIdentifier) final;
@@ -147,27 +149,27 @@ private:
 
     using Object = std::variant<
         std::monostate,
-        Ref<RemoteAdapter>,
-        Ref<RemoteBindGroup>,
-        Ref<RemoteBindGroupLayout>,
-        Ref<RemoteBuffer>,
-        Ref<RemoteCommandBuffer>,
-        Ref<RemoteCommandEncoder>,
-        Ref<RemoteComputePassEncoder>,
-        Ref<RemoteComputePipeline>,
-        Ref<RemoteDevice>,
-        Ref<RemoteExternalTexture>,
-        Ref<RemotePipelineLayout>,
-        Ref<RemoteQuerySet>,
-        Ref<RemoteQueue>,
-        Ref<RemoteRenderBundleEncoder>,
-        Ref<RemoteRenderBundle>,
-        Ref<RemoteRenderPassEncoder>,
-        Ref<RemoteRenderPipeline>,
-        Ref<RemoteSampler>,
-        Ref<RemoteShaderModule>,
-        Ref<RemoteTexture>,
-        Ref<RemoteTextureView>
+        IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>,
+        IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
     >;
     HashMap<WebGPUIdentifier, Object> m_objects;
 };

@@ -28,19 +28,28 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBindGroupLayoutMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
 
 namespace WebKit {
 
-RemoteBindGroupLayout::RemoteBindGroupLayout(PAL::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteBindGroupLayout::RemoteBindGroupLayout(PAL::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(bindGroupLayout)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteBindGroupLayout::~RemoteBindGroupLayout() = default;
+
+void RemoteBindGroupLayout::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteBindGroupLayout::setLabel(String&& label)
 {

@@ -28,18 +28,27 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBufferMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 
 namespace WebKit {
 
-RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(buffer)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteBuffer::~RemoteBuffer() = default;
+
+void RemoteBuffer::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {

@@ -36,6 +36,10 @@ namespace PAL::WebGPU {
 class QuerySet;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -45,17 +49,19 @@ class ObjectHeap;
 class RemoteQuerySet final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteQuerySet> create(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteQuerySet> create(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteQuerySet(querySet, objectHeap, identifier));
+        return adoptRef(*new RemoteQuerySet(querySet, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteQuerySet();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteQuerySet(PAL::WebGPU::QuerySet&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteQuerySet(PAL::WebGPU::QuerySet&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteQuerySet(const RemoteQuerySet&) = delete;
     RemoteQuerySet(RemoteQuerySet&&) = delete;
@@ -72,6 +78,7 @@ private:
 
     Ref<PAL::WebGPU::QuerySet> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

@@ -28,19 +28,28 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteRenderPassEncoderMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPURenderPassEncoder.h>
 
 namespace WebKit {
 
-RemoteRenderPassEncoder::RemoteRenderPassEncoder(PAL::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteRenderPassEncoder::RemoteRenderPassEncoder(PAL::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderPassEncoder)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderPassEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteRenderPassEncoder::~RemoteRenderPassEncoder() = default;
+
+void RemoteRenderPassEncoder::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderPassEncoder::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteRenderPassEncoder::setPipeline(WebGPUIdentifier renderPipeline)
 {

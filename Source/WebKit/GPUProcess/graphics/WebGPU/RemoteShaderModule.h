@@ -39,6 +39,10 @@ namespace PAL::WebGPU {
 class ShaderModule;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -48,17 +52,19 @@ class ObjectHeap;
 class RemoteShaderModule final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteShaderModule> create(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteShaderModule> create(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap, identifier));
+        return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteShaderModule();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteShaderModule(PAL::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteShaderModule(PAL::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteShaderModule(const RemoteShaderModule&) = delete;
     RemoteShaderModule(RemoteShaderModule&&) = delete;
@@ -75,6 +81,7 @@ private:
 
     Ref<PAL::WebGPU::ShaderModule> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

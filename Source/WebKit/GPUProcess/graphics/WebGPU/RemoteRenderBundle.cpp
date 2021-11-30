@@ -28,19 +28,28 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteRenderBundleMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPURenderBundle.h>
 
 namespace WebKit {
 
-RemoteRenderBundle::RemoteRenderBundle(PAL::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteRenderBundle::RemoteRenderBundle(PAL::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderBundle)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderBundle::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteRenderBundle::~RemoteRenderBundle() = default;
+
+void RemoteRenderBundle::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderBundle::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteRenderBundle::setLabel(String&& label)
 {

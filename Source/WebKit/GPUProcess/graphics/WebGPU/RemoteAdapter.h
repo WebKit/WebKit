@@ -36,6 +36,10 @@ namespace PAL::WebGPU {
 class Adapter;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -48,17 +52,19 @@ struct SupportedLimits;
 class RemoteAdapter final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteAdapter> create(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteAdapter> create(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteAdapter(adapter, objectHeap, identifier));
+        return adoptRef(*new RemoteAdapter(adapter, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteAdapter();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteAdapter(PAL::WebGPU::Adapter&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteAdapter(PAL::WebGPU::Adapter&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteAdapter(const RemoteAdapter&) = delete;
     RemoteAdapter(RemoteAdapter&&) = delete;
@@ -73,6 +79,7 @@ private:
 
     Ref<PAL::WebGPU::Adapter> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

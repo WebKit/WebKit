@@ -29,20 +29,29 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteRenderBundle.h"
+#include "RemoteRenderBundleEncoderMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPURenderBundle.h>
 #include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
 
 namespace WebKit {
 
-RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderBundleEncoder)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder() = default;
+
+void RemoteRenderBundleEncoder::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteRenderBundleEncoder::setPipeline(WebGPUIdentifier renderPipeline)
 {
@@ -142,7 +151,7 @@ void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& des
         return;
 
     auto renderBundle = m_backing->finish(*convertedDescriptor);
-    auto remoteRenderBundle = RemoteRenderBundle::create(renderBundle, m_objectHeap, identifier);
+    auto remoteRenderBundle = RemoteRenderBundle::create(renderBundle, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteRenderBundle);
 }
 

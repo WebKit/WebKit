@@ -28,6 +28,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteShaderModuleMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPUCompilationInfo.h>
 #include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
@@ -35,14 +37,21 @@
 
 namespace WebKit {
 
-RemoteShaderModule::RemoteShaderModule(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteShaderModule::RemoteShaderModule(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(shaderModule)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteShaderModule::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteShaderModule::~RemoteShaderModule() = default;
+
+void RemoteShaderModule::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteShaderModule::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteShaderModule::compilationInfo(WTF::CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&& callback)
 {

@@ -28,7 +28,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteTextureMessages.h"
 #include "RemoteTextureView.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPUTextureViewDescriptor.h"
 #include <pal/graphics/WebGPU/WebGPUTexture.h>
@@ -37,14 +39,21 @@
 
 namespace WebKit {
 
-RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(texture)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteTexture::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteTexture::~RemoteTexture() = default;
+
+void RemoteTexture::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteTexture::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor>& descriptor, WebGPUIdentifier identifier)
 {
@@ -58,7 +67,7 @@ void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor
     }
     ASSERT(convertedDescriptor);
     auto textureView = m_backing->createView(*convertedDescriptor);
-    auto remoteTextureView = RemoteTextureView::create(textureView, m_objectHeap, identifier);
+    auto remoteTextureView = RemoteTextureView::create(textureView, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteTextureView);
 }
 

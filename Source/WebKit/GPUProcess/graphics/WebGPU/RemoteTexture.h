@@ -36,6 +36,10 @@ namespace PAL::WebGPU {
 class Texture;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -46,17 +50,19 @@ struct TextureViewDescriptor;
 class RemoteTexture final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteTexture> create(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteTexture> create(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTexture(texture, objectHeap, identifier));
+        return adoptRef(*new RemoteTexture(texture, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteTexture();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteTexture(PAL::WebGPU::Texture&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteTexture(PAL::WebGPU::Texture&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteTexture(const RemoteTexture&) = delete;
     RemoteTexture(RemoteTexture&&) = delete;
@@ -75,6 +81,7 @@ private:
 
     Ref<PAL::WebGPU::Texture> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

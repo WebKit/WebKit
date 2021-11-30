@@ -29,25 +29,34 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteBindGroupLayout.h"
+#include "RemoteRenderPipelineMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
 #include <pal/graphics/WebGPU/WebGPURenderPipeline.h>
 
 namespace WebKit {
 
-RemoteRenderPipeline::RemoteRenderPipeline(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteRenderPipeline::RemoteRenderPipeline(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderPipeline)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderPipeline::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteRenderPipeline::~RemoteRenderPipeline() = default;
 
+void RemoteRenderPipeline::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderPipeline::messageReceiverName(), m_identifier.toUInt64());
+}
+
 void RemoteRenderPipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier identifier)
 {
     auto bindGroupLayout = m_backing->getBindGroupLayout(index);
-    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectHeap, identifier);
+    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteBindGroupLayout);
 }
 

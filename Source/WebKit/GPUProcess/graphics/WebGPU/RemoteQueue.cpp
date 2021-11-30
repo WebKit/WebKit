@@ -28,19 +28,28 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteQueueMessages.h"
+#include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPUQueue.h>
 
 namespace WebKit {
 
-RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(queue)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteQueue::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteQueue::~RemoteQueue() = default;
+
+void RemoteQueue::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteQueue::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
 {

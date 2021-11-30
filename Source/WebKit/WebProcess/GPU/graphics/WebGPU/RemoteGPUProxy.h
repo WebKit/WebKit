@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessConnection.h"
+#include "RenderingBackendIdentifier.h"
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
@@ -44,12 +45,12 @@ class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public PAL::WebGPU::GPU {
+class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteGPUProxy> create(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteGPUProxy> create(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
     {
-        return adoptRef(*new RemoteGPUProxy(gpuProcessConnection, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteGPUProxy(gpuProcessConnection, convertToBackingContext, identifier, renderingBackend));
     }
 
     virtual ~RemoteGPUProxy();
@@ -61,12 +62,20 @@ public:
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(GPUProcessConnection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteGPUProxy(GPUProcessConnection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
     RemoteGPUProxy(RemoteGPUProxy&&) = delete;
     RemoteGPUProxy& operator=(const RemoteGPUProxy&) = delete;
     RemoteGPUProxy& operator=(RemoteGPUProxy&&) = delete;
+
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    // Messages to be received.
+    void wasCreated(bool didSucceed, IPC::Semaphore&&);
+
+    void waitUntilInitialized();
 
     WebGPUIdentifier backing() const { return m_backing; }
     
@@ -81,13 +90,19 @@ private:
     {
         return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
     }
+    IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 
     void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
+
+    void abandonGPUProcess();
 
     Deque<WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
+    GPUProcessConnection* m_gpuProcessConnection;
+    bool m_didInitialize { false };
+    bool m_lost { false };
     IPC::StreamClientConnection m_streamConnection;
 };
 

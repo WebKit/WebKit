@@ -41,6 +41,10 @@ namespace PAL::WebGPU {
 class Queue;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -54,17 +58,19 @@ class ObjectHeap;
 class RemoteQueue final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteQueue> create(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteQueue> create(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteQueue(queue, objectHeap, identifier));
+        return adoptRef(*new RemoteQueue(queue, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteQueue();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteQueue(PAL::WebGPU::Queue&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteQueue(PAL::WebGPU::Queue&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteQueue(const RemoteQueue&) = delete;
     RemoteQueue(RemoteQueue&&) = delete;
@@ -99,6 +105,7 @@ private:
 
     Ref<PAL::WebGPU::Queue> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

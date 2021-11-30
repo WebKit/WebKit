@@ -36,6 +36,10 @@ namespace PAL::WebGPU {
 class BindGroup;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -45,17 +49,19 @@ class ObjectHeap;
 class RemoteBindGroup final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBindGroup> create(PAL::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteBindGroup> create(PAL::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBindGroup(bindGroup, objectHeap, identifier));
+        return adoptRef(*new RemoteBindGroup(bindGroup, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteBindGroup();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBindGroup(PAL::WebGPU::BindGroup&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteBindGroup(PAL::WebGPU::BindGroup&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteBindGroup(const RemoteBindGroup&) = delete;
     RemoteBindGroup(RemoteBindGroup&&) = delete;
@@ -70,6 +76,7 @@ private:
 
     Ref<PAL::WebGPU::BindGroup> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

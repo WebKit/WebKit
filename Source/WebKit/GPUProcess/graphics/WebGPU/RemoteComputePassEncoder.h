@@ -37,6 +37,10 @@ namespace PAL::WebGPU {
 class ComputePassEncoder;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -46,17 +50,19 @@ class ObjectHeap;
 class RemoteComputePassEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteComputePassEncoder> create(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteComputePassEncoder> create(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteComputePassEncoder(computePassEncoder, objectHeap, identifier));
+        return adoptRef(*new RemoteComputePassEncoder(computePassEncoder, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteComputePassEncoder();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteComputePassEncoder(const RemoteComputePassEncoder&) = delete;
     RemoteComputePassEncoder(RemoteComputePassEncoder&&) = delete;
@@ -87,6 +93,7 @@ private:
 
     Ref<PAL::WebGPU::ComputePassEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 

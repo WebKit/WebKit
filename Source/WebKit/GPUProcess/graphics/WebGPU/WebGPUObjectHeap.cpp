@@ -63,127 +63,127 @@ ObjectHeap::~ObjectHeap()
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteAdapter& adapter)
 {
-    auto result = m_objects.add(identifier, adapter);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter> { Ref { adapter } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteBindGroup& bindGroup)
 {
-    auto result = m_objects.add(identifier, bindGroup);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup> { Ref { bindGroup } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteBindGroupLayout& bindGroupLayout)
 {
-    auto result = m_objects.add(identifier, bindGroupLayout);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout> { Ref { bindGroupLayout } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteBuffer& buffer)
 {
-    auto result = m_objects.add(identifier, buffer);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer> { Ref { buffer } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteCommandBuffer& commandBuffer)
 {
-    auto result = m_objects.add(identifier, commandBuffer);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer> { Ref { commandBuffer } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteCommandEncoder& commandEncoder)
 {
-    auto result = m_objects.add(identifier, commandEncoder);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder> { Ref { commandEncoder } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteComputePassEncoder& computePassEncoder)
 {
-    auto result = m_objects.add(identifier, computePassEncoder);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder> { Ref { computePassEncoder } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteComputePipeline& computePipeline)
 {
-    auto result = m_objects.add(identifier, computePipeline);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline> { Ref { computePipeline } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteDevice& device)
 {
-    auto result = m_objects.add(identifier, device);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteDevice> { Ref { device } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteExternalTexture& externalTexture)
 {
-    auto result = m_objects.add(identifier, externalTexture);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture> { Ref { externalTexture } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemotePipelineLayout& pipelineLayout)
 {
-    auto result = m_objects.add(identifier, pipelineLayout);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout> { Ref { pipelineLayout } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteQuerySet& querySet)
 {
-    auto result = m_objects.add(identifier, querySet);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet> { Ref { querySet } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteQueue& queue)
 {
-    auto result = m_objects.add(identifier, queue);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteQueue> { Ref { queue } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteRenderBundleEncoder& renderBundleEncoder)
 {
-    auto result = m_objects.add(identifier, renderBundleEncoder);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder> { Ref { renderBundleEncoder } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteRenderBundle& renderBundle)
 {
-    auto result = m_objects.add(identifier, renderBundle);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle> { Ref { renderBundle } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteRenderPassEncoder& renderPassEncoder)
 {
-    auto result = m_objects.add(identifier, renderPassEncoder);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder> { Ref { renderPassEncoder } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteRenderPipeline& renderPipeline)
 {
-    auto result = m_objects.add(identifier, renderPipeline);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline> { Ref { renderPipeline } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteSampler& sampler)
 {
-    auto result = m_objects.add(identifier, sampler);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteSampler> { Ref { sampler } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteShaderModule& shaderModule)
 {
-    auto result = m_objects.add(identifier, shaderModule);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule> { Ref { shaderModule } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteTexture& texture)
 {
-    auto result = m_objects.add(identifier, texture);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteTexture> { Ref { texture } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteTextureView& textureView)
 {
-    auto result = m_objects.add(identifier, textureView);
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView> { Ref { textureView } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -193,172 +193,177 @@ void ObjectHeap::removeObject(WebGPUIdentifier identifier)
     ASSERT_UNUSED(result, result);
 }
 
+void ObjectHeap::clear()
+{
+    m_objects.clear();
+}
+
 PAL::WebGPU::Adapter* ObjectHeap::convertAdapterFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteAdapter>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteAdapter>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::BindGroup* ObjectHeap::convertBindGroupFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteBindGroup>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteBindGroup>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::BindGroupLayout* ObjectHeap::convertBindGroupLayoutFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteBindGroupLayout>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteBindGroupLayout>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::Buffer* ObjectHeap::convertBufferFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteBuffer>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteBuffer>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::CommandBuffer* ObjectHeap::convertCommandBufferFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteCommandBuffer>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteCommandBuffer>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::CommandEncoder* ObjectHeap::convertCommandEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteCommandEncoder>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteCommandEncoder>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::ComputePassEncoder* ObjectHeap::convertComputePassEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteComputePassEncoder>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteComputePassEncoder>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::ComputePipeline* ObjectHeap::convertComputePipelineFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteComputePipeline>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteComputePipeline>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::Device* ObjectHeap::convertDeviceFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteDevice>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteDevice>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::ExternalTexture* ObjectHeap::convertExternalTextureFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteExternalTexture>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteExternalTexture>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::PipelineLayout* ObjectHeap::convertPipelineLayoutFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemotePipelineLayout>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemotePipelineLayout>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::QuerySet* ObjectHeap::convertQuerySetFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteQuerySet>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteQuerySet>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::Queue* ObjectHeap::convertQueueFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteQueue>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteQueue>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::RenderBundleEncoder* ObjectHeap::convertRenderBundleEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteRenderBundleEncoder>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteRenderBundleEncoder>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::RenderBundle* ObjectHeap::convertRenderBundleFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteRenderBundle>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteRenderBundle>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::RenderPassEncoder* ObjectHeap::convertRenderPassEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteRenderPassEncoder>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteRenderPassEncoder>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::RenderPipeline* ObjectHeap::convertRenderPipelineFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteRenderPipeline>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteRenderPipeline>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::Sampler* ObjectHeap::convertSamplerFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteSampler>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteSampler>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::ShaderModule* ObjectHeap::convertShaderModuleFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteShaderModule>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteShaderModule>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::Texture* ObjectHeap::convertTextureFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteTexture>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteTexture>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::TextureView* ObjectHeap::convertTextureViewFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<Ref<RemoteTextureView>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value))
         return nullptr;
-    return &std::get<Ref<RemoteTextureView>>(iterator->value)->backing();
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value)->backing();
 }
 
 } // namespace WebKit::WebGPU

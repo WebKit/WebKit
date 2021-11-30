@@ -28,7 +28,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteAdapterMessages.h"
 #include "RemoteDevice.h"
+#include "StreamServerConnection.h"
 #include "WebGPUDeviceDescriptor.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPUSupportedFeatures.h"
@@ -38,14 +40,21 @@
 
 namespace WebKit {
 
-RemoteAdapter::RemoteAdapter(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+RemoteAdapter::RemoteAdapter(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(adapter)
     , m_objectHeap(objectHeap)
+    , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
 {
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteAdapter::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteAdapter::~RemoteAdapter() = default;
+
+void RemoteAdapter::stopListeningForIPC()
+{
+    m_streamConnection->stopReceivingMessages(Messages::RemoteAdapter::messageReceiverName(), m_identifier.toUInt64());
+}
 
 void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUIdentifier identifier, WTF::CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
 {
@@ -56,8 +65,8 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         return;
     }
 
-    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, identifier] (Ref<PAL::WebGPU::Device>&& device) mutable {
-        auto remoteDevice = RemoteDevice::create(device, objectHeap, identifier);
+    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, streamConnection = m_streamConnection.copyRef(), identifier] (Ref<PAL::WebGPU::Device>&& device) mutable {
+        auto remoteDevice = RemoteDevice::create(device, objectHeap, WTFMove(streamConnection), identifier);
         objectHeap->addObject(identifier, remoteDevice);
         const auto& features = device->features();
         const auto& limits = device->limits();

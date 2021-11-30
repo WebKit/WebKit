@@ -38,6 +38,10 @@ namespace PAL::WebGPU {
 class RenderBundleEncoder;
 }
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 namespace WebGPU {
@@ -48,17 +52,19 @@ struct RenderBundleDescriptor;
 class RemoteRenderBundleEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteRenderBundleEncoder> create(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderBundleEncoder> create(PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderBundleEncoder(renderBundleEncoder, objectHeap, identifier));
+        return adoptRef(*new RemoteRenderBundleEncoder(renderBundleEncoder, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     ~RemoteRenderBundleEncoder();
 
+    void stopListeningForIPC();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder&, WebGPU::ObjectHeap&, WebGPUIdentifier);
+    RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteRenderBundleEncoder(const RemoteRenderBundleEncoder&) = delete;
     RemoteRenderBundleEncoder(RemoteRenderBundleEncoder&&) = delete;
@@ -97,6 +103,7 @@ private:
 
     Ref<PAL::WebGPU::RenderBundleEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
+    Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };
 
