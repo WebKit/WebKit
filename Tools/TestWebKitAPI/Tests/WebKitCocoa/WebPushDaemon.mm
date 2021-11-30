@@ -158,7 +158,7 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
 }
 
 // FIXME: Re-enable this test for Monterey+ once webkit.org/232857 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000)
 TEST(WebPushD, DISABLED_BasicCommunication)
 #else
 TEST(WebPushD, BasicCommunication)
@@ -255,7 +255,7 @@ static const char* mainBytes = R"WEBPUSHRESOURCE(
 )WEBPUSHRESOURCE";
 
 // FIXME: Re-enable this test for Monterey+ once webkit.org/232857 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000)
 TEST(WebPushD, DISABLED_PermissionManagement)
 #else
 TEST(WebPushD, PermissionManagement)

@@ -26,10 +26,12 @@
 #import "config.h"
 #import "WebPushDaemon.h"
 
+#import "AppBundleRequest.h"
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
 #import "HandleMessage.h"
+#import "MockAppBundleRegistry.h"
 #import "WebPushDaemonConstants.h"
 
 #import <wtf/CompletionHandler.h>
@@ -180,13 +182,14 @@ void Daemon::connectionEventHandler(xpc_object_t request)
 void Daemon::connectionAdded(xpc_connection_t connection)
 {
     RELEASE_ASSERT(!m_connectionMap.contains(connection));
-    m_connectionMap.set(connection, WTF::makeUnique<ClientConnection>(connection));
+    m_connectionMap.set(connection, ClientConnection::create(connection));
 }
 
 void Daemon::connectionRemoved(xpc_connection_t connection)
 {
     RELEASE_ASSERT(m_connectionMap.contains(connection));
-    m_connectionMap.remove(connection);
+    auto clientConnection = m_connectionMap.take(connection);
+    clientConnection->connectionClosed();
 }
 
 CompletionHandler<void(EncodedMessage&&)> Daemon::createReplySender(MessageType messageType, OSObjectPtr<xpc_object_t>&& request)
@@ -253,10 +256,7 @@ void Daemon::requestSystemNotificationPermission(ClientConnection* connection, c
         return;
     }
 
-    // FIXME: This is for an API testing checkpoint
-    // Next step is actually perform a persistent permissions request on a per-platform basis
-    m_inMemoryOriginStringsWithPermissionForTesting.add(originString);
-    replySender(true);
+    connection->enqueueAppBundleRequest(makeUnique<AppBundlePermissionsRequest>(*connection, originString, WTFMove(replySender)));
 }
 
 void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* connection, CompletionHandler<void(const Vector<String>&)>&& replySender)
@@ -266,9 +266,8 @@ void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* conn
         return;
     }
 
-    // FIXME: This is for an API testing checkpoint
-    // Next step is actually gather persistent permissions from the system on a per-platform basis
-    replySender(copyToVector(m_inMemoryOriginStringsWithPermissionForTesting));
+    // FIXME: This will need platform-specific implementations for real world bundles once implemented.
+    replySender(MockAppBundleRegistry::singleton().getOriginsWithRegistrations(connection->hostAppCodeSigningIdentifier()));
 }
 
 void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection, const String& originString, CompletionHandler<void(const String&)>&& replySender)
@@ -278,12 +277,7 @@ void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection,
         return;
     }
 
-    // FIXME: This is for an API testing checkpoint
-    // Next step is actually delete any persistent permissions on a per-platform basis
-    if (m_inMemoryOriginStringsWithPermissionForTesting.remove(originString))
-        replySender("");
-    else
-        replySender(makeString("Origin ", originString, " not registered for push or notifications"));
+    connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, WTFMove(replySender)));
 }
 
 void Daemon::setHostAppAuditToken(ClientConnection* clientConnection, const Vector<uint8_t>& tokenData)

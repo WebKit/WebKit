@@ -1,3 +1,96 @@
+2021-11-29  Brady Eidson  <beidson@apple.com>
+
+        Make webpushd "fake registration for testing" much more complicated by adding a "mock app bundle" install
+        https://bugs.webkit.org/show_bug.cgi?id=233454
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+        
+        Before this patch, webpushd remembered "registrations" using a simple in-memory HashMap.
+        
+        In the near future, registrations will actually be represented with a placeholder app bundle on disk.
+        
+        The process of installing placeholders (and checking for existing ones) is complicated and asynchronous.
+        
+        This patch shifts the in-memory testing implementation from a simple HashMap to a "complicated and asynchronous"
+        registration mechanism that simulates how app-bundle installs will work.
+        
+        Once the "real" mechanisms are in place there will be much more in-depth testing that we can do.
+        For now, this is a "no behavior change" patch.
+
+        * NetworkProcess/Notifications/Cocoa/WebPushDaemonConnectionCocoa.mm:
+        (WebKit::WebPushD::Connection::connectionReceivedEvent const):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        "PushAppBundle" is an abstract base class for representing a placeholder application bundle for a registration.
+        Eventually there will be a native one for each platform that actually does system operations.
+        For now, the concrete implementation is the in-memory "Mock" app bundle.
+
+        * webpushd/PushAppBundle.h: Copied from Source/WebKit/webpushd/PushClientConnection.h.
+        * webpushd/PushAppBundle.mm: Copied from Source/WebKit/webpushd/PushClientConnection.h.
+        (WebPushD::PushAppBundleClient::~PushAppBundleClient):
+        (WebPushD::PushAppBundle::PushAppBundle):
+        (WebPushD::PushAppBundle::~PushAppBundle):
+        (WebPushD::PushAppBundle::detachFromClient):
+        
+        An "AppBundleRequest" is a queable operation meant to do something with an "App bundle".
+        For now the operations are "create" and "delete"
+        
+        * webpushd/AppBundleRequest.h: Added.
+        (WebPushD::AppBundleRequestImpl::AppBundleRequestImpl):
+        (WebPushD::AppBundleRequestImpl::~AppBundleRequestImpl):
+        (WebPushD::AppBundleRequestImpl::callCompletionHandlerAndCleanup):
+        (WebPushD::AppBundlePermissionsRequest::AppBundlePermissionsRequest):
+        (WebPushD::AppBundleDeletionRequest::AppBundleDeletionRequest):
+        * webpushd/AppBundleRequest.mm: Added.
+        (WebPushD::AppBundleRequest::AppBundleRequest):
+        (WebPushD::AppBundleRequest::~AppBundleRequest):
+        (WebPushD::AppBundleRequest::start):
+        (WebPushD::AppBundleRequest::cancel):
+        (WebPushD::AppBundleRequest::cleanupAfterCompletionHandler):
+        (WebPushD::AppBundlePermissionsRequest::startInternal):
+        (WebPushD::AppBundlePermissionsRequest::didCheckForExistingBundle):
+        (WebPushD::AppBundlePermissionsRequest::didCreateAppBundle):
+        (WebPushD::AppBundleDeletionRequest::startInternal):
+        (WebPushD::AppBundleDeletionRequest::didDeleteExistingBundleWithError):
+
+        * webpushd/MockAppBundleForTesting.h: Copied from Source/WebKit/webpushd/PushClientConnection.h.
+        (WebPushD::MockAppBundleForTesting::create):
+        * webpushd/MockAppBundleForTesting.mm: Added.
+        (WebPushD::MockAppBundleForTesting::MockAppBundleForTesting):
+        (WebPushD::MockAppBundleForTesting::~MockAppBundleForTesting):
+        (WebPushD::MockAppBundleForTesting::checkForExistingBundle):
+        (WebPushD::MockAppBundleForTesting::deleteExistingBundle):
+        (WebPushD::MockAppBundleForTesting::createBundle):
+        (WebPushD::MockAppBundleForTesting::stop):
+
+        * webpushd/MockAppBundleRegistry.h: Copied from Source/WebKit/webpushd/PushClientConnection.h.
+        * webpushd/MockAppBundleRegistry.mm: Added.
+        (WebPushD::MockAppBundleRegistry::singleton):
+        (WebPushD::MockAppBundleRegistry::getOriginsWithRegistrations):
+        (WebPushD::MockAppBundleRegistry::doesBundleExist):
+        (WebPushD::MockAppBundleRegistry::createBundle):
+        (WebPushD::MockAppBundleRegistry::deleteBundle):
+
+        * webpushd/PushClientConnection.h:
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::create):
+        (WebPushD::ClientConnection::enqueueAppBundleRequest):
+        (WebPushD::ClientConnection::maybeStartNextAppBundleRequest):
+        (WebPushD::ClientConnection::didCompleteAppBundleRequest):
+        (WebPushD::ClientConnection::connectionClosed):
+
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::connectionAdded):
+        (WebPushD::Daemon::connectionRemoved):
+        (WebPushD::Daemon::requestSystemNotificationPermission):
+        (WebPushD::Daemon::getOriginsWithPushAndNotificationPermissions):
+        (WebPushD::Daemon::deletePushAndNotificationRegistration):
+
 2021-11-29  David Kilzer  <ddkilzer@apple.com>
 
         Disable experimental web features on platforms without UI to enable them

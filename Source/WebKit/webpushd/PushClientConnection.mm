@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PushClientConnection.h"
 
+#import "AppBundleRequest.h"
 #import "CodeSigning.h"
 #import "WebPushDaemon.h"
 #import <JavaScriptCore/ConsoleTypes.h>
@@ -33,6 +34,11 @@
 #import <wtf/cocoa/Entitlements.h>
 
 namespace WebPushD {
+
+Ref<ClientConnection> ClientConnection::create(xpc_connection_t connection)
+{
+    return adoptRef(*new ClientConnection(connection));
+}
 
 ClientConnection::ClientConnection(xpc_connection_t connection)
     : m_xpcConnection(connection)
@@ -91,6 +97,51 @@ void ClientConnection::setDebugModeIsEnabled(bool enabled)
         message = makeString("[webpushd] Turned Debug Mode ", m_debugModeEnabled ? "on" : "off");
 
     Daemon::singleton().broadcastDebugMessage(MessageLevel::Info, message);
+}
+
+void ClientConnection::enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&& request)
+{
+    RELEASE_ASSERT(m_xpcConnection);
+    m_pendingBundleRequests.append(WTFMove(request));
+    maybeStartNextAppBundleRequest();
+}
+
+void ClientConnection::maybeStartNextAppBundleRequest()
+{
+    RELEASE_ASSERT(m_xpcConnection);
+
+    if (m_currentBundleRequest || m_pendingBundleRequests.isEmpty())
+        return;
+
+    m_currentBundleRequest = m_pendingBundleRequests.takeFirst();
+    m_currentBundleRequest->start();
+}
+
+void ClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
+{
+    // If our connection was closed there should be no in-progress bundle requests.
+    RELEASE_ASSERT(m_xpcConnection);
+
+    ASSERT(m_currentBundleRequest.get() == &request);
+    m_currentBundleRequest = nullptr;
+
+    maybeStartNextAppBundleRequest();
+}
+
+void ClientConnection::connectionClosed()
+{
+    RELEASE_ASSERT(m_xpcConnection);
+    m_xpcConnection = nullptr;
+
+    if (m_currentBundleRequest) {
+        m_currentBundleRequest->cancel();
+        m_currentBundleRequest = nullptr;
+    }
+
+    Deque<std::unique_ptr<AppBundleRequest>> pendingBundleRequests;
+    pendingBundleRequests.swap(m_pendingBundleRequests);
+    for (auto& requst : pendingBundleRequests)
+        requst->cancel();
 }
 
 } // namespace WebPushD
