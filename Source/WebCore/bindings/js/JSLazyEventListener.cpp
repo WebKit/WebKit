@@ -139,6 +139,10 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (!script.canExecuteScripts(AboutToCreateEventListener) || script.isPaused())
         return nullptr;
 
+    ASSERT_WITH_MESSAGE(document.settings().scriptMarkupEnabled(), "Scripting element attributes should have been stripped during parsing");
+    if (UNLIKELY(!document.settings().scriptMarkupEnabled()))
+        return nullptr;
+
     if (!executionContextDocument.frame())
         return nullptr;
     auto* globalObject = toJSDOMWindow(*executionContextDocument.frame(), isolatedWorld());
