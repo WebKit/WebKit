@@ -33,6 +33,7 @@
 
 namespace JSC {
 
+#if USE(JSVALUE64)
 ALWAYS_INLINE bool JIT::isOperandConstantDouble(VirtualRegister src)
 {
     if (!src.isConstant())
@@ -41,6 +42,7 @@ ALWAYS_INLINE bool JIT::isOperandConstantDouble(VirtualRegister src)
         return false;
     return getConstantOperand(src).isDouble();
 }
+#endif
 
 ALWAYS_INLINE bool JIT::isOperandConstantInt(VirtualRegister src)
 {
@@ -67,17 +69,6 @@ ALWAYS_INLINE JSValue JIT::getConstantOperand(VirtualRegister src)
     ASSERT(src.isConstant());
     RELEASE_ASSERT(m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) != SourceCodeRepresentation::LinkTimeConstant);
     return m_unlinkedCodeBlock->getConstant(src);
-}
-
-ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, VirtualRegister entry)
-{
-    ASSERT(entry.isHeader());
-#if USE(JSVALUE32_64)
-    store32(TrustedImm32(JSValue::Int32Tag), tagFor(entry));
-    store32(from, payloadFor(entry));
-#else
-    store64(from, addressFor(entry));
-#endif
 }
 
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
@@ -188,12 +179,6 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(
     appendCallWithExceptionCheck(function);
     emitValueProfilingSite(bytecode, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
-}
-
-ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, VirtualRegister reg)
-{
-    if (!isKnownCell(reg))
-        linkSlowCase(iter);
 }
 
 ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeIndex(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, BytecodeIndex bytecodeIndex)
@@ -307,14 +292,6 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
     return getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-template<typename Op>
-inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
-{
-    emitValueProfilingSite(bytecode, jsRegT10);
-}
-
-inline void JIT::emitValueProfilingSiteIfProfiledOpcode(...) { }
-
 template<typename Bytecode>
 inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs value)
 {
@@ -324,14 +301,6 @@ inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs va
     ptrdiff_t offset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + valueProfileOffsetFor<Bytecode>(m_bytecodeIndex.checkpoint()) + ValueProfile::offsetOfFirstBucket();
     storeValue(value, Address(s_metadataGPR, offset));
 }
-
-#if USE(JSVALUE64)
-template<typename Bytecode>
-inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, GPRReg resultReg)
-{
-    emitValueProfilingSite(bytecode, JSValueRegs(resultReg));
-}
-#endif
 
 template <typename Bytecode>
 inline void JIT::emitArrayProfilingSiteWithCell(const Bytecode& bytecode, ptrdiff_t offsetOfArrayProfile, RegisterID cellGPR, RegisterID scratchGPR)
@@ -353,10 +322,12 @@ ALWAYS_INLINE int32_t JIT::getOperandConstantInt(VirtualRegister src)
     return getConstantOperand(src).asInt32();
 }
 
+#if USE(JSVALUE64)
 ALWAYS_INLINE double JIT::getOperandConstantDouble(VirtualRegister src)
 {
     return getConstantOperand(src).asDouble();
 }
+#endif
 
 ALWAYS_INLINE void JIT::emitInitRegister(VirtualRegister dst)
 {
@@ -381,14 +352,11 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, JSValueRegs 
     storeValue(from, addressFor(dst));
 }
 
-#if USE(JSVALUE32_64)
-ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID tag, RegisterID payload)
-{
-    emitGetVirtualRegister(src, JSValueRegs { tag, payload });
-}
-
 ALWAYS_INLINE void JIT::emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst)
 {
+#if USE(JSVALUE64)
+    emitGetVirtualRegister(src, JSValueRegs { dst });
+#elif USE(JSVALUE32_64)
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     if (src.isConstant()) {
         if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
@@ -398,8 +366,10 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisterPayload(VirtualRegister src, Regis
         return;
     }
     load32(payloadFor(src), dst);
+#endif
 }
 
+#if USE(JSVALUE32_64)
 ALWAYS_INLINE void JIT::emitGetVirtualRegisterTag(VirtualRegister src, RegisterID dst)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
@@ -418,124 +388,9 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID d
     emitGetVirtualRegister(src, JSValueRegs { dst });
 }
 
-ALWAYS_INLINE void JIT::emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst)
-{
-    emitGetVirtualRegister(src, JSValueRegs { dst });
-}
-
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, RegisterID from)
 {
     emitPutVirtualRegister(dst, JSValueRegs { from });
-}
-#endif
-
-
-#if USE(JSVALUE32_64)
-
-inline void JIT::emitLoadDouble(VirtualRegister reg, FPRegisterID value)
-{
-    if (reg.isConstant()) {
-        ASSERT(m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(reg));
-        WriteBarrier<Unknown>& inConstantPool = m_unlinkedCodeBlock->constantRegister(reg);
-        loadDouble(TrustedImmPtr(&inConstantPool), value);
-    } else
-        loadDouble(addressFor(reg), value);
-}
-
-
-inline void JIT::emitStore(VirtualRegister reg, RegisterID tag, RegisterID payload, RegisterID base)
-{
-    store32(payload, payloadFor(reg, base));
-    store32(tag, tagFor(reg, base));
-}
-
-inline void JIT::emitStoreInt32(VirtualRegister reg, RegisterID payload, bool indexIsInt32)
-{
-    store32(payload, payloadFor(reg));
-    if (!indexIsInt32)
-        store32(TrustedImm32(JSValue::Int32Tag), tagFor(reg));
-}
-
-inline void JIT::emitStoreCell(VirtualRegister reg, RegisterID payload, bool indexIsCell)
-{
-    store32(payload, payloadFor(reg));
-    if (!indexIsCell)
-        store32(TrustedImm32(JSValue::CellTag), tagFor(reg));
-}
-
-inline void JIT::emitStoreBool(VirtualRegister reg, RegisterID payload, bool indexIsBool)
-{
-    store32(payload, payloadFor(reg));
-    if (!indexIsBool)
-        store32(TrustedImm32(JSValue::BooleanTag), tagFor(reg));
-}
-
-inline void JIT::emitStore(VirtualRegister reg, const JSValue constant, RegisterID base)
-{
-    store32(Imm32(constant.payload()), payloadFor(reg, base));
-    store32(Imm32(constant.tag()), tagFor(reg, base));
-}
-
-inline void JIT::emitJumpSlowCaseIfNotJSCell(VirtualRegister reg)
-{
-    if (!isKnownCell(reg)) {
-        if (reg.isConstant())
-            addSlowCase(jump());
-        else
-            addSlowCase(emitJumpIfNotJSCell(reg));
-    }
-}
-
-inline void JIT::emitJumpSlowCaseIfNotJSCell(VirtualRegister reg, RegisterID tag)
-{
-    if (!isKnownCell(reg)) {
-        if (reg.isConstant())
-            addSlowCase(jump());
-        else
-            addSlowCase(branchIfNotCell(tag));
-    }
-}
-
-ALWAYS_INLINE bool JIT::getOperandConstantInt(VirtualRegister op1, VirtualRegister op2, VirtualRegister& op, int32_t& constant)
-{
-    if (isOperandConstantInt(op1)) {
-        constant = getConstantOperand(op1).asInt32();
-        op = op2;
-        return true;
-    }
-
-    if (isOperandConstantInt(op2)) {
-        constant = getConstantOperand(op2).asInt32();
-        op = op1;
-        return true;
-    }
-    
-    return false;
-}
-
-#else // USE(JSVALUE32_64)
-
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfBothJSCells(RegisterID reg1, RegisterID reg2, RegisterID scratch)
-{
-    move(reg1, scratch);
-    or64(reg2, scratch);
-    return branchIfCell(scratch);
-}
-
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
-{
-    addSlowCase(branchIfCell(reg));
-}
-
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, VirtualRegister vReg)
-{
-    if (!isKnownCell(vReg))
-        emitJumpSlowCaseIfNotJSCell(reg);
-}
-
-ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotInt(RegisterID reg)
-{
-    return patchableBranch64(Below, reg, numberTagRegister);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(RegisterID reg1, RegisterID reg2, RegisterID scratch)
@@ -545,26 +400,20 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(RegisterID reg1, RegisterID reg2, 
     return branchIfNotInt32(scratch);
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg)
-{
-    addSlowCase(branchIfNotInt32(reg));
-}
-
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     addSlowCase(emitJumpIfNotInt(reg1, reg2, scratch));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotNumber(RegisterID reg)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID gpr)
 {
-    addSlowCase(branchIfNotNumber(reg));
+    emitJumpSlowCaseIfNotInt(JSValueRegs { gpr });
 }
+#endif
 
-#endif // USE(JSVALUE32_64)
-
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(JSValueRegs jsr)
 {
-    addSlowCase(branchIfNotCell(reg));
+    addSlowCase(branchIfNotInt32(jsr));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(JSValueRegs reg)
@@ -662,13 +511,19 @@ ALWAYS_INLINE void JIT::loadCodeBlockConstant(VirtualRegister constant, JSValueR
     loadValue(Address(dst.payloadGPR(), constant.toConstantIndex() * sizeof(Register)), dst);
 }
 
-#if USE(JSVALUE32_64)
 ALWAYS_INLINE void JIT::loadCodeBlockConstantPayload(VirtualRegister constant, RegisterID dst)
 {
     RELEASE_ASSERT(constant.isConstant());
     loadAddrOfCodeBlockConstantBuffer(*this, dst);
-    load32(Address(dst, constant.toConstantIndex() * sizeof(Register) + PayloadOffset), dst);
+    Address address(dst, constant.toConstantIndex() * sizeof(Register));
+#if USE(JSVALUE64)
+    load64(address, dst);
+#elif USE(JSVALUE32_64)
+    load32(address.withOffset(PayloadOffset), dst);
+#endif
 }
+
+#if USE(JSVALUE32_64)
 ALWAYS_INLINE void JIT::loadCodeBlockConstantTag(VirtualRegister constant, RegisterID dst)
 {
     RELEASE_ASSERT(constant.isConstant());

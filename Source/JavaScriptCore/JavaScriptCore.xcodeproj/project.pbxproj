@@ -4728,7 +4728,6 @@
 		A74DEF8E182D991400522C22 /* MapIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapIteratorPrototype.h; sourceTree = "<group>"; };
 		A74DEF8F182D991400522C22 /* JSMapIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMapIterator.cpp; sourceTree = "<group>"; };
 		A74DEF90182D991400522C22 /* JSMapIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMapIterator.h; sourceTree = "<group>"; };
-		A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic32_64.cpp; sourceTree = "<group>"; };
 		A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinNames.h; sourceTree = "<group>"; };
 		A767B5B317A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLoopPreHeaderCreationPhase.cpp; path = dfg/DFGLoopPreHeaderCreationPhase.cpp; sourceTree = "<group>"; };
 		A767B5B417A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLoopPreHeaderCreationPhase.h; path = dfg/DFGLoopPreHeaderCreationPhase.h; sourceTree = "<group>"; };
@@ -6375,7 +6374,6 @@
 				FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */,
 				0F75A0652013E4EF0038E2CF /* JITAllocator.h */,
 				86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */,
-				A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */,
 				FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */,
 				FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */,
 				FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */,

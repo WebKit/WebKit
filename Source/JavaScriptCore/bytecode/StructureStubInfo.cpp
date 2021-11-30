@@ -564,19 +564,14 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, Unli
     case AccessType::InstanceOf:
         hasConstantIdentifier = false;
         prototypeIsKnownObject = false;
-#if USE(JSVALUE64)
-        baseGPR = BaselineInstanceofRegisters::value;
-        valueGPR = BaselineInstanceofRegisters::result;
-        regs.prototypeGPR = BaselineInstanceofRegisters::proto;
-        m_stubInfoGPR = BaselineInstanceofRegisters::stubInfo;
-#elif USE(JSVALUE32_64)
         baseGPR = BaselineInstanceofRegisters::valueJSR.payloadGPR();
-        valueGPR = BaselineInstanceofRegisters::resultGPR;
+        valueGPR = BaselineInstanceofRegisters::resultJSR.payloadGPR();
         regs.prototypeGPR = BaselineInstanceofRegisters::protoJSR.payloadGPR();
         m_stubInfoGPR = BaselineInstanceofRegisters::stubInfoGPR;
-        baseTagGPR = InvalidGPRReg;
+#if USE(JSVALUE32_64)
+        baseTagGPR = BaselineInstanceofRegisters::valueJSR.tagGPR();
         valueTagGPR = InvalidGPRReg;
-        v.propertyTagGPR = InvalidGPRReg;
+        v.propertyTagGPR = BaselineInstanceofRegisters::protoJSR.tagGPR();
 #endif
         break;
     case AccessType::InByVal:

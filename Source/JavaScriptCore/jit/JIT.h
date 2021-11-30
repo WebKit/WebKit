@@ -254,8 +254,8 @@ namespace JSC {
     private:
         void loadGlobalObject(GPRReg);
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
-#if USE(JSVALUE32_64)
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
+#if USE(JSVALUE32_64)
         void loadCodeBlockConstantTag(VirtualRegister, RegisterID);
 #endif
 
@@ -313,31 +313,37 @@ namespace JSC {
         template<typename Op>
         void emitPutCallResult(const Op&);
 
+#if USE(JSVALUE64)
         template<typename Op> void compileOpStrictEq(const Instruction*);
         template<typename Op> void compileOpStrictEqJump(const Instruction*);
-        enum class CompileOpEqType { Eq, NEq };
-        void compileOpEqJumpSlow(Vector<SlowCaseEntry>::iterator&, CompileOpEqType, int jumpTarget);
-        bool isOperandConstantDouble(VirtualRegister);
-        
+#elif USE(JSVALUE32_64)
+        void compileOpEqCommon(VirtualRegister src1, VirtualRegister src2);
+        void compileOpEqSlowCommon(Vector<SlowCaseEntry>::iterator&);
+        void compileOpStrictEqCommon(VirtualRegister src1,  VirtualRegister src2);
+#endif
+
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
         // value register in write barrier is used before any scratch registers
         // so may safely be the same as either of the scratch registers.
         void emitWriteBarrier(VirtualRegister owner, WriteBarrierMode);
         void emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode);
-        void emitWriteBarrier(JSCell* owner, VirtualRegister value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner);
         void emitWriteBarrier(GPRReg owner);
 
-#if USE(JSVALUE64)
-        template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, GPRReg);
-#endif
         template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, JSValueRegs);
 
-        // This assumes that the value to profile is in regT0 (regT1/regT0 on JSVALUE32_64).
-        void emitValueProfilingSiteIfProfiledOpcode(...);
         template<typename Op>
-        std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void>
-        emitValueProfilingSiteIfProfiledOpcode(Op bytecode);
+        static inline constexpr bool isProfiledOp = std::is_same_v<decltype(Op::Metadata::m_profile), ValueProfile>;
+        template<typename Op>
+        std::enable_if_t<isProfiledOp<Op>, void>
+        emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
+        { // This assumes that the value to profile is in jsRegT10.
+            emitValueProfilingSite(bytecode, jsRegT10);
+        }
+        template<typename Op>
+        std::enable_if_t<!isProfiledOp<Op>, void>
+        emitValueProfilingSiteIfProfiledOpcode(Op)
+        { }
 
         template <typename Bytecode>
         void emitArrayProfilingSiteWithCell(const Bytecode&, RegisterID cellGPR, RegisterID scratchGPR);
@@ -347,57 +353,23 @@ namespace JSC {
         template<typename Op>
         ECMAMode ecmaMode(Op);
 
-        // Determines the type of private field access for a bytecode.
-        template<typename Op>
-        PrivateFieldPutKind privateFieldPutKind(Op);
-
         void emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst);
         void emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst);
         void emitPutVirtualRegister(VirtualRegister dst, JSValueRegs src);
-        void emitStore(VirtualRegister, const JSValue constant, RegisterID base = callFrameRegister);
-
-        int32_t getOperandConstantInt(VirtualRegister src);
-        double getOperandConstantDouble(VirtualRegister src);
 
 #if USE(JSVALUE32_64)
-        bool getOperandConstantInt(VirtualRegister op1, VirtualRegister op2, VirtualRegister& op, int32_t& constant);
-
-        void emitLoadDouble(VirtualRegister, FPRegisterID value);
-
-        void emitGetVirtualRegister(VirtualRegister src, RegisterID tag, RegisterID payload);
         void emitGetVirtualRegisterTag(VirtualRegister src, RegisterID dst);
-
-        void emitStore(VirtualRegister, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
-        void emitStoreInt32(VirtualRegister, RegisterID payload, bool indexIsInt32 = false);
-        void emitStoreCell(VirtualRegister, RegisterID payload, bool indexIsCell = false);
-        void emitStoreBool(VirtualRegister, RegisterID payload, bool indexIsBool = false);
-
-        void emitJumpSlowCaseIfNotJSCell(VirtualRegister);
-        void emitJumpSlowCaseIfNotJSCell(VirtualRegister, RegisterID tag);
-        void emitJumpSlowCaseIfNotJSCell(RegisterID);
-
-        // Arithmetic opcode helpers
-        template <typename Op>
-        void emitBinaryDoubleOp(const Instruction *, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
-
-#else // USE(JSVALUE32_64)
+#elif USE(JSVALUE64)
+        // Machine register variants purely for convenience
         void emitGetVirtualRegister(VirtualRegister src, RegisterID dst);
-        void emitPutVirtualRegister(VirtualRegister dst, RegisterID from = regT0);
-        void emitStoreCell(VirtualRegister dst, RegisterID payload, bool /* only used in JSValue32_64 */ = false)
-        {
-            emitPutVirtualRegister(dst, payload);
-        }
+        void emitPutVirtualRegister(VirtualRegister dst, RegisterID from);
 
-        Jump emitJumpIfBothJSCells(RegisterID, RegisterID, RegisterID);
-        void emitJumpSlowCaseIfJSCell(RegisterID);
-        void emitJumpSlowCaseIfNotJSCell(RegisterID);
-        void emitJumpSlowCaseIfNotJSCell(RegisterID, VirtualRegister);
         Jump emitJumpIfNotInt(RegisterID, RegisterID, RegisterID scratch);
-        PatchableJump emitPatchableJumpIfNotInt(RegisterID);
-        void emitJumpSlowCaseIfNotInt(RegisterID);
-        void emitJumpSlowCaseIfNotNumber(RegisterID);
         void emitJumpSlowCaseIfNotInt(RegisterID, RegisterID, RegisterID scratch);
-#endif // USE(JSVALUE32_64)
+        void emitJumpSlowCaseIfNotInt(RegisterID);
+#endif
+
+        void emitJumpSlowCaseIfNotInt(JSValueRegs);
 
         void emitJumpSlowCaseIfNotJSCell(JSValueRegs);
         void emitJumpSlowCaseIfNotJSCell(JSValueRegs, VirtualRegister);
@@ -647,9 +619,6 @@ namespace JSC {
         void emit_op_iterator_next(const Instruction*);
         void emitSlow_op_iterator_next(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
-        void emitRightShift(const Instruction*, bool isUnsigned);
-        void emitRightShiftSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
-
         void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
         void emitHasPrivateSlow(VirtualRegister dst, VirtualRegister base, VirtualRegister property, AccessType);
 
@@ -659,16 +628,20 @@ namespace JSC {
         void emitNewFuncExprCommon(const Instruction*);
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
-        void emitNotifyWrite(WatchpointSet*);
         void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
 
         void emitInitRegister(VirtualRegister);
 
-        void emitPutIntToCallFrameHeader(RegisterID from, VirtualRegister);
-
         bool isKnownCell(VirtualRegister);
+
         JSValue getConstantOperand(VirtualRegister);
+
+#if USE(JSVALUE64)
+        bool isOperandConstantDouble(VirtualRegister);
+        double getOperandConstantDouble(VirtualRegister src);
+#endif
         bool isOperandConstantInt(VirtualRegister);
+        int32_t getOperandConstantInt(VirtualRegister src);
         bool isOperandConstantChar(VirtualRegister);
 
         template <typename Op, typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
@@ -729,12 +702,6 @@ namespace JSC {
                 iter->from.link(this);
             ++iter;
         }
-        void linkDummySlowCase(Vector<SlowCaseEntry>::iterator& iter)
-        {
-            ASSERT(!iter->from.isSet());
-            ++iter;
-        }
-        void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, VirtualRegister);
         void linkAllSlowCasesForBytecodeIndex(Vector<SlowCaseEntry>& slowCases,
             Vector<SlowCaseEntry>::iterator&, BytecodeIndex bytecodeOffset);
 

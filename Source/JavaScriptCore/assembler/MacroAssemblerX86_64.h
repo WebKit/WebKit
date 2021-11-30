@@ -897,6 +897,12 @@ public:
         m_assembler.xorq_ir(imm.m_value, srcDest);
     }
 
+    void xor64(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        move(src, dest);
+        xor64(imm, dest);
+    }
+
     void xor64(TrustedImm64 imm, RegisterID srcDest)
     {
         move(imm, scratchRegister());

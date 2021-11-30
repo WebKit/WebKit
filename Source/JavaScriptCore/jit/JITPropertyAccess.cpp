@@ -149,8 +149,8 @@ void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEn
     emitNakedNearCall(vm.getCTIStub(slow_op_get_by_val_prepareCallGenerator).retaggedCode<NoPtrTag>());
     emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
 
-    emitValueProfilingSite(bytecode, returnValueGPR);
-    emitPutVirtualRegister(dst, returnValueGPR);
+    emitValueProfilingSite(bytecode, returnValueJSR);
+    emitPutVirtualRegister(dst, returnValueJSR);
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
     gen.reportSlowPathCall(coldPathBegin, Call());
@@ -280,8 +280,8 @@ void JIT::emitSlow_op_get_private_name(const Instruction* currentInstruction, Ve
     emitNakedNearCall(vm.getCTIStub(slow_op_get_private_name_prepareCallGenerator).retaggedCode<NoPtrTag>());
     emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
 
-    emitValueProfilingSite(bytecode, returnValueGPR);
-    emitPutVirtualRegister(dst, returnValueGPR);
+    emitValueProfilingSite(bytecode, returnValueJSR);
+    emitPutVirtualRegister(dst, returnValueJSR);
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
     gen.reportSlowPathCall(coldPathBegin, Call());
@@ -1273,8 +1273,8 @@ void JIT::emitSlow_op_get_by_id_direct(const Instruction* currentInstruction, Ve
     emitNakedNearCall(vm.getCTIStub(slow_op_get_by_id_prepareCallGenerator).retaggedCode<NoPtrTag>());
     emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
 
-    emitValueProfilingSite(bytecode, returnValueGPR);
-    emitPutVirtualRegister(resultVReg, returnValueGPR);
+    emitValueProfilingSite(bytecode, returnValueJSR);
+    emitPutVirtualRegister(resultVReg, returnValueJSR);
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
     gen.reportSlowPathCall(coldPathBegin, Call());
@@ -1369,8 +1369,8 @@ void JIT::emitSlow_op_get_by_id(const Instruction* currentInstruction, Vector<Sl
     emitNakedNearCall(vm.getCTIStub(slow_op_get_by_id_prepareCallGenerator).retaggedCode<NoPtrTag>());
     emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
 
-    emitValueProfilingSite(bytecode, returnValueGPR);
-    emitPutVirtualRegister(resultVReg, returnValueGPR);
+    emitValueProfilingSite(bytecode, returnValueJSR);
+    emitPutVirtualRegister(resultVReg, returnValueJSR);
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
     gen.reportSlowPathCall(coldPathBegin, Call());
@@ -1413,8 +1413,6 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg, resultJSR);
 }
 
-#if USE(JSVALUE64)
-
 #if ENABLE(EXTRA_CTI_THUNKS)
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_prepareCallGenerator(VM& vm)
 {
@@ -1451,8 +1449,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_prepareCallGenerato
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_prepareCall");
 }
 #endif // ENABLE(EXTRA_CTI_THUNKS)
-
-#endif
 
 void JIT::emitSlow_op_get_by_id_with_this(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
@@ -1503,14 +1499,12 @@ void JIT::emitSlow_op_get_by_id_with_this(const Instruction* currentInstruction,
     emitNakedNearCall(vm.getCTIStub(slow_op_get_by_id_with_this_prepareCallGenerator).retaggedCode<NoPtrTag>());
     emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
 
-    emitValueProfilingSite(bytecode, returnValueGPR);
-    emitPutVirtualRegister(resultVReg, returnValueGPR);
+    emitValueProfilingSite(bytecode, returnValueJSR);
+    emitPutVirtualRegister(resultVReg, returnValueJSR);
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
-
-#if USE(JSVALUE64)
 
 #if ENABLE(EXTRA_CTI_THUNKS)
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_with_this_prepareCallGenerator(VM& vm)
@@ -1550,8 +1544,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_with_this_prepareCa
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_with_this_prepareCall");
 }
 #endif // ENABLE(EXTRA_CTI_THUNKS)
-
-#endif
 
 void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
 {
@@ -2931,8 +2923,8 @@ void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
 
     doneCases.link(this);
 
-    emitValueProfilingSite(bytecode, JSValueRegs(resultGPR));
-    emitPutVirtualRegister(dst);
+    emitValueProfilingSite(bytecode, returnValueJSR);
+    emitPutVirtualRegister(dst, returnValueJSR);
 }
 
 void JIT::emitSlow_op_enumerator_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -2966,7 +2958,7 @@ void JIT::emit_enumerator_has_propertyImpl(const Instruction* currentInstruction
     slowCases.append(branch32(NotEqual, regT0, Address(regT1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
 
     move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
-    emitPutVirtualRegister(dst);
+    emitPutVirtualRegister(dst, regT0);
     Jump done = jump();
 
     slowCases.link(this);
@@ -3026,63 +3018,26 @@ void JIT::emit_op_enumerator_has_own_property(const Instruction* currentInstruct
 
 #endif
 
+void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
+{
+    // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
+    Jump valueNotCell;
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
 #if USE(JSVALUE64)
-
-void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
-{
-    // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
-    Jump valueNotCell;
-    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
         emitGetVirtualRegister(value, regT0);
-        valueNotCell = branchIfNotCell(regT0);
-    }
-
-    emitGetVirtualRegister(owner, regT0);
-    Jump ownerNotCell;
-    if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
-        ownerNotCell = branchIfNotCell(regT0);
-
-    Jump ownerIsRememberedOrInEden = barrierBranch(vm(), regT0, regT1);
-    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), regT0);
-    ownerIsRememberedOrInEden.link(this);
-
-    if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
-        ownerNotCell.link(this);
-    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue)
-        valueNotCell.link(this);
-}
-
-void JIT::emitWriteBarrier(JSCell* owner, VirtualRegister value, WriteBarrierMode mode)
-{
-    emitGetVirtualRegister(value, regT0);
-    Jump valueNotCell;
-    if (mode == ShouldFilterValue)
-        valueNotCell = branchIfNotCell(regT0);
-
-    emitWriteBarrier(owner);
-
-    if (mode == ShouldFilterValue)
-        valueNotCell.link(this);
-}
-
 #elif USE(JSVALUE32_64)
-
-void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
-{
-    // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
-    Jump valueNotCell;
-    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
         emitGetVirtualRegisterTag(value, regT0);
+#endif
         valueNotCell = branchIfNotCell(regT0);
     }
 
-    emitGetVirtualRegister(owner, regT0, regT1);
+    emitGetVirtualRegister(owner, jsRegT10);
     Jump ownerNotCell;
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
-        ownerNotCell = branchIfNotCell(regT0);
+        ownerNotCell = branchIfNotCell(jsRegT10);
 
-    Jump ownerIsRememberedOrInEden = barrierBranch(vm(), regT1, regT2);
-    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), regT1);
+    Jump ownerIsRememberedOrInEden = barrierBranch(vm(), jsRegT10.payloadGPR(), regT2);
+    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), jsRegT10.payloadGPR());
     ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
@@ -3090,22 +3045,6 @@ void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBa
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue)
         valueNotCell.link(this);
 }
-
-void JIT::emitWriteBarrier(JSCell* owner, VirtualRegister value, WriteBarrierMode mode)
-{
-    Jump valueNotCell;
-    if (mode == ShouldFilterValue) {
-        emitGetVirtualRegisterTag(value, regT0);
-        valueNotCell = branchIfNotCell(regT0);
-    }
-
-    emitWriteBarrier(owner);
-
-    if (mode == ShouldFilterValue)
-        valueNotCell.link(this);
-}
-
-#endif
 
 void JIT::emitWriteBarrier(VirtualRegister owner, WriteBarrierMode mode)
 {

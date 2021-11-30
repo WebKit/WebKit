@@ -126,16 +126,6 @@ void JIT::emitEnterOptimizationCheck()
 }
 #endif
 
-void JIT::emitNotifyWrite(WatchpointSet* set)
-{
-    if (!set || set->state() == IsInvalidated) {
-        addSlowCase(Jump());
-        return;
-    }
-    
-    addSlowCase(branch8(NotEqual, AbsoluteAddress(set->addressOfState()), TrustedImm32(IsInvalidated)));
-}
-
 void JIT::emitNotifyWriteWatchpoint(GPRReg pointerToSet)
 {
     auto ok = branchTestPtr(Zero, pointerToSet);

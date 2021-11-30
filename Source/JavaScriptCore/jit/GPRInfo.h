@@ -939,9 +939,11 @@ public:
 #if USE(JSVALUE64)
     static constexpr JSValueRegs jsRegT10 { GPRInfo::regT0 };
     static constexpr JSValueRegs jsRegT32 { GPRInfo::regT2 };
+    static constexpr JSValueRegs jsRegT54 { GPRInfo::regT4 };
 #elif USE(JSVALUE32_64)
     static constexpr JSValueRegs jsRegT10 { GPRInfo::regT1, GPRInfo::regT0 };
     static constexpr JSValueRegs jsRegT32 { GPRInfo::regT3, GPRInfo::regT2 };
+    static constexpr JSValueRegs jsRegT54 { GPRInfo::regT5, GPRInfo::regT4 };
 #endif
 
     // Return value register

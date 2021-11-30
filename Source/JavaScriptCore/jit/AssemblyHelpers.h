@@ -821,8 +821,7 @@ public:
     {
 #if USE(JSVALUE64)
         ASSERT(tempGPR != InvalidGPRReg);
-        move(gpr, tempGPR);
-        xor64(TrustedImm32(JSValue::ValueFalse), tempGPR);
+        xor64(TrustedImm32(JSValue::ValueFalse), gpr, tempGPR);
         return branchTest64(Zero, tempGPR, TrustedImm32(static_cast<int32_t>(~1)));
 #else
         UNUSED_PARAM(tempGPR);
@@ -845,8 +844,7 @@ public:
     {
 #if USE(JSVALUE64)
         ASSERT(tempGPR != InvalidGPRReg);
-        move(gpr, tempGPR);
-        xor64(TrustedImm32(JSValue::ValueFalse), tempGPR);
+        xor64(TrustedImm32(JSValue::ValueFalse), gpr, tempGPR);
         return branchTest64(NonZero, tempGPR, TrustedImm32(static_cast<int32_t>(~1)));
 #else
         UNUSED_PARAM(tempGPR);
@@ -1030,6 +1028,15 @@ public:
         return branchIfNotEmpty(regs.gpr());
 #else
         return branchIfNotEmpty(regs.tagGPR());
+#endif
+    }
+
+    void isUndefined(JSValueRegs regs, GPRReg dst)
+    {
+#if USE(JSVALUE64)
+        compare64(Equal, regs.payloadGPR(), TrustedImm32(JSValue::ValueUndefined), dst);
+#elif USE(JSVALUE32_64)
+        compare32(Equal, regs.tagGPR(), TrustedImm32(JSValue::UndefinedTag), dst);
 #endif
     }
 

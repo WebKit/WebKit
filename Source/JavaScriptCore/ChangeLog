@@ -1,3 +1,120 @@
+2021-11-30  Geza Lore  <glore@igalia.com>
+
+        [JSC] Unify most Baseline ops between JSVALUE64 and JSVALUE32_64
+        https://bugs.webkit.org/show_bug.cgi?id=233424
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch unifies the Baseline JIT implementations of most bytecode
+        ops between the JSVALUE32_64 and JSVALUE64 platforms. There are very
+        few changes to the generated code on JSVALUE64 (and all are fairly
+        trivial, e.g.: removal of redundant moves in the slow path), apart
+        from machine register substitutions. My measurements on x86_64
+        indicate the patch is performance neutral there (which is what we
+        expect).
+
+        On ARMv7/Thumb-2 JetStream2 shows a 0.4% improvement. This is due to
+        some of the improved implementations picked up from the JSVALUE64
+        versions.
+
+        Also remove various unused code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initializeFromUnlinkedStructureStubInfo):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfBoolean):
+        (JSC::AssemblyHelpers::branchIfNotBoolean):
+        (JSC::AssemblyHelpers::isUndefined):
+        * jit/GPRInfo.h:
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emit_compareAndJumpImpl):
+        (JSC::JIT::emit_compareUnsignedAndJumpImpl):
+        (JSC::JIT::emit_compareUnsignedImpl):
+        (JSC::JIT::emit_compareAndJumpSlowImpl):
+        (JSC::JIT::emit_op_inc):
+        (JSC::JIT::emit_op_dec):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitBitBinaryOpFastPath):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emitRightShiftFastPath):
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        (JSC::JIT::emit_op_div):
+        * jit/JITArithmetic32_64.cpp: Removed.
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitGetVirtualRegisterPayload):
+        (JSC::JIT::emitPutVirtualRegister):
+        (JSC::JIT::emitJumpSlowCaseIfNotInt):
+        (JSC::JIT::loadCodeBlockConstantPayload):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emit_op_is_empty):
+        (JSC::JIT::emit_op_typeof_is_undefined):
+        (JSC::JIT::emit_op_is_boolean):
+        (JSC::JIT::emit_op_is_number):
+        (JSC::JIT::emit_op_is_big_int):
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_to_property_key):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jundefined_or_null):
+        (JSC::JIT::emit_op_jnundefined_or_null):
+        (JSC::JIT::emit_op_jeq_ptr):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_to_numeric):
+        (JSC::JIT::emit_op_to_string):
+        (JSC::JIT::emit_op_to_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_get_parent_scope):
+        (JSC::JIT::emit_op_get_scope):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_check_tdz):
+        (JSC::JIT::emit_op_new_regexp):
+        (JSC::JIT::emit_op_get_rest_length):
+        (JSC::JIT::emit_op_get_prototype_of):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::compileOpEqCommon):
+        (JSC::JIT::compileOpEqSlowCommon):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emit_op_jeq):
+        (JSC::JIT::emit_op_jneq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emitSlow_op_jeq):
+        (JSC::JIT::emitSlow_op_jneq):
+        (JSC::JIT::compileOpStrictEqCommon):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::generateGetByValSlowCase):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        (JSC::JIT::emit_enumerator_has_propertyImpl):
+        (JSC::JIT::emitWriteBarrier):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitLoadJSCell):
+
 2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] jumpForTypedArrayOutOfBounds should use asAnyInt since it uses isAnyInt
