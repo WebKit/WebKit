@@ -94,7 +94,6 @@ public:
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
     bool supportsInitData(const AtomString&, const SharedBuffer&) const final;
-    RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
     std::optional<String> sanitizeSessionId(const String&) const final;
 
