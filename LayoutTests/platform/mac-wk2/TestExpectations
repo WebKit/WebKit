@@ -1032,8 +1032,6 @@ webkit.org/b/229820 [ BigSur Debug arm64 ] loader/stateobjects/pushstate-size.ht
 
 webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
 
-webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
-
 webkit.org/b/207632 tiled-drawing/scrolling/sticky/sticky-during-rubberband.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207631 tiled-drawing/scrolling/fixed/fixed-during-rubberband.html [ Pass ImageOnlyFailure ]

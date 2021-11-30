@@ -101,6 +101,7 @@ public:
     virtual void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) = 0;
 
     WEBCORE_EXPORT void registerServiceWorkerClients();
+    bool isClosed() const { return m_isClosed; }
 
 protected:
     WEBCORE_EXPORT SWClientConnection();
@@ -117,6 +118,7 @@ protected:
     WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, ServiceWorkerData&& newController);
 
     WEBCORE_EXPORT void clearPendingJobs();
+    void setIsClosed() { m_isClosed = true; }
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
@@ -124,6 +126,7 @@ private:
     enum class IsJobComplete { No, Yes };
     bool postTaskForJob(ServiceWorkerJobIdentifier, IsJobComplete, Function<void(ServiceWorkerJob&)>&&);
 
+    bool m_isClosed { false };
     HashMap<ServiceWorkerJobIdentifier, ServiceWorkerOrClientIdentifier> m_scheduledJobSources;
 };
 

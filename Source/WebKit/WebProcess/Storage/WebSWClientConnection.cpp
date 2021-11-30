@@ -225,6 +225,7 @@ void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, con
 
 void WebSWClientConnection::connectionToServerLost()
 {
+    setIsClosed();
     clear();
 }
 

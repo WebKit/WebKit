@@ -1,3 +1,15 @@
+2021-11-30  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerContainer does not respond well to network process crash
+        https://bugs.webkit.org/show_bug.cgi?id=233626
+
+        Reviewed by Chris Dumez.
+
+        Set SW client connection as closed when IPC connection gets closed.
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::connectionToServerLost):
+
 2021-11-30  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GraphicsContextGL should have ANGLE-specific subclass
