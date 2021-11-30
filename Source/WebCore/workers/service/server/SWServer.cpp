@@ -57,6 +57,12 @@ SWServer::Connection::Connection(SWServer& server, Identifier identifier)
 {
 }
 
+SWServer::Connection::~Connection()
+{
+    for (auto& request : std::exchange(m_registrationReadyRequests, { }))
+        request.callback({ });
+}
+
 HashSet<SWServer*>& SWServer::allServers()
 {
     static NeverDestroyed<HashSet<SWServer*>> servers;
@@ -1058,15 +1064,15 @@ void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registrati
         connection->resolveRegistrationReadyRequests(registration);
 }
 
-void SWServer::Connection::whenRegistrationReady(uint64_t registrationReadyRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL)
+void SWServer::Connection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
     if (auto* registration = doRegistrationMatching(topOrigin, clientURL)) {
         if (registration->activeWorker()) {
-            registrationReady(registrationReadyRequestIdentifier, registration->data());
+            callback(registration->data());
             return;
         }
     }
-    m_registrationReadyRequests.append({ topOrigin, clientURL, registrationReadyRequestIdentifier });
+    m_registrationReadyRequests.append({ topOrigin, clientURL, WTFMove(callback) });
 }
 
 void SWServer::Connection::storeRegistrationsOnDisk(CompletionHandler<void()>&& callback)
@@ -1084,7 +1090,7 @@ void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration
         if (!registration.key().isMatching(request.topOrigin, request.clientURL))
             return false;
 
-        this->registrationReady(request.identifier, registration.data());
+        request.callback(registration.data());
         return true;
     });
 }

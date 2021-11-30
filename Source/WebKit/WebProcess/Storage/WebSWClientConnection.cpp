@@ -145,22 +145,6 @@ void WebSWClientConnection::setSWOriginTableIsImported()
         m_tasksPendingOriginImport.takeFirst()();
 }
 
-void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::optional<ServiceWorkerRegistrationData>&& result)
-{
-    ASSERT(isMainRunLoop());
-
-    if (auto completionHandler = m_ongoingMatchRegistrationTasks.take(matchingRequest))
-        completionHandler(WTFMove(result));
-}
-
-void WebSWClientConnection::didGetRegistrations(uint64_t matchingRequest, Vector<ServiceWorkerRegistrationData>&& registrations)
-{
-    ASSERT(isMainRunLoop());
-
-    if (auto completionHandler = m_ongoingGetRegistrationsTasks.take(matchingRequest))
-        completionHandler(WTFMove(registrations));
-}
-
 void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
     ASSERT(isMainRunLoop());
@@ -171,9 +155,7 @@ void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, co
     }
 
     runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
-        uint64_t callbackID = ++m_previousCallbackIdentifier;
-        m_ongoingMatchRegistrationTasks.add(callbackID, WTFMove(callback));
-        send(Messages::WebSWServerConnection::MatchRegistration(callbackID, topOrigin, clientURL));
+        sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(callback));
     });
 }
 
@@ -188,16 +170,10 @@ void WebSWClientConnection::runOrDelayTaskForImport(Function<void()>&& task)
 
 void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
 {
-    uint64_t callbackID = ++m_previousCallbackIdentifier;
-    m_ongoingRegistrationReadyTasks.add(callbackID, WTFMove(callback));
-    send(Messages::WebSWServerConnection::WhenRegistrationReady(callbackID, topOrigin, clientURL));
-}
-
-void WebSWClientConnection::registrationReady(uint64_t callbackID, ServiceWorkerRegistrationData&& registrationData)
-{
-    ASSERT(registrationData.activeWorker);
-    if (auto callback = m_ongoingRegistrationReadyTasks.take(callbackID))
-        callback(WTFMove(registrationData));
+    sendWithAsyncReply(Messages::WebSWServerConnection::WhenRegistrationReady { topOrigin, clientURL }, [callback = WTFMove(callback)](auto result) mutable {
+        if (result)
+            callback(*WTFMove(result));
+    });
 }
 
 void WebSWClientConnection::setDocumentIsControlled(ScriptExecutionContextIdentifier documentIdentifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
@@ -217,9 +193,7 @@ void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, con
     }
 
     runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
-        uint64_t callbackID = ++m_previousCallbackIdentifier;
-        m_ongoingGetRegistrationsTasks.add(callbackID, WTFMove(callback));
-        send(Messages::WebSWServerConnection::GetRegistrations { callbackID, topOrigin, clientURL });
+        sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTFMove(callback));
     });
 }
 
@@ -231,16 +205,6 @@ void WebSWClientConnection::connectionToServerLost()
 
 void WebSWClientConnection::clear()
 {
-    auto registrationTasks = WTFMove(m_ongoingMatchRegistrationTasks);
-    for (auto& callback : registrationTasks.values())
-        callback(std::nullopt);
-
-    auto getRegistrationTasks = WTFMove(m_ongoingGetRegistrationsTasks);
-    for (auto& callback : getRegistrationTasks.values())
-        callback({ });
-
-    m_ongoingRegistrationReadyTasks.clear();
-
     clearPendingJobs();
 }
 

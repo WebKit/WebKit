@@ -81,7 +81,6 @@ private:
     void didMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData>&&);
     void didGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData>&&);
     void whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&&) final;
-    void registrationReady(uint64_t callbackID, WebCore::ServiceWorkerRegistrationData&&);
 
     void setDocumentIsControlled(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerRegistrationData&&, CompletionHandler<void(bool)>&&);
 
@@ -112,10 +111,6 @@ private:
 
     UniqueRef<WebSWOriginTable> m_swOriginTable;
 
-    uint64_t m_previousCallbackIdentifier { 0 };
-    HashMap<uint64_t, RegistrationCallback> m_ongoingMatchRegistrationTasks;
-    HashMap<uint64_t, GetRegistrationsCallback> m_ongoingGetRegistrationsTasks;
-    HashMap<uint64_t, WhenRegistrationReadyCallback> m_ongoingRegistrationReadyTasks;
     Deque<Function<void()>> m_tasksPendingOriginImport;
     bool m_isThrottleable { true };
 }; // class WebSWServerConnection
