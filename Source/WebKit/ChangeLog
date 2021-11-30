@@ -1,3 +1,22 @@
+2021-11-30  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: fix bundle identifier lookup for enabling remote inspection
+        https://bugs.webkit.org/show_bug.cgi?id=233015
+        <rdar://85277115>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Inspector/WebInspectorUtilities.h:
+        * UIProcess/Inspector/WebInspectorUtilities.cpp:
+        (WebKit::bundleIdentifierForSandboxBroker):
+        To avoid repeating the logic, extract this code to a helper.
+
+        * UIProcess/Cocoa/WebInspectorPreferenceObserver.mm:
+        (-[WKWebInspectorPreferenceObserver init]):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::shouldEnableRemoteInspector):
+        Use the helper method.
+
 2021-11-30  Brent Fulgham  <bfulgham@apple.com>
 
         Correct serialization error in _WKApplicationManifestIcon

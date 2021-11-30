@@ -52,6 +52,7 @@
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
+#import "WebInspectorUtilities.h"
 #import <JavaScriptCore/RemoteInspectorConstants.h>
 #endif
 
@@ -204,10 +205,7 @@ bool WebProcessProxy::shouldEnableRemoteInspector()
 #if PLATFORM(IOS_FAMILY)
     return CFPreferencesGetAppIntegerValue(WIRRemoteInspectorEnabledKey, WIRRemoteInspectorDomainName, nullptr);
 #else
-    auto sandboxBrokerBundleIdentifier = CFSTR("com.apple.Safari.SandboxBroker");
-    if (WebCore::applicationBundleIdentifier() == "com.apple.SafariTechnologyPreview"_s)
-        sandboxBrokerBundleIdentifier = CFSTR("com.apple.SafariTechnologyPreview.SandboxBroker");
-    return CFPreferencesGetAppIntegerValue(CFSTR("ShowDevelopMenu"), sandboxBrokerBundleIdentifier, nullptr);
+    return CFPreferencesGetAppIntegerValue(CFSTR("ShowDevelopMenu"), bundleIdentifierForSandboxBroker(), nullptr);
 #endif
 }
 
