@@ -3537,7 +3537,7 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
     if (view) {
         size_t length = view->length();
         Node* indexNode = m_jit.graph().child(node, 1).node();
-        if (indexNode->isAnyIntConstant() && indexNode->asUInt32() < length)
+        if (indexNode->isAnyIntConstant() && static_cast<uint64_t>(indexNode->asAnyInt()) < length)
             return JITCompiler::Jump();
 #if USE(LARGE_TYPED_ARRAYS)
         m_jit.signExtend32ToPtr(indexGPR, scratchGPR);

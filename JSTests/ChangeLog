@@ -1,3 +1,14 @@
+2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] jumpForTypedArrayOutOfBounds should use asAnyInt since it uses isAnyInt
+        https://bugs.webkit.org/show_bug.cgi?id=233610
+        rdar://85820476
+
+        Reviewed by Saam Barati.
+
+        * stress/anyint-index.js: Added.
+        (foo):
+
 2021-11-29  Saam Barati  <sbarati@apple.com>
 
         FTL's implementation of HasIndexedProperty for InBounds accesses checks the inverse of what it should be checking when exiting by seeing a hole
