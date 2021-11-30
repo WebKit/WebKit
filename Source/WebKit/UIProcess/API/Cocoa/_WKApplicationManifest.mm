@@ -90,10 +90,10 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     if (!(self = [self init]))
         return nil;
 
-    _src = [[coder decodeObjectOfClass:[NSString class] forKey:@"src"] copy];
+    _src = [[coder decodeObjectOfClass:[NSURL class] forKey:@"src"] copy];
     _sizes = [[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"sizes"] copy];
     _type = [[coder decodeObjectOfClass:[NSString class] forKey:@"type"] copy];
-    _purposes = [[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"purposes"] copy];
+    _purposes = [[coder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSNumber class]]] forKey:@"purposes"] copy];
 
     return self;
 }

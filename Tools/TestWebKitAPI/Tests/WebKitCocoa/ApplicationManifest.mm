@@ -31,9 +31,11 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebCore/ApplicationManifest.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKApplicationManifest.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace TestWebKitAPI {
 
@@ -359,6 +361,34 @@ TEST(ApplicationManifest, Icons)
         done = true;
     }];
     Util::run(&done);
+}
+
+TEST(ApplicationManifest, IconCoding)
+{
+    static const char* testURL = "https://example.com/images/touch/homescreen128.jpg";
+
+    WebCore::ApplicationManifest::Icon icon = { URL(URL(), testURL), makeVector<String>(@[@"96x96", @"128x128"]), "image/jpg", { WebCore::ApplicationManifest::Icon::Purpose::Monochrome, WebCore::ApplicationManifest::Icon::Purpose::Maskable } };
+
+    IGNORE_WARNINGS_BEGIN("objc-method-access")
+    auto manifestIcon = adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&icon]);
+    IGNORE_WARNINGS_END
+
+    NSError *error = nil;
+    NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:manifestIcon.get() requiringSecureCoding:YES error:&error];
+    EXPECT_EQ(archiveData.length, 602ull);
+    EXPECT_NULL(error);
+
+    _WKApplicationManifestIcon *decodedIcon = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKApplicationManifestIcon class] fromData:archiveData error:&error];
+    EXPECT_NULL(error);
+
+    EXPECT_TRUE([decodedIcon isKindOfClass:[_WKApplicationManifestIcon class]]);
+    EXPECT_STREQ(testURL, decodedIcon.src.absoluteString.UTF8String);
+    EXPECT_TRUE([decodedIcon.sizes[0] isEqual:@"96x96"]);
+    EXPECT_TRUE([decodedIcon.sizes[1] isEqual:@"128x128"]);
+    EXPECT_TRUE([decodedIcon.type isEqual:@"image/jpg"]);
+    EXPECT_EQ(decodedIcon.purposes.count, 2ul);
+    EXPECT_EQ(decodedIcon.purposes[0].unsignedLongValue, 2ul);
+    EXPECT_EQ(decodedIcon.purposes[1].unsignedLongValue, 4ul);
 }
 
 } // namespace TestWebKitAPI

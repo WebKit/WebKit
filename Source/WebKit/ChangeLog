@@ -1,3 +1,25 @@
+2021-11-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct serialization error in _WKApplicationManifestIcon
+        https://bugs.webkit.org/show_bug.cgi?id=233602
+        <rdar://problem/85838843>
+
+        Reviewed by Devin Rousso.
+
+        The 'initWithCoder' method had two mistakes: (1) It attempted to decode the 'purposes'
+        member as an NSArray of NSString, rather than NSNumber, and (2) it attempted to decode
+        the 'src' member as an NSString, when it is in fact an NSURL.
+
+        These errors caused serialization to fail (since NSSecureCoding correctly rejected the
+        serialization).
+
+        This patch corrects both errors and adds a new test to exercise this code path.
+
+        Tested by a new TestWebKitAPI Test: ApplicationManifest.IconCoding
+
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifestIcon initWithCoder:]): Correct decoding logic.
+
 2021-11-30  BJ Burg  <bburg@apple.com>
 
         Web Inspector: fix IPC race between unregistering an extension and Web Inspector closing
