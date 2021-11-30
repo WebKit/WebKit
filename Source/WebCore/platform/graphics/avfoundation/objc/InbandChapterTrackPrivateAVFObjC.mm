@@ -54,6 +54,8 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
 
     auto identifier = LOGIDENTIFIER;
     auto createChapterCue = ([this, identifier] (AVMetadataItem *item, int chapterNumber) mutable {
+        if (!client())
+            return;
         ChapterData chapterData = { PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), [item stringValue] };
         if (m_processedChapters.contains(chapterData))
             return;
