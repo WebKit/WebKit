@@ -1,3 +1,27 @@
+2021-11-30  Saam Barati  <sbarati@apple.com>
+
+        GetMyArgumentByValOutOfBounds needs to check for negative indices
+        https://bugs.webkit.org/show_bug.cgi?id=232966
+        <rdar://problem/85519898>
+
+        Reviewed by Yusuke Suzuki.
+
+        Negative indices inside of GetMyArgumentByValOutOfBounds would cause
+        us to have the resulting value be undefined, instead of a full blown
+        lookup that properly consults the prototype chain and such. The reason for
+        this is negative indices would show up as "out of bounds", which would
+        lead this node to result in undefined. But negative indices really should
+        be treated as string property names, and can't be treated like normal out
+        of bounds positive integers.
+        
+        This patch makes it so we speculate that we don't see negative indices. If
+        we do see negative indices, we stop performing the transformation inside
+        of arguments elimination so we don't end up in an OSR exit loop.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+
 2021-11-30  Geza Lore  <glore@igalia.com>
 
         [JSC] Unify most Baseline ops between JSVALUE64 and JSVALUE32_64

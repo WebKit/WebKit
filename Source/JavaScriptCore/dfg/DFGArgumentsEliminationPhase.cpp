@@ -312,7 +312,10 @@ private:
                     break;
                     
                 case GetByVal:
-                    escapeBasedOnArrayMode(node->arrayMode(), m_graph.varArgChild(node, 0), node);
+                    if (m_graph.hasExitSite(node, NegativeIndex))
+                        escape(m_graph.varArgChild(node, 0), node);
+                    else
+                        escapeBasedOnArrayMode(node->arrayMode(), m_graph.varArgChild(node, 0), node);
                     escape(m_graph.varArgChild(node, 1), node);
                     escape(m_graph.varArgChild(node, 2), node);
                     break;
