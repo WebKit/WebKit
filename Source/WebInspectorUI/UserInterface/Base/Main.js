@@ -608,6 +608,9 @@ WI.contentLoaded = function()
             WI.diagnosticController.addRecorder(new WI.GridOverlayDiagnosticEventRecorder(WI.diagnosticController));
             WI.diagnosticController.addRecorder(new WI.GridOverlayConfigurationDiagnosticEventRecorder(WI.diagnosticController));
         }
+
+        if (InspectorFrontendHost.supportsWebExtensions)
+            WI.diagnosticController.addRecorder(new WI.ExtensionTabActivationDiagnosticEventRecorder(WI.diagnosticController));
     }
 };
 

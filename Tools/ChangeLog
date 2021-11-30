@@ -1,3 +1,19 @@
+2021-11-30  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: add ExtensionTabActivation diagnostic event
+        https://bugs.webkit.org/show_bug.cgi?id=233101
+        <rdar://85264921>
+
+        Reviewed by Devin Rousso.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionHost.mm:
+        (TEST):
+        Start using new method parameter 'extensionBundleIdentifier'.
+
 2021-11-30  Brent Fulgham  <bfulgham@apple.com>
 
         Correct serialization error in _WKApplicationManifestIcon

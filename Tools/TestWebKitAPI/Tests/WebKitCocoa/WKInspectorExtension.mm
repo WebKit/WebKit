@@ -100,11 +100,12 @@ TEST(WKInspectorExtension, CanEvaluateScriptInExtensionTab)
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
 
     auto extensionID = [NSUUID UUID].UUIDString;
+    auto extensionBundleIdentifier = @"org.webkit.TestWebKitAPI.FirstExtension";
     auto extensionDisplayName = @"FirstExtension";
 
     // Register the test extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:extensionID displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
         sharedInspectorExtension = extension;
@@ -190,11 +191,12 @@ TEST(WKInspectorExtension, ExtensionTabIsPersistent)
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
 
     auto extensionID = [NSUUID UUID].UUIDString;
+    auto extensionBundleIdentifier = @"org.webkit.TestWebKitAPI.SecondExtension";
     auto extensionDisplayName = @"SecondExtension";
 
     // Register the test extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:extensionID displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
         sharedInspectorExtension = extension;
@@ -307,11 +309,12 @@ TEST(WKInspectorExtension, EvaluateScriptInExtensionTabCanReturnPromises)
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
 
     auto extensionID = [NSUUID UUID].UUIDString;
+    auto extensionBundleIdentifier = @"org.webkit.TestWebKitAPI.ThirdExtension";
     auto extensionDisplayName = @"ThirdExtension";
 
     // Register the test extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:extensionID displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
         sharedInspectorExtension = extension;

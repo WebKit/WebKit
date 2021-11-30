@@ -59,6 +59,7 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
 
     // Public
 
+    get extension() { return this._extension; }
     get extensionTabID() { return this._extensionTabID; }
     get iframeElement() { return this._iframeElement; }
 

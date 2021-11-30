@@ -109,7 +109,7 @@ std::optional<Inspector::ExtensionError> WebInspectorUIExtensionController::pars
 
 // WebInspectorUIExtensionController IPC messages.
 
-void WebInspectorUIExtensionController::registerExtension(const Inspector::ExtensionID& extensionID, const String& displayName, CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionController::registerExtension(const Inspector::ExtensionID& extensionID, const String& extensionBundleIdentifier, const String& displayName, CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
@@ -118,6 +118,7 @@ void WebInspectorUIExtensionController::registerExtension(const Inspector::Exten
 
     Vector<Ref<JSON::Value>> arguments {
         JSON::Value::create(extensionID),
+        JSON::Value::create(extensionBundleIdentifier),
         JSON::Value::create(displayName),
     };
     m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("registerExtension"_s, WTFMove(arguments), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](WebCore::InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {

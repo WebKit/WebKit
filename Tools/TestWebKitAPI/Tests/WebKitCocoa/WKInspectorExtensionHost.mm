@@ -69,7 +69,7 @@ TEST(WKInspectorExtensionHost, RegisterExtension)
 
     // Normal registration.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:firstID displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:firstID extensionBundleIdentifier:@"com.apple.webkit.FirstExtension" displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
 
@@ -79,7 +79,7 @@ TEST(WKInspectorExtensionHost, RegisterExtension)
 
     // Double registration.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:firstID displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:firstID extensionBundleIdentifier:@"com.apple.webkit.FirstExtension" displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NOT_NULL(error);
         EXPECT_NULL(extension);
         EXPECT_TRUE([error.localizedFailureReason containsString:@"RegistrationFailed"]);
@@ -90,7 +90,7 @@ TEST(WKInspectorExtensionHost, RegisterExtension)
 
     // Two registrations.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:secondID displayName:@"SecondExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:secondID extensionBundleIdentifier:@"com.apple.webkit.SecondExtension" displayName:@"SecondExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
 
@@ -119,7 +119,7 @@ TEST(WKInspectorExtensionHost, UnregisterExtension)
 
     // Unregister a known extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:firstID displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:firstID extensionBundleIdentifier:@"com.apple.webkit.FirstExtension" displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
         foundExtension = extension;
@@ -135,7 +135,7 @@ TEST(WKInspectorExtensionHost, UnregisterExtension)
 
     // Re-register an extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:firstID displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:firstID extensionBundleIdentifier:@"com.apple.webkit.FirstExtension" displayName:@"FirstExtension" completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
         foundExtension = extension;

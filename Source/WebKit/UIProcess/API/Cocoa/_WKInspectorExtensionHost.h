@@ -37,12 +37,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @abstract Registers a Web Extension with the associated Web Inspector.
  * @param extensionID A unique identifier for the extension.
+ * @param extensionBundleIdentifier A bundle identifier for the extension.
  * @param displayName A localized display name for the extension.
  * @param completionHandler The completion handler to be called when registration succeeds or fails.
  *
  * Web Extensions in Web Inspector are active as soon as they are registered.
  */
-- (void)registerExtensionWithID:(NSString *)extensionID displayName:(NSString *)displayName completionHandler:(void(^)(NSError * _Nullable, _WKInspectorExtension * _Nullable))completionHandler;
+- (void)registerExtensionWithID:(NSString *)extensionID extensionBundleIdentifier:(NSString *)extensionBundleIdentifier displayName:(NSString *)displayName completionHandler:(void(^)(NSError * _Nullable, _WKInspectorExtension * _Nullable))completionHandler;
 
 /**
  * @abstract Unregisters a Web Extension with the associated Web Inspector.

@@ -55,7 +55,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // API.
-    void registerExtension(const Inspector::ExtensionID&, const String& displayName, WTF::CompletionHandler<void(Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError>)>&&);
+    void registerExtension(const Inspector::ExtensionID&, const String& extensionBundleIdentifier, const String& displayName, WTF::CompletionHandler<void(Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError>)>&&);
     void unregisterExtension(const Inspector::ExtensionID&, WTF::CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&&);
     void createTabForExtension(const Inspector::ExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&&);
     void evaluateScriptForExtension(const Inspector::ExtensionID&, const String& scriptSource, const std::optional<URL>& frameURL, const std::optional<URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);

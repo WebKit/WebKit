@@ -108,11 +108,12 @@ TEST(WKInspectorExtensionDelegate, ShowAndHideTabCallbacks)
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
 
     auto extensionID = [NSUUID UUID].UUIDString;
+    auto extensionBundleIdentifier = @"com.apple.webkit.FirstExtension";
     auto extensionDisplayName = @"FirstExtension";
 
     // Register the test extension.
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:extensionID displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
         sharedInspectorExtension = extension;
@@ -187,9 +188,10 @@ TEST(WKInspectorExtensionDelegate, InspectedPageNavigatedCallbacks)
 
     // Register the test extension.
     auto extensionID = [NSUUID UUID].UUIDString;
+    auto extensionBundleIdentifier = @"com.apple.webkit.SecondExtension";
     auto extensionDisplayName = @"SecondExtension";
     pendingCallbackWasCalled = false;
-    [[webView _inspector] registerExtensionWithID:extensionID displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+    [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(extension);
         sharedInspectorExtension = extension;

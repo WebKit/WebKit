@@ -1,3 +1,50 @@
+2021-11-30  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: add ExtensionTabActivation diagnostic event
+        https://bugs.webkit.org/show_bug.cgi?id=233101
+        <rdar://85264921>
+
+        Reviewed by Devin Rousso.
+
+        Add new diagnostic event that reports the first activation of
+        an extension tab. Also report the number of active extension tabs.
+
+        * UserInterface/Controllers/ExtensionTabActivationDiagnosticEventRecorder.js: Added.
+        (WI.ExtensionTabActivationDiagnosticEventRecorder):
+        (WI.ExtensionTabActivationDiagnosticEventRecorder.prototype.setup):
+        (WI.ExtensionTabActivationDiagnosticEventRecorder.prototype.teardown):
+        (WI.ExtensionTabActivationDiagnosticEventRecorder.prototype._selectedTabContentViewDidChange):
+        Report only the first activation. The extension tab iframe does not load until
+        the first time that the tab is selected and shown.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded): Add diagnostic event recorder if extensions are supported.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.registerExtension):
+        Pass along the new extensionBundleIdentifier argument to the model object.
+
+        (WI.WebInspectorExtensionController.prototype.activeExtensionTabContentViews):
+        Added. This is a helper method for collecting diagnostic event data.
+
+        * UserInterface/Debug/Bootstrap.js:
+        (updateMockWebExtensionTab):
+        (WI.runBootstrapOperations):
+        Pass new extensionBundleIdentifier argument for the Mock Extension.
+
+        * UserInterface/Main.html: Add new file.
+        * UserInterface/Models/WebInspectorExtension.js:
+        (WI.WebInspectorExtension):
+        (WI.WebInspectorExtension.prototype.get extensionBundleIdentifier):
+        Store the extension bundle identifier on the model object. Add a getter.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.registerExtension):
+        Pass new extensionBundleIdentifier argument.
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView.prototype.get extension): Added.
+
 2021-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some unused event names

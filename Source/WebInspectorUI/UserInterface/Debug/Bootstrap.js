@@ -143,6 +143,7 @@ WI.runBootstrapOperations = function() {
     function updateMockWebExtensionTab() {
         let mockData = {
             extensionID: "1234567890ABCDEF",
+            extensionBundleIdentifier: "org.webkit.WebInspector.MockExtension",
             displayName: WI.unlocalizedString("Mock Extension"),
             tabName: WI.unlocalizedString("Mock"),
             tabIconURL: "Images/Info.svg",
@@ -157,7 +158,7 @@ WI.runBootstrapOperations = function() {
             return;
         }
 
-        let error = InspectorFrontendAPI.registerExtension(mockData.extensionID, mockData.displayName);
+        let error = InspectorFrontendAPI.registerExtension(mockData.extensionID, mockData.extensionBundleIdentifier, mockData.displayName);
         if (error) {
             WI.reportInternalError("Problem creating mock web extension: " + error);
             return;

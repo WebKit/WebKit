@@ -199,9 +199,9 @@ InspectorFrontendAPI = {
     },
 
     // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise nothing.
-    registerExtension(extensionID, displayName)
+    registerExtension(extensionID, extensionBundleIdentifier, displayName)
     {
-        return WI.sharedApp.extensionController.registerExtension(extensionID, displayName);
+        return WI.sharedApp.extensionController.registerExtension(extensionID, extensionBundleIdentifier, displayName);
     },
 
     // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise nothing.

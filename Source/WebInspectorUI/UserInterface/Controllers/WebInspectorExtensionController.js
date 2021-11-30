@@ -44,14 +44,14 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         return new Set(this._extensionForExtensionIDMap.keys());
     }
 
-    registerExtension(extensionID, displayName)
+    registerExtension(extensionID, extensionBundleIdentifier, displayName)
     {
         if (this._extensionForExtensionIDMap.has(extensionID)) {
             WI.reportInternalError("Unable to register extension, it's already registered: " + extensionID);
             return WI.WebInspectorExtension.ErrorCode.RegistrationFailed;
         }
 
-        let extension = new WI.WebInspectorExtension(extensionID, displayName);
+        let extension = new WI.WebInspectorExtension(extensionID, extensionBundleIdentifier, displayName);
         this._extensionForExtensionIDMap.set(extensionID, extension);
 
         this.dispatchEventToListeners(WI.WebInspectorExtensionController.Event.ExtensionAdded, {extension});
@@ -230,6 +230,11 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
                     this.hideExtensionTab(tabContentView.extensionTabID);
             }, checked);
         }
+    }
+
+    activeExtensionTabContentViews()
+    {
+        return Array.from(this._extensionTabContentViewForExtensionTabIDMap.values()).filter((tab) => tab.visible || tab.tabBarItem.parentTabBar);
     }
 
     evaluateScriptInExtensionTab(extensionTabID, scriptSource)

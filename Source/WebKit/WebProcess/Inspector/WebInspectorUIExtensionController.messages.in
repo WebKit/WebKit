@@ -23,7 +23,7 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
 messages -> WebInspectorUIExtensionController NotRefCounted {
-    RegisterExtension(String extensionID, String displayName) -> (Expected<void, Inspector::ExtensionError> result) Async
+    RegisterExtension(String extensionID, String extensionBundleIdentifier, String displayName) -> (Expected<void, Inspector::ExtensionError> result) Async
     UnregisterExtension(String extensionID) -> (Expected<void, Inspector::ExtensionError> result) Async
 
     CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, Inspector::ExtensionError> result) Async

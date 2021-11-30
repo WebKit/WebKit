@@ -226,7 +226,7 @@ private:
     return self.inspectorWebView;
 }
 
-- (void)registerExtensionWithID:(NSString *)extensionID displayName:(NSString *)displayName completionHandler:(void(^)(NSError *, _WKInspectorExtension *))completionHandler
+- (void)registerExtensionWithID:(NSString *)extensionID extensionBundleIdentifier:(NSString *)extensionBundleIdentifier displayName:(NSString *)displayName completionHandler:(void(^)(NSError *, _WKInspectorExtension *))completionHandler
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // It is an error to call this method prior to creating a frontend (i.e., with -connect or -show).
@@ -235,7 +235,7 @@ private:
         return;
     }
 
-    _inspector->extensionController()->registerExtension(extensionID, displayName, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
+    _inspector->extensionController()->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error())}], nil);
             return;
