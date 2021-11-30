@@ -255,7 +255,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 
             setUsesMatchElement(matchElement);
 
-            if constexpr (!std::is_same_v<nullptr_t, decltype(hostAffectingNames)>) {
+            if constexpr (!std::is_same_v<std::nullptr_t, decltype(hostAffectingNames)>) {
                 if (matchElement == MatchElement::Host)
                     hostAffectingNames->add(name);
             }
