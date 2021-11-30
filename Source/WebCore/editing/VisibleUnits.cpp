@@ -990,7 +990,10 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     if (line) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
         auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto& renderer = line->closestRunForPoint(pointInLine, isEditablePosition(p))->renderer();
+        auto run = line->closestRunForPoint(pointInLine, isEditablePosition(p));
+        if (!run)
+            return VisiblePosition();
+        auto& renderer = run->renderer();
         Node* node = renderer.node();
         if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node);
@@ -1043,7 +1046,10 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     if (line) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
         auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto& renderer = line->closestRunForPoint(pointInLine, isEditablePosition(p))->renderer();
+        auto run = line->closestRunForPoint(pointInLine, isEditablePosition(p));
+        if (!run)
+            return VisiblePosition();
+        auto& renderer = run->renderer();
         Node* node = renderer.node();
         if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node);
