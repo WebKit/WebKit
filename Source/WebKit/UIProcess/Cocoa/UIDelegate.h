@@ -173,6 +173,7 @@ private:
         void didDisableInspectorBrowserDomain(WebPageProxy&) final;
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
+        void requestPermissionOnXRSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&) final;
         void startXRSession(WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&&) final;
 #endif
 
@@ -265,6 +266,7 @@ private:
         bool webViewDidEnableInspectorBrowserDomain : 1;
         bool webViewDidDisableInspectorBrowserDomain : 1;
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
+        bool webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler: 1;
         bool webViewStartXRSessionWithCompletionHandler : 1;
 #endif
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;

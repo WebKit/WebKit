@@ -47,6 +47,10 @@ OBJC_CLASS UIViewController;
 #include "WebAuthenticationFlags.h"
 #endif
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#include <WebCore/PlatformXR.h>
+#endif
+
 namespace WebCore {
 class RegistrableDomain;
 class ResourceRequest;
@@ -210,6 +214,7 @@ public:
     virtual void decidePolicyForMediaKeySystemPermissionRequest(WebKit::WebPageProxy& page, API::SecurityOrigin& origin, const WTF::String& keySystem, CompletionHandler<void(bool)>&& completionHandler) { page.requestMediaKeySystemPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler)); }
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
+    virtual void requestPermissionOnXRSessionFeatures(WebKit::WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler) { completionHandler(granted); }    
     virtual void startXRSession(WebKit::WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&& completionHandler) { completionHandler(nil); }
 #endif
 };

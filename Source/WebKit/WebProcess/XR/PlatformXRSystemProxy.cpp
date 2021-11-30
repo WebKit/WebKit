@@ -34,6 +34,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "XRDeviceInfo.h"
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/Vector.h>
 
 using namespace PlatformXR;
@@ -67,6 +68,11 @@ void PlatformXRSystemProxy::enumerateImmersiveXRDevices(CompletionHandler<void(c
         m_devices.swap(devices);
         completionHandler(m_devices);
     });
+}
+
+void PlatformXRSystemProxy::requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
+{
+    m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestPermissionOnSessionFeatures(securityOriginData, mode, granted, consentRequired, consentOptional), WTFMove(completionHandler));
 }
 
 void PlatformXRSystemProxy::initializeTrackingAndRendering()

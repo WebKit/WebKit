@@ -650,6 +650,15 @@ inline Device::FrameData Device::FrameData::copy() const
 
 namespace WTF {
 
+template<> struct EnumTraits<PlatformXR::SessionMode> {
+    using values = EnumValues<
+        PlatformXR::SessionMode,
+        PlatformXR::SessionMode::Inline,
+        PlatformXR::SessionMode::ImmersiveVr,
+        PlatformXR::SessionMode::ImmersiveAr
+    >;
+};
+
 template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
     using values = EnumValues<
         PlatformXR::ReferenceSpaceType,

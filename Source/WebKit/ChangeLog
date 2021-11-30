@@ -1,3 +1,49 @@
+2021-11-30  Ada Chan  <adachan@apple.com>
+
+        [WebXR] Implement ChromeClient API to allow getting explicit consent from user on session features
+        https://bugs.webkit.org/show_bug.cgi?id=233617
+
+        Reviewed by Dean Jackson.
+
+        Set up WKUIDelegate method for asking user for permission on XR session features.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::requestPermissionOnXRSessionFeatures):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        Declare a WK enum that represents XR session mode and a WK flag
+        that represents XR session features for use in the new WKUIDelegate method.
+        Declare a new WKUIDelegate method for requesting user permission for
+        XR session features that takes in the security origin, the session mode,
+        the list of device supported features, the list of features that require consent,
+        and the list of features that optionally require consent.
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::toWKXRSessionMode):
+        (WebKit::toWKXRSessionFeatureFlags):
+        (WebKit::toPlatformXRFeatures):
+        (WebKit::UIDelegate::UIClient::requestPermissionOnXRSessionFeatures):
+        If the WKUIDelegate method for requesting permission is implemented, call it to 
+        get the list of user permitted features. Otherwise, preserve the current behavior
+        by returning the initially granted features based on device support.
+        * UIProcess/XR/PlatformXRCoordinator.h:
+        (WebKit::PlatformXRCoordinator::requestPermissionOnSessionFeatures):
+        Default implementation returns the initially granted features based on device support.
+        * UIProcess/XR/PlatformXRSystem.cpp:
+        (WebKit::PlatformXRSystem::requestPermissionOnSessionFeatures):
+        * UIProcess/XR/PlatformXRSystem.h:
+        * UIProcess/XR/PlatformXRSystem.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestPermissionOnXRSessionFeatures):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/XR/PlatformXRSystemProxy.cpp:
+        (WebKit::PlatformXRSystemProxy::requestPermissionOnSessionFeatures):
+        Send a message to the UI process to request user consent on session features.
+        * WebProcess/XR/PlatformXRSystemProxy.h:
+
 2021-11-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r286227.

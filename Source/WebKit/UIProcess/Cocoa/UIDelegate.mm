@@ -193,6 +193,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDidDisableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidDisableInspectorBrowserDomain:)];
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
+    m_delegateMethods.webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestPermissionForXRSessionOrigin:mode:grantedFeatures:consentRequiredFeatures:consentOptionalFeatures:completionHandler:)];
     m_delegateMethods.webViewStartXRSessionWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:startXRSessionWithCompletionHandler:)];
 #endif
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
@@ -1640,6 +1641,83 @@ void UIDelegate::UIClient::didDisableInspectorBrowserDomain(WebPageProxy&)
 }
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
+static _WKXRSessionMode toWKXRSessionMode(PlatformXR::SessionMode mode)
+{
+    switch (mode) {
+    case PlatformXR::SessionMode::Inline:
+        return _WKXRSessionModeInline;
+    case PlatformXR::SessionMode::ImmersiveVr:
+        return _WKXRSessionModeImmersiveVr;
+    case PlatformXR::SessionMode::ImmersiveAr:
+        return _WKXRSessionModeImmersiveAr;
+    }
+}
+
+static _WKXRSessionFeatureFlags toWKXRSessionFeatureFlags(PlatformXR::ReferenceSpaceType feature)
+{
+    switch (feature) {
+    case PlatformXR::ReferenceSpaceType::Viewer:
+        return _WKXRSessionFeatureFlagsReferenceSpaceTypeViewer;
+    case PlatformXR::ReferenceSpaceType::Local:
+        return _WKXRSessionFeatureFlagsReferenceSpaceTypeLocal;
+    case PlatformXR::ReferenceSpaceType::LocalFloor:
+        return _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor;
+    case PlatformXR::ReferenceSpaceType::BoundedFloor:
+        return _WKXRSessionFeatureFlagsReferenceSpaceTypeBoundedFloor;
+    case PlatformXR::ReferenceSpaceType::Unbounded:
+        return _WKXRSessionFeatureFlagsReferenceSpaceTypeUnbounded;
+    }
+}
+
+static _WKXRSessionFeatureFlags toWKXRSessionFeatureFlags(const PlatformXR::Device::FeatureList& features)
+{
+    _WKXRSessionFeatureFlags flags = _WKXRSessionFeatureFlagsNone;
+    for (auto feature : features)
+        flags |= toWKXRSessionFeatureFlags(feature);
+    return flags;
+}
+
+static std::optional<PlatformXR::Device::FeatureList> toPlatformXRFeatures(_WKXRSessionFeatureFlags featureFlags)
+{
+    if (featureFlags == _WKXRSessionFeatureFlagsNone)
+        return std::nullopt;
+
+    PlatformXR::Device::FeatureList features;
+    if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeViewer)
+        features.append(PlatformXR::ReferenceSpaceType::Viewer);
+    if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeLocal)
+        features.append(PlatformXR::ReferenceSpaceType::Local);
+    if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor)
+        features.append(PlatformXR::ReferenceSpaceType::LocalFloor);
+    if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeBoundedFloor)
+        features.append(PlatformXR::ReferenceSpaceType::BoundedFloor);
+    if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeUnbounded)
+        features.append(PlatformXR::ReferenceSpaceType::Unbounded);
+    return features;
+}
+
+void UIDelegate::UIClient::requestPermissionOnXRSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
+{
+    if (!m_uiDelegate || !m_uiDelegate->m_delegateMethods.webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler) {
+        completionHandler(granted);
+        return;
+    }
+
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate) {
+        completionHandler(granted);
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestPermissionForXRSessionOrigin:mode:grantedFeatures:consentRequiredFeatures:consentOptionalFeatures:completionHandler:));
+    [delegate _webView:m_uiDelegate->m_webView.get().get() requestPermissionForXRSessionOrigin:securityOriginData.toString() mode:toWKXRSessionMode(mode) grantedFeatures:toWKXRSessionFeatureFlags(granted) consentRequiredFeatures:toWKXRSessionFeatureFlags(consentRequired) consentOptionalFeatures:toWKXRSessionFeatureFlags(consentOptional) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (_WKXRSessionFeatureFlags userGrantedFeatures) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(toPlatformXRFeatures(userGrantedFeatures));
+    }).get()];
+}
+
 void UIDelegate::UIClient::startXRSession(WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&& completionHandler)
 {
     if (!m_uiDelegate || !m_uiDelegate->m_delegateMethods.webViewStartXRSessionWithCompletionHandler) {
