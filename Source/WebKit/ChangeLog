@@ -1,3 +1,20 @@
+2021-11-30  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: fix IPC race between unregistering an extension and Web Inspector closing
+        https://bugs.webkit.org/show_bug.cgi?id=233264
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::inspectorFrontendWillClose):
+        Remaining registrations will not be removed via unregisterExtension() if
+        the frontend is already in the midst of closing. Clear out the registry.
+
+        (WebKit::WebInspectorUIExtensionControllerProxy::registerExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::unregisterExtension):
+        Bail out if the inspector has closed between the IPC message being sent
+        and receiving the async response.
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         Migrate some WebSWClientConnection messages to async replies
