@@ -18,7 +18,7 @@ function checkUnderflow(value, min, disabled)
     input.disabled = !!disabled;
     var underflow = input.validity.rangeUnderflow;
     var resultText = 'The value "' + input.value + '" ' +
-        (underflow ? 'undeflows' : 'doesn\'t underflow') +
+        (underflow ? 'underflows' : 'doesn\'t underflow') +
         ' the minimum value "' + input.min + '"' + (disabled ? ' when disabled.' : '.');
     if (underflow)
         testPassed(resultText);
