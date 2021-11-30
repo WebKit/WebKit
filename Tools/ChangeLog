@@ -1,5 +1,14 @@
 2021-11-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Guard git-webkit with __name__
+        https://bugs.webkit.org/show_bug.cgi?id=233278
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/git-webkit:
+
+2021-11-29  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Delete unused environment variables
         https://bugs.webkit.org/show_bug.cgi?id=233565
         <rdar://problem/85820306>
