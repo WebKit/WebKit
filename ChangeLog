@@ -1,3 +1,14 @@
+2021-11-30  Tyler Wilcock  <tyler_w@apple.com>
+
+        Move tyler_w@apple.com to first entry in "emails" key
+
+        Unreviewed.
+
+        In order to cq+, your committer e-mail address must be the
+        first entry in the "emails" key.
+
+        * metadata/contributors.json:
+
 2021-11-29  Tyler Wilcock  <tyler_w@apple.com>
 
         Mark myself (Tyler Wilcock) as committer
