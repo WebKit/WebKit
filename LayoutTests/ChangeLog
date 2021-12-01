@@ -1,3 +1,13 @@
+2021-12-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Skip model tag test
+
+        Unreviewed test gardening.
+
+        <model> is not enabled/supported in GTK/WPE.
+
+        * platform/glib/TestExpectations:
+
 2021-12-01  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] requestVideoFrameCallback support

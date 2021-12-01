@@ -1870,6 +1870,9 @@ editing/pasteboard/copy-paste-attachment.html [ Skip ]
 editing/text-iterator/backwards-text-iterator-attachment.html [ Skip ]
 fast/css/has-attachment.html [ Skip ]
 
+# <model> is not supported by GTK/WPE
+http/tests/model/ [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
