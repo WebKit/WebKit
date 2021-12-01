@@ -1,6 +1,7 @@
 
 import logging
 import os
+import shutil
 import subprocess
 import time
 
@@ -37,6 +38,36 @@ class OSXBrowserDriver(BrowserDriver):
 
     def close_browsers(self):
         self._terminate_processes(self.process_name, self.bundle_id)
+
+    def _save_screenshot_to_path(self, output_directory, filename):
+        jpg_image_path = os.path.join(output_directory, filename)
+        try:
+            subprocess.call(['screencapture', jpg_image_path])
+            _log.info('Saved screenshot to "{}"'.format(jpg_image_path))
+        except subprocess.CalledProcessError as error:
+            _log.error('Failed to save screenshot - Error: {error}'.format(error=error))
+
+    def diagnose_test_failure(self, diagnose_directory, error):
+        _log.info('Diagnosing benchmark failure: "{}"'.format(error))
+
+        if not diagnose_directory:
+            _log.info('Diagnose directory is not specified, will skip diagnosing.')
+            return
+
+        if os.path.exists(diagnose_directory):
+            _log.info('Diagnose directory: "{}" already exists, cleaning it up'.format(diagnose_directory))
+            try:
+                if os.path.isdir(diagnose_directory):
+                    if len(os.listdir(diagnose_directory)):
+                        shutil.rmtree(diagnose_directory)
+                elif os.path.isfile(diagnose_directory):
+                    os.remove(diagnose_directory)
+            except Exception as error:
+                _log.error('Could not remove diagnose directory {} - error: {}'.format(diagnose_directory, error))
+        if not os.path.exists(diagnose_directory):
+            os.makedirs(diagnose_directory)
+
+        self._save_screenshot_to_path(diagnose_directory, 'test-failure-screenshot-{}.jpg'.format(int(time.time())))
 
     @classmethod
     def _launch_process(cls, build_dir, app_name, url, args):

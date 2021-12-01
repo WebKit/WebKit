@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import sys
+import time
 
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
@@ -31,6 +32,10 @@ def default_browser():
     return 'safari'
 
 
+def default_diagnose_dir():
+    return '/tmp/run-benchmark-diagnostics-{}/'.format(int(time.time()))
+
+
 def config_argument_parser():
     parser = argparse.ArgumentParser(description='Run browser based performance benchmarks. To run a single benchmark in the recommended way, use run-benchmark --plan. To see the vailable benchmarks, use run-benchmark --list-plans. This script passes through the __XPC variables in its environment to the Safari process.')
     mutual_group = parser.add_mutually_exclusive_group(required=True)
@@ -46,7 +51,7 @@ def config_argument_parser():
     parser.add_argument('--local-copy', help='Path to a local copy of the benchmark (e.g. PerformanceTests/SunSpider/).')
     parser.add_argument('--device-id', default=None, help='Undocumented option for mobile device testing.')
     parser.add_argument('--debug', action='store_true', help='Enable debug logging.')
-    parser.add_argument('--diagnose-directory', dest='diagnose_dir', default=None, help='Directory for storing diagnose information on test failure. It\'s up to browser driver implementation when this option is not specified.')
+    parser.add_argument('--diagnose-directory', dest='diagnose_dir', default=default_diagnose_dir(), help='Directory for storing diagnose information on test failure. Defaults to {}.'.format(default_diagnose_dir()))
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
 

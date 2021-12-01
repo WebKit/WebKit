@@ -1,3 +1,18 @@
+2021-12-01  W.D. Xiong  <wdx@apple.com>
+
+        [macOS] run-benchmark should take diagnostic screenshots upon test timeout
+        https://bugs.webkit.org/show_bug.cgi?id=232736
+
+        Reviewed by Dewei Zhu.
+
+        Added defaults for the --diagnose-directory flag depending on platform.
+        Added diagnose_test_failure method to OSXBrowserDriver to take screenshots and save to diagnostic directory.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver._save_screenshot_to_path):
+        (OSXBrowserDriver):
+        (OSXBrowserDriver.diagnose_test_failure):
+
 2021-12-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Do not query remotes when determining branches containing commit
