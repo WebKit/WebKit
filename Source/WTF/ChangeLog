@@ -1,3 +1,19 @@
+2021-12-01  J Pascoe  <j_pascoe@apple.com>
+
+        Fix NEAR_FIELD macro to support iOS devices again
+        https://bugs.webkit.org/show_bug.cgi?id=233671
+        rdar://85318070
+
+        In a previous change, https://bugs.webkit.org/show_bug.cgi?id=231085, the definition for
+        the NEAR_FIELD macro removed support for iOS. This change adds it back, fixing
+        NFC webauthn support.
+
+        Reviewed by Brent Fulgham.
+
+        Tested manually on an iPhone.
+
+        * wtf/PlatformHave.h:
+
 2021-12-01  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] requestVideoFrameCallback support
