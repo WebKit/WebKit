@@ -308,6 +308,11 @@ private:
                 break;
             }
 
+            case RegExpTestInline: {
+                considerBarrier(m_node->child1());
+                break;
+            }
+
             case RecordRegExpCachedResult: {
                 considerBarrier(m_graph.varArgChild(m_node, 0));
                 break;

@@ -1,3 +1,17 @@
+2021-12-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] RegExpTestInline DFG / FTL nodes should introduce a write-barrier
+        https://bugs.webkit.org/show_bug.cgi?id=233716
+
+        Reviewed by Michael Saboff.
+
+        Since RegExpTestInline fast path stores cells into JSGlobalObject's RegExpCachedResult field,
+        we need to consider about inserting a write-barrier onto JSGlobalObject.
+        This patch adds RegExpTestInline to DFGStoreBarrierInsertionPhase so that DFG / FTL inserts
+        a write-barrier appropriately.
+
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+
 2021-12-01  Keith Miller  <keith_miller@apple.com>
 
         Add static_assert the value we use to initialize a StructureID buffer should be 0.
