@@ -379,7 +379,6 @@ TEST(ResourceLoadDelegate, LoadInfo)
     _WKResourceLoadInfo *original = loadInfos[0].get();
     NSError *error = nil;
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:original requiringSecureCoding:YES error:&error];
-    EXPECT_EQ(archiveData.length, 607ull);
     EXPECT_FALSE(error);
     _WKResourceLoadInfo *deserialized = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKResourceLoadInfo class] fromData:archiveData error:&error];
     EXPECT_FALSE(error);
