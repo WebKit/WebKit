@@ -28,6 +28,8 @@
 
 #include <windows.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
+#include <wtf/PageBlock.h>
 
 namespace WTF {
 
@@ -44,6 +46,16 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool e
     if (!result)
         CRASH();
     return result;
+}
+
+void* OSAllocator::reserveUncommittedAligned(size_t bytes, Usage usage, bool writable, bool executable, bool, bool)
+{
+    ASSERT(hasOneBitSet(bytes) && bytes >= pageSize());
+    // FIXME: Is there a way to do this where we can either release the excess reservation or not reserve it at all?
+    void* result = reserveUncommitted(2 * bytes, usage, writable, executable);
+
+    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(bytes, reinterpret_cast<uintptr_t>(result)));
+    return aligned;
 }
 
 void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)

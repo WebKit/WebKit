@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 #include <wtf/PageBlock.h>
 
 #if ENABLE(JIT_CAGE)
@@ -70,6 +71,30 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, 
 #endif
 
     return result;
+}
+
+
+// FIXME: Make a smarter version of this for Linux flavors that have aligned mmap.
+void* OSAllocator::reserveUncommittedAligned(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    ASSERT(hasOneBitSet(bytes) && bytes >= pageSize());
+    // Double the size so we can ensure enough mapped memory to get an aligned start.
+    size_t mappedSize = bytes * 2;
+    char* mapped = reinterpret_cast<char*>(reserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
+    char* mappedEnd = mapped + mappedSize;
+
+    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(bytes, reinterpret_cast<uintptr_t>(mapped)));
+    char* alignedEnd = aligned + bytes;
+
+    RELEASE_ASSERT(alignedEnd <= mappedEnd);
+
+    if (size_t leftExtra = aligned - mapped)
+        releaseDecommitted(mapped, leftExtra);
+
+    if (size_t rightExtra = mappedEnd - alignedEnd)
+        releaseDecommitted(alignedEnd, rightExtra);
+
+    return aligned;
 }
 
 void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)

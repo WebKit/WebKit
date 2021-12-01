@@ -212,11 +212,6 @@ else
     const LowestTag = constexpr JSValue::LowestTag
 end
 
-if JSVALUE64
-    const NumberOfStructureIDEntropyBits = constexpr StructureIDTable::s_numberOfEntropyBits
-    const StructureEntropyBitsShift = constexpr StructureIDTable::s_entropyBitsShiftForStructurePointer
-end
-
 if LARGE_TYPED_ARRAYS
     const SmallTypedArrayMaxLength = constexpr ArrayProfile::s_smallTypedArrayMaxLength
 end

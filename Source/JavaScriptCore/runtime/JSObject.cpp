@@ -369,9 +369,9 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
     // https://pdfs.semanticscholar.org/343f/7182cde7669ca2a7de3dc01127927f384ef7.pdf
     
     StructureID structureID = this->structureID();
-    if (isNuked(structureID))
+    if (structureID.isNuked())
         return nullptr;
-    structure = vm.getStructure(structureID);
+    structure = structureID.decode();
     maxOffset = structure->maxOffset();
     IndexingType indexingMode;
     Dependency indexingModeDependency = structure->fencedIndexingMode(indexingMode);
@@ -1169,7 +1169,7 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
     DeferGC deferGC(vm);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateUndecided);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1183,7 +1183,7 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateInt32);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1197,7 +1197,7 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousDouble().at(this, i) = PNaN;
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateDouble);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1211,7 +1211,7 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1241,7 +1241,7 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
 {
     DeferGC deferGC(vm);
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     IndexingType oldType = indexingType();
     ASSERT_UNUSED(oldType, !hasIndexedProperties(oldType));
 
@@ -1331,7 +1331,7 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, TransitionKind tr
         storage->m_vector[i].setWithoutWriteBarrier(JSValue());
     
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
     nukeStructureAndSetButterfly(vm, oldStructureID, storage->butterfly());
     setStructure(vm, newStructure);
@@ -1390,7 +1390,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, TransitionKind transi
     }
     
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
     nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
     setStructure(vm, newStructure);
@@ -1444,7 +1444,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, TransitionKind trans
     }
     
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
     nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
     setStructure(vm, newStructure);
@@ -1522,7 +1522,7 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, TransitionKind t
 
     ASSERT(newStorage->butterfly() != butterfly);
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
 
     // Ensure new Butterfly initialization is correctly done before exposing it to the concurrent threads.
@@ -2024,7 +2024,7 @@ void JSObject::putDirectCustomGetterSetterWithoutTransition(VM& vm, PropertyName
     ASSERT(attributes & PropertyAttribute::CustomAccessorOrValue);
 
     StructureID structureID = this->structureID();
-    Structure* structure = vm.heap.structureIDTable().get(structureID);
+    Structure* structure = structureID.decode();
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
     putDirect(vm, offset, value);
 
@@ -2051,7 +2051,7 @@ void JSObject::putDirectNonIndexAccessorWithoutTransition(VM& vm, PropertyName p
 {
     ASSERT(attributes & PropertyAttribute::Accessor);
     StructureID structureID = this->structureID();
-    Structure* structure = vm.heap.structureIDTable().get(structureID);
+    Structure* structure = structureID.decode();
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
     putDirect(vm, offset, accessor);
     if (attributes & PropertyAttribute::ReadOnly)

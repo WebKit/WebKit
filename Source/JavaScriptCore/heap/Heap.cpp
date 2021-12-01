@@ -1493,8 +1493,6 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         if (vm().typeProfiler())
             vm().typeProfiler()->invalidateTypeSetCache(vm());
 
-        m_structureIDTable.flushOldTables();
-
         reapWeakHandles();
         pruneStaleEntriesFromWeakGCHashTables();
         sweepArrayBuffers();

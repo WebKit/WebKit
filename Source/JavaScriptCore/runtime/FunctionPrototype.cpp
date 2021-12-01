@@ -81,19 +81,19 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
     JSValue thisValue = callFrame->thisValue();
     if (thisValue.inherits<JSFunction>(vm)) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
-        Integrity::auditStructureID(vm, function->structureID());
+        Integrity::auditStructureID(function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(function->toString(globalObject)));
     }
 
     if (thisValue.inherits<InternalFunction>(vm)) {
         InternalFunction* function = jsCast<InternalFunction*>(thisValue);
-        Integrity::auditStructureID(vm, function->structureID());
+        Integrity::auditStructureID(function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", function->name(), "() {\n    [native code]\n}")));
     }
 
     if (thisValue.isObject()) {
         JSObject* object = asObject(thisValue);
-        Integrity::auditStructureID(vm, object->structureID());
+        Integrity::auditStructureID(object->structureID());
         if (object->isCallable(vm))
             RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}")));
     }

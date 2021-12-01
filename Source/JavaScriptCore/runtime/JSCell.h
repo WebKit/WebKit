@@ -135,7 +135,7 @@ public:
     Structure* structure(VM&) const;
     void setStructure(VM&, Structure*);
     void setStructureIDDirectly(StructureID id) { m_structureID = id; }
-    void clearStructure() { m_structureID = 0; }
+    void clearStructure() { m_structureID = StructureID(); }
 
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
     

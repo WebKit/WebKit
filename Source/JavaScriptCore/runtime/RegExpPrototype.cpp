@@ -199,7 +199,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncToString, (JSGlobalObject* globalObject,
         return throwVMTypeError(globalObject, scope);
 
     JSObject* thisObject = asObject(thisValue);
-    Integrity::auditStructureID(vm, thisObject->structureID());
+    Integrity::auditStructureID(thisObject->structureID());
 
     StringRecursionChecker checker(globalObject, thisObject);
     EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());

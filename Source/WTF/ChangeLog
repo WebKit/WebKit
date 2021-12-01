@@ -1,3 +1,18 @@
+2021-11-30  Keith Miller  <keith_miller@apple.com>
+
+        Structures should be allocated out of an aligned pool of memory so StructureID->Structure* is fast.
+        https://bugs.webkit.org/show_bug.cgi?id=233379
+
+        Reviewed by Yusuke Suzuki.
+
+        Add an aligned flavor of reserveUncommited, reserveUncommittedAligned.
+
+        * wtf/OSAllocator.h:
+        * wtf/posix/OSAllocatorPOSIX.cpp:
+        (WTF::OSAllocator::reserveUncommittedAligned):
+        * wtf/win/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::reserveUncommittedAligned):
+
 2021-11-30  Antoine Quint  <graouts@apple.com>
 
         [Model] Update required macOS version for camera, animation and audio APIs

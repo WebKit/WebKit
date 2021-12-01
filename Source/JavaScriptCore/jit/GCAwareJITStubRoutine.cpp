@@ -99,7 +99,7 @@ unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<A
     for (auto& key : cases)
         WTF::add(hasher, key->hash());
     for (auto& structureID : weakStructures)
-        WTF::add(hasher, structureID);
+        WTF::add(hasher, structureID.bits());
     return hasher.hash();
 }
 

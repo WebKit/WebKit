@@ -960,7 +960,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
     // Also used for valueOf.
 
     if (thisValue.isString()) {
-        Integrity::auditStructureID(vm, thisValue.asCell()->structureID());
+        Integrity::auditStructureID(thisValue.asCell()->structureID());
         return JSValue::encode(thisValue);
     }
 
@@ -968,7 +968,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
     if (!stringObject)
         return throwVMTypeError(globalObject, scope);
 
-    Integrity::auditStructureID(vm, stringObject->structureID());
+    Integrity::auditStructureID(stringObject->structureID());
     return JSValue::encode(stringObject->internalValue());
 }
 

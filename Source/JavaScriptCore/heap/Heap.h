@@ -37,7 +37,7 @@
 #include "MarkedSpace.h"
 #include "MutatorState.h"
 #include "Options.h"
-#include "StructureIDTable.h"
+#include "StructureID.h"
 #include "Synchronousness.h"
 #include "WeakHandleOwner.h"
 #include <wtf/AutomaticThread.h>
@@ -266,8 +266,6 @@ public:
     void addReference(JSCell*, ArrayBuffer*);
     
     bool isDeferred() const { return !!m_deferralDepth; }
-
-    StructureIDTable& structureIDTable() { return m_structureIDTable; }
 
     CodeBlockSet& codeBlockSet() { return *m_codeBlocks; }
 
@@ -588,7 +586,6 @@ private:
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
     Lock m_raceMarkStackLock;
 
-    StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;
     GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;
     size_t m_extraMemorySize { 0 };

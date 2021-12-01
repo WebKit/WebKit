@@ -13710,7 +13710,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue structureID;
         auto structure = m_state.forNode(baseEdge.node()).m_structure.onlyStructure();
         if (structure)
-            structureID = m_out.constInt32(structure->id());
+            structureID = m_out.constInt32(structure->id().bits());
         else
             structureID = m_out.load32(base, m_heaps.JSCell_structureID);
 
@@ -16789,7 +16789,7 @@ IGNORE_CLANG_WARNINGS_END
     
     void storeStructure(LValue object, Structure* structure)
     {
-        m_out.store32(m_out.constInt32(structure->id()), object, m_heaps.JSCell_structureID);
+        m_out.store32(m_out.constInt32(structure->id().bits()), object, m_heaps.JSCell_structureID);
         m_out.store32(
             m_out.constInt32(structure->objectInitializationBlob()),
             object, m_heaps.JSCell_usefulBytes);
@@ -19570,7 +19570,7 @@ IGNORE_CLANG_WARNINGS_END
             return proven;
         return m_out.notEqual(
             m_out.load32(cell, m_heaps.JSCell_structureID),
-            m_out.constInt32(vm().stringStructure->id()));
+            m_out.constInt32(vm().stringStructure->id().bits()));
     }
     
     LValue isString(LValue cell, SpeculatedType type = SpecFullTop)
@@ -19579,7 +19579,7 @@ IGNORE_CLANG_WARNINGS_END
             return proven;
         return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
-            m_out.constInt32(vm().stringStructure->id()));
+            m_out.constInt32(vm().stringStructure->id().bits()));
     }
 
     LValue isRopeString(LValue string, Edge edge = Edge())
@@ -19626,7 +19626,7 @@ IGNORE_CLANG_WARNINGS_END
             return proven;
         return m_out.notEqual(
             m_out.load32(cell, m_heaps.JSCell_structureID),
-            m_out.constInt32(vm().symbolStructure->id()));
+            m_out.constInt32(vm().symbolStructure->id().bits()));
     }
     
     LValue isSymbol(LValue cell, SpeculatedType type = SpecFullTop)
@@ -19635,7 +19635,7 @@ IGNORE_CLANG_WARNINGS_END
             return proven;
         return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
-            m_out.constInt32(vm().symbolStructure->id()));
+            m_out.constInt32(vm().symbolStructure->id().bits()));
     }
 
     LValue isNotHeapBigIntUnknownWhetherCell(LValue value, SpeculatedType type = SpecFullTop)
@@ -19664,7 +19664,7 @@ IGNORE_CLANG_WARNINGS_END
             return proven;
         return m_out.notEqual(
             m_out.load32(cell, m_heaps.JSCell_structureID),
-            m_out.constInt32(vm().bigIntStructure->id()));
+            m_out.constInt32(vm().bigIntStructure->id().bits()));
     }
 
     LValue isHeapBigInt(LValue cell, SpeculatedType type = SpecFullTop)
@@ -19673,7 +19673,7 @@ IGNORE_CLANG_WARNINGS_END
             return proven;
         return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
-            m_out.constInt32(vm().bigIntStructure->id()));
+            m_out.constInt32(vm().bigIntStructure->id().bits()));
     }
 
     LValue isArrayTypeForArrayify(LValue cell, ArrayMode arrayMode)
@@ -20400,7 +20400,7 @@ IGNORE_CLANG_WARNINGS_END
             m_out.store32(
                 m_out.bitOr(
                     m_out.load32(object, m_heaps.JSCell_structureID),
-                    m_out.constInt32(nukedStructureIDBit())),
+                    m_out.constInt32(StructureID::nukedStructureIDBit)),
                 object, m_heaps.JSCell_structureID);
             m_out.fence(&m_heaps.root, nullptr);
             m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
@@ -20428,7 +20428,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.store32(
             m_out.bitOr(
                 m_out.load32(object, m_heaps.JSCell_structureID),
-                m_out.constInt32(nukedStructureIDBit())),
+                m_out.constInt32(StructureID::nukedStructureIDBit)),
             object, m_heaps.JSCell_structureID);
         m_out.fence(&m_heaps.root, nullptr);
         m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
@@ -20976,12 +20976,8 @@ IGNORE_CLANG_WARNINGS_END
     LValue loadStructure(LValue value)
     {
         LValue structureID = m_out.load32(value, m_heaps.JSCell_structureID);
-        LValue tableBase = m_out.loadPtr(m_out.absolute(vm().heap.structureIDTable().base()));
-        LValue tableIndex = m_out.aShr(structureID, m_out.constInt32(StructureIDTable::s_numberOfEntropyBits));
-        LValue entropyBits = m_out.shl(m_out.zeroExtPtr(structureID), m_out.constInt32(StructureIDTable::s_entropyBitsShiftForStructurePointer));
-        TypedPointer address = m_out.baseIndex(m_heaps.structureTable, tableBase, m_out.zeroExtPtr(tableIndex));
-        LValue encodedStructureBits = m_out.loadPtr(address);
-        return m_out.bitXor(encodedStructureBits, entropyBits);
+        LValue maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(structureIDMask));
+        return m_out.add(m_out.constIntPtr(g_jscConfig.startOfStructureHeap), m_out.zeroExtPtr(maskedStructureID));
     }
 
     LValue weakPointer(JSCell* pointer)
@@ -20997,7 +20993,7 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue weakStructureID(RegisteredStructure structure)
     {
-        return m_out.constInt32(structure->id());
+        return m_out.constInt32(structure->id().bits());
     }
     
     LValue weakStructure(RegisteredStructure structure)

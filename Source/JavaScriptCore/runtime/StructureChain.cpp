@@ -73,10 +73,9 @@ void StructureChain::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.markAuxiliary(thisObject->m_vector.get());
-    VM& vm = visitor.vm();
     for (auto* current = thisObject->m_vector.get(); *current; ++current) {
         StructureID structureID = *current;
-        Structure* structure = vm.getStructure(structureID);
+        Structure* structure = structureID.decode();
         visitor.appendUnbarriered(structure);
     }
 }

@@ -685,7 +685,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
         {
             StructureID oldStructureID = metadata.m_structureID;
             if (oldStructureID) {
-                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* a = oldStructureID.decode();
                 Structure* b = baseValue.asCell()->structure(vm);
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
@@ -699,7 +699,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
         Structure* structure = baseCell->structure(vm);
         if (slot.isValue()) {
             // Start out by clearing out the old cache.
-            metadata.m_structureID = 0;
+            metadata.m_structureID = StructureID();
             metadata.m_offset = 0;
 
             if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
@@ -812,10 +812,10 @@ static JSValue performLLIntGetByID(const Instruction* pc, CodeBlock* codeBlock, 
                 oldStructureID = metadata.protoLoadMode.structureID;
                 break;
             default:
-                oldStructureID = 0;
+                oldStructureID = StructureID();
             }
             if (oldStructureID) {
-                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* a = oldStructureID.decode();
                 Structure* b = baseValue.asCell()->structure(vm);
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
@@ -950,7 +950,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         {
             StructureID oldStructureID = metadata.m_oldStructureID;
             if (oldStructureID) {
-                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* a = oldStructureID.decode();
                 Structure* b = baseValue.asCell()->structure(vm);
                 if (slot.type() == PutPropertySlot::NewProperty)
                     b = b->previousID();
@@ -963,9 +963,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         }
 
         // Start out by clearing out the old cache.
-        metadata.m_oldStructureID = 0;
+        metadata.m_oldStructureID = StructureID();
         metadata.m_offset = 0;
-        metadata.m_newStructureID = 0;
+        metadata.m_newStructureID = StructureID();
         metadata.m_structureChain.clear();
         
         JSCell* baseCell = baseValue.asCell();
@@ -1139,7 +1139,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
         {
             StructureID oldStructureID = metadata.m_structureID;
             if (oldStructureID) {
-                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* a = oldStructureID.decode();
                 Structure* b = baseValue.asCell()->structure(vm);
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
@@ -1153,7 +1153,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
         Structure* structure = baseCell->structure(vm);
         if (slot.isValue()) {
             // Start out by clearing out the old cache.
-            metadata.m_structureID = 0;
+            metadata.m_structureID = StructureID();
             metadata.m_offset = 0;
 
             if (!structure->isUncacheableDictionary()) {
@@ -1272,7 +1272,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         {
             StructureID oldStructureID = metadata.m_oldStructureID;
             if (oldStructureID) {
-                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* a = oldStructureID.decode();
                 Structure* b = baseValue.asCell()->structure(vm);
                 if (slot.type() == PutPropertySlot::NewProperty)
                     b = b->previousID();
@@ -1285,9 +1285,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         }
 
         // Start out by clearing out the old cache.
-        metadata.m_oldStructureID = 0;
+        metadata.m_oldStructureID = StructureID();
         metadata.m_offset = 0;
-        metadata.m_newStructureID = 0;
+        metadata.m_newStructureID = StructureID();
         metadata.m_property.clear();
         
         JSCell* baseCell = baseValue.asCell();
@@ -1361,8 +1361,8 @@ LLINT_SLOW_PATH_DECL(slow_path_set_private_brand)
         ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
 
         // Start out by clearing out the old cache.
-        metadata.m_oldStructureID = 0;
-        metadata.m_newStructureID = 0;
+        metadata.m_oldStructureID = StructureID();
+        metadata.m_newStructureID = StructureID();
         metadata.m_brand.clear();
 
         if (!newStructure->isDictionary()) {

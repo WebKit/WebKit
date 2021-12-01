@@ -164,6 +164,7 @@
 #include "StrictEvalActivation.h"
 #include "StringObject.h"
 #include "StrongInlines.h"
+#include "StructureAlignedMemoryAllocator.h"
 #include "StructureChain.h"
 #include "StructureInlines.h"
 #include "SymbolObject.h"
@@ -385,8 +386,8 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , stringObjectSpace ISO_SUBSPACE_INIT(heap, *cellHeapCellType, StringObject)
     , structureChainSpace ISO_SUBSPACE_INIT(heap, *cellHeapCellType, StructureChain)
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, *destructibleCellHeapCellType, StructureRareData) // Hash:0xaca4e62d
-    , structureSpace ISO_SUBSPACE_INIT(heap, *destructibleCellHeapCellType, Structure) // Hash:0x1f1bcdca
-    , brandedStructureSpace ISO_SUBSPACE_INIT(heap, *destructibleCellHeapCellType, BrandedStructure)
+    , structureSpace("IsolatedStructureSpace", heap, *destructibleCellHeapCellType, sizeof(Structure), Structure::numberOfLowerTierCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
+    , brandedStructureSpace("IsolatedBrandedStructureSpace", heap, *destructibleCellHeapCellType, sizeof(BrandedStructure), BrandedStructure::numberOfLowerTierCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
     , symbolTableSpace ISO_SUBSPACE_INIT(heap, *destructibleCellHeapCellType, SymbolTable) // Hash:0xc5215afd
     , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
     , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)

@@ -69,7 +69,7 @@ static_assert(sizeof(GetByIdModeMetadataProtoLoad) == 16);
 union GetByIdModeMetadata {
     GetByIdModeMetadata()
     {
-        defaultMode.structureID = 0;
+        defaultMode.structureID = StructureID();
         defaultMode.cachedOffset = 0;
         defaultMode.padding1 = 0;
         mode = GetByIdMode::Default;
@@ -100,7 +100,7 @@ static_assert(sizeof(GetByIdModeMetadata) == 16);
 struct GetByIdModeMetadata {
     GetByIdModeMetadata()
     {
-        defaultMode.structureID = 0;
+        defaultMode.structureID = StructureID();
         defaultMode.cachedOffset = 0;
         defaultMode.padding1 = 0;
         mode = GetByIdMode::Default;
@@ -127,7 +127,7 @@ struct GetByIdModeMetadata {
 inline void GetByIdModeMetadata::clearToDefaultModeWithoutCache()
 {
     mode = GetByIdMode::Default;
-    defaultMode.structureID = 0;
+    defaultMode.structureID = StructureID();
     defaultMode.cachedOffset = 0;
 }
 

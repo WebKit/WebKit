@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,36 @@
 
 #pragma once
 
-#include "ECMAMode.h"
+#include "IsoMemoryAllocatorBase.h"
+#include <wtf/Gigacage.h>
+
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+#include <wtf/DebugHeap.h>
+#endif
 
 namespace JSC {
 
-class PutByIdFlags {
+class StructureAlignedMemoryAllocator final : public IsoMemoryAllocatorBase {
 public:
-    constexpr static PutByIdFlags create(ECMAMode ecmaMode)
-    {
-        return PutByIdFlags(false, ecmaMode);
-    }
+    using Base = IsoMemoryAllocatorBase;
 
-    // A direct put_by_id means that we store the property without checking if the
-    // prototype chain has a setter.
-    constexpr static PutByIdFlags createDirect(ECMAMode ecmaMode)
-    {
-        return PutByIdFlags(true, ecmaMode);
-    }
+    StructureAlignedMemoryAllocator(CString);
+    ~StructureAlignedMemoryAllocator() final;
+    
+    void dump(PrintStream&) const final;
 
-    bool isDirect() const { return m_isDirect; }
-    ECMAMode ecmaMode() const { return m_ecmaMode; }
+    void* tryAllocateMemory(size_t) final;
+    void freeMemory(void*) final;
+    void* tryReallocateMemory(void*, size_t) final;
 
-private:
-    constexpr PutByIdFlags(bool isDirect, ECMAMode ecmaMode)
-        : m_isDirect(isDirect)
-        , m_ecmaMode(ecmaMode)
-    {
-    }
+    static void initializeStructureAddressSpace();
 
-    bool m_isDirect;
-    ECMAMode m_ecmaMode;
+protected:
+    void* tryMallocBlock() final;
+    void freeBlock(void* block) final;
+    void commitBlock(void* block) final;
+    void decommitBlock(void* block) final;
 };
 
 } // namespace JSC
 
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::PutByIdFlags);
-
-} // namespace WTF
