@@ -120,8 +120,6 @@ public:
     virtual float pageScaleFactor() const = 0;
     virtual ScrollExtents scrollExtents() const = 0;
     virtual bool scrollAnimationEnabled() const { return true; }
-
-    virtual bool momentumScrollingAnimatorEnabled() const { return false; }
 };
 
 class ScrollingEffectsController : public ScrollAnimationClient {
@@ -221,8 +219,6 @@ private:
 
     void startOrStopAnimationCallbacks();
 
-    bool momentumScrollingAnimatorEnabled() const { return m_momentumScrollingAnimatorEnabled; }
-
     void startDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason);
     void stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason);
 
@@ -253,7 +249,6 @@ private:
     bool m_isAnimatingScrollSnap { false };
     bool m_isAnimatingKeyboardScrolling { false };
     bool m_inScrollGesture { false };
-    bool m_momentumScrollingAnimatorEnabled { false };
 
 #if PLATFORM(MAC)
     WallTime m_lastMomentumScrollTimestamp;

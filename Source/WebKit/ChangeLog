@@ -1,3 +1,17 @@
+2021-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the scrolling tree plumbing of the momentumScrollingAnimatorEnabled() setting, which is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=233680
+
+        Reviewed by Tim Horton.
+
+        We no longer consult the momentumScrollingAnimatorEnabled setting in the scrolling tree, so remove
+        the plumbing.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+
 2021-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Add a momentum event synthesizer

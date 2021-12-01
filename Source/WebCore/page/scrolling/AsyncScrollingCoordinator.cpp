@@ -746,7 +746,6 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode.setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
     frameScrollingNode.setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());
     frameScrollingNode.setWheelEventGesturesBecomeNonBlocking(settings.wheelEventGesturesBecomeNonBlocking());
-    frameScrollingNode.setMomentumScrollingAnimatorEnabled(settings.momentumScrollingAnimatorEnabled());
 
     frameScrollingNode.setMinLayoutViewportOrigin(frameView.minStableLayoutViewportOrigin());
     frameScrollingNode.setMaxLayoutViewportOrigin(frameView.maxStableLayoutViewportOrigin());

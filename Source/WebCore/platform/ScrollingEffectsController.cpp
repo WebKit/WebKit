@@ -48,7 +48,6 @@ namespace WebCore {
 
 ScrollingEffectsController::ScrollingEffectsController(ScrollingEffectsControllerClient& client)
     : m_client(client)
-    , m_momentumScrollingAnimatorEnabled(client.momentumScrollingAnimatorEnabled())
 {
 }
 

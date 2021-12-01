@@ -298,8 +298,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled)
-            || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents)
-            || rootNode->hasChangedProperty(ScrollingStateNode::Property::MomentumScrollingAnimatorEnabled))) {
+            || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))) {
         Locker locker { m_treeStateLock };
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
@@ -319,9 +318,6 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))
             m_isMonitoringWheelEvents = scrollingStateTree->rootStateNode()->isMonitoringWheelEvents();
-
-        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::MomentumScrollingAnimatorEnabled))
-            m_momentumScrollingAnimatorEnabled = scrollingStateTree->rootStateNode()->momentumScrollingAnimatorEnabled();
     }
 
     m_overflowRelatedNodesMap.clear();
@@ -344,9 +340,6 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
             node->willBeDestroyed();
     }
 
-    if (rootNode && (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::MomentumScrollingAnimatorEnabled)))
-        RELEASE_LOG(Scrolling, "ScrollingTree momentum scrolling animator enabled: %d", rootNode->momentumScrollingAnimatorEnabled());
-    
     didCommitTree();
 
     LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(debugScrollingStateTreeAsTextBehaviors));

@@ -133,8 +133,6 @@ protected:
     void willStartAnimatedScroll();
     void didStopAnimatedScroll();
 
-    bool momentumScrollingAnimatorEnabled() const;
-    
     void setScrollAnimationInProgress(bool);
 
     virtual void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync);

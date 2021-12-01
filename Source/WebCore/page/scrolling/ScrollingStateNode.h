@@ -255,20 +255,19 @@ public:
         FixedElementsLayoutRelativeToFrame          = 1LLU << 31,
         VisualViewportIsSmallerThanLayoutViewport   = 1LLU << 32,
         AsyncFrameOrOverflowScrollingEnabled        = 1LLU << 33,
-        MomentumScrollingAnimatorEnabled            = 1LLU << 34,
-        WheelEventGesturesBecomeNonBlocking         = 1LLU << 35,
-        ScrollingPerformanceTestingEnabled          = 1LLU << 36,
-        LayoutViewport                              = 1LLU << 37,
-        MinLayoutViewportOrigin                     = 1LLU << 38,
-        MaxLayoutViewportOrigin                     = 1LLU << 39,
-        OverrideVisualViewportSize                  = 1LLU << 40,
+        WheelEventGesturesBecomeNonBlocking         = 1LLU << 34,
+        ScrollingPerformanceTestingEnabled          = 1LLU << 35,
+        LayoutViewport                              = 1LLU << 36,
+        MinLayoutViewportOrigin                     = 1LLU << 37,
+        MaxLayoutViewportOrigin                     = 1LLU << 38,
+        OverrideVisualViewportSize                  = 1LLU << 39,
         // ScrollingStatePositionedNode
-        RelatedOverflowScrollingNodes               = 1LLU << 41,
-        LayoutConstraintData                        = 1LLU << 42,
+        RelatedOverflowScrollingNodes               = 1LLU << 40,
+        LayoutConstraintData                        = 1LLU << 41,
         // ScrollingStateFixedNode, ScrollingStateStickyNode
-        ViewportConstraints                         = 1LLU << 43,
+        ViewportConstraints                         = 1LLU << 42,
         // ScrollingStateOverflowScrollProxyNode
-        OverflowScrollingNode                       = 1LLU << 44,
+        OverflowScrollingNode                       = 1LLU << 43,
     };
     
     bool hasChangedProperties() const { return !m_changedProperties.isEmpty(); }
