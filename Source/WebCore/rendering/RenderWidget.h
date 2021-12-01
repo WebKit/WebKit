@@ -82,7 +82,6 @@ protected:
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
-    virtual void paintContents(PaintInfo&, const LayoutPoint&);
     bool requiresLayer() const override;
 
 private:
@@ -98,6 +97,8 @@ private:
 
     bool setWidgetGeometry(const LayoutRect&);
     bool updateWidgetGeometry();
+
+    void paintContents(PaintInfo&, const LayoutPoint&);
 
     RefPtr<Widget> m_widget;
     IntRect m_clipRect; // The rectangle needs to remain correct after scrolling, so it is stored in content view coordinates, and not clipped to window.
