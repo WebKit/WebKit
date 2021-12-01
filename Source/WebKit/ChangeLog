@@ -1,3 +1,17 @@
+2021-12-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fixes after r286346.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+        (WebKit::MomentumEventDispatcher::startDisplayLink):
+        (WebKit::MomentumEventDispatcher::displayWasRefreshed):
+        (WebKit::MomentumEventDispatcher::didReceiveScrollEventWithInterval):
+        (WebKit::MomentumEventDispatcher::buildOffsetTableWithInitialDelta):
+        (WebKit::MomentumEventDispatcher::offsetAtTime):
+        (WebKit::momentumDecayRate):
+        (WebKit::MomentumEventDispatcher::computeNextDelta):
+        * WebProcess/WebPage/MomentumEventDispatcher.h:
+
 2021-12-01  Youenn Fablet  <youenn@apple.com>
 
         Reuse navigation preload if service worker is fetching the corresponding navigation request
