@@ -38,7 +38,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.globalLexicalEnvironmentSpace;
+        return &vm.globalLexicalEnvironmentSpace();
     }
 
     static JSGlobalLexicalEnvironment* create(VM& vm, Structure* structure, JSScope* parentScope)

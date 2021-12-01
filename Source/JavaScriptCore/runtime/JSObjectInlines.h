@@ -41,7 +41,7 @@ template<typename CellType, SubspaceAccess>
 CompleteSubspace* JSFinalObject::subspaceFor(VM& vm)
 {
     static_assert(!CellType::needsDestruction);
-    return &vm.cellSpace;
+    return &vm.cellSpace();
 }
 
 // https://tc39.es/ecma262/#sec-createlistfromarraylike

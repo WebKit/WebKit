@@ -163,7 +163,7 @@ JSC::IsoSubspace* JSWorkletGlobalScope::subspaceForImpl(JSC::VM& vm)
     auto& spaces = clientData.subspaces();
     if (auto* space = spaces.m_subspaceForWorkletGlobalScope.get())
         return space;
-    spaces.m_subspaceForWorkletGlobalScope = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *clientData.m_heapCellTypeForJSWorkletGlobalScope, JSWorkletGlobalScope);
+    spaces.m_subspaceForWorkletGlobalScope = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, clientData.m_heapCellTypeForJSWorkletGlobalScope, JSWorkletGlobalScope);
     auto* space = spaces.m_subspaceForWorkletGlobalScope.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

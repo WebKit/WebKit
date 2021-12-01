@@ -41,7 +41,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(sizeof(CellType) == sizeof(InternalFunction), "InternalFunction subclasses that add fields need to override subspaceFor<>()");
-        return &vm.internalFunctionSpace;
+        return &vm.internalFunctionSpace();
     }
 
     DECLARE_EXPORT_INFO;

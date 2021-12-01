@@ -74,7 +74,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -338,9 +338,9 @@ JSC::IsoSubspace* JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverr
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns> || !JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>)
-        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
+        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
     else
-        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
+        spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
     auto* space = spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

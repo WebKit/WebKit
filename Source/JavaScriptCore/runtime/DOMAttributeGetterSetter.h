@@ -43,7 +43,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.domAttributeGetterSetterSpace;
+        return &vm.domAttributeGetterSetterSpace();
     }
 
     static DOMAttributeGetterSetter* create(VM& vm, CustomGetter customGetter, CustomSetter customSetter, DOMAttributeAnnotation domAttribute)

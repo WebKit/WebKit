@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ObjectPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static ObjectPrototype* create(VM&, JSGlobalObject*, Structure*);

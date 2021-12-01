@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlObject, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static IntlObject* create(VM&, JSGlobalObject*, Structure*);

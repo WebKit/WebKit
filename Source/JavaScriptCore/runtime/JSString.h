@@ -111,7 +111,7 @@ public:
     template<typename, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.stringSpace;
+        return &vm.stringSpace();
     }
     
     // We employ overflow checks in many places with the assumption that MaxLength
@@ -270,7 +270,7 @@ public:
     template<typename, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.ropeStringSpace;
+        return &vm.ropeStringSpace();
     }
 
     // We use lower 3bits of fiber0 for flags. These bits are usable due to alignment, and it is OK even in 32bit architecture.

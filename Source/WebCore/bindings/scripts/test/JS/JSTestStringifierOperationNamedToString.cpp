@@ -69,7 +69,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierOperationNamedToStringPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -192,9 +192,9 @@ JSC::IsoSubspace* JSTestStringifierOperationNamedToString::subspaceForImpl(JSC::
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierOperationNamedToString> || !JSTestStringifierOperationNamedToString::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierOperationNamedToString>)
-        spaces.m_subspaceForTestStringifierOperationNamedToString = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestStringifierOperationNamedToString);
+        spaces.m_subspaceForTestStringifierOperationNamedToString = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestStringifierOperationNamedToString);
     else
-        spaces.m_subspaceForTestStringifierOperationNamedToString = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestStringifierOperationNamedToString);
+        spaces.m_subspaceForTestStringifierOperationNamedToString = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestStringifierOperationNamedToString);
     auto* space = spaces.m_subspaceForTestStringifierOperationNamedToString.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

@@ -38,7 +38,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(sizeof(CellType) == sizeof(JSProxy));
-        return &vm.jsProxySpace;
+        return &vm.jsProxySpace();
     }
 
     static JSProxy* create(VM& vm, Structure* structure, JSObject* target)

@@ -42,7 +42,7 @@ public:
     template<typename, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.codeBlockSpace.space;
+        return &vm.codeBlockSpace().space;
     }
 
     static FunctionCodeBlock* create(VM& vm, CopyParsedBlockTag, FunctionCodeBlock& other)

@@ -32,7 +32,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(MathObject, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static MathObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

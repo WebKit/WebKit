@@ -42,13 +42,14 @@
 
 namespace JSC {
 
+class CachedFunctionExecutable;
 class Decoder;
-class FunctionMetadataNode;
 class FunctionExecutable;
+class FunctionMetadataNode;
 class ParserError;
+class ScriptExecutable;
 class SourceProvider;
 class UnlinkedFunctionCodeBlock;
-class CachedFunctionExecutable;
 
 enum UnlinkedFunctionKind {
     UnlinkedNormalFunction,
@@ -67,7 +68,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.unlinkedFunctionExecutableSpace.space;
+        return &vm.unlinkedFunctionExecutableSpace().space;
     }
 
     static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isBuiltinDefaultClassConstructor = false)
@@ -131,7 +132,7 @@ public:
     {
         m_unlinkedCodeBlockForCall.clear();
         m_unlinkedCodeBlockForConstruct.clear();
-        vm.unlinkedFunctionExecutableSpace.set.remove(this);
+        vm.unlinkedFunctionExecutableSpace().set.remove(this);
     }
 
     void recordParse(CodeFeatures features, LexicalScopeFeatures lexicalScopeFeatures, bool hasCapturedVariables)

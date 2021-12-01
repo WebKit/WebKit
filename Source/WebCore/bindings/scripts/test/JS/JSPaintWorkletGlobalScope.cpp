@@ -169,7 +169,7 @@ JSC::IsoSubspace* JSPaintWorkletGlobalScope::subspaceForImpl(JSC::VM& vm)
     auto& spaces = clientData.subspaces();
     if (auto* space = spaces.m_subspaceForPaintWorkletGlobalScope.get())
         return space;
-    spaces.m_subspaceForPaintWorkletGlobalScope = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *clientData.m_heapCellTypeForJSPaintWorkletGlobalScope, JSPaintWorkletGlobalScope);
+    spaces.m_subspaceForPaintWorkletGlobalScope = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, clientData.m_heapCellTypeForJSPaintWorkletGlobalScope, JSPaintWorkletGlobalScope);
     auto* space = spaces.m_subspaceForPaintWorkletGlobalScope.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

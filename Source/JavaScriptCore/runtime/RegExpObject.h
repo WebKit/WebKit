@@ -36,7 +36,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.regExpObjectSpace;
+        return &vm.regExpObjectSpace();
     }
 
     static constexpr uintptr_t lastIndexIsNotWritableFlag = 0b01;

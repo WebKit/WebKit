@@ -97,7 +97,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCallTracerPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -513,9 +513,9 @@ JSC::IsoSubspace* JSTestCallTracer::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestCallTracer> || !JSTestCallTracer::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestCallTracer>)
-        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestCallTracer);
+        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestCallTracer);
     else
-        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestCallTracer);
+        spaces.m_subspaceForTestCallTracer = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestCallTracer);
     auto* space = spaces.m_subspaceForTestCallTracer.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

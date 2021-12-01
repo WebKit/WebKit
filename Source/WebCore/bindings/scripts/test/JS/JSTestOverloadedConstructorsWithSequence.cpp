@@ -68,7 +68,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestOverloadedConstructorsWithSequencePrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -238,9 +238,9 @@ JSC::IsoSubspace* JSTestOverloadedConstructorsWithSequence::subspaceForImpl(JSC:
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestOverloadedConstructorsWithSequence> || !JSTestOverloadedConstructorsWithSequence::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestOverloadedConstructorsWithSequence>)
-        spaces.m_subspaceForTestOverloadedConstructorsWithSequence = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestOverloadedConstructorsWithSequence);
+        spaces.m_subspaceForTestOverloadedConstructorsWithSequence = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestOverloadedConstructorsWithSequence);
     else
-        spaces.m_subspaceForTestOverloadedConstructorsWithSequence = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestOverloadedConstructorsWithSequence);
+        spaces.m_subspaceForTestOverloadedConstructorsWithSequence = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestOverloadedConstructorsWithSequence);
     auto* space = spaces.m_subspaceForTestOverloadedConstructorsWithSequence.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

@@ -47,7 +47,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.scopedArgumentsSpace;
+        return &vm.scopedArgumentsSpace();
     }
 
     // Creates an arguments object but leaves it uninitialized. This is dangerous if we GC right

@@ -59,7 +59,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.getterSetterSpace;
+        return &vm.getterSetterSpace();
     }
 
     static GetterSetter* create(VM& vm, JSGlobalObject* globalObject, JSObject* getter, JSObject* setter)

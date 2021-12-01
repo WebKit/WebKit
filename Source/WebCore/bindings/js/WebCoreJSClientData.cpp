@@ -38,6 +38,7 @@
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSRemoteDOMWindow.h"
 #include "JSServiceWorkerGlobalScope.h"
+#include "JSSharedWorkerGlobalScope.h"
 #include "JSWindowProxy.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
@@ -59,33 +60,34 @@ using namespace JSC;
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(vm)
-    , m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::create<RuntimeArray>())
-    , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::create<JSC::Bindings::RuntimeObject>())
-    , m_windowProxyHeapCellType(JSC::IsoHeapCellType::create<JSWindowProxy>())
-    , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::create<JSDOMWindow>())
-    , m_heapCellTypeForJSDedicatedWorkerGlobalScope(JSC::IsoHeapCellType::create<JSDedicatedWorkerGlobalScope>())
-    , m_heapCellTypeForJSRemoteDOMWindow(JSC::IsoHeapCellType::create<JSRemoteDOMWindow>())
-    , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::create<JSWorkerGlobalScope>())
+    , m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::Args<RuntimeArray>())
+    , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::Args<JSC::Bindings::RuntimeObject>())
+    , m_windowProxyHeapCellType(JSC::IsoHeapCellType::Args<JSWindowProxy>())
+    , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::Args<JSDOMWindow>())
+    , m_heapCellTypeForJSDedicatedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSDedicatedWorkerGlobalScope>())
+    , m_heapCellTypeForJSRemoteDOMWindow(JSC::IsoHeapCellType::Args<JSRemoteDOMWindow>())
+    , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSWorkerGlobalScope>())
+    , m_heapCellTypeForJSSharedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSSharedWorkerGlobalScope>())
 #if ENABLE(SERVICE_WORKER)
-    , m_heapCellTypeForJSServiceWorkerGlobalScope(JSC::IsoHeapCellType::create<JSServiceWorkerGlobalScope>())
+    , m_heapCellTypeForJSServiceWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSServiceWorkerGlobalScope>())
 #endif
-    , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::create<JSWorkletGlobalScope>())
+    , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSWorkletGlobalScope>())
 #if ENABLE(CSS_PAINTING_API)
-    , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::create<JSPaintWorkletGlobalScope>())
+    , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSPaintWorkletGlobalScope>())
 #endif
 #if ENABLE(WEB_AUDIO)
-    , m_heapCellTypeForJSAudioWorkletGlobalScope(JSC::IsoHeapCellType::create<JSAudioWorkletGlobalScope>())
+    , m_heapCellTypeForJSAudioWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSAudioWorkletGlobalScope>())
 #endif
-    , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::create<JSIDBSerializationGlobalObject>())
-    , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMBuiltinConstructorBase)
-    , m_domConstructorSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMConstructorBase)
-    , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMObject)
-    , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSDOMWindowProperties)
-    , m_runtimeArraySpace ISO_SUBSPACE_INIT(vm.heap, *m_runtimeArrayHeapCellType, RuntimeArray)
-    , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, RuntimeMethod) // Hash:0xf70c4a85
-    , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, *m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
-    , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, *m_windowProxyHeapCellType, JSWindowProxy)
-    , m_idbSerializationSpace ISO_SUBSPACE_INIT(vm.heap, *m_heapCellTypeForJSIDBSerializationGlobalObject, JSIDBSerializationGlobalObject)
+    , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::Args<JSIDBSerializationGlobalObject>())
+    , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMBuiltinConstructorBase)
+    , m_domConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMConstructorBase)
+    , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMObject)
+    , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMWindowProperties)
+    , m_runtimeArraySpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeArrayHeapCellType, RuntimeArray)
+    , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), RuntimeMethod) // Hash:0xf70c4a85
+    , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
+    , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, m_windowProxyHeapCellType, JSWindowProxy)
+    , m_idbSerializationSpace ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSIDBSerializationGlobalObject, JSIDBSerializationGlobalObject)
     , m_subspaces(makeUnique<DOMIsoSubspaces>())
 {
 }

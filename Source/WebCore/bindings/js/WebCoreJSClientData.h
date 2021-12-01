@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *
@@ -92,26 +92,26 @@ private:
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
 
-    std::unique_ptr<JSC::HeapCellType> m_runtimeArrayHeapCellType;
-    std::unique_ptr<JSC::HeapCellType> m_runtimeObjectHeapCellType;
-    std::unique_ptr<JSC::HeapCellType> m_windowProxyHeapCellType;
+    JSC::IsoHeapCellType m_runtimeArrayHeapCellType;
+    JSC::IsoHeapCellType m_runtimeObjectHeapCellType;
+    JSC::IsoHeapCellType m_windowProxyHeapCellType;
 public:
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDOMWindow;
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDedicatedWorkerGlobalScope;
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSRemoteDOMWindow;
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkerGlobalScope;
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSSharedWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSDOMWindow;
+    JSC::IsoHeapCellType m_heapCellTypeForJSDedicatedWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSRemoteDOMWindow;
+    JSC::IsoHeapCellType m_heapCellTypeForJSWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSSharedWorkerGlobalScope;
 #if ENABLE(SERVICE_WORKER)
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSServiceWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSServiceWorkerGlobalScope;
 #endif
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkletGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSWorkletGlobalScope;
 #if ENABLE(CSS_PAINTING_API)
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSPaintWorkletGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSPaintWorkletGlobalScope;
 #endif
 #if ENABLE(WEB_AUDIO)
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSAudioWorkletGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSAudioWorkletGlobalScope;
 #endif
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSIDBSerializationGlobalObject;
+    JSC::IsoHeapCellType m_heapCellTypeForJSIDBSerializationGlobalObject;
 
 private:
     JSC::IsoSubspace m_domBuiltinConstructorSpace;

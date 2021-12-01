@@ -64,7 +64,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestClassWithJSBuiltinConstructorPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -176,9 +176,9 @@ JSC::IsoSubspace* JSTestClassWithJSBuiltinConstructor::subspaceForImpl(JSC::VM& 
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestClassWithJSBuiltinConstructor> || !JSTestClassWithJSBuiltinConstructor::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestClassWithJSBuiltinConstructor>)
-        spaces.m_subspaceForTestClassWithJSBuiltinConstructor = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestClassWithJSBuiltinConstructor);
+        spaces.m_subspaceForTestClassWithJSBuiltinConstructor = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestClassWithJSBuiltinConstructor);
     else
-        spaces.m_subspaceForTestClassWithJSBuiltinConstructor = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestClassWithJSBuiltinConstructor);
+        spaces.m_subspaceForTestClassWithJSBuiltinConstructor = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestClassWithJSBuiltinConstructor);
     auto* space = spaces.m_subspaceForTestClassWithJSBuiltinConstructor.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

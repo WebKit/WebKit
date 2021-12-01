@@ -43,7 +43,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.customGetterSetterSpace;
+        return &vm.customGetterSetterSpace();
     }
 
     static CustomGetterSetter* create(VM& vm, CustomGetter customGetter, CustomSetter customSetter)

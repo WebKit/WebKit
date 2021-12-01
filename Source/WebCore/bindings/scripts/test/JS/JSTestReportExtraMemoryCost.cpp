@@ -63,7 +63,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReportExtraMemoryCostPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -171,9 +171,9 @@ JSC::IsoSubspace* JSTestReportExtraMemoryCost::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestReportExtraMemoryCost> || !JSTestReportExtraMemoryCost::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestReportExtraMemoryCost>)
-        spaces.m_subspaceForTestReportExtraMemoryCost = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestReportExtraMemoryCost);
+        spaces.m_subspaceForTestReportExtraMemoryCost = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestReportExtraMemoryCost);
     else
-        spaces.m_subspaceForTestReportExtraMemoryCost = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestReportExtraMemoryCost);
+        spaces.m_subspaceForTestReportExtraMemoryCost = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestReportExtraMemoryCost);
     auto* space = spaces.m_subspaceForTestReportExtraMemoryCost.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

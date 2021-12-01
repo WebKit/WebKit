@@ -38,7 +38,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalCalendarPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static TemporalCalendarPrototype* create(VM&, JSGlobalObject*, Structure*);

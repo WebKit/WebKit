@@ -1814,7 +1814,7 @@ JSC::IsoSubspace* JSTestGlobalObject::subspaceForImpl(JSC::VM& vm)
     auto& spaces = clientData.subspaces();
     if (auto* space = spaces.m_subspaceForTestGlobalObject.get())
         return space;
-    spaces.m_subspaceForTestGlobalObject = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *clientData.m_heapCellTypeForJSTestGlobalObject, JSTestGlobalObject);
+    spaces.m_subspaceForTestGlobalObject = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, clientData.m_heapCellTypeForJSTestGlobalObject, JSTestGlobalObject);
     auto* space = spaces.m_subspaceForTestGlobalObject.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

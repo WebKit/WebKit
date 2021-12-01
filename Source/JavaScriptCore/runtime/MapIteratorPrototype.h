@@ -37,7 +37,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(MapIteratorPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static MapIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

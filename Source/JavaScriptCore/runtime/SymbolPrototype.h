@@ -41,7 +41,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SymbolPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static SymbolPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

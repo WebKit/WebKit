@@ -129,7 +129,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.propertyTableSpace;
+        return &vm.propertyTableSpace();
     }
 
     static constexpr bool needsDestruction = true;

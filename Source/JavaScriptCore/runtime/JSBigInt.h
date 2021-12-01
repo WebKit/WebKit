@@ -56,7 +56,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.bigIntSpace;
+        return &vm.bigIntSpace();
     }
 
     enum class InitializationType { None, WithZero };

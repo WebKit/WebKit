@@ -66,8 +66,6 @@ public:
     template<typename Functor> void iterate(const Functor&);
     template<typename Functor> void iterate(const AbstractLocker&, const Functor&);
 
-    template<typename Functor> void iterateViaSubspaces(VM&, const Functor&);
-    
     template<typename Functor> void iterateCurrentlyExecuting(const Functor&);
     
     void dump(PrintStream&) const;

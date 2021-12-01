@@ -65,7 +65,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestIndexedSetterThrowingExceptionPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -276,9 +276,9 @@ JSC::IsoSubspace* JSTestIndexedSetterThrowingException::subspaceForImpl(JSC::VM&
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestIndexedSetterThrowingException> || !JSTestIndexedSetterThrowingException::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestIndexedSetterThrowingException>)
-        spaces.m_subspaceForTestIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestIndexedSetterThrowingException);
+        spaces.m_subspaceForTestIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestIndexedSetterThrowingException);
     else
-        spaces.m_subspaceForTestIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestIndexedSetterThrowingException);
+        spaces.m_subspaceForTestIndexedSetterThrowingException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestIndexedSetterThrowingException);
     auto* space = spaces.m_subspaceForTestIndexedSetterThrowingException.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

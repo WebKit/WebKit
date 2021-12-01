@@ -95,7 +95,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNodePrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -405,9 +405,9 @@ public:
             return space;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, TestNodeIterator> || !TestNodeIterator::needsDestruction);
         if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, TestNodeIterator>)
-            spaces.m_subspaceForTestNodeIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType.get(), TestNodeIterator);
+            spaces.m_subspaceForTestNodeIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), TestNodeIterator);
         else
-            spaces.m_subspaceForTestNodeIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, TestNodeIterator);
+            spaces.m_subspaceForTestNodeIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), TestNodeIterator);
         auto* space = spaces.m_subspaceForTestNodeIterator.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")
@@ -497,9 +497,9 @@ JSC::IsoSubspace* JSTestNode::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNode> || !JSTestNode::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNode>)
-        spaces.m_subspaceForTestNode = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestNode);
+        spaces.m_subspaceForTestNode = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestNode);
     else
-        spaces.m_subspaceForTestNode = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestNode);
+        spaces.m_subspaceForTestNode = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestNode);
     auto* space = spaces.m_subspaceForTestNode.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

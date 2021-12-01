@@ -369,7 +369,7 @@ JSC::IsoSubspace* JSDOMWindow::subspaceForImpl(JSC::VM& vm)
     auto& spaces = clientData.subspaces();
     if (auto* space = spaces.m_subspaceForDOMWindow.get())
         return space;
-    spaces.m_subspaceForDOMWindow = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *clientData.m_heapCellTypeForJSDOMWindow, JSDOMWindow);
+    spaces.m_subspaceForDOMWindow = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, clientData.m_heapCellTypeForJSDOMWindow, JSDOMWindow);
     auto* space = spaces.m_subspaceForDOMWindow.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

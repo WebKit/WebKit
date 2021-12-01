@@ -251,7 +251,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
         m_unlinkedCodeBlockForConstruct.set(vm, this, result);
         break;
     }
-    vm.unlinkedFunctionExecutableSpace.set.add(this);
+    vm.unlinkedFunctionExecutableSpace().set.add(this);
     return result;
 }
 
@@ -310,7 +310,7 @@ void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm)
         clearIfDead(m_unlinkedCodeBlockForCall);
         clearIfDead(m_unlinkedCodeBlockForConstruct);
         if (isCleared && !isStillValid)
-            vm.unlinkedFunctionExecutableSpace.set.remove(this);
+            vm.unlinkedFunctionExecutableSpace().set.remove(this);
     }
 }
 

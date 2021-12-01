@@ -64,7 +64,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         // Attempt GC allocation.
         void* temp;
         size_t size = sizeOf(length, elementSize);
-        temp = vm.primitiveGigacageAuxiliarySpace.allocateNonVirtual(vm, size, nullptr, AllocationFailureMode::ReturnNull);
+        temp = vm.primitiveGigacageAuxiliarySpace().allocateNonVirtual(vm, size, nullptr, AllocationFailureMode::ReturnNull);
         if (!temp)
             return;
 

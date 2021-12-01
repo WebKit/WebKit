@@ -456,7 +456,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.symbolTableSpace;
+        return &vm.symbolTableSpace();
     }
 
     static SymbolTable* create(VM& vm)

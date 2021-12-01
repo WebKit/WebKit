@@ -81,7 +81,7 @@ void ExecutableToCodeBlockEdge::visitChildrenImpl(JSCell* cell, Visitor& visitor
         visitor.appendUnbarriered(codeBlock);
     
     if (!visitor.isMarked(codeBlock))
-        vm.executableToCodeBlockEdgesWithFinalizers.add(edge);
+        vm.executableToCodeBlockEdgesWithFinalizers().add(edge);
     
     if (JITCode::isOptimizingJIT(codeBlock->jitType())) {
         // If we jettison ourselves we'll install our alternative, so make sure that it
@@ -114,7 +114,7 @@ void ExecutableToCodeBlockEdge::visitChildrenImpl(JSCell* cell, Visitor& visitor
     // not yet marked because it weakly depends on a structure that we did not yet mark, then we
     // will keep fixpointing until the end.
     visitor.appendUnbarriered(codeBlock->globalObject());
-    vm.executableToCodeBlockEdgesWithConstraints.add(edge);
+    vm.executableToCodeBlockEdgesWithConstraints().add(edge);
     edge->runConstraint(locker, vm, visitor);
 }
 
@@ -143,8 +143,8 @@ void ExecutableToCodeBlockEdge::finalizeUnconditionally(VM& vm)
         m_codeBlock.clear();
     }
     
-    vm.executableToCodeBlockEdgesWithFinalizers.remove(this);
-    vm.executableToCodeBlockEdgesWithConstraints.remove(this);
+    vm.executableToCodeBlockEdgesWithFinalizers().remove(this);
+    vm.executableToCodeBlockEdgesWithConstraints().remove(this);
 }
 
 inline void ExecutableToCodeBlockEdge::activate()
@@ -201,7 +201,7 @@ void ExecutableToCodeBlockEdge::runConstraint(const ConcurrentJSLocker& locker, 
     codeBlock->determineLiveness(locker, visitor);
 
     if (visitor.isMarked(codeBlock))
-        vm.executableToCodeBlockEdgesWithConstraints.remove(this);
+        vm.executableToCodeBlockEdgesWithConstraints().remove(this);
 }
 
 template void ExecutableToCodeBlockEdge::runConstraint(const ConcurrentJSLocker&, VM&, AbstractSlotVisitor&);

@@ -38,6 +38,7 @@
 namespace JSC {
 class Exception;
 class JSGlobalObject;
+class JSModuleRecord;
 class VM;
 }
 

@@ -46,7 +46,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.clonedArgumentsSpace;
+        return &vm.clonedArgumentsSpace();
     }
     
 private:

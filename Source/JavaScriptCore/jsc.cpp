@@ -1429,7 +1429,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.destructibleObjectSpace;
+        return &vm.destructibleObjectSpace();
     }
 
     JSCMemoryFootprint(VM& vm, Structure* structure)
@@ -1762,7 +1762,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.destructibleObjectSpace;
+        return &vm.destructibleObjectSpace();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

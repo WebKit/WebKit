@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,11 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class UnlinkedCodeBlock;
+
+namespace DFG {
 
 class FrequentExitSite {
 public:

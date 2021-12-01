@@ -55,9 +55,9 @@ IsoSubspace* JSFileSystemDirectoryHandleIterator::subspaceForImpl(VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator> || !JSFileSystemDirectoryHandleIterator::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator>)
-        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSFileSystemDirectoryHandleIterator));
+        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSFileSystemDirectoryHandleIterator));
     else
-        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSFileSystemDirectoryHandleIterator));
+        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSFileSystemDirectoryHandleIterator));
     auto* space = clientData.fileSystemDirectoryHandleIteratorSpace();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

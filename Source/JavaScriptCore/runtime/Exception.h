@@ -40,7 +40,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.exceptionSpace;
+        return &vm.exceptionSpace();
     }
 
     enum StackCaptureAction {

@@ -110,7 +110,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.sparseArrayValueMapSpace;
+        return &vm.sparseArrayValueMapSpace();
     }
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);

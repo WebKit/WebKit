@@ -72,7 +72,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedDeleterWithIdentifierPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -270,9 +270,9 @@ JSC::IsoSubspace* JSTestNamedDeleterWithIdentifier::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedDeleterWithIdentifier> || !JSTestNamedDeleterWithIdentifier::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedDeleterWithIdentifier>)
-        spaces.m_subspaceForTestNamedDeleterWithIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestNamedDeleterWithIdentifier);
+        spaces.m_subspaceForTestNamedDeleterWithIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestNamedDeleterWithIdentifier);
     else
-        spaces.m_subspaceForTestNamedDeleterWithIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestNamedDeleterWithIdentifier);
+        spaces.m_subspaceForTestNamedDeleterWithIdentifier = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestNamedDeleterWithIdentifier);
     auto* space = spaces.m_subspaceForTestNamedDeleterWithIdentifier.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

@@ -46,7 +46,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.structureChainSpace;
+        return &vm.structureChainSpace();
     }
 
     static StructureChain* create(VM&, JSObject*);

@@ -51,7 +51,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.arraySpace;
+        return &vm.arraySpace();
     }
         
 protected:
@@ -244,7 +244,7 @@ inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initia
             return nullptr;
 
         unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, vectorLengthHint);
-        void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
+        void* temp = vm.jsValueGigacageAuxiliarySpace().allocateNonVirtual(
             vm,
             Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)),
             nullptr, AllocationFailureMode::ReturnNull);

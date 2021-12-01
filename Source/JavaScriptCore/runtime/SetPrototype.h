@@ -37,7 +37,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SetPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

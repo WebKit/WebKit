@@ -37,7 +37,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.dateInstanceSpace;
+        return &vm.dateInstanceSpace();
     }
 
     static DateInstance* create(VM& vm, Structure* structure, double date)

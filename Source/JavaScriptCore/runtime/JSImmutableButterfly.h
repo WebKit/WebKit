@@ -153,7 +153,7 @@ public:
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         // We allocate out of the JSValue gigacage as other code expects all butterflies to live there.
-        return &vm.immutableButterflyJSValueGigacageAuxiliarySpace;
+        return &vm.immutableButterflyJSValueGigacageAuxiliarySpace();
     }
 
     // Only call this if you just allocated this butterfly.

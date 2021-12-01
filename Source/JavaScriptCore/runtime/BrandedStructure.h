@@ -47,7 +47,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.brandedStructureSpace;
+        return &vm.brandedStructureSpace();
     }
 
     ALWAYS_INLINE bool checkBrand(Symbol* brand)

@@ -1,3 +1,290 @@
+2021-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Move Subspaces from VM to Heap.
+        https://bugs.webkit.org/show_bug.cgi?id=233648
+        rdar://85875751
+
+        Reviewed by Saam Barati.
+
+        Subspaces are Heap data structures to begin with, and this refactoring is needed
+        in preparation for the global GC.
+
+        1. Embed HeapCellType and IsoHeapCellType instances in Heap directly instead of
+           malloc'ing them separately and referencing them via unique_ptrs.  These
+           instances are always instantiated unconditionally anyway.  This change
+           eliminates the unneeded busy work to allocate them separately.
+
+        2. Introduce a HeapSubspaceTypes.h that #include all the types that we have
+           subspaces for.  This makes it so that Heap.cpp's #include list is not flooded
+           with these types with subspaces, and that it'll be easier to discern between
+           these Subspace types from other data structures needed for implementing Heap.
+
+        3. Add VM accessor methods for subspaces that forward to Heap.  This will make it
+           easier for us to redirect to a thread local allocator later for the global GC.
+
+        4. Remove unneeded #includes in VM.h.
+
+        5. Remove unused CodeBlockSet::iterateViaSubspaces().
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/DFGExitProfile.h:
+        * bytecode/EvalCodeBlock.h:
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        (JSC::ExecutableToCodeBlockEdge::visitChildrenImpl):
+        (JSC::ExecutableToCodeBlockEdge::finalizeUnconditionally):
+        (JSC::ExecutableToCodeBlockEdge::runConstraint):
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * bytecode/FunctionCodeBlock.h:
+        * bytecode/ModuleProgramCodeBlock.h:
+        * bytecode/ProgramCodeBlock.h:
+        * bytecode/Repatch.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        (JSC::UnlinkedFunctionExecutable::finalizeUnconditionally):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::emitNewTypedArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * generator/DSL.rb:
+        * heap/CodeBlockSet.h:
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterateViaSubspaces): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::deleteAllUnlinkedCodeBlocks):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::sweepInFinalize):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        (JSC::Heap::gigacageAuxiliarySpace):
+        (JSC::Heap::SpaceAndSet::SpaceAndSet):
+        (JSC::Heap::SpaceAndSet::setFor):
+        (JSC::Heap::forEachCodeBlockSpace):
+        (JSC::Heap::forEachScriptExecutableSpace):
+        * heap/HeapSubspaceTypes.h: Added.
+        * heap/IsoHeapCellType.h:
+        * heap/IsoInlinedHeapCellType.h:
+        * heap/IsoInlinedHeapCellTypeInlines.h: Added.
+        (JSC::IsoInlinedHeapCellType<CellType>::IsoInlinedHeapCellType):
+        (JSC::IsoInlinedHeapCellType<CellType>::DestroyFunc::operator const):
+        (JSC::IsoInlinedHeapCellType<CellType>::finishSweep const):
+        (JSC::IsoInlinedHeapCellType<CellType>::destroy const):
+        * heap/MarkedBlockInlines.h:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * interpreter/CallFrame.h:
+        * jsc.cpp:
+        (JSCMemoryFootprint::subspaceFor):
+        (JSFileDescriptor::subspaceFor):
+        * runtime/AggregateErrorPrototype.h:
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/AsyncFromSyncIteratorPrototype.h:
+        * runtime/AsyncFunctionPrototype.h:
+        * runtime/AsyncGeneratorFunctionPrototype.h:
+        * runtime/AsyncGeneratorPrototype.h:
+        * runtime/AsyncIteratorPrototype.h:
+        * runtime/AtomicsObject.h:
+        * runtime/BigIntPrototype.h:
+        * runtime/BrandedStructure.h:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreateUninitialized):
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::reallocArrayRightIfPossible):
+        * runtime/CachedTypes.h:
+        * runtime/ClonedArguments.h:
+        * runtime/ConsoleObject.h:
+        * runtime/CustomGetterSetter.h:
+        (JSC::CustomGetterSetter::subspaceFor):
+        * runtime/DOMAttributeGetterSetter.h:
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.h:
+        * runtime/DirectArguments.h:
+        * runtime/ErrorPrototype.h:
+        * runtime/Exception.h:
+        * runtime/FinalizationRegistryPrototype.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/GeneratorFunctionPrototype.h:
+        * runtime/GeneratorPrototype.h:
+        * runtime/GetterSetter.h:
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::create):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::subspaceFor):
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlDisplayNamesPrototype.h:
+        * runtime/IntlListFormatPrototype.h:
+        * runtime/IntlLocalePrototype.h:
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRulesPrototype.h:
+        * runtime/IntlRelativeTimeFormatPrototype.h:
+        * runtime/IntlSegmentIteratorPrototype.h:
+        * runtime/IntlSegmenterPrototype.h:
+        * runtime/IntlSegmentsPrototype.h:
+        * runtime/IteratorPrototype.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        * runtime/JSArray.h:
+        (JSC::JSArray::subspaceFor):
+        (JSC::JSArray::tryCreate):
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createWithLength):
+        * runtime/JSBigInt.h:
+        * runtime/JSCallee.h:
+        (JSC::JSCallee::subspaceFor):
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::subspaceFor):
+        * runtime/JSGenericTypedArrayViewPrototype.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::subspaceFor):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::subspaceFor):
+        * runtime/JSModuleLoader.h:
+        * runtime/JSONObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSFinalObject::subspaceFor):
+        * runtime/JSPromise.h:
+        (JSC::JSPromise::subspaceFor):
+        * runtime/JSPromisePrototype.h:
+        (JSC::JSPromisePrototype::subspaceFor):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::subspaceFor):
+        * runtime/JSString.h:
+        (JSC::JSString::subspaceFor):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/MapIteratorPrototype.h:
+        * runtime/MapPrototype.h:
+        * runtime/MathObject.h:
+        * runtime/NativeErrorPrototype.h:
+        * runtime/NativeExecutable.h:
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::subspaceFor):
+        * runtime/ObjectPrototype.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/PropertyTable.h:
+        * runtime/ReflectObject.h:
+        * runtime/RegExp.h:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/RegExpStringIteratorPrototype.h:
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::createUninitialized):
+        * runtime/ScopedArguments.h:
+        * runtime/SetIteratorPrototype.h:
+        * runtime/SetPrototype.h:
+        * runtime/ShadowRealmPrototype.h:
+        * runtime/SparseArrayValueMap.h:
+        * runtime/StringIteratorPrototype.h:
+        * runtime/StringObject.h:
+        (JSC::StringObject::subspaceFor):
+        * runtime/Structure.h:
+        (JSC::Structure::subspaceFor):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::create):
+        * runtime/StructureChain.h:
+        * runtime/StructureRareData.h:
+        * runtime/SymbolPrototype.h:
+        * runtime/SymbolTable.h:
+        * runtime/TemporalCalendarPrototype.h:
+        * runtime/TemporalDurationPrototype.h:
+        * runtime/TemporalInstantPrototype.h:
+        * runtime/TemporalNow.h:
+        * runtime/TemporalObject.h:
+        * runtime/TemporalPlainTimePrototype.h:
+        * runtime/TemporalTimeZonePrototype.h:
+        * runtime/ThrowScope.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::cellHeapCellType):
+        (JSC::VM::destructibleObjectHeapCellType):
+        (JSC::VM::primitiveGigacageAuxiliarySpace):
+        (JSC::VM::jsValueGigacageAuxiliarySpace):
+        (JSC::VM::immutableButterflyJSValueGigacageAuxiliarySpace):
+        (JSC::VM::gigacageAuxiliarySpace):
+        (JSC::VM::cellSpace):
+        (JSC::VM::variableSizedCellSpace):
+        (JSC::VM::destructibleObjectSpace):
+        (JSC::VM::arraySpace):
+        (JSC::VM::bigIntSpace):
+        (JSC::VM::calleeSpace):
+        (JSC::VM::clonedArgumentsSpace):
+        (JSC::VM::customGetterSetterSpace):
+        (JSC::VM::dateInstanceSpace):
+        (JSC::VM::domAttributeGetterSetterSpace):
+        (JSC::VM::exceptionSpace):
+        (JSC::VM::executableToCodeBlockEdgeSpace):
+        (JSC::VM::functionSpace):
+        (JSC::VM::getterSetterSpace):
+        (JSC::VM::globalLexicalEnvironmentSpace):
+        (JSC::VM::internalFunctionSpace):
+        (JSC::VM::jsProxySpace):
+        (JSC::VM::nativeExecutableSpace):
+        (JSC::VM::numberObjectSpace):
+        (JSC::VM::plainObjectSpace):
+        (JSC::VM::promiseSpace):
+        (JSC::VM::propertyNameEnumeratorSpace):
+        (JSC::VM::propertyTableSpace):
+        (JSC::VM::regExpSpace):
+        (JSC::VM::regExpObjectSpace):
+        (JSC::VM::ropeStringSpace):
+        (JSC::VM::scopedArgumentsSpace):
+        (JSC::VM::sparseArrayValueMapSpace):
+        (JSC::VM::stringSpace):
+        (JSC::VM::stringObjectSpace):
+        (JSC::VM::structureChainSpace):
+        (JSC::VM::structureRareDataSpace):
+        (JSC::VM::structureSpace):
+        (JSC::VM::brandedStructureSpace):
+        (JSC::VM::symbolTableSpace):
+        (JSC::VM::executableToCodeBlockEdgesWithConstraints):
+        (JSC::VM::executableToCodeBlockEdgesWithFinalizers):
+        (JSC::VM::codeBlockSpace):
+        (JSC::VM::functionExecutableSpace):
+        (JSC::VM::programExecutableSpace):
+        (JSC::VM::unlinkedFunctionExecutableSpace):
+        (JSC::VM::setFuzzerAgent): Deleted.
+        (JSC::VM::SpaceAndSet::SpaceAndSet): Deleted.
+        (JSC::VM::SpaceAndSet::setFor): Deleted.
+        (JSC::VM::forEachCodeBlockSpace): Deleted.
+        (JSC::VM::forEachScriptExecutableSpace): Deleted.
+        * runtime/VMInlines.h:
+        (JSC::VM::setFuzzerAgent):
+        * runtime/WeakMapPrototype.h:
+        * runtime/WeakObjectRefPrototype.h:
+        * runtime/WeakSetPrototype.h:
+        * tools/JSDollarVM.cpp:
+        * tools/JSDollarVM.h:
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.h:
+        * wasm/js/WebAssemblyExceptionPrototype.h:
+        * wasm/js/WebAssemblyGlobalPrototype.h:
+        * wasm/js/WebAssemblyInstancePrototype.h:
+        * wasm/js/WebAssemblyLinkErrorPrototype.h:
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModulePrototype.h:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h:
+        * wasm/js/WebAssemblyTablePrototype.h:
+        * wasm/js/WebAssemblyTagPrototype.h:
+
 2021-11-30  Keith Miller  <keith_miller@apple.com>
 
         Structures should be allocated out of an aligned pool of memory so StructureID->Structure* is fast.

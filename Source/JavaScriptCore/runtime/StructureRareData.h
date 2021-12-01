@@ -66,7 +66,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.structureRareDataSpace;
+        return &vm.structureRareDataSpace();
     }
 
     static StructureRareData* create(VM&, Structure*);

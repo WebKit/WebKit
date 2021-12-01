@@ -37,7 +37,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WeakObjectRefPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static WeakObjectRefPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

@@ -51,7 +51,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.propertyNameEnumeratorSpace;
+        return &vm.propertyNameEnumeratorSpace();
     }
 
     static JSPropertyNameEnumerator* create(VM&, Structure*, uint32_t, uint32_t, PropertyNameArray&&);

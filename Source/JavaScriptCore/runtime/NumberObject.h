@@ -35,7 +35,7 @@ public:
     template<typename, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.numberObjectSpace;
+        return &vm.numberObjectSpace();
     }
 
     static NumberObject* create(VM& vm, Structure* structure)

@@ -71,7 +71,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSExposedStarPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -236,9 +236,9 @@ JSC::IsoSubspace* JSExposedStar::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSExposedStar> || !JSExposedStar::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSExposedStar>)
-        spaces.m_subspaceForExposedStar = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSExposedStar);
+        spaces.m_subspaceForExposedStar = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSExposedStar);
     else
-        spaces.m_subspaceForExposedStar = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSExposedStar);
+        spaces.m_subspaceForExposedStar = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSExposedStar);
     auto* space = spaces.m_subspaceForExposedStar.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

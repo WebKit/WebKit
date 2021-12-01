@@ -71,7 +71,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierReadOnlyAttributePrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -208,9 +208,9 @@ JSC::IsoSubspace* JSTestStringifierReadOnlyAttribute::subspaceForImpl(JSC::VM& v
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierReadOnlyAttribute> || !JSTestStringifierReadOnlyAttribute::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierReadOnlyAttribute>)
-        spaces.m_subspaceForTestStringifierReadOnlyAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestStringifierReadOnlyAttribute);
+        spaces.m_subspaceForTestStringifierReadOnlyAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestStringifierReadOnlyAttribute);
     else
-        spaces.m_subspaceForTestStringifierReadOnlyAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestStringifierReadOnlyAttribute);
+        spaces.m_subspaceForTestStringifierReadOnlyAttribute = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestStringifierReadOnlyAttribute);
     auto* space = spaces.m_subspaceForTestStringifierReadOnlyAttribute.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

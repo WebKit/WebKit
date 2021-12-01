@@ -2277,7 +2277,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             size_t newSize = newStructure()->outOfLineCapacity() * sizeof(JSValue);
 
             if (allocatingInline) {
-                Allocator allocator = vm.jsValueGigacageAuxiliarySpace.allocatorFor(newSize, AllocatorForMode::AllocatorIfExists);
+                Allocator allocator = vm.jsValueGigacageAuxiliarySpace().allocatorFor(newSize, AllocatorForMode::AllocatorIfExists);
 
                 jit.emitAllocate(scratchGPR, JITAllocator::constant(allocator), scratchGPR2, scratchGPR3, slowPath);
                 jit.addPtr(CCallHelpers::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR);

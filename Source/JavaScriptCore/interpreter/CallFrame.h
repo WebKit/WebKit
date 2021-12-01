@@ -38,6 +38,7 @@ namespace JSC  {
     class JSCallee;
     class JSScope;
     class SourceOrigin;
+    class VirtualRegister;
 
     struct Instruction;
 

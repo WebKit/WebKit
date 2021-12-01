@@ -42,7 +42,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
     
     DECLARE_EXPORT_INFO;

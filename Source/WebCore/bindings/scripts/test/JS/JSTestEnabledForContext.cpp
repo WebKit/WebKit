@@ -66,7 +66,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEnabledForContextPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -186,9 +186,9 @@ JSC::IsoSubspace* JSTestEnabledForContext::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestEnabledForContext> || !JSTestEnabledForContext::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestEnabledForContext>)
-        spaces.m_subspaceForTestEnabledForContext = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestEnabledForContext);
+        spaces.m_subspaceForTestEnabledForContext = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestEnabledForContext);
     else
-        spaces.m_subspaceForTestEnabledForContext = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestEnabledForContext);
+        spaces.m_subspaceForTestEnabledForContext = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestEnabledForContext);
     auto* space = spaces.m_subspaceForTestEnabledForContext.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

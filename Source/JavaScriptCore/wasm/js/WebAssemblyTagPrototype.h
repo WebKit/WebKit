@@ -40,7 +40,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyTagPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static WebAssemblyTagPrototype* create(VM&, JSGlobalObject*, Structure*);

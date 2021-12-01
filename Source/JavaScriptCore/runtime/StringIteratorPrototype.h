@@ -39,7 +39,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(StringIteratorPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static StringIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

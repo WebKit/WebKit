@@ -67,7 +67,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyFactoryFunctionPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -230,9 +230,9 @@ JSC::IsoSubspace* JSTestLegacyFactoryFunction::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestLegacyFactoryFunction> || !JSTestLegacyFactoryFunction::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestLegacyFactoryFunction>)
-        spaces.m_subspaceForTestLegacyFactoryFunction = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestLegacyFactoryFunction);
+        spaces.m_subspaceForTestLegacyFactoryFunction = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestLegacyFactoryFunction);
     else
-        spaces.m_subspaceForTestLegacyFactoryFunction = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestLegacyFactoryFunction);
+        spaces.m_subspaceForTestLegacyFactoryFunction = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestLegacyFactoryFunction);
     auto* space = spaces.m_subspaceForTestLegacyFactoryFunction.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

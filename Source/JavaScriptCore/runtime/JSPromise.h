@@ -37,7 +37,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.promiseSpace;
+        return &vm.promiseSpace();
     }
 
     JS_EXPORT_PRIVATE static JSPromise* create(VM&, Structure*);

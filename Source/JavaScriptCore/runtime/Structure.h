@@ -129,7 +129,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.structureSpace;
+        return &vm.structureSpace();
     }
 
     JS_EXPORT_PRIVATE static bool isValidPrototype(JSValue);

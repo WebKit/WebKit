@@ -43,7 +43,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.executableToCodeBlockEdgeSpace;
+        return &vm.executableToCodeBlockEdgeSpace();
     }
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);

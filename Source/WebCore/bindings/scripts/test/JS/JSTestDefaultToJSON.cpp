@@ -124,7 +124,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -808,9 +808,9 @@ JSC::IsoSubspace* JSTestDefaultToJSON::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSON> || !JSTestDefaultToJSON::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSON>)
-        spaces.m_subspaceForTestDefaultToJSON = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestDefaultToJSON);
+        spaces.m_subspaceForTestDefaultToJSON = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestDefaultToJSON);
     else
-        spaces.m_subspaceForTestDefaultToJSON = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestDefaultToJSON);
+        spaces.m_subspaceForTestDefaultToJSON = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestDefaultToJSON);
     auto* space = spaces.m_subspaceForTestDefaultToJSON.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

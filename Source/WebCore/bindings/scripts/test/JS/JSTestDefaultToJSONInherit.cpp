@@ -89,7 +89,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONInheritPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -292,9 +292,9 @@ JSC::IsoSubspace* JSTestDefaultToJSONInherit::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONInherit> || !JSTestDefaultToJSONInherit::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONInherit>)
-        spaces.m_subspaceForTestDefaultToJSONInherit = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestDefaultToJSONInherit);
+        spaces.m_subspaceForTestDefaultToJSONInherit = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestDefaultToJSONInherit);
     else
-        spaces.m_subspaceForTestDefaultToJSONInherit = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestDefaultToJSONInherit);
+        spaces.m_subspaceForTestDefaultToJSONInherit = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestDefaultToJSONInherit);
     auto* space = spaces.m_subspaceForTestDefaultToJSONInherit.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

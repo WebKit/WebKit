@@ -213,7 +213,7 @@ public:
     {
         auto scope = DECLARE_THROW_SCOPE(vm);
         size_t allocationSize = HashMapBuffer::allocationSize(capacity);
-        void* data = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, allocationSize, nullptr, AllocationFailureMode::ReturnNull);
+        void* data = vm.jsValueGigacageAuxiliarySpace().allocateNonVirtual(vm, allocationSize, nullptr, AllocationFailureMode::ReturnNull);
         if (!data) {
             throwOutOfMemoryError(globalObject, scope);
             return nullptr;

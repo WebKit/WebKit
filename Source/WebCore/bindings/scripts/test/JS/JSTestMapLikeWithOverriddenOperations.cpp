@@ -86,7 +86,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestMapLikeWithOverriddenOperationsPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -380,9 +380,9 @@ JSC::IsoSubspace* JSTestMapLikeWithOverriddenOperations::subspaceForImpl(JSC::VM
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestMapLikeWithOverriddenOperations> || !JSTestMapLikeWithOverriddenOperations::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestMapLikeWithOverriddenOperations>)
-        spaces.m_subspaceForTestMapLikeWithOverriddenOperations = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestMapLikeWithOverriddenOperations);
+        spaces.m_subspaceForTestMapLikeWithOverriddenOperations = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestMapLikeWithOverriddenOperations);
     else
-        spaces.m_subspaceForTestMapLikeWithOverriddenOperations = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestMapLikeWithOverriddenOperations);
+        spaces.m_subspaceForTestMapLikeWithOverriddenOperations = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestMapLikeWithOverriddenOperations);
     auto* space = spaces.m_subspaceForTestMapLikeWithOverriddenOperations.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

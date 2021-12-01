@@ -760,9 +760,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/HeapInlines.h
     heap/HeapObserver.h
     heap/HeapSnapshotBuilder.h
+    heap/HeapSubspaceTypes.h
     heap/IncrementalSweeper.h
     heap/IsoCellSet.h
     heap/IsoHeapCellType.h
+    heap/IsoInlinedHeapCellType.h
+    heap/IsoInlinedHeapCellTypeInlines.h
     heap/IsoMemoryAllocatorBase.h
     heap/IsoSubspace.h
     heap/IsoSubspaceInlines.h

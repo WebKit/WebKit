@@ -8301,7 +8301,7 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.constIntPtr(~static_cast<intptr_t>(7)));
         }
 
-        LValue allocator = allocatorForSize(vm().primitiveGigacageAuxiliarySpace, byteSize, slowCase);
+        LValue allocator = allocatorForSize(vm().primitiveGigacageAuxiliarySpace(), byteSize, slowCase);
         LValue storage = allocateHeapCell(allocator, slowCase);
 
         splatWords(
@@ -13922,7 +13922,7 @@ IGNORE_CLANG_WARNINGS_END
                 ValueFromBlock noButterfly = m_out.anchor(m_out.intPtrZero);
                 
                 LValue startOfStorage = allocateHeapCell(
-                    allocatorForSize(vm().jsValueGigacageAuxiliarySpace, butterflySize, slowPath),
+                    allocatorForSize(vm().jsValueGigacageAuxiliarySpace(), butterflySize, slowPath),
                     slowPath);
 
                 LValue fastButterflyValue = m_out.add(
@@ -15017,7 +15017,7 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
 
         size_t sizeInBytes = sizeInValues * sizeof(JSValue);
-        Allocator allocator = vm().jsValueGigacageAuxiliarySpace.allocatorForNonVirtual(sizeInBytes, AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorForNonVirtual(sizeInBytes, AllocatorForMode::AllocatorIfExists);
         LValue startOfStorage = allocateHeapCell(
             m_out.constIntPtr(allocator.localAllocator()), slowPath);
         ValueFromBlock fastButterfly = m_out.anchor(
@@ -17039,7 +17039,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue butterflySize = m_out.add(
             payloadSize, m_out.constIntPtr(sizeof(IndexingHeader)));
 
-        LValue allocator = allocatorForSize(vm().jsValueGigacageAuxiliarySpace, butterflySize, failCase);
+        LValue allocator = allocatorForSize(vm().jsValueGigacageAuxiliarySpace(), butterflySize, failCase);
         LValue startOfStorage = allocateHeapCell(allocator, failCase);
 
         LValue butterfly = m_out.add(startOfStorage, m_out.constIntPtr(sizeof(IndexingHeader)));

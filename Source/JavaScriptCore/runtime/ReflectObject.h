@@ -38,7 +38,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ReflectObject, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static ReflectObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

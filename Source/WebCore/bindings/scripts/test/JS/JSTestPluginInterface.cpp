@@ -64,7 +64,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestPluginInterfacePrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -244,9 +244,9 @@ JSC::IsoSubspace* JSTestPluginInterface::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestPluginInterface> || !JSTestPluginInterface::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestPluginInterface>)
-        spaces.m_subspaceForTestPluginInterface = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestPluginInterface);
+        spaces.m_subspaceForTestPluginInterface = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestPluginInterface);
     else
-        spaces.m_subspaceForTestPluginInterface = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestPluginInterface);
+        spaces.m_subspaceForTestPluginInterface = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestPluginInterface);
     auto* space = spaces.m_subspaceForTestPluginInterface.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

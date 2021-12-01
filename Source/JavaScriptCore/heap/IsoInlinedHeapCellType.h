@@ -32,28 +32,14 @@ namespace JSC {
 template<typename CellType>
 class IsoInlinedHeapCellType final : public HeapCellType {
 public:
-    IsoInlinedHeapCellType()
-        : HeapCellType(CellAttributes(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction, HeapCell::JSCell))
-    {
-    }
+    IsoInlinedHeapCellType();
 
     struct DestroyFunc {
-        ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
-        {
-            CellType::destroy(cell);
-        }
+        ALWAYS_INLINE void operator()(VM&, JSCell*) const;
     };
 
-    void finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) const final
-    {
-        handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
-    }
-
-    void destroy(VM&, JSCell* cell) const final
-    {
-        CellType::destroy(cell);
-    }
+    void finishSweep(MarkedBlock::Handle&, FreeList*) const final;
+    void destroy(VM&, JSCell*) const final;
 };
 
 } // namespace JSC
-

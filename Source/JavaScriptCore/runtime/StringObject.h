@@ -33,7 +33,7 @@ public:
     template<typename, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.stringObjectSpace;
+        return &vm.stringObjectSpace();
     }
 
     static StringObject* create(VM& vm, Structure* structure)

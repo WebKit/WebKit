@@ -335,7 +335,7 @@ bool ObjcFallbackObjectImp::toBoolean(JSGlobalObject*) const
 JSC::IsoSubspace* ObjcFallbackObjectImp::subspaceForImpl(JSC::VM& vm)
 {
     static NeverDestroyed<JSC::IsoSubspacePerVM> perVM([] (JSC::VM& vm) {
-        return ISO_SUBSPACE_PARAMETERS(*vm.destructibleObjectHeapCellType, ObjcFallbackObjectImp);
+        return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType(), ObjcFallbackObjectImp);
     });
     return &perVM.get().forVM(vm);
 }

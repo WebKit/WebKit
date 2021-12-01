@@ -66,7 +66,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.functionSpace;
+        return &vm.functionSpace();
     }
     
     typedef JSCallee Base;

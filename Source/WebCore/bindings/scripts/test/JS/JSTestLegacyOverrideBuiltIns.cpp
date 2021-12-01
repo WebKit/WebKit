@@ -73,7 +73,7 @@ public:
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyOverrideBuiltInsPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -249,9 +249,9 @@ JSC::IsoSubspace* JSTestLegacyOverrideBuiltIns::subspaceForImpl(JSC::VM& vm)
         return space;
     static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestLegacyOverrideBuiltIns> || !JSTestLegacyOverrideBuiltIns::needsDestruction);
     if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestLegacyOverrideBuiltIns>)
-        spaces.m_subspaceForTestLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.destructibleObjectHeapCellType, JSTestLegacyOverrideBuiltIns);
+        spaces.m_subspaceForTestLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestLegacyOverrideBuiltIns);
     else
-        spaces.m_subspaceForTestLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, *vm.cellHeapCellType, JSTestLegacyOverrideBuiltIns);
+        spaces.m_subspaceForTestLegacyOverrideBuiltIns = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestLegacyOverrideBuiltIns);
     auto* space = spaces.m_subspaceForTestLegacyOverrideBuiltIns.get();
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")

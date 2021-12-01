@@ -41,7 +41,7 @@ public:
     static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyExceptionPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static WebAssemblyExceptionPrototype* create(VM&, JSGlobalObject*, Structure*);
