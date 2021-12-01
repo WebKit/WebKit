@@ -1,3 +1,19 @@
+2021-12-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r283912) Broke backward compatibility for Swift bindings
+        https://bugs.webkit.org/show_bug.cgi?id=233701
+        <rdar://85627701>
+
+        Reviewed by Darin Adler.
+
+        Rename EpochTimeStamp back to DOMTimeStamp in DOMObject.h & DOMEvent.h
+        since those are API headers and we need to maintain backward compatibility.
+
+        * DOM/DOMEvent.h:
+        * DOM/DOMEvent.mm:
+        (-[DOMEvent timeStamp]):
+        * DOM/DOMObject.h:
+
 2021-11-24  David Kilzer  <ddkilzer@apple.com>
 
         Compiler should be able to check localized format strings for consistency
