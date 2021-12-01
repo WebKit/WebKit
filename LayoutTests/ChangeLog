@@ -1,3 +1,12 @@
+2021-11-30  Robert Jenner  <Jenner@apple.com>
+
+        REBASELINE: [ Monterey ] fast/dom/52776.html (layout-test) is a constant text failure (233669)
+        https://bugs.webkit.org/show_bug.cgi?id=233669
+
+        Unreviewed test gardening. Rebase for non-Monterey macs.
+
+        * platform/mac-bigsur/fast/dom/52776-expected.txt: Added.
+
 2021-11-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ Mac ] http/wpt/service-workers/service-worker-spinning-activate.https.html is flaky failing
