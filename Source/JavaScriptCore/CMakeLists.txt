@@ -1458,6 +1458,12 @@ if (COMPILER_IS_GCC_OR_CLANG)
     # Avoid using fused multiply-add instructions since this could give different results
     # for e.g. parseInt depending on the platform and compilation flags.
     WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -ffp-contract=off -fno-slp-vectorize)
+
+    # On MIPS we have to explicitly disable madd4, since some versions of gcc still generate
+    # such instructions despite -ffp-contract=off
+    if (WTF_CPU_MIPS)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -mno-madd4)
+    endif ()
 endif ()
 
 WEBKIT_COPY_FILES(JavaScriptCore_CopyHeaders

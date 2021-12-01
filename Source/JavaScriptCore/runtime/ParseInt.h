@@ -162,15 +162,7 @@ static double parseInt(StringView s, const CharType* data, int radix)
     // 14. Let number be the Number value for mathInt.
     int firstDigitPosition = p;
     bool sawDigit = false;
-#if COMPILER(GCC)
-    // Due to a bug found in GCC v8.4.0, a wrong fused multiply-add optimization can be inserted when calculating the final number,
-    // in number *= radix; number += digit;, so add volatile to prevent optimizations.
-    // GCC v8.4.0 also seems to ignore #pragma STDC FP_CONTRACT OFF, compiling with -ffp-contract=off, and setting function attributes
-    // __attribute__((optimize("fp-contract=off"))) and __attribute__((optimize("-ffp-contract=off"))).
-    volatile double number = 0;
-#else
     double number = 0;
-#endif
     while (p < length) {
         int digit = parseDigit(data[p], radix);
         if (digit == -1)
