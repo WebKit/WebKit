@@ -40,7 +40,6 @@
 #include "RenderObjectEnums.h"
 #include "RenderReplaced.h"
 #include "RenderStyleConstants.h"
-#include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "WritingMode.h"
 #include <limits>

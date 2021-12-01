@@ -87,6 +87,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineRunAndOffset.h"
+#include "LegacyRenderSVGRoot.h"
 #include "MathMLElement.h"
 #include "Page.h"
 #include "Range.h"
@@ -99,7 +100,6 @@
 #include "RenderMenuList.h"
 #include "RenderMeter.h"
 #include "RenderProgress.h"
-#include "RenderSVGRoot.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
@@ -547,7 +547,7 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         return AccessibilityMediaObject::create(renderer);
 #endif
 
-    if (is<RenderSVGRoot>(*renderer))
+    if (is<LegacyRenderSVGRoot>(*renderer))
         return AccessibilitySVGRoot::create(renderer);
     
     if (is<SVGElement>(node))

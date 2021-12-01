@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGRoot.h"
+#include "LegacyRenderSVGRoot.h"
 
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -52,9 +52,9 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGRoot);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGRoot);
 
-RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
+LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
     : RenderReplaced(element, WTFMove(style))
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
@@ -62,14 +62,14 @@ RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
 {
 }
 
-RenderSVGRoot::~RenderSVGRoot() = default;
+LegacyRenderSVGRoot::~LegacyRenderSVGRoot() = default;
 
-SVGSVGElement& RenderSVGRoot::svgSVGElement() const
+SVGSVGElement& LegacyRenderSVGRoot::svgSVGElement() const
 {
     return downcast<SVGSVGElement>(nodeForNonAnonymous());
 }
 
-void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
+void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment(*this));
 
@@ -114,12 +114,12 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
         intrinsicRatio = style().logicalAspectRatio();
 }
 
-bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
+bool LegacyRenderSVGRoot::isEmbeddedThroughSVGImage() const
 {
     return isInSVGImage(&svgSVGElement());
 }
 
-bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
+bool LegacyRenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
 {
     // If our frame has an owner renderer, we're embedded through eg. object/embed/iframe,
     // but we only negotiate if we're in an SVG document.
@@ -128,7 +128,7 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
     return frame().document()->isSVGDocument();
 }
 
-LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
+LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
     // When we're embedded through SVGImage (border-image/background-image/<html:img>/...) we're forced to resize to a specific size.
     if (!m_containerSize.isEmpty())
@@ -141,7 +141,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
     return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
 }
 
-LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
+LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
 {
     // When we're embedded through SVGImage (border-image/background-image/<html:img>/...) we're forced to resize to a specific size.
     if (!m_containerSize.isEmpty())
@@ -154,7 +154,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit>
     return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
 }
 
-void RenderSVGRoot::layout()
+void LegacyRenderSVGRoot::layout()
 {
     SetForScope<bool> change(m_inLayout, true);
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -210,7 +210,7 @@ void RenderSVGRoot::layout()
     clearNeedsLayout();
 }
 
-bool RenderSVGRoot::shouldApplyViewportClip() const
+bool LegacyRenderSVGRoot::shouldApplyViewportClip() const
 {
     // the outermost svg is clipped if auto, and svg document roots are always clipped
     // When the svg is stand-alone (isDocumentElement() == true) the viewport clipping should always
@@ -221,7 +221,7 @@ bool RenderSVGRoot::shouldApplyViewportClip() const
         || this->isDocumentElementRenderer();
 }
 
-void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // An empty viewport disables rendering.
     if (borderBoxRect().isEmpty())
@@ -297,27 +297,27 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     childPaintInfo.context().restore();
 }
 
-void RenderSVGRoot::willBeDestroyed()
+void LegacyRenderSVGRoot::willBeDestroyed()
 {
-    RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot&>(*this));
+    RenderBlock::removePercentHeightDescendant(const_cast<LegacyRenderSVGRoot&>(*this));
 
     SVGResourcesCache::clientDestroyed(*this);
     RenderReplaced::willBeDestroyed();
 }
 
-void RenderSVGRoot::insertedIntoTree(IsInternalMove isInternalMove)
+void LegacyRenderSVGRoot::insertedIntoTree(IsInternalMove isInternalMove)
 {
     RenderReplaced::insertedIntoTree(isInternalMove);
     SVGResourcesCache::clientWasAddedToTree(*this);
 }
 
-void RenderSVGRoot::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void LegacyRenderSVGRoot::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(*this);
     RenderReplaced::willBeRemovedFromTree(isInternalMove);
 }
 
-void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifference::Layout)
         setNeedsBoundariesUpdate();
@@ -331,8 +331,8 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 }
 
 // RenderBox methods will expect coordinates w/o any transforms in coordinates
-// relative to our borderBox origin.  This method gives us exactly that.
-void RenderSVGRoot::buildLocalToBorderBoxTransform()
+// relative to our borderBox origin. This method gives us exactly that.
+void LegacyRenderSVGRoot::buildLocalToBorderBoxTransform()
 {
     float scale = style().effectiveZoom();
     FloatPoint translate = svgSVGElement().currentTranslateValue();
@@ -343,7 +343,7 @@ void RenderSVGRoot::buildLocalToBorderBoxTransform()
     m_localToBorderBoxTransform = AffineTransform(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y()) * m_localToBorderBoxTransform;
 }
 
-const AffineTransform& RenderSVGRoot::localToParentTransform() const
+const AffineTransform& LegacyRenderSVGRoot::localToParentTransform() const
 {
     // Slightly optimized version of m_localToParentTransform = AffineTransform::translation(x(), y()) * m_localToBorderBoxTransform;
     m_localToParentTransform = m_localToBorderBoxTransform;
@@ -354,7 +354,7 @@ const AffineTransform& RenderSVGRoot::localToParentTransform() const
     return m_localToParentTransform;
 }
 
-LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
@@ -369,7 +369,7 @@ LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repa
     return RenderReplaced::computeRect(enclosingIntRect(repaintRect), repaintContainer, context);
 }
 
-std::optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<FloatRect> LegacyRenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // Apply our local transforms (except for x/y translation) and then call
     // RenderBox's method to handle all the normal CSS Box model bits
@@ -399,7 +399,7 @@ std::optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const
 // This method expects local CSS box coordinates.
 // Callers with local SVG viewport coordinates should first apply the localToBorderBoxTransform
 // to convert from SVG viewport coordinates to local CSS box coordinates.
-void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
+void LegacyRenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     ASSERT(!mode.contains(IsFixed)); // We should have no fixed content in the SVG rendering tree.
     ASSERT(mode.contains(UseTransforms)); // mapping a point through SVG w/o respecting transforms is useless.
@@ -407,19 +407,19 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* ancestorCo
     RenderReplaced::mapLocalToContainer(ancestorContainer, transformState, mode | ApplyContainerFlip, wasFixed);
 }
 
-const RenderObject* RenderSVGRoot::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+const RenderObject* LegacyRenderSVGRoot::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     return RenderReplaced::pushMappingToContainer(ancestorToStopAt, geometryMap);
 }
 
-void RenderSVGRoot::updateCachedBoundaries()
+void LegacyRenderSVGRoot::updateCachedBoundaries()
 {
     SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
     m_repaintBoundingBox.inflate(horizontalBorderAndPaddingExtent());
 }
 
-bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool LegacyRenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     LayoutPoint pointInParent = locationInContainer.point() - toLayoutSize(accumulatedOffset);
     LayoutPoint pointInBorderBox = pointInParent - toLayoutSize(location());
@@ -462,14 +462,14 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-bool RenderSVGRoot::hasRelativeDimensions() const
+bool LegacyRenderSVGRoot::hasRelativeDimensions() const
 {
     return svgSVGElement().intrinsicHeight().isPercentOrCalculated() || svgSVGElement().intrinsicWidth().isPercentOrCalculated();
 }
 
-void RenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer* resource)
+void LegacyRenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer* resource)
 {
-    RenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(*resource);
+    LegacyRenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(*resource);
     if (!svgRoot)
         return;
     svgRoot->m_resourcesNeedingToInvalidateClients.add(resource);

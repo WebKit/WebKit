@@ -21,12 +21,12 @@
 #include "SVGResources.h"
 
 #include "FilterOperation.h"
+#include "LegacyRenderSVGRoot.h"
 #include "PathOperation.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
-#include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
 #include "SVGGradientElement.h"
@@ -308,7 +308,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     return foundResources;
 }
 
-void SVGResources::layoutDifferentRootIfNeeded(const RenderSVGRoot* svgRoot)
+void SVGResources::layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot* svgRoot)
 {
     if (clipper() && svgRoot != SVGRenderSupport::findTreeRootObject(*clipper()))
         clipper()->layoutIfNeeded();

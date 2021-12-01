@@ -620,7 +620,7 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
     if (!isPositioningAllowed)
         style.setPosition(RenderStyle::initialPosition());
 
-    // RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
+    // LegacyRenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
     // not be scaled again.
     if (svgElement.hasTagName(SVGNames::foreignObjectTag))
         style.setEffectiveZoom(RenderStyle::initialZoom());

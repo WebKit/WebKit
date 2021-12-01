@@ -37,7 +37,7 @@ class RenderElement;
 class RenderGeometryMap;
 class RenderLayerModelObject;
 class RenderStyle;
-class RenderSVGRoot;
+class LegacyRenderSVGRoot;
 class SVGElement;
 class TransformState;
 
@@ -46,7 +46,7 @@ class SVGRenderSupport {
 public:
     static void layoutDifferentRootIfNeeded(const RenderElement&);
 
-    // Shares child layouting code between RenderSVGRoot/RenderSVG(Hidden)Container
+    // Shares child layouting code between LegacyRenderSVGRoot/RenderSVG(Hidden)Container
     static void layoutChildren(RenderElement&, bool selfNeedsLayout);
 
     // Helper function determining wheter overflow is hidden
@@ -89,8 +89,8 @@ public:
     static void updateMaskedAncestorShouldIsolateBlending(const RenderElement&);
 #endif
 
-    static RenderSVGRoot* findTreeRootObject(RenderElement&);
-    static const RenderSVGRoot* findTreeRootObject(const RenderElement&);
+    static LegacyRenderSVGRoot* findTreeRootObject(RenderElement&);
+    static const LegacyRenderSVGRoot* findTreeRootObject(const RenderElement&);
 
 private:
     // This class is not constructable.

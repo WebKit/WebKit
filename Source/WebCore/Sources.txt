@@ -2467,6 +2467,7 @@ rendering/style/StyleTransformData.cpp
 rendering/style/StyleVisualData.cpp
 rendering/style/TextSizeAdjustment.cpp
 rendering/style/WillChangeData.cpp
+rendering/svg/LegacyRenderSVGRoot.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGContainer.cpp
 rendering/svg/RenderSVGEllipse.cpp
@@ -2491,7 +2492,6 @@ rendering/svg/RenderSVGResourceMasker.cpp
 rendering/svg/RenderSVGResourcePattern.cpp
 rendering/svg/RenderSVGResourceRadialGradient.cpp
 rendering/svg/RenderSVGResourceSolidColor.cpp
-rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGShape.cpp
 rendering/svg/RenderSVGTSpan.cpp
 rendering/svg/RenderSVGText.cpp

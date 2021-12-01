@@ -38,6 +38,7 @@
 #include "HTMLSpanElement.h"
 #include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
+#include "LegacyRenderSVGRoot.h"
 #include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -62,7 +63,6 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceContainer.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -573,8 +573,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         writeSVGContainer(ts, downcast<RenderSVGContainer>(o), behavior);
         return;
     }
-    if (is<RenderSVGRoot>(o)) {
-        write(ts, downcast<RenderSVGRoot>(o), behavior);
+    if (is<LegacyRenderSVGRoot>(o)) {
+        write(ts, downcast<LegacyRenderSVGRoot>(o), behavior);
         return;
     }
     if (is<RenderSVGText>(o)) {

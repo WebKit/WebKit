@@ -32,11 +32,11 @@ class AffineTransform;
 class RenderSVGResourceContainer;
 class SVGSVGElement;
 
-class RenderSVGRoot final : public RenderReplaced {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGRoot);
+class LegacyRenderSVGRoot final : public RenderReplaced {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGRoot);
 public:
-    RenderSVGRoot(SVGSVGElement&, RenderStyle&&);
-    virtual ~RenderSVGRoot();
+    LegacyRenderSVGRoot(SVGSVGElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGRoot();
 
     SVGSVGElement& svgSVGElement() const;
 
@@ -67,6 +67,8 @@ private:
     void element() const = delete;
 
     bool isSVGRoot() const override { return true; }
+
+    // Intentially left 'RenderSVGRoot' instead of 'LegacyRenderSVGRoot', to avoid breaking layout tests.
     const char* renderName() const override { return "RenderSVGRoot"; }
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
@@ -121,4 +123,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGRoot, isSVGRoot())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGRoot, isSVGRoot())

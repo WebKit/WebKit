@@ -71,7 +71,7 @@ BuilderState::BuilderState(Builder& builder, RenderStyle& style, BuilderContext&
 // of each individual length value in the render style / tree. CSSPrimitiveValue::computeLength*()
 // multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
 // Though all CSS values that can be applied to outermost <svg> elements (width/height/border/padding...)
-// need to respect the scaling. RenderBox (the parent class of RenderSVGRoot) grabs values like
+// need to respect the scaling. RenderBox (the parent class of LegacyRenderSVGRoot) grabs values like
 // width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
 // if we'd pass a 1.0 zoom factor everyhwere. So we only pass a zoom factor of 1.0 for specific
 // properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).

@@ -25,11 +25,11 @@
 
 #include "Frame.h"
 #include "FrameView.h"
+#include "LegacyRenderSVGRoot.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"
-#include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "SVGResourceElementClient.h"
 #include "SVGResources.h"
@@ -198,9 +198,9 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject&
     ASSERT(object.node());
 
     if (needsLayout && !object.renderTreeBeingDestroyed()) {
-        // If we are inside the layout of an RenderSVGRoot, do not cross the SVG boundary to
+        // If we are inside the layout of an LegacyRenderSVGRoot, do not cross the SVG boundary to
         // invalidate the ancestor renderer because it may have finished its layout already.
-        if (is<RenderSVGRoot>(object) && downcast<RenderSVGRoot>(object).isInLayout())
+        if (is<LegacyRenderSVGRoot>(object) && downcast<LegacyRenderSVGRoot>(object).isInLayout())
             object.setNeedsLayout(MarkOnlyThis);
         else
             object.setNeedsLayout(MarkContainingBlockChain);

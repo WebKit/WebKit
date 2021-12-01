@@ -31,7 +31,7 @@ namespace WebCore {
 
 class RenderSVGContainer;
 class RenderSVGInline;
-class RenderSVGRoot;
+class LegacyRenderSVGRoot;
 class RenderSVGText;
 
 class RenderTreeBuilder::SVG {
@@ -41,13 +41,13 @@ public:
 
     void attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void attach(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    void attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(LegacyRenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
     RenderPtr<RenderObject> detach(RenderSVGText& parent, RenderObject& child) WARN_UNUSED_RETURN;
     RenderPtr<RenderObject> detach(RenderSVGInline& parent, RenderObject& child) WARN_UNUSED_RETURN;
     RenderPtr<RenderObject> detach(RenderSVGContainer& parent, RenderObject& child) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detach(RenderSVGRoot& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(LegacyRenderSVGRoot& parent, RenderObject& child) WARN_UNUSED_RETURN;
 
 private:
     RenderTreeBuilder& m_builder;

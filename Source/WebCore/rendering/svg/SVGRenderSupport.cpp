@@ -28,6 +28,7 @@
 #include "SVGRenderSupport.h"
 
 #include "ElementAncestorIterator.h"
+#include "LegacyRenderSVGRoot.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
@@ -39,7 +40,6 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
@@ -85,10 +85,10 @@ const RenderElement& SVGRenderSupport::localToParentTransform(const RenderElemen
     ASSERT(renderer.parent());
     auto& parent = *renderer.parent();
 
-    // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform
+    // At the SVG/HTML boundary (aka LegacyRenderSVGRoot), we apply the localToBorderBoxTransform
     // to map an element from SVG viewport coordinates to CSS box coordinates.
-    if (is<RenderSVGRoot>(parent))
-        transform = downcast<RenderSVGRoot>(parent).localToBorderBoxTransform() * renderer.localToParentTransform();
+    if (is<LegacyRenderSVGRoot>(parent))
+        transform = downcast<LegacyRenderSVGRoot>(parent).localToBorderBoxTransform() * renderer.localToParentTransform();
     else
         transform = renderer.localToParentTransform();
 
@@ -181,14 +181,14 @@ bool SVGRenderSupport::paintInfoIntersectsRepaintRect(const FloatRect& localRepa
     return localTransform.mapRect(localRepaintRect).intersects(paintInfo.rect);
 }
 
-RenderSVGRoot* SVGRenderSupport::findTreeRootObject(RenderElement& start)
+LegacyRenderSVGRoot* SVGRenderSupport::findTreeRootObject(RenderElement& start)
 {
-    return lineageOfType<RenderSVGRoot>(start).first();
+    return lineageOfType<LegacyRenderSVGRoot>(start).first();
 }
 
-const RenderSVGRoot* SVGRenderSupport::findTreeRootObject(const RenderElement& start)
+const LegacyRenderSVGRoot* SVGRenderSupport::findTreeRootObject(const RenderElement& start)
 {
-    return lineageOfType<RenderSVGRoot>(start).first();
+    return lineageOfType<LegacyRenderSVGRoot>(start).first();
 }
 
 static inline void invalidateResourcesOfChildren(RenderElement& renderer)
@@ -204,19 +204,19 @@ static inline void invalidateResourcesOfChildren(RenderElement& renderer)
 static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
 {
     const RenderElement* start = &renderer;
-    while (start && !is<RenderSVGRoot>(*start) && !is<RenderSVGViewportContainer>(*start))
+    while (start && !is<LegacyRenderSVGRoot>(*start) && !is<RenderSVGViewportContainer>(*start))
         start = start->parent();
 
     ASSERT(start);
     if (is<RenderSVGViewportContainer>(*start))
         return downcast<RenderSVGViewportContainer>(*start).isLayoutSizeChanged();
 
-    return downcast<RenderSVGRoot>(*start).isLayoutSizeChanged();
+    return downcast<LegacyRenderSVGRoot>(*start).isLayoutSizeChanged();
 }
 
 bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
 {
-    while (ancestor && !is<RenderSVGRoot>(*ancestor)) {
+    while (ancestor && !is<LegacyRenderSVGRoot>(*ancestor)) {
         if (is<RenderSVGTransformableContainer>(*ancestor))
             return downcast<RenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
         if (is<RenderSVGViewportContainer>(*ancestor))
@@ -300,7 +300,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 
 bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
 {
-    // RenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
+    // LegacyRenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
     ASSERT(!renderer.isDocumentElementRenderer());
 
     return renderer.style().overflowX() == Overflow::Hidden || renderer.style().overflowX() == Overflow::Scroll;

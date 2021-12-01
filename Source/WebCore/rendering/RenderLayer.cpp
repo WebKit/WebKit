@@ -83,6 +83,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "HitTestingTransformState.h"
+#include "LegacyRenderSVGRoot.h"
 #include "Logging.h"
 #include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
@@ -106,7 +107,6 @@
 #include "RenderReplica.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGResourceClipper.h"
-#include "RenderSVGRoot.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableCell.h"
@@ -3178,7 +3178,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
         return;
 
     // SVG elements get clipped in SVG code.
-    if (is<RenderSVGRoot>(renderer()))
+    if (is<LegacyRenderSVGRoot>(renderer()))
         return;
 
     auto clippedContentBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { UseLocalClipRectIfPossible });

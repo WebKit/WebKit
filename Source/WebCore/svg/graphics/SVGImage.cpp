@@ -43,10 +43,10 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
+#include "LegacyRenderSVGRoot.h"
 #include "LibWebRTCProvider.h"
 #include "Page.h"
 #include "PageConfiguration.h"
-#include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
@@ -136,7 +136,7 @@ void SVGImage::setContainerSize(const FloatSize& size)
     auto rootElement = this->rootElement();
     if (!rootElement)
         return;
-    auto* renderer = downcast<RenderSVGRoot>(rootElement->renderer());
+    auto* renderer = downcast<LegacyRenderSVGRoot>(rootElement->renderer());
     if (!renderer)
         return;
 
@@ -152,7 +152,7 @@ IntSize SVGImage::containerSize() const
     if (!rootElement)
         return IntSize();
 
-    auto* renderer = downcast<RenderSVGRoot>(rootElement->renderer());
+    auto* renderer = downcast<LegacyRenderSVGRoot>(rootElement->renderer());
     if (!renderer)
         return IntSize();
 

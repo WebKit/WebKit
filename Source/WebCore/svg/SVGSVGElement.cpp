@@ -30,8 +30,8 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "LegacyRenderSVGRoot.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
 #include "SMILTimeContainer.h"
@@ -211,7 +211,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         invalidateSVGPresentationalHintStyle();
 
         if (auto renderer = this->renderer()) {
-            if (is<RenderSVGRoot>(renderer) && downcast<RenderSVGRoot>(*renderer).isEmbeddedThroughFrameContainingSVGDocument())
+            if (is<LegacyRenderSVGRoot>(renderer) && downcast<LegacyRenderSVGRoot>(*renderer).isEmbeddedThroughFrameContainingSVGDocument())
                 RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         }
         return;
@@ -348,12 +348,12 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
             FloatPoint location;
             float zoomFactor = 1;
 
-            // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
+            // At the SVG/HTML boundary (aka LegacyRenderSVGRoot), we apply the localToBorderBoxTransform
             // to map an element from SVG viewport coordinates to CSS box coordinates.
-            // RenderSVGRoot's localToAbsolute method expects CSS box coordinates.
+            // LegacyRenderSVGRoot's localToAbsolute method expects CSS box coordinates.
             // We also need to adjust for the zoom level factored into CSS coordinates (bug #96361).
-            if (is<RenderSVGRoot>(*renderer)) {
-                location = downcast<RenderSVGRoot>(*renderer).localToBorderBoxTransform().mapPoint(location);
+            if (is<LegacyRenderSVGRoot>(*renderer)) {
+                location = downcast<LegacyRenderSVGRoot>(*renderer).localToBorderBoxTransform().mapPoint(location);
                 zoomFactor = 1 / renderer->style().effectiveZoom();
             }
 
@@ -383,7 +383,7 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
     if (!isValid())
         return false;
     // FIXME: We should respect display: none on the documentElement svg element
-    // but many things in FrameView and SVGImage depend on the RenderSVGRoot when
+    // but many things in FrameView and SVGImage depend on the LegacyRenderSVGRoot when
     // they should instead depend on the RenderView.
     // https://bugs.webkit.org/show_bug.cgi?id=103493
     if (document().documentElement() == this)
@@ -394,7 +394,7 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (isOutermostSVGSVGElement())
-        return createRenderer<RenderSVGRoot>(*this, WTFMove(style));
+        return createRenderer<LegacyRenderSVGRoot>(*this, WTFMove(style));
     return createRenderer<RenderSVGViewportContainer>(*this, WTFMove(style));
 }
 
@@ -475,9 +475,9 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
     if (!viewBox.isEmpty())
         return viewBox;
 
-    if (!is<RenderSVGRoot>(renderer()))
+    if (!is<LegacyRenderSVGRoot>(renderer()))
         return { };
-    if (!downcast<RenderSVGRoot>(*renderer()).isEmbeddedThroughSVGImage())
+    if (!downcast<LegacyRenderSVGRoot>(*renderer()).isEmbeddedThroughSVGImage())
         return { };
 
     Length intrinsicWidth = this->intrinsicWidth();
@@ -495,8 +495,8 @@ FloatSize SVGSVGElement::currentViewportSize() const
     FloatSize viewportSize;
 
     if (renderer()) {
-        if (is<RenderSVGRoot>(*renderer())) {
-            auto& root = downcast<RenderSVGRoot>(*renderer());
+        if (is<LegacyRenderSVGRoot>(*renderer())) {
+            auto& root = downcast<LegacyRenderSVGRoot>(*renderer());
             viewportSize = root.contentBoxRect().size() / root.style().effectiveZoom();
         } else
             viewportSize = downcast<RenderSVGViewportContainer>(*renderer()).viewport().size();

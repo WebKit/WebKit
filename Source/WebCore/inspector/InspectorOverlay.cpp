@@ -143,7 +143,7 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
     FrameView* containingView = containingFrame->view();
     FrameView* mainView = containingFrame->page()->mainFrame().view();
 
-    // RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
+    // LegacyRenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
     bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRoot();
 
     if (isSVGRenderer) {

@@ -52,7 +52,7 @@ void RenderSVGBlock::updateFromStyle()
     // Until this is resolved, disable overflow support. Opera/FF don't support it as well at the moment (Feb 2010).
     //
     // Note: This does NOT affect overflow handling on outer/inner <svg> elements - this is handled
-    // manually by RenderSVGRoot - which owns the documents enclosing root layer and thus works fine.
+    // manually by LegacyRenderSVGRoot - which owns the documents enclosing root layer and thus works fine.
     setHasNonVisibleOverflow(false);
 }
 

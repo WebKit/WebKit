@@ -20,8 +20,8 @@
 #include "config.h"
 #include "RenderSVGResourceContainer.h"
 
+#include "LegacyRenderSVGRoot.h"
 #include "RenderLayer.h"
-#include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
@@ -53,7 +53,7 @@ void RenderSVGResourceContainer::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     // Invalidate all resources if our layout changed.
     if (selfNeedsClientInvalidation())
-        RenderSVGRoot::addResourceForClientInvalidation(this);
+        LegacyRenderSVGRoot::addResourceForClientInvalidation(this);
 
     RenderSVGHiddenContainer::layout();
 }

@@ -30,6 +30,7 @@
 #include "DocumentInlines.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "LegacyRenderSVGRoot.h"
 #include "RenderButton.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
@@ -49,7 +50,6 @@
 #include "RenderRubyRun.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
@@ -290,8 +290,8 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (is<RenderSVGRoot>(parent)) {
-        svgBuilder().attach(downcast<RenderSVGRoot>(parent), WTFMove(child), beforeChild);
+    if (is<LegacyRenderSVGRoot>(parent)) {
+        svgBuilder().attach(downcast<LegacyRenderSVGRoot>(parent), WTFMove(child), beforeChild);
         return;
     }
 
@@ -374,8 +374,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
     if (is<RenderSVGContainer>(parent))
         return svgBuilder().detach(downcast<RenderSVGContainer>(parent), child);
 
-    if (is<RenderSVGRoot>(parent))
-        return svgBuilder().detach(downcast<RenderSVGRoot>(parent), child);
+    if (is<LegacyRenderSVGRoot>(parent))
+        return svgBuilder().detach(downcast<LegacyRenderSVGRoot>(parent), child);
 
     if (is<RenderBlockFlow>(parent))
         return blockBuilder().detach(downcast<RenderBlockFlow>(parent), child, canCollapseAnonymousBlock);
@@ -995,7 +995,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
         m_view.frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(replacedRenderer.intrinsicSize()));
         return;
     }
-    if (is<RenderSVGRoot>(child)) {
+    if (is<LegacyRenderSVGRoot>(child)) {
         auto fixedSize = [] (const auto& renderer) -> std::optional<IntSize> {
             auto& style = renderer.style();
             if (!style.width().isFixed() || !style.height().isFixed())

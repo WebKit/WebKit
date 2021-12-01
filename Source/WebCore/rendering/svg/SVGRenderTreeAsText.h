@@ -42,14 +42,14 @@ class RenderSVGImage;
 class RenderSVGInlineText;
 class RenderSVGResourceContainer;
 class RenderSVGShape;
-class RenderSVGRoot;
+class LegacyRenderSVGRoot;
 class RenderSVGText;
 class AffineTransform;
 class SVGUnitTypes;
 
 // functions used by the main RenderTreeAsText code
 void write(WTF::TextStream&, const RenderSVGShape&, OptionSet<RenderAsTextFlag>);
-void write(WTF::TextStream&, const RenderSVGRoot&, OptionSet<RenderAsTextFlag>);
+void write(WTF::TextStream&, const LegacyRenderSVGRoot&, OptionSet<RenderAsTextFlag>);
 void writeSVGGradientStop(WTF::TextStream&, const RenderSVGGradientStop&, OptionSet<RenderAsTextFlag>);
 void writeSVGResourceContainer(WTF::TextStream&, const RenderSVGResourceContainer&, OptionSet<RenderAsTextFlag>);
 void writeSVGContainer(WTF::TextStream&, const RenderSVGContainer&, OptionSet<RenderAsTextFlag>);

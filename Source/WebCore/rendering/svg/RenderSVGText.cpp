@@ -33,13 +33,13 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGRoot.h"
 #include "PointerEventsHitRules.h"
 #include "RenderIterator.h"
 #include "RenderSVGBlockInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGLengthList.h"
 #include "SVGResourcesCache.h"
@@ -347,7 +347,7 @@ void RenderSVGText::layout()
         m_needsPositioningValuesUpdate = false;
         updateCachedBoundariesInParents = true;
     } else {
-        RenderSVGRoot* rootObj = SVGRenderSupport::findTreeRootObject(*this);
+        LegacyRenderSVGRoot* rootObj = SVGRenderSupport::findTreeRootObject(*this);
         if (m_needsTextMetricsUpdate || (rootObj && rootObj->isLayoutSizeChanged())) {
             // If the root layout size changed (eg. window size changes) or the transform to the root
             // context has changed then recompute the on-screen font size.
