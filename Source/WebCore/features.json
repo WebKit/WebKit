@@ -1565,6 +1565,16 @@
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=164193",
         "keywords": ["requestIdleCallback", "idle callback"],
         "description": "An API that can be used to cooperatively schedule background tasks."
+    },
+    {
+        "name": "requestVideoFrameCallback",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://wicg.github.io/video-rvfc/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=211945",
+        "keywords": ["requestVideoFrameCallback", "rvfc"],
+        "description": "An API that can be used on a HTMLMediaElement to do per video frame processing."
     }
     ]
 }
