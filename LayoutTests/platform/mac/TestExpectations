@@ -2178,8 +2178,6 @@ webkit.org/b/223973 [ Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-lo
 
 webkit.org/b/223975 inspector/protocol/condition.html [ Pass Timeout ]
 
-webkit.org/b/220754 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
-
 webkit.org/b/223976 [ Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Pass Failure ]
 
 webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html [ Pass Failure ]
