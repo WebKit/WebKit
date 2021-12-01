@@ -177,15 +177,15 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
         serviceWorkerRegistrationIdentifier = *loader.parameters().serviceWorkerRegistrationIdentifier;
     }
 
-    auto* worker = server().activeWorkerFromRegistrationID(*serviceWorkerRegistrationIdentifier);
+    auto* registration = server().getRegistration(*serviceWorkerRegistrationIdentifier);
+    auto* worker = registration ? registration->activeWorker() : nullptr;
     if (!worker) {
         SWSERVERCONNECTION_RELEASE_LOG_ERROR("startFetch: DidNotHandle because no active worker for registration %" PRIu64, serviceWorkerRegistrationIdentifier->toUInt64());
         return nullptr;
     }
 
-    auto* registration = server().getRegistration(*serviceWorkerRegistrationIdentifier);
     if (worker->shouldSkipFetchEvent()) {
-        if (registration && registration->shouldSoftUpdate(loader.parameters().options))
+        if (registration->shouldSoftUpdate(loader.parameters().options))
             registration->scheduleSoftUpdate(loader.isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 
         return nullptr;
