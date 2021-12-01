@@ -36,7 +36,21 @@ namespace Style {
 
 class RuleData;
 
-enum class MatchElement : uint8_t { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, HasChild, HasDescendant, HasSibling, Host };
+enum class MatchElement : uint8_t {
+    Subject,
+    Parent,
+    Ancestor,
+    DirectSibling,
+    IndirectSibling,
+    AnySibling,
+    ParentSibling,
+    AncestorSibling,
+    HasChild,
+    HasDescendant,
+    HasSibling,
+    HasSiblingDescendant,
+    Host
+};
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
 struct RuleFeature {

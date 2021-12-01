@@ -111,12 +111,14 @@ static bool needsTraversal(const RuleFeatureSet& features, const ContainerNode::
         return true;
     if (features.usesMatchElement(MatchElement::HasDescendant))
         return true;
+    if (features.usesMatchElement(MatchElement::HasSiblingDescendant))
+        return true;
     return features.usesMatchElement(MatchElement::HasSibling) && childChange.previousSiblingElement;
 };
 
 static bool needsDescendantTraversal(const RuleFeatureSet& features)
 {
-    return features.usesMatchElement(MatchElement::HasDescendant);
+    return features.usesMatchElement(MatchElement::HasDescendant) || features.usesMatchElement(MatchElement::HasSiblingDescendant);
 };
 
 template<typename Function>

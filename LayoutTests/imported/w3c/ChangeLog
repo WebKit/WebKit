@@ -1,3 +1,13 @@
+2021-12-01  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Sibling combinator invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=233696
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/selectors/invalidation/has-sibling-expected.txt: Added.
+        * web-platform-tests/css/selectors/invalidation/has-sibling.html: Added.
+
 2021-12-01  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Update URL stripping in reports to match other implementations

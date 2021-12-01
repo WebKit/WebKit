@@ -1315,10 +1315,15 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
         for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
             if (checkRelative(*sibling))
                 return true;
+        }
+        break;
+    case Style::MatchElement::HasSiblingDescendant:
+        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
             if (checkDescendants(*sibling))
                 return true;
         }
         break;
+
     default:
         ASSERT_NOT_REACHED();
         break;

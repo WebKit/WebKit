@@ -52,6 +52,7 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::AncestorSibling:
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
+    case MatchElement::HasSiblingDescendant:
         return false;
     }
     ASSERT_NOT_REACHED();
@@ -61,9 +62,10 @@ static bool isSiblingOrSubject(MatchElement matchElement)
 bool isHasPseudoClassMatchElement(MatchElement matchElement)
 {
     switch (matchElement) {
-    case MatchElement::HasSibling:
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
+    case MatchElement::HasSibling:
+    case MatchElement::HasSiblingDescendant:
         return true;
     default:
         return false;
@@ -146,13 +148,15 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
         return MatchElement::HasDescendant;
     case MatchElement::IndirectSibling:
     case MatchElement::DirectSibling:
-    case MatchElement::ParentSibling:
-    case MatchElement::AncestorSibling:
     case MatchElement::AnySibling:
         return MatchElement::HasSibling;
+    case MatchElement::ParentSibling:
+    case MatchElement::AncestorSibling:
+        return MatchElement::HasSiblingDescendant;
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
+    case MatchElement::HasSiblingDescendant:
     case MatchElement::Host:
         ASSERT_NOT_REACHED();
         break;
