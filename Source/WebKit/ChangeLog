@@ -1,3 +1,13 @@
+2021-11-30  Antoine Quint  <graouts@apple.com>
+
+        replace-webkit-additions-includes should assume unknown or empty deployment targets are supported
+        https://bugs.webkit.org/show_bug.cgi?id=233650
+
+        Reviewed by Tim Horton.
+
+        * mac/replace-webkit-additions-includes.py:
+        (is_supported_os):
+
 2021-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         Pass the timestamp for scrolling thread animations through all the serviceScrollAnimation() calls

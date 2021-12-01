@@ -59,7 +59,7 @@ def is_supported_os():
     if os_version_string is not None:
         os_version = float('.'.join(os_version_string.split('.')[:2]))
         return os_version >= 16.0
-    raise RuntimeError('Unrecognized deployment target')
+    return True
 
 
 def main(argv=None):
