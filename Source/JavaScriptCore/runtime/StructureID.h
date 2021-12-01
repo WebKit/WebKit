@@ -52,7 +52,7 @@ public:
     explicit operator bool() const { return !!m_bits; }
     bool operator==(StructureID const& other) const  { return m_bits == other.m_bits; }
     bool operator!=(StructureID const& other) const  { return m_bits != other.m_bits; }
-    uint32_t bits() const { return m_bits; }
+    constexpr uint32_t bits() const { return m_bits; }
 
     StructureID(WTF::HashTableDeletedValueType) : m_bits(nukedStructureIDBit) { }
     bool isHashTableDeletedValue() const { return *this == StructureID(WTF::HashTableDeletedValue); }
