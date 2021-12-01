@@ -112,6 +112,8 @@ public:
 
     MediaTime timestampOffset() const { return m_timestampOffset; }
 
+    virtual size_t platformMaximumBufferSize() const { return 0; }
+
     struct TrackBuffer {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         MediaTime lastDecodeTimestamp;

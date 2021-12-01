@@ -51,6 +51,10 @@
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 
+#if PLATFORM(WPE)
+#include <wtf/text/StringToIntegerConversion.h>
+#endif
+
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
 
@@ -272,6 +276,105 @@ WTFLogChannel& SourceBufferPrivateGStreamer::logChannel() const
     return LogMediaSource;
 }
 #endif
+
+size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
+{
+#if PLATFORM(WPE)
+    if (!m_client)
+        return 0;
+
+    static size_t maxBufferSizeVideo = 0;
+    static size_t maxBufferSizeAudio = 0;
+    static size_t maxBufferSizeText = 0;
+
+    static std::once_flag once;
+    std::call_once(once, []() {
+        // Syntax: Case insensitive, full type (audio, video, text), compact type (a, v, t),
+        //         wildcard (*), unit multipliers (M=Mb, K=Kb, <empty>=bytes).
+        // Examples: MSE_MAX_BUFFER_SIZE='V:50M,audio:12k,TeXT:500K'
+        //           MSE_MAX_BUFFER_SIZE='*:100M'
+        //           MSE_MAX_BUFFER_SIZE='video:90M,T:100000'
+
+        String s(std::getenv("MSE_MAX_BUFFER_SIZE"));
+        if (!s.isEmpty()) {
+            Vector<String> entries = s.split(',');
+            for (const String& entry : entries) {
+                Vector<String> keyvalue = entry.split(':');
+                if (keyvalue.size() != 2)
+                    continue;
+                String key = keyvalue[0].stripWhiteSpace().convertToLowercaseWithoutLocale();
+                String value = keyvalue[1].stripWhiteSpace().convertToLowercaseWithoutLocale();
+                size_t units = 1;
+                if (value.endsWith('k'))
+                    units = 1024;
+                else if (value.endsWith('m'))
+                    units = 1024 * 1024;
+                if (units != 1)
+                    value = value.substring(0, value.length()-1);
+                auto parsedSize = parseInteger<size_t>(value);
+                if (!parsedSize)
+                    continue;
+                size_t size = *parsedSize;
+
+                if (key == "a" || key == "audio" || key == "*")
+                    maxBufferSizeAudio = size * units;
+                if (key == "v" || key == "video" || key == "*")
+                    maxBufferSizeVideo = size * units;
+                if (key == "t" || key == "text" || key == "*")
+                    maxBufferSizeText = size * units;
+            }
+        }
+    });
+
+    // If any track type size isn't specified, we consider that it has no limit and the values from the
+    // element have to be used. Otherwise, the track limits are accumulative.
+    do {
+        bool hasVideo = false;
+        bool hasAudio = false;
+        bool hasText = false;
+        size_t bufferSize = 0;
+
+        for (auto track : m_tracks.values()) {
+            switch (track->type()) {
+            case TrackPrivateBaseGStreamer::Video:
+                hasVideo = true;
+                break;
+            case TrackPrivateBaseGStreamer::Audio:
+                hasAudio = true;
+                break;
+            case TrackPrivateBaseGStreamer::Text:
+                hasText = true;
+                break;
+            default:
+                break;
+            }
+        }
+
+        if (hasVideo) {
+            if (maxBufferSizeVideo)
+                bufferSize += maxBufferSizeVideo;
+            else
+                break;
+        }
+        if (hasAudio) {
+            if (maxBufferSizeAudio)
+                bufferSize += maxBufferSizeAudio;
+            else
+                break;
+        }
+        if (hasText) {
+            if (maxBufferSizeText)
+                bufferSize += maxBufferSizeText;
+            else
+                break;
+        }
+        if (bufferSize)
+            return bufferSize;
+    } while (false);
+#endif
+
+    return 0;
+}
 
 }
 #endif

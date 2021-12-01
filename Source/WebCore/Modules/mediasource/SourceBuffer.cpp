@@ -630,6 +630,10 @@ uint64_t SourceBuffer::maximumBufferSize() const
     if (!element)
         return 0;
 
+    size_t platformMaximumBufferSize = m_private->platformMaximumBufferSize();
+    if (platformMaximumBufferSize)
+        return platformMaximumBufferSize;
+
     return element->maximumSourceBufferSize(*this);
 }
 
