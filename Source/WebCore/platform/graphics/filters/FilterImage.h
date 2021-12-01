@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatRect.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include "RenderingMode.h"

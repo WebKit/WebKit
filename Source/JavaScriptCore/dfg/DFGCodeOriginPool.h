@@ -28,6 +28,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CallFrame.h"
+#include "CodeOrigin.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC { namespace DFG {

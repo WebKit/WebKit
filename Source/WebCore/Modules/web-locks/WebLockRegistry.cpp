@@ -27,6 +27,7 @@
 
 #include "Exception.h"
 #include "WebLockManagerSnapshot.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 

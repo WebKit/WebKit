@@ -26,8 +26,8 @@
 #include "config.h"
 #include "IsoSubspace.h"
 
+#include "IsoAlignedMemoryAllocator.h"
 #include "IsoCellSetInlines.h"
-#include "IsoMemoryAllocatorBase.h"
 #include "JSCellInlines.h"
 #include "MarkedSpaceInlines.h"
 

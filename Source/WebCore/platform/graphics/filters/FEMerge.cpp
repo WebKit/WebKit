@@ -24,6 +24,7 @@
 #include "FEMerge.h"
 
 #include "FEMergeSoftwareApplier.h"
+#include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

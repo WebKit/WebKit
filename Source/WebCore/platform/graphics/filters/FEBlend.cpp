@@ -28,6 +28,7 @@
 
 #include "FEBlendNEON.h"
 #include "FEBlendSoftwareApplier.h"
+#include "ImageBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

@@ -36,6 +36,7 @@
 #include "GCIncomingRefCountedSetInlines.h"
 #include "GCSegmentedArrayInlines.h"
 #include "GCTypeMap.h"
+#include "GigacageAlignedMemoryAllocator.h"
 #include "HasOwnPropertyCache.h"
 #include "HeapHelperPool.h"
 #include "HeapIterationScope.h"

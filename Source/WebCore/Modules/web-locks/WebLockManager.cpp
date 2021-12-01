@@ -32,6 +32,7 @@
 #include "JSWebLockManagerSnapshot.h"
 #include "NavigatorBase.h"
 #include "SecurityOrigin.h"
+#include "WebLock.h"
 #include "WebLockGrantedCallback.h"
 #include "WebLockManagerSnapshot.h"
 #include "WebLockRegistry.h"

@@ -1,3 +1,18 @@
+2021-12-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early December 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=233699
+
+        Unreviewed non-unified build fixes.
+
+        * dfg/DFGCodeOriginPool.h: Add missing CodeOrigin.h header.
+        * heap/Heap.cpp: Add missing GigacageAlignedMemoryAllocator.h header.
+        * heap/IsoSubspace.cpp: Add missing IsoAlignedMemoryAllocator.h header, and remove
+        IsoMemoryAllocatorBase.h as it is included by the former.
+        * runtime/StackFrame.h: Add missing BytecodeIndex.h header.
+        * runtime/StructureID.h: Add missing wtf/HashTraits.h header.
+        * tools/Integrity.h: Add missing StructureID.h header.
+
 2021-12-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] RegExpTestInline DFG / FTL nodes should introduce a write-barrier

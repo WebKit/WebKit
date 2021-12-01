@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include "StructureID.h"
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
 

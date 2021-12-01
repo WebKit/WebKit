@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchIdentifier.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>

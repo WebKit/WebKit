@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BytecodeIndex.h"
 #include "Heap.h"
 #include "SlotVisitorMacros.h"
 #include "VM.h"
