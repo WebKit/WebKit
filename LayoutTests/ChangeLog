@@ -1,3 +1,12 @@
+2021-12-01  Andreu Botella  <andreu@andreubotella.com>
+
+        imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/multipart-formdata.window.html is no longer failing – remove expectations
+        https://bugs.webkit.org/show_bug.cgi?id=233664
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
 2021-12-01  Youenn Fablet  <youenn@apple.com>
 
         Reuse navigation preload if service worker is fetching the corresponding navigation request
