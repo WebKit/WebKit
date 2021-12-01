@@ -2792,7 +2792,7 @@ void FrameView::availableContentSizeChanged(AvailableSizeChangeReason reason)
         // FIXME: Merge this logic with m_setNeedsLayoutWasDeferred and find a more appropriate
         // way of handling potential recursive layouts when the viewport is resized to accomodate
         // the content but the content always overflows the viewport. See webkit.org/b/165781.
-        if (!(layoutContext().layoutPhase() == FrameViewLayoutContext::LayoutPhase::InViewSizeAdjust && useFixedLayout()))
+        if (layoutContext().layoutPhase() == FrameViewLayoutContext::LayoutPhase::InViewSizeAdjust)
             document->updateViewportUnitsOnResize();
     }
 
@@ -2896,14 +2896,21 @@ void FrameView::updateTiledBackingAdaptiveSizing()
 // FIXME: This shouldn't be called from outside; FrameView should call it when the relevant viewports change.
 void FrameView::layoutOrVisualViewportChanged()
 {
-    if (!frame().settings().visualViewportAPIEnabled())
-        return;
+    if (frame().settings().visualViewportAPIEnabled()) {
+        if (auto* window = frame().window())
+            window->visualViewport().update();
 
-    if (auto* window = frame().window())
-        window->visualViewport().update();
+        if (auto scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewVisualViewportChanged(*this);
+    }
 
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->frameViewVisualViewportChanged(*this);
+    auto layoutViewportSize = layoutViewportRect().size();
+    if (layoutViewportSize != m_lastLayoutViewportSize) {
+        if (auto* document = frame().document())
+            document->updateViewportUnitsOnResize();
+
+        m_lastLayoutViewportSize = layoutViewportSize;
+    }
 }
 
 void FrameView::unobscuredContentSizeChanged()
@@ -2911,9 +2918,6 @@ void FrameView::unobscuredContentSizeChanged()
 #if PLATFORM(IOS_FAMILY)
     updateTiledBackingAdaptiveSizing();
 #endif
-
-    if (auto* document = frame().document())
-        document->updateViewportUnitsOnResize();
 }
 
 void FrameView::loadProgressingStatusChanged()
@@ -5674,7 +5678,7 @@ FloatSize FrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<Over
 
 FloatSize FrameView::sizeForCSSDynamicViewportUnits() const
 {
-    return unobscuredContentRectIncludingScrollbars().size();
+    return rectForFixedPositionLayout().size();
 }
 
 FloatSize FrameView::sizeForCSSDefaultViewportUnits() const
