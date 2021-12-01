@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PushClientConnection.h"
+#include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushDaemonConstants.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -38,6 +39,8 @@
 namespace JSC {
 enum class MessageLevel : uint8_t;
 }
+
+using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 
 namespace WebPushD {
 
@@ -57,8 +60,8 @@ public:
     void requestSystemNotificationPermission(ClientConnection*, const String&, CompletionHandler<void(bool)>&& replySender);
     void getOriginsWithPushAndNotificationPermissions(ClientConnection*, CompletionHandler<void(const Vector<String>&)>&& replySender);
     void deletePushAndNotificationRegistration(ClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
-    void setHostAppAuditToken(ClientConnection*, const Vector<uint8_t>&);
     void setDebugModeIsEnabled(ClientConnection*, bool);
+    void updateConnectionConfiguration(ClientConnection*, const WebPushDaemonConnectionConfiguration&);
 
     void broadcastDebugMessage(JSC::MessageLevel, const String&);
 

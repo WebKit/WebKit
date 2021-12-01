@@ -33,7 +33,7 @@
 namespace WebPushD {
 
 AppBundleRequest::AppBundleRequest(ClientConnection& connection, const String& originString)
-    : m_connection(&connection)
+    : m_connection(connection)
     , m_originString(originString)
 {
 }
@@ -49,7 +49,11 @@ void AppBundleRequest::start()
 
     m_transaction = adoptOSObject(os_transaction_create(transactionDescription()));
 
-    m_appBundle = MockAppBundleForTesting::create(m_originString, m_connection->hostAppCodeSigningIdentifier(), *this);
+    if (m_connection->useMockBundlesForTesting())
+        m_appBundle = MockAppBundleForTesting::create(m_originString, m_connection->hostAppCodeSigningIdentifier(), *this);
+    else
+        RELEASE_ASSERT_NOT_REACHED();
+
     startInternal();
 }
 

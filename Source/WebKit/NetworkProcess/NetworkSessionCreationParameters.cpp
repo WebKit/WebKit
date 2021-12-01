@@ -74,6 +74,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << deviceManagementRestrictionsEnabled;
     encoder << allLoadsBlockedByDeviceManagementRestrictionsForTesting;
+    encoder << webPushDaemonConnectionConfiguration;
     encoder << dataConnectionServiceType;
     encoder << fastServerTrustEvaluationEnabled;
     encoder << networkCacheSpeculativeValidationEnabled;
@@ -233,6 +234,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!allLoadsBlockedByDeviceManagementRestrictionsForTesting)
         return std::nullopt;
 
+    std::optional<WebPushD::WebPushDaemonConnectionConfiguration> webPushDaemonConnectionConfiguration;
+    decoder >> webPushDaemonConnectionConfiguration;
+    if (!webPushDaemonConnectionConfiguration)
+        return std::nullopt;
+
     std::optional<String> dataConnectionServiceType;
     decoder >> dataConnectionServiceType;
     if (!dataConnectionServiceType)
@@ -356,6 +362,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
 #endif
         , WTFMove(*deviceManagementRestrictionsEnabled)
         , WTFMove(*allLoadsBlockedByDeviceManagementRestrictionsForTesting)
+        , WTFMove(*webPushDaemonConnectionConfiguration)
         , WTFMove(*networkCacheDirectory)
         , WTFMove(*networkCacheDirectoryExtensionHandle)
         , WTFMove(*dataConnectionServiceType)

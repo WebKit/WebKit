@@ -127,6 +127,9 @@ public:
     virtual bool hasAppBoundSession() const { return false; }
     virtual void clearAppBoundSession() { }
 #endif
+
+    virtual bool webPushDaemonUsesMockBundlesForTesting() const { return false; }
+
     void storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&&);
     void handlePrivateClickMeasurementConversion(WebCore::PrivateClickMeasurement::AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest, String&& attributedBundleIdentifier);
     void dumpPrivateClickMeasurement(CompletionHandler<void(String)>&&);
