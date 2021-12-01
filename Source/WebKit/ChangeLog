@@ -1,3 +1,16 @@
+2021-12-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [WP] Sandbox telemetry is missing for some system calls
+        https://bugs.webkit.org/show_bug.cgi?id=233594
+        <rdar://problem/85832755>
+
+        Reviewed by Brent Fulgham.
+
+        Sandbox telemetry is missing for some system calls, since telemetry rules are automatically overridden in some cases.
+        This patch is addressing this by disabling system call inference.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-12-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fixes after r286346.
