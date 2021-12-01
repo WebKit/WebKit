@@ -1448,13 +1448,17 @@ bool Quirks::shouldBypassUserGestureRequirementForWebAuthn() const
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-bool Quirks::needsToForceUserSelectWhenInstallingImageOverlay() const
+bool Quirks::needsToForceUserSelectAndUserDragWhenInstallingImageOverlay() const
 {
     if (!needsQuirks())
         return false;
 
     auto& url = m_document->topDocument().url();
     if (topPrivatelyControlledDomain(url.host().toString()).startsWith("google.") && url.path() == "/search")
+        return true;
+
+    auto host = url.host();
+    if (equalLettersIgnoringASCIICase(host, "youtube.com") || host.endsWithIgnoringASCIICase(".youtube.com"))
         return true;
 
     return false;

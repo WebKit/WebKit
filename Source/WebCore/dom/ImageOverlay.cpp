@@ -351,8 +351,10 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             elements.blocks.uncheckedAppend(WTFMove(blockContainer));
         }
 
-        if (document->quirks().needsToForceUserSelectWhenInstallingImageOverlay())
+        if (document->quirks().needsToForceUserSelectAndUserDragWhenInstallingImageOverlay()) {
             element.setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
+            element.setInlineStyleProperty(CSSPropertyWebkitUserDrag, CSSValueAuto);
+        }
     }
 
     if (!hadExistingElements) {

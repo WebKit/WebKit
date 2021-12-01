@@ -154,7 +154,7 @@ public:
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
 #if ENABLE(IMAGE_ANALYSIS)
-    bool needsToForceUserSelectWhenInstallingImageOverlay() const;
+    bool needsToForceUserSelectAndUserDragWhenInstallingImageOverlay() const;
 #endif
 
 private:
