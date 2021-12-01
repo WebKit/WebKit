@@ -4,5 +4,5 @@ Blocked access to external URL http://www1.localhost:8800/content-security-polic
 
 FAIL Test that the www1 image is allowed to load assert_unreached: www1 image should have loaded Reached unreachable code
 PASS Test that the www2 image is not allowed to load
-FAIL Test that the www2 image throws a violation event assert_equals: expected "http://www2.localhost:8800/content-security-policy/support/fail.png" but got "http://www2.localhost:8800"
+PASS Test that the www2 image throws a violation event
 

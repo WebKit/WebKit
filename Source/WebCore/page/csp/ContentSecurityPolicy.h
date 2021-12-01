@@ -192,8 +192,7 @@ private:
     void logToConsole(const String& message, const String& contextURL = String(), const OrdinalNumber& contextLine = OrdinalNumber::beforeFirst(), const OrdinalNumber& contextColumn = OrdinalNumber::beforeFirst(), JSC::JSGlobalObject* = nullptr) const;
     void applyPolicyToScriptExecutionContext();
 
-    // Implements the deprecated CSP2 "strip uri for reporting" algorithm from <https://www.w3.org/TR/CSP2/#violation-reports>.
-    String deprecatedURLForReporting(const URL&) const;
+    String createURLForReporting(const URL&, const String&) const;
 
     const TextEncoding& documentEncoding() const;
 

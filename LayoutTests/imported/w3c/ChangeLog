@@ -1,3 +1,20 @@
+2021-12-01  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Update URL stripping in reports to match other implementations
+        https://bugs.webkit.org/show_bug.cgi?id=233135
+
+        Reviewed by Kate Cheney.
+
+        Update tests as passing.
+
+        * web-platform-tests/content-security-policy/generic/directive-name-case-insensitive.sub-expected.txt:
+        * web-platform-tests/content-security-policy/media-src/media-src-7_1_2.sub-expected.txt:
+        * web-platform-tests/content-security-policy/media-src/media-src-7_2_2.sub-expected.txt:
+        * web-platform-tests/content-security-policy/media-src/media-src-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting/report-original-url.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting/report-strips-fragment-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image.sub-expected.txt:
+
 2021-12-01  Andreu Botella  <andreu@andreubotella.com>
 
         imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/multipart-formdata.window.html is no longer failing – remove expectations

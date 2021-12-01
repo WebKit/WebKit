@@ -949,7 +949,6 @@ imported/w3c/web-platform-tests/content-security-policy/navigate-to/href-locatio
 imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-dedicated-worker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/reporting/report-strips-fragment.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-allowed.html [ Skip ]

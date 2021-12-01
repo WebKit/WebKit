@@ -713,13 +713,24 @@ static bool shouldReportProtocolOnly(const URL& url)
     return !url.isHierarchical() || url.protocolIs("file");
 }
 
-String ContentSecurityPolicy::deprecatedURLForReporting(const URL& url) const
+String ContentSecurityPolicy::createURLForReporting(const URL& url, const String& violatedDirective) const
 {
+    // This implements the deprecated CSP2 "strip uri for reporting" algorithm from https://www.w3.org/TR/CSP2/#violation-reports
+    // with the change that cross-origin is considered safe except on some directives.
+    // The frame-src, object-src, and block-all-mixed-content directives would allow a website to put another in a frame
+    // and listen to emitted securitypolicyviolations.
+    bool directiveIsSafe = violatedDirective != ContentSecurityPolicyDirectiveNames::frameSrc
+        && violatedDirective != ContentSecurityPolicyDirectiveNames::objectSrc
+        && violatedDirective != ContentSecurityPolicyDirectiveNames::blockAllMixedContent;
+    auto securityOrigin = static_cast<SecurityOriginData>(*m_selfSource).securityOrigin();
+
     if (!url.isValid())
         return { };
     if (shouldReportProtocolOnly(url))
         return url.protocol().toString();
-    return static_cast<SecurityOriginData>(*m_selfSource).securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url)->toString();
+    if (securityOrigin->canRequest(url) || directiveIsSafe)
+        return url.strippedForUseAsReferrer();
+    return SecurityOrigin::create(url)->toString();
 }
 
 void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirective& effectiveViolatedDirective, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state) const
@@ -749,8 +760,15 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // FIXME: Support sending reports from worker.
     CSPInfo info;
 
-    auto blockedURL = URL(URL(), blockedURLString);
-    info.documentURI = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : deprecatedURLForReporting(blockedURL);
+    String blockedURI;
+    if (blockedURLString == "eval" || blockedURLString == "inline")
+        blockedURI = blockedURLString;
+    else {
+        // If there is a redirect then we use the pre-redirect URL: https://www.w3.org/TR/CSP3/#security-violation-reports.
+        blockedURI = createURLForReporting(preRedirectURL.isNull() ? URL(URL(), blockedURLString) : preRedirectURL, violatedDirective);
+    }
+
+    info.documentURI = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : blockedURI;
     info.lineNumber = sourcePosition.m_line.oneBasedInt();
     info.columnNumber = sourcePosition.m_column.oneBasedInt();
     info.sample = violatedDirectiveList.shouldReportSample(violatedDirective) ? sourceContent.left(40).toString() : emptyString();
@@ -771,20 +789,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         auto stack = createScriptCallStack(JSExecState::currentState(), 2);
         auto* callFrame = stack->firstNonNativeCallFrame();
         if (callFrame && callFrame->lineNumber()) {
-            info.sourceFile = deprecatedURLForReporting(URL { URL { }, callFrame->sourceURL() });
+            info.sourceFile = createURLForReporting(URL { URL { }, callFrame->sourceURL() }, violatedDirective);
             info.lineNumber = callFrame->lineNumber();
             info.columnNumber = callFrame->columnNumber();
         }
     }
     ASSERT(m_client || is<Document>(m_scriptExecutionContext));
-
-    String blockedURI;
-    if (blockedURLString == "eval" || blockedURLString == "inline")
-        blockedURI = blockedURLString;
-    else if (preRedirectURL.isNull())
-        blockedURI = deprecatedURLForReporting(blockedURL);
-    else
-        blockedURI = deprecatedURLForReporting(preRedirectURL);
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
