@@ -461,7 +461,7 @@ class Git(Scm):
 
     def branches_for(self, hash=None, remote=True):
         branch = run(
-            [self.executable(), 'branch', '-a'] + (['--contains', hash] if hash else []),
+            [self.executable(), 'branch'] + (['--contains', hash] if hash else ['-a']),
             cwd=self.root_path,
             capture_output=True,
             encoding='utf-8',

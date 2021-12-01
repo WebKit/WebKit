@@ -340,12 +340,12 @@ nothing to commit, working tree clean
                     )
                 ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                self.executable, 'branch', '-a', '--contains', re.compile(r'.+'),
+                self.executable, 'branch', '--contains', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
-                    stdout='\n'.join(sorted(self.branches_on(args[4]))) + '\n',
-                ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
+                    stdout='\n'.join(sorted(self.branches_on(args[3]))) + '\n',
+                ) if self.find(args[3]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
                 self.executable, 'checkout', '-b', re.compile(r'.+'),
                 cwd=self.path,

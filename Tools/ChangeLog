@@ -1,3 +1,17 @@
+2021-12-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Do not query remotes when determining branches containing commit
+        https://bugs.webkit.org/show_bug.cgi?id=233700
+        <rdar://problem/85920569>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.branches_for): Remove -a from --contains check.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+
 2021-12-01  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r286346): ResourceLoadDelegate.LoadInfo fails
