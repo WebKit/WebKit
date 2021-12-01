@@ -1,3 +1,19 @@
+2021-12-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] OSAllocator::reserveUncommittedAligned should use aligned allocation
+        https://bugs.webkit.org/show_bug.cgi?id=233674
+
+        Reviewed by Keith Miller.
+
+        OSAllocator::reserveUncommittedAligned reserved 2GiB for 1GiB
+        aligned allocation request.
+
+        Windows 10 (Desktop) has VirtualAlloc2 API to aligned allocation.
+
+        * wtf/win/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::reserveUncommittedAligned): Use VirtualAlloc2
+        API if available. Use SOFT_LINK_OPTIONAL for VirtualAlloc2.
+
 2021-12-01  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed. Fix -Wformat warning after in ThreadingPosix logging
