@@ -447,7 +447,6 @@ class LabelReference
         else
             $asm.puts "lea #{dst.x86Operand(:ptr)}, #{asmLabel}"
         end
-        print("#{offsetRegister(offset, dst.x86Operand(:ptr))}\n")
         offsetRegister(offset, dst.x86Operand(:ptr))
     end
 end
