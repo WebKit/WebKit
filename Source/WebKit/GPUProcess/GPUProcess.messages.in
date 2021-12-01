@@ -76,10 +76,6 @@ messages -> GPUProcess LegacyReceiver {
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
 #endif
 
-#if PLATFORM(COCOA)
-    ConsumeAudioComponentRegistrations(IPC::SharedBufferDataReference registrationData)
-#endif
-
     WebProcessConnectionCountForTesting() -> (uint64_t count) Async
 }
 

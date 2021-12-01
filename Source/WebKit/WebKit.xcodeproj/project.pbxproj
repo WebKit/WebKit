@@ -1974,8 +1974,6 @@
 		E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */ = {isa = PBXBuildFile; fileRef = E38A1FBF23A551BF00D2374F /* UserInterfaceIdiom.mm */; };
 		E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */; };
 		E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */; };
-		E3C2396D2721C9C200E37537 /* AudioComponentRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3C2396B2721C9C100E37537 /* AudioComponentRegistration.cpp */; };
-		E3C2396E2721C9C200E37537 /* AudioComponentRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C2396C2721C9C200E37537 /* AudioComponentRegistration.h */; };
 		E3CAAA442413279900CED2E2 /* AccessibilitySupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */; };
 		E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */; };
 		E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */; };
@@ -6282,8 +6280,6 @@
 		E3A86FBC26958E330059264D /* WebCaptionPreferencesDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCaptionPreferencesDelegate.cpp; sourceTree = "<group>"; };
 		E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityPreferences.cpp; sourceTree = "<group>"; };
 		E3BCE878267252120011D8DB /* AccessibilityPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPreferences.h; sourceTree = "<group>"; };
-		E3C2396B2721C9C100E37537 /* AudioComponentRegistration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioComponentRegistration.cpp; sourceTree = "<group>"; };
-		E3C2396C2721C9C200E37537 /* AudioComponentRegistration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioComponentRegistration.h; sourceTree = "<group>"; };
 		E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
 		E3EFB02C2550617C003C2F96 /* WebSystemSoundDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSystemSoundDelegate.cpp; sourceTree = "<group>"; };
 		E3EFB02D2550617C003C2F96 /* WebSystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSystemSoundDelegate.h; sourceTree = "<group>"; };
@@ -8858,8 +8854,6 @@
 				378E1A3B181ED6FF0031007A /* APIObject.mm */,
 				A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */,
 				A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */,
-				E3C2396B2721C9C100E37537 /* AudioComponentRegistration.cpp */,
-				E3C2396C2721C9C200E37537 /* AudioComponentRegistration.h */,
 				1A698F171E4910220064E881 /* AuxiliaryProcessCocoa.mm */,
 				CE11AD511CBC482F00681EE5 /* CodeSigning.h */,
 				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
@@ -12705,7 +12699,6 @@
 				7B1DB26625668CE1000E26BC /* ArrayReference.h in Headers */,
 				AAFA634F234F7C6400FFA864 /* AsyncRevalidation.h in Headers */,
 				BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */,
-				E3C2396E2721C9C200E37537 /* AudioComponentRegistration.h in Headers */,
 				512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */,
 				512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */,
 				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,
@@ -15049,7 +15042,6 @@
 				2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
 				2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */,
-				E3C2396D2721C9C200E37537 /* AudioComponentRegistration.cpp in Sources */,
 				CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */,
 				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
