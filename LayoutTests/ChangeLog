@@ -1,3 +1,9 @@
+2021-11-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, remove failure expectation for test that is now consistently passing.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-11-30  Robert Jenner  <Jenner@apple.com>
 
         REBASELINE: [ Monterey ] fast/dom/52776.html (layout-test) is a constant text failure (233669)
