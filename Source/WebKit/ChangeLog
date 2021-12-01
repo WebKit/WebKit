@@ -1,3 +1,23 @@
+2021-12-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][GTK4][WebDriver] Flaky crashes exiting many prompty-related webdriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=233505
+
+        Reviewed by Carlos Garcia Campos.
+
+        Covered by existing tests.
+
+        When building for GTK4, upon dialog closure the dialog widgets might
+        be removed with `webkitWebViewDialogSetChild(dialog, NULL)` while
+        the button is still registered as the default widget of the toplevel.
+
+        This commit makes sure we don't have a default widget while the
+        dialog is unmapped, to mirror the map() behavior.
+
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:
+        (webkitScriptDialogImplUnmap): Added to unset the default widget.
+        (webkit_script_dialog_impl_class_init): Register unmap callback.
+
 2021-11-30  Antoine Quint  <graouts@apple.com>
 
         replace-webkit-additions-includes should assume unknown or empty deployment targets are supported

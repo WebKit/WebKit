@@ -74,6 +74,20 @@ static gboolean webkitScriptDialogImplKeyPressEvent(GtkWidget* widget, GdkEventK
 }
 #endif
 
+#if USE(GTK4)
+static void webkitScriptDialogImplUnmap(GtkWidget* widget)
+{
+    if (!gtk_widget_get_mapped(widget))
+        return;
+
+    auto* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(widget));
+    if (WebCore::widgetIsOnscreenToplevelWindow(toplevel))
+        gtk_window_set_default(GTK_WINDOW(toplevel), nullptr);
+
+    GTK_WIDGET_CLASS(webkit_script_dialog_impl_parent_class)->unmap(widget);
+}
+#endif
+
 static void webkitScriptDialogImplMap(GtkWidget* widget)
 {
     WebKitScriptDialogImplPrivate* priv = WEBKIT_SCRIPT_DIALOG_IMPL(widget)->priv;
@@ -235,6 +249,9 @@ static void webkit_script_dialog_impl_class_init(WebKitScriptDialogImplClass* kl
     widgetClass->key_press_event = webkitScriptDialogImplKeyPressEvent;
 #endif
     widgetClass->map = webkitScriptDialogImplMap;
+#if USE(GTK4)
+    widgetClass->unmap = webkitScriptDialogImplUnmap;
+#endif
 #if !USE(GTK4)
     gtk_widget_class_set_accessible_role(widgetClass, ATK_ROLE_ALERT);
 #endif
