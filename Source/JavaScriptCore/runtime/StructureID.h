@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSCConfig.h"
+#include <wtf/StdIntExtras.h>
 
 namespace JSC {
 

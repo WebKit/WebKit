@@ -1,5 +1,14 @@
 2021-12-01  Xan Lopez  <xan@igalia.com>
 
+        [JSC] Fix potential build break related to StructureID.h
+        https://bugs.webkit.org/show_bug.cgi?id=233693
+
+        Reviewed by Adrian Perez de Castro.
+
+        * runtime/StructureID.h: include StdIntExtras.h for CPURegister.
+
+2021-12-01  Xan Lopez  <xan@igalia.com>
+
         [JSC] Remove debug print left over from previous patch
         https://bugs.webkit.org/show_bug.cgi?id=233692
 
