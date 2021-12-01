@@ -26,11 +26,15 @@
 #import "config.h"
 
 #import "DaemonTestUtilities.h"
+#import "Test.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <mach/mach_init.h>
 #import <mach/task.h>
 

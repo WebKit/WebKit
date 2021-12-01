@@ -1,3 +1,9 @@
+2021-12-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed API test build fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+
 2021-12-01  Alex Christensen  <achristensen@webkit.org>
 
         Add csp-report resource type to WKContentRuleList
