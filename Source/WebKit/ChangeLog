@@ -1,5 +1,26 @@
 2021-12-01  Youenn Fablet  <youenn@apple.com>
 
+        Reuse navigation preload if service worker is fetching the corresponding navigation request
+        https://bugs.webkit.org/show_bug.cgi?id=233490
+
+        Reviewed by Chris Dumez.
+
+        Store navigation preloader in NetworkSession, keyed by the corresponding fetch identifier.
+        When a navigation request is coming from fetch with the corresponding navigation preload identifier
+        we look at ongoing preloads and use it if available to answer the fetch.
+        To do so, we create a new ServiceWorkerFetchTask that will take the preloader of the initial ServiceWorkerFetchTask.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkSession.cpp:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+
+2021-12-01  Youenn Fablet  <youenn@apple.com>
+
         WebSWServerConnection::createFetchTask does not need to query twice for a registration
         https://bugs.webkit.org/show_bug.cgi?id=233467
 

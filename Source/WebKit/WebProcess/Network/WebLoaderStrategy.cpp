@@ -333,6 +333,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.serviceWorkersMode = resourceLoader.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No ? resourceLoader.options().serviceWorkersMode : ServiceWorkersMode::None;
     loadParameters.serviceWorkerRegistrationIdentifier = resourceLoader.options().serviceWorkerRegistrationIdentifier;
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
+    if (resourceLoader.options().navigationPreloadIdentifier)
+        loadParameters.navigationPreloadIdentifier = resourceLoader.options().navigationPreloadIdentifier;
 #endif
 
     auto* document = frame ? frame->document() : nullptr;

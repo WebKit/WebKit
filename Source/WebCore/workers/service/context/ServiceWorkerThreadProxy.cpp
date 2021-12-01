@@ -221,8 +221,8 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
 
     ASSERT(!m_ongoingFetchTasks.contains(key));
     m_ongoingFetchTasks.add(key, client.copyRef());
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy()](auto&) mutable {
-        thread().queueTaskToFireFetchEvent(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(referrer), WTFMove(options));
+    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy(), fetchIdentifier](auto&) mutable {
+        thread().queueTaskToFireFetchEvent(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(referrer), WTFMove(options), fetchIdentifier);
     }, WorkerRunLoop::defaultMode());
 }
 

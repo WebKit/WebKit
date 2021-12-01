@@ -31,6 +31,7 @@
 #include "AbortSignal.h"
 #include "ExceptionOr.h"
 #include "FetchBodyOwner.h"
+#include "FetchIdentifier.h"
 #include "FetchOptions.h"
 #include "FetchRequestInit.h"
 #include "ResourceRequest.h"
@@ -80,6 +81,8 @@ public:
     const URL& url() const { return m_request.url(); }
 
     ResourceRequest resourceRequest() const;
+    FetchIdentifier navigationPreloadIdentifier() const { return m_navigationPreloadIdentifier; }
+    void setNavigationPreloadIdentifier(FetchIdentifier identifier) { m_navigationPreloadIdentifier = identifier; }
 
 private:
     FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
@@ -97,6 +100,7 @@ private:
     String m_referrer;
     mutable String m_requestURL;
     Ref<AbortSignal> m_signal;
+    FetchIdentifier m_navigationPreloadIdentifier;
 };
 
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
@@ -106,6 +110,7 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional
     , m_referrer(WTFMove(referrer))
     , m_signal(AbortSignal::create(context))
 {
+    m_request.setRequester(ResourceRequest::Requester::Fetch);
     updateContentType();
 }
 

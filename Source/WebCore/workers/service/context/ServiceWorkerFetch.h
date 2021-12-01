@@ -59,7 +59,7 @@ public:
     virtual void continueDidReceiveResponse() = 0;
 };
 
-void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ScriptExecutionContextIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ScriptExecutionContextIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier);
 };
 
 } // namespace WebCore

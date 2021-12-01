@@ -152,8 +152,13 @@ void WebSWServerConnection::controlClient(ScriptExecutionContextIdentifier clien
 
 std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
 {
-    if (loader.parameters().serviceWorkersMode == ServiceWorkersMode::None)
+    if (loader.parameters().serviceWorkersMode == ServiceWorkersMode::None) {
+        if (loader.parameters().request.requester() == ResourceRequest::Requester::Fetch && isNavigationRequest(loader.parameters().options.destination)) {
+            if (auto task = ServiceWorkerFetchTask::fromNavigationPreloader(*this, loader, request, session()))
+                return task;
+        }
         return nullptr;
+    }
 
     if (!server().canHandleScheme(loader.originalRequest().url().protocol()))
         return nullptr;

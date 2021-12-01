@@ -139,7 +139,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     });
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ScriptExecutionContextIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ScriptExecutionContextIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier)
 {
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
 
@@ -167,6 +167,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     URL requestURL = request.url();
     auto fetchRequest = FetchRequest::create(globalScope, WTFMove(body), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(referrer));
+    fetchRequest->setNavigationPreloadIdentifier(fetchIdentifier);
 
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);

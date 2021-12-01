@@ -36,6 +36,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/BlobRegistryImpl.h>
+#include <WebCore/FetchIdentifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
@@ -65,6 +66,7 @@ class NetworkProcess;
 class NetworkResourceLoader;
 class NetworkBroadcastChannelRegistry;
 class NetworkSocketChannel;
+class ServiceWorkerFetchTask;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSocketTask;
@@ -175,6 +177,9 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void addSoftUpdateLoader(std::unique_ptr<ServiceWorkerSoftUpdateLoader>&& loader) { m_softUpdateLoaders.add(WTFMove(loader)); }
     void removeSoftUpdateLoader(ServiceWorkerSoftUpdateLoader* loader) { m_softUpdateLoaders.remove(loader); }
+    void addNavigationPreloaderTask(ServiceWorkerFetchTask&);
+    ServiceWorkerFetchTask* navigationPreloaderTaskFromFetchIdentifier(WebCore::FetchIdentifier);
+    void removeNavigationPreloaderTask(ServiceWorkerFetchTask&);
 #endif
 
     NetworkLoadScheduler& networkLoadScheduler();
@@ -258,8 +263,9 @@ protected:
 
 #if ENABLE(SERVICE_WORKER)
     HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;
+    HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_navigationPreloaders;
 #endif
-    
+
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData m_appPrivacyReportTestingData;
 #endif

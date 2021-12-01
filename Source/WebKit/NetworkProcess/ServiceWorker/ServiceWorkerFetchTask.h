@@ -63,7 +63,11 @@ class WebSWServerToContextConnection;
 class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static std::unique_ptr<ServiceWorkerFetchTask> fromNavigationPreloader(WebSWServerConnection&, NetworkResourceLoader&, const WebCore::ResourceRequest&, NetworkSession*);
+
     ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
+    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, std::unique_ptr<ServiceWorkerNavigationPreloader>&&);
+
     ~ServiceWorkerFetchTask();
 
     void start(WebSWServerToContextConnection&);
@@ -102,6 +106,7 @@ private:
     void loadResponseFromPreloader();
     void loadBodyFromPreloader();
     void cancelPreloadIfNecessary();
+    NetworkSession* session();
 
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);
@@ -113,7 +118,7 @@ private:
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
     WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     WebCore::ResourceRequest m_currentRequest;
-    WebCore::Timer m_timeoutTimer;
+    std::unique_ptr<WebCore::Timer> m_timeoutTimer;
     WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
     std::unique_ptr<ServiceWorkerNavigationPreloader> m_preloader;
     bool m_wasHandled { false };

@@ -39,6 +39,7 @@
 #include "PrivateClickMeasurementClientImpl.h"
 #include "PrivateClickMeasurementManager.h"
 #include "PrivateClickMeasurementManagerProxy.h"
+#include "ServiceWorkerFetchTask.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
@@ -545,5 +546,22 @@ String NetworkSession::attributedBundleIdentifierFromPageIdentifier(WebPageProxy
 {
     return m_attributedBundleIdentifierFromPageIdentifiers.get(identifier);
 }
+
+#if ENABLE(SERVICE_WORKER)
+void NetworkSession::addNavigationPreloaderTask(ServiceWorkerFetchTask& task)
+{
+    m_navigationPreloaders.add(task.fetchIdentifier(), task);
+}
+
+void NetworkSession::removeNavigationPreloaderTask(ServiceWorkerFetchTask& task)
+{
+    m_navigationPreloaders.remove(task.fetchIdentifier());
+}
+
+ServiceWorkerFetchTask* NetworkSession::navigationPreloaderTaskFromFetchIdentifier(FetchIdentifier identifier)
+{
+    return m_navigationPreloaders.get(identifier).get();
+}
+#endif
 
 } // namespace WebKit

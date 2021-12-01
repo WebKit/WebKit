@@ -170,7 +170,6 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     m_options.credentials = Credentials::SameOrigin;
     m_referrer = "client"_s;
     m_request.setURL(requestURL);
-    m_request.setRequester(ResourceRequest::Requester::Fetch);
     m_request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
 
     auto optionsResult = initializeOptions(init);
@@ -205,6 +204,8 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 {
     m_request = input.m_request;
+    m_navigationPreloadIdentifier = input.navigationPreloadIdentifier();
+
     m_options = input.m_options;
     m_referrer = input.m_referrer;
 
@@ -322,8 +323,9 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(ScriptExecutionContext& conte
     if (isDisturbedOrLocked())
         return Exception { TypeError, "Body is disturbed or locked"_s };
 
-    auto clone = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options}, String { m_referrer }));
+    auto clone = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
     clone->cloneBody(*this);
+    clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
     clone->m_signal->signalFollow(m_signal);
     return clone;
 }

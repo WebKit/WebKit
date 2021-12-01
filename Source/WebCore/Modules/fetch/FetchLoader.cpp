@@ -94,6 +94,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.dataBufferingPolicy = DataBufferingPolicy::DoNotBufferData;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.navigationPreloadIdentifier = request.navigationPreloadIdentifier();
 
     ResourceRequest fetchRequest = request.resourceRequest();
 

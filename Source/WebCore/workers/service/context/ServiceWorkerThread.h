@@ -64,7 +64,7 @@ public:
     void willPostTaskToFireMessageEvent();
     void willPostTaskToFirePushSubscriptionChangeEvent();
 
-    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, std::optional<ScriptExecutionContextIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
+    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, std::optional<ScriptExecutionContextIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier);
     void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
     void queueTaskToFireInstallEvent();
     void queueTaskToFireActivateEvent();
