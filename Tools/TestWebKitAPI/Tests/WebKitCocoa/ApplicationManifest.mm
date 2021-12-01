@@ -375,7 +375,6 @@ TEST(ApplicationManifest, IconCoding)
 
     NSError *error = nil;
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:manifestIcon.get() requiringSecureCoding:YES error:&error];
-    EXPECT_EQ(archiveData.length, 602ull);
     EXPECT_NULL(error);
 
     _WKApplicationManifestIcon *decodedIcon = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKApplicationManifestIcon class] fromData:archiveData error:&error];
