@@ -49,4 +49,8 @@ WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePayLineItem& total, cons
 
 } // namespace WebCore
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/PaymentSummaryItemsAdditions.h>
+#endif
+
 #endif // ENABLE(APPLE_PAY)

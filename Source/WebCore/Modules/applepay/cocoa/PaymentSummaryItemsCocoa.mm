@@ -50,6 +50,14 @@ static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePayLineItem::Typ
     }
 }
 
+} // namespace WebCore
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/PaymentSummaryItemsCocoaAdditions.mm>
+#endif
+
+namespace WebCore {
+
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM) || HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
 
 static NSDate *toDate(double date)
@@ -111,26 +119,24 @@ PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem
 
 PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem& lineItem)
 {
-#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM) || HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
     switch (lineItem.paymentTiming) {
     case ApplePayPaymentTiming::Immediate:
         break;
 
-    case ApplePayPaymentTiming::Recurring:
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+    case ApplePayPaymentTiming::Recurring:
         return platformRecurringSummaryItem(lineItem);
-#else
-        break;
 #endif
 
-    case ApplePayPaymentTiming::Deferred:
 #if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
+    case ApplePayPaymentTiming::Deferred:
         return platformDeferredSummaryItem(lineItem);
-#else
-        break;
+#endif
+
+#if defined(PaymentSummaryItemsCocoaAdditions_platformSummaryItem)
+    PaymentSummaryItemsCocoaAdditions_platformSummaryItem
 #endif
     }
-#endif
 
     return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }

@@ -33,6 +33,10 @@
 #include <optional>
 #include <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayLineItemAdditions.h>
+#endif
+
 namespace WebCore {
 
 struct ApplePayLineItem final {
@@ -45,9 +49,7 @@ struct ApplePayLineItem final {
     String label;
     String amount;
 
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM) || ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     ApplePayPaymentTiming paymentTiming { ApplePayPaymentTiming::Immediate };
-#endif
 
 #if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
     double recurringPaymentStartDate { std::numeric_limits<double>::quiet_NaN() };
@@ -60,6 +62,10 @@ struct ApplePayLineItem final {
     double deferredPaymentDate { std::numeric_limits<double>::quiet_NaN() };
 #endif
 
+#if defined(ApplePayLineItemAdditions_members)
+    ApplePayLineItemAdditions_members
+#endif
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ApplePayLineItem> decode(Decoder&);
 };
@@ -70,9 +76,7 @@ void ApplePayLineItem::encode(Encoder& encoder) const
     encoder << type;
     encoder << label;
     encoder << amount;
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM) || ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     encoder << paymentTiming;
-#endif
 #if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
     encoder << recurringPaymentStartDate;
     encoder << recurringPaymentIntervalUnit;
@@ -81,6 +85,9 @@ void ApplePayLineItem::encode(Encoder& encoder) const
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     encoder << deferredPaymentDate;
+#endif
+#if defined(ApplePayLineItemAdditions_encode)
+    ApplePayLineItemAdditions_encode
 #endif
 }
 
@@ -96,9 +103,7 @@ std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
     DECODE(type, Type)
     DECODE(label, String)
     DECODE(amount, String)
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM) || ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     DECODE(paymentTiming, ApplePayPaymentTiming)
-#endif
 #if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
     DECODE(recurringPaymentStartDate, double)
     DECODE(recurringPaymentIntervalUnit, ApplePayRecurringPaymentDateUnit)
@@ -108,6 +113,9 @@ std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     DECODE(deferredPaymentDate, double)
 #endif
+#if defined(ApplePayLineItemAdditions_decode_members)
+    ApplePayLineItemAdditions_decode_members
+#endif
 
 #undef DECODE
 
@@ -115,9 +123,7 @@ std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
         WTFMove(*type),
         WTFMove(*label),
         WTFMove(*amount),
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM) || ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
         WTFMove(*paymentTiming),
-#endif
 #if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
         WTFMove(*recurringPaymentStartDate),
         WTFMove(*recurringPaymentIntervalUnit),
@@ -126,6 +132,9 @@ std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
         WTFMove(*deferredPaymentDate),
+#endif
+#if defined(ApplePayLineItemAdditions_decode_return)
+    ApplePayLineItemAdditions_decode_return
 #endif
     } };
 }
