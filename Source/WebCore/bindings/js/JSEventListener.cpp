@@ -195,10 +195,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     auto handleExceptionIfNeeded = [&] (JSC::Exception* exception) -> bool {
         if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-            auto& scriptController = *downcast<WorkerGlobalScope>(scriptExecutionContext).script();
+            auto* scriptController = downcast<WorkerGlobalScope>(scriptExecutionContext).script();
             bool terminatorCausedException = (exception && vm.isTerminationException(exception));
-            if (terminatorCausedException || scriptController.isTerminatingExecution())
-                scriptController.forbidExecution();
+            if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution()))
+                scriptController->forbidExecution();
         }
 
         if (exception) {

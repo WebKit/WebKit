@@ -274,10 +274,10 @@ bool DeferredPromise::handleTerminationExceptionIfNeeded(CatchScope& scope, JSDO
 
     auto& scriptExecutionContext = *lexicalGlobalObject.scriptExecutionContext();
     if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-        auto& scriptController = *downcast<WorkerGlobalScope>(scriptExecutionContext).script();
+        auto* scriptController = downcast<WorkerGlobalScope>(scriptExecutionContext).script();
         bool terminatorCausedException = vm.isTerminationException(exception);
-        if (terminatorCausedException || scriptController.isTerminatingExecution()) {
-            scriptController.forbidExecution();
+        if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {
+            scriptController->forbidExecution();
             return true;
         }
     }

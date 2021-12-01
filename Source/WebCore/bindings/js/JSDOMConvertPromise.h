@@ -51,10 +51,10 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
         if (scope.exception()) {
             auto* scriptExecutionContext = globalObject->scriptExecutionContext();
             if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-                auto& scriptController = *downcast<WorkerGlobalScope>(*scriptExecutionContext).script();
+                auto* scriptController = downcast<WorkerGlobalScope>(*scriptExecutionContext).script();
                 bool terminatorCausedException = vm.isTerminationException(scope.exception());
-                if (terminatorCausedException || scriptController.isTerminatingExecution()) {
-                    scriptController.forbidExecution();
+                if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {
+                    scriptController->forbidExecution();
                     return nullptr;
                 }
             }
