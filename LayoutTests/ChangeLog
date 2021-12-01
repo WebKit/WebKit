@@ -1,3 +1,12 @@
+2021-11-30  Robert Jenner  <Jenner@apple.com>
+
+        REBASELINE: [ Monterey ] fast/dom/52776.html (layout-test) is a constant text failure (233669)
+        https://bugs.webkit.org/show_bug.cgi?id=233669
+
+        Unreviewed test gardening. Rebase expectation for Monterey.
+
+        * platform/mac/fast/dom/52776-expected.txt:
+
 2021-11-30  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         Update test expectations for a number of newly-passing tests.
