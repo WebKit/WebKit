@@ -33,37 +33,30 @@
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 
-namespace WebCore {
-    
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
-class WEBCORE_EXPORT DFABytecodeInterpreter {
+class DFABytecodeInterpreter {
 public:
-    DFABytecodeInterpreter(const DFABytecode* bytecode, unsigned bytecodeLength)
-        : m_bytecode(bytecode)
-        , m_bytecodeLength(bytecodeLength)
-    {
-    }
-    
-    typedef HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Actions;
-    
-    Actions interpret(const CString&, uint16_t flags);
-    Actions interpretWithConditions(const CString&, uint16_t flags, const DFABytecodeInterpreter::Actions& conditionActions);
+    DFABytecodeInterpreter(Span<const uint8_t> bytecode)
+        : m_bytecode(bytecode) { }
+
+    using Actions = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+
+    WEBCORE_EXPORT Actions interpret(const CString&, ResourceFlags);
+    Actions interpretWithConditions(const CString&, ResourceFlags, const Actions& conditionActions);
     Actions actionsMatchingEverything();
 
 private:
     void interpretAppendAction(unsigned& programCounter, Actions&, bool ifCondition);
-    void interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions&, bool ifCondition);
+    void interpretTestFlagsAndAppendAction(unsigned& programCounter, ResourceFlags, Actions&, bool ifCondition);
 
     template<bool caseSensitive>
     void interpetJumpTable(const char* url, uint32_t& urlIndex, uint32_t& programCounter, bool& urlIndexIsAfterEndOfString);
 
-    const DFABytecode* m_bytecode;
-    const unsigned m_bytecodeLength;
+    const Span<const uint8_t> m_bytecode;
     const DFABytecodeInterpreter::Actions* m_topURLActions { nullptr };
 };
 
-} // namespace ContentExtensions    
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

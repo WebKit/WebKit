@@ -27,11 +27,9 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-    
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
-typedef uint8_t DFABytecode;
+using DFABytecode = uint8_t;
 
 // Increment ContentExtensionStore::CurrentContentExtensionFileVersion
 // when making any non-backwards-compatible changes to the bytecode.
@@ -60,13 +58,13 @@ enum class DFABytecodeInstruction : uint8_t {
     CheckValueRangeCaseSensitive = 0x5,
 
     // AppendAction has one argument:
-    // The action to append (4 bytes).
+    // The action to append (1-4 bytes).
     AppendAction = 0x6,
     AppendActionWithIfCondition = 0x7,
     
     // TestFlagsAndAppendAction has two arguments:
-    // The flags to check before appending (2 bytes).
-    // The action to append (4 bytes).
+    // The flags to check before appending (1-3 bytes).
+    // The action to append (1-4 bytes).
     TestFlagsAndAppendAction = 0x8,
     TestFlagsAndAppendActionWithIfCondition = 0x9,
 
@@ -79,57 +77,51 @@ enum class DFABytecodeInstruction : uint8_t {
 };
 
 // The last four bits contain the instruction type.
-const uint8_t DFABytecodeInstructionMask = 0x0F;
-const uint8_t DFABytecodeJumpSizeMask = 0xF0;
+static constexpr uint8_t DFABytecodeInstructionMask = 0x0F;
+static constexpr uint8_t DFABytecodeJumpSizeMask = 0xF0;
+static constexpr uint8_t DFABytecodeFlagsSizeMask = 0x30;
+static constexpr uint8_t DFABytecodeActionSizeMask = 0xC0;
 
 // DFA bytecode starts with a 4 byte header which contains the size of this DFA.
-typedef uint32_t DFAHeader;
+using DFAHeader = uint32_t;
+
+// DFABytecodeFlagsSize and DFABytecodeActionSize are stored in the top four bits of the DFABytecodeInstructions that have flags and actions.
+enum class DFABytecodeFlagsSize : uint8_t {
+    UInt8 = 0x10,
+    UInt16 = 0x00, // Needs to be zero to be binary compatible with bytecode compiled with fixed-size flags.
+    UInt24 = 0x20,
+};
+enum class DFABytecodeActionSize : uint8_t {
+    UInt8 = 0x40,
+    UInt16 = 0x80,
+    UInt24 = 0xC0,
+    UInt32 = 0x00, // Needs to be zero to be binary compatible with bytecode compiled with fixed-size actions.
+};
 
 // A DFABytecodeJumpSize is stored in the top four bits of the DFABytecodeInstructions that have a jump.
-enum DFABytecodeJumpSize {
+enum class DFABytecodeJumpSize : uint8_t {
     Int8 = 0x10,
     Int16 = 0x20,
     Int24 = 0x30,
     Int32 = 0x40,
 };
-const int32_t Int24Max = (1 << 23) - 1;
-const int32_t Int24Min = -(1 << 23);
+static constexpr int32_t UInt24Max = (1 << 24) - 1;
+static constexpr int32_t Int24Max = (1 << 23) - 1;
+static constexpr int32_t Int24Min = -(1 << 23);
+static constexpr size_t Int24Size = 3;
+static constexpr size_t UInt24Size = 3;
 
 static inline DFABytecodeJumpSize smallestPossibleJumpSize(int32_t longestPossibleJump)
 {
     if (longestPossibleJump <= std::numeric_limits<int8_t>::max() && longestPossibleJump >= std::numeric_limits<int8_t>::min())
-        return Int8;
+        return DFABytecodeJumpSize::Int8;
     if (longestPossibleJump <= std::numeric_limits<int16_t>::max() && longestPossibleJump >= std::numeric_limits<int16_t>::min())
-        return Int16;
+        return DFABytecodeJumpSize::Int16;
     if (longestPossibleJump <= Int24Max && longestPossibleJump >= Int24Min)
-        return Int24;
-    return Int32;
+        return DFABytecodeJumpSize::Int24;
+    return DFABytecodeJumpSize::Int32;
 }
-    
-static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruction)
-{
-    switch (instruction) {
-    case DFABytecodeInstruction::CheckValueCaseSensitive:
-    case DFABytecodeInstruction::CheckValueCaseInsensitive:
-    case DFABytecodeInstruction::JumpTableCaseInsensitive:
-    case DFABytecodeInstruction::JumpTableCaseSensitive:
-    case DFABytecodeInstruction::CheckValueRangeCaseSensitive:
-    case DFABytecodeInstruction::CheckValueRangeCaseInsensitive:
-    case DFABytecodeInstruction::Jump:
-        RELEASE_ASSERT_NOT_REACHED(); // Variable instruction size.
-    case DFABytecodeInstruction::AppendAction:
-    case DFABytecodeInstruction::AppendActionWithIfCondition:
-        return sizeof(DFABytecodeInstruction) + sizeof(uint32_t);
-    case DFABytecodeInstruction::TestFlagsAndAppendAction:
-    case DFABytecodeInstruction::TestFlagsAndAppendActionWithIfCondition:
-        return sizeof(DFABytecodeInstruction) + sizeof(uint16_t) + sizeof(uint32_t);
-    case DFABytecodeInstruction::Terminate:
-        return sizeof(DFABytecodeInstruction);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-    
-} // namespace ContentExtensions    
-} // namespace WebCore
+
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

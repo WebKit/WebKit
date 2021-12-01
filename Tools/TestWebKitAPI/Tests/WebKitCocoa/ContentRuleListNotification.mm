@@ -416,6 +416,26 @@ TEST(ContentRuleList, TopFrameChildFrame)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetched successfully");
 }
 
+TEST(ContentRuleList, CSPReport)
+{
+    TestWebKitAPI::HTTPServer server({ { "/", { {
+        { "Content-Security-Policy", "frame-src 'none'; report-uri resources/save-report.py" }
+    }, "<iframe src=\"https://webkit.org/\"></iframe>" } } });
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:makeContentRuleList(@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"resource-type\":[\"csp-report\"]}}]").get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = adoptNS([ContentRuleListNotificationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+    while (notificationList.isEmpty())
+        TestWebKitAPI::Util::spinRunLoop();
+
+    URL expectedURL = server.request().URL;
+    expectedURL.setPath("/resources/save-report.py");
+    EXPECT_STREQ(expectedURL.string().utf8().data(), notificationList.first().url.utf8().data());
+}
+
 TEST(ContentRuleList, LegacyVersionAndName)
 {
     NSString *directory = [NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTestDirectory"];

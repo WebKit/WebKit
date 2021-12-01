@@ -46,8 +46,8 @@ ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContent
     , m_compiledExtension(WTFMove(compiledExtension))
     , m_extensionBaseURL(WTFMove(extensionBaseURL))
 {
-    DFABytecodeInterpreter withoutConditions(m_compiledExtension->filtersWithoutConditionsBytecode(), m_compiledExtension->filtersWithoutConditionsBytecodeLength());
-    DFABytecodeInterpreter withConditions(m_compiledExtension->filtersWithConditionsBytecode(), m_compiledExtension->filtersWithConditionsBytecodeLength());
+    DFABytecodeInterpreter withoutConditions({ m_compiledExtension->filtersWithoutConditionsBytecode(), m_compiledExtension->filtersWithoutConditionsBytecodeLength() });
+    DFABytecodeInterpreter withConditions({ m_compiledExtension->filtersWithConditionsBytecode(), m_compiledExtension->filtersWithConditionsBytecodeLength() });
     for (uint64_t action : withoutConditions.actionsMatchingEverything()) {
         ASSERT(static_cast<uint32_t>(action) == action);
         m_universalActionsWithoutConditions.append(static_cast<uint32_t>(action));
@@ -123,8 +123,8 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
 void ContentExtension::populateConditionCacheIfNeeded(const URL& topURL)
 {
     if (m_cachedTopURL != topURL) {
-        DFABytecodeInterpreter interpreter(m_compiledExtension->topURLFiltersBytecode(), m_compiledExtension->topURLFiltersBytecodeLength());
-        constexpr uint16_t allLoadTypesAndResourceTypes = LoadTypeMask | ResourceTypeMask | LoadContextMask;
+        DFABytecodeInterpreter interpreter({ m_compiledExtension->topURLFiltersBytecode(), m_compiledExtension->topURLFiltersBytecodeLength() });
+        constexpr ResourceFlags allLoadTypesAndResourceTypes = LoadTypeMask | ResourceTypeMask | LoadContextMask;
         String string = m_compiledExtension->conditionsApplyOnlyToDomain() ? topURL.host().toString() : topURL.string();
         auto topURLActions = interpreter.interpret(string.utf8(), allLoadTypesAndResourceTypes);
         

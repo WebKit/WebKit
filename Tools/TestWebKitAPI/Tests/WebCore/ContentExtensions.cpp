@@ -540,7 +540,7 @@ TEST_F(ContentExtensionTest, DistinguishablePrefixAreNotMerged)
     testRequest(backend, mainDocumentRequest("http://foo.orgg/"), { variantIndex<ContentExtensions::BlockLoadAction> });
 }
 
-static void compareContents(const ContentExtensions::DFABytecodeInterpreter::Actions& a, const Vector<uint64_t>& b)
+static void compareContents(const DFABytecodeInterpreter::Actions& a, const Vector<uint64_t>& b)
 {
     EXPECT_EQ(a.size(), b.size());
     for (unsigned i = 0; i < b.size(); ++i)
@@ -562,7 +562,7 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithIdenticalActionAreMerged)
     Vector<ContentExtensions::DFABytecode> bytecode;
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
-    ContentExtensions::DFABytecodeInterpreter interpreter(bytecode.data(), bytecode.size());
+    DFABytecodeInterpreter interpreter({ bytecode.data(), bytecode.size() });
     compareContents(interpreter.interpret("foo.org", 0), { 0 });
     compareContents(interpreter.interpret("ba.org", 0), { 0 });
     compareContents(interpreter.interpret("bar.org", 0), { });
@@ -588,7 +588,7 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithDistinguishableActionAreNotMerged
     Vector<ContentExtensions::DFABytecode> bytecode;
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
-    ContentExtensions::DFABytecodeInterpreter interpreter(bytecode.data(), bytecode.size());
+    DFABytecodeInterpreter interpreter({ bytecode.data(), bytecode.size() });
     compareContents(interpreter.interpret("foo.org", 0), { 0 });
     compareContents(interpreter.interpret("ba.org", 0), { 1 });
     compareContents(interpreter.interpret("bar.org", 0), { });
@@ -971,9 +971,9 @@ TEST_F(ContentExtensionTest, StringCombining)
     ASSERT_EQ(sequenceInstances(data.actions, "GGG"), 1);
 
     ASSERT_EQ(data.actions.size(), 78u);
-    ASSERT_EQ(data.filtersWithoutConditions.size(),  313u);
-    ASSERT_EQ(data.filtersWithConditions.size(),  5u);
-    ASSERT_EQ(data.topURLFilters.size(),  5u);
+    ASSERT_EQ(data.filtersWithoutConditions.size(), 288u);
+    ASSERT_EQ(data.filtersWithConditions.size(), 5u);
+    ASSERT_EQ(data.topURLFilters.size(), 5u);
     ASSERT_FALSE(data.conditionsApplyOnlyToDomain);
 
     auto extensionWithFlags = InMemoryCompiledContentExtension::create("["
@@ -1108,7 +1108,7 @@ TEST_F(ContentExtensionTest, UselessTermsMatchingEverythingAreEliminated)
     Vector<ContentExtensions::DFABytecode> bytecode;
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
-    ContentExtensions::DFABytecodeInterpreter interpreter(bytecode.data(), bytecode.size());
+    DFABytecodeInterpreter interpreter({ bytecode.data(), bytecode.size() });
     compareContents(interpreter.interpret("eb", 0), { });
     compareContents(interpreter.interpret("we", 0), { });
     compareContents(interpreter.interpret("weeb", 0), { });
@@ -1267,7 +1267,7 @@ TEST_F(ContentExtensionTest, LargeJumps)
         combinedBytecode.appendVector(bytecode);
     }
     
-    ContentExtensions::DFABytecodeInterpreter interpreter(&combinedBytecode[0], combinedBytecode.size());
+    DFABytecodeInterpreter interpreter({ combinedBytecode.data(), combinedBytecode.size() });
     
     patternId = 0;
     for (char c1 = 'A'; c1 <= 'Z'; ++c1) {
@@ -1708,7 +1708,7 @@ TEST_F(ContentExtensionTest, SplittingLargeNFAs)
             combinedBytecode.appendVector(bytecode);
         }
         
-        ContentExtensions::DFABytecodeInterpreter interpreter(&combinedBytecode[0], combinedBytecode.size());
+        DFABytecodeInterpreter interpreter({ combinedBytecode.data(), combinedBytecode.size() });
         
         EXPECT_EQ(interpreter.interpret("ABBBX", 0).size(), 1ull);
         EXPECT_EQ(interpreter.interpret("ACCCX", 0).size(), 1ull);

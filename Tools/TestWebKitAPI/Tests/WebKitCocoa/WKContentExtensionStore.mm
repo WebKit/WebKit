@@ -252,7 +252,7 @@ TEST_F(WKContentRuleListStoreTest, NonDefaultStore)
 
     NSData *data = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
     EXPECT_NOT_NULL(data);
-    EXPECT_EQ(data.length, 228u);
+    EXPECT_EQ(data.length, 225u);
     
     __block bool doneCheckingSource = false;
     [store _getContentRuleListSourceForIdentifier:identifier completionHandler:^(NSString *source) {

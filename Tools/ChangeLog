@@ -1,3 +1,17 @@
+2021-12-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add csp-report resource type to WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=233675
+        <rdar://71869893>
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::compareContents):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+
 2021-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ iOS ] TestWebKitAPI.ApplicationManifest.IconCoding is a constant failure

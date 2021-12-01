@@ -121,11 +121,11 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
 
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
         
-        DFABytecodeInterpreter withoutConditionsInterpreter(compiledExtension.filtersWithoutConditionsBytecode(), compiledExtension.filtersWithoutConditionsBytecodeLength());
+        DFABytecodeInterpreter withoutConditionsInterpreter({ compiledExtension.filtersWithoutConditionsBytecode(), compiledExtension.filtersWithoutConditionsBytecodeLength() });
         DFABytecodeInterpreter::Actions withoutConditionsActions = withoutConditionsInterpreter.interpret(urlCString, flags);
         
         URL topURL = resourceLoadInfo.mainDocumentURL;
-        DFABytecodeInterpreter withConditionsInterpreter(compiledExtension.filtersWithConditionsBytecode(), compiledExtension.filtersWithConditionsBytecodeLength());
+        DFABytecodeInterpreter withConditionsInterpreter({ compiledExtension.filtersWithConditionsBytecode(), compiledExtension.filtersWithConditionsBytecodeLength() });
         DFABytecodeInterpreter::Actions withConditionsActions = withConditionsInterpreter.interpretWithConditions(urlCString, flags, contentExtension->topURLActions(topURL));
         
         const SerializedActionByte* actions = compiledExtension.actions();

@@ -159,7 +159,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
 
     ResourceRequest request(reportURL);
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Other))
+    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::CSPReport))
         return;
 #endif
 
