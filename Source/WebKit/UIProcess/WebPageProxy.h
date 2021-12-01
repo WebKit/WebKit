@@ -51,6 +51,7 @@
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
+#include "ScrollingAccelerationCurve.h"
 #include "ShareableBitmap.h"
 #include "ShareableResource.h"
 #include "SpeechRecognitionPermissionRequest.h"
@@ -3153,6 +3154,11 @@ private:
     WindowKind m_windowKind { WindowKind::Unparented };
 
     WebNotificationManagerMessageHandler m_notificationManagerMessageHandler;
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    std::optional<ScrollingAccelerationCurve> m_scrollingAccelerationCurve;
+    std::optional<ScrollingAccelerationCurve> m_lastSentScrollingAccelerationCurve;
+#endif
 };
 
 #ifdef __OBJC__

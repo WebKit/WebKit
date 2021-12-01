@@ -3500,6 +3500,9 @@
 		2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageOverlay.h; sourceTree = "<group>"; };
 		2D6482492644B1AB00030335 /* RemoteLayerTreeLayers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeLayers.h; sourceTree = "<group>"; };
 		2D64824A2644B1AB00030335 /* RemoteLayerTreeLayers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeLayers.mm; sourceTree = "<group>"; };
+		2D65D194274B8E73009C4101 /* ScrollingAccelerationCurveMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingAccelerationCurveMac.mm; sourceTree = "<group>"; };
+		2D65D195274B8E84009C4101 /* ScrollingAccelerationCurve.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingAccelerationCurve.h; sourceTree = "<group>"; };
+		2D65D196274B8E84009C4101 /* ScrollingAccelerationCurve.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingAccelerationCurve.cpp; sourceTree = "<group>"; };
 		2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFPageNumberIndicator.h; path = ios/WKPDFPageNumberIndicator.h; sourceTree = "<group>"; };
 		2D6AB540192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFPageNumberIndicator.mm; path = ios/WKPDFPageNumberIndicator.mm; sourceTree = "<group>"; };
 		2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKThumbnailView.h; sourceTree = "<group>"; };
@@ -3783,6 +3786,8 @@
 		2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContext.h; sourceTree = "<group>"; };
 		2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContextInternal.h; sourceTree = "<group>"; };
 		2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFindOptions.h; sourceTree = "<group>"; };
+		2DEE709D2755A46800FBF864 /* MomentumEventDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MomentumEventDispatcher.h; sourceTree = "<group>"; };
+		2DEE709E2755A46800FBF864 /* MomentumEventDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MomentumEventDispatcher.cpp; sourceTree = "<group>"; };
 		2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewGestureControllerIOS.mm; path = ios/ViewGestureControllerIOS.mm; sourceTree = "<group>"; };
 		2DF9EEE31A781FB400B6CFBE /* APIFrameInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameInfo.cpp; sourceTree = "<group>"; };
 		2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameInfo.h; sourceTree = "<group>"; };
@@ -7089,6 +7094,8 @@
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
+				2D65D196274B8E84009C4101 /* ScrollingAccelerationCurve.cpp */,
+				2D65D195274B8E84009C4101 /* ScrollingAccelerationCurve.h */,
 				5C80B3DD23690F100086E6DE /* ServiceWorkerInitializationData.cpp */,
 				5C80B3DB23690D8D0086E6DE /* ServiceWorkerInitializationData.h */,
 				1AFDE6571954A42B00C48FFA /* SessionState.cpp */,
@@ -9880,9 +9887,9 @@
 		5C157A0A2717C9F100ED5280 /* webpushd */ = {
 			isa = PBXGroup;
 			children = (
-				5CBB6D4D271F67CC00FD1A5D /* com.apple.webkit.webpushd.plist */,
 				5160E954274B887100567388 /* AppBundleRequest.h */,
 				5160E953274B887100567388 /* AppBundleRequest.mm */,
+				5CBB6D4D271F67CC00FD1A5D /* com.apple.webkit.webpushd.plist */,
 				51F7BB75274498BB00C45A72 /* MockAppBundleForTesting.h */,
 				51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */,
 				5160E95C274C2A0300567388 /* MockAppBundleRegistry.h */,
@@ -10621,6 +10628,8 @@
 				1A90C1F21264FD71003E44D4 /* FindController.h */,
 				9B033E72252580F300501071 /* IPCTestingAPI.cpp */,
 				9B033E71252580F300501071 /* IPCTestingAPI.h */,
+				2DEE709E2755A46800FBF864 /* MomentumEventDispatcher.cpp */,
+				2DEE709D2755A46800FBF864 /* MomentumEventDispatcher.h */,
 				7C387433172F5615001BD88A /* PageBanner.cpp */,
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
@@ -11187,6 +11196,7 @@
 				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
 				C1E123B920A11572002646F4 /* PDFContextMenu.h */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
+				2D65D194274B8E73009C4101 /* ScrollingAccelerationCurveMac.mm */,
 				51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */,
 				51D130501382EAC000351EDD /* SecItemRequestData.h */,
 				51D130511382EAC000351EDD /* SecItemResponseData.cpp */,
@@ -12435,13 +12445,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5160E956274B887200567388 /* AppBundleRequest.h in Headers */,
+				5C1579FC2717AF5000ED5280 /* DaemonUtilities.h in Headers */,
+				51F7BB77274498BB00C45A72 /* MockAppBundleForTesting.h in Headers */,
+				5160E95E274C2A0300567388 /* MockAppBundleRegistry.h in Headers */,
 				5160E959274C0D8900567388 /* PushAppBundle.h in Headers */,
 				51F7BB7B2744C50700C45A72 /* PushClientConnection.h in Headers */,
-				5160E95E274C2A0300567388 /* MockAppBundleRegistry.h in Headers */,
-				5C1579FC2717AF5000ED5280 /* DaemonUtilities.h in Headers */,
-				5160E956274B887200567388 /* AppBundleRequest.h in Headers */,
 				512CD69F2723393A00F7F8EC /* WebPushDaemon.h in Headers */,
-				51F7BB77274498BB00C45A72 /* MockAppBundleForTesting.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14975,16 +14985,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5160E955274B887200567388 /* AppBundleRequest.mm in Sources */,
 				5C157A012717B7FB00ED5280 /* ArgumentCoders.cpp in Sources */,
 				51F7BB7D2745640400C45A72 /* CodeSigning.mm in Sources */,
 				5C1579FF2717B6D200ED5280 /* DaemonDecoder.cpp in Sources */,
-				51F7BB76274498BB00C45A72 /* MockAppBundleForTesting.mm in Sources */,
-				5160E955274B887200567388 /* AppBundleRequest.mm in Sources */,
-				5160E95A274C0D8900567388 /* PushAppBundle.mm in Sources */,
-				5160E960274C2A4000567388 /* MockAppBundleRegistry.mm in Sources */,
-				51F7BB7C2744C50700C45A72 /* PushClientConnection.mm in Sources */,
 				5C1579FE2717B6C100ED5280 /* DaemonEncoder.cpp in Sources */,
 				5C1579FB2717AF5000ED5280 /* DaemonUtilities.mm in Sources */,
+				51F7BB76274498BB00C45A72 /* MockAppBundleForTesting.mm in Sources */,
+				5160E960274C2A4000567388 /* MockAppBundleRegistry.mm in Sources */,
+				5160E95A274C0D8900567388 /* PushAppBundle.mm in Sources */,
+				51F7BB7C2744C50700C45A72 /* PushClientConnection.mm in Sources */,
 				512CD6A02723393A00F7F8EC /* WebPushDaemon.mm in Sources */,
 				5C157A0C2717CA1D00ED5280 /* WebPushDaemonMain.mm in Sources */,
 			);

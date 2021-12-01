@@ -1,3 +1,14 @@
+2021-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Add a momentum event synthesizer
+        https://bugs.webkit.org/show_bug.cgi?id=233653
+        <rdar://problem/85571258>
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformEnable.h:
+        Add an ENABLE().
+
 2021-11-30  Keith Miller  <keith_miller@apple.com>
 
         Structures should be allocated out of an aligned pool of memory so StructureID->Structure* is fast.
