@@ -1,3 +1,16 @@
+2021-11-30  Cameron McCormack  <heycam@apple.com>
+
+        Add resources for an upcoming blog post
+        https://bugs.webkit.org/show_bug.cgi?id=233681
+
+        Unreviewed.
+
+        * blog-files/wide-gamut-canvas/pinwheels.html: Added.
+        * blog-files/wide-gamut-canvas/puzzle.html: Added.
+        * blog-files/wide-gamut-canvas/puzzle.jpg: Added.
+        * blog-files/wide-gamut-canvas/squares.html: Added.
+        * blog-files/wide-gamut-canvas/stripes.html: Added.
+
 2021-11-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Coding style for inner namespaces is should be simplified to not indented
