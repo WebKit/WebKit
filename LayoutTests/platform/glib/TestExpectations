@@ -775,8 +775,12 @@ webkit.org/b/231811 media/video-system-sleep.html [ Timeout ]
 webkit.org/b/231811 webaudio/audiocontext-state-interrupted.html [ Timeout ]
 webkit.org/b/231811 webaudio/suspend-context-while-interrupted.html [ Timeout ]
 
-# Also Timing out on the bots
-webkit.org/b/232629 http/tests/media/media-blocked-by-willsendrequest.html [ Crash Timeout ]
+imported/w3c/web-platform-tests/video-rvfc [ Pass ]
+fast/mediastream/getUserMedia-rvfc.html [ Pass Failure ]
+webrtc/peerConnection-rvfc.html [ Failure ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs

@@ -87,6 +87,14 @@ inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
     return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
 }
 
+inline MediaTime fromGstClockTime(GstClockTime time)
+{
+    if (!GST_CLOCK_TIME_IS_VALID(time))
+        return MediaTime::invalidTime();
+
+    return MediaTime(GST_TIME_AS_USECONDS(time), G_USEC_PER_SEC);
+}
+
 class GstMappedBuffer {
     WTF_MAKE_NONCOPYABLE(GstMappedBuffer);
 public:

@@ -1,3 +1,14 @@
+2021-12-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] requestVideoFrameCallback support
+        https://bugs.webkit.org/show_bug.cgi?id=233541
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Update rvfc test expectations. WebRTC-related tests fail
+        mostly because WebRTC encoding/decoding is currently totally broken in WPE/GTK. XR tests
+        shall be handled in a separate patch.
+
 2021-12-01  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Update URL stripping in reports to match other implementations

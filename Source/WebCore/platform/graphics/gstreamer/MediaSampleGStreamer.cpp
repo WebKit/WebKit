@@ -24,6 +24,7 @@
 
 #include "GStreamerCommon.h"
 #include "PixelBuffer.h"
+#include "VideoFrameMetadataGStreamer.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <algorithm>
@@ -32,7 +33,7 @@
 
 namespace WebCore {
 
-MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId, VideoRotation videoRotation, bool videoMirrored)
+MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoSampleMetadata>&& metadata)
     : m_pts(MediaTime::zeroTime())
     , m_dts(MediaTime::zeroTime())
     , m_duration(MediaTime::zeroTime())
@@ -46,29 +47,27 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     GstBuffer* buffer = gst_sample_get_buffer(sample.get());
     RELEASE_ASSERT(buffer);
 
-    auto createMediaTime =
-        [](GstClockTime time) -> MediaTime {
-            return MediaTime(GST_TIME_AS_USECONDS(time), G_USEC_PER_SEC);
-        };
+    if (metadata)
+        buffer = webkitGstBufferSetVideoSampleMetadata(buffer, WTFMove(metadata));
 
     if (GST_BUFFER_PTS_IS_VALID(buffer))
-        m_pts = createMediaTime(GST_BUFFER_PTS(buffer));
+        m_pts = fromGstClockTime(GST_BUFFER_PTS(buffer));
     if (GST_BUFFER_DTS_IS_VALID(buffer) || GST_BUFFER_PTS_IS_VALID(buffer))
-        m_dts = createMediaTime(GST_BUFFER_DTS_OR_PTS(buffer));
+        m_dts = fromGstClockTime(GST_BUFFER_DTS_OR_PTS(buffer));
     if (GST_BUFFER_DURATION_IS_VALID(buffer)) {
         // Sometimes (albeit rarely, so far seen only at the end of a track)
         // frames have very small durations, so small that may be under the
         // precision we are working with and be truncated to zero.
         // SourceBuffer algorithms are not expecting frames with zero-duration,
         // so let's use something very small instead in those fringe cases.
-        m_duration = createMediaTime(std::max(GST_BUFFER_DURATION(buffer), minimumDuration));
+        m_duration = fromGstClockTime(std::max(GST_BUFFER_DURATION(buffer), minimumDuration));
     } else {
         // Unfortunately, sometimes samples don't provide a duration. This can never happen in MP4 because of the way
         // the format is laid out, but it's pretty common in WebM.
         // The good part is that durations don't matter for playback, just for buffered ranges and coded frame deletion.
         // We want to pick something small enough to not cause unwanted frame deletion, but big enough to never be
         // mistaken for a rounding artifact.
-        m_duration = createMediaTime(16666667); // 1/60 seconds
+        m_duration = fromGstClockTime(16666667); // 1/60 seconds
     }
 
     m_size = gst_buffer_get_size(buffer);
@@ -101,7 +100,7 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, Media
     return adoptRef(*gstreamerMediaSample);
 }
 
-Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& pixelBuffer, const IntSize& destinationSize, double frameRate, VideoRotation videoRotation, bool videoMirrored)
+Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& pixelBuffer, const IntSize& destinationSize, double frameRate, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoSampleMetadata>&& metadata)
 {
     ensureGStreamerInitialized();
 
@@ -119,6 +118,9 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& 
     auto width = size.width();
     auto height = size.height();
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_BGRA, width, height);
+
+    if (metadata)
+        webkitGstBufferSetVideoSampleMetadata(buffer.get(), *metadata);
 
     int frameRateNumerator, frameRateDenominator;
     gst_util_double_to_fraction(frameRate, &frameRateNumerator, &frameRateDenominator);

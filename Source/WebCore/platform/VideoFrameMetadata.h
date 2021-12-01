@@ -27,6 +27,8 @@
 
 #if ENABLE(VIDEO)
 
+#include <optional>
+
 namespace WebCore {
 
 struct VideoFrameMetadata {

@@ -469,6 +469,8 @@ private:
     void configureDownloadBuffer(GstElement*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
+    void configureVideoDecoder(GstElement*);
+
     void setPlaybinURL(const URL& urlString);
 
     void updateTracks(const GRefPtr<GstStreamCollection>&);
@@ -564,6 +566,9 @@ private:
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
 private:
+    std::optional<VideoFrameMetadata> videoFrameMetadata() final;
+    uint64_t m_sampleCount { 0 };
+    uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     GUniquePtr<struct wpe_video_plane_display_dmabuf_source> m_wpeVideoPlaneDisplayDmaBuf;
 #endif

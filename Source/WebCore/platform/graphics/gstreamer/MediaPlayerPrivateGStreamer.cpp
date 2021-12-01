@@ -51,6 +51,7 @@
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "TextCombinerGStreamer.h"
 #include "TextSinkGStreamer.h"
+#include "VideoFrameMetadataGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
 
 #if ENABLE(MEDIA_STREAM)
@@ -2750,31 +2751,26 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin* subBin, GstElement* element, MediaPlayerPrivateGStreamer* player) {
         GUniquePtr<char> binName(gst_element_get_name(GST_ELEMENT_CAST(subBin)));
         GUniquePtr<char> elementName(gst_element_get_name(element));
+        auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        auto classifiers = elementClass.split('/');
+
+        // Collect processing time metrics for video decoders and converters.
+        if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"))
+            webkitGstTraceProcessingTimeForElement(element);
+
+        if (classifiers.contains("Decoder"_s) && classifiers.contains("Video"_s)) {
+            player->configureVideoDecoder(element);
+            return;
+        }
 
         if (g_str_has_prefix(elementName.get(), "downloadbuffer")) {
             player->configureDownloadBuffer(element);
             return;
         }
 
-        if (g_str_has_prefix(elementName.get(), "uridecodebin")) {
-            // This will set the multiqueue size to the default value.
+        // This will set the multiqueue size to the default value.
+        if (g_str_has_prefix(elementName.get(), "uridecodebin"))
             g_object_set(element, "buffer-size", 2 * MB, nullptr);
-            return;
-        }
-
-        if (!g_str_has_prefix(binName.get(), "decodebin"))
-            return;
-
-        if (g_str_has_prefix(elementName.get(), "v4l2"))
-            player->m_videoDecoderPlatform = GstVideoDecoderPlatform::Video4Linux;
-        else if (g_str_has_prefix(elementName.get(), "imxvpudec"))
-            player->m_videoDecoderPlatform = GstVideoDecoderPlatform::ImxVPU;
-        else if (g_str_has_prefix(elementName.get(), "omx"))
-            player->m_videoDecoderPlatform = GstVideoDecoderPlatform::OpenMAX;
-
-#if USE(TEXTURE_MAPPER_GL)
-        player->updateTextureMapperFlags();
-#endif
     }), this);
 
     g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(sourceSetupCallback), this);
@@ -2817,6 +2813,27 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         g_signal_connect(videoSinkPad.get(), "notify::caps", G_CALLBACK(+[](GstPad* videoSinkPad, GParamSpec*, MediaPlayerPrivateGStreamer* player) {
             player->videoSinkCapsChanged(videoSinkPad);
         }), this);
+}
+
+void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
+{
+    GUniquePtr<char> name(gst_element_get_name(decoder));
+    if (g_str_has_prefix(name.get(), "v4l2"))
+        m_videoDecoderPlatform = GstVideoDecoderPlatform::Video4Linux;
+    else if (g_str_has_prefix(name.get(), "imxvpudec"))
+        m_videoDecoderPlatform = GstVideoDecoderPlatform::ImxVPU;
+    else if (g_str_has_prefix(name.get(), "omx"))
+        m_videoDecoderPlatform = GstVideoDecoderPlatform::OpenMAX;
+    else if (g_str_has_prefix(name.get(), "avdec")) {
+        // Set the decoder maximum number of threads to a low, fixed value, not depending on the
+        // platform. This also helps with processing metrics gathering. When using the default value
+        // the decoder introduces artificial processing latency reflecting the maximum number of threads.
+        g_object_set(decoder, "max-threads", 2, nullptr);
+    }
+
+#if USE(TEXTURE_MAPPER_GL)
+    updateTextureMapperFlags();
+#endif
 }
 
 bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
@@ -2929,6 +2946,8 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
     Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
+
+    ++m_sampleCount;
 
     auto internalCompositingOperation = [this](TextureMapperPlatformLayerProxy& proxy, std::unique_ptr<GstVideoFrameHolder>&& frameHolder) {
         std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
@@ -3230,7 +3249,7 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 {
     Locker sampleLocker { m_sampleMutex };
 
-    if (m_sample) {
+    if (m_sample && gst_sample_get_buffer(m_sample.get())) {
         // Allocate a new copy of the sample which has to be released. The copy is necessary so that
         // the video dimensions can still be fetched and also for canvas rendering. The release is
         // necessary because the sample might have been allocated by a hardware decoder and memory
@@ -3785,6 +3804,31 @@ WTFLogChannel& MediaPlayerPrivateGStreamer::logChannel() const
     return WebCore::LogMedia;
 }
 #endif
+
+std::optional<VideoFrameMetadata> MediaPlayerPrivateGStreamer::videoFrameMetadata()
+{
+    if (m_sampleCount == m_lastVideoFrameMetadataSampleCount)
+        return { };
+
+    m_lastVideoFrameMetadataSampleCount = m_sampleCount;
+
+    Locker sampleLocker { m_sampleMutex };
+    if (!GST_IS_SAMPLE(m_sample.get()))
+        return { };
+
+    auto* buffer = gst_sample_get_buffer(m_sample.get());
+    auto metadata = webkitGstBufferGetVideoFrameMetadata(buffer);
+    auto size = naturalSize();
+    metadata.width = size.width();
+    metadata.height = size.height();
+    metadata.presentedFrames = m_sampleCount;
+
+    // FIXME: presentationTime and expectedDisplayTime might not always have the same value, we should try getting more precise values.
+    metadata.presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds();
+    metadata.expectedDisplayTime = metadata.presentationTime;
+
+    return metadata;
+}
 
 }
 
