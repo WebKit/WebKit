@@ -99,9 +99,9 @@ void ScrollingTreeOverflowScrollingNodeNicosia::stopAnimatedScroll()
     m_delegate.stopAnimatedScroll();
 }
 
-void ScrollingTreeOverflowScrollingNodeNicosia::serviceScrollAnimation()
+void ScrollingTreeOverflowScrollingNodeNicosia::serviceScrollAnimation(MonotonicTime currentTime)
 {
-    m_delegate.serviceScrollAnimation();
+    m_delegate.serviceScrollAnimation(currentTime);
 }
 
 } // namespace WebCore

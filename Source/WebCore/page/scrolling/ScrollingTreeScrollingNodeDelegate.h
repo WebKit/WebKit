@@ -42,7 +42,7 @@ public:
     virtual bool startAnimatedScrollToPosition(FloatPoint) = 0;
     virtual void stopAnimatedScroll() = 0;
 
-    virtual void serviceScrollAnimation() = 0;
+    virtual void serviceScrollAnimation(MonotonicTime) = 0;
 
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;

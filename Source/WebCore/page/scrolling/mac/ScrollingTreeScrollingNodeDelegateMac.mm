@@ -205,9 +205,9 @@ void ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback(ScrollingEffec
     scrollingNode().setScrollAnimationInProgress(false);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::serviceScrollAnimation()
+void ScrollingTreeScrollingNodeDelegateMac::serviceScrollAnimation(MonotonicTime currentTime)
 {
-    m_scrollController.animationCallback(MonotonicTime::now());
+    m_scrollController.animationCallback(currentTime);
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const

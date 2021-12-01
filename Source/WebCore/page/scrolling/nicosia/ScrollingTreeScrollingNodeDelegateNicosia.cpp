@@ -108,9 +108,9 @@ void ScrollingTreeScrollingNodeDelegateNicosia::stopAnimationCallback(ScrollingE
     scrollingNode().setScrollAnimationInProgress(false);
 }
 
-void ScrollingTreeScrollingNodeDelegateNicosia::serviceScrollAnimation()
+void ScrollingTreeScrollingNodeDelegateNicosia::serviceScrollAnimation(MonotonicTime currentTime)
 {
-    m_scrollController.animationCallback(MonotonicTime::now());
+    m_scrollController.animationCallback(currentTime);
 }
 
 bool ScrollingTreeScrollingNodeDelegateNicosia::allowsHorizontalScrolling() const

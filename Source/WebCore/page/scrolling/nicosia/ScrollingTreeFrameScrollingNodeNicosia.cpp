@@ -116,9 +116,9 @@ void ScrollingTreeFrameScrollingNodeNicosia::stopAnimatedScroll()
     m_delegate.stopAnimatedScroll();
 }
 
-void ScrollingTreeFrameScrollingNodeNicosia::serviceScrollAnimation()
+void ScrollingTreeFrameScrollingNodeNicosia::serviceScrollAnimation(MonotonicTime currentTime)
 {
-    m_delegate.serviceScrollAnimation();
+    m_delegate.serviceScrollAnimation(currentTime);
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const

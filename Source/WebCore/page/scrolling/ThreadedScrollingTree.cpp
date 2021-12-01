@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
+#include "AnimationFrameRate.h"
 #include "AsyncScrollingCoordinator.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
@@ -355,12 +356,16 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
     m_state = SynchronizationState::InRenderingUpdate;
 }
 
+Seconds ThreadedScrollingTree::frameDuration()
+{
+    auto displayFPS = nominalFramesPerSecond().value_or(FullSpeedFramesPerSecond);
+    return 1_s / (double)displayFPS;
+}
+
 Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
 {
     constexpr double allowableFrameFraction = 0.5;
-    auto displayFPS = nominalFramesPerSecond().value_or(60);
-    Seconds frameDuration = 1_s / (double)displayFPS;
-    return allowableFrameFraction * frameDuration;
+    return allowableFrameFraction * frameDuration();
 }
 
 void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
@@ -370,7 +375,7 @@ void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAni
     });
 }
 
-void ThreadedScrollingTree::serviceScrollAnimations()
+void ThreadedScrollingTree::serviceScrollAnimations(MonotonicTime currentTime)
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
@@ -379,7 +384,7 @@ void ThreadedScrollingTree::serviceScrollAnimations()
         if (!is<ScrollingTreeScrollingNode>(targetNode))
             continue;
 
-        downcast<ScrollingTreeScrollingNode>(*targetNode).serviceScrollAnimation();
+        downcast<ScrollingTreeScrollingNode>(*targetNode).serviceScrollAnimation(currentTime);
     }
 }
 
@@ -457,7 +462,7 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
     Locker locker { m_treeLock };
     
-    serviceScrollAnimations();
+    serviceScrollAnimations(MonotonicTime::now());
 
     if (m_state != SynchronizationState::Idle && canUpdateLayersOnScrollingThread())
         applyLayerPositionsInternal();

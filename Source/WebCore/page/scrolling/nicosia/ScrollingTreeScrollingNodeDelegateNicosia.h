@@ -52,7 +52,7 @@ public:
     bool startAnimatedScrollToPosition(FloatPoint) final;
     void stopAnimatedScroll() final;
 
-    void serviceScrollAnimation() final;
+    void serviceScrollAnimation(MonotonicTime) final;
 
 private:
     // ScrollingEffectsControllerClient.

@@ -1,5 +1,14 @@
 2021-11-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Pass the timestamp for scrolling thread animations through all the serviceScrollAnimation() calls
+        https://bugs.webkit.org/show_bug.cgi?id=233678
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+
+2021-11-30  Simon Fraser  <simon.fraser@apple.com>
+
         Remove the scrolling tree plumbing of the momentumScrollingAnimatorEnabled() setting, which is no longer needed
         https://bugs.webkit.org/show_bug.cgi?id=233680
 

@@ -753,7 +753,7 @@ void ScrollingTree::willProcessWheelEvent()
     m_lastWheelEventTime = MonotonicTime::now();
 }
 
-std::optional<unsigned> ScrollingTree::nominalFramesPerSecond()
+std::optional<FramesPerSecond> ScrollingTree::nominalFramesPerSecond()
 {
     Locker locker { m_treeStateLock };
     return m_treeState.nominalFramesPerSecond;

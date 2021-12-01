@@ -55,7 +55,7 @@ public:
     bool startAnimatedScrollToPosition(FloatPoint) final;
     void stopAnimatedScroll() final;
 
-    void serviceScrollAnimation() final;
+    void serviceScrollAnimation(MonotonicTime) final;
 
     void willDoProgrammaticScroll(const FloatPoint&);
     void currentScrollPositionChanged();

@@ -87,9 +87,9 @@ void ScrollingTreeOverflowScrollingNodeMac::stopAnimatedScroll()
     m_delegate.stopAnimatedScroll();
 }
 
-void ScrollingTreeOverflowScrollingNodeMac::serviceScrollAnimation()
+void ScrollingTreeOverflowScrollingNodeMac::serviceScrollAnimation(MonotonicTime currentTime)
 {
-    m_delegate.serviceScrollAnimation();
+    m_delegate.serviceScrollAnimation(currentTime);
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::willDoProgrammaticScroll(const FloatPoint& targetScrollPosition)

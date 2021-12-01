@@ -68,7 +68,7 @@ private:
 
     bool startAnimatedScrollToPosition(FloatPoint) final;
     void stopAnimatedScroll() final;
-    void serviceScrollAnimation() final;
+    void serviceScrollAnimation(MonotonicTime) final;
 
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const final;
 

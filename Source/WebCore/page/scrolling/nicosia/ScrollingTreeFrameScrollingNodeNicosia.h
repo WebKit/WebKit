@@ -57,7 +57,7 @@ private:
 
     bool startAnimatedScrollToPosition(FloatPoint) override;
     void stopAnimatedScroll() override;
-    void serviceScrollAnimation() final;
+    void serviceScrollAnimation(MonotonicTime) final;
 
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
