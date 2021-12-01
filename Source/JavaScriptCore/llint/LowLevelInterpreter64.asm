@@ -696,7 +696,8 @@ end
 
 macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
     andq constexpr structureIDMask, structureIDThenStructure
-    loadp JSCConfig + constexpr (offsetof(Config, startOfStructureHeap)), scratch
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
+    loadp [scratch], scratch
     addp scratch, structureIDThenStructure
 end
 
