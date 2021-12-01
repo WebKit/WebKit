@@ -164,6 +164,18 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSS3DTransformInteroperabilityEnabled:
+  type: bool
+  humanReadableName: "CSS 3D Transform Interoperability"
+  humanReadableDescription: "Enable 3D transform behavior that is specification-compliant but backwards incompatible"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCascadeLayersEnabled:
   type: bool
   humanReadableName: "CSS Cascade Layers"
