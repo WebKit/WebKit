@@ -860,7 +860,13 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         renderingContext->suspendIfNeeded();
         return renderingContext;
     }
-    auto context = hostWindow->createGraphicsContextGL(attributes);
+    RefPtr<GraphicsContextGL> context;
+    if (hostWindow)
+        context = hostWindow->createGraphicsContextGL(attributes);
+    else {
+        // FIXME: OffscreenCanvas does not support GPU process.
+        context = createWebProcessGraphicsContextGL(attributes);
+    }
     if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
