@@ -902,15 +902,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-    if (!m_page->settings().offlineWebApplicationCacheEnabled()) {
-        // This call is not meant to actually read a preference, but is only here to trigger a sandbox rule in the
-        // WebContent process, which will toggle a sandbox variable used to determine if AppCache is disabled
-        // This call should be replaced with proper API when available.
-        CFPreferencesGetAppIntegerValue(CFSTR("key"), CFSTR("com.apple.WebKit.WebContent.AppCacheDisabled"), nullptr);
-    }
-#endif
-
     updateThrottleState();
 }
 
