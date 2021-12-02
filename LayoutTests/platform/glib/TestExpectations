@@ -754,6 +754,7 @@ webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.ht
 
 webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeout ]
 
+webkit.org/b/231811 fast/mediastream/MediaStream-video-element-enter-background.html [ Failure ]
 webkit.org/b/231811 media/audio-background-playback-playlist.html [ Failure ]
 webkit.org/b/231811 media/media-session/actionHandlerInternalMappings.html [ Failure ]
 webkit.org/b/231811 media/media-session/default-actionHandlers.html [ Failure ]
@@ -781,6 +782,8 @@ webrtc/peerConnection-rvfc.html [ Failure ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
+
+webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -1349,6 +1352,8 @@ webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/227987 http/tests/media/media-stream/get-display-media-prompt.html [ Timeout Pass ]
 
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Failure ]
+
+webkit.org/b/233740 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -2580,6 +2585,7 @@ webkit.org/b/232386 fast/repaint/text-selection-rect-in-overflow.html [ Failure 
 webkit.org/b/232386 fast/selectors/empty-namespace-with-element-selector.html [ Failure ]
 webkit.org/b/232386 fast/table/Rowspan-value-more-than-number-of-rows-present.html [ Failure ]
 webkit.org/b/232386 fast/text/crash-font-family-parsed.html [ Failure ]
+webkit.org/b/232386 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
 webkit.org/b/232386 fast/text/line-breaks-after-white-space.html [ Failure ]
 webkit.org/b/232386 fast/text/text-shadow-no-default-color.html [ Failure ]
 webkit.org/b/232386 fast/text/text-underline-first-line-decoration.html [ ImageOnlyFailure ]
