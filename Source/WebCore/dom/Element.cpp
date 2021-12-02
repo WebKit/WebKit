@@ -31,6 +31,7 @@
 #include "AttributeChangeInvalidation.h"
 #include "CSSParser.h"
 #include "ChildChangeInvalidation.h"
+#include "ChildListMutationScope.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClassChangeInvalidation.h"
@@ -3266,15 +3267,23 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
 
 ExceptionOr<void> Element::setInnerHTML(const String& html)
 {
-    auto fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent);
-    if (fragment.hasException())
-        return fragment.releaseException();
-
     ContainerNode* container;
     if (!is<HTMLTemplateElement>(*this))
         container = this;
     else
         container = &downcast<HTMLTemplateElement>(*this).content();
+
+    // Parsing empty string creates additional elements only inside <html> container
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inhtml
+    if (html.isEmpty() && !is<HTMLHtmlElement>(*container)) {
+        ChildListMutationScope mutation(*container);
+        container->removeChildren();
+        return { };
+    }
+
+    auto fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent);
+    if (fragment.hasException())
+        return fragment.releaseException();
 
     return replaceChildrenWithFragment(*container, fragment.releaseReturnValue());
 }

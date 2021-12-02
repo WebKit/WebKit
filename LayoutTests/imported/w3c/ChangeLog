@@ -1,3 +1,13 @@
+2021-12-02  Alexey Shvayka  <ashvayka@apple.com>
+
+        Add a fast path for empty string to setInnerHTML()
+        https://bugs.webkit.org/show_bug.cgi?id=233647
+
+        Reviewed by Geoff Garen.
+
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/innerhtml-on-templates/innerhtml-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/innerhtml-on-templates/innerhtml.html:
+
 2021-12-02  Youenn Fablet  <youenn@apple.com>
 
         Add support for NavigationPreloadManager

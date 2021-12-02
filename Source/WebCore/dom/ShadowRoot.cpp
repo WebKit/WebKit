@@ -29,6 +29,7 @@
 #include "ShadowRoot.h"
 
 #include "CSSStyleSheet.h"
+#include "ChildListMutationScope.h"
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "HTMLParserIdioms.h"
@@ -182,6 +183,12 @@ String ShadowRoot::innerHTML() const
 
 ExceptionOr<void> ShadowRoot::setInnerHTML(const String& markup)
 {
+    if (markup.isEmpty()) {
+        ChildListMutationScope mutation(*this);
+        removeChildren();
+        return { };
+    }
+
     auto fragment = createFragmentForInnerOuterHTML(*host(), markup, AllowScriptingContent);
     if (fragment.hasException())
         return fragment.releaseException();
