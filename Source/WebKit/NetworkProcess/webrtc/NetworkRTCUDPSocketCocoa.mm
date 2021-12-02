@@ -219,6 +219,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
             connection->send(Messages::LibWebRTCNetwork::SignalClose(identifier, -1), 0);
             break;
         case nw_listener_state_cancelled:
+            RELEASE_LOG(WebRTC, "NetworkRTCUDPSocketCocoaConnections cancelled listener %" PRIu64, identifier.toUInt64());
             nwListener.clear();
             break;
         }

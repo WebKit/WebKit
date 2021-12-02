@@ -288,8 +288,11 @@ void NetworkRTCProvider::addSocket(LibWebRTCSocketIdentifier identifier, std::un
     ASSERT(m_rtcNetworkThread.IsCurrent());
     ASSERT(socket);
     m_sockets.emplace(identifier, WTFMove(socket));
+
+    RTC_RELEASE_LOG("new socket %" PRIu64 ", total socket number is %lu", identifier.toUInt64(), m_sockets.size());
     if (m_sockets.size() > maxSockets) {
         auto socketIdentifierToClose = m_sockets.begin()->first;
+        RTC_RELEASE_LOG_ERROR("too many sockets, closing %" PRIu64, socketIdentifierToClose.toUInt64());
         closeSocket(socketIdentifierToClose);
         ASSERT(m_sockets.find(socketIdentifierToClose) == m_sockets.end());
     }
