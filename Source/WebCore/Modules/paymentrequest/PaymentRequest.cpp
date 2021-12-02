@@ -410,7 +410,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
         if (!handler)
             continue;
 
-        auto result = handler->convertData(data.releaseReturnValue());
+        auto result = handler->convertData(document, data.releaseReturnValue());
         if (result.hasException()) {
             settleShowPromise(result.releaseException());
             return;

@@ -68,7 +68,7 @@ private:
     Page& page() const;
 
     // PaymentHandler
-    ExceptionOr<void> convertData(JSC::JSValue) final;
+    ExceptionOr<void> convertData(Document&, JSC::JSValue) final;
     ExceptionOr<void> show(Document&) final;
     bool canAbortSession() final { return false; }
     void hide() final;

@@ -29,12 +29,22 @@
 
 #include "ApplePaySessionPaymentRequest.h"
 #include "ExceptionOr.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class PaymentRequestValidator {
 public:
-    static ExceptionOr<void> validate(const ApplePaySessionPaymentRequest&);
+    enum class Field : uint8_t {
+        MerchantCapabilities = 1 << 0,
+        SupportedNetworks = 1 << 1,
+        CountryCode = 1 << 2,
+        CurrencyCode = 1 << 3,
+        Total = 1 << 4,
+        ShippingMethods = 1 << 5,
+    };
+
+    static ExceptionOr<void> validate(const ApplePaySessionPaymentRequest&, OptionSet<PaymentRequestValidator::Field>);
     static ExceptionOr<void> validateTotal(const ApplePayLineItem&);
 };
 

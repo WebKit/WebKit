@@ -71,7 +71,7 @@ private:
     ExceptionOr<void> paymentMethodUpdated(Vector<RefPtr<ApplePayError>>&& errors);
 
     // PaymentHandler
-    ExceptionOr<void> convertData(JSC::JSValue) final;
+    ExceptionOr<void> convertData(Document&, JSC::JSValue) final;
     ExceptionOr<void> show(Document&) final;
     bool canAbortSession() final { return true; }
     void hide() final;

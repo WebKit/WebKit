@@ -179,7 +179,15 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& d
         return mergeResult.releaseException();
 
     // FIXME: Merge this validation into the validation we are doing above.
-    auto validatedPaymentRequest = PaymentRequestValidator::validate(result);
+    constexpr OptionSet fieldsToValidate = {
+        PaymentRequestValidator::Field::MerchantCapabilities,
+        PaymentRequestValidator::Field::SupportedNetworks,
+        PaymentRequestValidator::Field::CountryCode,
+        PaymentRequestValidator::Field::CurrencyCode,
+        PaymentRequestValidator::Field::Total,
+        PaymentRequestValidator::Field::ShippingMethods,
+    };
+    auto validatedPaymentRequest = PaymentRequestValidator::validate(result, fieldsToValidate);
     if (validatedPaymentRequest.hasException())
         return validatedPaymentRequest.releaseException();
 

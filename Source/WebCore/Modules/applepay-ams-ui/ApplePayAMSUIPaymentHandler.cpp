@@ -36,13 +36,13 @@
 
 namespace WebCore {
 
-static ExceptionOr<ApplePayAMSUIRequest> convertAndValidateApplePayAMSUIRequest(ScriptExecutionContext& context, JSC::JSValue data)
+static ExceptionOr<ApplePayAMSUIRequest> convertAndValidateApplePayAMSUIRequest(Document& document, JSC::JSValue data)
 {
     if (data.isEmpty())
         return Exception { TypeError, "Missing payment method data." };
 
-    auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto applePayAMSUIRequest = convertDictionary<ApplePayAMSUIRequest>(*context.globalObject(), data);
+    auto throwScope = DECLARE_THROW_SCOPE(document.vm());
+    auto applePayAMSUIRequest = convertDictionary<ApplePayAMSUIRequest>(*document.globalObject(), data);
     if (throwScope.exception())
         return Exception { ExistingExceptionError };
 
@@ -118,9 +118,9 @@ Page& ApplePayAMSUIPaymentHandler::page() const
     return *document().page();
 }
 
-ExceptionOr<void> ApplePayAMSUIPaymentHandler::convertData(JSC::JSValue data)
+ExceptionOr<void> ApplePayAMSUIPaymentHandler::convertData(Document& document, JSC::JSValue data)
 {
-    auto requestOrException = convertAndValidateApplePayAMSUIRequest(*scriptExecutionContext(), data);
+    auto requestOrException = convertAndValidateApplePayAMSUIRequest(document, data);
     if (requestOrException.hasException())
         return requestOrException.releaseException();
 

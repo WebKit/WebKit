@@ -50,7 +50,7 @@ public:
     static bool enabledForContext(ScriptExecutionContext&);
     static bool hasActiveSession(Document&);
 
-    virtual ExceptionOr<void> convertData(JSC::JSValue) = 0;
+    virtual ExceptionOr<void> convertData(Document&, JSC::JSValue) = 0;
     virtual ExceptionOr<void> show(Document&) = 0;
     virtual bool canAbortSession() = 0;
     virtual void hide() = 0;

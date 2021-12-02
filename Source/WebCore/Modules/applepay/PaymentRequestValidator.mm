@@ -43,36 +43,50 @@ static ExceptionOr<void> validateSupportedNetworks(const Vector<String>&);
 static ExceptionOr<void> validateShippingMethods(const Vector<ApplePayShippingMethod>&);
 static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod&);
 
-ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPaymentRequest& paymentRequest)
+ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPaymentRequest& paymentRequest, OptionSet<Field> fieldsToValidate)
 {
-    auto validatedCountryCode = validateCountryCode(paymentRequest.countryCode());
-    if (validatedCountryCode.hasException())
-        return validatedCountryCode.releaseException();
-
-    auto validatedCurrencyCode = validateCurrencyCode(paymentRequest.currencyCode());
-    if (validatedCurrencyCode.hasException())
-        return validatedCurrencyCode.releaseException();
-
-    auto validatedSupportedNetworks = validateSupportedNetworks(paymentRequest.supportedNetworks());
-    if (validatedSupportedNetworks.hasException())
-        return validatedSupportedNetworks.releaseException();
-
-    auto validatedMerchantCapabilities = validateMerchantCapabilities(paymentRequest.merchantCapabilities());
-    if (validatedMerchantCapabilities.hasException())
-        return validatedMerchantCapabilities.releaseException();
-
-    auto validatedTotal = validateTotal(paymentRequest.total());
-    if (validatedTotal.hasException())
-        return validatedTotal.releaseException();
-
-    auto validatedShippingMethods = validateShippingMethods(paymentRequest.shippingMethods());
-    if (validatedShippingMethods.hasException())
-        return validatedShippingMethods.releaseException();
-
-    for (auto& countryCode : paymentRequest.supportedCountries()) {
-        auto validatedCountryCode = validateCountryCode(countryCode);
+    if (fieldsToValidate.contains(Field::CountryCode)) {
+        auto validatedCountryCode = validateCountryCode(paymentRequest.countryCode());
         if (validatedCountryCode.hasException())
             return validatedCountryCode.releaseException();
+    }
+
+    if (fieldsToValidate.contains(Field::CurrencyCode)) {
+        auto validatedCurrencyCode = validateCurrencyCode(paymentRequest.currencyCode());
+        if (validatedCurrencyCode.hasException())
+            return validatedCurrencyCode.releaseException();
+    }
+
+    if (fieldsToValidate.contains(Field::SupportedNetworks)) {
+        auto validatedSupportedNetworks = validateSupportedNetworks(paymentRequest.supportedNetworks());
+        if (validatedSupportedNetworks.hasException())
+            return validatedSupportedNetworks.releaseException();
+    }
+
+    if (fieldsToValidate.contains(Field::MerchantCapabilities)) {
+        auto validatedMerchantCapabilities = validateMerchantCapabilities(paymentRequest.merchantCapabilities());
+        if (validatedMerchantCapabilities.hasException())
+            return validatedMerchantCapabilities.releaseException();
+    }
+
+    if (fieldsToValidate.contains(Field::Total)) {
+        auto validatedTotal = validateTotal(paymentRequest.total());
+        if (validatedTotal.hasException())
+            return validatedTotal.releaseException();
+    }
+
+    if (fieldsToValidate.contains(Field::ShippingMethods)) {
+        auto validatedShippingMethods = validateShippingMethods(paymentRequest.shippingMethods());
+        if (validatedShippingMethods.hasException())
+            return validatedShippingMethods.releaseException();
+    }
+
+    if (fieldsToValidate.contains(Field::CountryCode)) {
+        for (auto& countryCode : paymentRequest.supportedCountries()) {
+            auto validatedCountryCode = validateCountryCode(countryCode);
+            if (validatedCountryCode.hasException())
+                return validatedCountryCode.releaseException();
+        }
     }
 
     return { };

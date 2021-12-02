@@ -78,15 +78,34 @@
 
 namespace WebCore {
 
-static ExceptionOr<ApplePayRequest> convertAndValidateApplePayRequest(ScriptExecutionContext& context, JSC::JSValue data)
+static inline PaymentCoordinator& paymentCoordinator(Document& document)
+{
+    ASSERT(document.page());
+    return document.page()->paymentCoordinator();
+}
+
+static ExceptionOr<ApplePayRequest> convertAndValidateApplePayRequest(Document& document, JSC::JSValue data)
 {
     if (data.isEmpty())
         return Exception { TypeError, "Missing payment method data." };
 
-    auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto applePayRequest = convertDictionary<ApplePayRequest>(*context.globalObject(), data);
+    auto throwScope = DECLARE_THROW_SCOPE(document.vm());
+    auto applePayRequest = convertDictionary<ApplePayRequest>(*document.globalObject(), data);
     if (throwScope.exception())
         return Exception { ExistingExceptionError };
+
+    auto validatedRequest = convertAndValidate(document, applePayRequest.version, applePayRequest, paymentCoordinator(document));
+    if (validatedRequest.hasException())
+        return validatedRequest.releaseException();
+
+    constexpr OptionSet fieldsToValidate = {
+        PaymentRequestValidator::Field::MerchantCapabilities,
+        PaymentRequestValidator::Field::SupportedNetworks,
+        PaymentRequestValidator::Field::CountryCode,
+    };
+    auto exception = PaymentRequestValidator::validate(validatedRequest.releaseReturnValue(), fieldsToValidate);
+    if (exception.hasException())
+        return exception.releaseException();
 
     return WTFMove(applePayRequest);
 }
@@ -107,12 +126,6 @@ bool ApplePayPaymentHandler::handlesIdentifier(const PaymentRequest::MethodIdent
 
     auto& url = std::get<URL>(identifier);
     return url.host() == "apple.com" && url.path() == "/apple-pay";
-}
-
-static inline PaymentCoordinator& paymentCoordinator(Document& document)
-{
-    ASSERT(document.page());
-    return document.page()->paymentCoordinator();
 }
 
 bool ApplePayPaymentHandler::hasActiveSession(Document& document)
@@ -200,9 +213,9 @@ static ExceptionOr<ApplePayShippingMethod> convertAndValidate(const PaymentShipp
     return { WTFMove(result) };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::JSValue data)
+ExceptionOr<void> ApplePayPaymentHandler::convertData(Document& document, JSC::JSValue data)
 {
-    auto requestOrException = convertAndValidateApplePayRequest(*scriptExecutionContext(), data);
+    auto requestOrException = convertAndValidateApplePayRequest(document, data);
     if (requestOrException.hasException())
         return requestOrException.releaseException();
 
@@ -269,7 +282,12 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
     if (auto modifierData = modifierException.releaseReturnValue())
         merge(request, WTFMove(std::get<1>(*modifierData)));
 
-    auto exception = PaymentRequestValidator::validate(request);
+    constexpr OptionSet fieldsToValidate = {
+        PaymentRequestValidator::Field::CurrencyCode,
+        PaymentRequestValidator::Field::Total,
+        PaymentRequestValidator::Field::ShippingMethods,
+    };
+    auto exception = PaymentRequestValidator::validate(request, fieldsToValidate);
     if (exception.hasException())
         return exception.releaseException();
 
