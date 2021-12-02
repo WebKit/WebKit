@@ -39,8 +39,8 @@ public:
     static Ref<MessageChannel> create(ScriptExecutionContext&);
     ~MessageChannel();
 
-    MessagePort& port1() const { return m_ports.first.get(); }
-    MessagePort& port2() const { return m_ports.second.get(); }
+    MessagePort& port1() const { return m_ports.first; }
+    MessagePort& port2() const { return m_ports.second; }
 
 private:
     explicit MessageChannel(ScriptExecutionContext&);
