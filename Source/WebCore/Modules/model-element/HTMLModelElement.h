@@ -97,6 +97,10 @@ public:
 
     bool isDraggableIgnoringAttributes() const final { return true; }
 
+#if PLATFORM(COCOA)
+    Vector<RetainPtr<id>> accessibilityChildren();
+#endif
+    
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 

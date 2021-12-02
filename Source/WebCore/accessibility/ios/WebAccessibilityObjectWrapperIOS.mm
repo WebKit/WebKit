@@ -416,6 +416,13 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         } else
             [array addObject:wrapper];
     }
+    
+#if ENABLE(MODEL_ELEMENT)
+    if (self.axBackingObject->isModel()) {
+        for (auto child : self.axBackingObject->modelElementChildren())
+            [array addObject:child.get()];
+    }
+#endif
 
     return array.autorelease();
 }
@@ -1039,6 +1046,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::MenuBar:
     case AccessibilityRole::MenuListPopup:
     case AccessibilityRole::MenuListOption:
+    case AccessibilityRole::Model:
     case AccessibilityRole::Outline:
     case AccessibilityRole::Paragraph:
     case AccessibilityRole::Pre:

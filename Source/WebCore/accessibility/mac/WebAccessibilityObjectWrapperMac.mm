@@ -1850,6 +1850,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (backingObject->isMeter())
         return @"AXMeter";
 
+#if ENABLE(MODEL_ELEMENT)
+    if (backingObject->isModel())
+        return @"AXModel";
+#endif
+
     // Treat any group without exposed children as empty.
     if ([[self role] isEqual:NSAccessibilityGroupRole] && !backingObject->children().size() && ![[self renderWidgetChildren] count])
         return @"AXEmptyGroup";
@@ -2189,6 +2194,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityChildrenAttribute] || [attributeName isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute]) {
+#if ENABLE(MODEL_ELEMENT)
+        if (backingObject->isModel()) {
+            auto modelChildren = backingObject->modelElementChildren();
+            if (modelChildren.size()) {
+                return createNSArray(modelChildren, [] (auto& child) -> id {
+                    return child.get();
+                }).autorelease();
+            }
+        }
+#endif
+
         if (!self.childrenVectorSize) {
             if (NSArray *children = [self renderWidgetChildren])
                 return children;
@@ -4334,8 +4350,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [super accessibilityIndexOfChild:child];
 
     NSArray *children = self.childrenVectorArray;
-    if (!children.count)
-        return [[self renderWidgetChildren] indexOfObject:child];
+    if (!children.count) {
+        if (auto *renderWidgetChildren = [self renderWidgetChildren])
+            return [renderWidgetChildren indexOfObject:child];
+#if ENABLE(MODEL_ELEMENT)
+        if (backingObject->isModel())
+            return backingObject->modelElementChildren().find(child);
+#endif
+    }
 
     NSUInteger count = [children count];
     for (NSUInteger i = 0; i < count; ++i) {
@@ -4365,9 +4387,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return [[self accessibilityAttributeValue:NSAccessibilityChildrenAttribute] count];
 
         auto childrenSize = self.childrenVectorSize;
-        if (!childrenSize)
-            return [[self renderWidgetChildren] count];
-
+        if (!childrenSize) {
+#if ENABLE(MODEL_ELEMENT)
+            if (backingObject->isModel())
+                return backingObject->modelElementChildren().size();
+#endif
+            if (NSArray *renderWidgetChildren = [self renderWidgetChildren])
+                return [renderWidgetChildren count];
+        }
         return childrenSize;
     }
 
@@ -4384,7 +4411,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
         if (!self.childrenVectorSize) {
-            NSArray *children = [self renderWidgetChildren];
+            NSArray *children = nil;
+#if ENABLE(MODEL_ELEMENT)
+            if (backingObject->isModel()) {
+                children = createNSArray(backingObject->modelElementChildren(), [] (auto& child) -> id {
+                    return child.get();
+                }).autorelease();
+            } else
+#endif
+                children = [self renderWidgetChildren];
+            
             if (!children)
                 return nil;
 

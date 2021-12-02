@@ -469,6 +469,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Insertion, NSAccessibilityGroupRole },
         { AccessibilityRole::Subscript, NSAccessibilityGroupRole },
         { AccessibilityRole::Superscript, NSAccessibilityGroupRole },
+        { AccessibilityRole::Model, NSAccessibilityGroupRole },
     };
     PlatformRoleMap roleMap;
     for (auto& role : roles)

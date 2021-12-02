@@ -823,6 +823,10 @@ private:
     std::optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
     std::optional<SimpleRange> visibleCharacterRange() const override;
 
+#if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
+    Vector<RetainPtr<id>> modelElementChildren() override;
+#endif
+    
 protected: // FIXME: Make the data members private.
     bool childrenInitialized() const { return m_childrenInitialized; }
     AccessibilityChildrenVector m_children;

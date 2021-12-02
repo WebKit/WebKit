@@ -32,6 +32,12 @@
 #import "SceneKitModel.h"
 #import "SceneKitModelLoader.h"
 #import <pal/spi/cocoa/SceneKitSPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+static std::optional<RetainPtr<id>> makeVectorElement(const RetainPtr<id>*, id arrayElement)
+{
+    return { retainPtr(arrayElement) };
+}
 
 namespace WebCore {
 
@@ -168,6 +174,18 @@ void SceneKitModelPlayer::updateScene()
     if (m_layer.get().scene == m_model->defaultScene())
         return;
     m_layer.get().scene = m_model->defaultScene();
+}
+
+Vector<RetainPtr<id>> SceneKitModelPlayer::accessibilityChildren()
+{
+#if PLATFORM(IOS_FAMILY)
+    NSArray *children = [m_model->defaultScene() accessibilityElements];
+#else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    NSArray *children = [m_model->defaultScene() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+    return makeVector<RetainPtr<id>>(children);
 }
 
 }

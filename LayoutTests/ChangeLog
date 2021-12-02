@@ -1,3 +1,19 @@
+2021-12-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support accessibility attributes for <model>
+        https://bugs.webkit.org/show_bug.cgi?id=233620
+        <rdar://problem/85852073>
+
+        Reviewed by Dean Jackson, Andres Gonzalez.
+
+        * accessibility/model-element-attributes.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/ios/accessibility/model-element-attributes-expected.txt: Added.
+        * platform/mac/accessibility/model-element-attributes-expected.txt: Added.
+        * platform/win/TestExpectations:
+
 2021-12-01  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Skip model tag test

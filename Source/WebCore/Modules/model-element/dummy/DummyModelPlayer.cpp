@@ -118,4 +118,11 @@ void DummyModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
 {
 }
 
+#if PLATFORM(COCOA)
+Vector<RetainPtr<id>> DummyModelPlayer::accessibilityChildren()
+{
+    return { };
+}
+#endif
+
 }

@@ -73,6 +73,7 @@ private:
     void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void setIsMuted(bool, CompletionHandler<void(bool success)>&&) override;
+    Vector<RetainPtr<id>> accessibilityChildren() override;
 
     // SceneKitModelLoaderClient overrides.
     virtual void didFinishLoading(SceneKitModelLoader&, Ref<SceneKitModel>) override;

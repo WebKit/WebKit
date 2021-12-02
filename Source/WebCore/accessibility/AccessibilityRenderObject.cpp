@@ -2954,6 +2954,11 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(canvasTag))
         return AccessibilityRole::Canvas;
 
+#if ENABLE(MODEL_ELEMENT)
+    if (node && node->hasTagName(modelTag))
+        return AccessibilityRole::Model;
+#endif
+
     if (cssBox && cssBox->isRenderView())
         return AccessibilityRole::WebArea;
     
@@ -3526,7 +3531,7 @@ void AccessibilityRenderObject::addChildren()
     addTextFieldChildren();
     addCanvasChildren();
     addRemoteSVGChildren();
-    
+
 #if PLATFORM(COCOA)
     updateAttachmentViewParents();
 #endif

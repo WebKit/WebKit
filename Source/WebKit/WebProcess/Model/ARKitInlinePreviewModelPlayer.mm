@@ -342,6 +342,12 @@ void ARKitInlinePreviewModelPlayer::setIsMuted(bool isMuted, CompletionHandler<v
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSetIsMuted(*modelIdentifier, isMuted), WTFMove(remoteCompletionHandler));
 }
 
+Vector<RetainPtr<id>> ARKitInlinePreviewModelPlayer::accessibilityChildren()
+{
+    // FIXME: https://webkit.org/b/233575 Need to return something to create a remote element connection to the InlinePreviewModel hosted in another process.
+    return { };
+}
+
 }
 
 #endif

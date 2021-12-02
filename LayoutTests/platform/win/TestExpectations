@@ -279,6 +279,7 @@ accessibility/listbox-clear-selection.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 accessibility/img-no-alt-not-ignored-with-title.html [ Skip ]
 accessibility/visible-character-range.html [ Skip ]
+accessibility/model-element-attributes.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
 # AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and

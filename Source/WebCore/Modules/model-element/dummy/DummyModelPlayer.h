@@ -59,6 +59,9 @@ private:
     void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) override;
     void setIsMuted(bool, CompletionHandler<void(bool success)>&&) override;
+#if PLATFORM(COCOA)
+    Vector<RetainPtr<id>> accessibilityChildren() override;
+#endif
 
     WeakPtr<ModelPlayerClient> m_client;
 };

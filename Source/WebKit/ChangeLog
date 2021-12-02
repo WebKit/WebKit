@@ -1,3 +1,15 @@
+2021-12-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support accessibility attributes for <model>
+        https://bugs.webkit.org/show_bug.cgi?id=233620
+        <rdar://problem/85852073>
+
+        Reviewed by Dean Jackson, Andres Gonzalez.
+
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::accessibilityChildren):
+
 2021-12-01  Alex Christensen  <achristensen@webkit.org>
 
         Use Span instead of pointer/length in CompiledContentExtension

@@ -1276,7 +1276,11 @@ AccessibilityObject* AccessibilityNodeObject::captionForFigure() const
 
 bool AccessibilityNodeObject::usesAltTagForTextComputation() const
 {
-    return isImage() || isInputImage() || isNativeImage() || isCanvas() || (node() && node()->hasTagName(imgTag));
+    bool usesAltTag = isImage() || isInputImage() || isNativeImage() || isCanvas() || (node() && node()->hasTagName(imgTag));
+#if ENABLE(MODEL_ELEMENT)
+    usesAltTag |= isModel();
+#endif
+    return usesAltTag;
 }
 
 bool AccessibilityNodeObject::isLabelable() const
@@ -1754,6 +1758,11 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Acce
 
     if (obj->isTree() || obj->isCanvas())
         return false;
+
+#if ENABLE(MODEL_ELEMENT)
+    if (obj->isModel())
+        return false;
+#endif
 
     return true;
 }

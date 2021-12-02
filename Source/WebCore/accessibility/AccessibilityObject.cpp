@@ -56,6 +56,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLModelElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
@@ -1315,6 +1316,17 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
 
     return true;
 }
+
+#if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
+Vector<RetainPtr<id>> AccessibilityObject::modelElementChildren()
+{
+    Node* node = this->node();
+    if (!is<HTMLModelElement>(node))
+        return { };
+    
+    return downcast<HTMLModelElement>(node)->accessibilityChildren();
+}
+#endif
 
 // Finds a RenderListItem parent give a node.
 static RenderListItem* renderListItemContainerForNode(Node* node)

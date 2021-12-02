@@ -200,6 +200,7 @@ enum class AccessibilityRole {
     MenuListPopup,
     MenuListOption,
     Meter,
+    Model,
     Outline,
     Paragraph,
     PopUpButton,
@@ -447,6 +448,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "MenuListOption";
     case AccessibilityRole::Meter:
         return "Meter";
+    case AccessibilityRole::Model:
+        return "Model";
     case AccessibilityRole::Outline:
         return "Outline";
     case AccessibilityRole::Paragraph:
@@ -956,6 +959,9 @@ public:
     bool isToolbar() const { return roleValue() == AccessibilityRole::Toolbar; }
     bool isSummary() const { return roleValue() == AccessibilityRole::Summary; }
     bool isBlockquote() const { return roleValue() == AccessibilityRole::Blockquote; }
+#if ENABLE(MODEL_ELEMENT)
+    bool isModel() const { return roleValue() == AccessibilityRole::Model; }
+#endif
 
     virtual bool isLandmark() const = 0;
     virtual bool isRangeControl() const = 0;
@@ -1533,6 +1539,11 @@ public:
     virtual String innerHTML() const = 0;
     virtual String outerHTML() const = 0;
 
+    
+#if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
+    virtual Vector<RetainPtr<id>> modelElementChildren() = 0;
+#endif
+    
 private:
     // Detaches this object from the objects it references and it is referenced by.
     virtual void detachRemoteParts(AccessibilityDetachmentType) = 0;

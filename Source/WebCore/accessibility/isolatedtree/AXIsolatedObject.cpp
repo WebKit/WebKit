@@ -1477,6 +1477,17 @@ void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRang
         object->setSelectedVisiblePositionRange(visiblePositionRange);
 }
 
+#if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
+Vector<RetainPtr<id>> AXIsolatedObject::modelElementChildren()
+{
+    return Accessibility::retrieveValueFromMainThread<Vector<RetainPtr<id>>>([this] () -> Vector<RetainPtr<id>> {
+        if (auto* object = associatedAXObject())
+            return object->modelElementChildren();
+        return { };
+    });
+}
+#endif
+
 FloatRect AXIsolatedObject::unobscuredContentRect() const
 {
     return Accessibility::retrieveValueFromMainThread<FloatRect>([this] () -> FloatRect {

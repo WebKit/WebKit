@@ -663,6 +663,10 @@ private:
     void clearIsIgnoredFromParentData() override;
     void setIsIgnoredFromParentDataForChild(AXCoreObject*) override;
 
+#if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
+    Vector<RetainPtr<id>> modelElementChildren() override;
+#endif
+    
     void updateBackingStore() override;
 
     String innerHTML() const override;

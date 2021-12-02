@@ -134,6 +134,7 @@ webkit.org/b/223862 accessibility/gtk/text-for-range-list-items.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-simple.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-table-cells.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-with-link.html [ Failure ]
+accessibility/model-element-attributes.html [ Skip ]
 
 # canvas
 webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]

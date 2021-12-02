@@ -552,6 +552,15 @@ void HTMLModelElement::setIsMuted(bool isMuted, DOMPromiseDeferred<void>&& promi
     });
 }
 
+#if PLATFORM(COCOA)
+Vector<RetainPtr<id>> HTMLModelElement::accessibilityChildren()
+{
+    if (!m_modelPlayer)
+        return { };
+    return m_modelPlayer->accessibilityChildren();
+}
+#endif
+
 }
 
 #endif // ENABLE(MODEL_ELEMENT)

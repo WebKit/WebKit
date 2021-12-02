@@ -2120,6 +2120,7 @@ fast/dom/linkify-phone-numbers.html [ Pass ]
 accessibility/video-element-url-attribute.html [ Pass ]
 accessibility/visible-character-range.html [ Pass ]
 accessibility/ancestor-computation.html [ Pass ]
+accessibility/model-element-attributes.html [ Pass ]
 
 # Enable "aria-current" tests for iOS.
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
