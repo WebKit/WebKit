@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,9 +30,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 ContentExtensionRule::ContentExtensionRule(Trigger&& trigger, Action&& action)
     : m_trigger(WTFMove(trigger))
@@ -85,16 +83,16 @@ template<typename... Types> struct VariantDeserializer<std::variant<Types...>> {
     }
 };
 
-DeserializedAction DeserializedAction::deserialize(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
+DeserializedAction DeserializedAction::deserialize(Span<const uint8_t> serializedActions, uint32_t location)
 {
-    RELEASE_ASSERT(location < actionsLength);
-    return { location, VariantDeserializer<ActionData>::deserialize({ actions + location + 1, actionsLength - location - 1 }, actions[location]) };
+    RELEASE_ASSERT(location < serializedActions.size());
+    return { location, VariantDeserializer<ActionData>::deserialize(serializedActions.subspan(location + 1), serializedActions[location]) };
 }
 
-size_t DeserializedAction::serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
+size_t DeserializedAction::serializedLength(Span<const uint8_t> serializedActions, uint32_t location)
 {
-    RELEASE_ASSERT(location < actionsLength);
-    return 1 + VariantDeserializer<ActionData>::serializedLength({ actions + location + 1, actionsLength - location - 1 }, actions[location]);
+    RELEASE_ASSERT(location < serializedActions.size());
+    return 1 + VariantDeserializer<ActionData>::serializedLength(serializedActions.subspan(location + 1), serializedActions[location]);
 }
 
 Trigger Trigger::isolatedCopy() const
@@ -114,8 +112,6 @@ Action Action::isolatedCopy() const
     return { crossThreadCopy(m_data) };
 }
 
-} // namespace ContentExtensions
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

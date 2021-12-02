@@ -143,14 +143,10 @@ public:
     const CompiledContentExtensionData& data() { return m_data; };
 
 private:
-    const ContentExtensions::SerializedActionByte* actions() const final { return m_data.actions.data(); }
-    unsigned actionsLength() const final { return m_data.actions.size(); }
-    const ContentExtensions::DFABytecode* filtersWithoutConditionsBytecode() const final { return m_data.filtersWithoutConditions.data(); }
-    unsigned filtersWithoutConditionsBytecodeLength() const final { return m_data.filtersWithoutConditions.size(); }
-    const ContentExtensions::DFABytecode* filtersWithConditionsBytecode() const final { return m_data.filtersWithConditions.data(); }
-    unsigned filtersWithConditionsBytecodeLength() const final { return m_data.filtersWithConditions.size(); }
-    const ContentExtensions::DFABytecode* topURLFiltersBytecode() const final { return m_data.topURLFilters.data(); }
-    unsigned topURLFiltersBytecodeLength() const final { return m_data.topURLFilters.size(); }
+    Span<const uint8_t> serializedActions() const final { return { m_data.actions.data(), m_data.actions.size() }; }
+    Span<const uint8_t> filtersWithoutConditionsBytecode() const final { return { m_data.filtersWithoutConditions.data(), m_data.filtersWithoutConditions.size() }; }
+    Span<const uint8_t> filtersWithConditionsBytecode() const final { return { m_data.filtersWithConditions.data(), m_data.filtersWithConditions.size() }; }
+    Span<const uint8_t> topURLFiltersBytecode() const final { return { m_data.topURLFilters.data(), m_data.topURLFilters.size() }; }
     bool conditionsApplyOnlyToDomain() const final { return m_data.conditionsApplyOnlyToDomain; }
 
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)

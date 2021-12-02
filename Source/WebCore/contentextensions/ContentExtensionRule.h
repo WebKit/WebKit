@@ -138,8 +138,8 @@ private:
 };
 
 struct DeserializedAction : public Action {
-    static DeserializedAction deserialize(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
-    static size_t serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
+    static DeserializedAction deserialize(Span<const uint8_t>, uint32_t location);
+    static size_t serializedLength(Span<const uint8_t>, uint32_t location);
 
     uint32_t actionID() const { return m_actionID; }
 

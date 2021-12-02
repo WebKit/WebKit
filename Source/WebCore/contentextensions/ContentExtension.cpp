@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
 {
@@ -46,8 +45,8 @@ ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContent
     , m_compiledExtension(WTFMove(compiledExtension))
     , m_extensionBaseURL(WTFMove(extensionBaseURL))
 {
-    DFABytecodeInterpreter withoutConditions({ m_compiledExtension->filtersWithoutConditionsBytecode(), m_compiledExtension->filtersWithoutConditionsBytecodeLength() });
-    DFABytecodeInterpreter withConditions({ m_compiledExtension->filtersWithConditionsBytecode(), m_compiledExtension->filtersWithConditionsBytecodeLength() });
+    DFABytecodeInterpreter withoutConditions(m_compiledExtension->filtersWithoutConditionsBytecode());
+    DFABytecodeInterpreter withConditions(m_compiledExtension->filtersWithConditionsBytecode());
     for (uint64_t action : withoutConditions.actionsMatchingEverything()) {
         ASSERT(static_cast<uint32_t>(action) == action);
         m_universalActionsWithoutConditions.append(static_cast<uint32_t>(action));
@@ -65,14 +64,12 @@ ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContent
 
 uint32_t ContentExtension::findFirstIgnorePreviousRules() const
 {
-    auto* actions = m_compiledExtension->actions();
-    uint32_t actionsLength = m_compiledExtension->actionsLength();
+    auto serializedActions = m_compiledExtension->serializedActions();
     uint32_t currentActionIndex = 0;
-    while (currentActionIndex < actionsLength) {
-        RELEASE_ASSERT(currentActionIndex < actionsLength);
-        if (actions[currentActionIndex] == WTF::alternativeIndexV<IgnorePreviousRulesAction, ActionData>)
+    while (currentActionIndex < serializedActions.size()) {
+        if (serializedActions[currentActionIndex] == WTF::alternativeIndexV<IgnorePreviousRulesAction, ActionData>)
             return currentActionIndex;
-        currentActionIndex += DeserializedAction::serializedLength(actions, actionsLength, currentActionIndex);
+        currentActionIndex += DeserializedAction::serializedLength(serializedActions, currentActionIndex);
     }
     return std::numeric_limits<uint32_t>::max();
 }
@@ -86,12 +83,11 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
 {
     uint32_t firstIgnorePreviousRules = findFirstIgnorePreviousRules();
     
-    auto* actions = m_compiledExtension->actions();
-    uint32_t actionsLength = m_compiledExtension->actionsLength();
+    auto serializedActions = m_compiledExtension->serializedActions();
 
     auto inGlobalDisplayNoneStyleSheet = [&](const uint32_t location) {
-        RELEASE_ASSERT(location < actionsLength);
-        return location < firstIgnorePreviousRules && actions[location] == WTF::alternativeIndexV<CSSDisplayNoneSelectorAction, ActionData>;
+        RELEASE_ASSERT(location < serializedActions.size());
+        return location < firstIgnorePreviousRules && serializedActions[location] == WTF::alternativeIndexV<CSSDisplayNoneSelectorAction, ActionData>;
     };
     
     StringBuilder css;
@@ -99,7 +95,7 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
         if (inGlobalDisplayNoneStyleSheet(universalActionLocation)) {
             if (!css.isEmpty())
                 css.append(',');
-            auto action = DeserializedAction::deserialize(actions, actionsLength, universalActionLocation);
+            auto action = DeserializedAction::deserialize(serializedActions, universalActionLocation);
             ASSERT(std::holds_alternative<CSSDisplayNoneSelectorAction>(action.data()));
             if (auto* actionData = std::get_if<CSSDisplayNoneSelectorAction>(&action.data()))
                 css.append(actionData->string);
@@ -123,7 +119,7 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
 void ContentExtension::populateConditionCacheIfNeeded(const URL& topURL)
 {
     if (m_cachedTopURL != topURL) {
-        DFABytecodeInterpreter interpreter({ m_compiledExtension->topURLFiltersBytecode(), m_compiledExtension->topURLFiltersBytecodeLength() });
+        DFABytecodeInterpreter interpreter(m_compiledExtension->topURLFiltersBytecode());
         constexpr ResourceFlags allLoadTypesAndResourceTypes = LoadTypeMask | ResourceTypeMask | LoadContextMask;
         String string = m_compiledExtension->conditionsApplyOnlyToDomain() ? topURL.host().toString() : topURL.string();
         auto topURLActions = interpreter.interpret(string.utf8(), allLoadTypesAndResourceTypes);
@@ -156,8 +152,7 @@ const Vector<uint32_t>& ContentExtension::universalActionsWithConditions(const U
     populateConditionCacheIfNeeded(topURL);
     return m_cachedUniversalConditionedActions;
 }
-    
-} // namespace ContentExtensions
-} // namespace WebCore
+
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
