@@ -595,4 +595,9 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     _processPool->setUsesOnlyHIDGamepadProviderForTesting(usesHIDProvider);
 }
 
+- (void)_terminateAllWebContentProcesses
+{
+    _processPool->terminateAllWebContentProcesses();
+}
+
 @end

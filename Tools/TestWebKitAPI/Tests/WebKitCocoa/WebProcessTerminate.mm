@@ -29,6 +29,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
@@ -46,4 +47,21 @@ TEST(WebKit, WebProcessTerminate)
 
     auto pid2 = [webView _webProcessIdentifier];
     EXPECT_TRUE(pid != pid2);
+}
+
+TEST(WebKit, TerminateAllProcessesDuringLaunch)
+{
+    auto webView = adoptNS([WKWebView new]);
+
+    // Initiate a load to make sure the process actually launches.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    // Call terminateAllProcesses while the process is still launching.
+    [webView.get().configuration.processPool _terminateAllWebContentProcesses];
+
+    TestWebKitAPI::Util::sleep(0.5);
+
+    // The WKWebView should be able to recover from the WebProcess termination and navigation should succeed.
+    [webView loadHTMLString:@"test" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
 }
