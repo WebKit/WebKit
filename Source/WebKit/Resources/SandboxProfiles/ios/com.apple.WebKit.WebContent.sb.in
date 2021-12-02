@@ -1368,6 +1368,9 @@
         (syscall-number SYS_writev))
 )
 
+(when (defined? 'SYS__map_with_linking_np)
+    (allow syscall-unix SYS__map_with_linking_np))
+
 (with-filter (system-attribute apple-internal)
     (when (defined? 'syscall-unix)
         (allow syscall-unix

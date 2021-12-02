@@ -1,3 +1,18 @@
+2021-12-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add required system call to WebKit sandboxes
+        https://bugs.webkit.org/show_bug.cgi?id=233730
+        <rdar://85266065>
+
+        Reviewed by Brent Fulgham.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Hook up navigator.gpu.requestAdapter()
