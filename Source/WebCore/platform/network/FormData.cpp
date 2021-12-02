@@ -273,15 +273,16 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
 
     Vector<char> encodedData;
     for (auto& item : formData.items()) {
-        // FIXME: The expected behavior is to convert files to string for enctype "text/plain". Conversion may be added at "void DOMFormData::set(const String& name, Blob& blob, const String& filename)" or here.
-        // FIXME: Remove the following if statement when fixed.
-        if (!std::holds_alternative<String>(item.data))
-            continue;
-        
-        ASSERT(std::holds_alternative<String>(item.data));
+        String stringValue = WTF::switchOn(item.data,
+            [](const String& string) {
+                return string;
+            }, [](const RefPtr<File>& file) {
+                return file->name();
+            }
+        );
 
         auto normalizedName = normalizeStringData(encoding, item.name);
-        auto normalizedStringData = normalizeStringData(encoding, std::get<String>(item.data));
+        auto normalizedStringData = normalizeStringData(encoding, stringValue);
         FormDataBuilder::addKeyValuePairAsFormData(encodedData, normalizedName, normalizedStringData, encodingType);
     }
 

@@ -158,25 +158,13 @@ void FileInputType::restoreFormControlState(const FormControlState& state)
     filesChosen(filesFromFormControlState(state));
 }
 
-bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
+bool FileInputType::appendFormData(DOMFormData& formData, bool) const
 {
     ASSERT(element());
     RefPtr fileList = element()->files();
     ASSERT(fileList);
 
     auto name = element()->name();
-
-    if (!multipart) {
-        // Send only the basenames.
-        // 4.10.16.4 and 4.10.16.6 sections in HTML5.
-
-        if (fileList->isEmpty())
-            formData.append(name, emptyString());
-
-        for (auto& file : fileList->files())
-            formData.append(name, file->name());
-        return true;
-    }
 
     // If no filename at all is entered, return successful but empty.
     // Null would be more logical, but Netscape posts an empty file. Argh.
