@@ -1,3 +1,37 @@
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285569. rdar://problem/83070565
+
+    Enable dialog tests on Windows
+    https://bugs.webkit.org/show_bug.cgi?id=232911
+    
+    Reviewed by Youenn Fablet.
+    
+    The runtime flag sometimes seems to be off for Windows, change the member in
+    RuntimeEnabledFeatures.h and re-enable tests.
+    
+    Source/WebCore:
+    
+    * page/RuntimeEnabledFeatures.h:
+    
+    LayoutTests:
+    
+    * platform/win/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285569 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-10  Tim Nguyen  <ntim@apple.com>
+
+            Enable dialog tests on Windows
+            https://bugs.webkit.org/show_bug.cgi?id=232911
+
+            Reviewed by Youenn Fablet.
+
+            The runtime flag sometimes seems to be off for Windows, change the member in
+            RuntimeEnabledFeatures.h and re-enable tests.
+
+            * page/RuntimeEnabledFeatures.h:
+
 2021-11-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r285823. rdar://problem/85236459
