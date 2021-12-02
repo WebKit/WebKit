@@ -161,8 +161,8 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
     EXPECT_NULL(error);
 }
 
-// FIXME: Re-enable this test for Monterey+ once webkit.org/232857 is resolved.
-#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000)
+// FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
+#if PLATFORM(MAC)
 TEST(WebPushD, DISABLED_BasicCommunication)
 #else
 TEST(WebPushD, BasicCommunication)
@@ -199,15 +199,16 @@ TEST(WebPushD, BasicCommunication)
         return;
     }
 
-    // Send audit token
+    // Send configuration with audit token
     {
-        std::array<uint8_t, 40> encodedMessage;
+        std::array<uint8_t, 42> encodedMessage;
         encodedMessage.fill(0);
-        encodedMessage[0] = 32;
-        memcpy(&encodedMessage[8], &token, sizeof(token));
+        encodedMessage[1] = 1;
+        encodedMessage[2] = 32;
+        memcpy(&encodedMessage[10], &token, sizeof(token));
         auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-        xpc_dictionary_set_uint64(dictionary.get(), "message type", 5);
+        xpc_dictionary_set_uint64(dictionary.get(), "message type", 6);
         xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
         xpc_connection_send_message(connection.get(), dictionary.get());
     }
@@ -217,7 +218,7 @@ TEST(WebPushD, BasicCommunication)
         auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
         std::array<uint8_t, 1> encodedMessage { 1 };
         xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-        xpc_dictionary_set_uint64(dictionary.get(), "message type", 6);
+        xpc_dictionary_set_uint64(dictionary.get(), "message type", 5);
         xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
 
         xpc_connection_send_message(connection.get(), dictionary.get());
@@ -258,8 +259,8 @@ static const char* mainBytes = R"WEBPUSHRESOURCE(
 </script>
 )WEBPUSHRESOURCE";
 
-// FIXME: Re-enable this test for Monterey+ once webkit.org/232857 is resolved.
-#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED < 110000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000)
+// FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
+#if PLATFORM(MAC)
 TEST(WebPushD, DISABLED_PermissionManagement)
 #else
 TEST(WebPushD, PermissionManagement)
