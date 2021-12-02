@@ -326,6 +326,7 @@
 #if PLATFORM(MAC)
     (with report) (with telemetry)
 #endif
+    (global-name "com.apple.audio.AudioComponentRegistrar")
     (global-name "com.apple.awdd")
 #if !ENABLE(CFPREFS_DIRECT_MODE)
     (global-name "com.apple.cfprefsd.agent")

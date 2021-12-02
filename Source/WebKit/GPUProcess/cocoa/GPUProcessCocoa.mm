@@ -30,7 +30,6 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
-#import "AudioComponentRegistration.h"
 #import "GPUConnectionToWebProcess.h"
 #import "RemoteRenderingBackend.h"
 #import <wtf/RetainPtr.h>
@@ -75,11 +74,6 @@ void GPUProcess::dispatchSimulatedNotificationsForPreferenceChange(const String&
 }
 
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
-
-void GPUProcess::consumeAudioComponentRegistrations(const IPC::DataReference& data)
-{
-    WebKit::consumeAudioComponentRegistrations(data);
-}
 
 } // namespace WebKit
 
