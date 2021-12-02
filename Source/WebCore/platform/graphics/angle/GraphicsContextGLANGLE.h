@@ -38,9 +38,6 @@
 #include "IOSurface.h"
 #endif
 
-#if PLATFORM(MAC)
-#include "ScopedHighPerformanceGPURequest.h"
-#endif
 
 #if USE(NICOSIA)
 namespace Nicosia {
@@ -348,7 +345,6 @@ public:
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
     std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;
-    void setContextVisibility(bool) final;
     void prepareForDisplay() override;
 
     void forceContextLost();
@@ -357,9 +353,6 @@ public:
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();
 
-#if PLATFORM(COCOA)
-    void displayWasReconfigured();
-#endif
     unsigned textureSeed(GCGLuint texture);
 
     constexpr static EGLNativeDisplayType defaultDisplay = EGL_DEFAULT_DISPLAY;
@@ -443,10 +436,6 @@ protected:
     // When preserveDrawingBuffer == true, this is blitted to during display prepare.
     std::unique_ptr<IOSurface> m_displayBufferBacking;
     void* m_displayBufferPbuffer { nullptr };
-#endif
-#if PLATFORM(MAC)
-    bool m_switchesGPUOnDisplayReconfiguration { false };
-    ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
 #endif
 #if USE(COORDINATED_GRAPHICS)
     GCGLuint m_compositorTexture { 0 };

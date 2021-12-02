@@ -54,6 +54,9 @@ public:
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
 #endif
+#if USE(ANGLE)
+    void setContextVisibility(bool) final;
+#endif
 
 protected:
     GraphicsContextGLTextureMapper(WebCore::GraphicsContextGLAttributes&&);

@@ -172,7 +172,7 @@ void GraphicsContextGLANGLE::checkGPUStatus()
 {
 }
 
-void GraphicsContextGLANGLE::setContextVisibility(bool)
+void GraphicsContextGLTextureMapper::setContextVisibility(bool)
 {
 }
 

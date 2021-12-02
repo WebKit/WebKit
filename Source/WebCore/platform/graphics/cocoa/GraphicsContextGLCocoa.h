@@ -36,6 +36,10 @@ class GraphicsContextGLCVCocoa;
 }
 #endif
 
+#if PLATFORM(MAC)
+#include "ScopedHighPerformanceGPURequest.h"
+#endif
+
 namespace WebCore {
 
 class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
@@ -66,13 +70,21 @@ public:
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
 #endif
+    void setContextVisibility(bool) final;
 
+#if PLATFORM(MAC)
+    void updateContextOnDisplayReconfiguration();
+#endif
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&);
     bool isValid() const;
 
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
+#endif
+#if PLATFORM(MAC)
+    bool m_switchesGPUOnDisplayReconfiguration { false };
+    ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
 #endif
     friend class GraphicsContextGLCVCocoa;
 };

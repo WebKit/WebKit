@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
-#if ENABLE(WEBGL)
-#include "GraphicsContextGLOpenGLManager.h"
+#if PLATFORM(MAC)
 
-#include "Logging.h"
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 
-#if USE(ANGLE)
-#include "GraphicsContextGLANGLE.h"
-#else
-#include "GraphicsContextGLOpenGL.h"
-#endif
 namespace WebCore {
 
-GraphicsContextGLOpenGLManager& GraphicsContextGLOpenGLManager::sharedManager()
-{
-    static NeverDestroyed<GraphicsContextGLOpenGLManager> s_manager;
-    return s_manager;
+class DisplayConfigurationMonitor {
+public:
+    ~DisplayConfigurationMonitor();
+    WEBCORE_EXPORT static DisplayConfigurationMonitor& singleton();
+
+    class Client {
+    public:
+        Client();
+        virtual ~Client();
+        virtual void displayWasReconfigured() = 0;
+    };
+    void addClient(Client&);
+    void removeClient(Client&);
+
+    WEBCORE_EXPORT void dispatchDisplayWasReconfigured(CGDisplayChangeSummaryFlags);
+private:
+    DisplayConfigurationMonitor();
+    Vector<Client*> m_clients;
+    friend NeverDestroyed<DisplayConfigurationMonitor>;
+};
+
 }
-
-void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLType* context)
-{
-    ASSERT(context);
-    if (!context)
-        return;
-
-    ASSERT(!m_contexts.contains(context));
-    m_contexts.append(context);
-}
-
-void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLType* context)
-{
-    if (!m_contexts.contains(context))
-        return;
-    m_contexts.removeFirst(context);
-}
-
-void GraphicsContextGLOpenGLManager::recycleContextIfNecessary()
-{
-    if (hasTooManyContexts()) {
-        LOG(WebGL, "GraphicsContextGLOpenGLManager recycled context (%p).", m_contexts[0]);
-        m_contexts[0]->recycleContext();
-    }
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGL)
+#endif

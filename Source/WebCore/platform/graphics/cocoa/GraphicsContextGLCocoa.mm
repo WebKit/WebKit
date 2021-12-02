@@ -153,7 +153,7 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
         // These properties are defined for EGL_ANGLE_power_preference as EGLContext attributes,
         // but Metal backend uses EGLDisplay attributes.
-        auto powerPreference = attrs.forceRequestForHighPerformanceGPU ? GraphicsContextGLAttributes::PowerPreference::HighPerformance : attrs.powerPreference;
+        auto powerPreference = attrs.effectivePowerPreference();
         if (powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower) {
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_LOW_POWER_ANGLE);
@@ -194,12 +194,24 @@ static bool needsEAGLOnMac()
 }
 #endif
 
-RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes&& attributes)
+RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLAttributes&& attributes)
 {
     auto context = adoptRef(*new GraphicsContextGLCocoa(WTFMove(attributes)));
     if (!context->isValid())
         return nullptr;
     return context;
+}
+
+GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& creationAttributes)
+    : GraphicsContextGLANGLE(WTFMove(creationAttributes))
+{
+    if (!isValid())
+        return;
+#if PLATFORM(MAC)
+    auto attributes = contextAttributes();
+    if (!attributes.useMetal && attributes.effectivePowerPreference() == GraphicsContextGLPowerPreference::HighPerformance)
+        m_switchesGPUOnDisplayReconfiguration = true;
+#endif
 }
 
 GraphicsContextGLCocoa::~GraphicsContextGLCocoa() = default;
@@ -212,11 +224,6 @@ IOSurface* GraphicsContextGLCocoa::displayBuffer()
 void GraphicsContextGLCocoa::markDisplayBufferInUse()
 {
     return m_swapChain.markDisplayBufferInUse();
-}
-
-GraphicsContextGLCocoa::GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&& attributes)
-    : GraphicsContextGLANGLE(WTFMove(attributes))
-{
 }
 
 // FIXME: Below is functionality that should be moved to GraphicsContextGLCocoa to simplify the base class.
@@ -255,14 +262,12 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs
         // display reconfiguration callback. Upon this, we update the CGL contexts inside ANGLE.
         const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
         bool supportsPowerPreference = strstr(displayExtensions, "EGL_ANGLE_power_preference");
-        if (supportsPowerPreference) {
-            m_switchesGPUOnDisplayReconfiguration = attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance
-                || attrs.forceRequestForHighPerformanceGPU;
-        } else {
+        if (!supportsPowerPreference) {
+            attrs.forceRequestForHighPerformanceGPU = false;
             if (attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
                 attrs.powerPreference = GraphicsContextGLPowerPreference::Default;
-                setContextAttributes(attrs);
             }
+            setContextAttributes(attrs);
         }
     }
 #endif
@@ -506,7 +511,7 @@ void GraphicsContextGLANGLE::checkGPUStatus()
     restartStatus = 0;
 }
 
-void GraphicsContextGLANGLE::setContextVisibility(bool isVisible)
+void GraphicsContextGLCocoa::setContextVisibility(bool isVisible)
 {
 #if PLATFORM(MAC)
     if (!m_switchesGPUOnDisplayReconfiguration)
@@ -520,14 +525,14 @@ void GraphicsContextGLANGLE::setContextVisibility(bool isVisible)
 #endif
 }
 
-void GraphicsContextGLANGLE::displayWasReconfigured()
-{
 #if PLATFORM(MAC)
+void GraphicsContextGLCocoa::updateContextOnDisplayReconfiguration()
+{
     if (m_switchesGPUOnDisplayReconfiguration)
         EGL_HandleGPUSwitchANGLE(m_displayObj);
-#endif
     dispatchContextChangedNotification();
 }
+#endif
 
 bool GraphicsContextGLANGLE::reshapeDisplayBufferBacking()
 {

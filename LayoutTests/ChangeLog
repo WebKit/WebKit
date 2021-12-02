@@ -1,3 +1,16 @@
+2021-12-02  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGLANGLE should not have Cocoa Mac specific display reconfiguration code
+        https://bugs.webkit.org/show_bug.cgi?id=233695
+
+        Reviewed by Antti Koivisto.
+
+        Change the test to account for the behavior change
+        where the simulated context change event is delivered
+        only to the context being tested, not to all contexts.
+
+        * fast/canvas/webgl/webglcontextchangedevent.html:
+
 2021-12-02  Youenn Fablet  <youenn@apple.com>
 
         Add support for NavigationPreloadManager

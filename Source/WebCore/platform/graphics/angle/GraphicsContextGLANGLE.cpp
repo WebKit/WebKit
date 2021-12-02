@@ -2915,9 +2915,7 @@ bool GraphicsContextGLANGLE::waitAndUpdateOldestFrame()
 void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting event)
 {
     if (event == SimulatedEventForTesting::ContextChange) {
-#if PLATFORM(COCOA)
-        GraphicsContextGLOpenGLManager::sharedManager().displayWasReconfigured();
-#endif
+        dispatchContextChangedNotification();
         return;
     }
     if (event == SimulatedEventForTesting::GPUStatusFailure) {

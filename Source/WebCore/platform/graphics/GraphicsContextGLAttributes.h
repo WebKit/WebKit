@@ -68,6 +68,12 @@ struct GraphicsContextGLAttributes {
 #if ENABLE(WEBXR)
     bool xrCompatible { false };
 #endif
+    PowerPreference effectivePowerPreference() const
+    {
+        if (forceRequestForHighPerformanceGPU)
+            return PowerPreference::HighPerformance;
+        return powerPreference;
+    }
 };
 
 }

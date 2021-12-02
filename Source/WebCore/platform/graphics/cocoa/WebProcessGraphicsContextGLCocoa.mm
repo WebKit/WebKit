@@ -32,6 +32,10 @@
 #import "WebGLLayer.h"
 #import <wtf/BlockObjCExceptions.h>
 
+#if PLATFORM(MAC)
+#import "DisplayConfigurationMonitor.h"
+#endif
+
 namespace WebCore {
 namespace {
 
@@ -48,23 +52,45 @@ static RetainPtr<WebGLLayer> createWebGLLayer(const GraphicsContextGLAttributes&
 }
 
 // GraphicsContextGL type that is used when WebGL is run in-process in WebContent process.
-class WebProcessGraphicsContextGLCocoa final : public GraphicsContextGLCocoa {
+class WebProcessGraphicsContextGLCocoa final : public GraphicsContextGLCocoa
+#if PLATFORM(MAC)
+    , private DisplayConfigurationMonitor::Client
+#endif
+
+{
 public:
-    ~WebProcessGraphicsContextGLCocoa() = default;
+    ~WebProcessGraphicsContextGLCocoa();
     bool isValid() const { return GraphicsContextGLCocoa::isValid() && m_webGLLayer; }
     // GraphicsContextGLCocoa overrides.
     PlatformLayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
     void prepareForDisplay() final;
 private:
-    WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes)
-        : GraphicsContextGLCocoa(WTFMove(attributes))
-        , m_webGLLayer(createWebGLLayer(contextAttributes()))
-    {
-    }
+#if PLATFORM(MAC)
+    // DisplayConfigurationMonitor::Client overrides.
+    void displayWasReconfigured() final;
+#endif
+
+    WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&&);
     RetainPtr<WebGLLayer> m_webGLLayer;
 
     friend RefPtr<GraphicsContextGL> WebCore::createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&);
 };
+
+WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes)
+    : GraphicsContextGLCocoa(WTFMove(attributes))
+    , m_webGLLayer(createWebGLLayer(contextAttributes()))
+{
+#if PLATFORM(MAC)
+    DisplayConfigurationMonitor::singleton().addClient(*this);
+#endif
+}
+
+WebProcessGraphicsContextGLCocoa::~WebProcessGraphicsContextGLCocoa()
+{
+#if PLATFORM(MAC)
+    DisplayConfigurationMonitor::singleton().removeClient(*this);
+#endif
+}
 
 void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
 {
@@ -77,6 +103,13 @@ void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
     [m_webGLLayer setNeedsDisplay];
     END_BLOCK_OBJC_EXCEPTIONS
 }
+
+#if PLATFORM(MAC)
+void WebProcessGraphicsContextGLCocoa::displayWasReconfigured()
+{
+    updateContextOnDisplayReconfiguration();
+}
+#endif
 
 }
 

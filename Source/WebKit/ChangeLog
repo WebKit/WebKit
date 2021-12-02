@@ -1,3 +1,20 @@
+2021-12-02  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGLANGLE should not have Cocoa Mac specific display reconfiguration code
+        https://bugs.webkit.org/show_bug.cgi?id=233695
+
+        Reviewed by Antti Koivisto.
+
+        Previous GraphicsContextGLANGLE::displayWasReconfigured()
+        was renamed to updateContextOnDisplayReconfiguration().
+        The displayWasReconfigured() was taken into use in the notification interface
+        DisplayConfigurationMonitor::Client::displayWasReconfigured().
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::displayWasReconfigured):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::displayConfigurationChanged):
+
 2021-12-02  Youenn Fablet  <youenn@apple.com>
 
         Add support for NavigationPreloadManager

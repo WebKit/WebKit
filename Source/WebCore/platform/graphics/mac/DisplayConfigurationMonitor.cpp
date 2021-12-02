@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,50 +24,49 @@
  */
 
 #include "config.h"
+#include "DisplayConfigurationMonitor.h"
 
-#if ENABLE(WEBGL)
-#include "GraphicsContextGLOpenGLManager.h"
+#if PLATFORM(MAC)
 
-#include "Logging.h"
+#include <wtf/ThreadAssertions.h>
 
-#if USE(ANGLE)
-#include "GraphicsContextGLANGLE.h"
-#else
-#include "GraphicsContextGLOpenGL.h"
-#endif
 namespace WebCore {
 
-GraphicsContextGLOpenGLManager& GraphicsContextGLOpenGLManager::sharedManager()
+DisplayConfigurationMonitor::Client::Client() = default;
+
+DisplayConfigurationMonitor::Client::~Client() = default;
+
+DisplayConfigurationMonitor::DisplayConfigurationMonitor() = default;
+
+DisplayConfigurationMonitor::~DisplayConfigurationMonitor() = default;
+
+DisplayConfigurationMonitor& DisplayConfigurationMonitor::singleton()
 {
-    static NeverDestroyed<GraphicsContextGLOpenGLManager> s_manager;
-    return s_manager;
+    assertIsMainThread();
+    static NeverDestroyed<DisplayConfigurationMonitor> instance;
+    return instance;
 }
 
-void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLType* context)
+void DisplayConfigurationMonitor::addClient(Client& client)
 {
-    ASSERT(context);
-    if (!context)
+    ASSERT(!m_clients.contains(&client));
+    m_clients.append(&client);
+}
+
+void DisplayConfigurationMonitor::removeClient(Client& client)
+{
+    ASSERT(m_clients.contains(&client));
+    m_clients.removeFirst(&client);
+}
+
+void DisplayConfigurationMonitor::dispatchDisplayWasReconfigured(CGDisplayChangeSummaryFlags flags)
+{
+    if (!(flags & kCGDisplaySetModeFlag))
         return;
-
-    ASSERT(!m_contexts.contains(context));
-    m_contexts.append(context);
+    for (auto* client : copyToVector(m_clients))
+        client->displayWasReconfigured();
 }
 
-void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLType* context)
-{
-    if (!m_contexts.contains(context))
-        return;
-    m_contexts.removeFirst(context);
 }
 
-void GraphicsContextGLOpenGLManager::recycleContextIfNecessary()
-{
-    if (hasTooManyContexts()) {
-        LOG(WebGL, "GraphicsContextGLOpenGLManager recycled context (%p).", m_contexts[0]);
-        m_contexts[0]->recycleContext();
-    }
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGL)
+#endif

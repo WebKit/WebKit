@@ -107,7 +107,7 @@ void RemoteGraphicsContextGL::displayWasReconfigured()
     assertIsMainRunLoop();
     remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = Ref { *this }]() {
         assertIsCurrent(protectedThis->m_streamThread);
-        protectedThis->m_context->displayWasReconfigured();
+        protectedThis->m_context->updateContextOnDisplayReconfiguration();
     });
 }
 #endif

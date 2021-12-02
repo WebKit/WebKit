@@ -28,10 +28,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
-#include <CoreGraphics/CGDisplayConfiguration.h>
-#endif
-
 namespace WebCore {
 
 const unsigned MaxContexts = 16;
@@ -58,13 +54,6 @@ public:
     
     void recycleContextIfNecessary();
     bool hasTooManyContexts() const { return m_contexts.size() >= MaxContexts; }
-    
-#if PLATFORM(MAC)
-    WEBCORE_EXPORT static void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);
-#endif
-#if PLATFORM(COCOA)
-    void displayWasReconfigured();
-#endif
     
 private:
     GraphicsContextGLOpenGLManager() = default;
