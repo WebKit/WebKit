@@ -1,3 +1,42 @@
+2021-12-01  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Console execution context can become an unexpected selection on refresh/navigation
+        https://bugs.webkit.org/show_bug.cgi?id=233349
+
+        Reviewed by Devin Rousso.
+
+        There are really three bugs here in `WI.QuickConsole.prototype._handleFrameExecutionContextsCleared`, each of
+        which contribute to unexpected execution context selections.
+
+        1. If the frame of the active execution context commits a provisional load, our code attempts to re-select the
+        new context for that frame, which results in clearing the `Auto` bit for selected context, which means the
+        context no longer will follow the selected DOM node. This is resolved by no longer following a frame's execution
+        context on navigation if the current selection is `Auto` (tracked by the `_useExecutionContextOfInspectedNode`
+        variable).
+
+        2. Because of the very short timeframe for the above to take place before bailing (previously 10ms) there are
+        many situations where other large payloads over the protocol, like a complex DOM tree, will cause the timeout to
+        fire before we receive an event telling us there is a new execution context for the frame, which means we end up
+        not following the frame anyways. This is improved by increasing the timeout to a still-brisk, but more
+        reasonable 100ms.
+
+        3. The timeout in (2) can lead to us having a selected execution context that may no longer be valid because the
+        fail-safe in `QuickConsole.prototype._handleFrameExecutionContextsCleared` doesn't really fail safely, since it
+        doesn't provide a new execution context to be active and instead seems to rely on the hope that the context will
+        still work for future invocations, which I believe is how many users are getting into the state of a blank
+        execution context picker (with a working drop down menu with actual contexts that are selectable) and are unable
+        to evaluate anything in the console until re-selecting an execution context.
+
+        Additional drive-by change to move the checks for whether or not we can use the execution context of a selected
+        node into its own method.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype._populateActiveExecutionContextNavigationItemContextMenu):
+        (WI.QuickConsole.prototype._handleEngineeringShowInternalExecutionContextsSettingChanged):
+        (WI.QuickConsole.prototype._handleFrameExecutionContextsCleared):
+        (WI.QuickConsole.prototype._handleTargetRemoved):
+        (WI.QuickConsole.prototype._canUseExecutionContextOfInspectedNode):
+
 2021-11-30  BJ Burg  <bburg@apple.com>
 
         Web Inspector: add ExtensionTabActivation diagnostic event
