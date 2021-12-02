@@ -1,3 +1,34 @@
+2021-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Add implementation of table and table cell interfaces when building with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=233694
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add unit tests and WTR implementation for tables.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (testTableBasic):
+        (beforeAll):
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+        (WTR::AccessibilityUIElement::rowAtIndex):
+        (WTR::elementsVector):
+        (WTR::attributesOfElements):
+        (WTR::AccessibilityUIElement::attributesOfChildren):
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+        (WTR::makeJSArray):
+        (WTR::AccessibilityUIElement::rowHeaders const):
+        (WTR::AccessibilityUIElement::columnHeaders const):
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRows):
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells):
+        (WTR::AccessibilityUIElement::rowCount):
+        (WTR::AccessibilityUIElement::columnCount):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::cellForColumnAndRow):
+
 2021-12-01  Sihui Liu  <sihui_liu@apple.com>
 
         FileSystemSyncAccessHandle should be invalidated when network process crashes

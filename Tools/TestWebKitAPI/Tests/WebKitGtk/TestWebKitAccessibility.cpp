@@ -2332,6 +2332,418 @@ static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
 #endif
 }
 
+static void testTableBasic(AccessibilityTest* test, gconstpointer)
+{
+#if !USE(ATSPI)
+    g_test_skip("Tables work differently with ATK");
+#else
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <table>"
+        "      <caption>Table Caption</caption>"
+        "      <tr><th>Column 1</th><th>Column 2</th><th>Column 3</th></tr>"
+        "      <tr><th rowspan='2'>Row 1 Cell 1</th><td>Row 1 Cell 2</td><td>Row 1 Cell 3</td></tr>"
+        "      <tr><td>Row 2 Cell 2</td><td>Row 2 Cell 3</td></tr>"
+        "      <tr><td colspan='3'>Row 3 Cell 1</td></tr>"
+        "    </table>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto table = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TABLE(table.get()));
+    g_assert_cmpint(atspi_accessible_get_role(table.get(), nullptr), ==, ATSPI_ROLE_TABLE);
+    g_assert_cmpint(atspi_accessible_get_child_count(table.get(), nullptr), ==, 5);
+    g_assert_cmpint(atspi_table_get_n_rows(ATSPI_TABLE(table.get()), nullptr), ==, 4);
+    g_assert_cmpint(atspi_table_get_n_columns(ATSPI_TABLE(table.get()), nullptr), ==, 3);
+
+    auto caption = adoptGRef(atspi_table_get_caption(ATSPI_TABLE(table.get()), nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(caption.get()));
+    g_assert_cmpint(atspi_accessible_get_role(caption.get(), nullptr), ==, ATSPI_ROLE_CAPTION);
+    g_assert_true(ATSPI_IS_TEXT(caption.get()));
+    GUniquePtr<char> text(atspi_text_get_text(ATSPI_TEXT(caption.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Table Caption");
+
+    text.reset(atspi_table_get_row_description(ATSPI_TABLE(table.get()), 0, nullptr));
+    g_assert_cmpstr(text.get(), ==, "");
+    g_assert_null(atspi_table_get_row_header(ATSPI_TABLE(table.get()), 0, nullptr));
+    text.reset(atspi_table_get_row_description(ATSPI_TABLE(table.get()), 1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 1 Cell 1");
+    auto rowHeader = adoptGRef(atspi_table_get_row_header(ATSPI_TABLE(table.get()), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(rowHeader.get()));
+    text.reset(atspi_table_get_row_description(ATSPI_TABLE(table.get()), 2, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 1 Cell 1");
+    auto header = adoptGRef(atspi_table_get_row_header(ATSPI_TABLE(table.get()), 2, nullptr));
+    g_assert_true(rowHeader.get() == header.get());
+    text.reset(atspi_table_get_row_description(ATSPI_TABLE(table.get()), 3, nullptr));
+    g_assert_cmpstr(text.get(), ==, "");
+    g_assert_null(atspi_table_get_row_header(ATSPI_TABLE(table.get()), 3, nullptr));
+
+    text.reset(atspi_table_get_column_description(ATSPI_TABLE(table.get()), 0, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Column 1");
+    auto columnHeader0 = adoptGRef(atspi_table_get_column_header(ATSPI_TABLE(table.get()), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(columnHeader0.get()));
+    text.reset(atspi_table_get_column_description(ATSPI_TABLE(table.get()), 1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Column 2");
+    auto columnHeader1 = adoptGRef(atspi_table_get_column_header(ATSPI_TABLE(table.get()), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(columnHeader1.get()));
+    text.reset(atspi_table_get_column_description(ATSPI_TABLE(table.get()), 2, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Column 3");
+    auto columnHeader2 = adoptGRef(atspi_table_get_column_header(ATSPI_TABLE(table.get()), 2, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(columnHeader2.get()));
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 0, 0, nullptr), ==, 0);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 0, nullptr), ==, 0);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 0, nullptr), ==, 0);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 0, 0, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 0, 0, nullptr), ==, 1);
+    int row, column, rowSpan, columnSpan;
+    gboolean isSelected;
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 0, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 0);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell0 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 0, 0, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell0.get()));
+    g_assert_true(cell0.get() == columnHeader0.get());
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell0.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell0.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell0.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 0);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell0.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 0);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    auto cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell0.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    GRefPtr<GPtrArray> rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell0.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 0);
+    GRefPtr<GPtrArray> columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell0.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 0);
+    g_assert_true(ATSPI_IS_TEXT(cell0.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell0.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Column 1");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 0, 1, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 1, nullptr), ==, 0);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 1, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 0, 1, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 0, 1, nullptr), ==, 1);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 1, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 1);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell1 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 0, 1, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell1.get()));
+    g_assert_true(cell1.get() == columnHeader1.get());
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell1.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell1.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell1.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 1);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell1.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 1);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell1.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell1.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 0);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell1.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 0);
+    g_assert_true(ATSPI_IS_TEXT(cell1.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell1.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Column 2");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 0, 2, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 2, nullptr), ==, 0);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 2, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 0, 2, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 0, 2, nullptr), ==, 1);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 2, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 2);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell2 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 0, 2, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell2.get()));
+    g_assert_true(cell2.get() == columnHeader2.get());
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell2.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell2.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell2.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 2);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell2.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 0);
+    g_assert_cmpint(column, ==, 2);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell2.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell2.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 0);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell2.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 0);
+    g_assert_true(ATSPI_IS_TEXT(cell2.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell2.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Column 3");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 1, 0, nullptr), ==, 3);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 3, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 3, nullptr), ==, 0);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 1, 0, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 1, 0, nullptr), ==, 1);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 3, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 0);
+    g_assert_cmpint(rowSpan, ==, 2);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell3 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 1, 0, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell3.get()));
+    g_assert_true(cell3.get() == rowHeader.get());
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell3.get()), nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell3.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell3.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 0);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell3.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 0);
+    g_assert_cmpint(rowSpan, ==, 2);
+    g_assert_cmpint(columnSpan, ==, 1);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell3.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell3.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 0);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell3.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 0);
+    g_assert_true(ATSPI_IS_TEXT(cell3.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell3.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 1 Cell 1");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 1, 1, nullptr), ==, 4);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 4, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 4, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 1, 1, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 1, 1, nullptr), ==, 1);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 4, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 1);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell4 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 1, 1, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell4.get()));
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell4.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell4.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell4.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 1);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell4.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 1);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell4.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell4.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 1);
+    g_assert_true(rowHeaders->pdata[0] == rowHeader.get());
+    g_ptr_array_foreach(rowHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell4.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 1);
+    g_assert_true(columnHeaders->pdata[0] == columnHeader1.get());
+    g_ptr_array_foreach(columnHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    g_assert_true(ATSPI_IS_TEXT(cell4.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell4.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 1 Cell 2");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 1, 2, nullptr), ==, 5);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 5, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 5, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 1, 2, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 1, 2, nullptr), ==, 1);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 5, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 2);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell5 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 1, 2, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell5.get()));
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell5.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell5.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell5.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 2);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell5.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 1);
+    g_assert_cmpint(column, ==, 2);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell5.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell5.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 1);
+    g_assert_true(rowHeaders->pdata[0] == rowHeader.get());
+    g_ptr_array_foreach(rowHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell5.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 1);
+    g_assert_true(columnHeaders->pdata[0] == columnHeader2.get());
+    g_ptr_array_foreach(columnHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    g_assert_true(ATSPI_IS_TEXT(cell5.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell5.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 1 Cell 3");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 2, 0, nullptr), ==, 3);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 2, 0, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 2, 0, nullptr), ==, 1);
+    auto cell = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 2, 0, nullptr));
+    g_assert_true(cell3.get() == cell.get());
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 2, 1, nullptr), ==, 6);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 6, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 6, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 2, 1, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 2, 1, nullptr), ==, 1);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 6, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 2);
+    g_assert_cmpint(column, ==, 1);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell6 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 2, 1, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell6.get()));
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell6.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell6.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell6.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 2);
+    g_assert_cmpint(column, ==, 1);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell6.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 2);
+    g_assert_cmpint(column, ==, 1);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell6.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell6.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 1);
+    g_assert_true(rowHeaders->pdata[0] == rowHeader.get());
+    g_ptr_array_foreach(rowHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell6.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 1);
+    g_assert_true(columnHeaders->pdata[0] == columnHeader1.get());
+    g_ptr_array_foreach(columnHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    g_assert_true(ATSPI_IS_TEXT(cell6.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell6.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 2 Cell 2");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 2, 2, nullptr), ==, 7);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 7, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 7, nullptr), ==, 2);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 2, 2, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 2, 2, nullptr), ==, 1);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 7, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 2);
+    g_assert_cmpint(column, ==, 2);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    g_assert_false(isSelected);
+    auto cell7 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 2, 2, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell7.get()));
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell7.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell7.get()), nullptr), ==, 1);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell7.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 2);
+    g_assert_cmpint(column, ==, 2);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell7.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 2);
+    g_assert_cmpint(column, ==, 2);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 1);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell7.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell7.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 1);
+    g_assert_true(rowHeaders->pdata[0] == rowHeader.get());
+    g_ptr_array_foreach(rowHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell7.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 1);
+    g_assert_true(columnHeaders->pdata[0] == columnHeader2.get());
+    g_ptr_array_foreach(columnHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    g_assert_true(ATSPI_IS_TEXT(cell7.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell7.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 2 Cell 3");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 3, 0, nullptr), ==, 8);
+    g_assert_cmpint(atspi_table_get_row_at_index(ATSPI_TABLE(table.get()), 8, nullptr), ==, 3);
+    g_assert_cmpint(atspi_table_get_column_at_index(ATSPI_TABLE(table.get()), 8, nullptr), ==, 0);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 3, 0, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 3, 0, nullptr), ==, 3);
+    g_assert_true(atspi_table_get_row_column_extents_at_index(ATSPI_TABLE(table.get()), 8, &row, &column, &rowSpan, &columnSpan, &isSelected, nullptr));
+    g_assert_cmpint(row, ==, 3);
+    g_assert_cmpint(column, ==, 0);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 3);
+    g_assert_false(isSelected);
+    auto cell8 = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 3, 0, nullptr));
+    g_assert_true(ATSPI_IS_TABLE_CELL(cell8.get()));
+    g_assert_cmpint(atspi_table_cell_get_row_span(ATSPI_TABLE_CELL(cell8.get()), nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_cell_get_column_span(ATSPI_TABLE_CELL(cell8.get()), nullptr), ==, 3);
+    g_assert_true(atspi_table_cell_get_position(ATSPI_TABLE_CELL(cell8.get()), &row, &column, nullptr));
+    g_assert_cmpint(row, ==, 3);
+    g_assert_cmpint(column, ==, 0);
+    atspi_table_cell_get_row_column_span(ATSPI_TABLE_CELL(cell8.get()), &row, &column, &rowSpan, &columnSpan, nullptr);
+    g_assert_cmpint(row, ==, 3);
+    g_assert_cmpint(column, ==, 0);
+    g_assert_cmpint(rowSpan, ==, 1);
+    g_assert_cmpint(columnSpan, ==, 3);
+    cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell8.get()), nullptr));
+    g_assert_true(table.get() == cellTable.get());
+    rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell8.get()), nullptr));
+    g_assert_cmpint(rowHeaders->len, ==, 0);
+    g_ptr_array_foreach(rowHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell8.get()), nullptr));
+    g_assert_cmpint(columnHeaders->len, ==, 1);
+    g_assert_true(columnHeaders->pdata[0] == columnHeader0.get());
+    g_ptr_array_foreach(columnHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
+    g_assert_true(ATSPI_IS_TEXT(cell8.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(cell8.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Row 3 Cell 1");
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 3, 1, nullptr), ==, 8);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 3, 1, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 3, 1, nullptr), ==, 3);
+    cell = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 3, 1, nullptr));
+    g_assert_true(cell8.get() == cell.get());
+
+    g_assert_cmpint(atspi_table_get_index_at(ATSPI_TABLE(table.get()), 3, 2, nullptr), ==, 8);
+    g_assert_cmpint(atspi_table_get_row_extent_at(ATSPI_TABLE(table.get()), 3, 2, nullptr), ==, 1);
+    g_assert_cmpint(atspi_table_get_column_extent_at(ATSPI_TABLE(table.get()), 3, 2, nullptr), ==, 3);
+    cell = adoptGRef(atspi_table_get_accessible_at(ATSPI_TABLE(table.get()), 3, 2, nullptr));
+    g_assert_true(cell8.get() == cell.get());
+#endif
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -2360,6 +2772,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "image/basic", testImageBasic);
     AccessibilityTest::add("WebKitAccessibility", "selection/listbox", testSelectionListBox);
     AccessibilityTest::add("WebKitAccessibility", "selection/menulist", testSelectionMenuList);
+    AccessibilityTest::add("WebKitAccessibility", "table/basic", testTableBasic);
 }
 
 void afterAll()

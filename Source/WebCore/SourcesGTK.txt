@@ -48,6 +48,8 @@ accessibility/atspi/AccessibilityObjectHyperlinkAtspi.cpp
 accessibility/atspi/AccessibilityObjectHypertextAtspi.cpp
 accessibility/atspi/AccessibilityObjectImageAtspi.cpp
 accessibility/atspi/AccessibilityObjectSelectionAtspi.cpp
+accessibility/atspi/AccessibilityObjectTableAtspi.cpp
+accessibility/atspi/AccessibilityObjectTableCellAtspi.cpp
 accessibility/atspi/AccessibilityObjectTextAtspi.cpp
 accessibility/atspi/AccessibilityObjectValueAtspi.cpp
 accessibility/atspi/AccessibilityRootAtspi.cpp

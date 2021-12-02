@@ -172,7 +172,7 @@ bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
     if (!m_parent)
         return true;
     
-#if PLATFORM(IOS_FAMILY) || USE(ATK)
+#if PLATFORM(IOS_FAMILY) || USE(ATK) || USE(ATSPI)
     return true;
 #endif
     

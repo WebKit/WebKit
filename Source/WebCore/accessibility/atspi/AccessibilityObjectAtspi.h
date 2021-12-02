@@ -52,7 +52,9 @@ public:
         Action = 1 << 6,
         Document = 1 << 7,
         Image = 1 << 8,
-        Selection = 1 << 9
+        Selection = 1 << 9,
+        Table = 1 << 10,
+        TableCell = 1 << 11
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -138,9 +140,24 @@ public:
     WEBCORE_EXPORT bool clearSelection() const;
     void selectionChanged();
 
+    WEBCORE_EXPORT AccessibilityObjectAtspi* cell(unsigned row, unsigned column) const;
+    WEBCORE_EXPORT unsigned rowCount() const;
+    WEBCORE_EXPORT unsigned columnCount() const;
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> cells() const;
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> rows() const;
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> rowHeaders() const;
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> columnHeaders() const;
+
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> cellRowHeaders() const;
+    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> cellColumnHeaders() const;
+    WEBCORE_EXPORT unsigned rowSpan() const;
+    WEBCORE_EXPORT unsigned columnSpan() const;
+    WEBCORE_EXPORT std::pair<std::optional<unsigned>, std::optional<unsigned>> cellPosition() const;
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
+    Vector<RefPtr<AccessibilityObjectAtspi>> wrapperVector(const Vector<RefPtr<AXCoreObject>>&) const;
     int indexInParent() const;
     GVariant* parentReference() const;
     void childAdded(AccessibilityObjectAtspi&);
@@ -189,6 +206,18 @@ private:
     bool isChildSelected(unsigned) const;
     bool selectAll() const;
 
+    AccessibilityObjectAtspi* rowHeader(unsigned) const;
+    AccessibilityObjectAtspi* columnHeader(unsigned) const;
+    unsigned rowExtent(unsigned row, unsigned column) const;
+    unsigned columnExtent(unsigned row, unsigned column) const;
+
+    AccessibilityObjectAtspi* tableCaption() const;
+    std::optional<unsigned> cellIndex(unsigned row, unsigned column) const;
+    std::optional<unsigned> rowAtIndex(unsigned) const;
+    std::optional<unsigned> columnAtIndex(unsigned) const;
+    String rowDescription(unsigned) const;
+    String columnDescription(unsigned) const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
@@ -201,6 +230,8 @@ private:
     static GDBusInterfaceVTable s_documentFunctions;
     static GDBusInterfaceVTable s_imageFunctions;
     static GDBusInterfaceVTable s_selectionFunctions;
+    static GDBusInterfaceVTable s_tableFunctions;
+    static GDBusInterfaceVTable s_tableCellFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

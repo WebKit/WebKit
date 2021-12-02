@@ -100,6 +100,15 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
     if (coreObject.canHaveSelectedChildren())
         interfaces.add(Interface::Selection);
 
+    if (coreObject.isTable())
+        interfaces.add(Interface::Table);
+
+    if (coreObject.roleValue() == AccessibilityRole::Cell
+        || coreObject.roleValue() == AccessibilityRole::GridCell
+        || coreObject.roleValue() == AccessibilityRole::ColumnHeader
+        || coreObject.roleValue() == AccessibilityRole::RowHeader)
+        interfaces.add(Interface::TableCell);
+
     return interfaces;
 }
 
@@ -500,6 +509,10 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_image_interface), &s_imageFunctions });
         if (m_interfaces.contains(Interface::Selection))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_selection_interface), &s_selectionFunctions });
+        if (m_interfaces.contains(Interface::Table))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_table_interface), &s_tableFunctions });
+        if (m_interfaces.contains(Interface::TableCell))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_table_cell_interface), &s_tableCellFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -556,8 +569,10 @@ std::optional<AccessibilityObjectAtspi*> AccessibilityObjectAtspi::parent() cons
     if (!axParent)
         return nullptr;
 
-    if (auto* atspiParent = axParent->wrapper())
+    if (auto* atspiParent = axParent->wrapper()) {
+        atspiParent->setRoot(root());
         return atspiParent;
+    }
 
     return std::nullopt;
 }
@@ -598,23 +613,27 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::childAt(unsigned index) cons
     return wrapper;
 }
 
+Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::wrapperVector(const Vector<RefPtr<AXCoreObject>>& elements) const
+{
+    Vector<RefPtr<AccessibilityObjectAtspi>> wrappers;
+    wrappers.reserveInitialCapacity(elements.size());
+    auto* root = this->root();
+    for (const auto& element : elements) {
+        if (auto* wrapper = element->wrapper()) {
+            wrapper->setRoot(root);
+            wrappers.uncheckedAppend(wrapper);
+        }
+    }
+    return wrappers;
+}
+
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::children() const
 {
     RELEASE_ASSERT(!isMainThread());
     if (!m_axObject)
         return { };
 
-    const auto& children = m_axObject->children();
-    Vector<RefPtr<AccessibilityObjectAtspi>> wrappers;
-    wrappers.reserveInitialCapacity(children.size());
-    auto* root = this->root();
-    for (const auto& child : children) {
-        if (auto* wrapper = child->wrapper()) {
-            wrapper->setRoot(root);
-            wrappers.uncheckedAppend(wrapper);
-        }
-    }
-    return wrappers;
+    return wrapperVector(m_axObject->children());
 }
 
 int AccessibilityObjectAtspi::indexInParent() const
@@ -1152,6 +1171,10 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_image_interface.name);
     if (m_interfaces.contains(Interface::Selection))
         g_variant_builder_add(builder, "s", webkit_selection_interface.name);
+    if (m_interfaces.contains(Interface::Table))
+        g_variant_builder_add(builder, "s", webkit_table_interface.name);
+    if (m_interfaces.contains(Interface::TableCell))
+        g_variant_builder_add(builder, "s", webkit_table_cell_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
