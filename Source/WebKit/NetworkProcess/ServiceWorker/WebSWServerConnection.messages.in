@@ -51,6 +51,11 @@ messages -> WebSWServerConnection NotRefCounted {
     UnsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<bool, WebCore::ExceptionData> result) Async
     GetPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result) Async
     GetPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<uint8_t, WebCore::ExceptionData> result) Async 
+
+    EnableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result) Async
+    DisableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result) Async
+    SetNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier identifier, String value) -> (std::optional<WebCore::ExceptionData> result) Async
+    GetNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData> result) Async
 }
 
 #endif // ENABLE(SERVICE_WORKER)

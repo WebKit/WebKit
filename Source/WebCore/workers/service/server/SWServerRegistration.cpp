@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "HTTPParsers.h"
 #include "Logging.h"
 #include "SWServer.h"
 #include "SWServerToContextConnection.h"
@@ -54,6 +55,7 @@ SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorker
     , m_softUpdateTimer { *this, &SWServerRegistration::softUpdate }
 {
     m_scopeURL.removeFragmentIdentifier();
+    m_preloadState.headerValue = "true"_s;
 }
 
 SWServerRegistration::~SWServerRegistration()
@@ -380,6 +382,38 @@ void SWServerRegistration::scheduleSoftUpdate(IsAppInitiated isAppInitiated)
 
     RELEASE_LOG(ServiceWorker, "SWServerRegistration::softUpdateIfNeeded");
     m_softUpdateTimer.startOneShot(softUpdateDelay);
+}
+
+// https://w3c.github.io/ServiceWorker/#dom-navigationpreloadmanager-enable, steps run in parallel.
+std::optional<ExceptionData> SWServerRegistration::enableNavigationPreload()
+{
+    // FIXME: Persist this data.
+    if (!m_activeWorker)
+        return ExceptionData { InvalidStateError, "No active worker"_s };
+    m_preloadState.enabled = true;
+    return { };
+}
+
+// https://w3c.github.io/ServiceWorker/#dom-navigationpreloadmanager-disable, steps run in parallel.
+std::optional<ExceptionData> SWServerRegistration::disableNavigationPreload()
+{
+    // FIXME: Persist this data.
+    if (!m_activeWorker)
+        return ExceptionData { InvalidStateError, "No active worker"_s };
+    m_preloadState.enabled = false;
+    return { };
+}
+
+// https://w3c.github.io/ServiceWorker/#dom-navigationpreloadmanager-setheadervalue, steps run in parallel.
+std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderValue(String&& headerValue)
+{
+    // FIXME: Persist this data.
+    if (!isValidHTTPHeaderValue(headerValue))
+        return ExceptionData { TypeError, "Invalid header value"_s };
+    if (!m_activeWorker)
+        return ExceptionData { InvalidStateError, "No active worker"_s };
+    m_preloadState.headerValue = WTFMove(headerValue);
+    return { };
 }
 
 } // namespace WebCore

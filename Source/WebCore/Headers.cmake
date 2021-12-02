@@ -1898,6 +1898,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/WorkerThreadType.h
     workers/WorkerType.h
 
+    workers/service/NavigationPreloadState.h
     workers/service/SWClientConnection.h
     workers/service/ServiceWorkerClientData.h
     workers/service/ServiceWorkerClientQueryOptions.h

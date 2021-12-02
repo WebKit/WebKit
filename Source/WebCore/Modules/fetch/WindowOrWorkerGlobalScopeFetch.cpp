@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WindowOrWorkerGlobalScopeFetch.h"
 
+#include "CachedResourceRequestInitiators.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FetchResponse.h"
@@ -62,7 +63,7 @@ void WindowOrWorkerGlobalScopeFetch::fetch(DOMWindow& window, FetchRequest::Info
 
         UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::IsPropagatedFromFetch::Yes);
         promise.settle(WTFMove(result));
-    });
+    }, cachedResourceRequestInitiators().fetch);
 }
 
 void WindowOrWorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& deferred)
@@ -77,7 +78,7 @@ void WindowOrWorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchReques
 
     FetchResponse::fetch(scope, request.releaseReturnValue().get(), [promise = WTFMove(promise)](ExceptionOr<FetchResponse&>&& result) mutable {
         promise.settle(WTFMove(result));
-    });
+    }, cachedResourceRequestInitiators().fetch);
 }
 
 }

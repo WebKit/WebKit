@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
+#include "NavigationPreloadManager.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerTypes.h"
@@ -252,6 +253,13 @@ void ServiceWorkerRegistration::stop()
 bool ServiceWorkerRegistration::virtualHasPendingActivity() const
 {
     return getNewestWorker() && hasEventListeners();
+}
+
+NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
+{
+    if (!m_navigationPreload)
+        m_navigationPreload = std::unique_ptr<NavigationPreloadManager>(new NavigationPreloadManager(*this));
+    return *m_navigationPreload;
 }
 
 } // namespace WebCore

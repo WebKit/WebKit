@@ -83,13 +83,13 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
     m_isStarted = m_loader;
 }
 
-void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
+void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request, const String& initiator)
 {
     ResourceLoaderOptions resourceLoaderOptions = request.fetchOptions();
     resourceLoaderOptions.preflightPolicy = PreflightPolicy::Consider;
     ThreadableLoaderOptions options(resourceLoaderOptions,
         context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective,
-        String(cachedResourceRequestInitiators().fetch),
+        String(initiator),
         ResponseFilteringPolicy::Disable);
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.dataBufferingPolicy = DataBufferingPolicy::DoNotBufferData;

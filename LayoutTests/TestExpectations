@@ -403,8 +403,7 @@ webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 # Requires additional test infrastructure.
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 
-# Unsupported features: SharedWorker, NavigationPreload
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload [ Skip ]
+# Unsupported features: SharedWorker
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 
 # Unsupported features: PerformanceNavigationTiming

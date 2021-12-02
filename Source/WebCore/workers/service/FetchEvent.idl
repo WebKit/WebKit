@@ -32,8 +32,8 @@
     JSGenerateToNativeObject
 ] interface FetchEvent : ExtendableEvent {
     constructor(DOMString type, FetchEventInit eventInitDict);
-
     [SameObject] readonly attribute FetchRequest request;
+    [CallWith=ScriptExecutionContext, EnabledBySetting=ServiceWorkerNavigationPreloadEnabled] readonly attribute Promise<any> preloadResponse;
     readonly attribute DOMString clientId;
     readonly attribute DOMString reservedClientId;
     readonly attribute DOMString targetClientId;

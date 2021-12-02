@@ -455,9 +455,16 @@ void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceR
     completionHandler(WTFMove(request));
 }
 
+#if ASSERT_ENABLED
+static bool isOpaqueRedirectResponseWithoutLocationHeader(const ResourceResponse& response)
+{
+    return response.type() == ResourceResponse::Type::Opaqueredirect && response.isRedirection() && response.httpHeaderField(HTTPHeaderName::Location).isNull();
+}
+#endif
+
 void CachedResource::setResponse(const ResourceResponse& response)
 {
-    ASSERT(m_response.type() == ResourceResponse::Type::Default);
+    ASSERT(m_response.type() == ResourceResponse::Type::Default || isOpaqueRedirectResponseWithoutLocationHeader(m_response));
     m_response = response;
     m_varyingHeaderValues = collectVaryingRequestHeaders(cookieJar(), m_resourceRequest, m_response);
 

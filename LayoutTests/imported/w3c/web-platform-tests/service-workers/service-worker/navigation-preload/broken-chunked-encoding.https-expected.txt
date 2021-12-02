@@ -1,0 +1,5 @@
+
+
+FAIL FetchEvent#preloadResponse resolves even if the body is sent with broken chunked encoding. assert_equals: expected "PASS: preloadResponse resolved" but got "FAIL: preloadResponse rejected"
+FAIL FetchEvent#preloadResponse resolves even if the body is sent with broken chunked encoding with some delays assert_equals: expected "PASS: preloadResponse resolved" but got "FAIL: preloadResponse rejected"
+

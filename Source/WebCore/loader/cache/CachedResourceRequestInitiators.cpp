@@ -33,6 +33,7 @@ CachedResourceRequestInitiators::CachedResourceRequestInitiators()
     , eventsource("eventsource", AtomString::ConstructFromLiteral)
     , fetch("fetch", AtomString::ConstructFromLiteral)
     , icon("icon", AtomString::ConstructFromLiteral)
+    , navigation("navigation", AtomString::ConstructFromLiteral)
     , xmlhttprequest("xmlhttprequest", AtomString::ConstructFromLiteral)
 {
 }

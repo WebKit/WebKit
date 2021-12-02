@@ -1,3 +1,12 @@
+2021-12-02  Youenn Fablet  <youenn@apple.com>
+
+        Add support for NavigationPreloadManager
+        https://bugs.webkit.org/show_bug.cgi?id=233523
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-12-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] OSAllocator::reserveUncommittedAligned should use aligned allocation

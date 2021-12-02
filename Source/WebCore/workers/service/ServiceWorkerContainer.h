@@ -98,6 +98,13 @@ public:
 
     NavigatorBase* navigator() { return &m_navigator; }
 
+    using VoidPromise = DOMPromiseDeferred<void>;
+    using NavigationPreloadStatePromise = DOMPromiseDeferred<IDLDictionary<NavigationPreloadState>>;
+    void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, VoidPromise&&);
+    void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, VoidPromise&&);
+    void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, String&&, VoidPromise&&);
+    void getNavigationPreloadState(ServiceWorkerRegistrationIdentifier, NavigationPreloadStatePromise&&);
+
 private:
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { }) final;
 

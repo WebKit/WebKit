@@ -92,6 +92,7 @@ Sec-WebSocket-Version
 Server-Timing
 Service-Worker
 Service-Worker-Allowed
+Service-Worker-Navigation-Preload
 Set-Cookie
 Set-Cookie2
 SourceMap

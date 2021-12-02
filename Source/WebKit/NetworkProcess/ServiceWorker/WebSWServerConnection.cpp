@@ -523,6 +523,46 @@ void WebSWServerConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWor
     worker->terminate();
 }
 
+void WebSWServerConnection::enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
+{
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(ExceptionData { InvalidStateError, "No registration"_s });
+        return;
+    }
+    callback(registration->enableNavigationPreload());
+}
+
+void WebSWServerConnection::disableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
+{
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(ExceptionData { InvalidStateError, "No registration"_s });
+        return;
+    }
+    callback(registration->disableNavigationPreload());
+}
+
+void WebSWServerConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String&& headerValue, ExceptionOrVoidCallback&& callback)
+{
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(ExceptionData { InvalidStateError, "No registration"_s });
+        return;
+    }
+    callback(registration->setNavigationPreloadHeaderValue(WTFMove(headerValue)));
+}
+
+void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrNavigationPreloadStateCallback&& callback)
+{
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(makeUnexpected(ExceptionData { InvalidStateError, { } }));
+        return;
+    }
+    callback(registration->navigationPreloadState());
+}
+
 } // namespace WebKit
 
 #undef SWSERVERCONNECTION_RELEASE_LOG

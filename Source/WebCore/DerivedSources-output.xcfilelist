@@ -1631,6 +1631,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationRecord.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationRecord.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNamedNodeMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNamedNodeMap.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadManager.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadManager.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Clipboard.cpp

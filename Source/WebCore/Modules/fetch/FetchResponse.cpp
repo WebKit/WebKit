@@ -227,7 +227,7 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
     });
 }
 
-void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback)
+void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback, const String& initiator)
 {
     if (request.signal().aborted()) {
         responseCallback(Exception { AbortError, "Request signal is aborted"_s });
@@ -249,7 +249,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
     response->addAbortSteps(request.signal());
 
     response->m_bodyLoader = makeUnique<BodyLoader>(response.get(), WTFMove(responseCallback));
-    if (!response->m_bodyLoader->start(context, request))
+    if (!response->m_bodyLoader->start(context, request, initiator))
         response->m_bodyLoader = nullptr;
 }
 
@@ -377,11 +377,11 @@ void FetchResponse::BodyLoader::didReceiveData(const uint8_t* data, size_t size)
     source.resolvePullPromise();
 }
 
-bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
+bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const FetchRequest& request, const String& initiator)
 {
     m_credentials = request.fetchOptions().credentials;
     m_loader = makeUnique<FetchLoader>(*this, &m_response.m_body->consumer());
-    m_loader->start(context, request);
+    m_loader->start(context, request, initiator);
     return m_loader->isStarted();
 }
 

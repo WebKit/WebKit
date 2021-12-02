@@ -88,12 +88,11 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
 
     m_timeoutTimer->startOneShot(loader.connectionToWebProcess().networkProcess().serviceWorkerFetchTimeout());
 
-    // FIXME: Consider extending this based on navigation preload manager.
     bool shouldDoNavigationPreload = session && isNavigationRequest(loader.parameters().options.destination) && loader.originalRequest().httpMethod() == "GET";
-    if (shouldDoNavigationPreload && !isWorkerReady) {
+    if (shouldDoNavigationPreload && (!isWorkerReady || registration.navigationPreloadState().enabled)) {
         NetworkLoadParameters parameters = loader.parameters();
         parameters.request = m_currentRequest;
-        m_preloader = makeUnique<ServiceWorkerNavigationPreloader>(*session, WTFMove(parameters));
+        m_preloader = makeUnique<ServiceWorkerNavigationPreloader>(*session, WTFMove(parameters), registration.navigationPreloadState(), loader.shouldCaptureExtraNetworkLoadMetrics());
         session->addNavigationPreloaderTask(*this);
     }
 }
@@ -151,7 +150,7 @@ void ServiceWorkerFetchTask::startFetch()
     auto request = m_currentRequest;
     cleanHTTPRequestHeadersForAccessControl(request, m_loader.parameters().httpHeadersToKeep);
 
-    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer });
+    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled() });
     ASSERT_UNUSED(isSent, isSent);
 }
 
@@ -282,7 +281,7 @@ void ServiceWorkerFetchTask::didNotHandle()
         m_timeoutTimer->stop();
     softUpdateIfNeeded();
 
-    if (m_preloader) {
+    if (m_preloader && !m_preloader->isServiceWorkerNavigationPreloadEnabled()) {
         loadResponseFromPreloader();
         return;
     }

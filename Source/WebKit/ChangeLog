@@ -1,3 +1,28 @@
+2021-12-02  Youenn Fablet  <youenn@apple.com>
+
+        Add support for NavigationPreloadManager
+        https://bugs.webkit.org/show_bug.cgi?id=233523
+
+        Reviewed by Chris Dumez.
+
+        Make use of ServiceWorkerNavigationPreloader when preload flag is true.
+        We only start as soon as created the preload in case of main frame navigation when preload flag is true.
+        Update ServiceWorkerNavigationPreloader to differentiate explicit preloads (enabled by NavigationPreloadManager) from implict preloads.
+        Implict preloads can be used when fetch event is not handled, which is not guaranteed for explicit preloads, given the Service-Worker-Navigation-Preload header.
+        Add IPC to read and set preload state (enabled and header value).
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2021-12-01  Sihui Liu  <sihui_liu@apple.com>
 
         FileSystemSyncAccessHandle should be invalidated when network process crashes

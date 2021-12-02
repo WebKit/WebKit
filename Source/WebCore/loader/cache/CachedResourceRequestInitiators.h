@@ -37,6 +37,7 @@ struct CachedResourceRequestInitiators {
     const AtomString eventsource;
     const AtomString fetch;
     const AtomString icon;
+    const AtomString navigation;
     const AtomString xmlhttprequest;
     WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiators); WTF_MAKE_FAST_ALLOCATED;
 private:

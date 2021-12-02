@@ -62,6 +62,11 @@ private:
     void getPushSubscription(ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) final;
     void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) final;
 
+    void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
+    void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
+    void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&) final;
+    void getNavigationPreloadState(ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&) final;
+
     Ref<WorkerThread> m_thread;
 
     uint64_t m_lastRequestIdentifier { 0 };
@@ -73,6 +78,8 @@ private:
     HashMap<uint64_t, UnsubscribeFromPushServiceCallback> m_unsubscribeFromPushServiceRequests;
     HashMap<uint64_t, GetPushSubscriptionCallback> m_getPushSubscriptionRequests;
     HashMap<uint64_t, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
+    HashMap<uint64_t, ExceptionOrVoidCallback> m_voidCallbacks;
+    HashMap<uint64_t, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
 };
 
 } // namespace WebCore

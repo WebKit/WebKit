@@ -48,7 +48,7 @@ public:
 
     RefPtr<SharedBuffer> startStreaming();
 
-    void start(ScriptExecutionContext&, const FetchRequest&);
+    void start(ScriptExecutionContext&, const FetchRequest&, const String&);
     void start(ScriptExecutionContext&, const Blob&);
     void startLoadingBlobURL(ScriptExecutionContext&, const URL& blobURL);
     void stop();

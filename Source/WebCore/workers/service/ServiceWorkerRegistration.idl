@@ -37,6 +37,7 @@
     readonly attribute ServiceWorker? installing;
     readonly attribute ServiceWorker? waiting;
     readonly attribute ServiceWorker? active;
+    [SameObject, EnabledBySetting=ServiceWorkerNavigationPreloadEnabled] readonly attribute NavigationPreloadManager navigationPreload;
 
     readonly attribute USVString scope;
     readonly attribute ServiceWorkerUpdateViaCache updateViaCache;

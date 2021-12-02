@@ -64,7 +64,7 @@ public:
     static ExceptionOr<Ref<FetchResponse>> redirect(ScriptExecutionContext&, const String& url, int status);
 
     using NotificationCallback = Function<void(ExceptionOr<FetchResponse&>&&)>;
-    static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&);
+    static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&, const String& initiator);
 
     void startConsumingStream(unsigned);
     void consumeChunk(Ref<JSC::Uint8Array>&&);
@@ -129,7 +129,7 @@ private:
         BodyLoader(FetchResponse&, NotificationCallback&&);
         ~BodyLoader();
 
-        bool start(ScriptExecutionContext&, const FetchRequest&);
+        bool start(ScriptExecutionContext&, const FetchRequest&, const String& initiator);
         void stop();
 
         void consumeDataByChunk(ConsumeDataByChunkCallback&&);

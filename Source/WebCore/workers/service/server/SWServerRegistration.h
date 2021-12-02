@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "NavigationPreloadState.h"
 #include "SWServer.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -110,6 +111,11 @@ public:
     bool isAppInitiated() const { return m_isAppInitiated; }
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
+    WEBCORE_EXPORT std::optional<ExceptionData> enableNavigationPreload();
+    WEBCORE_EXPORT std::optional<ExceptionData> disableNavigationPreload();
+    WEBCORE_EXPORT std::optional<ExceptionData> setNavigationPreloadHeaderValue(String&&);
+    const NavigationPreloadState& navigationPreloadState() const { return m_preloadState; }
+
 private:
     void activate();
     void handleClientUnload();
@@ -138,6 +144,7 @@ private:
     WebCore::Timer m_softUpdateTimer;
     
     bool m_isAppInitiated { true };
+    NavigationPreloadState m_preloadState;
 };
 
 } // namespace WebCore

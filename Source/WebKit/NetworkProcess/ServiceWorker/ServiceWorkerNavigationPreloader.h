@@ -29,6 +29,8 @@
 
 #include "NetworkCacheEntry.h"
 #include "NetworkLoadClient.h"
+#include "NetworkLoadParameters.h"
+#include <WebCore/NavigationPreloadState.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -38,13 +40,12 @@ class NetworkLoadMetrics;
 namespace WebKit {
 
 class NetworkLoad;
-class NetworkLoadParameters;
 class NetworkSession;
 
 class ServiceWorkerNavigationPreloader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerNavigationPreloader> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ServiceWorkerNavigationPreloader(NetworkSession&, NetworkLoadParameters&&);
+    ServiceWorkerNavigationPreloader(NetworkSession&, NetworkLoadParameters&&, const WebCore::NavigationPreloadState&, bool shouldCaptureExtraNetworkLoadMetrics);
     ~ServiceWorkerNavigationPreloader();
 
     void cancel();
@@ -57,6 +58,7 @@ public:
     const WebCore::ResourceError& error() const { return m_error; }
     const WebCore::ResourceResponse& response() const { return m_response; }
     const WebCore::NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
+    bool isServiceWorkerNavigationPreloadEnabled() const { return m_state.enabled; }
 
 private:
     // NetworkLoadClient.
@@ -68,14 +70,18 @@ private:
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) final;
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;
+    bool shouldCaptureExtraNetworkLoadMetrics() const final { return m_shouldCaptureExtraNetworkLoadMetrics; }
 
+    void start();
     void loadWithCacheEntry(NetworkCache::Entry&);
-    void loadFromNetwork(NetworkSession&, NetworkLoadParameters&&);
+    void loadFromNetwork();
     void didComplete();
 
     std::unique_ptr<NetworkLoad> m_networkLoad;
     WeakPtr<NetworkSession> m_session;
-    bool m_isCancelled { false };
+
+    NetworkLoadParameters m_parameters;
+    WebCore::NavigationPreloadState m_state;
 
     std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
@@ -85,6 +91,10 @@ private:
 
     ResponseCallback m_responseCallback;
     BodyCallback m_bodyCallback;
+
+    bool m_isStarted { false };
+    bool m_isCancelled { false };
+    bool m_shouldCaptureExtraNetworkLoadMetrics { false };
 };
 
 } // namespace WebKit

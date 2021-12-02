@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DOMPromiseProxy.h"
 #include "ExtendableEvent.h"
 #include "FetchRequest.h"
 #include <wtf/CompletionHandler.h>
@@ -71,6 +72,11 @@ public:
 
     static ResourceError createResponseError(const URL&, const String&, ResourceError::IsSanitized = ResourceError::IsSanitized::No);
 
+    using PreloadResponsePromise = DOMPromiseProxy<IDLAny>;
+    PreloadResponsePromise& preloadResponse(ScriptExecutionContext&);
+
+    void setNavigationPreloadIdentifier(FetchIdentifier);
+
 private:
     WEBCORE_EXPORT FetchEvent(const AtomString&, Init&&, IsTrusted);
 
@@ -89,7 +95,17 @@ private:
     RefPtr<DOMPromise> m_respondPromise;
 
     ResponseCallback m_onResponse;
+
+    FetchIdentifier m_navigationPreloadIdentifier;
+    std::unique_ptr<PreloadResponsePromise> m_preloadResponsePromise;
 };
+
+inline void FetchEvent::setNavigationPreloadIdentifier(FetchIdentifier identifier)
+{
+    ASSERT(!m_navigationPreloadIdentifier);
+    ASSERT(identifier);
+    m_navigationPreloadIdentifier = identifier;
+}
 
 } // namespace WebCore
 
