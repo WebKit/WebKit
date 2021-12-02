@@ -1,3 +1,12 @@
+2021-12-02  Brady Eidson  <beidson@apple.com>
+
+        AVDelegatingPlaybackCoordinator error compiling on macOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=232454
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+
 2021-12-02  Youenn Fablet  <youenn@apple.com>
 
         Add support for NavigationPreloadManager

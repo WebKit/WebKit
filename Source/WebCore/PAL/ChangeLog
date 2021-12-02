@@ -1,3 +1,13 @@
+2021-12-02  Brady Eidson  <beidson@apple.com>
+
+        AVDelegatingPlaybackCoordinator error compiling on macOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=232454
+
+        Reviewed by Tim Horton.
+
+        * pal/cocoa/AVFoundationSoftLink.h: Don't softlink on platforms that don't have it
+          (No other source changes were necessary)
+
 2021-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Add missing files to CMake
