@@ -208,7 +208,7 @@ void HTMLButtonElement::setActivatedSubmit(bool flag)
     m_isActivatedSubmit = flag;
 }
 
-bool HTMLButtonElement::appendFormData(DOMFormData& formData, bool)
+bool HTMLButtonElement::appendFormData(DOMFormData& formData)
 {
     if (m_type != SUBMIT || name().isEmpty() || !m_isActivatedSubmit)
         return false;

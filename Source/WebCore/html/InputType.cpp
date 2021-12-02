@@ -196,7 +196,7 @@ bool InputType::isFormDataAppendable() const
     return !element()->name().isEmpty();
 }
 
-bool InputType::appendFormData(DOMFormData& formData, bool) const
+bool InputType::appendFormData(DOMFormData& formData) const
 {
     ASSERT(element());
     // Always successful.

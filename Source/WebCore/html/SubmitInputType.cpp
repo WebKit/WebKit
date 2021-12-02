@@ -47,7 +47,7 @@ const AtomString& SubmitInputType::formControlType() const
     return InputTypeNames::submit();
 }
 
-bool SubmitInputType::appendFormData(DOMFormData& formData, bool) const
+bool SubmitInputType::appendFormData(DOMFormData& formData) const
 {
     ASSERT(element());
     if (!element()->isActivatedSubmit())

@@ -45,7 +45,7 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
-    bool appendFormData(DOMFormData&, bool) final;
+    bool appendFormData(DOMFormData&) final;
     const AtomString& formControlType() const final;
     bool isOptionalFormControl() const final { return false; }
 

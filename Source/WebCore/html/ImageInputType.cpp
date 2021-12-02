@@ -55,7 +55,7 @@ bool ImageInputType::isFormDataAppendable() const
     return true;
 }
 
-bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
+bool ImageInputType::appendFormData(DOMFormData& formData) const
 {
     ASSERT(element());
     if (!element()->isActivatedSubmit())

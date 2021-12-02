@@ -212,7 +212,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     auto domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmissionOrURLParsing());
     StringPairVector formValues;
 
-    auto result = form.constructEntryList(WTFMove(domFormData), &formValues, isMultiPartForm ? HTMLFormElement::IsMultipartForm::Yes : HTMLFormElement::IsMultipartForm::No);
+    auto result = form.constructEntryList(WTFMove(domFormData), &formValues);
     RELEASE_ASSERT(result);
     domFormData = result.releaseNonNull();
 

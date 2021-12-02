@@ -634,9 +634,9 @@ void TextFieldInputType::updatePlaceholderText()
     m_placeholder->setInnerText(placeholderText);
 }
 
-bool TextFieldInputType::appendFormData(DOMFormData& formData, bool multipart) const
+bool TextFieldInputType::appendFormData(DOMFormData& formData) const
 {
-    InputType::appendFormData(formData, multipart);
+    InputType::appendFormData(formData);
     ASSERT(element());
     auto& dirnameAttrValue = element()->attributeWithoutSynchronization(dirnameAttr);
     if (!dirnameAttrValue.isNull())

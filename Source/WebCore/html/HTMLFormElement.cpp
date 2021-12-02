@@ -1008,7 +1008,7 @@ const AtomString& HTMLFormElement::autocomplete() const
     return equalIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? off : on;
 }
 
-RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFormData, StringPairVector* formValues, IsMultipartForm isMultipartForm)
+RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFormData, StringPairVector* formValues)
 {
     // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-form-data-set
     ASSERT(isMainThread());
@@ -1021,7 +1021,7 @@ RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFo
     for (auto& control : this->copyAssociatedElementsVector()) {
         auto& element = control->asHTMLElement();
         if (!element.isDisabledFormControl())
-            control->appendFormData(domFormData.get(), isMultipartForm == IsMultipartForm::Yes);
+            control->appendFormData(domFormData.get());
         if (formValues && is<HTMLInputElement>(element)) {
             auto& input = downcast<HTMLInputElement>(element);
             if (input.isTextField()) {

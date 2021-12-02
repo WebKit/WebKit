@@ -49,7 +49,7 @@ private:
     bool storesValueSeparateFromAttribute() override;
     bool shouldRespectHeightAndWidthAttributes() override;
     void setValue(const String&, bool, TextFieldEventBehavior) override;
-    bool appendFormData(DOMFormData&, bool) const override;
+    bool appendFormData(DOMFormData&) const override;
 };
 
 } // namespace WebCore

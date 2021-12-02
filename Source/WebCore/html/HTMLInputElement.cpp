@@ -948,10 +948,10 @@ void HTMLInputElement::setActivatedSubmit(bool flag)
     m_isActivatedSubmit = flag;
 }
 
-bool HTMLInputElement::appendFormData(DOMFormData& formData, bool multipart)
+bool HTMLInputElement::appendFormData(DOMFormData& formData)
 {
     Ref<InputType> protectedInputType(*m_inputType);
-    return m_inputType->isFormDataAppendable() && m_inputType->appendFormData(formData, multipart);
+    return m_inputType->isFormDataAppendable() && m_inputType->appendFormData(formData);
 }
 
 void HTMLInputElement::reset()

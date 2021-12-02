@@ -213,7 +213,7 @@ public:
     virtual FormControlState saveFormControlState() const;
     virtual void restoreFormControlState(const FormControlState&);
     virtual bool isFormDataAppendable() const;
-    virtual bool appendFormData(DOMFormData&, bool multipart) const;
+    virtual bool appendFormData(DOMFormData&) const;
 
     // DOM property functions.
 

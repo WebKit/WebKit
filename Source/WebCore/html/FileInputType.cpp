@@ -158,7 +158,7 @@ void FileInputType::restoreFormControlState(const FormControlState& state)
     filesChosen(filesFromFormControlState(state));
 }
 
-bool FileInputType::appendFormData(DOMFormData& formData, bool) const
+bool FileInputType::appendFormData(DOMFormData& formData) const
 {
     ASSERT(element());
     RefPtr fileList = element()->files();

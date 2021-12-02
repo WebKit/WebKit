@@ -45,7 +45,7 @@ bool BaseButtonInputType::shouldSaveAndRestoreFormControlState() const
     return false;
 }
 
-bool BaseButtonInputType::appendFormData(DOMFormData&, bool) const
+bool BaseButtonInputType::appendFormData(DOMFormData&) const
 {
     // Buttons except overridden types are never successful.
     return false;

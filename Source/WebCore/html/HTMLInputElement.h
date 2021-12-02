@@ -406,7 +406,7 @@ private:
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
-    bool appendFormData(DOMFormData&, bool) final;
+    bool appendFormData(DOMFormData&) final;
 
     bool isSuccessfulSubmitButton() const final;
     bool matchesDefaultPseudoClass() const final;

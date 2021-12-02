@@ -462,7 +462,7 @@ void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& ne
     HTMLPlugInImageElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
-bool HTMLObjectElement::appendFormData(DOMFormData& formData, bool)
+bool HTMLObjectElement::appendFormData(DOMFormData& formData)
 {
     if (name().isEmpty())
         return false;

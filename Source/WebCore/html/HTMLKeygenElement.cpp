@@ -117,7 +117,7 @@ String HTMLKeygenElement::keytype() const
     return isKeytypeRSA() ? "rsa"_s : emptyString();
 }
 
-bool HTMLKeygenElement::appendFormData(DOMFormData& formData, bool)
+bool HTMLKeygenElement::appendFormData(DOMFormData& formData)
 {
     // Only RSA is supported at this time.
     if (!isKeytypeRSA())

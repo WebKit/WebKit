@@ -59,7 +59,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void defaultEventHandler(Event&) final;
 
-    bool appendFormData(DOMFormData&, bool) final;
+    bool appendFormData(DOMFormData&) final;
 
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }

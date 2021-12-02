@@ -127,9 +127,7 @@ public:
 
     static HTMLFormElement* findClosestFormAncestor(const Element&);
     
-    enum class IsMultipartForm : bool { No, Yes };
-    
-    RefPtr<DOMFormData> constructEntryList(Ref<DOMFormData>&&, StringPairVector*, IsMultipartForm);
+    RefPtr<DOMFormData> constructEntryList(Ref<DOMFormData>&&, StringPairVector*);
     
 private:
     HTMLFormElement(const QualifiedName&, Document&);

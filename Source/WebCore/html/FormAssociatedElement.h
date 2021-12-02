@@ -62,7 +62,7 @@ public:
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).
-    virtual bool appendFormData(DOMFormData&, bool) { return false; }
+    virtual bool appendFormData(DOMFormData&) { return false; }
 
     void formWillBeDestroyed();
 

@@ -1045,7 +1045,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
         invalidateStyleAndRenderersForSubtree();
 }
 
-bool HTMLSelectElement::appendFormData(DOMFormData& formData, bool)
+bool HTMLSelectElement::appendFormData(DOMFormData& formData)
 {
     const AtomString& name = this->name();
     if (name.isEmpty())

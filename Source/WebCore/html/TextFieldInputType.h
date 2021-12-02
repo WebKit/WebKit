@@ -98,7 +98,7 @@ private:
     bool shouldRespectListAttribute() override;
     HTMLElement* placeholderElement() const final;
     void updatePlaceholderText() final;
-    bool appendFormData(DOMFormData&, bool multipart) const final;
+    bool appendFormData(DOMFormData&) const final;
     void subtreeHasChanged() final;
     void capsLockStateMayHaveChanged() final;
     void updateAutoFillButton() final;

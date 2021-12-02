@@ -222,7 +222,7 @@ RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(RenderStyle&
     return createRenderer<RenderTextControlMultiLine>(*this, WTFMove(style));
 }
 
-bool HTMLTextAreaElement::appendFormData(DOMFormData& formData, bool)
+bool HTMLTextAreaElement::appendFormData(DOMFormData& formData)
 {
     if (name().isEmpty())
         return false;
