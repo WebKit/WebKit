@@ -1,3 +1,16 @@
+2021-12-02  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX Isolated Tree: Document links should be stored in web areas, not the root
+        https://bugs.webkit.org/show_bug.cgi?id=233728
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/visible-elements.html:
+        * accessibility/visible-elements-expected.txt:
+        Make this test async so it passes in isolated tree mode.
+        This test must be async because it includes JS that dynamically
+        changes page content.
+
 2021-12-02  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GraphicsContextGLANGLE should not have Cocoa Mac specific display reconfiguration code

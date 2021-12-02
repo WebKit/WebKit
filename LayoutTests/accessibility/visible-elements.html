@@ -1,40 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
 
-</script>
-<body id="body">
-    <!-- This test ensures that a plugin that is not accessible, will not appear in the AX hierachy-->
-
-    <a href="#a">more</a><BR>
-    <div id="hiddenDiv" style="visibility: hidden; left: 0px; "><a href="#b">hello</a></div>
+<a href="#first-link">more</a><BR>
+<div id="hidden-div" style="visibility: hidden; left: 0px;"><a href="#second-link">hello</a></div>
     
-    <div id="result"></div>
+<script>
+    description("This test ensures that document links appropriately respect a link's visibility.")
 
-     
-    <script>
-        if (window.accessibilityController) {
-            var result = document.getElementById("result");
+    function numberOfSubstringOccurences(string, substring) {
+        return string.split(substring).length - 1;
+    }
 
-            var body = document.getElementById("body");
-            body.focus();
-            var links1 = accessibilityController.focusedElement.attributesOfDocumentLinks();
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var webarea, initialDocumentLinks, finalDocumentLinks;
+        setTimeout(async function() {
+            webarea = accessibilityController.rootElement.childAtIndex(0);
+            initialDocumentLinks = webarea.attributesOfDocumentLinks();
+            shouldBeTrue("initialDocumentLinks.includes('#first-link')")
+            shouldBeFalse("initialDocumentLinks.includes('#second-link')")
+            shouldBe("numberOfSubstringOccurences(initialDocumentLinks, 'AXRole: AXLink')", "1")
  
-            // toggle the div
-            var divElement = document.getElementById("hiddenDiv");
-            divElement.style.visibility = "visible";
+            document.getElementById("hidden-div").style.visibility = "visible";
+            await waitFor(() => {
+                finalDocumentLinks = webarea.attributesOfDocumentLinks();
+                return finalDocumentLinks && initialDocumentLinks != finalDocumentLinks;
+            });
+            shouldBeTrue("finalDocumentLinks.includes('#first-link')")
+            shouldBeTrue("finalDocumentLinks.includes('#second-link')")
+            shouldBe("numberOfSubstringOccurences(finalDocumentLinks, 'AXRole: AXLink')", "2")
 
-            accessibilityController.focusedElement.attributesOfChildren();
-            var links2 = accessibilityController.focusedElement.attributesOfDocumentLinks();
-            if (links1 != links2) {
-                result.innerHTML += "PASS";
-            }
-            else {
-                result.innerHTML += "FAIL - The div's visibility was toggled, but the new link did not appear\n\n";
-                result.innerHTML += "Links1: " + links1 + "\n\nLinks2: " + links2 + "\n\n";
-            }
-        }
-    </script>
+            finishJSTest();
+        }, 0);
+    }
+</script>
 </body>
 </html>
+

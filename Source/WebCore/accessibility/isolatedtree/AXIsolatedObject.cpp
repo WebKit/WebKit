@@ -425,8 +425,11 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
         setProperty(AXPropertyName::SessionID, object.sessionID().isolatedCopy());
         setProperty(AXPropertyName::DocumentURI, object.documentURI().isolatedCopy());
         setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding().isolatedCopy());
-        setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
     }
+
+    // We only expose document links in web area objects.
+    if (object.isWebArea())
+        setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
 
     if (object.isWidget())
         setProperty(AXPropertyName::IsWidget, true);
