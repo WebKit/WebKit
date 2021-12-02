@@ -58,6 +58,8 @@ private:
     void appendInlineBoxDisplayBoxForBidiBoundary(const Box&, const InlineRect&, DisplayBoxes&);
     void adjustInlineBoxDisplayBoxForBidiBoundary(InlineDisplay::Box&, const InlineRect&);
 
+    void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
+
     const ContainerBox& root() const { return m_formattingContextRoot; }
     InlineFormattingState& formattingState() const { return m_formattingState; } 
 

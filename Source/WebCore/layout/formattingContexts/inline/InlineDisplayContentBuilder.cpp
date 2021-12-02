@@ -192,6 +192,23 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
     adjustParentInlineBoxInkOverflow();
 }
 
+void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& layoutBox, const InlineRect& rect, bool isFirstInlineBoxFragment)
+{
+    auto adjustedSize = LayoutSize { LayoutUnit::fromFloatCeil(rect.width()), LayoutUnit::fromFloatCeil(rect.height()) };
+    auto adjustedRect = Rect { LayoutPoint { rect.topLeft() }, adjustedSize };
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    if (!isFirstInlineBoxFragment) {
+        auto enclosingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
+        enclosingBorderBoxRect.expandToContain(adjustedRect);
+        adjustedRect = enclosingBorderBoxRect;
+    }
+    boxGeometry.setLogicalTopLeft(adjustedRect.topLeft());
+    auto contentBoxHeight = adjustedRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu));
+    auto contentBoxWidth = adjustedRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
+    boxGeometry.setContentBoxHeight(contentBoxHeight);
+    boxGeometry.setContentBoxWidth(contentBoxWidth);
+}
+
 void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool linehasContent, DisplayBoxes& boxes)
 {
     ASSERT(lineRun.layoutBox().isInlineBox());
@@ -221,14 +238,7 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
     }
 
     // This inline box showed up first on this line.
-    auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
-    auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };
-    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    boxGeometry.setLogicalTopLeft(logicalRect.topLeft());
-    auto contentBoxHeight = logicalRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu));
-    boxGeometry.setContentBoxHeight(contentBoxHeight);
-    auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
-    boxGeometry.setContentBoxWidth(contentBoxWidth);
+    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
 }
 
 void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, DisplayBoxes& boxes)
@@ -255,16 +265,8 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , inlineBox.hasContent()
         , isFirstLastBox(inlineBox) });
 
-    auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
-    auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };
     // Middle or end of the inline box. Let's stretch the box as needed.
-    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    auto enclosingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
-    enclosingBorderBoxRect.expandToContain(logicalRect);
-    boxGeometry.setLogicalLeft(enclosingBorderBoxRect.left());
-
-    boxGeometry.setContentBoxHeight(enclosingBorderBoxRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu)));
-    boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu)));
+    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
 }
 
 void InlineDisplayContentBuilder::appendInlineBoxDisplayBoxForBidiBoundary(const Box& layoutBox, const InlineRect& inlineBoxRect, DisplayBoxes& boxes)
