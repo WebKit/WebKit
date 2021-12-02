@@ -1,0 +1,9 @@
+<style>
+* { opacity: 0.1; translate: 1px; }
+</style>
+<dialog>PASS if this doesn't crash</dialog>
+<script>
+    document.querySelector("dialog").showModal();
+    if (testRunner)
+        testRunner.dumpAsText();
+</script>
