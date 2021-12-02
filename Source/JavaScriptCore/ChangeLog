@@ -1,3 +1,119 @@
+2021-12-02  Geza Lore  <glore@igalia.com>
+
+        [JSC] Generated code size reductions for baseline JIT (all architectures)
+        https://bugs.webkit.org/show_bug.cgi?id=233474
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch introduces a few improvements that reduce the generated
+        code size.
+
+        Target independent improvements to the Baseline JIT:
+
+        1. Some bytecodes that are very frequent (e.g.: get_by_id, call) share
+        the same instructions at the tail end of the fast and slow paths.
+        Instead of duplicating these in the slow path, then branch to the next
+        sequential bytecode on the fast path, make the slow path branch to and
+        reuse these common instructions, which then naturally fall through to
+        the next sequential bytecode.
+
+        2. Minor tweaks in a few places to remove redundant reloading of
+        immediates and remove redundant moves.
+
+        3. Remove a small number of redundant unconditional branches from some
+        DataIC fast paths.
+
+        ARMv7/Thumb-2 specific improvements:
+
+        4. Add assembler support for LDRD and STRD (load/store a pair of
+        32-bit GPRs) and use them throughout via loadValue/storeValue. This
+        yields denser code as it often eliminates repeated temporary register
+        setups (especially for a BaseIndex access), and also due to point 4
+        below. This is also potentially a performance improvement on
+        micro-architectures with a 64-bit LSU data-path.
+
+        5. Instructions using only r0-r7 as operands can often use a short,
+        16-bit encoding in Thumb-2, so prefer to use low order registers
+        as temporaries wherever possible.
+
+        The net effect of this patch is that the emitted baseline code during
+        a run of JetStream2 is ~6.6% smaller on x86_64, ~5.1% smaller on
+        ARM64, and ~24% smaller on ARMv7/Thumb-2. On ARMv7/Thumb-2, DFG code
+        is also ~5.3% smaller, while on other architectures the DFG code is
+        unaffected.
+
+        On ARMv7/Thumb-2, this patch also yields an ~2% improvement in
+        JetStream2 scores on my test machine.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ldrd):
+        (JSC::ARMv7Assembler::strd):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp12Reg4Reg4Reg4Imm8):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::bestTempRegister):
+        (JSC::MacroAssemblerARMv7::scratchRegister):
+        (JSC::MacroAssemblerARMv7::add32):
+        (JSC::MacroAssemblerARMv7::sub32):
+        (JSC::MacroAssemblerARMv7::loadPair32):
+        (JSC::MacroAssemblerARMv7::store32):
+        (JSC::MacroAssemblerARMv7::storePair32):
+        (JSC::MacroAssemblerARMv7::compare32AndSetFlags):
+        (JSC::MacroAssemblerARMv7::test32):
+        (JSC::MacroAssemblerARMv7::branch32):
+        (JSC::MacroAssemblerARMv7::farJump):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::compare32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::loadPair32):
+        (JSC::MacroAssemblerMIPS::storePair32):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeValue):
+        (JSC::AssemblyHelpers::loadValue):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::generateGetByIdInlineAccess):
+        (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::setFastPathResumePoint):
+        (JSC::JIT::fastPathResumePoint const):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::generateGetByValSlowCase):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        (JSC::JIT::emitHasPrivate):
+        (JSC::JIT::emitHasPrivateSlow):
+        (JSC::JIT::emitSlow_op_has_private_name):
+        (JSC::JIT::emitSlow_op_has_private_brand):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        (JSC::JIT::emitWriteBarrier):
+
 2021-12-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early December 2021 edition

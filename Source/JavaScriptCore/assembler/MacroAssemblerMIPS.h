@@ -1321,13 +1321,32 @@ public:
 
     void loadPair32(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
     {
+        loadPair32(Address(src, offset.m_value), dest1, dest2);
+    }
+
+    void loadPair32(Address address, RegisterID dest1, RegisterID dest2)
+    {
         ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
-        if (src == dest1) {
-            load32(Address(src, offset.m_value + 4), dest2);
-            load32(Address(src, offset.m_value), dest1);
+        if (address.base == dest1) {
+            load32(address.withOffset(4), dest2);
+            load32(address, dest1);
         } else {
-            load32(Address(src, offset.m_value), dest1);
-            load32(Address(src, offset.m_value + 4), dest2);
+            load32(address, dest1);
+            load32(address.withOffset(4), dest2);
+        }
+    }
+
+    void loadPair32(BaseIndex address, RegisterID dest1, RegisterID dest2)
+    {
+        if (address.base == dest1 || address.index == dest1) {
+            RELEASE_ASSERT(address.base != dest2);
+            RELEASE_ASSERT(address.index != dest2);
+
+            load32(address.withOffset(4), dest2);
+            load32(address, dest1);
+        } else {
+            load32(address, dest1);
+            load32(address.withOffset(4), dest2);
         }
     }
 
@@ -1631,8 +1650,19 @@ public:
 
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
-        store32(src1, Address(dest, offset.m_value));
-        store32(src2, Address(dest, offset.m_value + 4));
+        storePair32(src1, src2, Address(dest, offset.m_value));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, Address address)
+    {
+        store32(src1, address);
+        store32(src2, address.withOffset(4));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, BaseIndex address)
+    {
+        store32(src1, address);
+        store32(src2, address.withOffset(4));
     }
 
     // Floating-point operations:

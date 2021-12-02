@@ -215,6 +215,26 @@ inline void JIT::emitJumpSlowToHotForCheckpoint(Jump jump)
     jump.linkTo(iter->value, this);
 }
 
+inline void JIT::setFastPathResumePoint()
+{
+    ASSERT_WITH_MESSAGE(m_bytecodeIndex, "This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set");
+    auto result = m_fastPathResumeLabels.add(m_bytecodeIndex, label());
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+inline MacroAssembler::Label JIT::fastPathResumePoint() const
+{
+    ASSERT_WITH_MESSAGE(m_bytecodeIndex, "This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set");
+    // Location set by setFastPathResumePoint
+    auto iter = m_fastPathResumeLabels.find(m_bytecodeIndex);
+    if (iter != m_fastPathResumeLabels.end())
+        return iter->value;
+    // Next instruction in sequence
+    const Instruction* currentInstruction = m_unlinkedCodeBlock->instructions().at(m_bytecodeIndex).ptr();
+    return m_labels[m_bytecodeIndex.offset() + currentInstruction->size()];
+}
+
+
 ALWAYS_INLINE void JIT::addSlowCase(Jump jump)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
@@ -328,11 +348,6 @@ ALWAYS_INLINE double JIT::getOperandConstantDouble(VirtualRegister src)
     return getConstantOperand(src).asDouble();
 }
 #endif
-
-ALWAYS_INLINE void JIT::emitInitRegister(VirtualRegister dst)
-{
-    storeTrustedValue(jsUndefined(), addressFor(dst));
-}
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst)
 {

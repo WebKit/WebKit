@@ -185,6 +185,7 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
     callOperation(operationCallEval, argumentGPR0, argumentGPR1, argumentGPR2);
     addSlowCase(branchIfEmpty(returnValueJSR));
 
+    setFastPathResumePoint();
     emitPutCallResult(bytecode);
 
     return true;
@@ -205,8 +206,6 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     materializePointerIntoMetadata(bytecode, OpCallEval::Metadata::offsetOfCallLinkInfo(), callLinkInfoGPR);
     emitVirtualCallWithoutMovingGlobalObject(*m_vm, callLinkInfoGPR, CallMode::Regular);
     resetSP();
-
-    emitPutCallResult(bytecode);
 }
 
 template<typename Op>
@@ -302,8 +301,9 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 
     m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
 
+    if constexpr (Op::opcodeID != op_iterator_open && Op::opcodeID != op_iterator_next)
+        setFastPathResumePoint();
     resetSP();
-
     emitPutCallResult(bytecode);
 }
 
@@ -328,10 +328,6 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
         abortWithReason(JITDidReturnFromTailCall);
         return;
     }
-
-    resetSP();
-
-    emitPutCallResult(bytecode);
 }
 
 void JIT::emit_op_call(const Instruction* currentInstruction)
@@ -470,8 +466,12 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
 
 void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    auto bytecode = instruction->as<OpIteratorOpen>();
+
     linkAllSlowCases(iter);
     compileOpCallSlowCase<OpIteratorOpen>(instruction, iter, m_callLinkInfoIndex++);
+    resetSP();
+    emitPutCallResult(bytecode);
     emitJumpSlowToHotForCheckpoint(jump());
 
     linkAllSlowCases(iter);
@@ -480,7 +480,6 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
     notObject.append(branchIfNotCell(iteratorJSR));
     notObject.append(branchIfNotObject(iteratorJSR.payloadGPR()));
 
-    auto bytecode = instruction->as<OpIteratorOpen>();
     VirtualRegister nextVReg = bytecode.m_next;
     UniquedStringImpl* ident = vm().propertyNames->next.impl();
 
@@ -615,8 +614,12 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
 
 void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    auto bytecode = instruction->as<OpIteratorNext>();
+
     linkAllSlowCases(iter);
     compileOpCallSlowCase<OpIteratorNext>(instruction, iter, m_callLinkInfoIndex++);
+    resetSP();
+    emitPutCallResult(bytecode);
     emitJumpSlowToHotForCheckpoint(jump());
 
     using BaselineGetByIdRegisters::resultJSR;
@@ -624,7 +627,6 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
 
     constexpr JSValueRegs iterCallResultJSR = dontClobberJSR;
 
-    auto bytecode = instruction->as<OpIteratorNext>();
     {
         VirtualRegister doneVReg = bytecode.m_done;
 

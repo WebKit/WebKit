@@ -280,6 +280,8 @@ namespace JSC {
 
         void advanceToNextCheckpoint();
         void emitJumpSlowToHotForCheckpoint(Jump);
+        void setFastPathResumePoint();
+        Label fastPathResumePoint() const;
 
         void addSlowCase(Jump);
         void addSlowCase(const JumpList&);
@@ -620,7 +622,7 @@ namespace JSC {
         void emitSlow_op_iterator_next(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
-        void emitHasPrivateSlow(VirtualRegister dst, VirtualRegister base, VirtualRegister property, AccessType);
+        void emitHasPrivateSlow(VirtualRegister base, VirtualRegister property, AccessType);
 
         template<typename Op>
         void emitNewFuncCommon(const Instruction*);
@@ -629,8 +631,6 @@ namespace JSC {
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
         void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
-
-        void emitInitRegister(VirtualRegister);
 
         bool isKnownCell(VirtualRegister);
 
@@ -911,6 +911,7 @@ namespace JSC {
         Vector<NearJumpRecord> m_nearJumps;
         Vector<Label> m_labels;
         HashMap<BytecodeIndex, Label> m_checkpointLabels;
+        HashMap<BytecodeIndex, Label> m_fastPathResumeLabels;
         Vector<JITGetByIdGenerator> m_getByIds;
         Vector<JITGetByValGenerator> m_getByVals;
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;

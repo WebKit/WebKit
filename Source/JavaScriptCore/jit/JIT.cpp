@@ -159,14 +159,11 @@ void JIT::resetSP()
     checkStackPointerAlignment();
 }
 
-#define NEXT_OPCODE(name) \
-    m_bytecodeIndex = BytecodeIndex(m_bytecodeIndex.offset() + currentInstruction->size()); \
-    break;
-
 #define NEXT_OPCODE_IN_MAIN(name) \
     if (previousSlowCasesSize != m_slowCases.size()) \
         ++m_bytecodeCountHavingSlowCase; \
-    NEXT_OPCODE(name)
+    m_bytecodeIndex = BytecodeIndex(m_bytecodeIndex.offset() + currentInstruction->size()); \
+    break;
 
 #define DEFINE_SLOW_OP(name) \
     case op_##name: { \
@@ -188,13 +185,13 @@ void JIT::resetSP()
 #define DEFINE_SLOWCASE_OP(name) \
     case name: { \
         emitSlow_##name(currentInstruction, iter); \
-        NEXT_OPCODE(name); \
+        break; \
     }
 
 #define DEFINE_SLOWCASE_SLOW_OP(name) \
     case op_##name: { \
         emitSlowCaseCall(currentInstruction, iter, slow_path_##name); \
-        NEXT_OPCODE(op_##name); \
+        break; \
     }
 
 void JIT::emitSlowCaseCall(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, SlowPathFunction stub)
@@ -675,12 +672,14 @@ void JIT::privateCompileSlowCases()
 
         RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen.");
         RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen.");
-        
-        emitJumpSlowToHot(jump(), 0);
+
+        jump().linkTo(fastPathResumePoint(), this);
         ++bytecodeCountHavingSlowCase;
 
-        if (UNLIKELY(sizeMarker))
+        if (UNLIKELY(sizeMarker)) {
+            m_bytecodeIndex = BytecodeIndex(m_bytecodeIndex.offset() + currentInstruction->size());
             m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+        }
     }
 
     RELEASE_ASSERT(bytecodeCountHavingSlowCase == m_bytecodeCountHavingSlowCase);

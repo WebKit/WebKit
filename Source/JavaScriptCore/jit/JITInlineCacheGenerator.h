@@ -49,46 +49,43 @@ enum class AccessType : int8_t;
 enum class JITType : uint8_t;
 
 namespace BaselineDelByValRegisters {
+constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
 #if USE(JSVALUE64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT1 };
 constexpr JSValueRegs propertyJSR { GPRInfo::regT0 };
-constexpr JSValueRegs resultJSR { propertyJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT3 };
 constexpr GPRReg scratchGPR { GPRInfo::regT2 };
 #elif USE(JSVALUE32_64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT3, GPRInfo::regT2 };
 constexpr JSValueRegs propertyJSR { GPRInfo::regT1, GPRInfo::regT0 };
-constexpr JSValueRegs resultJSR { propertyJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT7 };
 constexpr GPRReg scratchGPR { GPRInfo::regT6 };
 #endif
 }
 
 namespace BaselineDelByIdRegisters {
+constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
 #if USE(JSVALUE64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT1 };
-constexpr JSValueRegs resultJSR { GPRInfo::regT0 };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT3 };
 constexpr GPRReg scratchGPR { GPRInfo::regT2 };
 #elif USE(JSVALUE32_64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT3, GPRInfo::regT2 };
-constexpr JSValueRegs resultJSR { GPRInfo::regT1, GPRInfo::regT0 };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT7 };
 constexpr GPRReg scratchGPR { GPRInfo::regT6 };
 #endif
 }
 
 namespace BaselineGetByValRegisters {
+constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
 #if USE(JSVALUE64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT0 };
 constexpr JSValueRegs propertyJSR { GPRInfo::regT1 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT2 };
 constexpr GPRReg scratchGPR { GPRInfo::regT3 };
 #elif USE(JSVALUE32_64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT1, GPRInfo::regT0 };
 constexpr JSValueRegs propertyJSR { GPRInfo::regT3, GPRInfo::regT2 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT7 };
 constexpr GPRReg scratchGPR { GPRInfo::regT6 };
 #endif
@@ -136,16 +133,15 @@ static_assert(AssemblyHelpers::noOverlap(valueJSR, protoJSR, stubInfoGPR, scratc
 }
 
 namespace BaselineInByValRegisters {
+constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
 #if USE(JSVALUE64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT0 };
 constexpr JSValueRegs propertyJSR { GPRInfo::regT1 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT2 };
 constexpr GPRReg scratchGPR { GPRInfo::regT3 };
 #elif USE(JSVALUE32_64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT1, GPRInfo::regT0 };
 constexpr JSValueRegs propertyJSR  { GPRInfo::regT3, GPRInfo::regT2 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT7 };
 constexpr GPRReg scratchGPR { GPRInfo::regT6 };
 #endif
@@ -154,31 +150,29 @@ static_assert(propertyJSR == BaselineGetByValRegisters::propertyJSR);
 }
 
 namespace BaselineGetByIdRegisters {
+constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
+constexpr JSValueRegs baseJSR { JSRInfo::returnValueJSR };
 #if USE(JSVALUE64)
-constexpr JSValueRegs baseJSR { GPRInfo::regT0 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT1 };
 constexpr GPRReg scratchGPR { GPRInfo::regT2 };
 constexpr JSValueRegs dontClobberJSR { GPRInfo::regT3 };
 #elif USE(JSVALUE32_64)
-constexpr JSValueRegs baseJSR { GPRInfo::regT1, GPRInfo::regT0 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT2 };
 constexpr GPRReg scratchGPR { GPRInfo::regT3 };
 constexpr JSValueRegs dontClobberJSR { GPRInfo::regT6, GPRInfo::regT7 };
 #endif
+static_assert(AssemblyHelpers::noOverlap(baseJSR, stubInfoGPR, scratchGPR, dontClobberJSR));
 }
 
 namespace BaselineGetByIdWithThisRegisters {
+constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
 #if USE(JSVALUE64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT0 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr JSValueRegs thisJSR { GPRInfo::regT1 };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT2 };
 constexpr GPRReg scratchGPR { GPRInfo::regT3 };
 #elif USE(JSVALUE32_64)
 constexpr JSValueRegs baseJSR { GPRInfo::regT1, GPRInfo::regT0 };
-constexpr JSValueRegs resultJSR { baseJSR };
 constexpr JSValueRegs thisJSR { GPRInfo::regT3, GPRInfo::regT2 };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT7 };
 constexpr GPRReg scratchGPR { GPRInfo::regT6 };
@@ -187,7 +181,7 @@ constexpr GPRReg scratchGPR { GPRInfo::regT6 };
 
 namespace BaselineInByIdRegisters {
 constexpr JSValueRegs baseJSR { BaselineGetByIdRegisters::baseJSR };
-constexpr JSValueRegs resultJSR { BaselineGetByIdRegisters::resultJSR };
+constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
 constexpr GPRReg stubInfoGPR { BaselineGetByIdRegisters::stubInfoGPR };
 constexpr GPRReg scratchGPR { BaselineGetByIdRegisters::scratchGPR };
 }
@@ -204,7 +198,7 @@ constexpr JSValueRegs baseJSR { GPRInfo::regT1, GPRInfo::regT0 };
 constexpr JSValueRegs valueJSR { GPRInfo::regT3, GPRInfo::regT2 };
 constexpr GPRReg stubInfoGPR { GPRInfo::regT7 };
 constexpr GPRReg scratchGPR { GPRInfo::regT6 };
-constexpr GPRReg scratch2GPR { GPRInfo::regT4 };
+constexpr GPRReg scratch2GPR { baseJSR.tagGPR() }; // Reusing regT1 for better code size on ARM_THUMB2
 #endif
 }
 

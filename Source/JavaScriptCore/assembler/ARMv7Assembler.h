@@ -562,6 +562,8 @@ private:
     typedef enum {
         OP_B_T1         = 0xD000,
         OP_B_T2         = 0xE000,
+        OP_STRD_imm_T1  = 0xE840,
+        OP_LDRD_imm_T1  = 0xE850,
         OP_POP_T2       = 0xE8BD,
         OP_PUSH_T2      = 0xE92D,
         OP_AND_reg_T2   = 0xEA00,
@@ -810,7 +812,7 @@ public:
     // NOTE: In an IT block, add doesn't modify the flags register.
     ALWAYS_INLINE void add(RegisterID rd, RegisterID rn, RegisterID rm)
     {
-        if (rd == ARMRegisters::sp) {
+        if (rd == ARMRegisters::sp && rd != rn) {
             mov(rd, rn);
             rn = rd;
         }
@@ -1240,6 +1242,47 @@ public:
             m_formatter.twoWordOp12Reg4FourFours(OP_LDRSH_reg_T2, rn, FourFours(rt, 0, shift, rm));
     }
 
+    // If index is set, this is a regular offset or a pre-indexed load;
+    // if index is not set then it is a post-index load.
+    //
+    // If wback is set rn is updated - this is a pre or post index load,
+    // if wback is not set this is a regular offset memory access.
+    //
+    // (-1020 <= offset <= 1020)
+    // offset % 4 == 0
+    // _reg = REG[rn]
+    // _tmp = _reg + offset
+    // _addr = index ? _tmp : _reg
+    // REG[rt] = MEM[_addr]
+    // REG[rt2] = MEM[_addr + 4]
+    // if (wback) REG[rn] = _tmp
+    ALWAYS_INLINE void ldrd(RegisterID rt, RegisterID rt2, RegisterID rn, int offset, bool index, bool wback)
+    {
+        ASSERT(!BadReg(rt));
+        ASSERT(!BadReg(rt2));
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(rt != rt2);
+        ASSERT(index || wback);
+        ASSERT(!wback | (rt != rn));
+        ASSERT(!wback | (rt2 != rn));
+        ASSERT(!(offset & 0x3));
+
+        bool add = true;
+        if (offset < 0) {
+            add = false;
+            offset = -offset;
+        }
+        offset >>= 2;
+        ASSERT(!(offset & ~0xff));
+
+        uint16_t opcode = OP_LDRD_imm_T1;
+        opcode |= (wback << 5);
+        opcode |= (add << 7);
+        opcode |= (index << 8);
+
+        m_formatter.twoWordOp12Reg4Reg4Reg4Imm8(static_cast<OpcodeID1>(opcode), rn, rt, rt2, offset);
+    }
+
     void lsl(RegisterID rd, RegisterID rm, int32_t shiftAmount)
     {
         ASSERT(!BadReg(rd));
@@ -1329,6 +1372,7 @@ public:
 
     ALWAYS_INLINE void mov(RegisterID rd, RegisterID rm)
     {
+        ASSERT(rd != rm); // Use a NOP instead
         m_formatter.oneWordOp8RegReg143(OP_MOV_reg_T1, rm, rd);
     }
 
@@ -1674,6 +1718,46 @@ public:
             m_formatter.oneWordOp7Reg3Reg3Reg3(OP_STRH_reg_T1, rm, rn, rt);
         else
             m_formatter.twoWordOp12Reg4FourFours(OP_STRH_reg_T2, rn, FourFours(rt, 0, shift, rm));
+    }
+
+    // If index is set, this is a regular offset or a pre-indexed load;
+    // if index is not set then it is a post-index load.
+    //
+    // If wback is set rn is updated - this is a pre or post index load,
+    // if wback is not set this is a regular offset memory access.
+    //
+    // (-1020 <= offset <= 1020)
+    // offset % 4 == 0
+    // _reg = REG[rn]
+    // _tmp = _reg + offset
+    // _addr = index ? _tmp : _reg
+    // MEM[_addr] = REG[rt]
+    // MEM[_addr + 4] = REG[rt2]
+    // if (wback) REG[rn] = _tmp
+    ALWAYS_INLINE void strd(RegisterID rt, RegisterID rt2, RegisterID rn, int offset, bool index, bool wback)
+    {
+        ASSERT(!BadReg(rt));
+        ASSERT(!BadReg(rt2));
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(index || wback);
+        ASSERT(!wback | (rt != rn));
+        ASSERT(!wback | (rt2 != rn));
+        ASSERT(!(offset & 0x3));
+
+        bool add = true;
+        if (offset < 0) {
+            add = false;
+            offset = -offset;
+        }
+        offset >>= 2;
+        ASSERT(!(offset & ~0xff));
+
+        uint16_t opcode = OP_STRD_imm_T1;
+        opcode |= (wback << 5);
+        opcode |= (add << 7);
+        opcode |= (index << 8);
+
+        m_formatter.twoWordOp12Reg4Reg4Reg4Imm8(static_cast<OpcodeID1>(opcode), rn, rt, rt2, offset);
     }
 
     ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
@@ -2885,6 +2969,12 @@ private:
         {
             m_buffer.putShort(op | reg1);
             m_buffer.putShort((reg2 << 12) | imm);
+        }
+
+        ALWAYS_INLINE void twoWordOp12Reg4Reg4Reg4Imm8(OpcodeID1 op, RegisterID reg1, RegisterID reg2, RegisterID reg3, uint8_t imm)
+        {
+            m_buffer.putShort(op | reg1);
+            m_buffer.putShort((reg2 << 12) | (reg3 << 8) | imm);
         }
 
         ALWAYS_INLINE void twoWordOp12Reg40Imm3Reg4Imm20Imm5(OpcodeID1 op, RegisterID reg1, RegisterID reg2, uint16_t imm1, uint16_t imm2, uint16_t imm3)

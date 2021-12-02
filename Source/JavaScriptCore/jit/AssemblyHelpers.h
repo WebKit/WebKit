@@ -164,8 +164,8 @@ public:
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
 #else
-        store32(regs.payloadGPR(), address.withOffset(PayloadOffset));
-        store32(regs.tagGPR(), address.withOffset(TagOffset));
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
 #endif
     }
     
@@ -174,8 +174,8 @@ public:
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
 #else
-        store32(regs.payloadGPR(), address.withOffset(PayloadOffset));
-        store32(regs.tagGPR(), address.withOffset(TagOffset));
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
 #endif
     }
     
@@ -194,13 +194,8 @@ public:
 #if USE(JSVALUE64)
         load64(address, regs.gpr());
 #else
-        if (address.base == regs.payloadGPR()) {
-            load32(address.withOffset(TagOffset), regs.tagGPR());
-            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
-        } else {
-            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
-            load32(address.withOffset(TagOffset), regs.tagGPR());
-        }
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+        loadPair32(address, regs.payloadGPR(), regs.tagGPR());
 #endif
     }
     
@@ -209,18 +204,8 @@ public:
 #if USE(JSVALUE64)
         load64(address, regs.gpr());
 #else
-        if (address.base == regs.payloadGPR() || address.index == regs.payloadGPR()) {
-            // We actually could handle the case where the registers are aliased to both
-            // tag and payload, but we don't for now.
-            RELEASE_ASSERT(address.base != regs.tagGPR());
-            RELEASE_ASSERT(address.index != regs.tagGPR());
-            
-            load32(address.withOffset(TagOffset), regs.tagGPR());
-            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
-        } else {
-            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
-            load32(address.withOffset(TagOffset), regs.tagGPR());
-        }
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+        loadPair32(address, regs.payloadGPR(), regs.tagGPR());
 #endif
     }
 

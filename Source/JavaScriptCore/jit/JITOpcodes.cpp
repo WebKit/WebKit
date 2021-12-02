@@ -1253,10 +1253,12 @@ void JIT::emit_op_enter(const Instruction*)
     // object lifetime and increasing GC pressure.
     size_t count = m_unlinkedCodeBlock->numVars();
 #if !ENABLE(EXTRA_CTI_THUNKS)
-    for (size_t j = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); j < count; ++j)
-        emitInitRegister(virtualRegisterForLocal(j));
+    size_t first = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
+    if (first < count)
+        moveTrustedValue(jsUndefined(), jsRegT10);
+    for (size_t j = first; j < count; ++j)
+        emitPutVirtualRegister(virtualRegisterForLocal(j), jsRegT10);
 
-    
     loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
     emitWriteBarrier(regT0);
 
