@@ -1,3 +1,16 @@
+2021-12-02  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Make Web Lock API work across multiple WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=233719
+
+        Reviewed by Alex Christensen.
+
+        See WebCore Changelog.
+
+        * WebView.cpp:
+        (getOrCreateWebLockRegistry):
+        (WebView::initWithFrame):
+
 2021-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         AX: Use ObjectIdentifier for AXID

@@ -75,6 +75,7 @@ namespace WebCore {
 class CertificateInfo;
 class RegistrableDomain;
 class SecurityOrigin;
+class LocalWebLockRegistry;
 
 struct MockWebAuthenticationConfiguration;
 }
@@ -317,6 +318,7 @@ public:
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }
 
     API::HTTPCookieStore& cookieStore();
+    WebCore::LocalWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
 
     void renameOriginInWebsiteData(URL&&, URL&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
 
@@ -471,6 +473,7 @@ private:
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     mutable std::optional<WebCore::ThirdPartyCookieBlockingMode> m_thirdPartyCookieBlockingMode; // Lazily computed.
 #endif
+    Ref<WebCore::LocalWebLockRegistry> m_webLockRegistry;
 };
 
 }

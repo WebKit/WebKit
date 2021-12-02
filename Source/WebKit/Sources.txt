@@ -435,6 +435,7 @@ UIProcess/WebFrameProxy.cpp
 UIProcess/WebFullScreenManagerProxy.cpp
 UIProcess/WebGeolocationManagerProxy.cpp
 UIProcess/WebGeolocationProvider.cpp
+UIProcess/WebLockRegistryProxy.cpp
 UIProcess/WebNavigationState.cpp
 UIProcess/WebOpenPanelResultListenerProxy.cpp
 UIProcess/WebPageDiagnosticLoggingClient.cpp
@@ -781,6 +782,7 @@ WebProcess/UserContent/WebUserContentController.cpp
 WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp
 
+WebProcess/WebCoreSupport/RemoteWebLockRegistry.cpp
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
 WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp
 WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp
@@ -847,8 +849,6 @@ RemoteGraphicsContextGLMessageReceiver.cpp
 RemoteGraphicsContextGLProxyMessageReceiver.cpp
 PlatformXRSystemMessageReceiver.cpp
 PlatformXRSystemProxyMessageReceiver.cpp
-WebBroadcastChannelRegistryMessageReceiver.cpp
-
 RemoteAdapterMessageReceiver.cpp
 RemoteBindGroupMessageReceiver.cpp
 RemoteBindGroupLayoutMessageReceiver.cpp
@@ -871,3 +871,6 @@ RemoteSamplerMessageReceiver.cpp
 RemoteShaderModuleMessageReceiver.cpp
 RemoteTextureMessageReceiver.cpp
 RemoteTextureViewMessageReceiver.cpp
+RemoteWebLockRegistryMessageReceiver.cpp
+WebBroadcastChannelRegistryMessageReceiver.cpp
+WebLockRegistryProxyMessageReceiver.cpp

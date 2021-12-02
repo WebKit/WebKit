@@ -1,3 +1,17 @@
+2021-12-02  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Make Web Lock API work across multiple WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=233719
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebLocks.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2021-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ Monterey ] fast/images/text-recognition/mac/image-overlay-text-disables-app-highlight-menu-items.html (layout-test) is a constant text failure

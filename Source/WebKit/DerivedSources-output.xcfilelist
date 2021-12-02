@@ -387,6 +387,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIMessagesReplies
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebLockRegistryMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebLockRegistryMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebLockRegistryMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SampleBufferDisplayLayerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SampleBufferDisplayLayerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SampleBufferDisplayLayerMessagesReplies.h
@@ -526,6 +529,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebLockRegistryProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebLockRegistryProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebLockRegistryProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebMDNSRegisterMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebMDNSRegisterMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebMDNSRegisterMessagesReplies.h

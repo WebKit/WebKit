@@ -26,6 +26,6 @@
 
 namespace WebCore {
 
-enum class WebLockMode { Shared, Exclusive };
+enum class WebLockMode : bool { Shared, Exclusive };
 
 }

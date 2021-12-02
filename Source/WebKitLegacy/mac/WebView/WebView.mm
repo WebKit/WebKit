@@ -231,6 +231,7 @@
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
+#import <WebCore/WebLockRegistry.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/Widget.h>
 #import <WebKitLegacy/DOM.h>
@@ -1438,6 +1439,18 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 }
 #endif
 
+static Ref<WebCore::LocalWebLockRegistry> getOrCreateWebLockRegistry(bool isPrivateBrowsingEnabled)
+{
+    static NeverDestroyed<WeakPtr<WebCore::LocalWebLockRegistry>> defaultRegistry;
+    static NeverDestroyed<WeakPtr<WebCore::LocalWebLockRegistry>> privateRegistry;
+    auto& existingRegistry = isPrivateBrowsingEnabled ? privateRegistry : defaultRegistry;
+    if (existingRegistry.get())
+        return *existingRegistry.get();
+    auto registry = WebCore::LocalWebLockRegistry::create();
+    existingRegistry.get() = registry;
+    return registry;
+}
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     WebCoreThreadViolationCheckRoundTwo();
@@ -1543,6 +1556,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
+        getOrCreateWebLockRegistry([[self preferences] privateBrowsingEnabled]),
         WebCore::DummyPermissionController::create(),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>()
@@ -1824,6 +1838,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
+        getOrCreateWebLockRegistry([[self preferences] privateBrowsingEnabled]),
         WebCore::DummyPermissionController::create(),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>()

@@ -312,6 +312,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::SourceBufferAppendMode',
         'WebCore::SpeechRecognitionConnectionClientIdentifier',
         'WebCore::UserMediaRequestIdentifier',
+        'WebCore::WebLockIdentifier',
         'WebCore::WebSocketIdentifier',
         'WebKit::ActivityStateChangeID',
         'WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier',

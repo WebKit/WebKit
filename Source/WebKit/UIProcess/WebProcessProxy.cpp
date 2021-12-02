@@ -46,6 +46,7 @@
 #include "WebBackForwardCache.h"
 #include "WebBackForwardListItem.h"
 #include "WebInspectorUtilities.h"
+#include "WebLockRegistryProxy.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageGroup.h"
@@ -240,6 +241,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_captivePortalMode(captivePortalMode)
     , m_crossOriginMode(crossOriginMode)
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
+    , m_webLockRegistry(websiteDataStore ? makeUnique<WebLockRegistryProxy>(*this) : nullptr)
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
@@ -345,6 +347,10 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 #endif
     updateRegistrationWithDataStore();
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
+
+    // Delay construction of the WebLockRegistryProxy until the WebProcessProxy has a data store since the data store holds the
+    // LocalWebLockRegistry.
+    m_webLockRegistry = makeUnique<WebLockRegistryProxy>(*this);
 }
 
 bool WebProcessProxy::isDummyProcessProxy() const
@@ -527,6 +533,9 @@ void WebProcessProxy::shutDown()
 
     m_userInitiatedActionMap.clear();
     m_sleepDisablers.clear();
+
+    if (m_webLockRegistry)
+        m_webLockRegistry->processDidExit();
 
 #if ENABLE(ROUTING_ARBITRATION)
     m_routingArbitrator->processDidTerminate();

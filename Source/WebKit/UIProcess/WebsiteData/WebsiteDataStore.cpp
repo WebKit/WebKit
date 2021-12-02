@@ -59,6 +59,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageQuotaManager.h>
+#include <WebCore/WebLockRegistry.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
@@ -130,6 +131,7 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
 #if HAVE(APP_SSO)
     , m_soAuthorizationCoordinator(makeUniqueRef<SOAuthorizationCoordinator>())
 #endif
+    , m_webLockRegistry(WebCore::LocalWebLockRegistry::create())
 {
     WTF::setProcessPrivileges(allPrivileges());
     registerWithSessionIDMap();

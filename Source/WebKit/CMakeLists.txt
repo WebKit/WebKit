@@ -229,6 +229,7 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/WebCookieManagerProxy
     UIProcess/WebFullScreenManagerProxy
     UIProcess/WebGeolocationManagerProxy
+    UIProcess/WebLockRegistryProxy
     UIProcess/WebPageProxy
     UIProcess/WebPasteboardProxy
     UIProcess/WebProcessPool
@@ -307,6 +308,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/UserContent/WebUserContentController
 
+    WebProcess/WebCoreSupport/RemoteWebLockRegistry
     WebProcess/WebCoreSupport/WebBroadcastChannelRegistry
     WebProcess/WebCoreSupport/WebSpeechRecognitionConnection
 

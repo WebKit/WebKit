@@ -312,6 +312,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
 
+    Modules/web-locks/WebLockIdentifier.h
+    Modules/web-locks/WebLockManagerSnapshot.h
+    Modules/web-locks/WebLockMode.h
+    Modules/web-locks/WebLockRegistry.h
+
     Modules/webauthn/AttestationConveyancePreference.h
     Modules/webauthn/AuthenticationExtensionsClientInputs.h
     Modules/webauthn/AuthenticationExtensionsClientOutputs.h

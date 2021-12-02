@@ -49,6 +49,7 @@
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
 #include "RemoteRemoteCommandListener.h"
+#include "RemoteWebLockRegistry.h"
 #include "SpeechRecognitionRealtimeMediaSourceManager.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
@@ -279,6 +280,7 @@ WebProcess::WebProcess()
     , m_webLoaderStrategy(*new WebLoaderStrategy)
     , m_cacheStorageProvider(WebCacheStorageProvider::create())
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
+    , m_webLockRegistry(RemoteWebLockRegistry::create(*this))
     , m_cookieJar(WebCookieJar::create())
     , m_reportingEndpointsCache(ReportingEndpointsCache::create())
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })

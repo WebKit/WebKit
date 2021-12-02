@@ -25,9 +25,9 @@
 #pragma once
 
 #include "ClientOrigin.h"
+#include "ProcessIdentifier.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "WebLockIdentifier.h"
-#include "WebLockManager.h"
 #include "WebLockMode.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -40,29 +40,40 @@ namespace WebCore {
 class Exception;
 struct WebLockManagerSnapshot;
 
-class WebLockRegistry : public RefCounted<WebLockRegistry>, public CanMakeWeakPtr<WebLockRegistry> {
+class WebLockRegistry : public RefCounted<WebLockRegistry> {
 public:
-    static Ref<WebLockRegistry> registryForOrigin(const ClientOrigin&);
-    ~WebLockRegistry();
+    virtual ~WebLockRegistry() { }
 
-    void requestLock(WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void(Exception&&)>&& releaseHandler);
-    void releaseLock(WebLockIdentifier, const String& name);
-    void abortLockRequest(WebLockIdentifier, const String& name, CompletionHandler<void(bool)>&&);
-    void snapshot(CompletionHandler<void(WebLockManagerSnapshot&&)>&&);
-    void clientIsGoingAway(ScriptExecutionContextIdentifier);
+    virtual void requestLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) = 0;
+    virtual void releaseLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) = 0;
+    virtual void abortLockRequest(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) = 0;
+    virtual void snapshot(const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) = 0;
+    virtual void clientIsGoingAway(const ClientOrigin&, ScriptExecutionContextIdentifier) = 0;
+
+protected:
+    WebLockRegistry() = default;
+};
+
+class LocalWebLockRegistry final : public WebLockRegistry, public CanMakeWeakPtr<LocalWebLockRegistry> {
+public:
+    static Ref<LocalWebLockRegistry> create() { return adoptRef(*new LocalWebLockRegistry); }
+    ~LocalWebLockRegistry();
+
+    WEBCORE_EXPORT void requestLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
+    WEBCORE_EXPORT void releaseLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) final;
+    WEBCORE_EXPORT void abortLockRequest(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) final;
+    WEBCORE_EXPORT void snapshot(const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) final;
+    WEBCORE_EXPORT void clientIsGoingAway(const ClientOrigin&, ScriptExecutionContextIdentifier) final;
+    WEBCORE_EXPORT void clientsAreGoingAway(ProcessIdentifier);
 
 private:
-    explicit WebLockRegistry(const ClientOrigin&);
+    WEBCORE_EXPORT LocalWebLockRegistry();
 
-    struct LockInfo;
-    struct LockRequest;
+    class PerOriginRegistry;
+    Ref<PerOriginRegistry> ensureRegistryForOrigin(const ClientOrigin&);
+    RefPtr<PerOriginRegistry> existingRegistryForOrigin(const ClientOrigin&) const;
 
-    bool isGrantable(const LockRequest&) const;
-    void processLockRequestQueue(const String& name, Deque<LockRequest>&);
-
-    const ClientOrigin m_origin;
-    HashMap<String, Deque<LockRequest>> m_lockRequestQueueMap;
-    HashMap<String, Vector<LockInfo>> m_heldLocks;
+    HashMap<ClientOrigin, WeakPtr<PerOriginRegistry>> m_perOriginRegistries;
 };
 
 } // namespace WebCore

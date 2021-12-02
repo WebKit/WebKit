@@ -31,11 +31,15 @@
 #include "JSDOMPromise.h"
 #include "JSWebLockManagerSnapshot.h"
 #include "NavigatorBase.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
 #include "WebLock.h"
 #include "WebLockGrantedCallback.h"
 #include "WebLockManagerSnapshot.h"
 #include "WebLockRegistry.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerThread.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
 
@@ -53,6 +57,7 @@ static std::optional<ClientOrigin> clientOriginFromContext(ScriptExecutionContex
 
 struct WebLockManager::LockRequest {
     WebLockIdentifier lockIdentifier;
+    ScriptExecutionContextIdentifier clientID;
     String name;
     WebLockMode mode { WebLockMode::Exclusive };
     RefPtr<WebLockGrantedCallback> grantedCallback;
@@ -137,14 +142,15 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
         });
     }
 
-    m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, name, options.mode, WTFMove(grantedCallback), WTFMove(options.signal) });
+    auto clientID = scriptExecutionContext()->identifier();
+    m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, clientID, name, options.mode, WTFMove(grantedCallback), WTFMove(options.signal) });
 
-    requestLockOnMainThread(lockIdentifier, name, options, [weakThis = WeakPtr { *this }, lockIdentifier](bool success) mutable {
+    requestLockOnMainThread(lockIdentifier, clientID, name, options, [weakThis = WeakPtr { *this }, lockIdentifier](bool success) mutable {
         if (weakThis)
             weakThis->didCompleteLockRequest(lockIdentifier, success);
-    }, [weakThis = WeakPtr { *this }, lockIdentifier](Exception&& exception) mutable {
+    }, [weakThis = WeakPtr { *this }, lockIdentifier]() mutable {
         if (weakThis)
-            weakThis->settleReleasePromise(lockIdentifier, WTFMove(exception));
+            weakThis->settleReleasePromise(lockIdentifier, Exception { AbortError, "Lock was stolen by another request"_s });
     });
 }
 
@@ -157,7 +163,7 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
 
         if (success) {
             if (request.signal && request.signal->aborted()) {
-                releaseLockOnMainThread(request.lockIdentifier, request.name);
+                releaseLockOnMainThread(request.lockIdentifier, request.clientID, request.name);
                 return;
             }
 
@@ -165,15 +171,15 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
             auto result = request.grantedCallback->handleEvent(lock.ptr());
             RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
             if (!waitingPromise) {
-                releaseLockOnMainThread(request.lockIdentifier, request.name);
+                releaseLockOnMainThread(request.lockIdentifier, request.clientID, request.name);
                 settleReleasePromise(request.lockIdentifier, Exception { ExistingExceptionError });
                 return;
             }
 
-            DOMPromise::whenPromiseIsSettled(waitingPromise->globalObject(), waitingPromise->promise(), [this, weakThis = WTFMove(weakThis), lockIdentifier = request.lockIdentifier, name = request.name, waitingPromise] {
+            DOMPromise::whenPromiseIsSettled(waitingPromise->globalObject(), waitingPromise->promise(), [this, weakThis = WTFMove(weakThis), lockIdentifier = request.lockIdentifier, clientID = request.clientID, name = request.name, waitingPromise] {
                 if (!weakThis)
                     return;
-                releaseLockOnMainThread(lockIdentifier, name);
+                releaseLockOnMainThread(lockIdentifier, clientID, name);
                 settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
             });
         } else {
@@ -188,33 +194,33 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
     });
 }
 
-void WebLockManager::requestLockOnMainThread(WebLockIdentifier lockIdentifier, const String& name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void(Exception&&)>&& releaseHandler)
+void WebLockManager::requestLockOnMainThread(WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
-    ensureOnMainThread([contextIdentifier = scriptExecutionContext()->identifier(), clientOrigin = crossThreadCopy(*m_clientOrigin), name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTFMove(grantedHandler), releaseHandler = WTFMove(releaseHandler)]() mutable {
-        WebLockRegistry::registryForOrigin(clientOrigin)->requestLock(lockIdentifier, contextIdentifier, name, mode, steal, ifAvailable, [contextIdentifier, grantedHandler = WTFMove(grantedHandler)] (bool success) mutable {
-            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [grantedHandler = WTFMove(grantedHandler), success](auto&) mutable {
+    ensureOnMainThread([clientID, clientOrigin = crossThreadCopy(*m_clientOrigin), name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTFMove(grantedHandler), lockStolenHandler = WTFMove(lockStolenHandler)](auto& registry) mutable {
+        registry.requestLock(clientOrigin, lockIdentifier, clientID, name, mode, steal, ifAvailable, [clientID, grantedHandler = WTFMove(grantedHandler)] (bool success) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [grantedHandler = WTFMove(grantedHandler), success](auto&) mutable {
                 grantedHandler(success);
             });
-        }, [contextIdentifier, releaseHandler = WTFMove(releaseHandler)](Exception&& exception) mutable {
-            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [releaseHandler = WTFMove(releaseHandler), exception = crossThreadCopy(exception)](auto&) mutable {
-                releaseHandler(WTFMove(exception));
+        }, [clientID, lockStolenHandler = WTFMove(lockStolenHandler)]() mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [lockStolenHandler = WTFMove(lockStolenHandler)](auto&) mutable {
+                lockStolenHandler();
             });
         });
     });
 }
 
-void WebLockManager::releaseLockOnMainThread(WebLockIdentifier lockIdentifier, const String& name)
+void WebLockManager::releaseLockOnMainThread(WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name)
 {
-    ensureOnMainThread([clientOrigin = crossThreadCopy(*m_clientOrigin), lockIdentifier, name = crossThreadCopy(name)] {
-        WebLockRegistry::registryForOrigin(clientOrigin)->releaseLock(lockIdentifier, name);
+    ensureOnMainThread([clientOrigin = crossThreadCopy(*m_clientOrigin), lockIdentifier, clientID, name = crossThreadCopy(name)](auto& registry) {
+        registry.releaseLock(clientOrigin, lockIdentifier, clientID, name);
     });
 }
 
 void WebLockManager::abortLockRequestOnMainThread(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ensureOnMainThread([contextIdentifier = scriptExecutionContext()->identifier(), clientOrigin = crossThreadCopy(*m_clientOrigin), lockIdentifier, name = crossThreadCopy(name), completionHandler = WTFMove(completionHandler)]() mutable {
-        WebLockRegistry::registryForOrigin(clientOrigin)->abortLockRequest(lockIdentifier, name, [contextIdentifier, completionHandler = WTFMove(completionHandler)](bool wasAborted) mutable {
-            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [completionHandler = WTFMove(completionHandler), wasAborted](auto&) mutable {
+    ensureOnMainThread([clientID = scriptExecutionContext()->identifier(), clientOrigin = crossThreadCopy(*m_clientOrigin), lockIdentifier, name = crossThreadCopy(name), completionHandler = WTFMove(completionHandler)](auto& registry) mutable {
+        registry.abortLockRequest(clientOrigin, lockIdentifier, clientID, name, [clientID, completionHandler = WTFMove(completionHandler)](bool wasAborted) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTFMove(completionHandler), wasAborted](auto&) mutable {
                 completionHandler(wasAborted);
             });
         });
@@ -223,8 +229,8 @@ void WebLockManager::abortLockRequestOnMainThread(WebLockIdentifier lockIdentifi
 
 void WebLockManager::queryOnMainThread(CompletionHandler<void(Snapshot&&)>&& completionHandler)
 {
-    ensureOnMainThread([contextIdentifier = scriptExecutionContext()->identifier(), clientOrigin = crossThreadCopy(*m_clientOrigin), completionHandler = WTFMove(completionHandler)]() mutable {
-        WebLockRegistry::registryForOrigin(clientOrigin)->snapshot([contextIdentifier, completionHandler = WTFMove(completionHandler)](Snapshot&& snapshot) mutable {
+    ensureOnMainThread([contextIdentifier = scriptExecutionContext()->identifier(), clientOrigin = crossThreadCopy(*m_clientOrigin), completionHandler = WTFMove(completionHandler)](auto& registry) mutable {
+        registry.snapshot(clientOrigin, [contextIdentifier, completionHandler = WTFMove(completionHandler)](Snapshot&& snapshot) mutable {
             ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [completionHandler = WTFMove(completionHandler), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
                 completionHandler(WTFMove(snapshot));
             });
@@ -302,9 +308,27 @@ void WebLockManager::clientIsGoingAway()
     m_pendingRequests.clear();
     m_releasePromises.clear();
 
-    ensureOnMainThread([clientOrigin = crossThreadCopy(*m_clientOrigin), contextIdentifier = scriptExecutionContext()->identifier()] {
-        WebLockRegistry::registryForOrigin(clientOrigin)->clientIsGoingAway(contextIdentifier);
+    ensureOnMainThread([clientOrigin = crossThreadCopy(*m_clientOrigin), contextIdentifier = scriptExecutionContext()->identifier()](auto& registry) {
+        registry.clientIsGoingAway(clientOrigin, contextIdentifier);
     });
+}
+
+void WebLockManager::ensureOnMainThread(Function<void(WebLockRegistry&)>&& task)
+{
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+    ASSERT(context->isContextThread());
+
+    if (is<Document>(*context)) {
+        if (auto page = downcast<Document>(*context).page())
+            task(page->webLockRegistry());
+    } else {
+        downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([task = WTFMove(task)](auto& context) {
+            if (auto page = downcast<Document>(context).page())
+                task(page->webLockRegistry());
+        });
+    }
 }
 
 bool WebLockManager::virtualHasPendingActivity() const

@@ -1,3 +1,61 @@
+2021-12-02  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Make Web Lock API work across multiple WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=233719
+
+        Reviewed by Alex Christensen.
+
+        See WebCore changelog.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Sources.txt:
+        * UIProcess/WebLockRegistryProxy.cpp: Added.
+        (WebKit::WebLockRegistryProxy::WebLockRegistryProxy):
+        (WebKit::WebLockRegistryProxy::~WebLockRegistryProxy):
+        (WebKit::WebLockRegistryProxy::requestLock):
+        (WebKit::WebLockRegistryProxy::releaseLock):
+        (WebKit::WebLockRegistryProxy::abortLockRequest):
+        (WebKit::WebLockRegistryProxy::snapshot):
+        (WebKit::WebLockRegistryProxy::clientIsGoingAway):
+        (WebKit::WebLockRegistryProxy::processDidExit):
+        * UIProcess/WebLockRegistryProxy.h: Added.
+        * UIProcess/WebLockRegistryProxy.messages.in: Added.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::m_webLockRegistry):
+        (WebKit::WebProcessProxy::shutDown):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::webLockRegistry):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/WebCoreSupport/RemoteWebLockRegistry.cpp: Added.
+        (WebKit::RemoteWebLockRegistry::LocksSnapshot::isEmpty const):
+        (WebKit::RemoteWebLockRegistry::RemoteWebLockRegistry):
+        (WebKit::RemoteWebLockRegistry::~RemoteWebLockRegistry):
+        (WebKit::RemoteWebLockRegistry::requestLock):
+        (WebKit::RemoteWebLockRegistry::releaseLock):
+        (WebKit::RemoteWebLockRegistry::abortLockRequest):
+        (WebKit::RemoteWebLockRegistry::snapshot):
+        (WebKit::RemoteWebLockRegistry::clientIsGoingAway):
+        (WebKit::RemoteWebLockRegistry::didCompleteLockRequest):
+        (WebKit::RemoteWebLockRegistry::didStealLock):
+        * WebProcess/WebCoreSupport/RemoteWebLockRegistry.h: Added.
+        * WebProcess/WebCoreSupport/RemoteWebLockRegistry.messages.in: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::webLockRegistry):
+
 2021-12-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r286437.

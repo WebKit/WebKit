@@ -79,6 +79,7 @@
 #include "ThreadableWebSocketChannel.h"
 #include "UserContentProvider.h"
 #include "VisitedLinkStore.h"
+#include "WebLockRegistry.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
@@ -1170,6 +1171,20 @@ private:
     void postMessage(const ClientOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
+class EmptyWebLockRegistry final : public WebLockRegistry {
+public:
+    static Ref<EmptyWebLockRegistry> create()
+    {
+        return adoptRef(*new EmptyWebLockRegistry);
+    }
+private:
+    void requestLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String&, WebLockMode, bool, bool, Function<void(bool)>&&, Function<void()>&&) { }
+    void releaseLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String&) final { }
+    void abortLockRequest(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String&, CompletionHandler<void(bool)>&&) final { }
+    void snapshot(const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) { }
+    void clientIsGoingAway(const ClientOrigin&, ScriptExecutionContextIdentifier) { }
+};
+
 PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
 {
     PageConfiguration pageConfiguration {
@@ -1186,6 +1201,7 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<EmptyMediaRecorderProvider>(),
         EmptyBroadcastChannelRegistry::create(),
+        EmptyWebLockRegistry::create(),
         DummyPermissionController::create(),
         makeUniqueRef<DummyStorageProvider>(),
         makeUniqueRef<DummyModelPlayerProvider>()

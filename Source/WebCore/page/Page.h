@@ -167,6 +167,7 @@ class ValidationMessageClient;
 class VisibleSelection;
 class VisitedLinkStore;
 class WebGLStateTracker;
+class WebLockRegistry;
 class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 
@@ -297,6 +298,8 @@ public:
 
     BroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
     WEBCORE_EXPORT void setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&&); // Only used by WebKitLegacy.
+
+    WebLockRegistry& webLockRegistry() { return m_webLockRegistry; }
 
     WEBCORE_EXPORT static void forEachPage(const Function<void(Page&)>&);
     WEBCORE_EXPORT static unsigned nonUtilityPageCount();
@@ -1132,6 +1135,7 @@ private:
     Ref<UserContentProvider> m_userContentProvider;
     Ref<VisitedLinkStore> m_visitedLinkStore;
     Ref<BroadcastChannelRegistry> m_broadcastChannelRegistry;
+    Ref<WebLockRegistry> m_webLockRegistry;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
     WeakHashSet<ActivityStateChangeObserver> m_activityStateChangeObservers;
 

@@ -132,6 +132,7 @@ class ProcessAssertion;
 class RemoteCDMFactory;
 class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
+class RemoteWebLockRegistry;
 struct ServiceWorkerInitializationData;
 class StorageAreaMap;
 class UserData;
@@ -340,6 +341,7 @@ public:
 
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
     WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
+    RemoteWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
     WebCore::ReportingEndpointsCache& reportingEndpointsCache() { return m_reportingEndpointsCache.get(); }
@@ -676,6 +678,7 @@ private:
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
     Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
+    Ref<RemoteWebLockRegistry> m_webLockRegistry;
     Ref<WebCookieJar> m_cookieJar;
     Ref<WebCore::ReportingEndpointsCache> m_reportingEndpointsCache;
     WebSocketChannelManager m_webSocketChannelManager;

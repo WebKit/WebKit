@@ -37,6 +37,7 @@ namespace WebCore {
 class DeferredPromise;
 class NavigatorBase;
 class WebLockGrantedCallback;
+class WebLockRegistry;
 
 struct ClientOrigin;
 struct WebLockManagerSnapshot;
@@ -62,8 +63,8 @@ public:
 private:
     explicit WebLockManager(NavigatorBase&);
 
-    void requestLockOnMainThread(WebLockIdentifier, const String& name, const Options&, Function<void(bool)>&&, Function<void(Exception&&)>&& releaseHandler);
-    void releaseLockOnMainThread(WebLockIdentifier, const String& name);
+    void requestLockOnMainThread(WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, const Options&, Function<void(bool)>&&, Function<void()>&& lockStolenHandler);
+    void releaseLockOnMainThread(WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name);
     void abortLockRequestOnMainThread(WebLockIdentifier, const String& name, CompletionHandler<void(bool)>&&);
     void queryOnMainThread(CompletionHandler<void(Snapshot&&)>&&);
 
@@ -71,6 +72,8 @@ private:
     void settleReleasePromise(WebLockIdentifier, ExceptionOr<JSC::JSValue>&&);
     void signalToAbortTheRequest(WebLockIdentifier);
     void clientIsGoingAway();
+
+    void ensureOnMainThread(Function<void(WebLockRegistry&)>&& task);
 
     // ActiveDOMObject.
     void stop() final;
