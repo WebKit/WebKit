@@ -1,5 +1,40 @@
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286309. rdar://problem/84665699
+
+    Use scriptDisallowedScope in FrameSelection::updateAppearance
+    https://bugs.webkit.org/show_bug.cgi?id=233644
+    
+    Patch by Gabriel Nava Marino <gnavamarino@apple.com> on 2021-11-30
+    Reviewed by Ryosuke Niwa.
+    
+    Use scriptDisallowedScope in FrameSelection::updateAppearance to avoid re-entrancy
+    RenderView problems when a downstream function executes a JS callback.
+    
+    * editing/FrameSelection.cpp:
+    (WebCore::FrameSelection::validateSelection const):
+    (WebCore::FrameSelection::updateAppearance):
+    * editing/FrameSelection.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286309 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-30  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+            Use scriptDisallowedScope in FrameSelection::updateAppearance
+            https://bugs.webkit.org/show_bug.cgi?id=233644
+
+            Reviewed by Ryosuke Niwa.
+
+            Use scriptDisallowedScope in FrameSelection::updateAppearance to avoid re-entrancy
+            RenderView problems when a downstream function executes a JS callback.
+
+            * editing/FrameSelection.cpp:
+            (WebCore::FrameSelection::validateSelection const):
+            (WebCore::FrameSelection::updateAppearance):
+            * editing/FrameSelection.h:
+
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286308. rdar://problem/63180952
 
     Scripting attributes are sometimes not properly stripped from elements when JS is disabled
