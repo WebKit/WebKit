@@ -38,7 +38,7 @@ struct GPUSamplerBindingLayout {
         };
     }
 
-    GPUSamplerBindingType type;
+    GPUSamplerBindingType type { GPUSamplerBindingType::Filtering };
 };
 
 }

@@ -63,7 +63,7 @@ struct GPUBindGroupEntry {
         };
     }
 
-    GPUIndex32 binding;
+    GPUIndex32 binding { 0 };
     GPUBindingResource resource;
 };
 

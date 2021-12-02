@@ -42,10 +42,10 @@ struct GPUStencilFaceState {
         };
     }
 
-    GPUCompareFunction compare;
-    GPUStencilOperation failOp;
-    GPUStencilOperation depthFailOp;
-    GPUStencilOperation passOp;
+    GPUCompareFunction compare { GPUCompareFunction::Always };
+    GPUStencilOperation failOp { GPUStencilOperation::Keep };
+    GPUStencilOperation depthFailOp { GPUStencilOperation::Keep };
+    GPUStencilOperation passOp { GPUStencilOperation::Keep };
 };
 
 }

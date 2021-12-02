@@ -41,9 +41,9 @@ struct GPUTextureBindingLayout {
         };
     }
 
-    GPUTextureSampleType sampleType;
-    GPUTextureViewDimension viewDimension;
-    bool multisampled;
+    GPUTextureSampleType sampleType { GPUTextureSampleType::Float };
+    GPUTextureViewDimension viewDimension { GPUTextureViewDimension::_2d };
+    bool multisampled { false };
 };
 
 }

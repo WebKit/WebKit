@@ -41,10 +41,10 @@ struct GPUVertexAttribute {
         };
     }
 
-    GPUVertexFormat format;
-    GPUSize64 offset;
+    GPUVertexFormat format { GPUVertexFormat::Uint8x2 };
+    GPUSize64 offset { 0 };
 
-    GPUIndex32 shaderLocation;
+    GPUIndex32 shaderLocation { 0 };
 };
 
 }

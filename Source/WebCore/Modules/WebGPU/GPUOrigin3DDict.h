@@ -42,9 +42,9 @@ struct GPUOrigin3DDict {
         };
     }
 
-    GPUIntegerCoordinate x;
-    GPUIntegerCoordinate y;
-    GPUIntegerCoordinate z;
+    GPUIntegerCoordinate x { 0 };
+    GPUIntegerCoordinate y { 0 };
+    GPUIntegerCoordinate z { 0 };
 };
 
 using GPUOrigin3D = std::variant<Vector<GPUIntegerCoordinate>, GPUOrigin3DDict>;

@@ -43,9 +43,9 @@ struct GPUBufferDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
-    GPUSize64 size;
-    GPUBufferUsageFlags usage;
-    bool mappedAtCreation;
+    GPUSize64 size { 0 };
+    GPUBufferUsageFlags usage { 0 };
+    bool mappedAtCreation { false };
 };
 
 }

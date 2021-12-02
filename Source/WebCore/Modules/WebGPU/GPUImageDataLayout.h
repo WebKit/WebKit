@@ -41,7 +41,7 @@ struct GPUImageDataLayout {
         };
     }
 
-    GPUSize64 offset;
+    GPUSize64 offset { 0 };
     std::optional<GPUSize32> bytesPerRow;
     std::optional<GPUSize32> rowsPerImage;
 };

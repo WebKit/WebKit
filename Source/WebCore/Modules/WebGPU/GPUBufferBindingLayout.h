@@ -41,9 +41,9 @@ struct GPUBufferBindingLayout {
         };
     }
 
-    GPUBufferBindingType type;
-    bool hasDynamicOffset;
-    GPUSize64 minBindingSize;
+    GPUBufferBindingType type { GPUBufferBindingType::Uniform };
+    bool hasDynamicOffset { false };
+    GPUSize64 minBindingSize { 0 };
 };
 
 }

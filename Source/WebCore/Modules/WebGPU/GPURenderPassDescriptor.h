@@ -53,7 +53,7 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
 
     Vector<GPURenderPassColorAttachment> colorAttachments;
     std::optional<GPURenderPassDepthStencilAttachment> depthStencilAttachment;
-    GPUQuerySet* occlusionQuerySet;
+    GPUQuerySet* occlusionQuerySet { nullptr };
     GPURenderPassTimestampWrites timestampWrites;
 };
 

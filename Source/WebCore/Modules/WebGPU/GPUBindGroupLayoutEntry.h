@@ -51,8 +51,8 @@ struct GPUBindGroupLayoutEntry {
         };
     }
 
-    GPUIndex32 binding;
-    GPUShaderStageFlags visibility;
+    GPUIndex32 binding { 0 };
+    GPUShaderStageFlags visibility { 0 };
 
     std::optional<GPUBufferBindingLayout> buffer;
     std::optional<GPUSamplerBindingLayout> sampler;

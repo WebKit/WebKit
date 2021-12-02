@@ -45,9 +45,9 @@ struct GPUComputePassTimestampWrite {
         };
     }
 
-    GPUQuerySet* querySet;
-    GPUSize32 queryIndex;
-    GPUComputePassTimestampLocation location;
+    GPUQuerySet* querySet { nullptr };
+    GPUSize32 queryIndex { 0 };
+    GPUComputePassTimestampLocation location { GPUComputePassTimestampLocation::Beginning };
 };
 
 using GPUComputePassTimestampWrites = Vector<GPUComputePassTimestampWrite>;

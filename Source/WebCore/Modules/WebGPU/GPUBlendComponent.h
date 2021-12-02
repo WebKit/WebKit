@@ -41,9 +41,9 @@ struct GPUBlendComponent {
         };
     }
 
-    GPUBlendOperation operation;
-    GPUBlendFactor srcFactor;
-    GPUBlendFactor dstFactor;
+    GPUBlendOperation operation { GPUBlendOperation::Add };
+    GPUBlendFactor srcFactor { GPUBlendFactor::One };
+    GPUBlendFactor dstFactor { GPUBlendFactor::Zero };
 };
 
 }

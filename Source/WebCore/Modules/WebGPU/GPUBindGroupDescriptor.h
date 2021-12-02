@@ -46,7 +46,7 @@ struct GPUBindGroupDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
-    GPUBindGroupLayout* layout;
+    GPUBindGroupLayout* layout { nullptr };
     Vector<GPUBindGroupEntry> entries;
 };
 

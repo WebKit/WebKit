@@ -51,10 +51,10 @@ struct GPUDepthStencilState {
         };
     }
 
-    GPUTextureFormat format;
+    GPUTextureFormat format { GPUTextureFormat::R8unorm };
 
-    bool depthWriteEnabled;
-    GPUCompareFunction depthCompare;
+    bool depthWriteEnabled { false };
+    GPUCompareFunction depthCompare { GPUCompareFunction::Always };
 
     GPUStencilFaceState stencilFront;
     GPUStencilFaceState stencilBack;
@@ -62,9 +62,9 @@ struct GPUDepthStencilState {
     std::optional<GPUStencilValue> stencilReadMask;
     std::optional<GPUStencilValue> stencilWriteMask;
 
-    GPUDepthBias depthBias;
-    float depthBiasSlopeScale;
-    float depthBiasClamp;
+    GPUDepthBias depthBias { 0 };
+    float depthBiasSlopeScale { 0 };
+    float depthBiasClamp { 0 };
 };
 
 }

@@ -45,9 +45,9 @@ struct GPURenderPassTimestampWrite {
         };
     }
 
-    GPUQuerySet* querySet;
-    GPUSize32 queryIndex;
-    GPURenderPassTimestampLocation location;
+    GPUQuerySet* querySet { nullptr };
+    GPUSize32 queryIndex { 0 };
+    GPURenderPassTimestampLocation location { GPURenderPassTimestampLocation::Beginning };
 };
 
 using GPURenderPassTimestampWrites = Vector<GPURenderPassTimestampWrite>;

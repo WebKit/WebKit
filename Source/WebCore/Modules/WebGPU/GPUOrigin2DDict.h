@@ -41,8 +41,8 @@ struct GPUOrigin2DDict {
         };
     }
 
-    GPUIntegerCoordinate x;
-    GPUIntegerCoordinate y;
+    GPUIntegerCoordinate x { 0 };
+    GPUIntegerCoordinate y { 0 };
 };
 
 using GPUOrigin2D = std::variant<Vector<GPUIntegerCoordinate>, GPUOrigin2DDict>;

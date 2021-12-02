@@ -40,9 +40,9 @@ struct GPUMultisampleState {
         };
     }
 
-    GPUSize32 count;
-    GPUSampleMask mask;
-    bool alphaToCoverageEnabled;
+    GPUSize32 count { 1 };
+    GPUSampleMask mask { 0xFFFFFFFF };
+    bool alphaToCoverageEnabled { false };
 };
 
 }

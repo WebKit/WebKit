@@ -45,8 +45,8 @@ struct GPUVertexBufferLayout {
         };
     }
 
-    GPUSize64 arrayStride;
-    GPUVertexStepMode stepMode;
+    GPUSize64 arrayStride { 0 };
+    GPUVertexStepMode stepMode { GPUVertexStepMode::Vertex };
     Vector<GPUVertexAttribute> attributes;
 };
 

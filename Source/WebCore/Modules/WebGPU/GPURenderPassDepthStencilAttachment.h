@@ -58,15 +58,15 @@ struct GPURenderPassDepthStencilAttachment {
         };
     }
 
-    GPUTextureView* view;
+    GPUTextureView* view { nullptr };
 
     std::variant<GPULoadOp, float> depthLoadValue;
-    GPUStoreOp depthStoreOp;
-    bool depthReadOnly;
+    GPUStoreOp depthStoreOp { GPUStoreOp::Store };
+    bool depthReadOnly { false };
 
     std::variant<GPULoadOp, GPUStencilValue> stencilLoadValue;
-    GPUStoreOp stencilStoreOp;
-    bool stencilReadOnly;
+    GPUStoreOp stencilStoreOp { GPUStoreOp::Store };
+    bool stencilReadOnly { false };
 };
 
 }

@@ -47,8 +47,8 @@ struct GPURenderBundleEncoderDescriptor : public GPURenderPassLayout {
         };
     }
 
-    bool depthReadOnly;
-    bool stencilReadOnly;
+    bool depthReadOnly { false };
+    bool stencilReadOnly { false };
 };
 
 }

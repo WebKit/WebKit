@@ -49,7 +49,7 @@ struct GPURenderPassLayout : public GPUObjectDescriptorBase {
 
     Vector<GPUTextureFormat> colorFormats;
     std::optional<GPUTextureFormat> depthStencilFormat;
-    GPUSize32 sampleCount;
+    GPUSize32 sampleCount { 1 };
 };
 
 }

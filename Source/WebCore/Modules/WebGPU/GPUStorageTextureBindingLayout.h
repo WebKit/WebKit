@@ -42,9 +42,9 @@ struct GPUStorageTextureBindingLayout {
         };
     }
 
-    GPUStorageTextureAccess access;
-    GPUTextureFormat format;
-    GPUTextureViewDimension viewDimension;
+    GPUStorageTextureAccess access { GPUStorageTextureAccess::WriteOnly };
+    GPUTextureFormat format { GPUTextureFormat::R8unorm };
+    GPUTextureViewDimension viewDimension { GPUTextureViewDimension::_2d };
 };
 
 }

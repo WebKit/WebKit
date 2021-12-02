@@ -52,11 +52,11 @@ struct GPUCanvasConfiguration {
         };
     }
 
-    GPUDevice* device;
-    GPUTextureFormat format;
-    GPUTextureUsageFlags usage; // GPUTextureUsage.RENDER_ATTACHMENT
-    GPUPredefinedColorSpace colorSpace;
-    GPUCanvasCompositingAlphaMode compositingAlphaMode;
+    GPUDevice* device { nullptr };
+    GPUTextureFormat format { GPUTextureFormat::R8unorm };
+    GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
+    GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
+    GPUCanvasCompositingAlphaMode compositingAlphaMode { GPUCanvasCompositingAlphaMode::Opaque };
     std::optional<GPUExtent3D> size;
 };
 

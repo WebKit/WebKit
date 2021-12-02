@@ -54,11 +54,11 @@ struct GPURenderPassColorAttachment {
         };
     }
 
-    GPUTextureView* view;
-    GPUTextureView* resolveTarget;
+    GPUTextureView* view { nullptr };
+    GPUTextureView* resolveTarget { nullptr };
 
     std::variant<GPULoadOp, Vector<double>, GPUColorDict> loadValue;
-    GPUStoreOp storeOp;
+    GPUStoreOp storeOp { GPUStoreOp::Store };
 };
 
 }

@@ -40,7 +40,7 @@ struct GPUPipelineDescriptorBase : public GPUObjectDescriptorBase {
         };
     }
 
-    GPUPipelineLayout* layout;
+    GPUPipelineLayout* layout { nullptr };
 };
 
 }

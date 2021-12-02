@@ -43,10 +43,10 @@ struct GPUColorTargetState {
         };
     }
 
-    GPUTextureFormat format;
+    GPUTextureFormat format { GPUTextureFormat::R8unorm };
 
     std::optional<GPUBlendState> blend;
-    GPUColorWriteFlags writeMask;
+    GPUColorWriteFlags writeMask { GPUColorWrite::ALL };
 };
 
 }

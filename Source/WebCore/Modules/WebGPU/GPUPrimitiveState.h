@@ -47,13 +47,13 @@ struct GPUPrimitiveState {
         };
     }
 
-    GPUPrimitiveTopology topology;
+    GPUPrimitiveTopology topology { GPUPrimitiveTopology::TriangleList };
     std::optional<GPUIndexFormat> stripIndexFormat;
-    GPUFrontFace frontFace;
-    GPUCullMode cullMode;
+    GPUFrontFace frontFace { GPUFrontFace::Ccw };
+    GPUCullMode cullMode { GPUCullMode::None };
 
     // Requires "depth-clip-control" feature.
-    bool unclippedDepth;
+    bool unclippedDepth { false };
 };
 
 }

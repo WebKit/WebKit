@@ -43,10 +43,10 @@ struct GPUColorDict {
         };
     }
 
-    double r;
-    double g;
-    double b;
-    double a;
+    double r { 0 };
+    double g { 0 };
+    double b { 0 };
+    double a { 0 };
 };
 
 using GPUColor = std::variant<Vector<double>, GPUColorDict>;

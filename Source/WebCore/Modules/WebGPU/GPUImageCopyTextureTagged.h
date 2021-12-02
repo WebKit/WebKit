@@ -47,8 +47,8 @@ struct GPUImageCopyTextureTagged : public GPUImageCopyTexture {
         };
     }
 
-    GPUPredefinedColorSpace colorSpace;
-    bool premultipliedAlpha;
+    GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
+    bool premultipliedAlpha { false };
 };
 
 }

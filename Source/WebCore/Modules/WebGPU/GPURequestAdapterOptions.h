@@ -41,7 +41,7 @@ struct GPURequestAdapterOptions {
     }
 
     std::optional<GPUPowerPreference> powerPreference;
-    bool forceFallbackAdapter;
+    bool forceFallbackAdapter { false };
 };
 
 }

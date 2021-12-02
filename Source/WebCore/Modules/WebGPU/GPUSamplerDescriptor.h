@@ -53,16 +53,16 @@ struct GPUSamplerDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
-    GPUAddressMode addressModeU;
-    GPUAddressMode addressModeV;
-    GPUAddressMode addressModeW;
-    GPUFilterMode magFilter;
-    GPUFilterMode minFilter;
-    GPUFilterMode mipmapFilter;
-    float lodMinClamp;
-    float lodMaxClamp;
+    GPUAddressMode addressModeU { GPUAddressMode::ClampToEdge };
+    GPUAddressMode addressModeV { GPUAddressMode::ClampToEdge };
+    GPUAddressMode addressModeW { GPUAddressMode::ClampToEdge };
+    GPUFilterMode magFilter { GPUFilterMode::Nearest };
+    GPUFilterMode minFilter { GPUFilterMode::Nearest };
+    GPUFilterMode mipmapFilter { GPUFilterMode::Nearest };
+    float lodMinClamp { 0 };
+    float lodMaxClamp { 32 };
     std::optional<GPUCompareFunction> compare;
-    uint16_t maxAnisotropy;
+    uint16_t maxAnisotropy { 1 };
 };
 
 }

@@ -46,7 +46,7 @@ struct GPUProgrammableStage {
         };
     }
 
-    GPUShaderModule* module;
+    GPUShaderModule* module { nullptr };
     String entryPoint;
     Vector<KeyValuePair<String, GPUPipelineConstantValue>> constants;
 };

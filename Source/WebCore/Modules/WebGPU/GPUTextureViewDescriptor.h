@@ -52,10 +52,10 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
 
     std::optional<GPUTextureFormat> format;
     std::optional<GPUTextureViewDimension> dimension;
-    GPUTextureAspect aspect;
-    GPUIntegerCoordinate baseMipLevel;
+    GPUTextureAspect aspect { GPUTextureAspect::All };
+    GPUIntegerCoordinate baseMipLevel { 0 };
     std::optional<GPUIntegerCoordinate> mipLevelCount;
-    GPUIntegerCoordinate baseArrayLayer;
+    GPUIntegerCoordinate baseArrayLayer { 0 };
     std::optional<GPUIntegerCoordinate> arrayLayerCount;
 };
 

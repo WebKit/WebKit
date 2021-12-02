@@ -48,8 +48,8 @@ struct GPUQuerySetDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
-    GPUQueryType type;
-    GPUSize32 count;
+    GPUQueryType type { GPUQueryType::Occlusion };
+    GPUSize32 count { 0 };
     Vector<GPUPipelineStatisticName> pipelineStatistics;
 };
 

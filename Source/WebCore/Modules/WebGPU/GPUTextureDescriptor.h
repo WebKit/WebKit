@@ -50,11 +50,11 @@ struct GPUTextureDescriptor : public GPUObjectDescriptorBase {
     }
 
     GPUExtent3D size;
-    GPUIntegerCoordinate mipLevelCount;
-    GPUSize32 sampleCount;
-    GPUTextureDimension dimension;
-    GPUTextureFormat format;
-    GPUTextureUsageFlags usage;
+    GPUIntegerCoordinate mipLevelCount { 1 };
+    GPUSize32 sampleCount { 1 };
+    GPUTextureDimension dimension { GPUTextureDimension::_2d };
+    GPUTextureFormat format { GPUTextureFormat::R8unorm };
+    GPUTextureUsageFlags usage { 0 };
 };
 
 }

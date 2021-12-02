@@ -42,9 +42,9 @@ struct GPUExtent3DDict {
         };
     }
 
-    GPUIntegerCoordinate width;
-    GPUIntegerCoordinate height;
-    GPUIntegerCoordinate depthOrArrayLayers;
+    GPUIntegerCoordinate width { 0 };
+    GPUIntegerCoordinate height { 0 };
+    GPUIntegerCoordinate depthOrArrayLayers { 0 };
 };
 
 using GPUExtent3D = std::variant<Vector<GPUIntegerCoordinate>, GPUExtent3DDict>;

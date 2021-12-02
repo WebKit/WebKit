@@ -45,8 +45,8 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
-    HTMLVideoElement* source;
-    GPUPredefinedColorSpace colorSpace;
+    HTMLVideoElement* source { nullptr };
+    GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
 };
 
 }

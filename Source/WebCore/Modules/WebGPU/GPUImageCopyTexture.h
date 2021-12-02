@@ -47,10 +47,10 @@ struct GPUImageCopyTexture {
         };
     }
 
-    GPUTexture* texture;
-    GPUIntegerCoordinate mipLevel;
+    GPUTexture* texture { nullptr };
+    GPUIntegerCoordinate mipLevel { 0 };
     std::optional<GPUOrigin3D> origin;
-    GPUTextureAspect aspect;
+    GPUTextureAspect aspect { GPUTextureAspect::All };
 };
 
 }
