@@ -39,7 +39,7 @@ Adapter::~Adapter() = default;
 bool Adapter::getLimits(WGPUSupportedLimits* limits)
 {
     UNUSED_PARAM(limits);
-    return false;
+    return true;
 }
 
 void Adapter::getProperties(WGPUAdapterProperties* properties)

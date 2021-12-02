@@ -1,3 +1,15 @@
+2021-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Hook up navigator.gpu.requestAdapter()
+        https://bugs.webkit.org/show_bug.cgi?id=233619
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/WebKitLegacy.xcconfig: We have to be able to #include files from WebGPU.
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createGPUForWebGPU const): Hook up GPUImpl to WebCore.
+
 2021-12-02  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Make Web Lock API work across multiple WebProcesses

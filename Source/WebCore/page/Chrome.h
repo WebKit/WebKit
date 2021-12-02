@@ -32,6 +32,10 @@
 OBJC_CLASS NSView;
 #endif
 
+namespace PAL::WebGPU {
+class GPU;
+}
+
 namespace WebCore {
 
 class ChromeClient;
@@ -90,6 +94,8 @@ public:
 #if ENABLE(WEBGL)
     RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const override;
 #endif
+
+    RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const;
 
     PlatformDisplayID displayID() const override;
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond>) override;

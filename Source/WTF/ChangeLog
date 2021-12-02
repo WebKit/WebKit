@@ -1,3 +1,13 @@
+2021-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Hook up navigator.gpu.requestAdapter()
+        https://bugs.webkit.org/show_bug.cgi?id=233619
+
+        Reviewed by Dean Jackson.
+
+        * wtf/PlatformHave.h: Create a HAVE() macro, by default off. As we bring
+        more infrastructure online, this will eventually flip to on.
+
 2021-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ Monterey ] fast/images/text-recognition/mac/image-overlay-text-disables-app-highlight-menu-items.html (layout-test) is a constant text failure

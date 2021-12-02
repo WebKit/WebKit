@@ -63,6 +63,7 @@
 #include "RemoteScrollingCoordinatorTransaction.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebGPUObjectHeap.h"
 #include "WebProcessMessages.h"
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
@@ -554,6 +555,19 @@ void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsConte
     releaseGraphicsContextGL(identifier);
 }
 #endif
+
+void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer&& stream)
+{
+    auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
+    if (it == m_remoteRenderingBackendMap.end())
+        return;
+    auto* renderingBackend = it->value.get();
+
+    auto addResult = m_remoteGPUMap.ensure(identifier, [&]() {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, *this, *renderingBackend, WTFMove(stream)) };
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
 
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {

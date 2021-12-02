@@ -252,6 +252,7 @@ private:
     RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&, WebCore::PlatformDisplayID hostWindowDisplayID) const final;
 #endif
 
+    RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const final;
 
     CompositingTriggerFlags allowedCompositingTriggers() const final
     {

@@ -38,11 +38,27 @@ static PAL::WebGPU::RequestAdapterOptions convertToBacking(const std::optional<G
     return options->convertToBacking();
 }
 
+void GPU::setBacking(PAL::WebGPU::GPU& backing)
+{
+    m_backing = &backing;
+    while (!m_pendingRequestAdapterArguments.isEmpty()) {
+        auto arguments = m_pendingRequestAdapterArguments.takeFirst();
+        requestAdapter(arguments.options, WTFMove(arguments.promise));
+    }
+}
+
 void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
 {
+    if (!m_backing) {
+        m_pendingRequestAdapterArguments.append({ options, WTFMove(promise) });
+        return;
+    }
+
     m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
-        if (!adapter)
-            promise.resolve(nullptr);
+        if (!adapter) {
+            promise.reject(nullptr);
+            return;
+        }
         promise.resolve(GPUAdapter::create(adapter.releaseNonNull()).ptr());
     });
 }

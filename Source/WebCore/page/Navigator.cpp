@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "GPU.h"
 #include "Geolocation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LoaderStrategy.h"
@@ -345,6 +346,26 @@ bool Navigator::standalone() const
 
 void Navigator::getStorageUpdates()
 {
+}
+
+GPU* Navigator::gpu()
+{
+    if (!m_gpuForWebGPU) {
+        auto* frame = this->frame();
+        if (!frame)
+            return nullptr;
+        auto* page = frame->page();
+        if (!page)
+            return nullptr;
+        auto gpu = page->chrome().createGPUForWebGPU();
+        if (!gpu)
+            return nullptr;
+
+        m_gpuForWebGPU = GPU::create();
+        m_gpuForWebGPU->setBacking(*gpu);
+    }
+
+    return m_gpuForWebGPU.get();
 }
 
 } // namespace WebCore

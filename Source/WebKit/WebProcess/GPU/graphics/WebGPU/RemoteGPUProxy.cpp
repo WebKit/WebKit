@@ -48,10 +48,22 @@ RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, WebGP
     , m_gpuProcessConnection(&gpuProcessConnection)
     , m_streamConnection(gpuProcessConnection.connection(), defaultStreamSize)
 {
+    m_gpuProcessConnection->addClient(*this);
     m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteGPUProxy::messageReceiverName(), identifier.toUInt64(), *this);
+    connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteGPU(identifier, renderingBackend, m_streamConnection.streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
+    // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
+    waitUntilInitialized();
 }
 
 RemoteGPUProxy::~RemoteGPUProxy() = default;
+
+void RemoteGPUProxy::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
+{
+    ASSERT(m_gpuProcessConnection);
+    ASSERT(&connection == m_gpuProcessConnection);
+    abandonGPUProcess();
+}
 
 void RemoteGPUProxy::abandonGPUProcess()
 {

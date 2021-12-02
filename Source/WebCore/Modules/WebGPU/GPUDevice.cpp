@@ -204,8 +204,10 @@ void GPUDevice::pushErrorScope(GPUErrorFilter errorFilter)
 void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)
 {
     m_backing->popErrorScope([promise = WTFMove(errorScopePromise)] (std::optional<PAL::WebGPU::Error>&& error) mutable {
-        if (!error)
+        if (!error) {
             promise.resolve(std::nullopt);
+            return;
+        }
         WTF::switchOn(WTFMove(*error), [&] (Ref<PAL::WebGPU::OutOfMemoryError>&& outOfMemoryError) {
             GPUError error = RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
             promise.resolve(error);

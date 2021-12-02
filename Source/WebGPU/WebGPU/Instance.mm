@@ -52,6 +52,7 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Fun
 {
     UNUSED_PARAM(options);
     UNUSED_PARAM(callback);
+    callback(WGPURequestAdapterStatus_Unavailable, Adapter::create(), "Adapter");
 }
 
 } // namespace WebGPU
@@ -64,7 +65,7 @@ void wgpuInstanceRelease(WGPUInstance instance)
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return nullptr;
+    return new WGPUInstanceImpl { WebGPU::Instance::create() };
 }
 
 WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
@@ -384,7 +385,7 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    return instance->instance->requestAdapter(options, [callback, userdata] (WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, const char* message) {
+    instance->instance->requestAdapter(options, [callback, userdata] (WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, const char* message) {
         callback(status, new WGPUAdapterImpl { WTFMove(adapter) }, message, userdata);
     });
 }

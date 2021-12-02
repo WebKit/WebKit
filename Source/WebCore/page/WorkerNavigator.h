@@ -39,6 +39,8 @@ public:
     bool onLine() const final;
     void setIsOnline(bool isOnline) { m_isOnline = isOnline; }
 
+    GPU* gpu();
+
 private:
     explicit WorkerNavigator(ScriptExecutionContext&, const String&, bool isOnline);
 

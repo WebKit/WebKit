@@ -255,6 +255,8 @@ private:
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&) final;
 #endif
 
+    RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const final;
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_mockVideoPresentationModeEnabled { false };
 #endif

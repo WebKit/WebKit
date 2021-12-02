@@ -93,6 +93,10 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+#import <pal/graphics/WebGPU/Impl/WebGPUImpl.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(GEOLOCATION)
 #import <WebCore/Geolocation.h>
 #endif
@@ -1153,3 +1157,12 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
     WebCore::changeUniversalAccessZoomFocus(viewRect, selectionRect);
 }
 #endif
+
+RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
+{
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    return PAL::WebGPU::GPUImpl::create();
+#else
+    return nullptr;
+#endif
+}

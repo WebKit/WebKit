@@ -546,6 +546,11 @@ RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextG
 }
 #endif
 
+RefPtr<PAL::WebGPU::GPU> Chrome::createGPUForWebGPU() const
+{
+    return m_client.createGPUForWebGPU();
+}
+
 PlatformDisplayID Chrome::displayID() const
 {
     return m_page.displayID();
