@@ -36,6 +36,7 @@ namespace Style {
 
 class RuleData;
 
+// FIXME: Has* values should be separated so we could describe both the :has() argument and its position in the selector.
 enum class MatchElement : uint8_t {
     Subject,
     Parent,
@@ -49,6 +50,7 @@ enum class MatchElement : uint8_t {
     HasDescendant,
     HasSibling,
     HasSiblingDescendant,
+    HasNonSubject, // FIXME: This is a catch-all for cases where :has() is in non-subject position.
     Host
 };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;

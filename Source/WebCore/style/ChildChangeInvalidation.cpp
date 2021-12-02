@@ -75,8 +75,11 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         for (auto& invalidationRuleSet : *invalidationRuleSets) {
             if (!isHasPseudoClassMatchElement(invalidationRuleSet.matchElement))
                 continue;
-            if (isDescendant && invalidationRuleSet.matchElement != MatchElement::HasDescendant)
-                continue;
+            if (isDescendant) {
+                // Elements deeper in the tree can't affect anything except when :has() selector uses descendant combinator.
+                if (invalidationRuleSet.matchElement != MatchElement::HasDescendant && invalidationRuleSet.matchElement != MatchElement::HasNonSubject)
+                    continue;
+            }
             Invalidator::addToMatchElementRuleSets(matchElementRuleSets, invalidationRuleSet);
         }
     };
@@ -113,11 +116,15 @@ static bool needsTraversal(const RuleFeatureSet& features, const ContainerNode::
         return true;
     if (features.usesMatchElement(MatchElement::HasSiblingDescendant))
         return true;
+    if (features.usesMatchElement(MatchElement::HasNonSubject))
+        return true;
     return features.usesMatchElement(MatchElement::HasSibling) && childChange.previousSiblingElement;
 };
 
 static bool needsDescendantTraversal(const RuleFeatureSet& features)
 {
+    if (features.usesMatchElement(MatchElement::HasNonSubject))
+        return true;
     return features.usesMatchElement(MatchElement::HasDescendant) || features.usesMatchElement(MatchElement::HasSiblingDescendant);
 };
 

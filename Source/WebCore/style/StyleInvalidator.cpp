@@ -346,6 +346,11 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
+    case MatchElement::HasNonSubject: {
+        SelectorMatchingState selectorMatchingState;
+        invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
+        break;
+    }
     case MatchElement::Host:
         invalidateInShadowTreeIfNeeded(element);
         break;

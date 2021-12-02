@@ -53,6 +53,7 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
     case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasNonSubject:
         return false;
     }
     ASSERT_NOT_REACHED();
@@ -66,6 +67,7 @@ bool isHasPseudoClassMatchElement(MatchElement matchElement)
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasNonSubject:
         return true;
     default:
         return false;
@@ -157,6 +159,7 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasNonSubject:
     case MatchElement::Host:
         ASSERT_NOT_REACHED();
         break;
@@ -176,8 +179,11 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
         if (type == CSSSelector::PseudoClassHost)
             return MatchElement::Host;
 
-        if (type == CSSSelector::PseudoClassHas)
+        if (type == CSSSelector::PseudoClassHas) {
+            if (matchElement != MatchElement::Subject)
+                return MatchElement::HasNonSubject;
             return computeHasPseudoClassMatchElement(childSelector);
+        }
     }
     if (selector.match() == CSSSelector::PseudoElement) {
         // Similarly for ::slotted().
