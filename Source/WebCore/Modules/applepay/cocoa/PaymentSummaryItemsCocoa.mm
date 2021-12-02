@@ -62,7 +62,7 @@ namespace WebCore {
 
 static NSDate *toDate(double date)
 {
-    return [NSDate dateWithTimeIntervalSince1970:date];
+    return [NSDate dateWithTimeIntervalSince1970:(date / 1000)];
 }
 
 #endif // HAVE(PASSKIT_RECURRING_SUMMARY_ITEM) || HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
