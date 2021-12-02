@@ -1,3 +1,15 @@
+2021-12-02  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r285570.
+
+        Broke StarD build
+
+        Reverted changeset:
+
+        "Fix crash in GraphicsContextCG::endTransparencyLayer"
+        https://bugs.webkit.org/show_bug.cgi?id=230230
+        https://commits.webkit.org/r285570
+
 2021-12-02  Tyler Wilcock  <tyler_w@apple.com>
 
         AX Isolated Tree: Document links should be stored in web areas, not the root

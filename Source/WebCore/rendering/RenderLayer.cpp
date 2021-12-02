@@ -2089,9 +2089,9 @@ RenderLayer* RenderLayer::transparentPaintingAncestor()
     if (isComposited())
         return nullptr;
 
-    for (RenderLayer* curr = stackingContext(); curr; curr = curr->stackingContext()) {
+    for (RenderLayer* curr = parent(); curr; curr = curr->parent()) {
         if (curr->isComposited())
-            break;
+            return nullptr;
         if (curr->isTransparent())
             return curr;
     }
@@ -3061,8 +3061,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
         // If we have a transparency layer enclosing us and we are the root of a transform, then we need to establish the transparency
         // layer from the parent now, assuming there is a parent
         if (paintFlags & PaintLayerFlag::HaveTransparency) {
-            // Top layer elements are not affected by ancestor opacities
-            if (!establishesTopLayer() && parent())
+            if (parent())
                 parent()->beginTransparencyLayers(context, paintingInfo, paintingInfo.paintDirtyRect);
             else
                 beginTransparencyLayers(context, paintingInfo, paintingInfo.paintDirtyRect);
