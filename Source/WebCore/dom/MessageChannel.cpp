@@ -33,26 +33,29 @@
 
 namespace WebCore {
 
+static std::pair<Ref<MessagePort>, Ref<MessagePort>> generateMessagePorts(ScriptExecutionContext& context)
+{
+    MessagePortIdentifier id1 = { Process::identifier(), ObjectIdentifier<MessagePortIdentifier::PortIdentifierType>::generate() };
+    MessagePortIdentifier id2 = { Process::identifier(), ObjectIdentifier<MessagePortIdentifier::PortIdentifierType>::generate() };
+
+    return { MessagePort::create(context, id1, id2), MessagePort::create(context, id2, id1) };
+}
+
 Ref<MessageChannel> MessageChannel::create(ScriptExecutionContext& context)
 {
     return adoptRef(*new MessageChannel(context));
 }
 
 MessageChannel::MessageChannel(ScriptExecutionContext& context)
+    : m_ports(generateMessagePorts(context))
 {
-    MessagePortIdentifier id1 = { Process::identifier(), ObjectIdentifier<MessagePortIdentifier::PortIdentifierType>::generate() };
-    MessagePortIdentifier id2 = { Process::identifier(), ObjectIdentifier<MessagePortIdentifier::PortIdentifierType>::generate() };
-
-    m_port1 = MessagePort::create(context, id1, id2);
-    m_port2 = MessagePort::create(context, id2, id1);
-
     if (!context.activeDOMObjectsAreStopped()) {
-        ASSERT(!m_port1->closed());
-        ASSERT(!m_port2->closed());
-        MessagePortChannelProvider::fromContext(context).createNewMessagePortChannel(id1, id2);
+        ASSERT(!port1().closed());
+        ASSERT(!port2().closed());
+        MessagePortChannelProvider::fromContext(context).createNewMessagePortChannel(port1().identifier(), port2().identifier());
     } else {
-        ASSERT(m_port1->closed());
-        ASSERT(m_port2->closed());
+        ASSERT(port1().closed());
+        ASSERT(port2().closed());
     }
 }
 

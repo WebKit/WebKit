@@ -82,8 +82,8 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
         return Exception { InvalidStateError, "Audio context's frame is detached"_s };
 
     auto messageChannel = MessageChannel::create(*context.scriptExecutionContext());
-    auto nodeMessagePort = messageChannel->port1();
-    auto processorMessagePort = messageChannel->port2();
+    auto& nodeMessagePort = messageChannel->port1();
+    auto& processorMessagePort = messageChannel->port2();
 
     RefPtr<SerializedScriptValue> serializedOptions;
     {
@@ -95,7 +95,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     }
 
     auto parameterData = WTFMove(options.parameterData);
-    auto node = adoptRef(*new AudioWorkletNode(context, name, WTFMove(options), *nodeMessagePort));
+    auto node = adoptRef(*new AudioWorkletNode(context, name, WTFMove(options), nodeMessagePort));
     node->suspendIfNeeded();
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });
@@ -109,7 +109,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     if (node->numberOfOutputs() > 0)
         context.sourceNodeWillBeginPlayback(node);
 
-    context.audioWorklet().createProcessor(name, processorMessagePort->disentangle(), serializedOptions.releaseNonNull(), node);
+    context.audioWorklet().createProcessor(name, processorMessagePort.disentangle(), serializedOptions.releaseNonNull(), node);
 
     {
         // The node should be manually added to the automatic pull node list, even without a connect() call.
