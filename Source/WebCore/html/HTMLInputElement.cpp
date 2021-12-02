@@ -301,7 +301,7 @@ bool HTMLInputElement::typeMismatch() const
 
 bool HTMLInputElement::valueMissing() const
 {
-    return willValidate() && m_inputType->valueMissing(value());
+    return m_inputType->valueMissing(value());
 }
 
 bool HTMLInputElement::hasBadInput() const

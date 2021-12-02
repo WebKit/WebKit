@@ -242,7 +242,7 @@ bool BaseDateAndTimeInputType::shouldRespectListAttribute()
 bool BaseDateAndTimeInputType::valueMissing(const String& value) const
 {
     ASSERT(element());
-    return element()->isRequired() && value.isEmpty();
+    return !element()->isDisabledOrReadOnly() && element()->isRequired() && value.isEmpty();
 }
 
 bool BaseDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const

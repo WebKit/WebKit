@@ -120,7 +120,7 @@ bool TextFieldInputType::isEmptyValue() const
 bool TextFieldInputType::valueMissing(const String& value) const
 {
     ASSERT(element());
-    return element()->isRequired() && value.isEmpty();
+    return !element()->isDisabledOrReadOnly() && element()->isRequired() && value.isEmpty();
 }
 
 void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)

@@ -1,3 +1,15 @@
+2021-12-01  Chris Dumez  <cdumez@apple.com>
+
+        validity.valueMissing should not rely on element's disabled state for inputs of type radio/file/checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=233735
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/radio-valueMissing-expected.txt:
+
 2021-12-01  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Sibling combinator invalidation
