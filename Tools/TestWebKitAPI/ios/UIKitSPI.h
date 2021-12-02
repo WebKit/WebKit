@@ -140,6 +140,7 @@ WTF_EXTERN_C_END
 
 @interface UICalloutBar : UIView
 + (UICalloutBar *)sharedCalloutBar;
++ (UICalloutBar *)activeCalloutBar;
 @end
 
 @interface _UINavigationInteractiveTransitionBase : UIPercentDrivenInteractiveTransition

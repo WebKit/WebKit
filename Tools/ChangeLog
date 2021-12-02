@@ -1,3 +1,15 @@
+2021-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ Monterey ] fast/images/text-recognition/mac/image-overlay-text-disables-app-highlight-menu-items.html (layout-test) is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=233658
+        rdar://problem/85886424
+
+        Reviewed by Tim Horton.
+
+        Add a forward declaration for open source builds.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2021-12-02  Brady Eidson  <beidson@apple.com>
 
         REGRESSION: r286075 [ Big Sur x86] 2 TestWebKitAPI.WebPushD (API-Tests) are constant failures
