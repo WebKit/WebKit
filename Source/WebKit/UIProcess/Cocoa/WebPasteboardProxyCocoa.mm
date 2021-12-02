@@ -419,7 +419,7 @@ void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection,
         auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryBuffer)
             return completionHandler(0);
-        auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), static_cast<size_t>(ipcHandle.dataSize));
+        auto buffer = sharedMemoryBuffer->createSharedBuffer(ipcHandle.dataSize);
         auto newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer.ptr(), pasteboardType);
         didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
         completionHandler(newChangeCount);

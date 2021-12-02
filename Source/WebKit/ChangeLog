@@ -1,3 +1,43 @@
+2021-12-01  Jean-Yves Avenard  <jya@apple.com>
+
+        Avoid allocating and copy memory from a SharedMemory into a SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=233401
+        rdar://85637721
+
+        Reviewed by Eric Carlson.
+
+        We can directly wrap a SharedMemory into a SharedBuffer using
+        SharedMemory::createSharedBuffer instead.
+        No change in observable behaviour other than total memory size reduction.
+
+        Fly-by fix: check for null when mapping a SharedMemory to an IPC handle
+        in a couple of spots.
+
+        * Shared/ShareableResource.h: Make ShareableResource use thread-safe refcount.
+        A ShareableResource once created is immutable and the SharedMemory object
+        itself has thread-safe refounting. Deleting the object outside the main thread
+        is safe.
+        Make members const.
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::wrapInSharedBuffer): Refactor method, using DataSegment::Provider
+        instead of platfom specific code.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::decodeSharedBuffer):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::saveImageToLibrary):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+        Hardening code, checking for nullability.
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+        Hardening code, checking for nullability.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreAppHighlightsAndScrollToIndex):
+
 2021-12-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support accessibility attributes for <model>

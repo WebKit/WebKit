@@ -240,7 +240,7 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return nullptr;
-    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), ipcHandle.dataSize);
+    return sharedMemoryBuffer->createSharedBuffer(ipcHandle.dataSize);
 }
 
 bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
@@ -275,15 +275,14 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
     auto sharedMemoryImage = SharedMemory::map(imageHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryImage)
         return;
+    auto imageBuffer = sharedMemoryImage->createSharedBuffer(imageHandle.dataSize);
 
-    auto imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), static_cast<size_t>(imageHandle.dataSize));
     RefPtr<SharedBuffer> archiveBuffer;
-
     if (!archiveHandle.handle.isNull()) {
         auto sharedMemoryArchive = SharedMemory::map(archiveHandle.handle, SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryArchive)
             return;
-        archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), static_cast<size_t>(archiveHandle.dataSize));
+        archiveBuffer = sharedMemoryArchive->createSharedBuffer(archiveHandle.dataSize);
     }
     pageClient().setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), ResourceResponseBase::sanitizeSuggestedFilename(filename), extension, title, url, visibleURL, WTFMove(archiveBuffer), originIdentifier);
 }

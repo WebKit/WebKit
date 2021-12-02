@@ -588,7 +588,7 @@ void WebPageProxy::saveImageToLibrary(const SharedMemory::IPCHandle& imageHandle
     if (!sharedMemoryBuffer)
         return;
 
-    auto buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), static_cast<size_t>(imageHandle.dataSize));
+    auto buffer = sharedMemoryBuffer->createSharedBuffer(imageHandle.dataSize);
     pageClient().saveImageToLibrary(WTFMove(buffer));
 }
 
