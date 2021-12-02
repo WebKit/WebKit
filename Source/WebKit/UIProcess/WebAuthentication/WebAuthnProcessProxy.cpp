@@ -122,8 +122,6 @@ void WebAuthnProcessProxy::getWebAuthnProcessConnection(WebProcessProxy& webProc
 
 void WebAuthnProcessProxy::webAuthnProcessCrashed()
 {
-    for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->terminateAllWebContentProcesses();
     sharedProcess() = nullptr;
 }
 
