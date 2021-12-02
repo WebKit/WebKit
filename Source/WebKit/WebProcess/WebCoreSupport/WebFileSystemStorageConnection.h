@@ -67,6 +67,7 @@ class WebFileSystemStorageConnection final : public WebCore::FileSystemStorageCo
 public:
     static Ref<WebFileSystemStorageConnection> create(IPC::Connection&);
     void connectionClosed();
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     explicit WebFileSystemStorageConnection(IPC::Connection&);
@@ -85,7 +86,11 @@ private:
 
     void createSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::GetAccessHandleCallback&&) final;
     void close(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::FileSystemStorageConnection::VoidCallback&&) final;
+    void registerSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier) final;
+    void unregisterSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
+    void invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
 
+    HashMap<WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier> m_syncAccessHandles;
     RefPtr<IPC::Connection> m_connection;
 };
 

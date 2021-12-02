@@ -59,15 +59,30 @@ static NSString *mainFrameString = @"<script> \
     </script>";
 
 static const char* workerBytes = R"TESTRESOURCE(
+var position = 0;
+var accessHandle;
 async function test()
 {
     try {
         var rootHandle = await navigator.storage.getDirectory();
         var fileHandle = await rootHandle.getFileHandle('file-system-access.txt', { 'create' : true });
-        var accessHandle = await fileHandle.createSyncAccessHandle();
+        accessHandle = await fileHandle.createSyncAccessHandle();
         var buffer = new ArrayBuffer(10);
         var writeSize = accessHandle.write(buffer, { "at" : 0 });
         self.postMessage('success: write ' + writeSize + ' bytes');
+        keepAccessHandleActive();
+    } catch(err) {
+        self.postMessage('error: ' + err.name + ' - ' + err.message);
+        close();
+    }
+}
+function keepAccessHandleActive()
+{
+    try {
+        var buffer = new ArrayBuffer(1);
+        var writeSize = accessHandle.write(buffer, { "at" : position });
+        position += writeSize;
+        setTimeout(keepAccessHandleActive, 100);
     } catch (err) {
         self.postMessage('error: ' + err.name + ' - ' + err.message);
         close();
@@ -76,7 +91,7 @@ async function test()
 test();
 )TESTRESOURCE";
 
-TEST(FileSystemAccess, ProcessCrashDuringWrite)
+TEST(FileSystemAccess, WebProcessCrashDuringWrite)
 {
     auto handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -126,6 +141,53 @@ TEST(FileSystemAccess, ProcessCrashDuringWrite)
     [webView _killWebContentProcess];
 
     [secondWebView evaluateJavaScript:@"start()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
+}
+
+TEST(FileSystemAccess, NetworkProcessCrashDuringWrite)
+{
+    auto handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto preferences = [configuration preferences];
+    preferences._fileSystemAccessEnabled = YES;
+    preferences._accessHandleEnabled = YES;
+    preferences._storageAPIEnabled = YES;
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        RetainPtr<NSData> data;
+        NSURL *requestURL = task.request.URL;
+        EXPECT_WK_STREQ("webkit://webkit.org/worker.js", requestURL.absoluteString);
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/javascript" expectedContentLength:0 textEncodingName:nil]);
+        data = [NSData dataWithBytes:workerBytes length:strlen(workerBytes)];
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data.get()];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webkit"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"page is loaded", [lastScriptMessage body]);
+
+    [webView evaluateJavaScript:@"start()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
+
+    // Kill network process.
+    [[configuration websiteDataStore] _terminateNetworkProcess];
+
+    // Open access handle should be closed when network process crashes.
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"error: InvalidStateError - AccessHandle is closing or closed", [lastScriptMessage body]);
+
+    // Access handle can be created after network process is relaunched.
+    [webView evaluateJavaScript:@"start()" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
 }

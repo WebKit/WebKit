@@ -36,6 +36,7 @@
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
 #include "SerializedScriptValue.h"
+#include "WorkerThread.h"
 #include "WritableStream.h"
 #include "WritableStreamSink.h"
 

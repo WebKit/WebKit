@@ -43,6 +43,8 @@
 #include "WebCoreJSClientData.h"
 #include "WorkerConsoleClient.h"
 #include "WorkerModuleScriptLoader.h"
+#include "WorkerOrWorkletThread.h"
+#include "WorkerRunLoop.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/DeferTermination.h>

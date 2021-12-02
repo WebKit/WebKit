@@ -52,19 +52,22 @@ public:
     void getSize(DOMPromiseDeferred<IDLUnsignedLongLong>&&);
     void flush(DOMPromiseDeferred<void>&&);
     void close(DOMPromiseDeferred<void>&&);
-    void didClose(ExceptionOr<void>&&);
     ExceptionOr<unsigned long long> read(BufferSource&&, FilesystemReadWriteOptions);
     ExceptionOr<unsigned long long> write(BufferSource&&, FilesystemReadWriteOptions);
     using Result = std::variant<ExceptionOr<void>, ExceptionOr<uint64_t>>;
     void completePromise(Result&&);
+    void invalidate();
 
 private:
     FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     bool isClosingOrClosed() const;
     using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     void closeInternal(CloseCallback&&);
+    void closeFile();
+    void didCloseFile();
     enum class CloseMode : bool { Async, Sync };
     void closeBackend(CloseMode);
+    void didCloseBackend(ExceptionOr<void>&&);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;

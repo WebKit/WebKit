@@ -30,6 +30,9 @@
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FileSystemDirectoryHandle.h>
 #include <WebCore/FileSystemFileHandle.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/WorkerFileSystemStorageConnection.h>
+#include <WebCore/WorkerGlobalScope.h>
 
 namespace WebKit {
 
@@ -46,6 +49,9 @@ WebFileSystemStorageConnection::WebFileSystemStorageConnection(IPC::Connection& 
 void WebFileSystemStorageConnection::connectionClosed()
 {
     m_connection = nullptr;
+
+    for (auto identifier : m_syncAccessHandles.keys())
+        invalidateAccessHandle(identifier);
 }
 
 void WebFileSystemStorageConnection::closeHandle(WebCore::FileSystemHandleIdentifier identifier)
@@ -191,6 +197,26 @@ void WebFileSystemStorageConnection::move(WebCore::FileSystemHandleIdentifier id
     m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::Move(identifier, destinationIdentifier, newName), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
         completionHandler(convertToExceptionOr(error));
     });
+}
+
+void WebFileSystemStorageConnection::registerSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier identifier, WebCore::ScriptExecutionContextIdentifier contextIdentifier)
+{
+    m_syncAccessHandles.add(identifier, contextIdentifier);
+}
+
+void WebFileSystemStorageConnection::unregisterSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier identifier)
+{
+    m_syncAccessHandles.remove(identifier);
+}
+
+void WebFileSystemStorageConnection::invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier identifier)
+{
+    if (auto contextIdentifier = m_syncAccessHandles.get(identifier)) {
+        WebCore::ScriptExecutionContext::postTaskTo(contextIdentifier, [identifier](auto& context) mutable {
+            if (FileSystemStorageConnection* connection = downcast<WebCore::WorkerGlobalScope>(context).fileSystemStorageConnection())
+                connection->invalidateAccessHandle(identifier);
+        });
+    }
 }
 
 } // namespace WebKit

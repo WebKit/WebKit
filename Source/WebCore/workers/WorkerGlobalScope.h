@@ -29,15 +29,12 @@
 #include "Base64Utilities.h"
 #include "CacheStorageConnection.h"
 #include "ImageBitmap.h"
-#include "ScriptBufferSourceProvider.h"
 #include "ScriptExecutionContext.h"
 #include "Supplementable.h"
 #include "WindowOrWorkerGlobalScope.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
-#include "WorkerCacheStorageConnection.h"
-#include "WorkerMessagePortChannelProvider.h"
-#include "WorkerThread.h"
+#include "WorkerType.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
 #include <wtf/HashMap.h>
@@ -54,14 +51,20 @@ class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class FileSystemStorageConnection;
 class FontFaceSet;
+class MessagePortChannelProvider;
 class Performance;
 class ScheduledAction;
+class ScriptBuffer;
+class ScriptBufferSourceProvider;
+class WorkerCacheStorageConnection;
 class WorkerFileSystemStorageConnection;
 class WorkerLocation;
+class WorkerMessagePortChannelProvider;
 class WorkerNavigator;
 class WorkerSWClientConnection;
 class WorkerStorageConnection;
 class WorkerStorageConnection;
+class WorkerThread;
 struct WorkerParameters;
 
 namespace IDBClient {
@@ -90,7 +93,7 @@ public:
     WorkerStorageConnection& storageConnection();
     static void postFileSystemStorageTask(Function<void()>&&);
     WorkerFileSystemStorageConnection& getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&&);
-    WorkerFileSystemStorageConnection* fileSystemStorageConnection();
+    WEBCORE_EXPORT WorkerFileSystemStorageConnection* fileSystemStorageConnection();
     WorkerCacheStorageConnection& cacheStorageConnection();
     MessagePortChannelProvider& messagePortChannelProvider();
 #if ENABLE(SERVICE_WORKER)

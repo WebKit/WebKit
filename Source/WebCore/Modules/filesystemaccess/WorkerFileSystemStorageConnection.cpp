@@ -52,6 +52,9 @@ WorkerFileSystemStorageConnection::~WorkerFileSystemStorageConnection()
 
 void WorkerFileSystemStorageConnection::connectionClosed()
 {
+    for (auto handle : m_syncAccessHandles.values())
+        handle->invalidate();
+
     scopeClosed();
 }
 
@@ -285,6 +288,31 @@ void WorkerFileSystemStorageConnection::close(FileSystemHandleIdentifier identif
 
         mainThreadConnection->close(identifier, accessHandleIdentifier, WTFMove(mainThreadCallback));
     });
+}
+
+void WorkerFileSystemStorageConnection::registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier, FileSystemSyncAccessHandle& handle)
+{
+    if (!m_scope)
+        return;
+
+    m_syncAccessHandles.add(identifier, WeakPtr { handle });
+    callOnMainThread([identifier, contextIdentifier = m_scope->identifier(), mainThreadConnection = m_mainThreadConnection]() mutable {
+        mainThreadConnection->registerSyncAccessHandle(identifier, contextIdentifier);
+    });
+}
+
+void WorkerFileSystemStorageConnection::unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier)
+{
+    m_syncAccessHandles.remove(identifier);
+    callOnMainThread([identifier, mainThreadConnection = m_mainThreadConnection]() mutable {
+        mainThreadConnection->unregisterSyncAccessHandle(identifier);
+    });
+}
+
+void WorkerFileSystemStorageConnection::invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier identifier)
+{
+    if (auto handle = m_syncAccessHandles.get(identifier))
+        handle->invalidate();
 }
 
 void WorkerFileSystemStorageConnection::getHandleNames(FileSystemHandleIdentifier identifier, GetHandleNamesCallback&& callback)

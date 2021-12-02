@@ -30,6 +30,7 @@
 #include "FileSystemFileHandle.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerThread.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -47,11 +48,16 @@ FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& c
 {
     ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
     suspendIfNeeded();
+
+    m_source->registerSyncAccessHandle(m_identifier, *this);
 }
 
 FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
 {
     ASSERT(isClosingOrClosed());
+
+    m_source->unregisterSyncAccessHandle(m_identifier);
+
     if (m_closeResult)
         return;
 
@@ -142,35 +148,52 @@ void FileSystemSyncAccessHandle::closeInternal(CloseCallback&& callback)
     if (isClosing)
         return;
 
+    ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
+    closeFile();
+}
+
+void FileSystemSyncAccessHandle::closeFile()
+{
+    if (m_file == FileSystem::invalidPlatformFileHandle)
+        return;
+
     auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
     ASSERT(scope);
 
-    ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
     WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = std::exchange(m_file, FileSystem::invalidPlatformFileHandle), workerThread = Ref { scope->thread() }]() mutable {
         FileSystem::closeFile(file);
         workerThread->runLoop().postTask([weakThis = WTFMove(weakThis)](auto&) mutable {
             if (weakThis)
-                weakThis->closeBackend(CloseMode::Async);
+                weakThis->didCloseFile();
         });
     });
 }
 
+void FileSystemSyncAccessHandle::didCloseFile()
+{
+    closeBackend(CloseMode::Async);
+}
+
 void FileSystemSyncAccessHandle::closeBackend(CloseMode mode)
 {
+    if (m_closeResult)
+        return;
+
     if (mode == CloseMode::Async) {
         m_source->close(m_identifier, [this, protectedThis = Ref { *this }](auto result) mutable {
-            didClose(WTFMove(result));
+            didCloseBackend(WTFMove(result));
         });
         return;
     }
 
     m_source->close(m_identifier, [](auto) { });
-    didClose({ });
+    didCloseBackend({ });
 }
 
-void FileSystemSyncAccessHandle::didClose(ExceptionOr<void>&& result)
+void FileSystemSyncAccessHandle::didCloseBackend(ExceptionOr<void>&& result)
 {
-    ASSERT(!m_closeResult);
+    if (m_closeResult)
+        return;
 
     m_closeResult = WTFMove(result);
     auto callbacks = std::exchange(m_closeCallbacks, { });
@@ -245,6 +268,14 @@ const char* FileSystemSyncAccessHandle::activeDOMObjectName() const
 void FileSystemSyncAccessHandle::stop()
 {
     closeInternal([](auto) { });
+}
+
+void FileSystemSyncAccessHandle::invalidate()
+{
+    closeFile();
+
+    // Invalidation is initiated by backend.
+    didCloseBackend({ });
 }
 
 } // namespace WebCore

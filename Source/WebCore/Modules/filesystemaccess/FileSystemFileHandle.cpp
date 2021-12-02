@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSFile.h"
 #include "JSFileSystemSyncAccessHandle.h"
+#include "WorkerFileSystemStorageConnection.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -95,6 +96,22 @@ void FileSystemFileHandle::close(FileSystemSyncAccessHandleIdentifier accessHand
         return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
 
     connection().close(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
+}
+
+void FileSystemFileHandle::registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier, FileSystemSyncAccessHandle& handle)
+{
+    if (isClosed())
+        return;
+
+    downcast<WorkerFileSystemStorageConnection>(connection()).registerSyncAccessHandle(identifier, handle);
+}
+
+void FileSystemFileHandle::unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier)
+{
+    if (isClosed())
+        return;
+
+    connection().unregisterSyncAccessHandle(identifier);
 }
 
 } // namespace WebCore

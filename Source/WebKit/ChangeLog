@@ -1,3 +1,18 @@
+2021-12-01  Sihui Liu  <sihui_liu@apple.com>
+
+        FileSystemSyncAccessHandle should be invalidated when network process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=232605
+        <rdar://problem/85187706>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::connectionClosed):
+        (WebKit::WebFileSystemStorageConnection::registerSyncAccessHandle):
+        (WebKit::WebFileSystemStorageConnection::unregisterSyncAccessHandle):
+        (WebKit::WebFileSystemStorageConnection::invalidateAccessHandle):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+
 2021-12-01  Jean-Yves Avenard  <jya@apple.com>
 
         Avoid allocating and copy memory from a SharedMemory into a SharedBuffer

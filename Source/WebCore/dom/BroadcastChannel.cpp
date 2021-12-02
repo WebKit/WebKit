@@ -34,6 +34,7 @@
 #include "SerializedScriptValue.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
+#include "WorkerThread.h"
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
