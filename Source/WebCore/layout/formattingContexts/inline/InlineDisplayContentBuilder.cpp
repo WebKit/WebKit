@@ -282,7 +282,7 @@ void InlineDisplayContentBuilder::adjustInlineBoxDisplayBoxForBidiBoundary(Inlin
     UNUSED_PARAM(inlineBoxRect);
 }
 
-void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft,  DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
 {
     // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
     for (auto& lineRun : lineContent.runs) {
@@ -341,118 +341,65 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
 
 void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
 {
-    // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
-    auto& runs = lineContent.runs;
-    ASSERT(lineContent.visualOrderList.size() == runs.size());
+    ASSERT(lineContent.visualOrderList.size() == lineContent.runs.size());
 
-    auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-    auto contentRightInVisualOrder = lineBoxLogicalTopLeft.x();
-    // First visual run's initial content position depends on the block's inline direction.
-    if (!root().style().isLeftToRightDirection()) {
-        // FIXME: This needs the block end position instead of the lineLogicalWidth.
-        contentRightInVisualOrder += lineContent.lineLogicalWidth - rootInlineBoxRect.width();
-    }
-    // Adjust the content start position with the (text)alignment offset (root inline box has the alignment offset and not the individual runs).
-    contentRightInVisualOrder += rootInlineBoxRect.left();
-    Vector<size_t> inlineBoxStack;
-    inlineBoxStack.reserveInitialCapacity(lineBox.nonRootInlineLevelBoxes().size());
+    auto createDisplayBoxesInVisualOrderForContentRuns = [&] {
+        auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
+        auto contentRightInVisualOrder = InlineLayoutUnit { };
+        // First visual run's initial content position depends on the block's inline direction.
+        if (!root().style().isLeftToRightDirection()) {
+            // FIXME: This needs the block end position instead of the lineLogicalWidth.
+            contentRightInVisualOrder += lineContent.lineLogicalWidth - rootInlineBoxRect.width();
+        }
+        // Adjust the content start position with the (text)alignment offset (root inline box has the alignment offset and not the individual runs).
+        contentRightInVisualOrder += rootInlineBoxRect.left();
 
-    for (size_t i = 0; i < runs.size(); ++i) {
-        auto visualIndex = lineContent.visualOrderList[i];
-        auto& lineRun = runs[visualIndex];
+        auto& runs = lineContent.runs;
+        for (size_t i = 0; i < runs.size(); ++i) {
+            auto visualIndex = lineContent.visualOrderList[i];
+            auto& lineRun = runs[visualIndex];
 
-        auto isContentRun = !lineRun.isInlineBoxStart() && !lineRun.isLineSpanningInlineBoxStart() && !lineRun.isInlineBoxEnd() && !lineRun.isWordBreakOpportunity();
-        if (!isContentRun)
-            continue;
+            auto isContentRun = !lineRun.isInlineBoxStart() && !lineRun.isLineSpanningInlineBoxStart() && !lineRun.isInlineBoxEnd();
+            if (!isContentRun) {
+                // FIXME: Add support for inline boxes.
+                continue;
+            }
 
-        auto displayBoxRect = [&] {
-            auto& layoutBox = lineRun.layoutBox();
-            auto logicalRect = InlineRect { };
-            auto marginStart = std::optional<LayoutUnit> { };
+            auto visualRectRelativeToRoot = [&](auto logicallRect) {
+                logicallRect.setLeft(contentRightInVisualOrder);
+                logicallRect.moveBy(lineBoxLogicalTopLeft);
+                return logicallRect;
+            };
 
-            if (lineRun.isText() || lineRun.isSoftLineBreak())
-                logicalRect = lineBox.logicalRectForTextRun(lineRun);
-            else if (lineRun.isHardLineBreak())
-                logicalRect = lineBox.logicalRectForLineBreakBox(layoutBox);
-            else {
+            if (lineRun.isText()) {
+                auto visualRect = visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun));
+                appendTextDisplayBox(lineRun, visualRect, boxes);
+                contentRightInVisualOrder += visualRect.width();
+                continue;
+            }
+            if (lineRun.isSoftLineBreak()) {
+                ASSERT(!visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)).width());
+                appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
+                continue;
+            }
+            if (lineRun.isHardLineBreak()) {
+                ASSERT(!visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(lineRun.layoutBox())).width());
+                appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(lineRun.layoutBox())), boxes);
+                continue;
+            }
+            if (lineRun.isBox()) {
+                auto& layoutBox = lineRun.layoutBox();
                 auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-                if (lineRun.isBox()) {
-                    marginStart = boxGeometry.marginStart();
-                    logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
-                } else
-                    ASSERT_NOT_REACHED();
+                auto visualRect = visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry));
+                visualRect.moveHorizontally(boxGeometry.marginStart());
+                appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
+                contentRightInVisualOrder += boxGeometry.marginStart() + visualRect.width() + boxGeometry.marginEnd();
+                continue;
             }
-            logicalRect.moveVertically(lineBoxLogicalTopLeft.y());
-            // Use the distance from the logical previous run to place the display box horizontally in visual terms.
-            auto* logicalPreviousRun = visualIndex ? &runs[visualIndex - 1] : nullptr;
-            // Certain css properties (e.g. word-spacing) may introduce a gap between runs.
-            auto distanceFromLogicalPreviousRun = logicalPreviousRun ? lineRun.logicalLeft() - logicalPreviousRun->logicalRight() : lineRun.logicalLeft();
-            auto visualOrderRect = logicalRect;
-            auto contentLeft = contentRightInVisualOrder + distanceFromLogicalPreviousRun + marginStart.value_or(0);
-            visualOrderRect.setLeft(contentLeft);
-            return visualOrderRect;
-        }();
-
-        auto handleInlineBoxBoundariesIfApplicable = [&] {
-            // Visual order could introduce gaps and/or inject runs outside from the current inline box content.
-            // In such cases, we need to "close" the inline box(es) and "open" a new one(s) to accommodate the current content.
-            // <div>a<span id=first>b&#8238;g</span>f<span id=second>e&#8237;c</span>d</div>
-            // produces the following output (note the #8238; #8237; RTL/LTR control characters):
-            // abcdefg
-            // with the following, fragmented inline boxes :
-            // a[first open]b[first close][second open]c[second close]d[second open]e[second close]f[first open]g[first close] 
-            auto& parentBox = lineRun.layoutBox().parent();
-            ASSERT(parentBox.isInlineBox() || &parentBox == &root());
-
-            auto runParentIsCurrentInlineBox = (&parentBox == &root() && inlineBoxStack.isEmpty())
-                || (!inlineBoxStack.isEmpty() && &parentBox == &boxes[inlineBoxStack.last()].layoutBox());
-            if (runParentIsCurrentInlineBox) {
-                // We've got the correct inline box as parent. Nothing to do here.
-                return;
-            }
-            // If this run is not nested inside the current inline box (meaning it visually got injected in-between the inline box content)
-            // we need to "close" all the nested inline boxes first (e.g. see the example above; right before appending "c").
-            while (!inlineBoxStack.isEmpty()) {
-                auto& inlineBoxDisplayBox = boxes[inlineBoxStack.last()];
-                if (&parentBox == &inlineBoxDisplayBox.layoutBox())
-                    break;
-                inlineBoxStack.removeLast();
-                // FIXME: Compute geometry for this inline box fragment.
-                adjustInlineBoxDisplayBoxForBidiBoundary(inlineBoxDisplayBox, { });
-            }
-
-            // We also may need to "open" new inline boxes if the current content is nested inside inline boxes (e.g. see the example above; right before "g")
-            for (auto* ancestor = &parentBox; ancestor != &root(); ancestor = &ancestor->parent()) {
-                ASSERT(ancestor->isInlineBox());
-                auto& inlineBox = *ancestor;
-                inlineBoxStack.append(boxes.size());
-                // FIXME: Compute geometry for this inline box fragment.
-                appendInlineBoxDisplayBoxForBidiBoundary(inlineBox, { }, boxes);
-            }
-        };
-        handleInlineBoxBoundariesIfApplicable();
-
-        if (lineRun.isText())
-            appendTextDisplayBox(lineRun, displayBoxRect, boxes);
-        else if (lineRun.isSoftLineBreak())
-            appendSoftLineBreakDisplayBox(lineRun, displayBoxRect, boxes);
-        else if (lineRun.isHardLineBreak())
-            appendHardLineBreakDisplayBox(lineRun, displayBoxRect, boxes);
-        else if (lineRun.isBox())
-            appendAtomicInlineLevelDisplayBox(lineRun, displayBoxRect, boxes);
-        else
-            ASSERT_NOT_REACHED();
-
-        contentRightInVisualOrder = displayBoxRect.right();
-    }
-
-    // Close the remaining nested inline boxes.
-    // <div>a<span>b&#8238;d</span>c</div>
-    // At the end of the run list loop when we finished processing [d], the inline box (<span>) is still "open".
-    for (auto& inlineBoxIndex : inlineBoxStack) {
-        // FIXME: Compute geometry for this inline box fragment.
-        adjustInlineBoxDisplayBoxForBidiBoundary(boxes[inlineBoxIndex], { });
-    }
+            ASSERT(lineRun.isWordBreakOpportunity());
+        }
+    };
+    createDisplayBoxesInVisualOrderForContentRuns();
 }
 
 void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxLogicalRight)
