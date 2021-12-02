@@ -1,3 +1,18 @@
+2021-12-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [WP] Strengthen sandbox when AppCache is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=233746
+        <rdar://problem/85953893>
+
+        Reviewed by Brent Fulgham.
+
+        When AppCache is disabled, we can remove access to some resources in the WebContent process' sandbox.
+        This is implemented using a new sandbox state variable representing the AppCache state.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-12-02  Youenn Fablet  <youenn@apple.com>
 
         Add some logging to NetworkRTCProvider
