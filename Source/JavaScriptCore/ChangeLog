@@ -1,3 +1,18 @@
+2021-12-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Fix effective address loading for LabelReferences with offsets
+        https://bugs.webkit.org/show_bug.cgi?id=233754
+
+        Reviewed by Yusuke Suzuki.
+
+        r286345 (and subsequent change in r286372) introduced a load from a
+        label address with an additional offset. To properly handle this,
+        RISCV64 offlineasm generates the desired load-effective-address
+        instruction but now also generates an additional add instruction when
+        an offset value is present for that lea.
+
+        * offlineasm/riscv64.rb:
+
 2021-12-02  Geza Lore  <glore@igalia.com>
 
         [JSC] Generated code size reductions for baseline JIT (all architectures)

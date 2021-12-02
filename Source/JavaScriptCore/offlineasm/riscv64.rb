@@ -1464,6 +1464,41 @@ class BaseIndex
     end
 end
 
+def riscv64LowerLabelReferences(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "leap", "leaq"
+                labelRef = node.operands[0]
+                if labelRef.is_a? LabelReference
+                    dest = node.operands[1]
+                    newList << Instruction.new(codeOrigin, node.opcode, [LabelReference.new(node.codeOrigin, labelRef.label), dest])
+                    if labelRef.offset != 0
+                        newList << Instruction.new(codeOrigin, "addp", [dest, Immediate.new(node.codeOrigin, labelRef.offset), dest])
+                    end
+                else
+                    newList << node
+                end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+class Sequence
+    def getModifiedListRISCV64
+        result = @list
+        result = riscv64LowerLabelReferences(result)
+        return result
+    end
+end
+
 class Instruction
     def lowerRISCV64
         case opcode
