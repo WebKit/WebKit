@@ -815,20 +815,21 @@ void Element::setFocus(bool flag, FocusVisibility visibility)
         return;
     {
         Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, CSSSelector::PseudoClassFocus);
+        Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(*this, CSSSelector::PseudoClassFocusVisible);
         Style::PseudoClassChangeInvalidation directFocusStyleInvalidation(*this, CSSSelector::PseudoClassDirectFocus);
         document().userActionElements().setFocused(*this, flag);
+
+        // Shadow host with a slot that contain focused element is not considered focused.
+        for (auto* root = containingShadowRoot(); root; root = root->host()->containingShadowRoot()) {
+            root->setContainsFocusedElement(flag);
+            root->host()->invalidateStyle();
+        }
+
+        for (auto* element = this; element; element = element->parentElementInComposedTree())
+            element->setHasFocusWithin(flag);
+
+        setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || shouldAlwaysHaveFocusVisibleWhenFocused(*this)));
     }
-
-    // Shadow host with a slot that contain focused element is not considered focused.
-    for (auto* root = containingShadowRoot(); root; root = root->host()->containingShadowRoot()) {
-        root->setContainsFocusedElement(flag);
-        root->host()->invalidateStyle();
-    }
-
-    for (auto* element = this; element; element = element->parentElementInComposedTree())
-        element->setHasFocusWithin(flag);
-
-    setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || shouldAlwaysHaveFocusVisibleWhenFocused(*this)));
 }
 
 void Element::setHasFocusVisible(bool flag)
@@ -844,7 +845,6 @@ void Element::setHasFocusVisible(bool flag)
     if (hasFocusVisible() == flag)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusVisible);
     document().userActionElements().setHasFocusVisible(*this, flag);
 }
 
