@@ -1,5 +1,61 @@
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r285570. rdar://problem/83070565
+
+    Fix crash in GraphicsContextCG::endTransparencyLayer
+    https://bugs.webkit.org/show_bug.cgi?id=230230
+    
+    Reviewed by Myles C. Maxfield.
+    
+    Source/WebCore:
+    
+    The crash was due to unbalanced calls to begin and end transparency layers.
+    
+    A branch handling ancestors of transparent layers that are transform root needed to be
+    aware of the top layer. Opacity on ancestors don't affect top layer elements so calling
+    `beginTransparencyLayers` on `parent()` is incorrect.
+    
+    Also fix `transparentPaintingAncestor()` to be top layer aware to avoid flickering layers
+    while scrolling.
+    
+    Test: fast/layers/top-layer-ancestor-opacity-and-transform-crash.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::transparentPaintingAncestor):
+    (WebCore::RenderLayer::paintLayerWithEffects):
+    
+    LayoutTests:
+    
+    * fast/layers/top-layer-ancestor-opacity-and-transform-crash-expected.txt: Added.
+    * fast/layers/top-layer-ancestor-opacity-and-transform-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285570 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-10  Tim Nguyen  <ntim@apple.com>
+
+            Fix crash in GraphicsContextCG::endTransparencyLayer
+            https://bugs.webkit.org/show_bug.cgi?id=230230
+
+            Reviewed by Myles C. Maxfield.
+
+            The crash was due to unbalanced calls to begin and end transparency layers.
+
+            A branch handling ancestors of transparent layers that are transform root needed to be
+            aware of the top layer. Opacity on ancestors don't affect top layer elements so calling
+            `beginTransparencyLayers` on `parent()` is incorrect.
+
+            Also fix `transparentPaintingAncestor()` to be top layer aware to avoid flickering layers
+            while scrolling.
+
+            Test: fast/layers/top-layer-ancestor-opacity-and-transform-crash.html
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::transparentPaintingAncestor):
+            (WebCore::RenderLayer::paintLayerWithEffects):
+
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r285569. rdar://problem/83070565
 
     Enable dialog tests on Windows
