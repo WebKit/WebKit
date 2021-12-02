@@ -138,6 +138,8 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void computePreferredLogicalWidths() override;
 
+    LayoutRect frameRectForStickyPositioning() const override;
+
     static RenderPtr<RenderTableCell> createTableCellWithStyle(Document&, const RenderStyle&);
 
     const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableCell (anonymous)" : "RenderTableCell"; }

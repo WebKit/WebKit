@@ -1,3 +1,23 @@
+2021-12-02  Martin Robinson  <mrobinson@webkit.org>
+
+        sticky th or td in table does not stops at specified top
+        https://bugs.webkit.org/show_bug.cgi?id=232431
+        <rdar://problem/85011818>
+
+        Reviewed by Simon Fraser.
+
+        Add new WPT tests that test the behavior of sticky <td> elements in the middle of
+        tables.
+
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-bottom-expected.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-bottom.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-left-expected.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-left.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-right-expected.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-right.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-top-expected.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-td-top.html: Added.
+
 2021-12-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] :focus-visible should stop matching after blur

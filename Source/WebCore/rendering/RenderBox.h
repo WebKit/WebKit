@@ -783,7 +783,7 @@ private:
     // These include tables, positioned objects, floats and flexible boxes.
     virtual void computePreferredLogicalWidths();
 
-    LayoutRect frameRectForStickyPositioning() const final { return frameRect(); }
+    LayoutRect frameRectForStickyPositioning() const override { return frameRect(); }
 
     LayoutRect computeVisibleRectUsingPaintOffset(const LayoutRect&) const;
     

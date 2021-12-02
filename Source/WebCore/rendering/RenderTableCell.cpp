@@ -203,6 +203,17 @@ void RenderTableCell::computePreferredLogicalWidths()
     }
 }
 
+LayoutRect RenderTableCell::frameRectForStickyPositioning() const
+{
+    // RenderTableCell has the RenderTableRow as the container, but is positioned relatively
+    // to the RenderTableSection. The sticky positioning algorithm assumes that elements are
+    // positioned relatively to their container, so we correct for that here.
+    ASSERT(parentBox());
+    auto returnValue = frameRect();
+    returnValue.move(-parentBox()->locationOffset());
+    return returnValue;
+}
+
 void RenderTableCell::computeIntrinsicPadding(LayoutUnit rowHeight)
 {
     LayoutUnit oldIntrinsicPaddingBefore = intrinsicPaddingBefore();
