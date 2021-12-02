@@ -322,7 +322,7 @@ constexpr bool CSSPrimitiveValue::isResolution(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
 {
-    return type >= CSSUnitType::CSS_VW && type <= CSSUnitType::CSS_DVMAX;
+    return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewporCSSUnitType;
 }
 
 template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)

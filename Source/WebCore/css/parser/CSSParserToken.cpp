@@ -114,8 +114,12 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             break;
         case 'v':
             switch (toASCIILower(data[1])) {
+            case 'b':
+                return CSSUnitType::CSS_VB;
             case 'h':
                 return CSSUnitType::CSS_VH;
+            case 'i':
+                return CSSUnitType::CSS_VI;
             case 'w':
                 return CSSUnitType::CSS_VW;
             }
@@ -136,8 +140,12 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                 break;
             case 'v':
                 switch (toASCIILower(data[2])) {
+                case 'b':
+                    return CSSUnitType::CSS_DVB;
                 case 'h':
                     return CSSUnitType::CSS_DVH;
+                case 'i':
+                    return CSSUnitType::CSS_DVI;
                 case 'w':
                     return CSSUnitType::CSS_DVW;
                 }
@@ -147,8 +155,12 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case 'l':
             if (toASCIILower(data[1]) == 'v') {
                 switch (toASCIILower(data[2])) {
+                case 'b':
+                    return CSSUnitType::CSS_LVB;
                 case 'h':
                     return CSSUnitType::CSS_LVH;
+                case 'i':
+                    return CSSUnitType::CSS_LVI;
                 case 'w':
                     return CSSUnitType::CSS_LVW;
                 }
@@ -177,8 +189,12 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case 's':
             if (toASCIILower(data[1]) == 'v') {
                 switch (toASCIILower(data[2])) {
+                case 'b':
+                    return CSSUnitType::CSS_SVB;
                 case 'h':
                     return CSSUnitType::CSS_SVH;
+                case 'i':
+                    return CSSUnitType::CSS_SVI;
                 case 'w':
                     return CSSUnitType::CSS_SVW;
                 }

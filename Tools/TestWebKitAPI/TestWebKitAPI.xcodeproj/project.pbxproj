@@ -763,6 +763,7 @@
 		93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */; };
 		93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FCDB33263631560046DD7D /* SortedArrayMap.cpp */; };
 		952F7167270BD9CB00D00DCC /* CSSViewportUnits.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 952F7166270BD99700D00DCC /* CSSViewportUnits.html */; };
+		952F7167270BD9CB00D00DCD /* CSSViewportUnits.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = 952F7166270BD99700D00DCD /* CSSViewportUnits.svg */; };
 		996EDCCB270E70D7006DF175 /* InspectorExtension-basic-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 996EDCCA270E70AB006DF175 /* InspectorExtension-basic-page.html */; };
 		9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9984FACD1CFFB038008D198C /* editable-body.html */; };
 		99E2846626F93DB50003F1FA /* InspectorExtension-TabIcon-30x30.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = 99E2846526F93D760003F1FA /* InspectorExtension-TabIcon-30x30.png */; };
@@ -1269,6 +1270,7 @@
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				4995A6F025E8772000E5F0A9 /* csp-document-uri-report.html in Copy Resources */,
 				952F7167270BD9CB00D00DCC /* CSSViewportUnits.html in Copy Resources */,
+				952F7167270BD9CB00D00DCD /* CSSViewportUnits.svg in Copy Resources */,
 				2DDD4DA4270B8B3500659A61 /* cube.usdz in Copy Resources */,
 				F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
@@ -2508,6 +2510,7 @@
 		950E4CC0252E75230071659F /* iOSStylusSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSStylusSupport.mm; sourceTree = "<group>"; };
 		952F7164270BD97E00D00DCC /* CSSViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CSSViewportUnits.mm; sourceTree = "<group>"; };
 		952F7166270BD99700D00DCC /* CSSViewportUnits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = CSSViewportUnits.html; sourceTree = "<group>"; };
+		952F7166270BD99700D00DCD /* CSSViewportUnits.svg */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = CSSViewportUnits.svg; sourceTree = "<group>"; };
 		953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewUnderPageBackgroundColor.mm; sourceTree = "<group>"; };
 		958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedStringWebKitAdditions.mm; sourceTree = "<group>"; };
 		95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewThemeColor.mm; sourceTree = "<group>"; };
@@ -3989,6 +3992,7 @@
 				9B62630B1F8C2510007EE29B /* copy-url.html */,
 				4995A6EF25E876A300E5F0A9 /* csp-document-uri-report.html */,
 				952F7166270BD99700D00DCC /* CSSViewportUnits.html */,
+				952F7166270BD99700D00DCD /* CSSViewportUnits.svg */,
 				F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */,
 				F47DFB2421A8704A00021FB6 /* data-detectors.html */,
 				F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */,

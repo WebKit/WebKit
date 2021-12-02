@@ -54,18 +54,26 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
     case CSSUnitType::CSS_VMAX:
+    case CSSUnitType::CSS_VB:
+    case CSSUnitType::CSS_VI:
     case CSSUnitType::CSS_SVW:
     case CSSUnitType::CSS_SVH:
     case CSSUnitType::CSS_SVMIN:
     case CSSUnitType::CSS_SVMAX:
+    case CSSUnitType::CSS_SVB:
+    case CSSUnitType::CSS_SVI:
     case CSSUnitType::CSS_LVW:
     case CSSUnitType::CSS_LVH:
     case CSSUnitType::CSS_LVMIN:
     case CSSUnitType::CSS_LVMAX:
+    case CSSUnitType::CSS_LVB:
+    case CSSUnitType::CSS_LVI:
     case CSSUnitType::CSS_DVW:
     case CSSUnitType::CSS_DVH:
     case CSSUnitType::CSS_DVMIN:
     case CSSUnitType::CSS_DVMAX:
+    case CSSUnitType::CSS_DVB:
+    case CSSUnitType::CSS_DVI:
         return CalculationCategory::Length;
     case CSSUnitType::CSS_PERCENTAGE:
         return CalculationCategory::Percent;
@@ -122,18 +130,26 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
     case CSSUnitType::CSS_VMAX:
+    case CSSUnitType::CSS_VB:
+    case CSSUnitType::CSS_VI:
     case CSSUnitType::CSS_SVW:
     case CSSUnitType::CSS_SVH:
     case CSSUnitType::CSS_SVMIN:
     case CSSUnitType::CSS_SVMAX:
+    case CSSUnitType::CSS_SVB:
+    case CSSUnitType::CSS_SVI:
     case CSSUnitType::CSS_LVW:
     case CSSUnitType::CSS_LVH:
     case CSSUnitType::CSS_LVMIN:
     case CSSUnitType::CSS_LVMAX:
+    case CSSUnitType::CSS_LVB:
+    case CSSUnitType::CSS_LVI:
     case CSSUnitType::CSS_DVW:
     case CSSUnitType::CSS_DVH:
     case CSSUnitType::CSS_DVMIN:
     case CSSUnitType::CSS_DVMAX:
+    case CSSUnitType::CSS_DVB:
+    case CSSUnitType::CSS_DVI:
     default:
         return CalculationCategory::Other;
     }
@@ -186,18 +202,26 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
     case CSSUnitType::CSS_VMAX:
+    case CSSUnitType::CSS_VB:
+    case CSSUnitType::CSS_VI:
     case CSSUnitType::CSS_SVW:
     case CSSUnitType::CSS_SVH:
     case CSSUnitType::CSS_SVMIN:
     case CSSUnitType::CSS_SVMAX:
+    case CSSUnitType::CSS_SVB:
+    case CSSUnitType::CSS_SVI:
     case CSSUnitType::CSS_LVW:
     case CSSUnitType::CSS_LVH:
     case CSSUnitType::CSS_LVMIN:
     case CSSUnitType::CSS_LVMAX:
+    case CSSUnitType::CSS_LVB:
+    case CSSUnitType::CSS_LVI:
     case CSSUnitType::CSS_DVW:
     case CSSUnitType::CSS_DVH:
     case CSSUnitType::CSS_DVMIN:
     case CSSUnitType::CSS_DVMAX:
+    case CSSUnitType::CSS_DVB:
+    case CSSUnitType::CSS_DVI:
     case CSSUnitType::CSS_DPPX:
     case CSSUnitType::CSS_X:
     case CSSUnitType::CSS_DPI:

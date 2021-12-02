@@ -1,3 +1,22 @@
+2021-12-02  Devin Rousso  <drousso@apple.com>
+
+        [css-values-4] Support `*vi` (inline) and `*vb` (block) viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=232895
+        <rdar://problem/85179134>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.svg: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.mm:
+        (TEST.CSSViewportUnits.AllSame):
+        (TEST.CSSViewportUnits.EmptyUnobscuredSizeOverrides):
+        (TEST.CSSViewportUnits.SameUnobscuredSizeOverrides):
+        (TEST.CSSViewportUnits.DifferentUnobscuredSizeOverrides):
+        (TEST.CSSViewportUnits.SVGDocument): Added.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2021-12-02  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Make Web Lock API work across multiple WebProcesses
