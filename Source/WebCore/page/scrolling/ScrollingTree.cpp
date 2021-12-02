@@ -437,7 +437,6 @@ void ScrollingTree::applyLayerPositionsAfterCommit()
 
 void ScrollingTree::applyLayerPositions()
 {
-    ASSERT(isMainThread());
     Locker locker { m_treeLock };
 
     applyLayerPositionsInternal();
