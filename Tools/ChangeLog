@@ -1,3 +1,82 @@
+2021-12-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EWS][GTK][WPE] Add a new Class for running layout tests on the EWS for the GTK and WPE ports.
+        https://bugs.webkit.org/show_bug.cgi?id=231999
+
+        Reviewed by Jonathan Bedard.
+
+        This patch adds a new class to the EWS for running layout tests for the GTK and WPE ports.
+        It will be used initially for the GTK port and later for the WPE one.
+        Mac/iOS ports will continue to use the current default EWS, so no behaviour change for them.
+
+        This new class is specially designed to:
+        A. Work with a tree that is not always green (or even that is often quite red).
+        B. To not report any false positive to the patch author.
+        C. To allow patch authors to use this EWS to get new expectations for patches that need lot of new re-baselines (like a WPT import)
+
+        The very simplified logic of how this works is the following:
+        1. Run layout tests with patch (abort early at 500 unexpected failures)
+        2. Run layout tests with patch 10 times for each test that failed consistently (non-flaky) on step 1.
+        3. Run layout tests without patch 10 times for each test that failed consistently (non-flaky) on step 2.
+
+        Then report to the patch author only the new consistent failures (tests that failed always with the patch and passed always without the patch, retrying 10 times)
+        Any flaky test found is only reported to the bot watchers.
+
+        For an explainer about why this is needed, and more details about the flow diagram and several design considerations, please check:
+        https://people.igalia.com/clopez/wkbug/231999/explainer.html
+
+        The patch also add 3 new workers to the queue (to a total of 8) to speed up testing.
+
+        * CISupport/ews-build/config.json:
+        * CISupport/ews-build/factories.py:
+        (GTKTestsFactory):
+        * CISupport/ews-build/layout_test_failures.py:
+        (LayoutTestFailures.__init__):
+        (LayoutTestFailures.results_from_string):
+        (LayoutTestFailures.results_from_string.get_failing_tests):
+        * CISupport/ews-build/steps.py:
+        (BufferLogHeaderObserver):
+        (BufferLogHeaderObserver.__init__):
+        (BufferLogHeaderObserver.headerReceived):
+        (BufferLogHeaderObserver.getHeaders):
+        (BugzillaMixin.send_email_for_infrastructure_issue):
+        (Trigger.propertiesToPassToTriggers):
+        (RunWebKitTests.setLayoutTestCommand):
+        (RunWebKitTests.start):
+        (RunWebKitTests.commandComplete):
+        (ReRunWebKitTests.evaluateCommand):
+        (ReRunWebKitTests.commandComplete):
+        (RunWebKitTestsWithoutPatch.commandComplete):
+        (AnalyzeLayoutTestsResults.report_failure):
+        (AnalyzeLayoutTestsResults.send_email_for_flaky_failure):
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures):
+        (AnalyzeLayoutTestsResults.start):
+        (RunWebKit1Tests.start):
+        (RunWebKitTestsRedTree):
+        (RunWebKitTestsRedTree._did_command_timed_out):
+        (RunWebKitTestsRedTree.evaluateCommand):
+        (RunWebKitTestsRepeatFailuresRedTree):
+        (RunWebKitTestsRepeatFailuresRedTree.__init__):
+        (RunWebKitTestsRepeatFailuresRedTree.setLayoutTestCommand):
+        (RunWebKitTestsRepeatFailuresRedTree.evaluateCommand):
+        (RunWebKitTestsRepeatFailuresRedTree.commandComplete):
+        (RunWebKitTestsRepeatFailuresRedTree.start):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree.__init__):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree.setLayoutTestCommand):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree.evaluateCommand):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree.commandComplete):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree.start):
+        (RunWebKitTestsWithoutPatchRedTree):
+        (RunWebKitTestsWithoutPatchRedTree.evaluateCommand):
+        (AnalyzeLayoutTestsResultsRedTree):
+        (AnalyzeLayoutTestsResultsRedTree.report_success):
+        (AnalyzeLayoutTestsResultsRedTree.report_warning):
+        (AnalyzeLayoutTestsResultsRedTree.report_infrastructure_issue_and_maybe_retry_build):
+        (AnalyzeLayoutTestsResultsRedTree.send_email_for_pre_existent_failures):
+        (AnalyzeLayoutTestsResultsRedTree.start):
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-12-01  Alex Christensen  <achristensen@webkit.org>
 
         Use Span instead of pointer/length in CompiledContentExtension

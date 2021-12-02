@@ -30,7 +30,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificR
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
+                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
                    ValidatePatch, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection,
                    InstallBuiltProduct, VerifyGitHubIntegrity)
@@ -257,7 +257,7 @@ class GTKBuildFactory(BuildFactory):
 
 
 class GTKTestsFactory(TestFactory):
-    LayoutTestClass = RunWebKitTests
+    LayoutTestClass = RunWebKitTestsRedTree
 
 
 class WPEFactory(Factory):

@@ -16,6 +16,9 @@
     { "name": "igalia7-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia8-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia9-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia10-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia11-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia12-gtk-wk2-ews", "platform": "gtk" },
     { "name": "aperez-gtk-ews", "platform": "gtk" },
     { "name": "igalia-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
@@ -111,14 +114,15 @@
       "name": "GTK-Build-EWS", "shortname": "gtk", "icon": "buildOnly",
       "factory": "GTKBuildFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["api-tests-gtk-ews"],
+      "triggers": ["api-tests-gtk-ews", "gtk-wk2-tests-ews"],
       "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "aperez-gtk-ews"]
     },
     {
       "name": "GTK-WK2-Tests-EWS", "shortname": "gtk-wk2", "icon": "testOnly",
       "factory": "GTKTestsFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
-      "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews"]
+      "triggered_by": ["gtk-build-ews"],
+      "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews", "igalia10-gtk-wk2-ews", "igalia11-gtk-wk2-ews", "igalia12-gtk-wk2-ews"]
     },
     {
       "name": "iOS-15-Build-EWS", "shortname": "ios", "icon": "buildOnly",
@@ -310,6 +314,7 @@
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
+      "triggered_by": ["gtk-build-ews"],
       "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews"]
     },
     {
@@ -388,11 +393,15 @@
       "builderNames": ["API-Tests-macOS-EWS"]
     },
     {
+      "type": "Triggerable", "name": "gtk-build-ews",
+      "builderNames": ["GTK-Build-EWS"]
+    },
+    {
       "type": "Triggerable", "name": "api-tests-gtk-ews",
       "builderNames": ["API-Tests-GTK-EWS"]
     },
     {
-      "type": "Try_Userpass", "name": "gtk-wk2-tests-ews-disabled", "port": 5558,
+      "type": "Triggerable", "name": "gtk-wk2-tests-ews",
       "builderNames": ["GTK-WK2-Tests-EWS"]
     },
     {
