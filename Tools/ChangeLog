@@ -1,3 +1,43 @@
+2021-12-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Use nullptr instead of 0 in JSStringCreateWithCharacters()
+
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+        (WTR::AccessibilityUIElement::attributesOfLinkedUIElements):
+        (WTR::AccessibilityUIElement::attributesOfDocumentLinks):
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue):
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::parameterizedAttributeNames):
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::subrole):
+        (WTR::AccessibilityUIElement::computedRoleString):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::helpText const):
+        (WTR::AccessibilityUIElement::speakAs):
+        (WTR::AccessibilityUIElement::ariaDropEffects const):
+        (WTR::AccessibilityUIElement::rangeForLine):
+        (WTR::AccessibilityUIElement::rangeForPosition):
+        (WTR::AccessibilityUIElement::boundsForRange):
+        (WTR::AccessibilityUIElement::stringForRange):
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders):
+        (WTR::AccessibilityUIElement::attributesOfColumns):
+        (WTR::AccessibilityUIElement::attributesOfRows):
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells):
+        (WTR::AccessibilityUIElement::attributesOfHeader):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        (WTR::AccessibilityUIElement::accessibilityValue const):
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+        (WTR::AccessibilityUIElement::url):
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange):
+        (WTR::AccessibilityUIElement::rectsForTextMarkerRange):
+        (WTR::AccessibilityUIElement::characterAtOffset):
+
 2021-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Add implementation of table and table cell interfaces when building with ATSPI
