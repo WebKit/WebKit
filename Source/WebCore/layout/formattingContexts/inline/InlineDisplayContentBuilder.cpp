@@ -286,43 +286,37 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
 {
     // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
     for (auto& lineRun : lineContent.runs) {
+        auto& layoutBox = lineRun.layoutBox();
 
-        auto displayBoxRect = [&] {
-            auto& layoutBox = lineRun.layoutBox();
-            auto logicalRect = InlineRect { };
-
-            if (lineRun.isText() || lineRun.isSoftLineBreak())
-                logicalRect = lineBox.logicalRectForTextRun(lineRun);
-            else if (lineRun.isHardLineBreak())
-                logicalRect = lineBox.logicalRectForLineBreakBox(layoutBox);
-            else if (lineRun.isBox())
-                logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox));
-            else if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
-                logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox));
-            else
-                ASSERT_NOT_REACHED();
+        auto logicalRectRelativeToRoot = [&](auto logicalRect) {
             logicalRect.moveBy(lineBoxLogicalTopLeft);
             return logicalRect;
         };
 
         if (lineRun.isText()) {
-            appendTextDisplayBox(lineRun, displayBoxRect(), boxes);
+            appendTextDisplayBox(lineRun, logicalRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
             continue;
         }
         if (lineRun.isSoftLineBreak()) {
-            appendSoftLineBreakDisplayBox(lineRun, displayBoxRect(), boxes);
+            appendSoftLineBreakDisplayBox(lineRun, logicalRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
             continue;
         }
         if (lineRun.isHardLineBreak()) {
-            appendHardLineBreakDisplayBox(lineRun, displayBoxRect(), boxes);
+            appendHardLineBreakDisplayBox(lineRun, logicalRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)), boxes);
             continue;
         }
         if (lineRun.isBox()) {
-            appendAtomicInlineLevelDisplayBox(lineRun, displayBoxRect(), boxes);
+            appendAtomicInlineLevelDisplayBox(lineRun
+                , logicalRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)))
+                , boxes);
             continue;
         }
         if (lineRun.isInlineBoxStart()) {
-            appendInlineBoxDisplayBox(lineRun, lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox()), displayBoxRect(), lineBox.hasContent(), boxes);
+            appendInlineBoxDisplayBox(lineRun
+                , lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox())
+                , logicalRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
+                , lineBox.hasContent()
+                , boxes);
             continue;
         }
         if (lineRun.isLineSpanningInlineBoxStart()) {
@@ -332,7 +326,10 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
                 // don't extend the spanning line box over to this line -also there is no next line in cases like this.
                 continue;
             }
-            appendSpanningInlineBoxDisplayBox(lineRun, lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox()), displayBoxRect(), boxes);
+            appendSpanningInlineBoxDisplayBox(lineRun
+                , lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox())
+                , logicalRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
+                , boxes);
             continue;
         }
         ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
