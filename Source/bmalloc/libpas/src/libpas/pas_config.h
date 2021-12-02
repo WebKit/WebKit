@@ -45,6 +45,8 @@
 
 #define PAS_ARM __PAS_ARM
 
+#define PAS_RISCV __PAS_RISCV
+
 #define PAS_ADDRESS_BITS                 48
 
 #if PAS_ARM

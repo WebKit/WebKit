@@ -1,3 +1,22 @@
+2021-12-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        [libpas] Define and use PAS_RISCV
+        https://bugs.webkit.org/show_bug.cgi?id=233753
+
+        Reviewed by Yusuke Suzuki.
+
+        Define PAS_RISCV as appropriate and use it accordingly to avoid custom
+        x86-64 assembly, much like it's avoided for PAS_ARM. This gets libpas
+        compiling for RISC-V targets.
+
+        * libpas/src/libpas/pas_config.h:
+        * libpas/src/libpas/pas_config_prefix.h:
+        * libpas/src/libpas/pas_segregated_page_inlines.h:
+        (pas_segregated_page_deallocate_with_page):
+        * libpas/src/libpas/pas_utils.h:
+        * libpas/src/libpas/pas_utils_prefix.h:
+        (__pas_fence):
+
 2021-11-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Unreviewed, speculative libpas Linux fix, libpas requires libatomic in Linux etc., part 2

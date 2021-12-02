@@ -43,3 +43,8 @@
 
 #define __PAS_ARM (__PAS_ARM64 || __PAS_ARM32)
 
+#if defined(__riscv)
+#define __PAS_RISCV 1
+#else
+#define __PAS_RISCV 0
+#endif

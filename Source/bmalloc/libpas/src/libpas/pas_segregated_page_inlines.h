@@ -369,7 +369,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
     word = page->alloc_bits[word_index];
 
     if (page_config.check_deallocation) {
-#if !PAS_ARM
+#if !PAS_ARM && !PAS_RISCV
         new_word = word;
         
         asm volatile (
@@ -385,7 +385,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
             : "+r"(new_word)
             : "r"((unsigned)bit_index_unmasked), "r"(begin)
             : "memory");
-#else /* !PAS_ARM -> so PAS_ARM */
+#else /* !PAS_ARM && !PAS_RISCV -> so PAS_ARM or PAS_RISCV */
         unsigned bit_mask;
         bit_mask = PAS_BITVECTOR_BIT_MASK(bit_index_unmasked);
         
@@ -393,7 +393,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
             pas_segregated_page_deallocation_did_fail(begin);
         
         new_word = word & ~bit_mask;
-#endif /* !PAS_ARM -> so end of PAS_ARM */
+#endif /* !PAS_ARM && !PAS_RISCV-> so end of PAS_ARM or PAS_RISCV */
     } else
         new_word = word & ~PAS_BITVECTOR_BIT_MASK(bit_index_unmasked);
     

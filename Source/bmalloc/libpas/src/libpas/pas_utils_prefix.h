@@ -102,7 +102,7 @@ static __PAS_ALWAYS_INLINE void __pas_compiler_fence(void)
 
 static __PAS_ALWAYS_INLINE void __pas_fence(void)
 {
-#if !__PAS_ARM
+#if !__PAS_ARM && !__PAS_RISCV
     if (sizeof(void*) == 8)
         asm volatile("lock; orl $0, (%%rsp)" ::: "memory");
     else

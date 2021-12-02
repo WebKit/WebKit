@@ -83,6 +83,8 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ARM __PAS_ARM
 
+#define PAS_RISCV __PAS_RISCV
+
 #ifdef __cplusplus
 #define PAS_TYPEOF(a) decltype (a)
 #else
