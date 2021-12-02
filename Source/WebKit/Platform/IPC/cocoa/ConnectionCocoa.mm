@@ -545,7 +545,7 @@ void Connection::receiveSourceEventHandler()
         return;
 
 #if PLATFORM(MAC)
-    decoder->setImportanceAssertion(makeUnique<ImportanceAssertion>(header));
+    decoder->setImportanceAssertion(ImportanceAssertion { header });
 #endif
 
     if (decoder->messageName() == MessageName::InitializeConnection) {

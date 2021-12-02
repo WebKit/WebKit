@@ -147,7 +147,7 @@ bool Decoder::shouldMaintainOrderingWithAsyncMessages() const
 }
 
 #if PLATFORM(MAC)
-void Decoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion> assertion)
+void Decoder::setImportanceAssertion(ImportanceAssertion&& assertion)
 {
     m_importanceAssertion = WTFMove(assertion);
 }
