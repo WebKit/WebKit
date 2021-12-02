@@ -157,6 +157,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     WKRetainPtr<WKPageGroupRef> _pageGroup;
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
+    BOOL _imageControlsEnabled;
 #endif
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
@@ -227,6 +228,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _respectsImageOrientation = NO;
     _showsURLsInToolTips = NO;
     _serviceControlsEnabled = NO;
+    _imageControlsEnabled = NO;
 #endif
     _waitsForPaintAfterViewDidMoveToWindow = YES;
 
@@ -425,6 +427,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
     configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
+    configuration->_imageControlsEnabled = self->_imageControlsEnabled;
     configuration->_pageGroup = self._pageGroup;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -1145,13 +1148,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_imageControlsEnabled
 {
-    // Image controls are no longer supported.
-    return NO;
+    return _imageControlsEnabled;
 }
 
 - (void)_setImageControlsEnabled:(BOOL)imageControlsEnabled
 {
-    // Image controls are no longer supported.
+    _imageControlsEnabled = imageControlsEnabled;
 }
 
 - (BOOL)_requiresUserActionForEditingControlsManager

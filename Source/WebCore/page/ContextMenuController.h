@@ -69,6 +69,10 @@ public:
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
     void showContextMenuAt(Frame&, const IntPoint& clickPoint);
 #endif
+    
+#if ENABLE(SERVICE_CONTROLS)
+    void showImageControlsMenu(Event&);
+#endif
 
 private:
     std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type);

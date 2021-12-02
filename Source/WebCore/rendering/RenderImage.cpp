@@ -145,6 +145,10 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
+#if ENABLE(SERVICE_CONTROLS)
+    if (is<HTMLImageElement>(element))
+        m_hasShadowControls = downcast<HTMLImageElement>(element).imageMenuEnabled();
+#endif
 }
 
 RenderImage::RenderImage(Document& document, RenderStyle&& style, StyleImage* styleImage)

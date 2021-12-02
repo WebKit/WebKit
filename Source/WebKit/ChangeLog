@@ -1,3 +1,26 @@
+2021-12-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Re-add support of image control menus.
+        https://bugs.webkit.org/show_bug.cgi?id=233305
+
+        Reviewed by Tim Horton.
+
+        Image control menus are needed for mail transition to modern WebKit, so re-add them
+        after the removal in https://trac.webkit.org/changeset/272117/webkit
+
+        * Platform/spi/mac/AppKitSPI.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetImageControlsEnabled):
+        (WKPreferencesGetImageControlsEnabled):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _imageControlsEnabled]):
+        (-[WKWebViewConfiguration _setImageControlsEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2021-12-02  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add required system call to WebKit sandboxes

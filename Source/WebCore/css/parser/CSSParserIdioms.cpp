@@ -40,6 +40,10 @@ bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
         return isUASheetBehavior(mode);
     case CSSValueWebkitFocusRingColor:
         return isUASheetBehavior(mode) || isQuirksModeBehavior(mode);
+#if ENABLE(SERVICE_CONTROLS)
+    case CSSValueInternalImageControlsButton:
+        return isUASheetBehavior(mode);
+#endif
     default:
         return true;
     }

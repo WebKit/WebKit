@@ -249,6 +249,10 @@ public:
 
     enum FileUploadDecorations { SingleFile, MultipleFiles };
     virtual void paintFileUploadIconDecorations(const RenderObject& /*inputRenderer*/, const RenderObject& /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { }
+    
+#if ENABLE(SERVICE_CONTROLS)
+    virtual IntSize imageControlsButtonSize() const { return IntSize(); }
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const { return LayoutSize(); }
@@ -358,6 +362,11 @@ protected:
 #if ENABLE(DATALIST_ELEMENT)
     virtual void adjustListButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintListButton(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
+#endif
+    
+#if ENABLE(SERVICE_CONTROLS)
+    virtual void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const;
+    virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 #endif
 
     virtual void adjustProgressBarStyle(RenderStyle&, const Element*) const;

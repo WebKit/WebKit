@@ -74,6 +74,9 @@ StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
+#if ENABLE(SERVICE_CONTROLS)
+StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
+#endif
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 #if ENABLE(DATALIST_ELEMENT)
 StyleSheetContents* UserAgentStyle::dataListStyleSheet;

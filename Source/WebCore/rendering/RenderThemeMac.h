@@ -145,6 +145,10 @@ private:
     void paintListButtonForInput(const RenderObject&, GraphicsContext&, const FloatRect&);
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
 #endif
+    
+#if ENABLE(SERVICE_CONTROLS)
+    void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const final;
+#endif
 
 #if ENABLE(VIDEO)
     bool supportsClosedCaptioning() const final { return true; }
@@ -208,6 +212,13 @@ private:
     int minimumProgressBarHeight(const RenderStyle&) const;
     const IntSize* progressBarSizes() const;
     const int* progressBarMargins(NSControlSize) const;
+    
+#if ENABLE(SERVICE_CONTROLS)
+    bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) final;
+    IntSize imageControlsButtonSize() const final;
+
+    NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
+#endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;

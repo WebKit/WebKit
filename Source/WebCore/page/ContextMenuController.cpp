@@ -73,6 +73,10 @@
 #include <wtf/WallTime.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
+
 
 namespace WebCore {
 
@@ -143,6 +147,21 @@ void ContextMenuController::showContextMenu(Event& event, ContextMenuProvider& p
     showContextMenu(event);
 }
 
+#if ENABLE(SERVICE_CONTROLS)
+
+static Image* imageFromImageElementNode(Node& node)
+{
+    auto* renderer = node.renderer();
+    if (!is<RenderImage>(renderer))
+        return nullptr;
+    auto* image = downcast<RenderImage>(*renderer).cachedImage();
+    if (!image || image->errorOccurred())
+        return nullptr;
+    return image->imageForRenderer(renderer);
+}
+
+#endif
+
 std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event& event, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type contextType)
 {
     if (!is<MouseEvent>(event))
@@ -162,6 +181,16 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
 
     m_context = ContextMenuContext(contextType, result);
 
+#if ENABLE(SERVICE_CONTROLS)
+    if (ImageControlsMac::isImageControlsButtonElement(node)) {
+        if (auto* image = imageFromImageElementNode(*result.innerNonSharedNode()))
+            m_context.setControlledImage(image);
+
+        // FIXME: If we couldn't get the image then we shouldn't try to show the image controls menu for it.
+        return nullptr;
+    }
+#endif
+    
     return makeUnique<ContextMenu>();
 }
 
@@ -1532,6 +1561,17 @@ void ContextMenuController::showContextMenuAt(Frame& frame, const IntPoint& clic
     bool handled = frame.eventHandler().sendContextMenuEvent(mouseEvent);
     if (handled)
         m_client.showContextMenu();
+}
+
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+
+void ContextMenuController::showImageControlsMenu(Event& event)
+{
+    clearContextMenu();
+    handleContextMenuEvent(event);
+    m_client.showContextMenu();
 }
 
 #endif

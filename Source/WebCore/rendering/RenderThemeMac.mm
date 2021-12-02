@@ -75,23 +75,13 @@
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
+#import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
-
-#if ENABLE(SERVICE_CONTROLS)
-
-// FIXME: This should go into an SPI.h file in the spi directory.
-#if USE(APPLE_INTERNAL_SDK)
-#import <AppKit/AppKitDefines_Private.h>
-#else
-#define APPKIT_PRIVATE_CLASS
-#endif
-
-#endif // ENABLE(SERVICE_CONTROLS)
 
 // FIXME: This should go into an SPI.h file in the spi directory.
 @interface NSTextFieldCell ()
@@ -1091,6 +1081,14 @@ void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) c
         style.setMarginLeft(Length(-4, LengthType::Fixed));
 }
 
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const Element*) const
+{
+    style.setHeight(Length(imageControlsButtonSize().height(), LengthType::Fixed));
+    style.setWidth(Length(imageControlsButtonSize().width(), LengthType::Fixed));
+}
 #endif
 
 bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
@@ -2281,6 +2279,37 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
 
     return StringTruncator::centerTruncate(strToTruncate, width, font);
 }
+
+#if ENABLE(SERVICE_CONTROLS)
+NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
+{
+    if (!m_servicesRolloverButton) {
+        m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
+        [m_servicesRolloverButton setBezelStyle:NSBezelStyleRoundedDisclosure];
+        [m_servicesRolloverButton setButtonType:NSButtonTypePushOnPushOff];
+        [m_servicesRolloverButton setImagePosition:NSImageOnly];
+        [m_servicesRolloverButton setState:NO];
+    }
+    return m_servicesRolloverButton.get();
+}
+
+bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
+    LocalCurrentGraphicsContext localContext(paintInfo.context());
+    GraphicsContextStateSaver stateSaver(paintInfo.context());
+    paintInfo.context().translate(rect.location());
+    IntRect innerFrame(IntPoint(), rect.size());
+    [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
+    [cell setControlView:nil];
+    return false;
+}
+
+IntSize RenderThemeMac::imageControlsButtonSize() const
+{
+    return IntSize(servicesRolloverButtonCell().cellSize);
+}
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 const CGFloat attachmentIconSize = 48;
