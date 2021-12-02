@@ -201,6 +201,8 @@ private:
 
     bool childHasPercentHeightDescendants(const RenderBox&) const;
 
+    void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
+
     enum class GapType { BetweenLines, BetweenItems };
     LayoutUnit computeGap(GapType) const;
 

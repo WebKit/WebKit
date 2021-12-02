@@ -399,7 +399,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     // We have to reset this, because changes to our ancestors' style can affect
     // this value. Also, this needs to be before we call updateAfterLayout, as
     // that function may re-enter this one.
-    m_hasDefiniteHeight = SizeDefiniteness::Unknown;
+    resetHasDefiniteHeight();
 
     // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if we overflow or not.
     updateScrollInfoAfterLayout();
@@ -1101,7 +1101,7 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
         }
         allItems.append(constructFlexItem(*child, relayoutChildren));
         // constructFlexItem() might set the override containing block height so any value cached for definiteness might be incorrect.
-        m_hasDefiniteHeight = SizeDefiniteness::Unknown;
+        resetHasDefiniteHeight();
     }
     
     const LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
@@ -1450,6 +1450,8 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
 {
     auto childHadLayout = child.everHadLayout();
     child.clearOverridingContentSize();
+    if (is<RenderFlexibleBox>(child))
+        downcast<RenderFlexibleBox>(child).resetHasDefiniteHeight();
     
     LayoutUnit borderAndPadding = isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
     LayoutUnit childInnerFlexBaseSize = computeFlexBaseSizeForChild(child, borderAndPadding, relayoutChildren);
