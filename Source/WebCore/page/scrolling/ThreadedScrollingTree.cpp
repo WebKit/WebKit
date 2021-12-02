@@ -402,8 +402,9 @@ void ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout()
     if (m_delayedRenderingUpdateDetectionTimer)
         m_delayedRenderingUpdateDetectionTimer->stop();
 
-    auto startTime = MonotonicTime::now();
-    auto timeoutTime = startTime + maxAllowableRenderingUpdateDurationForSynchronization();
+    auto currentTime = MonotonicTime::now();
+    auto estimatedNextDisplayRefreshTime = std::max(m_lastDisplayDidRefreshTime + frameDuration(), currentTime);
+    auto timeoutTime = std::min(currentTime + maxAllowableRenderingUpdateDurationForSynchronization(), estimatedNextDisplayRefreshTime);
 
     bool becameIdle = m_stateCondition.waitUntil(m_treeLock, timeoutTime, [&] {
         assertIsHeld(m_treeLock);
@@ -462,7 +463,9 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
     Locker locker { m_treeLock };
     
-    serviceScrollAnimations(MonotonicTime::now());
+    auto now = MonotonicTime::now();
+    m_lastDisplayDidRefreshTime = now;
+    serviceScrollAnimations(now);
 
     if (m_state != SynchronizationState::Idle && canUpdateLayersOnScrollingThread())
         applyLayerPositionsInternal();

@@ -123,6 +123,8 @@ private:
 
     bool m_receivedBeganEventFromMainThread WTF_GUARDED_BY_LOCK(m_treeLock) { false };
     Condition m_waitingForBeganEventCondition;
+    
+    MonotonicTime m_lastDisplayDidRefreshTime;
 
     // Dynamically allocated because it has to use the ScrollingThread's runloop.
     std::unique_ptr<RunLoop::Timer<ThreadedScrollingTree>> m_delayedRenderingUpdateDetectionTimer WTF_GUARDED_BY_LOCK(m_treeLock);
