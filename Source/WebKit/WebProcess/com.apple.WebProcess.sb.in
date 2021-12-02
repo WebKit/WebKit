@@ -1870,6 +1870,10 @@
 )
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
+(disable-syscall-inference)
+#endif
+
 (define (syscall-unix-common)
     (syscall-number
         SYS___disable_threadsignal
@@ -1878,6 +1882,10 @@
         SYS_bsdthread_create
         SYS_bsdthread_ctl
         SYS_bsdthread_terminate
+        SYS_close
+        SYS_close_nocancel
+        SYS_csops
+        SYS_csops_audittoken
         SYS_csrctl
         SYS_exit
         SYS_fcntl
@@ -1885,6 +1893,7 @@
         SYS_fgetxattr
         SYS_fileport_makefd
         SYS_flock
+        SYS_fsetxattr ;; <rdar://problem/56332491>
         SYS_fsgetpath
         SYS_fstat64
         SYS_fstatat64
@@ -1904,6 +1913,7 @@
         SYS_gettimeofday
         SYS_getuid
         SYS_getxattr
+        SYS_ioctl
         SYS_issetugid
         SYS_kdebug_trace
         SYS_kdebug_trace64
@@ -1919,8 +1929,12 @@
         SYS_mprotect
         SYS_msync
         SYS_munmap
+        SYS_open
+        SYS_open_nocancel
+        SYS_openat
         SYS_pathconf
         SYS_pread
+        SYS_proc_info
         SYS_psynch_cvbroad
         SYS_psynch_cvclrprepost
         SYS_psynch_cvsignal
@@ -1933,10 +1947,13 @@
         SYS_rename
         SYS_stat64
         SYS_statfs64
+        SYS_sysctlbyname
         SYS_thread_selfid
         SYS_ulock_wait
         SYS_ulock_wake
-        SYS_workq_kernreturn))
+        SYS_workq_kernreturn
+        SYS_write_nocancel
+        SYS_writev))
 
 (define (syscall-unix-intel)
     (syscall-number
@@ -1968,18 +1985,13 @@
         SYS_change_fdguard_np
         SYS_chmod
         SYS_chmod_extended
-        SYS_close
-        SYS_close_nocancel
         SYS_connect
         SYS_connect_nocancel
         SYS_connectx
-        SYS_csops
-        SYS_csops_audittoken
         SYS_dup
         SYS_fchmod
         SYS_fgetattrlist ;; <rdar://problem/50931110>
         SYS_fileport_makeport
-        SYS_fsetxattr ;; <rdar://problem/56332491>
         SYS_fstat64_extended ;; <rdar://problem/61310019>
         SYS_fsync
         SYS_getegid
@@ -1991,7 +2003,6 @@
         SYS_guarded_open_np
         SYS_guarded_pwrite_np
         SYS_guarded_write_np
-        SYS_ioctl
         SYS_kdebug_typefilter
         SYS_kevent
         SYS_kqueue ;; <rdar://problem/49609201>
@@ -2003,13 +2014,9 @@
         SYS_munlock
         SYS_necp_client_action
         SYS_necp_open
-        SYS_open
         SYS_open_dprotected_np ;; <rdar://problem/74473824>
-        SYS_open_nocancel
-        SYS_openat
         SYS_openat_nocancel
         SYS_pipe
-        SYS_proc_info
         SYS_proc_rlimit_control
         SYS_process_policy
         SYS_psynch_rw_rdlock ;; <rdar://problem/49060359>
@@ -2037,16 +2044,13 @@
         SYS_socketpair
         SYS_stat64_extended ;; <rdar://problem/50473330>
         SYS_sysctl
-        SYS_sysctlbyname
         SYS_terminate_with_payload ;; <rdar://problem/50026580>
         SYS_thread_selfusage
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
         SYS_ulock_wait2 ;; <rdar://problem/58743778>
 #endif
         SYS_unlink
-        SYS_write
-        SYS_write_nocancel
-        SYS_writev))
+        SYS_write))
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))
