@@ -114,8 +114,7 @@ layer at (0,0) size 785x614
               text run at (20,0) width 0: "\x{202C}"
           RenderBlock {P} at (4,64) size 20x20
             RenderText {#text} at (0,0) size 20x19
-              text run at (0,0) width 20: "\x{202D}\x{5D2}\x{5D1}\x{5D0}"
-              text run at (20,0) width 0: "\x{202C}"
+              text run at (0,0) width 20: "\x{202D}\x{5D2}\x{5D1}\x{5D0}\x{202C}"
         RenderText {#text} at (140,86) size 4x19
           text run at (140,86) width 4: " "
         RenderBlock {DIV} at (147,64) size 87x68 [border: (1px solid #008000)]
@@ -271,8 +270,7 @@ layer at (0,0) size 785x614
               text run at (116,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
           RenderBlock {P} at (4,124) size 137x20
             RenderText {#text} at (0,0) size 137x19
-              text run at (0,0) width 56 RTL: "\x{202E}CBA \x{5D0}\x{5D1}\x{5D2}"
-              text run at (56,0) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5} "
+              text run at (0,0) width 79 RTL: "\x{5D3}\x{5D4}\x{5D5} \x{202E}CBA \x{5D0}\x{5D1}\x{5D2}"
               text run at (79,0) width 37: "\x{202C} DEF "
               text run at (116,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
           RenderBlock {P} at (4,144) size 137x20
@@ -448,8 +446,7 @@ layer at (0,0) size 785x614
                     text run at (0,0) width 5 RTL: "\x{5D6}"
           RenderBlock {P} at (4,24) size 168x20
             RenderText {#text} at (0,0) size 168x19
-              text run at (0,0) width 88 RTL: "\x{202E}ABC \x{5D3}\x{5D4}\x{5D5} DEF"
-              text run at (88,0) width 24 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+              text run at (0,0) width 112 RTL: "\x{5D0}\x{5D1}\x{5D2} \x{202E}ABC \x{5D3}\x{5D4}\x{5D5} DEF"
               text run at (112,0) width 35: "\x{202C} GHI "
               text run at (147,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (182,210) size 4x19

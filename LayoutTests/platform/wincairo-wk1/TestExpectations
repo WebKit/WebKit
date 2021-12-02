@@ -262,8 +262,6 @@ accessibility/win/select-element-role.html [ Failure ]
 accessibility/win/selection-and-focus.html [ Failure ]
 accessibility/win/text-role.html [ Failure ]
 
-accessibility/add-children-pseudo-element.html [ Failure ]
-
 webkit.org/b/181501 accessibility/table-header-calculation-for-header-rows.html [ Failure ]
 
 webkit.org/b/182132 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]

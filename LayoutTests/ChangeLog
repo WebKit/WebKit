@@ -1,3 +1,16 @@
+2021-12-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/wincairo/fast/dom/52776-expected.txt:
+        * platform/wincairo/fast/text/atsui-rtl-override-selection-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-neutral-run-expected.txt:
+
 2021-12-02  Tim Nguyen  <ntim@apple.com>
 
         Fix crash in GraphicsContextCG::endTransparencyLayer

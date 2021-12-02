@@ -2049,12 +2049,10 @@ storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 storage/indexeddb/value-cursor-cycle.html [ Failure Pass ]
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
-webgl/1.0.3/conformance/extensions/oes-element-index-uint.html [ Failure ]
 webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
-webgl/1.0.3/conformance/textures/default-texture.html [ Failure ]
 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
@@ -2068,7 +2066,6 @@ webgl/2.0.0/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky ti
 webgl/2.0.0/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.0/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.0/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
 webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
 webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
@@ -2079,7 +2076,6 @@ webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
 webgl/2.0.0/conformance2/query/occlusion-query.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
-webgl/2.0.0/conformance2/rendering/element-index-uint.html [ Failure ]
 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
@@ -2106,5 +2102,3 @@ fast/text/whitespace-with-zero-width-space-in-between.html [ ImageOnlyFailure ]
 webgl/gl-clear-preserve-drawing-buffer-bug.html [ ImageOnlyFailure ]
 
 fast/text/preserved-white-space-with-word-spacing.html [ ImageOnlyFailure ]
-
-editing/selection/modal-dialog-select-paragraph.html [ Failure ]
