@@ -343,7 +343,7 @@ InputTypeDateEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      "PLATFORM(APPLETV)": false
       default: true
     WebCore:
       default: false
@@ -358,7 +358,7 @@ InputTypeDateTimeLocalEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      "PLATFORM(APPLETV)": false
       default: true
     WebCore:
       default: false
@@ -373,7 +373,7 @@ InputTypeMonthEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
+      "!PLATFORM(MAC) && !PLATFORM(APPLETV)": true
       default: false
     WebCore:
       default: false
@@ -388,7 +388,7 @@ InputTypeTimeEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      "PLATFORM(APPLETV)": false
       default: true
     WebCore:
       default: false
@@ -402,7 +402,7 @@ InputTypeWeekEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
+      "!PLATFORM(MAC) && !PLATFORM(APPLETV)": true
       default: false
     WebCore:
       default: false

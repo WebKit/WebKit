@@ -1,3 +1,20 @@
+2021-12-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macCatalyst] Enable support for date/time inputs
+        https://bugs.webkit.org/show_bug.cgi?id=233710
+        rdar://80108114
+
+        Reviewed by Tim Horton.
+
+        Date/time inputs were unsupported due to the lack of support for custom
+        views inside UIContextMenuInteractions on macCatalyst.
+
+        However, after date/time pickers transitioned to use
+        _UIDatePickerOverlayPresentation in iOS 15, there is nothing preventing
+        them from functioning on macCatalyst.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         macOS Monterey build fix after r286420 (suggested by Brady).
