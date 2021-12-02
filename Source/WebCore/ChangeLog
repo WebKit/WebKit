@@ -1,5 +1,64 @@
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r285320. rdar://problem/85943167
+
+    Form action with a redirect should report correct blocked URI
+    https://bugs.webkit.org/show_bug.cgi?id=232660
+    <rdar://problem/84969024>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    We currently report the blocked URI as the target of a redirect, per
+    the spec it should actually be the initiating url.
+    
+    Test: http/tests/security/contentSecurityPolicy/form-action-redirect-with-correct-blocked-uri.html
+    
+    * loader/DocumentLoader.cpp:
+    (WebCore::DocumentLoader::willSendRequest):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::checkIfFormActionAllowedByCSP const):
+    * loader/FrameLoader.h:
+    * page/csp/ContentSecurityPolicy.cpp:
+    (WebCore::ContentSecurityPolicy::allowResourceFromSource const):
+    (WebCore::ContentSecurityPolicy::allowFormAction const):
+    * page/csp/ContentSecurityPolicy.h:
+    
+    LayoutTests:
+    
+    * http/tests/security/contentSecurityPolicy/form-action-redirect-with-correct-blocked-uri-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/form-action-redirect-with-correct-blocked-uri.html: Added.
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked-expected.txt:
+    Update console logging to report the correct URL.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285320 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-04  Kate Cheney  <katherine_cheney@apple.com>
+
+            Form action with a redirect should report correct blocked URI
+            https://bugs.webkit.org/show_bug.cgi?id=232660
+            <rdar://problem/84969024>
+
+            Reviewed by Brent Fulgham.
+
+            We currently report the blocked URI as the target of a redirect, per
+            the spec it should actually be the initiating url.
+
+            Test: http/tests/security/contentSecurityPolicy/form-action-redirect-with-correct-blocked-uri.html
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::willSendRequest):
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::checkIfFormActionAllowedByCSP const):
+            * loader/FrameLoader.h:
+            * page/csp/ContentSecurityPolicy.cpp:
+            (WebCore::ContentSecurityPolicy::allowResourceFromSource const):
+            (WebCore::ContentSecurityPolicy::allowFormAction const):
+            * page/csp/ContentSecurityPolicy.h:
+
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286309. rdar://problem/84665699
 
     Use scriptDisallowedScope in FrameSelection::updateAppearance
