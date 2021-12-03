@@ -43,9 +43,9 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
 } WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 typedef NS_ENUM(NSInteger, _WKApplicationManifestIconPurpose) {
-    _WKApplicationManifestIconPurposeAny,
-    _WKApplicationManifestIconPurposeMonochrome,
-    _WKApplicationManifestIconPurposeMaskable,
+    _WKApplicationManifestIconPurposeAny = (1 << 0),
+    _WKApplicationManifestIconPurposeMonochrome = (1 << 1),
+    _WKApplicationManifestIconPurposeMaskable = (1 << 2),
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))

@@ -1,3 +1,21 @@
+2021-12-02  Rachel Ginsberg  <rginsberg@apple.com>
+
+        Make enum values consisten in ApplicationManifest::Icon::Purpose
+        and _WKApplicationManifestIconPurpose
+        https://bugs.webkit.org/show_bug.cgi?id=233764
+        rdar://85976270
+
+        Reviewed by Brent Fulgham.
+
+        The ApplicationManifest tests already check for 1, 2, and 4 respectively.
+
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        Set the _WKApplicationManifestIconPurpose enum values to 
+        1, 2, 4 to match the enum values set in ApplicationManifest::Icon::Purpose.
+        Those values are used in ApplicationManifest because an
+        OptionSet is used.
+
+
 2021-12-02  Per Arne Vollan  <pvollan@apple.com>
 
         [WP][iOS] Add telemetry to determine which system calls are only used on process launch
