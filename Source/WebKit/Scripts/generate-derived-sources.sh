@@ -4,8 +4,8 @@ set -e
 
 ARGS=("$@")
 
-mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit"
-cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit"
+mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2"
+cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2"
 
 export WebKit2="${SRCROOT}"
 

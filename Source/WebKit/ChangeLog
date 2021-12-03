@@ -1,3 +1,15 @@
+2021-12-03  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r286487.
+
+        Broke multiple builds.
+
+        Reverted changeset:
+
+        "Rename DerivedSources/WebKit2 to DerivedSources/WebKit"
+        https://bugs.webkit.org/show_bug.cgi?id=233803
+        https://commits.webkit.org/r286487
+
 2021-12-03  Sihui Liu  <sihui_liu@apple.com>
 
         Fetch and remove file system data via WKWebsiteDataStore
