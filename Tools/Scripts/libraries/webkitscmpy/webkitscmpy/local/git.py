@@ -877,7 +877,7 @@ class Git(Scm):
             self.executable(), 'filter-branch', '-f',
             '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
                 date='{} -{}'.format(int(time.time()), self.gmtoffset())
-            ), '{}...{}'.format(target, head),
+            ), 'refs/heads/{}...{}'.format(target, head),
         ], cwd=self.root_path, env={'FILTER_BRANCH_SQUELCH_WARNING': '1'}, capture_output=True).returncode
 
     def fetch(self, branch, remote='origin'):
