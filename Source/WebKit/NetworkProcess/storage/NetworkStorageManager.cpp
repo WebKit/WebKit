@@ -28,6 +28,7 @@
 
 #include "FileSystemStorageHandleRegistry.h"
 #include "FileSystemStorageManager.h"
+#include "Logging.h"
 #include "NetworkStorageManagerMessages.h"
 #include "OriginStorageManager.h"
 #include "WebsiteDataType.h"
