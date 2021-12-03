@@ -1083,6 +1083,9 @@ webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ DumpJSConsoleLogInStdErr ]
 
+webkit.org/b/233796 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/refresh [ Failure ]
+webkit.org/b/233796 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/redirect-to-about.window.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1354,6 +1357,8 @@ webkit.org/b/227987 http/tests/media/media-stream/get-display-media-prompt.html 
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Failure ]
 
 webkit.org/b/233740 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Failure ]
+webkit.org/b/233740 webrtc/vp9-svc.html [ Timeout ]
+webkit.org/b/233740 webrtc/vp9.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

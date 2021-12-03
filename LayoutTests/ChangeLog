@@ -1,3 +1,14 @@
+2021-12-02  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=233799
+
+        Add a platform specific baseline for imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https.html
+        as the tests pass on GTK and WPE.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https-expected.txt: Added.
+
 2021-12-02  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: In AccessibilityRenderObject::documentLinks, use existing image-map document links instead of always creating new ones
