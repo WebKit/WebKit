@@ -1,3 +1,34 @@
+2021-12-03  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] Bitfit allocator has a wrong assertion when a page's max_free is enough for the size of an allocation, not enough for that allocation's size class, and the object of that size is not aligned to the currently requested alignment
+        https://bugs.webkit.org/show_bug.cgi?id=233831
+
+        Reviewed by Yusuke Suzuki.
+
+        What a combination of conditions:
+        
+        - We just failed bitfit allocation in a page, which gives us some max_free (aka largest_available), and the allocation had nontrivial alignment.
+        - The max_free is smaller than the size class.
+        - The max_free is larger than the requested size.
+        - The max_free object is not aligned to the requested alignment.
+        
+        The code handles this fine, but has a wrong assertion about it.
+
+        This change fixes the assertion and adds a test that deterministically reproduced the issue.
+
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/pas_bitfit_allocator.c:
+        (pas_bitfit_allocator_finish_failing):
+        * libpas/src/libpas/pas_bitfit_allocator_inlines.h:
+        (pas_bitfit_allocator_try_allocate):
+        * libpas/src/test/BitfitTests.cpp: Added.
+        (std::getBitfitSizeClasses):
+        (std::assertSizeClasses):
+        (std::testAllocateAlignedSmallerThanSizeClassAndSmallerThanLargestAvailable):
+        (addBitfitTests):
+        * libpas/src/test/TestHarness.cpp:
+        (main):
+
 2021-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] Update to 96f9f4c28dc119695311c7c6bd81ed1f3f4e260c (allow more specialization of partial versus exclusive allocation)

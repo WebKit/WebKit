@@ -205,6 +205,8 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
                                                      size_t largest_available,
                                                      pas_bitfit_page_config* config)
 {
+    static const bool verbose = false;
+    
     pas_bitfit_directory* directory;
     pas_bitfit_size_class* size_class;
     pas_bitfit_view* new_view;
@@ -221,6 +223,11 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
     PAS_ASSERT(pas_compact_bitfit_directory_ptr_load_non_null(&view->directory) == directory);
 
     view_index = view->index;
+
+    if (verbose) {
+        pas_log("Finishing failing in view %p, size = %zu, alignment = %zu, largest_available = %zu\n",
+                view, size, alignment, largest_available);
+    }
 
     /* If we're still on the view that the allocator was on and we found that this view no longer
        has enough max_free for our size class, then tell everyone about this and bail.
@@ -242,8 +249,14 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
         pas_bitfit_directory_set_processed_max_free(
             directory, index, largest_available >> config->base.min_align_shift,
             "processing on finish_failing");
+
+        /* If we're doing an aligned allocation, then we might now skip over this view even though the
+           size we were allocating would have fit. The reason why we're doing it is that the largest size
+           we could have fit is smaller than the size class, and although it's big enough for the size being
+           requested, it's not aligned properly. */
+        PAS_TESTING_ASSERT(largest_available < size
+                           || alignment > pas_page_base_config_min_align(config->base));
         
-        PAS_TESTING_ASSERT(largest_available < size);
         PAS_TESTING_ASSERT(largest_available < size_class->size);
         
         current_size_class = size_class;

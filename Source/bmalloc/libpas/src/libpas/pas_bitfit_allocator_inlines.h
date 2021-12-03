@@ -88,6 +88,9 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
             allocator->view = view;
         }
 
+        if (verbose)
+            pas_log("Allocating in view %p\n", view);
+
         bytes_committed = 0;
         bitfit_result = pas_bitfit_allocation_result_create_empty();
 
@@ -178,6 +181,8 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
 
         if (verbose)
             pas_log("bitfit allocation succeeded with %p\n", (void*)bitfit_result.u.result);
+
+        PAS_TESTING_ASSERT(pas_is_aligned(bitfit_result.u.result, alignment));
         
         return pas_fast_path_allocation_result_create_success(bitfit_result.u.result);
     }

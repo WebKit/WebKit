@@ -335,6 +335,7 @@ int resultPipe[2];
 } // anonymous namespace
 
 void addBitfieldVectorTests();
+void addBitfitTests();
 void addBitvectorTests();
 void addCartesianTreeTests();
 void addCoalignTests();
@@ -697,6 +698,7 @@ int main(int argc, char** argv)
 
     // Run the rest of the tests in alphabetical order.
     ADD_SUITE(BitfieldVector);
+    ADD_SUITE(Bitfit);
     ADD_SUITE(Bitvector);
     ADD_SUITE(CartesianTree);
     ADD_SUITE(Coalign);

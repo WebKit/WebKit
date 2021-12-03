@@ -568,6 +568,7 @@
 		2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */; };
 		2C85DC4127128F0F00367905 /* pas_try_allocate_intrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */; };
 		2C91E5502718DA9A00D67FF9 /* pas_size_lookup_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C91E54F2718DA9A00D67FF9 /* pas_size_lookup_mode.h */; };
+		2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1252,6 +1253,7 @@
 		2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExpendableMemoryTests.cpp; sourceTree = "<group>"; };
 		2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_try_allocate_intrinsic.h; sourceTree = "<group>"; };
 		2C91E54F2718DA9A00D67FF9 /* pas_size_lookup_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_size_lookup_mode.h; sourceTree = "<group>"; };
+		2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitfitTests.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1344,6 +1346,7 @@
 			isa = PBXGroup;
 			children = (
 				0FDEA45D228B651B0085E340 /* BitfieldVectorTests.cpp */,
+				2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */,
 				0F53181022C954ED003F7B6A /* BitvectorTests.cpp */,
 				0F31A66723E8B336002C0CA3 /* CartesianTreeTests.cpp */,
 				0FC682362129D4EB003C6A13 /* CoalignTests.cpp */,
@@ -2584,6 +2587,7 @@
 				0FF248FD230CC4CB0077202E /* IsoHeapPageSharingTests.cpp in Sources */,
 				0FD48B6723B589910026C46D /* IsoHeapPartialAndBaselineTests.cpp in Sources */,
 				0F5B6094235E919900CAE629 /* IsoHeapReservedMemoryTests.cpp in Sources */,
+				2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */,
 				0F5193E7266AE5D400483A2C /* JITHeapTests.cpp in Sources */,
 				0FC64191213745FA0040CE5E /* LargeFreeHeapTests.cpp in Sources */,
 				0FEB6668231C87BC009C001B /* LargeSharingPoolDump.cpp in Sources */,
