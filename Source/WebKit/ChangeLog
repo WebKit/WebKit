@@ -1,5 +1,19 @@
 2021-12-02  Per Arne Vollan  <pvollan@apple.com>
 
+        [WP][iOS] Add telemetry to determine which system calls are only used on process launch
+        https://bugs.webkit.org/show_bug.cgi?id=233649
+        <rdar://problem/85875930>
+
+        Reviewed by Brent Fulgham.
+
+        Add telemetry to determine which system calls are only used on WebContent process launch on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+
+2021-12-02  Per Arne Vollan  <pvollan@apple.com>
+
         [WP] Strengthen sandbox when AppCache is disabled
         https://bugs.webkit.org/show_bug.cgi?id=233746
         <rdar://problem/85953893>
