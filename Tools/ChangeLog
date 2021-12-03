@@ -1,3 +1,13 @@
+2021-12-02  Jean-Yves Avenard  <jya@apple.com>
+
+        Compilation error on Tools/TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm
+        https://bugs.webkit.org/show_bug.cgi?id=233797
+        rdar://problem/86000569
+
+        Unreviewed API test build fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+
 2021-11-29  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Make Python 3.10 compatible

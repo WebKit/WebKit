@@ -35,6 +35,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <array>
 #import <mach/mach_init.h>
 #import <mach/task.h>
 
