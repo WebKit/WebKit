@@ -73,7 +73,7 @@ UNEXPORTED_SYMBOLS_FILE = Configurations/WebCore.unexp;
 
 WK_ANGLE_LDFLAGS = -weak-lANGLE-shared;
 
-WK_WEBGPU_LDFLAGS = -weak_framework WebGPU;
+WK_WEBGPU_LDFLAGS = ; // To be filled-in after Apple update its internal build system.
 
 WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
