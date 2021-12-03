@@ -1,3 +1,13 @@
+2021-12-03  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Fix erase range to prevent accidental deletion in files with changing durations
+        https://bugs.webkit.org/show_bug.cgi?id=233528
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/media-source/media-source-append-tiny-durations-expected.txt: Added.
+        * media/media-source/media-source-append-tiny-durations.html: Added.
+
 2021-12-02  Chris Dumez  <cdumez@apple.com>
 
         html/semantics/forms/constraints/form-validation-validity-valid.html WPT test is failing
