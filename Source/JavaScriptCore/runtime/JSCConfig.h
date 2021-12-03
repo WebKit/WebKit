@@ -40,7 +40,11 @@ class VM;
 using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
 #endif
 
+#if PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
+constexpr uintptr_t structureHeapAddressSize = 512 * MB;
+#else
 constexpr uintptr_t structureHeapAddressSize = 1 * GB;
+#endif
 
 struct Config {
     static Config& singleton();

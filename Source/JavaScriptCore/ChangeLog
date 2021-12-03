@@ -1,5 +1,18 @@
 2021-12-02  Saam Barati  <sbarati@apple.com>
 
+        Lower structureHeapAddressSize on more memory limited ARM64 devices
+        https://bugs.webkit.org/show_bug.cgi?id=233786
+        <rdar://85940431>
+
+        Reviewed by Yusuke Suzuki.
+
+        Some processes using JSC are failing the mmap for the 1GB region.
+        Let's lower the region size to 512MB on lower memory iOS devices.
+
+        * runtime/JSCConfig.h:
+
+2021-12-02  Saam Barati  <sbarati@apple.com>
+
         Fix OOM crash in JSValue::toWTFStringForConsole
         https://bugs.webkit.org/show_bug.cgi?id=233775
         <rdar://85259423>
