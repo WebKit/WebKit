@@ -1,3 +1,15 @@
+2021-12-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] shell's $.globalObjectFor is not safe for non object cells
+        https://bugs.webkit.org/show_bug.cgi?id=233794
+
+        Reviewed by Saam Barati.
+
+        Only Object cells can have Structures having JSGlobalObject.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+
 2021-12-02  Saam Barati  <sbarati@apple.com>
 
         Lower structureHeapAddressSize on more memory limited ARM64 devices

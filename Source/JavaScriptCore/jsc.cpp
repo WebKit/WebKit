@@ -2077,8 +2077,8 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
     JSValue arg = callFrame->argument(0);
-    if (arg.isCell())
-        return JSValue::encode(arg.asCell()->structure(vm)->globalObject()->globalThis());
+    if (arg.isObject())
+        return JSValue::encode(asObject(arg)->globalObject(vm)->globalThis());
 
     return JSValue::encode(jsUndefined());
 }
