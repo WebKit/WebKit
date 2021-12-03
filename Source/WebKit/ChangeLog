@@ -1,3 +1,66 @@
+2021-12-02  Tim Horton  <timothy_horton@apple.com>
+
+        MomentumEventDispatcher curve sometimes doesn't match the system curve
+        https://bugs.webkit.org/show_bug.cgi?id=233801
+        <rdar://problem/85870287>
+
+        Reviewed by Simon Fraser.
+
+        Three small changes to get us closer to the system curve:
+
+        1) Fetch the momentum event dispatch interval from the system, and use
+        it to scale the momentum start event's delta (which we use as our
+        initial velocity) into the "ideal" curve's frame rate (which is always
+        60fps regardless).
+
+        2) Back-date the animation start time to the fingers-down phase end event,
+        so that the momentum start phase has a delta. This seems to match what
+        the system does.
+
+        3) Switch to MonotonicTime for the animation time, since it doesn't need
+        to be in the same timebase as events (which are oddly in WallTime), and
+        certainly should be monotonic.
+
+        * Shared/ScrollingAccelerationCurve.cpp:
+        (WebKit::ScrollingAccelerationCurve::ScrollingAccelerationCurve):
+        (WebKit::ScrollingAccelerationCurve::interpolate):
+        (WebKit::ScrollingAccelerationCurve::encode const):
+        (WebKit::ScrollingAccelerationCurve::decode):
+        (WebKit::operator<<):
+        * Shared/ScrollingAccelerationCurve.h:
+        (WebKit::ScrollingAccelerationCurve::frameRate):
+        (WebKit::ScrollingAccelerationCurve::operator== const):
+        * Shared/mac/ScrollingAccelerationCurveMac.mm:
+        (WebKit::fromIOHIDCurve):
+        (WebKit::fromIOHIDCurveArrayWithAcceleration):
+        (WebKit::fromIOHIDDevice):
+        Fetch and propagate the dispatch frame rate. This isn't *really* a
+        ScrollingAccelerationCurve property, but neither is `resolution`;
+        this is just currently the only place we look up HID properties
+        and push them to the Web Content process; some re-architecture is
+        warranted here in the future.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+        (WebKit::MomentumEventDispatcher::handleWheelEvent):
+        Keep track of the last fingers-down phase ended event timestamp.
+
+        (WebKit::MomentumEventDispatcher::didStartMomentumPhase):
+        Backdate the start time so that the first event has the appropriate delta.
+        Divide out the dispatch frame rate so that the initial velocity is
+        as if the curve were running at 60fps (since we *will* run it at 60fps and interpolate).
+
+        (WebKit::MomentumEventDispatcher::didEndMomentumPhase):
+        (WebKit::MomentumEventDispatcher::consumeDeltaForTime):
+        (WebKit::MomentumEventDispatcher::displayWasRefreshed):
+        Factor the consume-a-delta-from-the-ideal-curve code out from displayWasRefreshed
+        so we can use it in the start phase too.
+
+        (WebKit::MomentumEventDispatcher::offsetAtTime):
+        (WebKit::MomentumEventDispatcher::computeNextDelta):
+        Rename idealCurveFrameRate->idealCurveFrameInterval for accuracy.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.h:
+
 2021-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         A Safari tab can rarely get stuck in a state where rendering updates stop happening
