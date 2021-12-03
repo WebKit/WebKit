@@ -78,6 +78,7 @@ public:
     std::optional<LayoutUnit> horizontalPadding() const;
 
     LayoutUnit borderAndPaddingStart() const { return borderLeft() + paddingLeft().value_or(0); }
+    LayoutUnit borderAndPaddingEnd() const { return borderRight() + paddingRight().value_or(0); }
 
     LayoutUnit contentBoxTop() const { return paddingBoxTop() + paddingTop().value_or(0); }
     LayoutUnit contentBoxLeft() const { return paddingBoxLeft() + paddingLeft().value_or(0); }

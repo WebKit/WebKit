@@ -109,6 +109,7 @@ struct Box {
     void moveHorizontally(Layout::InlineLayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
     void adjustInkOverflow(const Layout::InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
     void truncate(Layout::InlineLayoutUnit truncatedwidth = 0.f);
+    void setLogicalRight(Layout::InlineLayoutUnit right) { m_logicalRect.setRight(right); }
 
     std::optional<Text>& text() { return m_text; }
     const std::optional<Text>& text() const { return m_text; }

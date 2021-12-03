@@ -34,6 +34,9 @@
 #include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/Range.h>
+
+using WTF::Range;
 
 namespace WebCore {
 namespace Layout {
@@ -357,6 +360,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 {
     ASSERT(lineContent.visualOrderList.size() == lineContent.runs.size());
 
+    Vector<Range<size_t>> inlineBoxRangeList;
     auto needsNonRootInlineBoxDisplayBox = false;
     auto createDisplayBoxesInVisualOrderForContentRuns = [&] {
         auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
@@ -457,6 +461,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
                     for (auto* inlineBox : makeReversedRange(inlineBoxFragmentsToClose)) {
                         ASSERT(inlineBox->isInlineBox());
+                        ASSERT(inlineBoxDisplayBoxMap.contains(inlineBox));
+                        inlineBoxRangeList.append({ inlineBoxDisplayBoxMap.get(inlineBox), index });
                         parentBoxStack.remove(inlineBox);
                     }
 
@@ -498,11 +504,18 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 inlineBoxNeedingDisplayBoxList.append(ancestor);
             }
         }
+        // "Close" the remaining inline boxes on the stack (excluding the root).
+        while (parentBoxStack.size() > 1) {
+            auto* parentInlineBox = parentBoxStack.takeLast();
+            ASSERT(inlineBoxDisplayBoxMap.contains(parentInlineBox));
+            inlineBoxRangeList.append({ inlineBoxDisplayBoxMap.get(parentInlineBox), boxes.size() });
+        }
     };
     if (needsNonRootInlineBoxDisplayBox)
         createDisplayBoxesInVisualOrderForInlineBoxes();
 
     auto adjustVisualGeometryWithInlineBoxes = [&] {
+        size_t currentInlineBox = 0;
         auto accumulatedOffset = InlineLayoutUnit { };
 
         ASSERT(boxes[0].isRootInlineBox());
@@ -510,8 +523,22 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             auto& displayBox = boxes[index];
             displayBox.moveHorizontally(accumulatedOffset);
 
+            while (currentInlineBox < inlineBoxRangeList.size() && index == inlineBoxRangeList[currentInlineBox].end() - 1) {
+                // We are at the end of the inline box content.
+                // Let's compute the inline box width and offset the rest of the content with padding/border/margin end.
+                auto inlineBoxRange = inlineBoxRangeList[currentInlineBox++];
+                auto& inlineBoxDisplayBox = boxes[inlineBoxRange.begin()];
+                ASSERT(inlineBoxDisplayBox.isNonRootInlineBox());
+
+                auto& boxGeometry = formattingState().boxGeometry(inlineBoxDisplayBox.layoutBox());
+                auto contentRight = displayBox.logicalRight();
+                if (inlineBoxDisplayBox.isLastBox()) {
+                    accumulatedOffset += boxGeometry.borderAndPaddingEnd() + boxGeometry.marginEnd();
+                    inlineBoxDisplayBox.setLogicalRight(contentRight + boxGeometry.borderAndPaddingEnd());
+                } else
+                    inlineBoxDisplayBox.setLogicalRight(contentRight);
+            }
             if (displayBox.isNonRootInlineBox() && displayBox.isFirstBox()) {
-                // FIXME: Add support for the 'end' side of the inline box.
                 auto& layoutBox = displayBox.layoutBox();
                 auto& boxGeometry = formattingState().boxGeometry(layoutBox);
 
