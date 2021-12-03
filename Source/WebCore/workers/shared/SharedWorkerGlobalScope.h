@@ -32,10 +32,12 @@ namespace WebCore {
 class SharedWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(SharedWorkerGlobalScope);
 public:
-    bool isSharedWorkerGlobalScope() const final { return true; }
     const String& name() const;
     void close();
+
 private:
+    Type type() const final { return Type::SharedWorker; }
+
     EventTargetInterface eventTargetInterface() const final;
     FetchOptions::Destination destination() const final;
 };
@@ -43,6 +45,6 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SharedWorkerGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).isSharedWorkerGlobalScope(); }
-    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.isSharedWorkerGlobalScope(); }
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
+    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
 SPECIALIZE_TYPE_TRAITS_END()

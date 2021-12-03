@@ -50,8 +50,6 @@ public:
 
     ~ServiceWorkerGlobalScope();
 
-    bool isServiceWorkerGlobalScope() const final { return true; }
-
     ServiceWorkerClients& clients() { return m_clients.get(); }
     ServiceWorkerRegistration& registration() { return m_registration.get(); }
     ServiceWorker& serviceWorker() { return m_serviceWorker.get(); }
@@ -84,6 +82,7 @@ private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
     void notifyServiceWorkerPageOfCreationIfNecessary();
 
+    Type type() const final { return Type::ServiceWorker; }
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
     ServiceWorkerContextData m_contextData;
@@ -100,8 +99,8 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ServiceWorkerGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).isServiceWorkerGlobalScope(); }
-    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.isServiceWorkerGlobalScope(); }
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::ServiceWorker; }
+    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::ServiceWorker; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SERVICE_WORKER)

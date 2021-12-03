@@ -76,9 +76,8 @@ class WorkerGlobalScope : public Supplementable<WorkerGlobalScope>, public Base6
 public:
     virtual ~WorkerGlobalScope();
 
-    virtual bool isDedicatedWorkerGlobalScope() const { return false; }
-    virtual bool isSharedWorkerGlobalScope() const { return false; }
-    virtual bool isServiceWorkerGlobalScope() const { return false; }
+    enum class Type : uint8_t { DedicatedWorker, ServiceWorker, SharedWorker };
+    virtual Type type() const = 0;
 
     const URL& url() const final { return m_url; }
     String origin() const;
