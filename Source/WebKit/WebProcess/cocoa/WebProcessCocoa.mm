@@ -224,6 +224,8 @@ static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
+
     setQOS(parameters.latencyQOS, parameters.throughputQOS);
     
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -266,12 +268,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
             ASSERT_UNUSED(ok, ok);
         }
     }
-
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WTF::logChannels().initializeLogChannelsIfNecessary(parameters.wtfLoggingChannels);
-    WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
-    WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
-#endif
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 

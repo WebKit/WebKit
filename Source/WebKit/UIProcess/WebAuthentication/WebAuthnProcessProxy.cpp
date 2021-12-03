@@ -63,9 +63,8 @@ WebAuthnProcessProxy& WebAuthnProcessProxy::singleton()
 
     auto createAndInitializeNewProcess = [] {
         auto webAuthnProcess = adoptRef(*new WebAuthnProcessProxy);
-
         WebAuthnProcessCreationParameters parameters;
-
+        parameters.auxiliaryProcessParameters = webAuthnProcess->auxiliaryProcessParameters();
         // Initialize the WebAuthn process.
         webAuthnProcess->send(Messages::WebAuthnProcess::InitializeWebAuthnProcess(parameters), 0);
         webAuthnProcess->updateProcessAssertion();

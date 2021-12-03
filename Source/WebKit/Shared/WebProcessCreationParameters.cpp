@@ -47,6 +47,7 @@ WebProcessCreationParameters::~WebProcessCreationParameters()
 
 void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << auxiliaryProcessParameters;
     encoder << injectedBundlePath;
     encoder << injectedBundlePathExtensionHandle;
     encoder << additionalSandboxExtensionHandles;
@@ -59,9 +60,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     encoder << enableRemoteWebInspectorExtensionHandle;
 #endif
-    encoder << wtfLoggingChannels;
-    encoder << webCoreLoggingChannels;
-    encoder << webKitLoggingChannels;
 #if ENABLE(MEDIA_STREAM)
     encoder << audioCaptureExtensionHandle;
 #endif
@@ -227,6 +225,8 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
 {
+    if (!decoder.decode(parameters.auxiliaryProcessParameters))
+        return false;
     if (!decoder.decode(parameters.injectedBundlePath))
         return false;
     
@@ -272,16 +272,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.enableRemoteWebInspectorExtensionHandle = WTFMove(*enableRemoteWebInspectorExtensionHandle);
 #endif
-
-    if (!decoder.decode(parameters.wtfLoggingChannels))
-        return false;
-    if (!decoder.decode(parameters.webCoreLoggingChannels))
-        return false;
-    if (!decoder.decode(parameters.webKitLoggingChannels))
-        return false;
-
 #if ENABLE(MEDIA_STREAM)
-
     std::optional<SandboxExtension::Handle> audioCaptureExtensionHandle;
     decoder >> audioCaptureExtensionHandle;
     if (!audioCaptureExtensionHandle)

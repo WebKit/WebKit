@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
-
-#include "AuxiliaryProcessCreationParameters.h"
+#include <wtf/text/WTFString.h>
 
 namespace IPC {
 class Decoder;
@@ -36,14 +34,16 @@ class Encoder;
 
 namespace WebKit {
 
-struct WebAuthnProcessCreationParameters {
-    WebAuthnProcessCreationParameters();
-    AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
+// Parameters that are sent to the process object as the first message after process has started.
+struct AuxiliaryProcessCreationParameters {
+    AuxiliaryProcessCreationParameters();
+
+    String wtfLoggingChannels;
+    String webCoreLoggingChannels;
+    String webKitLoggingChannels;
 
     void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebAuthnProcessCreationParameters&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, AuxiliaryProcessCreationParameters&);
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(WEB_AUTHN)

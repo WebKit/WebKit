@@ -27,9 +27,12 @@
 #include "AuxiliaryProcessProxy.h"
 
 #include "AuxiliaryProcessMessages.h"
+#include "LogInitialization.h"
 #include "Logging.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/LogInitialization.h>
+#include <wtf/LogInitialization.h>
 #include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)
@@ -399,6 +402,17 @@ void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& r
                 responsivenessHandler();
         });
     });
+}
+
+AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParameters()
+{
+    AuxiliaryProcessCreationParameters parameters;
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    parameters.wtfLoggingChannels = WTF::logLevelString();
+    parameters.webCoreLoggingChannels = WebCore::logLevelString();
+    parameters.webKitLoggingChannels = WebKit::logLevelString();
+#endif
+    return parameters;
 }
 
 } // namespace WebKit

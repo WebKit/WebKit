@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(WEB_AUTHN)
-
+#include "config.h"
 #include "AuxiliaryProcessCreationParameters.h"
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
+#include "ArgumentCoders.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
-struct WebAuthnProcessCreationParameters {
-    WebAuthnProcessCreationParameters();
-    AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
+AuxiliaryProcessCreationParameters::AuxiliaryProcessCreationParameters() = default;
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebAuthnProcessCreationParameters&);
-};
+void AuxiliaryProcessCreationParameters::encode(IPC::Encoder& encoder) const
+{
+    encoder << wtfLoggingChannels;
+    encoder << webCoreLoggingChannels;
+    encoder << webKitLoggingChannels;
+}
 
-} // namespace WebKit
+bool AuxiliaryProcessCreationParameters::decode(IPC::Decoder& decoder, AuxiliaryProcessCreationParameters& result)
+{
+    if (!decoder.decode(result.wtfLoggingChannels))
+        return false;
+    if (!decoder.decode(result.webCoreLoggingChannels))
+        return false;
+    if (!decoder.decode(result.webKitLoggingChannels))
+        return false;
+    return true;
+}
 
-#endif // ENABLE(WEB_AUTHN)
+}

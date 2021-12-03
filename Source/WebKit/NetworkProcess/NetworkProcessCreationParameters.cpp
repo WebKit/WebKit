@@ -43,6 +43,7 @@ NetworkProcessCreationParameters& NetworkProcessCreationParameters::operator=(Ne
 
 void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << auxiliaryProcessParameters;
     encoder << cacheModel;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     encoder << uiProcessCookieStorageIdentifier;
@@ -77,6 +78,9 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
 {
+    if (!decoder.decode(result.auxiliaryProcessParameters))
+        return false;
+
     if (!decoder.decode(result.cacheModel))
         return false;
 

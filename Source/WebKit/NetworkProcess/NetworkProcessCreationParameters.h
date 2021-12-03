@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AuxiliaryProcessCreationParameters.h"
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include <WebCore/Cookie.h>
@@ -54,6 +55,8 @@ struct NetworkProcessCreationParameters {
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
+
+    AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 
     CacheModel cacheModel { CacheModel::DocumentViewer };
 

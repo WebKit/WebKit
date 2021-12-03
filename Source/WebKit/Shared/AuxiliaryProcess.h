@@ -46,6 +46,7 @@ namespace WebKit {
 
 class SandboxInitializationParameters;
 struct AuxiliaryProcessInitializationParameters;
+struct AuxiliaryProcessCreationParameters;
 
 class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
@@ -143,6 +144,7 @@ protected:
     virtual void handlePreferenceChange(const String& domain, const String& key, id value);
     virtual void dispatchSimulatedNotificationsForPreferenceChange(const String& key) { }
 #endif
+    void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
 
 private:
     virtual bool shouldOverrideQuarantine() { return true; }

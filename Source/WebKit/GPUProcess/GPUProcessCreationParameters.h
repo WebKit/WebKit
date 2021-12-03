@@ -27,8 +27,10 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "AuxiliaryProcessCreationParameters.h"
 #include "SandboxExtension.h"
 #include <wtf/ProcessID.h>
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -39,6 +41,7 @@ namespace WebKit {
 struct GPUProcessCreationParameters {
     GPUProcessCreationParameters();
 
+    AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices { false };
 #if PLATFORM(MAC)
@@ -56,10 +59,6 @@ struct GPUProcessCreationParameters {
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
 #endif
-
-    String wtfLoggingChannels;
-    String webCoreLoggingChannels;
-    String webKitLoggingChannels;
 
     String applicationVisibleName;
 

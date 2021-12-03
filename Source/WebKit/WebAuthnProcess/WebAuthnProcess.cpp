@@ -92,6 +92,7 @@ void WebAuthnProcess::lowMemoryHandler(Critical critical)
 
 void WebAuthnProcess::initializeWebAuthnProcess(WebAuthnProcessCreationParameters&& parameters)
 {
+    applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
 }

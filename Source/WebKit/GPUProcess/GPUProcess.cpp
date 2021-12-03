@@ -211,6 +211,7 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 
 void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 {
+    applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
@@ -245,12 +246,6 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
     auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
     CGImageSourceSetAllowableTypes(emptyArray.get());
-#endif
-
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WTF::logChannels().initializeLogChannelsIfNecessary(parameters.wtfLoggingChannels);
-    WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
-    WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
 #endif
 
     m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);

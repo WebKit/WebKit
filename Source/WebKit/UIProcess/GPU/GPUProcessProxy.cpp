@@ -138,6 +138,8 @@ GPUProcessProxy::GPUProcessProxy()
     connect();
 
     GPUProcessCreationParameters parameters;
+    parameters.auxiliaryProcessParameters = auxiliaryProcessParameters();
+
 #if ENABLE(MEDIA_STREAM)
     parameters.useMockCaptureDevices = m_useMockCaptureDevices;
 #if PLATFORM(MAC)
@@ -655,11 +657,6 @@ void GPUProcessProxy::didBecomeUnresponsive()
 #if !PLATFORM(COCOA)
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    parameters.wtfLoggingChannels = WTF::logLevelString();
-    parameters.webCoreLoggingChannels = WebCore::logLevelString();
-    parameters.webKitLoggingChannels = WebKit::logLevelString();
-#endif
 }
 #endif
 

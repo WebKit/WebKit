@@ -37,6 +37,7 @@
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "AuxiliaryProcessMessages.h"
+#include "AuxiliaryProcessProxy.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "GPUProcessConnectionInfo.h"
@@ -776,6 +777,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     });
 
     WebProcessCreationParameters parameters;
+    parameters.auxiliaryProcessParameters = AuxiliaryProcessProxy::auxiliaryProcessParameters();
 
     parameters.injectedBundlePath = m_resolvedPaths.injectedBundlePath;
     if (!parameters.injectedBundlePath.isEmpty()) {

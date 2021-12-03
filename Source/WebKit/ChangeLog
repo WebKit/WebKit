@@ -1,3 +1,77 @@
+2021-12-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Network process does not seem to initialize logging
+        https://bugs.webkit.org/show_bug.cgi?id=233360
+        <rdar://problem/85765854>
+
+        Reviewed by Fujii Hironori.
+
+        Move GPUProcess and WebProcess process creation arguments
+        related to logging strings to new AuxiliaryProcessCreationParameters.
+        Use this in all auxiliary processes GPUProcess, WebProcess,
+        AuthnProcess and NetworkProcess.
+
+        Use the canonical WTF::logLevelString(), WebCore::logLevelString(),
+        WebKit::logLevelString() to initialize Cocoa WebKit2 logging settings
+        for process creation arguments.
+
+        Fixes bugs where
+         Tools/Scripts/run-minibrowser --debug -WebKit2Logging IPCMessages
+        would not print IPCMessages logging for NetworkProcess.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::applyProcessCreationParameters):
+        * Shared/AuxiliaryProcess.h:
+        * Shared/AuxiliaryProcessCreationParameters.cpp: Copied from Source/WebKit/WebAuthnProcess/WebAuthnProcessCreationParameters.cpp.
+        (WebKit::AuxiliaryProcessCreationParameters::encode const):
+        (WebKit::AuxiliaryProcessCreationParameters::decode):
+        * Shared/AuxiliaryProcessCreationParameters.h: Copied from Source/WebKit/WebAuthnProcess/WebAuthnProcessCreationParameters.h.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Sources.txt:
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::auxiliaryProcessParameters):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/Cocoa/GPUProcessProxyCocoa.mm:
+        (WebKit::GPUProcessProxy::platformInitializeGPUProcessParameters):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::GPUProcessProxy::platformInitializeGPUProcessParameters):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+        (WebKit::WebAuthnProcessProxy::singleton):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::initializeWebAuthnProcess):
+        * WebAuthnProcess/WebAuthnProcessCreationParameters.cpp:
+        (WebKit::WebAuthnProcessCreationParameters::encode const):
+        (WebKit::WebAuthnProcessCreationParameters::decode):
+        * WebAuthnProcess/WebAuthnProcessCreationParameters.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/playstation/WebProcessPlayStation.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-12-02  Tim Horton  <timothy_horton@apple.com>
 
         MomentumEventDispatcher curve sometimes doesn't match the system curve

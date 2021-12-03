@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AuxiliaryProcessCreationParameters.h"
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
@@ -47,6 +48,8 @@ protected:
 
 public:
     virtual ~AuxiliaryProcessProxy();
+
+    static AuxiliaryProcessCreationParameters auxiliaryProcessParameters();
 
     void connect();
     virtual void terminate();

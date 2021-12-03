@@ -208,6 +208,7 @@ Platform/IPC/StringReference.cpp @no-unify
 Shared/AccessibilityPreferences.cpp
 Shared/ActivityAssertion.cpp @no-unify
 Shared/AuxiliaryProcess.cpp @no-unify
+Shared/AuxiliaryProcessCreationParameters.cpp @no-unify
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp @no-unify
 Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
