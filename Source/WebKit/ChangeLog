@@ -1,3 +1,26 @@
+2021-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ Monterey wk2 ] http/tests/media/video-webm-stall.html (layout-test) is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=233717
+        rdar://85933254
+
+        Reviewed by Peng Liu.
+
+        After r274117, we call `PlatformMediaSessionManager::setWebMFormatReaderEnabled` in GPUProcess with
+        `m_webMParserEnabled` instead of the value of `m_webMFormatReaderEnabled`. Since we (arbitrarily) update WebM
+        parser enablement before WebM format reader enablement, this means that the first call to update preferences
+        leaves the WebM format reader disabled on PlatformMediaSessionManager even though it should be enabled. Prior to
+        the more recent change in r285477, this would be corrected on subsequent calls into
+        `GPUProcessProxy::updatePreferences()`, which previously sent `GPUProcess::SetWebMFormatReaderEnabled()`
+        messages even if the value of the preference hadn't changed.
+
+        r285477 removed those redundant IPC messages when the enablement value hasn't changed, so we can no longer
+        rely on PlatformMediaSessionManager being eventually updated to `true` due to `m_webMParserEnabled` being set to
+        true. Simply fix this by using `m_webMFormatReaderEnabled` instead of `m_webMParserEnabled`.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::setWebMFormatReaderEnabled):
+
 2021-12-03  BJ Burg  <bburg@apple.com>
 
         Web Inspector: Web Inspector^2 crashes after closing if Web Inspector^1 closed first

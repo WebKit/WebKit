@@ -468,7 +468,7 @@ void GPUProcess::setWebMFormatReaderEnabled(bool enabled)
     if (m_webMFormatReaderEnabled == enabled)
         return;
     m_webMFormatReaderEnabled = enabled;
-    PlatformMediaSessionManager::setWebMFormatReaderEnabled(m_webMParserEnabled);
+    PlatformMediaSessionManager::setWebMFormatReaderEnabled(m_webMFormatReaderEnabled);
 }
 #endif
 
