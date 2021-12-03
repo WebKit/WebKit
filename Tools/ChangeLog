@@ -1,3 +1,65 @@
+2021-12-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r286505. rdar://problem/85918531
+
+    Follow-up to r286479 to add API test and address issues found by the test
+    https://bugs.webkit.org/show_bug.cgi?id=233798
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    Add functionality needed for API testing and fix issues found by the API test.
+    
+    * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+    * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+    (-[WKWebView _isLayerTreeFrozenForTesting:]):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::destroyProvisionalPage):
+    (WebKit::WebPageProxy::isLayerTreeFrozen):
+    * UIProcess/WebPageProxy.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::isLayerTreeFrozen):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    Add new SPI to check if the layer tree is frozen in the WebProcess so that I could
+    write an API test for this.
+    
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+    Make sure m_provisionalLoadURL gets initialized when the ProvisionalPageProxy gets
+    constructed *after* the provisional load has already started (which is the case
+    when the process swap is triggered by COOP).
+    
+    (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+    If the provisional load load fails in the provisional process, and the ProvisionalPageProxy
+    was constructed on resource response (COOP case), then no longer forward the
+    didFailProvisionalLoadForFrame() to the WebPageProxy. Instead, we destroy the
+    ProvisionalPageProxy. This is to avoid duplicate calls to didFailProvisionalLoadForFrame().
+    In this case, there is still a provisional load ongoing in the committed process and the
+    ProvisionalPageProxy destructor will take care of stopping that provisional load (due to
+    r286479), which will cause the committed process to send its own
+    didFailProvisionalLoadForFrame IPC.
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286505 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-03  Chris Dumez  <cdumez@apple.com>
+
+            Follow-up to r286479 to add API test and address issues found by the test
+            https://bugs.webkit.org/show_bug.cgi?id=233798
+
+            Reviewed by Darin Adler.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286308. rdar://problem/63180952

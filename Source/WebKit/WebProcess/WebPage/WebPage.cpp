@@ -2790,6 +2790,11 @@ void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
     updateDrawingAreaLayerTreeFreezeState();
 }
 
+void WebPage::isLayerTreeFrozen(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(!!m_layerTreeFreezeReasons);
+}
+
 void WebPage::updateDrawingAreaLayerTreeFreezeState()
 {
     if (!m_drawingArea)

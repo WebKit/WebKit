@@ -398,6 +398,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     FreezeLayerTreeDueToSwipeAnimation()
     UnfreezeLayerTreeDueToSwipeAnimation()
+    IsLayerTreeFrozen() -> (bool isFrozen) Async
 
     # Printing.
     BeginPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)

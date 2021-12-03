@@ -418,6 +418,13 @@
     });
 }
 
+- (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler
+{
+    _page->isLayerTreeFrozen([completionHandler = makeBlockPtr(completionHandler)](bool isFrozen) {
+        completionHandler(isFrozen);
+    });
+}
+
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler
 {
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
