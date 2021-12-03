@@ -176,6 +176,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/workers/service"
     "${WEBCORE_DIR}/workers/service/context"
     "${WEBCORE_DIR}/workers/service/server"
+    "${WEBCORE_DIR}/workers/shared"
     "${WEBCORE_DIR}/worklets"
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
@@ -1212,8 +1213,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     workers/AbstractWorker.idl
     workers/DedicatedWorkerGlobalScope.idl
-    workers/SharedWorker.idl
-    workers/SharedWorkerGlobalScope.idl
     workers/Worker.idl
     workers/WorkerGlobalScope.idl
     workers/WorkerLocation.idl
@@ -1235,6 +1234,9 @@ set(WebCore_NON_SVG_IDL_FILES
     workers/service/ServiceWorkerRegistration.idl
     workers/service/ServiceWorkerUpdateViaCache.idl
     workers/service/ServiceWorkerWindowClient.idl
+
+    workers/shared/SharedWorker.idl
+    workers/shared/SharedWorkerGlobalScope.idl
 
     worklets/PaintWorkletGlobalScope.idl
     worklets/Worklet.idl

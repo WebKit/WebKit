@@ -1639,6 +1639,8 @@ $(PROJECT_DIR)/workers/service/ServiceWorkerGlobalScope.idl
 $(PROJECT_DIR)/workers/service/ServiceWorkerRegistration.idl
 $(PROJECT_DIR)/workers/service/ServiceWorkerUpdateViaCache.idl
 $(PROJECT_DIR)/workers/service/ServiceWorkerWindowClient.idl
+$(PROJECT_DIR)/workers/shared/SharedWorker.idl
+$(PROJECT_DIR)/workers/shared/SharedWorkerGlobalScope.idl
 $(PROJECT_DIR)/worklets/PaintWorkletGlobalScope.idl
 $(PROJECT_DIR)/worklets/Worklet.idl
 $(PROJECT_DIR)/worklets/WorkletGlobalScope.idl

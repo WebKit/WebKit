@@ -2723,8 +2723,6 @@ workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp
 workers/DedicatedWorkerThread.cpp
 workers/ScriptBuffer.cpp
-workers/SharedWorker.cpp
-workers/SharedWorkerGlobalScope.cpp
 workers/Worker.cpp
 workers/WorkerAnimationController.cpp
 workers/WorkerConsoleClient.cpp
@@ -2777,6 +2775,8 @@ workers/service/server/SWServerJobQueue.cpp
 workers/service/server/SWServerRegistration.cpp
 workers/service/server/SWServerToContextConnection.cpp
 workers/service/server/SWServerWorker.cpp
+workers/shared/SharedWorker.cpp
+workers/shared/SharedWorkerGlobalScope.cpp
 worklets/PaintWorkletGlobalScope.cpp
 worklets/Worklet.cpp
 worklets/WorkletGlobalScope.cpp

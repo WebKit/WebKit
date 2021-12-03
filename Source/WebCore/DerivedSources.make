@@ -1435,12 +1435,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/testing/XRSimulateUserActivationFunction.idl \
     $(WebCore)/workers/AbstractWorker.idl \
     $(WebCore)/workers/DedicatedWorkerGlobalScope.idl \
-    $(WebCore)/workers/SharedWorker.idl \
-    $(WebCore)/workers/SharedWorkerGlobalScope.idl \
     $(WebCore)/workers/Worker.idl \
     $(WebCore)/workers/WorkerGlobalScope.idl \
     $(WebCore)/workers/WorkerLocation.idl \
-	$(WebCore)/workers/WorkerOptions.idl \
+    $(WebCore)/workers/WorkerOptions.idl \
     $(WebCore)/workers/WorkerType.idl \
     $(WebCore)/workers/service/ExtendableEvent.idl \
     $(WebCore)/workers/service/ExtendableEventInit.idl \
@@ -1457,6 +1455,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/workers/service/ServiceWorkerRegistration.idl \
     $(WebCore)/workers/service/ServiceWorkerUpdateViaCache.idl \
     $(WebCore)/workers/service/ServiceWorkerWindowClient.idl \
+    $(WebCore)/workers/shared/SharedWorker.idl \
+    $(WebCore)/workers/shared/SharedWorkerGlobalScope.idl \
     $(WebCore)/worklets/PaintWorkletGlobalScope.idl \
     $(WebCore)/worklets/Worklet.idl \
     $(WebCore)/worklets/WorkletGlobalScope.idl \
