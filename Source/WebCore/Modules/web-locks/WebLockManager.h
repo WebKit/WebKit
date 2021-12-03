@@ -63,24 +63,19 @@ public:
 private:
     explicit WebLockManager(NavigatorBase&);
 
-    void requestLockOnMainThread(WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, const Options&, Function<void(bool)>&&, Function<void()>&& lockStolenHandler);
-    void releaseLockOnMainThread(WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name);
-    void abortLockRequestOnMainThread(WebLockIdentifier, const String& name, CompletionHandler<void(bool)>&&);
-    void queryOnMainThread(CompletionHandler<void(Snapshot&&)>&&);
-
     void didCompleteLockRequest(WebLockIdentifier, bool success);
     void settleReleasePromise(WebLockIdentifier, ExceptionOr<JSC::JSValue>&&);
     void signalToAbortTheRequest(WebLockIdentifier);
     void clientIsGoingAway();
-
-    void ensureOnMainThread(Function<void(WebLockRegistry&)>&& task);
 
     // ActiveDOMObject.
     void stop() final;
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
-    const std::optional<ClientOrigin> m_clientOrigin;
+    class MainThreadBridge;
+    RefPtr<MainThreadBridge> m_mainThreadBridge;
+
     HashMap<WebLockIdentifier, RefPtr<DeferredPromise>> m_releasePromises;
 
     struct LockRequest;
