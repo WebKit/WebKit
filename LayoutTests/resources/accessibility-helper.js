@@ -1,3 +1,10 @@
+// This function is necessary when printing AX attributes that are stringified with angle brackets:
+//    AXChildren: <array of size 0>
+// `debug` outputs to the `innerHTML` of a generated element, so these brackets must be escaped to be printed.
+function debugEscaped(message) {
+    debug(escapeHTML(message));
+}
+
 // Dumps the accessibility tree hierarchy for the given accessibilityObject into
 // an element with id="tree", e.g., <pre id="tree"></pre>. In addition, it
 // returns a two element array with the first element [0] being false if the

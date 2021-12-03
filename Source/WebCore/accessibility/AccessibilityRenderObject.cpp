@@ -2050,13 +2050,23 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
         } else {
             auto* parent = current->parentNode();
             if (is<HTMLAreaElement>(*current) && is<HTMLMapElement>(parent)) {
-                auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
-                HTMLMapElement& map = downcast<HTMLMapElement>(*parent);
-                areaObject.setHTMLAreaElement(downcast<HTMLAreaElement>(current));
-                areaObject.setHTMLMapElement(&map);
-                areaObject.setParent(accessibilityParentForImageMap(&map));
-
-                result.append(&areaObject);
+                auto* parentImage = downcast<HTMLMapElement>(parent)->imageElement();
+                auto* parentImageRenderer = parentImage ? parentImage->renderer() : nullptr;
+                if (auto* parentImageAxObject = document.axObjectCache()->getOrCreate(parentImageRenderer)) {
+                    for (const auto& child : parentImageAxObject->children()) {
+                        if (is<AccessibilityImageMapLink>(child) && !result.contains(child))
+                            result.append(child);
+                    }
+                } else {
+                    // We couldn't retrieve the already existing image-map links from the parent image, so create a new one.
+                    ASSERT_NOT_REACHED("Unexpectedly missing image-map link parent AX object.");
+                    auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
+                    auto& map = downcast<HTMLMapElement>(*parent);
+                    areaObject.setHTMLAreaElement(downcast<HTMLAreaElement>(current));
+                    areaObject.setHTMLMapElement(&map);
+                    areaObject.setParent(accessibilityParentForImageMap(&map));
+                    result.append(&areaObject);
+                }
             }
         }
     }

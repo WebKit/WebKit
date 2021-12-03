@@ -1,5 +1,8 @@
+This test passes if all four links on the page are found.
 
-----------------------
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXLink
@@ -30,7 +33,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXURL: http://www.apple.com/
+AXURL: LayoutTests/accessibility/mac/document-links.html#Link1
 AXAccessKey: (null)
 AXLinkRelationshipType:
 AXElementBusy: 0
@@ -67,7 +70,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXURL: http://www.apple.com/
+AXURL: LayoutTests/accessibility/mac/document-links.html#Link2
 AXAccessKey: (null)
 AXLinkRelationshipType:
 AXElementBusy: 0
@@ -82,29 +85,29 @@ AXRoleDescription: link
 AXChildren: <array of size 1>
 AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
-AXParent: <AXLink: 'link 3'>
-AXSize: NSSize: {37, 18}
-AXTitle: link 3
+AXParent: <AXLink: 'Link3'>
+AXSize: NSSize: {38, 18}
+AXTitle: Link3
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXLink: 'link 3'>
+AXWindow: <AXLink: 'Link3'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXLink: 'link 3'>
-AXEndTextMarker: <AXLink: 'link 3'>
+AXStartTextMarker: <AXLink: 'Link3'>
+AXEndTextMarker: <AXLink: 'Link3'>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXLink: 'link 3'>
+AXTopLevelUIElement: <AXLink: 'Link3'>
 AXLanguage:
 AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXLink: 'link 3'>
+AXFocusableAncestor: <AXLink: 'Link3'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXURL: http://webkit.org/
+AXURL: LayoutTests/accessibility/mac/document-links.html#Link3
 AXAccessKey: (null)
 AXLinkRelationshipType:
 AXElementBusy: 0
@@ -118,34 +121,36 @@ AXRoleDescription: link
 AXChildren: <array of size 1>
 AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
-AXParent: <AXLink: 'link 4'>
-AXSize: NSSize: {37, 18}
-AXTitle: link 4
+AXParent: <AXLink: 'Link4'>
+AXSize: NSSize: {38, 18}
+AXTitle: Link4
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXLink: 'link 4'>
+AXWindow: <AXLink: 'Link4'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXLink: 'link 4'>
-AXEndTextMarker: <AXLink: 'link 4'>
+AXStartTextMarker: <AXLink: 'Link4'>
+AXEndTextMarker: <AXLink: 'Link4'>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXLink: 'link 4'>
+AXTopLevelUIElement: <AXLink: 'Link4'>
 AXLanguage:
 AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXLink: 'link 4'>
+AXFocusableAncestor: <AXLink: 'Link4'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXURL: LayoutTests/accessibility/mac/document-links.html#asdf
+AXURL: LayoutTests/accessibility/mac/document-links.html#Link4
 AXAccessKey: (null)
 AXLinkRelationshipType:
 AXElementBusy: 0
 
 ------------
 
+PASS successfullyParsed is true
 
- link 3 link 4
+TEST COMPLETE
+ Link3 Link4
