@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 #include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
 #include "WebInspectorUtilities.h"
+#include "WebPageProxyIdentifier.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorClient.h>
@@ -288,6 +289,7 @@ private:
     WebPageProxy* m_inspectedPage { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };
     std::unique_ptr<API::InspectorClient> m_inspectorClient;
+    WebPageProxyIdentifier m_inspectedPageIdentifier;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     RefPtr<WebInspectorUIExtensionControllerProxy> m_extensionController;

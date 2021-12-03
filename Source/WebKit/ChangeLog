@@ -1,5 +1,25 @@
 2021-12-03  BJ Burg  <bburg@apple.com>
 
+        Web Inspector: Web Inspector^2 crashes after closing if Web Inspector^1 closed first
+        https://bugs.webkit.org/show_bug.cgi?id=233293
+        <rdar://problem/85526508>
+
+        Reviewed by Devin Rousso.
+
+        Cache the inspected page's identifier. During frontend teardown, use the cached indentifier
+        to remove the message receiver that was added to receive messages from the inspected page.
+
+        Other operations using m_inspectedPage should be guarded in case that the inspected
+        page already been closed and destroyed.
+
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::createFrontendPage):
+        (WebKit::WebInspectorUIProxy::closeFrontendPageAndWindow):
+        * UIProcess/Inspector/WebInspectorUIProxy.h:
+
+
+2021-12-03  BJ Burg  <bburg@apple.com>
+
         [Cocoa] Web Inspector: fix completion handler type signature for _WKInspectorExtension methods
         https://bugs.webkit.org/show_bug.cgi?id=233792
         <rdar://problem/85995314>

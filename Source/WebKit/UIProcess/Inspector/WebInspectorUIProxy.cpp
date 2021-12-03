@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -225,6 +225,8 @@ void WebInspectorUIProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
     ASSERT(!m_inspectedPage);
 
     m_inspectedPage = &inspectedPage;
+    m_inspectedPageIdentifier = m_inspectedPage->identifier();
+
     m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageID(), *this);
 
     if (m_inspectorPage)
@@ -419,7 +421,7 @@ void WebInspectorUIProxy::createFrontendPage()
     // Make sure the inspected page has a running WebProcess so we can inspect it.
     m_inspectedPage->launchInitialProcessIfNecessary();
 
-    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->identifier(), *this);
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier, *this);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = WebInspectorUIExtensionControllerProxy::create(*m_inspectorPage);
@@ -529,7 +531,8 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     SetForScope<bool> reentrancyProtector(m_closing, true);
     
     // Notify WebKit client when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
-    m_inspectedPage->uiClient().willCloseLocalInspector(*m_inspectedPage, *this);
+    if (m_inspectedPage)
+        m_inspectedPage->uiClient().willCloseLocalInspector(*m_inspectedPage, *this);
 
     m_isVisible = false;
     m_isProfilingPage = false;
@@ -539,12 +542,12 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     untrackInspectorPage(m_inspectorPage);
 
     m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
-    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->identifier());
+    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier);
 
-    if (m_isActiveFrontend) {
-        m_isActiveFrontend = false;
+    if (m_inspectedPage && m_isActiveFrontend)
         m_inspectedPage->inspectorController().disconnectFrontend(*this);
-    }
+
+    m_isActiveFrontend = false;
 
     if (m_isAttached)
         platformDetach();
