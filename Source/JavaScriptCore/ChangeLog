@@ -1,3 +1,14 @@
+2021-12-02  Saam Barati  <sbarati@apple.com>
+
+        Fix OOM crash in JSValue::toWTFStringForConsole
+        https://bugs.webkit.org/show_bug.cgi?id=233775
+        <rdar://85259423>
+
+        Reviewed by Mark Lam.
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toWTFStringForConsole const):
+
 2021-12-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Fix effective address loading for LabelReferences with offsets

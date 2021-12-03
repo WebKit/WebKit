@@ -474,9 +474,9 @@ WTF::String JSValue::toWTFStringForConsole(JSGlobalObject* globalObject) const
     String result = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (isString())
-        return makeString("\"", result, "\"");
+        return tryMakeString("\"", result, "\"");
     if (jsDynamicCast<JSArray*>(vm, *this))
-        return makeString("[", result, "]");
+        return tryMakeString("[", result, "]");
     return result;
 }
 
