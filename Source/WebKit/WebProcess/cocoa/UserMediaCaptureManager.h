@@ -99,7 +99,7 @@ private:
         explicit DisplayFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
 
     private:
-        WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*) final;
+        WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*) final;
         WebCore::CaptureDeviceManager& displayCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 
         UserMediaCaptureManager& m_manager;

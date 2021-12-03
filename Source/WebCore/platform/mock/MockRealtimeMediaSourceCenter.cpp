@@ -177,7 +177,7 @@ IntSize MockDisplayCapturer::intrinsicSize() const
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
             return { "Unable to find mock display device with given persistentID"_s };
@@ -186,11 +186,11 @@ public:
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Window:
 #if PLATFORM(MAC)
-            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
+            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, WTFMove(hashSalt), constraints);
 #elif USE(GSTREAMER)
             return MockDisplayCaptureSourceGStreamer::create(device, constraints);
 #else
-            return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, String { }, constraints);
+            return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints);
 #endif
             break;
         case CaptureDevice::DeviceType::Microphone:

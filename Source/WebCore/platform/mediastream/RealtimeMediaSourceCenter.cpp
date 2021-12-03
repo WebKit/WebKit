@@ -91,7 +91,7 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
         if (videoDevice.type() == CaptureDevice::DeviceType::Camera)
             source = videoCaptureFactory().createVideoCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints);
         else
-            source = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), &request.videoConstraints);
+            source = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints);
 
         if (!source) {
             completionHandler(makeUnexpected(makeString("Failed to create MediaStream video source: ", source.errorMessage)));
@@ -194,7 +194,7 @@ void RealtimeMediaSourceCenter::triggerDevicesChangedObservers()
     });
 }
 
-void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest& request, Vector<DeviceInfo>& diaplayDeviceInfo, String& firstInvalidConstraint)
+void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest& request, String&& hashSalt, Vector<DeviceInfo>& displayDeviceInfo, String& firstInvalidConstraint)
 {
     if (!request.videoConstraints.isValid)
         return;
@@ -204,9 +204,9 @@ void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest&
         if (!device.enabled())
             return;
 
-        auto sourceOrError = displayCaptureFactory().createDisplayCaptureSource(device, { });
+        auto sourceOrError = displayCaptureFactory().createDisplayCaptureSource(device, String { hashSalt }, &request.videoConstraints);
         if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
-            diaplayDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
+            displayDeviceInfo.append({ sourceOrError.captureSource->fitnessScore(), device });
 
         if (!invalidConstraint.isEmpty() && firstInvalidConstraint.isEmpty())
             firstInvalidConstraint = invalidConstraint;
@@ -283,7 +283,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration(Valid
     String firstInvalidConstraint;
 
     if (request.type == MediaStreamRequest::Type::DisplayMedia)
-        getDisplayMediaDevices(request, videoDeviceInfo, firstInvalidConstraint);
+        getDisplayMediaDevices(request, String { deviceIdentifierHashSalt }, videoDeviceInfo, firstInvalidConstraint);
     else
         getUserMediaDevices(request, String { deviceIdentifierHashSalt }, audioDeviceInfo, videoDeviceInfo, firstInvalidConstraint);
 

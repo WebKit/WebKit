@@ -123,7 +123,7 @@ private:
         CaptureDevice device;
     };
 
-    void getDisplayMediaDevices(const MediaStreamRequest&, Vector<DeviceInfo>&, String&);
+    void getDisplayMediaDevices(const MediaStreamRequest&, String&&, Vector<DeviceInfo>&, String&);
     void getUserMediaDevices(const MediaStreamRequest&, String&&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
     void validateRequestConstraintsAfterEnumeration(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, String&&);
     void enumerateDevices(bool shouldEnumerateCamera, bool shouldEnumerateDisplay, bool shouldEnumerateMicrophone, bool shouldEnumerateSpeakers, CompletionHandler<void()>&&);

@@ -47,7 +47,7 @@ class RemoteRealtimeDisplaySource final : public WebCore::RealtimeMediaSource
 #endif
 {
 public:
-    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
     ~RemoteRealtimeDisplaySource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
@@ -65,7 +65,7 @@ public:
     void sourceMutedChanged(bool value) { notifyMutedChange(value); }
 
 private:
-    RemoteRealtimeDisplaySource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    RemoteRealtimeDisplaySource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
 
     // RealtimeMediaSource
     void startProducingData() final { m_proxy.startProducingData(); }

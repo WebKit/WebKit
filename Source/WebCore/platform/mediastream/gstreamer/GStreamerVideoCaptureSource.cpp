@@ -71,10 +71,10 @@ private:
 
 class GStreamerDisplayCaptureSourceFactory final : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
         auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
-        return manager.createDisplayCaptureSource(device, constraints);
+        return manager.createDisplayCaptureSource(device, WTFMove(hashSalt), constraints);
     }
 private:
     CaptureDeviceManager& displayCaptureDeviceManager() final { return GStreamerDisplayCaptureDeviceManager::singleton(); }

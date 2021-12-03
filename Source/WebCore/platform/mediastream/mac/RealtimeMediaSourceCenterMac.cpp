@@ -57,9 +57,9 @@ private:
 
 class DisplayCaptureSourceFactoryMac final : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
-        return DisplayCaptureSourceCocoa::create(device, constraints);
+        return DisplayCaptureSourceCocoa::create(device, WTFMove(hashSalt), constraints);
     }
 private:
     CaptureDeviceManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }

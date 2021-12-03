@@ -1,3 +1,28 @@
+2021-12-03  Eric Carlson  <eric.carlson@apple.com>
+
+        DisplayCaptureSource doesn't initialize base class correctly
+        https://bugs.webkit.org/show_bug.cgi?id=233722
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        Pass the hash salt to the factory.
+
+        * WebProcess/cocoa/RemoteRealtimeDisplaySource.cpp:
+        (WebKit::RemoteRealtimeDisplaySource::create): Remove 'name' parameter because 
+        CaptureDevice already has the name.
+        (WebKit::RemoteRealtimeDisplaySource::RemoteRealtimeDisplaySource): Pass name to
+        base class from device.label().
+        (WebKit::RemoteRealtimeDisplaySource::createRemoteMediaSource): Don't call setName
+        with settings, it was already set in the constructor.
+        * WebProcess/cocoa/RemoteRealtimeDisplaySource.h:
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource): Pass
+        hash salt to RemoteRealtimeDisplaySource::create.
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2021-12-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename DerivedSources/WebKit2 to DerivedSources/WebKit

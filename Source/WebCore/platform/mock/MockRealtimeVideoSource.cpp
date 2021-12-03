@@ -176,6 +176,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
         settings.setDisplaySurface(mockScreen() ? RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor : RealtimeMediaSourceSettings::DisplaySurfaceType::Window);
         settings.setLogicalSurface(false);
     }
+    settings.setDeviceId(hashedId());
     settings.setFrameRate(frameRate());
     auto size = this->size();
     if (mockCamera()) {
@@ -192,10 +193,10 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     supportedConstraints.setSupportsWidth(true);
     supportedConstraints.setSupportsHeight(true);
     supportedConstraints.setSupportsAspectRatio(true);
-    if (mockCamera()) {
-        supportedConstraints.setSupportsDeviceId(true);
+    supportedConstraints.setSupportsDeviceId(true);
+    if (mockCamera())
         supportedConstraints.setSupportsFacingMode(true);
-    } else {
+    else {
         supportedConstraints.setSupportsDisplaySurface(true);
         supportedConstraints.setSupportsLogicalSurface(true);
     }

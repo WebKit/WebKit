@@ -94,7 +94,7 @@ class DisplayCaptureFactory
 {
 public:
     virtual ~DisplayCaptureFactory() = default;
-    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
+    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
     virtual CaptureDeviceManager& displayCaptureDeviceManager() = 0;
 
 protected:

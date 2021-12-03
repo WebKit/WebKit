@@ -33,16 +33,12 @@
 #include "ImageTransferSessionVT.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
-#include "PixelBufferConformerCV.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "RealtimeVideoUtilities.h"
-#include "RemoteVideoSample.h"
 #include "Timer.h"
-#include <CoreMedia/CMSync.h>
 #include <IOSurface/IOSurfaceRef.h>
-#include <mach/mach_time.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
@@ -58,14 +54,14 @@
 
 namespace WebCore {
 
-CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& device, const MediaConstraints* constraints)
+CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
     switch (device.type()) {
     case CaptureDevice::DeviceType::Screen:
 #if PLATFORM(IOS)
-        return create(ReplayKitCaptureSource::create(device.persistentId()), device, constraints);
+        return create(ReplayKitCaptureSource::create(device.persistentId()), device, WTFMove(hashSalt), constraints);
 #else
-        return create(CGDisplayStreamScreenCaptureSource::create(device.persistentId()), device, constraints);
+        return create(CGDisplayStreamScreenCaptureSource::create(device.persistentId()), device, WTFMove(hashSalt), constraints);
 #endif
     case CaptureDevice::DeviceType::Window:
     case CaptureDevice::DeviceType::Microphone:
@@ -79,12 +75,12 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
     return { };
 }
 
-CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Capturer>, String>&& capturer, const CaptureDevice& device, const MediaConstraints* constraints)
+CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Capturer>, String>&& capturer, const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
     if (!capturer.has_value())
         return CaptureSourceOrError { WTFMove(capturer.error()) };
 
-    auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), String { device.label() }));
+    auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), String { device.label() }, String { device.persistentId() }, WTFMove(hashSalt)));
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
         if (result)
@@ -94,8 +90,8 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Captur
     return CaptureSourceOrError(WTFMove(source));
 }
 
-DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, String&& name)
-    : RealtimeMediaSource(Type::Video, WTFMove(name))
+DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, String&& name, String&& deviceID, String&& hashSalt)
+    : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_capturer(WTFMove(capturer))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
     , m_capturerIsRunningObserver([weakThis = WeakPtr { *this }] (bool isRunning) { if (weakThis) weakThis->notifyMutedChange(!isRunning); })
@@ -131,6 +127,7 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
         auto size = this->size();
         settings.setWidth(size.width());
         settings.setHeight(size.height());
+        settings.setDeviceId(hashedId());
 
         settings.setDisplaySurface(m_capturer->surfaceType());
         settings.setLogicalSurface(false);
@@ -139,6 +136,7 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
         supportedConstraints.setSupportsFrameRate(true);
         supportedConstraints.setSupportsWidth(true);
         supportedConstraints.setSupportsHeight(true);
+        supportedConstraints.setSupportsDeviceId(true);
         supportedConstraints.setSupportsDisplaySurface(true);
         supportedConstraints.setSupportsLogicalSurface(true);
 

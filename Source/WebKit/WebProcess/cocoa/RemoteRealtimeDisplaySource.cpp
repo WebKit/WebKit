@@ -38,17 +38,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeDisplaySource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+Ref<RealtimeMediaSource> RemoteRealtimeDisplaySource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
 {
-    auto source = adoptRef(*new RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
+    auto source = adoptRef(*new RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
     manager.addSource(source.copyRef());
     manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
-RemoteRealtimeDisplaySource::RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt))
+RemoteRealtimeDisplaySource::RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, String { device.label() }, String { device.persistentId() }, WTFMove(hashSalt))
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
@@ -65,7 +65,6 @@ void RemoteRealtimeDisplaySource::createRemoteMediaSource()
 
         setSettings(WTFMove(settings));
         setCapabilities(WTFMove(capabilities));
-        setName(String { m_settings.label().string() });
 
         m_proxy.setAsReady();
         if (m_proxy.shouldCaptureInGPUProcess())

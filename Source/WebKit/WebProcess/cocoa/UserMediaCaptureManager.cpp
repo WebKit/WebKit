@@ -240,9 +240,9 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
     return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess)));
 }
 
-CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints)
+CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    return CaptureSourceOrError(RemoteRealtimeDisplaySource::create(device, constraints, { }, { }, m_manager, false));
+    return CaptureSourceOrError(RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, false));
 }
 
 }

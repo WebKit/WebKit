@@ -1,3 +1,13 @@
+2021-12-03  Eric Carlson  <eric.carlson@apple.com>
+
+        DisplayCaptureSource doesn't initialize base class correctly
+        https://bugs.webkit.org/show_bug.cgi?id=233722
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/get-display-media-settings-expected.txt: Added.
+        * fast/mediastream/get-display-media-settings.html: Added.
+
 2021-12-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] WPT import. December 2021 edition

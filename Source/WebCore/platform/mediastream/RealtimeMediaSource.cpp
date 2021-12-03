@@ -1103,9 +1103,7 @@ void RealtimeMediaSource::scheduleDeferredTask(Function<void()>&& function)
 const String& RealtimeMediaSource::hashedId() const
 {
 #ifndef NDEBUG
-    auto deviceType = this->deviceType();
-    if (deviceType != CaptureDevice::DeviceType::Screen && deviceType != CaptureDevice::DeviceType::Window)
-        ASSERT(!m_hashedID.isEmpty());
+    ASSERT(!m_hashedID.isEmpty());
 #endif
     return m_hashedID;
 }
