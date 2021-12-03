@@ -1,3 +1,42 @@
+2021-12-03  Tim Horton  <timothy_horton@apple.com>
+
+        Add more logging for MomentumEventDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=233811
+
+        Reviewed by Simon Fraser.
+
+        Add a temporary event log to MomentumEventDispatcher, to debug delta/offset/curve issues.
+
+        * WebProcess/WebPage/EventDispatcher.h:
+        (WebKit::EventDispatcher::queue):
+        * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+        (WebKit::MomentumEventDispatcher::handleWheelEvent):
+        Accumulate event deltas. Also accumulate event deltas for the
+        fingers-down phase in the "generated" offset. Store the phase and 
+        momentum phase smooshed into a single field.
+
+        (WebKit::MomentumEventDispatcher::dispatchSyntheticMomentumEvent):
+        Accumulate generated deltas.
+
+        (WebKit::MomentumEventDispatcher::didEndMomentumPhase):
+        Attempt to dump the log 1 second after each momentum phase. We'll skip
+        it if another scroll has started since.
+
+        (WebKit::MomentumEventDispatcher::setScrollingAccelerationCurve):
+        (WebKit::MomentumEventDispatcher::startDisplayLink):
+        (WebKit::MomentumEventDispatcher::stopDisplayLink):
+        (WebKit::MomentumEventDispatcher::consumeDeltaForCurrentTime):
+        (WebKit::MomentumEventDispatcher::buildOffsetTableWithInitialDelta):
+        (WebKit::MomentumEventDispatcher::computeNextDelta):
+        Adopt more MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING. Error logging
+        we leave outside of this, because that we'll keep around.
+
+        (WebKit::MomentumEventDispatcher::pushLogEntry):
+        (WebKit::MomentumEventDispatcher::flushLog):
+        Dump the event log in an easy-to-copy-into-a-CSV format.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.h:
+
 2021-12-03  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r286487.

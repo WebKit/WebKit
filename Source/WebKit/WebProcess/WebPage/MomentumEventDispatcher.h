@@ -28,8 +28,8 @@
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
 
 // FIXME: Remove this once we decide which version we want.
-#define USE_MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING 0
-#define USE_MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING 1
+#define ENABLE_MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING 0
+#define ENABLE_MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING 1
 
 #include "DisplayLinkObserverID.h"
 #include "ScrollingAccelerationCurve.h"
@@ -90,6 +90,25 @@ private:
     void didReceiveScrollEventWithInterval(WebCore::FloatSize, Seconds);
     void didReceiveScrollEvent(const WebWheelEvent&);
 
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+    void pushLogEntry();
+    void flushLog();
+
+    WebCore::FloatSize m_lastActivePhaseDelta;
+
+    struct LogEntry {
+        MonotonicTime time;
+
+        float totalGeneratedOffset { 0 };
+        float totalEventOffset { 0 };
+
+        uint32_t latestGeneratedPhase { 0 };
+        uint32_t latestEventPhase { 0 };
+    };
+    LogEntry m_currentLogState;
+    Vector<LogEntry> m_log;
+#endif
+
     struct Delta {
         float rawPlatformDelta;
         Seconds frameInterval;
@@ -103,9 +122,6 @@ private:
     WallTime m_lastEndedEventTimestamp;
     std::optional<WebWheelEvent> m_lastIncomingEvent;
     WebCore::RectEdges<bool> m_lastRubberBandableEdges;
-#if !RELEASE_LOG_DISABLED
-    WebCore::FloatSize m_lastActivePhaseDelta;
-#endif
 
     struct {
         bool active { false };
@@ -119,12 +135,12 @@ private:
 
         Vector<WebCore::FloatSize> offsetTable;
 
-#if !RELEASE_LOG_DISABLED
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
         WebCore::FloatSize accumulatedEventOffset;
         bool didLogInitialQueueState { false };
 #endif
 
-#if USE(MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING)
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING)
         WebCore::FloatSize carryOffset;
 #endif
     } m_currentGesture;
