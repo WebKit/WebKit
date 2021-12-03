@@ -67,6 +67,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_request(request)
     , m_processSwapRequestedByClient(processSwapRequestedByClient)
     , m_isProcessSwappingOnNavigationResponse(isProcessSwappingOnNavigationResponse)
+    , m_provisionalLoadURL(isProcessSwappingOnNavigationResponse ? request.url() : URL())
 #if PLATFORM(IOS_FAMILY)
     , m_provisionalLoadActivity(m_process->throttler().foregroundActivity("Provisional Load"_s))
 #endif
@@ -295,6 +296,15 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameI
     PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didFailProvisionalLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     ASSERT(!m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = { };
+
+    if (m_isProcessSwappingOnNavigationResponse) {
+        // If the provisional load fails and we were process-swapping on navigation response, then we simply destroy ourselves.
+        // In this case, the provisional load is still ongoing in the committed process and the ProvisionalPageProxy destructor
+        // will stop it and cause the committed process to send its own DidFailProvisionalLoadForFrame IPC.
+        ASSERT(m_page.provisionalPageProxy() == this);
+        m_page.destroyProvisionalPage();
+        return;
+    }
 
     // Make sure the Page's main frame's expectedURL gets cleared since we updated it in didStartProvisionalLoad.
     if (auto* pageMainFrame = m_page.mainFrame())

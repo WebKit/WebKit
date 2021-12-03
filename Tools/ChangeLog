@@ -1,3 +1,14 @@
+2021-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Follow-up to r286479 to add API test and address issues found by the test
+        https://bugs.webkit.org/show_bug.cgi?id=233798
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Add room for more bytecode in WKContentRuleList file format

@@ -424,6 +424,13 @@
     });
 }
 
+- (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler
+{
+    _page->isLayerTreeFrozen([completionHandler = makeBlockPtr(completionHandler)](bool isFrozen) {
+        completionHandler(isFrozen);
+    });
+}
+
 - (void)_gpuToWebProcessConnectionCountForTesting:(void(^)(NSUInteger))completionHandler
 {
     RefPtr gpuProcess = _page->process().processPool().gpuProcess();
