@@ -33,6 +33,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -269,11 +270,20 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
     setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
 }
 
-void InlineDisplayContentBuilder::appendInlineBoxDisplayBoxForBidiBoundary(const Box& layoutBox, const InlineRect& inlineBoxRect, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::insertInlineBoxDisplayBoxForBidiBoundary(const InlineLevelBox& inlineBox, const InlineRect& inlineBoxRect, size_t insertionPoint, DisplayBoxes& boxes)
 {
-    UNUSED_PARAM(layoutBox);
-    UNUSED_PARAM(inlineBoxRect);
-    UNUSED_PARAM(boxes);
+    ASSERT(inlineBox.isInlineBox());
+    // FIXME: Compute ink overflow.
+    boxes.insert(insertionPoint, { m_lineIndex
+        , InlineDisplay::Box::Type::NonRootInlineBox
+        , inlineBox.layoutBox()
+        , UBIDI_DEFAULT_LTR
+        , inlineBoxRect
+        , inlineBoxRect
+        , { }
+        , { }
+        , true
+        , isFirstLastBox(inlineBox) });
 }
 
 void InlineDisplayContentBuilder::adjustInlineBoxDisplayBoxForBidiBoundary(InlineDisplay::Box& displayBox, const InlineRect& inlineBoxRect)
@@ -340,6 +350,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 {
     ASSERT(lineContent.visualOrderList.size() == lineContent.runs.size());
 
+    auto needsNonRootInlineBoxDisplayBox = false;
     auto createDisplayBoxesInVisualOrderForContentRuns = [&] {
         auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
         auto contentRightInVisualOrder = InlineLayoutUnit { };
@@ -358,7 +369,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
             auto isContentRun = !lineRun.isInlineBoxStart() && !lineRun.isLineSpanningInlineBoxStart() && !lineRun.isInlineBoxEnd();
             if (!isContentRun) {
-                // FIXME: Add support for inline boxes.
+                needsNonRootInlineBoxDisplayBox = true;
                 continue;
             }
 
@@ -397,6 +408,76 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         }
     };
     createDisplayBoxesInVisualOrderForContentRuns();
+
+    auto createDisplayBoxesInVisualOrderForInlineBoxes = [&] {
+        // Visual order could introduce gaps and/or inject runs outside from the current inline box content.
+        // In such cases, we need to "close" and "open" display boxes for these inline box fragments
+        // to accommodate the current content.
+        // We do it by finding the lowest common ancestor of the last and the current content display boxes and
+        // traverse both ancestor chains and close/open the parent (inline) boxes.
+        // (open here means to create a new display box, while close means to simply pop it out of parentBoxStack).
+        // <div>a<span id=first>b&#8238;g</span>f<span id=second>e&#8237;c</span>d</div>
+        // produces the following output (note the #8238; #8237; RTL/LTR control characters):
+        // abcdefg
+        // with the following, fragmented inline boxes:
+        // a[first open]b[first close][second open]c[second close]d[second open]e[second close]f[first open]g[first close]
+        ListHashSet<const Box*> parentBoxStack;
+        parentBoxStack.add(&root());
+
+        ASSERT(boxes[0].isRootInlineBox());
+        for (size_t index = 1; index < boxes.size(); ++index) {
+            auto& parentBox = boxes[index].layoutBox().parent();
+            ASSERT(parentBox.isInlineBox() || &parentBox == &root());
+
+            auto runParentIsCurrentInlineBox = &parentBox == parentBoxStack.last();
+            if (runParentIsCurrentInlineBox) {
+                // We've got the correct inline box as parent. Nothing to do here.
+                continue;
+            }
+            auto parentBoxStackEnd = parentBoxStack.end();
+            Vector<const Box*> inlineBoxNeedingDisplayBoxList;
+            for (auto* ancestor = &parentBox; ancestor; ancestor = &ancestor->parent()) {
+                ASSERT(ancestor == &root() || ancestor->isInlineBox());
+                auto parentBoxIterator = parentBoxStack.find(ancestor);
+                if (parentBoxIterator != parentBoxStackEnd) {
+                    // This is the lowest common ancestor.
+                    // Let's traverse both ancestor chains and create/close display boxes as needed.
+                    Vector<const Box*> inlineBoxFragmentsToClose;
+                    for (auto it = ++parentBoxIterator; it != parentBoxStackEnd; ++it)
+                        inlineBoxFragmentsToClose.append(*it);
+
+                    for (auto* inlineBox : makeReversedRange(inlineBoxFragmentsToClose)) {
+                        ASSERT(inlineBox->isInlineBox());
+                        parentBoxStack.remove(inlineBox);
+                    }
+
+                    // Insert new display boxes for inline box fragments on bidi boundary.
+                    for (auto* inlineBox : makeReversedRange(inlineBoxNeedingDisplayBoxList)) {
+                        ASSERT(inlineBox->isInlineBox());
+                        parentBoxStack.add(inlineBox);
+
+                        auto createAndInsertDisplayBoxForInlineBoxFragment = [&] {
+                            auto visualRect = lineBox.logicalBorderBoxForInlineBox(*inlineBox, formattingState().boxGeometry(*inlineBox));
+                            // Use the current content left as the starting point for this display box.
+                            visualRect.setLeft(boxes[index].logicalLeft());
+                            visualRect.moveVertically(lineBoxLogicalTopLeft.y());
+                            // Visual width is not yet known.
+                            visualRect.setWidth({ });
+                            insertInlineBoxDisplayBoxForBidiBoundary(lineBox.inlineLevelBoxForLayoutBox(*inlineBox), visualRect, index, boxes);
+                            ++index;
+                        };
+                        createAndInsertDisplayBoxForInlineBoxFragment();
+                    }
+                    break;
+                }
+                // root may not be the lowest but always a common ancestor.
+                ASSERT(ancestor != &root());
+                inlineBoxNeedingDisplayBoxList.append(ancestor);
+            }
+        }
+    };
+    if (needsNonRootInlineBoxDisplayBox)
+        createDisplayBoxesInVisualOrderForInlineBoxes();
 }
 
 void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxLogicalRight)
