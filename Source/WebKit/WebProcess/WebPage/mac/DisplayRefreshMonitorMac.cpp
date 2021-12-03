@@ -60,8 +60,12 @@ DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac()
 void DisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
     // FIXME: This will perturb displayUpdate.
-    if (!m_firstCallbackInCurrentRunloop)
+    if (!m_firstCallbackInCurrentRunloop) {
+        RELEASE_LOG(DisplayLink, "[Web] DisplayRefreshMonitorMac::dispatchDisplayDidRefresh() for display %u - m_firstCallbackInCurrentRunloop is false", displayID());
+        Locker locker { lock() };
+        setIsPreviousFrameDone(true);
         return;
+    }
 
     DisplayRefreshMonitor::dispatchDisplayDidRefresh(displayUpdate);
 }
