@@ -270,9 +270,16 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
     setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
 }
 
-void InlineDisplayContentBuilder::insertInlineBoxDisplayBoxForBidiBoundary(const InlineLevelBox& inlineBox, const InlineRect& inlineBoxRect, size_t insertionPoint, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::insertInlineBoxDisplayBoxForBidiBoundary(const InlineLevelBox& inlineBox, const InlineRect& inlineBoxRect, bool isFirstInlineBoxFragment, size_t insertionPoint, DisplayBoxes& boxes)
 {
     ASSERT(inlineBox.isInlineBox());
+
+    auto isFirstLastBox = OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> { };
+    if (inlineBox.isFirstBox() && isFirstInlineBoxFragment)
+        isFirstLastBox.add({ InlineDisplay::Box::PositionWithinInlineLevelBox::First });
+    if (inlineBox.isLastBox())
+        isFirstLastBox.add({ InlineDisplay::Box::PositionWithinInlineLevelBox::Last });
+
     // FIXME: Compute ink overflow.
     boxes.insert(insertionPoint, { m_lineIndex
         , InlineDisplay::Box::Type::NonRootInlineBox
@@ -283,7 +290,7 @@ void InlineDisplayContentBuilder::insertInlineBoxDisplayBoxForBidiBoundary(const
         , { }
         , { }
         , true
-        , isFirstLastBox(inlineBox) });
+        , isFirstLastBox });
 }
 
 void InlineDisplayContentBuilder::adjustInlineBoxDisplayBoxForBidiBoundary(InlineDisplay::Box& displayBox, const InlineRect& inlineBoxRect)
@@ -422,6 +429,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         // abcdefg
         // with the following, fragmented inline boxes:
         // a[first open]b[first close][second open]c[second close]d[second open]e[second close]f[first open]g[first close]
+        HashMap<const Box*, size_t> inlineBoxDisplayBoxMap;
         ListHashSet<const Box*> parentBoxStack;
         parentBoxStack.add(&root());
 
@@ -458,6 +466,13 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                         parentBoxStack.add(inlineBox);
 
                         auto createAndInsertDisplayBoxForInlineBoxFragment = [&] {
+                            // Make sure that the "previous" display box for this particular inline box is not tracked as the "last box".
+                            auto lastDisplayBoxForInlineBoxIndex = inlineBoxDisplayBoxMap.take(inlineBox);
+                            auto isFirstFragment = !lastDisplayBoxForInlineBoxIndex;
+                            if (!isFirstFragment)
+                                boxes[lastDisplayBoxForInlineBoxIndex].setIsLastBox(false);
+                            inlineBoxDisplayBoxMap.set(inlineBox, index);
+
                             auto& boxGeometry = formattingState().boxGeometry(*inlineBox);
                             auto visualRect = lineBox.logicalBorderBoxForInlineBox(*inlineBox, boxGeometry);
                             // Use the current content left as the starting point for this display box.
@@ -465,7 +480,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                             visualRect.moveVertically(lineBoxLogicalTopLeft.y());
                             // Visual width is not yet known.
                             visualRect.setWidth({ });
-                            insertInlineBoxDisplayBoxForBidiBoundary(lineBox.inlineLevelBoxForLayoutBox(*inlineBox), visualRect, index, boxes);
+                            insertInlineBoxDisplayBoxForBidiBoundary(lineBox.inlineLevelBoxForLayoutBox(*inlineBox), visualRect, isFirstFragment, index, boxes);
                             ++index;
                             // Need to push the rest of the content when this inline box has margin/border/padding.
                             needsDisplayBoxHorizontalAdjustment = needsDisplayBoxHorizontalAdjustment

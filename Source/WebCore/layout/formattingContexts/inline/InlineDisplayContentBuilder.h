@@ -55,7 +55,7 @@ private:
     void appendAtomicInlineLevelDisplayBox(const Line::Run&, const InlineRect& , DisplayBoxes&);
     void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, DisplayBoxes&);
     void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, DisplayBoxes&);
-    void insertInlineBoxDisplayBoxForBidiBoundary(const InlineLevelBox&, const InlineRect&, size_t insertionPoint, DisplayBoxes&);
+    void insertInlineBoxDisplayBoxForBidiBoundary(const InlineLevelBox&, const InlineRect&, bool isFirstInlineBoxFragment, size_t insertionPoint, DisplayBoxes&);
     void adjustInlineBoxDisplayBoxForBidiBoundary(InlineDisplay::Box&, const InlineRect&);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);

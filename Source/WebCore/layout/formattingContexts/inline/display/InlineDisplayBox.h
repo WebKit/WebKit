@@ -128,6 +128,8 @@ struct Box {
     bool isFirstBox() const { return m_isFirstWithinInlineLevelBox; }
     bool isLastBox() const { return m_isLastWithinInlineLevelBox; }
 
+    void setIsLastBox(bool isLastBox) { m_isLastWithinInlineLevelBox = isLastBox; }
+
 private:
     const size_t m_lineIndex { 0 };
     const Type m_type { Type::GenericInlineLevelBox };
