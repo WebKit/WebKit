@@ -1249,7 +1249,21 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
 
 bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, const Element& element, const CSSSelector& hasSelector) const
 {
-    // FIXME: This could be better in terms of performance.
+    auto* cache = checkingContext.selectorMatchingState ? &checkingContext.selectorMatchingState->hasPseudoClassMatchCache : nullptr;
+
+    Style::HasPseudoClassMatch* cachedMatch = nullptr;
+    if (cache) {
+        cachedMatch = &cache->add(Style::makeHasPseudoClassCacheKey(hasSelector, element), Style::HasPseudoClassMatch::None).iterator->value;
+        switch (*cachedMatch) {
+        case Style::HasPseudoClassMatch::Matches:
+            return true;
+        case Style::HasPseudoClassMatch::Fails:
+        case Style::HasPseudoClassMatch::FailsSubtree:
+            return false;
+        case Style::HasPseudoClassMatch::None:
+            break;
+        }
+    }
 
     SelectorChecker hasChecker(element.document());
     bool matchedInsideScope = false;
@@ -1267,69 +1281,90 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     };
 
     auto checkDescendants = [&](const Element& descendantRoot) {
-        auto descendants = descendantsOfType<Element>(descendantRoot);
-        if (!descendants.first())
-            return false;
-
-        if (checkingContext.selectorMatchingState) {
-            // See if we already know this :has() selector doesn't match in this subtree.
-            auto& failureCache = checkingContext.selectorMatchingState->hasPseudoClassDescendantFailureCache;
-            if (!failureCache.isEmpty()) {
-                for (auto* ancestor = descendantRoot.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-                    if (failureCache.contains(Style::makeHasPseudoClassCacheKey(hasSelector, *ancestor)))
-                        return false;
+        for (auto it = descendantsOfType<Element>(descendantRoot).begin(); it;) {
+            auto& descendant = *it;
+            if (cache) {
+                auto key = Style::makeHasPseudoClassCacheKey(hasSelector, descendant);
+                if (cache->get(key) == Style::HasPseudoClassMatch::FailsSubtree) {
+                    it.traverseNextSkippingChildren();
+                    continue;
                 }
             }
-        }
-
-        matchedInsideScope = false;
-
-        for (auto& descendant : descendants) {
             if (checkRelative(descendant))
                 return true;
-        }
 
-        if (checkingContext.selectorMatchingState && !matchedInsideScope) {
-            auto& failureCache = checkingContext.selectorMatchingState->hasPseudoClassDescendantFailureCache;
-            failureCache.add(Style::makeHasPseudoClassCacheKey(hasSelector, descendantRoot));
+            it.traverseNext();
         }
 
         return false;
     };
 
-    auto matchElement = Style::computeHasPseudoClassMatchElement(hasSelector);
+    auto match = [&] {
+        auto matchElement = Style::computeHasPseudoClassMatchElement(hasSelector);
 
-    switch (matchElement) {
-    case Style::MatchElement::HasChild:
-        for (auto& child : childrenOfType<Element>(element)) {
-            if (checkRelative(child))
+        switch (matchElement) {
+        // :has(> .child)
+        case Style::MatchElement::HasChild:
+            for (auto& child : childrenOfType<Element>(element)) {
+                if (checkRelative(child))
+                    return true;
+            }
+            break;
+        // :has(.descendant)
+        case Style::MatchElement::HasDescendant: {
+            if (!element.firstElementChild())
+                return false;
+            if (cache) {
+                // See if we already know this descendant selector doesn't match in this subtree.
+                for (auto* ancestor = element.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
+                    auto key = Style::makeHasPseudoClassCacheKey(hasSelector, *ancestor);
+                    if (cache->get(key) == Style::HasPseudoClassMatch::FailsSubtree)
+                        return false;
+                }
+            }
+            if (checkDescendants(element))
                 return true;
+            break;
         }
-        break;
-    case Style::MatchElement::HasDescendant: {
-        if (checkDescendants(element))
-            return true;
-        break;
+        // FIXME: Add a separate case for adjacent combinator.
+        // :has(+ .sibling)
+        // :has(~ .sibling)
+        case Style::MatchElement::HasSibling:
+            for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                if (checkRelative(*sibling))
+                    return true;
+            }
+            break;
+        // FIXME: Add a separate case for adjacent combinator.
+        // :has(+ .sibling .descendant)
+        // :has(~ .sibling .descendant)
+        case Style::MatchElement::HasSiblingDescendant:
+            for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                if (checkDescendants(*sibling))
+                    return true;
+            }
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        return false;
+    };
+
+    auto result = match();
+
+    if (cachedMatch) {
+        *cachedMatch = [&] {
+            if (result)
+                return Style::HasPseudoClassMatch::Matches;
+            if (matchedInsideScope)
+                return Style::HasPseudoClassMatch::Fails;
+            return Style::HasPseudoClassMatch::FailsSubtree;
+        }();
     }
-    case Style::MatchElement::HasSibling:
-        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-            if (checkRelative(*sibling))
-                return true;
-        }
-        break;
-    case Style::MatchElement::HasSiblingDescendant:
-        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-            if (checkDescendants(*sibling))
-                return true;
-        }
-        break;
 
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return false;
+    return result;
 }
 
 bool SelectorChecker::checkScrollbarPseudoClass(const CheckingContext& checkingContext, const Element& element, const CSSSelector& selector) const
