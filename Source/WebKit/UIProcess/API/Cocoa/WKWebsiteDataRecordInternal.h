@@ -77,6 +77,8 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeAlternativeServices])
         return WebsiteDataType::AlternativeServices;
 #endif
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeFileSystem])
+        return WebsiteDataType::FileSystem;
     return std::nullopt;
 }
 
@@ -134,6 +136,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeAlternativeServices];
 #endif
+    if (websiteDataTypes.contains(WebsiteDataType::FileSystem))
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeFileSystem];
 
     return wkWebsiteDataTypes;
 }

@@ -51,6 +51,7 @@ NSString * const _WKWebsiteDataTypeCredentials = @"_WKWebsiteDataTypeCredentials
 NSString * const _WKWebsiteDataTypeAdClickAttributions = @"_WKWebsiteDataTypeAdClickAttributions";
 NSString * const _WKWebsiteDataTypePrivateClickMeasurements = @"_WKWebsiteDataTypePrivateClickMeasurements";
 NSString * const _WKWebsiteDataTypeAlternativeServices = @"_WKWebsiteDataTypeAlternativeServices";
+NSString * const _WKWebsiteDataTypeFileSystem = @"_WKWebsiteDataTypeFileSystem";
 
 #if PLATFORM(MAC)
 NSString * const _WKWebsiteDataTypePlugInData = @"_WKWebsiteDataTypePlugInData";
@@ -110,6 +111,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Private Click Measurements"];
     if ([dataTypes containsObject:_WKWebsiteDataTypeAlternativeServices])
         [array addObject:@"Alternative Services"];
+    if ([dataTypes containsObject:_WKWebsiteDataTypeFileSystem])
+        [array addObject:@"File System"];
 
     return [array componentsJoinedByString:@", "];
 }

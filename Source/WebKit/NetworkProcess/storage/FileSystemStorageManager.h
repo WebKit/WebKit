@@ -49,6 +49,8 @@ public:
     bool releaseLockForFile(const String& path, WebCore::FileSystemHandleIdentifier);
 
 private:
+    void close();
+
     String m_path;
     FileSystemStorageHandleRegistry& m_registry;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;

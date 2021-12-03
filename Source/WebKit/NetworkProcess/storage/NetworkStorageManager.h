@@ -28,10 +28,12 @@
 #include "Connection.h"
 #include "FileSystemStorageError.h"
 #include "OriginStorageManager.h"
+#include "WebsiteData.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <pal/SessionID.h>
+#include <wtf/Forward.h>
 
 namespace IPC {
 class SharedFileHandle;
@@ -55,12 +57,21 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
     void close();
     void clearStorageForTesting(CompletionHandler<void()>&&);
+    void fetchData(OptionSet<WebsiteDataType>, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
+    void deleteData(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
+    void deleteDataModifiedSince(OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
+    void deleteDataForRegistrableDomains(OptionSet<WebsiteDataType>, const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
 
 private:
     NetworkStorageManager(PAL::SessionID, const String& path);
     ~NetworkStorageManager();
     OriginStorageManager& localOriginStorageManager(const WebCore::ClientOrigin&);
+    void removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
     FileSystemStorageHandleRegistry& fileSystemStorageHandleRegistry();
+
+    void forEachOriginDirectory(const Function<void(const String&)>&);
+    Vector<WebsiteData::Entry> fetchDataFromDisk(OptionSet<WebsiteDataType>);
+    Vector<WebCore::ClientOrigin> deleteDataOnDisk(OptionSet<WebsiteDataType>, WallTime, const Function<bool(const WebCore::ClientOrigin&)>&);
 
     // IPC::MessageReceiver (implemented by generated code)
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

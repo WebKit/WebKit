@@ -1,3 +1,88 @@
+2021-12-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Fetch and remove file system data via WKWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=233567
+
+        Reviewed by Youenn Fablet.
+
+        Introduce a new WebsiteDataType value FileSystem for FileSystemAccess data. Network process now can fetch and 
+        delete this type of data when fetching and deleteing website data (if FileSystem type is included in target
+        types).
+
+        To track origins that have FileSystem data, this patch introduces a new file named origin in the origin's 
+        directory. This file will be created when OriginStorageManager is created.
+
+        To delete existing FileSystem data, network process finds origins that are requested to be deleted and have data 
+        on disk, closes active access handles, and deletes the files. The origin file mentioned above will be deleted if 
+        there is no other file left in the same directory, and empty directories will be deleted.
+
+        New API tests: FileSystemAccess.FetchAndRemoveData
+                       FileSystemAccess.RemoveDataByModificationTime
+                       FileSystemAccess.FetchDataForThirdParty
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::monitoredDataTypes):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        (WebKit::FileSystemStorageHandle::activeSyncAccessHandle const):
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::~FileSystemStorageManager):
+        (WebKit::FileSystemStorageManager::close):
+        * NetworkProcess/storage/FileSystemStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::readOriginFromFile):
+        (WebKit::writeOriginToFileIfNecessary):
+        (WebKit::deleteOriginFileIfNecessary):
+        (WebKit::originDirectoryPath):
+        (WebKit::originFilePath):
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        (WebKit::NetworkStorageManager::removeOriginStorageManagerIfPossible):
+        (WebKit::toWebsiteDataType):
+        (WebKit::NetworkStorageManager::forEachOriginDirectory):
+        (WebKit::NetworkStorageManager::fetchDataFromDisk):
+        (WebKit::NetworkStorageManager::fetchData):
+        (WebKit::NetworkStorageManager::deleteDataOnDisk):
+        (WebKit::NetworkStorageManager::deleteData):
+        (WebKit::NetworkStorageManager::deleteDataModifiedSince):
+        (WebKit::NetworkStorageManager::deleteDataForRegistrableDomains):
+        (WebKit::originPath): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::toStorageIdentifier):
+        (WebKit::OriginStorageManager::StorageBucket::typeStoragePath const):
+        (WebKit::OriginStorageManager::StorageBucket::fileSystemStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::isActive):
+        (WebKit::OriginStorageManager::StorageBucket::deleteData):
+        (WebKit::OriginStorageManager::StorageBucket::deleteFileSystemStorageData):
+        (WebKit::OriginStorageManager::OriginStorageManager):
+        (WebKit::OriginStorageManager::isActive):
+        (WebKit::OriginStorageManager::deleteData):
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::ownerProcess):
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.messages.in: Added.
+
 2021-12-03  Chris Dumez  <cdumez@apple.com>
 
         Follow-up to r286479 to add API test and address issues found by the test

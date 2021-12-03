@@ -37,6 +37,7 @@ WK_EXTERN NSString * const _WKWebsiteDataTypeCredentials WK_API_AVAILABLE(macos(
 WK_EXTERN NSString * const _WKWebsiteDataTypeAdClickAttributions WK_API_AVAILABLE(macos(10.15), ios(13.0));
 WK_EXTERN NSString * const _WKWebsiteDataTypePrivateClickMeasurements WK_API_AVAILABLE(macos(12.0), ios(15.0));
 WK_EXTERN NSString * const _WKWebsiteDataTypeAlternativeServices WK_API_AVAILABLE(macos(11.0), ios(14.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeFileSystem WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_API_AVAILABLE(macos(10.11));

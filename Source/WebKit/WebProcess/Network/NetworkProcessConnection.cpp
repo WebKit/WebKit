@@ -37,6 +37,8 @@
 #include "WebCacheStorageProvider.h"
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFileSystemStorageConnection.h"
+#include "WebFileSystemStorageConnectionMessages.h"
 #include "WebFrame.h"
 #include "WebIDBConnectionToServer.h"
 #include "WebIDBConnectionToServerMessages.h"
@@ -117,6 +119,10 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     if (decoder.messageReceiverName() == Messages::StorageAreaMap::messageReceiverName()) {
         if (auto* storageAreaMap = WebProcess::singleton().storageAreaMap(makeObjectIdentifier<StorageAreaIdentifierType>(decoder.destinationID())))
             storageAreaMap->didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebFileSystemStorageConnection::messageReceiverName()) {
+        WebProcess::singleton().fileSystemStorageConnection().didReceiveMessage(connection, decoder);
         return;
     }
 

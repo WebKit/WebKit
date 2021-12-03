@@ -222,6 +222,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebCoreSupport/RemoteWebLockRegistry \
 	WebProcess/WebCoreSupport/WebBroadcastChannelRegistry \
 	WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider \
+	WebProcess/WebCoreSupport/WebFileSystemStorageConnection \
 	WebProcess/WebCoreSupport/WebSpeechRecognitionConnection \
 	WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager \
 	WebProcess/Storage/WebSWContextManagerConnection \

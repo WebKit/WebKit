@@ -1,3 +1,16 @@
+2021-12-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Fetch and remove file system data via WKWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=233567
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::readEntireFile): Read whole file content into a Vector.
+        (WTF::FileSystemImpl::deleteAllFilesModifiedSince): Recursively delete files and folders modified after 
+        specified time in a directory.
+        * wtf/FileSystem.h:
+
 2021-12-03  Tim Horton  <timothy_horton@apple.com>
 
         Enable Momentum Event Generator by default
