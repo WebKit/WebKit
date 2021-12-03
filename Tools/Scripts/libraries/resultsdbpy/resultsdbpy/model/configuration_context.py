@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,7 +26,8 @@ import time
 
 from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
-from collections import Iterable, OrderedDict
+from collections import OrderedDict
+from collections.abc import Iterable
 from datetime import datetime
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.commit_context import CommitContext

@@ -1,3 +1,13 @@
+2021-11-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Make Python 3.10 compatible
+        https://bugs.webkit.org/show_bug.cgi?id=233771
+        <rdar://problem/85978234>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/configuration_context.py:
+
 2021-12-02  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Handle ambiguous branch names in land
