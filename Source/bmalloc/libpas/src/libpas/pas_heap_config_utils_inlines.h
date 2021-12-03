@@ -142,12 +142,15 @@ typedef struct {
     }; \
     \
     void* name ## _heap_config_allocate_small_segregated_page( \
-        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction) \
+        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, \
+        pas_segregated_page_role role) \
     { \
         pas_basic_heap_config_definitions_arguments arguments = {__VA_ARGS__}; \
         \
         pas_segregated_page_config page_config; \
         pas_basic_heap_page_caches* page_caches; \
+        pas_megapage_cache* megapage_cache; \
+        pas_fast_megapage_kind megapage_kind; \
         void* allocation; \
         \
         page_config = upcase_name ## _HEAP_CONFIG.small_segregated_config; \
@@ -156,11 +159,22 @@ typedef struct {
         \
         page_caches = ((pas_basic_heap_runtime_config*)heap->runtime_config)->page_caches; \
         \
+        switch (role) { \
+        case pas_segregated_page_shared_role: \
+            megapage_cache = &page_caches->small_other_megapage_cache; \
+            megapage_kind = pas_small_other_fast_megapage_kind; \
+            break; \
+        case pas_segregated_page_exclusive_role: \
+            megapage_cache = &page_caches->small_exclusive_segregated_megapage_cache; \
+            megapage_kind = pas_small_exclusive_segregated_fast_megapage_kind; \
+            break; \
+        } \
+        \
         allocation = pas_fast_megapage_cache_try_allocate( \
-            &page_caches->small_segregated_megapage_cache, \
+            megapage_cache, \
             &name ## _megapage_table, \
             page_config.base.page_config_ptr, \
-            pas_small_segregated_fast_megapage_kind, \
+            megapage_kind, \
             arguments.allocate_page_should_zero, \
             pas_heap_for_segregated_heap(heap), \
             transaction); \
@@ -184,10 +198,10 @@ typedef struct {
         page_caches = ((pas_basic_heap_runtime_config*)heap->runtime_config)->page_caches; \
         \
         allocation = pas_fast_megapage_cache_try_allocate( \
-            &page_caches->small_bitfit_megapage_cache, \
+            &page_caches->small_other_megapage_cache, \
             &name ## _megapage_table, \
             page_config.base.page_config_ptr, \
-            pas_small_bitfit_fast_megapage_kind, \
+            pas_small_other_fast_megapage_kind, \
             arguments.allocate_page_should_zero, \
             pas_heap_for_segregated_heap(heap), \
             transaction); \
@@ -196,13 +210,16 @@ typedef struct {
     } \
     \
     void* name ## _heap_config_allocate_medium_segregated_page( \
-        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction) \
+        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, \
+        pas_segregated_page_role role) \
     { \
         pas_basic_heap_config_definitions_arguments arguments = {__VA_ARGS__}; \
         \
         pas_segregated_page_config page_config; \
         pas_basic_heap_page_caches* page_caches; \
         void* allocation; \
+        \
+        PAS_UNUSED_PARAM(role); \
         \
         page_config = upcase_name ## _HEAP_CONFIG.medium_segregated_config; \
         \

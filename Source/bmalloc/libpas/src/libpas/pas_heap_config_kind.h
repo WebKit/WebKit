@@ -50,19 +50,7 @@ enum { pas_heap_config_kind_num_kinds =
 #undef PAS_DEFINE_HEAP_CONFIG_KIND
 };
 
-static inline const char*
-pas_heap_config_kind_get_string(pas_heap_config_kind kind)
-{
-    switch (kind) {
-#define PAS_DEFINE_HEAP_CONFIG_KIND(name, value) \
-    case pas_heap_config_kind_ ## name: \
-        return #name;
-#include "pas_heap_config_kind.def"
-#undef PAS_DEFINE_HEAP_CONFIG_KIND
-    }
-    PAS_ASSERT(!"Invalid kind");
-    return NULL;
-}
+PAS_API const char* pas_heap_config_kind_get_string(pas_heap_config_kind kind);
 
 typedef bool (*pas_heap_config_kind_callback)(pas_heap_config_kind kind,
                                               pas_heap_config* config,

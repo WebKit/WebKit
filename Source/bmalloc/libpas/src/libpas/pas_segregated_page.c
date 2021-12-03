@@ -36,6 +36,7 @@
 #include "pas_epoch.h"
 #include "pas_free_granules.h"
 #include "pas_full_alloc_bits_inlines.h"
+#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
 #include "pas_heap_lock.h"
 #include "pas_log.h"
 #include "pas_page_malloc.h"
@@ -194,14 +195,17 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     static const bool verbose = false;
     
     pas_segregated_page_config page_config;
+    pas_segregated_page_role role;
 
     page_config = *page_config_ptr;
 
-    PAS_ASSERT(pas_page_kind_get_config_kind(page_config.base.page_kind)
-               == pas_page_config_kind_segregated);
+    PAS_ASSERT(page_config.base.page_config_kind == pas_page_config_kind_segregated);
+
+    role = pas_segregated_view_get_page_role_for_owner(owner);
 
     /* This is essential for medium deallocation. */
-    pas_page_base_construct(&page->base, page_config.base.page_kind);
+    pas_page_base_construct(
+        &page->base, pas_page_kind_for_segregated_variant_and_role(page_config.variant, role));
 
     page->use_epoch = PAS_EPOCH_INVALID;
 
@@ -223,7 +227,8 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     
     page->view_cache_index = (pas_allocator_index)UINT_MAX;
 
-    if (pas_segregated_view_is_some_exclusive(owner)) {
+    switch (role) {
+    case pas_segregated_page_exclusive_role:{
         pas_segregated_size_directory* directory;
         pas_segregated_size_directory_data* data;
 
@@ -241,8 +246,13 @@ void pas_segregated_page_construct(pas_segregated_page* page,
             page->view_cache_index = directory->view_cache_index;
         } else
             PAS_ASSERT(directory->view_cache_index == (pas_allocator_index)UINT_MAX);
-    } else
+        break;
+    }
+        
+    case pas_segregated_page_shared_role:
         page->object_size = 0;
+        break;
+    }
 
     page->is_in_use_for_allocation = false;
     page->is_committing_fully = false;
@@ -755,23 +765,38 @@ pas_segregated_page_and_config_for_address_and_heap_config(uintptr_t begin,
                                                            pas_heap_config* config)
 {
     switch (config->fast_megapage_kind_func(begin)) {
-    case pas_small_segregated_fast_megapage_kind:
+    case pas_small_exclusive_segregated_fast_megapage_kind:
         return pas_segregated_page_and_config_create(
             pas_segregated_page_for_address_and_page_config(
                 begin, config->small_segregated_config),
             &config->small_segregated_config);
-    case pas_small_bitfit_fast_megapage_kind:
-        return pas_segregated_page_and_config_create_empty();
+    case pas_small_other_fast_megapage_kind: {
+        pas_page_base_and_kind page_and_kind;
+        page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, *config);
+        switch (page_and_kind.page_kind) {
+        case pas_small_shared_segregated_page_kind:
+            return pas_segregated_page_and_config_create(
+                pas_page_base_get_segregated(page_and_kind.page_base),
+                &config->small_segregated_config);
+        case pas_small_bitfit_page_kind:
+            return pas_segregated_page_and_config_create_empty();
+        default:
+            PAS_ASSERT(!"Should not be reached");
+            return pas_segregated_page_and_config_create_empty();
+        }
+    }
     case pas_not_a_fast_megapage_kind: {
         pas_page_base* page_base;
         page_base = config->page_header_func(begin);
         if (page_base) {
             switch (pas_page_base_get_kind(page_base)) {
-            case pas_small_segregated_page_kind:
+            case pas_small_exclusive_segregated_page_kind:
+            case pas_small_shared_segregated_page_kind:
                 return pas_segregated_page_and_config_create(
                     pas_page_base_get_segregated(page_base),
                     &config->small_segregated_config);
-            case pas_medium_segregated_page_kind:
+            case pas_medium_exclusive_segregated_page_kind:
+            case pas_medium_shared_segregated_page_kind:
                 return pas_segregated_page_and_config_create(
                     pas_page_base_get_segregated(page_base),
                     &config->medium_segregated_config);

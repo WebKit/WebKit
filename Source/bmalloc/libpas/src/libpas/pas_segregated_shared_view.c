@@ -126,9 +126,10 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
             pas_physical_memory_transaction_begin(&transaction);
             pas_heap_lock_lock_conditionally(
                 pas_segregated_page_config_heap_lock_hold_mode(page_config));
-            page_boundary = page_config.base.page_allocator(
+            page_boundary = page_config.page_allocator(
                 heap,
-                pas_segregated_page_config_heap_lock_hold_mode(page_config) ? NULL : &transaction);
+                pas_segregated_page_config_heap_lock_hold_mode(page_config) ? NULL : &transaction,
+                pas_segregated_page_shared_role);
             pas_heap_lock_unlock_conditionally(
                 pas_segregated_page_config_heap_lock_hold_mode(page_config));
         } while (!pas_physical_memory_transaction_end(&transaction));

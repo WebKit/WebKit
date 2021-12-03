@@ -57,15 +57,31 @@ void pas_local_allocator_construct(pas_local_allocator* allocator,
     allocator->object_size = directory->object_size;
     PAS_ASSERT(allocator->object_size);
     allocator->alignment_shift = directory->alignment_shift;
-    PAS_ASSERT(pas_is_aligned(allocator->object_size, pas_local_allocator_alignment(allocator)));
+
+    if (!pas_segregated_size_directory_is_bitfit(directory))
+        PAS_ASSERT(pas_is_aligned(allocator->object_size, pas_local_allocator_alignment(allocator)));
     
     allocator->page_ish = 0;
     allocator->current_offset = 0;
     allocator->end_offset = 0;
     
     allocator->view = pas_segregated_size_directory_as_view(directory);
-    allocator->config_kind = pas_local_allocator_config_kind_create_normal(
-        directory->base.page_config_kind);
+
+    if (pas_segregated_size_directory_is_bitfit(directory)) {
+        pas_bitfit_size_class* size_class;
+        pas_bitfit_allocator* bitfit_allocator;
+
+        size_class = pas_segregated_size_directory_get_bitfit_size_class(directory);
+        
+        allocator->config_kind = pas_local_allocator_config_kind_create_bitfit(
+            pas_compact_bitfit_directory_ptr_load_non_null(&size_class->directory)->config_kind);
+
+        bitfit_allocator = pas_local_allocator_get_bitfit(allocator);
+        bitfit_allocator->size_class = size_class;
+        bitfit_allocator->view = NULL;
+    } else
+        allocator->config_kind = pas_local_allocator_config_kind_create_normal(directory->base.page_config_kind);
+    
     if (verbose) {
         pas_log("allocator %p has kind %s, ends at %p\n",
                 allocator, pas_local_allocator_config_kind_get_string(allocator->config_kind),
@@ -122,57 +138,6 @@ void pas_local_allocator_move(pas_local_allocator* dst,
     if (pas_compact_tagged_unsigned_ptr_load(&partial_view->alloc_bits) == (unsigned*)src->bits)
         pas_compact_tagged_unsigned_ptr_store(&partial_view->alloc_bits, (unsigned*)dst->bits);
     pas_lock_unlock(&shared_view->ownership_lock);
-}
-
-bool pas_local_allocator_refill_with_bitfit(
-    pas_local_allocator* allocator,
-    pas_allocator_counts* counts)
-{
-    pas_segregated_page_config fake_null_config;
-    bool skip_bitfit;
-
-    fake_null_config.base.is_enabled = false;
-    fake_null_config.kind = pas_segregated_page_config_kind_null;
-    skip_bitfit = false;
-
-    return pas_local_allocator_refill_with_known_config(
-        allocator, counts, fake_null_config, skip_bitfit);
-}
-
-void pas_local_allocator_finish_refill_with_bitfit(
-    pas_local_allocator* allocator,
-    pas_segregated_size_directory* size_directory)
-{
-    static const bool verbose = false;
-    
-    pas_bitfit_allocator* bitfit;
-    pas_bitfit_size_class* size_class;
-    pas_bitfit_view* bitfit_view;
-    pas_bitfit_page_config_kind bitfit_kind;
-    pas_bitfit_page_config* bitfit_config;
-
-    if (verbose) {
-        pas_log("local allocator %p for size directory %p doing bitfit allocation.\n",
-                allocator, size_directory);
-    }
-    
-    size_class = pas_compact_atomic_bitfit_size_class_ptr_load_non_null(
-        &size_directory->bitfit_size_class);
-    
-    bitfit_kind = pas_compact_bitfit_directory_ptr_load_non_null(&size_class->directory)->config_kind;
-    
-    allocator->config_kind = pas_local_allocator_config_kind_create_bitfit(bitfit_kind);
-    
-    bitfit = pas_local_allocator_get_bitfit(allocator);
-    
-    bitfit_config = pas_bitfit_page_config_kind_get_config(bitfit_kind);
-    
-    bitfit_view = pas_bitfit_size_class_get_first_free_view(size_class, bitfit_config);
-    
-    PAS_ASSERT(bitfit_view);
-    
-    bitfit->size_class = size_class;
-    bitfit->view = bitfit_view;
 }
 
 static bool stop_impl(

@@ -489,7 +489,8 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
                 full_alloc_bits.word_index_end);
     }
 
-    if (page_config->enable_empty_word_eligibility_optimization) {
+    if (pas_segregated_page_config_enable_empty_word_eligibility_optimization_for_role(
+            *page_config, pas_segregated_view_get_page_role_for_allocator(view))) {
         if (verbose)
             pas_log("Doing empty word eligibility for view %p\n", view);
         for (index = full_alloc_bits.word_index_begin;

@@ -37,15 +37,16 @@
 #include "pas_physical_memory_transaction.h"
 
 bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
-                                      pas_local_allocator* local,
                                       pas_bitfit_page_config* config,
                                       pas_lock_hold_mode commit_lock_hold_mode)
 {
     static const bool verbose = false;
     
     pas_bitfit_directory* directory;
+    pas_segregated_heap* heap;
 
     directory = pas_compact_bitfit_directory_ptr_load(&view->directory);
+    heap = directory->heap;
 
     /* We're almost certainly gonna commit a page, so let's just get this out of the way. We need to
        release the ownership lock to do this. But, we can't do it at all if we already hold the commit
@@ -118,8 +119,7 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
                             view, pas_bitfit_page_config_kind_get_string(config->kind));
                 }
                 
-                view->page_boundary = config->base.page_allocator(
-                    pas_segregated_view_get_size_directory(local->view)->heap, &transaction);
+                view->page_boundary = config->page_allocator(heap, &transaction);
                 did_succeed = !!view->page_boundary;
                 
                 if (verbose)
@@ -231,9 +231,9 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
         unsigned index;
         pas_bitfit_size_class* current_size_class;
         pas_versioned_field first_free_value;
-        
-        pas_bitfit_allocator_reset(allocator);
 
+        allocator->view = NULL;
+        
         PAS_ASSERT(view->page_boundary);
         pas_bitfit_page_for_boundary(view->page_boundary, *config)->did_note_max_free = false;
         

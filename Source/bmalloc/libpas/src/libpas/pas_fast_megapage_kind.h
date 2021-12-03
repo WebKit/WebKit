@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,8 @@ PAS_BEGIN_EXTERN_C;
 
 enum pas_fast_megapage_kind {
     pas_not_a_fast_megapage_kind,
-    pas_small_segregated_fast_megapage_kind,
-    pas_small_bitfit_fast_megapage_kind,
+    pas_small_exclusive_segregated_fast_megapage_kind,
+    pas_small_other_fast_megapage_kind,
 };
 
 typedef enum pas_fast_megapage_kind pas_fast_megapage_kind;
@@ -43,10 +43,10 @@ static inline const char* pas_fast_megapage_kind_get_string(pas_fast_megapage_ki
     switch (kind) {
     case pas_not_a_fast_megapage_kind:
         return "not_a_fast_megapage";
-    case pas_small_segregated_fast_megapage_kind:
-        return "small_segregated_fast_megapage";
-    case pas_small_bitfit_fast_megapage_kind:
-        return "small_bitfit_fast_megapage";
+    case pas_small_exclusive_segregated_fast_megapage_kind:
+        return "small_exclusive_segregated_fast_megapage";
+    case pas_small_other_fast_megapage_kind:
+        return "small_other_fast_megapage";
     }
     PAS_ASSERT(!"Should not be reached");
     return NULL;

@@ -167,7 +167,7 @@ void pas_utility_heap_deallocate(void* ptr)
 
     pas_segregated_page_deallocate(
         begin, NULL, pas_segregated_deallocation_direct_mode, NULL,
-        PAS_UTILITY_HEAP_CONFIG.small_segregated_config);
+        PAS_UTILITY_HEAP_CONFIG.small_segregated_config, pas_segregated_page_exclusive_role);
 }
 
 size_t pas_utility_heap_get_num_free_bytes(void)

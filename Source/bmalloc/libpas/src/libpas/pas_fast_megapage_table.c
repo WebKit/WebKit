@@ -94,7 +94,7 @@ void pas_fast_megapage_table_set_by_index(pas_fast_megapage_table* table,
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
 
     if (index < PAS_NUM_FAST_FAST_MEGAPAGE_BITS
-        && value == pas_small_segregated_fast_megapage_kind) {
+        && value == pas_small_exclusive_segregated_fast_megapage_kind) {
         pas_bitvector_set(table->fast_bits, index, true);
         return;
     }

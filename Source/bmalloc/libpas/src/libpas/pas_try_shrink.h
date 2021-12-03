@@ -40,11 +40,24 @@ static PAS_ALWAYS_INLINE bool pas_try_shrink(void* ptr,
     begin = (uintptr_t)ptr;
 
     switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_segregated_fast_megapage_kind:
+    case pas_small_exclusive_segregated_fast_megapage_kind:
         return false;
-    case pas_small_bitfit_fast_megapage_kind:
-        pas_bitfit_page_shrink(begin, new_size, config.small_bitfit_config);
-        return true;
+    case pas_small_other_fast_megapage_kind: {
+        pas_page_base_and_kind page_and_kind;
+        page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config);
+        switch (page_and_kind.page_kind) {
+        case pas_small_shared_segregated_page_kind:
+            return false;
+        case pas_small_bitfit_page_kind:
+            config.small_bitfit_config.specialized_page_shrink_with_page(
+                pas_page_base_get_bitfit(page_and_kind.page_base),
+                begin, new_size);
+            return true;
+        default:
+            PAS_ASSERT(!"Should not be reached");
+            return 0;
+        }
+    }
     case pas_not_a_fast_megapage_kind: {
         pas_page_base* page_base;
         bool shrink_result;
@@ -52,7 +65,8 @@ static PAS_ALWAYS_INLINE bool pas_try_shrink(void* ptr,
         page_base = config.page_header_func(begin);
         if (page_base) {
             switch (pas_page_base_get_kind(page_base)) {
-            case pas_small_segregated_page_kind:
+            case pas_small_exclusive_segregated_page_kind:
+            case pas_small_shared_segregated_page_kind:
                 PAS_ASSERT(!config.small_segregated_is_in_megapage);
                 return false;
             case pas_small_bitfit_page_kind:
@@ -61,7 +75,8 @@ static PAS_ALWAYS_INLINE bool pas_try_shrink(void* ptr,
                     pas_page_base_get_bitfit(page_base),
                     begin, new_size);
                 return true;
-            case pas_medium_segregated_page_kind:
+            case pas_medium_exclusive_segregated_page_kind:
+            case pas_medium_shared_segregated_page_kind:
                 return false;
             case pas_medium_bitfit_page_kind:
                 config.medium_bitfit_config.specialized_page_shrink_with_page(

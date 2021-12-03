@@ -108,6 +108,15 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char
 
 PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+static inline void pas_assertion_failed_noreturn_silencer(
+    const char* filename, int line, const char* function, const char* expression)
+{
+    pas_assertion_failed(filename, line, function, expression);
+}
+#pragma clang diagnostic pop
+
 #define PAS_LIKELY(x) __PAS_LIKELY(x)
 #define PAS_UNLIKELY(x) __PAS_UNLIKELY(x)
 
@@ -115,7 +124,7 @@ PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, 
     do { \
         if (PAS_LIKELY(exp)) \
             break; \
-        pas_assertion_failed(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
+        pas_assertion_failed_noreturn_silencer(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
     } while (0)
 
 #define PAS_TESTING_ASSERT(exp) \
@@ -124,7 +133,7 @@ PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, 
             break; \
         if (PAS_LIKELY(exp)) \
             break; \
-        pas_assertion_failed(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
+        pas_assertion_failed_noreturn_silencer(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
     } while (0)
 
 static inline bool pas_is_power_of_2(uintptr_t value)

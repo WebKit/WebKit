@@ -52,7 +52,10 @@ PAS_BEGIN_EXTERN_C;
     .small_segregated_sharing_shift = PAS_SMALL_SHARING_SHIFT, \
     .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
-    .small_segregated_enable_empty_word_eligibility_optimization = false, \
+    .small_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \
+    .small_shared_segregated_logging_mode = pas_segregated_deallocation_no_logging_mode, \
+    .small_exclusive_segregated_enable_empty_word_eligibility_optimization = false, \
+    .small_shared_segregated_enable_empty_word_eligibility_optimization = false, \
     .small_segregated_use_reversed_current_word = false, \
     .enable_view_cache = false, \
     .use_small_bitfit = true, \
@@ -64,6 +67,8 @@ PAS_BEGIN_EXTERN_C;
     .medium_segregated_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .medium_segregated_sharing_shift = PAS_MEDIUM_SHARING_SHIFT, \
     .medium_segregated_wasteage_handicap = PAS_MEDIUM_PAGE_HANDICAP, \
+    .medium_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_aware_logging_mode, \
+    .medium_shared_segregated_logging_mode = pas_segregated_deallocation_no_logging_mode, \
     .use_medium_bitfit = true, \
     .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .use_marge_bitfit = true, \
@@ -72,11 +77,7 @@ PAS_BEGIN_EXTERN_C;
 
 PAS_API extern pas_heap_config iso_test_heap_config;
 
-PAS_BASIC_HEAP_CONFIG_DECLARATIONS(
-    iso_test, ISO_TEST,
-    .small_size_aware_logging = PAS_SMALL_SIZE_AWARE_LOGGING,
-    .medium_size_aware_logging = PAS_MEDIUM_SIZE_AWARE_LOGGING,
-    .verify_before_logging = false);
+PAS_BASIC_HEAP_CONFIG_DECLARATIONS(iso_test, ISO_TEST);
 
 PAS_END_EXTERN_C;
 

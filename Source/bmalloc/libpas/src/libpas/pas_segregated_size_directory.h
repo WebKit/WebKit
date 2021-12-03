@@ -27,7 +27,7 @@
 #define PAS_SEGREGATED_SIZE_DIRECTORY_H
 
 #include "pas_allocator_index.h"
-#include "pas_compact_atomic_bitfit_size_class_ptr.h"
+#include "pas_bitfit_size_class.h"
 #include "pas_compact_atomic_page_sharing_pool_ptr.h"
 #include "pas_compact_atomic_segregated_size_directory_ptr.h"
 #include "pas_compact_atomic_thread_local_cache_layout_node.h"
@@ -52,13 +52,15 @@ typedef struct pas_segregated_size_directory_data pas_segregated_size_directory_
 PAS_DEFINE_COMPACT_ATOMIC_PTR(pas_segregated_size_directory_data,
                               pas_segregated_size_directory_data_ptr);
 
-struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_segregated_size_directory {
+#define PAS_SEGREGATED_SIZE_DIRECTORY_ALIGNMENT_SHIFT_BITS 5
+
+struct pas_segregated_size_directory {
     pas_segregated_directory base;
     
     pas_segregated_heap* heap;
 
     unsigned object_size : 27;
-    unsigned alignment_shift : 5;
+    unsigned alignment_shift : PAS_SEGREGATED_SIZE_DIRECTORY_ALIGNMENT_SHIFT_BITS;
 
     /* This holds two fields that need to be CASable, so we don't want use a bitfield:
        
@@ -84,7 +86,6 @@ struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_segregated_size_directory {
                                              because it takes less space to put it here. */
     
     pas_segregated_size_directory_data_ptr data;
-    pas_compact_atomic_bitfit_size_class_ptr bitfit_size_class;
 
     /* The owning segregated heap holds these in a singly linked list. */
     pas_compact_atomic_segregated_size_directory_ptr next_for_heap;
@@ -172,7 +173,7 @@ PAS_API pas_segregated_size_directory* pas_segregated_size_directory_create(
     unsigned object_size,
     unsigned alignment,
     pas_heap_config* heap_config,
-    pas_segregated_page_config* page_config,
+    pas_segregated_page_config* page_config, /* Pass NULL to create a bitfit size directory. */
     pas_segregated_size_directory_creation_mode creation_mode);
 
 PAS_API void pas_segregated_size_directory_finish_creation(pas_segregated_size_directory* directory);
@@ -254,6 +255,21 @@ static inline void pas_segregated_size_directory_set_min_index(pas_segregated_si
         if (pas_compare_and_swap_uint32_weak(&directory->encoded_stuff, old_stuff, new_stuff))
             return;
     }
+}
+
+static inline bool pas_segregated_size_directory_is_bitfit(pas_segregated_size_directory* directory)
+{
+    return directory->base.page_config_kind == pas_segregated_page_config_kind_null;
+}
+
+static inline pas_bitfit_size_class* pas_segregated_size_directory_get_bitfit_size_class(
+    pas_segregated_size_directory* directory)
+{
+    uintptr_t result;
+    PAS_TESTING_ASSERT(pas_segregated_size_directory_is_bitfit(directory));
+    result = (uintptr_t)(directory + 1);
+    PAS_TESTING_ASSERT(pas_is_aligned(result, alignof(pas_bitfit_size_class)));
+    return (pas_bitfit_size_class*)result;
 }
 
 static inline bool pas_segregated_size_directory_did_try_to_create_view_cache(

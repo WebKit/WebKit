@@ -54,10 +54,7 @@ PAS_BEGIN_EXTERN_C;
         pas_local_allocator* allocator, \
         pas_allocator_counts* counts) \
     { \
-        bool skip_bitfit; \
-        skip_bitfit = false; \
-        return pas_local_allocator_refill_with_known_config( \
-            allocator, counts, (page_config_value), skip_bitfit); \
+        return pas_local_allocator_refill_with_known_config(allocator, counts, (page_config_value)); \
     } \
     \
     void lower_case_page_config_name ## _specialized_local_allocator_return_memory_to_page( \

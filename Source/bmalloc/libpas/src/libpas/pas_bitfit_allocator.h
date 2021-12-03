@@ -44,7 +44,6 @@ typedef struct pas_bitfit_view pas_bitfit_view;
 struct pas_bitfit_allocator {
     pas_bitfit_size_class* size_class;
     pas_bitfit_view* view;
-    unsigned countdown;
 };
 
 PAS_END_EXTERN_C;

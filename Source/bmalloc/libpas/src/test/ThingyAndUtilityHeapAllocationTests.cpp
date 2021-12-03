@@ -3131,12 +3131,12 @@ void addMargeBitfitTests()
                  SIZE_CLASS_PROGRAM(
                      PrimitiveAllocator(20000), 21504, pas_medium_segregated_object_kind, 5, 2),
                  SIZE_CLASS_PROGRAM(
-                     PrimitiveAllocator(30000), 32768, pas_marge_bitfit_object_kind, 5, 2),
+                     PrimitiveAllocator(30000), 32768, pas_marge_bitfit_object_kind, 5, 1),
                  SIZE_CLASS_PROGRAM(
                      PrimitiveAllocator(29000), 32768, pas_marge_bitfit_object_kind, 5, 1)));
     ADD_TEST(testSizeClassCreation(
                  SIZE_CLASS_PROGRAM(
-                     PrimitiveAllocator(300000), 303104, pas_marge_bitfit_object_kind, 5, 2),
+                     PrimitiveAllocator(300000), 303104, pas_marge_bitfit_object_kind, 5, 1),
                  SIZE_CLASS_PROGRAM(
                      PrimitiveAllocator(290000), 290816, pas_marge_bitfit_object_kind, 5, 1)));
 }

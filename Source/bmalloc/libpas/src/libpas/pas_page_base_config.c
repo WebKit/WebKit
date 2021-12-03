@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_GET_PAGE_BASE_H
-#define PAS_GET_PAGE_BASE_H
+#include "pas_config.h"
 
-#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
-#include "pas_heap_config.h"
-#include "pas_page_base.h"
-#include "pas_large_map.h"
+#if LIBPAS_ENABLED
+
+#include "pas_page_base_config.h"
+
+#include "pas_bitfit_page_config.h"
+#include "pas_segregated_page_config.h"
 
 PAS_BEGIN_EXTERN_C;
 
-static PAS_ALWAYS_INLINE pas_page_base* pas_get_page_base(void* ptr,
-                                                          pas_heap_config config)
+const char* pas_page_base_config_get_kind_string(pas_page_base_config* config)
 {
-    uintptr_t begin;
-    
-    begin = (uintptr_t)ptr;
-    
-    switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_exclusive_segregated_fast_megapage_kind:
-        return pas_page_base_for_address_and_page_config(begin, config.small_segregated_config.base);
-    case pas_small_other_fast_megapage_kind:
-        return pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config).page_base;
-    case pas_not_a_fast_megapage_kind: {
-        pas_page_base* page_base;
-
-        page_base = config.page_header_func(begin);
-        if (page_base)
-            return page_base;
-
-        return NULL;
-    } }
-    
+    switch (config->page_config_kind) {
+    case pas_page_config_kind_segregated:
+        return pas_segregated_page_config_kind_get_string(pas_page_base_config_get_segregated(config)->kind);
+    case pas_page_config_kind_bitfit:
+        return pas_bitfit_page_config_kind_get_string(pas_page_base_config_get_bitfit(config)->kind);
+    }
     PAS_ASSERT(!"Should not be reached");
     return NULL;
 }
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_GET_PAGE_BASE */
+#endif /* LIBPAS_ENABLED */
 

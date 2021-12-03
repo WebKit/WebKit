@@ -87,12 +87,12 @@ pas_basic_heap_page_caches* pas_create_basic_heap_page_caches_with_reserved_memo
         provider);
     
     pas_megapage_cache_construct(
-        &caches->small_segregated_megapage_cache,
+        &caches->small_exclusive_segregated_megapage_cache,
         allocate_from_large,
         NULL);
 
     pas_megapage_cache_construct(
-        &caches->small_bitfit_megapage_cache,
+        &caches->small_other_megapage_cache,
         allocate_from_large,
         NULL);
 

@@ -110,7 +110,7 @@ PAS_API bool jit_heap_config_for_each_shared_page_directory_remote(
                      pas_segregated_shared_page_directory* directory,
                      void* arg),
     void* arg);
-PAS_API PAS_NO_RETURN void jit_heap_config_dump_shared_page_directory_arg(
+PAS_API void jit_heap_config_dump_shared_page_directory_arg(
     pas_stream* stream, pas_segregated_shared_page_directory* directory);
 
 PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
@@ -120,7 +120,7 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
             .is_enabled = true, \
             .heap_config_ptr = &jit_heap_config, \
             .page_config_ptr = &jit_heap_config.variant_lowercase ## _bitfit_config.base, \
-            .page_kind = pas_ ## variant_lowercase ## _bitfit_page_kind, \
+            .page_config_kind = pas_page_config_kind_bitfit, \
             .min_align_shift = JIT_ ## variant_uppercase ## _MIN_ALIGN_SHIFT, \
             .page_size = JIT_ ## variant_uppercase ## _PAGE_SIZE, \
             .granule_size = JIT_ ## variant_uppercase ## _GRANULE_SIZE, \
@@ -135,12 +135,12 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
             .page_header_for_boundary_remote = jit_page_header_for_boundary_remote, \
             .page_object_payload_offset = 0, \
             .page_object_payload_size = JIT_ ## variant_uppercase ## _PAGE_SIZE, \
-            .page_allocator = jit_ ## variant_lowercase ## _bitfit_allocate_page, \
             .create_page_header = jit_ ## variant_lowercase ## _bitfit_create_page_header, \
             .destroy_page_header = jit_ ## variant_lowercase ## _bitfit_destroy_page_header \
         }, \
         .variant = pas_ ## variant_lowercase ## _bitfit_page_config_variant, \
         .kind = pas_bitfit_page_config_kind_jit_ ## variant_lowercase ## _bitfit, \
+        .page_allocator = jit_ ## variant_lowercase ## _bitfit_allocate_page, \
         PAS_BITFIT_PAGE_CONFIG_SPECIALIZATIONS(jit_ ## variant_lowercase ## _bitfit_page_config) \
     }
 

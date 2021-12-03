@@ -75,10 +75,18 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
                 pas_segregated_size_directory_local_allocator_size_for_config(*page_config));
     }
 
-    result = pas_immortal_heap_allocate(
-        sizeof(pas_segregated_size_directory),
-        "pas_segregated_size_directory",
-        pas_object_allocation);
+    if (page_config) {
+        result = pas_immortal_heap_allocate(
+            sizeof(pas_segregated_size_directory),
+            "pas_segregated_size_directory",
+            pas_object_allocation);
+    } else {
+        result = pas_immortal_heap_allocate_with_alignment(
+            sizeof(pas_segregated_size_directory) + sizeof(pas_bitfit_size_class),
+            PAS_MAX(alignof(pas_segregated_size_directory), alignof(pas_bitfit_size_class)),
+            "pas_segregated_size_directory+pas_bitfit_size_class",
+            pas_object_allocation);
+    }
 
     if (verbose) {
         pas_log("%d: Creating directory %p for %s with object_size = %u, alignment = %u\n",
@@ -98,6 +106,13 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
     PAS_ASSERT(pas_is_aligned(object_size, alignment));
     result->alignment_shift = pas_log2(alignment);
 
+    if (page_config)
+        result->alignment_shift = pas_log2(alignment);
+    else {
+        PAS_ASSERT(PAS_SEGREGATED_SIZE_DIRECTORY_ALIGNMENT_SHIFT_BITS == 5);
+        result->alignment_shift = 31;
+    }
+
     result->encoded_stuff =
         pas_segregated_size_directory_encode_stuff(2 * PAS_NUM_BASELINE_ALLOCATORS, UINT_MAX);
     
@@ -105,21 +120,17 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
     
     pas_segregated_size_directory_data_ptr_store(&result->data, NULL);
 
-    if (page_config)
-        pas_compact_atomic_bitfit_size_class_ptr_store(&result->bitfit_size_class, NULL);
-    else {
+    if (!page_config) {
         pas_bitfit_heap* bitfit_heap;
         pas_bitfit_size_class* bitfit_size_class;
 
         bitfit_heap = pas_segregated_heap_get_bitfit(heap, heap_config, pas_lock_is_held);
         PAS_ASSERT(bitfit_heap);
         
-        bitfit_size_class =
-            pas_bitfit_heap_ensure_size_class(
-                bitfit_heap, result, heap_config, pas_lock_is_held);
+        bitfit_size_class = pas_segregated_size_directory_get_bitfit_size_class(result);
         
-        pas_compact_atomic_bitfit_size_class_ptr_store(
-            &result->bitfit_size_class, bitfit_size_class);
+        pas_bitfit_heap_construct_and_insert_size_class(
+            bitfit_heap, bitfit_size_class, object_size, heap_config);
     }
     
     pas_compact_atomic_segregated_size_directory_ptr_store(&result->next_for_heap, NULL);

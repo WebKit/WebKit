@@ -63,11 +63,10 @@ typedef struct {
 PAS_API pas_bitfit_variant_selection
 pas_bitfit_heap_select_variant(size_t object_size, pas_heap_config* config);
 
-PAS_API pas_bitfit_size_class*
-pas_bitfit_heap_ensure_size_class(pas_bitfit_heap* heap,
-                                         pas_segregated_size_directory* directory,
-                                         pas_heap_config* config,
-                                         pas_lock_hold_mode heap_lock_hold_mode);
+PAS_API void pas_bitfit_heap_construct_and_insert_size_class(pas_bitfit_heap* heap,
+                                                             pas_bitfit_size_class* size_class,
+                                                             unsigned object_size,
+                                                             pas_heap_config* config);
 
 PAS_API pas_heap_summary pas_bitfit_heap_compute_summary(pas_bitfit_heap* heap);
 

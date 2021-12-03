@@ -43,9 +43,13 @@ PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(
         .base = {
             .is_enabled = false,
             .heap_config_ptr = NULL,
-            .page_config_ptr = NULL
+            .page_config_ptr = NULL,
         },
         .kind = pas_segregated_page_config_kind_null,
+
+        /* We log NULL using kind_and_role = 0, which works out to null/shared. */
+        .shared_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode,
+        .exclusive_logging_mode = pas_segregated_deallocation_no_logging_mode
     }))
 
 PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(pas_utility_small,

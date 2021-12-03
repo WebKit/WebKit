@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #ifndef PAS_SEGREGATED_VIEW_KIND_H
 #define PAS_SEGREGATED_VIEW_KIND_H
 
-#include "pas_utils.h"
+#include "pas_segregated_page_role.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -87,6 +87,36 @@ static inline const char* pas_segregated_view_kind_get_string(pas_segregated_vie
 static inline bool pas_segregated_view_kind_is_some_exclusive(pas_segregated_view_kind kind)
 {
     return kind <= pas_segregated_ineligible_exclusive_view_kind;
+}
+
+static inline pas_segregated_page_role
+pas_segregated_view_kind_get_role_for_owner(pas_segregated_view_kind kind)
+{
+    switch (kind) {
+    case pas_segregated_exclusive_view_kind:
+    case pas_segregated_ineligible_exclusive_view_kind:
+        return pas_segregated_page_exclusive_role;
+    case pas_segregated_shared_handle_kind:
+        return pas_segregated_page_shared_role;
+    default:
+        PAS_ASSERT(!"Should not be reached");
+        return pas_segregated_page_exclusive_role;
+    }
+}
+
+static inline pas_segregated_page_role
+pas_segregated_view_kind_get_role_for_allocator(pas_segregated_view_kind kind)
+{
+    switch (kind) {
+    case pas_segregated_exclusive_view_kind:
+    case pas_segregated_ineligible_exclusive_view_kind:
+        return pas_segregated_page_exclusive_role;
+    case pas_segregated_partial_view_kind:
+        return pas_segregated_page_shared_role;
+    default:
+        PAS_ASSERT(!"Should not be reached");
+        return pas_segregated_page_exclusive_role;
+    }
 }
 
 static inline bool pas_segregated_view_kind_can_become_empty(pas_segregated_view_kind kind)

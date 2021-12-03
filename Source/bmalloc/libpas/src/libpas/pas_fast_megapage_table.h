@@ -109,7 +109,7 @@ static inline pas_fast_megapage_kind pas_fast_megapage_table_get_by_index(
     
     if (PAS_LIKELY(index < PAS_NUM_FAST_FAST_MEGAPAGE_BITS)
         && PAS_LIKELY(pas_bitvector_get(table->fast_bits, index)))
-        return pas_small_segregated_fast_megapage_kind;
+        return pas_small_exclusive_segregated_fast_megapage_kind;
     
     for (table_index = 0; table_index < PAS_NUM_FAST_MEGAPAGE_TABLES; ++table_index) {
         instance = table->instances[table_index];

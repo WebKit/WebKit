@@ -1,3 +1,237 @@
+2021-12-02  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] Update to 96f9f4c28dc119695311c7c6bd81ed1f3f4e260c (allow more specialization of partial versus exclusive allocation)
+        https://bugs.webkit.org/show_bug.cgi?id=233782
+
+        Reviewed by Yusuke Suzuki.
+
+        Libpas's main optimization for lots of isoheaps is partial views of shared pages: a single page may get
+        chopped up so that different heaps get different ranges of the page. This works out, in a not-too-gross
+        way, by reusing the segregated heap page management logic.
+
+        But previously, pages used exclusively versus pages that were shared looked largely the same; the only
+        way to tell them apart is that they had a different owner. Notably, those pages would get allocated out
+        of the same megapages, so a megapage lookup could not tell you if you were exclusive or shared.
+
+        This change introduces the concept of pas_segregated_page_role, which is this distinction between
+        exclusive and shared, and spreads it across all page management logic. So:
+
+        -> Page allocation knows the page's role, so it can use different megapages for exclusive or shared.
+           This enables exclusive and shared to have different deallocation fast paths.
+
+        -> Page_kind is now different depending on whether the page is exclusive or shared.
+
+        -> Many of the entrypoints into segregated_page that are required to know page_config are now also
+           required to know page_role. This makes sense, because the combination of megapages and page_kinds
+           knowing about roles means that anyone who ends up calling segregated_page API will now typically
+           know the role.
+
+        -> It's still possible to dynamically deduce the role using the page's owner, but hardly any code does
+           that.
+
+        This is leveraged in this patch to introduce some tiny space-saving optimizations to isoheaps:
+
+        -> Partial deallocation no longer uses the deallocation log.
+
+        -> Partial deallocation no longer uses the empty_word_eligibility_optimization.
+
+        This change is a stepping stone for introducing more different kinds of roles in the future.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/bmalloc_heap_config.h:
+        * libpas/src/libpas/hotbit_heap_config.h:
+        * libpas/src/libpas/iso_heap_config.h:
+        * libpas/src/libpas/iso_test_heap_config.h:
+        * libpas/src/libpas/jit_heap_config.c:
+        (jit_heap_config_dump_shared_page_directory_arg):
+        * libpas/src/libpas/jit_heap_config.h:
+        * libpas/src/libpas/minalign32_heap_config.h:
+        * libpas/src/libpas/pagesize64k_heap_config.h:
+        * libpas/src/libpas/pas_basic_heap_page_caches.h:
+        * libpas/src/libpas/pas_bitfit_allocator.c:
+        (pas_bitfit_allocator_commit_view):
+        (pas_bitfit_allocator_finish_failing):
+        * libpas/src/libpas/pas_bitfit_allocator.h:
+        * libpas/src/libpas/pas_bitfit_allocator_inlines.h:
+        (pas_bitfit_allocator_try_allocate):
+        (pas_bitfit_allocator_reset): Deleted.
+        (pas_bitfit_allocator_assert_reset): Deleted.
+        * libpas/src/libpas/pas_bitfit_heap.c:
+        (pas_bitfit_heap_construct_and_insert_size_class):
+        (pas_bitfit_heap_ensure_size_class): Deleted.
+        * libpas/src/libpas/pas_bitfit_heap.h:
+        * libpas/src/libpas/pas_bitfit_page.c:
+        (pas_bitfit_page_construct):
+        * libpas/src/libpas/pas_bitfit_page_config.h:
+        * libpas/src/libpas/pas_bitfit_page_config_inlines.h:
+        * libpas/src/libpas/pas_bitfit_page_config_kind.c:
+        (pas_bitfit_page_config_kind_get_string):
+        * libpas/src/libpas/pas_bitfit_page_config_kind.h:
+        (pas_bitfit_page_config_kind_get_string): Deleted.
+        * libpas/src/libpas/pas_bitfit_page_inlines.h:
+        (pas_bitfit_page_allocate):
+        * libpas/src/libpas/pas_bitfit_size_class.c:
+        (pas_bitfit_size_class_create): Deleted.
+        * libpas/src/libpas/pas_bitfit_size_class.h:
+        * libpas/src/libpas/pas_create_basic_heap_page_caches_with_reserved_memory.c:
+        (pas_create_basic_heap_page_caches_with_reserved_memory):
+        * libpas/src/libpas/pas_deallocate.c:
+        (deallocate_segregated):
+        (pas_try_deallocate_slow_no_cache):
+        * libpas/src/libpas/pas_deallocate.h:
+        (pas_deallocate_known_segregated):
+        (pas_try_deallocate_not_small_exclusive_segregated):
+        (pas_try_deallocate_impl):
+        (pas_deallocate_known_segregated_impl): Deleted.
+        (pas_try_deallocate_not_small): Deleted.
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (pas_enumerate_segregated_heaps):
+        * libpas/src/libpas/pas_fast_megapage_kind.h:
+        (pas_fast_megapage_kind_get_string):
+        * libpas/src/libpas/pas_fast_megapage_table.c:
+        (pas_fast_megapage_table_set_by_index):
+        * libpas/src/libpas/pas_fast_megapage_table.h:
+        (pas_fast_megapage_table_get_by_index):
+        * libpas/src/libpas/pas_get_allocation_size.h:
+        (pas_get_allocation_size):
+        * libpas/src/libpas/pas_get_heap.h:
+        (pas_get_heap):
+        (pas_get_heap_known_segregated): Deleted.
+        * libpas/src/libpas/pas_get_object_kind.h:
+        (pas_get_object_kind):
+        * libpas/src/libpas/pas_get_page_base.h:
+        (pas_get_page_base):
+        * libpas/src/libpas/pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h: Added.
+        (pas_get_page_base_and_kind_for_small_other_in_fast_megapage):
+        * libpas/src/libpas/pas_has_object.h:
+        (pas_has_object):
+        * libpas/src/libpas/pas_heap_config.h:
+        * libpas/src/libpas/pas_heap_config_inlines.h:
+        * libpas/src/libpas/pas_heap_config_kind.c:
+        (pas_heap_config_kind_get_string):
+        * libpas/src/libpas/pas_heap_config_kind.h:
+        (pas_heap_config_kind_get_string): Deleted.
+        * libpas/src/libpas/pas_heap_config_utils.h:
+        * libpas/src/libpas/pas_heap_config_utils_inlines.h:
+        * libpas/src/libpas/pas_internal_config.h:
+        * libpas/src/libpas/pas_local_allocator.c:
+        (pas_local_allocator_construct):
+        (pas_local_allocator_refill_with_bitfit): Deleted.
+        (pas_local_allocator_finish_refill_with_bitfit): Deleted.
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_scan_bits_to_set_up_free_bits):
+        (pas_local_allocator_set_up_free_bits):
+        (pas_local_allocator_set_up_primordial_bump):
+        (pas_local_allocator_start_allocating_in_primordial_partial_view):
+        (pas_local_allocator_bless_primordial_partial_view_before_stopping):
+        (pas_local_allocator_try_allocate_in_primordial_partial_view):
+        (pas_local_allocator_refill_with_known_config):
+        (pas_local_allocator_return_memory_to_page_set_bit_callback):
+        (pas_local_allocator_return_memory_to_page_for_role):
+        (pas_local_allocator_return_memory_to_page):
+        (pas_local_allocator_try_allocate_small_segregated_slow_impl):
+        (pas_local_allocator_try_allocate_out_of_line_cases):
+        (pas_local_allocator_try_allocate_slow_impl):
+        * libpas/src/libpas/pas_object_kind.h:
+        (pas_object_kind_for_page_kind):
+        * libpas/src/libpas/pas_page_base_and_kind.h: Added.
+        (pas_page_base_and_kind_create):
+        (pas_page_base_and_kind_create_empty):
+        * libpas/src/libpas/pas_page_base_config.c: Added.
+        (pas_page_base_config_get_kind_string):
+        * libpas/src/libpas/pas_page_base_config.h:
+        (pas_page_base_config_is_segregated):
+        (pas_page_base_config_is_bitfit):
+        (pas_page_base_config_get_config_kind): Deleted.
+        * libpas/src/libpas/pas_page_kind.h:
+        (pas_page_kind_get_string):
+        (pas_page_kind_get_config_kind):
+        (pas_page_kind_get_segregated_variant):
+        (pas_page_kind_get_segregated_role):
+        (pas_page_kind_for_segregated_variant_and_role):
+        (pas_page_kind_for_bitfit_variant):
+        * libpas/src/libpas/pas_segregated_deallocation_logging_mode.h: Added.
+        (pas_segregated_deallocation_logging_mode_does_logging):
+        (pas_segregated_deallocation_logging_mode_is_size_aware):
+        (pas_segregated_deallocation_logging_mode_is_checked):
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (max_object_size_for_page_config):
+        (pas_segregated_heap_ensure_size_directory_for_size):
+        * libpas/src/libpas/pas_segregated_page.c:
+        (pas_segregated_page_construct):
+        (pas_segregated_page_and_config_for_address_and_heap_config):
+        * libpas/src/libpas/pas_segregated_page_config.h:
+        (pas_segregated_page_config_enable_empty_word_eligibility_optimization_for_role):
+        (pas_segregated_page_config_logging_mode_for_role):
+        * libpas/src/libpas/pas_segregated_page_config_inlines.h:
+        * libpas/src/libpas/pas_segregated_page_config_kind.c:
+        (pas_segregated_page_config_kind_get_string):
+        * libpas/src/libpas/pas_segregated_page_config_kind.def:
+        * libpas/src/libpas/pas_segregated_page_config_kind.h:
+        (pas_segregated_page_config_kind_get_string): Deleted.
+        * libpas/src/libpas/pas_segregated_page_config_kind_and_role.c: Added.
+        (pas_segregated_page_config_kind_and_role_get_string):
+        * libpas/src/libpas/pas_segregated_page_config_kind_and_role.h: Added.
+        (pas_segregated_page_config_kind_and_role_create):
+        * libpas/src/libpas/pas_segregated_page_config_utils.h:
+        (pas_segregated_page_config_verify_dealloc): Deleted.
+        * libpas/src/libpas/pas_segregated_page_inlines.h:
+        (pas_segregated_page_deallocate_with_page):
+        (pas_segregated_page_deallocate):
+        (pas_segregated_page_get_directory_for_address_in_page):
+        (pas_segregated_page_get_directory_for_address_and_page_config):
+        (pas_segregated_page_get_object_size_for_address_in_page):
+        (pas_segregated_page_get_object_size_for_address_and_page_config):
+        (pas_segregated_page_log_or_deallocate):
+        * libpas/src/libpas/pas_segregated_page_role.h: Added.
+        (pas_segregated_page_role_get_string):
+        * libpas/src/libpas/pas_segregated_shared_view.c:
+        (pas_segregated_shared_view_commit_page):
+        * libpas/src/libpas/pas_segregated_size_directory.c:
+        (pas_segregated_size_directory_create):
+        * libpas/src/libpas/pas_segregated_size_directory.h:
+        (pas_segregated_size_directory_is_bitfit):
+        (pas_segregated_size_directory_get_bitfit_size_class):
+        * libpas/src/libpas/pas_segregated_view.c:
+        (should_be_eligible):
+        * libpas/src/libpas/pas_segregated_view.h:
+        (pas_segregated_view_get_page_role_for_owner):
+        (pas_segregated_view_get_page_role_for_allocator):
+        * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+        (pas_segregated_view_will_start_allocating):
+        * libpas/src/libpas/pas_segregated_view_kind.h:
+        (pas_segregated_view_kind_get_role_for_owner):
+        (pas_segregated_view_kind_get_role_for_allocator):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (process_deallocation_log_with_config):
+        (flush_deallocation_log):
+        (pas_thread_local_cache_append_deallocation_slow):
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        (pas_thread_local_cache_encode_object):
+        (pas_thread_local_cache_append_deallocation):
+        (pas_thread_local_cache_append_deallocation_with_size):
+        * libpas/src/libpas/pas_try_reallocate.h:
+        (pas_try_reallocate_table_segregated_case):
+        (pas_try_reallocate):
+        * libpas/src/libpas/pas_try_shrink.h:
+        (pas_try_shrink):
+        * libpas/src/libpas/pas_utility_heap.c:
+        (pas_utility_heap_deallocate):
+        * libpas/src/libpas/pas_utility_heap_config.c:
+        (pas_utility_heap_allocate_page):
+        (pas_utility_heap_shared_page_directory_selector):
+        (pas_utility_heap_config_for_each_shared_page_directory):
+        (pas_utility_heap_config_dump_shared_page_directory_arg):
+        * libpas/src/libpas/pas_utility_heap_config.h:
+        (pas_utility_heap_shared_page_directory_selector): Deleted.
+        * libpas/src/libpas/pas_utils.h:
+        (pas_assertion_failed_noreturn_silencer):
+        * libpas/src/libpas/thingy_heap_config.h:
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+        (std::addMargeBitfitTests):
+
 2021-12-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [libpas] Define and use PAS_RISCV

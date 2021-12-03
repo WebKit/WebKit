@@ -36,12 +36,11 @@ PAS_BEGIN_EXTERN_C;
     pas_fast_path_allocation_result \
     lower_case_page_config_name ## _specialized_allocator_try_allocate( \
         pas_bitfit_allocator* allocator, \
-        pas_local_allocator* local, \
         size_t size, \
         size_t alignment) \
     { \
         return pas_bitfit_allocator_try_allocate( \
-            allocator, local, size, alignment, (page_config_value)); \
+            allocator, size, alignment, (page_config_value)); \
     } \
     \
     void lower_case_page_config_name ## _specialized_page_deallocate_with_page( \

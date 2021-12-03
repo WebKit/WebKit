@@ -326,7 +326,8 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
                                          uintptr_t begin,
                                          pas_segregated_deallocation_mode deallocation_mode,
                                          pas_thread_local_cache* thread_local_cache,
-                                         pas_segregated_page_config page_config)
+                                         pas_segregated_page_config page_config,
+                                         pas_segregated_page_role role)
 {
     static const bool verbose = false;
     static const bool count_things = false;
@@ -402,12 +403,15 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
     if (verbose)
         pas_log("at word_index = %zu, new_word = %u\n", word_index, new_word);
 
-    if (!page_config.enable_empty_word_eligibility_optimization || !new_word) {
+    if (!pas_segregated_page_config_enable_empty_word_eligibility_optimization_for_role(page_config, role)
+        || !new_word) {
         pas_segregated_view owner;
         owner = page->owner;
-        
-        if (pas_segregated_view_get_kind(owner) != pas_segregated_exclusive_view_kind) {
-            if (pas_segregated_view_is_some_exclusive(owner)) {
+
+        switch (role) {
+        case pas_segregated_page_exclusive_role: {
+            if (pas_segregated_view_get_kind(owner) != pas_segregated_exclusive_view_kind) {
+                PAS_TESTING_ASSERT(pas_segregated_view_is_some_exclusive(owner));
                 if (verbose)
                     pas_log("Notifying exclusive-ish eligibility on view %p.\n", owner);
                 /* NOTE: If this decides to cache the view then it's possible that we will release and
@@ -415,27 +419,31 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
                 pas_segregated_exclusive_view_note_eligibility(
                     pas_segregated_view_get_exclusive(owner),
                     page, deallocation_mode, thread_local_cache, page_config);
-            } else {
-                pas_segregated_shared_handle* shared_handle;
-                pas_segregated_partial_view* partial_view;
-                size_t offset_in_page;
-                size_t bit_index;
-                
-                offset_in_page = pas_modulo_power_of_2(begin, page_config.base.page_size);
-                bit_index = offset_in_page >> page_config.base.min_align_shift;
-                
-                shared_handle = pas_segregated_view_get_shared_handle(owner);
-                
-                partial_view = pas_segregated_shared_handle_partial_view_for_index(
-                    shared_handle, bit_index, page_config);
-
-                if (verbose)
-                    pas_log("Notifying partial eligibility on view %p.\n", partial_view);
-                
-                if (!partial_view->eligibility_has_been_noted)
-                    pas_segregated_partial_view_note_eligibility(partial_view, page);
             }
+            break;
         }
+            
+        case pas_segregated_page_shared_role: {
+            pas_segregated_shared_handle* shared_handle;
+            pas_segregated_partial_view* partial_view;
+            size_t offset_in_page;
+            size_t bit_index;
+            
+            offset_in_page = pas_modulo_power_of_2(begin, page_config.base.page_size);
+            bit_index = offset_in_page >> page_config.base.min_align_shift;
+            
+            shared_handle = pas_segregated_view_get_shared_handle(owner);
+            
+            partial_view = pas_segregated_shared_handle_partial_view_for_index(
+                shared_handle, bit_index, page_config);
+            
+            if (verbose)
+                pas_log("Notifying partial eligibility on view %p.\n", partial_view);
+            
+            if (!partial_view->eligibility_has_been_noted)
+                pas_segregated_partial_view_note_eligibility(partial_view, page);
+            break;
+        } }
     }
 
     if (page_config.base.page_size > page_config.base.granule_size) {
@@ -492,7 +500,8 @@ static PAS_ALWAYS_INLINE void pas_segregated_page_deallocate(
     pas_lock** held_lock,
     pas_segregated_deallocation_mode deallocation_mode,
     pas_thread_local_cache* thread_local_cache,
-    pas_segregated_page_config page_config)
+    pas_segregated_page_config page_config,
+    pas_segregated_page_role role)
 {
     pas_segregated_page* page;
     
@@ -501,13 +510,14 @@ static PAS_ALWAYS_INLINE void pas_segregated_page_deallocate(
     page = pas_segregated_page_for_address_and_page_config(begin, page_config);
     pas_segregated_page_switch_lock(page, held_lock, page_config);
     pas_segregated_page_deallocate_with_page(
-        page, begin, deallocation_mode, thread_local_cache, page_config);
+        page, begin, deallocation_mode, thread_local_cache, page_config, role);
 }
 
 static PAS_ALWAYS_INLINE pas_segregated_size_directory*
 pas_segregated_page_get_directory_for_address_in_page(pas_segregated_page* page,
                                                       uintptr_t begin,
-                                                      pas_segregated_page_config page_config)
+                                                      pas_segregated_page_config page_config,
+                                                      pas_segregated_page_role role)
 {
     pas_segregated_view owning_view;
     
@@ -515,72 +525,110 @@ pas_segregated_page_get_directory_for_address_in_page(pas_segregated_page* page,
     
     owning_view = page->owner;
 
-    switch (pas_segregated_view_get_kind(owning_view)) {
-    case pas_segregated_exclusive_view_kind:
-    case pas_segregated_ineligible_exclusive_view_kind:
+    switch (role) {
+    case pas_segregated_page_exclusive_role:
         return pas_compact_segregated_size_directory_ptr_load_non_null(
             &pas_segregated_view_get_exclusive(owning_view)->directory);
 
-    case pas_segregated_shared_handle_kind:
+    case pas_segregated_page_shared_role:
         return pas_compact_segregated_size_directory_ptr_load(
             &pas_segregated_shared_handle_partial_view_for_object(
                 pas_segregated_view_get_shared_handle(owning_view), begin, page_config)->directory);
-
-    default:
-        PAS_ASSERT(!"Should not be reached");
-        return NULL;
     }
+    
+    PAS_ASSERT(!"Should not be reached");
+    return NULL;
 }
 
 static PAS_ALWAYS_INLINE pas_segregated_size_directory*
 pas_segregated_page_get_directory_for_address_and_page_config(uintptr_t begin,
-                                                              pas_segregated_page_config page_config)
+                                                              pas_segregated_page_config page_config,
+                                                              pas_segregated_page_role role)
 {
     PAS_ASSERT(page_config.base.is_enabled);
     
     return pas_segregated_page_get_directory_for_address_in_page(
         pas_segregated_page_for_address_and_page_config(begin, page_config),
-        begin, page_config);
+        begin, page_config, role);
 }
 
 static PAS_ALWAYS_INLINE unsigned
 pas_segregated_page_get_object_size_for_address_in_page(pas_segregated_page* page,
                                                         uintptr_t begin,
-                                                        pas_segregated_page_config page_config)
+                                                        pas_segregated_page_config page_config,
+                                                        pas_segregated_page_role role)
 {
-    pas_segregated_view owning_view;
-    
     PAS_ASSERT(page_config.base.is_enabled);
     
-    owning_view = page->owner;
-
-    switch (pas_segregated_view_get_kind(owning_view)) {
-    case pas_segregated_exclusive_view_kind:
-    case pas_segregated_ineligible_exclusive_view_kind:
+    switch (role) {
+    case pas_segregated_page_exclusive_role:
+        PAS_TESTING_ASSERT(pas_segregated_view_is_some_exclusive(page->owner));
         return page->object_size;
 
-    case pas_segregated_shared_handle_kind:
+    case pas_segregated_page_shared_role: {
+        pas_segregated_view owning_view;
+        
+        owning_view = page->owner;
+    
         return pas_compact_segregated_size_directory_ptr_load(
             &pas_segregated_shared_handle_partial_view_for_object(
                 pas_segregated_view_get_shared_handle(owning_view),
                 begin, page_config)->directory)->object_size;
-
-    default:
-        PAS_ASSERT(!"Should not be reached");
-        return 0;
-    }
+    } }
+    
+    PAS_ASSERT(!"Should not be reached");
+    return 0;
 }
 
 static PAS_ALWAYS_INLINE unsigned
 pas_segregated_page_get_object_size_for_address_and_page_config(
     uintptr_t begin,
-    pas_segregated_page_config page_config)
+    pas_segregated_page_config page_config,
+    pas_segregated_page_role role)
 {
     PAS_ASSERT(page_config.base.is_enabled);
     
     return pas_segregated_page_get_object_size_for_address_in_page(
         pas_segregated_page_for_address_and_page_config(begin, page_config),
-        begin, page_config);
+        begin, page_config, role);
+}
+
+static PAS_ALWAYS_INLINE void pas_segregated_page_log_or_deallocate(
+    uintptr_t begin,
+    pas_thread_local_cache* cache,
+    pas_segregated_page_config page_config,
+    pas_segregated_page_role role)
+{
+    pas_segregated_deallocation_logging_mode mode;
+    
+    mode = pas_segregated_page_config_logging_mode_for_role(page_config, role);
+
+    if (!pas_segregated_deallocation_logging_mode_does_logging(mode)) {
+        pas_lock* held_lock;
+        held_lock = NULL;
+        pas_segregated_page_deallocate(
+            begin, &held_lock, pas_segregated_deallocation_to_view_cache_mode, cache, page_config, role);
+        pas_lock_switch(&held_lock, NULL);
+        return;
+    }
+
+    /* This check happens here because if logging is disabled then whether we check deallocation is governed
+       by the check_deallocation flag. */
+    if (pas_segregated_deallocation_logging_mode_is_checked(mode)) {
+        if (PAS_UNLIKELY(!pas_segregated_page_is_allocated(begin, page_config)))
+            pas_deallocation_did_fail("Page bit not set", begin);
+    }
+
+    if (pas_segregated_deallocation_logging_mode_is_size_aware(mode)) {
+        pas_thread_local_cache_append_deallocation_with_size(
+            cache, begin,
+            pas_segregated_page_get_object_size_for_address_and_page_config(begin, page_config, role),
+            pas_segregated_page_config_kind_and_role_create(page_config.kind, role));
+        return;
+    }
+    
+    pas_thread_local_cache_append_deallocation(
+        cache, begin, pas_segregated_page_config_kind_and_role_create(page_config.kind, role));
 }
 
 PAS_END_EXTERN_C;

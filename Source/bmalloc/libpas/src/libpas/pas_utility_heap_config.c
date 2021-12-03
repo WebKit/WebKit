@@ -36,12 +36,6 @@
 
 PAS_BEGIN_EXTERN_C;
 
-pas_segregated_shared_page_directory pas_utility_heap_shared_page_directory =
-    PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_INITIALIZER(
-        PAS_UTILITY_HEAP_CONFIG.small_segregated_config,
-        pas_share_pages,
-        NULL);
-
 pas_heap_config pas_utility_heap_config = PAS_UTILITY_HEAP_CONFIG;
 
 PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DEFINITIONS(
@@ -50,15 +44,26 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DEFINITIONS(
     pas_utility_heap_config, PAS_UTILITY_HEAP_CONFIG);
 
 void* pas_utility_heap_allocate_page(
-    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction)
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, pas_segregated_page_role role)
 {
     PAS_UNUSED_PARAM(heap);
     PAS_ASSERT(!transaction);
+    PAS_ASSERT(role == pas_segregated_page_exclusive_role);
     return (void*)pas_compact_bootstrap_free_heap_try_allocate_with_alignment(
         PAS_SMALL_PAGE_DEFAULT_SIZE,
         pas_alignment_create_traditional(PAS_SMALL_PAGE_DEFAULT_SIZE),
         "pas_utility_heap/page",
         pas_delegate_allocation).begin;
+}
+
+pas_segregated_shared_page_directory*
+pas_utility_heap_shared_page_directory_selector(pas_segregated_heap* heap,
+                                                pas_segregated_size_directory* directory)
+{
+    PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(directory);
+    PAS_ASSERT(!"Not implemented");
+    return NULL;
 }
 
 bool pas_utility_heap_config_for_each_shared_page_directory(
@@ -68,14 +73,17 @@ bool pas_utility_heap_config_for_each_shared_page_directory(
     void* arg)
 {
     PAS_ASSERT(heap == &pas_utility_segregated_heap);
-    return callback(&pas_utility_heap_shared_page_directory, arg);
+    PAS_UNUSED_PARAM(callback);
+    PAS_UNUSED_PARAM(arg);
+    return true;
 }
 
 void pas_utility_heap_config_dump_shared_page_directory_arg(
     pas_stream* stream, pas_segregated_shared_page_directory* directory)
 {
+    PAS_UNUSED_PARAM(stream);
     PAS_UNUSED_PARAM(directory);
-    pas_stream_printf(stream, "Utility");
+    PAS_ASSERT(!"Should not be reached");
 }
 
 PAS_END_EXTERN_C;

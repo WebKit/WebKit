@@ -112,10 +112,11 @@ typedef pas_allocation_result (*pas_heap_config_specialized_try_allocate_common_
     pas_heap_runtime_config* runtime_config,
     pas_allocator_counts* allocator_counts,
     pas_size_lookup_mode size_lookup_mode);
-typedef bool (*pas_heap_config_specialized_try_deallocate_not_small)(
+typedef bool (*pas_heap_config_specialized_try_deallocate_not_small_exclusive_segregated)(
     pas_thread_local_cache* thread_local_cache,
     uintptr_t begin,
-    pas_deallocation_mode deallocation_mode);
+    pas_deallocation_mode deallocation_mode,
+    pas_fast_megapage_kind megapage_kind);
 
 struct pas_heap_config {
     /* This always self-points. It's useful for going from a config to a config_ptr. */
@@ -190,7 +191,7 @@ struct pas_heap_config {
     pas_heap_config_specialized_local_allocator_try_allocate_inline_cases specialized_local_allocator_try_allocate_inline_cases;
     pas_heap_config_specialized_local_allocator_try_allocate_slow specialized_local_allocator_try_allocate_slow;
     pas_heap_config_specialized_try_allocate_common_impl_slow specialized_try_allocate_common_impl_slow;
-    pas_heap_config_specialized_try_deallocate_not_small specialized_try_deallocate_not_small;
+    pas_heap_config_specialized_try_deallocate_not_small_exclusive_segregated specialized_try_deallocate_not_small_exclusive_segregated;
 };
 
 #define PAS_HEAP_CONFIG_SPECIALIZATIONS(lower_case_heap_config_name) \
@@ -204,8 +205,8 @@ struct pas_heap_config {
         lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_slow, \
     .specialized_try_allocate_common_impl_slow = \
         lower_case_heap_config_name ## _specialized_try_allocate_common_impl_slow, \
-    .specialized_try_deallocate_not_small = \
-        lower_case_heap_config_name ## _specialized_try_deallocate_not_small
+    .specialized_try_deallocate_not_small_exclusive_segregated = \
+        lower_case_heap_config_name ## _specialized_try_deallocate_not_small_exclusive_segregated
 
 #define PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(lower_case_heap_config_name) \
     PAS_API pas_allocation_result \
@@ -234,10 +235,11 @@ struct pas_heap_config {
         pas_heap_runtime_config* runtime_config, \
         pas_allocator_counts* allocator_counts, \
         pas_size_lookup_mode size_lookup_mode); \
-    PAS_API bool lower_case_heap_config_name ## _specialized_try_deallocate_not_small( \
+    PAS_API bool lower_case_heap_config_name ## _specialized_try_deallocate_not_small_exclusive_segregated( \
         pas_thread_local_cache* thread_local_cache, \
         uintptr_t begin, \
-        pas_deallocation_mode deallocation_mode)
+        pas_deallocation_mode deallocation_mode, \
+        pas_fast_megapage_kind megapage_kind)
 
 static PAS_ALWAYS_INLINE pas_segregated_page_config*
 pas_heap_config_segregated_page_config_ptr_for_variant(

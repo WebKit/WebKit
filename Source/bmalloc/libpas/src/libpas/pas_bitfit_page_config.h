@@ -41,16 +41,15 @@ struct pas_bitfit_allocator;
 struct pas_bitfit_page;
 struct pas_bitfit_page_config;
 struct pas_heap_runtime_config;
-struct pas_local_allocator;
 typedef struct pas_bitfit_allocator pas_bitfit_allocator;
 typedef struct pas_bitfit_page pas_bitfit_page;
 typedef struct pas_bitfit_page_config pas_bitfit_page_config;
 typedef struct pas_heap_runtime_config pas_heap_runtime_config;
-typedef struct pas_local_allocator pas_local_allocator;
 
+typedef void* (*pas_bitfit_page_config_page_allocator)(
+    pas_segregated_heap*, pas_physical_memory_transaction* transaction);
 typedef pas_fast_path_allocation_result (*pas_bitfit_page_config_specialized_allocator_try_allocate)(
     pas_bitfit_allocator* allocator,
-    pas_local_allocator* local,
     size_t size,
     size_t alignment);
 typedef void (*pas_bitfit_page_config_specialized_page_deallocate_with_page)(
@@ -69,6 +68,9 @@ struct pas_bitfit_page_config {
 
     pas_bitfit_page_config_variant variant;
     pas_bitfit_page_config_kind kind;
+
+    /* This is the allocator used to create pages. */
+    pas_bitfit_page_config_page_allocator page_allocator;
 
     pas_bitfit_page_config_specialized_allocator_try_allocate specialized_allocator_try_allocate;
     pas_bitfit_page_config_specialized_page_deallocate_with_page specialized_page_deallocate_with_page;
@@ -114,7 +116,6 @@ PAS_API extern bool pas_marge_bitfit_page_config_variant_is_enabled_override;
     PAS_API pas_fast_path_allocation_result \
     lower_case_page_config_name ## _specialized_allocator_try_allocate( \
         pas_bitfit_allocator* allocator, \
-        pas_local_allocator* local, \
         size_t size, \
         size_t alignment); \
     PAS_API void lower_case_page_config_name ## _specialized_page_deallocate_with_page( \

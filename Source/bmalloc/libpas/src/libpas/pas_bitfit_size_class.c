@@ -75,24 +75,6 @@ void pas_bitfit_size_class_construct(pas_bitfit_size_class* size_class,
     pas_compact_atomic_bitfit_size_class_ptr_store(insertion_point, size_class);
 }
 
-pas_bitfit_size_class* pas_bitfit_size_class_create(
-    unsigned size,
-    pas_bitfit_directory* directory,
-    pas_compact_atomic_bitfit_size_class_ptr* insertion_point)
-{
-    pas_bitfit_size_class* result;
-
-    result = pas_immortal_heap_allocate_with_alignment(
-        sizeof(pas_bitfit_size_class),
-        alignof(pas_bitfit_size_class),
-        "pas_bitfit_size_class",
-        pas_object_allocation);
-
-    pas_bitfit_size_class_construct(result, size, directory, insertion_point);
-
-    return result;
-}
-
 pas_bitfit_view*
 pas_bitfit_size_class_get_first_free_view(pas_bitfit_size_class* size_class,
                                           pas_bitfit_page_config* page_config)

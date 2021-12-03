@@ -44,8 +44,7 @@ void pas_bitfit_page_construct(pas_bitfit_page* page,
 
     config = *config_ptr;
     
-    PAS_ASSERT(pas_page_kind_get_config_kind(config.base.page_kind)
-               == pas_page_config_kind_bitfit);
+    PAS_ASSERT(config.base.page_config_kind == pas_page_config_kind_bitfit);
 
     pas_lock_assert_held(&view->ownership_lock);
 
@@ -54,7 +53,7 @@ void pas_bitfit_page_construct(pas_bitfit_page* page,
                 page, view, pas_bitfit_page_config_kind_get_string(config.kind));
     }
 
-    pas_page_base_construct(&page->base, config.base.page_kind);
+    pas_page_base_construct(&page->base, pas_page_kind_for_bitfit_variant(config.variant));
 
     page->use_epoch = PAS_EPOCH_INVALID;
 

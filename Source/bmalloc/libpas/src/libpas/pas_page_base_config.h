@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 #define PAS_PAGE_BASE_CONFIG_H
 
 #include "pas_lock.h"
+#include "pas_page_config_kind.h"
 #include "pas_page_granule_use_count.h"
-#include "pas_page_kind.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -54,8 +54,6 @@ typedef pas_page_base* (*pas_page_base_config_page_header_for_boundary)(void* bo
 typedef void* (*pas_page_base_config_boundary_for_page_header)(pas_page_base* page);
 typedef pas_page_base* (*pas_page_base_config_page_header_for_boundary_remote)(
     pas_enumerator* enumerator, void* boundary);
-typedef void* (*pas_page_base_config_page_allocator)(
-    pas_segregated_heap*, pas_physical_memory_transaction* transaction);
 typedef pas_page_base* (*pas_page_base_config_create_page_header)(
     void* boundary, pas_lock_hold_mode heap_lock_hold_mode);
 typedef void (*pas_page_base_config_destroy_page_header)(
@@ -73,7 +71,7 @@ struct pas_page_base_config {
 
     /* What page_kind to put in pages allocated by this config. This happens to tell if the config
        is a segregated or a bitfit config. */
-    pas_page_kind page_kind;
+    pas_page_config_kind page_config_kind;
 
     /* Smallest small object size and the minimum alignment. */
     uint8_t min_align_shift;
@@ -106,9 +104,6 @@ struct pas_page_base_config {
     /* How many bytes are provisioned for objects past that offset? */
     size_t page_object_payload_size;
 
-    /* This is the allocator used to create pages. */
-    pas_page_base_config_page_allocator page_allocator;
-
     /* Some configurations need to be able to allocate/free the page header. The allocation would
        happen after page allocation or commit, and the deallocation would happen right before or
        right after page decommit. */
@@ -136,20 +131,14 @@ pas_page_base_config_num_granule_bytes(pas_page_base_config config)
     return PAS_PAGE_BASE_CONFIG_NUM_GRANULE_BYTES(config.page_size / config.granule_size);
 }
 
-static PAS_ALWAYS_INLINE pas_page_config_kind
-pas_page_base_config_get_config_kind(pas_page_base_config config)
-{
-    return pas_page_kind_get_config_kind(config.page_kind);
-}
-
 static PAS_ALWAYS_INLINE bool pas_page_base_config_is_segregated(pas_page_base_config config)
 {
-    return pas_page_base_config_get_config_kind(config) == pas_page_config_kind_segregated;
+    return config.page_config_kind == pas_page_config_kind_segregated;
 }
 
 static PAS_ALWAYS_INLINE bool pas_page_base_config_is_bitfit(pas_page_base_config config)
 {
-    return pas_page_base_config_get_config_kind(config) == pas_page_config_kind_segregated;
+    return config.page_config_kind == pas_page_config_kind_segregated;
 }
 
 static inline pas_segregated_page_config*
@@ -165,6 +154,8 @@ pas_page_base_config_get_bitfit(pas_page_base_config* config)
     PAS_ASSERT(pas_page_base_config_is_bitfit(*config));
     return (pas_bitfit_page_config*)config;
 }
+
+PAS_API const char* pas_page_base_config_get_kind_string(pas_page_base_config* config);
 
 PAS_END_EXTERN_C;
 

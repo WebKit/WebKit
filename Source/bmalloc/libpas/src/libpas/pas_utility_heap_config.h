@@ -46,8 +46,6 @@ PAS_BEGIN_EXTERN_C;
                                         PAS_SMALL_PAGE_DEFAULT_SIZE, \
                                         PAS_SMALL_PAGE_DEFAULT_SIZE)
 
-PAS_API extern pas_segregated_shared_page_directory pas_utility_heap_shared_page_directory;
-
 static inline pas_page_base* pas_utility_heap_page_header_for_boundary(void* allocation)
 {
     return (pas_page_base*)allocation;
@@ -59,16 +57,11 @@ static inline void* pas_utility_heap_boundary_for_page_header(pas_page_base* pag
 }
 
 PAS_API void* pas_utility_heap_allocate_page(
-    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction);
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, pas_segregated_page_role role);
 
-static inline pas_segregated_shared_page_directory*
+PAS_API pas_segregated_shared_page_directory*
 pas_utility_heap_shared_page_directory_selector(pas_segregated_heap* heap,
-                                                pas_segregated_size_directory* directory)
-{
-    PAS_UNUSED_PARAM(heap);
-    PAS_UNUSED_PARAM(directory);
-    return &pas_utility_heap_shared_page_directory;
-}
+                                                pas_segregated_size_directory* directory);
 
 static inline pas_page_base* pas_utility_heap_create_page_header(
     void* boundary, pas_lock_hold_mode heap_lock_hold_mode)
@@ -106,7 +99,7 @@ PAS_API void pas_utility_heap_config_dump_shared_page_directory_arg(
                 .is_enabled = true, \
                 .heap_config_ptr = &pas_utility_heap_config, \
                 .page_config_ptr = &pas_utility_heap_config.small_segregated_config.base, \
-                .page_kind = pas_small_segregated_page_kind, \
+                .page_config_kind = pas_page_config_kind_segregated, \
                 .min_align_shift = PAS_INTERNAL_MIN_ALIGN_SHIFT, \
                 .page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
                 .granule_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
@@ -118,7 +111,6 @@ PAS_API void pas_utility_heap_config_dump_shared_page_directory_arg(
                 .page_object_payload_offset = PAS_UTILITY_HEAP_PAYLOAD_OFFSET, \
                 .page_object_payload_size = \
                     PAS_SMALL_PAGE_DEFAULT_SIZE - PAS_UTILITY_HEAP_PAYLOAD_OFFSET, \
-                .page_allocator = pas_utility_heap_allocate_page, \
                 .create_page_header = pas_utility_heap_create_page_header, \
                 .destroy_page_header = pas_utility_heap_destroy_page_header, \
             }, \
@@ -127,11 +119,14 @@ PAS_API void pas_utility_heap_config_dump_shared_page_directory_arg(
             .wasteage_handicap = 1., \
             .sharing_shift = PAS_SMALL_SHARING_SHIFT, \
             .num_alloc_bits = PAS_UTILITY_NUM_ALLOC_BITS, \
-            .dealloc_func = NULL, \
+            .shared_logging_mode = pas_segregated_deallocation_no_logging_mode, \
+            .exclusive_logging_mode = pas_segregated_deallocation_no_logging_mode, \
             .use_reversed_current_word = PAS_ARM64, \
             .check_deallocation = false, \
-            .enable_empty_word_eligibility_optimization = false, \
+            .enable_empty_word_eligibility_optimization_for_shared = false, \
+            .enable_empty_word_eligibility_optimization_for_exclusive = false, \
             .enable_view_cache = false, \
+            .page_allocator = pas_utility_heap_allocate_page, \
             .shared_page_directory_selector = pas_utility_heap_shared_page_directory_selector, \
             PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATIONS(pas_utility_heap_page_config) \
         }, \

@@ -307,7 +307,7 @@ bool jit_heap_config_for_each_shared_page_directory_remote(
     return true;
 }
 
-PAS_NO_RETURN void jit_heap_config_dump_shared_page_directory_arg(
+void jit_heap_config_dump_shared_page_directory_arg(
     pas_stream* stream, pas_segregated_shared_page_directory* directory)
 {
     PAS_UNUSED_PARAM(stream);

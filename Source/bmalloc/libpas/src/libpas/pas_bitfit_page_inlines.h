@@ -272,7 +272,8 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
     PAS_TESTING_ASSERT(pas_is_aligned(size, pas_page_base_config_min_align(page_config.base)));
 
     pas_lock_testing_assert_held(&owner->ownership_lock);
-    PAS_TESTING_ASSERT(pas_page_base_get_kind(&page->base) == page_config.base.page_kind);
+    PAS_TESTING_ASSERT(pas_page_base_get_kind(&page->base)
+                       == pas_page_kind_for_bitfit_variant(page_config.variant));
     PAS_TESTING_ASSERT(pas_compact_atomic_bitfit_view_ptr_load_non_null(&page->owner) == owner);
 
     pas_bitfit_page_testing_verify(page);

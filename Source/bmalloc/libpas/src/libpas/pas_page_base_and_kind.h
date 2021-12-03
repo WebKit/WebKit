@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_GET_PAGE_BASE_H
-#define PAS_GET_PAGE_BASE_H
+#ifndef PAS_PAGE_BASE_AND_KIND_H
+#define PAS_PAGE_BASE_AND_KIND_H
 
-#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
-#include "pas_heap_config.h"
 #include "pas_page_base.h"
-#include "pas_large_map.h"
 
 PAS_BEGIN_EXTERN_C;
 
-static PAS_ALWAYS_INLINE pas_page_base* pas_get_page_base(void* ptr,
-                                                          pas_heap_config config)
+struct pas_page_base;
+struct pas_page_base_and_kind;
+typedef struct pas_page_base pas_page_base;
+typedef struct pas_page_base_and_kind pas_page_base_and_kind;
+
+struct pas_page_base_and_kind {
+    pas_page_base* page_base;
+    pas_page_kind page_kind;
+};
+
+static inline pas_page_base_and_kind pas_page_base_and_kind_create(pas_page_base* page_base,
+                                                                   pas_page_kind page_kind)
 {
-    uintptr_t begin;
-    
-    begin = (uintptr_t)ptr;
-    
-    switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_exclusive_segregated_fast_megapage_kind:
-        return pas_page_base_for_address_and_page_config(begin, config.small_segregated_config.base);
-    case pas_small_other_fast_megapage_kind:
-        return pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config).page_base;
-    case pas_not_a_fast_megapage_kind: {
-        pas_page_base* page_base;
+    pas_page_base_and_kind result;
+    PAS_TESTING_ASSERT(page_base);
+    PAS_TESTING_ASSERT(pas_page_base_get_kind(page_base) == page_kind);
+    result.page_base = page_base;
+    result.page_kind = page_kind;
+    return result;
+}
 
-        page_base = config.page_header_func(begin);
-        if (page_base)
-            return page_base;
-
-        return NULL;
-    } }
-    
-    PAS_ASSERT(!"Should not be reached");
-    return NULL;
+static inline pas_page_base_and_kind pas_page_base_and_kind_create_empty(void)
+{
+    pas_page_base_and_kind result;
+    pas_zero_memory(&result, sizeof(result));
+    return result;
 }
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_GET_PAGE_BASE */
+#endif /* PAS_PAGE_BASE_AND_KIND_H */
 

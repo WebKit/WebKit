@@ -85,13 +85,14 @@ PAS_BEGIN_EXTERN_C;
             runtime_config, allocator_counts, size_lookup_mode); \
     } \
     \
-    bool lower_case_heap_config_name ## _specialized_try_deallocate_not_small( \
+    bool lower_case_heap_config_name ## _specialized_try_deallocate_not_small_exclusive_segregated( \
         pas_thread_local_cache* thread_local_cache, \
         uintptr_t begin, \
-        pas_deallocation_mode deallocation_mode) \
+        pas_deallocation_mode deallocation_mode, \
+        pas_fast_megapage_kind megapage_kind) \
     { \
-        return pas_try_deallocate_not_small( \
-            thread_local_cache, begin, (heap_config_value), deallocation_mode); \
+        return pas_try_deallocate_not_small_exclusive_segregated( \
+            thread_local_cache, begin, (heap_config_value), deallocation_mode, megapage_kind); \
     } \
     \
     struct pas_dummy

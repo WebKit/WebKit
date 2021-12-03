@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_GET_PAGE_BASE_H
-#define PAS_GET_PAGE_BASE_H
+#ifndef PAS_SEGREGATED_PAGE_ROLE_H
+#define PAS_SEGREGATED_PAGE_ROLE_H
 
-#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
-#include "pas_heap_config.h"
-#include "pas_page_base.h"
-#include "pas_large_map.h"
+#include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
-static PAS_ALWAYS_INLINE pas_page_base* pas_get_page_base(void* ptr,
-                                                          pas_heap_config config)
+enum pas_segregated_page_role {
+    pas_segregated_page_shared_role,
+    pas_segregated_page_exclusive_role
+};
+
+typedef enum pas_segregated_page_role pas_segregated_page_role;
+
+static inline const char* pas_segregated_page_role_get_string(pas_segregated_page_role role)
 {
-    uintptr_t begin;
-    
-    begin = (uintptr_t)ptr;
-    
-    switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_exclusive_segregated_fast_megapage_kind:
-        return pas_page_base_for_address_and_page_config(begin, config.small_segregated_config.base);
-    case pas_small_other_fast_megapage_kind:
-        return pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config).page_base;
-    case pas_not_a_fast_megapage_kind: {
-        pas_page_base* page_base;
-
-        page_base = config.page_header_func(begin);
-        if (page_base)
-            return page_base;
-
-        return NULL;
-    } }
-    
+    switch (role) {
+    case pas_segregated_page_shared_role:
+        return "shared";
+    case pas_segregated_page_exclusive_role:
+        return "exclusive";
+    }
     PAS_ASSERT(!"Should not be reached");
     return NULL;
 }
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_GET_PAGE_BASE */
+#endif /* PAS_SEGREGATED_PAGE_ROLE_H */
 

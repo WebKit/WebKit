@@ -198,6 +198,16 @@ PAS_API pas_segregated_page_config_kind
 pas_segregated_view_get_page_config_kind(pas_segregated_view view);
 PAS_API pas_segregated_page_config* pas_segregated_view_get_page_config(pas_segregated_view view);
 
+static inline pas_segregated_page_role pas_segregated_view_get_page_role_for_owner(pas_segregated_view view)
+{
+    return pas_segregated_view_kind_get_role_for_owner(pas_segregated_view_get_kind(view));
+}
+
+static inline pas_segregated_page_role pas_segregated_view_get_page_role_for_allocator(pas_segregated_view view)
+{
+    return pas_segregated_view_kind_get_role_for_allocator(pas_segregated_view_get_kind(view));
+}
+
 PAS_API size_t pas_segregated_view_get_index(pas_segregated_view view);
 
 PAS_API void* pas_segregated_view_get_page_boundary(pas_segregated_view view);

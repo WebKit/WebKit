@@ -81,8 +81,10 @@ static size_t max_object_size_for_page_config(pas_heap* parent_heap,
     
     size_t result;
 
-    if (verbose)
-        pas_log("max_object_size for %p (%s): %zu\n", &parent_heap->segregated_heap, pas_page_kind_get_string(page_config->page_kind), page_config->max_object_size);
+    if (verbose) {
+        pas_log("max_object_size for %p (%s): %zu\n", &parent_heap->segregated_heap,
+                pas_page_base_config_get_kind_string(page_config), page_config->max_object_size);
+    }
     
     result = pas_round_down_to_power_of_2(
         page_config->max_object_size,
@@ -1241,6 +1243,8 @@ pas_segregated_heap_ensure_size_directory_for_size(
                 heap, pas_heap_config_kind_get_string(config->kind), size, alignment);
     }
 
+    PAS_ASSERT(pas_is_aligned(size, alignment));
+
     if (PAS_ENABLE_TESTING) {
         check_part_of_all_heaps_data data;
         data.heap = heap;
@@ -1327,8 +1331,9 @@ pas_segregated_heap_ensure_size_directory_for_size(
     result = pas_segregated_heap_size_directory_for_index(heap, index, cached_index, config);
 
     PAS_ASSERT(
-        !result ||
-        pas_is_aligned(result->object_size, pas_segregated_size_directory_alignment(result)));
+        !result
+        || pas_is_aligned(result->object_size, pas_segregated_size_directory_alignment(result))
+        || pas_segregated_size_directory_is_bitfit(result));
 
     is_utility = pas_heap_config_is_utility(config);
 
@@ -1345,6 +1350,15 @@ pas_segregated_heap_ensure_size_directory_for_size(
         if (verbose)
             pas_log("Found result = %p, but we need to evict it starting at index = %zu\n", result, index);
 
+        /* Bitfit size directories claim super high alignment, so they should never get replaced. This is a
+           hard requirement, since:
+
+           - pas_bitfit_size_class is allocated as part of the pas_segregated_size_directory.
+           - We cannot add duplicate bitfit_size_classes, so if we ever tried to replace a
+             segregated_size_directory with another one of the same size, and they both had bitfit_size_classes,
+             then we'd be in trouble. */
+        PAS_ASSERT(!pas_segregated_size_directory_is_bitfit(result));
+        
         PAS_ASSERT(result->object_size >= object_size);
         PAS_ASSERT(result->object_size >= pas_segregated_heap_size_for_index(index, *config));
         PAS_ASSERT(pas_segregated_heap_index_for_size(result->object_size, *config) >= index);
@@ -1358,7 +1372,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
             PAS_ASSERT(pas_segregated_size_directory_min_index(result) != UINT_MAX);
             pas_segregated_size_directory_set_min_index(result, (unsigned)(index + 1));
         }
-        
+
         /* Need to clear out this size class from this size and smaller sizes.
            This loop starts at index (not index + 1 despite what the initial
            condition seems to do) and travels down. */

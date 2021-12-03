@@ -116,9 +116,10 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
 
                         pas_physical_memory_transaction_begin(&transaction);
                         pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-                        exclusive->page_boundary = page_config.base.page_allocator(
+                        exclusive->page_boundary = page_config.page_allocator(
                             size_directory->heap,
-                            heap_lock_hold_mode ? NULL : &transaction);
+                            heap_lock_hold_mode ? NULL : &transaction,
+                            pas_segregated_page_exclusive_role);
                         if (exclusive->page_boundary) {
                             if (verbose) {
                                 pas_log("Creating page header for new exclusive page, boundary = %p.\n",
