@@ -1680,3 +1680,4 @@ webkit.org/b/232492 [ BigSur Debug ] webrtc/video-receivers.html [ Pass Crash ]
 
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
 
+webkit.org/b/233665 [ Monterey+ ] http/tests/workers/service/serviceworker-websocket.https.html [ Failure ]
