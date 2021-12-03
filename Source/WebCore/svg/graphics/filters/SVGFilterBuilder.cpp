@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,6 +39,25 @@ void SVGFilterBuilder::setupBuiltinEffects(Ref<FilterEffect> sourceGraphic)
     m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic.ptr());
     m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(sourceGraphic));
     addBuiltinEffects();
+}
+
+static OptionSet<FilterEffectGeometry::Flags> boundarySetFlagsForElement(SVGElement& element)
+{
+    OptionSet<FilterEffectGeometry::Flags> flags;
+
+    if (element.hasAttribute(SVGNames::xAttr))
+        flags.add(FilterEffectGeometry::Flags::HasX);
+
+    if (element.hasAttribute(SVGNames::yAttr))
+        flags.add(FilterEffectGeometry::Flags::HasY);
+
+    if (element.hasAttribute(SVGNames::widthAttr))
+        flags.add(FilterEffectGeometry::Flags::HasWidth);
+
+    if (element.hasAttribute(SVGNames::heightAttr))
+        flags.add(FilterEffectGeometry::Flags::HasHeight);
+
+    return flags;
 }
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
@@ -85,26 +105,29 @@ RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filt
 
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
         effect = effectElement.build(*this);
-        if (!effect) {
-            clearEffects();
-            return nullptr;
-        }
+        if (!effect)
+            break;
 
-        effectElement.setStandardAttributes(effect.get());
-        effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, m_primitiveUnits, m_targetBoundingBox));
+        if (auto flags = boundarySetFlagsForElement(effectElement)) {
+            auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, m_primitiveUnits, m_targetBoundingBox);
+            m_effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
+        }
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
         if (colorInterpolationForElement(effectElement) == ColorInterpolation::LinearRGB)
             effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
 #endif
+
         if (auto renderer = effectElement.renderer())
             appendEffectToEffectReferences(effect.copyRef(), renderer);
 
         add(effectElement.result(), effect);
     }
 
-    if (!effect || totalNumberFilterEffects(*effect) > maxTotalNumberFilterEffects)
+    if (!effect || totalNumberFilterEffects(*effect) > maxTotalNumberFilterEffects) {
+        clearEffects();
         return nullptr;
+    }
 
     return effect;
 }

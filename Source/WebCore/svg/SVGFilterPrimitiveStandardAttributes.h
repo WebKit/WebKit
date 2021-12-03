@@ -36,8 +36,6 @@ class SVGFilterBuilder;
 class SVGFilterPrimitiveStandardAttributes : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
 public:
-    void setStandardAttributes(FilterEffect*) const;
-
     virtual RefPtr<FilterEffect> build(SVGFilterBuilder&) const = 0;
     // Returns true, if the new value is different from the old one.
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);

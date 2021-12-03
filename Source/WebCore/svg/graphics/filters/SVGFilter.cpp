@@ -51,8 +51,7 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     builder.setTargetBoundingBox(targetBoundingBox);
     builder.setPrimitiveUnits(filterElement.primitiveUnits());
 
-    auto lastEffect = builder.buildFilterEffects(filterElement);
-    if (!lastEffect)
+    if (!builder.buildFilterEffects(filterElement))
         return nullptr;
 
     FilterEffectVector expression;
@@ -61,7 +60,9 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
 
     ASSERT(!expression.isEmpty());
     filter->setExpression(WTFMove(expression));
-    
+
+    filter->setEffectGeometryMap(builder.takeEffectGeometryMap());
+
 #if USE(CORE_IMAGE)
     if (!filter->supportsCoreImageRendering())
         filter->setRenderingMode(RenderingMode::Unaccelerated);
@@ -97,6 +98,14 @@ bool SVGFilter::supportsCoreImageRendering() const
     return true;
 }
 #endif
+
+std::optional<FilterEffectGeometry> SVGFilter::effectGeometry(FilterEffect& effect) const
+{
+    auto it = m_effectGeometryMap.find(effect);
+    if (it != m_effectGeometryMap.end())
+        return it->value;
+    return std::nullopt;
+}
 
 bool SVGFilter::apply(const Filter& filter)
 {

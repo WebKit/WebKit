@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -69,6 +70,8 @@ public:
     RefPtr<FilterEffect> buildFilterEffects(SVGFilterElement&);
     bool buildExpression(FilterEffectVector& expression) const;
 
+    FilterEffectGeometryMap takeEffectGeometryMap() { return WTFMove(m_effectGeometryMap); }
+
 private:
     inline void addBuiltinEffects()
     {
@@ -84,8 +87,10 @@ private:
     HashMap<RenderObject*, FilterEffect*> m_effectRenderer;
 
     RefPtr<FilterEffect> m_lastEffect;
+
     FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
+    FilterEffectGeometryMap m_effectGeometryMap;
 };
     
 } // namespace WebCore

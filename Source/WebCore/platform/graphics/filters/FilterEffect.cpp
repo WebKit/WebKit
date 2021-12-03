@@ -24,10 +24,8 @@
 #include "config.h"
 #include "FilterEffect.h"
 
-#include "Color.h"
 #include "Filter.h"
 #include "FilterEffectApplier.h"
-#include "GeometryUtilities.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
@@ -44,43 +42,42 @@ FloatRect FilterEffect::calculateImageRect(const Filter& filter, const FilterIma
 
 FloatRect FilterEffect::determineFilterPrimitiveSubregion(const Filter& filter)
 {
-    // FETile, FETurbulence, FEFlood don't have input effects, take the filter region as unite rect.
-    FloatRect subregion;
-    if (unsigned numberOfInputEffects = inputEffects().size()) {
-        subregion = inputEffect(0)->determineFilterPrimitiveSubregion(filter);
-        for (unsigned i = 1; i < numberOfInputEffects; ++i) {
-            auto inputPrimitiveSubregion = inputEffect(i)->determineFilterPrimitiveSubregion(filter);
-            subregion.unite(inputPrimitiveSubregion);
+    // This function implements https://www.w3.org/TR/filter-effects-1/#FilterPrimitiveSubRegion.
+    FloatRect primitiveSubregion;
+
+    // If there is no input effects, take the effect boundaries as unite rect.
+    if (!m_inputEffects.isEmpty()) {
+        for (auto& effect : m_inputEffects) {
+            auto inputPrimitiveSubregion = effect->determineFilterPrimitiveSubregion(filter);
+            primitiveSubregion.unite(inputPrimitiveSubregion);
         }
     } else
-        subregion = filter.filterRegion();
+        primitiveSubregion = filter.filterRegion();
 
-    // After calling determineFilterPrimitiveSubregion on the target effect, reset the subregion again for <feTile>.
+    // Don't use the input's subregion for FETile.
     if (filterType() == FilterEffect::Type::FETile)
-        subregion = filter.filterRegion();
-
-    auto boundaries = effectBoundaries();
-    if (hasX())
-        subregion.setX(boundaries.x());
-    if (hasY())
-        subregion.setY(boundaries.y());
-    if (hasWidth())
-        subregion.setWidth(boundaries.width());
-    if (hasHeight())
-        subregion.setHeight(boundaries.height());
-
-    setFilterPrimitiveSubregion(subregion);
-
-    auto absoluteSubregion = subregion;
-    absoluteSubregion.scale(filter.filterScale());
+        primitiveSubregion = filter.filterRegion();
+    
+    // Clip the primitive subregion to the effect geometry.
+    if (auto geometry = filter.effectGeometry(*this)) {
+        if (auto x = geometry->x())
+            primitiveSubregion.setX(*x);
+        if (auto y = geometry->y())
+            primitiveSubregion.setY(*y);
+        if (auto width = geometry->width())
+            primitiveSubregion.setWidth(*width);
+        if (auto height = geometry->height())
+            primitiveSubregion.setHeight(*height);
+    }
 
     // Clip every filter effect to the filter region.
-    auto absoluteScaledFilterRegion = filter.filterRegion();
-    absoluteScaledFilterRegion.scale(filter.filterScale());
-    absoluteSubregion.intersect(absoluteScaledFilterRegion);
+    auto absoluteMaxEffectRect = filter.maxEffectRect(primitiveSubregion);
+    absoluteMaxEffectRect.scale(filter.filterScale());
 
-    setMaxEffectRect(absoluteSubregion);
-    return subregion;
+    setFilterPrimitiveSubregion(primitiveSubregion);
+    setMaxEffectRect(absoluteMaxEffectRect);
+
+    return primitiveSubregion;
 }
 
 FilterEffect* FilterEffect::inputEffect(unsigned number) const
@@ -129,7 +126,6 @@ bool FilterEffect::apply(const Filter& filter)
     LOG_WITH_STREAM(Filters, stream
         << "FilterEffect " << filterName() << " " << this << " apply():"
         << "\n  filterPrimitiveSubregion " << m_filterPrimitiveSubregion
-        << "\n  effectBoundaries " << m_effectBoundaries
         << "\n  absolutePaintRect " << absoluteImageRect
         << "\n  maxEffectRect " << m_maxEffectRect
         << "\n  filter scale " << filter.filterScale());

@@ -27,7 +27,6 @@
 #include "FilterFunction.h"
 #include "FilterImage.h"
 #include "FilterImageVector.h"
-#include "IntRect.h"
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -38,7 +37,6 @@ namespace WebCore {
 
 class Filter;
 class FilterEffectApplier;
-class ImageBuffer;
 
 class FilterEffect : public FilterFunction {
 public:
@@ -71,26 +69,9 @@ public:
     enum class RepresentationType { TestOutput, Debugging };
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType = RepresentationType::TestOutput) const;
 
-    // The following functions are SVG specific and will move to RenderSVGResourceFilterPrimitive.
-    // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
-    bool hasX() const { return m_hasX; }
-    void setHasX(bool value) { m_hasX = value; }
-
-    bool hasY() const { return m_hasY; }
-    void setHasY(bool value) { m_hasY = value; }
-
-    bool hasWidth() const { return m_hasWidth; }
-    void setHasWidth(bool value) { m_hasWidth = value; }
-
-    bool hasHeight() const { return m_hasHeight; }
-    void setHasHeight(bool value) { m_hasHeight = value; }
-
     FloatRect filterPrimitiveSubregion() const { return m_filterPrimitiveSubregion; }
     void setFilterPrimitiveSubregion(const FloatRect& filterPrimitiveSubregion) { m_filterPrimitiveSubregion = filterPrimitiveSubregion; }
 
-    FloatRect effectBoundaries() const { return m_effectBoundaries; }
-    void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
-    
     virtual FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const;
 
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
@@ -102,7 +83,7 @@ public:
 
     virtual void transformResultColorSpace(FilterEffect* in, const int) { in->transformResultColorSpace(m_operatingColorSpace); }
     void transformResultColorSpace(const DestinationColorSpace&);
-    
+
 protected:
     using FilterFunction::FilterFunction;
 
@@ -122,15 +103,6 @@ private:
     // The subregion of a filter primitive according to the SVG Filter specification in local coordinates.
     // This is SVG specific and needs to move to RenderSVGResourceFilterPrimitive.
     FloatRect m_filterPrimitiveSubregion;
-
-    // x, y, width and height of the actual SVGFE*Element. Is needed to determine the subregion of the
-    // filter primitive on a later step.
-    FloatRect m_effectBoundaries;
-    
-    bool m_hasX { false };
-    bool m_hasY { false };
-    bool m_hasWidth { false };
-    bool m_hasHeight { false };
 
     DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::SRGB() };
 };

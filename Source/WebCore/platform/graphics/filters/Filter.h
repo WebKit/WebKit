@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "FilterEffectGeometry.h"
 #include "FilterFunction.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
@@ -29,6 +30,7 @@
 
 namespace WebCore {
 
+class FilterEffect;
 class FilterImage;
 
 class Filter : public FilterFunction {
@@ -59,6 +61,8 @@ public:
     FloatPoint scaledByFilterScale(const FloatPoint&) const;
     FloatSize scaledByFilterScale(const FloatSize&) const;
     FloatRect scaledByFilterScale(const FloatRect&) const;
+
+    virtual std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const { return std::nullopt; }
 
     FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const;
     FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;

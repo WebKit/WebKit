@@ -42,19 +42,22 @@ public:
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
-    void setExpression(FilterEffectVector&& expression) { m_expression = WTFMove(expression); }
     RefPtr<FilterEffect> lastEffect() const { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
-
-    FloatSize resolvedSize(const FloatSize&) const final;
 
     RefPtr<FilterImage> apply() override;
 
 private:
     SVGFilter(RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
 
+    // FIXME: Merge the effectBoundaries in the expression node.
+    void setExpression(FilterEffectVector&& expression) { m_expression = WTFMove(expression); }
+    void setEffectGeometryMap(FilterEffectGeometryMap&& effectGeometryMap) { m_effectGeometryMap = WTFMove(effectGeometryMap); }
+
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const override;
 #endif
+    std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const override;
+    FloatSize resolvedSize(const FloatSize&) const final;
 
     bool apply(const Filter&) override;
     IntOutsets outsets() const override;
@@ -63,7 +66,9 @@ private:
     FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits;
 
+    // FIXME: Make m_expression a Vector of the FilterEffect and the effectBoundaries.
     FilterEffectVector m_expression;
+    FilterEffectGeometryMap m_effectGeometryMap;
 };
 
 } // namespace WebCore
