@@ -1,3 +1,15 @@
+2021-12-03  ujwal koneru  <ujwal.koneru@sony.com>
+
+        Fix playstation build after r286484
+        https://bugs.webkit.org/show_bug.cgi?id=233823
+
+        unreviewed build fix.
+
+        * UIProcess/playstation/WebProcessPoolPlayStation.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/playstation/WebProcessPlayStation.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-12-03  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build

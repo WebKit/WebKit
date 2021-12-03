@@ -32,8 +32,9 @@
 
 namespace WebKit {
 
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)
+void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 }
 
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters&)
