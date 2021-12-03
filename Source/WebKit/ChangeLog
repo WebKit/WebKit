@@ -1,3 +1,20 @@
+2021-12-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename DerivedSources/WebKit2 to DerivedSources/WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=233803
+
+        Reviewed by Tim Horton.
+
+        Mechanical rename.
+
+        No new tests because there is no behavior change.
+
+        * Configurations/BaseTarget.xcconfig:
+        * Scripts/generate-derived-sources.sh:
+        * Scripts/generate-unified-sources.sh:
+        * UnifiedSources-output.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-12-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Network process does not seem to initialize logging
