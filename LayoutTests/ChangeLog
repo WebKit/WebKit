@@ -1,3 +1,14 @@
+2021-12-03  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GStreamer] test http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=233737
+
+        Reviewed by Philippe Normand.
+
+        Give some more time to the frequency analyzer to detect activity.
+
+        * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html:
+
 2021-12-03  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Fix erase range to prevent accidental deletion in files with changing durations
