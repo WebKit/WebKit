@@ -608,11 +608,11 @@ HasPseudoClassEnabled:
   humanReadableDescription: "Enable :has() pseudo-class"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 HighlightAPIEnabled:
   type: bool
