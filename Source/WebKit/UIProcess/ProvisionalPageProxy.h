@@ -73,7 +73,7 @@ using LayerHostingContextID = uint32_t;
 class ProvisionalPageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool shouldClosePreviousPageAfterCommit, API::WebsitePolicies*);
+    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*);
     ~ProvisionalPageProxy();
 
     WebPageProxy& page() const { return m_page; }
@@ -84,7 +84,7 @@ public:
     uint64_t navigationID() const { return m_navigationID; }
     const URL& provisionalURL() const { return m_provisionalLoadURL; }
 
-    bool shouldClosePreviousPageAfterCommit() const { return m_shouldClosePreviousPageAfterCommit; }
+    bool isProcessSwappingOnNavigationResponse() const { return m_isProcessSwappingOnNavigationResponse; }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     std::unique_ptr<DrawingAreaProxy> takeDrawingArea();
@@ -170,7 +170,7 @@ private:
     WebCore::ResourceRequest m_request;
     ProcessSwapRequestedByClient m_processSwapRequestedByClient;
     bool m_wasCommitted { false };
-    bool m_shouldClosePreviousPageAfterCommit { false };
+    bool m_isProcessSwappingOnNavigationResponse { false };
     URL m_provisionalLoadURL;
 
 #if PLATFORM(COCOA)
