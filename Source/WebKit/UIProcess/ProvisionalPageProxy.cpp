@@ -58,7 +58,7 @@ using namespace WebCore;
 #define PROVISIONALPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, navigationID=%" PRIu64 "] ProvisionalPageProxy::" fmt, this, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), m_navigationID, ##__VA_ARGS__)
 #define PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, navigationID=%" PRIu64 "] ProvisionalPageProxy::" fmt, this, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), m_navigationID, ##__VA_ARGS__)
 
-ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy> suspendedPage, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest& request, ProcessSwapRequestedByClient processSwapRequestedByClient, bool shouldClosePreviousPageAfterCommit, API::WebsitePolicies* websitePolicies)
+ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy> suspendedPage, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest& request, ProcessSwapRequestedByClient processSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies* websitePolicies)
     : m_page(page)
     , m_webPageID(suspendedPage ? suspendedPage->webPageID() : PageIdentifier::generate())
     , m_process(WTFMove(process))
@@ -66,7 +66,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_isServerRedirect(isServerRedirect)
     , m_request(request)
     , m_processSwapRequestedByClient(processSwapRequestedByClient)
-    , m_shouldClosePreviousPageAfterCommit(shouldClosePreviousPageAfterCommit)
+    , m_isProcessSwappingOnNavigationResponse(isProcessSwappingOnNavigationResponse)
 #if PLATFORM(IOS_FAMILY)
     , m_provisionalLoadActivity(m_process->throttler().foregroundActivity("Provisional Load"_s))
 #endif
@@ -117,6 +117,12 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
         send(Messages::WebPage::Close());
         m_process->removeVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
+
+        // If we were process-swapping on navigation response then there is still a provisional load going on in the previous process
+        // and its layer tree is frozen. Since we didn't end up committing the provisional process, we need to stop the load in the
+        // previous process so that it cancels its navigation and unfreezes its layer tree.
+        if (isProcessSwappingOnNavigationResponse())
+            m_page.send(Messages::WebPage::StopLoading());
     }
 
     m_process->removeProvisionalPageProxy(*this);

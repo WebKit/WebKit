@@ -1,3 +1,37 @@
+2021-12-02  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r283179) Google Drive freezes after downloading a folder
+        https://bugs.webkit.org/show_bug.cgi?id=233783
+        <rdar://85918531>
+
+        Reviewed by Darin Adler.
+
+        When process-swapping on a navigation response due to COOP, we create a new ProvisionalPageProxy
+        to trigger a provisional load in a new WebProcess. In the common case, the ProvisionalPageProxy
+        gets committed, we process-swap and everything works fine. However, if the client decides to
+        convert the navigation into a download (like in the Google Drive case), then the
+        ProvisionalPageProxy gets destroyed without being committed. The issue is that the committed
+        process still thinks at this point that it is in the middle of a navigation and its layer
+        tree is thus frozen with reason=PageTransition. This is what makes Google Drive look frozen
+        after the download. This is not an issue with PSON because the process-swap happens in
+        decidePolicyForNavigationAction() and we tell the previous process to ignore the navigation
+        when we process-swap.
+
+        To address the issue, we now tell the committed process to cancel its navigation if the
+        ProvisionalPageProxy ends up getting destroyed without being committed. This lets the
+        committed process know there is no point in waiting for this navigation to happen and allows
+        it to unfreeze its layer tree.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        * UIProcess/ProvisionalPageProxy.h:
+        (WebKit::ProvisionalPageProxy::isProcessSwappingOnNavigationResponse const):
+        (WebKit::ProvisionalPageProxy::shouldClosePreviousPageAfterCommit const): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+
 2021-12-02  Rachel Ginsberg  <rginsberg@apple.com>
 
         Make enum values consisten in ApplicationManifest::Icon::Purpose
