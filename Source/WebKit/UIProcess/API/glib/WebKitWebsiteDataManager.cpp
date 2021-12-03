@@ -1369,6 +1369,30 @@ gboolean webkit_website_data_manager_clear_finish(WebKitWebsiteDataManager* mana
 }
 
 /**
+ * webkit_website_data_manager_get_process_ids:
+ * @manager: a #WebKitWebsiteDataManager
+ * @result: a #GList
+ *
+ * Get the process IDs for the @manager.
+ *
+ * Returns: the @result #GList with the process ids appended.
+ *
+ * Since: 2.49.2
+ */
+GList* webkit_website_data_manager_get_process_ids(WebKitWebsiteDataManager* manager, GList* result)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), result);
+
+    if (manager->priv->websiteDataStore) {
+        const auto& networkProcess = manager->priv->websiteDataStore->networkProcess();
+        if (auto pid = networkProcess.processID())
+            result = g_list_append(result, GINT_TO_POINTER(pid));
+    }
+
+    return result;
+}
+
+/**
  * WebKitITPFirstParty: (ref-func webkit_itp_first_party_ref) (unref-func webkit_itp_first_party_unref)
  *
  * Describes a first party origin.

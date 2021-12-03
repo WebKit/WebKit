@@ -1942,6 +1942,29 @@ void webkit_web_context_send_message_to_all_extensions(WebKitWebContext* context
         process->send(Messages::WebProcess::SendMessageToWebProcessExtension(webkitUserMessageGetMessage(message)), 0);
 }
 
+/**
+ * webkit_web_context_get_process_ids:
+ * @context: the #WebKitWebContext
+ * @result: a #GList
+ *
+ * Get the process IDs for the @context.
+ *
+ * Returns: the @result #GList with the process ids appended.
+ *
+ * Since: 2.49.2
+ */
+GList* webkit_web_context_get_process_ids(WebKitWebContext* context, GList* result)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), result);
+
+    for (Ref process : context->priv->processPool->processes()) {
+        if (auto pid = process->processID())
+            result = g_list_append(result, GINT_TO_POINTER(pid));
+    }
+
+    return result;
+}
+
 #if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_web_context_set_use_system_appearance_for_scrollbars:

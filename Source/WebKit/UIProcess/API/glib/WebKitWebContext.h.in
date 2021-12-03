@@ -413,6 +413,10 @@ WEBKIT_API void
 webkit_web_context_send_message_to_all_extensions   (WebKitWebContext              *context,
                                                      WebKitUserMessage             *message);
 
+WEBKIT_API GList *
+webkit_web_context_get_process_ids                  (WebKitWebContext              *context,
+                                                     GList                         *result);
+
 #if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED void
 webkit_web_context_set_use_system_appearance_for_scrollbars (WebKitWebContext      *context,

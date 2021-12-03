@@ -193,6 +193,10 @@ webkit_website_data_manager_clear_finish                               (WebKitWe
                                                                         GAsyncResult             *result,
                                                                         GError                  **error);
 
+WEBKIT_API GList *
+webkit_website_data_manager_get_process_ids                            (WebKitWebsiteDataManager *manager,
+                                                                        GList                    *result);
+
 #if !ENABLE(2022_GLIB_API)
 WEBKIT_API void
 webkit_website_data_manager_set_memory_pressure_settings               (WebKitMemoryPressureSettings *settings);
