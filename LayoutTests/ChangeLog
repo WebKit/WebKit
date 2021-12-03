@@ -1,3 +1,11 @@
+2021-12-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] WPT css-transform transform-interpolation-rotate-slerp.html is flaky img failing after updated in r286002
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         DisplayCaptureSource doesn't initialize base class correctly
