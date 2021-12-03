@@ -391,9 +391,6 @@ bool HTMLInputElement::stepMismatch() const
 
 bool HTMLInputElement::isValid() const
 {
-    if (!willValidate())
-        return true;
-
     String value = this->value();
     bool someError = m_inputType->isInvalid(value) || tooShort(value, CheckDirtyFlag) || tooLong(value, CheckDirtyFlag) || customError();
     return !someError;
