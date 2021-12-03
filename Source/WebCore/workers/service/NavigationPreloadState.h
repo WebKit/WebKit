@@ -33,14 +33,16 @@
 namespace WebCore {
 
 struct NavigationPreloadState {
-    bool enabled { false };
-    String headerValue;
+    static NavigationPreloadState defaultValue() { return { false, "true"_s }; }
 
     NavigationPreloadState isolatedCopy() const & { return { enabled, headerValue.isolatedCopy() }; }
     NavigationPreloadState isolatedCopy() && { return { enabled, WTFMove(headerValue).isolatedCopy() }; }
 
     template<class Encoder> void encode(Encoder& encoder) const { encoder << enabled << headerValue; }
     template<class Decoder> static std::optional<NavigationPreloadState> decode(Decoder&);
+
+    bool enabled { false };
+    String headerValue;
 };
 
 template<class Decoder>

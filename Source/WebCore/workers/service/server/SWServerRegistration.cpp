@@ -43,7 +43,7 @@ static ServiceWorkerRegistrationIdentifier generateServiceWorkerRegistrationIden
     return ServiceWorkerRegistrationIdentifier::generate();
 }
 
-SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
+SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&& navigationPreloadState)
     : m_identifier(generateServiceWorkerRegistrationIdentifier())
     , m_registrationKey(key)
     , m_updateViaCache(updateViaCache)
@@ -53,9 +53,9 @@ SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorker
     , m_server(server)
     , m_creationTime(MonotonicTime::now())
     , m_softUpdateTimer { *this, &SWServerRegistration::softUpdate }
+    , m_preloadState(WTFMove(navigationPreloadState))
 {
     m_scopeURL.removeFragmentIdentifier();
-    m_preloadState.headerValue = "true"_s;
 }
 
 SWServerRegistration::~SWServerRegistration()
@@ -387,32 +387,35 @@ void SWServerRegistration::scheduleSoftUpdate(IsAppInitiated isAppInitiated)
 // https://w3c.github.io/ServiceWorker/#dom-navigationpreloadmanager-enable, steps run in parallel.
 std::optional<ExceptionData> SWServerRegistration::enableNavigationPreload()
 {
-    // FIXME: Persist this data.
     if (!m_activeWorker)
         return ExceptionData { InvalidStateError, "No active worker"_s };
+
     m_preloadState.enabled = true;
+    m_server.storeRegistrationForWorker(*m_activeWorker);
     return { };
 }
 
 // https://w3c.github.io/ServiceWorker/#dom-navigationpreloadmanager-disable, steps run in parallel.
 std::optional<ExceptionData> SWServerRegistration::disableNavigationPreload()
 {
-    // FIXME: Persist this data.
     if (!m_activeWorker)
         return ExceptionData { InvalidStateError, "No active worker"_s };
+
     m_preloadState.enabled = false;
+    m_server.storeRegistrationForWorker(*m_activeWorker);
     return { };
 }
 
 // https://w3c.github.io/ServiceWorker/#dom-navigationpreloadmanager-setheadervalue, steps run in parallel.
 std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderValue(String&& headerValue)
 {
-    // FIXME: Persist this data.
     if (!isValidHTTPHeaderValue(headerValue))
         return ExceptionData { TypeError, "Invalid header value"_s };
     if (!m_activeWorker)
         return ExceptionData { InvalidStateError, "No active worker"_s };
+
     m_preloadState.headerValue = WTFMove(headerValue);
+    m_server.storeRegistrationForWorker(*m_activeWorker);
     return { };
 }
 

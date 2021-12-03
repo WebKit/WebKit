@@ -53,7 +53,7 @@ enum class IsAppInitiated : bool { No, Yes };
 class SWServerRegistration : public CanMakeWeakPtr<SWServerRegistration> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
+    SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&&);
     ~SWServerRegistration();
 
     const ServiceWorkerRegistrationKey& key() const { return m_registrationKey; }

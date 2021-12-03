@@ -47,7 +47,8 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const &
         loadedFromDisk,
         lastNavigationWasAppInitiated,
         crossThreadCopy(scriptResourceMap),
-        serviceWorkerPageIdentifier
+        serviceWorkerPageIdentifier,
+        crossThreadCopy(navigationPreloadState),
     };
 }
 
@@ -67,7 +68,8 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() &&
         loadedFromDisk,
         lastNavigationWasAppInitiated,
         crossThreadCopy(WTFMove(scriptResourceMap)),
-        serviceWorkerPageIdentifier
+        serviceWorkerPageIdentifier,
+        crossThreadCopy(WTFMove(navigationPreloadState))
     };
 }
 

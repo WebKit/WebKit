@@ -59,6 +59,7 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
+static NSString *serviceWorkerRegistrationFilename = @"ServiceWorkerRegistrations-8.sqlite3";
 static bool serviceWorkerGlobalObjectIsAvailable;
 
 static String expectedMessage;
@@ -2016,7 +2017,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     auto path = store._configuration._serviceWorkerRegistrationDirectory.path;
 
     NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
-    NSURL *swDBPath = [directory URLByAppendingPathComponent:@"ServiceWorkerRegistrations-7.sqlite3"];
+    NSURL *swDBPath = [directory URLByAppendingPathComponent:serviceWorkerRegistrationFilename];
 
     unsigned timeout = 0;
     while (![[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path] && ++timeout < 100)
@@ -2047,7 +2048,7 @@ TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
 
     [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-7.sqlite3"] error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:serviceWorkerRegistrationFilename] error:nil];
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
@@ -2449,9 +2450,9 @@ TEST(ServiceWorkers, CustomDataStorePathsVersusCompletionHandlers)
     done = false;
 
     unsigned timeout = 0;
-    while (![[NSFileManager defaultManager] fileExistsAtPath:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-7.sqlite3"].path] && ++timeout < 20)
+    while (![[NSFileManager defaultManager] fileExistsAtPath:[swPath URLByAppendingPathComponent:serviceWorkerRegistrationFilename].path] && ++timeout < 20)
         TestWebKitAPI::Util::sleep(0.1);
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-7.sqlite3"].path]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:[swPath URLByAppendingPathComponent:serviceWorkerRegistrationFilename].path]);
 
     // Fetch SW records
     auto websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);

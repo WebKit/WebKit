@@ -1,3 +1,15 @@
+2021-12-03  Youenn Fablet  <youenn@apple.com>
+
+        Persist NavigationPreloadState in service worker registration database
+        https://bugs.webkit.org/show_bug.cgi?id=233698
+        <rdar://problem/85963120>
+
+        Reviewed by Chris Dumez.
+
+        Increase counter from 7 to 8.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2021-12-02  Jean-Yves Avenard  <jya@apple.com>
 
         Compilation error on Tools/TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm
