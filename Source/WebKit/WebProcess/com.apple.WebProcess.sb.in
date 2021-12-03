@@ -1812,30 +1812,48 @@
 
 (when (defined? 'system-fcntl)
     (deny system-fcntl (with telemetry))
-    (allow system-fcntl
-        (fcntl-command F_BARRIERFSYNC)
-        (fcntl-command F_GETCONFINED)
-        (fcntl-command F_GETFL) ;; LibJPEGReadPlugin::copyImageBlockSetStandard
-        (fcntl-command F_GETLK)
-        (fcntl-command F_GETSIGSINFO)
-        (fcntl-command F_NOCACHE)
-        (fcntl-command F_OFD_GETLK)
-        (fcntl-command F_OFD_SETLKWTIMEOUT)
-        (fcntl-command F_RDADVISE)
-        (fcntl-command F_SETCONFINED)
-        (fcntl-command F_GETPATH) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
-        (fcntl-command F_ADDFILESIGS_RETURN) ;; ImageLoaderMachO::loadCodeSignature
-        (fcntl-command F_CHECK_LV) ;; ImageLoaderMachO::loadCodeSignature
-        (fcntl-command F_SPECULATIVE_READ) ;; ImageLoaderMachO::mapSegments
-        (fcntl-command F_SETFD) ;; libwebrtc.dylib (no backtrace)
-        (fcntl-command F_GETFD) ;; libwebrtc.dylib (no backtrace)
-        (fcntl-command F_RDADVISE) ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
-        (fcntl-command F_NOCACHE) ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
-        (fcntl-command F_SETFL) ;; CMCapture uses when camera is enabled
-        (fcntl-command F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
+     (allow system-fcntl
+        (fcntl-command
+            F_GETPATH)) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
+    (allow system-fcntl (with report) (with telemetry)
+       (fcntl-command
+            F_BARRIERFSYNC
+            F_GETCONFINED
+            F_GETFL ;; LibJPEGReadPlugin::copyImageBlockSetStandard
+            F_GETSIGSINFO
+            F_NOCACHE
+            F_RDADVISE
+            F_SETCONFINED
+            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
+            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
+            F_SPECULATIVE_READ ;; ImageLoaderMachO::mapSegments
+            F_SETFD ;; libwebrtc.dylib (no backtrace)
+            F_GETFD ;; libwebrtc.dylib (no backtrace)
+            F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
+            F_NOCACHE ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
+            F_SETFL ;; CMCapture uses when camera is enabled
+            F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 
-    (allow system-fcntl
-        (fcntl-command F_OFD_SETLK))
+    (define (appcache-fcntl-commands)
+        (fcntl-command
+            F_GETLK
+            F_OFD_GETLK
+            F_OFD_SETLK
+            F_OFD_SETLKWTIMEOUT))
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+    ;; This rule enables the WebContent process to flip the "AppCacheDisabled" sandbox variable
+    ;; by reading a preference from the domain "com.apple.WebKit.WebContent.AppCacheDisabled".
+    (deny user-preference-read (with enable-state-flag "AppCacheDisabled")
+        (preference-domain "com.apple.WebKit.WebContent.AppCacheDisabled"))
+ 
+    (with-filter (require-not (state-flag "AppCacheDisabled"))
+        (allow system-fcntl (appcache-fcntl-commands)))
+    (with-filter (state-flag "AppCacheDisabled")
+        (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands)))
+#else
+    (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands))
+#endif
 
     (allow system-fcntl
         (fcntl-command F_GETPROTECTIONCLASS)
