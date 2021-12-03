@@ -553,12 +553,12 @@ MockCaptureDevicesEnabled:
 MomentumScrollingAnimatorEnabled:
   type: bool
   humanReadableName: "Momentum Scrolling Animator"
-  humanReadableDescription: "Drive momentum scrolling via an internal animator instead of using momentum events"
+  humanReadableDescription: "Generate momentum events in WebKit instead of using those delivered by the system"
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
 
