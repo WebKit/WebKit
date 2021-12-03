@@ -42,6 +42,7 @@
         "css/css-flexbox/justify-content_flex-start.html",
         "css/css-flexbox/justify-content_space-around.html",
         "css/css-flexbox/justify-content_space-between-001.html",
+        "css/css-flexbox/negative-available-size-crash.html",
         "css/css-flexbox/negative-flex-margins-crash.html",
         "css/css-flexbox/negative-flex-rounding-crash.html",
         "css/css-flexbox/negative-item-margins-002-crash.html",

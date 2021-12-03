@@ -1,3 +1,19 @@
+2021-12-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] WPT import. December 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=233810
+
+        Reviewed by Rob Buis.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-flexbox/negative-available-size-crash-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/negative-available-size-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/scrollbars-auto-expected.html:
+        * web-platform-tests/css/css-flexbox/scrollbars-expected.html:
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2.html:
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2.html:
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2021-12-02  Chris Dumez  <cdumez@apple.com>
 
         html/semantics/forms/constraints/form-validation-validity-valid.html WPT test is failing

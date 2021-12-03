@@ -1539,6 +1539,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-reverse-wrap-baseline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-shrink-to-fit-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-shrink-to-fit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-available-size-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-margins-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-flex-rounding-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/negative-item-margins-002-crash.html
