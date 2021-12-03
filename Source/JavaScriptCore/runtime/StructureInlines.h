@@ -256,7 +256,7 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
     if (hasIndexedProperties(indexingType()))
         return true;
     
-    if (!isTypedView(typedArrayTypeForType(m_blob.type())))
+    if (!isTypedView(typedArrayTypeForType(m_cellHeaderType)))
         return false;
 
     return jsCast<const JSArrayBufferView*>(cell)->mode() == WastefulTypedArray;

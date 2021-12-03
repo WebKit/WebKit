@@ -45,7 +45,7 @@ bool VMInspector::verifyCellSize(VM& vm, JSCell* cell, size_t allocatorCellSize)
     Structure* structure = cell->structure(vm);
     const ClassInfo* classInfo = structure->classInfo();
     JSType cellType = cell->type();
-    AUDIT_VERIFY(action, verifier, cellType == structure->m_blob.type(), cell, cellType, structure->m_blob.type());
+    AUDIT_VERIFY(action, verifier, cellType == structure->typeInfo().type(), cell, cellType, structure->typeInfo().type());
 
     size_t size = cellSize(vm, cell);
     AUDIT_VERIFY(action, verifier, size <= allocatorCellSize, cell, cellType, size, allocatorCellSize, classInfo->staticClassSize);

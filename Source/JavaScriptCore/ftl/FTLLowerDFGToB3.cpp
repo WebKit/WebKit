@@ -16802,7 +16802,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        LValue id = m_out.load32(structure, m_heaps.Structure_structureID);
+        LValue id = m_out.bitAnd(m_out.castToInt32(structure), m_out.constInt32(structureIDMask));
         m_out.store32(id, object, m_heaps.JSCell_structureID);
 
         LValue blob = m_out.load32(structure, m_heaps.Structure_indexingModeIncludingHistory);

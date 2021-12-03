@@ -2464,7 +2464,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
             loadPtrFromMetadata(bytecode, OpPutToScope::Metadata::offsetOfStructure(), scratchGPR1);
             emitGetVirtualRegisterPayload(scope, scopeGPR);
             addSlowCase(branchTestPtr(Zero, scratchGPR1));
-            load32(Address(scratchGPR1, Structure::structureIDOffset()), scratchGPR1);
+            and32(TrustedImm32(structureIDMask), scratchGPR1);
             addSlowCase(branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), scratchGPR1));
 
             emitGetVirtualRegister(value, valueJSR);

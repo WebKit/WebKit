@@ -1,3 +1,49 @@
+2021-12-03  Keith Miller  <keith_miller@apple.com>
+
+        Remove StructureIDBlob
+        https://bugs.webkit.org/show_bug.cgi?id=233723
+
+        Reviewed by Yusuke Suzuki.
+
+        StructureIDBlob isn't very useful now that StructureIDs are just the
+        bottom bits of the pointer on 64 bit platforms. In a follow up patch
+        I'll change the layout of JSCell and Structure so that TypeInfo creation
+        can be a single load platforms that allow (and don't penalize) misaligned loads.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::setBrandTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::id const):
+        (JSC::Structure::objectInitializationBlob const):
+        (JSC::Structure::idBlob const):
+        (JSC::Structure::isProxy const):
+        (JSC::Structure::typeInfo const):
+        (JSC::Structure::indexingType const):
+        (JSC::Structure::indexingMode const):
+        (JSC::Structure::fencedIndexingMode):
+        (JSC::Structure::indexingModeIncludingHistory const):
+        (JSC::Structure::indexingModeIncludingHistoryOffset):
+        (JSC::Structure::structureIDOffset): Deleted.
+        * runtime/StructureIDBlob.h: Removed.
+        * runtime/StructureInlines.h:
+        (JSC::Structure::hasIndexingHeader const):
+        * tools/VMInspectorInlines.h:
+        (JSC::VMInspector::verifyCellSize):
+
 2021-12-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] shell's $.globalObjectFor is not safe for non object cells
