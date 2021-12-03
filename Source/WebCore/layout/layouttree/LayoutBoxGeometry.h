@@ -77,6 +77,8 @@ public:
     std::optional<LayoutUnit> verticalPadding() const;
     std::optional<LayoutUnit> horizontalPadding() const;
 
+    LayoutUnit borderAndPaddingStart() const { return borderLeft() + paddingLeft().value_or(0); }
+
     LayoutUnit contentBoxTop() const { return paddingBoxTop() + paddingTop().value_or(0); }
     LayoutUnit contentBoxLeft() const { return paddingBoxLeft() + paddingLeft().value_or(0); }
     LayoutUnit contentBoxBottom() const { return contentBoxTop() + contentBoxHeight(); }

@@ -409,6 +409,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     };
     createDisplayBoxesInVisualOrderForContentRuns();
 
+    auto needsDisplayBoxHorizontalAdjustment = false;
     auto createDisplayBoxesInVisualOrderForInlineBoxes = [&] {
         // Visual order could introduce gaps and/or inject runs outside from the current inline box content.
         // In such cases, we need to "close" and "open" display boxes for these inline box fragments
@@ -457,7 +458,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                         parentBoxStack.add(inlineBox);
 
                         auto createAndInsertDisplayBoxForInlineBoxFragment = [&] {
-                            auto visualRect = lineBox.logicalBorderBoxForInlineBox(*inlineBox, formattingState().boxGeometry(*inlineBox));
+                            auto& boxGeometry = formattingState().boxGeometry(*inlineBox);
+                            auto visualRect = lineBox.logicalBorderBoxForInlineBox(*inlineBox, boxGeometry);
                             // Use the current content left as the starting point for this display box.
                             visualRect.setLeft(boxes[index].logicalLeft());
                             visualRect.moveVertically(lineBoxLogicalTopLeft.y());
@@ -465,6 +467,12 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                             visualRect.setWidth({ });
                             insertInlineBoxDisplayBoxForBidiBoundary(lineBox.inlineLevelBoxForLayoutBox(*inlineBox), visualRect, index, boxes);
                             ++index;
+                            // Need to push the rest of the content when this inline box has margin/border/padding.
+                            needsDisplayBoxHorizontalAdjustment = needsDisplayBoxHorizontalAdjustment
+                                || boxGeometry.horizontalBorder()
+                                || boxGeometry.horizontalPadding().value_or(0)
+                                || boxGeometry.marginStart()
+                                || boxGeometry.marginEnd();
                         };
                         createAndInsertDisplayBoxForInlineBoxFragment();
                     }
@@ -478,6 +486,27 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     };
     if (needsNonRootInlineBoxDisplayBox)
         createDisplayBoxesInVisualOrderForInlineBoxes();
+
+    auto adjustVisualGeometryWithInlineBoxes = [&] {
+        auto accumulatedOffset = InlineLayoutUnit { };
+
+        ASSERT(boxes[0].isRootInlineBox());
+        for (size_t index = 1; index < boxes.size(); ++index) {
+            auto& displayBox = boxes[index];
+            displayBox.moveHorizontally(accumulatedOffset);
+
+            if (displayBox.isNonRootInlineBox() && displayBox.isFirstBox()) {
+                // FIXME: Add support for the 'end' side of the inline box.
+                auto& layoutBox = displayBox.layoutBox();
+                auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+
+                displayBox.moveHorizontally(boxGeometry.marginStart());
+                accumulatedOffset += boxGeometry.marginStart() + boxGeometry.borderAndPaddingStart();
+            }
+        }
+    };
+    if (needsDisplayBoxHorizontalAdjustment)
+        adjustVisualGeometryWithInlineBoxes();
 }
 
 void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxLogicalRight)
