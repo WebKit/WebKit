@@ -63,7 +63,7 @@ void FileSystemDirectoryHandle::getFileHandle(const String& name, std::optional<
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
         }
 
-        promise.settle(FileSystemFileHandle::create(*context, String { name }, result.returnValue(), WTFMove(connection)));
+        promise.resolve(FileSystemFileHandle::create(*context, String { name }, result.returnValue(), WTFMove(connection)));
     });
 }
 
@@ -84,7 +84,7 @@ void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, std::opti
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
         }
 
-        promise.settle(FileSystemDirectoryHandle::create(*context, String { name }, identifier, WTFMove(connection)));
+        promise.resolve(FileSystemDirectoryHandle::create(*context, String { name }, identifier, WTFMove(connection)));
     });
 }
 
@@ -105,10 +105,7 @@ void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromi
         return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
     connection().resolve(identifier(), handle.identifier(), [promise = WTFMove(promise)](auto result) mutable {
-        if (result.hasException())
-            return promise.reject(result.releaseException());
-
-        promise.resolve(result.releaseReturnValue());
+        promise.settle(WTFMove(result));
     });
 }
 

@@ -671,11 +671,7 @@ void ServiceWorkerContainer::setNavigationPreloadHeaderValue(ServiceWorkerRegist
 void ServiceWorkerContainer::getNavigationPreloadState(ServiceWorkerRegistrationIdentifier identifier, NavigationPreloadStatePromise&& promise)
 {
     ensureSWClientConnection().getNavigationPreloadState(identifier, [promise = WTFMove(promise)](auto&& result) mutable {
-        if (result.hasException()) {
-            promise.reject(result.releaseException());
-            return;
-        }
-        promise.resolve(result.releaseReturnValue());
+        promise.settle(WTFMove(result));
     });
 }
 

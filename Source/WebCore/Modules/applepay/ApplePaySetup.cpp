@@ -53,7 +53,7 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
 {
     auto canCall = PaymentSession::canCreateSession(document);
     if (canCall.hasException()) {
-        promise.settle(canCall.releaseException());
+        promise.reject(canCall.releaseException());
         return;
     }
 
@@ -78,7 +78,7 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
 
     page->paymentCoordinator().getSetupFeatures(m_configuration, document.url(), [this, pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
         if (m_setupFeaturesPromise)
-            std::exchange(m_setupFeaturesPromise, std::nullopt)->settle(WTFMove(setupFeatures));
+            std::exchange(m_setupFeaturesPromise, std::nullopt)->resolve(WTFMove(setupFeatures));
     });
 }
 
@@ -86,7 +86,7 @@ void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature
 {
     auto canCall = PaymentSession::canCreateSession(document);
     if (canCall.hasException()) {
-        promise.settle(canCall.releaseException());
+        promise.reject(canCall.releaseException());
         return;
     }
 
@@ -111,7 +111,7 @@ void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature
 
     page->paymentCoordinator().beginApplePaySetup(m_configuration, document.url(), WTFMove(features), [this](bool result) {
         if (m_beginPromise)
-            std::exchange(m_beginPromise, std::nullopt)->settle(result);
+            std::exchange(m_beginPromise, std::nullopt)->resolve(result);
     });
 }
 
@@ -125,10 +125,10 @@ ApplePaySetup::ApplePaySetup(ScriptExecutionContext& context, ApplePaySetupConfi
 void ApplePaySetup::stop()
 {
     if (m_setupFeaturesPromise)
-        std::exchange(m_setupFeaturesPromise, std::nullopt)->settle(Exception { AbortError });
+        std::exchange(m_setupFeaturesPromise, std::nullopt)->reject(Exception { AbortError });
 
     if (m_beginPromise)
-        std::exchange(m_beginPromise, std::nullopt)->settle(Exception { AbortError });
+        std::exchange(m_beginPromise, std::nullopt)->reject(Exception { AbortError });
 
     if (auto page = downcast<Document>(*scriptExecutionContext()).page())
         page->paymentCoordinator().endApplePaySetup();

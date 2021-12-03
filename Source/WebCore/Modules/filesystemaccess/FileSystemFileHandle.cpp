@@ -86,7 +86,7 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
         }
 
-        promise.settle(FileSystemSyncAccessHandle::create(*context, protectedThis.get(), identifier, file));
+        promise.resolve(FileSystemSyncAccessHandle::create(*context, protectedThis.get(), identifier, file));
     });
 }
 
