@@ -96,8 +96,14 @@ static WTF::String constructedPath(const WTF::String& base, const WTF::String& i
 
 // The size and offset of the densely packed bytes in the file, not sizeof and offsetof, which would
 // represent the size and offset of the structure in memory, possibly with compiler-added padding.
-const size_t ContentRuleListFileHeaderSize = 2 * sizeof(uint32_t) + 5 * sizeof(uint64_t);
-const size_t ConditionsApplyOnlyToDomainOffset = sizeof(uint32_t) + 5 * sizeof(uint64_t);
+const size_t CurrentVersionFileHeaderSize = 2 * sizeof(uint32_t) + 7 * sizeof(uint64_t);
+
+static size_t headerSize(uint32_t version)
+{
+    if (version < 12)
+        return 2 * sizeof(uint32_t) + 5 * sizeof(uint64_t);
+    return CurrentVersionFileHeaderSize;
+}
 
 struct ContentRuleListMetaData {
     uint32_t version { ContentRuleListStore::CurrentContentRuleListFileVersion };
@@ -107,15 +113,18 @@ struct ContentRuleListMetaData {
     uint64_t filtersWithConditionsBytecodeSize { 0 };
     uint64_t conditionedFiltersBytecodeSize { 0 };
     uint32_t conditionsApplyOnlyToDomain { false };
+    uint64_t frameURLFiltersBytecodeSize { 0 };
+    uint64_t unused { 0 }; // Additional space on disk reserved so we can add something without incrementing the version number.
     
     size_t fileSize() const
     {
-        return ContentRuleListFileHeaderSize
+        return headerSize(version)
             + sourceSize
             + actionsSize
             + filtersWithoutConditionsBytecodeSize
             + filtersWithConditionsBytecodeSize
-            + conditionedFiltersBytecodeSize;
+            + conditionedFiltersBytecodeSize
+            + frameURLFiltersBytecodeSize;
     }
 };
 
@@ -130,8 +139,10 @@ static WebKit::NetworkCache::Data encodeContentRuleListMetaData(const ContentRul
     encoder << metaData.filtersWithConditionsBytecodeSize;
     encoder << metaData.conditionedFiltersBytecodeSize;
     encoder << metaData.conditionsApplyOnlyToDomain;
+    encoder << metaData.frameURLFiltersBytecodeSize;
+    encoder << metaData.unused;
 
-    ASSERT(encoder.bufferSize() == ContentRuleListFileHeaderSize);
+    ASSERT(encoder.bufferSize() == CurrentVersionFileHeaderSize);
     return WebKit::NetworkCache::Data(encoder.buffer(), encoder.bufferSize());
 }
 
@@ -145,66 +156,70 @@ template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(S
     function({ data.data(), data.size() });
 }
 
-template<typename T>
-static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& fileData)
+static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const WebKit::NetworkCache::Data& fileData)
 {
-    bool success = false;
     ContentRuleListMetaData metaData;
-    getData(fileData, [&metaData, &success, &fileData](Span<const uint8_t> span) {
-        // The file data should be mapped into one continuous memory segment so the size
-        // passed to the applier should always equal the data size.
-        if (span.size() != fileData.size())
-            return false;
+    auto span = fileData.span();
 
-        WTF::Persistence::Decoder decoder(span);
-        
-        std::optional<uint32_t> version;
-        decoder >> version;
-        if (!version)
-            return false;
-        metaData.version = WTFMove(*version);
-
-        std::optional<uint64_t> sourceSize;
-        decoder >> sourceSize;
-        if (!sourceSize)
-            return false;
-        metaData.sourceSize = WTFMove(*sourceSize);
-
-        std::optional<uint64_t> actionsSize;
-        decoder >> actionsSize;
-        if (!actionsSize)
-            return false;
-        metaData.actionsSize = WTFMove(*actionsSize);
-
-        std::optional<uint64_t> filtersWithoutConditionsBytecodeSize;
-        decoder >> filtersWithoutConditionsBytecodeSize;
-        if (!filtersWithoutConditionsBytecodeSize)
-            return false;
-        metaData.filtersWithoutConditionsBytecodeSize = WTFMove(*filtersWithoutConditionsBytecodeSize);
-
-        std::optional<uint64_t> filtersWithConditionsBytecodeSize;
-        decoder >> filtersWithConditionsBytecodeSize;
-        if (!filtersWithConditionsBytecodeSize)
-            return false;
-        metaData.filtersWithConditionsBytecodeSize = WTFMove(*filtersWithConditionsBytecodeSize);
-
-        std::optional<uint64_t> conditionedFiltersBytecodeSize;
-        decoder >> conditionedFiltersBytecodeSize;
-        if (!conditionedFiltersBytecodeSize)
-            return false;
-        metaData.conditionedFiltersBytecodeSize = WTFMove(*conditionedFiltersBytecodeSize);
-
-        std::optional<uint32_t> conditionsApplyOnlyToDomain;
-        decoder >> conditionsApplyOnlyToDomain;
-        if (!conditionsApplyOnlyToDomain)
-            return false;
-        metaData.conditionsApplyOnlyToDomain = WTFMove(*conditionsApplyOnlyToDomain);
-
-        success = true;
-        return false;
-    });
-    if (!success)
+    WTF::Persistence::Decoder decoder(span);
+    
+    std::optional<uint32_t> version;
+    decoder >> version;
+    if (!version)
         return std::nullopt;
+    metaData.version = WTFMove(*version);
+
+    std::optional<uint64_t> sourceSize;
+    decoder >> sourceSize;
+    if (!sourceSize)
+        return std::nullopt;
+    metaData.sourceSize = WTFMove(*sourceSize);
+
+    std::optional<uint64_t> actionsSize;
+    decoder >> actionsSize;
+    if (!actionsSize)
+        return std::nullopt;
+    metaData.actionsSize = WTFMove(*actionsSize);
+
+    std::optional<uint64_t> filtersWithoutConditionsBytecodeSize;
+    decoder >> filtersWithoutConditionsBytecodeSize;
+    if (!filtersWithoutConditionsBytecodeSize)
+        return std::nullopt;
+    metaData.filtersWithoutConditionsBytecodeSize = WTFMove(*filtersWithoutConditionsBytecodeSize);
+
+    std::optional<uint64_t> filtersWithConditionsBytecodeSize;
+    decoder >> filtersWithConditionsBytecodeSize;
+    if (!filtersWithConditionsBytecodeSize)
+        return std::nullopt;
+    metaData.filtersWithConditionsBytecodeSize = WTFMove(*filtersWithConditionsBytecodeSize);
+
+    std::optional<uint64_t> conditionedFiltersBytecodeSize;
+    decoder >> conditionedFiltersBytecodeSize;
+    if (!conditionedFiltersBytecodeSize)
+        return std::nullopt;
+    metaData.conditionedFiltersBytecodeSize = WTFMove(*conditionedFiltersBytecodeSize);
+
+    std::optional<uint32_t> conditionsApplyOnlyToDomain;
+    decoder >> conditionsApplyOnlyToDomain;
+    if (!conditionsApplyOnlyToDomain)
+        return std::nullopt;
+    metaData.conditionsApplyOnlyToDomain = WTFMove(*conditionsApplyOnlyToDomain);
+
+    if (metaData.version < 12)
+        return metaData;
+
+    std::optional<uint64_t> frameURLFiltersBytecodeSize;
+    decoder >> frameURLFiltersBytecodeSize;
+    if (!frameURLFiltersBytecodeSize)
+        return std::nullopt;
+    metaData.frameURLFiltersBytecodeSize = WTFMove(*frameURLFiltersBytecodeSize);
+    
+    std::optional<uint64_t> unused;
+    decoder >> unused;
+    if (!unused)
+        return std::nullopt;
+    metaData.unused = 0;
+
     return metaData;
 }
 
@@ -359,7 +374,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
     
-    char invalidHeader[ContentRuleListFileHeaderSize];
+    char invalidHeader[CurrentVersionFileHeaderSize];
     memset(invalidHeader, 0xFF, sizeof(invalidHeader));
     // This header will be rewritten in CompilationClient::finalize.
     if (writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
@@ -410,11 +425,11 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
     // has been already mapped, therefore tryCreateSharedMemory() cannot fail.
     RELEASE_ASSERT(sharedMemory);
 
-    const size_t headerAndSourceSize = ContentRuleListFileHeaderSize + data.metaData.sourceSize;
+    const size_t headerAndSourceSize = headerSize(data.metaData.version) + data.metaData.sourceSize;
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
         WTF::String(identifier),
         sharedMemory.releaseNonNull(),
-        ConditionsApplyOnlyToDomainOffset,
+        data.metaData.conditionsApplyOnlyToDomain,
         headerAndSourceSize,
         data.metaData.actionsSize,
         headerAndSourceSize
@@ -428,7 +443,13 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
             + data.metaData.actionsSize
             + data.metaData.filtersWithoutConditionsBytecodeSize
             + data.metaData.filtersWithConditionsBytecodeSize,
-        data.metaData.conditionedFiltersBytecodeSize
+        data.metaData.conditionedFiltersBytecodeSize,
+        headerAndSourceSize
+            + data.metaData.actionsSize
+            + data.metaData.filtersWithoutConditionsBytecodeSize
+            + data.metaData.filtersWithConditionsBytecodeSize
+            + data.metaData.conditionedFiltersBytecodeSize,
+        data.metaData.frameURLFiltersBytecodeSize
     );
     auto compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
     return API::ContentRuleList::create(WTFMove(compiledContentRuleList), WTFMove(data.data));
@@ -442,10 +463,13 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
     case 9:
     case 10:
     case 11:
+    case 12:
         if (!mappedData.metaData.sourceSize)
             return { };
-        bool is8Bit = mappedData.data.data()[ContentRuleListFileHeaderSize];
-        size_t start = ContentRuleListFileHeaderSize + sizeof(bool);
+            
+        auto headerSizeBytes = headerSize(mappedData.metaData.version);
+        bool is8Bit = mappedData.data.data()[headerSizeBytes];
+        size_t start = headerSizeBytes + sizeof(bool);
         size_t length = mappedData.metaData.sourceSize - sizeof(bool);
         if (is8Bit)
             return WTF::String(mappedData.data.data() + start, length);

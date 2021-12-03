@@ -78,7 +78,7 @@ enum class DFABytecodeInstruction : uint8_t {
 
 // The last four bits contain the instruction type.
 static constexpr uint8_t DFABytecodeInstructionMask = 0x0F;
-static constexpr uint8_t DFABytecodeJumpSizeMask = 0xF0;
+static constexpr uint8_t DFABytecodeJumpSizeMask = 0x30;
 static constexpr uint8_t DFABytecodeFlagsSizeMask = 0x30;
 static constexpr uint8_t DFABytecodeActionSizeMask = 0xC0;
 
@@ -87,40 +87,29 @@ using DFAHeader = uint32_t;
 
 // DFABytecodeFlagsSize and DFABytecodeActionSize are stored in the top four bits of the DFABytecodeInstructions that have flags and actions.
 enum class DFABytecodeFlagsSize : uint8_t {
-    UInt8 = 0x10,
-    UInt16 = 0x00, // Needs to be zero to be binary compatible with bytecode compiled with fixed-size flags.
+    UInt8 = 0x00,
+    UInt16 = 0x10,
     UInt24 = 0x20,
 };
 enum class DFABytecodeActionSize : uint8_t {
-    UInt8 = 0x40,
-    UInt16 = 0x80,
-    UInt24 = 0xC0,
-    UInt32 = 0x00, // Needs to be zero to be binary compatible with bytecode compiled with fixed-size actions.
+    UInt8 = 0x00,
+    UInt16 = 0x40,
+    UInt24 = 0x80,
+    UInt32 = 0xC0,
 };
 
 // A DFABytecodeJumpSize is stored in the top four bits of the DFABytecodeInstructions that have a jump.
 enum class DFABytecodeJumpSize : uint8_t {
-    Int8 = 0x10,
-    Int16 = 0x20,
-    Int24 = 0x30,
-    Int32 = 0x40,
+    Int8 = 0x00,
+    Int16 = 0x10,
+    Int24 = 0x20,
+    Int32 = 0x30,
 };
 static constexpr int32_t UInt24Max = (1 << 24) - 1;
 static constexpr int32_t Int24Max = (1 << 23) - 1;
 static constexpr int32_t Int24Min = -(1 << 23);
 static constexpr size_t Int24Size = 3;
 static constexpr size_t UInt24Size = 3;
-
-static inline DFABytecodeJumpSize smallestPossibleJumpSize(int32_t longestPossibleJump)
-{
-    if (longestPossibleJump <= std::numeric_limits<int8_t>::max() && longestPossibleJump >= std::numeric_limits<int8_t>::min())
-        return DFABytecodeJumpSize::Int8;
-    if (longestPossibleJump <= std::numeric_limits<int16_t>::max() && longestPossibleJump >= std::numeric_limits<int16_t>::min())
-        return DFABytecodeJumpSize::Int16;
-    if (longestPossibleJump <= Int24Max && longestPossibleJump >= Int24Min)
-        return DFABytecodeJumpSize::Int24;
-    return DFABytecodeJumpSize::Int32;
-}
 
 } // namespace WebCore::ContentExtensions
 

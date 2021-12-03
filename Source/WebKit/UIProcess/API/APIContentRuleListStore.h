@@ -54,10 +54,9 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     // This should be incremented every time a functional change is made to the bytecode, file format, etc.
     // to prevent crashing while loading old data.
-    // Also update ContentRuleListStore::getContentRuleListSource to be able to find the original JSON
+    // Also update getContentRuleListSourceFromMappedFile to be able to find the original JSON
     // source from old versions.
-    // Update getContentRuleListSourceFromMappedFile with this.
-    static constexpr uint32_t CurrentContentRuleListFileVersion = 11;
+    static constexpr uint32_t CurrentContentRuleListFileVersion = 12;
 
     static ContentRuleListStore& defaultStore();
     static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath);

@@ -151,7 +151,18 @@ int32_t DFABytecodeCompiler::longestPossibleJump(uint32_t instructionLocation, u
     ASSERT(m_nodeStartOffsets[destinationNodeIndex] <= instructionLocation);
     return m_nodeStartOffsets[destinationNodeIndex] - instructionLocation;
 }
-    
+
+static DFABytecodeJumpSize smallestPossibleJumpSize(int32_t longestPossibleJump)
+{
+    if (longestPossibleJump <= std::numeric_limits<int8_t>::max() && longestPossibleJump >= std::numeric_limits<int8_t>::min())
+        return DFABytecodeJumpSize::Int8;
+    if (longestPossibleJump <= std::numeric_limits<int16_t>::max() && longestPossibleJump >= std::numeric_limits<int16_t>::min())
+        return DFABytecodeJumpSize::Int16;
+    if (longestPossibleJump <= Int24Max && longestPossibleJump >= Int24Min)
+        return DFABytecodeJumpSize::Int24;
+    return DFABytecodeJumpSize::Int32;
+}
+
 void DFABytecodeCompiler::emitJump(uint32_t sourceNodeIndex, uint32_t destinationNodeIndex)
 {
     uint32_t instructionLocation = m_bytecode.size();

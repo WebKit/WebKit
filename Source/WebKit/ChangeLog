@@ -1,3 +1,27 @@
+2021-12-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add room for more bytecode in WKContentRuleList file format
+        https://bugs.webkit.org/show_bug.cgi?id=233780
+
+        Reviewed by Tim Hatcher.
+
+        * Shared/WebCompiledContentRuleList.cpp:
+        (WebKit::WebCompiledContentRuleList::frameURLFiltersBytecode const):
+        * Shared/WebCompiledContentRuleList.h:
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::encode const):
+        (WebKit::WebCompiledContentRuleListData::decode):
+        * Shared/WebCompiledContentRuleListData.h:
+        (WebKit::WebCompiledContentRuleListData::WebCompiledContentRuleListData):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListMetaData::fileSize const):
+        (API::encodeContentRuleListMetaData):
+        (API::decodeContentRuleListMetaData):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::getContentRuleListSourceFromMappedFile):
+        * UIProcess/API/APIContentRuleListStore.h:
+
 2021-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         DisplayCaptureSource doesn't initialize base class correctly

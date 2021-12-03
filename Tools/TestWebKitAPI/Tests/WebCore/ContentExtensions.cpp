@@ -66,6 +66,7 @@ struct CompiledContentExtensionData {
     Vector<ContentExtensions::DFABytecode> filtersWithoutConditions;
     Vector<ContentExtensions::DFABytecode> filtersWithConditions;
     Vector<ContentExtensions::DFABytecode> topURLFilters;
+    Vector<ContentExtensions::DFABytecode> frameURLFilters;
     bool conditionsApplyOnlyToDomain { false };
 };
 
@@ -147,6 +148,7 @@ private:
     Span<const uint8_t> filtersWithoutConditionsBytecode() const final { return { m_data.filtersWithoutConditions.data(), m_data.filtersWithoutConditions.size() }; }
     Span<const uint8_t> filtersWithConditionsBytecode() const final { return { m_data.filtersWithConditions.data(), m_data.filtersWithConditions.size() }; }
     Span<const uint8_t> topURLFiltersBytecode() const final { return { m_data.topURLFilters.data(), m_data.topURLFilters.size() }; }
+    Span<const uint8_t> frameURLFiltersBytecode() const final { return { m_data.frameURLFilters.data(), m_data.frameURLFilters.size() }; }
     bool conditionsApplyOnlyToDomain() const final { return m_data.conditionsApplyOnlyToDomain; }
 
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)
@@ -966,7 +968,7 @@ TEST_F(ContentExtensionTest, StringCombining)
     ASSERT_EQ(sequenceInstances(data.actions, "AAA"), 2);
     ASSERT_EQ(sequenceInstances(data.actions, "GGG"), 1);
 
-    ASSERT_EQ(data.actions.size(), 78u);
+    ASSERT_EQ(data.actions.size(), 72u);
     ASSERT_EQ(data.filtersWithoutConditions.size(), 288u);
     ASSERT_EQ(data.filtersWithConditions.size(), 5u);
     ASSERT_EQ(data.topURLFilters.size(), 5u);

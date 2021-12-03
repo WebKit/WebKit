@@ -41,10 +41,10 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, bool conditionsApplyOnlyToDomain, size_t actionsOffset, size_t actionsSize, size_t filtersWithoutConditionsBytecodeOffset, size_t filtersWithoutConditionsBytecodeSize, size_t filtersWithConditionsBytecodeOffset, size_t filtersWithConditionsBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
         : identifier(WTFMove(identifier))
         , data(WTFMove(data))
-        , conditionsApplyOnlyToDomainOffset(conditionsApplyOnlyToDomainOffset)
+        , conditionsApplyOnlyToDomain(conditionsApplyOnlyToDomain)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
         , filtersWithoutConditionsBytecodeOffset(filtersWithoutConditionsBytecodeOffset)
@@ -53,6 +53,8 @@ public:
         , filtersWithConditionsBytecodeSize(filtersWithConditionsBytecodeSize)
         , topURLFiltersBytecodeOffset(topURLFiltersBytecodeOffset)
         , topURLFiltersBytecodeSize(topURLFiltersBytecodeSize)
+        , frameURLFiltersBytecodeOffset(frameURLFiltersBytecodeOffset)
+        , frameURLFiltersBytecodeSize(frameURLFiltersBytecodeSize)
     {
     }
 
@@ -61,15 +63,17 @@ public:
 
     String identifier;
     Ref<SharedMemory> data;
-    unsigned conditionsApplyOnlyToDomainOffset { 0 };
-    unsigned actionsOffset { 0 };
-    unsigned actionsSize { 0 };
-    unsigned filtersWithoutConditionsBytecodeOffset { 0 };
-    unsigned filtersWithoutConditionsBytecodeSize { 0 };
-    unsigned filtersWithConditionsBytecodeOffset { 0 };
-    unsigned filtersWithConditionsBytecodeSize { 0 };
-    unsigned topURLFiltersBytecodeOffset { 0 };
-    unsigned topURLFiltersBytecodeSize { 0 };
+    bool conditionsApplyOnlyToDomain { 0 };
+    size_t actionsOffset { 0 };
+    size_t actionsSize { 0 };
+    size_t filtersWithoutConditionsBytecodeOffset { 0 };
+    size_t filtersWithoutConditionsBytecodeSize { 0 };
+    size_t filtersWithConditionsBytecodeOffset { 0 };
+    size_t filtersWithConditionsBytecodeSize { 0 };
+    size_t topURLFiltersBytecodeOffset { 0 };
+    size_t topURLFiltersBytecodeSize { 0 };
+    size_t frameURLFiltersBytecodeOffset { 0 };
+    size_t frameURLFiltersBytecodeSize { 0 };
 };
 
 }

@@ -46,6 +46,7 @@ private:
     Span<const uint8_t> filtersWithoutConditionsBytecode() const final;
     Span<const uint8_t> filtersWithConditionsBytecode() const final;
     Span<const uint8_t> topURLFiltersBytecode() const final;
+    Span<const uint8_t> frameURLFiltersBytecode() const final;
     Span<const uint8_t> serializedActions() const final;
     bool conditionsApplyOnlyToDomain() const final;
     

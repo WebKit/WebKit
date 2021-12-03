@@ -1,3 +1,12 @@
+2021-12-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add room for more bytecode in WKContentRuleList file format
+        https://bugs.webkit.org/show_bug.cgi?id=233780
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+
 2021-12-03  Youenn Fablet  <youenn@apple.com>
 
         Persist NavigationPreloadState in service worker registration database

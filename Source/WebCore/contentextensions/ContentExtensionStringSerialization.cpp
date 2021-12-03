@@ -32,51 +32,22 @@ namespace WebCore::ContentExtensions {
 
 String deserializeString(Span<const uint8_t> span)
 {
-    const auto* actions = span.data();
-    const auto actionsLength = span.size();
-    auto prefixLength = sizeof(uint32_t) + sizeof(bool);
-    auto stringStartIndex = prefixLength;
-    RELEASE_ASSERT(actionsLength >= stringStartIndex);
-    uint32_t stringLength = *reinterpret_cast<const uint32_t*>(actions);
-    bool wideCharacters = actions[sizeof(uint32_t)];
-
-    if (wideCharacters) {
-        RELEASE_ASSERT(actionsLength >= stringStartIndex + stringLength * sizeof(UChar));
-        return String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), stringLength);
-    }
-    RELEASE_ASSERT(actionsLength >= stringStartIndex + stringLength * sizeof(LChar));
-    return String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), stringLength);
+    auto serializedLength = *reinterpret_cast<const uint32_t*>(span.data());
+    return String::fromUTF8(span.data() + sizeof(uint32_t), serializedLength - sizeof(uint32_t));
 }
 
 void serializeString(Vector<uint8_t>& actions, const String& string)
 {
-    // Append Selector length (4 bytes).
-    uint32_t stringLength = string.length();
-    actions.grow(actions.size() + sizeof(uint32_t));
-    *reinterpret_cast<uint32_t*>(&actions[actions.size() - sizeof(uint32_t)]) = stringLength;
-    bool wideCharacters = !string.is8Bit();
-    actions.append(wideCharacters);
-    // Append Selector.
-    if (wideCharacters) {
-        uint32_t startIndex = actions.size();
-        actions.grow(actions.size() + sizeof(UChar) * stringLength);
-        for (uint32_t i = 0; i < stringLength; ++i)
-            *reinterpret_cast<UChar*>(&actions[startIndex + i * sizeof(UChar)]) = string[i];
-    } else {
-        for (uint32_t i = 0; i < stringLength; ++i)
-            actions.append(string[i]);
-    }
+    auto utf8 = string.utf8();
+    uint32_t serializedLength = sizeof(uint32_t) + utf8.length();
+    actions.reserveCapacity(actions.size() + serializedLength);
+    actions.uncheckedAppend(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
+    actions.uncheckedAppend(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() });
 }
 
 size_t stringSerializedLength(Span<const uint8_t> span)
 {
-    constexpr auto prefixLength = sizeof(uint32_t) + sizeof(bool);
-    RELEASE_ASSERT(span.size() >= prefixLength);
-    auto stringLength = *reinterpret_cast<const uint32_t*>(span.data());
-    bool wideCharacters = span[sizeof(uint32_t)];
-    if (wideCharacters)
-        return prefixLength + stringLength * sizeof(UChar);
-    return prefixLength + stringLength * sizeof(LChar);
+    return *reinterpret_cast<const uint32_t*>(span.data());
 }
 
 } // namespace WebCore::ContentExtensions

@@ -46,7 +46,7 @@ WebCompiledContentRuleList::~WebCompiledContentRuleList()
 
 bool WebCompiledContentRuleList::conditionsApplyOnlyToDomain() const
 {
-    return *reinterpret_cast<const uint32_t*>(static_cast<const uint8_t*>(m_data.data->data()) + m_data.conditionsApplyOnlyToDomainOffset);
+    return m_data.conditionsApplyOnlyToDomain;
 }
 
 Span<const uint8_t> WebCompiledContentRuleList::filtersWithoutConditionsBytecode() const
@@ -62,6 +62,11 @@ Span<const uint8_t> WebCompiledContentRuleList::filtersWithConditionsBytecode() 
 Span<const uint8_t> WebCompiledContentRuleList::topURLFiltersBytecode() const
 {
     return spanWithOffsetAndLength(m_data.topURLFiltersBytecodeOffset, m_data.topURLFiltersBytecodeSize);
+}
+
+Span<const uint8_t> WebCompiledContentRuleList::frameURLFiltersBytecode() const
+{
+    return spanWithOffsetAndLength(m_data.frameURLFiltersBytecodeOffset, m_data.frameURLFiltersBytecodeSize);
 }
 
 Span<const uint8_t> WebCompiledContentRuleList::serializedActions() const
