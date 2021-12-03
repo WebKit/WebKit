@@ -82,7 +82,7 @@
     });
 }
 
-- (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError *, NSDictionary *))completionHandler
+- (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError *, id))completionHandler
 {
     std::optional<URL> optionalFrameURL = frameURL ? std::make_optional(URL(frameURL)) : std::nullopt;
     std::optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? std::make_optional(URL(contextSecurityOrigin)) : std::nullopt;
@@ -103,7 +103,7 @@
     });
 }
 
-- (void)evaluateScript:(NSString *)scriptSource inTabWithIdentifier:(NSString *)extensionTabIdentifier completionHandler:(void(^)(NSError *, NSDictionary *))completionHandler
+- (void)evaluateScript:(NSString *)scriptSource inTabWithIdentifier:(NSString *)extensionTabIdentifier completionHandler:(void(^)(NSError *, id))completionHandler
 {
     _extension->evaluateScriptInExtensionTab(extensionTabIdentifier, scriptSource, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {

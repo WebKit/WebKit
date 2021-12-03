@@ -1,3 +1,23 @@
+2021-12-03  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: fix completion handler type signature for _WKInspectorExtension methods
+        https://bugs.webkit.org/show_bug.cgi?id=233792
+        <rdar://problem/85995314>
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension evaluateScript:frameURL:contextSecurityOrigin:useContentScriptContext:completionHandler:]):
+        (-[_WKInspectorExtension evaluateScript:inTabWithIdentifier:completionHandler:]):
+        Replace the completionHandler's NSDictionary argument type with `id`.
+
+        A dictionary is not necessarily returned here because the implementation deserializes a SerializedScriptValue.
+        This could be a string, number, array, dictionary, or other serializable values.
+
+        While the frontend does return a dictionary payload, this is unpacked on the WebProcess-side
+        before being sent back out via the _WKInspectorExtension APi.
+
 2021-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Add room for more bytecode in WKContentRuleList file format
