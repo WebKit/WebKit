@@ -570,7 +570,7 @@ bool ContentSecurityPolicy::allowResourceFromSource(const URL& url, RedirectResp
     TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
         String consoleMessage = consoleMessageForViolation(name, violatedDirective, blockedURL, "Refused to load");
-        reportViolation(name, violatedDirective, blockedURL.string(), consoleMessage, sourceURL, sourcePosition);
+        reportViolation(name, violatedDirective, blockedURL, consoleMessage, sourceURL, sourcePosition);
     };
     return allPoliciesAllow(WTFMove(handleViolatedDirective), resourcePredicate, url, redirectResponseReceived == RedirectResponseReceived::Yes);
 }
