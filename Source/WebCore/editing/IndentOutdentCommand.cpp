@@ -116,8 +116,8 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
         targetBlockquote = createBlockElement();
         if (outerBlock == nodeToSplitTo)
             insertNodeAt(*targetBlockquote, start);
-        else
-            insertNodeBefore(*targetBlockquote, *outerBlock);
+        else if (!insertNodeBefore(*targetBlockquote, *outerBlock))
+            return;
         startOfContents = positionInParentAfterNode(targetBlockquote.get());
     }
     
@@ -192,8 +192,13 @@ void IndentOutdentCommand::outdentParagraph()
     }
     auto placeholder = HTMLBRElement::create(document());
     insertNodeBefore(placeholder, *splitBlockquoteNode);
-    if (placeholder->isConnected())
-        moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), positionBeforeNode(placeholder.ptr()), true);
+    if (!placeholder->isConnected())
+        return;
+    auto visibleStartOfParagraphToMove = startOfParagraph(visibleStartOfParagraph);
+    auto visibleEndOfParagraphToMove = endOfParagraph(visibleEndOfParagraph);
+    if (visibleStartOfParagraphToMove.isNull() || visibleEndOfParagraphToMove.isNull())
+        return;
+    moveParagraph(visibleStartOfParagraphToMove, visibleEndOfParagraphToMove, positionBeforeNode(placeholder.ptr()), true);
 }
 
 // FIXME: We should merge this function with ApplyBlockElementCommand::formatSelection

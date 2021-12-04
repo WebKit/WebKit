@@ -1750,7 +1750,7 @@ RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node& start, Node& end, bool 
 
     ASSERT(adjustedEnd);
     RefPtr<Node> node;
-    for (node = &start; node && node->parentNode() != adjustedEnd; node = node->parentNode()) {
+    for (node = &start; node && node->parentNode() != adjustedEnd;) {
         RefPtr parentNode = node->parentNode();
         if (!parentNode || !is<Element>(*parentNode) || editingIgnoresContent(*parentNode))
             break;
@@ -1759,6 +1759,7 @@ RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node& start, Node& end, bool 
         VisiblePosition positionInNode = firstPositionInOrBeforeNode(node.get());
         if (positionInParent != positionInNode)
             splitElement(downcast<Element>(*parentNode), *node);
+        node = parentNode;
     }
 
     return node;
