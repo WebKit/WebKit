@@ -53,6 +53,22 @@
         }
     },
     {
+        "name": "Broadcast Channel API",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=230236",
+        "keywords": ["broadcast", "channel"],
+        "category": "html",
+        "description": "The Broadcast Channel API allows basic communication between browsing contexts or workers on the same origin.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
+    },
+    {
         "name": "CSS Animation Worklet API",
         "status": {
             "status": "Under Consideration"
@@ -381,6 +397,38 @@
         "contact": {
             "name": "Daniel Bates",
             "email": "dbates@webkit.org"
+        }
+    },
+    {
+        "name": "Cross-Origin-Embedder-Policy HTTP header",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/origin.html#coep",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=228755",
+        "keywords": ["coep", "isolation"],
+        "category": "html",
+        "description": "The HTTP Cross-Origin-Embedder-Policy (COEP) response header prevents a document from loading any cross-origin resources that don't explicitly grant the document permission (using CORP or CORS).",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
+    },
+    {
+        "name": "Cross-Origin-Opener-Policy HTTP header",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policies",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=228755",
+        "keywords": ["coop", "isolation"],
+        "category": "html",
+        "description": "The HTTP Cross-Origin-Opener-Policy (COOP) response header allows you to ensure a top-level document does not share a browsing context group with cross-origin documents.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
         }
     },
     {
@@ -1510,6 +1558,22 @@
         "url": "https://webbluetoothcg.github.io/web-bluetooth/",
         "keywords": ["bluetooth", "privacy"],
         "description": "An API to listen for Bluetooth Low Energy advertising packets."
+    },
+    {
+        "name": "Web Locks",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://w3c.github.io/web-locks/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=232436",
+        "keywords": ["lock", "synchronization"],
+        "category": "webapps",
+        "description": "API to allow browsing contexts (windows, workers) within a web application to coordinate the usage of resources.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
     },
     {
         "name": "Web MIDI",
