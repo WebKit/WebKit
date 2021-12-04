@@ -549,6 +549,16 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     };
     if (needsDisplayBoxHorizontalAdjustment)
         adjustVisualGeometryWithInlineBoxes();
+
+    auto computeInlineBoxGeometry = [&] {
+        ASSERT(!inlineBoxRangeList.isEmpty());
+        for (auto& inlineBoxRange : inlineBoxRangeList) {
+            auto& inlineBoxDisplayBox = boxes[inlineBoxRange.begin()];
+            setInlineBoxGeometry(inlineBoxDisplayBox.layoutBox(), inlineBoxDisplayBox.logicalRect(), inlineBoxDisplayBox.isFirstBox());
+        }
+    };
+    if (needsNonRootInlineBoxDisplayBox)
+        computeInlineBoxGeometry();
 }
 
 void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxLogicalRight)
