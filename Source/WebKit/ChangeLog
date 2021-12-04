@@ -1,3 +1,21 @@
+2021-12-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Launch Captive Portal WebContent process when requested
+        https://bugs.webkit.org/show_bug.cgi?id=233824
+        <rdar://problem/86023898>
+
+        Reviewed by Darin Adler.
+
+        When the WebKit client requests a Captive Portal process, launch the dedicated XPC service
+        with Captive Portal entitlements.
+
+         * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::webContentServiceName): New helper function.
+        (WebKit::serviceName): Update to use new helper.
+        (WebKit::ProcessLauncher::launchProcess): Log errors when launching.
+        * WebKit.xcodeproj/project.pbxproj: Include the CaptivePortal xpc service when creating
+        development symlinks.
+
 2021-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web content process sometimes crashes under WebPage::positionInformation()

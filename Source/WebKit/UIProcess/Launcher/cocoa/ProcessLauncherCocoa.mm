@@ -54,11 +54,19 @@
 
 namespace WebKit {
 
-static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions)
+static const char* webContentServiceName(bool nonValidInjectedCodeAllowed, ProcessLauncher::Client* client)
+{
+    if (client && client->shouldEnableCaptivePortalMode())
+        return "com.apple.WebKit.WebContent.CaptivePortal";
+
+    return nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
+}
+
+static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
-        return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
+        return webContentServiceName(launchOptions.nonValidInjectedCodeAllowed, client);
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
 #if ENABLE(GPU_PROCESS)
@@ -120,7 +128,7 @@ void ProcessLauncher::launchProcess()
     if (!m_launchOptions.customWebContentServiceBundleIdentifier.isNull())
         name = m_launchOptions.customWebContentServiceBundleIdentifier.data();
     else
-        name = serviceName(m_launchOptions);
+        name = serviceName(m_launchOptions, m_client);
 
     m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
 
@@ -231,7 +239,7 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort] (xpc_object_t event) {
+    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort, name] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
@@ -240,6 +248,12 @@ void ProcessLauncher::launchProcess()
 
         if (!processLauncher->isLaunching())
             return;
+
+#if ERROR_DISABLED
+        UNUSED_PARAM(name);
+#endif
+
+        LOG_ERROR("Error while launching %s: %s", name, xpc_dictionary_get_string(event, XPC_ERROR_KEY_DESCRIPTION));
 
 #if ASSERT_ENABLED
         mach_port_urefs_t sendRightCount = 0;
