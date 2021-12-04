@@ -163,7 +163,11 @@ static void removeCSSAnimationCreatedByMarkup(const Styleable& styleable, CSSAni
     auto& backingAnimation = cssAnimation.backingAnimation();
     for (size_t i = 0; i < cssAnimationList->size(); ++i) {
         if (cssAnimationList->animation(i) == backingAnimation) {
-            auto newAnimationList = cssAnimationList->copy();
+            // It is important we do not make a clone of the Animation references contained
+            // within cssAnimationList since sorting animations in compareCSSAnimations()
+            // makes pointer comparisons to distinguish between backing animations of various
+            // CSSAnimation objects.
+            auto newAnimationList = cssAnimationList->shallowCopy();
             newAnimationList->remove(i);
             keyframeEffectStack.setCSSAnimationList(WTFMove(newAnimationList));
             return;

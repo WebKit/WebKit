@@ -35,12 +35,16 @@ if (i) { \
 
 AnimationList::AnimationList() = default;
 
-AnimationList::AnimationList(const AnimationList& other)
+AnimationList::AnimationList(const AnimationList& other, CopyBehavior copyBehavior)
     : RefCounted()
 {
     m_animations.reserveInitialCapacity(other.size());
-    for (auto& animation : other.m_animations)
-        m_animations.uncheckedAppend(Animation::create(animation.get()));
+    for (auto& animation : other.m_animations) {
+        if (copyBehavior == CopyBehavior::Reference)
+            m_animations.uncheckedAppend(animation.get());
+        else
+            m_animations.uncheckedAppend(Animation::create(animation.get()));
+    }
 }
 
 void AnimationList::fillUnsetProperties()

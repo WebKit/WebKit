@@ -35,7 +35,8 @@ class AnimationList : public RefCounted<AnimationList> {
 public:
     static Ref<AnimationList> create() { return adoptRef(*new AnimationList); }
 
-    Ref<AnimationList> copy() const { return adoptRef(*new AnimationList(*this)); }
+    Ref<AnimationList> copy() const { return adoptRef(*new AnimationList(*this, CopyBehavior::Clone)); }
+    Ref<AnimationList> shallowCopy() const { return adoptRef(*new AnimationList(*this, CopyBehavior::Reference)); }
 
     void fillUnsetProperties();
     bool operator==(const AnimationList&) const;
@@ -56,7 +57,9 @@ public:
     
 private:
     AnimationList();
-    AnimationList(const AnimationList&);
+
+    enum class CopyBehavior : uint8_t { Clone, Reference };
+    AnimationList(const AnimationList&, CopyBehavior);
 
     AnimationList& operator=(const AnimationList&);
 
