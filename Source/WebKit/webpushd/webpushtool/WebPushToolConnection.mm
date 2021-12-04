@@ -1,0 +1,169 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebPushToolConnection.h"
+
+#import <mach/mach_init.h>
+#import <mach/task.h>
+#import <pal/spi/cocoa/ServersSPI.h>
+#import <wtf/RetainPtr.h>
+
+namespace WebPushTool {
+
+std::unique_ptr<Connection> Connection::create(Action action, bool preferTestService)
+{
+    return makeUnique<Connection>(action, preferTestService);
+}
+
+static mach_port_t maybeConnectToService(const char* serviceName)
+{
+    mach_port_t bsPort;
+    task_get_special_port(mach_task_self(), TASK_BOOTSTRAP_PORT, &bsPort);
+
+    mach_port_t servicePort;
+    kern_return_t err = bootstrap_look_up(bsPort, serviceName, &servicePort);
+
+    if (err == KERN_SUCCESS)
+        return servicePort;
+
+    return MACH_PORT_NULL;
+}
+
+Connection::Connection(Action action, bool preferTestService)
+    : m_action(action)
+{
+    if (preferTestService)
+        m_serviceName = "org.webkit.webpushtestdaemon.service";
+    else
+        m_serviceName = "com.apple.webkit.webpushd.service";
+
+    m_connection = adoptNS(xpc_connection_create_mach_service(m_serviceName, dispatch_get_main_queue(), 0));
+
+    xpc_connection_set_event_handler(m_connection.get(), [this, weakThis = WeakPtr { *this }](xpc_object_t event) {
+        if (!weakThis)
+            return;
+
+        if (event == XPC_ERROR_CONNECTION_INVALID) {
+            printf("Failed to start listening for connections to mach service\n");
+            connectionDropped();
+            return;
+        }
+
+        if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
+            printf("Connection closed\n");
+            connectionDropped();
+            return;
+        }
+
+        if (xpc_get_type(event) == XPC_TYPE_DICTIONARY) {
+            messageReceived(event);
+            return;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    });
+}
+
+void Connection::connectToService()
+{
+    if (!m_connection)
+        return;
+
+    auto result = maybeConnectToService(m_serviceName);
+    if (result == MACH_PORT_NULL)
+        printf("Waiting for service '%s' to be available\n", m_serviceName);
+
+    while (result == MACH_PORT_NULL) {
+        usleep(1000);
+        result = maybeConnectToService(m_serviceName);
+    }
+
+    xpc_connection_activate(m_connection.get());
+
+    sendAuditToken();
+    startAction();
+}
+
+void Connection::startAction()
+{
+    switch (m_action) {
+    case Action::StreamDebugMessages:
+        startDebugStreamAction();
+        break;
+    };
+}
+
+void Connection::startDebugStreamAction()
+{
+    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    std::array<uint8_t, 1> encodedMessage { 1 };
+    xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
+    xpc_dictionary_set_uint64(dictionary.get(), "message type", 5);
+    xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
+
+    xpc_connection_send_message(m_connection.get(), dictionary.get());
+
+    printf("Now streaming debug messages\n");
+}
+
+void Connection::sendAuditToken()
+{
+    audit_token_t token = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
+    kern_return_t result = task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
+    if (result != KERN_SUCCESS) {
+        printf("Unable to get audit token to send\n");
+        return;
+    }
+
+    std::array<uint8_t, 42> encodedMessage;
+    encodedMessage.fill(0);
+    encodedMessage[1] = 1;
+    encodedMessage[2] = 32;
+    memcpy(&encodedMessage[10], &token, sizeof(token));
+    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
+    xpc_dictionary_set_uint64(dictionary.get(), "message type", 6);
+    xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
+    xpc_connection_send_message(m_connection.get(), dictionary.get());
+}
+
+void Connection::connectionDropped()
+{
+    m_connection = nullptr;
+    CFRunLoopStop(CFRunLoopGetCurrent());
+}
+
+void Connection::messageReceived(xpc_object_t message)
+{
+    const char* debugMessage = xpc_dictionary_get_string(message, "debug message");
+    if (!debugMessage)
+        return;
+
+    printf("%s\n", debugMessage);
+}
+
+} // namespace WebPushTool
