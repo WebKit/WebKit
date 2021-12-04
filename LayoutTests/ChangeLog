@@ -1,3 +1,14 @@
+2021-12-03  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] (REGRESSION r285597): Fix SVGFilter clamping calculation
+        https://bugs.webkit.org/show_bug.cgi?id=233843
+
+        Reviewed by Simon Fraser.
+
+        Unskip two layout tests which were skipped in r285597.
+
+        * TestExpectations:
+
 2021-12-03  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some consistent timeouts

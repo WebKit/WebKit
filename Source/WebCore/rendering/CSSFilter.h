@@ -46,16 +46,15 @@ public:
 
     void setSourceImageRect(const FloatRect&);
     bool buildFilterFunctions(RenderElement&, const FilterOperations&);
-    void determineFilterPrimitiveSubregion();
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
 
-    RefPtr<FilterEffect> lastEffect();
-    IntOutsets outsets() const override;
+    RefPtr<FilterEffect> lastEffect() const final;
+    IntOutsets outsets() const final;
 
     void clearIntermediateResults();
-    RefPtr<FilterImage> apply() override;
+    RefPtr<FilterImage> apply() final;
 
     bool updateBackingStoreRect(const FloatRect& filterRect);
 
@@ -65,7 +64,7 @@ private:
     CSSFilter(RenderingMode, float scaleFactor, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
 
 #if USE(CORE_IMAGE)
-    bool supportsCoreImageRendering() const override;
+    bool supportsCoreImageRendering() const final;
 #endif
 
     bool m_hasFilterThatMovesPixels { false };

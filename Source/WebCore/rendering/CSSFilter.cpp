@@ -31,7 +31,6 @@
 #include "FEComponentTransfer.h"
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
-#include "FEMerge.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "LengthFunctions.h"
@@ -42,10 +41,6 @@
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SourceGraphic.h"
-
-#if USE(DIRECT2D)
-#include <d2d1.h>
-#endif
 
 namespace WebCore {
 
@@ -336,7 +331,7 @@ bool CSSFilter::updateBackingStoreRect(const FloatRect& filterRect)
     return true;
 }
 
-RefPtr<FilterEffect> CSSFilter::lastEffect()
+RefPtr<FilterEffect> CSSFilter::lastEffect() const
 {
     if (m_functions.isEmpty())
         return nullptr;
@@ -362,19 +357,6 @@ bool CSSFilter::supportsCoreImageRendering() const
     return true;
 }
 #endif
-
-void CSSFilter::determineFilterPrimitiveSubregion()
-{
-    auto effect = lastEffect();
-    effect->determineFilterPrimitiveSubregion(*this);
-    FloatRect subRegion = effect->maxEffectRect();
-    // At least one FilterEffect has a too big image size, recalculate the effect sizes with new scale factors.
-    FloatSize filterScale { 1, 1 };
-    if (ImageBuffer::sizeNeedsClamping(subRegion.size(), filterScale)) {
-        setFilterScale(filterScale);
-        effect->determineFilterPrimitiveSubregion(*this);
-    }
-}
 
 void CSSFilter::clearIntermediateResults()
 {

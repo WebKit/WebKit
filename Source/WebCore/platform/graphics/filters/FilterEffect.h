@@ -56,9 +56,6 @@ public:
     // Recurses on inputs.
     FloatRect determineFilterPrimitiveSubregion(const Filter&);
 
-    FloatRect maxEffectRect() const { return m_maxEffectRect; }
-    void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; }
-
     bool apply(const Filter&) override;
 
     // Correct any invalid pixels, if necessary, in the result of a filter operation.
@@ -96,10 +93,6 @@ private:
 
     RefPtr<FilterImage> m_filterImage;
 
-    // The maximum size of a filter primitive. In SVG this is the primitive subregion in absolute coordinate space.
-    // The absolute paint rect should never be bigger than m_maxEffectRect.
-    FloatRect m_maxEffectRect;
-    
     // The subregion of a filter primitive according to the SVG Filter specification in local coordinates.
     // This is SVG specific and needs to move to RenderSVGResourceFilterPrimitive.
     FloatRect m_filterPrimitiveSubregion;

@@ -70,13 +70,7 @@ FloatRect FilterEffect::determineFilterPrimitiveSubregion(const Filter& filter)
             primitiveSubregion.setHeight(*height);
     }
 
-    // Clip every filter effect to the filter region.
-    auto absoluteMaxEffectRect = filter.maxEffectRect(primitiveSubregion);
-    absoluteMaxEffectRect.scale(filter.filterScale());
-
     setFilterPrimitiveSubregion(primitiveSubregion);
-    setMaxEffectRect(absoluteMaxEffectRect);
-
     return primitiveSubregion;
 }
 
@@ -127,7 +121,7 @@ bool FilterEffect::apply(const Filter& filter)
         << "FilterEffect " << filterName() << " " << this << " apply():"
         << "\n  filterPrimitiveSubregion " << m_filterPrimitiveSubregion
         << "\n  absolutePaintRect " << absoluteImageRect
-        << "\n  maxEffectRect " << m_maxEffectRect
+        << "\n  maxEffectRect " << filter.scaledByFilterScale(filter.maxEffectRect(m_filterPrimitiveSubregion))
         << "\n  filter scale " << filter.filterScale());
 
     return applier->apply(filter, inputFilterImages, *m_filterImage);

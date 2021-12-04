@@ -67,6 +67,10 @@ public:
     FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const;
     FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
 
+    virtual RefPtr<FilterEffect> lastEffect() const = 0;
+
+    bool clampFilterRegionIfNeeded();
+    
     virtual RefPtr<FilterImage> apply() = 0;
     WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage);
 

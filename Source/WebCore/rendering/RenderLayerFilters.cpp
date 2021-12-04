@@ -180,7 +180,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
     m_paintOffset = filterSourceRect.location();
     resetDirtySourceRect();
 
-    filter.determineFilterPrimitiveSubregion();
+    filter.clampFilterRegionIfNeeded();
 
     if (hasUpdatedBackingStore)
         allocateBackingStore(destinationContext);

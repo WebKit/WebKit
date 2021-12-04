@@ -26,7 +26,9 @@
 #include "config.h"
 #include "Filter.h"
 
+#include "FilterEffect.h"
 #include "FilterImage.h"
+#include "ImageBuffer.h"
 
 namespace WebCore {
 
@@ -74,6 +76,26 @@ FloatRect Filter::clipToMaxEffectRect(const FloatRect& imageRect, const FloatRec
 {
     auto maxEffectRect = this->maxEffectRect(primitiveSubregion);
     return m_clipOperation == ClipOperation::Intersect ? intersection(imageRect, maxEffectRect) : unionRect(imageRect, maxEffectRect);
+}
+
+bool Filter::clampFilterRegionIfNeeded()
+{
+    auto lastEffect = this->lastEffect();
+    lastEffect->determineFilterPrimitiveSubregion(*this);
+    
+    auto maxEffectRect = this->maxEffectRect(lastEffect->filterPrimitiveSubregion());
+    auto scaledMaxEffectRect = scaledByFilterScale(maxEffectRect);
+
+    FloatSize clampingScale(1, 1);
+    if (!ImageBuffer::sizeNeedsClamping(scaledMaxEffectRect.size(), clampingScale))
+        return false;
+
+    m_filterScale = m_filterScale * clampingScale;
+
+    // At least one FilterEffect has a too big image size,
+    // recalculate the effect sizes with new scale factors.
+    lastEffect->determineFilterPrimitiveSubregion(*this);
+    return true;
 }
 
 RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage)

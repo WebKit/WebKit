@@ -235,8 +235,10 @@ RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targ
     if (paintRect.isEmpty())
         return nullptr;
 
-    FloatSize scale;
-    FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
+    FloatSize scale(1, 1);
+    FloatSize clampedSize = paintRect.size();
+    if (ImageBuffer::sizeNeedsClamping(clampedSize, scale))
+        clampedSize = clampedSize * scale;
 
 #if USE(DIRECT2D)
     auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, context, 1, colorSpace, PixelFormat::BGRA8);

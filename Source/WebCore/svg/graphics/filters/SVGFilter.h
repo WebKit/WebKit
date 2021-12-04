@@ -42,9 +42,9 @@ public:
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
-    RefPtr<FilterEffect> lastEffect() const { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
+    RefPtr<FilterEffect> lastEffect() const final { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
 
-    RefPtr<FilterImage> apply() override;
+    RefPtr<FilterImage> apply() final;
 
 private:
     SVGFilter(RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
@@ -54,14 +54,14 @@ private:
     void setEffectGeometryMap(FilterEffectGeometryMap&& effectGeometryMap) { m_effectGeometryMap = WTFMove(effectGeometryMap); }
 
 #if USE(CORE_IMAGE)
-    bool supportsCoreImageRendering() const override;
+    bool supportsCoreImageRendering() const final;
 #endif
-    std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const override;
+    std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const final;
     FloatSize resolvedSize(const FloatSize&) const final;
 
-    bool apply(const Filter&) override;
-    IntOutsets outsets() const override;
-    void clearResult() override;
+    bool apply(const Filter&) final;
+    IntOutsets outsets() const final;
+    void clearResult() final;
 
     FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits;

@@ -122,9 +122,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     filterData->drawingRegion.intersect(filterData->boundaries);
 
     // Determine scale factor for filter. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
-    FloatRect absoluteDrawingRegion = filterData->drawingRegion;
-    absoluteDrawingRegion.scale(filterScale);
-    ImageBuffer::sizeNeedsClamping(absoluteDrawingRegion.size(), filterScale);
+    ImageBuffer::sizeNeedsClamping(filterData->drawingRegion.size(), filterScale);
 
     // Set the rendering mode from the page's settings.
     auto renderingMode = renderer.settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
@@ -137,21 +135,9 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false;
     }
 
-    auto lastEffect = filterData->builder->lastEffect();
-    ASSERT(lastEffect);
-
-    LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter::applyResource\n" << *filterData->builder->lastEffect());
-
-    lastEffect->determineFilterPrimitiveSubregion(*filterData->filter);
-    FloatRect subRegion = lastEffect->maxEffectRect();
-
-    // At least one FilterEffect has a too big image size,
-    // recalculate the effect sizes with new scale factors.
-    if (ImageBuffer::sizeNeedsClamping(subRegion.size(), filterScale)) {
-        filterData->filter->setFilterScale(filterScale);
-        lastEffect->determineFilterPrimitiveSubregion(*filterData->filter);
-    }
-
+    if (filterData->filter->clampFilterRegionIfNeeded())
+        filterScale = filterData->filter->filterScale();
+    
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
     // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
     if (filterData->drawingRegion.isEmpty()) {
