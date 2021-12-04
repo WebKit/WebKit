@@ -334,7 +334,7 @@ webkit.org/b/98363 [ Release ] accessibility/canvas-fallback-content-2.html [ Fa
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
 webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
-webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
+webkit.org/b/98382 accessibility/visible-elements.html [ Timeout ]
 
 webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure ]
 
@@ -1336,7 +1336,8 @@ webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache-long.ht
 
 webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
 
-webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
+# Was Slow Failure before libwebrtc bumped to M96 in r285577
+webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Timeout ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 

@@ -257,6 +257,7 @@ webkit.org/b/223729 [ Debug ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pa
 
 # Scrolling coordinator
 webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
+webkit.org/b/215508 [ Release ] scrollingcoordinator/fixed-node-reattach.html [ Pass Timeout ]
 
 #Simple Line Layout
 webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]

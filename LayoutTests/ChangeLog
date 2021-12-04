@@ -1,3 +1,12 @@
+2021-12-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some consistent timeouts
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-12-03  John Wilander  <wilander@apple.com>
 
         PCM: Unlinkable tokens for triggering event to prevent fraud
