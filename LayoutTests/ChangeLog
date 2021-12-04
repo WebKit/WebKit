@@ -1,3 +1,24 @@
+2021-12-04  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make ellipsis-text.html, aria-roledescription.html, and aria-switch-checked.html pass in isolated tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=233790
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-roledescription-expected.txt:
+        * accessibility/aria-roledescription.html:
+        * accessibility/aria-switch-checked-expected.txt:
+        * accessibility/aria-switch-checked.html:
+        Make these tests async. They must be made async to pass in
+        isolated tree mode as they dynamically change page content using JS.
+
+        * accessibility/ellipsis-text.html:
+        Make this test isolated-tree-friendly by selecting elements with accessibleElementById instead
+        `document.getElementById("id").focus()` and `accessibilityController.focusedElement`
+
+        * platform/glib/accessibility/aria-roledescription-expected.txt:
+        Update platform-specfic expectation for the new version of this test.
+
 2021-12-03  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] (REGRESSION r285597): Fix SVGFilter clamping calculation

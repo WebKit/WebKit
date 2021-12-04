@@ -1,45 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
 <div id="btn" role="button" aria-roledescription="Super Button">text</div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
-function runTest() {
     description("This tests that aria-roledescription works.");
 
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-        // Confirm we can override our role description.
-        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+        var domButton = document.getElementById("btn");
+        var axButton = accessibilityController.accessibleElementById("btn");
 
-        // Confirm our role description returns to default when set to zero length.
-        document.getElementById("btn").setAttribute("aria-roledescription", "");
-        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+        async function waitForDefaultRoleDescription(element) {
+            await waitFor(() => {
+                let roleDescription = element.roleDescription;
+                // The default role description differs per-platform, so wait for the lack of "Super Button".
+                return roleDescription && !roleDescription.includes("Super Button");
+            });
+            debug(`PASS Got default role description: ${element.roleDescription}`)
+        }
 
-        // Confirm our role description returns to default when set to whitespace only.
-        document.getElementById("btn").setAttribute("aria-roledescription", "     ");
-        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+        setTimeout(async function() {
+            // Confirm we can override our role description.
+            shouldBe("axButton.roleDescription", "'AXRoleDescription: Super Button'");
 
-        // Confirm our role description strips extraneous whitespace characters.
-        document.getElementById("btn").setAttribute("aria-roledescription", "          Super Button          ");
-        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+            // Confirm our role description returns to default when set to zero length.
+            domButton.setAttribute("aria-roledescription", "");
+            await waitForDefaultRoleDescription(axButton);
 
-        // Confirm our role description returns to default when removed.
-        document.getElementById("btn").removeAttribute("aria-roledescription");
-        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+            // Confirm our role description strips extraneous whitespace characters.
+            domButton.setAttribute("aria-roledescription", "          Super Button          ");
+            await expectAsyncExpression("axButton.roleDescription", "'AXRoleDescription: Super Button'")
+
+            // Confirm our role description returns to default when set to whitespace only.
+            domButton.setAttribute("aria-roledescription", "     ");
+            await waitForDefaultRoleDescription(axButton);
+
+            // Confirm our role description strips extraneous whitespace (including new line) characters.
+            domButton.setAttribute("aria-roledescription", `          Super Button          
+
+
+
+            `);
+            await expectAsyncExpression("axButton.roleDescription", "'AXRoleDescription: Super Button'")
+
+            // Confirm our role description returns to default when removed.
+            domButton.removeAttribute("aria-roledescription");
+            await waitForDefaultRoleDescription(axButton);
+
+            finishJSTest();
+        }, 0);
     }
-}
-
-runTest();
 </script>
-
 </body>
-<script src="../resources/js-test-post.js"></script>
 </html>
