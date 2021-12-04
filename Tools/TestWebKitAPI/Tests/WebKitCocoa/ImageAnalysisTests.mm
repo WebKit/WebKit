@@ -80,9 +80,10 @@ static void swizzledProcessRequestWithResults(id, SEL, VKImageAnalyzerRequest *,
 
 #if PLATFORM(IOS_FAMILY)
 
+static CGPoint gSwizzledLocationInView = CGPoint { 100, 100 };
 static CGPoint swizzledLocationInView(id, SEL, UIView *)
 {
-    return CGPointMake(100, 100);
+    return gSwizzledLocationInView;
 }
 
 static void swizzledProcessRequestWithError(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
@@ -93,7 +94,7 @@ static void swizzledProcessRequestWithError(id, SEL, VKImageAnalyzerRequest *, v
 
 TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 {
-    InstanceMethodSwizzler gestureLocationSwizzler { UIGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
+    InstanceMethodSwizzler gestureLocationSwizzler { UILongPressGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
     InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
@@ -107,7 +108,7 @@ TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 
 TEST(ImageAnalysisTests, HandleImageAnalyzerError)
 {
-    InstanceMethodSwizzler gestureLocationSwizzler { UIGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
+    InstanceMethodSwizzler gestureLocationSwizzler { UILongPressGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
     InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
@@ -116,6 +117,21 @@ TEST(ImageAnalysisTests, HandleImageAnalyzerError)
     [webView _imageAnalysisGestureRecognizer].state = UIGestureRecognizerStateBegan;
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(gDidProcessRequestCount, 1U);
+}
+
+TEST(ImageAnalysisTests, DoNotCrashWhenHitTestingOutsideOfWebView)
+{
+    InstanceMethodSwizzler gestureLocationSwizzler { UILongPressGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
+    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"image"];
+
+    gSwizzledLocationInView = CGPointMake(500, 500);
+    [webView _imageAnalysisGestureRecognizer].state = UIGestureRecognizerStateBegan;
+    [webView waitForNextPresentationUpdate];
+    [webView expectElementCount:1 querySelector:@"img"];
+    EXPECT_EQ(gDidProcessRequestCount, 0U);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

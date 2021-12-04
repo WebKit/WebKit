@@ -1,3 +1,18 @@
+2021-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web content process sometimes crashes under WebPage::positionInformation()
+        https://bugs.webkit.org/show_bug.cgi?id=233841
+        rdar://85917212
+
+        Reviewed by Geoffrey Garen.
+
+        Add a test that exercises hit-testing for Live Text, but induces this crash by hit-testing outside of the bounds
+        of the web view (such that the hit-tested node ends up as null).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::swizzledLocationInView):
+        (TestWebKitAPI::TEST):
+
 2021-12-03  John Wilander  <wilander@apple.com>
 
         PCM: Unlinkable tokens for triggering event to prevent fraud

@@ -3141,7 +3141,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
             info.image = shareableBitmapSnapshotForNode(element);
     }
 
-    if (!info.isImage && request.includeImageData) {
+    if (!info.isImage && request.includeImageData && hitTestNode) {
         if (auto video = hostVideoElementIgnoringImageOverlay(*hitTestNode))
             videoPositionInformation(*this, *video, request, info);
         else if (is<HTMLImageElement>(hitTestNode))
