@@ -164,7 +164,7 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
                 request3.append('\0');
                 EXPECT_TRUE(strnstr(request3.data(), "POST / HTTP/1.1\r\n", request3.size()));
                 const char* bodyBegin = strnstr(request3.data(), "\r\n\r\n", request3.size()) + strlen("\r\n\r\n");
-                EXPECT_STREQ(bodyBegin, "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":2}");
+                EXPECT_STREQ(bodyBegin, "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3}");
                 done = true;
             });
             break;
@@ -192,7 +192,45 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
 }
 
 #if HAVE(RSA_BSSA)
-TEST(PrivateClickMeasurement, FraudPrevention)
+
+enum class TokenSigningParty : bool { Source, Destination };
+
+static void triggerAttributionWithSubresourceRedirect(Connection& connection, const String& attributionDestinationNonce)
+{
+    auto optionalQueryString = attributionDestinationNonce.isEmpty() ? attributionDestinationNonce : makeString("?attributionDestinationNonce=", attributionDestinationNonce);
+    auto location = makeString("/.well-known/private-click-measurement/trigger-attribution/12", optionalQueryString);
+    connection.receiveHTTPRequest([connection, location] (Vector<char>&& request1) {
+        EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
+        auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: ", location, "\r\nContent-Length: 0\r\n\r\n").utf8().data();
+        connection.send(redirect, [connection, location] {
+            connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
+                auto expectedHttpGetString = makeString("GET ", location, " HTTP/1.1\r\n").utf8().data();
+                EXPECT_TRUE(strnstr(request2.data(), expectedHttpGetString, request2.size()));
+                const char* response = "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 0\r\n\r\n";
+                connection.send(response);
+            });
+        });
+    });
+}
+
+static void runDestinationWebView(RetainPtr<WKWebView> webView, NSURL *serverURL)
+{
+    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
+        [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
+            [webView _setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:serverURL completionHandler:^{
+                [webView _setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:serverURL completionHandler:^{
+                    [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
+                        NSString *html = [NSString stringWithFormat:@"<script>setTimeout(function(){ fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'}); }, 100);</script>", serverURL];
+                        [webView loadHTMLString:html baseURL:exampleURL()];
+                    }];
+                }];
+            }];
+        }];
+    }];
+}
+
+static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty)
 {
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
@@ -222,12 +260,15 @@ TEST(PrivateClickMeasurement, FraudPrevention)
     auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
 
     auto keyData = base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size());
-
     // The server.
-    HTTPServer server([&done, connectionCount = 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {
+    HTTPServer server([signingParty, &done, connectionCount = signingParty == TokenSigningParty::Source ? 1 : 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {
         switch (++connectionCount) {
         case 1:
-            connection.receiveHTTPRequest([connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
+            EXPECT_TRUE(signingParty == TokenSigningParty::Destination);
+            triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789");
+            break;
+        case 2:
+            connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
                 EXPECT_TRUE(strnstr(request1.data(), "GET / HTTP/1.1\r\n", request1.size()));
 
                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
@@ -235,12 +276,12 @@ TEST(PrivateClickMeasurement, FraudPrevention)
                     "Content-Type: application/json\r\n"
                     "Content-Length: ", 24 + keyData.length(), "\r\n\r\n"
                     "{\"token_public_key\": \"", keyData, "\"}");
-                connection.send(WTFMove(response), [connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
-                    connection.receiveHTTPRequest([connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
+                connection.send(WTFMove(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
+                    connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
                         EXPECT_TRUE(strnstr(request2.data(), "POST / HTTP/1.1\r\n", request2.size()));
 
                         auto request2String = String(request2.data(), request2.size());
-                        auto key = String("source_unlinkable_token");
+                        auto key = signingParty == TokenSigningParty::Source ? String("source_unlinkable_token") : String("destination_unlinkable_token");
                         auto start = request2String.find(key);
                         start += key.length() + 3;
                         auto end = request2String.find('"', start);
@@ -258,8 +299,8 @@ TEST(PrivateClickMeasurement, FraudPrevention)
                             "Content-Type: application/json\r\n"
                             "Content-Length: ", 24 + unlinkableToken.length(), "\r\n\r\n"
                             "{\"unlinkable_token\": \"", unlinkableToken, "\"}");
-                        connection.send(WTFMove(response), [connection, &keyData, &done, unlinkableToken, token, &secKey] {
-                            connection.receiveHTTPRequest([connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
+                        connection.send(WTFMove(response), [signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] {
+                            connection.receiveHTTPRequest([signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
                                 EXPECT_TRUE(strnstr(request3.data(), "GET / HTTP/1.1\r\n", request3.size()));
 
                                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
@@ -267,10 +308,10 @@ TEST(PrivateClickMeasurement, FraudPrevention)
                                     "Content-Type: application/json\r\n"
                                     "Content-Length: ", 24 + keyData.length(), "\r\n\r\n"
                                     "{\"token_public_key\": \"", keyData, "\"}");
-                                connection.send(WTFMove(response), [connection, &done, unlinkableToken, token, &secKey] {
-                                    connection.receiveHTTPRequest([connection, &done, unlinkableToken, token, &secKey] (Vector<char>&& request4) {
+                                connection.send(WTFMove(response), [signingParty, connection, &done, unlinkableToken, token, &secKey] {
+                                    connection.receiveHTTPRequest([signingParty, connection, &done, unlinkableToken, token, &secKey] (Vector<char>&& request4) {
                                         EXPECT_TRUE(strnstr(request4.data(), "POST / HTTP/1.1\r\n", request4.size()));
-                                        EXPECT_TRUE(strnstr(request4.data(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":2,",
+                                        EXPECT_TRUE(strnstr(request4.data(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3,",
                                             request4.size()));
 
                                         EXPECT_FALSE(strnstr(request4.data(), token.utf8().data(), request4.size()));
@@ -278,7 +319,7 @@ TEST(PrivateClickMeasurement, FraudPrevention)
 
                                         auto request4String = String(request4.data(), request4.size());
 
-                                        auto key = String("source_secret_token");
+                                        auto key = signingParty == TokenSigningParty::Source ? String("source_secret_token") : String("destination_secret_token");
                                         auto start = request4String.find(key);
                                         start += key.length() + 3;
                                         auto end = request4String.find('"', start);
@@ -286,7 +327,7 @@ TEST(PrivateClickMeasurement, FraudPrevention)
                                         auto tokenVector = base64URLDecode(token);
                                         auto tokenData = adoptNS([[NSData alloc] initWithBytes:tokenVector->data() length:tokenVector->size()]);
 
-                                        key = String("source_secret_token_signature");
+                                        key = signingParty == TokenSigningParty::Source ? String("source_secret_token_signature") : String("destination_secret_token_signature");
                                         start = request4String.find(key);
                                         start += key.length() + 3;
                                         end = request4String.find('"', start);
@@ -305,21 +346,9 @@ TEST(PrivateClickMeasurement, FraudPrevention)
                 });
             });
             break;
-        case 2:
-            connection.receiveHTTPRequest([connection] (Vector<char>&& request1) {
-                EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
-                const char* redirect = "HTTP/1.1 302 Found\r\n"
-                    "Location: /.well-known/private-click-measurement/trigger-attribution/12\r\n"
-                    "Content-Length: 0\r\n\r\n";
-                connection.send(redirect, [connection] {
-                    connection.receiveHTTPRequest([connection] (Vector<char>&& request2) {
-                        EXPECT_TRUE(strnstr(request2.data(), "GET /.well-known/private-click-measurement/trigger-attribution/12 HTTP/1.1\r\n", request2.size()));
-                        const char* response = "HTTP/1.1 200 OK\r\n"
-                            "Content-Length: 0\r\n\r\n";
-                        connection.send(response);
-                    });
-                });
-            });
+        case 3:
+            EXPECT_TRUE(signingParty == TokenSigningParty::Source);
+            triggerAttributionWithSubresourceRedirect(connection, emptyString());
             break;
         }
     }, HTTPServer::Protocol::Https);
@@ -327,23 +356,23 @@ TEST(PrivateClickMeasurement, FraudPrevention)
 
     auto webView = webViewWithoutUsingDaemon();
     webView.get().navigationDelegate = delegateAllowingAllTLS();
-    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789" applicationBundleID:@"test.bundle.id" ephemeral:NO];
+    auto clickNonce = signingParty == TokenSigningParty::Source ? @"ABCDEFabcdef0123456789" : nil;
+    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:clickNonce applicationBundleID:@"test.bundle.id" ephemeral:NO];
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
 
-    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
-        [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
-            [webView _setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:serverURL completionHandler:^{
-                [webView _setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:serverURL completionHandler:^{
-                    [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
-                        NSString *html = [NSString stringWithFormat:@"<script>setTimeout(function(){ fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'}); }, 100);</script>", serverURL];
-                        [webView loadHTMLString:html baseURL:exampleURL()];
-                    }];
-                }];
-            }];
-        }];
-    }];
+    runDestinationWebView(webView, serverURL);
     Util::run(&done);
+}
+
+TEST(PrivateClickMeasurement, SourceClickFraudPrevention)
+{
+    signUnlinkableTokenAndSendSecretToken(TokenSigningParty::Source);
+}
+
+TEST(PrivateClickMeasurement, DestinationClickFraudPrevention)
+{
+    signUnlinkableTokenAndSendSecretToken(TokenSigningParty::Destination);
 }
 #endif
 

@@ -58,7 +58,7 @@ TEST(PrivateClickMeasurement, ValidMinValues)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(min6BitValue, PrivateClickMeasurement::Priority(min6BitValue)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":0,\"attributed_on_site\":\"example.com\",\"trigger_data\":0,\"version\":2}");
+    ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":0,\"attributed_on_site\":\"example.com\",\"trigger_data\":0,\"version\":3}");
 }
 
 TEST(PrivateClickMeasurement, ValidMidValues)
@@ -66,7 +66,7 @@ TEST(PrivateClickMeasurement, ValidMidValues)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData((uint32_t)9, PrivateClickMeasurement::Priority((uint32_t)22)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":192,\"attributed_on_site\":\"example.com\",\"trigger_data\":9,\"version\":2}");
+    ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":192,\"attributed_on_site\":\"example.com\",\"trigger_data\":9,\"version\":3}");
 }
 
 TEST(PrivateClickMeasurement, ValidMaxValues)
@@ -74,7 +74,7 @@ TEST(PrivateClickMeasurement, ValidMaxValues)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier", WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":255,\"attributed_on_site\":\"example.com\",\"trigger_data\":15,\"version\":2}");
+    ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":255,\"attributed_on_site\":\"example.com\",\"trigger_data\":15,\"version\":3}");
 }
 
 TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
@@ -126,7 +126,7 @@ TEST(PrivateClickMeasurement, ValidConversionURLs)
 
 TEST(PrivateClickMeasurement, ValidSourceNonce)
 {
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdef0123456789"_s };
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
     ASSERT_TRUE(ephemeralNonce.isValid());
 }
 
@@ -282,19 +282,19 @@ TEST(PrivateClickMeasurement, InvalidConversionWithDisallowedURLComponents)
 TEST(PrivateClickMeasurement, InvalidSourceNonce)
 {
     // Fewer than the requried number of bytes.
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDabcd0123456789"_s };
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDabcd0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // More than the requried number of bytes.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFGHIabcdefghi0123456789"_s };
+    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFGHIabcdefghi0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Illegal, ASCII character '/'.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcde/0123456789"_s };
+    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcde/0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Illegal, non-ASCII character 'å'.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdeå0123456789" };
+    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdeå0123456789" };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Empty string.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { StringImpl::empty() };
+    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { StringImpl::empty() };
     ASSERT_FALSE(ephemeralNonce.isValid());
 }
 
@@ -318,7 +318,7 @@ TEST(PrivateClickMeasurement, InvalidBlindedSecret)
     auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 0ul);
 
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdef0123456789"_s };
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
     EXPECT_TRUE(ephemeralNonce.isValid());
     pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
 

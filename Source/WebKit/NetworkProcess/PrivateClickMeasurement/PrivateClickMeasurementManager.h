@@ -73,7 +73,11 @@ private:
     const PCM::Store& store() const;
     void startTimer(Seconds);
     void getTokenPublicKey(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
-    void getSignedUnlinkableToken(PrivateClickMeasurement&&);
+    void getTokenPublicKey(AttributionTriggerData&&, PrivateClickMeasurement::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(AttributionTriggerData&&, const String& publicKeyBase64URL)>&&);
+    void configureForTokenSigning(PrivateClickMeasurement::PcmDataCarried&, URL& tokenSignatureURL, std::optional<URL> givenTokenSignatureURL);
+    std::optional<String> getSignatureBase64URLFromTokenSignatureResponse(const String& errorDescription, const RefPtr<JSON::Object>&);
+    void getSignedUnlinkableTokenForSource(PrivateClickMeasurement&&);
+    void getSignedUnlinkableTokenForDestination(SourceSite&&, AttributionDestinationSite&&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
     void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&);
     void clearSentAttribution(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint);
     void attribute(SourceSite&&, AttributionDestinationSite&&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
@@ -101,10 +105,14 @@ private:
     std::optional<AttributionReportTestConfig> m_attributionReportTestConfig;
 
     struct TestingFraudPreventionValues {
-        String unlinkableToken;
-        String secretToken;
-        String signature;
-        String keyID;
+        String unlinkableTokenForSource;
+        String secretTokenForSource;
+        String signatureForSource;
+        String keyIDForSource;
+        String unlinkableTokenForDestination;
+        String secretTokenForDestination;
+        String signatureForDestination;
+        String keyIDForDestination;
     };
 
     std::optional<TestingFraudPreventionValues> m_fraudPreventionValuesForTesting;

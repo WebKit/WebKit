@@ -38,7 +38,7 @@ using namespace WebCore;
 
 TEST(PrivateClickMeasurement, ValidBlindedSecret)
 {
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdef0123456789"_s };
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
     EXPECT_TRUE(ephemeralNonce.isValid());
 
     WebCore::PrivateClickMeasurement pcm(
@@ -83,7 +83,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     EXPECT_STREQ(sourceUnlinkableToken->getString("source_engagement_type"_s).utf8().data(), "click");
     EXPECT_STREQ(sourceUnlinkableToken->getString("source_nonce"_s).utf8().data(), "ABCDEFabcdef0123456789");
     EXPECT_FALSE(sourceUnlinkableToken->getString("source_unlinkable_token"_s).isEmpty());
-    EXPECT_EQ(sourceUnlinkableToken->getInteger("version"_s), 2);
+    EXPECT_EQ(sourceUnlinkableToken->getInteger("version"_s), 3);
 
     // Generate the signature.
     auto blindedMessage = base64URLDecode(sourceUnlinkableToken->getString("source_unlinkable_token"_s));

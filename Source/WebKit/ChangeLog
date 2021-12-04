@@ -1,3 +1,58 @@
+2021-12-03  John Wilander  <wilander@apple.com>
+
+        PCM: Unlinkable tokens for triggering event to prevent fraud
+        https://bugs.webkit.org/show_bug.cgi?id=233673
+        <rdar://79426347>
+
+        Reviewed by Alex Christensen.
+
+        This patch allows triggering events to have an optional query parameter like this:
+        https://destination.example/.well-known/private-click-measurement/trigger-attribution/11?attributionDestinationNonce=ABCDEFabcdef0123456789
+
+        The presence of an attributionDestinationNonce triggers PrivateClickMeasurementManager to
+        ask the server to sign an unlinkable token for the triggering event and then stores the
+        corresponding secret token plus the signature for later inclusion in the attribution report.
+
+        New API/unit test PrivateClickMeasurement.DestinationClickFraudPrevention.
+
+        * NetworkProcess/DatabaseUtilities.cpp:
+        (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase const):
+            Now handles destination tokens.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+            Now sets destinationSite in WebCore::PrivateClickMeasurement::AttributionTriggerData.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::Database):
+            Now calls addDestinationTokenColumnsIfNecessary().
+        (WebKit::PCM::Database::insertPrivateClickMeasurement):
+            Now does insertion of optional destination tokens.
+        (WebKit::PCM::Database::addDestinationTokenColumnsIfNecessary):
+            Database migration.
+        (WebKit::PCM::Database::addBundleIDColumnIfNecessary): Deleted.
+            Temporary migration function for non-customer builds. No longer needed.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+            Just name changes.
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+            Not changed afaik. Seems like the diff is confused.
+        (WebKit::PrivateClickMeasurementManager::configureForTokenSigning):
+            New function to extract shared code.
+        (WebKit::PrivateClickMeasurementManager::getSignatureBase64URLFromTokenSignatureResponse):
+            New function to extract shared code.
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource):
+            Renamed to add "ForSource" and all shared code extracted.
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination):
+            Different than for the source in that it results in an attribution call.
+        (PrivateClickMeasurementManager::handleAttribution):
+            Now does signing of destination token if the optional nonce is in the triggering event.
+        (PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::setPCMFraudPreventionValuesForTesting):
+            Added empty initializer strings for the destination test token values not in use yet.
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken): Deleted.
+            Renamed PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource().
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+
 2021-12-03  ujwal koneru  <ujwal.koneru@sony.com>
 
         Fix playstation build after r286484

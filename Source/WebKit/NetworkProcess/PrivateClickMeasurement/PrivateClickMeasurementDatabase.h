@@ -76,7 +76,7 @@ private:
     std::optional<DomainID> domainID(const WebCore::RegistrableDomain&);
     String getDomainStringFromDomainID(DomainID) const final;
 
-    void addBundleIDColumnIfNecessary();
+    void addDestinationTokenColumnsIfNecessary();
     bool needsUpdatedSchema() final;
     bool createUniqueIndices() final;
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;

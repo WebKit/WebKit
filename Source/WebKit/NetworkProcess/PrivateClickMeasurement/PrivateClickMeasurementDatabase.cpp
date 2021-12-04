@@ -40,7 +40,7 @@ constexpr auto setUnattributedPrivateClickMeasurementAsExpiredQuery = "UPDATE Un
 constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
     "sourceID, timeOfAdClick, token, signature, keyID, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto insertAttributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
-    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
+    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID, destinationToken, destinationSignature, destinationKeyID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
 constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
 constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
@@ -64,6 +64,7 @@ constexpr auto createAttributedPrivateClickMeasurement = "CREATE TABLE Attribute
     "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
     "attributionTriggerData INTEGER NOT NULL, priority INTEGER NOT NULL, timeOfAdClick REAL NOT NULL, "
     "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, sourceApplicationBundleID TEXT, "
+    "destinationToken TEXT, destinationSignature TEXT, destinationKeyID TEXT, "
     "FOREIGN KEY(sourceSiteDomainID) REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
     "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
 constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID_sourceApplicationBundleID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID, sourceApplicationBundleID )"_s;
@@ -86,7 +87,7 @@ Database::Database(const String& storageDirectory)
     ASSERT(!RunLoop::isMain());
     openDatabaseAndCreateSchemaIfNecessary();
     enableForeignKeys();
-    addBundleIDColumnIfNecessary();
+    addDestinationTokenColumnsIfNecessary();
     migrateDataToNewTablesIfNecessary();
     allDatabases().add(this);
 }
@@ -180,6 +181,7 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
         auto attributionTriggerData = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().data : -1;
         auto priority = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().priority : -1;
         auto sourceEarliestTimeToSend = attribution.timesToSend().sourceEarliestTimeToSend ? attribution.timesToSend().sourceEarliestTimeToSend.value().secondsSinceEpoch().value() : -1;
+        auto destinationSecretToken = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().destinationSecretToken : std::nullopt;
         auto destinationEarliestTimeToSend = attribution.timesToSend().destinationEarliestTimeToSend ? attribution.timesToSend().destinationEarliestTimeToSend.value().secondsSinceEpoch().value() : -1;
 
         // We should never be inserting an attributed private click measurement value into the database without valid report times.
@@ -199,6 +201,9 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
             || statement->bindText(10, sourceSecretToken ? sourceSecretToken->keyIDBase64URL : emptyString()) != SQLITE_OK
             || statement->bindDouble(11, destinationEarliestTimeToSend) != SQLITE_OK
             || statement->bindText(12, attribution.sourceApplicationBundleID()) != SQLITE_OK
+            || statement->bindText(13, destinationSecretToken ? destinationSecretToken->tokenBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(14, destinationSecretToken ? destinationSecretToken->signatureBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(15, destinationSecretToken ? destinationSecretToken->keyIDBase64URL : emptyString()) != SQLITE_OK
             || statement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::insertPrivateClickMeasurement insertAttributedPrivateClickMeasurementQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -699,20 +704,18 @@ void Database::destroyStatements()
     m_insertObservedDomainStatement = nullptr;
 }
 
-void Database::addBundleIDColumnIfNecessary()
+void Database::addDestinationTokenColumnsIfNecessary()
 {
-    // FIXME: Remove this at the end of 2021. No public release was made with the schema missing sourceApplicationBundleID, so this is only needed to migrate internal users who updated in September 2021.
-    String attributedTableName("AttributedPrivateClickMeasurement");
-    String unattributedTableName("UnattributedPrivateClickMeasurement"_s);
-    String sourceApplicationBundleIDColumnName("sourceApplicationBundleID"_s);
-    auto checkColumns = [&] (const String& tableName) {
-        auto columns = columnsForTable(tableName);
-        if (!columns.size() || columns.last() != sourceApplicationBundleIDColumnName)
-            addMissingColumnToTable(tableName, sourceApplicationBundleIDColumnName);
-    };
-    checkColumns(attributedTableName);
-    checkColumns(unattributedTableName);
+    String attributedTableName("AttributedPrivateClickMeasurement"_s);
+    String destinationKeyIDColumnName("destinationKeyID"_s);
+    auto columns = columnsForTable(attributedTableName);
+    if (!columns.size() || columns.last() != destinationKeyIDColumnName) {
+        addMissingColumnToTable(attributedTableName, "destinationToken"_s);
+        addMissingColumnToTable(attributedTableName, "destinationSignature"_s);
+        addMissingColumnToTable(attributedTableName, destinationKeyIDColumnName);
+    }
 }
+
 bool Database::needsUpdatedSchema()
 {
     // FIXME: Remove this at the end of 2021. No public release was made with the schema missing sourceApplicationBundleID, so this is only needed to migrate internal users who updated in September 2021.

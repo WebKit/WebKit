@@ -463,7 +463,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
 
     auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
     if (!attributionSourceNonceAttr.isEmpty()) {
-        auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { attributionSourceNonceAttr };
+        auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { attributionSourceNonceAttr };
         if (!ephemeralNonce.isValid()) {
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
             return std::nullopt;

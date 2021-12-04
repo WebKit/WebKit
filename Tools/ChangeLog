@@ -1,3 +1,31 @@
+2021-12-03  John Wilander  <wilander@apple.com>
+
+        PCM: Unlinkable tokens for triggering event to prevent fraud
+        https://bugs.webkit.org/show_bug.cgi?id=233673
+        <rdar://79426347>
+
+        Reviewed by Alex Christensen.
+
+        New test PrivateClickMeasurement.DestinationClickFraudPrevention.
+        The other changes are a report version bump 2->3 and a name change
+        FraudPrevention–>SourceClickFraudPrevention.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::runBasicPCMTest):
+        (TestWebKitAPI::triggerAttributionWithSubresourceRedirect):
+            Extracted shared code.
+        (TestWebKitAPI::runDestinationWebView):
+            Extracted shared code.
+        (TestWebKitAPI::signUnlinkableTokenAndSendSecretToken):
+            Extracted shared code.
+        (TestWebKitAPI::TEST):
+            New test PrivateClickMeasurement.DestinationClickFraudPrevention.
+            Extracted shared code from PrivateClickMeasurement.SourceClickFraudPrevention.
+
 2021-12-03  Sihui Liu  <sihui_liu@apple.com>
 
         Fetch and remove file system data via WKWebsiteDataStore

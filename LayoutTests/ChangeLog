@@ -1,3 +1,21 @@
+2021-12-03  John Wilander  <wilander@apple.com>
+
+        PCM: Unlinkable tokens for triggering event to prevent fraud
+        https://bugs.webkit.org/show_bug.cgi?id=233673
+        <rdar://79426347>
+
+        Reviewed by Alex Christensen.
+
+        These changes are a report version bump 2->3.
+
+        * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start-expected.txt:
+        * http/tests/privateClickMeasurement/multiple-app-bundle-ids-expected.txt:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce-expected.txt:
+        * http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+
 2021-12-03  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] WPT css-transform transform-interpolation-rotate-slerp.html is flaky img failing after updated in r286002

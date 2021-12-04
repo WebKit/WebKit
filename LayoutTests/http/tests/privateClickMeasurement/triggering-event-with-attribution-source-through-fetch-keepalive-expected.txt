@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: [Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of 15.
+CONSOLE MESSAGE: [Private Click Measurement] Triggering event was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of 15.
 CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 404
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:8443/.well-known/private-click-measurement/trigger-attribution/Dummy?attributionSource=https://127.0.0.1 due to access control checks.
 Tests triggering of private click measurement attribution with same-site triggering event request.

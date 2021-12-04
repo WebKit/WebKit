@@ -1006,9 +1006,11 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
     std::optional<WebCore::PrivateClickMeasurement::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
     if (!sessionID().isEphemeral()) {
-        if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url()))
+        if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url())) {
             privateClickMeasurementAttributionTriggerData = result.value();
-        else if (!result.error().isEmpty())
+            if (privateClickMeasurementAttributionTriggerData)
+                privateClickMeasurementAttributionTriggerData->destinationSite = WebCore::RegistrableDomain { request.firstPartyForCookies() };
+        } else if (!result.error().isEmpty())
             addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Error, result.error());
     }
 
