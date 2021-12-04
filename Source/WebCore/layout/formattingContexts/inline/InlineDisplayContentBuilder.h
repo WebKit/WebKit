@@ -43,6 +43,8 @@ public:
 
     DisplayBoxes build(const LineBuilder::LineContent&, const LineBox&, const InlineRect& lineBoxLogicalRect, const size_t lineIndex);
 
+    static void computeIsFirstIsLastBoxForInlineContent(DisplayBoxes&);
+
 private:
     void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes&);
     void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes&);

@@ -145,6 +145,7 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     auto& inlineItems = formattingState().inlineItems();
     lineLayout(inlineItems, { 0, inlineItems.size() }, constraints);
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes());
+    InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(formattingState().boxes());
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
@@ -155,6 +156,7 @@ void InlineFormattingContext::lineLayoutForIntergration(const ConstraintsForInFl
     auto& inlineItems = formattingState().inlineItems();
     lineLayout(inlineItems, { 0, inlineItems.size() }, constraints);
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes());
+    InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(formattingState().boxes());
 }
 
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraintsForIntegration()

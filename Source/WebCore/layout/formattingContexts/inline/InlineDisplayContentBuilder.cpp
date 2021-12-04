@@ -123,7 +123,9 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         , textRunRect
         , inkOverflow()
         , lineRun.expansion()
-        , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen } });
+        , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen }
+        , true
+        , { } });
 }
 
 void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run& lineRun, const InlineRect& softLineBreakRunRect, DisplayBoxes& boxes)
@@ -647,6 +649,24 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(const LineBox
         auto& parentDisplayBox = boxes[m_inlineBoxIndexMap.get(&parentInlineBox)];
         parentDisplayBox.adjustInkOverflow(inkOverflow);
     }
+}
+
+void InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(DisplayBoxes& boxes)
+{
+    HashMap<const Box*, size_t> lastDisplayBoxForInlineTextBoxIndexes;
+    ASSERT(boxes[0].isRootInlineBox());
+    for (size_t index = 1; index < boxes.size(); ++index) {
+        auto& displayBox = boxes[index];
+        // FIXME: Transition the inline box isFirst/isLast computation here as well.
+        if (!displayBox.isText())
+            continue;
+        auto& layoutBox = displayBox.layoutBox();
+        if (!lastDisplayBoxForInlineTextBoxIndexes.contains(&layoutBox))
+            displayBox.setIsFirstBox(true);
+        lastDisplayBoxForInlineTextBoxIndexes.set(&layoutBox, index);
+    }
+    for (auto lastDisplayBoxForInlineTextBoxIndex : lastDisplayBoxForInlineTextBoxIndexes)
+        boxes[lastDisplayBoxForInlineTextBoxIndex.value].setIsLastBox(true);
 }
 
 }

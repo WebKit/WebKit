@@ -130,6 +130,7 @@ struct Box {
     bool isLastBox() const { return m_isLastWithinInlineLevelBox; }
 
     void setIsLastBox(bool isLastBox) { m_isLastWithinInlineLevelBox = isLastBox; }
+    void setIsFirstBox(bool isFirstBox) { m_isFirstWithinInlineLevelBox = isFirstBox; }
 
 private:
     const size_t m_lineIndex { 0 };
