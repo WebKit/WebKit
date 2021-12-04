@@ -31,6 +31,7 @@
 #include "EventTarget.h"
 #include "FetchRequestCredentials.h"
 #include "MessagePort.h"
+#include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
@@ -58,7 +59,7 @@ struct WorkerOptions;
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(Worker);
 public:
-    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, const WorkerOptions&);
+    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, WorkerOptions&&);
     virtual ~Worker();
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
@@ -67,7 +68,7 @@ public:
     bool wasTerminated() const { return m_wasTerminated; }
 
     String identifier() const { return m_identifier; }
-    const String& name() const { return m_name; }
+    const String& name() const { return m_options.name; }
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
@@ -78,10 +79,10 @@ public:
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
 #endif
 
-    WorkerType type() const { return m_type; }
+    WorkerType type() const { return m_options.type; }
 
 private:
-    explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags, const WorkerOptions&);
+    explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags, WorkerOptions&&);
 
     EventTargetInterface eventTargetInterface() const final { return WorkerEventTargetInterfaceType; }
 
@@ -100,7 +101,7 @@ private:
     static void networkStateChanged(bool isOnLine);
 
     RefPtr<WorkerScriptLoader> m_scriptLoader;
-    String m_name;
+    const WorkerOptions m_options;
     String m_identifier;
     WorkerGlobalScopeProxy& m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
     std::optional<ContentSecurityPolicyResponseHeaders> m_contentSecurityPolicyResponseHeaders;
@@ -113,8 +114,6 @@ private:
 #if ENABLE(WEB_RTC)
     HashSet<String> m_transformers;
 #endif
-    WorkerType m_type { WorkerType::Classic };
-    FetchRequestCredentials m_credentials { FetchRequestCredentials::SameOrigin };
 };
 
 } // namespace WebCore

@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct WorkerOptions {
-    WorkerType type;
-    FetchRequestCredentials credentials;
+    WorkerType type { WorkerType::Classic };
+    FetchRequestCredentials credentials { FetchRequestCredentials::SameOrigin };
     String name;
 };
 

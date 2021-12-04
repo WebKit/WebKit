@@ -107,7 +107,7 @@ protected:
     SocketProvider* socketProvider();
 
 private:
-    virtual bool isServiceWorkerThread() const { return false; }
+    virtual ASCIILiteral threadName() const = 0;
 
     virtual void finishedEvaluatingScript() { }
 

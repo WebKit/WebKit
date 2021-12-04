@@ -116,7 +116,7 @@ Ref<Thread> WorkerThread::createThread()
         return Thread::current();
     }
 
-    return Thread::create(isServiceWorkerThread() ? "WebCore: Service Worker" : "WebCore: Worker", [this] {
+    return Thread::create(threadName(), [this] {
         workerOrWorkletThread();
     }, ThreadType::JavaScript);
 }

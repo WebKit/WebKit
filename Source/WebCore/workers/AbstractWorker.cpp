@@ -32,13 +32,29 @@
 #include "AbstractWorker.h"
 
 #include "ContentSecurityPolicy.h"
+#include "FetchOptions.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "WorkerOptions.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AbstractWorker);
+
+FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options)
+{
+    FetchOptions fetchOptions;
+    fetchOptions.mode = FetchOptions::Mode::SameOrigin;
+    if (options.type == WorkerType::Module)
+        fetchOptions.credentials = options.credentials;
+    else
+        fetchOptions.credentials = FetchOptions::Credentials::SameOrigin;
+    fetchOptions.cache = FetchOptions::Cache::Default;
+    fetchOptions.redirect = FetchOptions::Redirect::Follow;
+    fetchOptions.destination = FetchOptions::Destination::Worker;
+    return fetchOptions;
+}
 
 ExceptionOr<URL> AbstractWorker::resolveURL(const String& url, bool shouldBypassMainWorldContentSecurityPolicy)
 {

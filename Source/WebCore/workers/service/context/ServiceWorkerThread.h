@@ -87,7 +87,7 @@ protected:
 private:
     WEBCORE_EXPORT ServiceWorkerThread(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const Settings::Values&, WorkerLoaderProxy&, WorkerDebuggerProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
-    bool isServiceWorkerThread() const final { return true; }
+    ASCIILiteral threadName() const final { return "WebCore: ServiceWorker"_s; }
     void finishedEvaluatingScript() final;
 
     void finishedFiringInstallEvent(bool hasRejectedAnyPromise);

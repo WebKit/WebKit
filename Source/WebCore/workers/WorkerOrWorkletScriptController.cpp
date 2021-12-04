@@ -82,11 +82,6 @@ WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadTyp
     }
 }
 
-WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadType type, WorkerOrWorkletGlobalScope* globalScope)
-    : WorkerOrWorkletScriptController(type, JSC::VM::create(), globalScope)
-{
-}
-
 WorkerOrWorkletScriptController::~WorkerOrWorkletScriptController()
 {
     JSLockHolder lock(vm());
