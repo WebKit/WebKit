@@ -169,7 +169,7 @@ void setAttributeValue(id element, NSString* attribute, id value, bool synchrono
     END_AX_OBJC_EXCEPTIONS
 }
 
-NSString *AccessibilityUIElement::descriptionOfValue(id valueObject) const
+RetainPtr<NSString> AccessibilityUIElement::descriptionOfValue(id valueObject) const
 {
     if (!valueObject)
         return nil;
@@ -588,7 +588,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
             || [attribute isEqualToString:@"AXRelativeFrame"])
             continue;
 
-        RetainPtr<NSString> value = descriptionOfValue(attributeValue(attribute).get());
+        auto value = descriptionOfValue(attributeValue(attribute).get());
         [values appendFormat:@"%@: %@\n", attribute, value.get()];
     }
 
@@ -598,7 +598,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef attribute)
 {
     auto value = attributeValue([NSString stringWithJSStringRef:attribute]);
-    NSString *valueDescription = descriptionOfValue(value.get());
+    auto valueDescription = descriptionOfValue(value.get());
     return [valueDescription createJSStringRef];
 }
 
@@ -730,8 +730,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *role = descriptionOfValue(attributeValue(NSAccessibilityRoleAttribute).get());
-    return concatenateAttributeAndValue(@"AXRole", role);
+    auto role = descriptionOfValue(attributeValue(NSAccessibilityRoleAttribute).get());
+    return concatenateAttributeAndValue(@"AXRole", role.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -740,8 +740,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *subrole = descriptionOfValue(attributeValue(NSAccessibilitySubroleAttribute).get());
-    return concatenateAttributeAndValue(@"AXSubrole", subrole);
+    auto subrole = descriptionOfValue(attributeValue(NSAccessibilitySubroleAttribute).get());
+    return concatenateAttributeAndValue(@"AXSubrole", subrole.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -750,8 +750,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *role = descriptionOfValue(attributeValue(NSAccessibilityRoleDescriptionAttribute).get());
-    return concatenateAttributeAndValue(@"AXRoleDescription", role);
+    auto role = descriptionOfValue(attributeValue(NSAccessibilityRoleDescriptionAttribute).get());
+    return concatenateAttributeAndValue(@"AXRoleDescription", role.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -760,7 +760,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *computedRoleString = descriptionOfValue(attributeValue(@"AXARIARole").get());
+    auto computedRoleString = descriptionOfValue(attributeValue(@"AXARIARole").get());
     return [computedRoleString createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
 
@@ -770,8 +770,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *title = descriptionOfValue(attributeValue(NSAccessibilityTitleAttribute).get());
-    return concatenateAttributeAndValue(@"AXTitle", title);
+    auto title = descriptionOfValue(attributeValue(NSAccessibilityTitleAttribute).get());
+    return concatenateAttributeAndValue(@"AXTitle", title.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -780,8 +780,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *description = descriptionOfValue(attributeValue(NSAccessibilityDescriptionAttribute).get());
-    return concatenateAttributeAndValue(@"AXDescription", description);
+    auto description = descriptionOfValue(attributeValue(NSAccessibilityDescriptionAttribute).get());
+    return concatenateAttributeAndValue(@"AXDescription", description.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -790,8 +790,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *description = descriptionOfValue(attributeValue(NSAccessibilityOrientationAttribute).get());
-    return concatenateAttributeAndValue(@"AXOrientation", description);    
+    auto description = descriptionOfValue(attributeValue(NSAccessibilityOrientationAttribute).get());
+    return concatenateAttributeAndValue(@"AXOrientation", description.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -801,9 +801,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     auto value = attributeValue(NSAccessibilityValueAttribute);
-    NSString *description = descriptionOfValue(value.get());
+    auto description = descriptionOfValue(value.get());
     if (description)
-        return concatenateAttributeAndValue(@"AXValue", description);
+        return concatenateAttributeAndValue(@"AXValue", description.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -812,8 +812,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *description = descriptionOfValue(attributeValue(@"AXLanguage").get());
-    return concatenateAttributeAndValue(@"AXLanguage", description);
+    auto description = descriptionOfValue(attributeValue(@"AXLanguage").get());
+    return concatenateAttributeAndValue(@"AXLanguage", description.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -822,8 +822,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *description = descriptionOfValue(attributeValue(NSAccessibilityHelpAttribute).get());
-    return concatenateAttributeAndValue(@"AXHelp", description);
+    auto description = descriptionOfValue(attributeValue(NSAccessibilityHelpAttribute).get());
+    return concatenateAttributeAndValue(@"AXHelp", description.get());
     END_AX_OBJC_EXCEPTIONS
     
     return nullptr;
@@ -1688,8 +1688,8 @@ bool AccessibilityUIElement::isCollapsed() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *value = descriptionOfValue(attributeValue(@"AXEmbeddedImageDescription").get());
-    return concatenateAttributeAndValue(@"AXEmbeddedImageDescription", value);
+    auto value = descriptionOfValue(attributeValue(@"AXEmbeddedImageDescription").get());
+    return concatenateAttributeAndValue(@"AXEmbeddedImageDescription", value.get());
     END_AX_OBJC_EXCEPTIONS
     return nullptr;
 }

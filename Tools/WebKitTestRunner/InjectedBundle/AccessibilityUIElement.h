@@ -405,7 +405,7 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<id> attributeValueForParameter(NSString *, id) const;
-    NSString *descriptionOfValue(id valueObject) const;
+    RetainPtr<NSString> descriptionOfValue(id valueObject) const;
 #endif
 
 #if !PLATFORM(COCOA) && !USE(ATSPI)

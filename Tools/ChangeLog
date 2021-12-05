@@ -1,3 +1,32 @@
+2021-12-04  Andres Gonzalez  <andresg_22@apple.com>
+
+        Change WTR::AccessibilityUIElement::descriptionOfValue(id) to return a RetainPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=233815
+        <rdar://problem/86019373>
+
+        Reviewed by Chris Fleizach.
+
+        This fixes several tests in isolated tree mode, in particular:
+        accessibility/mac/focus-crash.html
+        accessibility/mac/search-predicate.html
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::descriptionOfValue const):
+        (WTR::AccessibilityUIElement::allAttributes):
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue):
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::subrole):
+        (WTR::AccessibilityUIElement::roleDescription):
+        (WTR::AccessibilityUIElement::computedRoleString):
+        (WTR::AccessibilityUIElement::title):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::orientation const):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::helpText const):
+        (WTR::AccessibilityUIElement::embeddedImageDescription const):
+
 2021-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web content process sometimes crashes under WebPage::positionInformation()
