@@ -768,7 +768,7 @@ class WebKitGenerator(BaseGenerator):
 
     @util.LogEntryExit
     def _get_derived_sources_dir(self):
-        return os.path.join(self.application.get_xcode_built_products_dir(), "DerivedSources", "WebKit2")
+        return os.path.join(self.application.get_xcode_built_products_dir(), "DerivedSources", "WebKit")
 
     @util.LogEntryExit
     def _get_generate_derived_sources_script(self):

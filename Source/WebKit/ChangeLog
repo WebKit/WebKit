@@ -1,3 +1,22 @@
+2021-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename DerivedSources/WebKit2 to DerivedSources/WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=233803
+
+        Reviewed by Tim Horton.
+
+        Mechanical rename.
+
+        No new tests because there is no behavior change.
+
+        * Configurations/BaseTarget.xcconfig:
+        * DerivedSources-output.xcfilelist:
+        * PlatformGTK.cmake:
+        * Scripts/generate-derived-sources.sh:
+        * Scripts/generate-unified-sources.sh:
+        * UnifiedSources-output.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-12-04  Brady Eidson  <beidson@apple.com>
 
         Add command line `webpushtool` for daemon development and debugging.
