@@ -1,3 +1,24 @@
+2021-12-06  Brady Eidson  <beidson@apple.com>
+
+        Put webpushd code in WebKit.framework.
+        https://bugs.webkit.org/show_bug.cgi?id=233886
+
+        Reviewed by Alex Christensen.
+
+        This fixes some build/mastering/linking issues.
+
+        * Configurations/webpushd.xcconfig:
+        * Shared/API/Cocoa/WKMain.h:
+        * Shared/API/Cocoa/WKMain.mm:
+        (WKWebPushDaemonMain):
+        * WebKit.xcodeproj/project.pbxproj:
+        * webpushd/WebPushDaemonMain.h: Copied from Source/WebKit/Shared/API/Cocoa/WKMain.mm.
+        * webpushd/WebPushDaemonMain.mm:
+        (WebKit::WebPushDaemonMain):
+        (main): Deleted.
+        * webpushd/webpushd.cpp: Copied from Source/WebKit/Shared/API/Cocoa/WKMain.mm.
+        (main):
+
 2021-12-06  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r286527): Three API tests crashing under WebKit::ProcessLauncher::launchProcess()

@@ -24,6 +24,8 @@
  */
 
 #import "config.h"
+#import "WebPushDaemonMain.h"
+
 #import "DaemonConnection.h"
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
@@ -55,7 +57,13 @@ static void connectionRemoved(xpc_connection_t connection)
 
 } // namespace WebPushD
 
-int main(int argc, const char** argv)
+using WebPushD::connectionEventHandler;
+using WebPushD::connectionAdded;
+using WebPushD::connectionRemoved;
+
+namespace WebKit {
+
+int WebPushDaemonMain(int argc, const char** argv)
 {
     if (argc != 3 || strcmp(argv[1], "--machServiceName")) {
         NSLog(@"usage: webpushd --machServiceName <name>");
@@ -64,9 +72,11 @@ int main(int argc, const char** argv)
     const char* machServiceName = argv[2];
 
     @autoreleasepool {
-        WebKit::startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.webpush", WebPushD::connectionAdded, WebPushD::connectionRemoved, WebPushD::connectionEventHandler);
+        WebKit::startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.webpush", connectionAdded, connectionRemoved, connectionEventHandler);
         WTF::initializeMainThread();
     }
     CFRunLoopRun();
     return 0;
 }
+
+} // namespace WebKit
