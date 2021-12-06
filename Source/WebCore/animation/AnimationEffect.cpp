@@ -43,6 +43,16 @@ AnimationEffect::~AnimationEffect()
 {
 }
 
+void AnimationEffect::setAnimation(WebAnimation* animation)
+{
+    if (m_animation == animation)
+        return;
+
+    m_animation = animation;
+    if (animation)
+        animation->updateRelevance();
+}
+
 EffectTiming AnimationEffect::getBindingsTiming() const
 {
     if (is<DeclarativeAnimation>(animation()))
@@ -549,6 +559,36 @@ std::optional<double> AnimationEffect::progressUntilNextStep(double iterationPro
     auto numberOfSteps = downcast<StepsTimingFunction>(*m_timingFunction).numberOfSteps();
     auto nextStepProgress = ceil(iterationProgress * numberOfSteps) / numberOfSteps;
     return nextStepProgress - iterationProgress;
+}
+
+Seconds AnimationEffect::timeToNextTick(BasicEffectTiming timing) const
+{
+    switch (timing.phase) {
+    case AnimationEffectPhase::Before:
+        // The effect is in its "before" phase, in this case we can wait until it enters its "active" phase.
+        return delay() - *timing.localTime;
+    case AnimationEffectPhase::Active: {
+        if (!ticksContinouslyWhileActive())
+            return endTime() - *timing.localTime;
+        if (auto iterationProgress = getComputedTiming().simpleIterationProgress) {
+            // In case we're in a range that uses a steps() timing function, we can compute the time until the next step starts.
+            if (auto progressUntilNextStep = this->progressUntilNextStep(*iterationProgress))
+                return iterationDuration() * *progressUntilNextStep;
+        }
+        // Other effects that continuously tick in the "active" phase will need to update their animated
+        // progress at the immediate next opportunity.
+        return 0_s;
+    }
+    case AnimationEffectPhase::After:
+        // The effect is in its after phase, which means it will no longer update its progress, so it doens't need a tick.
+        return Seconds::infinity();
+    case AnimationEffectPhase::Idle:
+        ASSERT_NOT_REACHED();
+        return Seconds::infinity();
+    }
+
+    ASSERT_NOT_REACHED();
+    return Seconds::infinity();
 }
 
 } // namespace WebCore

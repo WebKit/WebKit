@@ -1162,13 +1162,8 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
 {
     bool animationChanged = animation != this->animation();
     AnimationEffect::setAnimation(animation);
-
-    if (!animationChanged)
-        return;
-
-    if (animation)
-        animation->updateRelevance();
-    updateEffectStackMembership();
+    if (animationChanged)
+        updateEffectStackMembership();
 }
 
 const std::optional<const Styleable> KeyframeEffect::targetStyleable() const
@@ -2120,45 +2115,30 @@ std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProg
     return std::nullopt;
 }
 
-Seconds KeyframeEffect::timeToNextTick() const
+bool KeyframeEffect::ticksContinouslyWhileActive() const
 {
-    auto timing = getBasicTiming();
-    switch (timing.phase) {
-    case AnimationEffectPhase::Before:
-        // The effect is in its "before" phase, in this case we can wait until it enters its "active" phase.
-        return delay() - *timing.localTime;
-    case AnimationEffectPhase::Active: {
-        auto doesNotAffectStyles = m_blendingKeyframes.isEmpty() || m_blendingKeyframes.properties().isEmpty();
-        auto completelyAcceleratedAndRunning = isCompletelyAccelerated() && isRunningAccelerated();
-        if (doesNotAffectStyles || completelyAcceleratedAndRunning) {
-            // In the case of fully accelerated running effects and effects that don't actually target any CSS property,
-            // we do not have a need to invalidate styles.
-            if (is<CSSAnimation>(animation())) {
-                // However, CSS Animations need to trigger "animationiteration" events, in this case we must wait until the next iteration.
-                if (auto iterationProgress = getComputedTiming().simpleIterationProgress)
-                    return iterationDuration() * (1 - *iterationProgress);
-            }
-            // Other running effects in the "active" phase can wait until they end.
-            return endTime() - *timing.localTime;
+    auto doesNotAffectStyles = m_blendingKeyframes.isEmpty() || m_blendingKeyframes.properties().isEmpty();
+    if (doesNotAffectStyles)
+        return false;
+
+    if (isCompletelyAccelerated() && isRunningAccelerated())
+        return false;
+
+    return true;
+}
+
+Seconds KeyframeEffect::timeToNextTick(BasicEffectTiming timing) const
+{
+    if (timing.phase == AnimationEffectPhase::Active) {
+        // CSS Animations need to trigger "animationiteration" events even if there is no need to
+        // update styles while animating, so if we're dealing with one we must wait until the next iteration.
+        if (!ticksContinouslyWhileActive() && is<CSSAnimation>(animation())) {
+            if (auto iterationProgress = getComputedTiming().simpleIterationProgress)
+                return iterationDuration() * (1 - *iterationProgress);
         }
-        if (auto iterationProgress = getComputedTiming().simpleIterationProgress) {
-            // In case we're in a range that uses a steps() timing function, we can compute the time until the next step starts.
-            if (auto progressUntilNextStep = this->progressUntilNextStep(*iterationProgress))
-                return iterationDuration() * *progressUntilNextStep;
-        }
-        // Other effects in the "active" phase will need to update their animated value at the immediate next opportunity.
-        return 0_s;
-    }
-    case AnimationEffectPhase::After:
-        // The effect is in its after phase, which means it will no longer update its value, so it doens't need a tick.
-        return Seconds::infinity();
-    case AnimationEffectPhase::Idle:
-        ASSERT_NOT_REACHED();
-        return Seconds::infinity();
     }
 
-    ASSERT_NOT_REACHED();
-    return Seconds::infinity();
+    return AnimationEffect::timeToNextTick(timing);
 }
 
 } // namespace WebCore

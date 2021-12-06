@@ -797,8 +797,8 @@ void WebAnimation::timingDidChange(DidSeek didSeek, SynchronouslyNotify synchron
 
 void WebAnimation::invalidateEffect()
 {
-    if (!isEffectInvalidationSuspended() && m_effect)
-        m_effect->invalidate();
+    if (!isEffectInvalidationSuspended() && is<KeyframeEffect>(m_effect))
+        downcast<KeyframeEffect>(*m_effect).invalidate();
 }
 
 void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify synchronouslyNotify)
@@ -1234,8 +1234,8 @@ void WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionCont
         updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
 
-    if (m_effect)
-        m_effect->apply(targetStyle, resolutionContext, startTime);
+    if (is<KeyframeEffect>(m_effect))
+        downcast<KeyframeEffect>(*m_effect).apply(targetStyle, resolutionContext, startTime);
 }
 
 void WebAnimation::setSuspended(bool isSuspended)
@@ -1453,7 +1453,7 @@ Seconds WebAnimation::timeToNextTick() const
         return Seconds::infinity();
 
     ASSERT(effect());
-    return effect()->timeToNextTick() / playbackRate;
+    return effect()->timeToNextTick(effect()->getBasicTiming()) / playbackRate;
 }
 
 } // namespace WebCore

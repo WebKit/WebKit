@@ -47,10 +47,6 @@
 
 namespace WebCore {
 
-namespace Style {
-struct ResolutionContext;
-}
-
 class AnimationEffect : public RefCounted<AnimationEffect>, public CanMakeWeakPtr<AnimationEffect> {
 public:
     virtual ~AnimationEffect();
@@ -65,17 +61,15 @@ public:
     ExceptionOr<void> bindingsUpdateTiming(std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(std::optional<OptionalEffectTiming>);
 
-    virtual void apply(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds> = std::nullopt) = 0;
-    virtual void invalidate() = 0;
-    virtual void animationDidTick() = 0;
-    virtual void animationDidPlay() = 0;
-    virtual void animationDidChangeTimingProperties() = 0;
-    virtual void animationWasCanceled() = 0;
-    virtual void animationSuspensionStateDidChange(bool) = 0;
-    virtual void animationTimelineDidChange(AnimationTimeline*) = 0;
+    virtual void animationDidTick() { };
+    virtual void animationDidPlay() { };
+    virtual void animationDidChangeTimingProperties() { };
+    virtual void animationWasCanceled() { };
+    virtual void animationSuspensionStateDidChange(bool) { };
+    virtual void animationTimelineDidChange(AnimationTimeline*) { };
 
     WebAnimation* animation() const { return m_animation.get(); }
-    virtual void setAnimation(WebAnimation* animation) { m_animation = animation; }
+    virtual void setAnimation(WebAnimation*);
 
     Seconds delay() const { return m_delay; }
     void setDelay(const Seconds&);
@@ -106,11 +100,12 @@ public:
 
     void updateStaticTimingProperties();
 
-    virtual Seconds timeToNextTick() const { return Seconds::infinity(); }
+    virtual Seconds timeToNextTick(BasicEffectTiming) const;
 
 protected:
     explicit AnimationEffect();
 
+    virtual bool ticksContinouslyWhileActive() const { return false; }
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:

@@ -46,6 +46,10 @@ namespace WebCore {
 class Element;
 class FilterOperations;
 
+namespace Style {
+struct ResolutionContext;
+}
+
 class KeyframeEffect : public AnimationEffect
     , public CSSPropertyBlendingClient {
 public:
@@ -53,8 +57,6 @@ public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&&);
     static Ref<KeyframeEffect> create(const Element&, PseudoId);
     ~KeyframeEffect() { }
-
-    bool isKeyframeEffect() const final { return true; }
 
     struct BasePropertyIndexedKeyframe {
         std::variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
@@ -123,21 +125,14 @@ public:
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    void apply(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds> = std::nullopt) override;
-    void invalidate() override;
-    void animationDidTick() final;
-    void animationDidPlay() final;
-    void animationDidChangeTimingProperties() final;
-    void animationWasCanceled() final;
-    void animationSuspensionStateDidChange(bool) final;
-    void animationTimelineDidChange(AnimationTimeline*) final;
+    void apply(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds> = std::nullopt);
+    void invalidate();
+
     void animationTimingDidChange();
     void transformRelatedPropertyDidChange();
     OptionSet<AcceleratedActionApplicationResult> applyPendingAcceleratedActions();
 
     void willChangeRenderer();
-
-    void setAnimation(WebAnimation*) final;
 
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
@@ -204,8 +199,6 @@ private:
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);
-    Seconds timeToNextTick() const final;
-    std::optional<double> progressUntilNextStep(double) const final;
     bool isTargetingTransformRelatedProperty() const;
     void checkForMatchingTransformFunctionLists();
     void checkForMatchingFilterFunctionLists();
@@ -214,6 +207,19 @@ private:
 #if ENABLE(FILTERS_LEVEL_2)
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
+
+    // AnimationEffect
+    bool isKeyframeEffect() const final { return true; }
+    void animationDidTick() final;
+    void animationDidPlay() final;
+    void animationDidChangeTimingProperties() final;
+    void animationWasCanceled() final;
+    void animationSuspensionStateDidChange(bool) final;
+    void animationTimelineDidChange(AnimationTimeline*) final;
+    void setAnimation(WebAnimation*) final;
+    Seconds timeToNextTick(BasicEffectTiming) const final;
+    bool ticksContinouslyWhileActive() const final;
+    std::optional<double> progressUntilNextStep(double) const final;
 
     KeyframeList m_blendingKeyframes { emptyString() };
     HashSet<CSSPropertyID> m_animatedProperties;
