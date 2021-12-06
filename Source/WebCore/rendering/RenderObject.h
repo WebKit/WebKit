@@ -326,6 +326,7 @@ public:
     // to add SVG renderer methods to RenderObject with an ASSERT_NOT_REACHED() default implementation.
     virtual bool isRenderSVGModelObject() const { return false; }
     virtual bool isRenderSVGBlock() const { return false; };
+    virtual bool isLegacySVGRoot() const { return false; }
     virtual bool isSVGRoot() const { return false; }
     virtual bool isSVGContainer() const { return false; }
     virtual bool isSVGTransformableContainer() const { return false; }
@@ -345,6 +346,7 @@ public:
     virtual bool isSVGResourceFilter() const { return false; }
     virtual bool isSVGResourceClipper() const { return false; }
     virtual bool isSVGResourceFilterPrimitive() const { return false; }
+    bool isSVGRootOrLegacySVGRoot() const { return isSVGRoot() || isLegacySVGRoot(); }
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers

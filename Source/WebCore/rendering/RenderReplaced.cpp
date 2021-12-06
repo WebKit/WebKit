@@ -544,7 +544,7 @@ static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsic
     if (hasIntrinsicWidth && hasIntrinsicHeight)
         return true;
     if (hasIntrinsicWidth || hasIntrinsicHeight)
-        return contentRenderer && contentRenderer->isSVGRoot();
+        return contentRenderer && contentRenderer->isSVGRootOrLegacySVGRoot();
     return false;
 }
 

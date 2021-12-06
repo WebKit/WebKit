@@ -1714,7 +1714,7 @@ std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRect
 {
     RenderObject* renderer = this->renderer();
     Vector<FloatQuad> quads;
-    if (isSVGElement() && renderer && !renderer->isSVGRoot()) {
+    if (isSVGElement() && renderer && !renderer->isSVGRootOrLegacySVGRoot()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
         if (auto localRect = svgElement.getBoundingBox())

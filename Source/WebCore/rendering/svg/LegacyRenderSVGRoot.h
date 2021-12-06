@@ -66,7 +66,7 @@ public:
 private:
     void element() const = delete;
 
-    bool isSVGRoot() const override { return true; }
+    bool isLegacySVGRoot() const override { return true; }
 
     // Intentially left 'RenderSVGRoot' instead of 'LegacyRenderSVGRoot', to avoid breaking layout tests.
     const char* renderName() const override { return "RenderSVGRoot"; }
@@ -123,4 +123,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGRoot, isSVGRoot())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGRoot, isLegacySVGRoot())

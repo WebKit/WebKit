@@ -533,7 +533,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         if (replaced.isFloating() || replaced.isPositioned())
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
 
-        if (replaced.isSVGRoot())
+        if (replaced.isSVGRootOrLegacySVGRoot())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
 
         if (is<RenderImage>(replaced)) {

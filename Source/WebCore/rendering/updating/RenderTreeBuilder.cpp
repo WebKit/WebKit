@@ -995,7 +995,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
         m_view.frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(replacedRenderer.intrinsicSize()));
         return;
     }
-    if (is<LegacyRenderSVGRoot>(child)) {
+    if (child.isSVGRootOrLegacySVGRoot()) {
         auto fixedSize = [] (const auto& renderer) -> std::optional<IntSize> {
             auto& style = renderer.style();
             if (!style.width().isFixed() || !style.height().isFixed())

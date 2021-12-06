@@ -508,7 +508,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (shouldApplyLayoutContainment(*object) && shouldApplySizeContainment(*object))
         return true;
 
-    if (object->isSVGRoot())
+    if (object->isSVGRootOrLegacySVGRoot())
         return true;
 
     if (!object->hasNonVisibleOverflow())

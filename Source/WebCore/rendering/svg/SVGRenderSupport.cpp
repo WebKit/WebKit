@@ -204,7 +204,7 @@ static inline void invalidateResourcesOfChildren(RenderElement& renderer)
 static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
 {
     const RenderElement* start = &renderer;
-    while (start && !is<LegacyRenderSVGRoot>(*start) && !is<RenderSVGViewportContainer>(*start))
+    while (start && !start->isSVGRootOrLegacySVGRoot() && !is<RenderSVGViewportContainer>(*start))
         start = start->parent();
 
     ASSERT(start);
@@ -216,7 +216,7 @@ static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& rende
 
 bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
 {
-    while (ancestor && !is<LegacyRenderSVGRoot>(*ancestor)) {
+    while (ancestor && !ancestor->isSVGRootOrLegacySVGRoot()) {
         if (is<RenderSVGTransformableContainer>(*ancestor))
             return downcast<RenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
         if (is<RenderSVGViewportContainer>(*ancestor))

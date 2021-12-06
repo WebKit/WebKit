@@ -169,7 +169,7 @@ void RenderView::layout()
                 || box.style().logicalHeight().isPercentOrCalculated()
                 || box.style().logicalMinHeight().isPercentOrCalculated()
                 || box.style().logicalMaxHeight().isPercentOrCalculated()
-                || box.isSVGRoot()
+                || box.isSVGRootOrLegacySVGRoot()
                 )
                 box.setChildNeedsLayout(MarkOnlyThis);
         }

@@ -856,7 +856,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     Vector<FloatQuad> quads;
     bool isSVGRoot = false;
 
-    if (obj->isSVGRoot())
+    if (obj->isSVGRootOrLegacySVGRoot())
         isSVGRoot = true;
 
     if (is<RenderText>(*obj))
@@ -3011,7 +3011,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (headingLevel())
         return AccessibilityRole::Heading;
     
-    if (m_renderer->isSVGRoot())
+    if (m_renderer->isSVGRootOrLegacySVGRoot())
         return AccessibilityRole::SVGRoot;
     
     if (isStyleFormatGroup()) {

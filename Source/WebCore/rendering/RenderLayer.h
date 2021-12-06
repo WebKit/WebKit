@@ -600,7 +600,7 @@ public:
     {
         // FIXME: This really needs to know if there are transforms on this layer and any of the layers
         // between it and the ancestor in question.
-        return !renderer().hasTransform() && !renderer().isSVGRoot();
+        return !renderer().hasTransform() && !renderer().isSVGRootOrLegacySVGRoot();
     }
 
     // FIXME: adjustForColumns allows us to position compositing layers in columns correctly, but eventually they need to be split across columns too.

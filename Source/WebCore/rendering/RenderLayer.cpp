@@ -2205,7 +2205,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         context.clip(pixelSnappedClipRect);
 
 #if ENABLE(CSS_COMPOSITING)
-        bool usesCompositeOperation = hasBlendMode() && !(renderer().isSVGRoot() && parent() && parent()->isRenderViewLayer());
+        bool usesCompositeOperation = hasBlendMode() && !(renderer().isLegacySVGRoot() && parent() && parent()->isRenderViewLayer());
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), blendMode());
 #endif
@@ -5541,7 +5541,7 @@ void RenderLayer::updateFiltersAfterStyleChange()
 
     // Add the filter as a client to this renderer, unless we are a RenderLayer accommodating
     // an SVG. In that case it takes care of its own resource management for filters.
-    if (renderer().style().filter().hasReferenceFilter() && !renderer().isSVGRoot()) {
+    if (renderer().style().filter().hasReferenceFilter() && !renderer().isSVGRootOrLegacySVGRoot()) {
         ensureLayerFilters();
         m_filters->updateReferenceFilterClients(renderer().style().filter());
     } else if (m_filters)
