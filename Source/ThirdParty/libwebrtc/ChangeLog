@@ -1,3 +1,13 @@
+2021-12-06  Youenn Fablet  <youenn@apple.com>
+
+        Close WebRTC allocation sequence shared socket in case of sequence network failure
+        https://bugs.webkit.org/show_bug.cgi?id=233808
+
+        Reviewed by Geoffrey Garen.
+
+        * Source/webrtc/p2p/client/basic_port_allocator.cc:
+        * Source/webrtc/p2p/client/basic_port_allocator.h:
+
 2021-11-22  Youenn Fablet  <youenn@apple.com>
 
         Remove h264_bitstream_parser spurious logging

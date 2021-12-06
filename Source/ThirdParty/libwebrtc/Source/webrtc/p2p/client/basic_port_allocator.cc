@@ -1272,9 +1272,22 @@ void AllocationSequence::Clear() {
   relay_ports_.clear();
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+void AllocationSequence::set_network_failed()
+{
+  network_failed_ = true;
+  if (udp_socket_) {
+    udp_socket_->SetError(ENETDOWN);
+    udp_socket_->Close();
+  }
+}
+#endif
+
 void AllocationSequence::OnNetworkFailed() {
   RTC_DCHECK(!network_failed_);
-  network_failed_ = true;
+#if defined(WEBRTC_WEBKIT_BUILD)
+  set_network_failed();
+#endif
   // Stop the allocation sequence if its network failed.
   Stop();
 }
