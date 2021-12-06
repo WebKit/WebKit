@@ -1,3 +1,17 @@
+2021-12-06  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Toggling the Settings -> Enabled LBSE flag has no immediate effect
+        https://bugs.webkit.org/show_bug.cgi?id=233871
+
+        Reviewed by Rob Buis.
+
+        Toggling "Enable layer-based SVG engine" in e.g. MiniBrowser or from JS has no immediate effect.
+        A relayout is not enough: a full style / render tree rebuild is needed.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml: When "LayerBasedSVGEngineEnabled" changes call
+        WebCore::SettingsBase::layerBasedSVGEngineEnabledChanged() to assure the switch from legacy to
+        LBSE engine and vice-versa is live and doesn't need reloads to take effect.
+
 2021-12-06  Youenn Fablet  <youenn@apple.com>
 
         Enable NavigationPreloadManager by default

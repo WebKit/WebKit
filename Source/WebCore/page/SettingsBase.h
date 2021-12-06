@@ -139,6 +139,9 @@ protected:
 #if ENABLE(MEDIA_STREAM)
     void mockCaptureDevicesEnabledChanged();
 #endif
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    void layerBasedSVGEngineEnabledChanged();
+#endif
 
     Page* m_page;
 
