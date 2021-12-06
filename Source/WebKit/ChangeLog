@@ -1,3 +1,16 @@
+2021-12-06  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r286527): Three API tests crashing under WebKit::ProcessLauncher::launchProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=233882
+        <rdar://problem/86111726>
+
+        Reviewed by Brent Fulgham.
+
+        Correct the eventHandler to capture the process name, rather than using a raw pointer to the character string.
+
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2021-12-06  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Block access to unused IOKit class

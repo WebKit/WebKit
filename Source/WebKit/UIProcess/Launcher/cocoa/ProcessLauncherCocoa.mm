@@ -239,7 +239,7 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort, name] (xpc_object_t event) {
+    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort, logName = String(name)] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
@@ -250,10 +250,13 @@ void ProcessLauncher::launchProcess()
             return;
 
 #if ERROR_DISABLED
-        UNUSED_PARAM(name);
+        UNUSED_PARAM(logName);
 #endif
 
-        LOG_ERROR("Error while launching %s: %s", name, xpc_dictionary_get_string(event, XPC_ERROR_KEY_DESCRIPTION));
+        if (event)
+            LOG_ERROR("Error while launching %s: %s", logName.utf8().data(), xpc_dictionary_get_string(event, XPC_ERROR_KEY_DESCRIPTION));
+        else
+            LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.utf8().data());
 
 #if ASSERT_ENABLED
         mach_port_urefs_t sendRightCount = 0;
