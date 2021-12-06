@@ -1,3 +1,33 @@
+2021-12-06  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Restore navigator.hardwareConcurrency
+        https://bugs.webkit.org/show_bug.cgi?id=233381
+        <rdar://85023911>
+
+        Reviewed by Saam Barati.
+
+        * fast/dom/Window/resources/window-property-collector.js:
+        (emitExpectedResult):
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/dom/navigator-hardwareConcurrency-expected.txt: Added.
+        * fast/dom/navigator-hardwareConcurrency.html: Added.
+        * fast/workers/resources/worker-navigator.js:
+        * fast/workers/worker-navigator-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ipad/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/win/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wincairo/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wpe/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2021-12-06  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] (REGRESSION r285597): Set the filterRegion of the CSSFilter after it is created

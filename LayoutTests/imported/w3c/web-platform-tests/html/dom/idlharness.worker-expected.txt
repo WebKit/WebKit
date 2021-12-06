@@ -761,7 +761,7 @@ PASS WorkerNavigator interface: member oscpu
 PASS WorkerNavigator interface: attribute language
 PASS WorkerNavigator interface: attribute languages
 PASS WorkerNavigator interface: attribute onLine
-FAIL WorkerNavigator interface: attribute hardwareConcurrency assert_true: The prototype object must have a property "hardwareConcurrency" expected true got false
+PASS WorkerNavigator interface: attribute hardwareConcurrency
 PASS WorkerNavigator must be primary interface of self.navigator
 PASS Stringification of self.navigator
 PASS WorkerNavigator interface: self.navigator must inherit property "appCodeName" with the proper type
@@ -778,7 +778,7 @@ PASS WorkerNavigator interface: self.navigator must not have property "oscpu"
 PASS WorkerNavigator interface: self.navigator must inherit property "language" with the proper type
 PASS WorkerNavigator interface: self.navigator must inherit property "languages" with the proper type
 PASS WorkerNavigator interface: self.navigator must inherit property "onLine" with the proper type
-FAIL WorkerNavigator interface: self.navigator must inherit property "hardwareConcurrency" with the proper type assert_inherits: property "hardwareConcurrency" not found in prototype chain
+PASS WorkerNavigator interface: self.navigator must inherit property "hardwareConcurrency" with the proper type
 PASS WorkerLocation interface: existence and properties of interface object
 PASS WorkerLocation interface object length
 PASS WorkerLocation interface object name
