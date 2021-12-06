@@ -165,10 +165,10 @@ ALWAYS_INLINE VM& CallFrame::deprecatedVM() const
 }
 
 template<typename Type>
-inline Allocator allocatorForNonVirtualConcurrently(VM& vm, size_t allocationSize, AllocatorForMode mode)
+inline Allocator allocatorForConcurrently(VM& vm, size_t allocationSize, AllocatorForMode mode)
 {
     if (auto* subspace = subspaceForConcurrently<Type>(vm))
-        return subspace->allocatorForNonVirtual(allocationSize, mode);
+        return subspace->allocatorFor(allocationSize, mode);
     return { };
 }
 
@@ -178,7 +178,7 @@ ALWAYS_INLINE void* tryAllocateCellHelper(Heap& heap, size_t size, GCDeferralCon
     VM& vm = heap.vm();
     ASSERT(deferralContext || heap.isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
     ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocateNonVirtual(vm, size, deferralContext, failureMode));
+    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocate(vm, size, deferralContext, failureMode));
     if (failureMode == AllocationFailureMode::ReturnNull && !result)
         return nullptr;
 #if ENABLE(GC_VALIDATION)

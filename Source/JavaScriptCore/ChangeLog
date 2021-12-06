@@ -1,3 +1,90 @@
+2021-12-06  Mark Lam  <mark.lam@apple.com>
+
+        Remove unneeded virtual allocator methods from Subspace.
+        https://bugs.webkit.org/show_bug.cgi?id=233891
+        rdar://86117970
+
+        Reviewed by Yusuke Suzuki.
+
+        Since the virtual allocate() and allocateFor() methods are now deleted, we can
+        also rename the inline allocateNonVirtual() and allocatorForNonVirtual() methods
+        to simply allocate() and allocateFor().  Similarly, rename
+        allocatorForNonVirtualConcurrently() to allocatorForConcurrently().
+
+        There are 2 places that still invokes the non-inline version of
+        CompleteSubspace::allocatorFor().  For this reason, we introduce a
+        CompleteSubsace::allocatorForNonInline() to keep the linkage the same.  There's a
+        chance that the compiler/linker may already inline the method in 1 or both of
+        these places, but we'll offer allocatorForNonInline() to keep the code expressing
+        the same thing and let the compiler/linker decide whether to inline it or not just
+        as before.
+
+        This is purely a re-factoring patch.  There are no behavior changes, except for
+        the removal of those 2 entries from the vtbls.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfileBase<Derived>::initializeProfile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocatorForNonInline):
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        (JSC::CompleteSubspace::allocatorFor): Deleted.
+        (JSC::CompleteSubspace::allocate): Deleted.
+        * heap/CompleteSubspace.h:
+        (JSC::CompleteSubspace::allocatorFor):
+        (JSC::CompleteSubspace::allocatorForNonVirtual): Deleted.
+        * heap/CompleteSubspaceInlines.h:
+        (JSC::CompleteSubspace::allocate):
+        (JSC::CompleteSubspace::allocateNonVirtual): Deleted.
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::allocatorFor): Deleted.
+        (JSC::IsoSubspace::allocate): Deleted.
+        * heap/IsoSubspace.h:
+        (JSC::IsoSubspace::allocatorFor):
+        (JSC::IsoSubspace::allocatorForNonVirtual): Deleted.
+        * heap/IsoSubspaceInlines.h:
+        (JSC::IsoSubspace::allocate):
+        (JSC::IsoSubspace::allocateNonVirtual): Deleted.
+        * heap/Subspace.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreateUninitialized):
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::reallocArrayRightIfPossible):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::overrideThings):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::create):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreate):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createWithLength):
+        * runtime/JSCellInlines.h:
+        (JSC::allocatorForConcurrently):
+        (JSC::tryAllocateCellHelper):
+        (JSC::allocatorForNonVirtualConcurrently): Deleted.
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::createUninitialized):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::create):
+
 2021-12-06  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Support Cascade Layers in the Styles sidebar

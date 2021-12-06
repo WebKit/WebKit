@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,7 +99,7 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
 
     size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
-    Allocator allocator = subspaceFor<JSFinalObject>(vm)->allocatorForNonVirtual(allocationSize, AllocatorForMode::EnsureAllocator);
+    Allocator allocator = subspaceFor<JSFinalObject>(vm)->allocatorFor(allocationSize, AllocatorForMode::EnsureAllocator);
 
     // Take advantage of extra inline capacity available in the size class.
     if (allocator) {

@@ -56,9 +56,6 @@ public:
     void finishSweep(MarkedBlock::Handle&, FreeList*);
     void destroy(VM&, JSCell*);
 
-    virtual Allocator allocatorFor(size_t, AllocatorForMode) = 0;
-    virtual void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) = 0;
-    
     void prepareForAllocation();
     
     void didCreateFirstDirectory(BlockDirectory* directory) { m_directoryForEmptyAllocation = directory; }
@@ -115,13 +112,13 @@ protected:
     BlockDirectory* m_firstDirectory { nullptr };
     BlockDirectory* m_directoryForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.
     SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_preciseAllocations;
+
+    bool m_isIsoSubspace { false };
+    uint8_t m_remainingLowerTierCellCount { 0 };
+
     Subspace* m_nextSubspaceInAlignedMemoryAllocator { nullptr };
 
     CString m_name;
-
-    bool m_isIsoSubspace { false };
-protected:
-    uint8_t m_remainingLowerTierCellCount { 0 };
 };
 
 } // namespace JSC

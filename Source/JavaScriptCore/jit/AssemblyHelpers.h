@@ -1820,7 +1820,7 @@ public:
         VM& vm, GPRReg resultGPR, StructureType structure, StorageType storage, GPRReg scratchGPR1,
         GPRReg scratchGPR2, JumpList& slowPath, size_t size)
     {
-        Allocator allocator = allocatorForNonVirtualConcurrently<ClassType>(vm, size, AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = allocatorForConcurrently<ClassType>(vm, size, AllocatorForMode::AllocatorIfExists);
         emitAllocateJSObject(resultGPR, JITAllocator::constant(allocator), scratchGPR1, structure, storage, scratchGPR2, slowPath);
     }
     

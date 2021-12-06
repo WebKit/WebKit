@@ -8747,7 +8747,7 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
-        Allocator allocator = allocatorForNonVirtualConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = allocatorForConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
         
         LValue result = allocateCell(
             m_out.constIntPtr(allocator.localAllocator()), vm().stringStructure.get(), slowPath);
@@ -13881,9 +13881,9 @@ IGNORE_CLANG_WARNINGS_END
             if (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType())) {
                 Allocator cellAllocator;
                 if (structure->typeInfo().type() == JSType::ArrayType)
-                    cellAllocator = allocatorForNonVirtualConcurrently<JSArray>(vm(), JSArray::allocationSize(structure->inlineCapacity()), AllocatorForMode::AllocatorIfExists);
+                    cellAllocator = allocatorForConcurrently<JSArray>(vm(), JSArray::allocationSize(structure->inlineCapacity()), AllocatorForMode::AllocatorIfExists);
                 else
-                    cellAllocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm(), JSFinalObject::allocationSize(structure->inlineCapacity()), AllocatorForMode::AllocatorIfExists);
+                    cellAllocator = allocatorForConcurrently<JSFinalObject>(vm(), JSFinalObject::allocationSize(structure->inlineCapacity()), AllocatorForMode::AllocatorIfExists);
 
                 bool hasIndexingHeader = hasIndexedProperties(structure->indexingType());
                 unsigned indexingHeaderSize = 0;
@@ -15017,7 +15017,7 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
 
         size_t sizeInBytes = sizeInValues * sizeof(JSValue);
-        Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorForNonVirtual(sizeInBytes, AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorFor(sizeInBytes, AllocatorForMode::AllocatorIfExists);
         LValue startOfStorage = allocateHeapCell(
             m_out.constIntPtr(allocator.localAllocator()), slowPath);
         ValueFromBlock fastButterfly = m_out.anchor(
@@ -16852,7 +16852,7 @@ IGNORE_CLANG_WARNINGS_END
     LValue allocateObject(
         size_t size, StructureType structure, LValue butterfly, LBasicBlock slowPath)
     {
-        Allocator allocator = allocatorForNonVirtualConcurrently<ClassType>(vm(), size, AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = allocatorForConcurrently<ClassType>(vm(), size, AllocatorForMode::AllocatorIfExists);
         return allocateObject(
             m_out.constIntPtr(allocator.localAllocator()), structure, butterfly, slowPath);
     }
@@ -16873,7 +16873,7 @@ IGNORE_CLANG_WARNINGS_END
             CompleteSubspace* actualSubspace = bitwise_cast<CompleteSubspace*>(subspace->asIntPtr());
             size_t actualSize = size->asIntPtr();
 
-            Allocator actualAllocator = actualSubspace->allocatorForNonVirtual(actualSize, AllocatorForMode::AllocatorIfExists);
+            Allocator actualAllocator = actualSubspace->allocatorFor(actualSize, AllocatorForMode::AllocatorIfExists);
             if (!actualAllocator) {
                 LBasicBlock continuation = m_out.newBlock();
                 LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
@@ -16935,7 +16935,7 @@ IGNORE_CLANG_WARNINGS_END
     LValue allocateObject(RegisteredStructure structure)
     {
         size_t allocationSize = JSFinalObject::allocationSize(structure.get()->inlineCapacity());
-        Allocator allocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm(), allocationSize, AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = allocatorForConcurrently<JSFinalObject>(vm(), allocationSize, AllocatorForMode::AllocatorIfExists);
         
         // FIXME: If the allocator is null, we could simply emit a normal C call to the allocator
         // instead of putting it on the slow path.

@@ -117,7 +117,7 @@ inline JSBigInt* JSBigInt::createWithLength(JSGlobalObject* nullOrGlobalObjectFo
     }
 
     ASSERT(length <= maxLength);
-    void* data = vm.primitiveGigacageAuxiliarySpace().allocateNonVirtual(vm, length * sizeof(Digit), nullptr, AllocationFailureMode::ReturnNull);
+    void* data = vm.primitiveGigacageAuxiliarySpace().allocate(vm, length * sizeof(Digit), nullptr, AllocationFailureMode::ReturnNull);
     if (UNLIKELY(!data)) {
         if (nullOrGlobalObjectForOOM) {
             auto scope = DECLARE_THROW_SCOPE(vm);

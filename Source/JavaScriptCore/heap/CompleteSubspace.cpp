@@ -45,14 +45,9 @@ CompleteSubspace::~CompleteSubspace()
 {
 }
 
-Allocator CompleteSubspace::allocatorFor(size_t size, AllocatorForMode mode)
+Allocator CompleteSubspace::allocatorForNonInline(size_t size, AllocatorForMode mode)
 {
-    return allocatorForNonVirtual(size, mode);
-}
-
-void* CompleteSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
-{
-    return allocateNonVirtual(vm, size, deferralContext, failureMode);
+    return allocatorFor(size, mode);
 }
 
 Allocator CompleteSubspace::allocatorForSlow(size_t size)
@@ -123,8 +118,8 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
         vm.verifyCanGC();
 
     sanitizeStackForVM(vm);
-    
-    if (Allocator allocator = allocatorFor(size, AllocatorForMode::EnsureAllocator))
+
+    if (Allocator allocator = allocatorForNonInline(size, AllocatorForMode::EnsureAllocator))
         return allocator.allocate(vm.heap, deferralContext, AllocationFailureMode::ReturnNull);
     
     if (size <= Options::preciseAllocationCutoff()

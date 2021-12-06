@@ -120,7 +120,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
 
     VM& vm = this->vm();
     if (size) {
-        if (Allocator allocator = vm.jsValueGigacageAuxiliarySpace().allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists)) {
+        if (Allocator allocator = vm.jsValueGigacageAuxiliarySpace().allocatorFor(size, AllocatorForMode::AllocatorIfExists)) {
             m_jit.emitAllocate(storageGPR, JITAllocator::constant(allocator), scratchGPR, scratch2GPR, slowCases);
             
             m_jit.addPtr(
@@ -135,9 +135,9 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
 
     Allocator allocator;
     if (structure->typeInfo().type() == JSType::ArrayType)
-        allocator = allocatorForNonVirtualConcurrently<JSArray>(vm, JSArray::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
+        allocator = allocatorForConcurrently<JSArray>(vm, JSArray::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
     else
-        allocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm, JSFinalObject::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
+        allocator = allocatorForConcurrently<JSFinalObject>(vm, JSFinalObject::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
     if (allocator) {
         emitAllocateJSObject(resultGPR, JITAllocator::constant(allocator), scratchGPR, TrustedImmPtr(structure), storageGPR, scratch2GPR, slowCases);
         m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
@@ -10737,7 +10737,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
     
     size_t size = initialOutOfLineCapacity * sizeof(JSValue);
 
-    Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
+    Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorFor(size, AllocatorForMode::AllocatorIfExists);
 
     if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
@@ -10781,7 +10781,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     size_t newSize = oldSize * outOfLineGrowthFactor;
     ASSERT(newSize == node->transition()->next->outOfLineCapacity() * sizeof(JSValue));
     
-    Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorForNonVirtual(newSize, AllocatorForMode::AllocatorIfExists);
+    Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorFor(newSize, AllocatorForMode::AllocatorIfExists);
 
     if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
@@ -14911,7 +14911,7 @@ void SpeculativeJIT::compileNewObject(Node* node)
 
     RegisteredStructure structure = node->structure();
     size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-    Allocator allocatorValue = allocatorForNonVirtualConcurrently<JSFinalObject>(vm(), allocationSize, AllocatorForMode::AllocatorIfExists);
+    Allocator allocatorValue = allocatorForConcurrently<JSFinalObject>(vm(), allocationSize, AllocatorForMode::AllocatorIfExists);
     if (!allocatorValue)
         slowPath.append(m_jit.jump());
     else {
@@ -16003,7 +16003,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     GPRReg scratch2GPR = scratch2.gpr();
 
     CCallHelpers::JumpList slowPath;
-    Allocator allocatorValue = allocatorForNonVirtualConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
+    Allocator allocatorValue = allocatorForConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
     emitAllocateJSCell(resultGPR, JITAllocator::constant(allocatorValue), allocatorGPR, TrustedImmPtr(m_jit.graph().registerStructure(vm().stringStructure.get())), scratchGPR, slowPath);
 
     // This puts nullptr for the first fiber. It makes visitChildren safe even if this JSRopeString is discarded due to the speculation failure in the following path.

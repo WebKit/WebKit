@@ -42,11 +42,9 @@ public:
 
     size_t cellSize() { return m_directory.cellSize(); }
 
-    Allocator allocatorFor(size_t, AllocatorForMode) override;
-    Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
+    Allocator allocatorFor(size_t, AllocatorForMode);
 
-    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
-    void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
+    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
 
     void sweepLowerTierCell(PreciseAllocation*);
     void clearIsoCellSetBit(PreciseAllocation*);
@@ -72,7 +70,7 @@ private:
     SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
-ALWAYS_INLINE Allocator IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
+ALWAYS_INLINE Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode)
 {
     RELEASE_ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
     return Allocator(&m_localAllocator);

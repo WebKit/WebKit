@@ -123,7 +123,7 @@ void DirectArguments::overrideThings(JSGlobalObject* globalObject)
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
-    void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocateNonVirtual(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::ReturnNull);
+    void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocate(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::ReturnNull);
     if (UNLIKELY(!backingStore)) {
         throwOutOfMemoryError(globalObject, scope);
         return;
