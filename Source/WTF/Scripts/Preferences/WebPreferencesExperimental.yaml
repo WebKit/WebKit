@@ -1265,11 +1265,11 @@ ServiceWorkerNavigationPreloadEnabled:
   condition: ENABLE(SERVICE_WORKER)
   defaultValue:
     WebCore:
-      default: false
+      default: true
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
 
 SharedWorkerEnabled:
   type: bool
