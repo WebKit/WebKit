@@ -142,16 +142,9 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
 
     auto adjustedBox = [&](const InlineDisplay::Box& box, float offset)
     {
-        return InlineDisplay::Box {
-            box.lineIndex(),
-            box.type(),
-            box.layoutBox(),
-            box.bidiLevel(),
-            moveVertically(box.logicalRect(), offset),
-            moveVertically(box.inkOverflow(), offset),
-            box.expansion(),
-            box.text()
-        };
+        auto adjustedBox = box;
+        adjustedBox.moveVertically(offset);
+        return adjustedBox;
     };
 
     auto adjustedContent = InlineContent::create(inlineContent.lineLayout());

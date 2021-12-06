@@ -478,7 +478,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                             auto lastDisplayBoxForInlineBoxIndex = inlineBoxDisplayBoxMap.take(inlineBox);
                             auto isFirstFragment = !lastDisplayBoxForInlineBoxIndex;
                             if (!isFirstFragment)
-                                boxes[lastDisplayBoxForInlineBoxIndex].setIsLastBox(false);
+                                boxes[lastDisplayBoxForInlineBoxIndex].setIsLastForLayoutBox(false);
                             inlineBoxDisplayBoxMap.set(inlineBox, index);
 
                             auto& boxGeometry = formattingState().boxGeometry(*inlineBox);
@@ -534,13 +534,13 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
                 auto& boxGeometry = formattingState().boxGeometry(inlineBoxDisplayBox.layoutBox());
                 auto contentRight = displayBox.logicalRight();
-                if (inlineBoxDisplayBox.isLastBox()) {
+                if (inlineBoxDisplayBox.isLastForLayoutBox()) {
                     accumulatedOffset += boxGeometry.borderAndPaddingEnd() + boxGeometry.marginEnd();
                     inlineBoxDisplayBox.setLogicalRight(contentRight + boxGeometry.borderAndPaddingEnd());
                 } else
                     inlineBoxDisplayBox.setLogicalRight(contentRight);
             }
-            if (displayBox.isNonRootInlineBox() && displayBox.isFirstBox()) {
+            if (displayBox.isNonRootInlineBox() && displayBox.isFirstForLayoutBox()) {
                 auto& layoutBox = displayBox.layoutBox();
                 auto& boxGeometry = formattingState().boxGeometry(layoutBox);
 
@@ -556,7 +556,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         ASSERT(!inlineBoxRangeList.isEmpty());
         for (auto& inlineBoxRange : inlineBoxRangeList) {
             auto& inlineBoxDisplayBox = boxes[inlineBoxRange.begin()];
-            setInlineBoxGeometry(inlineBoxDisplayBox.layoutBox(), inlineBoxDisplayBox.logicalRect(), inlineBoxDisplayBox.isFirstBox());
+            setInlineBoxGeometry(inlineBoxDisplayBox.layoutBox(), inlineBoxDisplayBox.logicalRect(), inlineBoxDisplayBox.isFirstForLayoutBox());
         }
     };
     if (needsNonRootInlineBoxDisplayBox)
@@ -653,20 +653,26 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(const LineBox
 
 void InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(DisplayBoxes& boxes)
 {
-    HashMap<const Box*, size_t> lastDisplayBoxForInlineTextBoxIndexes;
+    HashMap<const Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
+
     ASSERT(boxes[0].isRootInlineBox());
+    boxes[0].setIsFirstForLayoutBox(true);
+    size_t lastRootInlineBoxIndex = 0;
+
     for (size_t index = 1; index < boxes.size(); ++index) {
         auto& displayBox = boxes[index];
-        // FIXME: Transition the inline box isFirst/isLast computation here as well.
-        if (!displayBox.isText())
+        if (displayBox.isRootInlineBox()) {
+            lastRootInlineBoxIndex = index;
             continue;
+        }
         auto& layoutBox = displayBox.layoutBox();
-        if (!lastDisplayBoxForInlineTextBoxIndexes.contains(&layoutBox))
-            displayBox.setIsFirstBox(true);
-        lastDisplayBoxForInlineTextBoxIndexes.set(&layoutBox, index);
+        if (lastDisplayBoxForLayoutBoxIndexes.set(&layoutBox, index).isNewEntry)
+            displayBox.setIsFirstForLayoutBox(true);
     }
-    for (auto lastDisplayBoxForInlineTextBoxIndex : lastDisplayBoxForInlineTextBoxIndexes)
-        boxes[lastDisplayBoxForInlineTextBoxIndex.value].setIsLastBox(true);
+    for (auto index : lastDisplayBoxForLayoutBoxIndexes.values())
+        boxes[index].setIsLastForLayoutBox(true);
+
+    boxes[lastRootInlineBoxIndex].setIsLastForLayoutBox(true);
 }
 
 }

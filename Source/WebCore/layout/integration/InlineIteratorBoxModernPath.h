@@ -48,7 +48,7 @@ public:
     {
     }
 
-    bool isText() const { return !!box().text(); }
+    bool isText() const { return box().isTextOrSoftLineBreak(); }
     bool isInlineBox() const { return box().isInlineBox(); }
     bool isRootInlineBox() const { return box().isRootInlineBox(); }
 
@@ -106,16 +106,16 @@ public:
     void traverseNextTextBox()
     {
         ASSERT(!atEnd());
-        ASSERT(box().text());
+        ASSERT(box().isTextOrSoftLineBreak());
 
-        auto& layoutBox = box().layoutBox();
-
-        traverseNextLeaf();
-
-        if (!atEnd() && &layoutBox != &box().layoutBox())
+        if (box().isLastForLayoutBox()) {
             setAtEnd();
+            return;
+        }
 
-        ASSERT(atEnd() || box().text());
+        traverseNextWithSameLayoutBox();
+
+        ASSERT(box().isTextOrSoftLineBreak());
     }
 
     void traverseNextOnLine()
@@ -144,36 +144,32 @@ public:
 
     void traverseNextInlineBox()
     {
+        ASSERT(!atEnd());
         ASSERT(box().isInlineBox());
 
-        if (box().isLastBox()) {
+        if (box().isLastForLayoutBox()) {
             setAtEnd();
             return;
         }
 
-        auto& layoutBox = box().layoutBox();
-        do {
-            traverseNextBox();
-        } while (!atEnd() && &box().layoutBox() != &layoutBox);
+        traverseNextWithSameLayoutBox();
 
-        ASSERT(atEnd() || box().isInlineBox());
+        ASSERT(box().isInlineBox());
     }
 
     void traversePreviousInlineBox()
     {
+        ASSERT(!atEnd());
         ASSERT(box().isInlineBox());
 
-        if (box().isFirstBox()) {
+        if (box().isFirstForLayoutBox()) {
             setAtEnd();
             return;
         }
 
-        auto& layoutBox = box().layoutBox();
-        do {
-            traversePreviousBox();
-        } while (!atEnd() && &box().layoutBox() != &layoutBox);
+        traversePreviousWithSameLayoutBox();
 
-        ASSERT(atEnd() || box().isInlineBox());
+        ASSERT(box().isInlineBox());
     }
 
     BoxModernPath firstLeafBoxForInlineBox() const
@@ -247,6 +243,22 @@ private:
         do {
             traversePreviousBox();
         } while (!atEnd() && box().isInlineBox());
+    }
+
+    void traverseNextWithSameLayoutBox()
+    {
+        auto& layoutBox = box().layoutBox();
+        do {
+            traverseNextBox();
+        } while (!atEnd() && &box().layoutBox() != &layoutBox);
+    }
+
+    void traversePreviousWithSameLayoutBox()
+    {
+        auto& layoutBox = box().layoutBox();
+        do {
+            traversePreviousBox();
+        } while (!atEnd() && &box().layoutBox() != &layoutBox);
     }
 
     void setAtEnd() { m_boxIndex = boxes().size(); }

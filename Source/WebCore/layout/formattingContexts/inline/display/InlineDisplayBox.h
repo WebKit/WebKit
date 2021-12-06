@@ -74,11 +74,12 @@ struct Box {
         First = 1 << 0,
         Last  = 1 << 1
     };
-    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { PositionWithinInlineLevelBox::First, PositionWithinInlineLevelBox::Last });
+    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { });
 
     bool isText() const { return m_type == Type::Text; }
     bool isEllipsis() const { return m_type == Type::Ellipsis; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
+    bool isTextOrSoftLineBreak() const { return isText() || isSoftLineBreak(); }
     bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
     bool isLineBreak() const { return isSoftLineBreak() || isLineBreakBox(); }
     bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
@@ -105,8 +106,16 @@ struct Box {
     Layout::InlineLayoutUnit logicalWidth() const { return logicalRect().width(); }
     Layout::InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
 
-    void moveVertically(Layout::InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
-    void moveHorizontally(Layout::InlineLayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
+    void moveVertically(Layout::InlineLayoutUnit offset)
+    {
+        m_logicalRect.moveVertically(offset);
+        m_inkOverflow.moveVertically(offset);
+    }
+    void moveHorizontally(Layout::InlineLayoutUnit offset)
+    {
+        m_logicalRect.moveHorizontally(offset);
+        m_inkOverflow.moveHorizontally(offset);
+    }
     void adjustInkOverflow(const Layout::InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
     void truncate(Layout::InlineLayoutUnit truncatedwidth = 0.f);
     void setLogicalRight(Layout::InlineLayoutUnit right) { m_logicalRect.setRight(right); }
@@ -126,11 +135,11 @@ struct Box {
     size_t lineIndex() const { return m_lineIndex; }
     // These functions tell you whether this display box is the first/last for the associated inline level box (Layout::Box) and not whether it's the first/last box on the line.
     // (e.g. always true for atomic boxes, but inline boxes spanning over multiple lines can produce individual first/last boxes).
-    bool isFirstBox() const { return m_isFirstWithinInlineLevelBox; }
-    bool isLastBox() const { return m_isLastWithinInlineLevelBox; }
+    bool isFirstForLayoutBox() const { return m_isFirstForLayoutBox; }
+    bool isLastForLayoutBox() const { return m_isLastForLayoutBox; }
 
-    void setIsLastBox(bool isLastBox) { m_isLastWithinInlineLevelBox = isLastBox; }
-    void setIsFirstBox(bool isFirstBox) { m_isFirstWithinInlineLevelBox = isFirstBox; }
+    void setIsFirstForLayoutBox(bool isFirstBox) { m_isFirstForLayoutBox = isFirstBox; }
+    void setIsLastForLayoutBox(bool isLastBox) { m_isLastForLayoutBox = isLastBox; }
 
 private:
     const size_t m_lineIndex { 0 };
@@ -140,8 +149,8 @@ private:
     Layout::InlineRect m_logicalRect;
     Layout::InlineRect m_inkOverflow;
     bool m_hasContent : 1;
-    bool m_isFirstWithinInlineLevelBox : 1;
-    bool m_isLastWithinInlineLevelBox : 1;
+    bool m_isFirstForLayoutBox : 1;
+    bool m_isLastForLayoutBox : 1;
     Expansion m_expansion;
     std::optional<Text> m_text;
 };
@@ -154,8 +163,8 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_logicalRect(logicalRect)
     , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)
-    , m_isFirstWithinInlineLevelBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
-    , m_isLastWithinInlineLevelBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
+    , m_isFirstForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
+    , m_isLastForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
     , m_expansion(expansion)
     , m_text(text)
 {

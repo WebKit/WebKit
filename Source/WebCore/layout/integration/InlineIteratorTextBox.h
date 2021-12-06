@@ -59,8 +59,8 @@ public:
     // FIXME: Remove. For intermediate porting steps only.
     const LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(Box::legacyInlineBox()); }
 
+    // This returns the next text box generated for the same RenderText/Layout::InlineTextBox.
     TextBoxIterator nextTextBox() const;
-    TextBoxIterator previousTextBox() const;
 };
 
 class TextBoxIterator : public LeafBoxIterator {
@@ -74,6 +74,7 @@ public:
     const TextBox& operator*() const { return get(); }
     const TextBox* operator->() const { return &get(); }
 
+    // This traverses to the next text box generated for the same RenderText/Layout::InlineTextBox.
     TextBoxIterator& traverseNextTextBox();
 
 private:
