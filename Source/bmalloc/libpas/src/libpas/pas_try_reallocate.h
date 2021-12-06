@@ -354,6 +354,7 @@ pas_try_reallocate(void* old_ptr,
     } }
     
     PAS_ASSERT(!"Should never be reached");
+    return pas_allocation_result_create_failure();
 }
 
 typedef struct {

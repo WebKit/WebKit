@@ -91,11 +91,28 @@ static void destroy(pas_thread_local_cache* thread_local_cache, pas_lock_hold_mo
 
 static void destructor(void* arg)
 {
+    static const bool verbose = false;
+
     pas_thread_local_cache* thread_local_cache;
     
     thread_local_cache = (pas_thread_local_cache*)arg;
 
-    destroy(thread_local_cache, pas_lock_is_not_held);
+#ifndef PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT
+    /* If pthread_self_is_exiting_np does not exist, we set PAS_THREAD_LOCAL_CACHE_DESTROYED in the TLS so that
+       subsequent calls of pas_thread_local_cache_try_get() can detect whether TLS is destroyed. Since
+       PAS_THREAD_LOCAL_CACHE_DESTROYED is a non-null value, pthread will call this destructor again (up to
+       PTHREAD_DESTRUCTOR_ITERATIONS times). Each time it does, it will clear the TLS entry. Hence, we need to re-set
+       PAS_THREAD_LOCAL_CACHE_DESTROYED in the TLS each time to continue to indicate that destroy() has already been called once. */
+    pas_thread_local_cache_set_impl((pas_thread_local_cache*)PAS_THREAD_LOCAL_CACHE_DESTROYED);
+    PAS_ASSERT(!pas_thread_local_cache_can_set());
+#endif
+
+    if (((uintptr_t)thread_local_cache) != PAS_THREAD_LOCAL_CACHE_DESTROYED)
+        destroy(thread_local_cache, pas_lock_is_not_held);
+    else {
+        if (verbose)
+            pas_log("[%d] Repeated destructor call for TLS %p\n", getpid(), thread_local_cache);
+    }
 }
 
 static pas_thread_local_cache* allocate_cache(unsigned allocator_index_capacity)
@@ -174,7 +191,7 @@ pas_thread_local_cache* pas_thread_local_cache_create(void)
     for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node))
         pas_thread_local_cache_layout_node_construct(layout_node, thread_local_cache);
 
-    pas_thread_local_cache_set_impl(thread_local_cache);
+    pas_thread_local_cache_set(thread_local_cache);
     
     return thread_local_cache;
 }
@@ -194,7 +211,7 @@ void pas_thread_local_cache_destroy(pas_lock_hold_mode heap_lock_hold_mode)
         pas_log("[%d] TLC %p getting destroyed\n", getpid(), thread_local_cache);
     destroy(thread_local_cache, heap_lock_hold_mode);
 
-    pas_thread_local_cache_set_impl(NULL);
+    pas_thread_local_cache_set(NULL);
 }
 
 pas_thread_local_cache* pas_thread_local_cache_get_slow(pas_heap_config* config,
@@ -312,7 +329,7 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
 
     if (thread_local_cache != new_thread_local_cache)
-        pas_thread_local_cache_set_impl(new_thread_local_cache);
+        pas_thread_local_cache_set(new_thread_local_cache);
     
     PAS_ASSERT(desired_allocator_index < new_thread_local_cache->allocator_index_upper_bound);
     return pas_local_allocator_result_create_success(
@@ -566,7 +583,7 @@ void pas_thread_local_cache_flush_deallocation_log(pas_thread_local_cache* threa
         pas_scavenger_notify_eligibility_if_needed();
 }
 
-#ifdef PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT
+#if PAS_OS(DARWIN)
 
 static void suspend(pas_thread_local_cache* cache)
 {
@@ -740,14 +757,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                     continue;
                 }
 
-#ifdef PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT
-                if (!pas_thread_local_cache_is_guaranteed_to_destruct()) {
-                    /* We're on a platform that can't guarantee that thread local caches are destructed.
-                       Therefore, we might have a TLC that has a dangling thread pointer. So, we don't
-                       attempt to do the suspend thing. */
-                    continue;
-                }
-
+#if PAS_OS(DARWIN)
                 if (verbose)
                     pas_log("Need to suspend for allocator %p\n", scavenger_data);
                 
@@ -769,7 +779,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
 #endif
             }
             
-#ifdef PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT
+#if PAS_OS(DARWIN)
             if (did_suspend)
                 resume(cache);
 #endif

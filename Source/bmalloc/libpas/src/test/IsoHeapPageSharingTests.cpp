@@ -4519,22 +4519,18 @@ void addAllTests()
         ADD_TEST(testScavengerEventuallyReturnsMemory(128, 1));
         ADD_TEST(testScavengerEventuallyReturnsMemory(128, 10000));
         ADD_TEST(testScavengerEventuallyReturnsMemory(8, 10000));
-        if (pas_thread_local_cache_is_guaranteed_to_destruct()) {
-            ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 1));
-            ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 10000));
-            ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(8, 10000));
-        }
+        ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 1));
+        ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 10000));
+        ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(8, 10000));
         ADD_TEST(testScavengerShutsDownEventually(64, 10000, 1, 1));
     }
     
     ADD_TEST(testScavengerEventuallyReturnsMemory(128, 1));
     ADD_TEST(testScavengerEventuallyReturnsMemory(128, 10000));
     ADD_TEST(testScavengerEventuallyReturnsMemory(8, 10000));
-    if (pas_thread_local_cache_is_guaranteed_to_destruct()) {
-        ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 1));
-        ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 10000));
-        ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(8, 10000));
-    }
+    ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 1));
+    ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(128, 10000));
+    ADD_TEST(testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink(8, 10000));
     ADD_TEST(testScavengerShutsDownEventually(64, 10000, 1, 1));
 }
 

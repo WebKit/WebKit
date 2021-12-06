@@ -1082,7 +1082,7 @@ void addIsoHeapPartialAndBaselineTests()
     SuspendScavengerScope suspendScavenger;
     
 #if PAS_ENABLE_ISO && PAS_ENABLE_ISO_TEST
-    if (pas_thread_local_cache_is_guaranteed_to_destruct()) {
+    {
         RunScavengerFully runScavengerFully;
         addScavengerDependentTests();
     }

@@ -1,3 +1,52 @@
+2021-12-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Set pthread_setspecific with marker in TLS destructor to detect TLS is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=233851
+
+        Reviewed by Mark Lam.
+
+        TLS has lifetime problem that,
+
+        1. TLS is destroyed
+        2. The other TLS is destroyed, and the destructor is called
+        3. The destructor touches (1)'s TLS, then revive TLS of (1) (e.g. libpas's thread local cache).
+
+        To handle these cases, pthread library (libc) repeatedly calls destructor PAS_THREAD_LOCAL_CACHE_DESTROYED times
+        so that we clean up revived TLS again.
+
+        By using this mechanism, we can emulate pthread_self_is_exiting_np so that we can avoid reviving TLS.
+
+        1. When destroying TLS, we set a marker (PAS_THREAD_LOCAL_CACHE_DESTROYED in this case) in TLS.
+        2. During the other destructor calls, we can detect that TLS is destroyed by checking pthread_getspecific(...) == PAS_THREAD_LOCAL_CACHE_DESTROYED.
+        3. We repeatedly calls the destructor of TLS, but every time, we set PAS_THREAD_LOCAL_CACHE_DESTROYED.
+           So after PAS_THREAD_LOCAL_CACHE_DESTROYED times, it is left, and we achieve the goal (1) offering the way to
+           detect the destroyed TLS and (2) avoiding reviving of TLS.
+
+        This patch implements it when pthread_self_is_exiting_np does not exist.
+
+        * libpas/src/libpas/pas_segregated_page_inlines.h:
+        (pas_segregated_page_switch_lock_with_mode):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (destructor):
+        (pas_thread_local_cache_create):
+        (pas_thread_local_cache_destroy):
+        (pas_thread_local_cache_get_local_allocator_slow):
+        (pas_thread_local_cache_for_all):
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        (pas_thread_local_cache_try_get_impl):
+        (pas_thread_local_cache_try_get):
+        (pas_thread_local_cache_can_set):
+        (pas_thread_local_cache_set_impl):
+        (pas_thread_local_cache_set):
+        (pas_thread_local_cache_is_guaranteed_to_destruct): Deleted.
+        * libpas/src/libpas/pas_try_reallocate.h:
+        (pas_try_reallocate):
+        * libpas/src/libpas/pas_utils.h:
+        * libpas/src/test/IsoHeapPageSharingTests.cpp:
+        (std::addAllTests):
+        * libpas/src/test/IsoHeapPartialAndBaselineTests.cpp:
+        (addIsoHeapPartialAndBaselineTests):
+
 2021-12-03  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] Bitfit allocator has a wrong assertion when a page's max_free is enough for the size of an allocation, not enough for that allocation's size class, and the object of that size is not aligned to the currently requested alignment

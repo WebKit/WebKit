@@ -278,6 +278,7 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_switch_lock_with_mode(
         return true;
     } }
     PAS_ASSERT(!"Should not be reached");
+    return true;
 }
 
 static PAS_ALWAYS_INLINE void pas_segregated_page_switch_lock(

@@ -108,14 +108,13 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char
 
 PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
+PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
 static inline void pas_assertion_failed_noreturn_silencer(
     const char* filename, int line, const char* function, const char* expression)
 {
     pas_assertion_failed(filename, line, function, expression);
 }
-#pragma clang diagnostic pop
+PAS_IGNORE_WARNINGS_END
 
 #define PAS_LIKELY(x) __PAS_LIKELY(x)
 #define PAS_UNLIKELY(x) __PAS_UNLIKELY(x)
