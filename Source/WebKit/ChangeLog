@@ -1,3 +1,16 @@
+2021-12-06  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r286535) [GTK] Fix clean builds after DerivedSources/WebKit2 move
+        https://bugs.webkit.org/show_bug.cgi?id=233881
+
+        Reviewed by Žan Doberšek.
+
+        Build fix. Covered by exiting tests.
+
+        * PlatformGTK.cmake: Add symbolic links for the public generated like
+        we do for the regular headers. It happened to work before because they
+        were created already in a webkit2 folder.
+
 2021-12-06  Alex Christensen  <achristensen@webkit.org>
 
         WKWebpagePreferences._activeContentRuleListActionPatterns should be an NSDictionary of identifier to allowed patterns
