@@ -38,6 +38,10 @@
 #include "ApplicationManifest.h"
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+#include "DeviceOrientationUpdateProvider.h"
+#endif
+
 namespace WebCore {
 
 class AlternativeTextClient;

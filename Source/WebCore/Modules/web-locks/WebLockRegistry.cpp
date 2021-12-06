@@ -26,6 +26,7 @@
 #include "WebLockRegistry.h"
 
 #include "Exception.h"
+#include "WebLockManager.h"
 #include "WebLockManagerSnapshot.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
