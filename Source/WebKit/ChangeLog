@@ -1,3 +1,11 @@
+2021-12-06  Mark Lam  <mark.lam@apple.com>
+
+        Reverting local test code that should not have been landed.
+
+        Not reviewed.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+
 2021-12-06  Tim Horton  <timothy_horton@apple.com>
 
         Momentum Event Dispatcher: Momentum phase runs backwards with natural scrolling disabled
