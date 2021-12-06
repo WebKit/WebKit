@@ -1,3 +1,12 @@
+2021-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a call to os_signpost to tag a momentum scroll animation
+        https://bugs.webkit.org/show_bug.cgi?id=233885
+
+        Reviewed by Tim Horton.
+
+        * wtf/SystemTracing.h:
+
 2021-12-06  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Add a way to run scripted animations

@@ -34,6 +34,7 @@
 #import <pal/spi/mac/NSScrollViewSPI.h>
 #import <sys/sysctl.h>
 #import <sys/time.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/text/TextStream.h>
 
 #if PLATFORM(MAC)
@@ -177,6 +178,10 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     delta = deltaAlignedToDominantAxis(delta);
 
     auto momentumPhase = wheelEvent.momentumPhase();
+    
+    if (momentumPhase == PlatformWheelEventPhase::Began)
+        WTFBeginAnimationSignpostIntervalAlways("Momentum scroll", "");
+    
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
         m_momentumScrollInProgress = true;
 
@@ -219,6 +224,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     }
 
     if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhase::Ended) {
+        WTFEndSignpostIntervalAlways("Momentum scroll", "");
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
         m_lastMomentumScrollTimestamp = { };
