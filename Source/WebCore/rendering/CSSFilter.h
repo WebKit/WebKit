@@ -43,6 +43,9 @@ class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<CSSFilter> create(const FilterOperations&, RenderingMode, float scaleFactor = 1, ClipOperation = ClipOperation::Intersect);
+    WEBCORE_EXPORT static RefPtr<CSSFilter> create(Vector<Ref<FilterFunction>>&&);
+
+    const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
 
     void setSourceImageRect(const FloatRect&);
     bool buildFilterFunctions(RenderElement&, const FilterOperations&);
@@ -62,6 +65,7 @@ public:
 
 private:
     CSSFilter(RenderingMode, float scaleFactor, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
+    CSSFilter(Vector<Ref<FilterFunction>>&&);
 
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const final;

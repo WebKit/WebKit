@@ -208,6 +208,11 @@ void RecorderImpl::recordEndClipToDrawingCommands(const FloatRect& destination)
     append<EndClipToDrawingCommands>(destination);
 }
 
+void RecorderImpl::recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
+{
+    append<DrawFilteredImageBuffer>(sourceImageIdentifier, sourceImageRect, filter);
+}
+
 void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
 {
     append<DrawGlyphs>(font, glyphs, advances, count, localAnchor, mode);

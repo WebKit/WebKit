@@ -146,7 +146,7 @@ protected:
             return nullptr;
 
         const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
-        auto result = filter.apply(this);
+        auto result = filter.apply(this, { { }, logicalSize() });
         if (!result)
             return nullptr;
 

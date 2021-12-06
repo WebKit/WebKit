@@ -55,6 +55,9 @@ public:
 
     const LightSource& lightSource() const { return m_lightSource.get(); }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder, class ClassName> static std::optional<Ref<ClassName>> decode(Decoder&);
+
 protected:
     FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
@@ -76,5 +79,60 @@ protected:
     float m_kernelUnitLengthY;
     Ref<LightSource> m_lightSource;
 };
+
+template<class Encoder>
+void FELighting::encode(Encoder& encoder) const
+{
+    encoder << m_lightingColor;
+    encoder << m_surfaceScale;
+    encoder << m_diffuseConstant;
+    encoder << m_specularConstant;
+    encoder << m_specularExponent;
+    encoder << m_kernelUnitLengthX;
+    encoder << m_kernelUnitLengthY;
+    // FIXME: encode m_lightSource.
+}
+
+template<class Decoder, class ClassName>
+std::optional<Ref<ClassName>> FELighting::decode(Decoder& decoder)
+{
+    std::optional<Color> lightingColor;
+    decoder >> lightingColor;
+    if (!lightingColor)
+        return std::nullopt;
+
+    std::optional<float> surfaceScale;
+    decoder >> surfaceScale;
+    if (!surfaceScale)
+        return std::nullopt;
+
+    std::optional<float> diffuseConstant;
+    decoder >> diffuseConstant;
+    if (!diffuseConstant)
+        return std::nullopt;
+
+    std::optional<float> specularConstant;
+    decoder >> specularConstant;
+    if (!specularConstant)
+        return std::nullopt;
+
+    std::optional<float> specularExponent;
+    decoder >> specularExponent;
+    if (!specularExponent)
+        return std::nullopt;
+
+    std::optional<float> kernelUnitLengthX;
+    decoder >> kernelUnitLengthX;
+    if (!kernelUnitLengthX)
+        return std::nullopt;
+
+    std::optional<float> kernelUnitLengthY;
+    decoder >> kernelUnitLengthY;
+    if (!kernelUnitLengthY)
+        return std::nullopt;
+
+    // FIXME: decode m_lightSource.
+    return std::nullopt;
+}
 
 } // namespace WebCore

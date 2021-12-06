@@ -98,9 +98,10 @@ bool Filter::clampFilterRegionIfNeeded()
     return true;
 }
 
-RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage)
+RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect)
 {
     setSourceImage(sourceImage);
+    setSourceImageRect(sourceImageRect);
 
     auto result = apply();
     if (!result)

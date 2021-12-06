@@ -55,6 +55,7 @@ public:
     void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
     ClipOperation clipOperation() const { return m_clipOperation; }
+    void setClipOperation(ClipOperation clipOperation) { m_clipOperation = clipOperation; }
 
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
 
@@ -72,9 +73,10 @@ public:
     bool clampFilterRegionIfNeeded();
     
     virtual RefPtr<FilterImage> apply() = 0;
-    WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage);
+    WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect);
 
 protected:
+    using FilterFunction::FilterFunction;
     Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, ClipOperation = ClipOperation::Intersect);
     Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation = ClipOperation::Intersect);
 
@@ -91,3 +93,16 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::Filter::ClipOperation> {
+    using values = EnumValues<
+        WebCore::Filter::ClipOperation,
+
+        WebCore::Filter::ClipOperation::Intersect,
+        WebCore::Filter::ClipOperation::Unite
+    >;
+};
+
+} // namespace WTF

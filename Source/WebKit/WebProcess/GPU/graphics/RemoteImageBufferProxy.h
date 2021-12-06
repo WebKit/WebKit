@@ -198,6 +198,14 @@ protected:
         return bitmap->createImage();
     }
 
+    RefPtr<WebCore::Image> filteredImage(WebCore::Filter& filter) override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+        flushDrawingContext();
+        return m_remoteRenderingBackendProxy->getFilteredImage(m_renderingResourceIdentifier, filter);
+    }
+
     std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const final
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))

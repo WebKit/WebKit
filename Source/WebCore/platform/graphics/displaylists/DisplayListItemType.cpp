@@ -80,6 +80,8 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(BeginClipToDrawingCommands);
     case ItemType::EndClipToDrawingCommands:
         return sizeof(EndClipToDrawingCommands);
+    case ItemType::DrawFilteredImageBuffer:
+        return sizeof(DrawFilteredImageBuffer);
     case ItemType::DrawGlyphs:
         return sizeof(DrawGlyphs);
     case ItemType::DrawImageBuffer:
@@ -216,6 +218,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::ClearRect:
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:
+    case ItemType::DrawFilteredImageBuffer:
     case ItemType::DrawFocusRingPath:
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:
@@ -322,6 +325,7 @@ bool isInlineItem(ItemType type)
     case ItemType::ConcatenateCTM:
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:
+    case ItemType::DrawFilteredImageBuffer:
     case ItemType::DrawImageBuffer:
     case ItemType::DrawNativeImage:
     case ItemType::DrawPattern:

@@ -215,7 +215,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
 
     if (!filterData.boundaries.isEmpty()) {
         filterData.state = FilterData::Built;
-        context->drawFilteredImageBuffer(filterData.sourceGraphicBuffer.get(), *filterData.filter);
+        context->drawFilteredImageBuffer(filterData.sourceGraphicBuffer.get(), filterData.drawingRegion, *filterData.filter);
     }
 
     filterData.sourceGraphicBuffer = nullptr;

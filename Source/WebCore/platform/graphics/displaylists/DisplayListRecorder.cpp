@@ -144,6 +144,24 @@ void Recorder::setMiterLimit(float miterLimit)
     recordSetMiterLimit(miterLimit);
 }
 
+void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
+{
+    appendStateChangeItemIfNecessary();
+
+    if (!sourceImage) {
+        recordDrawFilteredImageBuffer({ }, sourceImageRect, filter);
+        return;
+    }
+
+    if (!canDrawImageBuffer(*sourceImage)) {
+        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter);
+        return;
+    }
+
+    recordResourceUse(*sourceImage);
+    recordDrawFilteredImageBuffer(sourceImage->renderingResourceIdentifier(), sourceImageRect, filter);
+}
+
 void Recorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     m_drawGlyphsRecorder.drawGlyphs(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);

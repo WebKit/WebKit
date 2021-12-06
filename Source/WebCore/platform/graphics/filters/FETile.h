@@ -28,7 +28,7 @@ namespace WebCore {
     
 class FETile : public FilterEffect {
 public:
-    static Ref<FETile> create();
+    WEBCORE_EXPORT static Ref<FETile> create();
 
 private:
     FETile();

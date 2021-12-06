@@ -220,6 +220,23 @@ void RemoteDisplayListRecorder::endClipToDrawingCommands(const FloatRect& destin
     drawingContext().clipToImageBuffer(*maskImageBuffer, destination);
 }
 
+void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, IPC::FilterReference filterReference)
+{
+    RefPtr<ImageBuffer> sourceImage;
+
+    if (sourceImageIdentifier) {
+        sourceImage = resourceCache().cachedImageBuffer({ *sourceImageIdentifier, m_webProcessIdentifier });
+        if (!sourceImage) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    auto filter = filterReference.takeFilter();
+
+    handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get());
+}
+
 void RemoteDisplayListRecorder::drawGlyphs(DisplayList::DrawGlyphs&& item)
 {
     auto fontIdentifier = item.fontIdentifier();

@@ -207,7 +207,7 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
 
     auto& filter = *m_filter;
 
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), filter);
+    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), filter.sourceImageRect(), filter);
     filter.clearIntermediateResults();
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");

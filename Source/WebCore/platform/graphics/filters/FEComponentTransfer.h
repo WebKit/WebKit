@@ -48,16 +48,22 @@ struct ComponentTransferFunction {
     float offset { 0 };
 
     Vector<float> tableValues;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<ComponentTransferFunction> decode(Decoder&);
 };
 
 class FEComponentTransfer : public FilterEffect {
 public:
-    static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
+    WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
     ComponentTransferFunction redFunction() const { return m_redFunction; }
     ComponentTransferFunction greenFunction() const { return m_greenFunction; }
     ComponentTransferFunction blueFunction() const { return m_blueFunction; }
     ComponentTransferFunction alphaFunction() const { return m_alphaFunction; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<FEComponentTransfer>> decode(Decoder&);
 
 private:
     FEComponentTransfer(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
@@ -76,6 +82,111 @@ private:
     ComponentTransferFunction m_alphaFunction;
 };
 
+template<class Encoder>
+void ComponentTransferFunction::encode(Encoder& encoder) const
+{
+    encoder << type;
+    encoder << slope;
+    encoder << intercept;
+    encoder << amplitude;
+    encoder << exponent;
+    encoder << offset;
+    encoder << tableValues;
+}
+
+template<class Decoder>
+std::optional<ComponentTransferFunction> ComponentTransferFunction::decode(Decoder& decoder)
+{
+    std::optional<ComponentTransferType> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    std::optional<float> slope;
+    decoder >> slope;
+    if (!slope)
+        return std::nullopt;
+
+    std::optional<float> intercept;
+    decoder >> intercept;
+    if (!intercept)
+        return std::nullopt;
+
+    std::optional<float> amplitude;
+    decoder >> amplitude;
+    if (!amplitude)
+        return std::nullopt;
+
+    std::optional<float> exponent;
+    decoder >> exponent;
+    if (!exponent)
+        return std::nullopt;
+
+    std::optional<float> offset;
+    decoder >> offset;
+    if (!offset)
+        return std::nullopt;
+
+    std::optional<Vector<float>> tableValues;
+    decoder >> tableValues;
+    if (!tableValues)
+        return std::nullopt;
+
+    return { { *type, *slope, *intercept, *amplitude, *exponent, *offset, WTFMove(*tableValues) } };
+}
+
+template<class Encoder>
+void FEComponentTransfer::encode(Encoder& encoder) const
+{
+    encoder << m_redFunction;
+    encoder << m_greenFunction;
+    encoder << m_blueFunction;
+    encoder << m_alphaFunction;
+}
+
+template<class Decoder>
+std::optional<Ref<FEComponentTransfer>> FEComponentTransfer::decode(Decoder& decoder)
+{
+    std::optional<ComponentTransferFunction> redFunction;
+    decoder >> redFunction;
+    if (!redFunction)
+        return std::nullopt;
+
+    std::optional<ComponentTransferFunction> greenFunction;
+    decoder >> greenFunction;
+    if (!greenFunction)
+        return std::nullopt;
+
+    std::optional<ComponentTransferFunction> blueFunction;
+    decoder >> blueFunction;
+    if (!blueFunction)
+        return std::nullopt;
+
+    std::optional<ComponentTransferFunction> alphaFunction;
+    decoder >> alphaFunction;
+    if (!alphaFunction)
+        return std::nullopt;
+
+    return FEComponentTransfer::create(*redFunction, *greenFunction, *blueFunction, *alphaFunction);
+}
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ComponentTransferType> {
+    using values = EnumValues<
+        WebCore::ComponentTransferType,
+
+        WebCore::FECOMPONENTTRANSFER_TYPE_UNKNOWN,
+        WebCore::FECOMPONENTTRANSFER_TYPE_IDENTITY,
+        WebCore::FECOMPONENTTRANSFER_TYPE_TABLE,
+        WebCore::FECOMPONENTTRANSFER_TYPE_DISCRETE,
+        WebCore::FECOMPONENTTRANSFER_TYPE_LINEAR,
+        WebCore::FECOMPONENTTRANSFER_TYPE_GAMMA
+    >;
+};
+
+} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEComponentTransfer)

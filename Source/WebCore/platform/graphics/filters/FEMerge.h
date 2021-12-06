@@ -28,15 +28,37 @@ namespace WebCore {
 
 class FEMerge : public FilterEffect {
 public:
-    static Ref<FEMerge> create();
+    WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs);
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<FEMerge>> decode(Decoder&);
 
 private:
-    FEMerge();
+    FEMerge(unsigned numberOfEffectInputs);
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+
+    unsigned m_numberOfEffectInputs { 0 };
 };
+
+template<class Encoder>
+void FEMerge::encode(Encoder& encoder) const
+{
+    encoder << m_numberOfEffectInputs;
+}
+
+template<class Decoder>
+std::optional<Ref<FEMerge>> FEMerge::decode(Decoder& decoder)
+{
+    std::optional<unsigned> numberOfEffectInputs;
+    decoder >> numberOfEffectInputs;
+    if (!numberOfEffectInputs)
+        return std::nullopt;
+
+    return FEMerge::create(*numberOfEffectInputs);
+}
 
 } // namespace WebCore
 

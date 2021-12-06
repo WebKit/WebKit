@@ -52,6 +52,7 @@ enum class ItemType : uint8_t {
     ClipPath,
     BeginClipToDrawingCommands,
     EndClipToDrawingCommands,
+    DrawFilteredImageBuffer,
     DrawGlyphs,
     DrawImageBuffer,
     DrawNativeImage,

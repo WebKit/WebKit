@@ -29,6 +29,7 @@
 #include "DisplayListItemBuffer.h"
 #include "DisplayListItems.h"
 #include "DisplayListIterator.h"
+#include "Filter.h"
 #include "Logging.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
@@ -243,6 +244,8 @@ void DisplayList::append(ItemHandle item)
         return append<BeginClipToDrawingCommands>(item.get<BeginClipToDrawingCommands>());
     case ItemType::EndClipToDrawingCommands:
         return append<EndClipToDrawingCommands>(item.get<EndClipToDrawingCommands>());
+    case ItemType::DrawFilteredImageBuffer:
+        return append<DrawFilteredImageBuffer>(item.get<DrawFilteredImageBuffer>());
     case ItemType::DrawGlyphs:
         return append<DrawGlyphs>(item.get<DrawGlyphs>());
     case ItemType::DrawImageBuffer:

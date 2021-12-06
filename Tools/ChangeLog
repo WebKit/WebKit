@@ -1,3 +1,13 @@
+2021-12-05  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Add the encoding/decoding for Filter and FilterEffect
+        https://bugs.webkit.org/show_bug.cgi?id=232844
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+
 2021-12-05  Simon Fraser  <simon.fraser@apple.com>
 
         Add trace points for generated momentum events

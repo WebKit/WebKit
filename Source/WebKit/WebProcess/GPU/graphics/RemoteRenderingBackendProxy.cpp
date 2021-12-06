@@ -223,6 +223,22 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
     return ShareableBitmap::create(handle);
 }
 
+RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
+{
+    ShareableBitmap::Handle handle;
+    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }), Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer::Reply(handle));
+    ASSERT_UNUSED(sendResult, sendResult);
+
+    if (handle.isNull())
+        return { };
+
+    auto bitmap = ShareableBitmap::create(handle);
+    if (!bitmap)
+        return { };
+
+    return bitmap->createImage();
+}
+
 void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     sendToStream(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier));

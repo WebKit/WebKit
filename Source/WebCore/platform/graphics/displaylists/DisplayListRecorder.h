@@ -88,6 +88,7 @@ protected:
     virtual void recordClipPath(const Path&, WindRule) = 0;
     virtual void recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace) = 0;
     virtual void recordEndClipToDrawingCommands(const FloatRect& destination) = 0;
+    virtual void recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter&) = 0;
     virtual void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) = 0;
     virtual void recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
     virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
@@ -223,6 +224,8 @@ private:
     WEBCORE_EXPORT void applyStrokePattern() final;
     WEBCORE_EXPORT void applyFillPattern() final;
 #endif
+
+    WEBCORE_EXPORT void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&) final;
 
     WEBCORE_EXPORT void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) final;
     WEBCORE_EXPORT void drawGlyphsAndCacheFont(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;

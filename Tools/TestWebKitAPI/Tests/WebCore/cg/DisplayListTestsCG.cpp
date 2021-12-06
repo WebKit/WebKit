@@ -32,6 +32,7 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/DisplayListResourceHeap.h>
+#include <WebCore/Filter.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContextCG.h>
 

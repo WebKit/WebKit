@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "FilterReference.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/DisplayList.h>
@@ -192,6 +193,11 @@ void RemoteDisplayListRecorderProxy::recordBeginClipToDrawingCommands(const Floa
 void RemoteDisplayListRecorderProxy::recordEndClipToDrawingCommands(const FloatRect& destination)
 {
     send(Messages::RemoteDisplayListRecorder::EndClipToDrawingCommands(destination));
+}
+
+void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
+{
+    send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, IPC::FilterReference(Ref<Filter> { filter })));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)

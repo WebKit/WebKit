@@ -61,7 +61,7 @@ RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder& filterBuilder) c
     if (mergeInputs.isEmpty())
         return nullptr;
 
-    auto effect = FEMerge::create();
+    auto effect = FEMerge::create(mergeInputs.size());
     effect->inputEffects() = WTFMove(mergeInputs);
     return effect;
 }

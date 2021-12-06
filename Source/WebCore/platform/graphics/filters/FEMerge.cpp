@@ -29,13 +29,14 @@
 
 namespace WebCore {
 
-Ref<FEMerge> FEMerge::create()
+Ref<FEMerge> FEMerge::create(unsigned numberOfEffectInputs)
 {
-    return adoptRef(*new FEMerge());
+    return adoptRef(*new FEMerge(numberOfEffectInputs));
 }
 
-FEMerge::FEMerge()
+FEMerge::FEMerge(unsigned numberOfEffectInputs)
     : FilterEffect(FilterEffect::Type::FEMerge)
+    , m_numberOfEffectInputs(numberOfEffectInputs)
 {
 }
 

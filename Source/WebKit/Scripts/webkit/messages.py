@@ -266,6 +266,7 @@ def types_that_cannot_be_forward_declared():
     return frozenset([
         'CVPixelBufferRef',
         'IPC::DataReference',
+        'IPC::FilterReference',
         'IPC::FontReference',
         'IPC::Semaphore',
         'MachSendRight',

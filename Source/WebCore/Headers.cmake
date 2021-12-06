@@ -1560,12 +1560,34 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/cv/ImageTransferSessionVT.h
 
+    platform/graphics/filters/FEBlend.h
+    platform/graphics/filters/FEColorMatrix.h
+    platform/graphics/filters/FEComponentTransfer.h
+    platform/graphics/filters/FEComposite.h
+    platform/graphics/filters/FEConvolveMatrix.h
+    platform/graphics/filters/FEDiffuseLighting.h
+    platform/graphics/filters/FEDisplacementMap.h
+    platform/graphics/filters/FEDropShadow.h
+    platform/graphics/filters/FEFlood.h
+    platform/graphics/filters/FEGaussianBlur.h
+    platform/graphics/filters/FELighting.h
+    platform/graphics/filters/FEMerge.h
+    platform/graphics/filters/FEMorphology.h
+    platform/graphics/filters/FEOffset.h
+    platform/graphics/filters/FESpecularLighting.h
+    platform/graphics/filters/FETile.h
+    platform/graphics/filters/FETurbulence.h
     platform/graphics/filters/Filter.h
+    platform/graphics/filters/FilterEffect.h
     platform/graphics/filters/FilterEffectGeometry.h
+    platform/graphics/filters/FilterEffectVector.h
     platform/graphics/filters/FilterFunction.h
     platform/graphics/filters/FilterImage.h
+    platform/graphics/filters/FilterImageVector.h
     platform/graphics/filters/FilterOperation.h
     platform/graphics/filters/FilterOperations.h
+    platform/graphics/filters/LightSource.h
+    platform/graphics/filters/SourceGraphic.h
 
     platform/graphics/iso/ISOBox.h
     platform/graphics/iso/ISOOriginalFormatBox.h
@@ -1731,6 +1753,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     plugins/PluginViewBase.h
 
     rendering/BreakLines.h
+    rendering/CSSFilter.h
     rendering/ClipRect.h
     rendering/EventRegion.h
     rendering/FloatingObjects.h
@@ -1877,6 +1900,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     svg/SVGUnitTypes.h
 
     svg/graphics/SVGImageCache.h
+
+    svg/graphics/filters/SVGFilter.h
 
     svg/properties/SVGList.h
     svg/properties/SVGPrimitiveList.h

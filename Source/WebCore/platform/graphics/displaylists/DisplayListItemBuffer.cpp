@@ -114,6 +114,9 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::EndClipToDrawingCommands:
         ASSERT_NOT_REACHED();
         return;
+    case ItemType::DrawFilteredImageBuffer:
+        get<DrawFilteredImageBuffer>().apply(context);
+        return;
     case ItemType::DrawGlyphs:
         ASSERT_NOT_REACHED();
         return;
@@ -255,6 +258,9 @@ void ItemHandle::destroy()
         return;
     case ItemType::ClipPath:
         get<ClipPath>().~ClipPath();
+        return;
+    case ItemType::DrawFilteredImageBuffer:
+        get<DrawFilteredImageBuffer>().~DrawFilteredImageBuffer();
         return;
     case ItemType::DrawFocusRingPath:
         get<DrawFocusRingPath>().~DrawFocusRingPath();
@@ -491,6 +497,8 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<ClipOutToPath>(itemOffset, *this);
     case ItemType::ClipPath:
         return copyInto<ClipPath>(itemOffset, *this);
+    case ItemType::DrawFilteredImageBuffer:
+        return copyInto<DrawFilteredImageBuffer>(itemOffset, *this);
     case ItemType::DrawFocusRingPath:
         return copyInto<DrawFocusRingPath>(itemOffset, *this);
     case ItemType::DrawFocusRingRects:

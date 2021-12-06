@@ -28,13 +28,16 @@ namespace WebCore {
 
 class FEOffset : public FilterEffect {
 public:
-    static Ref<FEOffset> create(float dx, float dy);
+    WEBCORE_EXPORT static Ref<FEOffset> create(float dx, float dy);
 
     float dx() const { return m_dx; }
     void setDx(float);
 
     float dy() const { return m_dy; }
     void setDy(float);
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<FEOffset>> decode(Decoder&);
 
 private:
     FEOffset(float dx, float dy);
@@ -50,6 +53,29 @@ private:
     float m_dx;
     float m_dy;
 };
+
+template<class Encoder>
+void FEOffset::encode(Encoder& encoder) const
+{
+    encoder << m_dx;
+    encoder << m_dy;
+}
+
+template<class Decoder>
+std::optional<Ref<FEOffset>> FEOffset::decode(Decoder& decoder)
+{
+    std::optional<float> dx;
+    decoder >> dx;
+    if (!dx)
+        return std::nullopt;
+
+    std::optional<float> dy;
+    decoder >> dy;
+    if (!dy)
+        return std::nullopt;
+
+    return FEOffset::create(*dx, *dy);
+}
 
 } // namespace WebCore
 

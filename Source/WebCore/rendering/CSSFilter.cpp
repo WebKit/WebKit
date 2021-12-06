@@ -52,10 +52,21 @@ RefPtr<CSSFilter> CSSFilter::create(const FilterOperations& operations, Renderin
     return adoptRef(*new CSSFilter(renderingMode, scaleFactor, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 }
 
+RefPtr<CSSFilter> CSSFilter::create(Vector<Ref<FilterFunction>>&& functions)
+{
+    return adoptRef(new CSSFilter(WTFMove(functions)));
+}
+
 CSSFilter::CSSFilter(RenderingMode renderingMode, float scaleFactor, ClipOperation clipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
     : Filter(Filter::Type::CSSFilter, renderingMode, FloatSize { scaleFactor, scaleFactor }, clipOperation)
     , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
     , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
+{
+}
+
+CSSFilter::CSSFilter(Vector<Ref<FilterFunction>>&& functions)
+    : Filter(Type::CSSFilter)
+    , m_functions(WTFMove(functions))
 {
 }
 

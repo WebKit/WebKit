@@ -38,7 +38,7 @@ enum class EdgeModeType {
 
 class FEConvolveMatrix : public FilterEffect {
 public:
-    static Ref<FEConvolveMatrix> create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
+    WEBCORE_EXPORT static Ref<FEConvolveMatrix> create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
 
     IntSize kernelSize() const { return m_kernelSize; }
     void setKernelSize(const IntSize&);
@@ -64,6 +64,9 @@ public:
     bool preserveAlpha() const { return m_preserveAlpha; }
     bool setPreserveAlpha(bool);
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<FEConvolveMatrix>> decode(Decoder&);
+
 private:
     FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
 
@@ -83,6 +86,80 @@ private:
     Vector<float> m_kernelMatrix;
 };
 
+template<class Encoder>
+void FEConvolveMatrix::encode(Encoder& encoder) const
+{
+    encoder << m_kernelSize;
+    encoder << m_divisor;
+    encoder << m_bias;
+    encoder << m_targetOffset;
+    encoder << m_edgeMode;
+    encoder << m_kernelUnitLength;
+    encoder << m_preserveAlpha;
+    encoder << m_kernelMatrix;
+}
+
+template<class Decoder>
+std::optional<Ref<FEConvolveMatrix>> FEConvolveMatrix::decode(Decoder& decoder)
+{
+    std::optional<IntSize> kernelSize;
+    decoder >> kernelSize;
+    if (!kernelSize)
+        return std::nullopt;
+
+    std::optional<float> divisor;
+    decoder >> divisor;
+    if (!divisor)
+        return std::nullopt;
+
+    std::optional<float> bias;
+    decoder >> bias;
+    if (!bias)
+        return std::nullopt;
+
+    std::optional<IntPoint> targetOffset;
+    decoder >> targetOffset;
+    if (!targetOffset)
+        return std::nullopt;
+
+    std::optional<EdgeModeType> edgeMode;
+    decoder >> edgeMode;
+    if (!edgeMode)
+        return std::nullopt;
+
+    std::optional<FloatPoint> kernelUnitLength;
+    decoder >> kernelUnitLength;
+    if (!kernelUnitLength)
+        return std::nullopt;
+
+    std::optional<bool> preserveAlpha;
+    decoder >> preserveAlpha;
+    if (!kernelUnitLength)
+        return std::nullopt;
+
+    std::optional<Vector<float>> kernelMatrix;
+    decoder >> kernelMatrix;
+    if (!kernelMatrix)
+        return std::nullopt;
+
+    return FEConvolveMatrix::create(*kernelSize, *divisor, *bias, *targetOffset, *edgeMode, *kernelUnitLength, *preserveAlpha, WTFMove(*kernelMatrix));
+}
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::EdgeModeType> {
+    using values = EnumValues<
+        WebCore::EdgeModeType,
+
+        WebCore::EdgeModeType::Unknown,
+        WebCore::EdgeModeType::Duplicate,
+        WebCore::EdgeModeType::Wrap,
+        WebCore::EdgeModeType::None
+    >;
+};
+
+} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEConvolveMatrix)

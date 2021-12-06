@@ -912,6 +912,29 @@ private:
     FloatRect m_destination;
 };
 
+class DrawFilteredImageBuffer {
+public:
+    static constexpr ItemType itemType = ItemType::DrawFilteredImageBuffer;
+    static constexpr bool isInlineItem = false;
+    static constexpr bool isDrawingItem = true;
+
+    WEBCORE_EXPORT DrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter&);
+
+    std::optional<RenderingResourceIdentifier> sourceImageIdentifier() const { return m_sourceImageIdentifier; }
+    FloatRect sourceImageRect() const { return m_sourceImageRect; }
+
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, WebCore::ImageBuffer* sourceImage);
+
+    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
+    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_sourceImageRect; }
+
+private:
+    std::optional<RenderingResourceIdentifier> m_sourceImageIdentifier;
+    FloatRect m_sourceImageRect;
+    Ref<Filter> m_filter;
+};
+
 class DrawGlyphs {
 public:
     static constexpr ItemType itemType = ItemType::DrawGlyphs;
@@ -2405,6 +2428,7 @@ using DisplayListItem = std::variant
     , ConcatenateCTM
     , DrawDotsForDocumentMarker
     , DrawEllipse
+    , DrawFilteredImageBuffer
     , DrawFocusRingPath
     , DrawFocusRingRects
     , DrawGlyphs

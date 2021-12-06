@@ -37,6 +37,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
+namespace IPC {
+class FilterReference;
+}
+
 namespace WebKit {
 
 class RemoteRenderingBackend;
@@ -77,6 +81,7 @@ public:
     void beginClipToDrawingCommands(const WebCore::FloatRect& destination, const WebCore::DestinationColorSpace&);
     void endClipToDrawingCommands(const WebCore::FloatRect& destination);
     void drawGlyphs(WebCore::DisplayList::DrawGlyphs&&);
+    void drawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, IPC::FilterReference);
     void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
     void drawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
     void drawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&);

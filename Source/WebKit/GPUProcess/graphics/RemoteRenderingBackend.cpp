@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "FilterReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
@@ -313,6 +314,33 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         if (!context)
             return;
         context->drawImageBuffer(*imageBuffer, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { WebCore::CompositeOperator::Copy });
+        bitmap->createHandle(handle);
+    }();
+    completionHandler(WTFMove(handle));
+}
+
+void RemoteRenderingBackend::getFilteredImageForImageBuffer(RenderingResourceIdentifier identifier, IPC::FilterReference&& filterReference, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto filter = filterReference.takeFilter();
+
+    ShareableBitmap::Handle handle;
+    [&]() {
+        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+        if (!imageBuffer)
+            return;
+        auto image = imageBuffer->filteredImage(filter);
+        if (!image)
+            return;
+        auto imageSize = image->size();
+        auto bitmap = ShareableBitmap::createShareable(IntSize(imageSize), { imageBuffer->colorSpace() });
+        if (!bitmap)
+            return;
+        auto context = bitmap->createGraphicsContext();
+        if (!context)
+            return;
+        context->drawImage(*image, FloatPoint());
         bitmap->createHandle(handle);
     }();
     completionHandler(WTFMove(handle));
