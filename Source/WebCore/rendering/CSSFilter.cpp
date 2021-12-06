@@ -44,12 +44,17 @@
 
 namespace WebCore {
 
-RefPtr<CSSFilter> CSSFilter::create(const FilterOperations& operations, RenderingMode renderingMode, float scaleFactor, ClipOperation clipOperation)
+RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox)
 {
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
-    return adoptRef(*new CSSFilter(renderingMode, scaleFactor, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
+    auto filter = adoptRef(*new CSSFilter(renderingMode, filterScale, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
+
+    if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox))
+        return nullptr;
+
+    return filter;
 }
 
 RefPtr<CSSFilter> CSSFilter::create(Vector<Ref<FilterFunction>>&& functions)
@@ -57,8 +62,8 @@ RefPtr<CSSFilter> CSSFilter::create(Vector<Ref<FilterFunction>>&& functions)
     return adoptRef(new CSSFilter(WTFMove(functions)));
 }
 
-CSSFilter::CSSFilter(RenderingMode renderingMode, float scaleFactor, ClipOperation clipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
-    : Filter(Filter::Type::CSSFilter, renderingMode, FloatSize { scaleFactor, scaleFactor }, clipOperation)
+CSSFilter::CSSFilter(RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
+    : Filter(Filter::Type::CSSFilter, renderingMode, filterScale, clipOperation)
     , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
     , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
 {
@@ -213,7 +218,7 @@ static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperat
     return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
-static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, FilterEffect& previousEffect)
+static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox, FilterEffect& previousEffect)
 {
     auto& referencedSVGResources = renderer.ensureReferencedSVGResources();
     auto* filterElement = referencedSVGResources.referencedFilterElement(renderer.document(), filterOperation);
@@ -227,10 +232,10 @@ static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilte
     }
 
     SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.sourceImageRect(), filter.filterRegion(), filter.clipOperation(), previousEffect);
+    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), targetBoundingBox, previousEffect);
 }
 
-bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations)
+bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)
 {
     m_functions.clear();
     m_outsets = { };
@@ -287,7 +292,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::REFERENCE:
-            filter = createSVGFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, *previousEffect);
+            filter = createSVGFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox, *previousEffect);
             effect = nullptr;
             break;
 
@@ -330,18 +335,6 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
     return true;
 }
 
-bool CSSFilter::updateBackingStoreRect(const FloatRect& filterRect)
-{
-    if (filterRect.isEmpty() || ImageBuffer::sizeNeedsClamping(filterRect.size()))
-        return false;
-
-    if (filterRect == sourceImageRect())
-        return false;
-
-    setSourceImageRect(filterRect);
-    return true;
-}
-
 RefPtr<FilterEffect> CSSFilter::lastEffect() const
 {
     if (m_functions.isEmpty())
@@ -378,33 +371,24 @@ void CSSFilter::clearIntermediateResults()
 RefPtr<FilterImage> CSSFilter::apply()
 {
     for (auto& function : m_functions) {
+        if (function->isSVGFilter())
+            downcast<SVGFilter>(function.ptr())->setSourceImageRect(sourceImageRect());
         if (!function->apply(*this))
             return nullptr;
     }
     return lastEffect()->filterImage();
 }
 
-LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)
+void CSSFilter::setFilterRegion(const FloatRect& filterRegion)
 {
-    // The result of this function is the area in the "filterBoxRect" that needs to be repainted, so that we fully cover the "dirtyRect".
-    auto rectForRepaint = dirtyRect;
-    if (hasFilterThatMovesPixels())
-        rectForRepaint += outsets();
-    rectForRepaint.intersect(filterBoxRect);
-    return rectForRepaint;
-}
-
-void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)
-{
-    Filter::setFilterRegion(sourceImageRect);
-    Filter::setSourceImageRect(sourceImageRect);
+    Filter::setFilterRegion(filterRegion);
 
     for (auto& function : m_functions) {
-        if (function->isSVGFilter()) {
-            downcast<SVGFilter>(function.ptr())->setFilterRegion(sourceImageRect);
-            downcast<SVGFilter>(function.ptr())->setSourceImageRect(sourceImageRect);
-        }
+        if (function->isSVGFilter())
+            downcast<SVGFilter>(function.ptr())->setFilterRegion(filterRegion);
     }
+
+    clampFilterRegionIfNeeded();
 }
 
 IntOutsets CSSFilter::outsets() const

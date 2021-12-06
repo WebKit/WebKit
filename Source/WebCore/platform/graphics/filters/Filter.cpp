@@ -32,21 +32,12 @@
 
 namespace WebCore {
 
-Filter::Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation)
+Filter::Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion)
     : FilterFunction(filterType)
     , m_renderingMode(renderingMode)
     , m_filterScale(filterScale)
     , m_clipOperation(clipOperation)
-{
-}
-
-Filter::Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation clipOperation)
-    : FilterFunction(filterType)
-    , m_renderingMode(renderingMode)
-    , m_filterScale(filterScale)
-    , m_sourceImageRect(sourceImageRect)
     , m_filterRegion(filterRegion)
-    , m_clipOperation(clipOperation)
 {
 }
 

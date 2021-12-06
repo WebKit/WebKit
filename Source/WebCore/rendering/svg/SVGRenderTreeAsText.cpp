@@ -431,7 +431,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
         FloatRect dummyRect;
         FloatSize dummyScale(1, 1);
         SVGFilterBuilder builder;
-        auto dummyFilter = SVGFilter::create(filter.filterElement(), builder, RenderingMode::Unaccelerated, dummyScale, dummyRect, dummyRect, dummyRect);
+        auto dummyFilter = SVGFilter::create(filter.filterElement(), builder, RenderingMode::Unaccelerated, dummyScale, dummyRect, dummyRect);
         if (dummyFilter) {
             TextStream::IndentScope indentScope(ts);
 

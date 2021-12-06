@@ -77,19 +77,17 @@ public:
 
 protected:
     using FilterFunction::FilterFunction;
-    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, ClipOperation = ClipOperation::Intersect);
-    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, const FloatRect& sourceImageRect, const FloatRect& filterRegion, ClipOperation = ClipOperation::Intersect);
+    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion = { });
 
 private:
     RenderingMode m_renderingMode;
-
     FloatSize m_filterScale;
-    FloatRect m_sourceImageRect;
+    ClipOperation m_clipOperation;
     FloatRect m_filterRegion;
 
+    // FIXME: these should not be members of Filter. They should be passed to Filter::apply().
+    FloatRect m_sourceImageRect;
     RefPtr<ImageBuffer> m_sourceImage;
-
-    ClipOperation m_clipOperation;
 };
 
 } // namespace WebCore

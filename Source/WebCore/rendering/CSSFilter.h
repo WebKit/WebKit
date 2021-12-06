@@ -42,13 +42,12 @@ class SourceGraphic;
 class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<CSSFilter> create(const FilterOperations&, RenderingMode, float scaleFactor = 1, ClipOperation = ClipOperation::Intersect);
+    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& targetBoundingBox);
     WEBCORE_EXPORT static RefPtr<CSSFilter> create(Vector<Ref<FilterFunction>>&&);
 
     const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
 
-    void setSourceImageRect(const FloatRect&);
-    bool buildFilterFunctions(RenderElement&, const FilterOperations&);
+    void setFilterRegion(const FloatRect&);
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
@@ -59,13 +58,11 @@ public:
     void clearIntermediateResults();
     RefPtr<FilterImage> apply() final;
 
-    bool updateBackingStoreRect(const FloatRect& filterRect);
-
-    LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
-
 private:
-    CSSFilter(RenderingMode, float scaleFactor, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
+    CSSFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
     CSSFilter(Vector<Ref<FilterFunction>>&&);
+    
+    bool buildFilterFunctions(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
 
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const final;

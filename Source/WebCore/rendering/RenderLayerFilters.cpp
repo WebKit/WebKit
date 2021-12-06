@@ -121,7 +121,7 @@ void RenderLayerFilters::buildFilter(RenderElement& renderer, float scaleFactor,
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
     // FIXME: this rebuilds the entire effects chain even if the filter style didn't change.
-    m_filter = CSSFilter::create(renderer.style().filter(), renderingMode, scaleFactor, Filter::ClipOperation::Unite);
+    m_filter = CSSFilter::create(renderer, renderer.style().filter(), renderingMode, FloatSize { scaleFactor, scaleFactor }, Filter::ClipOperation::Unite, m_targetBoundingBox);
 }
 
 GraphicsContext* RenderLayerFilters::inputContext()
@@ -129,10 +129,10 @@ GraphicsContext* RenderLayerFilters::inputContext()
     return m_sourceImage ? &m_sourceImage->context() : nullptr;
 }
 
-void RenderLayerFilters::allocateBackingStore(const GraphicsContext& targetContext)
+void RenderLayerFilters::allocateBackingStoreIfNeeded(const GraphicsContext& targetContext)
 {
     auto& filter = *m_filter;
-    auto logicalSize = filter.scaledByFilterScale(filter.sourceImageRect().size());
+    auto logicalSize = filter.scaledByFilterScale(m_filterRegion.size());
 
     if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize) {
 #if USE(DIRECT2D)
@@ -151,42 +151,59 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
     if (!m_filter)
         return nullptr;
 
-    auto& filter = *m_filter;
-    auto filterSourceRect = filter.computeSourceImageRectForDirtyRect(filterBoxRect, dirtyRect);
-    if (filterSourceRect.isEmpty())
+    // Calculate targetBoundingBox since it will be used if the filter is created.
+    auto targetBoundingBox = intersection(filterBoxRect, dirtyRect);
+    if (targetBoundingBox.isEmpty())
         return nullptr;
 
-    bool hasUpdatedBackingStore = filter.updateBackingStoreRect(filterSourceRect);
+    if (m_targetBoundingBox != targetBoundingBox) {
+        m_targetBoundingBox = targetBoundingBox;
+        // FIXME: this rebuilds the entire effects chain even if the filter style didn't change.
+        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_filter->renderingMode(), m_filter->filterScale(), Filter::ClipOperation::Unite, m_targetBoundingBox);
+    }
 
-    // FIXME: this call should be moved to CSSFilter::create() when FilterEffect does not store its geometry.
-    if (hasUpdatedBackingStore || !m_filter->lastEffect()) {
-        // If the filter fails to build, remove it from the layer. It will still attempt to
-        // go through regular processing (e.g. compositing), but never apply anything.
-        if (!m_filter->buildFilterFunctions(renderer, renderer.style().filter()))
-            return nullptr;
+    if (!m_filter)
+        return nullptr;
+
+    auto& filter = *m_filter;
+    
+    // For CSSFilter, filterRegion = targetBoundingBox + filter->outsets()
+    auto filterRegion = targetBoundingBox;
+    if (filter.hasFilterThatMovesPixels()) {
+        filterRegion += filter.outsets();
+        filterRegion.intersect(filterBoxRect);
+    }
+
+    if (filterRegion.isEmpty())
+        return nullptr;
+
+    // For CSSFilter, sourceImageRect = filterRegion.
+    bool hasUpdatedBackingStore = false;
+    if (m_filterRegion != filterRegion) {
+        m_filterRegion = filterRegion;
+        hasUpdatedBackingStore = true;
     }
 
     if (!filter.hasFilterThatMovesPixels())
         m_repaintRect = dirtyRect;
     else {
         if (hasUpdatedBackingStore)
-            m_repaintRect = filterSourceRect;
+            m_repaintRect = filterRegion;
         else {
             m_repaintRect = dirtyRect;
             m_repaintRect.unite(layerRepaintRect);
-            m_repaintRect.intersect(filterSourceRect);
+            m_repaintRect.intersect(filterRegion);
         }
     }
-    m_paintOffset = filterSourceRect.location();
+
+    m_paintOffset = filterRegion.location();
     resetDirtySourceRect();
 
-    filter.clampFilterRegionIfNeeded();
-
-    if (hasUpdatedBackingStore)
-        allocateBackingStore(destinationContext);
+    filter.setFilterRegion(m_filterRegion);
+    allocateBackingStoreIfNeeded(destinationContext);
 
     auto* sourceGraphicsContext = inputContext();
-    if (!sourceGraphicsContext || filter.filterRegion().isEmpty() || ImageBuffer::sizeNeedsClamping(filter.filterRegion().size()))
+    if (!sourceGraphicsContext)
         return nullptr;
 
     // Translate the context so that the contents of the layer is captured in the offscreen memory buffer.
@@ -207,7 +224,7 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
 
     auto& filter = *m_filter;
 
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), filter.sourceImageRect(), filter);
+    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_filterRegion, filter);
     filter.clearIntermediateResults();
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");
