@@ -1,3 +1,15 @@
+2021-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r286507): [macOS] Many file system access layout tests became flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=233892
+
+        Unreviewed, revert r286507.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::readEntireFile): Deleted.
+        (WTF::FileSystemImpl::deleteAllFilesModifiedSince): Deleted.
+        * wtf/FileSystem.h:
+
 2021-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Add a call to os_signpost to tag a momentum scroll animation

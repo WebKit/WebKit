@@ -51,61 +51,20 @@ public:
             m_fileSystemStorageManager->connectionClosed(connection);
     }
 
-    enum class StorageType : uint8_t {
-        FileSystem,
-    };
-
-    static String toStorageIdentifier(StorageType type)
+    String typeStoragePath(const String& storageIdentifier) const
     {
-        switch (type) {
-        case StorageType::FileSystem:
-            return "FileSystem"_s;
-        default:
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return ""_s;
-    }
-
-    String typeStoragePath(StorageType type) const
-    {
-        auto storageIdentifier = toStorageIdentifier(type);
-        if (m_rootPath.isEmpty() || storageIdentifier.isEmpty())
-            return emptyString();
-
-        return FileSystem::pathByAppendingComponent(m_rootPath, storageIdentifier);
+        return m_rootPath.isEmpty() ? emptyString() : FileSystem::pathByAppendingComponent(m_rootPath, storageIdentifier);
     }
 
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
     {
         if (!m_fileSystemStorageManager)
-            m_fileSystemStorageManager = makeUnique<FileSystemStorageManager>(typeStoragePath(StorageType::FileSystem), registry);
+            m_fileSystemStorageManager = makeUnique<FileSystemStorageManager>(typeStoragePath("FileSystem"), registry);
 
         return *m_fileSystemStorageManager;
     }
 
-    bool isActive()
-    {
-        return !!m_fileSystemStorageManager;
-    }
-
-    void deleteData(OptionSet<WebsiteDataType> types, WallTime modifiedSinceTime)
-    {
-        if (types.contains(WebsiteDataType::FileSystem))
-            deleteFileSystemStorageData(modifiedSinceTime);
-
-        FileSystem::deleteNonEmptyDirectory(m_rootPath);
-    }
-
 private:
-    void deleteFileSystemStorageData(WallTime modifiedSinceTime)
-    {
-        m_fileSystemStorageManager = nullptr;
-
-        auto fileSystemStoragePath = typeStoragePath(StorageType::FileSystem);
-        FileSystem::deleteAllFilesModifiedSince(fileSystemStoragePath, modifiedSinceTime);
-    }
-
     String m_rootPath;
     String m_identifier;
     StorageBucketMode m_mode { StorageBucketMode::BestEffort };
@@ -115,7 +74,6 @@ private:
 OriginStorageManager::OriginStorageManager(String&& path)
     : m_path(WTFMove(path))
 {
-    ASSERT(!RunLoop::isMain());
 }
 
 OriginStorageManager::~OriginStorageManager() = default;
@@ -143,17 +101,6 @@ void OriginStorageManager::persist()
 FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
 {
     return defaultBucket().fileSystemStorageManager(registry);
-}
-
-bool OriginStorageManager::isActive()
-{
-    return defaultBucket().isActive();
-}
-
-void OriginStorageManager::deleteData(OptionSet<WebsiteDataType> types, WallTime modifiedSince)
-{
-    ASSERT(!RunLoop::isMain());
-    defaultBucket().deleteData(types, modifiedSince);
 }
 
 } // namespace WebKit

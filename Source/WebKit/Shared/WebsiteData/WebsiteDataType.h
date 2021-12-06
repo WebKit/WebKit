@@ -52,7 +52,6 @@ enum class WebsiteDataType : uint32_t {
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     AlternativeServices = 1 << 18,
 #endif
-    FileSystem = 1 << 19,
 };
 
 } // namespace WebKit
@@ -80,11 +79,10 @@ template<> struct EnumTraits<WebKit::WebsiteDataType> {
 #endif
         WebKit::WebsiteDataType::DOMCache,
         WebKit::WebsiteDataType::DeviceIdHashSalt,
-        WebKit::WebsiteDataType::PrivateClickMeasurements,
+        WebKit::WebsiteDataType::PrivateClickMeasurements
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-        WebKit::WebsiteDataType::AlternativeServices,
+        , WebKit::WebsiteDataType::AlternativeServices
 #endif
-        WebKit::WebsiteDataType::FileSystem
     >;
 };
 

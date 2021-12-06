@@ -514,60 +514,6 @@ std::optional<Salt> readOrMakeSalt(const String& path)
     return salt;
 }
 
-std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
-{
-    if (!FileSystem::isHandleValid(handle))
-        return std::nullopt;
-
-    auto size = FileSystem::fileSize(handle).value_or(0);
-    if (!size)
-        return std::nullopt;
-
-    unsigned bytesToRead;
-    if (!WTF::convertSafely(size, bytesToRead))
-        return std::nullopt;
-
-    Vector<uint8_t> buffer(bytesToRead);
-    unsigned totalBytesRead = FileSystem::readFromFile(handle, buffer.data(), buffer.size());
-    if (totalBytesRead != bytesToRead)
-        return std::nullopt;
-
-    return buffer;
-}
-
-void deleteAllFilesModifiedSince(const String& directory, WallTime time)
-{
-    // This function may delete directory folder.
-    if (time == -WallTime::infinity()) {
-        deleteNonEmptyDirectory(directory);
-        return;
-    }
-
-    auto children = listDirectory(directory);
-    for (auto& child : children) {
-        auto childPath = FileSystem::pathByAppendingComponent(directory, child);
-        auto childType = fileType(childPath);
-        if (!childType)
-            continue;
-
-        switch (*childType) {
-        case FileType::Regular: {
-            if (auto modificationTime = FileSystem::fileModificationTime(childPath); modificationTime && *modificationTime >= time)
-                deleteFile(childPath);
-            break;
-        }
-        case FileType::Directory:
-            deleteAllFilesModifiedSince(childPath, time);
-            deleteEmptyDirectory(childPath);
-            break;
-        case FileType::SymbolicLink:
-            break;
-        }
-    }
-
-    FileSystem::deleteEmptyDirectory(directory);
-}
-
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 bool deleteEmptyDirectory(const String& path)

@@ -1,3 +1,73 @@
+2021-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r286507): [macOS] Many file system access layout tests became flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=233892
+
+        Unreviewed, revert r286507.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::monitoredDataTypes):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        (WebKit::FileSystemStorageHandle::activeSyncAccessHandle const): Deleted.
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::~FileSystemStorageManager):
+        (WebKit::FileSystemStorageManager::close): Deleted.
+        * NetworkProcess/storage/FileSystemStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::originPath):
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        (WebKit::readOriginFromFile): Deleted.
+        (WebKit::writeOriginToFileIfNecessary): Deleted.
+        (WebKit::deleteOriginFileIfNecessary): Deleted.
+        (WebKit::originDirectoryPath): Deleted.
+        (WebKit::originFilePath): Deleted.
+        (WebKit::NetworkStorageManager::removeOriginStorageManagerIfPossible): Deleted.
+        (WebKit::toWebsiteDataType): Deleted.
+        (WebKit::NetworkStorageManager::forEachOriginDirectory): Deleted.
+        (WebKit::NetworkStorageManager::fetchDataFromDisk): Deleted.
+        (WebKit::NetworkStorageManager::fetchData): Deleted.
+        (WebKit::NetworkStorageManager::deleteDataOnDisk): Deleted.
+        (WebKit::NetworkStorageManager::deleteData): Deleted.
+        (WebKit::NetworkStorageManager::deleteDataModifiedSince): Deleted.
+        (WebKit::NetworkStorageManager::deleteDataForRegistrableDomains): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::typeStoragePath const):
+        (WebKit::OriginStorageManager::StorageBucket::fileSystemStorageManager):
+        (WebKit::OriginStorageManager::OriginStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::toStorageIdentifier): Deleted.
+        (WebKit::OriginStorageManager::StorageBucket::isActive): Deleted.
+        (WebKit::OriginStorageManager::StorageBucket::deleteData): Deleted.
+        (WebKit::OriginStorageManager::StorageBucket::deleteFileSystemStorageData): Deleted.
+        (WebKit::OriginStorageManager::isActive): Deleted.
+        (WebKit::OriginStorageManager::deleteData): Deleted.
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::ownerProcess):
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.messages.in: Removed.
+
 2021-12-06  Mark Lam  <mark.lam@apple.com>
 
         Reverting local test code that should not have been landed.

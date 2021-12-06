@@ -221,7 +221,6 @@ $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.i
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/RemoteWebLockRegistry.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in
-$(PROJECT_DIR)/WebProcess/WebCoreSupport/WebFileSystemStorageConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in

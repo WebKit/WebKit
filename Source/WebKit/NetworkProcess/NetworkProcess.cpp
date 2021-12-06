@@ -1555,12 +1555,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         }
     }
 #endif
-
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end()) {
-        iterator->value->fetchData(websiteDataTypes, [callbackAggregator](auto entries) mutable {
-            callbackAggregator->m_websiteData.entries.appendVector(WTFMove(entries));
-        });
-    }
 }
 
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
@@ -1635,9 +1629,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
             networkSession->clearAlternativeServices(modifiedSince);
     }
 #endif
-
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end())
-        iterator->value->deleteDataModifiedSince(websiteDataTypes, modifiedSince, [clearTasksHandler] { });
 }
 
 static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
@@ -1744,9 +1735,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         }
     }
 #endif
-
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end())
-        iterator->value->deleteData(websiteDataTypes, originDatas, [clearTasksHandler] { });
 
     if (auto* networkSession = this->networkSession(sessionID)) {
         HashSet<WebCore::RegistrableDomain> domainsToDeleteNetworkDataFor;
@@ -1971,13 +1959,6 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
         });
     }
 
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end()) {
-        iterator->value->deleteDataForRegistrableDomains(websiteDataTypes, domainsToDeleteAllNonCookieWebsiteDataFor, [callbackAggregator](auto deletedDomains) mutable {
-            for (auto domain : deletedDomains)
-                callbackAggregator->m_domains.add(WTFMove(domain));
-        });
-    }
-
     auto dataTypesForUIProcess = WebsiteData::filter(websiteDataTypes, WebsiteDataProcessType::UI);
     if (!dataTypesForUIProcess.isEmpty() && !domainsToDeleteAllNonCookieWebsiteDataFor.isEmpty()) {
         CompletionHandler<void(const HashSet<RegistrableDomain>&)> completionHandler = [callbackAggregator] (const HashSet<RegistrableDomain>& domains) {
@@ -2092,12 +2073,6 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
             fetchDiskCacheEntries(session.cache(), sessionID, fetchOptions, [callbackAggregator](auto entries) mutable {
                 callbackAggregator->m_websiteData.entries.appendVector(entries);
             });
-        });
-    }
-
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end()) {
-        iterator->value->fetchData(websiteDataTypes, [callbackAggregator](auto entries) mutable {
-            callbackAggregator->m_websiteData.entries.appendVector(WTFMove(entries));
         });
     }
 }

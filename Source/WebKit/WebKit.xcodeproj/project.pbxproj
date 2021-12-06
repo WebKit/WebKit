@@ -1504,9 +1504,6 @@
 		93D6B7B5255268D70058DD3A /* SpeechRecognitionPermissionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B7B2255268A20058DD3A /* SpeechRecognitionPermissionManager.h */; };
 		93D6B7B925534A170058DD3A /* WKSpeechRecognitionPermissionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B7B725534A110058DD3A /* WKSpeechRecognitionPermissionCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93E799852756FA550074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E799822756FA540074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp */; };
-		93E799872756FAB40074008A /* WebFileSystemStorageConnectionMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799832756FA540074008A /* WebFileSystemStorageConnectionMessagesReplies.h */; };
-		93E799882756FAC20074008A /* WebFileSystemStorageConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
 		9565083926D87A2B00E15CB7 /* AppleMediaServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9565083726D87A2B00E15CB7 /* AppleMediaServicesSPI.h */; };
@@ -5325,10 +5322,6 @@
 		93D6B7B725534A110058DD3A /* WKSpeechRecognitionPermissionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSpeechRecognitionPermissionCallback.h; sourceTree = "<group>"; };
 		93D6B7B825534A120058DD3A /* WKSpeechRecognitionPermissionCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSpeechRecognitionPermissionCallback.cpp; sourceTree = "<group>"; };
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
-		93E7997E2756F6700074008A /* WebFileSystemStorageConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebFileSystemStorageConnection.messages.in; sourceTree = "<group>"; };
-		93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFileSystemStorageConnectionMessages.h; sourceTree = "<group>"; };
-		93E799822756FA540074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFileSystemStorageConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
-		93E799832756FA540074008A /* WebFileSystemStorageConnectionMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFileSystemStorageConnectionMessagesReplies.h; sourceTree = "<group>"; };
 		93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfiguration.h; sourceTree = "<group>"; };
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
 		950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseDeviceObserver.h; path = ios/WKMouseDeviceObserver.h; sourceTree = "<group>"; };
@@ -10634,7 +10627,6 @@
 				BC032D6810F4378D0058C15A /* WebEditorClient.h */,
 				9354242B2703BDCB005CA72C /* WebFileSystemStorageConnection.cpp */,
 				9354242A2703BDCB005CA72C /* WebFileSystemStorageConnection.h */,
-				93E7997E2756F6700074008A /* WebFileSystemStorageConnection.messages.in */,
 				BC111A58112F4FBB00337BAB /* WebFrameLoaderClient.cpp */,
 				BC032D6A10F4378D0058C15A /* WebFrameLoaderClient.h */,
 				BC1BE1DF12D54A410004A228 /* WebGeolocationClient.cpp */,
@@ -12112,9 +12104,6 @@
 				E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */,
 				E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */,
 				E3866B052399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h */,
-				93E799822756FA540074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp */,
-				93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */,
-				93E799832756FA540074008A /* WebFileSystemStorageConnectionMessagesReplies.h */,
 				CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */,
 				CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */,
 				CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */,
@@ -13361,8 +13350,6 @@
 				BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */,
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
 				9354242C2703BDCB005CA72C /* WebFileSystemStorageConnection.h in Headers */,
-				93E799882756FAC20074008A /* WebFileSystemStorageConnectionMessages.h in Headers */,
-				93E799872756FAB40074008A /* WebFileSystemStorageConnectionMessagesReplies.h in Headers */,
 				1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */,
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
@@ -15491,7 +15478,6 @@
 				E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */,
 				E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */,
 				2D92A789212B6AB100F493FD /* WebEvent.cpp in Sources */,
-				93E799852756FA550074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp in Sources */,
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
 				CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */,
 				BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */,

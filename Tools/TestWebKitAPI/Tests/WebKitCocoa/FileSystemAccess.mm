@@ -29,13 +29,11 @@
 
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
-#import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WKWebsiteDataRecordPrivate.h>
 
 @interface FileSystemAccessMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -50,7 +48,7 @@
 
 @end
 
-static NSString *workerFrameString = @"<script> \
+static NSString *mainFrameString = @"<script> \
     function start() { \
         var worker = new Worker('worker.js'); \
         worker.onmessage = function(event) { \
@@ -117,7 +115,7 @@ TEST(FileSystemAccess, WebProcessCrashDuringWrite)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webkit"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadHTMLString:workerFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
+    [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"page is loaded", [lastScriptMessage body]);
@@ -128,7 +126,7 @@ TEST(FileSystemAccess, WebProcessCrashDuringWrite)
     EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
 
     auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [secondWebView loadHTMLString:workerFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
+    [secondWebView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"page is loaded", [lastScriptMessage body]);
@@ -170,7 +168,7 @@ TEST(FileSystemAccess, NetworkProcessCrashDuringWrite)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webkit"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadHTMLString:workerFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
+    [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"page is loaded", [lastScriptMessage body]);
@@ -258,198 +256,6 @@ TEST(FileSystemAccess, MigrateToNewStorageDirectory)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"file is opened", [lastScriptMessage body]);
-}
-
-static NSString *testString = @"<script> \
-    async function open(shouldCreateFile) \
-    { \
-        try { \
-            var rootHandle = await navigator.storage.getDirectory(); \
-            var fileHandle = await rootHandle.getFileHandle('file-system-access.txt', { 'create' : shouldCreateFile }); \
-            window.webkit.messageHandlers.testHandler.postMessage('file is opened'); \
-        } catch(err) { \
-            window.webkit.messageHandlers.testHandler.postMessage('error: ' + err.name + ' - ' + err.message); \
-        } \
-    } \
-    open(true); \
-    </script>";
-
-TEST(FileSystemAccess, FetchAndRemoveData)
-{
-    auto handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-    auto websiteDataStore = [configuration websiteDataStore];
-    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
-
-    // Remove existing data.
-    done = false;
-    [websiteDataStore removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    auto preferences = [configuration preferences];
-    preferences._fileSystemAccessEnabled = YES;
-    preferences._storageAPIEnabled = YES;
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadHTMLString:testString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"file is opened", [lastScriptMessage body]);
-
-    // Fetch data and remove it by origin.
-    done = false;
-    [websiteDataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-        EXPECT_EQ(records.count, 1u);
-        auto record = [records objectAtIndex:0];
-        EXPECT_STREQ("webkit.org", [record.displayName UTF8String]);
-
-        // Remove data.
-        [websiteDataStore removeDataOfTypes:types forDataRecords:records completionHandler:^{
-            done = true;
-        }];
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    // Fetch data after removal.
-    done = false;
-    [websiteDataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-        EXPECT_EQ(records.count, 0u);
-        done = true;
-    }];
-
-    // File cannot be opened after data removal.
-    [webView evaluateJavaScript:@"open(false)" completionHandler:nil];
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"error: NotFoundError - The object can not be found here.", [lastScriptMessage body]);
-}
-
-TEST(FileSystemAccess, RemoveDataByModificationTime)
-{
-    auto handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-    auto preferences = [configuration preferences];
-    preferences._fileSystemAccessEnabled = YES;
-    preferences._storageAPIEnabled = YES;
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadHTMLString:testString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"file is opened", [lastScriptMessage body]);
-
-    auto websiteDataStore = [configuration websiteDataStore];
-    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
-    done = false;
-    __block NSUInteger recordsCount;
-    [websiteDataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-        recordsCount = records.count;
-        EXPECT_GT(recordsCount, 0u);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    done = false;
-    [websiteDataStore removeDataOfTypes:types modifiedSince:[NSDate now] completionHandler:^ {
-        [websiteDataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-            recordsCount = records.count;
-            EXPECT_EQ(records.count, recordsCount);
-            done = true;
-        }];
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    done = false;
-    [websiteDataStore removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
-        [websiteDataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-            EXPECT_EQ(records.count, 0u);
-            done = true;
-        }];
-    }];
-    TestWebKitAPI::Util::run(&done);
-}
-
-static NSString *mainFrameString = @"<script> \
-    function postResult(event) \
-    { \
-        window.webkit.messageHandlers.testHandler.postMessage(event.data); \
-    } \
-    addEventListener('message', postResult, false); \
-    </script> \
-    <iframe src='https://127.0.0.1:9091/'>";
-
-static const char* frameBytes = R"TESTRESOURCE(
-<script>
-function postMessage(message)
-{
-    parent.postMessage(message, '*');
-}
-async function open()
-{
-    try {
-        var rootHandle = await navigator.storage.getDirectory();
-        var fileHandle = await rootHandle.getFileHandle('file-system-access.txt', { 'create' : true });
-        postMessage('file is opened');
-    } catch(err) {
-        postMessage('error: ' + err.name + ' - ' + err.message);
-    }
-}
-open();
-</script>
-)TESTRESOURCE";
-
-TEST(FileSystemAccess, FetchDataForThirdParty)
-{
-    TestWebKitAPI::HTTPServer server({
-        { "/", { frameBytes } },
-    }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-    auto preferences = [configuration preferences];
-    preferences._fileSystemAccessEnabled = YES;
-    preferences._storageAPIEnabled = YES;
-
-    auto websiteDataStore = [configuration websiteDataStore];
-    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
-    done = false;
-    [websiteDataStore removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [navigationDelegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
-        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
-        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-    }];
-    [navigationDelegate setDecidePolicyForNavigationAction:[&](WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
-        decisionHandler(WKNavigationActionPolicyAllow);
-    }];
-    [webView setNavigationDelegate:navigationDelegate.get()];
-
-    [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"file is opened", [lastScriptMessage body]);
-
-    done = false;
-    [websiteDataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-        // Should return both opening origin and top origin.
-        EXPECT_EQ(records.count, 2u);
-        auto sortFunction = ^(WKWebsiteDataRecord *record1, WKWebsiteDataRecord *record2){
-            return [record1.displayName compare:record2.displayName];
-        };
-        auto sortedRecords = [records sortedArrayUsingComparator:sortFunction];
-        EXPECT_WK_STREQ(@"127.0.0.1", [sortedRecords objectAtIndex:0].displayName);
-        EXPECT_WK_STREQ(@"webkit.org", [sortedRecords objectAtIndex:1].displayName);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
 }
 
 #endif // USE(APPLE_INTERNAL_SDK)

@@ -1,3 +1,12 @@
+2021-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r286507): [macOS] Many file system access layout tests became flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=233892
+
+        Unreviewed, revert r286507.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FileSystemAccess.mm:
+
 2021-12-06  Jon Lee  <jonlee@apple.com>
 
         Update GPU Process feature flags
