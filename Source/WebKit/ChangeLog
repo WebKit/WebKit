@@ -1,3 +1,19 @@
+2021-12-06  Tim Horton  <timothy_horton@apple.com>
+
+        Momentum Event Dispatcher: Momentum phase runs backwards with natural scrolling disabled
+        https://bugs.webkit.org/show_bug.cgi?id=233894
+        <rdar://problem/86111948>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+        (WebKit::MomentumEventDispatcher::consumeDeltaForCurrentTime):
+        Only flip the deltas if the trackpad is configured to use "natural"
+        scrolling (in which "directionInvertedFromDevice" is true).
+
+        (WebKit::MomentumEventDispatcher::computeNextDelta):
+        Fix initial queue state logging to log both axes before setting the "did log" bit.
+
 2021-12-06  Brady Eidson  <beidson@apple.com>
 
         Put webpushd code in WebKit.framework.
