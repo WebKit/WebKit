@@ -1,3 +1,14 @@
+2021-12-06  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebpagePreferences._activeContentRuleListActionPatterns should be an NSDictionary of identifier to allowed patterns
+        https://bugs.webkit.org/show_bug.cgi?id=233842
+
+        Reviewed by Timothy Hatcher.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentExtensionStore.mm:
+        (navigationDelegateAllowingActiveActionsOnTestHost):
+        (TEST_F):
+
 2021-12-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Add the encoding/decoding for Filter and FilterEffect

@@ -228,11 +228,11 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
             }, [&] (const ModifyHeadersAction& action) {
-                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(url))
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url))
                     results.summary.modifyHeadersActions.append(action);
             }, [&] (const RedirectAction& redirectAction) {
-                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(url))
-                    results.summary.redirectActions.append({ redirectAction, m_contentExtensions.get(actionsFromContentRuleList.contentRuleListIdentifier)->extensionBaseURL() });
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url))
+                    results.summary.redirectActions.append({ redirectAction, m_contentExtensions.get(contentRuleListIdentifier)->extensionBaseURL() });
             }), action.data());
         }
 

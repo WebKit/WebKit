@@ -174,10 +174,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& request, const SubstituteD
     , m_originalSubstituteDataWasValid(substituteData.isValid())
     , m_substituteResourceDeliveryTimer(*this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_applicationCacheHost(makeUnique<ApplicationCacheHost>(*this))
-    , m_activeContentRuleListActionPatterns(Vector<UserContentURLPattern>())
 {
-    // FIXME: Vector default constructor shouldn't need to know the size of the elements,
-    // so m_activeContentRuleListActionPatterns ought to be able to be initialized with an initializer list in the header without including UserContentURLPattern.h.
 }
 
 FrameLoader* DocumentLoader::frameLoader() const
@@ -2437,28 +2434,27 @@ ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler 
 }
 #endif // ENABLE(CONTENT_FILTERING)
 
-void DocumentLoader::setActiveContentRuleListActionPatterns(const std::optional<HashSet<String>>& patterns)
+void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>& patterns)
 {
-    if (!patterns) {
-        m_activeContentRuleListActionPatterns = std::nullopt;
-        return;
-    }
-    Vector<WebCore::UserContentURLPattern> patternVector;
-    patternVector.reserveInitialCapacity(patterns->size());
-    for (auto& patternString : *patterns) {
-        WebCore::UserContentURLPattern parsedPattern(patternString);
-        if (parsedPattern.isValid())
-            patternVector.uncheckedAppend(WTFMove(parsedPattern));
+    HashMap<String, Vector<UserContentURLPattern>> parsedPatternMap;
+
+    for (auto& pair : patterns) {
+        Vector<UserContentURLPattern> patternVector;
+        patternVector.reserveInitialCapacity(pair.value.size());
+        for (auto& patternString : pair.value) {
+            UserContentURLPattern parsedPattern(patternString);
+            if (parsedPattern.isValid())
+                patternVector.uncheckedAppend(WTFMove(parsedPattern));
+        }
+        parsedPatternMap.set(pair.key, WTFMove(patternVector));
     }
 
-    m_activeContentRuleListActionPatterns = WTFMove(patternVector);
+    m_activeContentRuleListActionPatterns = WTFMove(parsedPatternMap);
 }
 
-bool DocumentLoader::allowsActiveContentRuleListActionsForURL(const URL& url) const
+bool DocumentLoader::allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL& url) const
 {
-    if (!m_activeContentRuleListActionPatterns)
-        return true;
-    for (const auto& pattern : *m_activeContentRuleListActionPatterns) {
+    for (const auto& pattern : m_activeContentRuleListActionPatterns.get(contentRuleListIdentifier)) {
         if (pattern.matches(url))
             return true;
     }

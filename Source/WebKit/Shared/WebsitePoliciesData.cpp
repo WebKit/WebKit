@@ -64,7 +64,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     if (!contentBlockersEnabled)
         return std::nullopt;
 
-    std::optional<std::optional<HashSet<String>>> activeContentRuleListActionPatterns;
+    std::optional<HashMap<WTF::String, Vector<WTF::String>>> activeContentRuleListActionPatterns;
     decoder >> activeContentRuleListActionPatterns;
     if (!activeContentRuleListActionPatterns)
         return std::nullopt;
