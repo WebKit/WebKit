@@ -1,3 +1,17 @@
+2021-12-06  Sam Weinig  <weinig@apple.com>
+
+        [CSS Color 5] Update color-mix() to support srgb-linear and alpha premultiplication
+        https://bugs.webkit.org/show_bug.cgi?id=233862
+
+        Reviewed by Cameron McCormack.
+
+        Update test and results to also test the srgb-linear color space and also to
+        specifically test colors with and without alpha, updating the results for the
+        new premuliplied results.
+
+        * fast/css/parsing-color-mix-expected.txt:
+        * fast/css/parsing-color-mix.html:
+
 2021-12-06  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Support Cascade Layers in the Styles sidebar

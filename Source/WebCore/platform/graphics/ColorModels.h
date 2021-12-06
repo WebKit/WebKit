@@ -57,6 +57,11 @@ enum class ColorComponentType {
     Percentage
 };
 
+enum class ColorSpaceCoordinateSystem {
+    RectangularOrthogonal,
+    CylindricalPolar
+};
+
 template<typename T> struct ColorComponentInfo {
     T min;
     T max;
@@ -70,6 +75,7 @@ template<> struct ExtendedRGBModel<float> {
         { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
 };
 
 template<typename ColorType> inline constexpr bool UsesExtendedRGBModel = std::is_same_v<typename ColorType::Model, ExtendedRGBModel<typename ColorType::ComponentType>>;
@@ -81,6 +87,7 @@ template<> struct HSLModel<float> {
         { 0, 100, ColorComponentType::Percentage }
     } };
     static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
 };
 
 template<typename ColorType> inline constexpr bool UsesHSLModel = std::is_same_v<typename ColorType::Model, HSLModel<typename ColorType::ComponentType>>;
@@ -92,6 +99,7 @@ template<> struct HWBModel<float> {
         { 0, 100, ColorComponentType::Percentage }
     } };
     static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
 };
 
 template<typename ColorType> inline constexpr bool UsesHWBModel = std::is_same_v<typename ColorType::Model, HWBModel<typename ColorType::ComponentType>>;
@@ -103,6 +111,7 @@ template<> struct LabModel<float> {
         { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
 };
 
 template<typename ColorType> inline constexpr bool UsesLabModel = std::is_same_v<typename ColorType::Model, LabModel<typename ColorType::ComponentType>>;
@@ -114,6 +123,7 @@ template<> struct LCHModel<float> {
         { 0, 360, ColorComponentType::Angle }
     } };
     static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
 };
 
 template<typename ColorType> inline constexpr bool UsesLCHModel = std::is_same_v<typename ColorType::Model, LCHModel<typename ColorType::ComponentType>>;
@@ -125,6 +135,7 @@ template<> struct RGBModel<float> {
         { 0, 1, ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = true;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
 };
 
 template<> struct RGBModel<uint8_t> {
@@ -134,6 +145,7 @@ template<> struct RGBModel<uint8_t> {
         { 0, 255, ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = true;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
 };
 
 template<typename ColorType> inline constexpr bool UsesRGBModel = std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>;
@@ -145,6 +157,7 @@ template<> struct XYZModel<float> {
         { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = false;
+    static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
 };
 
 template<typename ColorType> inline constexpr bool UsesXYZModel = std::is_same_v<typename ColorType::Model, XYZModel<typename ColorType::ComponentType>>;

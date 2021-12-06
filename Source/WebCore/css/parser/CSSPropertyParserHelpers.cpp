@@ -46,6 +46,7 @@
 #include "ColorConversion.h"
 #include "ColorInterpolation.h"
 #include "ColorLuminance.h"
+#include "ColorNormalization.h"
 #include "Logging.h"
 #include "Pair.h"
 #include "RenderStyleConstants.h"
@@ -1468,11 +1469,6 @@ static std::optional<double> consumeOptionalAlphaAllowingSymbolTableIdent(CSSPar
     return std::nullopt;
 }
 
-static double normalizeHue(double hue)
-{
-    return std::fmod(std::fmod(hue, 360.0) + 360.0, 360.0);
-}
-
 static uint8_t normalizeRGBComponentNumber(double value)
 {
     return convertPrescaledSRGBAFloatToSRGBAByte(value);
@@ -1736,31 +1732,6 @@ template<HSLFunctionMode Mode> static Color parseHSLParameters(CSSParserTokenRan
     }
 
     return parseNonRelativeHSLParameters(args, context);
-}
-
-template<typename ComponentType> struct WhitenessBlackness {
-    ComponentType whiteness;
-    ComponentType blackness;
-};
-
-template<typename ComponentType> static auto normalizeWhitenessBlackness(ComponentType whiteness, ComponentType blackness) -> WhitenessBlackness<ComponentType>
-{
-    //   Values outside of these ranges are not invalid, but are clamped to the
-    //   ranges defined here at computed-value time.
-    WhitenessBlackness<ComponentType> result {
-        clampTo<ComponentType>(whiteness, 0.0, 100.0),
-        clampTo<ComponentType>(blackness, 0.0, 100.0)
-    };
-
-    //   If the sum of these two arguments is greater than 100%, then at
-    //   computed-value time they are further normalized to add up to 100%, with
-    //   the same relative ratio.
-    if (auto sum = result.whiteness + result.blackness; sum >= 100) {
-        result.whiteness *= 100.0 / sum;
-        result.blackness *= 100.0 / sum;
-    }
-
-    return result;
 }
 
 template<typename ConsumerForHue, typename ConsumerForWhitenessAndBlackness, typename ConsumerForAlpha>
@@ -2324,7 +2295,7 @@ static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSPa
 
 static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args)
 {
-    // <rectangular-color-space> = srgb | lab | oklab | xyz | xyz-d50 | xyz-d65
+    // <rectangular-color-space> = srgb | srgb-linear | lab | oklab | xyz | xyz-d50 | xyz-d65
     // <polar-color-space> = hsl | hwb | lch | oklch
     // <hue-interpolation-method> = [ shorter | longer | increasing | decreasing | specified ] hue
     // <color-interpolation-method> = in [ <rectangular-color-space> | <polar-color-space> <hue-interpolation-method>? ]
@@ -2340,7 +2311,7 @@ static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(C
         // specified in the passed in 'colorInterpolationMethod' parameter.
         auto hueInterpolationMethod = consumeHueInterpolationMethod(args);
         if (!hueInterpolationMethod)
-            return {{ colorInterpolationMethod }};
+            return {{ colorInterpolationMethod, AlphaPremultiplication::Premultiplied }};
         
         // If the hue-interpolation-method was provided it must be followed immediately by the 'hue' identifier.
         if (!consumeIdentRaw<CSSValueHue>(args))
@@ -2348,14 +2319,14 @@ static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(C
 
         colorInterpolationMethod.hueInterpolationMethod = *hueInterpolationMethod;
 
-        return {{ colorInterpolationMethod }};
+        return {{ colorInterpolationMethod, AlphaPremultiplication::Premultiplied }};
     };
 
     auto consumeRectangularColorSpace = [](CSSParserTokenRange& args, auto colorInterpolationMethod) -> std::optional<ColorInterpolationMethod> {
         // Consume the color space identifier.
         args.consumeIncludingWhitespace();
 
-        return {{ colorInterpolationMethod }};
+        return {{ colorInterpolationMethod, AlphaPremultiplication::Premultiplied }};
     };
 
     switch (args.peek().id()) {
@@ -2373,6 +2344,8 @@ static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(C
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::OKLab { });
     case CSSValueSRGB:
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::SRGB { });
+    case CSSValueSrgbLinear:
+        return consumeRectangularColorSpace(args, ColorInterpolationMethod::SRGBLinear { });
     case CSSValueXyzD50:
         return consumeRectangularColorSpace(args, ColorInterpolationMethod::XYZD50 { });
     case CSSValueXyz:
@@ -2466,70 +2439,42 @@ static std::optional<ColorMixPercentages> normalizedMixPercentages(const ColorMi
     return result;
 }
 
-// Normalization is special cased for for all polar color spaces to renormalize the hue, with additional normalization needed
-// for HWBA to normalize the whiteness and blackness components. Furthermore, HWBA and HSLA also get converted to SRGBA which
-// is their canonical form.
+// After interpolation, if the color is in the HWB or HSL color space, it needs to be canonicalized back to sRGB as
+// is done at parse time.
 
-template<typename ColorType> inline Color makeColorTypeByNormalizingComponentsAfterMix(const ColorComponents<float, 4>& colorComponents)
+template<typename ColorType> Color makeCanonicalColor(ColorType color)
 {
-    return makeFromComponents<ColorType>(colorComponents);
+    return color;
 }
 
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(const ColorComponents<float, 4>& colorComponents)
+template<> Color makeCanonicalColor<HWBA<float>>(HWBA<float> color)
 {
-    auto [hue, whiteness, blackness, alpha] = colorComponents;
-    auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness, blackness);
-    float normalizedHue = normalizeHue(hue);
-
-    return convertColor<SRGBA<uint8_t>>(HWBA<float> { normalizedHue, normalizedWhitness, normalizedBlackness, alpha });
+    return convertColor<SRGBA<uint8_t>>(color);
 }
 
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>(const ColorComponents<float, 4>& colorComponents)
+template<> Color makeCanonicalColor<HSLA<float>>(HSLA<float> color)
 {
-    auto [hue, saturation, lightness, alpha] = colorComponents;
-    float normalizedHue = normalizeHue(hue);
-
-    return convertColor<SRGBA<uint8_t>>(HSLA<float> { normalizedHue, saturation, lightness, alpha });
+    return convertColor<SRGBA<uint8_t>>(color);
 }
 
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<LCHA<float>>(const ColorComponents<float, 4>& colorComponents)
+template<typename InterpolationMethod> static Color mixColorComponentsUsingColorInterpolationMethod(InterpolationMethod interpolationMethod, ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
 {
-    auto [lightness, chroma, hue, alpha] = colorComponents;
-    float normalizedHue = normalizeHue(hue);
-
-    return LCHA<float> { lightness, chroma, normalizedHue, alpha };
-}
-
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<OKLCHA<float>>(const ColorComponents<float, 4>& colorComponents)
-{
-    auto [lightness, chroma, hue, alpha] = colorComponents;
-    float normalizedHue = normalizeHue(hue);
-
-    return OKLCHA<float> { lightness, chroma, normalizedHue, alpha };
-}
-
-template<typename Method> static Color mixColorComponentsUsingColorInterpolationMethod(Method colorInterpolationMethod, ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
-{
-    using ColorType = typename Method::ColorType;
+    using ColorType = typename InterpolationMethod::ColorType;
 
     // 1. Both colors are converted to the specified <color-space>. If the specified color space has a smaller gamut than
     //    the one in which the color to be adjusted is specified, gamut mapping will occur.
-    auto colorComponents1 = asColorComponents(color1.template toColorTypeLossy<ColorType>());
-    auto colorComponents2 = asColorComponents(color2.template toColorTypeLossy<ColorType>());
+    auto convertedColor1 = color1.template toColorTypeLossy<ColorType>();
+    auto convertedColor2 = color2.template toColorTypeLossy<ColorType>();
 
     // 2. Colors are then interpolated in the specified color space, as described in CSS Color 4 § 13 Interpolation. [...]
-    auto [normalizedColorComponents1, normalizedColorComponents2] = preInterpolationNormalization(colorInterpolationMethod, colorComponents1, colorComponents2);
-
-    auto mixedColorComponents = mapColorComponents([&] (auto componentFromColor1, auto componentFromColor2) -> float {
-        return (componentFromColor1 * mixPercentages.p1 / 100.0) + (componentFromColor2 * mixPercentages.p2 / 100.0);
-    }, normalizedColorComponents1, normalizedColorComponents2);
+    auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0);
 
     // 3. If an alpha multiplier was produced during percentage normalization, the alpha component of the interpolated result
     //    is multiplied by the alpha multiplier.
     if (mixPercentages.alphaMultiplier)
-        mixedColorComponents[3] *= (*mixPercentages.alphaMultiplier / 100.0);
+        mixedColor.alpha *= (*mixPercentages.alphaMultiplier / 100.0);
 
-    return makeColorTypeByNormalizingComponentsAfterMix<ColorType>(mixedColorComponents);
+    return makeCanonicalColor(mixedColor);
 }
 
 static Color mixColorComponents(ColorInterpolationMethod colorInterpolationMethod, const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
@@ -2538,9 +2483,9 @@ static Color mixColorComponents(ColorInterpolationMethod colorInterpolationMetho
     if (!mixPercentages)
         return { };
 
-    return WTF::switchOn(colorInterpolationMethod.value,
-        [&] (auto method) {
-            return mixColorComponentsUsingColorInterpolationMethod<decltype(method)>(method, *mixPercentages, mixComponents1.color, mixComponents2.color);
+    return WTF::switchOn(colorInterpolationMethod.colorSpace,
+        [&] (auto colorSpace) {
+            return mixColorComponentsUsingColorInterpolationMethod<decltype(colorSpace)>(colorSpace, *mixPercentages, mixComponents1.color, mixComponents2.color);
         }
     );
 }

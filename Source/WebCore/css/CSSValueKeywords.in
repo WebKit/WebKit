@@ -1492,6 +1492,7 @@ color-mix
 // color-space-interpolation
 in
 // srgb
+// srgb-linear
 // lab
 // oklab
 // xyz
