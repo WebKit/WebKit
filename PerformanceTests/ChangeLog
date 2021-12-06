@@ -1,3 +1,33 @@
+2021-12-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RAMification] Add support for dumping smaps rollups on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=233867
+
+        Reviewed by Yusuke Suzuki.
+
+        Add the option to dump smaps rollup after the end of each RAMification
+        test case. This mirrors the vmmap functionality and is implemented
+        alongside that option.
+
+        Once the jsc binary is left idle after the test case run, the
+        smaps_rollup output for the given jsc process is collected from the
+        proc filesystem. This material is then printed out after the test
+        is done, following the memory footprint dump.
+
+        For now this prefers the smaps_rollup instead of the complete smaps.
+        In this form, it already gives a good insight into the balance between
+        the proportional and residential set size amounts. Complete smaps could
+        be beneficial later, especially if we can implement differentiation
+        between allocations of different types and/or purposes.
+
+        * JetStream2/RAMification.py:
+        (parseArgs):
+        (BaseRunner.__init__):
+        (BaseRunner.getResults):
+        (LocalRunner.runOneTest):
+        (main):
+        (main.runTestList):
+
 2021-11-21  Cathie Chen  <cathiechen@igalia.com>
 
         [Performance test][css-contain] Add case to test contain: layout inside a complex document

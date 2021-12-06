@@ -43,7 +43,7 @@ oneMB = float(1024 * 1024)
 footprintRE = re.compile(r"Current Footprint: (\d+(?:.\d+)?)")
 peakFootprintRE = re.compile(r"Peak Footprint: (\d+(?:.\d+)?)")
 
-TestResult = collections.namedtuple("TestResult", ["name", "returnCode", "footprint", "peakFootprint", "vmmapOutput"])
+TestResult = collections.namedtuple("TestResult", ["name", "returnCode", "footprint", "peakFootprint", "vmmapOutput", "smapsOutput"])
 
 ramification_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
@@ -121,6 +121,7 @@ def parseArgs(parser=None):
     parser.add_argument("-n", "--run-no-jit", dest="runNoJITTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run no JIT tests [default]")
     parser.add_argument("-o", "--output", dest="jsonFilename", type=str, default=None, metavar="JSON-output-file", help="Path to JSON output")
     parser.add_argument("-m", "--vmmap", dest="takeVmmap", action="store_true", default=False, help="Take a vmmap after each test")
+    parser.add_argument("--smaps", dest="takeSmaps", action="store_true", default=False, help="Take a smaps rollup after each test")
 
     args = parser.parse_args()
 
@@ -147,7 +148,8 @@ class BaseRunner:
     def __init__(self, args):
         self.rootDir = args.testDir
         self.environmentVars = {}
-        self.vmmapOutput = ""
+        self.vmmapOutput = "" if args.takeVmmap else None
+        self.smapsOutput = "" if args.takeSmaps else None
 
     def setup(self):
         pass
@@ -180,7 +182,7 @@ class BaseRunner:
         self.returnCode = returnCode
 
     def getResults(self):
-        return TestResult(name=self.testName, returnCode=self.returnCode, footprint=self.footprint, peakFootprint=self.peakFootprint, vmmapOutput=self.vmmapOutput)
+        return TestResult(name=self.testName, returnCode=self.returnCode, footprint=self.footprint, peakFootprint=self.peakFootprint, vmmapOutput=self.vmmapOutput, smapsOutput=self.smapsOutput)
 
 
 class LocalRunner(BaseRunner):
@@ -211,9 +213,12 @@ class LocalRunner(BaseRunner):
             self.processLine(line)
 
             if "js shell waiting for input to exit" in line:
-                self.vmmapOutput = subprocess.Popen(['vmmap', '--summary', '{}'.format(proc.pid)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
-                if sys.version_info[0] >= 3:
-                    self.vmmapOutput = str(self.vmmapOutput, "utf-8")
+                if self.vmmapOutput is not None:
+                    self.vmmapOutput = subprocess.Popen(['vmmap', '--summary', '{}'.format(proc.pid)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+                    if sys.version_info[0] >= 3:
+                        self.vmmapOutput = str(self.vmmapOutput, "utf-8")
+                if self.smapsOutput is not None:
+                    self.smapsOutput = subprocess.Popen(['cat', '/proc/{}/smaps_rollup'.format(proc.pid)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
                 proc.stdin.write(b"done\n")
                 proc.stdin.flush()
 
@@ -235,8 +240,7 @@ def main(parser=None):
 
     testRunner = args.runner(args)
 
-
-    if args.takeVmmap:
+    if args.takeVmmap or args.takeSmaps:
         testRunner.setEnv("JS_SHELL_WAIT_FOR_INPUT_TO_EXIT", "1")
 
     dyldFrameworkPath = frameworkPathFromExecutablePath(args.jscCommand)
@@ -270,6 +274,8 @@ def main(parser=None):
                     print("footprint: {}, peak footprint: {}".format(testResult.footprint, testResult.peakFootprint))
                     if testResult.vmmapOutput:
                         print(testResult.vmmapOutput)
+                    if testResult.smapsOutput:
+                        print(testResult.smapsOutput)
                 else:
                     print
 
