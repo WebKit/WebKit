@@ -8052,8 +8052,10 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
         "IOAudioEngineUserClient"_s,
         "IOSurfaceRootUserClient"_s,
 #endif
-#if (PLATFORM(MAC) && CPU(ARM64)) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC) && CPU(ARM64)
         "IOMobileFramebufferUserClient"_s,
+#endif
+#if PLATFORM(MAC) && CPU(ARM64) || PLATFORM(IOS_FAMILY)
         "IOSurfaceAcceleratorClient"_s,
 #endif
     });

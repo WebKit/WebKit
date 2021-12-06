@@ -92,30 +92,12 @@
         domains))
 
 (define-once (framebuffer-access)
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOMobileFramebufferUserClient")
-        )
-        (when (defined? 'iokit-external-method)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-async-external-method
-                    iokit-external-method
-                    iokit-external-trap)
-                (allow (with telemetry) iokit-external-method
-                    (iokit-method-number
-                        8
-                        28
-                    )
-                )
-            )
-        )
-    )
+    (deny iokit-open (with telemetry-backtrace)
+        (iokit-user-client-class "IOMobileFramebufferUserClient"))
 
     ; IOMobileFramebuffer
     (with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
-        (allow iokit-get-properties
+        (allow iokit-get-properties (with telemetry)
                (iokit-property "AppleTV"
                                "DisplayPipePlaneBaseAlignment"
                                "DisplayPipeStrideRequirements"
