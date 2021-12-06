@@ -562,7 +562,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     [self _didEndScrollingOrZooming];
 }
 
-- (NSUndoManager *)undoManager
+- (NSUndoManager *)undoManagerForWebView
 {
     if (self.focusedElementInformation.shouldSynthesizeKeyEventsForEditing && self.hasHiddenContentEditable) {
         if (!_quirkyUndoManager)

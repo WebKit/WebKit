@@ -42,6 +42,7 @@
 #import <cmath>
 
 @interface WKContentView ()
+@property (nonatomic, readonly) NSUndoManager *undoManagerForWebView;
 - (BOOL)_shouldSimulateKeyboardInputOnTextInsertion;
 @end
 
@@ -183,6 +184,19 @@ static CGRect rounded(CGRect rect)
 - (UIView *)inputAccessoryView
 {
     return _customInputAccessoryView.get();
+}
+
+@end
+
+@interface CustomUndoManagerWebView : TestWKWebView
+@property (nonatomic, strong) NSUndoManager *customUndoManager;
+@end
+
+@implementation CustomUndoManagerWebView
+
+- (NSUndoManager *)undoManager
+{
+    return _customUndoManager ?: super.undoManager;
 }
 
 @end
@@ -799,6 +813,17 @@ TEST(KeyboardInputTests, InsertDictationAlternativesSimulatingKeyboardInput)
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
     [[webView textInputContentView] insertText:@"hello" alternatives:@[ @"helo" ] style:UITextAlternativeStyleNone];
     EXPECT_NS_EQUAL((@[@"keydown", @"beforeinput", @"input", @"keyup", @"change"]), [webView objectByEvaluatingJavaScript:@"firedEvents"]);
+}
+
+TEST(KeyboardInputTests, OverrideUndoManager)
+{
+    auto webView = adoptNS([[CustomUndoManagerWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto contentView = [webView wkContentView];
+    EXPECT_EQ(contentView.undoManager, contentView.undoManagerForWebView);
+
+    auto undoManager = adoptNS([[NSUndoManager alloc] init]);
+    [webView setCustomUndoManager:undoManager.get()];
+    EXPECT_EQ(contentView.undoManager, undoManager);
 }
 
 } // namespace TestWebKitAPI

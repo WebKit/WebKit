@@ -318,6 +318,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [super resignFirstResponder];
 }
 
+- (NSUndoManager *)undoManager
+{
+    if (self._currentContentView == _contentView)
+        return [_contentView undoManagerForWebView];
+
+    return [super undoManager];
+}
+
 FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender

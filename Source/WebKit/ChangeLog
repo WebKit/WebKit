@@ -1,3 +1,28 @@
+2021-12-06  Matt Gilligan  <matthew_gilligan@apple.com>
+
+        [iOS] Allow WKWebView clients to override undoManager
+        https://bugs.webkit.org/show_bug.cgi?id=233297
+        <rdar://problem/85526549>
+
+        Reviewed by Wenson Hsieh.
+
+        Move WKContentView's undoManager up the responder chain to WKWebView so web view
+        subclasses can customize the undo manager used when WKContentView is first responder.
+
+        Test: KeyboardInputTests.OverrideUndoManager
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView undoManager]):
+        Return the undo manager provided by _contentView when it is current.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView undoManagerForWebView]):
+        Provide the view's undo manager via this property so that -undoManager will look up the
+        responder chain to WKWebView.
+
+        (-[WKContentView undoManager]): Deleted.
+
 2021-12-06  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r286535) [GTK] Fix clean builds after DerivedSources/WebKit2 move

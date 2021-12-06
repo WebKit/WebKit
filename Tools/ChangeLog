@@ -1,3 +1,15 @@
+2021-12-06  Matt Gilligan  <matthew_gilligan@apple.com>
+
+        [iOS] Allow WKWebView clients to override undoManager
+        https://bugs.webkit.org/show_bug.cgi?id=233297
+        <rdar://problem/85526549>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (-[CustomUndoManagerWebView undoManager]):
+        (TestWebKitAPI::TEST):
+
 2021-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] AppHighlights.AppHighlightCreateAndRestoreAndScroll is a flaky failure
