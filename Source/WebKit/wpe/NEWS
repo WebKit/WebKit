@@ -1,4 +1,13 @@
 =================
+WPE WebKit 2.34.2
+=================
+
+What's new in WPE WebKit 2.34.2?
+
+  - Fix scrolling issues when pressing Home and PgDown keys.
+  - Fix the build with video disabled.
+
+=================
 WPE WebKit 2.34.1
 =================
 
