@@ -28,14 +28,15 @@
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
-JSC::JSValue jsDate(JSC::JSGlobalObject&, double value);
-double valueToDate(JSC::JSGlobalObject&, JSC::JSValue); // NaN if the value can't be converted to a date.
+JSC::JSValue jsDate(JSC::JSGlobalObject&, WallTime value);
+WallTime valueToDate(JSC::JSGlobalObject&, JSC::JSValue); // NaN if the value can't be converted to a date.
 
 template<> struct Converter<IDLDate> : DefaultConverter<IDLDate> {
-    static double convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    static WallTime convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         return valueToDate(lexicalGlobalObject, value);
     }
@@ -46,7 +47,7 @@ template<> struct JSConverter<IDLDate> {
     static constexpr bool needsGlobalObject = false;
 
     // FIXME: This should be taking a JSDOMGlobalObject and passing it to jsDate.
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, double value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, WallTime value)
     {
         return jsDate(lexicalGlobalObject, value);
     }

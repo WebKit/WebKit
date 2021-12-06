@@ -47,7 +47,7 @@ public:
 private:
     const AtomString& formControlType() const override;
     DateComponentsType dateType() const override;
-    double valueAsDate() const override;
+    WallTime valueAsDate() const override;
     String serializeWithMilliseconds(double) const override;
     Decimal parseToNumber(const String&, const Decimal&) const override;
     Decimal defaultValueForStepUp() const override;

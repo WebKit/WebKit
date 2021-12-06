@@ -101,7 +101,7 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
             return true;
         }
         if (keyPathElement == "lastModifiedDate") {
-            result = jsDate(lexicalGlobalObject, jsCast<JSFile*>(obj)->wrapped().lastModified());
+            result = jsDate(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(jsCast<JSFile*>(obj)->wrapped().lastModified()).value()));
             return true;
         }
     }
@@ -177,7 +177,7 @@ JSValue toJS(JSGlobalObject& lexicalGlobalObject, JSGlobalObject& globalObject, 
     case IndexedDB::KeyType::Date:
         // FIXME: This should probably be toJS<IDLDate>(...) as per:
         // http://w3c.github.io/IndexedDB/#request-convert-a-key-to-a-value
-        RELEASE_AND_RETURN(scope, toJS<IDLNullable<IDLDate>>(lexicalGlobalObject, key->date()));
+        RELEASE_AND_RETURN(scope, toJS<IDLNullable<IDLDate>>(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(key->date()).value())));
     case IndexedDB::KeyType::Number:
         return jsNumber(key->number());
     case IndexedDB::KeyType::Min:
@@ -211,7 +211,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
         auto dateValue = valueToDate(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isnan(dateValue))
-            return IDBKey::createDate(dateValue);
+            return IDBKey::createDate(dateValue.secondsSinceEpoch().milliseconds());
     }
 
     if (value.isObject()) {

@@ -1111,11 +1111,12 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     return canPlay;
 }
 
-double HTMLMediaElement::getStartDate() const
+WallTime HTMLMediaElement::getStartDate() const
 {
     if (!m_player)
-        return std::numeric_limits<double>::quiet_NaN();
-    return m_player->getStartDate().toDouble();
+        return WallTime::nan();
+
+    return WallTime::fromRawSeconds(m_player->getStartDate().toDouble());
 }
 
 void HTMLMediaElement::load()

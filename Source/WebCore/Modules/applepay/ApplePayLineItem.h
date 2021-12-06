@@ -29,8 +29,8 @@
 
 #include "ApplePayPaymentTiming.h"
 #include "ApplePayRecurringPaymentDateUnit.h"
-#include <limits>
 #include <optional>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -52,14 +52,14 @@ struct ApplePayLineItem final {
     ApplePayPaymentTiming paymentTiming { ApplePayPaymentTiming::Immediate };
 
 #if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
-    double recurringPaymentStartDate { std::numeric_limits<double>::quiet_NaN() };
+    WallTime recurringPaymentStartDate { WallTime::nan() };
     ApplePayRecurringPaymentDateUnit recurringPaymentIntervalUnit { ApplePayRecurringPaymentDateUnit::Month };
     unsigned recurringPaymentIntervalCount = 1;
-    double recurringPaymentEndDate { std::numeric_limits<double>::quiet_NaN() };
+    WallTime recurringPaymentEndDate { WallTime::nan() };
 #endif
 
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
-    double deferredPaymentDate { std::numeric_limits<double>::quiet_NaN() };
+    WallTime deferredPaymentDate { WallTime::nan() };
 #endif
 
 #if defined(ApplePayLineItemAdditions_members)
@@ -105,13 +105,13 @@ std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
     DECODE(amount, String)
     DECODE(paymentTiming, ApplePayPaymentTiming)
 #if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
-    DECODE(recurringPaymentStartDate, double)
+    DECODE(recurringPaymentStartDate, WallTime)
     DECODE(recurringPaymentIntervalUnit, ApplePayRecurringPaymentDateUnit)
     DECODE(recurringPaymentIntervalCount, unsigned)
-    DECODE(recurringPaymentEndDate, double)
+    DECODE(recurringPaymentEndDate, WallTime)
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
-    DECODE(deferredPaymentDate, double)
+    DECODE(deferredPaymentDate, WallTime)
 #endif
 #if defined(ApplePayLineItemAdditions_decode_members)
     ApplePayLineItemAdditions_decode_members

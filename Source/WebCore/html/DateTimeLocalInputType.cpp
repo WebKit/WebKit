@@ -62,13 +62,13 @@ DateComponentsType DateTimeLocalInputType::dateType() const
     return DateComponentsType::DateTimeLocal;
 }
 
-double DateTimeLocalInputType::valueAsDate() const
+WallTime DateTimeLocalInputType::valueAsDate() const
 {
     // valueAsDate doesn't work for the datetime-local type according to the standard.
-    return DateComponents::invalidMilliseconds();
+    return WallTime::nan();
 }
 
-ExceptionOr<void> DateTimeLocalInputType::setValueAsDate(double value) const
+ExceptionOr<void> DateTimeLocalInputType::setValueAsDate(WallTime value) const
 {
     // valueAsDate doesn't work for the datetime-local type according to the standard.
     return InputType::setValueAsDate(value);

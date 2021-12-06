@@ -1,3 +1,21 @@
+2021-12-06  Devin Rousso  <drousso@apple.com>
+
+        Change IDL `Date` to be backed by `WallTime` to avoid confusion when converting to native dates
+        https://bugs.webkit.org/show_bug.cgi?id=233781
+
+        Reviewed by Darin Adler.
+
+        JS `Date` is milliseconds-based, but some native dates (e.g. `NSDate`) are seconds-based.
+        `WallTime` will help avoid confusion since not a generic type (e.g. `double`) and instead
+        has explicitly defined conversion methods to seconds, milliseconds, etc..
+
+        * DOM/DOMInternal.h:
+        (kit):
+        (core):
+
+        * DOM/DOMHTMLMediaElement.mm:
+        (-[DOMHTMLMediaElement getStartDate]):
+
 2021-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Hook up navigator.gpu.requestAdapter()

@@ -32,6 +32,7 @@
 #include <wtf/Brigand.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
+#include <wtf/WallTime.h>
 
 #if ENABLE(WEBGL)
 #include "WebGLAny.h"
@@ -259,11 +260,11 @@ template<typename T> struct IDLTypedArray : IDLBufferSource<T> { };
 
 // Non-WebIDL extensions
 
-struct IDLDate : IDLType<double> { 
-    using NullableType = double;
-    static double nullValue() { return std::numeric_limits<double>::quiet_NaN(); }
-    static bool isNullValue(double value) { return std::isnan(value); }
-    static double extractValueFromNullable(double value) { return value; }
+struct IDLDate : IDLType<WallTime> { 
+    using NullableType = WallTime;
+    static WallTime nullValue() { return WallTime::nan(); }
+    static bool isNullValue(WallTime value) { return std::isnan(value); }
+    static WallTime extractValueFromNullable(WallTime value) { return value; }
 };
 
 struct IDLJSON : IDLType<String> { 

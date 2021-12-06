@@ -1108,12 +1108,12 @@ void HTMLInputElement::setValueInternal(const String& sanitizedValue, TextFieldE
     updateValidity();
 }
 
-double HTMLInputElement::valueAsDate() const
+WallTime HTMLInputElement::valueAsDate() const
 {
     return m_inputType->valueAsDate();
 }
 
-ExceptionOr<void> HTMLInputElement::setValueAsDate(double value)
+ExceptionOr<void> HTMLInputElement::setValueAsDate(WallTime value)
 {
     return m_inputType->setValueAsDate(value);
 }

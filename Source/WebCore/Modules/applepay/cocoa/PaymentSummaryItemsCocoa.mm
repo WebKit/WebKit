@@ -60,9 +60,9 @@ namespace WebCore {
 
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM) || HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
 
-static NSDate *toDate(double date)
+static NSDate *toDate(WallTime date)
 {
-    return [NSDate dateWithTimeIntervalSince1970:(date / 1000)];
+    return [NSDate dateWithTimeIntervalSince1970:date.secondsSinceEpoch().value()];
 }
 
 #endif // HAVE(PASSKIT_RECURRING_SUMMARY_ITEM) || HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)

@@ -47,8 +47,8 @@ public:
 private:
     const AtomString& formControlType() const final;
     DateComponentsType dateType() const final;
-    double valueAsDate() const final;
-    ExceptionOr<void> setValueAsDate(double) const final;
+    WallTime valueAsDate() const final;
+    ExceptionOr<void> setValueAsDate(WallTime) const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;

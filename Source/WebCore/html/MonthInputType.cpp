@@ -64,15 +64,15 @@ DateComponentsType MonthInputType::dateType() const
     return DateComponentsType::Month;
 }
 
-double MonthInputType::valueAsDate() const
+WallTime MonthInputType::valueAsDate() const
 {
     ASSERT(element());
     auto date = parseToDateComponents(element()->value());
     if (!date)
-        return DateComponents::invalidMilliseconds();
+        return WallTime::nan();
     double msec = date->millisecondsSinceEpoch();
     ASSERT(std::isfinite(msec));
-    return msec;
+    return WallTime::fromRawSeconds(Seconds::fromMilliseconds(msec).value());
 }
 
 String MonthInputType::serializeWithMilliseconds(double value) const

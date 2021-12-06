@@ -46,6 +46,7 @@
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Observer.h>
+#include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
@@ -242,7 +243,7 @@ public:
     void setCurrentTimeWithTolerance(double, double toleranceBefore, double toleranceAfter);
     double currentTimeForBindings() const { return currentTime(); }
     WEBCORE_EXPORT ExceptionOr<void> setCurrentTimeForBindings(double);
-    WEBCORE_EXPORT double getStartDate() const;
+    WEBCORE_EXPORT WallTime getStartDate() const;
     WEBCORE_EXPORT double duration() const override;
     WEBCORE_EXPORT bool paused() const override;
     void setPaused(bool);

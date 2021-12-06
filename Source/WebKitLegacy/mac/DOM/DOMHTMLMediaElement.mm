@@ -28,6 +28,7 @@
 
 #import "DOMHTMLMediaElement.h"
 
+#import "DOMInternal.h"
 #import "DOMMediaErrorInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMTimeRangesInternal.h"
@@ -313,7 +314,7 @@
 - (NSTimeInterval)getStartDate
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getStartDate();
+    return kit(IMPL->getStartDate());
 }
 
 - (void)play
