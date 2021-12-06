@@ -34,9 +34,12 @@
 namespace WebCore {
 
 class AnimationEventBase;
+class CustomEffectCallback;
 class DocumentTimelinesController;
 class RenderBoxModelObject;
 class RenderElement;
+
+struct CustomAnimationOptions;
 
 class DocumentTimeline final : public AnimationTimeline
 {
@@ -50,6 +53,7 @@ public:
     Document* document() const { return m_document.get(); }
 
     std::optional<Seconds> currentTime() override;
+    ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, std::optional<std::variant<double, CustomAnimationOptions>>&&);
 
     void animationTimingDidChange(WebAnimation&) override;
     void removeAnimation(WebAnimation&) override;

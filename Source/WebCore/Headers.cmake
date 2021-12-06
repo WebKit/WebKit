@@ -384,6 +384,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/isolatedtree/AXIsolatedTree.h
 
     animation/CSSPropertyBlendingClient.h
+    animation/CustomAnimationOptions.h
     animation/CompositeOperation.h
     animation/DocumentTimelinesController.h
     animation/EffectTiming.h

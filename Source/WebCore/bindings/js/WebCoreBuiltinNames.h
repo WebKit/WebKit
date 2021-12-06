@@ -106,6 +106,7 @@ namespace WebCore {
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
     macro(CustomElementRegistry) \
+    macro(CustomEffect) \
     macro(Database) \
     macro(DataTransferItem) \
     macro(DataTransferItemList) \

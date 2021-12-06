@@ -28,6 +28,9 @@
 
 #include "AnimationEventBase.h"
 #include "CSSTransition.h"
+#include "CustomAnimationOptions.h"
+#include "CustomEffect.h"
+#include "CustomEffectCallback.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimelinesController.h"
@@ -492,6 +495,39 @@ Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElem
 unsigned DocumentTimeline::numberOfAnimationTimelineInvalidationsForTesting() const
 {
     return m_numberOfAnimationTimelineInvalidationsForTesting;
+}
+
+ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallback>&& callback, std::optional<std::variant<double, CustomAnimationOptions>>&& options)
+{
+    ASSERT(m_document);
+
+    String id = "";
+    std::optional<std::variant<double, EffectTiming>> customEffectOptions;
+
+    if (options) {
+        std::variant<double, EffectTiming> customEffectOptionsVariant;
+        if (std::holds_alternative<double>(*options))
+            customEffectOptionsVariant = std::get<double>(*options);
+        else {
+            auto customEffectOptions = std::get<CustomAnimationOptions>(*options);
+            id = customEffectOptions.id;
+            customEffectOptionsVariant = WTFMove(customEffectOptions);
+        }
+        customEffectOptions = customEffectOptionsVariant;
+    }
+
+    auto customEffectResult = CustomEffect::create(WTFMove(callback), WTFMove(customEffectOptions));
+    if (customEffectResult.hasException())
+        return customEffectResult.releaseException();
+
+    auto animation = WebAnimation::create(*document(), &customEffectResult.returnValue().get());
+    animation->setId(id);
+
+    auto animationPlayResult = animation->play();
+    if (animationPlayResult.hasException())
+        return animationPlayResult.releaseException();
+
+    return animation;
 }
 
 } // namespace WebCore

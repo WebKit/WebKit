@@ -703,6 +703,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/CompositeOperation.idl \
     $(WebCore)/animation/CompositeOperationOrAuto.idl \
     $(WebCore)/animation/ComputedEffectTiming.idl \
+    $(WebCore)/animation/CustomAnimationOptions.idl \
+    $(WebCore)/animation/CustomEffect.idl \
+    $(WebCore)/animation/CustomEffectCallback.idl \
     $(WebCore)/animation/Document+WebAnimations.idl \
     $(WebCore)/animation/DocumentOrShadowRoot+WebAnimations.idl \
     $(WebCore)/animation/DocumentTimeline.idl \

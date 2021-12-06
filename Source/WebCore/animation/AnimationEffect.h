@@ -51,6 +51,7 @@ class AnimationEffect : public RefCounted<AnimationEffect>, public CanMakeWeakPt
 public:
     virtual ~AnimationEffect();
 
+    virtual bool isCustomEffect() const { return false; }
     virtual bool isKeyframeEffect() const { return false; }
 
     EffectTiming getBindingsTiming() const;

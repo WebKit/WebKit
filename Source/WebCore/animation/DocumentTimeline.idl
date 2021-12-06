@@ -27,4 +27,5 @@
     Exposed=Window
 ] interface DocumentTimeline : AnimationTimeline {
     [CallWith=Document] constructor(optional DocumentTimelineOptions options);
+    [EnabledBySetting=WebAnimationsCustomEffectsEnabled] WebAnimation animate(CustomEffectCallback callback, optional (unrestricted double or CustomAnimationOptions) options);
 };

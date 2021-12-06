@@ -1,3 +1,21 @@
+2021-12-06  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Add a way to run scripted animations
+        https://bugs.webkit.org/show_bug.cgi?id=233869
+        rdar://85983542
+
+        Reviewed by Dean Jackson.
+
+        Add tests for the new CustomEffect interface and the document.timeline.animate() method.
+        These are written using WPT libraries such that they may be upstreamed to the WPT repository
+        in the future if and when the CustomEffect interface is standardized.
+
+        * platform/win/TestExpectations:
+        * webanimations/custom-effect/custom-effect-expected.txt: Added.
+        * webanimations/custom-effect/custom-effect.html: Added.
+        * webanimations/custom-effect/document-timeline-animate-expected.txt: Added.
+        * webanimations/custom-effect/document-timeline-animate.html: Added.
+
 2021-12-06  Rob Buis  <rbuis@igalia.com>
 
         Null check in shouldUseBreakElement

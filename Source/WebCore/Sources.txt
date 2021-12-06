@@ -469,6 +469,7 @@ animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
 animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
+animation/CustomEffect.cpp
 animation/DeclarativeAnimation.cpp
 animation/DocumentTimeline.cpp
 animation/DocumentTimelinesController.cpp
@@ -3005,6 +3006,9 @@ JSCryptoKeyPair.cpp
 JSCryptoKeyUsage.cpp
 JSCryptoRsaHashedKeyAlgorithm.cpp
 JSCryptoRsaKeyAlgorithm.cpp
+JSCustomAnimationOptions.cpp
+JSCustomEffect.cpp
+JSCustomEffectCallback.cpp
 JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
 JSDOMApplicationCache.cpp

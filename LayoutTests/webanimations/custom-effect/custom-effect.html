@@ -1,0 +1,108 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>CustomEffect</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    let numberOfCalls = 0;
+    let customEffectProgress = null;
+
+    const animation = document.timeline.animate(progress => {
+        customEffectProgress = progress;
+        numberOfCalls++;
+    }, { duration: 1 });
+
+    assert_equals(customEffectProgress, null, "Callback does not fire upon creation.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(customEffectProgress, 0, "Callback is first fired with progress = 0.");
+
+    await animation.finished;
+    const numberOfCallsAfterEffectEnded = numberOfCalls;
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfCallsAfterEffectEnded, numberOfCalls, "Callback is no longer fired after custom effect entered the after phase.");
+    assert_not_equals(customEffectProgress, 1, "Callback is first fired with progress = 1.");
+}, "Custom effects with no fill do not fire with progress = 1.");
+
+promise_test(async t => {
+    let numberOfCalls = 0;
+    let customEffectProgress = null;
+
+    const animation = document.timeline.animate(progress => {
+        customEffectProgress = progress;
+        numberOfCalls++;
+    }, { fill: "forwards", duration: 1});
+
+    assert_equals(customEffectProgress, null, "Callback does not fire upon creation.");
+
+    await animation.finished;
+    assert_equals(customEffectProgress, 1, "Callback is finally fired with progress = 1.");
+
+    const numberOfCallsAfterEffectEnded = numberOfCalls;
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfCallsAfterEffectEnded, numberOfCalls, "Callback is no longer fired after custom effect entered the after phase.");
+}, "Forward-filling custom effects fire once with progress = 1.");
+
+promise_test(async t => {
+    let numberOfCalls = 0;
+    let customEffectProgress = null;
+
+    // Create an animation that won't start until long into the future.
+    const animation = new Animation;
+    animation.startTime = document.timeline.currentTime + (100 * 1000);
+    animation.effect = new CustomEffect(progress => {
+        customEffectProgress = progress;
+        numberOfCalls++;
+    }, { fill: "backwards", duration: 1});
+
+    assert_equals(customEffectProgress, null, "Callback does not fire upon creation.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(customEffectProgress, 0, "Callback is first fired with progress = 0.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfCalls, 1, "Callback is not fired after the first frame as it's still in the before phase and its progress hasn't changed.");
+}, "Backward-filling custom effects fire only once with progress = 0 during the before phase.");
+
+promise_test(async t => {
+    let numberOfCalls = 0;
+    let customEffectProgress = null;
+
+    const duration = 1000;
+    const animation = document.timeline.animate(progress => {
+        customEffectProgress = progress;
+        numberOfCalls++;
+    }, duration);
+
+    animation.pause();
+    assert_equals(customEffectProgress, null, "Callback does not fire upon creation.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(customEffectProgress, 0, "Callback is first fired with progress = 0.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfCalls, 1, "Callback is not called while animation is paused.");
+
+    animation.currentTime = animation.startTime + (duration * 0.2);
+    animation.currentTime = animation.startTime + (duration * 0.1);
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfCalls, 2, "Callback is only called once if changing the current time several times between frames.");
+    assert_equals(customEffectProgress, 0.1, "Callback is called with the update progress when seeking the animation.");
+}, "Custom effects are called when the associated animatoun is paused and seeked.");
+
+promise_test(async t => {
+    await new Promise(resolve => {
+        document.timeline.animate(progress => resolve(), 100 * 1000);
+    });
+}, "Custom effects fire callbacks with no other reason to update the page rendering.");
+
+</script>
+</body>

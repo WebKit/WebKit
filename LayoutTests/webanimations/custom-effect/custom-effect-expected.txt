@@ -1,0 +1,7 @@
+
+PASS Custom effects with no fill do not fire with progress = 1.
+PASS Forward-filling custom effects fire once with progress = 1.
+PASS Backward-filling custom effects fire only once with progress = 0 during the before phase.
+PASS Custom effects are called when the associated animatoun is paused and seeked.
+PASS Custom effects fire callbacks with no other reason to update the page rendering.
+

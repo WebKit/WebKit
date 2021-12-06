@@ -679,7 +679,6 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/Animatable.idl
     animation/AnimationEffect.idl
     animation/AnimationFrameProvider.idl
-    animation/EffectTiming.idl
     animation/AnimationPlaybackEvent.idl
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
@@ -688,10 +687,14 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/CompositeOperation.idl
     animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
+    animation/CustomAnimationOptions.idl
+    animation/CustomEffect.idl
+    animation/CustomEffectCallback.idl
     animation/Document+WebAnimations.idl
     animation/DocumentOrShadowRoot+WebAnimations.idl
     animation/DocumentTimeline.idl
     animation/DocumentTimelineOptions.idl
+    animation/EffectTiming.idl
     animation/FillMode.idl
     animation/GetAnimationsOptions.idl
     animation/GlobalEventHandlers+CSSAnimations.idl

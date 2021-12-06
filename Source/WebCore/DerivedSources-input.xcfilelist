@@ -814,6 +814,9 @@ $(PROJECT_DIR)/animation/CSSTransition.idl
 $(PROJECT_DIR)/animation/CompositeOperation.idl
 $(PROJECT_DIR)/animation/CompositeOperationOrAuto.idl
 $(PROJECT_DIR)/animation/ComputedEffectTiming.idl
+$(PROJECT_DIR)/animation/CustomAnimationOptions.idl
+$(PROJECT_DIR)/animation/CustomEffect.idl
+$(PROJECT_DIR)/animation/CustomEffectCallback.idl
 $(PROJECT_DIR)/animation/Document+WebAnimations.idl
 $(PROJECT_DIR)/animation/DocumentOrShadowRoot+WebAnimations.idl
 $(PROJECT_DIR)/animation/DocumentTimeline.idl
