@@ -1,3 +1,16 @@
+2021-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] AppHighlights.AppHighlightCreateAndRestoreAndScroll is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=233828
+
+        Reviewed by Tim Horton.
+
+        This test began to sometimes fail on iOS 15 API test runners in EWS after enabling `APP_HIGHLIGHTS` in non-
+        internal builds. Make this test more robust by waiting for scrolling to the restored highlight.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAppHighlights.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-06  Alex Christensen  <achristensen@webkit.org>
 
         WKWebpagePreferences._activeContentRuleListActionPatterns should be an NSDictionary of identifier to allowed patterns
