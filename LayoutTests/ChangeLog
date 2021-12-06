@@ -1,3 +1,21 @@
+2021-12-06  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Support Cascade Layers in the Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=233208
+
+        Reviewed by Devin Rousso.
+
+        Add new test cases for `CSS.getMatchesStyleForNode` to make sure that layer groupings are correctly determined,
+        and that rules nested in `@layer` rules and `@import layer()`s are correctly represented and sorted by the order
+        they are applied to an element.
+
+        * inspector/css/getMatchedStylesForNode-expected.txt:
+        - Re-baseline to account for change in order of CSSGrouping properties in the protocol due to `text` now being
+        optional.
+        * inspector/css/getMatchedStylesForNodeLayerGrouping-expected.txt: Added.
+        * inspector/css/getMatchedStylesForNodeLayerGrouping.html: Added.
+        * inspector/css/resources/external-layers.css: Added.
+
 2021-12-06  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Add a way to run scripted animations

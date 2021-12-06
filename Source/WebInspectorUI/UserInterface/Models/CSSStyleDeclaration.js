@@ -470,7 +470,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     {
         let indentString = WI.indentString();
         let styleText = "";
-        let groupings = this.groupings.filter((grouping) => grouping.text !== "all");
+        let groupings = this.groupings.filter((grouping) => !grouping.isMedia || grouping.text !== "all");
         let groupingsCount = groupings.length;
 
         if (options.includeGroupingsAndSelectors) {
@@ -478,7 +478,10 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
                 if (options.multiline)
                     styleText += indentString.repeat(groupingsCount - i - 1);
 
-                styleText += groupings[i].prefix + " " + groupings[i].text + " {";
+                styleText += groupings[i].prefix;
+                if (groupings[i].text)
+                    styleText += " " + groupings[i].text;
+                styleText += " {";
 
                 if (options.multiline)
                     styleText += "\n";

@@ -56,6 +56,11 @@ MediaList& CSSImportRule::media() const
     return *m_mediaCSSOMWrapper;
 }
 
+const std::optional<CascadeLayerName>& CSSImportRule::cascadeLayerName() const
+{
+    return m_importRule.get().cascadeLayerName();
+}
+
 String CSSImportRule::cssText() const
 {
     if (auto queries = m_importRule.get().mediaQueries()) {

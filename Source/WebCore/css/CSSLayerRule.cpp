@@ -52,18 +52,10 @@ String CSSLayerRule::cssText() const
 
     StringBuilder result;
 
-    auto appendLayerName = [&](auto& name) {
-        for (auto& segment : name) {
-            result.append(segment);
-            if (&segment != &name.last())
-                result.append('.');
-        }
-    };
-
     if (layer.isStatement()) {
         result.append("@layer ");
         for (auto& name : layer.nameList()) {
-            appendLayerName(name);
+            result.append(stringFromCascadeLayerName(name));
             if (&name != &layer.nameList().last())
                 result.append(", ");
         }
@@ -72,13 +64,32 @@ String CSSLayerRule::cssText() const
     }
 
     result.append("@layer ");
-    if (!layer.name().isEmpty()) {
-        appendLayerName(layer.name());
-        result.append(' ');
-    }
+    if (auto name = layerName())
+        result.append(*name, " ");
     result.append("{\n");
     appendCSSTextForItems(result);
     result.append('}');
+    return result.toString();
+}
+
+std::optional<String> CSSLayerRule::layerName() const
+{
+    auto& layer = downcast<StyleRuleLayer>(groupRule());
+
+    if (!layer.isStatement() && !layer.name().isEmpty())
+        return stringFromCascadeLayerName(layer.name());
+    
+    return std::nullopt;
+}
+
+String CSSLayerRule::stringFromCascadeLayerName(const CascadeLayerName& name)
+{
+    StringBuilder result;
+    for (auto& segment : name) {
+        result.append(segment);
+        if (&segment != &name.last())
+            result.append('.');
+    }
     return result.toString();
 }
 

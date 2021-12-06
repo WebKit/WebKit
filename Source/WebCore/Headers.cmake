@@ -525,6 +525,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSRegisteredCustomProperty.h
     css/CSSRule.h
     css/CSSRuleList.h
+    css/CSSSelector.h
+    css/CSSSelectorList.h
     css/CSSStyleDeclaration.h
     css/CSSStyleRule.h
     css/CSSStyleSheet.h
@@ -551,6 +553,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/Rect.h
     css/StyleColor.h
     css/StyleProperties.h
+    css/StyleRule.h
     css/StyleRuleType.h
     css/StyleSheet.h
     css/StyleSheetContents.h
@@ -563,6 +566,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParserMode.h
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
+
+    cssjit/CompiledSelector.h
 
     display/DisplayTree.h
     display/DisplayTreeBuilder.h

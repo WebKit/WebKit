@@ -1,0 +1,15 @@
+@layer base, special;
+
+@supports(color: red) {
+    @layer special {
+        .imported {
+            color: darkslategray;
+        }
+    }
+}
+
+@layer base {
+    .imported {
+        color: mintcream;
+    }
+}

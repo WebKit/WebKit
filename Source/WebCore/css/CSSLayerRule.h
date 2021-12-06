@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CSSGroupingRule.h"
+#include "StyleRule.h"
 
 namespace WebCore {
 
@@ -40,6 +41,9 @@ public:
     static Ref<CSSLayerRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
 
     String cssText() const final;
+    std::optional<String> layerName() const;
+
+    static String stringFromCascadeLayerName(const CascadeLayerName&);
 
 private:
     CSSLayerRule(StyleRuleLayer&, CSSStyleSheet*);

@@ -1,3 +1,26 @@
+2021-12-06  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Support Cascade Layers in the Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=233208
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/CSSGrouping.js:
+        (WI.CSSGrouping):
+        (WI.CSSGrouping.prototype.get isLayer):
+        (WI.CSSGrouping.prototype.get prefix):
+        - Update `CSSGrouping` to support `@layer` rules, and make `text` optional for a grouping, since anonymous layers
+        will not have a name.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.generateFormattedText):
+        - Ensure that spacing remains correct and "null" isn't shown for groupings without text.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        - When merging layer groups, ensure that a "." is used as a separator, and that each group has a name (to
+        prevent having a hanging period or the "null" text appearing).
+
 2021-12-02  Devin Rousso  <drousso@apple.com>
 
         [css-values-4] Support `*vi` (inline) and `*vb` (block) viewport units
