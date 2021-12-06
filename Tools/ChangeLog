@@ -1,3 +1,14 @@
+2021-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Add trace points for generated momentum events
+        https://bugs.webkit.org/show_bug.cgi?id=233857
+
+        Reviewed by Tim Horton.
+
+        Add start/end points for synthetic momentum, and a trace point for each generated event.
+
+        * Tracing/SystemTracePoints.plist:
+
 2021-12-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Change WTR::AccessibilityUIElement::descriptionOfValue(id) to return a RetainPtr.

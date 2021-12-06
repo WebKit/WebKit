@@ -127,6 +127,9 @@ enum TracePointCode {
     RenderServerSnapshotEnd,
     TakeSnapshotStart,
     TakeSnapshotEnd,
+    SyntheticMomentumStart,
+    SyntheticMomentumEnd,
+    SyntheticMomentumEvent,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,

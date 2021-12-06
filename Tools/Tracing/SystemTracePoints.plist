@@ -596,6 +596,48 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Synthetic momentum</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12025</string>
+                 <key>CodeEnd</key>
+                 <string>12026</string>
+                 <key>ArgNamesEnd</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Initial Velocity X</string>
+                     <key>Arg2</key>
+                     <string>Initial Velocity Y</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Synthetic momentum event</string>
+                 <key>Type</key>
+                 <string>Level</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>12027</string>
+                 <key>ArgNames</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Phase</string>
+                     <key>Arg2</key>
+                     <string>Delta X</string>
+                     <key>Arg3</key>
+                     <string>Delta Y</string>
+                 </dict>
+                 <key>LevelArg</key>
+                 <string>Arg3</string>
+                 <key>LevelDataType</key>
+                 <string>UInt64</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>

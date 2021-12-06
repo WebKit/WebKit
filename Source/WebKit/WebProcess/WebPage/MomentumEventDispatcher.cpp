@@ -34,6 +34,7 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/Scrollbar.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebKit {
 
@@ -144,6 +145,8 @@ static float appKitScrollMultiplierForEvent(const WebWheelEvent& event)
 
 void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phase phase, WebCore::FloatSize delta)
 {
+    tracePoint(SyntheticMomentumEvent, static_cast<uint64_t>(phase), std::abs(delta.width()), std::abs(delta.height()));
+
     ASSERT(m_currentGesture.active);
     ASSERT(m_currentGesture.initiatingEvent);
 
@@ -182,6 +185,8 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
 
 void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier pageIdentifier, const WebWheelEvent& event)
 {
+    tracePoint(SyntheticMomentumStart);
+
     auto momentumStartInterval = event.ioHIDEventTimestamp() - m_lastEndedEventTimestamp;
 
     m_currentGesture.active = true;
@@ -223,6 +228,7 @@ void MomentumEventDispatcher::didEndMomentumPhase()
     stopDisplayLink();
 
     m_currentGesture = { };
+    tracePoint(SyntheticMomentumEnd);
 }
 
 void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentifier pageIdentifier, std::optional<ScrollingAccelerationCurve> curve)
