@@ -1,3 +1,16 @@
+2021-12-06  Jon Lee  <jonlee@apple.com>
+
+        Update GPU Process feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=232547
+        rdar://83905400
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Update features that are set when using `run-webkit-tests --use-gpu-process`.
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults): Turn off DOM Rendering on layout test bots for the time being.
+
 2021-12-06  Matt Gilligan  <matthew_gilligan@apple.com>
 
         [iOS] Allow WKWebView clients to override undoManager

@@ -361,17 +361,6 @@ CanvasColorSpaceEnabled:
     WebCore:
       default: false
 
-CaptureVideoInGPUProcessEnabled:
-  type: bool
-  humanReadableName: "GPU Process: Video Capture"
-  humanReadableDescription: "Enable video capture in GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: WebKit::defaultCaptureVideoInGPUProcessEnabled()
-
 ContactPickerAPIEnabled:
   type: bool
   humanReadableName: "Contact Picker API"
@@ -1372,27 +1361,16 @@ TransformStreamAPIEnabled:
     WebKit:
       default: true
 
-UseGPUProcessForCanvasRenderingEnabled:
+UseGPUProcessForDOMRenderingEnabled:
   type: bool
-  humanReadableName: "GPU Process: Canvas Rendering"
-  humanReadableDescription: "Enable canvas rendering in GPU Process"
+  humanReadableName: "GPU Process: DOM Rendering"
+  humanReadableDescription: "Enable DOM rendering in GPU Process"
   webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS) && !(PLATFORM(GTK) || PLATFORM(WPE))
+  condition: ENABLE(GPU_PROCESS)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: defaultUseGPUProcessForCanvasRenderingEnabled()
-
-UseGPUProcessForMediaEnabled:
-  type: bool
-  humanReadableName: "GPU Process: Media"
-  humanReadableDescription: "Do all media loading and playback in the GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: WebKit::defaultUseGPUProcessForMediaEnabled()
+      default: defaultUseGPUProcessForDOMRenderingEnabled()
 
 UseGPUProcessForWebGLEnabled:
   type: bool
@@ -1637,20 +1615,6 @@ WebRTCH265CodecEnabled:
       default: false
     WebKit:
       default: false
-    WebCore:
-      default: false
-
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-WebRTCPlatformCodecsInGPUProcessEnabled:
-  type: bool
-  humanReadableName: "WebRTC Platform Codecs in GPU Process"
-  humanReadableDescription: "Enable WebRTC Platform Codecs in GPU Process"
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: WebKit::defaultWebRTCCodecsInGPUProcess()
     WebCore:
       default: false
 

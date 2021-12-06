@@ -1,3 +1,16 @@
+2021-12-06  Jon Lee  <jonlee@apple.com>
+
+        Update GPU Process feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=232547
+        rdar://83905400
+
+        Reviewed by Wenson Hsieh.
+
+        Move features enabled by default to internal. DOM and WebGL are experimental.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-12-06  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Toggling the Settings -> Enabled LBSE flag has no immediate effect
