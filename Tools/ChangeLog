@@ -1,3 +1,17 @@
+2021-12-07  Lauro Moura  <lmoura@igalia.com>
+
+        [reporelaypy] Autoinstall missing lupa fakeredis dependency
+        https://bugs.webkit.org/show_bug.cgi?id=233934
+
+        Reviewed by Jonathan Bedard.
+
+        Using the same version as resultsdbpy. Avoids ImportErrors running the
+        webkitpy suite when they're not installed.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Add lupa and
+        bump version.
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+
 2021-12-07  Kyle Piddington  <kpiddington@apple.com>
 
         Roll ANGLE to include upstreamed Metal backend
