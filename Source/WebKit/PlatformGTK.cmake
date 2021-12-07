@@ -875,19 +875,9 @@ add_custom_command(
     COMMAND ln -n -s -f ${WEBKIT_DIR}/UIProcess/API/gtk ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2
 )
 add_custom_command(
-    OUTPUT ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitEnumTypes.h
-    DEPENDS ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitEnumTypes.h
-    COMMAND ln -n -s -f ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitEnumTypes.h ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitEnumTypes.h
-)
-add_custom_command(
-    OUTPUT ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitWebProcessEnumTypes.h
-    DEPENDS ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitWebProcessEnumTypes.h
-    COMMAND ln -n -s -f ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitWebProcessEnumTypes.h ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitWebProcessEnumTypes.h
-)
-add_custom_command(
-    OUTPUT ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitVersion.h
-    DEPENDS ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h
-    COMMAND ln -n -s -f ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitVersion.h
+    OUTPUT ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit2
+    DEPENDS ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit
+    COMMAND ln -n -s -f ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit2
 )
 add_custom_command(
     OUTPUT ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/webkit2
@@ -906,9 +896,7 @@ add_custom_command(
 )
 add_custom_target(WebKit-fake-api-headers
     DEPENDS ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2
-            ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitEnumTypes.h
-            ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitVersion.h
-            ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2/WebKitWebProcessEnumTypes.h
+            ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit2
             ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/webkit2
             ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension/webkit2
             ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension/webkitdom

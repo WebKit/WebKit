@@ -55,6 +55,12 @@ add_custom_command(
 )
 
 add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WPE_API_DIR}/webkit2
+    DEPENDS ${DERIVED_SOURCES_WPE_API_DIR}/webkit
+    COMMAND ln -n -s -f ${DERIVED_SOURCES_WPE_API_DIR}/webkit ${DERIVED_SOURCES_WPE_API_DIR}/webkit2
+)
+
+add_custom_command(
     OUTPUT ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
     DEPENDS ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe
     COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe

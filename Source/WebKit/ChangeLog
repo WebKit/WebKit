@@ -1,3 +1,23 @@
+2021-12-06  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r286535) [GTK] Fix clean builds after DerivedSources/WebKit2 move
+        https://bugs.webkit.org/show_bug.cgi?id=233881
+
+        Reviewed by Don Olmstead.
+
+        Build fix. Covered by existing tests
+
+        The previous approach of this patch created the links to the header
+        derived sources into the target webkit2/ folder, which in turn was a
+        link to <repo>/Source/WebKit/UIProcess/API/gtk. So it ended up
+        actually creating the links inside the Source directory.
+
+        This commit instead links a different webkit2/ folder from the
+        generated webkit folder for the WebKitGTK/WPE derived sources headers.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2021-12-06  Brady Eidson  <beidson@apple.com>
 
         webpushd/webpushtool debugging additions
