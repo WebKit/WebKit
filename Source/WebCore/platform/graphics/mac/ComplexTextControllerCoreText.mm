@@ -242,7 +242,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                         continue;
                     }
                     FontPlatformData runFontPlatformData(runCTFont, CTFontGetSize(runCTFont));
-                    runFont = FontCache::singleton().fontForPlatformData(runFontPlatformData).ptr();
+                    runFont = FontCache::forCurrentThread().fontForPlatformData(runFontPlatformData).ptr();
                 }
                 if (m_fallbackFonts && runFont != &m_font.primaryFont())
                     m_fallbackFonts->add(runFont);

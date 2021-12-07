@@ -37,6 +37,7 @@ class JSGlobalObject;
 
 namespace WebCore {
 
+class FontCache;
 class QualifiedNameCache;
 class ThreadTimers;
 
@@ -59,24 +60,28 @@ public:
 
     const CachedResourceRequestInitiators& cachedResourceRequestInitiators()
     {
+        ASSERT(!m_destroyed);
         if (UNLIKELY(!m_cachedResourceRequestInitiators))
             initializeCachedResourceRequestInitiators();
         return *m_cachedResourceRequestInitiators;
     }
     EventNames& eventNames()
     {
+        ASSERT(!m_destroyed);
         if (UNLIKELY(!m_eventNames))
             initializeEventNames();
         return *m_eventNames;
     }
     QualifiedNameCache& qualifiedNameCache()
     {
+        ASSERT(!m_destroyed);
         if (UNLIKELY(!m_qualifiedNameCache))
             initializeQualifiedNameCache();
         return *m_qualifiedNameCache;
     }
     const MIMETypeRegistryThreadGlobalData& mimeTypeRegistryThreadGlobalData()
     {
+        ASSERT(!m_destroyed);
         if (UNLIKELY(!m_MIMETypeRegistryThreadGlobalData))
             initializeMimeTypeRegistryThreadGlobalData();
         return *m_MIMETypeRegistryThreadGlobalData;
@@ -95,11 +100,22 @@ public:
     bool isInRemoveAllEventListeners() const { return m_isInRemoveAllEventListeners; }
     void setIsInRemoveAllEventListeners(bool value) { m_isInRemoveAllEventListeners = value; }
 
+    FontCache& fontCache()
+    {
+        ASSERT(!m_destroyed);
+        if (UNLIKELY(!m_fontCache))
+            initializeFontCache();
+        return *m_fontCache;
+    }
+
+    FontCache* fontCacheIfNotDestroyed() { return m_destroyed ? nullptr : &fontCache(); }
+
 private:
     WEBCORE_EXPORT void initializeCachedResourceRequestInitiators();
     WEBCORE_EXPORT void initializeEventNames();
     WEBCORE_EXPORT void initializeQualifiedNameCache();
     WEBCORE_EXPORT void initializeMimeTypeRegistryThreadGlobalData();
+    WEBCORE_EXPORT void initializeFontCache();
 
     std::unique_ptr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
     std::unique_ptr<EventNames> m_eventNames;
@@ -108,12 +124,14 @@ private:
     JSC::JSGlobalObject* m_currentState { nullptr };
     std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
     std::unique_ptr<MIMETypeRegistryThreadGlobalData> m_MIMETypeRegistryThreadGlobalData;
+    std::unique_ptr<FontCache> m_fontCache;
 
 #ifndef NDEBUG
     bool m_isMainThread;
 #endif
 
     bool m_isInRemoveAllEventListeners { false };
+    bool m_destroyed { false };
 
     WEBCORE_EXPORT friend ThreadGlobalData& threadGlobalData();
 };

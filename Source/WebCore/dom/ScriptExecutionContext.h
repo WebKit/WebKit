@@ -66,7 +66,6 @@ class DatabaseContext;
 class EventQueue;
 class EventLoopTaskGroup;
 class EventTarget;
-class FontCache;
 class FontLoadRequest;
 class MessagePort;
 class PermissionController;
@@ -168,7 +167,6 @@ public:
 
     virtual void didLoadResourceSynchronously(const URL&);
 
-    virtual FontCache& fontCache();
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
     virtual CSSValuePool& cssValuePool();
     virtual std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);

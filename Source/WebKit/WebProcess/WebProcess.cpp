@@ -868,8 +868,9 @@ bool WebProcess::shouldTerminate()
 void WebProcess::terminate()
 {
 #ifndef NDEBUG
+    // These are done in an attempt to reduce LEAK output.
     GCController::singleton().garbageCollectNow();
-    FontCache::singleton().invalidate();
+    FontCache::forCurrentThread().invalidate();
     MemoryCache::singleton().setDisabled(true);
 #endif
 

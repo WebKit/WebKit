@@ -131,7 +131,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
 
     RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
-    FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
+    // FIXME: Call setShouldMockBoldSystemFontForAccessibility() on all workers.
+    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
 
 #if ENABLE(WEB_AUDIO)
     AudioContext::setDefaultSampleRateForTesting(std::nullopt);
@@ -570,7 +571,8 @@ ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(
     if (!m_page)
         return Exception { InvalidAccessError };
     RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(requires);
-    FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(requires);
+    // FIXME: Call setShouldMockBoldSystemFontForAccessibility() on all workers.
+    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(requires);
     return { };
 }
 

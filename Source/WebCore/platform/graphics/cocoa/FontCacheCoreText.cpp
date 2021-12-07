@@ -757,7 +757,7 @@ static void invalidateFontCache();
 
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
-    ASSERT_UNUSED(observer, observer == &FontCache::singleton());
+    ASSERT_UNUSED(observer, isMainThread() && observer == &FontCache::forCurrentThread());
 
     invalidateFontCache();
 }
@@ -1249,13 +1249,16 @@ static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSel
 static void invalidateFontCache()
 {
     ensureOnMainThread([] {
+        // FIXME: Workers need to access SystemFontDatabaseCoreText.
         SystemFontDatabaseCoreText::singleton().clear();
+        // FIXME: Workers need to access FontFamilySpecificationCoreTextCache.
         clearFontFamilySpecificationCoreTextCache();
 
+        // FIXME: Workers need to access FontDatabase.
         FontDatabase::singletonAllowingUserInstalledFonts().clear();
         FontDatabase::singletonDisallowingUserInstalledFonts().clear();
 
-        FontCache::singleton().invalidate();
+        FontCache::invalidateAllFontCaches();
     });
 }
 
@@ -1287,7 +1290,7 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
 
     if (family.startsWith("UICTFontTextStyle")) {
         const auto& request = fontDescription.fontSelectionRequest();
-        CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) || FontCache::singleton().shouldMockBoldSystemFontForAccessibility() ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
+        CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) || FontCache::forCurrentThread().shouldMockBoldSystemFontForAccessibility() ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
         auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(family.string().createCFString().get(), RenderThemeCocoa::singleton().contentSizeCategory(), fontDescription.computedLocale().string().createCFString().get()));
         if (traits)
             descriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
@@ -1696,7 +1699,7 @@ void FontCache::prewarmGlobally()
 
     FontCache::PrewarmInformation prewarmInfo;
     prewarmInfo.seenFamilies = WTFMove(families);
-    FontCache::singleton().prewarm(prewarmInfo);
+    FontCache::forCurrentThread().prewarm(prewarmInfo);
 #endif
 }
 

@@ -1852,7 +1852,7 @@ ExceptionOr<void> Internals::setMarkedTextMatchesAreHighlighted(bool flag)
 
 void Internals::invalidateFontCache()
 {
-    FontCache::singleton().invalidate();
+    FontCache::invalidateAllFontCaches();
 }
 
 void Internals::setFontSmoothingEnabled(bool enabled)

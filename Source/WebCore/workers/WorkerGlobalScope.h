@@ -139,7 +139,6 @@ public:
 
     CSSValuePool& cssValuePool() final;
     CSSFontSelector* cssFontSelector() final;
-    FontCache& fontCache() final;
     Ref<FontFaceSet> fonts();
     std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
@@ -221,7 +220,6 @@ private:
 #endif
     std::unique_ptr<CSSValuePool> m_cssValuePool;
     RefPtr<CSSFontSelector> m_cssFontSelector;
-    RefPtr<FontCache> m_fontCache;
     ReferrerPolicy m_referrerPolicy;
     Settings::Values m_settingsValues;
     WorkerType m_workerType;

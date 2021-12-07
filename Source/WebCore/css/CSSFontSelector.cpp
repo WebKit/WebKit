@@ -65,7 +65,6 @@ static unsigned fontSelectorId;
 CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_context(context)
-    , m_fontCache(context.fontCache())
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
     , m_fontModifiedObserver([this] { fontModified(); })
     , m_uniqueId(++fontSelectorId)
@@ -81,7 +80,7 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
             m_fontFamilyNames.uncheckedAppend(familyName);
     }
 
-    m_fontCache->addClient(*this);
+    FontCache::forCurrentThread().addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
 
@@ -93,7 +92,9 @@ CSSFontSelector::~CSSFontSelector()
     LOG(Fonts, "CSSFontSelector %p dtor", this);
 
     clearFonts();
-    m_fontCache->removeClient(*this);
+
+    if (auto fontCache = FontCache::forCurrentThreadIfNotDestroyed())
+        fontCache->removeClient(*this);
 }
 
 FontFaceSet* CSSFontSelector::fontFaceSetIfExists()
@@ -359,7 +360,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     if (!resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto font = m_fontCache->fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues });
+    auto font = FontCache::forCurrentThread().fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues });
     if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
     return FontRanges { WTFMove(font) };
@@ -390,7 +391,7 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     if (!m_context->settingsValues().fontFallbackPrefersPictographs)
         return nullptr;
     auto& pictographFontFamily = m_context->settingsValues().fontGenericFamilies.pictographFontFamily();
-    auto font = m_fontCache->fontForFamily(fontDescription, pictographFontFamily);
+    auto font = FontCache::forCurrentThread().fontForFamily(fontDescription, pictographFontFamily);
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled() && is<Document>(m_context))
         ResourceLoadObserver::shared().logFontLoad(downcast<Document>(*m_context), pictographFontFamily, !!font);
 

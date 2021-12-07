@@ -37,7 +37,6 @@
 #include "DatabaseContext.h"
 #include "Document.h"
 #include "ErrorEvent.h"
-#include "FontCache.h"
 #include "FontLoadRequest.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
@@ -221,11 +220,6 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
 
 void ScriptExecutionContext::didLoadResourceSynchronously(const URL&)
 {
-}
-
-FontCache& ScriptExecutionContext::fontCache()
-{
-    return FontCache::singleton();
 }
 
 CSSValuePool& ScriptExecutionContext::cssValuePool()

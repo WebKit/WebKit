@@ -93,7 +93,7 @@ RefPtr<Font> WorkerFontLoadRequest::createFont(const FontDescription& fontDescri
 {
     ASSERT(m_fontCustomPlatformData);
     ASSERT(m_context);
-    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote, &m_context->fontCache());
+    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote);
 }
 
 void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)

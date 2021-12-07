@@ -187,7 +187,7 @@ void CSSFontFaceSource::load(Document* document)
             fontDescription.setOneFamily(m_familyNameOrURI);
             fontDescription.setComputedSize(1);
             fontDescription.setShouldAllowUserInstalledFonts(m_face.allowUserInstalledFonts());
-            success = FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, { }, true);
+            success = FontCache::forCurrentThread().fontForFamily(fontDescription, m_familyNameOrURI, { }, true);
             if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
                 ResourceLoadObserver::shared().logFontLoad(*document, m_familyNameOrURI.string(), success);
         }
@@ -210,7 +210,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
         // We're local. Just return a Font from the normal cache.
         // We don't want to check alternate font family names here, so pass true as the checkingAlternateName parameter.
-        return FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, fontCreationContext, true);
+        return FontCache::forCurrentThread().fontForFamily(fontDescription, m_familyNameOrURI, fontCreationContext, true);
     }
 
     if (m_fontRequest) {

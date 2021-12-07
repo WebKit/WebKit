@@ -106,7 +106,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 
     ASSERT(fontPlatformData);
 
-    return FontRanges(FontCache::singleton().fontForPlatformData(*fontPlatformData));
+    return FontRanges(FontCache::forCurrentThread().fontForPlatformData(*fontPlatformData));
 }
 
 }

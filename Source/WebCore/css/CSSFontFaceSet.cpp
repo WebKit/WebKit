@@ -119,7 +119,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
     if (!m_owningFontSelector->scriptExecutionContext())
         return;
     AllowUserInstalledFonts allowUserInstalledFonts = m_owningFontSelector->scriptExecutionContext()->settingsValues().shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
-    Vector<FontSelectionCapabilities> capabilities = m_owningFontSelector->scriptExecutionContext()->fontCache().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
+    Vector<FontSelectionCapabilities> capabilities = FontCache::forCurrentThread().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
     if (capabilities.isEmpty())
         return;
 

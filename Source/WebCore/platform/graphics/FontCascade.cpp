@@ -136,7 +136,7 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 {
     if (!m_fonts)
         return false;
-    if (m_fonts->generation() != fontSelector.fontCache().generation())
+    if (m_fonts->generation() != FontCache::forCurrentThread().generation())
         return false;
     if (m_fonts->fontSelectorVersion() != fontSelector.version())
         return false;
@@ -154,7 +154,7 @@ void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
-    FontCache::fontCacheFallingBackToSingleton(fontSelector).updateFontCascade(*this, WTFMove(fontSelector));
+    FontCache::forCurrentThread().updateFontCascade(*this, WTFMove(fontSelector));
 }
 
 GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const

@@ -81,11 +81,8 @@ public:
     enum class Interstitial : bool { No, Yes };
     enum class Visibility : bool { Visible, Invisible };
     enum class OrientationFallback : bool { No, Yes };
-    WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, Interstitial = Interstitial::No,
-        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    static Ref<Font> create(const FontPlatformData&, Origin, FontCache* fontCacheForVerticalData, Interstitial = Interstitial::No,
-        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic, FontCache* = nullptr);
+    WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, Interstitial = Interstitial::No, Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
+    WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
 
     WEBCORE_EXPORT ~Font();
 
@@ -164,7 +161,7 @@ public:
     bool supportsCodePoint(UChar32) const;
     bool platformSupportsCodePoint(UChar32, std::optional<UChar32> variation = std::nullopt) const;
 
-    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont, FontCache&) const;
+    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont) const;
 
     const GlyphPage* glyphPage(unsigned pageNumber) const;
 
@@ -209,7 +206,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, std::optional<RenderingResourceIdentifier>, FontCache*);
+    WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, std::optional<RenderingResourceIdentifier>);
 
     void platformInit();
     void platformGlyphInit();

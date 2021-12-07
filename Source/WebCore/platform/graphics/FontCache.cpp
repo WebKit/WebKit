@@ -35,7 +35,9 @@
 #include "FontPlatformData.h"
 #include "FontSelector.h"
 #include "Logging.h"
+#include "ThreadGlobalData.h"
 #include "WebKitFontFamilyNames.h"
+#include "WorkerOrWorkletThread.h"
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -148,16 +150,14 @@ struct FontCache::FontDataCaches {
 #endif
 };
 
-Ref<FontCache> FontCache::create()
+FontCache& FontCache::forCurrentThread()
 {
-    ASSERT(!isMainThread());
-    return adoptRef(*new FontCache());
+    return threadGlobalData().fontCache();
 }
 
-FontCache& FontCache::singleton()
+FontCache* FontCache::forCurrentThreadIfNotDestroyed()
 {
-    static MainThreadNeverDestroyed<FontCache> globalFontCache;
-    return globalFontCache;
+    return threadGlobalData().fontCacheIfNotDestroyed();
 }
 
 FontCache::FontCache()
@@ -281,7 +281,7 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 #endif
 
     auto addResult = m_fontDataCaches->data.ensure(platformData, [&] {
-        return Font::create(platformData, Font::Origin::Local, this);
+        return Font::create(platformData, Font::Origin::Local);
     });
 
     ASSERT(addResult.iterator->value->platformData() == platformData);
@@ -487,6 +487,14 @@ void FontCache::invalidate()
         client->fontCacheInvalidated();
 
     purgeInactiveFontData();
+}
+
+void FontCache::invalidateAllFontCaches()
+{
+    ASSERT(isMainThread());
+
+    // FIXME: Invalidate FontCaches in workers too.
+    FontCache::forCurrentThread().invalidate();
 }
 
 #if !PLATFORM(COCOA)

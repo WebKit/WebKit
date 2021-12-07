@@ -34,7 +34,6 @@
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
-#include "FontCache.h"
 #include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
 #include "IDBConnectionProxy.h"
@@ -68,6 +67,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
@@ -528,13 +528,6 @@ CSSFontSelector* WorkerGlobalScope::cssFontSelector()
     if (!m_cssFontSelector)
         m_cssFontSelector = CSSFontSelector::create(*this);
     return m_cssFontSelector.get();
-}
-
-FontCache& WorkerGlobalScope::fontCache()
-{
-    if (!m_fontCache)
-        m_fontCache = FontCache::create();
-    return *m_fontCache;
 }
 
 Ref<FontFaceSet> WorkerGlobalScope::fonts()

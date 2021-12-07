@@ -72,7 +72,6 @@ public:
     void addFontFaceRule(StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);
     void addFontPaletteValuesRule(StyleRuleFontPaletteValues&);
 
-    FontCache& fontCache() const final { return m_fontCache.get(); }
     void fontCacheInvalidated() final;
 
     bool isEmpty() const;
@@ -123,7 +122,6 @@ private:
     Vector<PendingFontFaceRule> m_stagingArea;
 
     WeakPtr<ScriptExecutionContext> m_context;
-    Ref<FontCache> m_fontCache;
     RefPtr<FontFaceSet> m_fontFaceSet;
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;

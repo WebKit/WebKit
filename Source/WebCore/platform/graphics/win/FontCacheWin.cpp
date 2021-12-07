@@ -146,7 +146,7 @@ static const Vector<String>* getLinkedFonts(String& family)
     return result;
 }
 
-static const Vector<DWORD, 4>& getCJKCodePageMasks()
+static const Vector<DWORD, 4>& getCJKCodePageMasks(FontCache& fontCache)
 {
     // The default order in which we look for a font for a CJK character. If the user's default code page is
     // one of these, we will use it first.
@@ -161,7 +161,7 @@ static const Vector<DWORD, 4>& getCJKCodePageMasks()
     static bool initialized;
     if (!initialized) {
         initialized = true;
-        IMLangFontLinkType* langFontLink = FontCache::singleton().getFontLinkInterface();
+        IMLangFontLinkType* langFontLink = fontCache.getFontLinkInterface();
         if (!langFontLink)
             return codePageMasks;
 
@@ -257,7 +257,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
                 // The CJK character may belong to multiple code pages. We want to
                 // do font linking against a single one of them, preferring the default
                 // code page for the user's locale.
-                const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks();
+                const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks(*this);
                 unsigned numCodePages = CJKCodePageMasks.size();
                 for (unsigned i = 0; i < numCodePages && !hfont; ++i) {
                     hfont = createMLangFont(langFontLink, hdc, CJKCodePageMasks[i]);

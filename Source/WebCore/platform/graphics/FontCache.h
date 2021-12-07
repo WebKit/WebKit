@@ -280,15 +280,13 @@ struct FontCascadeCacheKeyHashTraits : HashTraits<FontCascadeCacheKey> {
 
 using FontCascadeCache = HashMap<FontCascadeCacheKey, std::unique_ptr<FontCascadeCacheEntry>, FontCascadeCacheKeyHash, FontCascadeCacheKeyHashTraits>;
 
-class FontCache : public RefCounted<FontCache> {
-    friend class NeverDestroyed<FontCache, MainThreadAccessTraits>;
-
+class FontCache {
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<FontCache> create();
-    WEBCORE_EXPORT static FontCache& singleton();
-    static FontCache& fontCacheFallingBackToSingleton(RefPtr<FontSelector>);
+    WEBCORE_EXPORT static FontCache& forCurrentThread();
+    static FontCache* forCurrentThreadIfNotDestroyed();
 
+    FontCache();
     ~FontCache();
 
     // These methods are implemented by the platform.
@@ -324,6 +322,7 @@ public:
 
     unsigned short generation() const { return m_generation; }
     WEBCORE_EXPORT void invalidate();
+    WEBCORE_EXPORT static void invalidateAllFontCaches();
 
     WEBCORE_EXPORT size_t fontCount();
     WEBCORE_EXPORT size_t inactiveFontCount();
@@ -359,11 +358,9 @@ public:
     };
     PrewarmInformation collectPrewarmInformation() const;
     void prewarm(const PrewarmInformation&);
-    void prewarmGlobally();
+    static void prewarmGlobally();
 
 private:
-    FontCache();
-
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
     void pruneUnreferencedEntriesFromFontCascadeCache();
     void pruneSystemFallbackFonts();
@@ -443,11 +440,6 @@ std::optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::deco
         return { };
 
     return prewarmInformation;
-}
-
-inline FontCache& FontCache::fontCacheFallingBackToSingleton(RefPtr<FontSelector> fontSelector)
-{
-    return fontSelector ? fontSelector->fontCache() : FontCache::singleton();
 }
 
 }

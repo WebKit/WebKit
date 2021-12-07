@@ -57,7 +57,10 @@ namespace WebCore {
 
 static void invalidateAfterGenericFamilyChange(Page* page)
 {
-    FontCache::singleton().invalidateFontCascadeCache();
+    // No need to invalidate FontCascadeCaches in worker threads, since workers
+    // do not respond to changes in Settings values.
+    FontCache::forCurrentThread().invalidateFontCascadeCache();
+
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
 }
