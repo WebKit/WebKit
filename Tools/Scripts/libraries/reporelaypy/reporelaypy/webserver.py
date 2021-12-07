@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,44 +20,34 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
+import os
 
+autoinstall_path = os.environ.get('AUTOINSTALL_PATH')
+if autoinstall_path:
+    from webkitcorepy import AutoInstall
+    AutoInstall.set_directory(autoinstall_path)
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+from flask import Flask, current_app, json as fjson
+from reporelaypy import Checkout, CheckoutRoute, Database, Redirector
 
+app = Flask(__name__)
 
-setup(
-    name='webkitflaskpy',
-    version='0.3.0',
-    description="Library supporting the WebKit Team's flask based web services.",
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Framework :: Flask',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3 :: Only',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Software Development :: Testing',
-    ],
-    keywords='web javascript webkit',
-    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitflaskpy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitflaskpy',
-    ],
-    install_requires=[
-        'Flask',
-        'Flask-Cors',
-        'gunicorn',
-        'webkitcorepy',
-    ],
-    include_package_data=True,
-    zip_safe=False,
+database = Database()
+checkout = Checkout.from_json(os.environ.get('CHECKOUT', '{}'))
+checkout_routes = CheckoutRoute(
+    checkout, redirectors=Redirector.from_json(os.environ.get('REDIRECTORS', '[]')),
+    import_name=__name__, database=database,
 )
+
+
+@app.route('/__health')
+def health():
+    return 'ready' if checkout.repository else 'cloning'
+
+
+app.register_blueprint(checkout_routes)
+
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

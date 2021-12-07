@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,8 +29,8 @@ def readme():
 
 
 setup(
-    name='resultsdbpy',
-    version='3.1.6',
+    name='reporelaypy',
+    version='0.1.0',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -42,30 +42,21 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Software Development :: Testing',
+        'Topic :: Software Development :: Version Control :: Git',
     ],
-    keywords='database history results testing webkit',
-    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/resultsdbpy',
+    keywords='git hook mirror webkit',
+    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/reporelaypy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',
     packages=[
-        'resultsdbpy',
-        'resultsdbpy.controller',
-        'resultsdbpy.example',
-        'resultsdbpy.flask_support',
-        'resultsdbpy.model',
-        'resultsdbpy.view',
+        'reporelaypy',
+        'reporelaypy.test',
     ],
     install_requires=[
-        'boto3',
-        'cassandra-driver',
         'fakeredis',
-        'lupa',
-        'pycryptodome',
         'redis',
         'xmltodict',
-        'selenium',
         'webkitcorepy',
         'webkitscmpy',
         'webkitflaskpy',

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,44 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
+import json
+
+from flask.wrappers import Response as FlaskResponse
 
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+class Response(FlaskResponse):
+    @property
+    def text(self):
+        return self.data.decode('utf-8')
 
+    @property
+    def content(self):
+        return self.data
 
-setup(
-    name='webkitflaskpy',
-    version='0.3.0',
-    description="Library supporting the WebKit Team's flask based web services.",
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Framework :: Flask',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3 :: Only',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Software Development :: Testing',
-    ],
-    keywords='web javascript webkit',
-    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitflaskpy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitflaskpy',
-    ],
-    install_requires=[
-        'Flask',
-        'Flask-Cors',
-        'gunicorn',
-        'webkitcorepy',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-)
+    def json(self):
+        return json.loads(self.text)

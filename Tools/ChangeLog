@@ -1,3 +1,48 @@
+2021-12-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [reporelaypy] Add implementation of commits.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=233734
+        <rdar://problem/85945101>
+
+        Reviewed by Dewei Zhu.
+
+        As commits.webkit.org becomes more important to WebKit development, we need to apply
+        our normal robust testing and review to the code backing it.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Add entrypoint to library.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkout.py: Added.
+        (Checkout): Abstraction managing local repository checkout.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkoutroute.py: Added.
+        (Redirector): Generates redirects for certain SCM services.
+        (CheckoutRoute): http routes returning information based on a checkout.
+        * Scripts/libraries/reporelaypy/reporelaypy/database.py: Added.
+        (Database): A connection to a true Redis or TinyRedis database.
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/checkout_unittest.py:
+        (CheckoutUnittest):
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/checkoutroute_unittest.py: Added.
+        (RedirectorUnittest):
+        (CheckoutRouteUnittest):
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/database_unittest.py: Added.
+        (DatabaseUnittest):
+        * Scripts/libraries/reporelaypy/reporelaypy/webserver.py: Copied from Tools/Scripts/libraries/webkitflaskpy/setup.py.
+        (health):
+        * Scripts/libraries/reporelaypy/run: Added.
+        * Scripts/libraries/reporelaypy/setup.py: Added.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/flask_support/flask_testcase.py:
+        (FlaskTestCase.run_with_mock_webserver.decorator.real_method):
+        (FlaskRequestsResponse): Moved to webkitflaskpy.
+        * Scripts/libraries/webkitflaskpy/setup.py: Bump version, update library description.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/mock_app.py: Added.
+        (mock_app): Setup a flask app for testing.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/response.py: Added.
+        (Response): Move FlaskRequestsResponse to more generic location.
+        * Scripts/webkitpy/__init__.py: Include reporelaypy for testing.
+        * Scripts/webkitpy/test/main.py:
+        (main): Include reporelaypy for testing.
+        (Tester._run_tests): Ditto.
+
 2021-12-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r286507): [macOS] Many file system access layout tests became flaky failures
