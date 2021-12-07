@@ -55,7 +55,8 @@ CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&& se
     m_selectorArray = makeUniqueArray<CSSSelector>(flattenedSize);
     size_t arrayIndex = 0;
     for (size_t i = 0; i < selectorVector.size(); ++i) {
-        CSSParserSelector* current = selectorVector[i].get();
+        CSSParserSelector* first = selectorVector[i].get();
+        CSSParserSelector* current = first;
         while (current) {
             {
                 // Move item from the parser selector vector into m_selectorArray without invoking destructor (Ugh.)
@@ -65,6 +66,8 @@ CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&& se
                 // Free the underlying memory without invoking the destructor.
                 operator delete (currentSelector);
             }
+            if (current != first)
+                m_selectorArray[arrayIndex].setNotFirstInTagHistory();
             current = current->tagHistory();
             ASSERT(!m_selectorArray[arrayIndex].isLastInSelectorList());
             if (current)

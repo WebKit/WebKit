@@ -56,6 +56,7 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     , m_match(Tag)
     , m_pseudoType(0)
     , m_isLastInSelectorList(false)
+    , m_isFirstInTagHistory(true)
     , m_isLastInTagHistory(true)
     , m_hasRareData(false)
     , m_hasNameWithCase(false)
@@ -286,6 +287,18 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
         return PseudoElementUnknown;
 
     return type;
+}
+
+const CSSSelector* CSSSelector::firstInCompound() const
+{
+    auto* selector = this;
+    while (!selector->isFirstInTagHistory()) {
+        auto* previousSelector = selector - 1;
+        if (previousSelector->relation() != Subselector)
+            break;
+        selector = previousSelector;
+    }
+    return selector;
 }
 
 bool CSSSelector::operator==(const CSSSelector& other) const

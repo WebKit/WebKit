@@ -74,6 +74,8 @@ struct RuleFeatureWithInvalidationSelector : public RuleFeature {
     const CSSSelector* invalidationSelector { nullptr };
 };
 
+using PseudoClassInvalidationKey = std::tuple<unsigned, uint8_t, AtomString>;
+
 using RuleFeatureVector = Vector<RuleFeature>;
 
 struct RuleFeatureSet {
@@ -98,10 +100,11 @@ struct RuleFeatureSet {
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
-    HashMap<CSSSelector::PseudoClassType, std::unique_ptr<RuleFeatureVector>, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassRules;
+    HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassesAffectingHost;
+    HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassTypes;
 
     std::array<bool, matchElementCount> usedMatchElements { };
 
@@ -116,13 +119,21 @@ private:
         Vector<std::pair<AtomString, MatchElement>, 32> ids;
         Vector<std::pair<AtomString, MatchElement>, 32> classes;
         Vector<std::pair<const CSSSelector*, MatchElement>, 32> attributes;
-        Vector<std::pair<CSSSelector::PseudoClassType, MatchElement>, 32> pseudoClasses;
+        Vector<std::pair<const CSSSelector*, MatchElement>, 32> pseudoClasses;
     };
     void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject);
 };
 
 bool isHasPseudoClassMatchElement(MatchElement);
 MatchElement computeHasPseudoClassMatchElement(const CSSSelector&);
+
+enum class InvalidationKeyType : uint8_t { Universal = 1, Class, Id, Tag };
+PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClassType, InvalidationKeyType, const AtomString& = starAtom());
+
+inline bool isUniversalInvalidation(const PseudoClassInvalidationKey& key)
+{
+    return static_cast<InvalidationKeyType>(std::get<1>(key)) == InvalidationKeyType::Universal;
+}
 
 } // namespace Style
 } // namespace WebCore

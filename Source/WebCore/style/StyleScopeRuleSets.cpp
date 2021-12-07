@@ -295,9 +295,9 @@ const Vector<InvalidationRuleSet>* ScopeRuleSets::attributeInvalidationRuleSets(
     return ensureInvalidationRuleSets(attributeName, m_attributeInvalidationRuleSets, m_features.attributeRules);
 }
 
-const Vector<InvalidationRuleSet>* ScopeRuleSets::pseudoClassInvalidationRuleSets(CSSSelector::PseudoClassType pseudoClass) const
+const Vector<InvalidationRuleSet>* ScopeRuleSets::pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey& pseudoClassKey) const
 {
-    return ensureInvalidationRuleSets(pseudoClass, m_pseudoClassInvalidationRuleSets, m_features.pseudoClassRules);
+    return ensureInvalidationRuleSets(pseudoClassKey, m_pseudoClassInvalidationRuleSets, m_features.pseudoClassRules);
 }
 
 bool ScopeRuleSets::hasComplexSelectorsForStyleAttribute() const

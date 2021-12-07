@@ -40,6 +40,7 @@ public:
 
 private:
     void computeInvalidation(CSSSelector::PseudoClassType, Style::InvalidationScope);
+    void collectRuleSets(const PseudoClassInvalidationKey&, InvalidationScope);
     void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;

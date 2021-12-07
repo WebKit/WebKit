@@ -320,21 +320,6 @@ static bool isUserActionPseudoClass(CSSSelector::PseudoClassType pseudo)
     }
 }
 
-static bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClassType pseudo)
-{
-    switch (pseudo) {
-    case CSSSelector::PseudoClassIs:
-    case CSSSelector::PseudoClassWhere:
-    case CSSSelector::PseudoClassNot:
-    case CSSSelector::PseudoClassAny:
-    case CSSSelector::PseudoClassMatches:
-    case CSSSelector::PseudoClassHas:
-        return true;
-    default:
-        return false;
-    }
-}
-
 static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClassType pseudoClass, CSSSelector::PseudoElementType compoundPseudoElement)
 {
     // Validity of these is determined by their content.

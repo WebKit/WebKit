@@ -67,7 +67,7 @@ public:
     const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomString&) const;
-    const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(CSSSelector::PseudoClassType) const;
+    const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
 
     const Vector<InvalidationRuleSet>* invalidationRuleSetsForChildChange(const Element&);
 
@@ -106,7 +106,7 @@ private:
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
-    mutable HashMap<CSSSelector::PseudoClassType, std::unique_ptr<Vector<InvalidationRuleSet>>, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> m_pseudoClassInvalidationRuleSets;
+    mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
 
     mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
 

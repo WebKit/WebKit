@@ -226,8 +226,10 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             default:
                 break;
             }
-        } else if (selector->match() == CSSSelector::PseudoClass)
-            selectorFeatures.pseudoClasses.append(std::make_pair(selector->pseudoClassType(), matchElement));
+        } else if (selector->match() == CSSSelector::PseudoClass) {
+            if (!isLogicalCombinationPseudoClass(selector->pseudoClassType()))
+                selectorFeatures.pseudoClasses.append(std::make_pair(selector, matchElement));
+        }
 
         if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
             selectorFeatures.hasSiblingSelector = true;
@@ -246,6 +248,46 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
         selector = selector->tagHistory();
     } while (selector);
 }
+
+PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClassType pseudoClass, InvalidationKeyType keyType, const AtomString& keyString)
+{
+    ASSERT(keyType != InvalidationKeyType::Universal || keyString == starAtom());
+    return {
+        pseudoClass,
+        static_cast<uint8_t>(keyType),
+        keyString
+    };
+};
+
+static PseudoClassInvalidationKey makePseudoClassInvalidationKey(const CSSSelector& selector)
+{
+    ASSERT(selector.match() == CSSSelector::PseudoClass);
+
+    auto pseudoClassType = selector.pseudoClassType();
+
+    AtomString className;
+    AtomString tagName;
+    for (auto* simpleSelector = selector.firstInCompound(); simpleSelector; simpleSelector = simpleSelector->tagHistory()) {
+        if (simpleSelector->match() == CSSSelector::Id)
+            return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Id, simpleSelector->value());
+
+        if (simpleSelector->match() == CSSSelector::Class && className.isNull())
+            className = simpleSelector->value();
+
+        if (simpleSelector->match() == CSSSelector::Tag)
+            tagName = simpleSelector->tagLowercaseLocalName();
+
+        if (simpleSelector->relation() != CSSSelector::Subselector)
+            break;
+    }
+    if (!className.isEmpty())
+        return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Class, className);
+
+    if (!tagName.isEmpty() && tagName != starAtom())
+        return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Tag, tagName);
+
+    return makePseudoClassInvalidationKey(selector.pseudoClassType(), InvalidationKeyType::Universal);
+};
 
 void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 {
@@ -287,7 +329,19 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
         setUsesMatchElement(matchElement);
     }
 
-    addToMap(pseudoClassRules, selectorFeatures.pseudoClasses, &pseudoClassesAffectingHost);
+    for (auto& selectorAndMatch : selectorFeatures.pseudoClasses) {
+        auto* selector = selectorAndMatch.first;
+        auto matchElement = selectorAndMatch.second;
+        pseudoClassRules.ensure(makePseudoClassInvalidationKey(*selector), [] {
+            return makeUnique<Vector<RuleFeature>>();
+        }).iterator->value->append({ ruleData, matchElement });
+
+        if (matchElement == MatchElement::Host)
+            pseudoClassesAffectingHost.add(selector->pseudoClassType());
+        pseudoClassTypes.add(selector->pseudoClassType());
+
+        setUsesMatchElement(matchElement);
+    }
 }
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
@@ -319,6 +373,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 
     addMap(pseudoClassRules, other.pseudoClassRules);
     pseudoClassesAffectingHost.add(other.pseudoClassesAffectingHost.begin(), other.pseudoClassesAffectingHost.end());
+    pseudoClassTypes.add(other.pseudoClassTypes.begin(), other.pseudoClassTypes.end());
 
     for (size_t i = 0; i < usedMatchElements.size(); ++i)
         usedMatchElements[i] = usedMatchElements[i] || other.usedMatchElements[i];
@@ -351,6 +406,7 @@ void RuleFeatureSet::clear()
     attributesAffectingHost.clear();
     pseudoClassRules.clear();
     pseudoClassesAffectingHost.clear();
+    pseudoClassTypes.clear();
     usesFirstLineRules = false;
     usesFirstLetterRules = false;
 }
