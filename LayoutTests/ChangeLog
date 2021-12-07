@@ -1,3 +1,12 @@
+2021-12-06  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Small gardening
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-12-06  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK][WPE] Mathml asserts with invisible operators

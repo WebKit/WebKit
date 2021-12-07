@@ -792,6 +792,8 @@ imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-x
 
 webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
 
+webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
