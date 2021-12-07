@@ -1,3 +1,14 @@
+2021-12-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [reporelaypy] Add implementation of commits.webkit.org (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=233734
+        <rdar://problem/85945101>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version, add sortedcontainers dependency.
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+
 2021-12-07  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Cocoa WebGL should support UI side compositing
