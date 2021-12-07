@@ -1987,6 +1987,107 @@ public:
         srliInsn<64 - bitSize>(rd, rd);
     }
 
+    struct ImmediateLoader {
+        enum PlaceholderTag { Placeholder };
+
+        ImmediateLoader(int32_t imm)
+            : ImmediateLoader(int64_t(imm))
+        { }
+
+        ImmediateLoader(PlaceholderTag, int32_t imm)
+            : ImmediateLoader(Placeholder, int64_t(imm))
+        { }
+
+        ImmediateLoader(int64_t imm)
+        {
+            // If the immediate value fits into the IImmediate mold, we can short-cut to just generating that through a single ADDI.
+            if (IImmediate::isValid(imm)) {
+                m_ops[m_opCount++] = { Op::Type::IImmediate, IImmediate::v<IImmediate>(imm).imm };
+                return;
+            }
+
+            // The immediate is larger than 12 bits, so it has to be loaded through the initial LUI and then additional shift-and-addi pairs.
+            // This sequence is generated in reverse. moveInto() or other users traverse the sequence accordingly.
+            int64_t value = imm;
+
+            while (true) {
+                uint32_t addiImm = value & ((1 << 12) - 1);
+                // The addi will be sign-extending the 12-bit value and adding it to the register-contained value. If the addi-immediate
+                // is negative, the remaining immediate has to be increased by 2^12 to offset the subsequent subtraction.
+                if (addiImm & (1 << 11))
+                    value += (1 << 12);
+                m_ops[m_opCount++] = { Op::Type::ADDI, addiImm };
+
+                // Shift out the bits incorporated into the just-added addi.
+                value = value >> 12;
+
+                // If the remainder of the immediate can fit into a 20-bit immediate, we can generate the LUI instruction that will end up
+                // loading the initial higher bits of the desired immediate.
+                if (ImmediateBase<20>::isValid(value)) {
+                    m_ops[m_opCount++] = { Op::Type::LUI, uint32_t((value & ((1 << 20) - 1)) << 12) };
+                    return;
+                }
+
+                // Otherwise, generate the lshift operation that will make room for lower parts of the immediate value.
+                m_ops[m_opCount++] = { Op::Type::LSHIFT12, 0 };
+            }
+        }
+
+        ImmediateLoader(PlaceholderTag, int64_t imm)
+            : ImmediateLoader(imm)
+        {
+            // The non-placeholder constructor already generated the necessary operations to load this immediate.
+            // This constructor still fills out the remaining potential operations as nops. This enables future patching
+            // of these instructions with other immediate-load sequences.
+
+            for (unsigned i = m_opCount; i < m_ops.size(); ++i)
+                m_ops[i] = { Op::Type::NOP, 0 };
+            m_opCount = m_ops.size();
+        }
+
+        void moveInto(RISCV64Assembler& assembler, RegisterID dest)
+        {
+            // This is a helper method that generates the necessary instructions through the RISCV64Assembler infrastructure.
+            // Operations are traversed in reverse in order to match the generation process.
+
+            for (unsigned i = 0; i < m_opCount; ++i) {
+                auto& op = m_ops[m_opCount - (i + 1)];
+                switch (op.type) {
+                case Op::Type::IImmediate:
+                    assembler.addiInsn(dest, RISCV64Registers::zero, IImmediate(op.value));
+                    break;
+                case Op::Type::LUI:
+                    assembler.luiInsn(dest, UImmediate(op.value));
+                    break;
+                case Op::Type::ADDI:
+                    assembler.addiInsn(dest, dest, IImmediate(op.value));
+                    break;
+                case Op::Type::LSHIFT12:
+                    assembler.slliInsn<12>(dest, dest);
+                    break;
+                case Op::Type::NOP:
+                    assembler.addiInsn(RISCV64Registers::zero, RISCV64Registers::zero, IImmediate::v<IImmediate, 0>());
+                    break;
+                }
+            }
+        }
+
+        struct Op {
+            enum class Type {
+                IImmediate,
+                LUI,
+                ADDI,
+                LSHIFT12,
+                NOP,
+            };
+
+            Type type;
+            uint32_t value;
+        };
+        std::array<Op, 8> m_ops;
+        unsigned m_opCount { 0 };
+    };
+
 protected:
     void insn(uint32_t instruction)
     {

@@ -1,3 +1,68 @@
+2021-12-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Add more MacroAssemblerRISCV64 helper infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=233805
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduce RISCV64Assembler::ImmediateLoader, a helper class that
+        generates the operations necessary for loading any immediate value into
+        some register. This can be as simple as using ADDI to load 12-bit values
+        or a combination of LUI, ADDI and possibly additional combinations of
+        LSHIFT and ADDI instructions. There's also a placeholder mode which
+        generates no-ops for unused operation slots, in order to enable
+        future patching and repatching for other immediate values.
+
+        MacroAssemblerRISCV64::Imm is introduced as a private helper struct that
+        groups together validity and construction operations for the different
+        immediate types implemented in the RISCV64Instructions namespace.
+
+        In MacroAssemblerRISCV64, resolveAddress() overloads are provided to
+        help generate most optimal address loading sequencing. RISC-V addressing
+        mode utilizes a base register and a 12-bit signed offset. When needed,
+        additional computation is done on the address object's parameters and
+        stored in the destination register through which the load can then be
+        performed.
+
+        Helper TempRegister and LazyTempRegister structs are added to the
+        MacroAssemblerRISCV64 class, along with the respective temps() and
+        lazyTemp() methods. temps() returns the TempRegister object, with the
+        template parameters defining which of the two scratch register types
+        should be allowed for use through this object. Release-time assert
+        on the m_allowScratchRegister value is done at the point of calling
+        temps(). lazyTemp() only handles one scratch register, and the assert
+        is done only when the register is actually used, and not just reserved
+        for use. This enables simpler implementations that better handle both
+        modes of scratch register usage (allowed or disallowed).
+
+        To get things rolling, the first set of MacroAssemblerRISCV64 methods
+        is implemented. Addition, subtraction and multiplication definitions
+        are provided, with the templated no-op declarations removed.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::TempRegister::data):
+        (JSC::MacroAssemblerRISCV64::TempRegister::memory):
+        (JSC::MacroAssemblerRISCV64::LazyTempRegister::LazyTempRegister):
+        (JSC::MacroAssemblerRISCV64::LazyTempRegister::operator RegisterID):
+        (JSC::MacroAssemblerRISCV64::temps):
+        (JSC::MacroAssemblerRISCV64::lazyTemp):
+        (JSC::MacroAssemblerRISCV64::add32):
+        (JSC::MacroAssemblerRISCV64::add64):
+        (JSC::MacroAssemblerRISCV64::sub32):
+        (JSC::MacroAssemblerRISCV64::sub64):
+        (JSC::MacroAssemblerRISCV64::mul32):
+        (JSC::MacroAssemblerRISCV64::mul64):
+        (JSC::MacroAssemblerRISCV64::Imm::isValid):
+        (JSC::MacroAssemblerRISCV64::Imm::I):
+        (JSC::MacroAssemblerRISCV64::Imm::S):
+        (JSC::MacroAssemblerRISCV64::Imm::B):
+        (JSC::MacroAssemblerRISCV64::Imm::U):
+        (JSC::MacroAssemblerRISCV64::Imm::J):
+        (JSC::MacroAssemblerRISCV64::resolveAddress):
+        * assembler/RISCV64Assembler.h:
+        (JSC::RISCV64Assembler::ImmediateLoader::ImmediateLoader):
+        (JSC::RISCV64Assembler::ImmediateLoader::moveInto):
+
 2021-12-06  Keith Miller  <keith_miller@apple.com>
 
         TypeInfo should be materializable from Structures as a single load.

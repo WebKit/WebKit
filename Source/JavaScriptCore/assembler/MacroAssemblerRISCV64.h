@@ -54,6 +54,60 @@ public:
         return dataTempRegister;
     }
 
+    enum TempRegisterType : int8_t {
+        Data,
+        Memory,
+    };
+
+    template<TempRegisterType... RegisterTypes>
+    struct TempRegister {
+        RegisterID data()
+        {
+            static_assert(((RegisterTypes == Data) || ...));
+            return dataTempRegister;
+        }
+
+        RegisterID memory()
+        {
+            static_assert(((RegisterTypes == Memory) || ...));
+            return memoryTempRegister;
+        }
+    };
+
+    template<TempRegisterType RegisterType>
+    struct LazyTempRegister {
+        LazyTempRegister(bool allowScratchRegister)
+            : m_allowScratchRegister(allowScratchRegister)
+        {
+            static_assert(RegisterType == Data || RegisterType == Memory);
+        }
+
+        operator RegisterID()
+        {
+            RELEASE_ASSERT(m_allowScratchRegister);
+            if constexpr (RegisterType == Data)
+                return dataTempRegister;
+            if constexpr (RegisterType == Memory)
+                return memoryTempRegister;
+            return InvalidGPRReg;
+        }
+
+        bool m_allowScratchRegister;
+    };
+
+    template<TempRegisterType... RegisterTypes>
+    auto temps() -> TempRegister<RegisterTypes...>
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return { };
+    }
+
+    template<TempRegisterType RegisterType>
+    auto lazyTemp() -> LazyTempRegister<RegisterType>
+    {
+        return { m_allowScratchRegister };
+    }
+
     static bool supportsFloatingPoint() { return true; }
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
@@ -105,12 +159,310 @@ public:
     static constexpr RegisterID framePointerRegister = RISCV64Registers::fp;
     static constexpr RegisterID linkRegister = RISCV64Registers::ra;
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(add32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(add64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(sub32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(sub64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(mul32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(mul64);
+    void add32(RegisterID src, RegisterID dest)
+    {
+        add32(src, dest, dest);
+    }
+
+    void add32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.addwInsn(dest, op1, op2);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void add32(TrustedImm32 imm, RegisterID dest)
+    {
+        add32(imm, dest, dest);
+    }
+
+    void add32(TrustedImm32 imm, RegisterID op2, RegisterID dest)
+    {
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.addiwInsn(dest, op2, Imm::I(imm.m_value));
+            m_assembler.maskRegister<32>(dest);
+            return;
+        }
+
+        auto temp = temps<Data>();
+        move(imm, temp.data());
+        m_assembler.addwInsn(dest, temp.data(), op2);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void add32(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        auto temp = temps<Data, Memory>();
+        move(TrustedImmPtr(address.m_ptr), temp.memory());
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.lwInsn(temp.data(), temp.memory(), Imm::I<0>());
+            m_assembler.addiInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+            m_assembler.swInsn(temp.memory(), temp.data(), Imm::S<0>());
+            return;
+        }
+
+        m_assembler.lwInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        move(imm, temp.data());
+        m_assembler.addInsn(temp.data(), temp.memory(), temp.data());
+
+        move(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.swInsn(temp.memory(), temp.data(), Imm::S<0>());
+    }
+
+    void add32(TrustedImm32 imm, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+            m_assembler.addiInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+            m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+            return;
+        }
+
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        move(imm, temp.data());
+        m_assembler.addInsn(temp.data(), temp.memory(), temp.data());
+
+        resolution = resolveAddress(address, temp.memory());
+        m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+    }
+
+    void add32(Address address, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.addwInsn(dest, temp.data(), dest);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void add64(RegisterID src, RegisterID dest)
+    {
+        add64(src, dest, dest);
+    }
+
+    void add64(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.addInsn(dest, op1, op2);
+    }
+
+    void add64(TrustedImm32 imm, RegisterID dest)
+    {
+        add64(imm, dest, dest);
+    }
+
+    void add64(TrustedImm32 imm, RegisterID op2, RegisterID dest)
+    {
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.addiInsn(dest, op2, Imm::I(imm.m_value));
+            return;
+        }
+
+        auto temp = temps<Data>();
+        move(imm, temp.data());
+        m_assembler.addInsn(dest, temp.data(), op2);
+    }
+
+    void add64(TrustedImm64 imm, RegisterID dest)
+    {
+        add64(imm, dest, dest);
+    }
+
+    void add64(TrustedImm64 imm, RegisterID op2, RegisterID dest)
+    {
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.addiInsn(dest, op2, Imm::I(imm.m_value));
+            return;
+        }
+
+        auto temp = temps<Data>();
+        move(imm, temp.data());
+        m_assembler.addInsn(dest, temp.data(), op2);
+    }
+
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        auto temp = temps<Data, Memory>();
+        move(TrustedImmPtr(address.m_ptr), temp.memory());
+
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.ldInsn(temp.data(), temp.memory(), Imm::I<0>());
+            m_assembler.addiInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+            m_assembler.sdInsn(temp.memory(), temp.data(), Imm::S<0>());
+            return;
+        }
+
+        m_assembler.ldInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        move(imm, temp.data());
+        m_assembler.addInsn(temp.data(), temp.data(), temp.memory());
+
+        move(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.sdInsn(temp.memory(), temp.data(), Imm::S<0>());
+    }
+
+    void add64(TrustedImm32 imm, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.addiInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+            m_assembler.sdInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+            return;
+        }
+
+        move(imm, temp.memory());
+        m_assembler.addInsn(temp.data(), temp.memory(), temp.data());
+
+        resolution = resolveAddress(address, temp.memory());
+        m_assembler.sdInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+    }
+
+    void add64(AbsoluteAddress address, RegisterID dest)
+    {
+        auto temp = temps<Memory>();
+        move(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.ldInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        m_assembler.addInsn(dest, temp.memory(), dest);
+    }
+
+    void add64(Address address, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.addInsn(dest, temp.data(), dest);
+    }
+
+    void sub32(RegisterID src, RegisterID dest)
+    {
+        sub32(dest, src, dest);
+    }
+
+    void sub32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.subwInsn(dest, op1, op2);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void sub32(TrustedImm32 imm, RegisterID dest)
+    {
+        sub32(dest, imm, dest);
+    }
+
+    void sub32(RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        add32(TrustedImm32(-imm.m_value), op1, dest);
+    }
+
+    void sub32(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        auto temp = temps<Data, Memory>();
+        move(TrustedImmPtr(address.m_ptr), temp.memory());
+
+        if (Imm::isValid<Imm::IType>(-imm.m_value)) {
+            m_assembler.lwInsn(temp.data(), temp.memory(), Imm::I<0>());
+            m_assembler.addiwInsn(temp.data(), temp.data(), Imm::I(-imm.m_value));
+            m_assembler.swInsn(temp.memory(), temp.data(), Imm::S<0>());
+            return;
+        }
+
+        m_assembler.lwInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        move(imm, temp.data());
+        m_assembler.subwInsn(temp.data(), temp.memory(), temp.data());
+
+        move(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.swInsn(temp.memory(), temp.data(), Imm::S<0>());
+    }
+
+    void sub32(TrustedImm32 imm, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+
+        if (Imm::isValid<Imm::IType>(-imm.m_value)) {
+            m_assembler.addiwInsn(temp.data(), temp.data(), Imm::I(-imm.m_value));
+            m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+            return;
+        }
+
+        move(imm, temp.memory());
+        m_assembler.subwInsn(temp.data(), temp.data(), temp.memory());
+
+        resolution = resolveAddress(address, temp.memory());
+        m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+    }
+
+    void sub32(Address address, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.subwInsn(dest, dest, temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void sub64(RegisterID src, RegisterID dest)
+    {
+        sub64(dest, src, dest);
+    }
+
+    void sub64(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.subInsn(dest, op1, op2);
+    }
+
+    void sub64(TrustedImm32 imm, RegisterID dest)
+    {
+        sub64(dest, imm, dest);
+    }
+
+    void sub64(RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        add64(TrustedImm32(-imm.m_value), op1, dest);
+    }
+
+    void sub64(TrustedImm64 imm, RegisterID dest)
+    {
+        sub64(dest, imm, dest);
+    }
+
+    void sub64(RegisterID op1, TrustedImm64 imm, RegisterID dest)
+    {
+        add64(TrustedImm64(-imm.m_value), op1, dest);
+    }
+
+    void mul32(RegisterID src, RegisterID dest)
+    {
+        mul32(src, dest, dest);
+    }
+
+    void mul32(RegisterID lhs, RegisterID rhs, RegisterID dest)
+    {
+        m_assembler.mulwInsn(dest, lhs, rhs);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void mul32(TrustedImm32 imm, RegisterID rhs, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        move(imm, temp.data());
+        m_assembler.mulwInsn(dest, temp.data(), rhs);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void mul64(RegisterID src, RegisterID dest)
+    {
+        mul64(src, dest, dest);
+    }
+
+    void mul64(RegisterID lhs, RegisterID rhs, RegisterID dest)
+    {
+        m_assembler.mulInsn(dest, lhs, rhs);
+    }
+
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(and32);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(and64);
 
@@ -388,6 +740,118 @@ public:
 
     template<PtrTag tag>
     static void linkCall(void*, Call, FunctionPtr<tag>) { }
+
+private:
+    struct Imm {
+        template<typename T>
+        using EnableIfInteger = std::enable_if_t<(std::is_same_v<T, int32_t> || std::is_same_v<T, int64_t>)>;
+
+        template<typename ImmediateType, typename T, typename = EnableIfInteger<T>>
+        static bool isValid(T value) { return ImmediateType::isValid(value); }
+
+        using IType = RISCV64Assembler::IImmediate;
+        template<int32_t value>
+        static IType I() { return IType::v<IType, value>(); }
+        template<typename T, typename = EnableIfInteger<T>>
+        static IType I(T value) { return IType::v<IType>(value); }
+        static IType I(uint32_t value) { return IType(value); }
+
+        using SType = RISCV64Assembler::SImmediate;
+        template<int32_t value>
+        static SType S() { return SType::v<SType, value>(); }
+        template<typename T, typename = EnableIfInteger<T>>
+        static SType S(T value) { return SType::v<SType>(value); }
+
+        using BType = RISCV64Assembler::BImmediate;
+        template<int32_t value>
+        static BType B() { return BType::v<BType, value>(); }
+        template<typename T, typename = EnableIfInteger<T>>
+        static BType B(T value) { return BType::v<BType>(value); }
+        static BType B(uint32_t value) { return BType(value); }
+
+        using UType = RISCV64Assembler::UImmediate;
+        static UType U(uint32_t value) { return UType(value); }
+
+        using JType = RISCV64Assembler::JImmediate;
+        template<int32_t value>
+        static JType J() { return JType::v<JType, value>(); }
+    };
+
+    struct AddressResolution {
+        RegisterID base;
+        int32_t offset;
+    };
+
+    template<typename RegisterType>
+    AddressResolution resolveAddress(BaseIndex address, RegisterType destination)
+    {
+        if (!!address.offset) {
+            if (RISCV64Assembler::ImmediateBase<12>::isValid(address.offset)) {
+                if (address.scale != TimesOne) {
+                    m_assembler.slliInsn(destination, address.index, uint32_t(address.scale));
+                    m_assembler.addInsn(destination, address.base, destination);
+                } else
+                    m_assembler.addInsn(destination, address.base, address.index);
+                return { destination, address.offset };
+            }
+
+            if (address.scale != TimesOne) {
+                uint32_t scale = address.scale;
+                int32_t upperOffset = address.offset >> scale;
+                int32_t lowerOffset = address.offset & ((1 << scale) - 1);
+
+                if (!RISCV64Assembler::ImmediateBase<12>::isValid(upperOffset)) {
+                    RISCV64Assembler::ImmediateLoader imml(upperOffset);
+                    imml.moveInto(m_assembler, destination);
+                    m_assembler.addInsn(destination, address.index, destination);
+                } else
+                    m_assembler.addiInsn(destination, address.index, Imm::I(upperOffset));
+                m_assembler.slliInsn(destination, destination, scale);
+                m_assembler.oriInsn(destination, destination, Imm::I(lowerOffset));
+            } else {
+                RISCV64Assembler::ImmediateLoader imml(address.offset);
+                imml.moveInto(m_assembler, destination);
+                m_assembler.addInsn(destination, destination, address.index);
+            }
+            m_assembler.addInsn(destination, address.base, destination);
+            return { destination, 0 };
+        }
+
+        if (address.scale != TimesOne) {
+            m_assembler.slliInsn(destination, address.index, address.scale);
+            m_assembler.addInsn(destination, address.base, destination);
+        } else
+            m_assembler.addInsn(destination, address.base, address.index);
+        return { destination, 0 };
+    }
+
+    template<typename RegisterType>
+    AddressResolution resolveAddress(Address address, RegisterType destination)
+    {
+        if (RISCV64Assembler::ImmediateBase<12>::isValid(address.offset))
+            return { address.base, address.offset };
+
+        uint32_t value = *reinterpret_cast<uint32_t*>(&address.offset);
+        if (value & (1 << 11))
+            value += (1 << 12);
+
+        m_assembler.luiInsn(destination, Imm::U(value));
+        m_assembler.addiInsn(destination, destination, Imm::I(value & ((1 << 12) - 1)));
+        m_assembler.addInsn(destination, address.base, destination);
+        return { destination, 0 };
+    }
+
+    template<typename RegisterType>
+    AddressResolution resolveAddress(ExtendedAddress address, RegisterType destination)
+    {
+        if (RISCV64Assembler::ImmediateBase<12>::isValid(address.offset))
+            return { address.base, int32_t(address.offset) };
+
+        RISCV64Assembler::ImmediateLoader imml(int64_t(address.offset));
+        imml.moveInto(m_assembler, destination);
+        m_assembler.addInsn(destination, address.base, destination);
+        return { destination, 0 };
+    }
 };
 
 } // namespace JSC
