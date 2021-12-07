@@ -1,5 +1,36 @@
 2021-12-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286563. rdar://problem/86175400
+
+    REGRESSION (r286527): Three API tests crashing under WebKit::ProcessLauncher::launchProcess()
+    https://bugs.webkit.org/show_bug.cgi?id=233882
+    <rdar://problem/86111726>
+    
+    Reviewed by Brent Fulgham.
+    
+    Correct the eventHandler to capture the process name, rather than using a raw pointer to the character string.
+    
+    * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+    (WebKit::ProcessLauncher::launchProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286563 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-06  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION (r286527): Three API tests crashing under WebKit::ProcessLauncher::launchProcess()
+            https://bugs.webkit.org/show_bug.cgi?id=233882
+            <rdar://problem/86111726>
+
+            Reviewed by Brent Fulgham.
+
+            Correct the eventHandler to capture the process name, rather than using a raw pointer to the character string.
+
+            * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+            (WebKit::ProcessLauncher::launchProcess):
+
+2021-12-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286574. rdar://problem/86174696
 
     Regression(r286505) imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html is a flaky crash
