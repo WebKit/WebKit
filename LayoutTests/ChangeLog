@@ -1,3 +1,15 @@
+2021-12-07  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: m_messagesBeingDispatched.isEmpty() on http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html
+        https://bugs.webkit.org/show_bug.cgi?id=228164
+        <rdar://problem/80914914>
+
+        Reviewed by Darin Adler.
+
+        Unskip test that should no longer be crashing.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-12-07  Kyle Piddington  <kpiddington@apple.com>
 
         Roll ANGLE to include upstreamed Metal backend

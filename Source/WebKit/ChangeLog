@@ -1,5 +1,25 @@
 2021-12-07  Chris Dumez  <cdumez@apple.com>
 
+        ASSERTION FAILED: m_messagesBeingDispatched.isEmpty() on http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html
+        https://bugs.webkit.org/show_bug.cgi?id=228164
+        <rdar://problem/80914914>
+
+        Reviewed by Darin Adler.
+
+        dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection() has an assertion to make sure that m_messagesBeingDispatched
+        was empty when getting called. However, in the case where there is a nested run loop, the call to
+        `m_messagesBeingDispatched.takeFirst().dispatch()` at the end of the function may cause the function to re-enter. When entering,
+        m_messagesBeingDispatched may not be empty so the assertion is wrong. Looking at the code, I think dropping the assertion is the
+        right thing to do as the implementation seems to be doing something sane upon re-entering. It will just append new messages to
+        m_messagesBeingDispatched and then try and dispatch them. Based on how it is implemented, message ordering would be preserved.
+
+        No new tests, unskipped existing test.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection):
+
+2021-12-07  Chris Dumez  <cdumez@apple.com>
+
         Make WebLockRegistryProxy::processDidExit() return early if process never registered any locks
         https://bugs.webkit.org/show_bug.cgi?id=233832
 
