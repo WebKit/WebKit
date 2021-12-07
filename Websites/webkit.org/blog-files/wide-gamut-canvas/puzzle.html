@@ -31,6 +31,7 @@ const SIZE = 3;
 const EMPTY_SQUARE = SIZE * SIZE - 1;
 const TILE_CORNER_RADIUS = 8;
 
+let supported = false;
 let width, height, board, blank;
 let canvas, ctx;
 let scale = 1;
@@ -68,7 +69,21 @@ function generateGrain() {
     return "data:image/svg+xml;base64," + btoa(svg);
 }
 
+function canvasSupportsDisplayP3() {
+    let canvas = document.createElement("canvas");
+    try {
+        let context = canvas.getContext("2d", { colorSpace: "display-p3" });
+        return context.getContextAttributes().colorSpace == "display-p3";
+    } catch {
+    }
+    return false;
+}
+
 function init() {
+    supported = canvasSupportsDisplayP3();
+    if (!supported)
+        document.body.className = "unsupported";
+
     canvas = placeholder;
     width = image.naturalWidth;
     height = image.naturalHeight;
@@ -163,7 +178,7 @@ function drawBoard() {
 }
 
 function updateCanvas() {
-    let colorSpace = displayP3.checked ? "display-p3" : "srgb";
+    let colorSpace = displayP3.checked && supported ? "display-p3" : "srgb";
 
     let newCanvas = cachedCanvases[colorSpace];
     if (newCanvas != canvas) {
@@ -182,12 +197,7 @@ function updateCanvas() {
     canvas.style.width = `${width / scale}px`;
     canvas.style.height = `${height / scale}px`;
 
-    try {
-        ctx = canvas.getContext("2d", { colorSpace });
-    } catch {
-        ctx = canvas.getContext("2d");
-        document.body.className = "unsupported";
-    }
+    ctx = canvas.getContext("2d", { colorSpace });
 
     drawBoard();
 }
