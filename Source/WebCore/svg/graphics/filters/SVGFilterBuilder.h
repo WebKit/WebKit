@@ -22,6 +22,7 @@
 #pragma once
 
 #include "FilterEffect.h"
+#include "SVGFilterExpression.h"
 #include "SVGUnitTypes.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -68,9 +69,7 @@ public:
 
     void setupBuiltinEffects(Ref<FilterEffect> sourceGraphic);
     RefPtr<FilterEffect> buildFilterEffects(SVGFilterElement&);
-    bool buildExpression(FilterEffectVector& expression) const;
-
-    FilterEffectGeometryMap takeEffectGeometryMap() { return WTFMove(m_effectGeometryMap); }
+    bool buildExpression(SVGFilterExpression&) const;
 
 private:
     inline void addBuiltinEffects()
@@ -78,6 +77,9 @@ private:
         for (auto& effect : m_builtinEffects.values())
             m_effectReferences.add(effect, FilterEffectSet());
     }
+
+    std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const;
+    bool buildEffectExpression(const RefPtr<FilterEffect>&, FilterEffectVector& stack, SVGFilterExpression&) const;
 
     HashMap<AtomString, RefPtr<FilterEffect>> m_builtinEffects;
     HashMap<AtomString, RefPtr<FilterEffect>> m_namedEffects;

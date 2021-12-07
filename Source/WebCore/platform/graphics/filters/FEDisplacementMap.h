@@ -54,7 +54,7 @@ public:
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    const DestinationColorSpace& resultColorSpace() const override;
+    const DestinationColorSpace& resultColorSpace(const FilterImageVector&) const override;
     void transformResultColorSpace(FilterEffect*, const int) override;
 
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;

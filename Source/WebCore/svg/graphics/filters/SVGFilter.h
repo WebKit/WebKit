@@ -22,8 +22,8 @@
 #pragma once
 
 #include "Filter.h"
-#include "FilterEffectVector.h"
 #include "FloatRect.h"
+#include "SVGFilterExpression.h"
 #include "SVGUnitTypes.h"
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
@@ -42,33 +42,28 @@ public:
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
-    RefPtr<FilterEffect> lastEffect() const final { return !m_expression.isEmpty() ? m_expression.last() : nullptr; }
+    RefPtr<FilterEffect> lastEffect() const final;
 
     RefPtr<FilterImage> apply() final;
 
 private:
     SVGFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
 
-    // FIXME: Merge the effectBoundaries in the expression node.
-    void setExpression(FilterEffectVector&& expression) { m_expression = WTFMove(expression); }
-    void setEffectGeometryMap(FilterEffectGeometryMap&& effectGeometryMap) { m_effectGeometryMap = WTFMove(effectGeometryMap); }
+    void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
 
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const final;
 #endif
-    std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const final;
     FloatSize resolvedSize(const FloatSize&) const final;
 
-    bool apply(const Filter&) final;
+    bool apply(const Filter&, const std::optional<FilterEffectGeometry>& = std::nullopt) final;
     IntOutsets outsets() const final;
     void clearResult() final;
 
     FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits;
 
-    // FIXME: Make m_expression a Vector of the FilterEffect and the effectBoundaries.
-    FilterEffectVector m_expression;
-    FilterEffectGeometryMap m_effectGeometryMap;
+    SVGFilterExpression m_expression;
 };
 
 } // namespace WebCore

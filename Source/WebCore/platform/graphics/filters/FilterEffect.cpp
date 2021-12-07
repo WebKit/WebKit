@@ -26,6 +26,7 @@
 
 #include "Filter.h"
 #include "FilterEffectApplier.h"
+#include "FilterEffectGeometry.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
@@ -40,26 +41,20 @@ FloatRect FilterEffect::calculateImageRect(const Filter& filter, const FilterIma
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-FloatRect FilterEffect::determineFilterPrimitiveSubregion(const Filter& filter)
+FloatRect FilterEffect::calculatePrimitiveSubregion(const Filter& filter, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>& geometry) const
 {
     // This function implements https://www.w3.org/TR/filter-effects-1/#FilterPrimitiveSubRegion.
     FloatRect primitiveSubregion;
 
-    // If there is no input effects, take the effect boundaries as unite rect.
-    if (!m_inputEffects.isEmpty()) {
-        for (auto& effect : m_inputEffects) {
-            auto inputPrimitiveSubregion = effect->determineFilterPrimitiveSubregion(filter);
-            primitiveSubregion.unite(inputPrimitiveSubregion);
-        }
+    // If there is no input effects, take the effect boundaries as unite rect. Don't use the input's subregion for FETile.
+    if (!inputs.isEmpty() && filterType() != FilterEffect::Type::FETile) {
+        for (auto& input : inputs)
+            primitiveSubregion.unite(input->primitiveSubregion());
     } else
         primitiveSubregion = filter.filterRegion();
 
-    // Don't use the input's subregion for FETile.
-    if (filterType() == FilterEffect::Type::FETile)
-        primitiveSubregion = filter.filterRegion();
-    
     // Clip the primitive subregion to the effect geometry.
-    if (auto geometry = filter.effectGeometry(*this)) {
+    if (geometry) {
         if (auto x = geometry->x())
             primitiveSubregion.setX(*x);
         if (auto y = geometry->y())
@@ -70,7 +65,6 @@ FloatRect FilterEffect::determineFilterPrimitiveSubregion(const Filter& filter)
             primitiveSubregion.setHeight(*height);
     }
 
-    setFilterPrimitiveSubregion(primitiveSubregion);
     return primitiveSubregion;
 }
 
@@ -80,7 +74,7 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
-bool FilterEffect::apply(const Filter& filter)
+bool FilterEffect::apply(const Filter& filter, const std::optional<FilterEffectGeometry>& geometry)
 {
     if (hasResult())
         return true;
@@ -100,16 +94,18 @@ bool FilterEffect::apply(const Filter& filter)
     }
 
     auto inputFilterImages = this->inputFilterImages();
-    auto imageRect = calculateImageRect(filter, inputFilterImages, m_filterPrimitiveSubregion);
+
+    auto primitiveSubregion = calculatePrimitiveSubregion(filter, inputFilterImages, geometry);
+    auto imageRect = calculateImageRect(filter, inputFilterImages, primitiveSubregion);
     auto absoluteImageRect = enclosingIntRect(filter.scaledByFilterScale(imageRect));
 
     if (absoluteImageRect.isEmpty() || ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()))
         return false;
     
     auto isAlphaImage = resultIsAlphaImage(inputFilterImages);
-    auto imageColorSpace = resultColorSpace();
+    auto imageColorSpace = resultColorSpace(inputFilterImages);
 
-    m_filterImage = FilterImage::create(m_filterPrimitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, filter.renderingMode(), imageColorSpace);
+    m_filterImage = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, filter.renderingMode(), imageColorSpace);
     if (!m_filterImage)
         return false;
 
@@ -119,9 +115,9 @@ bool FilterEffect::apply(const Filter& filter)
 
     LOG_WITH_STREAM(Filters, stream
         << "FilterEffect " << filterName() << " " << this << " apply():"
-        << "\n  filterPrimitiveSubregion " << m_filterPrimitiveSubregion
+        << "\n  filterPrimitiveSubregion " << primitiveSubregion
         << "\n  absolutePaintRect " << absoluteImageRect
-        << "\n  maxEffectRect " << filter.scaledByFilterScale(filter.maxEffectRect(m_filterPrimitiveSubregion))
+        << "\n  maxEffectRect " << filter.maxEffectRect(primitiveSubregion)
         << "\n  filter scale " << filter.filterScale());
 
     return applier->apply(filter, inputFilterImages, *m_filterImage);
@@ -173,7 +169,6 @@ TextStream& FilterEffect::externalRepresentation(TextStream& ts, RepresentationT
     if (representationType == RepresentationType::Debugging) {
         TextStream::IndentScope indentScope(ts);
         ts.dumpProperty("operating colorspace", operatingColorSpace());
-        ts.dumpProperty("result colorspace", resultColorSpace());
         ts << "\n" << indent;
     }
     return ts;

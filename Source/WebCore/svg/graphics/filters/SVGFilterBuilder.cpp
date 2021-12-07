@@ -201,7 +201,15 @@ void SVGFilterBuilder::clearResultsRecursive(FilterEffect* effect)
         clearResultsRecursive(reference);
 }
 
-static bool buildEffectExpression(const RefPtr<FilterEffect>& effect, FilterEffectVector& stack, FilterEffectVector& expression)
+std::optional<FilterEffectGeometry> SVGFilterBuilder::effectGeometry(FilterEffect& effect) const
+{
+    auto it = m_effectGeometryMap.find(effect);
+    if (it != m_effectGeometryMap.end())
+        return it->value;
+    return std::nullopt;
+}
+
+bool SVGFilterBuilder::buildEffectExpression(const RefPtr<FilterEffect>& effect, FilterEffectVector& stack, SVGFilterExpression& expression) const
 {
     // A cycle is detected.
     if (stack.contains(effect))
@@ -209,7 +217,7 @@ static bool buildEffectExpression(const RefPtr<FilterEffect>& effect, FilterEffe
 
     stack.append(effect);
     
-    expression.append(effect);
+    expression.append({ *effect, effectGeometry(*effect) });
 
     for (auto& inputEffect : effect->inputEffects()) {
         if (!buildEffectExpression(inputEffect, stack, expression))
@@ -223,7 +231,7 @@ static bool buildEffectExpression(const RefPtr<FilterEffect>& effect, FilterEffe
     return true;
 }
 
-bool SVGFilterBuilder::buildExpression(FilterEffectVector& expression) const
+bool SVGFilterBuilder::buildExpression(SVGFilterExpression& expression) const
 {
     if (!m_lastEffect)
         return false;

@@ -71,21 +71,13 @@ FloatRect Filter::clipToMaxEffectRect(const FloatRect& imageRect, const FloatRec
 
 bool Filter::clampFilterRegionIfNeeded()
 {
-    auto lastEffect = this->lastEffect();
-    lastEffect->determineFilterPrimitiveSubregion(*this);
-    
-    auto maxEffectRect = this->maxEffectRect(lastEffect->filterPrimitiveSubregion());
-    auto scaledMaxEffectRect = scaledByFilterScale(maxEffectRect);
+    auto scaledFilterRegion = scaledByFilterScale(m_filterRegion);
 
     FloatSize clampingScale(1, 1);
-    if (!ImageBuffer::sizeNeedsClamping(scaledMaxEffectRect.size(), clampingScale))
+    if (!ImageBuffer::sizeNeedsClamping(scaledFilterRegion.size(), clampingScale))
         return false;
 
     m_filterScale = m_filterScale * clampingScale;
-
-    // At least one FilterEffect has a too big image size,
-    // recalculate the effect sizes with new scale factors.
-    lastEffect->determineFilterPrimitiveSubregion(*this);
     return true;
 }
 

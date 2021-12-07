@@ -68,13 +68,13 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
-const DestinationColorSpace& FEDisplacementMap::resultColorSpace() const
+const DestinationColorSpace& FEDisplacementMap::resultColorSpace(const FilterImageVector& inputs) const
 {
     // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image
     // and does not apply to the 'in' source image. The 'in' source image must remain in its
     // current color space.
     // The result is in that same color space because it is a displacement of the 'in' image.
-    return inputEffect(0)->resultColorSpace();
+    return inputs[0]->colorSpace();
 }
 
 void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int index)

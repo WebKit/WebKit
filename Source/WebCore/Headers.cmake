@@ -1910,6 +1910,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     svg/graphics/SVGImageCache.h
 
     svg/graphics/filters/SVGFilter.h
+    svg/graphics/filters/SVGFilterExpression.h
 
     svg/properties/SVGList.h
     svg/properties/SVGPrimitiveList.h

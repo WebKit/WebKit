@@ -54,14 +54,12 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     if (!builder.buildFilterEffects(filterElement))
         return nullptr;
 
-    FilterEffectVector expression;
+    SVGFilterExpression expression;
     if (!builder.buildExpression(expression))
         return nullptr;
 
     ASSERT(!expression.isEmpty());
     filter->setExpression(WTFMove(expression));
-
-    filter->setEffectGeometryMap(builder.takeEffectGeometryMap());
 
 #if USE(CORE_IMAGE)
     if (!filter->supportsCoreImageRendering())
@@ -90,8 +88,8 @@ bool SVGFilter::supportsCoreImageRendering() const
         return false;
 
     ASSERT(!m_expression.isEmpty());
-    for (auto& effect : m_expression) {
-        if (!effect->supportsCoreImageRendering())
+    for (auto& term : m_expression) {
+        if (!term.effect->supportsCoreImageRendering())
             return false;
     }
 
@@ -99,15 +97,14 @@ bool SVGFilter::supportsCoreImageRendering() const
 }
 #endif
 
-std::optional<FilterEffectGeometry> SVGFilter::effectGeometry(FilterEffect& effect) const
+RefPtr<FilterEffect> SVGFilter::lastEffect() const
 {
-    auto it = m_effectGeometryMap.find(effect);
-    if (it != m_effectGeometryMap.end())
-        return it->value;
-    return std::nullopt;
+    if (m_expression.isEmpty())
+        return nullptr;
+    return m_expression.last().effect.ptr();
 }
 
-bool SVGFilter::apply(const Filter& filter)
+bool SVGFilter::apply(const Filter& filter, const std::optional<FilterEffectGeometry>&)
 {
     setSourceImage({ filter.sourceImage() });
     return apply();
@@ -116,8 +113,8 @@ bool SVGFilter::apply(const Filter& filter)
 RefPtr<FilterImage> SVGFilter::apply()
 {
     ASSERT(!m_expression.isEmpty());
-    for (auto& effect : m_expression) {
-        if (!effect->apply(*this))
+    for (auto& term : m_expression) {
+        if (!term.effect->apply(*this, term.geometry))
             return nullptr;
     }
     return lastEffect()->filterImage();
@@ -132,8 +129,8 @@ IntOutsets SVGFilter::outsets() const
 void SVGFilter::clearResult()
 {
     ASSERT(!m_expression.isEmpty());
-    for (auto& effect : m_expression)
-        effect->clearResult();
+    for (auto& term : m_expression)
+        term.effect->clearResult();
 }
 
 } // namespace WebCore

@@ -63,8 +63,6 @@ public:
     FloatSize scaledByFilterScale(const FloatSize&) const;
     FloatRect scaledByFilterScale(const FloatRect&) const;
 
-    virtual std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const { return std::nullopt; }
-
     FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const;
     FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
 
