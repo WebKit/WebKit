@@ -1,3 +1,19 @@
+2021-12-06  John Wilander  <wilander@apple.com>
+
+        Add WebCore::RegistrableDomain tests for duplicate sub domains
+        https://bugs.webkit.org/show_bug.cgi?id=233902
+        <rdar://problem/86130326>
+
+        Unreviewed expansion of the RegistrableDomain.MatchesURLs API test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=233330 claims that duplicate sub domains
+        such as news.news.example.com causes WebKit's RegistrableDomain matching to fail
+        and treat same-site content as cross-site. This patch add tests of such duplicate
+        sub domains.
+
+        * TestWebKitAPI/Tests/WebCore/RegistrableDomain.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-12-06  Brady Eidson  <beidson@apple.com>
 
         webpushd/webpushtool debugging additions
