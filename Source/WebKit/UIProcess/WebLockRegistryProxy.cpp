@@ -53,6 +53,7 @@ void WebLockRegistryProxy::requestLock(WebCore::ClientOrigin&& clientOrigin, Web
 {
     MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process.coreProcessIdentifier());
     MESSAGE_CHECK(clientID.processIdentifier() == m_process.coreProcessIdentifier());
+    m_hasEverRequestedLocks = true;
 
     m_process.websiteDataStore().webLockRegistry().requestLock(WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name), lockMode, steal, ifAvailable, [weakThis = WeakPtr { *this }, lockIdentifier, clientID](bool success) {
         if (weakThis)
@@ -90,7 +91,8 @@ void WebLockRegistryProxy::clientIsGoingAway(WebCore::ClientOrigin&& clientOrigi
 
 void WebLockRegistryProxy::processDidExit()
 {
-    m_process.websiteDataStore().webLockRegistry().clientsAreGoingAway(m_process.coreProcessIdentifier());
+    if (m_hasEverRequestedLocks)
+        m_process.websiteDataStore().webLockRegistry().clientsAreGoingAway(m_process.coreProcessIdentifier());
 }
 
 #undef MESSAGE_CHECK

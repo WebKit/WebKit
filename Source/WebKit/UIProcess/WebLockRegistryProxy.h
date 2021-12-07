@@ -57,6 +57,7 @@ private:
     void clientIsGoingAway(WebCore::ClientOrigin&&, WebCore::ScriptExecutionContextIdentifier);
 
     WebProcessProxy& m_process;
+    bool m_hasEverRequestedLocks { false };
 };
 
 } // namespace WebKit

@@ -1,5 +1,21 @@
 2021-12-07  Chris Dumez  <cdumez@apple.com>
 
+        Make WebLockRegistryProxy::processDidExit() return early if process never registered any locks
+        https://bugs.webkit.org/show_bug.cgi?id=233832
+
+        Reviewed by Darin Adler.
+
+        Make WebLockRegistryProxy::processDidExit() return early if process never registered any locks.
+        This avoids calling LocalWebLockRegistry::clientsAreGoingAway() (which can be expensive) in the
+        case we know for sure no locks were registered by this process.
+
+        * UIProcess/WebLockRegistryProxy.cpp:
+        (WebKit::WebLockRegistryProxy::requestLock):
+        (WebKit::WebLockRegistryProxy::processDidExit):
+        * UIProcess/WebLockRegistryProxy.h:
+
+2021-12-07  Chris Dumez  <cdumez@apple.com>
+
         Reload web views when toggling the captive portal mode at system level
         https://bugs.webkit.org/show_bug.cgi?id=233900
 
