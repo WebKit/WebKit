@@ -34,6 +34,7 @@
 #import "MockAppBundleRegistry.h"
 
 #import <wtf/CompletionHandler.h>
+#import <wtf/HexNumber.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Span.h>
 
@@ -180,6 +181,8 @@ void Daemon::connectionEventHandler(xpc_object_t request)
 
 void Daemon::connectionAdded(xpc_connection_t connection)
 {
+    broadcastDebugMessage((JSC::MessageLevel)0, makeString("New connection: 0x", hex(reinterpret_cast<uint64_t>(connection), WTF::HexConversionMode::Lowercase)));
+
     RELEASE_ASSERT(!m_connectionMap.contains(connection));
     m_connectionMap.set(connection, ClientConnection::create(connection));
 }

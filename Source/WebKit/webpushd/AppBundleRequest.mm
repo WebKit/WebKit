@@ -47,6 +47,8 @@ void AppBundleRequest::start()
 {
     ASSERT(m_connection);
 
+    m_connection->broadcastDebugMessage(makeString("Starting ", transactionDescription(), " request for origin ", m_originString));
+
     m_transaction = adoptOSObject(os_transaction_create(transactionDescription()));
 
     if (m_connection->useMockBundlesForTesting())
@@ -91,6 +93,8 @@ void AppBundlePermissionsRequest::didCheckForExistingBundle(PushAppBundle& bundl
 {
     ASSERT_UNUSED(bundle, &bundle == m_appBundle.get());
 
+    m_connection->broadcastDebugMessage(makeString("Origin ", m_originString, " app bundle request: didCheckForExistingBundle - ", exists == PushAppBundleExists::Yes ? "Exists" : "Does not exist"));
+
     if (exists == PushAppBundleExists::Yes)
         return callCompletionHandlerAndCleanup(true);
 
@@ -100,6 +104,8 @@ void AppBundlePermissionsRequest::didCheckForExistingBundle(PushAppBundle& bundl
 void AppBundlePermissionsRequest::didCreateAppBundle(PushAppBundle& bundle, PushAppBundleCreationResult result)
 {
     ASSERT_UNUSED(bundle, &bundle == m_appBundle.get());
+
+    m_connection->broadcastDebugMessage(makeString("Origin ", m_originString, " app bundle request: didCreateAppBundle - ", result == PushAppBundleCreationResult::Success ? "Created" : "Failed to create"));
 
     if (result == PushAppBundleCreationResult::Failure)
         return callCompletionHandlerAndCleanup(false);
@@ -118,8 +124,10 @@ void AppBundleDeletionRequest::didDeleteExistingBundleWithError(PushAppBundle& b
 {
     ASSERT_UNUSED(bundle, &bundle == m_appBundle.get());
 
+    m_connection->broadcastDebugMessage(makeString("Origin ", m_originString, " app bundle request: didDeleteExistingBundleWithError"));
+
     if (error)
-        Daemon::singleton().broadcastDebugMessage(MessageLevel::Info, makeString("Failed to delete app bundle: ", String([error description])));
+        m_connection->broadcastDebugMessage(makeString("Failed to delete app bundle: ", String([error description])));
 
     callCompletionHandlerAndCleanup(error ? String([error description]) : "");
 }

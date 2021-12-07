@@ -27,6 +27,7 @@
 #import "WebPushToolConnection.h"
 #import <Foundation/Foundation.h>
 #import <optional>
+#import <wtf/MainThread.h>
 
 __attribute__((__noreturn__))
 static void printUsageAndTerminate(NSString *message)
@@ -38,6 +39,7 @@ static void printUsageAndTerminate(NSString *message)
     fprintf(stderr, "  --development              Connects to mach service \"org.webkit.webpushtestdaemon.service\" (Default)\n");
     fprintf(stderr, "  --production               Connects to mach service \"com.apple.webkit.webpushd.service\"\n");
     fprintf(stderr, "  --streamDebugMessages      Stream debug messages from webpushd\n");
+    fprintf(stderr, "  --reconnect                Reconnect after connection is lost\n");
     fprintf(stderr, "\n");
 
     exit(-1);
@@ -45,7 +47,10 @@ static void printUsageAndTerminate(NSString *message)
 
 int main(int, const char **)
 {
-    bool preferTestService = true;
+    WTF::initializeMainThread();
+
+    auto preferTestService = WebPushTool::PreferTestService::Yes;
+    auto reconnect = WebPushTool::Reconnect::No;
     std::optional<WebPushTool::Action> action;
 
     @autoreleasepool {
@@ -55,11 +60,13 @@ int main(int, const char **)
 
         for (NSString *argument in [arguments subarrayWithRange:NSMakeRange(1, arguments.count - 1)]) {
             if ([argument isEqualToString:@"--production"])
-                preferTestService = false;
-            if ([argument isEqualToString:@"--development"])
-                preferTestService = true;
+                preferTestService = WebPushTool::PreferTestService::No;
+            else if ([argument isEqualToString:@"--development"])
+                preferTestService = WebPushTool::PreferTestService::Yes;
             else if ([argument isEqualToString:@"--streamDebugMessages"])
                 action = WebPushTool::Action::StreamDebugMessages;
+            else if ([argument isEqualToString:@"--reconnect"])
+                reconnect = WebPushTool::Reconnect::Yes;
             else
                 printUsageAndTerminate([NSString stringWithFormat:@"Invalid option provided: %@", argument]);
         }
@@ -68,7 +75,7 @@ int main(int, const char **)
     if (!action)
         printUsageAndTerminate(@"No action provided");
 
-    auto connection = WebPushTool::Connection::create(*action, preferTestService);
+    auto connection = WebPushTool::Connection::create(*action, preferTestService, reconnect);
     connection->connectToService();
 
     CFRunLoopRun();

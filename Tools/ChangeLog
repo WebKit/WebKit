@@ -1,3 +1,13 @@
+2021-12-06  Brady Eidson  <beidson@apple.com>
+
+        webpushd/webpushtool debugging additions
+        https://bugs.webkit.org/show_bug.cgi?id=233864
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::TEST): Adapt to debug message changes.
+
 2021-12-04  Jonathan Bedard  <jbedard@apple.com>
 
         [reporelaypy] Add implementation of commits.webkit.org

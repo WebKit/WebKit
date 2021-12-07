@@ -67,6 +67,8 @@ public:
 
     void connectionClosed();
 
+    void broadcastDebugMessage(const String&);
+
 private:
     ClientConnection(xpc_connection_t);
 

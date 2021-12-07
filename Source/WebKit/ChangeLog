@@ -1,3 +1,42 @@
+2021-12-06  Brady Eidson  <beidson@apple.com>
+
+        webpushd/webpushtool debugging additions
+        https://bugs.webkit.org/show_bug.cgi?id=233864
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+        
+        This patch:
+        - Teaches webpushtool the ability to wait for a reconnect after losing its connection
+        - Starts actually broadcasting meaningful debug messages from webpushd
+
+        * webpushd/AppBundleRequest.mm:
+        (WebPushD::AppBundleRequest::start):
+        (WebPushD::AppBundlePermissionsRequest::didCheckForExistingBundle):
+        (WebPushD::AppBundlePermissionsRequest::didCreateAppBundle):
+        (WebPushD::AppBundleDeletionRequest::didDeleteExistingBundleWithError):
+
+        * webpushd/PushClientConnection.h:
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::setDebugModeIsEnabled):
+        (WebPushD::ClientConnection::broadcastDebugMessage):
+        (WebPushD::ClientConnection::connectionClosed):
+
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::connectionAdded):
+
+        * webpushd/webpushtool/WebPushToolConnection.h:
+        * webpushd/webpushtool/WebPushToolConnection.mm:
+        (WebPushTool::Connection::create):
+        (WebPushTool::Connection::Connection):
+        (WebPushTool::Connection::connectToService):
+        (WebPushTool::Connection::connectionDropped):
+
+        * webpushd/webpushtool/WebPushToolMain.mm:
+        (printUsageAndTerminate):
+        (main):
+
 2021-12-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r286505) imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html is a flaky crash

@@ -31,6 +31,7 @@
 #import "WebPushDaemon.h"
 #import "WebPushDaemonConnectionConfiguration.h"
 #import <JavaScriptCore/ConsoleTypes.h>
+#import <wtf/HexNumber.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
 
@@ -103,15 +104,19 @@ void ClientConnection::setDebugModeIsEnabled(bool enabled)
         return;
 
     m_debugModeEnabled = enabled;
+    broadcastDebugMessage(makeString("Turned Debug Mode ", m_debugModeEnabled ? "on" : "off"));
+}
 
-    auto identifier = hostAppCodeSigningIdentifier();
-    String message;
-    if (!identifier.isEmpty())
-        message = makeString("[webpushd - ", identifier, "] Turned Debug Mode ", m_debugModeEnabled ? "on" : "off");
+void ClientConnection::broadcastDebugMessage(const String& message)
+{
+    String messageIdentifier;
+    auto signingIdentifer = hostAppCodeSigningIdentifier();
+    if (signingIdentifer.isEmpty())
+        messageIdentifier = makeString ("[(0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ")] ");
     else
-        message = makeString("[webpushd] Turned Debug Mode ", m_debugModeEnabled ? "on" : "off");
+        messageIdentifier = makeString ("[", signingIdentifer, " (0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ")] ");
 
-    Daemon::singleton().broadcastDebugMessage(MessageLevel::Info, message);
+    Daemon::singleton().broadcastDebugMessage(JSC::MessageLevel::Info, makeString(messageIdentifier, message));
 }
 
 void ClientConnection::enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&& request)
@@ -145,6 +150,8 @@ void ClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
 
 void ClientConnection::connectionClosed()
 {
+    broadcastDebugMessage("Connection closed");
+
     RELEASE_ASSERT(m_xpcConnection);
     m_xpcConnection = nullptr;
 

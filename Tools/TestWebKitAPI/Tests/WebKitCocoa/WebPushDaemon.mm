@@ -181,9 +181,14 @@ TEST(WebPushD, BasicCommunication)
         if (!debugMessage)
             return;
 
-        bool stringMatches = !strcmp(debugMessage, "[webpushd - TestWebKitAPI] Turned Debug Mode on");
-        if (!stringMatches)
-            stringMatches = !strcmp(debugMessage, "[webpushd - com.apple.WebKit.TestWebKitAPI] Turned Debug Mode on");
+        NSString *nsMessage = [NSString stringWithUTF8String:debugMessage];
+
+        // Ignore possible connections/messages from webpushtool
+        if ([nsMessage hasPrefix:@"[webpushtool "])
+            return;
+
+        bool stringMatches = [nsMessage hasPrefix:@"[com.apple.WebKit.TestWebKitAPI"] || [nsMessage hasPrefix:@"[TestWebKitAPI"];
+        stringMatches = stringMatches && [nsMessage hasSuffix:@" Turned Debug Mode on"];
 
         EXPECT_TRUE(stringMatches);
 

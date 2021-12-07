@@ -29,13 +29,14 @@
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <pal/spi/cocoa/ServersSPI.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebPushTool {
 
-std::unique_ptr<Connection> Connection::create(Action action, bool preferTestService)
+std::unique_ptr<Connection> Connection::create(Action action, PreferTestService preferTestService, Reconnect reconnect)
 {
-    return makeUnique<Connection>(action, preferTestService);
+    return makeUnique<Connection>(action, preferTestService, reconnect);
 }
 
 static mach_port_t maybeConnectToService(const char* serviceName)
@@ -52,13 +53,20 @@ static mach_port_t maybeConnectToService(const char* serviceName)
     return MACH_PORT_NULL;
 }
 
-Connection::Connection(Action action, bool preferTestService)
+Connection::Connection(Action action, PreferTestService preferTestService, Reconnect reconnect)
     : m_action(action)
+    , m_reconnect(reconnect == Reconnect::Yes)
 {
-    if (preferTestService)
+    if (preferTestService == PreferTestService::Yes)
         m_serviceName = "org.webkit.webpushtestdaemon.service";
     else
         m_serviceName = "com.apple.webkit.webpushd.service";
+}
+
+void Connection::connectToService()
+{
+    if (m_connection)
+        return;
 
     m_connection = adoptNS(xpc_connection_create_mach_service(m_serviceName, dispatch_get_main_queue(), 0));
 
@@ -74,6 +82,8 @@ Connection::Connection(Action action, bool preferTestService)
 
         if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
             printf("Connection closed\n");
+            if (m_reconnect)
+                printf("===============\nReconnecting...\n");
             connectionDropped();
             return;
         }
@@ -85,12 +95,6 @@ Connection::Connection(Action action, bool preferTestService)
 
         RELEASE_ASSERT_NOT_REACHED();
     });
-}
-
-void Connection::connectToService()
-{
-    if (!m_connection)
-        return;
 
     auto result = maybeConnectToService(m_serviceName);
     if (result == MACH_PORT_NULL)
@@ -154,6 +158,14 @@ void Connection::sendAuditToken()
 void Connection::connectionDropped()
 {
     m_connection = nullptr;
+    if (m_reconnect) {
+        callOnMainRunLoop([this, weakThis = WeakPtr { this }] {
+            if (weakThis)
+                connectToService();
+        });
+        return;
+    }
+
     CFRunLoopStop(CFRunLoopGetCurrent());
 }
 

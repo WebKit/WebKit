@@ -36,11 +36,21 @@ enum class Action {
     StreamDebugMessages,
 };
 
+enum class PreferTestService : bool {
+    Yes,
+    No,
+};
+
+enum class Reconnect : bool {
+    Yes,
+    No,
+};
+
 class Connection : public CanMakeWeakPtr<Connection> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<Connection> create(Action, bool preferTestService);
-    Connection(Action, bool preferTestService);
+    static std::unique_ptr<Connection> create(Action, PreferTestService, Reconnect);
+    Connection(Action, PreferTestService, Reconnect);
 
     void connectToService();
 
@@ -54,6 +64,7 @@ private:
     void sendAuditToken();
     
     Action m_action;
+    bool m_reconnect { false };
     RetainPtr<xpc_connection_t> m_connection;
     const char* m_serviceName;
 };
