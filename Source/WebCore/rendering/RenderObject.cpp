@@ -1389,7 +1389,7 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
         FloatPoint perspectiveOrigin = downcast<RenderLayerModelObject>(*containerObject).layer()->perspectiveOrigin();
 
         TransformationMatrix perspectiveMatrix;
-        perspectiveMatrix.applyPerspective(containerObject->style().perspective());
+        perspectiveMatrix.applyPerspective(containerObject->style().usedPerspective(*this));
         
         transform.translateRight3d(-perspectiveOrigin.x(), -perspectiveOrigin.y(), 0);
         transform = perspectiveMatrix * transform;

@@ -60,7 +60,12 @@ private:
     {
         if (!m_p)
             return { };
-        return floatValueForLength(*m_p, 1.0);
+
+        // From https://www.w3.org/TR/css-transforms-2/#perspective-property:
+        // "As very small <length> values can produce bizarre rendering results and stress the numerical accuracy of
+        // transform calculations, values less than 1px must be treated as 1px for rendering purposes. (This clamping
+        // does not affect the underlying value, so perspective: 0; in a stylesheet will still serialize back as 0.)"
+        return std::max(1.0f, floatValueForLength(*m_p, 1.0));
     }
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override

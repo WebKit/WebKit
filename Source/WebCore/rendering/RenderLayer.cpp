@@ -1764,7 +1764,7 @@ TransformationMatrix RenderLayer::perspectiveTransform(const LayoutRect& layerRe
 
     TransformationMatrix t;
     t.translate(perspectiveOrigin.x(), perspectiveOrigin.y());
-    t.applyPerspective(style.perspective());
+    t.applyPerspective(style.usedPerspective(renderer()));
     t.translate(-perspectiveOrigin.x(), -perspectiveOrigin.y());
 
     return t;

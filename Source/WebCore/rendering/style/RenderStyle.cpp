@@ -1813,6 +1813,11 @@ AnimationList& RenderStyle::ensureTransitions()
     return *m_rareNonInheritedData->transitions;
 }
 
+float RenderStyle::usedPerspective(const RenderObject& object) const
+{
+    return object.document().settings().css3DTransformInteroperabilityEnabled() ? std::max(1.0f, perspective()) : perspective();
+}
+
 const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) const
 {
     auto* transitions = this->transitions();
