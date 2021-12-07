@@ -1,3 +1,24 @@
+2021-12-06  Keith Miller  <keith_miller@apple.com>
+
+        TypeInfo should be materializable from Structures as a single load.
+        https://bugs.webkit.org/show_bug.cgi?id=233875
+
+        Reviewed by Mark Lam.
+
+        This is mostly just the members of Structure and JSCell so that
+        JSType and InlineTypeFlags are at the end of the JSCell header.
+
+        * assembler/testmasm.cpp:
+        (JSC::testBranchIfType):
+        (JSC::testBranchIfNotType):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        * runtime/Structure.h:
+        (JSC::Structure::typeInfo const):
+
 2021-12-06  Mark Lam  <mark.lam@apple.com>
 
         Remove unneeded virtual allocator methods from Subspace.

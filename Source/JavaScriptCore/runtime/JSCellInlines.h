@@ -58,9 +58,9 @@ inline JSCell::JSCell(CreatingEarlyCellTag)
 inline JSCell::JSCell(VM&, Structure* structure)
     : m_structureID(structure->id())
     , m_indexingTypeAndMisc(structure->indexingModeIncludingHistory())
+    , m_cellState(CellState::DefinitelyWhite)
     , m_type(structure->typeInfo().type())
     , m_flags(structure->typeInfo().inlineTypeFlags())
-    , m_cellState(CellState::DefinitelyWhite)
 {
     ASSERT(!isCompilationThread());
 
