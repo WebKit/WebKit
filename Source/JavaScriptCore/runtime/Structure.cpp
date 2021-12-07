@@ -197,9 +197,7 @@ inline void Structure::validateFlags() { }
 
 Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
     : JSCell(vm, vm.structureStructure.get())
-    , m_cellHeaderIndexingModeIncludingHistory(indexingType)
-    , m_cellHeaderType(typeInfo.type())
-    , m_cellHeaderInlineTypeFlags(typeInfo.inlineTypeFlags())
+    , m_blob(StructureID::encode(this), indexingType, typeInfo)
     , m_outOfLineTypeFlags(typeInfo.outOfLineTypeFlags())
     , m_inlineCapacity(inlineCapacity)
     , m_bitField(0)
@@ -240,8 +238,6 @@ const ClassInfo Structure::s_info = { "Structure", nullptr, nullptr, nullptr, CR
 
 Structure::Structure(VM& vm, CreatingEarlyCellTag)
     : JSCell(CreatingEarlyCell)
-    , m_cellHeaderIndexingModeIncludingHistory(NoIndexingShape)
-    , m_cellHeaderType(StructureType)
     , m_inlineCapacity(0)
     , m_bitField(0)
     , m_prototype(vm, this, jsNull())
@@ -268,7 +264,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setMaxOffset(vm, invalidOffset);
  
     TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
-    m_cellHeaderInlineTypeFlags = typeInfo.inlineTypeFlags();
+    m_blob = StructureIDBlob(StructureID::encode(this), 0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
@@ -278,10 +274,6 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
 
 Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
     : JSCell(vm, vm.structureStructure.get())
-    , m_cellHeaderIndexingModeIncludingHistory(previous->m_cellHeaderIndexingModeIncludingHistory)
-    , m_cellHeaderType(previous->m_cellHeaderType)
-    , m_cellHeaderInlineTypeFlags(previous->m_cellHeaderInlineTypeFlags)
-    , m_outOfLineTypeFlags(previous->m_outOfLineTypeFlags)
     , m_inlineCapacity(previous->m_inlineCapacity)
     , m_bitField(0)
     , m_prototype(vm, this, previous->m_prototype.get())
@@ -308,6 +300,10 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
  
+    TypeInfo typeInfo = previous->typeInfo();
+    m_blob = StructureIDBlob(StructureID::encode(this), previous->indexingModeIncludingHistory(), typeInfo);
+    m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
+
     ASSERT(!previous->typeInfo().structureIsImmortal());
     setPreviousID(vm, previous);
 
@@ -533,7 +529,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
         transition->setProtectPropertyTableWhileTransitioning(true);
     }
 
-    transition->m_cellHeaderIndexingModeIncludingHistory = structure->indexingModeIncludingHistory() & ~CopyOnWrite;
+    transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_transitionPropertyName = propertyName.uid();
     transition->setTransitionPropertyAttributes(attributes);
     transition->setTransitionKind(TransitionKind::PropertyAddition);
@@ -630,7 +626,7 @@ Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, 
         transition->setProtectPropertyTableWhileTransitioning(true);
     }
 
-    transition->m_cellHeaderIndexingModeIncludingHistory = structure->indexingModeIncludingHistory() & ~CopyOnWrite;
+    transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_transitionPropertyName = propertyName.uid();
     transition->setTransitionKind(TransitionKind::PropertyDeletion);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
@@ -724,7 +720,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
         transition->setProtectPropertyTableWhileTransitioning(true);
     }
 
-    transition->m_cellHeaderIndexingModeIncludingHistory = structure->indexingModeIncludingHistory() & ~CopyOnWrite;
+    transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_transitionPropertyName = propertyName.uid();
     transition->setTransitionPropertyAttributes(attributes);
     transition->setTransitionKind(TransitionKind::PropertyAttributeChange);
@@ -822,7 +818,7 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
     
     Structure* transition = create(vm, structure);
     transition->setTransitionKind(transitionKind);
-    transition->m_cellHeaderIndexingModeIncludingHistory = indexingModeIncludingHistory;
+    transition->m_blob.setIndexingModeIncludingHistory(indexingModeIncludingHistory);
     
     if (preventsExtensions(transitionKind))
         transition->setDidPreventExtensions(true);
@@ -1550,7 +1546,7 @@ Structure* Structure::setBrandTransition(VM& vm, Structure* structure, Symbol* b
     transition->setTransitionKind(TransitionKind::SetBrand);
 
     transition->m_cachedPrototypeChain.setMayBeNull(vm, transition, structure->m_cachedPrototypeChain.get());
-    transition->m_cellHeaderIndexingModeIncludingHistory = structure->indexingModeIncludingHistory();
+    transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory());
     transition->m_transitionPropertyName = &brand->uid();
     transition->setTransitionPropertyAttributes(0);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));

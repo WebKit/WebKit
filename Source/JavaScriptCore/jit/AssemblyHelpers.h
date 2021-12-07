@@ -1587,14 +1587,14 @@ public:
 
     void emitStoreStructureWithTypeInfo(RegisterID structure, RegisterID dest, RegisterID scratch)
     {
+#if USE(JSVALUE64)
+        load64(MacroAssembler::Address(structure, Structure::structureIDOffset()), scratch);
+        store64(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#else
         // Store all the info flags using a single 32-bit wide load and store.
         load32(MacroAssembler::Address(structure, Structure::indexingModeIncludingHistoryOffset()), scratch);
         store32(scratch, MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
 
-#if CPU(ADDRESS64)
-        and32(MacroAssembler::TrustedImm32(structureIDMask), structure, scratch);
-        store32(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-#else
         // Store the StructureID
         storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
 #endif

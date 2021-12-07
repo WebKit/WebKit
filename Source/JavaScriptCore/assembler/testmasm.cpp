@@ -5613,7 +5613,6 @@ static void testBranchIfType()
     struct CellLike {
         uint32_t structureID;
         uint8_t indexingType;
-        uint8_t cellState;
         JSType type;
     };
     CHECK_EQ(JSCell::typeInfoTypeOffset(), OBJECT_OFFSETOF(CellLike, type));
@@ -5648,7 +5647,6 @@ static void testBranchIfNotType()
     struct CellLike {
         uint32_t structureID;
         uint8_t indexingType;
-        uint8_t cellState;
         JSType type;
     };
     CHECK_EQ(JSCell::typeInfoTypeOffset(), OBJECT_OFFSETOF(CellLike, type));

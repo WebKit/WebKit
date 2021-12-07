@@ -37,6 +37,7 @@
 #include "PropertyNameArray.h"
 #include "PropertyOffset.h"
 #include "PutPropertySlot.h"
+#include "StructureIDBlob.h"
 #include "StructureRareData.h"
 #include "StructureTransitionTable.h"
 #include "TinyBloomFilter.h"
@@ -164,13 +165,14 @@ private:
     void validateFlags();
 
 public:
-    StructureID id() const { return StructureID::encode(this); }
-    int32_t objectInitializationBlob() const { return *reinterpret_cast_ptr<const uint32_t*>(&m_cellHeaderIndexingModeIncludingHistory); }
-    int64_t idBlob() const { return static_cast<uint64_t>(objectInitializationBlob()) << 32 | id().bits(); }
+    StructureID id() const { ASSERT(m_blob.structureID() == StructureID::encode(this)); return m_blob.structureID(); }
+    int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }
+    int64_t idBlob() const { return m_blob.blob(); }
 
     bool isProxy() const
     {
-        return m_cellHeaderType == PureForwardingProxyType || m_cellHeaderType == ProxyObjectType;
+        JSType type = m_blob.type();
+        return type == PureForwardingProxyType || type == ProxyObjectType;
     }
 
     static void dumpStatistics();
@@ -261,26 +263,22 @@ public:
     }
     
     // Type accessors.
-#if CPU(NEEDS_ALIGNED_ACCESS)
-    TypeInfo typeInfo() const { return TypeInfo(m_cellHeaderType, m_cellHeaderInlineTypeFlags, m_outOfLineTypeFlags); }
-#else
-    TypeInfo typeInfo() const { return *reinterpret_cast_ptr<const TypeInfo*>(&m_cellHeaderType); }
-#endif
+    TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
 protected:
     // You probably want typeInfo().type()
     JSType type() { return JSCell::type(); }
 public:
 
-    IndexingType indexingType() const { return indexingModeIncludingHistory() & AllWritableArrayTypes; }
-    IndexingType indexingMode() const  { return indexingModeIncludingHistory() & AllArrayTypes; }
+    IndexingType indexingType() const { return m_blob.indexingModeIncludingHistory() & AllWritableArrayTypes; }
+    IndexingType indexingMode() const  { return m_blob.indexingModeIncludingHistory() & AllArrayTypes; }
     Dependency fencedIndexingMode(IndexingType& indexingType)
     {
-        Dependency dependency = Dependency::loadAndFence(&m_cellHeaderIndexingModeIncludingHistory, indexingType);
+        Dependency dependency = m_blob.fencedIndexingModeIncludingHistory(indexingType);
         indexingType &= AllArrayTypes;
         return dependency;
     }
-    IndexingType indexingModeIncludingHistory() const { return m_cellHeaderIndexingModeIncludingHistory; }
+    IndexingType indexingModeIncludingHistory() const { return m_blob.indexingModeIncludingHistory(); }
         
     inline bool mayInterceptIndexedAccesses() const;
     
@@ -559,6 +557,11 @@ public:
 
     const ClassInfo* classInfo() const { return m_classInfo; }
 
+    static ptrdiff_t structureIDOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::structureIDOffset();
+    }
+
     static ptrdiff_t prototypeOffset()
     {
         return OBJECT_OFFSETOF(Structure, m_prototype);
@@ -581,7 +584,7 @@ public:
 
     static ptrdiff_t indexingModeIncludingHistoryOffset()
     {
-        return OBJECT_OFFSETOF(Structure, m_cellHeaderIndexingModeIncludingHistory);
+        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::indexingModeIncludingHistoryOffset();
     }
     
     static ptrdiff_t propertyTableUnsafeOffset()
@@ -857,12 +860,8 @@ private:
     static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
 
     // These need to be properly aligned at the beginning of the 'Structure'
-    // part of the object. And need to match the order of the equivalent properties in
-    // JSCell.
-    IndexingType m_cellHeaderIndexingModeIncludingHistory;
-    const CellState m_cellHeaderDefaultCellState { CellState::DefinitelyWhite };
-    const JSType m_cellHeaderType;
-    TypeInfo::InlineTypeFlags m_cellHeaderInlineTypeFlags;
+    // part of the object.
+    StructureIDBlob m_blob;
     TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags;
 
     uint8_t m_inlineCapacity;

@@ -266,9 +266,9 @@ private:
 
     StructureID m_structureID;
     IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.
-    CellState m_cellState;
     JSType m_type;
     TypeInfo::InlineTypeFlags m_flags;
+    CellState m_cellState;
 };
 
 class JSCellLock : public JSCell {
