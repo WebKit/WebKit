@@ -40,6 +40,7 @@
 #include "RenderObjectEnums.h"
 #include "RenderReplaced.h"
 #include "RenderStyleConstants.h"
+#include "RenderTable.h"
 #include "RenderView.h"
 #include "WritingMode.h"
 #include <limits>
@@ -652,7 +653,13 @@ std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(Rende
         std::optional<LayoutUnit> height = child.computeContentLogicalHeight(sizeType, size, cachedChildIntrinsicContentLogicalHeight(child));
         if (!height)
             return height;
-        return height.value() + child.scrollbarLogicalHeight();
+        // Tables interpret overriding sizes as the size of captions + rows. However the specified height of a table
+        // only includes the size of the rows. That's why we need to add the size of the captions here so that the table
+        // layout algorithm behaves appropiately.
+        LayoutUnit captionsHeight;
+        if (is<RenderTable>(child) && childMainSizeIsDefinite(child, size))
+            captionsHeight = downcast<RenderTable>(child).sumCaptionsLogicalHeight();
+        return *height + child.scrollbarLogicalHeight() + captionsHeight;
     }
 
     // computeLogicalWidth always re-computes the intrinsic widths. However, when

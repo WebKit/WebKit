@@ -419,6 +419,14 @@ void RenderTable::simplifiedNormalFlowLayout()
     }
 }
 
+LayoutUnit RenderTable::sumCaptionsLogicalHeight() const
+{
+    LayoutUnit height;
+    for (auto& caption : m_captions)
+        height += caption->logicalHeight() + caption->marginBefore() + caption->marginAfter();
+    return height;
+}
+
 void RenderTable::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -505,12 +513,8 @@ void RenderTable::layout()
         if (logicalHeightLength.isIntrinsic() || (logicalHeightLength.isSpecified() && logicalHeightLength.isPositive()))
             computedLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalHeightLength);
 
-        if (hasOverridingLogicalHeight()) {
-            LayoutUnit captionLogicalHeight;
-            for (auto& caption : m_captions)
-                captionLogicalHeight += caption->logicalHeight() + caption->marginBefore() + caption->marginAfter();
-            computedLogicalHeight = std::max(computedLogicalHeight, overridingLogicalHeight() - captionLogicalHeight);
-        }
+        if (hasOverridingLogicalHeight())
+            computedLogicalHeight = std::max(computedLogicalHeight, overridingLogicalHeight() - borderAndPaddingAfter - sumCaptionsLogicalHeight());
 
         Length logicalMaxHeightLength = style().logicalMaxHeight();
         if (logicalMaxHeightLength.isIntrinsic() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative())) {
@@ -533,7 +537,7 @@ void RenderTable::layout()
             // Completely empty tables (with no sections or anything) should at least honor their
             // overriding or specified height in strict mode, but this value will not be cached.
             shouldCacheIntrinsicContentLogicalHeightForFlexItem = false;
-            setLogicalHeight(hasOverridingLogicalHeight() ? overridingLogicalHeight() : logicalHeight() + computedLogicalHeight);
+            setLogicalHeight(hasOverridingLogicalHeight() ? overridingLogicalHeight() - borderAndPaddingAfter : logicalHeight() + computedLogicalHeight);
         }
 
         LayoutUnit sectionLogicalLeft = style().isLeftToRightDirection() ? borderStart() : borderEnd();
