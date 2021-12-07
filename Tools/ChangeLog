@@ -1,3 +1,20 @@
+2021-12-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [commits.webkit.org] Fallback to remote repository (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=233904
+        <rdar://problem/86131927>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkout.py:
+        (Checkout.Encoder.default):
+        (Checkout.__init__): Allow user to specify a remote fallback repository.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkoutroute.py:
+        (CheckoutRoute.commit): If no commit is found, query the fallback repository.
+        * Scripts/libraries/reporelaypy/run: Add --fallback option.
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+
 2021-12-07  Lauro Moura  <lmoura@igalia.com>
 
         [reporelaypy] Autoinstall missing lupa fakeredis dependency

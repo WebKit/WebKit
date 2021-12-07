@@ -27,7 +27,7 @@ import shutil
 import sys
 
 from webkitcorepy import run
-from webkitscmpy import local
+from webkitscmpy import local, remote
 
 
 class Checkout(object):
@@ -43,11 +43,14 @@ class Checkout(object):
             if not isinstance(obj, Checkout):
                 return super(Checkout.Encoder, self).default(obj)
 
-            return dict(
+            result = dict(
                 path=obj.path,
                 url=obj.url,
                 sentinal=obj.sentinal,
             )
+            if obj.fallback_repository:
+                result['fallback_url'] = obj.fallback_repository.url
+            return result
 
     @classmethod
     def from_json(cls, data):
@@ -66,12 +69,15 @@ class Checkout(object):
                 cloned.write('yes\n')
         return 0
 
-    def __init__(self, path, url=None, http_proxy=None, sentinal=True, primary=True):
+    def __init__(self, path, url=None, http_proxy=None, sentinal=True, fallback_url=None, primary=True):
         self.sentinal = sentinal
         self.path = path
         self.url = url
         self._repository = None
         self._child_process = None
+        self.fallback_repository = remote.Scm.from_url(fallback_url) if fallback_url else None
+        if self.fallback_repository:
+            self.fallback_repository.commit()
 
         containing_path = os.path.dirname(path)
         if not os.path.isdir(containing_path):

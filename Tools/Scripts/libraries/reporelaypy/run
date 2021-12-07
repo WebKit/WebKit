@@ -68,6 +68,10 @@ def main(args=None):
         '--update', dest='update_interval', default=0, action='store', type=int,
         help='Set the number of seconds to wait between polling git checkout',
     )
+    group.add_argument(
+        '--fallback', dest='fallback', default=None, action='store', type=str,
+        help='Fallback repository URL',
+    )
 
     group = parser.add_argument_group('Database')
     group.add_argument(
@@ -111,10 +115,18 @@ def main(args=None):
     print('Connected to database!')
 
     print('Finding checkout...')
-    checkout = Checkout(path=args.path, url=args.url, http_proxy=args.http_proxy, sentinal=args.sentinal)
+    checkout = Checkout(
+        path=args.path,
+        url=args.url,
+        http_proxy=args.http_proxy,
+        sentinal=args.sentinal,
+        fallback_url=args.fallback,
+    )
     print('Git checkout:')
     print('    Path: {}'.format(checkout.path))
     print('    URL: {}'.format(checkout.url))
+    if checkout.fallback_repository:
+        print('    Fallback: {}'.format(checkout.fallback_repository.url))
     if not checkout.repository:
         print('    Cloning repository...')
 

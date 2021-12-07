@@ -145,9 +145,19 @@ class CheckoutRoute(AuthedBlueprint):
         if not self.checkout.repository:
             return None
 
-        commit = self.checkout.repository.find(ref) if ref else self.checkout.repository.commit()
+        commit = None
+        try:
+            commit = self.checkout.repository.find(ref) if ref else self.checkout.repository.commit()
+        except (RuntimeError, ValueError):
+            pass
+
         if not commit:
-            return commit
+            try:
+                if self.checkout.fallback_repository:
+                    return self.checkout.fallback_repository.find(ref)
+            except (RuntimeError, ValueError):
+                pass
+            return None
 
         encoded = json.dumps(commit, cls=Commit.Encoder)
         self.database.set(commit.hash, encoded)
