@@ -20472,8 +20472,6 @@ _OBJC_CLASS_$_WebCoreFullScreenWarningView
 _OBJC_METACLASS_$_WebCoreFullScreenWarningView
 _OBJC_CLASS_$_WebCoreFullScreenWindow
 _OBJC_METACLASS_$_WebCoreFullScreenWindow
-_OBJC_CLASS_$_WebGLLayer
-_OBJC_METACLASS_$_WebGLLayer
 _OBJC_CLASS_$_WebLayer
 _OBJC_METACLASS_$_WebLayer
 _OBJC_CLASS_$_WebScriptObject
@@ -30643,8 +30641,6 @@ _OBJC_IVAR_$_WebCoreFullScreenPlaceholderView._exitWarning
 _OBJC_IVAR_$_WebCoreFullScreenPlaceholderView._target
 _OBJC_IVAR_$_WebCoreFullScreenPlaceholderView._action
 _OBJC_IVAR_$_WebCoreFullScreenWarningView._textField
-_OBJC_IVAR_$_WebGLLayer.m_context
-_OBJC_IVAR_$_WebGLLayer.m_layerOwner
 _OBJC_IVAR_$_WebScriptObjectPrivate.imp
 _OBJC_IVAR_$_WebScriptObjectPrivate.rootObject
 _OBJC_IVAR_$_WebScriptObjectPrivate.originRootObject

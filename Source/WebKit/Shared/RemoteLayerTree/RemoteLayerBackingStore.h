@@ -63,6 +63,7 @@ public:
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
+    void setContents(WTF::MachSendRight&& surfaceHandle);
     bool display();
 
     WebCore::FloatSize size() const { return m_size; }
@@ -83,7 +84,7 @@ public:
 
     bool hasFrontBuffer() const
     {
-        return !!m_frontBuffer.imageBuffer;
+        return m_bufferHandle.has_value();
     }
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> takePendingFlushers();

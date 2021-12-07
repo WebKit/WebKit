@@ -327,7 +327,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
     platform/graphics/cocoa/WebCoreCALayerExtras.mm
     platform/graphics/cocoa/WebCoreDecompressionSession.mm
-    platform/graphics/cocoa/WebGLLayer.mm
     platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm
     platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
 

@@ -296,6 +296,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerTypeModelLayer:
 #endif
+    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeTransformLayer:
@@ -312,7 +313,6 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #endif
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (m_isDebugLayerTreeHost)
             return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
         return makeWithLayer([CALayer _web_renderLayerWithContextID:properties.hostingContextID]);

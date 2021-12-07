@@ -40,6 +40,21 @@ namespace TestWebKitAPI {
 
 namespace {
 
+class TestedGraphicsContextGLCocoa : public WebCore::GraphicsContextGLCocoa {
+public:
+    static RefPtr<TestedGraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&& attributes)
+    {
+        auto context = adoptRef(*new TestedGraphicsContextGLCocoa(WTFMove(attributes)));
+        return context;
+    }
+    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return nullptr; }
+private:
+    TestedGraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes attributes)
+        : WebCore::GraphicsContextGLCocoa(WTFMove(attributes))
+    {
+    }
+};
+
 class GraphicsContextGLCocoaTest : public ::testing::Test {
 public:
     void SetUp() override // NOLINT
@@ -58,7 +73,7 @@ private:
 
 static const int expectedDisplayBufferPoolSize = 3;
 
-static RefPtr<WebCore::GraphicsContextGLCocoa> createDefaultTestContext(WebCore::IntSize contextSize)
+static RefPtr<TestedGraphicsContextGLCocoa> createDefaultTestContext(WebCore::IntSize contextSize)
 {
     WebCore::GraphicsContextGLAttributes attributes;
     attributes.useMetal = true;
@@ -67,14 +82,14 @@ static RefPtr<WebCore::GraphicsContextGLCocoa> createDefaultTestContext(WebCore:
     attributes.stencil = false;
     attributes.alpha = true;
     attributes.preserveDrawingBuffer = false;
-    auto context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes));
+    auto context = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
     if (!context)
         return nullptr;
     context->reshape(contextSize.width(), contextSize.height());
     return context;
 }
 
-static ::testing::AssertionResult changeContextContents(WebCore::GraphicsContextGLCocoa& context, int iteration)
+static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLCocoa& context, int iteration)
 {
     context.markContextChanged();
     WebCore::Color expected { iteration % 2 ? WebCore::Color::green : WebCore::Color::yellow };
@@ -119,15 +134,15 @@ TEST_F(GraphicsContextGLCocoaTest, MAYBE_MultipleGPUsDifferentPowerPreferenceMet
     WebCore::GraphicsContextGLAttributes attributes;
     attributes.useMetal = true;
     EXPECT_EQ(attributes.powerPreference, WebCore::GraphicsContextGLPowerPreference::Default);
-    auto defaultContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    auto defaultContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
     ASSERT_NE(defaultContext, nullptr);
 
     attributes.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
-    auto lowPowerContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    auto lowPowerContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
     ASSERT_NE(lowPowerContext, nullptr);
 
     attributes.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
-    auto highPerformanceContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
     ASSERT_NE(highPerformanceContext, nullptr);
 
     EXPECT_NE(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER));

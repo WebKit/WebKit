@@ -386,7 +386,7 @@ public:
 
     GraphicsContextGL* graphicsContextGL() const { return m_context.get(); }
     WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
-    PlatformLayer* platformLayer() const override;
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
     void reshape(int width, int height) override;
 

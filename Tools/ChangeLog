@@ -1,3 +1,14 @@
+2021-12-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cocoa WebGL should support UI side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=231009
+        <rdar://83437059>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLOpenGLCocoa.mm:
+        Add a dummy override of the new member function layerContentsDisplayDelegate.
+
 2021-12-06  John Wilander  <wilander@apple.com>
 
         Add WebCore::RegistrableDomain tests for duplicate sub domains

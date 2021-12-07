@@ -34,8 +34,6 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 LocalizedDateCache& localizedDateCache()
@@ -166,7 +164,7 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const M
         [components setMonth:(i + 1)];
         NSDate *date = [gregorian dateFromComponents:components.get()];
         NSString *formattedDate = [dateFormatter stringFromDate:date];
-        maximumWidth = max(maximumWidth, measurer.measureText(String(formattedDate)));
+        maximumWidth = std::max(maximumWidth, measurer.measureText(String(formattedDate)));
     }
 
     return maximumWidth;

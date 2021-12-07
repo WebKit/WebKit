@@ -78,8 +78,8 @@ void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF:
 {
     assertIsCurrent(m_streamThread);
     m_context->prepareForDisplay();
-    IOSurface* displayBuffer = m_context->displayBuffer();
     MachSendRight sendRight;
+    IOSurface* displayBuffer = m_context->displayBuffer();
     if (displayBuffer) {
         m_context->markDisplayBufferInUse();
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)

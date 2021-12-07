@@ -29,6 +29,9 @@
 #if USE(CORE_IMAGE)
 
 #import "FEComponentTransfer.h"
+#import <CoreImage/CIContext.h>
+#import <CoreImage/CIFilter.h>
+#import <CoreImage/CoreImage.h>
 
 namespace WebCore {
 

@@ -29,8 +29,7 @@
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLCocoa.h" // NOLINT
 #import "GraphicsContextGLOpenGLManager.h"
-#import "WebGLLayer.h"
-#import <wtf/BlockObjCExceptions.h>
+#import "PlatformCALayer.h"
 
 #if PLATFORM(MAC)
 #import "DisplayConfigurationMonitor.h"
@@ -39,46 +38,83 @@
 namespace WebCore {
 namespace {
 
-static RetainPtr<WebGLLayer> createWebGLLayer(const GraphicsContextGLAttributes& attributes)
-{
-    RetainPtr<WebGLLayer> layer;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    layer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attributes.devicePixelRatio contentsOpaque:!attributes.alpha]);
-#ifndef NDEBUG
-    [layer setName:@"WebGL Layer"];
-#endif
-    END_BLOCK_OBJC_EXCEPTIONS
-    return layer;
-}
+class DisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+public:
+    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque, float contentsScale)
+    {
+        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, contentsScale));
+    }
+
+    // GraphicsLayerContentsDisplayDelegate overrides.
+    void prepareToDelegateDisplay(PlatformCALayer& layer) final
+    {
+        layer.setOpaque(m_isOpaque);
+        layer.setContentsScale(m_contentsScale);
+    }
+
+    void display(PlatformCALayer& layer) final
+    {
+        if (m_displayBuffer)
+            layer.setContents(*m_displayBuffer);
+        else
+            layer.setContents(nullptr);
+    }
+
+    GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
+    {
+        return GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
+    }
+
+    void setDisplayBuffer(IOSurface* displayBuffer)
+    {
+        if (!displayBuffer) {
+            m_displayBuffer.reset();
+            return;
+        }
+        if (m_displayBuffer && displayBuffer->surface() == m_displayBuffer->surface())
+            return;
+        m_displayBuffer = IOSurface::createFromSurface(displayBuffer->surface(), DestinationColorSpace::SRGB());
+    }
+
+private:
+    DisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
+        : m_isOpaque(isOpaque)
+        , m_contentsScale(contentsScale)
+    {
+    }
+
+    const bool m_isOpaque;
+    const float m_contentsScale;
+    std::unique_ptr<IOSurface> m_displayBuffer;
+};
 
 // GraphicsContextGL type that is used when WebGL is run in-process in WebContent process.
 class WebProcessGraphicsContextGLCocoa final : public GraphicsContextGLCocoa
 #if PLATFORM(MAC)
     , private DisplayConfigurationMonitor::Client
 #endif
-
 {
 public:
     ~WebProcessGraphicsContextGLCocoa();
-    bool isValid() const { return GraphicsContextGLCocoa::isValid() && m_webGLLayer; }
+
     // GraphicsContextGLCocoa overrides.
-    PlatformLayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
 private:
 #if PLATFORM(MAC)
     // DisplayConfigurationMonitor::Client overrides.
     void displayWasReconfigured() final;
 #endif
-
     WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&&);
-    RetainPtr<WebGLLayer> m_webGLLayer;
 
+    Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend RefPtr<GraphicsContextGL> WebCore::createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&);
+    friend class GraphicsContextGLOpenGL;
 };
 
 WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLCocoa(WTFMove(attributes))
-    , m_webGLLayer(createWebGLLayer(contextAttributes()))
+    , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
 {
 #if PLATFORM(MAC)
     DisplayConfigurationMonitor::singleton().addClient(*this);
@@ -95,13 +131,7 @@ WebProcessGraphicsContextGLCocoa::~WebProcessGraphicsContextGLCocoa()
 void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
 {
     GraphicsContextGLCocoa::prepareForDisplay();
-    auto surface = m_swapChain.displayBuffer().surface.get();
-    if (!surface)
-        return;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_webGLLayer setContents:surface->asLayerContents()];
-    [m_webGLLayer setNeedsDisplay];
-    END_BLOCK_OBJC_EXCEPTIONS
+    m_layerContentsDisplayDelegate->setDisplayBuffer(displayBuffer());
 }
 
 #if PLATFORM(MAC)

@@ -44,16 +44,18 @@ namespace Nicosia {
 
 using namespace WebCore;
 
+namespace {
 class NicosiaImageBufferPipeSource final : public ImageBufferPipe::Source, public ContentLayerTextureMapperImpl::Client {
 public:
     NicosiaImageBufferPipeSource();
     virtual ~NicosiaImageBufferPipeSource();
 
+    // ImageBufferPipe::Source overrides.
     void handle(RefPtr<ImageBuffer>&&) final;
 
-    PlatformLayer* platformLayer() const;
-
+    ContentLayer* platformLayer() const { return m_nicosiaLayer.get(); }
 private:
+    // ContentLayerTextureMapperImpl::Client overrides.
     void swapBuffersIfNeeded() override;
 
     RefPtr<ContentLayer> m_nicosiaLayer;
@@ -62,16 +64,38 @@ private:
     RefPtr<ImageBuffer> m_imageBuffer;
 };
 
+class PipeSourceDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+public:
+    static Ref<PipeSourceDisplayDelegate> create(RefPtr<ContentLayer>&& nicosiaLayer)
+    {
+        return adoptRef(*new PipeSourceDisplayDelegate(WTFMove(nicosiaLayer)));
+    }
+
+    // GraphicsLayerContentsDisplayDelegate overrides.
+    PlatformLayer* platformLayer() const final { return m_nicosiaLayer.get(); }
+private:
+    PipeSourceDisplayDelegate(RefPtr<ContentLayer>&& nicosiaLayer)
+        : m_nicosiaLayer(WTFMove(nicosiaLayer))
+    {
+    }
+
+    RefPtr<ContentLayer> m_nicosiaLayer;
+};
+
 class NicosiaImageBufferPipe final : public ImageBufferPipe {
 public:
-    NicosiaImageBufferPipe();
-    virtual ~NicosiaImageBufferPipe() = default;
+    NicosiaImageBufferPipe()
+        : m_source(adoptRef(*new NicosiaImageBufferPipeSource))
+        , m_layerContentsDisplayDelegate(PipeSourceDisplayDelegate::create(m_source->platformLayer()))
+    {
+    }
 
+    // ImageBufferPipe overrides.
+    RefPtr<ImageBufferPipe::Source> source() const final { return m_source.ptr(); }
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
 private:
-    RefPtr<ImageBufferPipe::Source> source() const final;
-    PlatformLayer* platformLayer() const final;
-
-    RefPtr<NicosiaImageBufferPipeSource> m_source;
+    Ref<NicosiaImageBufferPipeSource> m_source;
+    Ref<PipeSourceDisplayDelegate> m_layerContentsDisplayDelegate;
 };
 
 NicosiaImageBufferPipeSource::NicosiaImageBufferPipeSource()
@@ -135,30 +159,10 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
     m_imageBuffer = WTFMove(buffer);
 }
 
-PlatformLayer* NicosiaImageBufferPipeSource::platformLayer() const
-{
-    return m_nicosiaLayer.get();
-}
-
 void NicosiaImageBufferPipeSource::swapBuffersIfNeeded()
 {
 }
 
-NicosiaImageBufferPipe::NicosiaImageBufferPipe()
-{
-    m_source = adoptRef(new NicosiaImageBufferPipeSource);
-}
-
-RefPtr<ImageBufferPipe::Source> NicosiaImageBufferPipe::source() const
-{
-    return m_source;
-}
-
-PlatformLayer* NicosiaImageBufferPipe::platformLayer() const
-{
-    if (m_source)
-        return m_source->platformLayer();
-    return nullptr;
 }
 
 } // namespace Nicosia

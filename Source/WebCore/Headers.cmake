@@ -1458,6 +1458,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GraphicsContextGLAttributes.h
     platform/graphics/GraphicsContextGLState.h
     platform/graphics/GraphicsLayer.h
+    platform/graphics/GraphicsLayerContentsDisplayDelegate.h
     platform/graphics/GraphicsLayerClient.h
     platform/graphics/GraphicsLayerFactory.h
     platform/graphics/GraphicsLayerTransform.h

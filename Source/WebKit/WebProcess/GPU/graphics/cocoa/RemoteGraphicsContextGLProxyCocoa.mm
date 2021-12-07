@@ -32,24 +32,69 @@
 #import "RemoteGraphicsContextGLMessages.h"
 #import "WebProcess.h"
 #import <WebCore/CVUtilities.h>
-#import <WebCore/GraphicsContextCG.h>
-#import <WebCore/GraphicsContextGLIOSurfaceSwapChain.h>
+#import <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/MediaSampleAVFObjC.h>
-#import <WebCore/WebGLLayer.h>
-#import <wtf/BlockObjCExceptions.h>
+#import <WebCore/PlatformCALayer.h>
 
 namespace WebKit {
 
 namespace {
 
+class DisplayBufferDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
+public:
+    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque, float contentsScale)
+    {
+        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, contentsScale));
+    }
+
+    // WebCore::GraphicsLayerContentsDisplayDelegate overrides.
+    void prepareToDelegateDisplay(WebCore::PlatformCALayer& layer) final
+    {
+        layer.setOpaque(m_isOpaque);
+        layer.setContentsScale(m_contentsScale);
+    }
+
+    void display(WebCore::PlatformCALayer& layer) final
+    {
+        if (m_displayBuffer)
+            layer.setContents(m_displayBuffer);
+        else
+            layer.setContents(nullptr);
+    }
+
+    WebCore::GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
+    {
+        return WebCore::GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
+    }
+
+    void setDisplayBuffer(const MachSendRight& displayBuffer)
+    {
+        if (!displayBuffer) {
+            m_displayBuffer = { };
+            return;
+        }
+        if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
+            return;
+        m_displayBuffer = displayBuffer.copySendRight();
+    }
+
+private:
+    DisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
+        : m_isOpaque(isOpaque)
+        , m_contentsScale(contentsScale)
+    {
+    }
+
+    const bool m_isOpaque;
+    const float m_contentsScale;
+    MachSendRight m_displayBuffer;
+};
+
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
 public:
-    bool isValid() const { return m_webGLLayer; }
-    WebCore::IOSurface* displayBuffer() const { return m_displayBuffer.get(); }
-
     // RemoteGraphicsContextGLProxy overrides.
-    PlatformLayer* platformLayer() const final { return m_webGLLayer.get(); }
+    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
@@ -58,30 +103,25 @@ public:
     RefPtr<WebCore::MediaSample> paintCompositedResultsToMediaSample() final;
 #endif
 private:
-    RemoteGraphicsContextGLProxyCocoa(GPUProcessConnection&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
-    RetainPtr<WebGLLayer> m_webGLLayer;
-    std::unique_ptr<WebCore::IOSurface> m_displayBuffer;
+    RemoteGraphicsContextGLProxyCocoa(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+        : RemoteGraphicsContextGLProxy(gpuProcessConnection, attributes, renderingBackend)
+        , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
+    {
+    }
+
+    MachSendRight m_displayBuffer;
+    Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
 };
-
-RemoteGraphicsContextGLProxyCocoa::RemoteGraphicsContextGLProxyCocoa(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
-    : RemoteGraphicsContextGLProxy(gpuProcessConnection, attributes, renderingBackend)
-{
-    auto attrs = contextAttributes();
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
-#ifndef NDEBUG
-    [m_webGLLayer setName:@"WebGL Layer"];
-#endif
-    END_BLOCK_OBJC_EXCEPTIONS
-}
 
 #if ENABLE(MEDIA_STREAM)
 RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxyCocoa::paintCompositedResultsToMediaSample()
 {
     if (!m_displayBuffer)
         return nullptr;
-    auto pixelBuffer = WebCore::createCVPixelBuffer(m_displayBuffer->surface());
+    // FIXME: Implement remote MediaSample.
+    auto surface = WebCore::IOSurface::createFromSendRight(m_displayBuffer.copySendRight(), WebCore::DestinationColorSpace::SRGB());
+    auto pixelBuffer = WebCore::createCVPixelBuffer(surface->surface());
     if (!pixelBuffer)
         return nullptr;
     return WebCore::MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), WebCore::MediaSampleAVFObjC::VideoRotation::UpsideDown, true);
@@ -100,26 +140,16 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
     }
     if (!displayBufferSendRight)
         return;
-    auto displayBuffer = WebCore::IOSurface::createFromSendRight(WTFMove(displayBufferSendRight), WebCore::DestinationColorSpace::SRGB());
-    if (!displayBuffer) {
-        markContextLost();
-        return;
-    }
-    m_displayBuffer = WTFMove(displayBuffer);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_webGLLayer setContents:m_displayBuffer->asLayerContents()];
-    END_BLOCK_OBJC_EXCEPTIONS
+    m_displayBuffer = WTFMove(displayBufferSendRight);
     markLayerComposited();
+    m_layerContentsDisplayDelegate->setDisplayBuffer(m_displayBuffer.copySendRight());
 }
 
 }
 
 RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
 {
-    auto context = adoptRef(new RemoteGraphicsContextGLProxyCocoa(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
-    if (!context->isValid())
-        return nullptr;
-    return context;
+    return adoptRef(new RemoteGraphicsContextGLProxyCocoa(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
 }
 
 }

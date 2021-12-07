@@ -58,6 +58,7 @@ namespace WebCore {
 class Animation;
 class GraphicsContext;
 class GraphicsLayerFactory;
+class GraphicsLayerContentsDisplayDelegate;
 class Image;
 class Model;
 class TiledBacking;
@@ -522,6 +523,7 @@ public:
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
+    virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
 #if ENABLE(MODEL_ELEMENT)
     virtual void setContentsToModel(RefPtr<Model>&&) { }
     virtual PlatformLayerID contentsLayerIDForModel() const { return 0; }

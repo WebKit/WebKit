@@ -32,6 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/text/StringCommon.h>
 
 namespace WebCore {
 
