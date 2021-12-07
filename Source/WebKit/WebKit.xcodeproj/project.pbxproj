@@ -967,8 +967,6 @@
 		5129EB1223D0DE7B00AF1CD7 /* ContentWorldShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */; };
 		512CD6982721EFC800F7F8EC /* WebPushDaemonConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6972721EFC300F7F8EC /* WebPushDaemonConnection.h */; };
 		512CD69A2721F0A900F7F8EC /* WebPushDaemonConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */; };
-		512CD69F2723393A00F7F8EC /* WebPushDaemon.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD69D2723393A00F7F8EC /* WebPushDaemon.h */; };
-		512CD6A02723393A00F7F8EC /* WebPushDaemon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512CD69E2723393A00F7F8EC /* WebPushDaemon.mm */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB930FE26E802160032B1C0 /* PrivateClickMeasurementConnection.h */; };
 		512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */; };
@@ -1007,12 +1005,6 @@
 		515BE1AB1D555AA000DD7C68 /* WebGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1A01D550AB000DD7C68 /* WebGamepad.h */; };
 		515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1B01D59006900DD7C68 /* GamepadData.h */; };
 		515BE1B51D5917FF00DD7C68 /* UIGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1AD1D555C5100DD7C68 /* UIGamepad.h */; };
-		5160E955274B887200567388 /* AppBundleRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E953274B887100567388 /* AppBundleRequest.mm */; };
-		5160E956274B887200567388 /* AppBundleRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E954274B887100567388 /* AppBundleRequest.h */; };
-		5160E959274C0D8900567388 /* PushAppBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E957274C0D8800567388 /* PushAppBundle.h */; };
-		5160E95A274C0D8900567388 /* PushAppBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E958274C0D8800567388 /* PushAppBundle.mm */; };
-		5160E95E274C2A0300567388 /* MockAppBundleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E95C274C2A0300567388 /* MockAppBundleRegistry.h */; };
-		5160E960274C2A4000567388 /* MockAppBundleRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E95F274C2A3F00567388 /* MockAppBundleRegistry.mm */; };
 		5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */; };
 		5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACC9351628064800342550 /* NetworkProcessMessages.h */; };
 		516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* APIError.h */; };
@@ -1026,6 +1018,21 @@
 		517B5F2F2757382B002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */; };
 		517B5F65275A8D7F002DC22D /* WebPushToolMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F64275A8D7E002DC22D /* WebPushToolMain.mm */; };
 		517B5F68275A9A78002DC22D /* WebPushToolConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F67275A9A78002DC22D /* WebPushToolConnection.mm */; };
+		517B5F73275E9609002DC22D /* WebPushDaemonMain.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F72275E9609002DC22D /* WebPushDaemonMain.h */; };
+		517B5F78275E9795002DC22D /* webpushd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F77275E9795002DC22D /* webpushd.cpp */; };
+		517B5F79275E97A1002DC22D /* WebPushDaemonMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C157A0B2717CA1C00ED5280 /* WebPushDaemonMain.mm */; };
+		517B5F7A275E97A4002DC22D /* WebPushDaemon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512CD69E2723393A00F7F8EC /* WebPushDaemon.mm */; };
+		517B5F7B275E97A9002DC22D /* PushClientConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7BB7A2744C50700C45A72 /* PushClientConnection.mm */; };
+		517B5F7C275E97B6002DC22D /* MockAppBundleForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F7BB75274498BB00C45A72 /* MockAppBundleForTesting.h */; };
+		517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F7BB792744C50700C45A72 /* PushClientConnection.h */; };
+		517B5F7E275E97B6002DC22D /* AppBundleRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E953274B887100567388 /* AppBundleRequest.mm */; };
+		517B5F7F275E97B6002DC22D /* WebPushDaemon.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD69D2723393A00F7F8EC /* WebPushDaemon.h */; };
+		517B5F80275E97B6002DC22D /* MockAppBundleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E95C274C2A0300567388 /* MockAppBundleRegistry.h */; };
+		517B5F81275E97B6002DC22D /* PushAppBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E957274C0D8800567388 /* PushAppBundle.h */; };
+		517B5F82275E97B6002DC22D /* PushAppBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E958274C0D8800567388 /* PushAppBundle.mm */; };
+		517B5F84275E97B6002DC22D /* MockAppBundleForTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */; };
+		517B5F85275E97B6002DC22D /* AppBundleRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E954274B887100567388 /* AppBundleRequest.h */; };
+		517B5F86275E97B6002DC22D /* MockAppBundleRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E95F274C2A3F00567388 /* MockAppBundleRegistry.mm */; };
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
@@ -1068,10 +1075,6 @@
 		51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */; };
 		51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */; };
 		51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */; };
-		51F7BB76274498BB00C45A72 /* MockAppBundleForTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */; };
-		51F7BB77274498BB00C45A72 /* MockAppBundleForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F7BB75274498BB00C45A72 /* MockAppBundleForTesting.h */; };
-		51F7BB7B2744C50700C45A72 /* PushClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F7BB792744C50700C45A72 /* PushClientConnection.h */; };
-		51F7BB7C2744C50700C45A72 /* PushClientConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7BB7A2744C50700C45A72 /* PushClientConnection.mm */; };
 		51F7BB7D2745640400C45A72 /* CodeSigning.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */; };
 		51F7BB7F274564A100C45A72 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F7BB7E274564A100C45A72 /* Security.framework */; };
 		51F886A61F2C228100C193EF /* WKTestingSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F886A41F2C214A00C193EF /* WKTestingSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1226,7 +1229,6 @@
 		5C1579FE2717B6C100ED5280 /* DaemonEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579E827172A8A00ED5280 /* DaemonEncoder.cpp */; };
 		5C1579FF2717B6D200ED5280 /* DaemonDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579E927172A8B00ED5280 /* DaemonDecoder.cpp */; };
 		5C157A012717B7FB00ED5280 /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
-		5C157A0C2717CA1D00ED5280 /* WebPushDaemonMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C157A0B2717CA1C00ED5280 /* WebPushDaemonMain.mm */; };
 		5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4406,6 +4408,8 @@
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/NetworkProcessConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheStorageEngineConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/CacheStorageEngineConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionMessages.h; path = DerivedSources/WebKit2/NetworkProcessConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		517B5F72275E9609002DC22D /* WebPushDaemonMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushDaemonMain.h; sourceTree = "<group>"; };
+		517B5F77275E9795002DC22D /* webpushd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = webpushd.cpp; sourceTree = "<group>"; };
 		518324782615B00D003F239E /* NetworkSchemeURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeURLProtocol.h; sourceTree = "<group>"; };
 		518324792615B00D003F239E /* NetworkSchemeURLProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkSchemeURLProtocol.mm; sourceTree = "<group>"; };
 		5183722023CE973A0003CF83 /* APIContentWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContentWorld.h; sourceTree = "<group>"; };
@@ -9941,6 +9945,7 @@
 		5C157A0A2717C9F100ED5280 /* webpushd */ = {
 			isa = PBXGroup;
 			children = (
+				517B5F77275E9795002DC22D /* webpushd.cpp */,
 				517B5F63275A8D5C002DC22D /* webpushtool */,
 				5160E954274B887100567388 /* AppBundleRequest.h */,
 				5160E953274B887100567388 /* AppBundleRequest.mm */,
@@ -9956,6 +9961,7 @@
 				512CD69D2723393A00F7F8EC /* WebPushDaemon.h */,
 				512CD69E2723393A00F7F8EC /* WebPushDaemon.mm */,
 				5C157A0B2717CA1C00ED5280 /* WebPushDaemonMain.mm */,
+				517B5F72275E9609002DC22D /* WebPushDaemonMain.h */,
 			);
 			path = webpushd;
 			sourceTree = "<group>";
@@ -12511,13 +12517,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5160E956274B887200567388 /* AppBundleRequest.h in Headers */,
 				5C1579FC2717AF5000ED5280 /* DaemonUtilities.h in Headers */,
-				51F7BB77274498BB00C45A72 /* MockAppBundleForTesting.h in Headers */,
-				5160E95E274C2A0300567388 /* MockAppBundleRegistry.h in Headers */,
-				5160E959274C0D8900567388 /* PushAppBundle.h in Headers */,
-				51F7BB7B2744C50700C45A72 /* PushClientConnection.h in Headers */,
-				512CD69F2723393A00F7F8EC /* WebPushDaemon.h in Headers */,
 				517B5F2F2757382B002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12590,6 +12590,7 @@
 				5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */,
 				994C6042253CA54400BDF060 /* _WKInspectorConfiguration.h in Headers */,
 				994C6045253CABA200BDF060 /* _WKInspectorConfigurationInternal.h in Headers */,
+				517B5F7F275E97B6002DC22D /* WebPushDaemon.h in Headers */,
 				991F492F23A812C60054642B /* _WKInspectorDebuggableInfo.h in Headers */,
 				99036AE223A949CF0000B06A /* _WKInspectorDebuggableInfoInternal.h in Headers */,
 				9197940C23DBC50300257892 /* _WKInspectorDelegate.h in Headers */,
@@ -12993,6 +12994,7 @@
 				831EEBBD1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.h in Headers */,
 				832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */,
 				E4436ECF1A0D040B00EAD204 /* NetworkCacheStorage.h in Headers */,
+				517B5F7C275E97B6002DC22D /* MockAppBundleForTesting.h in Headers */,
 				8310428B1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h in Headers */,
 				513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */,
 				51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */,
@@ -13127,6 +13129,7 @@
 				071BC59123CE1EAA00680D7C /* RemoteMediaPlayerProxyMessagesReplies.h in Headers */,
 				1D4D737123A9E56200717A25 /* RemoteMediaResourceManagerMessages.h in Headers */,
 				1D4D737623A9ED1800717A25 /* RemoteMediaResourceManagerMessagesReplies.h in Headers */,
+				517B5F85275E97B6002DC22D /* AppBundleRequest.h in Headers */,
 				1DD2A68525633C6700FF7B6F /* RemoteMediaSourceProxyMessages.h in Headers */,
 				1DD2A68825633C9500FF7B6F /* RemoteMediaSourceProxyMessagesReplies.h in Headers */,
 				E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */,
@@ -13219,6 +13222,7 @@
 				57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */,
 				448AC24E267135A700B28921 /* SynapseSPI.h in Headers */,
 				4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */,
+				517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */,
 				3157135F2040A9B20084F9CF /* SystemPreviewController.h in Headers */,
 				079D1D9A26960CD300883577 /* SystemStatusSPI.h in Headers */,
 				F4D985CB2691096600BBCCBE /* TapHandlingResult.h in Headers */,
@@ -13243,6 +13247,7 @@
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
 				1AC1336818565B5700F3EC05 /* UserData.h in Headers */,
+				517B5F80275E97B6002DC22D /* MockAppBundleRegistry.h in Headers */,
 				CD491B081E70D05F00009066 /* UserMediaCaptureManager.h in Headers */,
 				CD491B0E1E732E4D00009066 /* UserMediaCaptureManagerMessages.h in Headers */,
 				CD491B131E73482100009066 /* UserMediaCaptureManagerProxy.h in Headers */,
@@ -13720,6 +13725,7 @@
 				A1579B28258490E500528236 /* WKMediaFormatReader.h in Headers */,
 				9ACC07B925C8218400DC6386 /* WKMediaKeySystemPermissionCallback.h in Headers */,
 				1AB40EE61BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h in Headers */,
+				517B5F81275E97B6002DC22D /* PushAppBundle.h in Headers */,
 				5CABDC8622C40FDE001EDE8E /* WKMessageListener.h in Headers */,
 				C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */,
 				411A8DDB20DDD1AC0060D34F /* WKMockMediaDevice.h in Headers */,
@@ -13785,6 +13791,7 @@
 				BC2D021912AC426C00E732A3 /* WKPageLoadTypes.h in Headers */,
 				93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */,
 				2D7303791A7C2B7500F8F487 /* WKPageNavigationClient.h in Headers */,
+				517B5F73275E9609002DC22D /* WebPushDaemonMain.h in Headers */,
 				1AB8A1EE18400ACB00E9AE69 /* WKPagePolicyClient.h in Headers */,
 				373CEAD81859553F008C363D /* WKPagePolicyClientInternal.h in Headers */,
 				BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */,
@@ -15084,18 +15091,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5160E955274B887200567388 /* AppBundleRequest.mm in Sources */,
 				5C157A012717B7FB00ED5280 /* ArgumentCoders.cpp in Sources */,
 				51F7BB7D2745640400C45A72 /* CodeSigning.mm in Sources */,
 				5C1579FF2717B6D200ED5280 /* DaemonDecoder.cpp in Sources */,
 				5C1579FE2717B6C100ED5280 /* DaemonEncoder.cpp in Sources */,
+				517B5F78275E9795002DC22D /* webpushd.cpp in Sources */,
 				5C1579FB2717AF5000ED5280 /* DaemonUtilities.mm in Sources */,
-				51F7BB76274498BB00C45A72 /* MockAppBundleForTesting.mm in Sources */,
-				5160E960274C2A4000567388 /* MockAppBundleRegistry.mm in Sources */,
-				5160E95A274C0D8900567388 /* PushAppBundle.mm in Sources */,
-				51F7BB7C2744C50700C45A72 /* PushClientConnection.mm in Sources */,
-				512CD6A02723393A00F7F8EC /* WebPushDaemon.mm in Sources */,
-				5C157A0C2717CA1D00ED5280 /* WebPushDaemonMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15146,6 +15147,7 @@
 				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
 				57FABB132581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm in Sources */,
+				517B5F7E275E97B6002DC22D /* AppBundleRequest.mm in Sources */,
 				9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */,
 				99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */,
 				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,
@@ -15227,6 +15229,7 @@
 				CDE555352406EB8C008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp in Sources */,
 				CD3EEF462579C261006563BB /* RemoteMediaEngineConfigurationFactoryProxyMessageReceiver.cpp in Sources */,
 				0792314B239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp in Sources */,
+				517B5F7A275E97A4002DC22D /* WebPushDaemon.mm in Sources */,
 				0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */,
 				071BC58F23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessageReceiver.cpp in Sources */,
 				1D4D737023A9E54700717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp in Sources */,
@@ -15267,6 +15270,8 @@
 				2D11B7552126A282006F8878 /* UnifiedSource3-mm.mm in Sources */,
 				2D11B7562126A282006F8878 /* UnifiedSource3.cpp in Sources */,
 				2D11B7572126A282006F8878 /* UnifiedSource4-mm.mm in Sources */,
+				517B5F84275E97B6002DC22D /* MockAppBundleForTesting.mm in Sources */,
+				517B5F86275E97B6002DC22D /* MockAppBundleRegistry.mm in Sources */,
 				2D11B7582126A282006F8878 /* UnifiedSource4.cpp in Sources */,
 				2D11B7592126A282006F8878 /* UnifiedSource5-mm.mm in Sources */,
 				2D11B75A2126A282006F8878 /* UnifiedSource5.cpp in Sources */,
@@ -15349,6 +15354,7 @@
 				2D11B7A72126A283006F8878 /* UnifiedSource44-mm.mm in Sources */,
 				2D11B7A82126A283006F8878 /* UnifiedSource44.cpp in Sources */,
 				2D11B7A92126A283006F8878 /* UnifiedSource45-mm.mm in Sources */,
+				517B5F82275E97B6002DC22D /* PushAppBundle.mm in Sources */,
 				2D11B7AA2126A283006F8878 /* UnifiedSource45.cpp in Sources */,
 				2D11B7AB2126A283006F8878 /* UnifiedSource46-mm.mm in Sources */,
 				2D11B7AC2126A283006F8878 /* UnifiedSource46.cpp in Sources */,
@@ -15379,6 +15385,7 @@
 				2D11B7C52126A283006F8878 /* UnifiedSource59-mm.mm in Sources */,
 				2D11B7C62126A283006F8878 /* UnifiedSource59.cpp in Sources */,
 				2D11B7C72126A283006F8878 /* UnifiedSource60-mm.mm in Sources */,
+				517B5F79275E97A1002DC22D /* WebPushDaemonMain.mm in Sources */,
 				2D11B7C82126A283006F8878 /* UnifiedSource60.cpp in Sources */,
 				2D54C31A212F3B330049C174 /* UnifiedSource61-mm.mm in Sources */,
 				2D11B7CA2126A283006F8878 /* UnifiedSource61.cpp in Sources */,
@@ -15386,6 +15393,7 @@
 				2D11B7CB2126A283006F8878 /* UnifiedSource62.cpp in Sources */,
 				2D54C308212F3B330049C174 /* UnifiedSource63-mm.mm in Sources */,
 				2D11B7CC2126A283006F8878 /* UnifiedSource63.cpp in Sources */,
+				517B5F7B275E97A9002DC22D /* PushClientConnection.mm in Sources */,
 				2D54C30C212F3B330049C174 /* UnifiedSource64-mm.mm in Sources */,
 				2D11B7CD2126A283006F8878 /* UnifiedSource64.cpp in Sources */,
 				2D54C307212F3B330049C174 /* UnifiedSource65-mm.mm in Sources */,
