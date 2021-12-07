@@ -61,7 +61,7 @@ void Connection::connectionReceivedEvent(xpc_object_t request) const
     if (!debugMessage)
         return;
     auto messageLevel = static_cast<JSC::MessageLevel>(xpc_dictionary_get_uint64(request, protocolDebugMessageLevelKey));
-    networkSession().networkProcess().broadcastConsoleMessage(networkSession().sessionID(), MessageSource::PrivateClickMeasurement, messageLevel, String::fromUTF8(debugMessage));
+    networkSession().networkProcess().broadcastConsoleMessage(networkSession().sessionID(), MessageSource::Other, messageLevel, String::fromUTF8(debugMessage));
 }
 
 RetainPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const

@@ -71,10 +71,7 @@ private:
     bool canRegisterForNotifications(ClientConnection&);
 
     ClientConnection* toClientConnection(xpc_connection_t);
-
-    HashSet<String> m_inMemoryOriginStringsWithPermissionForTesting;
-
-    HashMap<xpc_connection_t, std::unique_ptr<ClientConnection>> m_connectionMap;
+    HashMap<xpc_connection_t, Ref<ClientConnection>> m_connectionMap;
 };
 
 } // namespace WebPushD

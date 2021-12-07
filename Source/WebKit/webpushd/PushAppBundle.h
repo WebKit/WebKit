@@ -25,53 +25,48 @@
 
 #pragma once
 
-#include <optional>
-#include <wtf/Deque.h>
-#include <wtf/Forward.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/spi/darwin/XPCSPI.h>
-#include <wtf/text/WTFString.h>
+
+@class NSError;
 
 namespace WebPushD {
 
-class AppBundleRequest;
-
-class ClientConnection : public RefCounted<ClientConnection>, public CanMakeWeakPtr<ClientConnection> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<ClientConnection> create(xpc_connection_t);
-
-    bool hasHostAppAuditToken() const { return !!m_hostAppAuditToken; }
-    void setHostAppAuditTokenData(const Vector<uint8_t>&);
-
-    const String& hostAppCodeSigningIdentifier();
-    bool hostAppHasPushEntitlement();
-
-    bool debugModeIsEnabled() const { return m_debugModeEnabled; }
-    void setDebugModeIsEnabled(bool);
-
-    void enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&&);
-    void didCompleteAppBundleRequest(AppBundleRequest&);
-
-    void connectionClosed();
-
-private:
-    ClientConnection(xpc_connection_t);
-
-    void maybeStartNextAppBundleRequest();
-    
-    OSObjectPtr<xpc_connection_t> m_xpcConnection;
-
-    std::optional<audit_token_t> m_hostAppAuditToken;
-    std::optional<String> m_hostAppCodeSigningIdentifier;
-    std::optional<bool> m_hostAppHasPushEntitlement;
-
-    Deque<std::unique_ptr<AppBundleRequest>> m_pendingBundleRequests;
-    std::unique_ptr<AppBundleRequest> m_currentBundleRequest;
-
-    bool m_debugModeEnabled { false };
+enum class PushAppBundleExists : bool {
+    No,
+    Yes,
 };
+
+enum class PushAppBundleCreationResult : bool {
+    Failure,
+    Success,
+};
+
+class PushAppBundle;
+
+class PushAppBundleClient {
+public:
+    virtual ~PushAppBundleClient();
+
+    virtual void didCheckForExistingBundle(PushAppBundle&, PushAppBundleExists) = 0;
+    virtual void didDeleteExistingBundleWithError(PushAppBundle&, NSError *) = 0;
+    virtual void didCreateAppBundle(PushAppBundle&, PushAppBundleCreationResult) = 0;
+};
+
+class PushAppBundle : public RefCounted<PushAppBundle> {
+public:
+    virtual ~PushAppBundle();
+    void detachFromClient();
+
+    virtual void checkForExistingBundle() = 0;
+    virtual void deleteExistingBundle() = 0;
+    virtual void createBundle() = 0;
+    virtual void stop() = 0;
+
+protected:
+    PushAppBundle(PushAppBundleClient&);
+
+    PushAppBundleClient* m_client;
+};
+
 
 } // namespace WebPushD

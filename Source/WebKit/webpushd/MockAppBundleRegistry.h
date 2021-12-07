@@ -25,53 +25,28 @@
 
 #pragma once
 
-#include <optional>
-#include <wtf/Deque.h>
-#include <wtf/Forward.h>
-#include <wtf/OSObjectPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/spi/darwin/XPCSPI.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebPushD {
 
-class AppBundleRequest;
+class MockAppBundleForTesting;
 
-class ClientConnection : public RefCounted<ClientConnection>, public CanMakeWeakPtr<ClientConnection> {
-    WTF_MAKE_FAST_ALLOCATED;
+class MockAppBundleRegistry {
+    friend class MockAppBundleForTesting;
 public:
-    static Ref<ClientConnection> create(xpc_connection_t);
+    static MockAppBundleRegistry& singleton();
 
-    bool hasHostAppAuditToken() const { return !!m_hostAppAuditToken; }
-    void setHostAppAuditTokenData(const Vector<uint8_t>&);
-
-    const String& hostAppCodeSigningIdentifier();
-    bool hostAppHasPushEntitlement();
-
-    bool debugModeIsEnabled() const { return m_debugModeEnabled; }
-    void setDebugModeIsEnabled(bool);
-
-    void enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&&);
-    void didCompleteAppBundleRequest(AppBundleRequest&);
-
-    void connectionClosed();
+    Vector<String> getOriginsWithRegistrations(const String& hostAppBundleIdentifier);
 
 private:
-    ClientConnection(xpc_connection_t);
+    bool doesBundleExist(const String& hostAppBundleIdentifier, const String& originString);
+    void createBundle(const String& hostAppBundleIdentifier, const String& originString);
+    void deleteBundle(const String& hostAppBundleIdentifier, const String& originString);
 
-    void maybeStartNextAppBundleRequest();
-    
-    OSObjectPtr<xpc_connection_t> m_xpcConnection;
-
-    std::optional<audit_token_t> m_hostAppAuditToken;
-    std::optional<String> m_hostAppCodeSigningIdentifier;
-    std::optional<bool> m_hostAppHasPushEntitlement;
-
-    Deque<std::unique_ptr<AppBundleRequest>> m_pendingBundleRequests;
-    std::unique_ptr<AppBundleRequest> m_currentBundleRequest;
-
-    bool m_debugModeEnabled { false };
+    HashMap<String, HashSet<String>> m_registeredBundleMap;
 };
 
 } // namespace WebPushD
