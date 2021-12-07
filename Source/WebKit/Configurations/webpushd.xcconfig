@@ -28,7 +28,16 @@ PRODUCT_NAME = webpushd;
 OTHER_LDFLAGS = -framework WebKit;
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
 
+// We want this to always be NO for non-simulator builds. If set to YES, Xcode will invoke codesign with an --entitlements parameter that points to the platform's BaseEntitlements.plist. This parameter would override any --entitlements parameter that we establish in WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS, causing our entitlements to be ignored.
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=*simulator] = YES;
+
+// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
+CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Resources/ios/XPCService-embedded-simulator.entitlements
+
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
+
+OTHER_CODE_SIGN_FLAGS = --entitlements $(WK_PROCESSED_XCENT_FILE);
 
 INSTALL_PATH[sdk=iphone*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Daemons;
 INSTALL_PATH[sdk=macosx*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Daemons;

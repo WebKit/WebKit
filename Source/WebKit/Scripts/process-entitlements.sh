@@ -216,6 +216,13 @@ function mac_process_webcontent_or_plugin_entitlements()
     fi
 }
 
+function mac_process_webpushd_entitlements()
+{
+    # FIXME: Add a sandbox profile for webpushd.
+    echo "webpushd sandbox has not been implemented yet"
+    plistbuddy Add :com.apple.private.aps-connection-initiate bool YES
+}
+
 # ========================================
 # macCatalyst entitlements
 # ========================================
@@ -504,6 +511,7 @@ function ios_family_process_webpushd_entitlements()
 {
     # FIXME: Add a sandbox profile for webpushd and add it to the seatbelt-profiles array.
     echo "webpushd sandbox has not been implemented yet"
+    plistbuddy Add :aps-connection-initiate bool YES
 }
 
 function ios_family_process_network_entitlements()
@@ -559,7 +567,8 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then mac_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then mac_process_gpu_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebAuthn ]]; then mac_process_webauthn_entitlements
-    elif [[ "${PRODUCT_NAME}" != webpushd && "${PRODUCT_NAME}" != adattributiond ]]; then echo "Unsupported/unknown product: ${PRODUCT_NAME}"
+    elif [[ "${PRODUCT_NAME}" == webpushd ]]; then mac_process_webpushd_entitlements
+    elif [[ "${PRODUCT_NAME}" != adattributiond ]]; then echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == maccatalyst || "${WK_PLATFORM_NAME}" == iosmac ]]
 then

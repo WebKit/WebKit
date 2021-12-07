@@ -35,8 +35,19 @@
 #import <wtf/MainThread.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <servers/bootstrap.h>
+#else
+#import <mach/std_types.h>
+extern "C" {
+extern kern_return_t bootstrap_check_in(mach_port_t bootstrapPort, const char *serviceName, mach_port_t*);
+}
+#endif
+
 using WebKit::Daemon::EncodedMessage;
 using WebPushD::Daemon;
+
+static const char *incomingPushServiceName = "com.apple.aps.webkit.webpushd.incoming-push";
 
 namespace WebPushD {
 
@@ -73,6 +84,12 @@ int WebPushDaemonMain(int argc, const char** argv)
 
     @autoreleasepool {
         WebKit::startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.webpush", connectionAdded, connectionRemoved, connectionEventHandler);
+
+        // TODO: remove this once we actually start using APSConnection.
+        mach_port_t incomingMessagePort;
+        if (bootstrap_check_in(bootstrap_port, incomingPushServiceName, &incomingMessagePort) != KERN_SUCCESS)
+            NSLog(@"Couldn't register for incoming push launch port.");
+        
         WTF::initializeMainThread();
     }
     CFRunLoopRun();

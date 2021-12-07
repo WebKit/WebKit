@@ -1,3 +1,36 @@
+2021-12-07  Ben Nham  <nham@apple.com>
+
+        webpushd should run with regular user permissions
+        https://bugs.webkit.org/show_bug.cgi?id=233844
+
+        Reviewed by Brady Eidson.
+
+        Currently webpushd runs as root, which is unneessary. This patch makes it so that we run
+        with regular user permissions. This is done by specifying a UserName in the launchd plist on
+        iOS and by installing the plist to /System/Library/LaunchAgents on Mac. Since the plists now
+        differ based on platform, I changed the "Copy Daemon Plists" build phase in the WebKit
+        target to copy the appropriate plist to either /S/L/LaunchDaemons or /S/L/LaunchAgents.
+
+        Additionally, webpushd needs the `aps-connection-initiate` or
+        `com.apple.private.aps-connection-initiate` to receive pushes from apsd on iOS and Mac
+        respectively, so I gave the daemon those entitlements.
+
+        Finally, webpushd now registers for the `com.apple.aps.webkit.webpushd.incoming-push` Mach
+        service so that it can be launched on demand in response to a push. Right now we just
+        `bootstrap_check_in` to the service at launch time, but eventually we'll remove that and
+        use APSConnection to check in to the service instead. Since the `bootstrap_check_in`
+        call is temporary, I chose not to make a header file in wtf/spi and declared the prototype
+        in the implementation file instead.
+
+        * Configurations/webpushd.xcconfig:
+        * Scripts/process-entitlements.sh:
+        * WebKit.xcodeproj/project.pbxproj:
+        * webpushd/WebPushDaemonMain.mm:
+        (WebKit::WebPushDaemonMain):
+        * webpushd/com.apple.webkit.webpushd.ios.plist: Added.
+        * webpushd/com.apple.webkit.webpushd.mac.plist: Added.
+        * webpushd/com.apple.webkit.webpushd.plist: Removed.
+
 2021-12-07  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: m_messagesBeingDispatched.isEmpty() on http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html
