@@ -1,3 +1,43 @@
+2021-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] Clean up what the machine code looks like under LTO
+        https://bugs.webkit.org/show_bug.cgi?id=233909
+
+        Reviewed by Yusuke Suzuki.
+
+        During the very painful perf burndown of libpas that got it to be a progression (rather than a
+        regression) versus bmalloc, I found that certain key fast paths - like fastMalloc and fastFree - perform
+        better when they do not have a stack frame. For this to happen, they must only make tail calls.
+
+        Sadly, LTO was inlining a slow path into fastFree (i.e. pas_deallocate), and this slow path had an
+        assertion, and the call to pas_assertion_failed was not a tail call.
+
+        This fixes the problem comprehensively:
+
+        - We now compile pas_assertion_failed as a breakpoint, just like WebKit would do. This is better for
+          code size and maybe it could sometimes be better for performance.
+
+        - The slow path that was getting inlined is now marked PAS_NEVER_INLINE.
+
+        - Inspecting the machine code, I found a couple other slow paths that were being inlined in a bunch of
+          places, and also marked them NEVER_INLINE.
+
+        If my past experiences are right, this could be a tiny speed-up on malloc-heavy workloads.
+
+        * libpas/src/libpas/pas_lock.c:
+        (pas_lock_lock_slow):
+        * libpas/src/libpas/pas_lock.h:
+        * libpas/src/libpas/pas_monotonic_time.c:
+        (get_timebase_info_slow):
+        (get_timebase_info):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (pas_thread_local_cache_append_deallocation_slow):
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        * libpas/src/libpas/pas_utils.c:
+        * libpas/src/libpas/pas_utils.h:
+        (pas_assertion_failed):
+        (pas_assertion_failed_noreturn_silencer):
+
 2021-12-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Set pthread_setspecific with marker in TLS destructor to detect TLS is destroyed

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,10 +48,12 @@ void pas_panic(const char* format, ...)
     __builtin_trap();
 }
 
+#if PAS_ENABLE_TESTING
 void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression)
 {
     pas_panic("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
 }
+#endif /* PAS_ENABLE_TESTING */
 
 static void (*deallocation_did_fail_callback)(const char* reason, void* begin);
 

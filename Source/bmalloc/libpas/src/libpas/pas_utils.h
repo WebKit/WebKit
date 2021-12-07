@@ -106,10 +106,23 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char
                                                                       size_t old_size,
                                                                       size_t new_size);
 
-PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression);
+#if PAS_ENABLE_TESTING
+PAS_API PAS_NO_RETURN void pas_assertion_failed(
+    const char* filename, int line, const char* function, const char* expression);
+#else /* PAS_ENABLE_TESTING -> so !PAS_ENABLE_TESTING */
+static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
+    const char* filename, int line, const char* function, const char* expression)
+{
+    PAS_UNUSED_PARAM(filename);
+    PAS_UNUSED_PARAM(line);
+    PAS_UNUSED_PARAM(function);
+    PAS_UNUSED_PARAM(expression);
+    __builtin_trap();
+}
+#endif /* PAS_ENABLE_TESTING -> so end of !PAS_ENABLE_TESTING */
 
 PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
-static inline void pas_assertion_failed_noreturn_silencer(
+static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
     const char* filename, int line, const char* function, const char* expression)
 {
     pas_assertion_failed(filename, line, function, expression);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 #if PAS_USE_SPINLOCKS
 
-void pas_lock_lock_slow(pas_lock* lock)
+PAS_NEVER_INLINE void pas_lock_lock_slow(pas_lock* lock)
 {
     static const size_t a_lot = 256;
 

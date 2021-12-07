@@ -793,9 +793,10 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
     return result;
 }
 
-void pas_thread_local_cache_append_deallocation_slow(pas_thread_local_cache* thread_local_cache,
-                                                     uintptr_t begin,
-                                                     pas_segregated_page_config_kind_and_role kind_and_role)
+PAS_NEVER_INLINE void pas_thread_local_cache_append_deallocation_slow(
+    pas_thread_local_cache* thread_local_cache,
+    uintptr_t begin,
+    pas_segregated_page_config_kind_and_role kind_and_role)
 {
     unsigned index;
 

@@ -36,21 +36,25 @@
 static mach_timebase_info_data_t timebase_info;
 static mach_timebase_info_data_t* timebase_info_ptr;
 
+static PAS_NEVER_INLINE mach_timebase_info_data_t* get_timebase_info_slow(void)
+{
+    kern_return_t kern_return;
+    kern_return = mach_timebase_info(&timebase_info);
+    PAS_ASSERT(kern_return == KERN_SUCCESS);
+    pas_fence();
+    timebase_info_ptr = &timebase_info;
+    return &timebase_info;
+}
+
 static mach_timebase_info_data_t* get_timebase_info(void)
 {
     mach_timebase_info_data_t* result;
 
     result = timebase_info_ptr;
-    if (!result) {
-        kern_return_t kern_return;
-        kern_return = mach_timebase_info(&timebase_info);
-        PAS_ASSERT(kern_return == KERN_SUCCESS);
-        pas_fence();
-        timebase_info_ptr = &timebase_info;
-        result = &timebase_info;
-    }
+    if (PAS_LIKELY(result))
+        return result;
 
-    return result;
+    return get_timebase_info_slow();
 }
 
 uint64_t pas_get_current_monotonic_time_nanoseconds(void)

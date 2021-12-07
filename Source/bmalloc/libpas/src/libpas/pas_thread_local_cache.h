@@ -334,7 +334,7 @@ PAS_API bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action alloca
                                             pas_deallocator_scavenge_action deallocator_action,
                                             pas_lock_hold_mode heap_lock_hold_mode);
 
-PAS_API void pas_thread_local_cache_append_deallocation_slow(
+PAS_API PAS_NEVER_INLINE void pas_thread_local_cache_append_deallocation_slow(
     pas_thread_local_cache* thread_local_cache,
     uintptr_t begin,
     pas_segregated_page_config_kind_and_role kind_and_role);
