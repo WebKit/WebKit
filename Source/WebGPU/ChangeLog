@@ -1,3 +1,14 @@
+2021-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix MacCatalyst build
+        https://bugs.webkit.org/show_bug.cgi?id=233920
+
+        Unreviewed.
+
+        Taken from JavaScriptCore.xcodeproj.
+
+        * Configurations/WebGPU.xcconfig:
+
 2021-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Hook up navigator.gpu.requestAdapter()
