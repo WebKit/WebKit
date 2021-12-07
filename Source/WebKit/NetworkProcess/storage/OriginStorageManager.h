@@ -28,10 +28,15 @@
 #include "Connection.h"
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+struct ClientOrigin;
+}
+
 namespace WebKit {
 
 class FileSystemStorageHandleRegistry;
 class FileSystemStorageManager;
+enum class WebsiteDataType : uint32_t;
 
 class OriginStorageManager {
     WTF_MAKE_FAST_ALLOCATED;
@@ -41,13 +46,18 @@ public:
 
     void connectionClosed(IPC::Connection::UniqueID);
     bool persisted() const { return m_persisted; }
-    void persist();
+    void setPersisted(bool value);
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
+    bool isActive();
+    void deleteData(OptionSet<WebsiteDataType>, WallTime);
 
 private:
     enum class StorageBucketMode : bool;
     class StorageBucket;
     StorageBucket& defaultBucket();
+
+    void createOriginFileIfNecessary(const WebCore::ClientOrigin&);
+    void deleteOriginFileIfNecessary();
 
     std::unique_ptr<StorageBucket> m_defaultBucket;
     String m_path;

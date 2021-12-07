@@ -28,6 +28,7 @@
 
 #include "FileSystemStorageError.h"
 #include "FileSystemStorageHandleRegistry.h"
+#include "WebFileSystemStorageConnectionMessages.h"
 
 namespace WebKit {
 
@@ -42,8 +43,7 @@ FileSystemStorageManager::~FileSystemStorageManager()
 {
     ASSERT(!RunLoop::isMain());
 
-    for (auto identifier : m_handles.keys())
-        m_registry.unregisterHandle(identifier);
+    close();
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
@@ -147,6 +147,26 @@ bool FileSystemStorageManager::releaseLockForFile(const String& path, WebCore::F
     }
 
     return false;
+}
+
+void FileSystemStorageManager::close()
+{
+    ASSERT(!RunLoop::isMain());
+
+    for (auto& [connectionID, identifiers] : m_handlesByConnection) {
+        for (auto identifier : identifiers) {
+            auto takenHandle = m_handles.take(identifier);
+            m_registry.unregisterHandle(identifier);
+
+            // Send message to web process to invalidate active sync access handle.
+            if (auto accessHandleIdentifier = takenHandle->activeSyncAccessHandle())
+                IPC::Connection::send(connectionID, Messages::WebFileSystemStorageConnection::InvalidateAccessHandle(*accessHandleIdentifier), 0);
+        }
+    }
+
+    ASSERT(m_handles.isEmpty());
+    m_handlesByConnection.clear();
+    m_lockMap.clear();
 }
 
 } // namespace WebKit

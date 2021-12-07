@@ -129,6 +129,8 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
     case WebsiteDataType::AlternativeServices:
         return WebsiteDataProcessType::Network;
 #endif
+    case WebsiteDataType::FileSystem:
+        return WebsiteDataProcessType::Network;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

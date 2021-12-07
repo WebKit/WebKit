@@ -108,6 +108,7 @@ enum class MappedFileMode {
 
 WTF_EXPORT_PRIVATE bool fileExists(const String&);
 WTF_EXPORT_PRIVATE bool deleteFile(const String&);
+WTF_EXPORT_PRIVATE void deleteAllFilesModifiedSince(const String&, WallTime);
 WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
 WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
 WTF_EXPORT_PRIVATE std::optional<uint64_t> fileSize(const String&); // Follows symlinks.
@@ -146,6 +147,7 @@ inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != i
 
 using Salt = std::array<uint8_t, 8>;
 WTF_EXPORT_PRIVATE std::optional<Salt> readOrMakeSalt(const String& path);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle);
 
 // Prefix is what the filename should be prefixed with, not the full path.
 WTF_EXPORT_PRIVATE String openTemporaryFile(const String& prefix, PlatformFileHandle&, const String& suffix = { });

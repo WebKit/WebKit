@@ -27,6 +27,7 @@
 
 #include "FileSystemHandleIdentifier.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
+#include "ProcessQualified.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>

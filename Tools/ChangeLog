@@ -1,3 +1,13 @@
+2021-12-07  Sihui Liu  <sihui_liu@apple.com>
+
+        Fetch and remove file system data via WKWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=233567
+        <rdar://problem/86029185>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FileSystemAccess.mm:
+
 2021-12-07  Jonathan Bedard  <jbedard@apple.com>
 
         [reporelaypy] Add implementation of commits.webkit.org (Follow-up fix)

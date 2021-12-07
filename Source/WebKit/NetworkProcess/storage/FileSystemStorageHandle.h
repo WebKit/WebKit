@@ -62,6 +62,7 @@ public:
     using AccessHandleInfo = std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>;
     Expected<AccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
     std::optional<FileSystemStorageError> close(WebCore::FileSystemSyncAccessHandleIdentifier);
+    std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> activeSyncAccessHandle() const { return m_activeSyncAccessHandle; }
 
 private:
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
