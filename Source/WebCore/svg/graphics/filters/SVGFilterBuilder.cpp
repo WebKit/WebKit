@@ -41,7 +41,7 @@ void SVGFilterBuilder::setupBuiltinEffects(Ref<FilterEffect> sourceGraphic)
     addBuiltinEffects();
 }
 
-static OptionSet<FilterEffectGeometry::Flags> boundarySetFlagsForElement(SVGElement& element)
+static OptionSet<FilterEffectGeometry::Flags> effectGeometryFlagsForElement(SVGElement& element)
 {
     OptionSet<FilterEffectGeometry::Flags> flags;
 
@@ -108,7 +108,7 @@ RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filt
         if (!effect)
             break;
 
-        if (auto flags = boundarySetFlagsForElement(effectElement)) {
+        if (auto flags = effectGeometryFlagsForElement(effectElement)) {
             auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, m_primitiveUnits, m_targetBoundingBox);
             m_effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
         }
@@ -209,7 +209,7 @@ std::optional<FilterEffectGeometry> SVGFilterBuilder::effectGeometry(FilterEffec
     return std::nullopt;
 }
 
-bool SVGFilterBuilder::buildEffectExpression(const RefPtr<FilterEffect>& effect, FilterEffectVector& stack, SVGFilterExpression& expression) const
+bool SVGFilterBuilder::buildEffectExpression(const RefPtr<FilterEffect>& effect, FilterEffectVector& stack, unsigned level, SVGFilterExpression& expression) const
 {
     // A cycle is detected.
     if (stack.contains(effect))
@@ -217,10 +217,10 @@ bool SVGFilterBuilder::buildEffectExpression(const RefPtr<FilterEffect>& effect,
 
     stack.append(effect);
     
-    expression.append({ *effect, effectGeometry(*effect) });
+    expression.append({ *effect, effectGeometry(*effect), level });
 
     for (auto& inputEffect : effect->inputEffects()) {
-        if (!buildEffectExpression(inputEffect, stack, expression))
+        if (!buildEffectExpression(inputEffect, stack, level + 1, expression))
             return false;
     }
 
@@ -237,7 +237,7 @@ bool SVGFilterBuilder::buildExpression(SVGFilterExpression& expression) const
         return false;
 
     FilterEffectVector stack;
-    if (!buildEffectExpression(m_lastEffect, stack, expression))
+    if (!buildEffectExpression(m_lastEffect, stack, 0, expression))
         return false;
 
     expression.reverse();

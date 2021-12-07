@@ -36,7 +36,7 @@ public:
     float specularExponent() const { return m_specularExponent; }
     bool setSpecularExponent(float);
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
     template<class Decoder> static std::optional<Ref<FESpecularLighting>> decode(Decoder&);
 

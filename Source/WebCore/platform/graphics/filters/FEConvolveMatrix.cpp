@@ -143,21 +143,21 @@ static TextStream& operator<<(TextStream& ts, const EdgeModeType& type)
     return ts;
 }
 
-TextStream& FEConvolveMatrix::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FEConvolveMatrix::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feConvolveMatrix";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " order=\"" << m_kernelSize << "\" "
-       << "kernelMatrix=\"" << m_kernelMatrix  << "\" "
-       << "divisor=\"" << m_divisor << "\" "
-       << "bias=\"" << m_bias << "\" "
-       << "target=\"" << m_targetOffset << "\" "
-       << "edgeMode=\"" << m_edgeMode << "\" "
-       << "kernelUnitLength=\"" << m_kernelUnitLength << "\" "
-       << "preserveAlpha=\"" << m_preserveAlpha << "\"]\n";
 
-    TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts, representation);
+    ts << " order=\"" << m_kernelSize << "\"";
+    ts << " kernelMatrix=\"" << m_kernelMatrix  << "\"";
+    ts << " divisor=\"" << m_divisor << "\"";
+    ts << " bias=\"" << m_bias << "\"";
+    ts << " target=\"" << m_targetOffset << "\"";
+    ts << " edgeMode=\"" << m_edgeMode << "\"";
+    ts << " kernelUnitLength=\"" << m_kernelUnitLength << "\"";
+    ts << " preserveAlpha=\"" << m_preserveAlpha << "\"";
+
+    ts << "]\n";
     return ts;
 }
 

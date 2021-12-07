@@ -46,6 +46,8 @@ public:
 
     RefPtr<FilterImage> apply() final;
 
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
+
 private:
     SVGFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
 

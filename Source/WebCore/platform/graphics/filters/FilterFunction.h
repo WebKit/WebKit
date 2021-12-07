@@ -39,6 +39,11 @@ namespace WebCore {
 
 class Filter;
 
+enum class FilterRepresentation : uint8_t {
+    TestOutput,
+    Debugging
+};
+
 class FilterFunction : public RefCounted<FilterFunction> {
 public:
     enum class Type : uint8_t {
@@ -92,6 +97,8 @@ public:
     virtual bool apply(const Filter&, const std::optional<FilterEffectGeometry>& = std::nullopt) { return false; }
     virtual IntOutsets outsets() const { return { }; }
     virtual void clearResult() { }
+
+    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation = FilterRepresentation::TestOutput) const = 0;
 
 private:
     Type m_filterType;

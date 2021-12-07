@@ -404,4 +404,22 @@ IntOutsets CSSFilter::outsets() const
     return m_outsets;
 }
 
+TextStream& CSSFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
+{
+    unsigned level = 0;
+
+    for (auto it = m_functions.rbegin(), end = m_functions.rend(); it != end; ++it) {
+        auto& function = *it;
+        
+        // SourceAlpha is a built-in effect. No need to say SourceGraphic is its input.
+        if (function->filterType() == FilterEffect::Type::SourceAlpha)
+            ++it;
+
+        TextStream::IndentScope indentScope(ts, level++);
+        function->externalRepresentation(ts, representation);
+    }
+
+    return ts;
+}
+
 } // namespace WebCore

@@ -1,3 +1,18 @@
+2021-12-06  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process]  [Filters] Make FilterEffect::externalRepresentation() and its overridable functions work iteratively
+        https://bugs.webkit.org/show_bug.cgi?id=233893
+
+        Reviewed by Cameron McCormack.
+
+        Add missing closing quotations in the expected results of some of the 
+        filter layout tests.
+
+        * svg/filters/feDropShadow-expected.txt:
+        * svg/filters/feDropShadow-subregion-expected.txt:
+        * svg/filters/feDropShadow-zero-deviation-expected.txt:
+        * svg/repaint/filter-child-repaint-expected.txt:
+
 2021-12-06  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Small gardening

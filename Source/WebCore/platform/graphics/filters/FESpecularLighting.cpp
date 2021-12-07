@@ -55,16 +55,16 @@ bool FESpecularLighting::setSpecularExponent(float specularExponent)
     return true;
 }
 
-TextStream& FESpecularLighting::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FESpecularLighting::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feSpecularLighting";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " surfaceScale=\"" << m_surfaceScale << "\" "
-       << "specualConstant=\"" << m_specularConstant << "\" "
-       << "specularExponent=\"" << m_specularExponent << "\"]\n";
+    
+    ts << " surfaceScale=\"" << m_surfaceScale << "\"";
+    ts << " specualConstant=\"" << m_specularConstant << "\"";
+    ts << " specularExponent=\"" << m_specularExponent << "\"";
 
-    TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts, representation);
+    ts << "]\n";
     return ts;
 }
 

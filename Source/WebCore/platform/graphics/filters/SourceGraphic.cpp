@@ -56,7 +56,7 @@ std::unique_ptr<FilterEffectApplier> SourceGraphic::createApplier(const Filter& 
     return FilterEffectApplier::create<SourceGraphicSoftwareApplier>(*this);
 }
 
-TextStream& SourceGraphic::externalRepresentation(TextStream& ts, RepresentationType) const
+TextStream& SourceGraphic::externalRepresentation(TextStream& ts, FilterRepresentation) const
 {
     ts << indent << "[SourceGraphic]\n";
     return ts;

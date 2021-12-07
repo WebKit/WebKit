@@ -79,7 +79,7 @@ private:
     }
 
     std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const;
-    bool buildEffectExpression(const RefPtr<FilterEffect>&, FilterEffectVector& stack, SVGFilterExpression&) const;
+    bool buildEffectExpression(const RefPtr<FilterEffect>&, FilterEffectVector& stack, unsigned level, SVGFilterExpression&) const;
 
     HashMap<AtomString, RefPtr<FilterEffect>> m_builtinEffects;
     HashMap<AtomString, RefPtr<FilterEffect>> m_namedEffects;

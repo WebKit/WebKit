@@ -35,7 +35,7 @@ public:
     float diffuseConstant() const { return m_diffuseConstant; }
     bool setDiffuseConstant(float);
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
     template<class Decoder> static std::optional<Ref<FEDiffuseLighting>> decode(Decoder&);
 

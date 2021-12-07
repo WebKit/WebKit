@@ -58,8 +58,7 @@ public:
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
 
-    enum class RepresentationType { TestOutput, Debugging };
-    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType = RepresentationType::TestOutput) const;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
 protected:
     using FilterFunction::FilterFunction;

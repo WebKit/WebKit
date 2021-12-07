@@ -133,4 +133,20 @@ void SVGFilter::clearResult()
         term.effect->clearResult();
 }
 
+TextStream& SVGFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
+{
+    for (auto it = m_expression.rbegin(), end = m_expression.rend(); it != end; ++it) {
+        auto& term = *it;
+        
+        // SourceAlpha is a built-in effect. No need to say SourceGraphic is its input.
+        if (term.effect->filterType() == FilterEffect::Type::SourceAlpha)
+            ++it;
+
+        TextStream::IndentScope indentScope(ts, term.level);
+        term.effect->externalRepresentation(ts, representation);
+    }
+
+    return ts;
+}
+
 } // namespace WebCore

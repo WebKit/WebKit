@@ -57,15 +57,14 @@ std::unique_ptr<FilterEffectApplier> FEBlend::createApplier(const Filter&) const
     return FilterEffectApplier::create<FEBlendSoftwareApplier>(*this);
 }
 
-TextStream& FEBlend::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FEBlend::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feBlend";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " mode=\"" << (m_mode == BlendMode::Normal ? "normal" : compositeOperatorName(CompositeOperator::SourceOver, m_mode)) << "\"]\n";
 
-    TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts, representation);
-    inputEffect(1)->externalRepresentation(ts, representation);
+    ts << " mode=\"" << (m_mode == BlendMode::Normal ? "normal" : compositeOperatorName(CompositeOperator::SourceOver, m_mode));
+
+    ts << "\"]\n";
     return ts;
 }
 

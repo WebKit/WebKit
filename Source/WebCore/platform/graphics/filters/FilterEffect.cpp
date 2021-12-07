@@ -161,12 +161,12 @@ void FilterEffect::transformResultColorSpace(const DestinationColorSpace& destin
     m_filterImage->transformToColorSpace(destinationColorSpace);
 }
 
-TextStream& FilterEffect::externalRepresentation(TextStream& ts, RepresentationType representationType) const
+TextStream& FilterEffect::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     // FIXME: We should dump the subRegions of the filter primitives here later. This isn't
     // possible at the moment, because we need more detailed informations from the target object.
     
-    if (representationType == RepresentationType::Debugging) {
+    if (representation == FilterRepresentation::Debugging) {
         TextStream::IndentScope indentScope(ts);
         ts.dumpProperty("operating colorspace", operatingColorSpace());
         ts << "\n" << indent;
@@ -174,11 +174,11 @@ TextStream& FilterEffect::externalRepresentation(TextStream& ts, RepresentationT
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const FilterEffect& filter)
+TextStream& operator<<(TextStream& ts, const FilterEffect& effect)
 {
     // Use a new stream because we want multiline mode for logging filters.
     TextStream filterStream;
-    filter.externalRepresentation(filterStream, FilterEffect::RepresentationType::Debugging);
+    effect.externalRepresentation(filterStream, FilterRepresentation::Debugging);
     
     return ts << filterStream.release();
 }

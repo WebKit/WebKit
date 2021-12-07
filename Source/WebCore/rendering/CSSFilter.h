@@ -68,6 +68,8 @@ private:
     bool supportsCoreImageRendering() const final;
 #endif
 
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
+
     bool m_hasFilterThatMovesPixels { false };
     bool m_hasFilterThatShouldBeRestrictedBySecurityOrigin { false };
 

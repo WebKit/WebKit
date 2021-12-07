@@ -136,14 +136,14 @@ std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createApplier(const Filter&
     return FilterEffectApplier::create<FEGaussianBlurSoftwareApplier>(*this);
 }
 
-TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feGaussianBlur";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\"]\n";
 
-    TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts, representation);
+    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\"";
+
+    ts << "]\n";
     return ts;
 }
 

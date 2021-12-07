@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "FilterEffectGeometry.h"
 #include "FilterFunction.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"

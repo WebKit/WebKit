@@ -45,17 +45,14 @@ std::unique_ptr<FilterEffectApplier> FEMerge::createApplier(const Filter&) const
     return FilterEffectApplier::create<FEMergeSoftwareApplier>(*this);
 }
 
-TextStream& FEMerge::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FEMerge::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feMerge";
     FilterEffect::externalRepresentation(ts, representation);
-    unsigned size = numberOfEffectInputs();
-    ASSERT(size > 0);
-    ts << " mergeNodes=\"" << size << "\"]\n";
 
-    TextStream::IndentScope indentScope(ts);
-    for (unsigned i = 0; i < size; ++i)
-        inputEffect(i)->externalRepresentation(ts, representation);
+    ts << " mergeNodes=\"" << m_numberOfEffectInputs << "\"";
+
+    ts << "]\n";
     return ts;
 }
 

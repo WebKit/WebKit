@@ -122,15 +122,18 @@ static TextStream& operator<<(TextStream& ts, TurbulenceType type)
     return ts;
 }
 
-TextStream& FETurbulence::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FETurbulence::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feTurbulence";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " type=\"" << type() << "\" "
-       << "baseFrequency=\"" << baseFrequencyX() << ", " << baseFrequencyY() << "\" "
-       << "seed=\"" << seed() << "\" "
-       << "numOctaves=\"" << numOctaves() << "\" "
-       << "stitchTiles=\"" << stitchTiles() << "\"]\n";
+    
+    ts << " type=\"" << type() << "\"";
+    ts << " baseFrequency=\"" << baseFrequencyX() << ", " << baseFrequencyY() << "\"";
+    ts << " seed=\"" << seed() << "\"";
+    ts << " numOctaves=\"" << numOctaves() << "\"";
+    ts << " stitchTiles=\"" << stitchTiles() << "\"";
+
+    ts << "]\n";
     return ts;
 }
 

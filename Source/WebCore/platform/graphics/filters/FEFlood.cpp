@@ -69,12 +69,15 @@ std::unique_ptr<FilterEffectApplier> FEFlood::createApplier(const Filter&) const
     return FilterEffectApplier::create<FEFloodSoftwareApplier>(*this);
 }
 
-TextStream& FEFlood::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FEFlood::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feFlood";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " flood-color=\"" << serializationForRenderTreeAsText(floodColor()) << "\" "
-       << "flood-opacity=\"" << floodOpacity() << "\"]\n";
+
+    ts << " flood-color=\"" << serializationForRenderTreeAsText(floodColor()) << "\"";
+    ts << " flood-opacity=\"" << floodOpacity() << "\"";
+
+    ts << "]\n";
     return ts;
 }
 

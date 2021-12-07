@@ -54,7 +54,7 @@ private:
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const final;
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const final;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
     SourceImage m_sourceImage;
     FloatRect m_sourceImageRect;

@@ -434,9 +434,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
         auto dummyFilter = SVGFilter::create(filter.filterElement(), builder, RenderingMode::Unaccelerated, dummyScale, dummyRect, dummyRect);
         if (dummyFilter) {
             TextStream::IndentScope indentScope(ts);
-
-            if (auto lastEffect = dummyFilter->lastEffect())
-                lastEffect->externalRepresentation(ts);
+            dummyFilter->externalRepresentation(ts, FilterRepresentation::TestOutput);
         }
     } else if (resource.resourceType() == ClipperResourceType) {
         const auto& clipper = static_cast<const RenderSVGResourceClipper&>(resource);

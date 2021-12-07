@@ -35,6 +35,7 @@ class FilterEffect;
 struct SVGFilterExpressionTerm {
     Ref<FilterEffect> effect;
     std::optional<FilterEffectGeometry> geometry;
+    unsigned level;
 };
 
 using SVGFilterExpression = Vector<SVGFilterExpressionTerm>;

@@ -77,14 +77,17 @@ std::unique_ptr<FilterEffectApplier> FEDropShadow::createApplier(const Filter&) 
     return FilterEffectApplier::create<FEDropShadowSoftwareApplier>(*this);
 }
     
-TextStream& FEDropShadow::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FEDropShadow::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent <<"[feDropShadow";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\" dx=\"" << m_dx << "\" dy=\"" << m_dy << "\" flood-color=\"" << serializationForRenderTreeAsText(m_shadowColor) <<"\" flood-opacity=\"" << m_shadowOpacity << "]\n";
 
-    TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts, representation);
+    ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\"";
+    ts << " dx=\"" << m_dx << "\" dy=\"" << m_dy << "\"";
+    ts << " flood-color=\"" << serializationForRenderTreeAsText(m_shadowColor) << "\"";
+    ts << " flood-opacity=\"" << m_shadowOpacity << "\"";
+
+    ts << "]\n";
     return ts;
 }
     
