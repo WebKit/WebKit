@@ -1,3 +1,20 @@
+2021-12-07  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance test][css-contain] Add test large-grid.html
+        https://bugs.webkit.org/show_bug.cgi?id=233628
+
+        Reviewed by Rob Buis.
+
+        This test large-grid.html is imported from Chromium, and we change it a little bit.
+        This case tests the performance of getting gridContainer.offsetHeight which is the parent of
+        a large grid with `contain: strict`. The performance is improved when enable CSS contain,
+        because offsetHeight returns the value directly if the element doesn't need relayout, see
+        `Document::updateLayoutIfDimensionsOutOfDate`. `contain: strict` sets a relayout boundary to
+        the large grid, so when its subtree changes, the container of the large grid doesn't need
+        relayout.
+
+        * Layout/large-grid.html: Added.
+
 2021-12-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [RAMification] Add support for dumping smaps rollups on Linux
