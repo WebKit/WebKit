@@ -1,3 +1,12 @@
+2021-12-07  Cameron McCormack  <heycam@apple.com>
+
+        Tweak puzzle to use feature detection
+        https://bugs.webkit.org/show_bug.cgi?id=233946
+
+        Unreviewed.
+
+        * blog-files/wide-gamut-canvas/puzzle.html:
+
 2021-11-30  Cameron McCormack  <heycam@apple.com>
 
         Add resources for an upcoming blog post

@@ -2,14 +2,18 @@
 <meta charset=utf-8>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body { text-align: center; white-space: nowrap; }
+body { text-align: center; white-space: nowrap; font: 16px Helvetica, sans-serif; }
 img, #puzzleboard { box-shadow: 0 0 4px black; }
 img { margin: 32px 8px 0; }
 #puzzleboard { display: inline-flex; flex-direction: column; background-color: tan; padding: 16px; border-radius: 8px; }
 canvas { border: 2px solid; border-color: rgba(0, 0, 0, 0.2) rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.2); background-color: rgba(255, 255, 255, 0.2); padding: 2px; }
-label { padding-top: 16px; font: bold 16px Helvetica, sans-serif; color: #864; text-shadow: 0px 2px 0px rgba(255, 255, 255, 0.3); color: rgb(104, 90, 70); border-radius: 8px; -webkit-user-select: none; user-select: none; text-align: center; }
+label { padding-top: 16px; font-weight: bold; color: #864; text-shadow: 0px 2px 0px rgba(255, 255, 255, 0.3); color: rgb(104, 90, 70); border-radius: 8px; -webkit-user-select: none; user-select: none; text-align: center; }
 input { vertical-align: middle; }
 label span { display: none; }
+.warning { display: none; }
+.unsupported .warning { display: block; position: absolute; top: 0; left: 0; right: 0; }
+.warning span { background-color: rgba(0, 0, 0, 0.5); padding: 4px; border; border-radius: 4px; color: white; }
+.unsupported label { text-decoration: line-through; }
 @media (prefers-color-scheme: dark) {
     html { background-color: black; }
     img, #puzzleboard { box-shadow: 0 0 4px #fff8; }
@@ -178,7 +182,13 @@ function updateCanvas() {
     canvas.style.width = `${width / scale}px`;
     canvas.style.height = `${height / scale}px`;
 
-    ctx = canvas.getContext("2d", { colorSpace });
+    try {
+        ctx = canvas.getContext("2d", { colorSpace });
+    } catch {
+        ctx = canvas.getContext("2d");
+        document.body.className = "unsupported";
+    }
+
     drawBoard();
 }
 
@@ -245,3 +255,4 @@ function animate() {
   <div id="placeholder"></div>
   <label><input id=displayP3 type=checkbox onchange="updateCanvas()"> Use Display P3 <span>canvas</span></label>
 </div>
+<div class="warning"><span>This browser does not support Display P3 canvas.</span></div>
