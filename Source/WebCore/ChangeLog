@@ -1,3 +1,10 @@
+2021-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the debug build.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::variationAxes):
+
 2021-12-02  Alan Coon  <alancoon@apple.com>
 
         Revert r286394. rdar://problem/83070565

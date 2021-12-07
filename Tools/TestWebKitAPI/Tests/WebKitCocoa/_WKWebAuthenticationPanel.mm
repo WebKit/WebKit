@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "TestWKWebView.h"

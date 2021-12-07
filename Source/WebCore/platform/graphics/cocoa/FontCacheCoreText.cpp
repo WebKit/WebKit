@@ -302,7 +302,10 @@ static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNam
 #if defined(HAVE_CTFontCopyVariationAxesInternal) // This macro is defined inside CoreText, not WebKit.
     if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
         return adoptCF(CTFontCopyVariationAxes(font));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     return adoptCF(CTFontCopyVariationAxesInternal(font));
+#pragma clang diagnostic pop
 #else
     UNUSED_PARAM(shouldLocalizeAxisNames);
     return adoptCF(CTFontCopyVariationAxes(font));

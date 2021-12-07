@@ -1,3 +1,9 @@
+2021-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the debug build.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+
 2021-12-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r286505. rdar://problem/85918531
