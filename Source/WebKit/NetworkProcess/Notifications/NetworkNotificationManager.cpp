@@ -31,6 +31,7 @@
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
 #include "NetworkSession.h"
+#include "WebPushDaemonConnectionConfiguration.h"
 #include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
@@ -43,23 +44,26 @@ NetworkNotificationManager::NetworkNotificationManager(NetworkSession& networkSe
         m_connection = makeUnique<WebPushD::Connection>(webPushMachServiceName.utf8(), *this);
 }
 
-void NetworkNotificationManager::maybeSendHostAppAuditToken() const
+void NetworkNotificationManager::maybeSendConnectionConfiguration() const
 {
-    if (m_sentHostAppAuditToken)
+    if (m_sentConnectionConfiguration)
         return;
-    m_sentHostAppAuditToken = true;
+    m_sentConnectionConfiguration = true;
+
+    WebPushD::WebPushDaemonConnectionConfiguration configuration;
+    configuration.useMockBundlesForTesting = m_networkSession.webPushDaemonUsesMockBundlesForTesting();
 
 #if PLATFORM(COCOA)
-        auto token = m_networkSession.networkProcess().parentProcessConnection()->getAuditToken();
-        if (!token)
-            return;
-
+    auto token = m_networkSession.networkProcess().parentProcessConnection()->getAuditToken();
+    if (token) {
         Vector<uint8_t> auditTokenData;
         auditTokenData.resize(sizeof(*token));
         memcpy(auditTokenData.data(), &(*token), sizeof(*token));
-
-        sendMessage<WebPushD::MessageType::SetHostAppAuditToken>(auditTokenData);
+        configuration.hostAppAuditTokenData = WTFMove(auditTokenData);
+    }
 #endif
+
+    sendMessage<WebPushD::MessageType::UpdateConnectionConfiguration>(configuration);
 }
 
 void NetworkNotificationManager::requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&& completionHandler)
@@ -123,7 +127,7 @@ void NetworkNotificationManager::sendMessage(Args&&... args) const
 {
     RELEASE_ASSERT(m_connection);
 
-    maybeSendHostAppAuditToken();
+    maybeSendConnectionConfiguration();
 
     Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);
@@ -187,7 +191,7 @@ void NetworkNotificationManager::sendMessageWithReply(CompletionHandler<void(Rep
 {
     RELEASE_ASSERT(m_connection);
 
-    maybeSendHostAppAuditToken();
+    maybeSendConnectionConfiguration();
 
     Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);

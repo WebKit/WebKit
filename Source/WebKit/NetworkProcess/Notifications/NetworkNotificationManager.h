@@ -62,11 +62,11 @@ private:
     void clearNotifications(const Vector<uint64_t>& notificationIDs) final;
     void didDestroyNotification(uint64_t notificationID) final;
 
-    void maybeSendHostAppAuditToken() const;
+    void maybeSendConnectionConfiguration() const;
 
     NetworkSession& m_networkSession;
     std::unique_ptr<WebPushD::Connection> m_connection;
-    mutable bool m_sentHostAppAuditToken { false };
+    mutable bool m_sentConnectionConfiguration { false };
 
     template<WebPushD::MessageType messageType, typename... Args>
     void sendMessage(Args&&...) const;

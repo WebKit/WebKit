@@ -1858,6 +1858,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.allowsCellularAccess = configuration().allowsCellularAccess() ? AllowsCellularAccess::Yes : AllowsCellularAccess::No;
     networkSessionParameters.deviceManagementRestrictionsEnabled = m_configuration->deviceManagementRestrictionsEnabled();
     networkSessionParameters.allLoadsBlockedByDeviceManagementRestrictionsForTesting = m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();
+    networkSessionParameters.webPushDaemonConnectionConfiguration = m_configuration->webPushDaemonConnectionConfiguration();
     networkSessionParameters.networkCacheDirectory = WTFMove(networkCacheDirectory);
     networkSessionParameters.networkCacheDirectoryExtensionHandle = WTFMove(networkCacheDirectoryExtensionHandle);
     networkSessionParameters.hstsStorageDirectory = WTFMove(hstsStorageDirectory);

@@ -32,7 +32,6 @@
 #import "DaemonUtilities.h"
 #import "HandleMessage.h"
 #import "MockAppBundleRegistry.h"
-#import "WebPushDaemonConstants.h"
 
 #import <wtf/CompletionHandler.h>
 #import <wtf/NeverDestroyed.h>
@@ -70,12 +69,12 @@ ARGUMENTS(String)
 REPLY(bool)
 END
 
-FUNCTION(setHostAppAuditToken)
-ARGUMENTS(Vector<uint8_t>)
-END
-
 FUNCTION(setDebugModeIsEnabled)
 ARGUMENTS(bool)
+END
+
+FUNCTION(updateConnectionConfiguration)
+ARGUMENTS(WebPushDaemonConnectionConfiguration)
 END
 
 #undef FUNCTION
@@ -225,11 +224,11 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
     case MessageType::RequestSystemNotificationPermission:
         handleWebPushDMessageWithReply<MessageInfo::requestSystemNotificationPermission>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
-    case MessageType::SetHostAppAuditToken:
-        handleWebPushDMessage<MessageInfo::setHostAppAuditToken>(clientConnection, encodedMessage);
-        break;
     case MessageType::SetDebugModeIsEnabled:
         handleWebPushDMessage<MessageInfo::setDebugModeIsEnabled>(clientConnection, encodedMessage);
+        break;
+    case MessageType::UpdateConnectionConfiguration:
+        handleWebPushDMessage<MessageInfo::updateConnectionConfiguration>(clientConnection, encodedMessage);
         break;
     }
 }
@@ -266,8 +265,13 @@ void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* conn
         return;
     }
 
+    if (connection->useMockBundlesForTesting()) {
+        replySender(MockAppBundleRegistry::singleton().getOriginsWithRegistrations(connection->hostAppCodeSigningIdentifier()));
+        return;
+    }
+
     // FIXME: This will need platform-specific implementations for real world bundles once implemented.
-    replySender(MockAppBundleRegistry::singleton().getOriginsWithRegistrations(connection->hostAppCodeSigningIdentifier()));
+    replySender({ });
 }
 
 void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection, const String& originString, CompletionHandler<void(const String&)>&& replySender)
@@ -280,14 +284,14 @@ void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection,
     connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, WTFMove(replySender)));
 }
 
-void Daemon::setHostAppAuditToken(ClientConnection* clientConnection, const Vector<uint8_t>& tokenData)
-{
-    clientConnection->setHostAppAuditTokenData(tokenData);
-}
-
 void Daemon::setDebugModeIsEnabled(ClientConnection* clientConnection, bool enabled)
 {
     clientConnection->setDebugModeIsEnabled(enabled);
+}
+
+void Daemon::updateConnectionConfiguration(ClientConnection* clientConnection, const WebPushDaemonConnectionConfiguration& configuration)
+{
+    clientConnection->updateConnectionConfiguration(configuration);
 }
 
 ClientConnection* Daemon::toClientConnection(xpc_connection_t connection)

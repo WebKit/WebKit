@@ -1,5 +1,171 @@
 2021-12-06  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286355. rdar://problem/86052131
+
+    Add WKWebsiteDataStore configuration option to enable Mock app bundle testing.
+    https://bugs.webkit.org/show_bug.cgi?id=233679
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Covered by API tests.
+    
+    We're about to land actual implementations of app permissions bundles.
+    But the mock bundles still have a place for testing.
+    We need a way to switch between Mock and Native.
+    
+    This patch takes the opportunity to plumb out a WebPushDaemonConnectionConfiguration object
+    that can easily be augmented in future patches to add new options without messing with messaging directly.
+    
+    * NetworkProcess/NetworkSession.h:
+    (WebKit::NetworkSession::webpushdUsesMockBundlesForTesting const):
+    
+    * NetworkProcess/NetworkSessionCreationParameters.cpp:
+    (WebKit::NetworkSessionCreationParameters::encode const):
+    (WebKit::NetworkSessionCreationParameters::decode):
+    * NetworkProcess/NetworkSessionCreationParameters.h:
+    
+    * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+    (WebKit::NetworkNotificationManager::maybeSendConnectionConfiguration const):
+    (WebKit::NetworkNotificationManager::sendMessage const):
+    (WebKit::NetworkNotificationManager::sendMessageWithReply const):
+    (WebKit::NetworkNotificationManager::maybeSendHostAppAuditToken const): Deleted.
+    * NetworkProcess/Notifications/NetworkNotificationManager.h:
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+    
+    * Shared/WebPushDaemonConnectionConfiguration.h: Copied from Source/WebKit/Shared/WebPushDaemonConstants.h.
+    (WebKit::WebPushD::WebPushDaemonConnectionConfiguration::encode const):
+    (WebKit::WebPushD::WebPushDaemonConnectionConfiguration::decode):
+    
+    * Shared/WebPushDaemonConstants.h:
+    (WebKit::WebPushD::messageTypeSendsReply):
+    
+    * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+    * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+    (-[_WKWebsiteDataStoreConfiguration webpushdUsesMockBundlesForTesting]):
+    (-[_WKWebsiteDataStoreConfiguration setWebpushdUsesMockBundlesForTesting:]):
+    
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::parameters):
+    
+    * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+    (WebKit::WebsiteDataStoreConfiguration::copy const):
+    (WebKit::WebsiteDataStoreConfiguration::webPushDaemonConnectionConfiguration const):
+    * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+    (WebKit::WebsiteDataStoreConfiguration::webpushdUsesMockBundlesForTesting const):
+    (WebKit::WebsiteDataStoreConfiguration::setWebpushdUsesMockBundlesForTesting):
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    * webpushd/AppBundleRequest.mm:
+    (WebPushD::AppBundleRequest::AppBundleRequest):
+    (WebPushD::AppBundleRequest::start):
+    
+    * webpushd/PushClientConnection.h:
+    (WebPushD::ClientConnection::hasHostAppAuditToken const):
+    (WebPushD::ClientConnection::useMockBundlesForTesting const):
+    * webpushd/PushClientConnection.mm:
+    (WebPushD::ClientConnection::updateConnectionConfiguration):
+    (WebPushD::ClientConnection::setHostAppAuditTokenData):
+    
+    * webpushd/WebPushDaemon.h:
+    * webpushd/WebPushDaemon.mm:
+    (WebPushD::Daemon::decodeAndHandleMessage):
+    (WebPushD::Daemon::getOriginsWithPushAndNotificationPermissions):
+    (WebPushD::Daemon::setDebugModeIsEnabled):
+    (WebPushD::Daemon::updateConnectionConfiguration):
+    (WebPushD::Daemon::setHostAppAuditToken): Deleted.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286355 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-01  Brady Eidson  <beidson@apple.com>
+
+            Add WKWebsiteDataStore configuration option to enable Mock app bundle testing.
+            https://bugs.webkit.org/show_bug.cgi?id=233679
+
+            Reviewed by Tim Horton.
+
+            Covered by API tests.
+
+            We're about to land actual implementations of app permissions bundles.
+            But the mock bundles still have a place for testing.
+            We need a way to switch between Mock and Native.
+
+            This patch takes the opportunity to plumb out a WebPushDaemonConnectionConfiguration object
+            that can easily be augmented in future patches to add new options without messing with messaging directly.
+
+            * NetworkProcess/NetworkSession.h:
+            (WebKit::NetworkSession::webpushdUsesMockBundlesForTesting const):
+
+            * NetworkProcess/NetworkSessionCreationParameters.cpp:
+            (WebKit::NetworkSessionCreationParameters::encode const):
+            (WebKit::NetworkSessionCreationParameters::decode):
+            * NetworkProcess/NetworkSessionCreationParameters.h:
+
+            * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+            (WebKit::NetworkNotificationManager::maybeSendConnectionConfiguration const):
+            (WebKit::NetworkNotificationManager::sendMessage const):
+            (WebKit::NetworkNotificationManager::sendMessageWithReply const):
+            (WebKit::NetworkNotificationManager::maybeSendHostAppAuditToken const): Deleted.
+            * NetworkProcess/Notifications/NetworkNotificationManager.h:
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
+            * Shared/WebPushDaemonConnectionConfiguration.h: Copied from Source/WebKit/Shared/WebPushDaemonConstants.h.
+            (WebKit::WebPushD::WebPushDaemonConnectionConfiguration::encode const):
+            (WebKit::WebPushD::WebPushDaemonConnectionConfiguration::decode):
+
+            * Shared/WebPushDaemonConstants.h:
+            (WebKit::WebPushD::messageTypeSendsReply):
+
+            * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+            * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+            (-[_WKWebsiteDataStoreConfiguration webpushdUsesMockBundlesForTesting]):
+            (-[_WKWebsiteDataStoreConfiguration setWebpushdUsesMockBundlesForTesting:]):
+
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::parameters):
+
+            * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+            (WebKit::WebsiteDataStoreConfiguration::copy const):
+            (WebKit::WebsiteDataStoreConfiguration::webPushDaemonConnectionConfiguration const):
+            * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+            (WebKit::WebsiteDataStoreConfiguration::webpushdUsesMockBundlesForTesting const):
+            (WebKit::WebsiteDataStoreConfiguration::setWebpushdUsesMockBundlesForTesting):
+
+            * WebKit.xcodeproj/project.pbxproj:
+
+            * webpushd/AppBundleRequest.mm:
+            (WebPushD::AppBundleRequest::AppBundleRequest):
+            (WebPushD::AppBundleRequest::start):
+
+            * webpushd/PushClientConnection.h:
+            (WebPushD::ClientConnection::hasHostAppAuditToken const):
+            (WebPushD::ClientConnection::useMockBundlesForTesting const):
+            * webpushd/PushClientConnection.mm:
+            (WebPushD::ClientConnection::updateConnectionConfiguration):
+            (WebPushD::ClientConnection::setHostAppAuditTokenData):
+
+            * webpushd/WebPushDaemon.h:
+            * webpushd/WebPushDaemon.mm:
+            (WebPushD::Daemon::decodeAndHandleMessage):
+            (WebPushD::Daemon::getOriginsWithPushAndNotificationPermissions):
+            (WebPushD::Daemon::setDebugModeIsEnabled):
+            (WebPushD::Daemon::updateConnectionConfiguration):
+            (WebPushD::Daemon::setHostAppAuditToken): Deleted.
+
+2021-12-06  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286273. rdar://problem/86052131
 
     Make webpushd "fake registration for testing" much more complicated by adding a "mock app bundle" install

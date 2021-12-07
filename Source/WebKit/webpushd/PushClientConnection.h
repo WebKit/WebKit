@@ -34,6 +34,13 @@
 #include <wtf/spi/darwin/XPCSPI.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
+namespace WebPushD {
+struct WebPushDaemonConnectionConfiguration;
+}
+}
+using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
+
 namespace WebPushD {
 
 class AppBundleRequest;
@@ -43,14 +50,17 @@ class ClientConnection : public RefCounted<ClientConnection>, public CanMakeWeak
 public:
     static Ref<ClientConnection> create(xpc_connection_t);
 
+    void updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration&);
+
     bool hasHostAppAuditToken() const { return !!m_hostAppAuditToken; }
-    void setHostAppAuditTokenData(const Vector<uint8_t>&);
 
     const String& hostAppCodeSigningIdentifier();
     bool hostAppHasPushEntitlement();
 
     bool debugModeIsEnabled() const { return m_debugModeEnabled; }
     void setDebugModeIsEnabled(bool);
+
+    bool useMockBundlesForTesting() const { return m_useMockBundlesForTesting; }
 
     void enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&&);
     void didCompleteAppBundleRequest(AppBundleRequest&);
@@ -61,7 +71,8 @@ private:
     ClientConnection(xpc_connection_t);
 
     void maybeStartNextAppBundleRequest();
-    
+    void setHostAppAuditTokenData(const Vector<uint8_t>&);
+
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
 
     std::optional<audit_token_t> m_hostAppAuditToken;
@@ -72,6 +83,7 @@ private:
     std::unique_ptr<AppBundleRequest> m_currentBundleRequest;
 
     bool m_debugModeEnabled { false };
+    bool m_useMockBundlesForTesting { false };
 };
 
 } // namespace WebPushD

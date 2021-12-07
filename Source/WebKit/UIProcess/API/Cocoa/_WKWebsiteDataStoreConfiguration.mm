@@ -561,6 +561,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(blocked);
 }
 
+- (BOOL)webPushDaemonUsesMockBundlesForTesting
+{
+    return _configuration->webPushDaemonUsesMockBundlesForTesting();
+}
+
+- (void)setWebPushDaemonUsesMockBundlesForTesting:(BOOL)usesMockBundles
+{
+    _configuration->setWebPushDaemonUsesMockBundlesForTesting(usesMockBundles);
+}
+
 - (API::Object&)_apiObject
 {
     return *_configuration;

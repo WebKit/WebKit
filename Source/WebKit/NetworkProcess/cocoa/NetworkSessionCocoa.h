@@ -121,6 +121,8 @@ public:
     bool fastServerTrustEvaluationEnabled() const { return m_fastServerTrustEvaluationEnabled; }
     bool deviceManagementRestrictionsEnabled() const { return m_deviceManagementRestrictionsEnabled; }
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
+    bool webPushDaemonUsesMockBundlesForTesting() const final { return m_webPushDaemonUsesMockBundlesForTesting; }
+
     DMFWebsitePolicyMonitor *deviceManagementPolicyMonitor();
 
     CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
@@ -180,6 +182,7 @@ private:
     RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
+    bool m_webPushDaemonUsesMockBundlesForTesting { false };
     bool m_shouldLogCookieInformation { false };
     bool m_fastServerTrustEvaluationEnabled { false };
     String m_dataConnectionServiceType;

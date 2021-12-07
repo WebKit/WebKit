@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ResourceLoadStatisticsParameters.h"
+#include "WebPushDaemonConnectionConfiguration.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/Seconds.h>
@@ -86,6 +87,7 @@ struct NetworkSessionCreationParameters {
 #endif
     bool deviceManagementRestrictionsEnabled { false };
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
+    WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration;
 
     String networkCacheDirectory;
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;

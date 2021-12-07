@@ -29,6 +29,7 @@
 #import "AppBundleRequest.h"
 #import "CodeSigning.h"
 #import "WebPushDaemon.h"
+#import "WebPushDaemonConnectionConfiguration.h"
 #import <JavaScriptCore/ConsoleTypes.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -45,10 +46,16 @@ ClientConnection::ClientConnection(xpc_connection_t connection)
 {
 }
 
+void ClientConnection::updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration& configuration)
+{
+    if (configuration.hostAppAuditTokenData)
+        setHostAppAuditTokenData(*configuration.hostAppAuditTokenData);
+
+    m_useMockBundlesForTesting = configuration.useMockBundlesForTesting;
+}
+
 void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData)
 {
-    RELEASE_ASSERT(!hasHostAppAuditToken());
-
     audit_token_t token;
     if (tokenData.size() != sizeof(token)) {
         ASSERT_WITH_MESSAGE(false, "Attempt to set an audit token from incorrect number of bytes");
@@ -56,6 +63,14 @@ void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData
     }
 
     memcpy(&token, tokenData.data(), tokenData.size());
+
+    if (hasHostAppAuditToken()) {
+        // Verify the token being set is equivalent to the last one set
+        audit_token_t& existingAuditToken = *m_hostAppAuditToken;
+        RELEASE_ASSERT(!memcmp(&existingAuditToken, &token, sizeof(token)));
+        return;
+    }
+
     m_hostAppAuditToken = WTFMove(token);
 }
 

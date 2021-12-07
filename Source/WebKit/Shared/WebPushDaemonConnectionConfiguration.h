@@ -25,39 +25,42 @@
 
 #pragma once
 
+#include <optional>
+#include <wtf/Vector.h>
+
 namespace WebKit::WebPushD {
 
-constexpr const char* protocolVersionKey = "protocol version";
-constexpr uint64_t protocolVersionValue = 1;
-constexpr const char* protocolEncodedMessageKey = "encoded message";
+struct WebPushDaemonConnectionConfiguration {
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<WebPushDaemonConnectionConfiguration> decode(Decoder&);
 
-constexpr const char* protocolDebugMessageKey { "debug message" };
-constexpr const char* protocolDebugMessageLevelKey { "debug message level" };
-
-constexpr const char* protocolMessageTypeKey { "message type" };
-enum class MessageType : uint8_t {
-    EchoTwice = 1,
-    RequestSystemNotificationPermission,
-    DeletePushAndNotificationRegistration,
-    GetOriginsWithPushAndNotificationPermissions,
-    SetDebugModeIsEnabled,
-    UpdateConnectionConfiguration,
+    bool useMockBundlesForTesting { false };
+    std::optional<Vector<uint8_t>> hostAppAuditTokenData;
 };
 
-inline bool messageTypeSendsReply(MessageType messageType)
+template<class Encoder>
+void WebPushDaemonConnectionConfiguration::encode(Encoder& encoder) const
 {
-    switch (messageType) {
-    case MessageType::EchoTwice:
-    case MessageType::GetOriginsWithPushAndNotificationPermissions:
-    case MessageType::DeletePushAndNotificationRegistration:
-    case MessageType::RequestSystemNotificationPermission:
-        return true;
-    case MessageType::SetDebugModeIsEnabled:
-    case MessageType::UpdateConnectionConfiguration:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    encoder << useMockBundlesForTesting << hostAppAuditTokenData;
+}
+
+template<class Decoder>
+std::optional<WebPushDaemonConnectionConfiguration> WebPushDaemonConnectionConfiguration::decode(Decoder& decoder)
+{
+    std::optional<bool> useMockBundlesForTesting;
+    decoder >> useMockBundlesForTesting;
+    if (!useMockBundlesForTesting)
+        return std::nullopt;
+
+    std::optional<std::optional<Vector<uint8_t>>> hostAppAuditTokenData;
+    decoder >> hostAppAuditTokenData;
+    if (!hostAppAuditTokenData)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*useMockBundlesForTesting),
+        WTFMove(*hostAppAuditTokenData)
+    } };
 }
 
 } // namespace WebKit::WebPushD

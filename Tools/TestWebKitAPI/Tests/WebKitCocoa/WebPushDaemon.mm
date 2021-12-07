@@ -265,6 +265,7 @@ TEST(WebPushD, PermissionManagement)
 
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
