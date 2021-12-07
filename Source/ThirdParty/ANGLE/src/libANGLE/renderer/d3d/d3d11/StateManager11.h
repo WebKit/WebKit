@@ -53,6 +53,7 @@ class ShaderConstants11 : angle::NonCopyable
     void onImageChange(gl::ShaderType shaderType,
                        unsigned int imageIndex,
                        const gl::ImageUnit &imageUnit);
+    void onClipControlChange(bool lowerLeft, bool zeroToOne);
 
     angle::Result updateBuffer(const gl::Context *context,
                                Renderer11 *renderer,
@@ -69,7 +70,10 @@ class ShaderConstants11 : angle::NonCopyable
               viewCoords{.0f},
               viewScale{.0f},
               multiviewWriteToViewportIndex{.0f},
-              firstVertex{0}
+              clipControlOrigin{-1.0f},
+              clipControlZeroToOne{.0f},
+              firstVertex{0},
+              padding{.0f, .0f}
         {}
 
         float depthRange[4];
@@ -81,8 +85,19 @@ class ShaderConstants11 : angle::NonCopyable
         // whenever a multi-view draw framebuffer is made active.
         float multiviewWriteToViewportIndex;
 
+        // EXT_clip_control
+        // Multiplied with Y coordinate: -1.0 for GL_LOWER_LEFT_EXT, 1.0f for GL_UPPER_LEFT_EXT
+        float clipControlOrigin;
+        // 0.0 for GL_NEGATIVE_ONE_TO_ONE_EXT, 1.0 for GL_ZERO_TO_ONE_EXT
+        float clipControlZeroToOne;
+
         uint32_t firstVertex;
+
+        // Added here to manually pad the struct to 16 byte boundary
+        float padding[2];
     };
+    static_assert(sizeof(Vertex) % 16u == 0,
+                  "D3D11 constant buffers must be multiples of 16 bytes");
 
     struct Pixel
     {
@@ -91,8 +106,8 @@ class ShaderConstants11 : angle::NonCopyable
               viewCoords{.0f},
               depthFront{.0f},
               viewScale{.0f},
-              multiviewWriteToViewportIndex(0),
-              padding(0)
+              multiviewWriteToViewportIndex{.0f},
+              padding{.0f}
         {}
 
         float depthRange[4];
@@ -107,6 +122,7 @@ class ShaderConstants11 : angle::NonCopyable
         // Added here to manually pad the struct.
         float padding;
     };
+    static_assert(sizeof(Pixel) % 16u == 0, "D3D11 constant buffers must be multiples of 16 bytes");
 
     struct Compute
     {
@@ -173,7 +189,9 @@ class StateManager11 final : angle::NonCopyable
 
     void deinitialize();
 
-    void syncState(const gl::Context *context, const gl::State::DirtyBits &dirtyBits);
+    void syncState(const gl::Context *context,
+                   const gl::State::DirtyBits &dirtyBits,
+                   gl::Command command);
 
     angle::Result updateStateForCompute(const gl::Context *context,
                                         GLuint numGroupsX,

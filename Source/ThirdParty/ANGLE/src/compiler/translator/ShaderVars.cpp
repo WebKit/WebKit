@@ -40,14 +40,19 @@ ShaderVariable::ShaderVariable(GLenum typeIn)
       active(false),
       isRowMajorLayout(false),
       location(-1),
+      hasImplicitLocation(false),
       binding(-1),
       imageUnitFormat(GL_NONE),
       offset(-1),
       readonly(false),
       writeonly(false),
+      isFragmentInOut(false),
       index(-1),
+      yuv(false),
       interpolation(INTERPOLATION_SMOOTH),
       isInvariant(false),
+      isShaderIOBlock(false),
+      isPatch(false),
       texelFetchStaticUse(false),
       flattenedOffsetInParentArrays(-1)
 {}
@@ -69,17 +74,23 @@ ShaderVariable::ShaderVariable(const ShaderVariable &other)
       staticUse(other.staticUse),
       active(other.active),
       fields(other.fields),
-      structName(other.structName),
+      structOrBlockName(other.structOrBlockName),
+      mappedStructOrBlockName(other.mappedStructOrBlockName),
       isRowMajorLayout(other.isRowMajorLayout),
       location(other.location),
+      hasImplicitLocation(other.hasImplicitLocation),
       binding(other.binding),
       imageUnitFormat(other.imageUnitFormat),
       offset(other.offset),
       readonly(other.readonly),
       writeonly(other.writeonly),
+      isFragmentInOut(other.isFragmentInOut),
       index(other.index),
+      yuv(other.yuv),
       interpolation(other.interpolation),
       isInvariant(other.isInvariant),
+      isShaderIOBlock(other.isShaderIOBlock),
+      isPatch(other.isPatch),
       texelFetchStaticUse(other.texelFetchStaticUse),
       flattenedOffsetInParentArrays(other.flattenedOffsetInParentArrays)
 {}
@@ -94,18 +105,24 @@ ShaderVariable &ShaderVariable::operator=(const ShaderVariable &other)
     staticUse                     = other.staticUse;
     active                        = other.active;
     fields                        = other.fields;
-    structName                    = other.structName;
+    structOrBlockName             = other.structOrBlockName;
+    mappedStructOrBlockName       = other.mappedStructOrBlockName;
     isRowMajorLayout              = other.isRowMajorLayout;
     flattenedOffsetInParentArrays = other.flattenedOffsetInParentArrays;
     location                      = other.location;
+    hasImplicitLocation           = other.hasImplicitLocation;
     binding                       = other.binding;
     imageUnitFormat               = other.imageUnitFormat;
     offset                        = other.offset;
     readonly                      = other.readonly;
     writeonly                     = other.writeonly;
+    isFragmentInOut               = other.isFragmentInOut;
     index                         = other.index;
+    yuv                           = other.yuv;
     interpolation                 = other.interpolation;
     isInvariant                   = other.isInvariant;
+    isShaderIOBlock               = other.isShaderIOBlock;
+    isPatch                       = other.isPatch;
     texelFetchStaticUse           = other.texelFetchStaticUse;
     return *this;
 }
@@ -115,12 +132,16 @@ bool ShaderVariable::operator==(const ShaderVariable &other) const
     if (type != other.type || precision != other.precision || name != other.name ||
         mappedName != other.mappedName || arraySizes != other.arraySizes ||
         staticUse != other.staticUse || active != other.active ||
-        fields.size() != other.fields.size() || structName != other.structName ||
+        fields.size() != other.fields.size() || structOrBlockName != other.structOrBlockName ||
+        mappedStructOrBlockName != other.mappedStructOrBlockName ||
         isRowMajorLayout != other.isRowMajorLayout || location != other.location ||
-        binding != other.binding || imageUnitFormat != other.imageUnitFormat ||
-        offset != other.offset || readonly != other.readonly || writeonly != other.writeonly ||
-        index != other.index || interpolation != other.interpolation ||
-        isInvariant != other.isInvariant || texelFetchStaticUse != other.texelFetchStaticUse)
+        hasImplicitLocation != other.hasImplicitLocation || binding != other.binding ||
+        imageUnitFormat != other.imageUnitFormat || offset != other.offset ||
+        readonly != other.readonly || writeonly != other.writeonly || index != other.index ||
+        yuv != other.yuv || interpolation != other.interpolation ||
+        isInvariant != other.isInvariant || isShaderIOBlock != other.isShaderIOBlock ||
+        isPatch != other.isPatch || texelFetchStaticUse != other.texelFetchStaticUse ||
+        isFragmentInOut != other.isFragmentInOut)
     {
         return false;
     }
@@ -143,12 +164,7 @@ void ShaderVariable::setArraySize(unsigned int size)
 
 unsigned int ShaderVariable::getInnerArraySizeProduct() const
 {
-    unsigned int arraySizeProduct = 1u;
-    for (size_t idx = 1; idx < arraySizes.size(); ++idx)
-    {
-        arraySizeProduct *= getNestedArraySize(static_cast<unsigned int>(idx));
-    }
-    return arraySizeProduct;
+    return gl::InnerArraySizeProduct(arraySizes);
 }
 
 unsigned int ShaderVariable::getArraySizeProduct() const
@@ -293,16 +309,28 @@ const sh::ShaderVariable *ShaderVariable::findField(const std::string &fullName,
         return nullptr;
     }
     size_t pos = fullName.find_first_of(".");
+    std::string topName, fieldName;
     if (pos == std::string::npos)
     {
-        return nullptr;
+        // If this is a shader I/O block without an instance name, return the field given only the
+        // field name.
+        if (!isShaderIOBlock || !name.empty())
+        {
+            return nullptr;
+        }
+
+        fieldName = fullName;
     }
-    std::string topName = fullName.substr(0, pos);
-    if (topName != name)
+    else
     {
-        return nullptr;
+        std::string baseName = isShaderIOBlock ? structOrBlockName : name;
+        topName              = fullName.substr(0, pos);
+        if (topName != baseName)
+        {
+            return nullptr;
+        }
+        fieldName = fullName.substr(pos + 1);
     }
-    std::string fieldName = fullName.substr(pos + 1);
     if (fieldName.empty())
     {
         return nullptr;
@@ -320,7 +348,7 @@ const sh::ShaderVariable *ShaderVariable::findField(const std::string &fullName,
 
 bool ShaderVariable::isBuiltIn() const
 {
-    return (name.size() >= 4 && name[0] == 'g' && name[1] == 'l' && name[2] == '_');
+    return gl::IsBuiltInName(name);
 }
 
 bool ShaderVariable::isEmulatedBuiltIn() const
@@ -356,9 +384,26 @@ bool ShaderVariable::isSameVariableAtLinkTime(const ShaderVariable &other,
             return false;
         }
     }
-    if (structName != other.structName)
+    if (structOrBlockName != other.structOrBlockName ||
+        mappedStructOrBlockName != other.mappedStructOrBlockName)
         return false;
     return true;
+}
+
+void ShaderVariable::updateEffectiveLocation(const sh::ShaderVariable &parent)
+{
+    if ((location < 0 || hasImplicitLocation) && !parent.hasImplicitLocation)
+    {
+        location = parent.location;
+    }
+}
+
+void ShaderVariable::resetEffectiveLocation()
+{
+    if (hasImplicitLocation)
+    {
+        location = -1;
+    }
 }
 
 bool ShaderVariable::isSameUniformAtLinkTime(const ShaderVariable &other) const
@@ -400,11 +445,28 @@ bool ShaderVariable::isSameVaryingAtLinkTime(const ShaderVariable &other) const
 
 bool ShaderVariable::isSameVaryingAtLinkTime(const ShaderVariable &other, int shaderVersion) const
 {
-    return (ShaderVariable::isSameVariableAtLinkTime(other, false, false) &&
-            InterpolationTypesMatch(interpolation, other.interpolation) &&
-            (shaderVersion >= 300 || isInvariant == other.isInvariant) &&
-            (location == other.location) &&
-            (name == other.name || (shaderVersion >= 310 && location >= 0)));
+    return ShaderVariable::isSameVariableAtLinkTime(other, false, false) &&
+           InterpolationTypesMatch(interpolation, other.interpolation) &&
+           (shaderVersion >= 300 || isInvariant == other.isInvariant) &&
+           (isPatch == other.isPatch) && location == other.location &&
+           (isSameNameAtLinkTime(other) || (shaderVersion >= 310 && location >= 0));
+}
+
+bool ShaderVariable::isSameNameAtLinkTime(const ShaderVariable &other) const
+{
+    if (isShaderIOBlock != other.isShaderIOBlock)
+    {
+        return false;
+    }
+
+    if (isShaderIOBlock)
+    {
+        // Shader I/O blocks match by block name.
+        return structOrBlockName == other.structOrBlockName;
+    }
+
+    // Otherwise match by name.
+    return name == other.name;
 }
 
 InterfaceBlock::InterfaceBlock()
@@ -482,7 +544,7 @@ bool InterfaceBlock::isSameInterfaceBlockAtLinkTime(const InterfaceBlock &other)
 
 bool InterfaceBlock::isBuiltIn() const
 {
-    return (name.size() >= 4 && name[0] == 'g' && name[1] == 'l' && name[2] == '_');
+    return gl::IsBuiltInName(name);
 }
 
 void WorkGroupSize::fill(int fillValue)

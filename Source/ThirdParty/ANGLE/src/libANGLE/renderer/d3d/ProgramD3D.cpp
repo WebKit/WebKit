@@ -222,10 +222,10 @@ class UniformEncodingVisitorD3D : public sh::BlockEncoderVisitor
           mUniformMapOut(uniformMapOut)
     {}
 
-    void visitNamedSamplerOrImage(const sh::ShaderVariable &sampler,
-                                  const std::string &name,
-                                  const std::string &mappedName,
-                                  const std::vector<unsigned int> &arraySizes) override
+    void visitNamedOpaqueObject(const sh::ShaderVariable &sampler,
+                                const std::string &name,
+                                const std::string &mappedName,
+                                const std::vector<unsigned int> &arraySizes) override
     {
         auto uniformMapEntry = mUniformMapOut->find(name);
         if (uniformMapEntry == mUniformMapOut->end())
@@ -1065,7 +1065,7 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
         mImage2DUniforms.push_back(image2Duniform);
     }
 
-    for (unsigned int ii = 0; ii < gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFERS; ++ii)
+    for (unsigned int ii = 0; ii < gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS; ++ii)
     {
         unsigned int index                             = stream->readInt<unsigned int>();
         mComputeAtomicCounterBufferRegisterIndices[ii] = index;
@@ -1381,7 +1381,7 @@ void ProgramD3D::save(const gl::Context *context, gl::BinaryOutputStream *stream
         gl::WriteShaderVar(stream, image2DUniform);
     }
 
-    for (unsigned int ii = 0; ii < gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFERS; ++ii)
+    for (unsigned int ii = 0; ii < gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS; ++ii)
     {
         stream->writeInt(mComputeAtomicCounterBufferRegisterIndices[ii]);
     }
@@ -2078,6 +2078,27 @@ std::unique_ptr<LinkEvent> ProgramD3D::link(const gl::Context *context,
                 shadersD3D[shaderType]->generateWorkarounds(&mShaderWorkarounds[shaderType]);
 
                 mShaderUniformsDirty.set(shaderType);
+
+                const std::set<std::string> &slowCompilingUniformBlockSet =
+                    shadersD3D[shaderType]->getSlowCompilingUniformBlockSet();
+                if (slowCompilingUniformBlockSet.size() > 0)
+                {
+                    std::ostringstream stream;
+                    stream << "You could get a better shader compiling performance if you re-write"
+                           << " the uniform block(s)\n[ ";
+                    for (const std::string &str : slowCompilingUniformBlockSet)
+                    {
+                        stream << str << " ";
+                    }
+                    stream << "]\nin the " << gl::GetShaderTypeString(shaderType) << " shader.\n";
+
+                    stream << "You could get more details from "
+                              "https://chromium.googlesource.com/angle/angle/+/refs/heads/main/"
+                              "src/libANGLE/renderer/d3d/d3d11/"
+                              "UniformBlockToStructuredBufferTranslation.md\n";
+                    ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_MEDIUM,
+                                       stream.str().c_str());
+                }
             }
         }
 
@@ -2091,11 +2112,14 @@ std::unique_ptr<LinkEvent> ProgramD3D::link(const gl::Context *context,
             }
         }
 
-        ProgramD3DMetadata metadata(mRenderer, shadersD3D, context->getClientType());
-        BuiltinVaryingsD3D builtins(metadata, resources.varyingPacking);
+        const gl::VaryingPacking &varyingPacking =
+            resources.varyingPacking.getOutputPacking(gl::ShaderType::Vertex);
 
-        mDynamicHLSL->generateShaderLinkHLSL(context->getCaps(), mState, metadata,
-                                             resources.varyingPacking, builtins, &mShaderHLSL);
+        ProgramD3DMetadata metadata(mRenderer, shadersD3D, context->getClientType());
+        BuiltinVaryingsD3D builtins(metadata, varyingPacking);
+
+        mDynamicHLSL->generateShaderLinkHLSL(context->getCaps(), mState, metadata, varyingPacking,
+                                             builtins, &mShaderHLSL);
 
         const ShaderD3D *vertexShader = shadersD3D[gl::ShaderType::Vertex];
         mUsesPointSize                = vertexShader && vertexShader->usesPointSize();
@@ -2111,7 +2135,7 @@ std::unique_ptr<LinkEvent> ProgramD3D::link(const gl::Context *context,
         if (mRenderer->getMajorShaderModel() >= 4)
         {
             mGeometryShaderPreamble = mDynamicHLSL->generateGeometryShaderPreamble(
-                resources.varyingPacking, builtins, mHasANGLEMultiviewEnabled,
+                varyingPacking, builtins, mHasANGLEMultiviewEnabled,
                 metadata.canSelectViewInVertexShader());
         }
 
@@ -2119,7 +2143,7 @@ std::unique_ptr<LinkEvent> ProgramD3D::link(const gl::Context *context,
 
         defineUniformsAndAssignRegisters();
 
-        gatherTransformFeedbackVaryings(resources.varyingPacking, builtins[gl::ShaderType::Vertex]);
+        gatherTransformFeedbackVaryings(varyingPacking, builtins[gl::ShaderType::Vertex]);
 
         linkResources(resources);
 
@@ -2638,24 +2662,34 @@ bool ProgramD3D::hasNamedUniform(const std::string &name)
 
 // Assume count is already clamped.
 template <typename T>
-void ProgramD3D::setUniformImpl(const gl::VariableLocation &locationInfo,
+void ProgramD3D::setUniformImpl(D3DUniform *targetUniform,
+                                const gl::VariableLocation &locationInfo,
                                 GLsizei count,
                                 const T *v,
                                 uint8_t *targetState,
                                 GLenum uniformType)
 {
-    D3DUniform *targetUniform             = mD3DUniforms[locationInfo.index];
     const int components                  = targetUniform->typeInfo.componentCount;
     const unsigned int arrayElementOffset = locationInfo.arrayIndex;
+    const int blockSize                   = 4;
 
     if (targetUniform->typeInfo.type == uniformType)
     {
-        T *dest         = reinterpret_cast<T *>(targetState) + arrayElementOffset * 4;
+        T *dest         = reinterpret_cast<T *>(targetState) + arrayElementOffset * blockSize;
         const T *source = v;
 
-        for (GLint i = 0; i < count; i++, dest += 4, source += components)
+        // If the component is equal to the block size, we can optimize to a single memcpy.
+        // Otherwise, we have to do partial block writes.
+        if (components == blockSize)
         {
-            memcpy(dest, source, components * sizeof(T));
+            memcpy(dest, source, components * count * sizeof(T));
+        }
+        else
+        {
+            for (GLint i = 0; i < count; i++, dest += blockSize, source += components)
+            {
+                memcpy(dest, source, components * sizeof(T));
+            }
         }
     }
     else
@@ -2697,10 +2731,10 @@ void ProgramD3D::setUniformInternal(GLint location, GLsizei count, const T *v, G
 
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        if (targetUniform->mShaderData[shaderType])
+        uint8_t *targetState = targetUniform->mShaderData[shaderType];
+        if (targetState)
         {
-            setUniformImpl(locationInfo, count, v, targetUniform->mShaderData[shaderType],
-                           uniformType);
+            setUniformImpl(targetUniform, locationInfo, count, v, targetState, uniformType);
             mShaderUniformsDirty.set(shaderType);
         }
     }

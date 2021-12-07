@@ -86,7 +86,7 @@ TEST_P(TimerQueriesTest, ProcAddresses)
 // Tests the time elapsed query
 TEST_P(TimerQueriesTest, TimeElapsed)
 {
-    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
@@ -281,7 +281,7 @@ TEST_P(TimerQueriesTest, TimeElapsedMulticontextTest)
     // http://anglebug.com/1541
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
-    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
@@ -517,4 +517,5 @@ TEST_P(TimerQueriesTestES3, TimestampGetInteger64)
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(TimerQueriesTest);
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TimerQueriesTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(TimerQueriesTestES3);

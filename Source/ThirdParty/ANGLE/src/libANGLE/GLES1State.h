@@ -177,6 +177,7 @@ class GLES1State final : angle::NonCopyable
     using MatrixStack = angle::FixedVector<angle::Mat4, Caps::GlobalMatrixStackDepth>;
     MatrixStack &currentMatrixStack();
     const MatrixStack &currentMatrixStack() const;
+    const MatrixStack &getMatrixStack(MatrixType mode) const;
 
     const angle::Mat4 &getModelviewMatrix() const;
 
@@ -218,15 +219,10 @@ class GLES1State final : angle::NonCopyable
     AttributesMask getVertexArraysAttributeMask() const;
     AttributesMask getActiveAttributesMask() const;
 
+    bool shouldHandleDirtyProgram();
+
     void setHint(GLenum target, GLenum mode);
     GLenum getHint(GLenum target) const;
-
-  private:
-    friend class State;
-    friend class GLES1Renderer;
-
-    // Back pointer for reading from State.
-    const State *mGLState;
 
     enum DirtyGles1Type
     {
@@ -246,15 +242,26 @@ class GLES1State final : angle::NonCopyable
         DIRTY_GLES1_LOGIC_OP,
         DIRTY_GLES1_CLIP_PLANES,
         DIRTY_GLES1_HINT_SETTING,
+        DIRTY_GLES1_PROGRAM,
         DIRTY_GLES1_MAX,
     };
+
+    void setAllDirty() { mDirtyBits.set(); }
+
+  private:
+    friend class State;
+    friend class GLES1Renderer;
+
+    // Back pointer for reading from State.
+    const State *mGLState;
+
     using DirtyBits = angle::BitSet<DIRTY_GLES1_MAX>;
     DirtyBits mDirtyBits;
 
-    void setDirty(DirtyGles1Type type);
-    void setAllDirty();
-    void clearDirty();
-    bool isDirty(DirtyGles1Type type) const;
+    void setDirty(DirtyGles1Type type) { mDirtyBits.set(type); }
+    void clearDirty() { mDirtyBits.reset(); }
+    void clearDirtyBits(const DirtyGles1Type &bitset) { mDirtyBits &= ~bitset; }
+    bool isDirty(DirtyGles1Type type) const { return mDirtyBits.test(type); }
 
     // All initial state values come from the
     // OpenGL ES 1.1 spec.

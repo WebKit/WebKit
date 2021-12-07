@@ -60,6 +60,8 @@ _d3d_shared_sources = [
   "VertexBuffer.h",
   "VertexDataManager.cpp",
   "VertexDataManager.h",
+  "driver_utils_d3d.cpp",
+  "driver_utils_d3d.h",
   "formatutilsD3D.h",
 ]
 
@@ -265,10 +267,14 @@ if (angle_enable_d3d11) {
     ]
   } else {
     _d3d11_backend_sources += [
-      "d3d11/converged/CompositorNativeWindow11.cpp",
-      "d3d11/converged/CompositorNativeWindow11.h",
       "d3d11/win32/NativeWindow11Win32.cpp",
       "d3d11/win32/NativeWindow11Win32.h",
+    ]
+  }
+  if (angle_enable_d3d11_compositor_native_window) {
+    _d3d11_backend_sources += [
+      "d3d11/converged/CompositorNativeWindow11.cpp",
+      "d3d11/converged/CompositorNativeWindow11.h",
     ]
   }
 
@@ -311,6 +317,9 @@ if (angle_enable_d3d9) {
 if (angle_enable_d3d11) {
   config("angle_d3d11_backend_config") {
     defines = [ "ANGLE_ENABLE_D3D11" ]
+    if (angle_enable_d3d11_compositor_native_window) {
+      defines += [ "ANGLE_ENABLE_D3D11_COMPOSITOR_NATIVE_WINDOW" ]
+    }
   }
 
   angle_source_set("angle_d3d11_backend") {
@@ -320,5 +329,13 @@ if (angle_enable_d3d11) {
 
     public_deps = [ ":angle_d3d_shared" ]
     public_configs = [ ":angle_d3d11_backend_config" ]
+  }
+
+  config("angle_enable_winuwp_config") {
+    defines = [ "ANGLE_ENABLE_WINDOWS_UWP 1" ]
+  }
+
+  angle_source_set("angle_enable_winuwp") {
+    public_configs = [ ":angle_enable_winuwp_config" ]
   }
 }

@@ -22,7 +22,9 @@ PersistentCommandPool::~PersistentCommandPool()
     ASSERT(!mCommandPool.valid() && mFreeBuffers.empty());
 }
 
-angle::Result PersistentCommandPool::init(vk::Context *context, uint32_t queueFamilyIndex)
+angle::Result PersistentCommandPool::init(vk::Context *context,
+                                          bool hasProtectedContent,
+                                          uint32_t queueFamilyIndex)
 {
     ASSERT(!mCommandPool.valid());
 
@@ -33,6 +35,10 @@ angle::Result PersistentCommandPool::init(vk::Context *context, uint32_t queueFa
     //  command buffers from this pool. Alternatively we could reset the entire command pool.
     commandPoolInfo.flags =
         VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+    if (hasProtectedContent)
+    {
+        commandPoolInfo.flags |= VK_COMMAND_POOL_CREATE_PROTECTED_BIT;
+    }
     commandPoolInfo.queueFamilyIndex = queueFamilyIndex;
 
     ANGLE_VK_TRY(context, mCommandPool.init(context->getDevice(), commandPoolInfo));
@@ -81,7 +87,7 @@ angle::Result PersistentCommandPool::collect(vk::Context *context,
 {
     // VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT NOT set, The CommandBuffer
     // can still hold the memory resource
-    ANGLE_VK_TRY(context, vkResetCommandBuffer(buffer.getHandle(), 0));
+    ANGLE_VK_TRY(context, buffer.reset());
 
     mFreeBuffers.emplace_back(std::move(buffer));
     return angle::Result::Continue;

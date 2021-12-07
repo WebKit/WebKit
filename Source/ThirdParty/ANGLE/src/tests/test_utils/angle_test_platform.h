@@ -15,13 +15,9 @@
 bool IsAdreno();
 
 // Renderer back-ends
-// Note: FL9_3 is explicitly *not* considered D3D11.
 bool IsD3D11();
-bool IsD3D11_FL93();
 // Is a D3D9-class renderer.
 bool IsD3D9();
-// Is D3D9 or SM9_3 renderer.
-bool IsD3DSM3();
 bool IsDesktopOpenGL();
 bool IsOpenGLES();
 bool IsOpenGL();

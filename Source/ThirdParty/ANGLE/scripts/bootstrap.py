@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 # Copyright 2015 Google Inc.  All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -18,11 +18,11 @@ def main():
     try:
         rc = subprocess.call(gclient_cmd, shell=True)
     except OSError:
-        print 'could not run "%s" via shell' % gclient_cmd
+        print('could not run "%s" via shell' % gclient_cmd)
         sys.exit(1)
 
     if rc:
-        print 'failed command: "%s"' % gclient_cmd
+        print('failed command: "%s"' % gclient_cmd)
         sys.exit(1)
 
     with open('.gclient') as gclient_file:
@@ -35,7 +35,7 @@ def main():
     with open('.gclient', 'w') as gclient_file:
         gclient_file.write(content)
 
-    print 'created .gclient'
+    print('created .gclient')
 
 
 if __name__ == '__main__':

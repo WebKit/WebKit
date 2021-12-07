@@ -13,10 +13,16 @@
 #include <stdlib.h>
 #include <array>
 
-#define EGL_PLATFORM_ANGLE_PLATFORM_METHODS_ANGLEX 0x34FD
+#define EGL_PLATFORM_ANGLE_PLATFORM_METHODS_ANGLEX 0x6AFB
 
 #if !defined(ANGLE_PLATFORM_EXPORT)
-#    if defined(__GNUC__) || defined(__clang__)
+#    if defined(_WIN32)
+#        if !defined(LIBANGLE_IMPLEMENTATION)
+#            define ANGLE_PLATFORM_EXPORT __declspec(dllimport)
+#        else
+#            define ANGLE_PLATFORM_EXPORT __declspec(dllexport)
+#        endif
+#    elif defined(__GNUC__) || defined(__clang__)
 #        define ANGLE_PLATFORM_EXPORT __attribute__((visibility("default")))
 #    endif
 #endif

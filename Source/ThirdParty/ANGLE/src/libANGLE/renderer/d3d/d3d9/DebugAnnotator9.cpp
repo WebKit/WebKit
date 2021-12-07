@@ -14,7 +14,7 @@ namespace rx
 {
 
 void DebugAnnotator9::beginEvent(gl::Context *context,
-                                 gl::EntryPoint entryPoint,
+                                 angle::EntryPoint entryPoint,
                                  const char *eventName,
                                  const char *eventMessage)
 {
@@ -26,7 +26,7 @@ void DebugAnnotator9::beginEvent(gl::Context *context,
 
 void DebugAnnotator9::endEvent(gl::Context *context,
                                const char *eventName,
-                               gl::EntryPoint entryPoint)
+                               angle::EntryPoint entryPoint)
 {
     angle::LoggingAnnotator::endEvent(context, eventName, entryPoint);
     D3DPERF_EndEvent();

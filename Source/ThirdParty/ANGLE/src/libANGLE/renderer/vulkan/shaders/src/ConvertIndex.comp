@@ -47,11 +47,13 @@ layout (push_constant) uniform PushConstants
 {
     // Read offset in bytes into the srcIndirectBuf array, divided by four.
     uint srcIndirectOffsetDiv4;
+    // Read offset in bytes into the srcIndexBuf array.
+    uint srcIndexOffset;
     // Write offset in bytes into the dstIndexBuf array, divided by four.
     uint dstIndexBufOffsetDiv4;
     // Maximum size of the read buffer. The highest index value we will convert.
     uint maxIndex;
-    // Write offset in bytes/4 of destinatio indirect buffer
+    // Write offset in bytes/4 of destination indirect buffer
     uint dstIndirectBufOffsetDiv4;
 };
 
@@ -72,11 +74,7 @@ layout (push_constant) uniform PushConstants
 
 uint PullIndex(uint index)
 {
-#if IsIndirect
-    uint srcIndex = index;
-#else
     uint srcIndex = index + srcIndexOffset;
-#endif
     uint srcBlock = srcIndexBuf[srcIndex >> 2];
     uint srcComponent = (srcIndex & 3);
 
@@ -113,7 +111,7 @@ void main()
     // the data and any additional invocations will be a no-op
     uint index = ((gl_GlobalInvocationID.x + (firstIndex >> 1)) << 1);
 
-    // Don't write anything to dest if we're entirely past the end of the buffer.
+    // Don't write anything to dst if we're entirely past the end of the buffer.
     // We assume buffer size is uint-aligned.
     if (index >= endIndex)
         return;

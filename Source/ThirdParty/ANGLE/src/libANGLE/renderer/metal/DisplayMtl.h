@@ -46,16 +46,14 @@ class DisplayMtl : public DisplayImpl
     bool testDeviceLost() override;
     egl::Error restoreLostDevice(const egl::Display *display) override;
 
-    std::string getVendorString() const override;
+    std::string getRendererDescription() override;
+    std::string getVendorString() override;
+    std::string getVersionString() override;
 
     DeviceImpl *createDevice() override;
 
     egl::Error waitClient(const gl::Context *context) override;
     egl::Error waitNative(const gl::Context *context, EGLint engine) override;
-    egl::Error validateClientBuffer(const egl::Config *configuration,
-                                    EGLenum buftype,
-                                    EGLClientBuffer clientBuffer,
-                                    const egl::AttributeMap &attribs) const override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
                                      EGLNativeWindowType window,
@@ -104,6 +102,11 @@ class DisplayMtl : public DisplayImpl
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
 
+    egl::Error validateClientBuffer(const egl::Config *configuration,
+                                    EGLenum buftype,
+                                    EGLClientBuffer clientBuffer,
+                                    const egl::AttributeMap &attribs) const override;
+
     egl::Error validateImageClientBuffer(const gl::Context *context,
                                          EGLenum target,
                                          EGLClientBuffer clientBuffer,
@@ -111,7 +114,6 @@ class DisplayMtl : public DisplayImpl
 
     egl::ConfigSet generateConfigs() override;
 
-    std::string getRendererDescription() const;
     gl::Caps getNativeCaps() const;
     const gl::TextureCapsMap &getNativeTextureCaps() const;
     const gl::Extensions &getNativeExtensions() const;
@@ -120,7 +122,7 @@ class DisplayMtl : public DisplayImpl
 
     // Check whether either of the specified iOS or Mac GPU family is supported
     bool supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) const;
-    bool supportsIOSGPUFamily(uint8_t iOSFamily) const;
+    bool supportsAppleGPUFamily(uint8_t iOSFamily) const;
     bool supportsMacGPUFamily(uint8_t macFamily) const;
     bool supportsDepth24Stencil8PixelFormat() const;
     bool supports32BitFloatFiltering() const;
@@ -164,6 +166,9 @@ class DisplayMtl : public DisplayImpl
 #if ANGLE_MTL_EVENT_AVAILABLE
     mtl::AutoObjCObj<MTLSharedEventListener> getOrCreateSharedEventListener();
 #endif
+
+    bool useDirectToMetalCompiler() const;
+
   protected:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
     void generateCaps(egl::Caps *outCaps) const override;
@@ -177,10 +182,11 @@ class DisplayMtl : public DisplayImpl
     void initializeFeatures();
     void initializeLimitations();
     EGLenum EGLDrawingBufferTextureTarget();
-    mtl::AutoObjCPtr<id<MTLDevice>> getMetalDeviceMatchingAttribute(const egl::AttributeMap &attribs);
+    mtl::AutoObjCPtr<id<MTLDevice>> getMetalDeviceMatchingAttribute(
+        const egl::AttributeMap &attribs);
     angle::Result initializeShaderLibrary();
 
-    mtl::AutoObjCPtr<id<MTLDevice>> mMetalDevice;
+    mtl::AutoObjCPtr<id<MTLDevice>> mMetalDevice = nil;
     uint32_t mMetalDeviceVendorId                = 0;
 
     mtl::CommandQueue mCmdQueue;
@@ -202,9 +208,6 @@ class DisplayMtl : public DisplayImpl
     mutable gl::Limitations mNativeLimitations;
 
     angle::FeaturesMtl mFeatures;
-
-    // track whether we initialized (or released) glslang
-    bool mGlslangInitialized;
 };
 
 }  // namespace rx

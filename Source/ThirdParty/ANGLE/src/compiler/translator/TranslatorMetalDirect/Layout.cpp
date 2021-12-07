@@ -12,7 +12,6 @@
 #include <unordered_set>
 
 #include "compiler/translator/Symbol.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/TranslatorMetalDirect/Layout.h"
 
 using namespace sh;
@@ -92,7 +91,7 @@ static Layout ScalarLayoutOf(const TType &type, Language language)
                         return {4, 4};
                 }
             }
-            TODO();
+            UNIMPLEMENTED();
             return Layout::Invalid();
     }
 }
@@ -133,7 +132,8 @@ Layout sh::MetalLayoutOf(const TType &type, MetalLayoutOfConfig config)
         }
         if (config.assumeStructsAreTailPadded)
         {
-            size_t pad = (kDefaultStructAlignmentSize - layout.sizeOf) % kDefaultStructAlignmentSize;
+            size_t pad =
+                (kDefaultStructAlignmentSize - layout.sizeOf) % kDefaultStructAlignmentSize;
             layout.sizeOf += pad;
         }
         layout.sizeOf = RoundUpToMultipleOf(layout.sizeOf, layout.alignOf);
@@ -215,7 +215,7 @@ bool sh::CanBePacked(TLayoutBlockStorage storage)
         case TLayoutBlockStorage::EbsStd430:
             return false;
         case TLayoutBlockStorage::EbsUnspecified:
-            LOGIC_ERROR();
+            UNREACHABLE();
             return false;
     }
 }
@@ -333,7 +333,7 @@ static Layout CommonGlslLayoutOf(const TType &type,
                 outerDim = static_cast<size_t>(type.getRows());
                 break;
             case TLayoutMatrixPacking::EmpUnspecified:
-                LOGIC_ERROR();
+                UNREACHABLE();
                 innerDim = 0;
                 outerDim = 0;
         }
@@ -370,7 +370,7 @@ Layout sh::GlslLayoutOf(const TType &type,
         case TLayoutBlockStorage::EbsStd430:
             return CommonGlslLayoutOf(type, storage, matrixPacking, maskArray, 1);
         case TLayoutBlockStorage::EbsUnspecified:
-            LOGIC_ERROR();
+            UNREACHABLE();
             return Layout::Invalid();
     }
 }
@@ -395,7 +395,7 @@ ANGLE_NO_DISCARD Layout sh::GlslStructLayoutOf(TField const *const *begin,
         case TLayoutBlockStorage::EbsStd430:
             return CommonGlslStructLayoutOf(begin, end, storage, matrixPacking, maskArray, 1);
         case TLayoutBlockStorage::EbsUnspecified:
-            LOGIC_ERROR();
+            UNREACHABLE();
             return Layout::Invalid();
     }
 }

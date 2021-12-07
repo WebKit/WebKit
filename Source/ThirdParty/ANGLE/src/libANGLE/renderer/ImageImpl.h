@@ -39,6 +39,8 @@ class ExternalImageSiblingImpl : public FramebufferAttachmentObjectImpl
     virtual gl::Format getFormat() const                        = 0;
     virtual bool isRenderable(const gl::Context *context) const = 0;
     virtual bool isTexturable(const gl::Context *context) const = 0;
+    virtual bool isYUV() const                                  = 0;
+    virtual bool hasProtectedContent() const                    = 0;
     virtual gl::Extents getSize() const                         = 0;
     virtual size_t getSamples() const                           = 0;
 };
@@ -53,6 +55,8 @@ class ImageImpl : angle::NonCopyable
     virtual egl::Error initialize(const egl::Display *display) = 0;
 
     virtual angle::Result orphan(const gl::Context *context, egl::ImageSibling *sibling) = 0;
+
+    virtual egl::Error exportVkImage(void *vkImage, void *vkImageCreateInfo);
 
   protected:
     const egl::ImageState &mState;

@@ -43,10 +43,10 @@
    `git cl upload` should warn you if you are missing this step.
 
 [gn-build-config]: https://www.chromium.org/developers/gn-build-configuration
-[compiler.gni]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler.gni
-[libGLESv2.gni]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/libGLESv2.gni
-[glslang.l]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/glslang.l
-[run_code_generation.py]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/scripts/run_code_generation.py
+[compiler.gni]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler.gni
+[libGLESv2.gni]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/libGLESv2.gni
+[glslang.l]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/glslang.l
+[run_code_generation.py]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/scripts/run_code_generation.py
 
 ### Testing
 
@@ -117,7 +117,7 @@
 
 ## Life of a Change List
 
-### Getting started with Gerrit for ANGLE
+### <a name="getting-started-with-gerrit"></a>Getting started with Gerrit for ANGLE
 
 1. Go to [https://chromium-review.googlesource.com/new-password][CR-passwd]
 2. Log in with the email you use for your git commits.
@@ -131,7 +131,7 @@
      CL with a particular review, and track dependencies between commits.
    * Download the hook from
      [https://chromium-review.googlesource.com/tools/hooks/commit-msg][commit-msg-hook] and copy
-     this file to `.git/hooks/commit-msg` within your local repository. On non-Windows, platforms,
+     this file to `.git/hooks/commit-msg` within your local repository. On non-Windows platforms,
      ensure that permissions are set to allow execution.
    * *BE AWARE:* Some patch management tools, such as StGit, currently bypass git hooks. They should
      not currently be used with changes intended for review.
@@ -146,9 +146,9 @@
    * `git add src/../FileName.cpp`
    * `git commit`
    * A text editor will open. Add a description at the top of the file.
-      * If your changes are associated with an issue in the issue tracker (e.g. a fix for a reported
-        bug), please associate the CL with that issue by adding the following line to the commit
-        message: `Bug: angleproject:<issue number>`.
+   * Associate the CL with an issue in the issue tracker (e.g. a fix for a reported bug)
+     by adding the following line to the commit message: `Bug: angleproject:<issue number>`.
+     * If necessary please file a new bug at http://anglebug.com/new
    * Save.
    * Close the text editor.
    * Use `git commit --amend` to update your CL with new changes.
@@ -198,7 +198,7 @@ about the process.
    See [the Chromium docs][TBR] for more info.
  * There are exceptions to these rules. Use your best judgement.
 
-[TBR]: https://chromium.googlesource.com/chromium/src/+/master/docs/code_reviews.md#tbr-to-be-reviewed
+[TBR]: https://chromium.googlesource.com/chromium/src/+/main/docs/code_reviews.md#tbr-to-be-reviewed
 
 ### Reverting a CL
 
@@ -263,9 +263,10 @@ See also:
 * [Chromium Projects: Contributing Code][Contributing-code]
 * [depot_tools tutorial][depot-tools-tutorial]
 * [angle_perftests README][Perftest-README]
+* [ANGLE Testing and Processes](TestingAndProcesses.md)
 
 [Committer-status]: https://dev.chromium.org/getting-involved/become-a-committer
 [Contributing-code]: http://www.chromium.org/developers/contributing-code/
 [depot-tools-tutorial]: http://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html
 [Perftest-README]: ../src/tests/perf_tests/README.md
-[Owners]: https://chromium.googlesource.com/chromium/src/+/master/docs/code_reviews.md#expectations-of-owners
+[Owners]: https://chromium.googlesource.com/chromium/src/+/main/docs/code_reviews.md#expectations-of-owners

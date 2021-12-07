@@ -62,54 +62,54 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 
     GLenum textureTarget = drawingBufferTextureTarget();
     // Create a texture to render into.
-    gl::GenTextures(1, &m_texture);
-    gl::BindTexture(textureTarget, m_texture);
-    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    gl::BindTexture(textureTarget, 0);
+    GL_GenTextures(1, &m_texture);
+    GL_BindTexture(textureTarget, m_texture);
+    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL_BindTexture(textureTarget, 0);
 
     // Create an FBO.
-    gl::GenFramebuffers(1, &m_fbo);
-    gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    GL_GenFramebuffers(1, &m_fbo);
+    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
 #if USE(COORDINATED_GRAPHICS)
-    gl::GenTextures(1, &m_compositorTexture);
-    gl::BindTexture(textureTarget, m_compositorTexture);
-    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL_GenTextures(1, &m_compositorTexture);
+    GL_BindTexture(textureTarget, m_compositorTexture);
+    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    gl::GenTextures(1, &m_intermediateTexture);
-    gl::BindTexture(textureTarget, m_intermediateTexture);
-    gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL_GenTextures(1, &m_intermediateTexture);
+    GL_BindTexture(textureTarget, m_intermediateTexture);
+    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    gl::BindTexture(textureTarget, 0);
+    GL_BindTexture(textureTarget, 0);
 #endif
 
     // Create a multisample FBO.
     ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
     if (attributes.antialias) {
-        gl::GenFramebuffers(1, &m_multisampleFBO);
-        gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+        GL_GenFramebuffers(1, &m_multisampleFBO);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
         m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-        gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
+        GL_GenRenderbuffers(1, &m_multisampleColorBuffer);
         if (attributes.stencil || attributes.depth)
-            gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+            GL_GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
     } else {
         // Bind canvas FBO.
-        gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
         if (attributes.stencil || attributes.depth)
-            gl::GenRenderbuffers(1, &m_depthStencilBuffer);
+            GL_GenRenderbuffers(1, &m_depthStencilBuffer);
     }
 
-    gl::ClearColor(0, 0, 0, 0);
+    GL_ClearColor(0, 0, 0, 0);
 }
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
@@ -118,26 +118,26 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
     if (m_texture)
-        gl::DeleteTextures(1, &m_texture);
+        GL_DeleteTextures(1, &m_texture);
 #if USE(COORDINATED_GRAPHICS)
     if (m_compositorTexture)
-        gl::DeleteTextures(1, &m_compositorTexture);
+        GL_DeleteTextures(1, &m_compositorTexture);
 #endif
 
     auto attributes = contextAttributes();
 
     if (attributes.antialias) {
-        gl::DeleteRenderbuffers(1, &m_multisampleColorBuffer);
+        GL_DeleteRenderbuffers(1, &m_multisampleColorBuffer);
         if (attributes.stencil || attributes.depth)
-            gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-        gl::DeleteFramebuffers(1, &m_multisampleFBO);
+            GL_DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        GL_DeleteFramebuffers(1, &m_multisampleFBO);
     } else if (attributes.stencil || attributes.depth) {
         if (m_depthStencilBuffer)
-            gl::DeleteRenderbuffers(1, &m_depthStencilBuffer);
+            GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
-    gl::DeleteFramebuffers(1, &m_fbo);
+    GL_DeleteFramebuffers(1, &m_fbo);
 #if USE(COORDINATED_GRAPHICS)
-    gl::DeleteTextures(1, &m_intermediateTexture);
+    GL_DeleteTextures(1, &m_intermediateTexture);
 #endif
 }
 
@@ -192,15 +192,15 @@ bool GraphicsContextGLANGLE::reshapeDisplayBufferBacking()
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
 #if USE(COORDINATED_GRAPHICS)
     if (m_compositorTexture) {
-        gl::BindTexture(textureTarget, m_compositorTexture);
-        gl::TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-        gl::BindTexture(textureTarget, m_intermediateTexture);
-        gl::TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        GL_BindTexture(textureTarget, m_compositorTexture);
+        GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        GL_BindTexture(textureTarget, m_intermediateTexture);
+        GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     }
 #endif
-    gl::BindTexture(textureTarget, m_texture);
-    gl::TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
+    GL_BindTexture(textureTarget, m_texture);
+    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
     return true;
 }
 

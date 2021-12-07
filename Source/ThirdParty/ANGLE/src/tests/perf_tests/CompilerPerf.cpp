@@ -194,7 +194,6 @@ bool IsPlatformAvailable(const CompilerParameters &param)
     switch (param.output)
     {
         case SH_HLSL_4_1_OUTPUT:
-        case SH_HLSL_4_0_FL9_3_OUTPUT:
         case SH_HLSL_3_0_OUTPUT:
         {
             angle::PoolAllocator allocator;
@@ -213,6 +212,8 @@ bool IsPlatformAvailable(const CompilerParameters &param)
             }
             break;
         }
+        case SH_HLSL_4_0_FL9_3_OUTPUT:
+            return false;
         default:
             break;
     }

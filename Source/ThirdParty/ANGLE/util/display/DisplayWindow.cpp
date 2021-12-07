@@ -79,7 +79,7 @@ void DisplayWindow::signalTestEvent()
 }
 
 // static
-#if defined(ANGLE_USE_VULKAN_DISPLAY)
+#if defined(ANGLE_USE_VULKAN_DISPLAY) && defined(EGL_NO_X11)
 OSWindow *OSWindow::New()
 {
     return new DisplayWindow();

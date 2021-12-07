@@ -14,6 +14,7 @@
 #include "libANGLE/renderer/d3d/d3d11/Context11.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
+#include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 #include "libANGLE/renderer/d3d/d3d11/texture_format_table.h"
 #include "libANGLE/renderer/dxgi_support_table.h"
 #include "test_utils/ANGLETest.h"
@@ -153,8 +154,32 @@ TEST_P(D3D11FormatTablesTest, TestFormatSupport)
     }
 }
 
+// This test validates that all DXGI_FORMATs can be potentially resized without crashes.
+TEST_P(D3D11FormatTablesTest, TestFormatMakeValidSize)
+{
+    gl::Context *context     = static_cast<gl::Context *>(getEGLWindow()->getContext());
+    rx::Context11 *context11 = rx::GetImplAs<rx::Context11>(context);
+    rx::Renderer11 *renderer = context11->getRenderer();
+
+    const gl::FormatSet &allFormats = gl::GetAllSizedInternalFormats();
+    for (GLenum internalFormat : allFormats)
+    {
+        const rx::d3d11::Format &formatInfo =
+            rx::d3d11::Format::Get(internalFormat, renderer->getRenderer11DeviceCaps());
+
+        std::array<bool, 2> isImages = {false, true};
+        for (auto &image : isImages)
+        {
+            int reqWidth  = 32;
+            int reqHeight = 32;
+            int level     = 0;
+
+            rx::d3d11::MakeValidSize(image, formatInfo.texFormat, &reqWidth, &reqHeight, &level);
+        }
+    }
+}
+
 ANGLE_INSTANTIATE_TEST(D3D11FormatTablesTest,
-                       ES2_D3D11_FL9_3(),
                        ES2_D3D11_FL10_0(),
                        ES2_D3D11_FL10_1(),
                        ES2_D3D11_FL11_0());

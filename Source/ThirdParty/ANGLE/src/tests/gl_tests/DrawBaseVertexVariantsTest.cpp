@@ -434,6 +434,7 @@ TEST_P(DrawBaseVertexVariantsTest, DrawElementsInstancedBaseVertexBaseInstance)
     doDrawElementsBaseVertexVariants(DrawCallVariants::DrawElementsInstancedBaseVertexBaseInstance);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexVariantsTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_1(DrawBaseVertexVariantsTest,
                                  DrawBaseVertexVariantsTestPrint,
                                  testing::ValuesIn(kBufferDataUsage),

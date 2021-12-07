@@ -20,14 +20,17 @@ extern int gMaxStepsPerformed;
 extern bool gEnableTrace;
 extern const char *gTraceFile;
 extern const char *gScreenShotDir;
+extern int gScreenShotFrame;
 extern bool gVerboseLogging;
 extern int gWarmupLoops;
 extern double gCalibrationTimeSeconds;
-extern double gTestTimeSeconds;
+extern double gMaxTrialTimeSeconds;
 extern int gTestTrials;
 extern bool gNoFinish;
 extern bool gEnableAllTraceTests;
-extern bool gStartTraceAfterSetup;
+extern bool gRetraceMode;
+extern bool gMinimizeGPUWork;
+extern bool gTraceTestValidation;
 
 inline bool OneFrame()
 {

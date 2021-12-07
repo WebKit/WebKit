@@ -11,7 +11,6 @@
 
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/TranslatorMetalDirect/ToposortStructs.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
@@ -76,7 +75,7 @@ std::vector<T> Toposort(const Graph<T> &g)
         invPerms.insert(entry.first);
     }
 
-    // L ← Empty list that will contain the sorted elements
+    // L <- Empty list that will contain the sorted elements
     std::vector<T> L;
 
     // function visit(node n)
@@ -91,7 +90,7 @@ std::vector<T> Toposort(const Graph<T> &g)
         if (temps.find(n) != temps.end())
         {
             // stop   (not a DAG)
-            LOGIC_ERROR();
+            UNREACHABLE();
         }
 
         // mark n with a temporary mark
@@ -218,9 +217,9 @@ bool GetAsDeclaredStructure(SymbolEnv &symbolEnv,
     if (TIntermDeclaration *declNode = node.getAsDeclarationNode())
     {
         ASSERT(declNode->getChildCount() == 1);
-        TIntermNode &node = *declNode->getChildNode(0);
+        TIntermNode &childNode = *declNode->getChildNode(0);
 
-        if (TIntermSymbol *symbolNode = node.getAsSymbolNode())
+        if (TIntermSymbol *symbolNode = childNode.getAsSymbolNode())
         {
             const TVariable &var = symbolNode->variable();
             const TType &type    = var.getType();
@@ -307,11 +306,11 @@ bool sh::ToposortStructs(TCompiler &compiler,
     root.traverse(&finder);
     ppc.hasStructEq = !finder.mUsedStructs.empty();
 
-    DeclaredStructure declaredStruct;
     std::vector<DeclaredStructure> declaredStructs;
     std::vector<TIntermNode *> nonStructStmtNodes;
 
     {
+        DeclaredStructure declaredStruct;
         const size_t stmtCount = root.getChildCount();
         for (size_t i = 0; i < stmtCount; ++i)
         {

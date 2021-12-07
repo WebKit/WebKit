@@ -273,6 +273,7 @@ class FramebufferManager
     FramebufferID createFramebuffer();
     Framebuffer *getFramebuffer(FramebufferID handle) const;
     void setDefaultFramebuffer(Framebuffer *framebuffer);
+    Framebuffer *getDefaultFramebuffer() const;
 
     void invalidateFramebufferCompletenessCache() const;
 

@@ -21,17 +21,26 @@
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "platform/PlatformMethods.h"
-#include "tests/test_expectations/GPUTestConfig.h"
-#include "tests/test_expectations/GPUTestExpectationsParser.h"
+#include "tests/test_utils/runner/TestSuite.h"
+#include "util/OSWindow.h"
 #include "util/test_utils.h"
 
 namespace angle
 {
 namespace
 {
+#if !defined(NDEBUG)
+constexpr bool kIsDebug = true;
+#else
+constexpr bool kIsDebug                = false;
+#endif  // !defined(NDEBUG)
+
 bool gGlobalError = false;
 bool gExpectError = false;
-uint32_t gBatchId = 0;
+bool gVerbose     = false;
+
+// Set this to true temporarily to enable image logging in release. Useful for diagnosing errors.
+bool gLogImages = kIsDebug;
 
 constexpr char kInfoTag[] = "*RESULT";
 
@@ -54,20 +63,11 @@ std::string DrawElementsToGoogleTestName(const std::string &dEQPName)
     return gTestName;
 }
 
-const char *gCaseListSearchPaths[] = {
-    "/../../sdcard/chromium_tests_root/third_party/angle/third_party/VK-GL-CTS/src",
-    "/../../third_party/VK-GL-CTS/src",
-    "/../../third_party/angle/third_party/VK-GL-CTS/src",
-};
+// Relative to the ANGLE root folder.
+constexpr char kCTSRootPath[] = "third_party/VK-GL-CTS/src/";
+constexpr char kSupportPath[] = "src/tests/deqp_support/";
 
-const char *gTestExpectationsSearchPaths[] = {
-    "/../../src/tests/deqp_support/",
-    "/../../third_party/angle/src/tests/deqp_support/",
-    "/deqp_support/",
-    "/../../sdcard/chromium_tests_root/third_party/angle/src/tests/deqp_support/",
-};
-
-#define OPENGL_CTS_DIR(PATH) "/external/openglcts/data/mustpass/gles/" PATH
+#define OPENGL_CTS_DIR(PATH) "external/openglcts/data/mustpass/gles/" PATH
 
 const char *gCaseListFiles[] = {
     OPENGL_CTS_DIR("aosp_mustpass/master/gles2-master.txt"),
@@ -77,6 +77,7 @@ const char *gCaseListFiles[] = {
     OPENGL_CTS_DIR("khronos_mustpass/master/gles2-khr-master.txt"),
     OPENGL_CTS_DIR("khronos_mustpass/master/gles3-khr-master.txt"),
     OPENGL_CTS_DIR("khronos_mustpass/master/gles31-khr-master.txt"),
+    OPENGL_CTS_DIR("khronos_mustpass/master/gles32-khr-master.txt"),
     OPENGL_CTS_DIR("aosp_mustpass/master/gles3-rotate-landscape.txt"),
     OPENGL_CTS_DIR("aosp_mustpass/master/gles3-rotate-reverse-portrait.txt"),
     OPENGL_CTS_DIR("aosp_mustpass/master/gles3-rotate-reverse-landscape.txt"),
@@ -91,10 +92,10 @@ const char *gTestExpectationsFiles[] = {
     "deqp_gles2_test_expectations.txt",         "deqp_gles3_test_expectations.txt",
     "deqp_gles31_test_expectations.txt",        "deqp_egl_test_expectations.txt",
     "deqp_khr_gles2_test_expectations.txt",     "deqp_khr_gles3_test_expectations.txt",
-    "deqp_khr_gles31_test_expectations.txt",    "deqp_gles3_rotate_test_expectations.txt",
+    "deqp_khr_gles31_test_expectations.txt",    "deqp_khr_gles32_test_expectations.txt",
     "deqp_gles3_rotate_test_expectations.txt",  "deqp_gles3_rotate_test_expectations.txt",
+    "deqp_gles3_rotate_test_expectations.txt",  "deqp_gles31_rotate_test_expectations.txt",
     "deqp_gles31_rotate_test_expectations.txt", "deqp_gles31_rotate_test_expectations.txt",
-    "deqp_gles31_rotate_test_expectations.txt",
 };
 
 using APIInfo = std::pair<const char *, GPUTestConfig::API>;
@@ -102,6 +103,7 @@ using APIInfo = std::pair<const char *, GPUTestConfig::API>;
 constexpr APIInfo kEGLDisplayAPIs[] = {
     {"angle-d3d9", GPUTestConfig::kAPID3D9},
     {"angle-d3d11", GPUTestConfig::kAPID3D11},
+    {"angle-d3d11-ref", GPUTestConfig::kAPID3D11},
     {"angle-gl", GPUTestConfig::kAPIGLDesktop},
     {"angle-gles", GPUTestConfig::kAPIGLES},
     {"angle-metal", GPUTestConfig::kAPIMetal},
@@ -110,31 +112,56 @@ constexpr APIInfo kEGLDisplayAPIs[] = {
     {"angle-vulkan", GPUTestConfig::kAPIVulkan},
 };
 
-constexpr char kdEQPEGLString[]    = "--deqp-egl-display-type=";
-constexpr char kANGLEEGLString[]   = "--use-angle=";
-constexpr char kANGLEPreRotation[] = "--emulated-pre-rotation=";
-constexpr char kdEQPCaseString[]   = "--deqp-case=";
-constexpr char kBatchIdString[]    = "--batch-id=";
+constexpr char kdEQPEGLString[]     = "--deqp-egl-display-type=";
+constexpr char kANGLEEGLString[]    = "--use-angle=";
+constexpr char kANGLEPreRotation[]  = "--emulated-pre-rotation=";
+constexpr char kdEQPCaseString[]    = "--deqp-case=";
+constexpr char kVerboseString[]     = "--verbose";
+constexpr char kRenderDocString[]   = "--renderdoc";
+constexpr char kNoRenderDocString[] = "--no-renderdoc";
+constexpr char kdEQPFlagsPrefix[]   = "--deqp-";
 
 std::array<char, 500> gCaseStringBuffer;
 
-const APIInfo *gInitAPI = nullptr;
-uint32_t gPreRotation   = 0;
+// For angle_deqp_gles3*_rotateN_tests, default gOptions.preRotation to N.
+#if defined(ANGLE_DEQP_GLES3_ROTATE90_TESTS) || defined(ANGLE_DEQP_GLES31_ROTATE90_TESTS)
+constexpr uint32_t kDefaultPreRotation = 90;
+#elif defined(ANGLE_DEQP_GLES3_ROTATE180_TESTS) || defined(ANGLE_DEQP_GLES31_ROTATE180_TESTS)
+constexpr uint32_t kDefaultPreRotation = 180;
+#elif defined(ANGLE_DEQP_GLES3_ROTATE270_TESTS) || defined(ANGLE_DEQP_GLES31_ROTATE270_TESTS)
+constexpr uint32_t kDefaultPreRotation = 270;
+#else
+constexpr uint32_t kDefaultPreRotation = 0;
+#endif
 
-constexpr const char *gdEQPEGLConfigNameString = "--deqp-gl-config-name=";
+#if defined(ANGLE_TEST_ENABLE_RENDERDOC_CAPTURE)
+constexpr bool kEnableRenderDocCapture = true;
+#else
+constexpr bool kEnableRenderDocCapture = false;
+#endif
+
+const APIInfo *gInitAPI = nullptr;
+dEQPOptions gOptions    = {
+    kDefaultPreRotation,      // preRotation
+    kEnableRenderDocCapture,  // enableRenderDocCapture
+};
+
+constexpr const char gdEQPEGLConfigNameString[] = "--deqp-gl-config-name=";
+constexpr const char gdEQPLogImagesString[]     = "--deqp-log-images=";
 
 // Default the config to RGBA8
 const char *gEGLConfigName = "rgba8888d24s8";
 
+std::vector<const char *> gdEQPForwardFlags;
+
 // Returns the default API for a platform.
 const char *GetDefaultAPIName()
 {
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return "angle-d3d11";
-#elif defined(ANGLE_PLATFORM_APPLE) || defined(ANGLE_PLATFORM_LINUX)
+#if defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX) || \
+    defined(ANGLE_PLATFORM_WINDOWS)
+    return "angle-vulkan";
+#elif defined(ANGLE_PLATFORM_APPLE)
     return "angle-gl";
-#elif defined(ANGLE_PLATFORM_ANDROID)
-    return "angle-gles";
 #else
 #    error Unknown platform.
 #endif
@@ -171,39 +198,30 @@ void Die()
     exit(EXIT_FAILURE);
 }
 
-Optional<std::string> FindFileFromPaths(const char *paths[],
-                                        size_t numPaths,
-                                        const std::string &exeDir,
-                                        const std::string &searchFile)
+Optional<std::string> FindFileFromPath(const char *dirPath, const char *filePath)
 {
-    for (size_t pathIndex = 0; pathIndex < numPaths; ++pathIndex)
-    {
-        const char *testPath = paths[pathIndex];
-        std::stringstream pathStringStream;
-        pathStringStream << exeDir << testPath << searchFile;
+    std::stringstream strstr;
+    strstr << dirPath << filePath;
+    std::string path = strstr.str();
 
-        std::string path = pathStringStream.str();
-        std::ifstream inFile(path.c_str());
-        if (!inFile.fail())
-        {
-            inFile.close();
-            return Optional<std::string>(path);
-        }
+    constexpr size_t kMaxFoundPathLen = 1000;
+    char foundPath[kMaxFoundPathLen];
+    if (angle::FindTestDataPath(path.c_str(), foundPath, kMaxFoundPathLen))
+    {
+        return std::string(foundPath);
     }
 
     return Optional<std::string>::Invalid();
 }
 
-Optional<std::string> FindCaseListPath(const std::string &exeDir, size_t testModuleIndex)
+Optional<std::string> FindCaseListPath(size_t testModuleIndex)
 {
-    return FindFileFromPaths(gCaseListSearchPaths, ArraySize(gCaseListSearchPaths), exeDir,
-                             gCaseListFiles[testModuleIndex]);
+    return FindFileFromPath(kCTSRootPath, gCaseListFiles[testModuleIndex]);
 }
 
-Optional<std::string> FindTestExpectationsPath(const std::string &exeDir, size_t testModuleIndex)
+Optional<std::string> FindTestExpectationsPath(size_t testModuleIndex)
 {
-    return FindFileFromPaths(gTestExpectationsSearchPaths, ArraySize(gTestExpectationsSearchPaths),
-                             exeDir, gTestExpectationsFiles[testModuleIndex]);
+    return FindFileFromPath(kSupportPath, gTestExpectationsFiles[testModuleIndex]);
 }
 
 class dEQPCaseList
@@ -239,7 +257,6 @@ class dEQPCaseList
 
   private:
     std::vector<CaseInfo> mCaseInfoList;
-    GPUTestExpectationsParser mTestExpectationsParser;
     size_t mTestModuleIndex;
     bool mInitialized = false;
 };
@@ -255,16 +272,14 @@ void dEQPCaseList::initialize()
 
     mInitialized = true;
 
-    std::string exeDir = GetExecutableDirectory();
-
-    Optional<std::string> caseListPath = FindCaseListPath(exeDir, mTestModuleIndex);
+    Optional<std::string> caseListPath = FindCaseListPath(mTestModuleIndex);
     if (!caseListPath.valid())
     {
         std::cerr << "Failed to find case list file." << std::endl;
         Die();
     }
 
-    Optional<std::string> testExpectationsPath = FindTestExpectationsPath(exeDir, mTestModuleIndex);
+    Optional<std::string> testExpectationsPath = FindTestExpectationsPath(mTestModuleIndex);
     if (!testExpectationsPath.valid())
     {
         std::cerr << "Failed to find test expectations file." << std::endl;
@@ -278,7 +293,7 @@ void dEQPCaseList::initialize()
         api = gInitAPI->second;
     }
 
-    GPUTestConfig testConfig = GPUTestConfig(api, gPreRotation);
+    GPUTestConfig testConfig = GPUTestConfig(api, gOptions.preRotation);
 
 #if !defined(ANGLE_PLATFORM_ANDROID)
     // Note: These prints mess up parsing of test list when running on Android.
@@ -293,16 +308,11 @@ void dEQPCaseList::initialize()
     }
 #endif
 
-    if (!mTestExpectationsParser.loadTestExpectationsFromFile(testConfig,
-                                                              testExpectationsPath.value()))
-    {
-        std::stringstream errorMsgStream;
-        for (const auto &message : mTestExpectationsParser.getErrorMessages())
-        {
-            errorMsgStream << std::endl << " " << message;
-        }
+    TestSuite *testSuite = TestSuite::GetInstance();
 
-        std::cerr << "Failed to load test expectations." << errorMsgStream.str() << std::endl;
+    if (!testSuite->loadTestExpectationsFromFileWithConfig(testConfig,
+                                                           testExpectationsPath.value()))
+    {
         Die();
     }
 
@@ -325,21 +335,33 @@ void dEQPCaseList::initialize()
         if (gTestName.empty())
             continue;
 
-        int expectation = mTestExpectationsParser.getTestExpectation(dEQPName);
+        int expectation = testSuite->getTestExpectation(dEQPName);
         mCaseInfoList.push_back(CaseInfo(dEQPName, gTestName, expectation));
     }
 
-    std::stringstream unusedMsgStream;
-    bool anyUnused = false;
-    for (const auto &message : mTestExpectationsParser.getUnusedExpectationsMessages())
+    if (testSuite->logAnyUnusedTestExpectations())
     {
-        anyUnused = true;
-        unusedMsgStream << std::endl << " " << message;
-    }
-    if (anyUnused)
-    {
-        std::cerr << "Failed to validate test expectations." << unusedMsgStream.str() << std::endl;
         Die();
+    }
+}
+
+bool IsPassingResult(dEQPTestResult result)
+{
+    // Check the global error flag for unexpected platform errors.
+    if (gGlobalError)
+    {
+        gGlobalError = false;
+        return false;
+    }
+
+    switch (result)
+    {
+        case dEQPTestResult::Fail:
+        case dEQPTestResult::Exception:
+            return false;
+
+        default:
+            return true;
     }
 }
 
@@ -384,27 +406,31 @@ class dEQPTest : public testing::TestWithParam<size_t>
         // crashed tests we track how many tests we "tried" to run.
         sTestCount++;
 
-        if (caseInfo.mExpectation == GPUTestExpectationsParser::kGpuTestSkip ||
-            caseInfo.mExpectation == GPUTestExpectationsParser::kGpuTestTimeout)
+        if (caseInfo.mExpectation == GPUTestExpectationsParser::kGpuTestSkip)
         {
             sSkippedTestCount++;
             std::cout << "Test skipped.\n";
             return;
         }
 
-        gExpectError      = (caseInfo.mExpectation != GPUTestExpectationsParser::kGpuTestPass);
-        TestResult result = deqp_libtester_run(caseInfo.mDEQPName.c_str());
+        TestSuite *testSuite = TestSuite::GetInstance();
+        testSuite->maybeUpdateTestTimeout(caseInfo.mExpectation);
 
-        bool testSucceeded = countTestResultAndReturnSuccess(result);
+        gExpectError          = (caseInfo.mExpectation != GPUTestExpectationsParser::kGpuTestPass);
+        dEQPTestResult result = deqp_libtester_run(caseInfo.mDEQPName.c_str());
 
-        // Check the global error flag for unexpected platform errors.
-        if (gGlobalError)
+        bool testSucceeded = IsPassingResult(result);
+
+        if (!testSucceeded && caseInfo.mExpectation == GPUTestExpectationsParser::kGpuTestFlaky)
         {
-            testSucceeded = false;
-            gGlobalError  = false;
+            result        = deqp_libtester_run(caseInfo.mDEQPName.c_str());
+            testSucceeded = IsPassingResult(result);
         }
 
-        if (caseInfo.mExpectation == GPUTestExpectationsParser::kGpuTestPass)
+        countTestResult(result);
+
+        if (caseInfo.mExpectation == GPUTestExpectationsParser::kGpuTestPass ||
+            caseInfo.mExpectation == GPUTestExpectationsParser::kGpuTestFlaky)
         {
             EXPECT_TRUE(testSucceeded);
 
@@ -420,25 +446,25 @@ class dEQPTest : public testing::TestWithParam<size_t>
         }
     }
 
-    bool countTestResultAndReturnSuccess(TestResult result) const
+    void countTestResult(dEQPTestResult result) const
     {
         switch (result)
         {
-            case TestResult::Pass:
+            case dEQPTestResult::Pass:
                 sPassedTestCount++;
-                return true;
-            case TestResult::Fail:
+                break;
+            case dEQPTestResult::Fail:
                 sFailedTestCount++;
-                return false;
-            case TestResult::NotSupported:
+                break;
+            case dEQPTestResult::NotSupported:
                 sNotSupportedTestCount++;
-                return true;
-            case TestResult::Exception:
+                break;
+            case dEQPTestResult::Exception:
                 sTestExceptionCount++;
-                return false;
+                break;
             default:
                 std::cerr << "Unexpected test result code: " << static_cast<int>(result) << "\n";
-                return false;
+                break;
         }
     }
 
@@ -539,22 +565,40 @@ void dEQPTest<TestModuleIndex>::SetUpTestCase()
         argv.push_back("--deqp-visibility=hidden");
     }
 
-    std::string logNameString;
-    if (gBatchId != 0)
-    {
-        std::stringstream logNameStream;
-        logNameStream << "--deqp-log-filename=test-results-batch-" << std::setfill('0')
-                      << std::setw(3) << gBatchId << ".qpa";
-        logNameString = logNameStream.str();
-        argv.push_back(logNameString.c_str());
+    TestSuite *testSuite = TestSuite::GetInstance();
 
-        // Flushing during multi-process execution punishes HDDs. http://anglebug.com/5157
+    std::stringstream logNameStream;
+    logNameStream << "TestResults";
+    if (testSuite->getBatchId() != -1)
+    {
+        logNameStream << "-Batch" << std::setfill('0') << std::setw(3) << testSuite->getBatchId();
+    }
+    logNameStream << ".qpa";
+
+    std::stringstream logArgStream;
+    logArgStream << "--deqp-log-filename="
+                 << testSuite->reserveTestArtifactPath(logNameStream.str());
+
+    std::string logNameString = logArgStream.str();
+    argv.push_back(logNameString.c_str());
+
+    if (!gLogImages)
+    {
+        argv.push_back("--deqp-log-images=disable");
+    }
+
+    // Flushing during multi-process execution punishes HDDs. http://anglebug.com/5157
+    if (testSuite->getBatchId() != -1)
+    {
         argv.push_back("--deqp-log-flush=disable");
     }
 
+    // Add any additional flags specified from command line to be forwarded to dEQP.
+    argv.insert(argv.end(), gdEQPForwardFlags.begin(), gdEQPForwardFlags.end());
+
     // Init the platform.
     if (!deqp_libtester_init_platform(static_cast<int>(argv.size()), argv.data(),
-                                      reinterpret_cast<void *>(&HandlePlatformError), gPreRotation))
+                                      reinterpret_cast<void *>(&HandlePlatformError), gOptions))
     {
         std::cout << "Aborting test due to dEQP initialization error." << std::endl;
         exit(1);
@@ -607,28 +651,32 @@ ANGLE_INSTANTIATE_DEQP_TEST_CASE(KHR_GLES3, 5);
 ANGLE_INSTANTIATE_DEQP_TEST_CASE(KHR_GLES31, 6);
 #endif
 
+#ifdef ANGLE_DEQP_KHR_GLES32_TESTS
+ANGLE_INSTANTIATE_DEQP_TEST_CASE(KHR_GLES32, 7);
+#endif
+
 #ifdef ANGLE_DEQP_GLES3_ROTATE90_TESTS
-ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES3_ROTATE90, 7);
+ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES3_ROTATE90, 8);
 #endif
 
 #ifdef ANGLE_DEQP_GLES3_ROTATE180_TESTS
-ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES3_ROTATE180, 8);
+ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES3_ROTATE180, 9);
 #endif
 
 #ifdef ANGLE_DEQP_GLES3_ROTATE270_TESTS
-ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES3_ROTATE270, 9);
+ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES3_ROTATE270, 10);
 #endif
 
 #ifdef ANGLE_DEQP_GLES31_ROTATE90_TESTS
-ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES31_ROTATE90, 10);
+ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES31_ROTATE90, 11);
 #endif
 
 #ifdef ANGLE_DEQP_GLES31_ROTATE180_TESTS
-ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES31_ROTATE180, 11);
+ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES31_ROTATE180, 12);
 #endif
 
 #ifdef ANGLE_DEQP_GLES31_ROTATE270_TESTS
-ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES31_ROTATE270, 12);
+ANGLE_INSTANTIATE_DEQP_TEST_CASE(GLES31_ROTATE270, 13);
 #endif
 
 void HandleDisplayType(const char *displayTypeString)
@@ -673,7 +721,7 @@ void HandlePreRotation(const char *preRotationString)
         exit(1);
     }
 
-    gPreRotation = preRotation;
+    gOptions.preRotation = preRotation;
 }
 
 void HandleEGLConfigName(const char *configNameString)
@@ -699,10 +747,21 @@ void HandleCaseName(const char *caseString, int *argc, int argIndex, char **argv
     argv[argIndex] = gCaseStringBuffer.data();
 }
 
-void HandleBatchId(const char *batchIdString)
+void HandleLogImages(const char *logImagesString)
 {
-    std::stringstream batchIdStream(batchIdString);
-    batchIdStream >> gBatchId;
+    if (strcmp(logImagesString, "enable") == 0)
+    {
+        gLogImages = true;
+    }
+    else if (strcmp(logImagesString, "disable") == 0)
+    {
+        gLogImages = false;
+    }
+    else
+    {
+        std::cout << "Error parsing log images setting. Use enable/disable.";
+        exit(1);
+    }
 }
 }  // anonymous namespace
 
@@ -733,9 +792,26 @@ void InitTestHarness(int *argc, char **argv)
         {
             HandleCaseName(argv[argIndex] + strlen(kdEQPCaseString), argc, argIndex, argv);
         }
-        else if (strncmp(argv[argIndex], kBatchIdString, strlen(kBatchIdString)) == 0)
+        else if (strncmp(argv[argIndex], kVerboseString, strlen(kVerboseString)) == 0 ||
+                 strcmp(argv[argIndex], "-v") == 0)
         {
-            HandleBatchId(argv[argIndex] + strlen(kBatchIdString));
+            gVerbose = true;
+        }
+        else if (strncmp(argv[argIndex], gdEQPLogImagesString, strlen(gdEQPLogImagesString)) == 0)
+        {
+            HandleLogImages(argv[argIndex] + strlen(gdEQPLogImagesString));
+        }
+        else if (strncmp(argv[argIndex], kRenderDocString, strlen(kRenderDocString)) == 0)
+        {
+            gOptions.enableRenderDocCapture = true;
+        }
+        else if (strncmp(argv[argIndex], kNoRenderDocString, strlen(kNoRenderDocString)) == 0)
+        {
+            gOptions.enableRenderDocCapture = false;
+        }
+        else if (strncmp(argv[argIndex], kdEQPFlagsPrefix, strlen(kdEQPFlagsPrefix)) == 0)
+        {
+            gdEQPForwardFlags.push_back(argv[argIndex]);
         }
         argIndex++;
     }
@@ -745,7 +821,7 @@ void InitTestHarness(int *argc, char **argv)
     {
         api = gInitAPI->second;
     }
-    if (gPreRotation != 0 && api != GPUTestConfig::kAPIVulkan &&
+    if (gOptions.preRotation != 0 && api != GPUTestConfig::kAPIVulkan &&
         api != GPUTestConfig::kAPISwiftShader)
     {
         std::cout << "PreRotation is only supported on Vulkan" << std::endl;

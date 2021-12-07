@@ -100,7 +100,7 @@ class Stream final : public LabeledObject, angle::NonCopyable
     bool isConsumerBoundToContext(const gl::Context *context) const;
 
     // Producer methods
-    Error validateD3D11Texture(void *texture, const AttributeMap &attributes) const;
+    Error validateD3D11Texture(const void *texture, const AttributeMap &attributes) const;
     Error postD3D11Texture(void *texture, const AttributeMap &attributes);
 
   private:

@@ -24,9 +24,7 @@ class Traverser : public TIntermTraverser
     std::unordered_map<int, TIntermSymbol *> replacements;
     explicit Traverser(TSymbolTable *symbolTable)
         : TIntermTraverser(true, false, false, symbolTable)
-    {
-
-    }
+    {}
 
     bool visitDeclaration(Visit visit, TIntermDeclaration *decl) override
     {
@@ -42,7 +40,7 @@ class Traverser : public TIntermTraverser
         TIntermTyped *declarator = sequence.front()->getAsTyped();
         const TType &type        = declarator->getType();
 
-        if (type.isStructSpecifier() && type.getQualifier() == EvqUniform)
+        if (type.isStructSpecifier())
         {
             const TStructure *structure = type.getStruct();
 
@@ -57,7 +55,7 @@ class Traverser : public TIntermTraverser
     void visitSymbol(TIntermSymbol *decl) override
     {
         auto symbol = replacements.find(decl->uniqueId().get());
-        if(symbol != replacements.end())
+        if (symbol != replacements.end())
         {
             queueReplacement(symbol->second->deepCopy(), OriginalNode::IS_DROPPED);
         }
@@ -100,12 +98,15 @@ class Traverser : public TIntermTraverser
             newSequence->push_back(namedDecl);
         }
 
-        mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), decl, *newSequence);
+        mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), decl,
+                                        std::move(*newSequence));
     }
 };
 }  // anonymous namespace
 
-bool NameEmbeddedStructUniformsMetal(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
+bool NameEmbeddedStructUniformsMetal(TCompiler *compiler,
+                                     TIntermBlock *root,
+                                     TSymbolTable *symbolTable)
 {
     Traverser nameStructs(symbolTable);
     root->traverse(&nameStructs);

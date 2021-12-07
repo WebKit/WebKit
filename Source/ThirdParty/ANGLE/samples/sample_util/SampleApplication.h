@@ -26,6 +26,8 @@ namespace angle
 class Library;
 }  // namespace angle
 
+bool IsGLExtensionEnabled(const std::string &extName);
+
 class SampleApplication
 {
   public:

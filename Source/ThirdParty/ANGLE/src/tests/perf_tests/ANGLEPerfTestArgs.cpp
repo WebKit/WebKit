@@ -19,13 +19,16 @@ int gMaxStepsPerformed         = 0;
 bool gEnableTrace              = false;
 const char *gTraceFile         = "ANGLETrace.json";
 const char *gScreenShotDir     = nullptr;
+int gScreenShotFrame           = 1;
 bool gVerboseLogging           = false;
 double gCalibrationTimeSeconds = 1.0;
-double gTestTimeSeconds        = 10.0;
+double gMaxTrialTimeSeconds    = 10.0;
 int gTestTrials                = 3;
 bool gNoFinish                 = false;
 bool gEnableAllTraceTests      = false;
-bool gStartTraceAfterSetup     = false;
+bool gRetraceMode              = false;
+bool gMinimizeGPUWork          = false;
+bool gTraceTestValidation      = false;
 
 // Default to three warmup loops. There's no science to this. More than two loops was experimentally
 // helpful on a Windows NVIDIA setup when testing with Vulkan and native trace tests.
@@ -52,8 +55,6 @@ using namespace angle;
 
 void ANGLEProcessPerfTestArgs(int *argc, char **argv)
 {
-    int argcOutCount = 0;
-
     for (int argIndex = 0; argIndex < *argc; argIndex++)
     {
         if (strcmp("--one-frame-only", argv[argIndex]) == 0)
@@ -74,6 +75,7 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
         else if (strcmp("--calibration", argv[argIndex]) == 0)
         {
             gCalibration = true;
+            gTestTrials  = 0;
         }
         else if (strcmp("--steps-per-trial", argv[argIndex]) == 0 && argIndex < *argc - 1)
         {
@@ -83,16 +85,30 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
         }
         else if (strcmp("--max-steps-performed", argv[argIndex]) == 0 && argIndex < *argc - 1)
         {
-            gMaxStepsPerformed = ReadIntArgument(argv[argIndex + 1]);
-            gWarmupLoops       = 0;
-            gTestTrials        = 1;
-            gTestTimeSeconds   = 36000;
+            gMaxStepsPerformed   = ReadIntArgument(argv[argIndex + 1]);
+            gWarmupLoops         = 0;
+            gTestTrials          = 1;
+            gMaxTrialTimeSeconds = 36000;
+            // Skip an additional argument.
+            argIndex++;
+        }
+        else if (strcmp("--fixed-test-time", argv[argIndex]) == 0 && argIndex < *argc - 1)
+        {
+            gMaxTrialTimeSeconds = ReadIntArgument(argv[argIndex + 1]);
+            gStepsPerTrial       = std::numeric_limits<int>::max();
+            gTestTrials          = 1;
+            gWarmupLoops         = 0;
             // Skip an additional argument.
             argIndex++;
         }
         else if (strcmp("--screenshot-dir", argv[argIndex]) == 0 && argIndex < *argc - 1)
         {
             gScreenShotDir = argv[argIndex + 1];
+            argIndex++;
+        }
+        else if (strcmp("--screenshot-frame", argv[argIndex]) == 0 && argIndex < *argc - 1)
+        {
+            gScreenShotFrame = ReadIntArgument(argv[argIndex + 1]);
             argIndex++;
         }
         else if (strcmp("--verbose-logging", argv[argIndex]) == 0 ||
@@ -120,9 +136,9 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
             // Skip an additional argument.
             argIndex++;
         }
-        else if (strcmp("--test-time", argv[argIndex]) == 0)
+        else if (strcmp("--max-trial-time", argv[argIndex]) == 0)
         {
-            gTestTimeSeconds = ReadIntArgument(argv[argIndex + 1]);
+            gMaxTrialTimeSeconds = ReadIntArgument(argv[argIndex + 1]);
             // Skip an additional argument.
             argIndex++;
         }
@@ -140,15 +156,20 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
         {
             gEnableAllTraceTests = true;
         }
-        else if (strcmp("--start-trace-after-setup", argv[argIndex]) == 0)
+        else if (strcmp("--retrace-mode", argv[argIndex]) == 0)
         {
-            gStartTraceAfterSetup = true;
+            gRetraceMode = true;
         }
-        else
+        else if (strcmp("--minimize-gpu-work", argv[argIndex]) == 0)
         {
-            argv[argcOutCount++] = argv[argIndex];
+            gMinimizeGPUWork = true;
+        }
+        else if (strcmp("--validation", argv[argIndex]) == 0)
+        {
+            gTraceTestValidation = true;
+            gWarmupLoops         = 0;
+            gTestTrials          = 1;
+            gMaxTrialTimeSeconds = 600.0;
         }
     }
-
-    *argc = argcOutCount;
 }

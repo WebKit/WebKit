@@ -41,7 +41,7 @@ inline bool SupportsFormat(DXGI_FORMAT format, const Renderer11DeviceCaps &devic
                        D3D11_FORMAT_SUPPORT_RENDER_TARGET;
     UINT minimumRequiredSamples = 0;
 
-    if (d3d11_gl::GetMaximumClientVersion(deviceCaps.featureLevel).major > 2)
+    if (d3d11_gl::GetMaximumClientVersion(deviceCaps).major > 2)
     {
         mustSupport |= D3D11_FORMAT_SUPPORT_TEXTURE3D;
 

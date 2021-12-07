@@ -1,0 +1,63 @@
+Name
+
+    ANGLE_rgbx_internal_format
+
+Name Strings
+
+    GL_ANGLE_rgbx_internal_format
+
+Contributors
+
+    Tim Van Patten, Google
+
+Contacts
+
+    Tim Van Patten, Google (timvp 'at' google 'dot' com)
+
+Notice
+
+    Copyright (c) 2021 The Khronos Group Inc. Copyright terms at
+        http://www.khronos.org/registry/speccopyright.html
+
+Status
+
+    Draft.
+
+Version
+
+    Version 1, November 22, 2021
+
+Number
+
+    OpenGL ES Extension ###
+
+Dependencies
+
+    OpenGL ES 2.0 is required.
+
+Overview
+
+    This extension introduces a sized internal RGBX format. This is a 32-bit representation of the
+    24-bit RGB format, with the Alpha channel ignored.
+
+New Types
+
+    None.
+
+New Procedures and Functions
+
+    None.
+
+New Tokens
+
+    // 32-bit RGBX format
+    GL_RGBX8_ANGLE                    0x96BA
+
+Issues
+
+    None.
+
+Revision History
+
+    #1 - (November 22, 2021) Tim Van Patten
+         Original draft

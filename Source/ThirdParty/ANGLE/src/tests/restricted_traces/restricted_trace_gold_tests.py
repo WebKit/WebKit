@@ -1,15 +1,4 @@
-#! /usr/bin/env python
-#
-# [VPYTHON:BEGIN]
-# wheel: <
-#  name: "infra/python/wheels/psutil/${vpython_platform}"
-#  version: "version:5.2.2"
-# >
-# wheel: <
-#  name: "infra/python/wheels/six-py2_py3"
-#  version: "version:1.10.0"
-# >
-# [VPYTHON:END]
+#! /usr/bin/env vpython3
 #
 # Copyright 2020 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -34,13 +23,15 @@ import tempfile
 import time
 import traceback
 
-from skia_gold import angle_skia_gold_properties
-from skia_gold import angle_skia_gold_session_manager
-
 # Add //src/testing into sys.path for importing xvfb and test_env, and
 # //src/testing/scripts for importing common.
 d = os.path.dirname
 THIS_DIR = d(os.path.abspath(__file__))
+sys.path.insert(0, d(THIS_DIR))
+
+from skia_gold import angle_skia_gold_properties
+from skia_gold import angle_skia_gold_session_manager
+
 ANGLE_SRC_DIR = d(d(d(THIS_DIR)))
 sys.path.insert(0, os.path.join(ANGLE_SRC_DIR, 'testing'))
 sys.path.insert(0, os.path.join(ANGLE_SRC_DIR, 'testing', 'scripts'))
@@ -60,8 +51,12 @@ def IsWindows():
 
 
 DEFAULT_TEST_SUITE = 'angle_perftests'
-DEFAULT_TEST_PREFIX = '--gtest_filter=TracePerfTest.Run/vulkan_'
+DEFAULT_TEST_PREFIX = 'TracePerfTest.Run/vulkan_'
+SWIFTSHADER_TEST_PREFIX = 'TracePerfTest.Run/vulkan_swiftshader_'
 DEFAULT_SCREENSHOT_PREFIX = 'angle_vulkan_'
+SWIFTSHADER_SCREENSHOT_PREFIX = 'angle_vulkan_swiftshader_'
+DEFAULT_BATCH_SIZE = 5
+DEFAULT_LOG = 'info'
 
 # Filters out stuff like: " I   72.572s run_tests_on_device(96071FFAZ00096) "
 ANDROID_LOGGING_PREFIX = r'I +\d+.\d+s \w+\(\w+\)  '
@@ -79,7 +74,7 @@ def temporary_dir(prefix=''):
     try:
         yield path
     finally:
-        logging.info("Removing temporary directory: %s" + path)
+        logging.info("Removing temporary directory: %s" % path)
         shutil.rmtree(path)
 
 
@@ -160,7 +155,7 @@ def get_binary_name(binary):
         return './%s' % binary
 
 
-def get_skia_gold_keys(args):
+def get_skia_gold_keys(args, env):
     """Get all the JSON metadata that will be passed to golctl."""
     # All values need to be strings, otherwise goldctl fails.
 
@@ -168,8 +163,6 @@ def get_skia_gold_keys(args):
     if hasattr(get_skia_gold_keys, 'called') and get_skia_gold_keys.called:
         logging.exception('get_skia_gold_keys may only be called once')
     get_skia_gold_keys.called = True
-
-    env = os.environ.copy()
 
     class Filter:
 
@@ -205,7 +198,10 @@ def get_skia_gold_keys(args):
 
     with common.temporary_file() as tempfile_path:
         binary = get_binary_name('angle_system_info_test')
-        if run_wrapper(args, [binary, '--vulkan', '-v'], env, tempfile_path):
+        sysinfo_args = [binary, '--vulkan', '-v']
+        if args.swiftshader:
+            sysinfo_args.append('--swiftshader')
+        if run_wrapper(args, sysinfo_args, env, tempfile_path):
             raise Exception('Error getting system info.')
 
         filter = Filter()
@@ -276,7 +272,8 @@ def upload_test_result_to_skia_gold(args, gold_session_manager, gold_session, go
     use_luci = not (gold_properties.local_pixel_tests or gold_properties.no_luci_auth)
 
     # Note: this would be better done by iterating the screenshot directory.
-    png_file_name = os.path.join(screenshot_dir, DEFAULT_SCREENSHOT_PREFIX + image_name + '.png')
+    prefix = SWIFTSHADER_SCREENSHOT_PREFIX if args.swiftshader else DEFAULT_SCREENSHOT_PREFIX
+    png_file_name = os.path.join(screenshot_dir, prefix + image_name + '.png')
 
     if not os.path.isfile(png_file_name):
         logging.info('Screenshot not found, test skipped.')
@@ -302,7 +299,9 @@ def upload_test_result_to_skia_gold(args, gold_session_manager, gold_session, go
             logging.error('Failed to get triage link for %s, raw output: %s', image_name, error)
             logging.error('Reason for no triage link: %s',
                           gold_session.GetTriageLinkOmissionReason(image_name))
-        elif gold_properties.IsTryjobRun():
+        if gold_properties.IsTryjobRun():
+            # Pick "show all results" so we can see the tryjob images by default.
+            triage_link += '&master=true'
             artifacts['triage_link_for_entire_cl'] = [triage_link]
         else:
             artifacts['gold_triage_link'] = [triage_link]
@@ -322,23 +321,141 @@ def upload_test_result_to_skia_gold(args, gold_session_manager, gold_session, go
     return FAIL
 
 
+def _get_batches(traces, batch_size):
+    for i in range(0, len(traces), batch_size):
+        yield traces[i:i + batch_size]
+
+
+def _get_gtest_filter_for_batch(args, batch):
+    prefix = SWIFTSHADER_TEST_PREFIX if args.swiftshader else DEFAULT_TEST_PREFIX
+    expanded = ['%s%s' % (prefix, trace) for trace in batch]
+    return '--gtest_filter=%s' % ':'.join(expanded)
+
+
+def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_results):
+    keys = get_skia_gold_keys(args, env)
+
+    with temporary_dir('angle_skia_gold_') as skia_gold_temp_dir:
+        gold_properties = angle_skia_gold_properties.ANGLESkiaGoldProperties(args)
+        gold_session_manager = angle_skia_gold_session_manager.ANGLESkiaGoldSessionManager(
+            skia_gold_temp_dir, gold_properties)
+        gold_session = gold_session_manager.GetSkiaGoldSession(keys)
+
+        traces = [trace.split(' ')[0] for trace in tests]
+
+        if args.isolated_script_test_filter:
+            filtered = []
+            for trace in traces:
+                # Apply test filter if present.
+                full_name = 'angle_restricted_trace_gold_tests.%s' % trace
+                if not fnmatch.fnmatch(full_name, args.isolated_script_test_filter):
+                    logging.info('Skipping test %s because it does not match filter %s' %
+                                 (full_name, args.isolated_script_test_filter))
+                else:
+                    filtered += [trace]
+            traces = filtered
+
+        batches = _get_batches(traces, args.batch_size)
+
+        for batch in batches:
+            for iteration in range(0, args.flaky_retries + 1):
+                with common.temporary_file() as tempfile_path:
+                    # This is how we signal early exit
+                    if not batch:
+                        logging.debug('All tests in batch completed.')
+                        break
+                    if iteration > 0:
+                        logging.info('Test run failed, running retry #%d...' % iteration)
+
+                    gtest_filter = _get_gtest_filter_for_batch(args, batch)
+                    cmd = [
+                        args.test_suite,
+                        gtest_filter,
+                        '--render-test-output-dir=%s' % screenshot_dir,
+                        '--one-frame-only',
+                        '--verbose-logging',
+                        '--enable-all-trace-tests',
+                    ] + extra_flags
+                    batch_result = PASS if run_wrapper(args, cmd, env,
+                                                       tempfile_path) == 0 else FAIL
+
+                    next_batch = []
+                    for trace in batch:
+                        artifacts = {}
+
+                        if batch_result == PASS:
+                            logging.debug('upload test result: %s' % trace)
+                            result = upload_test_result_to_skia_gold(args, gold_session_manager,
+                                                                     gold_session, gold_properties,
+                                                                     screenshot_dir, trace,
+                                                                     artifacts)
+                        else:
+                            result = batch_result
+
+                        expected_result = SKIP if result == SKIP else PASS
+                        test_results[trace] = {'expected': expected_result, 'actual': result}
+                        if len(artifacts) > 0:
+                            test_results[trace]['artifacts'] = artifacts
+                        if result == FAIL:
+                            next_batch.append(trace)
+                    batch = next_batch
+
+        # These properties are recorded after iteration to ensure they only happen once.
+        for _, trace_results in test_results.items():
+            result = trace_results['actual']
+            results['num_failures_by_type'][result] += 1
+            if result == FAIL:
+                trace_results['is_unexpected'] = True
+
+        return results['num_failures_by_type'][FAIL] == 0
+
+
+def _shard_tests(tests, shard_count, shard_index):
+    return [tests[index] for index in range(shard_index, len(tests), shard_count)]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--isolated-script-test-output', type=str)
     parser.add_argument('--isolated-script-test-perf-output', type=str)
-    parser.add_argument('--isolated-script-test-filter', type=str)
+    parser.add_argument('-f', '--isolated-script-test-filter', '--filter', type=str)
     parser.add_argument('--test-suite', help='Test suite to run.', default=DEFAULT_TEST_SUITE)
     parser.add_argument('--render-test-output-dir', help='Directory to store screenshots')
     parser.add_argument('--xvfb', help='Start xvfb.', action='store_true')
+    parser.add_argument(
+        '--flaky-retries', help='Number of times to retry failed tests.', type=int, default=0)
+    parser.add_argument(
+        '--shard-count',
+        help='Number of shards for test splitting. Default is 1.',
+        type=int,
+        default=1)
+    parser.add_argument(
+        '--shard-index',
+        help='Index of the current shard for test splitting. Default is 0.',
+        type=int,
+        default=0)
+    parser.add_argument(
+        '--batch-size',
+        help='Number of tests to run in a group. Default: %d' % DEFAULT_BATCH_SIZE,
+        type=int,
+        default=DEFAULT_BATCH_SIZE)
+    parser.add_argument(
+        '-l', '--log', help='Log output level. Default is %s.' % DEFAULT_LOG, default=DEFAULT_LOG)
+    parser.add_argument('--swiftshader', help='Test with SwiftShader.', action='store_true')
 
     add_skia_gold_args(parser)
 
     args, extra_flags = parser.parse_known_args()
+    logging.basicConfig(level=args.log.upper())
+
     env = os.environ.copy()
 
     if 'GTEST_TOTAL_SHARDS' in env and int(env['GTEST_TOTAL_SHARDS']) != 1:
-        logging.error('Sharding not yet implemented.')
-        sys.exit(1)
+        if 'GTEST_SHARD_INDEX' not in env:
+            logging.error('Sharding params must be specified together.')
+            sys.exit(1)
+        args.shard_count = int(env.pop('GTEST_TOTAL_SHARDS'))
+        args.shard_index = int(env.pop('GTEST_SHARD_INDEX'))
 
     results = {
         'tests': {},
@@ -353,54 +470,7 @@ def main():
         },
     }
 
-    result_tests = {}
-
-    def run_tests(args, tests, extra_flags, env, screenshot_dir):
-        keys = get_skia_gold_keys(args)
-
-        with temporary_dir('angle_skia_gold_') as skia_gold_temp_dir:
-            gold_properties = angle_skia_gold_properties.ANGLESkiaGoldProperties(args)
-            gold_session_manager = angle_skia_gold_session_manager.ANGLESkiaGoldSessionManager(
-                skia_gold_temp_dir, gold_properties)
-            gold_session = gold_session_manager.GetSkiaGoldSession(keys)
-
-            for test in tests['traces']:
-
-                # Apply test filter if present.
-                if args.isolated_script_test_filter:
-                    full_name = 'angle_restricted_trace_gold_tests.%s' % test
-                    if not fnmatch.fnmatch(full_name, args.isolated_script_test_filter):
-                        logging.info('Skipping test %s because it does not match filter %s' %
-                                     (full_name, args.isolated_script_test_filter))
-                        continue
-
-                with common.temporary_file() as tempfile_path:
-                    cmd = [
-                        args.test_suite,
-                        DEFAULT_TEST_PREFIX + test,
-                        '--render-test-output-dir=%s' % screenshot_dir,
-                        '--one-frame-only',
-                        '--verbose-logging',
-                    ] + extra_flags
-
-                    result = PASS if run_wrapper(args, cmd, env, tempfile_path) == 0 else FAIL
-
-                    artifacts = {}
-
-                    if result == PASS:
-                        result = upload_test_result_to_skia_gold(args, gold_session_manager,
-                                                                 gold_session, gold_properties,
-                                                                 screenshot_dir, test, artifacts)
-
-                    expected_result = SKIP if result == SKIP else PASS
-                    result_tests[test] = {'expected': expected_result, 'actual': result}
-                    if result == FAIL:
-                        result_tests[test]['is_unexpected'] = True
-                    if len(artifacts) > 0:
-                        result_tests[test]['artifacts'] = artifacts
-                    results['num_failures_by_type'][result] += 1
-
-            return results['num_failures_by_type'][FAIL] == 0
+    test_results = {}
 
     rc = 0
 
@@ -416,23 +486,30 @@ def main():
         with open(json_name) as fp:
             tests = json.load(fp)
 
+        # Split tests according to sharding
+        sharded_tests = _shard_tests(tests['traces'], args.shard_count, args.shard_index)
+
         if args.render_test_output_dir:
-            if not run_tests(args, tests, extra_flags, env, args.render_test_output_dir):
+            if not _run_tests(args, sharded_tests, extra_flags, env, args.render_test_output_dir,
+                              results, test_results):
                 rc = 1
         elif 'ISOLATED_OUTDIR' in env:
-            if not run_tests(args, tests, extra_flags, env, env['ISOLATED_OUTDIR']):
+            if not _run_tests(args, sharded_tests, extra_flags, env, env['ISOLATED_OUTDIR'],
+                              results, test_results):
                 rc = 1
         else:
             with temporary_dir('angle_trace_') as temp_dir:
-                if not run_tests(args, tests, extra_flags, env, temp_dir):
+                if not _run_tests(args, sharded_tests, extra_flags, env, temp_dir, results,
+                                  test_results):
                     rc = 1
 
     except Exception:
         traceback.print_exc()
+        results['interrupted'] = True
         rc = 1
 
-    if result_tests:
-        results['tests']['angle_restricted_trace_gold_tests'] = result_tests
+    if test_results:
+        results['tests']['angle_restricted_trace_gold_tests'] = test_results
 
     if args.isolated_script_test_output:
         with open(args.isolated_script_test_output, 'w') as out_file:

@@ -58,10 +58,6 @@ class VulkanDescriptorSetTest : public ANGLETest
 // Test atomic counter read.
 TEST_P(VulkanDescriptorSetTest, AtomicCounterReadLimitedDescriptorPool)
 {
-    // Skipping due to a bug on the Qualcomm Vulkan Android driver.
-    // http://anglebug.com/3726
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
-
     // Skipping test while we work on enabling atomic counter buffer support in th D3D renderer.
     // http://anglebug.com/1729
     ANGLE_SKIP_TEST_IF(IsD3D11());

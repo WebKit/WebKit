@@ -11,33 +11,35 @@
 namespace egl
 {
 
-AttributeMap::AttributeMap() {}
+AttributeMap::AttributeMap() = default;
 
 AttributeMap::AttributeMap(const AttributeMap &other) = default;
+
+AttributeMap &AttributeMap::operator=(const AttributeMap &other) = default;
 
 AttributeMap::~AttributeMap() = default;
 
 void AttributeMap::insert(EGLAttrib key, EGLAttrib value)
 {
-    mAttributes[key] = value;
+    mValidatedAttributes[key] = value;
 }
 
 bool AttributeMap::contains(EGLAttrib key) const
 {
-    return (mAttributes.find(key) != mAttributes.end());
+    return (attribs().find(key) != attribs().end());
 }
 
 EGLAttrib AttributeMap::get(EGLAttrib key) const
 {
-    auto iter = mAttributes.find(key);
-    ASSERT(iter != mAttributes.end());
+    auto iter = attribs().find(key);
+    ASSERT(iter != attribs().end());
     return iter->second;
 }
 
 EGLAttrib AttributeMap::get(EGLAttrib key, EGLAttrib defaultValue) const
 {
-    auto iter = mAttributes.find(key);
-    return (iter != mAttributes.end()) ? iter->second : defaultValue;
+    auto iter = attribs().find(key);
+    return (iter != attribs().end()) ? iter->second : defaultValue;
 }
 
 EGLint AttributeMap::getAsInt(EGLAttrib key) const
@@ -52,13 +54,13 @@ EGLint AttributeMap::getAsInt(EGLAttrib key, EGLint defaultValue) const
 
 bool AttributeMap::isEmpty() const
 {
-    return mAttributes.empty();
+    return attribs().empty();
 }
 
 std::vector<EGLint> AttributeMap::toIntVector() const
 {
     std::vector<EGLint> ret;
-    for (const auto &pair : mAttributes)
+    for (const auto &pair : attribs())
     {
         ret.push_back(static_cast<EGLint>(pair.first));
         ret.push_back(static_cast<EGLint>(pair.second));
@@ -70,25 +72,63 @@ std::vector<EGLint> AttributeMap::toIntVector() const
 
 AttributeMap::const_iterator AttributeMap::begin() const
 {
-    return mAttributes.begin();
+    return attribs().begin();
 }
 
 AttributeMap::const_iterator AttributeMap::end() const
 {
-    return mAttributes.end();
+    return attribs().end();
+}
+
+bool AttributeMap::validate(const ValidationContext *val,
+                            const egl::Display *display,
+                            AttributeValidationFunc validationFunc) const
+{
+    if (mIntPointer)
+    {
+        for (const EGLint *curAttrib = mIntPointer; curAttrib[0] != EGL_NONE; curAttrib += 2)
+        {
+            if (!validationFunc(val, display, curAttrib[0]))
+            {
+                return false;
+            }
+
+            mValidatedAttributes[static_cast<EGLAttrib>(curAttrib[0])] =
+                static_cast<EGLAttrib>(curAttrib[1]);
+        }
+        mIntPointer = nullptr;
+    }
+
+    if (mAttribPointer)
+    {
+        for (const EGLAttrib *curAttrib = mAttribPointer; curAttrib[0] != EGL_NONE; curAttrib += 2)
+        {
+            if (!validationFunc(val, display, curAttrib[0]))
+            {
+                return false;
+            }
+
+            mValidatedAttributes[curAttrib[0]] = curAttrib[1];
+        }
+        mAttribPointer = nullptr;
+    }
+
+    return true;
+}
+
+void AttributeMap::initializeWithoutValidation() const
+{
+    auto alwaysTrue = [](const ValidationContext *, const egl::Display *, EGLAttrib) {
+        return true;
+    };
+    (void)validate(nullptr, nullptr, alwaysTrue);
 }
 
 // static
 AttributeMap AttributeMap::CreateFromIntArray(const EGLint *attributes)
 {
     AttributeMap map;
-    if (attributes)
-    {
-        for (const EGLint *curAttrib = attributes; curAttrib[0] != EGL_NONE; curAttrib += 2)
-        {
-            map.insert(static_cast<EGLAttrib>(curAttrib[0]), static_cast<EGLAttrib>(curAttrib[1]));
-        }
-    }
+    map.mIntPointer = attributes;
     return map;
 }
 
@@ -96,13 +136,12 @@ AttributeMap AttributeMap::CreateFromIntArray(const EGLint *attributes)
 AttributeMap AttributeMap::CreateFromAttribArray(const EGLAttrib *attributes)
 {
     AttributeMap map;
-    if (attributes)
-    {
-        for (const EGLAttrib *curAttrib = attributes; curAttrib[0] != EGL_NONE; curAttrib += 2)
-        {
-            map.insert(curAttrib[0], curAttrib[1]);
-        }
-    }
+    map.mAttribPointer = attributes;
     return map;
+}
+
+bool AttributeMap::isValidated() const
+{
+    return mIntPointer == nullptr && mAttribPointer == nullptr;
 }
 }  // namespace egl

@@ -64,6 +64,8 @@ set(_d3d_shared_sources
     "src/libANGLE/renderer/d3d/VertexBuffer.h"
     "src/libANGLE/renderer/d3d/VertexDataManager.cpp"
     "src/libANGLE/renderer/d3d/VertexDataManager.h"
+    "src/libANGLE/renderer/d3d/driver_utils_d3d.cpp"
+    "src/libANGLE/renderer/d3d/driver_utils_d3d.h"
     "src/libANGLE/renderer/d3d/formatutilsD3D.h"
 )
 
@@ -273,10 +275,14 @@ if(angle_enable_d3d11)
         )
     else()
         list(APPEND _d3d11_backend_sources
-            "src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.cpp"
-            "src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
             "src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp"
             "src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.h"
+        )
+    endif()
+    if(angle_enable_d3d11_compositor_native_window)
+        list(APPEND _d3d11_backend_sources
+            "src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.cpp"
+            "src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
         )
     endif()
 

@@ -34,22 +34,23 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
 // Asynchronously synchronize the content of a resource between GPU memory and its CPU cache.
 // NOTE: This operation doesn't finish immediately upon function's return.
 template <class T>
-void SyncContent(ContextMtl *context,
-                 mtl::BlitCommandEncoder *blitEncoder,
-                 const std::shared_ptr<T> &resource)
+void InvokeCPUMemSync(ContextMtl *context,
+                      mtl::BlitCommandEncoder *blitEncoder,
+                      const std::shared_ptr<T> &resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     if (blitEncoder)
     {
-        blitEncoder->synchronizeResource(resource);
+        blitEncoder->synchronizeResource(resource.get());
 
         resource->resetCPUReadMemNeedSync();
+        resource->setCPUReadMemSyncPending(true);
     }
 #endif
 }
 
 template <class T>
-void EnsureContentSynced(ContextMtl *context, const std::shared_ptr<T> &resource)
+void EnsureCPUMemWillBeSynced(ContextMtl *context, const std::shared_ptr<T> &resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     // Make sure GPU & CPU contents are synchronized.
@@ -58,9 +59,10 @@ void EnsureContentSynced(ContextMtl *context, const std::shared_ptr<T> &resource
     if (resource->get().storageMode == MTLStorageModeManaged && resource->isCPUReadMemNeedSync())
     {
         mtl::BlitCommandEncoder *blitEncoder = context->getBlitCommandEncoder();
-        SyncContent(context, blitEncoder, resource);
+        InvokeCPUMemSync(context, blitEncoder, resource);
     }
 #endif
+    resource->resetCPUReadMemNeedSync();
 }
 
 }  // namespace
@@ -78,6 +80,7 @@ void Resource::reset()
     mUsageRef->cmdBufferQueueSerial = 0;
     resetCPUReadMemDirty();
     resetCPUReadMemNeedSync();
+    resetCPUReadMemSyncPending();
 }
 
 bool Resource::isBeingUsedByGPU(Context *context) const
@@ -282,7 +285,7 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
                                    bool memoryLess,
                                    TextureRef *refOut)
 {
-    if(desc.pixelFormat == MTLPixelFormatInvalid)
+    if (desc.pixelFormat == MTLPixelFormatInvalid)
     {
         return angle::Result::Stop;
     }
@@ -390,8 +393,9 @@ Texture::Texture(ContextMtl *context,
                 desc.usage = desc.usage | MTLTextureUsageShaderWrite;
             }
         }
-        if(desc.pixelFormat == MTLPixelFormatDepth32Float_Stencil8){
-          ASSERT(allowFormatView);
+        if (desc.pixelFormat == MTLPixelFormatDepth32Float_Stencil8)
+        {
+            ASSERT(allowFormatView);
         }
 
         if (allowFormatView)
@@ -476,7 +480,7 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
     : Resource(original),
       mColorWritableMask(original->mColorWritableMask)  // Share color write mask property
 {
-#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+#if ANGLE_MTL_SWIZZLE_AVAILABLE
     ANGLE_MTL_OBJC_SCOPE
     {
         auto view = [original->get()
@@ -495,12 +499,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
 
 void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    SyncContent(context, blitEncoder, shared_from_this());
+    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
 }
 
 void Texture::syncContentIfNeeded(ContextMtl *context)
 {
-    EnsureContentSynced(context, shared_from_this());
+    EnsureCPUMemWillBeSynced(context, shared_from_this());
 }
 
 bool Texture::isCPUAccessible() const
@@ -659,8 +663,6 @@ TextureRef Texture::createViewWithCompatibleFormat(MTLPixelFormat format)
 {
     return TextureRef(new Texture(this, format));
 }
-
-
 
 TextureRef Texture::createSwizzleView(const TextureSwizzleChannels &swizzle)
 {
@@ -825,8 +827,8 @@ TextureRef Texture::getReadableCopy(ContextMtl *context,
 
     ASSERT(encoder);
 
-    encoder->copyTexture(shared_from_this(), sliceToCopy, levelToCopy, mReadCopy, 0,
-                         0, 1, 1);
+    encoder->copyTexture(shared_from_this(), sliceToCopy, mtl::MipmapNativeLevel(levelToCopy),
+                         mReadCopy, 0, mtl::kZeroNativeMipLevel, 1, 1);
 
     return mReadCopy;
 }
@@ -983,7 +985,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
 
 void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    SyncContent(context, blitEncoder, shared_from_this());
+    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
 }
 
 const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
@@ -1000,11 +1002,11 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
 {
     mMapReadOnly = readonly;
 
-    if (!noSync && (isCPUReadMemNeedSync() || !readonly))
+    if (!noSync && (isCPUReadMemSyncPending() || isCPUReadMemNeedSync() || !readonly))
     {
         CommandQueue &cmdQueue = context->cmdQueue();
 
-        EnsureContentSynced(context, shared_from_this());
+        EnsureCPUMemWillBeSynced(context, shared_from_this());
 
         if (this->isBeingUsedByGPU(context))
         {
@@ -1012,6 +1014,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
         }
 
         cmdQueue.ensureResourceReadyForCPU(this);
+        resetCPUReadMemSyncPending();
     }
 
     return reinterpret_cast<uint8_t *>([get() contents]);

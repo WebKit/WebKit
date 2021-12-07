@@ -8,7 +8,7 @@ The main contract is that the caller passes the arguments:
 
   --isolated-script-test-output=[FILENAME]
 json is written to that file in the format:
-https://chromium.googlesource.com/chromium/src/+/master/docs/testing/json_test_results_format.md
+https://chromium.googlesource.com/chromium/src/+/main/docs/testing/json_test_results_format.md
 
 Optional argument:
 
@@ -78,6 +78,9 @@ def main():
     if 'GTEST_SHARD_INDEX' in env:
         extra_flags += ['--shard-index=' + env['GTEST_SHARD_INDEX']]
         env.pop('GTEST_SHARD_INDEX')
+    if 'ISOLATED_OUTDIR' in env:
+        extra_flags += ['--isolated-outdir=' + env['ISOLATED_OUTDIR']]
+        env.pop('ISOLATED_OUTDIR')
 
     # Assume we want to set up the sandbox environment variables all the
     # time; doing so is harmless on non-Linux platforms and is needed

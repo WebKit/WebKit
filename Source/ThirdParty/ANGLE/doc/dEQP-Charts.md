@@ -2,6 +2,10 @@
 
 These charts are generated nightly from the [chrome GPU waterfall bots](https://ci.chromium.org/p/chromium/g/chromium.gpu.fyi/console?limit=200). The output of dEQP tests are parsed by [generate_stats.py](https://chromium.googlesource.com/angle/angle/+/HEAD/scripts/generate_stats.py) and collected into a Sheet here: https://docs.google.com/spreadsheets/d/1uttk1z8lJ4ZsUY7wMdFauMzUxb048nh5l52zdrAznek
 
+Warning: the charts below that are wrapped by iframe tags may not display
+properly on GitHub Markdown. The charts can be viewed best on the
+[Chromium repo page](https://chromium.googlesource.com/angle/angle/+/HEAD/doc/dEQP-Charts.md).
+
 [TOC]
 
 ## Win Desktop OpenGL Charts

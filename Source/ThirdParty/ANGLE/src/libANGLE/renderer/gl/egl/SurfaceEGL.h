@@ -25,7 +25,9 @@ class SurfaceEGL : public SurfaceGL
 
     egl::Error makeCurrent(const gl::Context *context) override;
     egl::Error swap(const gl::Context *context) override;
-    egl::Error swapWithDamage(const gl::Context *context, EGLint *rects, EGLint n_rects) override;
+    egl::Error swapWithDamage(const gl::Context *context,
+                              const EGLint *rects,
+                              EGLint n_rects) override;
     egl::Error postSubBuffer(const gl::Context *context,
                              EGLint x,
                              EGLint y,
@@ -56,6 +58,7 @@ class SurfaceEGL : public SurfaceGL
                                   EGLnsecsANDROID *values) const override;
 
     EGLSurface getSurface() const;
+    virtual bool isExternal() const;
 
   protected:
     const FunctionsEGL *mEGL;

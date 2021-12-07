@@ -51,13 +51,16 @@ class ImageSibling : public gl::FramebufferAttachmentObject
     bool isRenderable(const gl::Context *context,
                       GLenum binding,
                       const gl::ImageIndex &imageIndex) const override;
+    bool isYUV() const override;
+    bool hasProtectedContent() const override;
 
   protected:
     // Set the image target of this sibling
     void setTargetImage(const gl::Context *context, egl::Image *imageTarget);
 
     // Orphan all EGL image sources and targets
-    angle::Result orphanImages(const gl::Context *context);
+    angle::Result orphanImages(const gl::Context *context,
+                               RefCountObjectReleaser<Image> *outReleaseImage);
 
     void notifySiblings(angle::SubjectMessage message);
 
@@ -97,6 +100,8 @@ class ExternalImageSibling : public ImageSibling
                       GLenum binding,
                       const gl::ImageIndex &imageIndex) const override;
     bool isTextureable(const gl::Context *context) const;
+    bool isYUV() const override;
+    bool hasProtectedContent() const override;
 
     void onAttach(const gl::Context *context, rx::Serial framebufferSerial) override;
     void onDetach(const gl::Context *context, rx::Serial framebufferSerial) override;
@@ -130,10 +135,12 @@ struct ImageState : private angle::NonCopyable
     std::set<ImageSibling *> targets;
 
     gl::Format format;
+    bool yuv;
     gl::Extents size;
     size_t samples;
     EGLenum sourceType;
     EGLenum colorspace;
+    bool hasProtectedContent;
 };
 
 class Image final : public RefCountObject, public LabeledObject
@@ -154,10 +161,12 @@ class Image final : public RefCountObject, public LabeledObject
     const gl::Format &getFormat() const;
     bool isRenderable(const gl::Context *context) const;
     bool isTexturable(const gl::Context *context) const;
+    bool isYUV() const;
     size_t getWidth() const;
     size_t getHeight() const;
     bool isLayered() const;
     size_t getSamples() const;
+    bool hasProtectedContent() const;
 
     Error initialize(const Display *display);
 
@@ -166,6 +175,8 @@ class Image final : public RefCountObject, public LabeledObject
     bool orphaned() const;
     gl::InitState sourceInitState() const;
     void setInitState(gl::InitState initState);
+
+    Error exportVkImage(void *vkImage, void *vkImageCreateInfo);
 
   private:
     friend class ImageSibling;

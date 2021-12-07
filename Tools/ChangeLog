@@ -1,3 +1,15 @@
+2021-12-07  Kyle Piddington  <kpiddington@apple.com>
+
+        Roll ANGLE to include upstreamed Metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=220896
+        <rdar://problem/73539682>
+
+        Reviewed by Ken Russell and Dean Jackson.
+
+        Update script to take sources from main, instead of master.
+
+        * Scripts/update-angle:
+
 2021-12-07  Sihui Liu  <sihui_liu@apple.com>
 
         Fetch and remove file system data via WKWebsiteDataStore

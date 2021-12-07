@@ -34,6 +34,10 @@ ANGLE_UTIL_EXPORT GLuint CompileProgram(const char *vsSource,
 ANGLE_UTIL_EXPORT GLuint CompileProgramWithGS(const char *vsSource,
                                               const char *gsSource,
                                               const char *fsSource);
+ANGLE_UTIL_EXPORT GLuint CompileProgramWithTESS(const char *vsSource,
+                                                const char *tcsSource,
+                                                const char *tesSource,
+                                                const char *fsSource);
 ANGLE_UTIL_EXPORT GLuint CompileProgramFromFiles(const std::string &vsPath,
                                                  const std::string &fsPath);
 ANGLE_UTIL_EXPORT GLuint CompileComputeProgram(const char *csSource,
@@ -45,7 +49,7 @@ ANGLE_UTIL_EXPORT GLuint LoadBinaryProgramOES(const std::vector<uint8_t> &binary
 ANGLE_UTIL_EXPORT GLuint LoadBinaryProgramES3(const std::vector<uint8_t> &binary,
                                               GLenum binaryFormat);
 
-ANGLE_UTIL_EXPORT void EnableDebugCallback(const void *userParam);
+ANGLE_UTIL_EXPORT void EnableDebugCallback(GLDEBUGPROC callbackChain, const void *userParam);
 
 namespace angle
 {

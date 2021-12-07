@@ -40,7 +40,7 @@ constexpr size_t kTextureStorageObserverMessageIndex = 0;
 class TextureStorage : public angle::Subject
 {
   public:
-    TextureStorage() {}
+    TextureStorage(const std::string &label) : mTextureLabel(label) {}
     ~TextureStorage() override {}
 
     virtual angle::Result onDestroy(const gl::Context *context);
@@ -85,8 +85,11 @@ class TextureStorage : public angle::Subject
     virtual angle::Result resolveTexture(const gl::Context *context);
     virtual GLsizei getRenderToTextureSamples() const;
 
+    virtual void onLabelUpdate() {}
+
   protected:
     const angle::Subject *mSubject;
+    const std::string mTextureLabel;
 };
 
 inline angle::Result TextureStorage::onDestroy(const gl::Context *context)

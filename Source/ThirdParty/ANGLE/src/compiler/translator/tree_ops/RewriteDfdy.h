@@ -10,28 +10,34 @@
 //
 // See http://anglebug.com/3487
 
-#ifndef COMPILER_TRANSLATOR_TREEOPS_FLIP_DFDY_H_
-#define COMPILER_TRANSLATOR_TREEOPS_FLIP_DFDY_H_
+#ifndef COMPILER_TRANSLATOR_TREEOPS_REWRITEDFDY_H_
+#define COMPILER_TRANSLATOR_TREEOPS_REWRITEDFDY_H_
 
 #include "common/angleutils.h"
+#include "compiler/translator/Compiler.h"
 
 namespace sh
 {
 
 class TCompiler;
 class TIntermNode;
+class TIntermSymbol;
 class TIntermBinary;
 class TIntermTyped;
 class TSymbolTable;
+class TVariable;
+class SpecConst;
+class DriverUniform;
 
 // If fragRotation = nullptr, no rotation will be applied.
 ANGLE_NO_DISCARD bool RewriteDfdy(TCompiler *compiler,
+                                  ShCompileOptions compileOptions,
                                   TIntermNode *root,
                                   const TSymbolTable &symbolTable,
                                   int shaderVersion,
-                                  TIntermBinary *flipXY,
-                                  TIntermTyped *fragRotation);
+                                  SpecConst *specConst,
+                                  const DriverUniform *driverUniforms);
 
 }  // namespace sh
 
-#endif  // COMPILER_TRANSLATOR_TREEOPS_FLIP_DFDY_H_
+#endif  // COMPILER_TRANSLATOR_TREEOPS_REWRITEDFDY_H_

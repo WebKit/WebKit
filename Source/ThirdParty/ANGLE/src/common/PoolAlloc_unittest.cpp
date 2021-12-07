@@ -64,9 +64,11 @@ TEST_P(PoolAllocatorAlignmentTest, Alignment)
     for (uint32_t i = 0; i < 100; ++i)
     {
         // Vary the allocation size around 4k to hit some multi-page allocations
-        void *allocation = poolAllocator.allocate((rand() % (1024 * 4)) + 1);
+        const size_t numBytes = rand() % (1024 * 4) + 1;
+        void *allocation      = poolAllocator.allocate(numBytes);
         // Verify alignment of allocation matches expected default
-        EXPECT_EQ(0u, (reinterpret_cast<std::uintptr_t>(allocation) % alignment));
+        EXPECT_EQ(0u, reinterpret_cast<std::uintptr_t>(allocation) % alignment)
+            << "Iteration " << i << " allocating " << numBytes;
     }
 }
 

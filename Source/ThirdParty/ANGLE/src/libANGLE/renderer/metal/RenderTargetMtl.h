@@ -46,19 +46,21 @@ class RenderTargetMtl final : public FramebufferAttachmentRenderTarget
     void duplicateFrom(const RenderTargetMtl &src);
     void reset();
 
-    mtl::TextureRef getTexture() const { return mTextureRenderTargetInfo->getTextureRef(); }
-    mtl::TextureRef getImplicitMSTexture() const { return mTextureRenderTargetInfo->getImplicitMSTextureRef(); }
-    const mtl::MipmapNativeLevel &getLevelIndex() const { return mTextureRenderTargetInfo->level; }
-    uint32_t getLayerIndex() const { return mTextureRenderTargetInfo->sliceOrDepth; }
+    mtl::TextureRef getTexture() const { return mTexture.lock(); }
+    mtl::TextureRef getImplicitMSTexture() const { return mImplicitMSTexture.lock(); }
+    const mtl::MipmapNativeLevel &getLevelIndex() const { return mLevelIndex; }
+    uint32_t getLayerIndex() const { return mLayerIndex; }
     uint32_t getRenderSamples() const;
     const mtl::Format *getFormat() const { return mFormat; }
 
     void toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
 
   private:
-// This is shared pointer to avoid crashing when texture deleted after bound to a frame buffer.
-    std::shared_ptr<mtl::RenderPassAttachmentTextureTargetDesc> mTextureRenderTargetInfo;
-    const mtl::Format *mFormat = nullptr;
+    mtl::TextureWeakRef mTexture;
+    mtl::TextureWeakRef mImplicitMSTexture;
+    mtl::MipmapNativeLevel mLevelIndex = mtl::kZeroNativeMipLevel;
+    uint32_t mLayerIndex               = 0;
+    const mtl::Format *mFormat         = nullptr;
 };
 }  // namespace rx
 

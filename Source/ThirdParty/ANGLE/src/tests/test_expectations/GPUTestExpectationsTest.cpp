@@ -24,6 +24,7 @@ class GPUTestConfigTest : public ANGLETest
     {
         EXPECT_EQ(IsWindows(), config.getConditions()[GPUTestConfig::kConditionWin]);
         EXPECT_EQ(IsOSX(), config.getConditions()[GPUTestConfig::kConditionMac]);
+        EXPECT_EQ(IsIOS(), config.getConditions()[GPUTestConfig::kConditionIOS]);
         EXPECT_EQ(IsLinux(), config.getConditions()[GPUTestConfig::kConditionLinux]);
         EXPECT_EQ(IsAndroid(), config.getConditions()[GPUTestConfig::kConditionAndroid]);
         EXPECT_EQ(IsNexus5X(), config.getConditions()[GPUTestConfig::kConditionNexus5X]);
@@ -34,6 +35,9 @@ class GPUTestConfigTest : public ANGLETest
         EXPECT_EQ(IsNVIDIA(), config.getConditions()[GPUTestConfig::kConditionNVIDIA]);
         EXPECT_EQ(IsDebug(), config.getConditions()[GPUTestConfig::kConditionDebug]);
         EXPECT_EQ(IsRelease(), config.getConditions()[GPUTestConfig::kConditionRelease]);
+        EXPECT_EQ(IsASan(), config.getConditions()[GPUTestConfig::kConditionASan]);
+        EXPECT_EQ(IsTSan(), config.getConditions()[GPUTestConfig::kConditionTSan]);
+        EXPECT_EQ(IsUBSan(), config.getConditions()[GPUTestConfig::kConditionUBSan]);
     }
 
     void validateConfigAPI(const GPUTestConfig &config,

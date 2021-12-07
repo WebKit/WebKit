@@ -45,12 +45,12 @@
 #endif
 
 layout(set = 0, binding = 0) uniform SRC_RESOURCE(SRC_RESOURCE_NAME) src;
-layout(location = 0) out DestType dest;
+layout(location = 0) out DestType dst;
 
 layout(push_constant) uniform PushConstants {
     // Translation from source to destination coordinates.
     ivec2 srcOffset;
-    ivec2 destOffset;
+    ivec2 dstOffset;
     int srcMip;
     int srcLayer;
     // Whether x and/or y need to be flipped
@@ -60,17 +60,17 @@ layout(push_constant) uniform PushConstants {
     bool premultiplyAlpha;
     bool unmultiplyAlpha;
     // Whether destination is emulated luminance/alpha.
-    bool destHasLuminance;
-    bool destIsAlpha;
+    bool dstHasLuminance;
+    bool dstIsAlpha;
     // Whether source or destination are sRGB.  They are brought to linear space for alpha
     // premultiply/unmultiply, as well as to ensure the copy doesn't change values due to sRGB
     // transformation.
     bool srcIsSRGB;
-    bool destIsSRGB;
+    bool dstIsSRGB;
     // Bits 0~3 tell whether R,G,B or A exist in destination, but as a result of format emulation.
     // Bit 0 is ignored, because R is always present.  For B and G, the result is set to 0 and for
     // A, the result is set to 1.
-    int destDefaultChannelsMask;
+    int dstDefaultChannelsMask;
     bool rotateXY;
 } params;
 
@@ -112,9 +112,9 @@ float sRGBToLinear(float sRGB)
 
 void main()
 {
-    ivec2 destSubImageCoords = ivec2(gl_FragCoord.xy) - params.destOffset;
+    ivec2 dstSubImageCoords = ivec2(gl_FragCoord.xy) - params.dstOffset;
 
-    ivec2 srcSubImageCoords = destSubImageCoords;
+    ivec2 srcSubImageCoords = dstSubImageCoords;
 
     // If flipping X and/or Y, srcOffset would contain the opposite x and/or y coordinate, so we
     // can simply reverse the direction in which x and/or y grows.
@@ -168,52 +168,52 @@ void main()
 #endif
 
     // Convert value to destination type.
-    DestType destValue = DestType(srcValue);
+    DestType dstValue = DestType(srcValue);
 
 #if !SrcIsFloat && DestIsFloat
-    destValue /= 255.0;
+    dstValue /= 255.0;
 #endif
 
     // Note: sRGB formats are unorm, so DestIsFloat must be necessarily set
 #if DestIsFloat
-    if (params.destIsSRGB)
+    if (params.dstIsSRGB)
     {
-        // If dest is sRGB, then export will perform a linear->sRGB transformation.  We need to
+        // If dst is sRGB, then export will perform a linear->sRGB transformation.  We need to
         // preemptively undo that so the values will be exported unchanged.This is done to avoid
         // creating a non-sRGB view of the texture, which would require recreating it with the
         // VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT flag.
 
-        destValue.r = sRGBToLinear(destValue.r);
-        destValue.g = sRGBToLinear(destValue.g);
-        destValue.b = sRGBToLinear(destValue.b);
+        dstValue.r = sRGBToLinear(dstValue.r);
+        dstValue.g = sRGBToLinear(dstValue.g);
+        dstValue.b = sRGBToLinear(dstValue.b);
     }
 #endif
 
-    // If dest is luminance/alpha, it's implemented with R or RG.  Do the appropriate swizzle.
-    if (params.destHasLuminance)
+    // If dst is luminance/alpha, it's implemented with R or RG.  Do the appropriate swizzle.
+    if (params.dstHasLuminance)
     {
-        destValue.rg = destValue.ra;
+        dstValue.rg = dstValue.ra;
     }
-    else if (params.destIsAlpha)
+    else if (params.dstIsAlpha)
     {
-        destValue.r = destValue.a;
+        dstValue.r = dstValue.a;
     }
     else
     {
-        int defaultChannelsMask = params.destDefaultChannelsMask;
+        int defaultChannelsMask = params.dstDefaultChannelsMask;
         if ((defaultChannelsMask & 2) != 0)
         {
-            destValue.g = 0;
+            dstValue.g = 0;
         }
         if ((defaultChannelsMask & 4) != 0)
         {
-            destValue.b = 0;
+            dstValue.b = 0;
         }
         if ((defaultChannelsMask & 8) != 0)
         {
-            destValue.a = 1;
+            dstValue.a = 1;
         }
     }
 
-    dest = destValue;
+    dst = dstValue;
 }

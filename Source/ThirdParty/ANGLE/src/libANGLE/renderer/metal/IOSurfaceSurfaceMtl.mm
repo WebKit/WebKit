@@ -17,6 +17,7 @@
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/FrameBufferMtl.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
+#include "libANGLE/renderer/metal/mtl_utils.h"
 
 // Compiler can turn on programmatical frame capture in release build by defining
 // ANGLE_METAL_FRAME_CAPTURE flag.
@@ -65,167 +66,6 @@ int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
         }
     }
     return -1;
-}
-
-ANGLE_MTL_UNUSED
-bool IsFrameCaptureEnabled()
-{
-#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    return false;
-#else
-    // We only support frame capture programmatically if the ANGLE_METAL_FRAME_CAPTURE
-    // environment flag is set. Otherwise, it will slow down the rendering. This allows user to
-    // finely control whether they want to capture the frame for particular application or not.
-    auto var                  = std::getenv("ANGLE_METAL_FRAME_CAPTURE");
-    static const bool enabled = var ? (strcmp(var, "1") == 0) : false;
-
-    return enabled;
-#endif
-}
-
-ANGLE_MTL_UNUSED
-std::string GetMetalCaptureFile()
-{
-#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    return "";
-#else
-    auto var                   = std::getenv("ANGLE_METAL_FRAME_CAPTURE_FILE");
-    const std::string filePath = var ? var : "";
-
-    return filePath;
-#endif
-}
-
-ANGLE_MTL_UNUSED
-size_t MaxAllowedFrameCapture()
-{
-#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    return 0;
-#else
-    auto var                      = std::getenv("ANGLE_METAL_FRAME_CAPTURE_MAX");
-    static const size_t maxFrames = var ? std::atoi(var) : 100;
-
-    return maxFrames;
-#endif
-}
-
-ANGLE_MTL_UNUSED
-size_t MinAllowedFrameCapture()
-{
-#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    return 0;
-#else
-    auto var                     = std::getenv("ANGLE_METAL_FRAME_CAPTURE_MIN");
-    static const size_t minFrame = var ? std::atoi(var) : 0;
-
-    return minFrame;
-#endif
-}
-
-ANGLE_MTL_UNUSED
-bool FrameCaptureDeviceScope()
-{
-#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    return false;
-#else
-    auto var                      = std::getenv("ANGLE_METAL_FRAME_CAPTURE_SCOPE");
-    static const bool scopeDevice = var ? (strcmp(var, "device") == 0) : false;
-
-    return scopeDevice;
-#endif
-}
-
-ANGLE_MTL_UNUSED
-std::atomic<size_t> gFrameCaptured(0);
-
-ANGLE_MTL_UNUSED
-void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQueue)
-{
-#if ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    if (!IsFrameCaptureEnabled())
-    {
-        return;
-    }
-
-    if (gFrameCaptured >= MaxAllowedFrameCapture())
-    {
-        return;
-    }
-
-    MTLCaptureManager *captureManager = [MTLCaptureManager sharedCaptureManager];
-    if (captureManager.isCapturing)
-    {
-        return;
-    }
-
-    gFrameCaptured++;
-
-    if (gFrameCaptured < MinAllowedFrameCapture())
-    {
-        return;
-    }
-
-#    ifdef __MAC_10_15
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13))
-    {
-        auto captureDescriptor                = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
-        captureDescriptor.get().captureObject = metalDevice;
-        const std::string filePath            = GetMetalCaptureFile();
-        if (filePath != "")
-        {
-            const std::string numberedPath =
-                filePath + std::to_string(gFrameCaptured - 1) + ".gputrace";
-            captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
-            captureDescriptor.get().outputURL =
-                [NSURL fileURLWithPath:[NSString stringWithUTF8String:numberedPath.c_str()]
-                           isDirectory:false];
-        }
-        else
-        {
-            // This will pause execution only if application is being debugged inside Xcode
-            captureDescriptor.get().destination = MTLCaptureDestinationDeveloperTools;
-        }
-
-        NSError *error;
-        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
-        {
-            NSLog(@"Failed to start capture, error %@", error);
-        }
-    }
-    else
-#    endif  // __MAC_10_15
-        if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13))
-    {
-        auto captureDescriptor                = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
-        captureDescriptor.get().captureObject = metalDevice;
-
-        NSError *error;
-        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
-        {
-            NSLog(@"Failed to start capture, error %@", error);
-        }
-    }
-#endif  // ANGLE_METAL_FRAME_CAPTURE_ENABLED
-}
-
-void StartFrameCapture(ContextMtl *context)
-{
-    StartFrameCapture(context->getMetalDevice(), context->cmdQueue().get());
-}
-
-void StopFrameCapture()
-{
-#if ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    if (!IsFrameCaptureEnabled())
-    {
-        return;
-    }
-    MTLCaptureManager *captureManager = [MTLCaptureManager sharedCaptureManager];
-    if (captureManager.isCapturing)
-    {
-        [captureManager stopCapture];
-    }
-#endif
 }
 
 }  // anonymous namespace
@@ -381,4 +221,5 @@ bool IOSurfaceSurfaceMtl::ValidateAttributes(EGLClientBuffer buffer,
     }
 
     return true;
-}}
+}
+}

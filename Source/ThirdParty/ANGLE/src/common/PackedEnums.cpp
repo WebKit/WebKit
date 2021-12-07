@@ -132,6 +132,7 @@ TextureType SamplerTypeToTextureType(GLenum samplerType)
             return TextureType::_2D;
 
         case GL_SAMPLER_EXTERNAL_OES:
+        case GL_SAMPLER_EXTERNAL_2D_Y2Y_EXT:
             return TextureType::External;
 
         case GL_SAMPLER_CUBE:
@@ -177,6 +178,46 @@ TextureType SamplerTypeToTextureType(GLenum samplerType)
 
         case GL_SAMPLER_VIDEO_IMAGE_WEBGL:
             return TextureType::VideoImage;
+
+        default:
+            UNREACHABLE();
+            return TextureType::InvalidEnum;
+    }
+}
+
+TextureType ImageTypeToTextureType(GLenum imageType)
+{
+    switch (imageType)
+    {
+        case GL_IMAGE_2D:
+        case GL_INT_IMAGE_2D:
+        case GL_UNSIGNED_INT_IMAGE_2D:
+            return TextureType::_2D;
+
+        case GL_IMAGE_CUBE:
+        case GL_INT_IMAGE_CUBE:
+        case GL_UNSIGNED_INT_IMAGE_CUBE:
+            return TextureType::CubeMap;
+
+        case GL_IMAGE_CUBE_MAP_ARRAY:
+        case GL_INT_IMAGE_CUBE_MAP_ARRAY:
+        case GL_UNSIGNED_INT_IMAGE_CUBE_MAP_ARRAY:
+            return TextureType::CubeMapArray;
+
+        case GL_IMAGE_2D_ARRAY:
+        case GL_INT_IMAGE_2D_ARRAY:
+        case GL_UNSIGNED_INT_IMAGE_2D_ARRAY:
+            return TextureType::_2DArray;
+
+        case GL_IMAGE_3D:
+        case GL_INT_IMAGE_3D:
+        case GL_UNSIGNED_INT_IMAGE_3D:
+            return TextureType::_3D;
+
+        case GL_IMAGE_BUFFER:
+        case GL_INT_IMAGE_BUFFER:
+        case GL_UNSIGNED_INT_IMAGE_BUFFER:
+            return TextureType::Buffer;
 
         default:
             UNREACHABLE();
@@ -435,6 +476,56 @@ std::ostream &operator<<(std::ostream &os, VertexAttribType value)
     }
     return os;
 }
+
+std::ostream &operator<<(std::ostream &os, TessEvaluationType value)
+{
+    switch (value)
+    {
+        case TessEvaluationType::Triangles:
+            os << "GL_TRIANGLES";
+            break;
+        case TessEvaluationType::Quads:
+            os << "GL_QUADS";
+            break;
+        case TessEvaluationType::Isolines:
+            os << "GL_ISOLINES";
+            break;
+        case TessEvaluationType::EqualSpacing:
+            os << "GL_EQUAL";
+            break;
+        case TessEvaluationType::FractionalEvenSpacing:
+            os << "GL_FRACTIONAL_EVEN";
+            break;
+        case TessEvaluationType::FractionalOddSpacing:
+            os << "GL_FRACTIONAL_ODD";
+            break;
+        case TessEvaluationType::Cw:
+            os << "GL_CW";
+            break;
+        case TessEvaluationType::Ccw:
+            os << "GL_CCW";
+            break;
+        case TessEvaluationType::PointMode:
+            os << "GL_TESS_GEN_POINT_MODE";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+const char *ShaderTypeToString(ShaderType shaderType)
+{
+    constexpr ShaderMap<const char *> kShaderTypeNameMap = {
+        {ShaderType::Vertex, "Vertex"},
+        {ShaderType::TessControl, "Tessellation control"},
+        {ShaderType::TessEvaluation, "Tessellation evaluation"},
+        {ShaderType::Geometry, "Geometry"},
+        {ShaderType::Fragment, "Fragment"},
+        {ShaderType::Compute, "Compute"}};
+    return kShaderTypeNameMap[shaderType];
+}
 }  // namespace gl
 
 namespace egl
@@ -520,5 +611,4 @@ gl::TextureType EGLTextureTargetToTextureType(EGLenum eglTarget)
             return gl::TextureType::InvalidEnum;
     }
 }
-
 }  // namespace egl_gl

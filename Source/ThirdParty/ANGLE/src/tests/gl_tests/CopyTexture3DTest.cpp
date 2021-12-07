@@ -857,9 +857,6 @@ TEST_P(Texture3DCopy, FloatFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    // http://anglebug.com/4756
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
-
     testFloatFormats(GL_TEXTURE_3D);
 }
 
@@ -1388,7 +1385,10 @@ TEST_P(Texture2DArrayCopy, UintFormats)
     testUintFormats(GL_TEXTURE_2D_ARRAY);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture3DCopy);
 ANGLE_INSTANTIATE_TEST_ES3(Texture3DCopy);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DArrayCopy);
 ANGLE_INSTANTIATE_TEST_ES3(Texture2DArrayCopy);
 
 }  // namespace angle

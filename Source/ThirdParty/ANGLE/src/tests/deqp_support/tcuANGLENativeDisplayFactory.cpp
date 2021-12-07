@@ -428,25 +428,24 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
             continue;
         }
 
-        const char **preRotationFeatures =
+        const char **enabledFeatures =
             reinterpret_cast<const char **>(mPlatformAttributes[attrIndex + 1]);
-        DE_ASSERT(preRotationFeatures != nullptr && preRotationFeatures[0] != nullptr);
+        DE_ASSERT(enabledFeatures != nullptr && *enabledFeatures != nullptr);
 
-        if (strcmp(preRotationFeatures[0], "emulated_prerotation_90") == 0)
+        for (; *enabledFeatures; ++enabledFeatures)
         {
-            preRotation = 90;
-        }
-        else if (strcmp(preRotationFeatures[0], "emulated_prerotation_180") == 0)
-        {
-            preRotation = 180;
-        }
-        else if (strcmp(preRotationFeatures[0], "emulated_prerotation_270") == 0)
-        {
-            preRotation = 270;
-        }
-        else
-        {
-            DE_ASSERT(DE_FALSE);
+            if (strcmp(enabledFeatures[0], "emulatedPrerotation90") == 0)
+            {
+                preRotation = 90;
+            }
+            else if (strcmp(enabledFeatures[0], "emulatedPrerotation180") == 0)
+            {
+                preRotation = 180;
+            }
+            else if (strcmp(enabledFeatures[0], "emulatedPrerotation270") == 0)
+            {
+                preRotation = 270;
+            }
         }
         break;
     }

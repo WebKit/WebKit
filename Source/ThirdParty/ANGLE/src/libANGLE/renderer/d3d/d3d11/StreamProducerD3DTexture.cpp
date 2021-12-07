@@ -112,15 +112,16 @@ StreamProducerD3DTexture::~StreamProducerD3DTexture()
     SafeRelease(mTexture);
 }
 
-egl::Error StreamProducerD3DTexture::validateD3DTexture(void *pointer,
+egl::Error StreamProducerD3DTexture::validateD3DTexture(const void *pointer,
                                                         const egl::AttributeMap &attributes) const
 {
-    ID3D11Texture2D *textureD3D = static_cast<ID3D11Texture2D *>(pointer);
+    // We must remove the const qualifier because "GetDevice" and "GetDesc" are non-const in D3D11.
+    ID3D11Texture2D *textureD3D = static_cast<ID3D11Texture2D *>(const_cast<void *>(pointer));
 
     // Check that the texture originated from our device
-    ID3D11Device *device;
+    angle::ComPtr<ID3D11Device> device;
     textureD3D->GetDevice(&device);
-    if (device != mRenderer->getDevice())
+    if (device.Get() != mRenderer->getDevice())
     {
         return egl::EglBadParameter() << "Texture not created on ANGLE D3D device";
     }

@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 
-// CGLFunctions.h: Exposing the soft-linked CGL interface.
+// FunctionsCGL.h: Exposing the soft-linked CGL interface.
 
 #ifndef CGL_FUNCTIONS_H_
 #define CGL_FUNCTIONS_H_

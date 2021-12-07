@@ -72,6 +72,25 @@ class IncompleteTextureTestES3 : public ANGLETest
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
     }
+
+  public:
+    void setupFramebuffer(const GLenum sizedInternalFormat)
+    {
+        glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, sizedInternalFormat, getWindowWidth(),
+                              getWindowHeight());
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  mRenderbuffer);
+        glViewport(0, 0, getWindowWidth(), getWindowHeight());
+        ASSERT_GL_NO_ERROR();
+    }
+
+  private:
+    GLRenderbuffer mRenderbuffer;
+    GLFramebuffer mFramebuffer;
 };
 
 class IncompleteTextureTestES31 : public ANGLETest
@@ -223,8 +242,176 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
+// Verifies that an incomplete integer texture has a signed integer type default value.
+TEST_P(IncompleteTextureTestES3, IntegerType)
+{
+    // GLES backend on Adreno has a problem to create a incomplete texture, although it doesn't go
+    // through the routine which creates a incomplete texture in the ANGLE driver.
+    ANGLE_SKIP_TEST_IF(IsAdreno() && IsAndroid() && IsOpenGLES());
+
+    // http://crbug.com/1168370
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsOpenGL());
+
+    constexpr char kVS[] = R"(#version 300 es
+in highp vec2 position;
+out highp vec2 texCoord;
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    texCoord = (position * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+in highp vec2 texCoord;
+out highp ivec4 color;
+uniform highp isampler2D tex;
+void main()
+{
+    ivec2 texSize = textureSize(tex, 0);
+    ivec2 texel = ivec2(vec2(texSize) * texCoord);
+    color = texelFetch(tex, texel, 0);
+})";
+
+    constexpr GLint clearColori[4] = {-10, 20, -30, 40};
+    constexpr GLint blackColori[4] = {0, 0, 0, 127};
+
+    setupFramebuffer(GL_RGBA8I);
+    glClearBufferiv(GL_COLOR, 0, clearColori);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_8I(0, 0, clearColori[0], clearColori[1], clearColori[2], clearColori[3]);
+
+    // Since no texture attachment has been specified, it is incomplete by definition
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glUseProgram(program);
+
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    const int width  = getWindowWidth() - 1;
+    const int height = getWindowHeight() - 1;
+    EXPECT_PIXEL_8I(0, 0, blackColori[0], blackColori[1], blackColori[2], blackColori[3]);
+    EXPECT_PIXEL_8I(width, 0, blackColori[0], blackColori[1], blackColori[2], blackColori[3]);
+    EXPECT_PIXEL_8I(0, height, blackColori[0], blackColori[1], blackColori[2], blackColori[3]);
+    EXPECT_PIXEL_8I(width, height, blackColori[0], blackColori[1], blackColori[2], blackColori[3]);
+}
+
+// Verifies that an incomplete unsigned integer texture has an unsigned integer type default value.
+TEST_P(IncompleteTextureTestES3, UnsignedIntegerType)
+{
+    // GLES backend on Adreno has a problem to create a incomplete texture, although it doesn't go
+    // through the routine which creates a incomplete texture in the ANGLE driver.
+    ANGLE_SKIP_TEST_IF(IsAdreno() && IsAndroid() && IsOpenGLES());
+
+    // http://crbug.com/1168370
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsOpenGL());
+
+    constexpr char kVS[] = R"(#version 300 es
+in highp vec2 position;
+out highp vec2 texCoord;
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    texCoord = (position * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+in highp vec2 texCoord;
+out highp uvec4 color;
+uniform highp usampler2D tex;
+void main()
+{
+    ivec2 texSize = textureSize(tex, 0);
+    ivec2 texel = ivec2(vec2(texSize) * texCoord);
+    color = texelFetch(tex, texel, 0);
+})";
+
+    constexpr GLuint clearColorui[4] = {40, 30, 20, 10};
+    constexpr GLuint blackColorui[4] = {0, 0, 0, 255};
+
+    setupFramebuffer(GL_RGBA8UI);
+    glClearBufferuiv(GL_COLOR, 0, clearColorui);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_8UI(0, 0, clearColorui[0], clearColorui[1], clearColorui[2], clearColorui[3]);
+
+    // Since no texture attachment has been specified, it is incomplete by definition
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glUseProgram(program);
+
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    const int width  = getWindowWidth() - 1;
+    const int height = getWindowHeight() - 1;
+    EXPECT_PIXEL_8UI(0, 0, blackColorui[0], blackColorui[1], blackColorui[2], blackColorui[3]);
+    EXPECT_PIXEL_8UI(width, 0, blackColorui[0], blackColorui[1], blackColorui[2], blackColorui[3]);
+    EXPECT_PIXEL_8UI(0, height, blackColorui[0], blackColorui[1], blackColorui[2], blackColorui[3]);
+    EXPECT_PIXEL_8UI(width, height, blackColorui[0], blackColorui[1], blackColorui[2],
+                     blackColorui[3]);
+}
+
+// Verifies that we are able to create an incomplete shadow texture.
+TEST_P(IncompleteTextureTestES3, ShadowType)
+{
+    // GLES backend on Adreno has a problem to create a incomplete texture, although it doesn't go
+    // through the routine which creates a incomplete texture in the ANGLE driver.
+    ANGLE_SKIP_TEST_IF(IsAdreno() && IsAndroid() && IsOpenGLES());
+
+    // http://crbug.com/1168370
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsOpenGL());
+
+    // http://anglebug.com/5594
+    ANGLE_SKIP_TEST_IF(IsD3D11() || IsOSX());
+
+    constexpr char kVS[] = R"(#version 300 es
+in highp vec2 position;
+out highp vec3 texCoord;
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    texCoord = vec3(((position * 0.5) + 0.5), 0.5);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+in highp vec3 texCoord;
+out highp vec4 color;
+uniform highp sampler2DShadow tex;
+void main()
+{
+    color = vec4(vec3(texture(tex, texCoord)), 1.0f);
+})";
+
+    constexpr GLColor clearColor = {10, 40, 20, 30};
+    constexpr GLColor blackColor = {0, 0, 0, 255};
+
+    setupFramebuffer(GL_RGBA8);
+    glClearBufferfv(GL_COLOR, 0, clearColor.toNormalizedVector().data());
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_EQ(0, 0, clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+
+    // Since no texture attachment has been specified, it is incomplete by definition
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "tex"), 1);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    const int width  = getWindowWidth() - 1;
+    const int height = getWindowHeight() - 1;
+    EXPECT_PIXEL_EQ(0, 0, blackColor[0], blackColor[1], blackColor[2], blackColor[3]);
+    EXPECT_PIXEL_EQ(width, 0, blackColor[0], blackColor[1], blackColor[2], blackColor[3]);
+    EXPECT_PIXEL_EQ(0, height, blackColor[0], blackColor[1], blackColor[2], blackColor[3]);
+    EXPECT_PIXEL_EQ(width, height, blackColor[0], blackColor[1], blackColor[2], blackColor[3]);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(IncompleteTextureTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(IncompleteTextureTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(IncompleteTextureTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(IncompleteTextureTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(IncompleteTextureTestES31);

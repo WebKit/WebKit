@@ -113,7 +113,6 @@ struct alignas(4) SamplerDesc
     uint8_t minFilter : 1;
     uint8_t magFilter : 1;
     uint8_t mipFilter : 2;
-    uint8_t normalizedCoordinates: 1;
 
     uint8_t maxAnisotropy : 5;
 
@@ -169,10 +168,7 @@ struct BlendDesc
     void reset();
     void reset(MTLColorWriteMask writeMask);
 
-    void updateWriteMask(const gl::BlendState &blendState);
-    void updateBlendFactors(const gl::BlendState &blendState);
-    void updateBlendOps(const gl::BlendState &blendState);
-    void updateBlendEnabled(const gl::BlendState &blendState);
+    void updateWriteMask(const uint8_t angleMask);
 
     // Use uint8_t instead of MTLColorWriteMask to compact space
     uint8_t writeMask : 4;
@@ -191,6 +187,9 @@ struct BlendDesc
     bool blendingEnabled : 1;
 };
 
+using BlendDescArray = std::array<BlendDesc, kMaxRenderTargets>;
+using WriteMaskArray = std::array<uint8_t, kMaxRenderTargets>;
+
 struct alignas(2) RenderPipelineColorAttachmentDesc : public BlendDesc
 {
     bool operator==(const RenderPipelineColorAttachmentDesc &rhs) const;
@@ -203,9 +202,9 @@ struct alignas(2) RenderPipelineColorAttachmentDesc : public BlendDesc
     void reset();
     void reset(MTLPixelFormat format);
     void reset(MTLPixelFormat format, MTLColorWriteMask writeMask);
-    void reset(MTLPixelFormat format, const BlendDesc &blendState);
+    void reset(MTLPixelFormat format, const BlendDesc &blendDesc);
 
-    void update(const BlendDesc &blendState);
+    void update(const BlendDesc &blendDesc);
 
     // Use uint16_t instead of MTLPixelFormat to compact space
     uint16_t pixelFormat : 16;
@@ -227,7 +226,6 @@ struct RenderPipelineOutputDesc
     uint8_t numColorAttachments : 3;
     uint8_t sampleCount : 5;
 };
-
 
 // Some SDK levels don't declare MTLPrimitiveTopologyClass. Needs to do compile time check here:
 #if !(TARGET_OS_OSX || TARGET_OS_MACCATALYST) && \
@@ -305,31 +303,10 @@ struct alignas(4) ProvokingVertexComputePipelineDesc
     bool operator==(const ProvokingVertexComputePipelineDesc &rhs) const;
     bool operator!=(const ProvokingVertexComputePipelineDesc &rhs) const;
     size_t hash() const;
-    
+
     gl::PrimitiveMode primitiveMode;
     uint8_t elementType;
     bool primitiveRestartEnabled;
-};
-
-struct RenderPassAttachmentTextureTargetDesc
-{
-    TextureRef getTextureRef() const { return texture.lock(); }
-    TextureRef getImplicitMSTextureRef() const { return implicitMSTexture.lock(); }
-    bool hasImplicitMSTexture() const { return !implicitMSTexture.expired(); }
-    uint32_t getRenderSamples() const
-    {
-        TextureRef tex   = getTextureRef();
-        TextureRef msTex = getImplicitMSTextureRef();
-        return msTex ? msTex->samples() : (tex ? tex->samples() : 1);
-    }
-
-    TextureWeakRef texture;
-    // Implicit multisample texture that will be rendered into and discarded at the end of
-    // a render pass. Its result will be resolved into normal texture above.
-    TextureWeakRef implicitMSTexture;
-    MipmapNativeLevel level = kZeroNativeMipLevel;
-    uint32_t sliceOrDepth   = 0;
-    bool blendable          = true;
 };
 
 struct RenderPassAttachmentDesc
@@ -341,34 +318,17 @@ struct RenderPassAttachmentDesc
     bool equalIgnoreLoadStoreOptions(const RenderPassAttachmentDesc &other) const;
     bool operator==(const RenderPassAttachmentDesc &other) const;
 
-    ANGLE_INLINE TextureRef texture() const
-    {
-        return renderTarget ? renderTarget->getTextureRef() : nullptr;
-    }
-    ANGLE_INLINE TextureRef implicitMSTexture() const
-    {
-        return renderTarget ? renderTarget->getImplicitMSTextureRef() : nullptr;
-    }
-    ANGLE_INLINE bool hasImplicitMSTexture() const
-    {
-        return renderTarget ? renderTarget->hasImplicitMSTexture() : false;
-    }
-    ANGLE_INLINE uint32_t renderSamples() const
-    {
-        return renderTarget ? renderTarget->getRenderSamples() : 1;
-    }
-    ANGLE_INLINE MipmapNativeLevel level() const
-    {
-        return renderTarget ? renderTarget->level : kZeroNativeMipLevel;
-    }
-    ANGLE_INLINE uint32_t sliceOrDepth() const
-    {
-        return renderTarget ? renderTarget->sliceOrDepth : 0;
-    }
-    ANGLE_INLINE bool blendable() const { return renderTarget ? renderTarget->blendable : false; }
+    ANGLE_INLINE bool hasImplicitMSTexture() const { return implicitMSTexture.get(); }
 
-    // This is shared pointer to avoid crashing when texture deleted after bound to a frame buffer.
-    std::shared_ptr<RenderPassAttachmentTextureTargetDesc> renderTarget;
+    TextureRef texture;
+    // Implicit multisample texture that will be rendered into and discarded at the end of
+    // a render pass. Its result will be resolved into normal texture above.
+    TextureRef implicitMSTexture;
+    MipmapNativeLevel level;
+    uint32_t sliceOrDepth;
+
+    // This attachment is blendable or not.
+    bool blendable;
     MTLLoadAction loadAction;
     MTLStoreAction storeAction;
     MTLStoreActionOptions storeActionOptions;
@@ -432,10 +392,10 @@ struct RenderPassDesc
     void populateRenderPipelineOutputDesc(RenderPipelineOutputDesc *outDesc) const;
     // This will populate the RenderPipelineOutputDesc with default blend state and the specified
     // MTLColorWriteMask
-    void populateRenderPipelineOutputDesc(MTLColorWriteMask colorWriteMask,
+    void populateRenderPipelineOutputDesc(const WriteMaskArray &writeMaskArray,
                                           RenderPipelineOutputDesc *outDesc) const;
     // This will populate the RenderPipelineOutputDesc with the specified blend state
-    void populateRenderPipelineOutputDesc(const BlendDesc &blendState,
+    void populateRenderPipelineOutputDesc(const BlendDescArray &blendDescArray,
                                           RenderPipelineOutputDesc *outDesc) const;
 
     bool equalIgnoreLoadStoreOptions(const RenderPassDesc &other) const;
@@ -473,7 +433,10 @@ struct hash<rx::mtl::RenderPipelineDesc>
 template <>
 struct hash<rx::mtl::ProvokingVertexComputePipelineDesc>
 {
-    size_t operator()(const rx::mtl::ProvokingVertexComputePipelineDesc &key) const { return key.hash(); }
+    size_t operator()(const rx::mtl::ProvokingVertexComputePipelineDesc &key) const
+    {
+        return key.hash();
+    }
 };
 }  // namespace std
 
@@ -506,17 +469,19 @@ class ProvokingVertexCacheSpecializeShaderFactory
   public:
     virtual ~ProvokingVertexCacheSpecializeShaderFactory() = default;
     // Get specialized shader for the render pipeline cache.
-    virtual angle::Result getSpecializedShader(Context *context,
-                                               gl::ShaderType shaderType,
-                                               const ProvokingVertexComputePipelineDesc &renderPipelineDesc,
-                                               id<MTLFunction> *shaderOut) = 0;
+    virtual angle::Result getSpecializedShader(
+        Context *context,
+        gl::ShaderType shaderType,
+        const ProvokingVertexComputePipelineDesc &renderPipelineDesc,
+        id<MTLFunction> *shaderOut) = 0;
     // Check whether specialized shaders is required for the specified RenderPipelineDesc.
     // If not, the render pipeline cache will use the supplied non-specialized shaders.
-    virtual bool hasSpecializedShader(gl::ShaderType shaderType,
-                                      const ProvokingVertexComputePipelineDesc &renderPipelineDesc) = 0;
+    virtual bool hasSpecializedShader(
+        gl::ShaderType shaderType,
+        const ProvokingVertexComputePipelineDesc &renderPipelineDesc) = 0;
 };
 
-// render pipeline state cache per shader program
+// Render pipeline state cache per shader program.
 class RenderPipelineCache final : angle::NonCopyable
 {
   public:
@@ -546,7 +511,6 @@ class RenderPipelineCache final : angle::NonCopyable
     AutoObjCPtr<id<MTLFunction>> mVertexShader;
     // Non-specialized fragment shader
     AutoObjCPtr<id<MTLFunction>> mFragmentShader;
-    // On shader with emulated rasterization discard, one without
 
   private:
     void clearPipelineStates();
@@ -563,7 +527,7 @@ class RenderPipelineCache final : angle::NonCopyable
     bool hasDefaultAttribs(const RenderPipelineDesc &desc) const;
 
     // One table with default attrib and one table without.
-    std::unordered_map<RenderPipelineDesc, AutoObjCPtr<id<MTLRenderPipelineState>>>
+    angle::HashMap<RenderPipelineDesc, AutoObjCPtr<id<MTLRenderPipelineState>>>
         mRenderPipelineStates[2];
     RenderPipelineCacheSpecializeShaderFactory *mSpecializedShaderFactory;
 };
@@ -573,7 +537,8 @@ class ProvokingVertexComputePipelineCache final : angle::NonCopyable
 {
   public:
     ProvokingVertexComputePipelineCache();
-    ProvokingVertexComputePipelineCache(ProvokingVertexCacheSpecializeShaderFactory *specializedShaderFactory);
+    ProvokingVertexComputePipelineCache(
+        ProvokingVertexCacheSpecializeShaderFactory *specializedShaderFactory);
     ~ProvokingVertexComputePipelineCache();
 
     // Set non-specialized vertex/fragment shader to be used by render pipeline cache to create
@@ -583,10 +548,10 @@ class ProvokingVertexComputePipelineCache final : angle::NonCopyable
     // shaders.
     void setComputeShader(Context *context, id<MTLFunction> shader);
     id<MTLFunction> getComputeShader() { return mComputeShader; }
-   
 
-    AutoObjCPtr<id<MTLComputePipelineState>> getComputePipelineState(ContextMtl *context,
-                                                                   const ProvokingVertexComputePipelineDesc &desc);
+    AutoObjCPtr<id<MTLComputePipelineState>> getComputePipelineState(
+        ContextMtl *context,
+        const ProvokingVertexComputePipelineDesc &desc);
 
     void clear();
 
@@ -600,22 +565,18 @@ class ProvokingVertexComputePipelineCache final : angle::NonCopyable
     AutoObjCPtr<id<MTLComputePipelineState>> insertComputePipelineState(
         Context *context,
         const ProvokingVertexComputePipelineDesc &desc);
-    
+
     AutoObjCPtr<id<MTLComputePipelineState>> createComputePipelineState(
         Context *context,
         const ProvokingVertexComputePipelineDesc &desc);
 
     bool hasDefaultAttribs(const RenderPipelineDesc &desc) const;
-    
+
     // One table with default attrib and one table without.
     std::unordered_map<ProvokingVertexComputePipelineDesc, AutoObjCPtr<id<MTLComputePipelineState>>>
-    mComputePipelineStates;
+        mComputePipelineStates;
     ProvokingVertexCacheSpecializeShaderFactory *mSpecializedShaderFactory;
 };
-
-
-
-
 
 class StateCache final : angle::NonCopyable
 {
@@ -641,8 +602,8 @@ class StateCache final : angle::NonCopyable
     const angle::FeaturesMtl &mFeatures;
 
     AutoObjCPtr<id<MTLDepthStencilState>> mNullDepthStencilState = nil;
-    std::unordered_map<DepthStencilDesc, AutoObjCPtr<id<MTLDepthStencilState>>> mDepthStencilStates;
-    std::unordered_map<SamplerDesc, AutoObjCPtr<id<MTLSamplerState>>> mSamplerStates;
+    angle::HashMap<DepthStencilDesc, AutoObjCPtr<id<MTLDepthStencilState>>> mDepthStencilStates;
+    angle::HashMap<SamplerDesc, AutoObjCPtr<id<MTLSamplerState>>> mSamplerStates;
 };
 
 }  // namespace mtl

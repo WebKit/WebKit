@@ -37,6 +37,7 @@ class BufferImpl : public angle::Subject
 
     virtual angle::Result setDataWithUsageFlags(const gl::Context *context,
                                                 gl::BufferBinding target,
+                                                GLeglClientBufferEXT clientBuffer,
                                                 const void *data,
                                                 size_t size,
                                                 gl::BufferUsage usage,

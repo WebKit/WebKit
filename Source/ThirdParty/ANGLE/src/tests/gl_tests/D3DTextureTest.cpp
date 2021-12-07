@@ -10,6 +10,7 @@
 #include "test_utils/gl_raii.h"
 
 #include <d3d11.h>
+#include <d3d9.h>
 #include <windows.h>
 
 #include "util/EGLWindow.h"
@@ -80,37 +81,30 @@ class D3DTextureTest : public ANGLETest
         PFN_D3D11_CREATE_DEVICE createDeviceFunc = reinterpret_cast<PFN_D3D11_CREATE_DEVICE>(
             GetProcAddress(mD3D11Module, "D3D11CreateDevice"));
 
-        EGLWindow *window  = getEGLWindow();
-        EGLDisplay display = window->getDisplay();
-        if (IsEGLDisplayExtensionEnabled(display, "EGL_EXT_device_query"))
+        EGLWindow *window   = getEGLWindow();
+        EGLDisplay display  = window->getDisplay();
+        EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
+        if (IsEGLClientExtensionEnabled("EGL_EXT_device_query"))
         {
-            PFNEGLQUERYDISPLAYATTRIBEXTPROC eglQueryDisplayAttribEXT =
-                reinterpret_cast<PFNEGLQUERYDISPLAYATTRIBEXTPROC>(
-                    eglGetProcAddress("eglQueryDisplayAttribEXT"));
-            PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT =
-                reinterpret_cast<PFNEGLQUERYDEVICEATTRIBEXTPROC>(
-                    eglGetProcAddress("eglQueryDeviceAttribEXT"));
+            EGLAttrib result = 0;
+            EXPECT_EGL_TRUE(eglQueryDisplayAttribEXT(display, EGL_DEVICE_EXT, &result));
+            device = reinterpret_cast<EGLDeviceEXT>(result);
+        }
 
-            EGLDeviceEXT device = 0;
+        ASSERT_NE(EGL_NO_DEVICE_EXT, device);
+
+        if (IsEGLDeviceExtensionEnabled(device, "EGL_ANGLE_device_d3d"))
+        {
+            EGLAttrib result = 0;
+            if (eglQueryDeviceAttribEXT(device, EGL_D3D11_DEVICE_ANGLE, &result))
             {
-                EGLAttrib result = 0;
-                EXPECT_EGL_TRUE(eglQueryDisplayAttribEXT(display, EGL_DEVICE_EXT, &result));
-                device = reinterpret_cast<EGLDeviceEXT>(result);
+                mD3D11Device = reinterpret_cast<ID3D11Device *>(result);
+                mD3D11Device->AddRef();
             }
-
-            if (IsEGLDeviceExtensionEnabled(device, "EGL_ANGLE_device_d3d"))
+            else if (eglQueryDeviceAttribEXT(device, EGL_D3D9_DEVICE_ANGLE, &result))
             {
-                EGLAttrib result = 0;
-                if (eglQueryDeviceAttribEXT(device, EGL_D3D11_DEVICE_ANGLE, &result))
-                {
-                    mD3D11Device = reinterpret_cast<ID3D11Device *>(result);
-                    mD3D11Device->AddRef();
-                }
-                else if (eglQueryDeviceAttribEXT(device, EGL_D3D9_DEVICE_ANGLE, &result))
-                {
-                    mD3D9Device = reinterpret_cast<IDirect3DDevice9 *>(result);
-                    mD3D9Device->AddRef();
-                }
+                mD3D9Device = reinterpret_cast<IDirect3DDevice9 *>(result);
+                mD3D9Device->AddRef();
             }
         }
         else
@@ -124,6 +118,7 @@ class D3DTextureTest : public ANGLETest
     void testTearDown() override
     {
         glDeleteProgram(mTextureProgram);
+        glDeleteProgram(mTextureProgramNoSampling);
 
         if (mD3D11Device)
         {
@@ -1197,60 +1192,165 @@ TEST_P(D3DTextureTestMS, CopyTexSubImage2DTest)
     eglDestroySurface(display, pbuffer);
 }
 
-TEST_P(D3DTextureTest, ClearTextureImage)
+class D3DTextureClearTest : public D3DTextureTest
 {
-    ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11());
+  protected:
+    D3DTextureClearTest() : D3DTextureTest() {}
 
-    EGLWindow *window  = getEGLWindow();
-    EGLDisplay display = window->getDisplay();
+    void RunClearTest(DXGI_FORMAT format)
+    {
+        ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11());
 
-    window->makeCurrent();
+        EGLWindow *window  = getEGLWindow();
+        EGLDisplay display = window->getDisplay();
 
-    const UINT bufferSize = 32;
-    EXPECT_TRUE(mD3D11Device != nullptr);
-    ID3D11Texture2D *d3d11_texture = nullptr;
-    CD3D11_TEXTURE2D_DESC desc(DXGI_FORMAT_R8G8B8A8_UNORM, bufferSize, bufferSize, 1, 1,
-                               D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
-    EXPECT_TRUE(SUCCEEDED(mD3D11Device->CreateTexture2D(&desc, nullptr, &d3d11_texture)));
+        window->makeCurrent();
 
-    const EGLint attribs[] = {EGL_NONE};
+        const UINT bufferSize = 32;
+        EXPECT_TRUE(mD3D11Device != nullptr);
+        ID3D11Texture2D *d3d11Texture = nullptr;
+        CD3D11_TEXTURE2D_DESC desc(format, bufferSize, bufferSize, 1, 1,
+                                   D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
+        EXPECT_TRUE(SUCCEEDED(mD3D11Device->CreateTexture2D(&desc, nullptr, &d3d11Texture)));
 
-    EGLImage image = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
-                                       static_cast<EGLClientBuffer>(d3d11_texture), attribs);
-    ASSERT_EGL_SUCCESS();
-    ASSERT_NE(image, EGL_NO_IMAGE_KHR);
+        // Can use unsized formats for all cases, but use sized ones to match Chromium.
+        EGLint internalFormat = GL_NONE;
+        switch (format)
+        {
+            case DXGI_FORMAT_R8G8B8A8_UNORM:
+            case DXGI_FORMAT_R16G16B16A16_FLOAT:
+                internalFormat = GL_RGBA;
+                break;
+            case DXGI_FORMAT_B8G8R8A8_UNORM:
+                internalFormat = GL_BGRA_EXT;
+                break;
+            case DXGI_FORMAT_R8_UNORM:
+                internalFormat = GL_RED_EXT;
+                break;
+            case DXGI_FORMAT_R8G8_UNORM:
+                internalFormat = GL_RG_EXT;
+                break;
+            case DXGI_FORMAT_R10G10B10A2_UNORM:
+                internalFormat = GL_RGB10_A2_EXT;
+                break;
+            case DXGI_FORMAT_R16_UNORM:
+                internalFormat = GL_R16_EXT;
+                break;
+            case DXGI_FORMAT_R16G16_UNORM:
+                internalFormat = GL_RG16_EXT;
+                break;
+            default:
+                ASSERT_TRUE(false);
+                break;
+        }
 
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    ASSERT_GL_NO_ERROR();
+        const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, internalFormat, EGL_NONE};
 
-    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
-    ASSERT_GL_NO_ERROR();
+        EGLImage image = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                                           static_cast<EGLClientBuffer>(d3d11Texture), attribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(image, EGL_NO_IMAGE_KHR);
 
-    GLuint fbo;
-    glGenFramebuffers(1, &fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-    EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
-              static_cast<unsigned>(GL_FRAMEBUFFER_COMPLETE));
-    ASSERT_GL_NO_ERROR();
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        ASSERT_GL_NO_ERROR();
 
-    glViewport(0, 0, static_cast<GLsizei>(bufferSize), static_cast<GLsizei>(bufferSize));
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_EQ(static_cast<GLint>(bufferSize) / 2, static_cast<GLint>(bufferSize) / 2, 255, 0,
-                    255, 255);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        ASSERT_GL_NO_ERROR();
 
-    glDeleteFramebuffers(1, &fbo);
-    glDeleteTextures(1, &texture);
+        GLuint fbo;
+        glGenFramebuffers(1, &fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
+                  static_cast<unsigned>(GL_FRAMEBUFFER_COMPLETE));
+        ASSERT_GL_NO_ERROR();
 
-    d3d11_texture->Release();
+        glViewport(0, 0, static_cast<GLsizei>(bufferSize), static_cast<GLsizei>(bufferSize));
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        if (format == DXGI_FORMAT_R16G16B16A16_FLOAT)
+        {
+            EXPECT_PIXEL_32F_EQ(static_cast<GLint>(bufferSize) / 2,
+                                static_cast<GLint>(bufferSize) / 2, 1.0f, 1.0f, 1.0f, 1.0f);
+        }
+        else
+        {
+            GLuint readColor[4] = {0, 0, 0, 255};
+            switch (internalFormat)
+            {
+                case GL_RGBA:
+                case GL_BGRA_EXT:
+                case GL_RGB10_A2_EXT:
+                    readColor[0] = readColor[1] = readColor[2] = 255;
+                    break;
+                case GL_RG_EXT:
+                case GL_RG16_EXT:
+                    readColor[0] = readColor[1] = 255;
+                    break;
+                case GL_RED_EXT:
+                case GL_R16_EXT:
+                    readColor[0] = 255;
+                    break;
+            }
+            // Read back as GL_UNSIGNED_BYTE even though the texture might have more than 8bpc.
+            EXPECT_PIXEL_EQ(static_cast<GLint>(bufferSize) / 2, static_cast<GLint>(bufferSize) / 2,
+                            readColor[0], readColor[1], readColor[2], readColor[3]);
+        }
+
+        glDeleteFramebuffers(1, &fbo);
+        glDeleteTextures(1, &texture);
+        eglDestroyImageKHR(display, image);
+
+        d3d11Texture->Release();
+    }
+};
+
+TEST_P(D3DTextureClearTest, ClearRGBA8)
+{
+    RunClearTest(DXGI_FORMAT_R8G8B8A8_UNORM);
+}
+
+TEST_P(D3DTextureClearTest, ClearBGRA8)
+{
+    RunClearTest(DXGI_FORMAT_B8G8R8A8_UNORM);
+}
+
+TEST_P(D3DTextureClearTest, ClearR8)
+{
+    RunClearTest(DXGI_FORMAT_R8_UNORM);
+}
+
+TEST_P(D3DTextureClearTest, ClearRG8)
+{
+    RunClearTest(DXGI_FORMAT_R8G8_UNORM);
+}
+
+TEST_P(D3DTextureClearTest, ClearRGB10A2)
+{
+    RunClearTest(DXGI_FORMAT_R10G10B10A2_UNORM);
+}
+
+TEST_P(D3DTextureClearTest, ClearRGBAF16)
+{
+    RunClearTest(DXGI_FORMAT_R16G16B16A16_FLOAT);
+}
+
+TEST_P(D3DTextureClearTest, ClearR16)
+{
+    RunClearTest(DXGI_FORMAT_R16_UNORM);
+}
+
+TEST_P(D3DTextureClearTest, ClearRG16)
+{
+    RunClearTest(DXGI_FORMAT_R16G16_UNORM);
 }
 
 TEST_P(D3DTextureTest, NonRenderableTextureImage)
@@ -1298,6 +1398,7 @@ TEST_P(D3DTextureTest, NonRenderableTextureImage)
 
     glDeleteFramebuffers(1, &fbo);
     glDeleteTextures(1, &texture);
+    eglDestroyImageKHR(display, image);
 
     d3d11_texture->Release();
 }
@@ -1432,14 +1533,328 @@ TEST_P(D3DTextureTest, RGBEmulationTextureImage)
     glDeleteRenderbuffers(1, &rgbaRbo);
     glDeleteFramebuffers(1, &fbo);
     glDeleteTextures(1, &texture);
+    eglDestroyImageKHR(display, image);
 
     d3d11_texture->Release();
+}
+
+TEST_P(D3DTextureTest, TextureArray)
+{
+    ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11());
+
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+
+    window->makeCurrent();
+
+    const UINT bufferSize = 32;
+    const UINT arraySize  = 4;
+
+    ID3D11Texture2D *d3d11_texture = nullptr;
+    CD3D11_TEXTURE2D_DESC desc(DXGI_FORMAT_R8G8B8A8_UNORM, bufferSize, bufferSize, arraySize, 1,
+                               D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
+    EXPECT_TRUE(SUCCEEDED(mD3D11Device->CreateTexture2D(&desc, nullptr, &d3d11_texture)));
+
+    const unsigned char kRFill = 0x12;
+    const unsigned char kGFill = 0x23;
+    const unsigned char kBFill = 0x34;
+    const unsigned char kAFill = 0x45;
+
+    std::vector<unsigned char> imageData(bufferSize * bufferSize * 4, 0);
+    for (size_t i = 0; i < imageData.size(); i += 4)
+    {
+        imageData[i]     = kRFill;
+        imageData[i + 1] = kGFill;
+        imageData[i + 2] = kBFill;
+        imageData[i + 3] = kAFill;
+    }
+
+    ID3D11DeviceContext *context = nullptr;
+    mD3D11Device->GetImmediateContext(&context);
+    ASSERT_NE(context, nullptr);
+
+    D3D11_BOX dstBox = {0, 0, 0, bufferSize, bufferSize, 1};
+    context->UpdateSubresource(d3d11_texture, arraySize - 1, &dstBox, imageData.data(),
+                               bufferSize * 4, imageData.size());
+
+    const EGLint attribs[] = {EGL_D3D11_TEXTURE_ARRAY_SLICE_ANGLE, arraySize - 1, EGL_NONE};
+    EGLImage image         = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                                       static_cast<EGLClientBuffer>(d3d11_texture), attribs);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(image, EGL_NO_IMAGE_KHR);
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    ASSERT_GL_NO_ERROR();
+
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
+              static_cast<unsigned>(GL_FRAMEBUFFER_COMPLETE));
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_EQ(static_cast<GLint>(bufferSize) / 2, static_cast<GLint>(bufferSize) / 2, kRFill,
+                    kGFill, kBFill, kAFill);
+
+    glDeleteFramebuffers(1, &fbo);
+    glDeleteTextures(1, &texture);
+    eglDestroyImageKHR(display, image);
+
+    d3d11_texture->Release();
+}
+
+class D3DTextureYUVTest : public D3DTextureTest
+{
+  protected:
+    D3DTextureYUVTest() : D3DTextureTest() {}
+
+    void RunYUVTest(DXGI_FORMAT format)
+    {
+        ASSERT_TRUE(format == DXGI_FORMAT_NV12 || format == DXGI_FORMAT_P010 ||
+                    format == DXGI_FORMAT_P016);
+        UINT formatSupport;
+        ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11() ||
+                           FAILED(mD3D11Device->CheckFormatSupport(format, &formatSupport)));
+        ASSERT_TRUE(formatSupport &
+                    (D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_SHADER_SAMPLE));
+
+        constexpr char kVS[] =
+            R"(precision highp float;
+            attribute vec4 position;
+            varying vec2 texcoord;
+
+            void main()
+            {
+                gl_Position = position;
+                texcoord = (position.xy * 0.5) + 0.5;
+                texcoord.y = 1.0 - texcoord.y;
+            })";
+
+        constexpr char kTextureExternalOESFS[] =
+            R"(#extension GL_OES_EGL_image_external : require
+            precision highp float;
+            uniform samplerExternalOES tex;
+            varying vec2 texcoord;
+
+            void main()
+            {
+                gl_FragColor = texture2D(tex, texcoord);
+            })";
+
+        GLuint textureExternalOESProgram = CompileProgram(kVS, kTextureExternalOESFS);
+        ASSERT_NE(0u, textureExternalOESProgram) << "shader compilation failed.";
+
+        GLint textureExternalOESUniformLocation =
+            glGetUniformLocation(textureExternalOESProgram, "tex");
+        ASSERT_NE(-1, textureExternalOESUniformLocation);
+
+        EGLWindow *window  = getEGLWindow();
+        EGLDisplay display = window->getDisplay();
+
+        window->makeCurrent();
+
+        const UINT bufferSize = 32;
+        EXPECT_TRUE(mD3D11Device != nullptr);
+        ID3D11Texture2D *d3d11_texture = nullptr;
+        CD3D11_TEXTURE2D_DESC desc(format, bufferSize, bufferSize, 1, 1,
+                                   D3D11_BIND_SHADER_RESOURCE);
+
+        const bool isNV12          = (format == DXGI_FORMAT_NV12);
+        const unsigned kYFillValue = isNV12 ? 0x12 : 0x1234;
+        const unsigned kUFillValue = isNV12 ? 0x23 : 0x2345;
+        const unsigned kVFillValue = isNV12 ? 0x34 : 0x3456;
+
+        std::vector<unsigned char> imageData;
+
+        if (isNV12)
+        {
+            imageData.resize(bufferSize * bufferSize * 3 / 2);
+            memset(imageData.data(), kYFillValue, bufferSize * bufferSize);
+            const size_t kUVOffset = bufferSize * bufferSize;
+            for (size_t i = 0; i < bufferSize * bufferSize / 2; i += 2)
+            {
+                imageData[kUVOffset + i]     = kUFillValue;
+                imageData[kUVOffset + i + 1] = kVFillValue;
+            }
+        }
+        else
+        {
+            imageData.resize(bufferSize * bufferSize * 3);
+            const size_t kUVOffset = bufferSize * bufferSize * 2;
+            for (size_t i = 0; i < kUVOffset; i += 2)
+            {
+                imageData[i]     = kYFillValue & 0xff;
+                imageData[i + 1] = (kYFillValue >> 8) & 0xff;
+                if (kUVOffset + i < imageData.size())
+                {
+                    // Interleave U & V samples.
+                    const unsigned fill          = (i % 4 == 0) ? kUFillValue : kVFillValue;
+                    imageData[kUVOffset + i]     = fill & 0xff;
+                    imageData[kUVOffset + i + 1] = (fill >> 8) & 0xff;
+                }
+            }
+        }
+
+        D3D11_SUBRESOURCE_DATA data = {};
+        data.pSysMem                = static_cast<const void *>(imageData.data());
+        data.SysMemPitch            = isNV12 ? bufferSize : bufferSize * 2;
+
+        EXPECT_TRUE(SUCCEEDED(mD3D11Device->CreateTexture2D(&desc, &data, &d3d11_texture)));
+
+        const EGLint yAttribs[] = {EGL_D3D11_TEXTURE_PLANE_ANGLE, 0, EGL_NONE};
+        EGLImage yImage = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                                            static_cast<EGLClientBuffer>(d3d11_texture), yAttribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(yImage, EGL_NO_IMAGE_KHR);
+
+        // Create and bind Y plane texture to image.
+        GLuint yTexture;
+        glGenTextures(1, &yTexture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_EXTERNAL_OES, yTexture);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        ASSERT_GL_NO_ERROR();
+
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, yImage);
+        ASSERT_GL_NO_ERROR();
+
+        GLuint rbo;
+        glGenRenderbuffers(1, &rbo);
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, isNV12 ? GL_RGBA8_OES : GL_RGBA16_EXT, bufferSize,
+                              bufferSize);
+        ASSERT_GL_NO_ERROR();
+
+        GLuint fbo;
+        glGenFramebuffers(1, &fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+        EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
+                  static_cast<unsigned>(GL_FRAMEBUFFER_COMPLETE));
+        ASSERT_GL_NO_ERROR();
+
+        // Draw the Y plane using a shader.
+        glUseProgram(textureExternalOESProgram);
+        glUniform1i(textureExternalOESUniformLocation, 0);
+        ASSERT_GL_NO_ERROR();
+
+        glViewport(0, 0, bufferSize, bufferSize);
+        drawQuad(textureExternalOESProgram, "position", 1.0f);
+        ASSERT_GL_NO_ERROR();
+
+        if (isNV12)
+        {
+
+            EXPECT_PIXEL_EQ(static_cast<GLint>(bufferSize) / 2, static_cast<GLint>(bufferSize) / 2,
+                            kYFillValue, 0, 0, 0xff);
+        }
+        else
+        {
+            EXPECT_PIXEL_16UI(static_cast<GLint>(bufferSize) / 2,
+                              static_cast<GLint>(bufferSize) / 2, kYFillValue, 0, 0, 0xffff);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        const EGLint uvAttribs[] = {EGL_D3D11_TEXTURE_PLANE_ANGLE, 1, EGL_NONE};
+        EGLImage uvImage =
+            eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                              static_cast<EGLClientBuffer>(d3d11_texture), uvAttribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(uvImage, EGL_NO_IMAGE_KHR);
+
+        // Create and bind UV plane texture to image.
+        GLuint uvTexture;
+        glGenTextures(1, &uvTexture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_EXTERNAL_OES, uvTexture);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        ASSERT_GL_NO_ERROR();
+
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, uvImage);
+        ASSERT_GL_NO_ERROR();
+
+        // Draw the UV plane using a shader.
+        glUseProgram(textureExternalOESProgram);
+        glUniform1i(textureExternalOESUniformLocation, 0);
+        ASSERT_GL_NO_ERROR();
+
+        // Use only half of the framebuffer to match UV plane dimensions.
+        glViewport(0, 0, bufferSize / 2, bufferSize / 2);
+        drawQuad(textureExternalOESProgram, "position", 1.0f);
+        ASSERT_GL_NO_ERROR();
+
+        if (isNV12)
+        {
+
+            EXPECT_PIXEL_EQ(static_cast<GLint>(bufferSize) / 4, static_cast<GLint>(bufferSize) / 4,
+                            kUFillValue, kVFillValue, 0, 0xff);
+        }
+        else
+        {
+            EXPECT_PIXEL_16UI(static_cast<GLint>(bufferSize) / 4,
+                              static_cast<GLint>(bufferSize) / 4, kUFillValue, kVFillValue, 0,
+                              0xffff);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        glDeleteProgram(textureExternalOESProgram);
+        glDeleteTextures(1, &yTexture);
+        glDeleteTextures(1, &uvTexture);
+        glDeleteFramebuffers(1, &fbo);
+        glDeleteRenderbuffers(1, &rbo);
+        eglDestroyImageKHR(display, yImage);
+        eglDestroyImageKHR(display, uvImage);
+
+        d3d11_texture->Release();
+    }
+};
+
+TEST_P(D3DTextureYUVTest, NV12TextureImage)
+{
+    RunYUVTest(DXGI_FORMAT_NV12);
+}
+
+// Reading back from RGBA16_EXT renderbuffer needs GL_EXT_texture_norm16 which is ES3 only.
+class D3DTextureYUVTestES3 : public D3DTextureYUVTest
+{
+  protected:
+    D3DTextureYUVTestES3() : D3DTextureYUVTest() {}
+};
+
+TEST_P(D3DTextureYUVTestES3, P010TextureImage)
+{
+    RunYUVTest(DXGI_FORMAT_P010);
+}
+
+TEST_P(D3DTextureYUVTestES3, P016TextureImage)
+{
+    RunYUVTest(DXGI_FORMAT_P016);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(D3DTextureTest);
+ANGLE_INSTANTIATE_TEST_ES2(D3DTextureClearTest);
+ANGLE_INSTANTIATE_TEST_ES2(D3DTextureYUVTest);
 ANGLE_INSTANTIATE_TEST_ES3(D3DTextureTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(D3DTextureYUVTestES3);
 // D3D Debug device reports an error. http://anglebug.com/3513
 // ANGLE_INSTANTIATE_TEST(D3DTextureTestMS, ES2_D3D11());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(D3DTextureTestMS);
 }  // namespace angle

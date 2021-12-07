@@ -6,10 +6,10 @@
 
 #include <algorithm>
 
+#include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
 #include "compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
-#include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
 
 using namespace sh;
 
@@ -22,8 +22,8 @@ class Separator : public TIntermTraverser
 {
   public:
     std::unordered_map<int, TIntermSymbol *> replacementMap;
-    Separator(TSymbolTable &symbolTable, IdGen &idGen) : TIntermTraverser(false, false, true, &symbolTable),
-        mIdGen(idGen)
+    Separator(TSymbolTable &symbolTable, IdGen &idGen)
+        : TIntermTraverser(false, false, true, &symbolTable), mIdGen(idGen)
     {}
     IdGen &mIdGen;
     bool visitDeclaration(Visit, TIntermDeclaration *declNode) override
@@ -37,20 +37,22 @@ class Separator : public TIntermTraverser
         if (type.isStructSpecifier() && symbolType != SymbolType::Empty)
         {
             const TStructure *structure = type.getStruct();
-            TVariable *structVar = nullptr;
-            TType * instanceType = nullptr;
-            //Name unnamed inline structs
-            if(structure->symbolType() == SymbolType::Empty)
+            TVariable *structVar        = nullptr;
+            TType *instanceType         = nullptr;
+            // Name unnamed inline structs
+            if (structure->symbolType() == SymbolType::Empty)
             {
-                const TStructure *structDefn = new TStructure(mSymbolTable, mIdGen.createNewName().rawName(), &structure->fields(), SymbolType::AngleInternal);
-                structVar = new TVariable(mSymbolTable, ImmutableString(""),
-                                         new TType(structDefn, true), SymbolType::Empty);
+                const TStructure *structDefn =
+                    new TStructure(mSymbolTable, mIdGen.createNewName().rawName(),
+                                   &structure->fields(), SymbolType::AngleInternal);
+                structVar    = new TVariable(mSymbolTable, ImmutableString(""),
+                                          new TType(structDefn, true), SymbolType::Empty);
                 instanceType = new TType(structDefn, false);
             }
             else
             {
-                structVar             = new TVariable(mSymbolTable, ImmutableString(""),
-                                                new TType(structure, true), SymbolType::Empty);
+                structVar    = new TVariable(mSymbolTable, ImmutableString(""),
+                                          new TType(structure, true), SymbolType::Empty);
                 instanceType = new TType(structure, false);
             }
             if (type.isArray())
@@ -58,33 +60,39 @@ class Separator : public TIntermTraverser
                 instanceType->makeArrays(type.getArraySizes());
             }
             instanceType->setQualifier(type.getQualifier());
-            
-            auto *instanceVar = new TVariable(mSymbolTable, var.name(), instanceType,
-                                              symbolType, var.extension());
+            auto *instanceVar =
+                new TVariable(mSymbolTable, var.name(), instanceType, symbolType, var.extensions());
 
             TIntermSequence replacements;
-            replacements.push_back(new TIntermSymbol(structVar));
+            replacements.push_back(new TIntermDeclaration({structVar}));
 
-            TIntermSymbol * instanceSymbol = new TIntermSymbol(instanceVar);
-            TIntermNode * instanceReplacement = instanceSymbol;
-            if(declaration.initExpr)
+            TIntermSymbol *instanceSymbol    = new TIntermSymbol(instanceVar);
+            TIntermDeclaration *instanceDecl = new TIntermDeclaration;
+            if (declaration.initExpr)
             {
-                instanceReplacement = new TIntermBinary(EOpInitialize, instanceSymbol, declaration.initExpr);
+                instanceDecl->appendDeclarator(new TIntermBinary(
+                    TOperator::EOpInitialize, instanceSymbol, declaration.initExpr));
             }
-            replacements.push_back(instanceReplacement);
+            else
+            {
+                instanceDecl->appendDeclarator(instanceSymbol);
+            }
+            replacements.push_back(instanceDecl);
 
             replacementMap[declaration.symbol.uniqueId().get()] = instanceSymbol;
-            mMultiReplacements.push_back(
-                NodeReplaceWithMultipleEntry(declNode, declNode->getChildNode(0), std::move(replacements)));
+            ASSERT(getParentNode() != nullptr);
+            ASSERT(getParentNode()->getAsBlock() != nullptr);
+            mMultiReplacements.push_back(NodeReplaceWithMultipleEntry(
+                getParentNode()->getAsBlock(), declNode, std::move(replacements)));
         }
 
         return false;
     }
-    
+
     void visitSymbol(TIntermSymbol *decl) override
     {
         auto symbol = replacementMap.find(decl->uniqueId().get());
-        if(symbol != replacementMap.end())
+        if (symbol != replacementMap.end())
         {
             queueReplacement(symbol->second->deepCopy(), OriginalNode::IS_DROPPED);
         }
@@ -95,7 +103,10 @@ class Separator : public TIntermTraverser
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool sh::SeparateCompoundStructDeclarations(TCompiler &compiler, IdGen &idGen, TIntermBlock &root)
+bool sh::SeparateCompoundStructDeclarations(TCompiler &compiler,
+                                            IdGen &idGen,
+                                            TIntermBlock &root,
+                                            TSymbolTable *symbolTable)
 {
     Separator separator(compiler.getSymbolTable(), idGen);
     root.traverse(&separator);
@@ -104,7 +115,7 @@ bool sh::SeparateCompoundStructDeclarations(TCompiler &compiler, IdGen &idGen, T
         return false;
     }
 
-    if (!SeparateDeclarations(&compiler, &root))
+    if (!SeparateDeclarations(&compiler, &root, symbolTable))
     {
         return false;
     }

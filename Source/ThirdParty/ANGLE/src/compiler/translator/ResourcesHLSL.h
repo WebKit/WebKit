@@ -40,7 +40,7 @@ class ResourcesHLSL : angle::NonCopyable
     void imageMetadataUniforms(TInfoSinkBase &out, unsigned int regIndex);
     TString uniformBlocksHeader(
         const ReferencedInterfaceBlocks &referencedInterfaceBlocks,
-        const std::map<int, const TInterfaceBlock *> &uniformBlockTranslatedToStructuredBuffer);
+        const std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap);
     TString shaderStorageBlocksHeader(const ReferencedInterfaceBlocks &referencedInterfaceBlocks);
 
     // Used for direct index references

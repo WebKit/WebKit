@@ -10,22 +10,30 @@
 #   variation of the population continuously.
 #
 
+import argparse
 import glob
-import subprocess
-import sys
+import logging
 import os
 import re
+import subprocess
+import sys
 
 base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 # Look for a [Rr]elease build.
-perftests_paths = glob.glob('out/*elease*')
-metric = 'wall_time'
-max_experiments = 10
+TEST_SUITE_SEARCH_PATH = glob.glob('out/*elease*')
+DEFAULT_METRIC = 'wall_time'
+DEFAULT_EXPERIMENTS = 10
 
-binary_name = 'angle_perftests'
+DEFAULT_TEST_SUITE = 'angle_perftests'
+
 if sys.platform == 'win32':
-    binary_name += '.exe'
+    DEFAULT_TEST_NAME = 'DrawCallPerfBenchmark.Run/d3d11_null'
+else:
+    DEFAULT_TEST_NAME = 'DrawCallPerfBenchmark.Run/gl'
+
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
 
 scores = []
 
@@ -74,80 +82,103 @@ def truncated_cov(data, n):
     return coefficient_of_variation(truncated_list(data, n))
 
 
-# Find most recent binary
-newest_binary = None
-newest_mtime = None
+def main(raw_args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--suite',
+        help='Test suite binary. Default is "%s".' % DEFAULT_TEST_SUITE,
+        default=DEFAULT_TEST_SUITE)
+    parser.add_argument(
+        '-m',
+        '--metric',
+        help='Test metric. Default is "%s".' % DEFAULT_METRIC,
+        default=DEFAULT_METRIC)
+    parser.add_argument(
+        '--experiments',
+        help='Number of experiments to run. Default is %d.' % DEFAULT_EXPERIMENTS,
+        default=DEFAULT_EXPERIMENTS,
+        type=int)
+    parser.add_argument('-v', '--verbose', help='Extra verbose logging.', action='store_true')
+    parser.add_argument('test_name', help='Test to run', default=DEFAULT_TEST_NAME)
+    args, extra_args = parser.parse_known_args(raw_args)
 
-for path in perftests_paths:
-    binary_path = os.path.join(base_path, path, binary_name)
-    if os.path.exists(binary_path):
-        binary_mtime = os.path.getmtime(binary_path)
-        if (newest_binary is None) or (binary_mtime > newest_mtime):
-            newest_binary = binary_path
-            newest_mtime = binary_mtime
+    if args.verbose:
+        logging.basicConfig(level='DEBUG')
 
-perftests_path = newest_binary
+    if sys.platform == 'win32':
+        args.suite += '.exe'
 
-if perftests_path == None or not os.path.exists(perftests_path):
-    print('Cannot find Release %s!' % binary_name)
-    sys.exit(1)
+    # Find most recent binary
+    newest_binary = None
+    newest_mtime = None
 
-if sys.platform == 'win32':
-    test_name = 'DrawCallPerfBenchmark.Run/d3d11_null'
-else:
-    test_name = 'DrawCallPerfBenchmark.Run/gl'
+    for path in TEST_SUITE_SEARCH_PATH:
+        binary_path = os.path.join(base_path, path, args.suite)
+        if os.path.exists(binary_path):
+            binary_mtime = os.path.getmtime(binary_path)
+            if (newest_binary is None) or (binary_mtime > newest_mtime):
+                newest_binary = binary_path
+                newest_mtime = binary_mtime
 
-if len(sys.argv) >= 2:
-    test_name = sys.argv[1]
+    perftests_path = newest_binary
 
-print('Using test executable: ' + perftests_path)
-print('Test name: ' + test_name)
+    if perftests_path == None or not os.path.exists(perftests_path):
+        print('Cannot find Release %s!' % args.test_suite)
+        return EXIT_FAILURE
+
+    print('Using test executable: %s' % perftests_path)
+    print('Test name: %s' % args.test_name)
+
+    def get_results(metric, extra_args=[]):
+        run = [perftests_path, '--gtest_filter=%s' % args.test_name] + extra_args
+        logging.info('running %s' % str(run))
+        process = subprocess.Popen(run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, err = process.communicate()
+
+        m = re.search(r'Running (\d+) tests', output)
+        if m and int(m.group(1)) > 1:
+            print(output)
+            raise Exception('Found more than one test result in output')
+
+        # Results are reported in the format:
+        # name_backend.metric: story= value units.
+        pattern = r'\.' + metric + r':.*= ([0-9.]+)'
+        logging.debug('searching for %s in output' % pattern)
+        m = re.findall(pattern, output)
+        if not m:
+            print(output)
+            raise Exception('Did not find the metric "%s" in the test output' % metric)
+
+        return [float(value) for value in m]
+
+    # Calibrate the number of steps
+    steps = get_results("steps_to_run", ["--calibration"] + extra_args)[0]
+    print("running with %d steps." % steps)
+
+    # Loop 'args.experiments' times, running the tests.
+    for experiment in range(args.experiments):
+        experiment_scores = get_results(args.metric,
+                                        ["--steps-per-trial", str(steps)] + extra_args)
+
+        for score in experiment_scores:
+            sys.stdout.write("%s: %.2f" % (args.metric, score))
+            scores.append(score)
+
+            if (len(scores) > 1):
+                sys.stdout.write(", mean: %.2f" % mean(scores))
+                sys.stdout.write(", variation: %.2f%%" %
+                                 (coefficient_of_variation(scores) * 100.0))
+
+            if (len(scores) > 7):
+                truncation_n = len(scores) >> 3
+                sys.stdout.write(", truncated mean: %.2f" % truncated_mean(scores, truncation_n))
+                sys.stdout.write(", variation: %.2f%%" %
+                                 (truncated_cov(scores, truncation_n) * 100.0))
+
+            print("")
+
+    return EXIT_SUCCESS
 
 
-def get_results(metric, extra_args=[]):
-    process = subprocess.Popen(
-        [perftests_path, '--gtest_filter=' + test_name] + extra_args,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
-    output, err = process.communicate()
-
-    m = re.search(r'Running (\d+) tests', output)
-    if m and int(m.group(1)) > 1:
-        print("Found more than one test result in output:")
-        print(output)
-        sys.exit(3)
-
-    # Results are reported in the format:
-    # name_backend.metric: story= value units.
-    pattern = r'\.' + metric + r':.*= ([0-9.]+)'
-    m = re.findall(pattern, output)
-    if not m:
-        print("Did not find the metric '%s' in the test output:" % metric)
-        print(output)
-        sys.exit(1)
-
-    return [float(value) for value in m]
-
-
-# Calibrate the number of steps
-steps = get_results("steps", ["--calibration"])[0]
-print("running with %d steps." % steps)
-
-# Loop 'max_experiments' times, running the tests.
-for experiment in range(max_experiments):
-    experiment_scores = get_results(metric, ["--steps-per-trial", str(steps)])
-
-    for score in experiment_scores:
-        sys.stdout.write("%s: %.2f" % (metric, score))
-        scores.append(score)
-
-        if (len(scores) > 1):
-            sys.stdout.write(", mean: %.2f" % mean(scores))
-            sys.stdout.write(", variation: %.2f%%" % (coefficient_of_variation(scores) * 100.0))
-
-        if (len(scores) > 7):
-            truncation_n = len(scores) >> 3
-            sys.stdout.write(", truncated mean: %.2f" % truncated_mean(scores, truncation_n))
-            sys.stdout.write(", variation: %.2f%%" % (truncated_cov(scores, truncation_n) * 100.0))
-
-        print("")
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

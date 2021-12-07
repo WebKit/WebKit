@@ -17,6 +17,7 @@
 #include <thread>
 
 #include "HistogramWriter.h"
+#include "tests/test_expectations/GPUTestExpectationsParser.h"
 #include "util/test_utils.h"
 
 namespace angle
@@ -60,6 +61,7 @@ enum class TestResultType
     Fail,
     NoResult,
     Pass,
+    Skip,
     Timeout,
     Unknown,
 };
@@ -92,7 +94,10 @@ struct TestResults
     std::mutex currentTestMutex;
     TestIdentifier currentTest;
     Timer currentTestTimer;
-    bool allDone = false;
+    double currentTestTimeout = 0.0;
+    bool allDone              = false;
+    std::string testArtifactsFakeTestName;
+    std::vector<std::string> testArtifactPaths;
 };
 
 struct FileLine
@@ -133,12 +138,35 @@ class TestSuite
 
     static TestSuite *GetInstance() { return mInstance; }
 
+    // Returns the path to the artifact in the output directory.
+    bool hasTestArtifactsDirectory() const;
+    std::string reserveTestArtifactPath(const std::string &artifactName);
+
+    int getShardIndex() const { return mShardIndex; }
+    int getBatchId() const { return mBatchId; }
+
+    // Test expectation processing.
+    bool loadTestExpectationsFromFileWithConfig(const GPUTestConfig &config,
+                                                const std::string &fileName);
+    bool loadAllTestExpectationsFromFile(const std::string &fileName);
+    int32_t getTestExpectation(const std::string &testName);
+    void maybeUpdateTestTimeout(uint32_t testExpectation);
+    int32_t getTestExpectationWithConfigAndUpdateTimeout(const GPUTestConfig &config,
+                                                         const std::string &testName);
+    bool logAnyUnusedTestExpectations();
+    void setTestExpectationsAllowMask(uint32_t mask)
+    {
+        mTestExpectationsParser.setTestExpectationsAllowMask(mask);
+    }
+
   private:
     bool parseSingleArg(const char *argument);
     bool launchChildTestProcess(uint32_t batchId, const std::vector<TestIdentifier> &testsInBatch);
     bool finishProcess(ProcessInfo *processInfo);
     int printFailuresAndReturnCount() const;
     void startWatchdog();
+    void dumpTestExpectationsErrorMessages();
+    int getSlowTestTimeout() const;
 
     static TestSuite *mInstance;
 
@@ -168,11 +196,16 @@ class TestSuite
     int mBatchTimeout;
     int mBatchId;
     int mFlakyRetries;
+    int mMaxFailures;
+    int mFailureCount;
+    bool mModifiedPreferredDevice;
     std::vector<std::string> mChildProcessArgs;
     std::map<TestIdentifier, FileLine> mTestFileLines;
     std::vector<ProcessInfo> mCurrentProcesses;
     std::thread mWatchdogThread;
     HistogramWriter mHistogramWriter;
+    std::string mTestArtifactDirectory;
+    GPUTestExpectationsParser mTestExpectationsParser;
 };
 
 bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut);

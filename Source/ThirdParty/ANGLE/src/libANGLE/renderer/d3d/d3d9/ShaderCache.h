@@ -95,7 +95,7 @@ class ShaderCache : angle::NonCopyable
         return mDevice->CreatePixelShader(function, shader);
     }
 
-    typedef std::unordered_map<std::string, ShaderObject *> Map;
+    typedef angle::HashMap<std::string, ShaderObject *> Map;
     Map mMap;
     std::mutex mMutex;
 

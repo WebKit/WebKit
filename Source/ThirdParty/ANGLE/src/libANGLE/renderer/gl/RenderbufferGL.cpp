@@ -68,10 +68,6 @@ angle::Result RenderbufferGL::setStorageMultisample(const gl::Context *context,
                                                     GLsizei height,
                                                     gl::MultisamplingMode mode)
 {
-    // Note: GL_EXT_multisampled_render_to_texture is not supported in the GL backend.
-    // http://anglebug.com/2894
-    ASSERT(mode == gl::MultisamplingMode::Regular);
-
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
@@ -80,9 +76,32 @@ angle::Result RenderbufferGL::setStorageMultisample(const gl::Context *context,
 
     nativegl::RenderbufferFormat renderbufferFormat =
         nativegl::GetRenderbufferFormat(functions, features, internalformat);
-    ANGLE_GL_TRY_ALWAYS_CHECK(
-        context, functions->renderbufferStorageMultisample(
-                     GL_RENDERBUFFER, samples, renderbufferFormat.internalFormat, width, height));
+    if (mode == gl::MultisamplingMode::Regular)
+    {
+        ANGLE_GL_TRY_ALWAYS_CHECK(context, functions->renderbufferStorageMultisample(
+                                               GL_RENDERBUFFER, samples,
+                                               renderbufferFormat.internalFormat, width, height));
+    }
+    else
+    {
+        ASSERT(mode == gl::MultisamplingMode::MultisampledRenderToTexture);
+
+        if (functions->renderbufferStorageMultisampleEXT)
+        {
+            ANGLE_GL_TRY_ALWAYS_CHECK(
+                context,
+                functions->renderbufferStorageMultisampleEXT(
+                    GL_RENDERBUFFER, samples, renderbufferFormat.internalFormat, width, height));
+        }
+        else
+        {
+            ASSERT(functions->renderbufferStorageMultisampleIMG);
+            ANGLE_GL_TRY_ALWAYS_CHECK(
+                context,
+                functions->renderbufferStorageMultisampleIMG(
+                    GL_RENDERBUFFER, samples, renderbufferFormat.internalFormat, width, height));
+        }
+    }
 
     mNativeInternalFormat = renderbufferFormat.internalFormat;
 

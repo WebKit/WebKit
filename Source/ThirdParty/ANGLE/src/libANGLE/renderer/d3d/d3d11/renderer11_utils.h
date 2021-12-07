@@ -70,7 +70,7 @@ unsigned int GetReservedVertexUniformVectors(D3D_FEATURE_LEVEL featureLevel);
 
 unsigned int GetReservedFragmentUniformVectors(D3D_FEATURE_LEVEL featureLevel);
 
-gl::Version GetMaximumClientVersion(D3D_FEATURE_LEVEL featureLevel);
+gl::Version GetMaximumClientVersion(const Renderer11DeviceCaps &caps);
 void GenerateCaps(ID3D11Device *device,
                   ID3D11DeviceContext *deviceContext,
                   const Renderer11DeviceCaps &renderer11DeviceCaps,

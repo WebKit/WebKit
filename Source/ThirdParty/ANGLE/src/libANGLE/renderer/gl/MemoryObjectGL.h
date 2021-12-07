@@ -22,6 +22,7 @@ class MemoryObjectGL : public MemoryObjectImpl
     void onDestroy(const gl::Context *context) override;
 
     angle::Result setDedicatedMemory(const gl::Context *context, bool dedicatedMemory) override;
+    angle::Result setProtectedMemory(const gl::Context *context, bool protectedMemory) override;
 
     angle::Result importFd(gl::Context *context,
                            GLuint64 size,

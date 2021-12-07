@@ -33,23 +33,22 @@ class RecordConstantPrecisionTraverser : public TIntermTraverser
 
     void visitConstantUnion(TIntermConstantUnion *node) override;
 
-    void nextIteration();
-
-    bool foundHigherPrecisionConstant() const { return mFoundHigherPrecisionConstant; }
-
   protected:
     bool operandAffectsParentOperationPrecision(TIntermTyped *operand);
-
-    bool mFoundHigherPrecisionConstant;
 };
 
 RecordConstantPrecisionTraverser::RecordConstantPrecisionTraverser(TSymbolTable *symbolTable)
-    : TIntermTraverser(true, false, true, symbolTable), mFoundHigherPrecisionConstant(false)
+    : TIntermTraverser(true, false, true, symbolTable)
 {}
 
 bool RecordConstantPrecisionTraverser::operandAffectsParentOperationPrecision(TIntermTyped *operand)
 {
     if (getParentNode()->getAsCaseNode() || getParentNode()->getAsBlock())
+    {
+        return false;
+    }
+
+    if (operand->getBasicType() == EbtBool || operand->getBasicType() == EbtStruct)
     {
         return false;
     }
@@ -69,62 +68,27 @@ bool RecordConstantPrecisionTraverser::operandAffectsParentOperationPrecision(TI
             case EOpIndexIndirect:
                 return false;
             default:
-                break;
-        }
-
-        TIntermTyped *otherOperand = parentAsBinary->getRight();
-        if (otherOperand == operand)
-        {
-            otherOperand = parentAsBinary->getLeft();
-        }
-        // If the precision of the other child is at least as high as the precision of the constant,
-        // the precision of the constant has no effect.
-        if (otherOperand->getAsConstantUnion() == nullptr &&
-            otherOperand->getPrecision() >= operand->getPrecision())
-        {
-            return false;
+                return true;
         }
     }
 
     TIntermAggregate *parentAsAggregate = getParentNode()->getAsAggregate();
     if (parentAsAggregate != nullptr)
     {
-        if (!parentAsAggregate->gotPrecisionFromChildren())
-        {
-            // This can be either:
-            // * a call to an user-defined function
-            // * a call to a texture function
-            // * some other kind of aggregate
-            // In any of these cases the constant precision has no effect.
-            return false;
-        }
-        if (parentAsAggregate->isConstructor() && parentAsAggregate->getBasicType() == EbtBool)
-        {
-            return false;
-        }
-        // If the precision of operands does affect the result, but the precision of any of the
-        // other children has a precision that's at least as high as the precision of the constant,
-        // the precision of the constant has no effect.
-        TIntermSequence *parameters = parentAsAggregate->getSequence();
-        for (TIntermNode *parameter : *parameters)
-        {
-            const TIntermTyped *typedParameter = parameter->getAsTyped();
-            if (parameter != operand && typedParameter != nullptr &&
-                parameter->getAsConstantUnion() == nullptr &&
-                typedParameter->getPrecision() >= operand->getPrecision())
-            {
-                return false;
-            }
-        }
+        // The precision of an aggregate is derived from children only in the following conditions:
+        //
+        // - Built-in math operations
+        // - Constructors
+        //
+        return parentAsAggregate->isConstructor() ||
+               BuiltInGroup::IsMath(parentAsAggregate->getOp());
     }
+
     return true;
 }
 
 void RecordConstantPrecisionTraverser::visitConstantUnion(TIntermConstantUnion *node)
 {
-    if (mFoundHigherPrecisionConstant)
-        return;
-
     // If the constant has lowp or undefined precision, it can't increase the precision of consuming
     // operations.
     if (node->getPrecision() < EbpMedium)
@@ -141,12 +105,6 @@ void RecordConstantPrecisionTraverser::visitConstantUnion(TIntermConstantUnion *
     TVariable *variable = DeclareTempVariable(mSymbolTable, node, EvqConst, &variableDeclaration);
     insertStatementInParentBlock(variableDeclaration);
     queueReplacement(CreateTempSymbolNode(variable), OriginalNode::IS_DROPPED);
-    mFoundHigherPrecisionConstant = true;
-}
-
-void RecordConstantPrecisionTraverser::nextIteration()
-{
-    mFoundHigherPrecisionConstant = false;
 }
 
 }  // namespace
@@ -154,21 +112,8 @@ void RecordConstantPrecisionTraverser::nextIteration()
 bool RecordConstantPrecision(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
 {
     RecordConstantPrecisionTraverser traverser(symbolTable);
-    // Iterate as necessary, and reset the traverser between iterations.
-    do
-    {
-        traverser.nextIteration();
-        root->traverse(&traverser);
-        if (traverser.foundHigherPrecisionConstant())
-        {
-            if (!traverser.updateTree(compiler, root))
-            {
-                return false;
-            }
-        }
-    } while (traverser.foundHigherPrecisionConstant());
-
-    return true;
+    root->traverse(&traverser);
+    return traverser.updateTree(compiler, root);
 }
 
 }  // namespace sh

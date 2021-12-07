@@ -12,6 +12,12 @@
 #include <iostream>
 
 #include <dlfcn.h>
+#ifdef ANGLE_PLATFORM_FUCHSIA
+#    include <zircon/process.h>
+#    include <zircon/syscalls.h>
+#else
+#    include <sys/resource.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -19,6 +25,21 @@
 
 namespace angle
 {
+
+namespace
+{
+std::string GetModulePath(void *moduleOrSymbol)
+{
+    Dl_info dlInfo;
+    if (dladdr(moduleOrSymbol, &dlInfo) == 0)
+    {
+        return "";
+    }
+
+    return dlInfo.dli_fname;
+}
+}  // namespace
+
 Optional<std::string> GetCWD()
 {
     std::array<char, 4096> pathBuf;
@@ -56,15 +77,21 @@ const char *GetPathSeparatorForEnvironmentVar()
     return ":";
 }
 
-std::string GetHelperExecutableDir()
+std::string GetModuleDirectory()
 {
     std::string directory;
     static int placeholderSymbol = 0;
-    Dl_info dlInfo;
-    if (dladdr(&placeholderSymbol, &dlInfo) != 0)
+    std::string moduleName       = GetModulePath(&placeholderSymbol);
+    if (!moduleName.empty())
     {
-        std::string moduleName = dlInfo.dli_fname;
-        directory              = moduleName.substr(0, moduleName.find_last_of('/') + 1);
+        directory = moduleName.substr(0, moduleName.find_last_of('/') + 1);
+    }
+
+    // Ensure we return the full path to the module, not the relative path
+    Optional<std::string> cwd = GetCWD();
+    if (cwd.valid() && !IsFullPath(directory))
+    {
+        directory = ConcatenatePath(cwd.value(), directory);
     }
     return directory;
 }
@@ -72,7 +99,9 @@ std::string GetHelperExecutableDir()
 class PosixLibrary : public Library
 {
   public:
-    PosixLibrary(const std::string &fullPath) : mModule(dlopen(fullPath.c_str(), RTLD_NOW)) {}
+    PosixLibrary(const std::string &fullPath, int extraFlags)
+        : mModule(dlopen(fullPath.c_str(), RTLD_NOW | extraFlags))
+    {}
 
     ~PosixLibrary() override
     {
@@ -94,25 +123,51 @@ class PosixLibrary : public Library
 
     void *getNative() const override { return mModule; }
 
+    std::string getPath() const override
+    {
+        if (!mModule)
+        {
+            return "";
+        }
+
+        return GetModulePath(mModule);
+    }
+
   private:
     void *mModule = nullptr;
 };
 
 Library *OpenSharedLibrary(const char *libraryName, SearchType searchType)
 {
-    std::string directory;
-    if (searchType == SearchType::ApplicationDir)
-    {
-        directory = GetHelperExecutableDir();
-    }
-
-    std::string fullPath = directory + libraryName + "." + GetSharedLibraryExtension();
-    return new PosixLibrary(fullPath);
+    std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
+    return OpenSharedLibraryWithExtension(libraryWithExtension.c_str(), searchType);
 }
 
-Library *OpenSharedLibraryWithExtension(const char *libraryName)
+Library *OpenSharedLibraryWithExtension(const char *libraryName, SearchType searchType)
 {
-    return new PosixLibrary(libraryName);
+    std::string directory;
+    if (searchType == SearchType::ModuleDir)
+    {
+#if ANGLE_PLATFORM_IOS
+        // On iOS, shared libraries must be loaded from within the app bundle.
+        directory = GetExecutableDirectory() + "/Frameworks/";
+#else
+        directory = GetModuleDirectory();
+#endif
+    }
+
+    int extraFlags = 0;
+    if (searchType == SearchType::AlreadyLoaded)
+    {
+        extraFlags = RTLD_NOLOAD;
+    }
+
+    std::string fullPath = directory + libraryName;
+#if ANGLE_PLATFORM_IOS
+    // On iOS, dlopen needs a suffix on the framework name to work.
+    fullPath = fullPath + "/" + libraryName;
+#endif
+    return new PosixLibrary(fullPath, extraFlags);
 }
 
 bool IsDirectory(const char *filename)
@@ -145,4 +200,31 @@ char GetPathSeparator()
 {
     return '/';
 }
+
+std::string GetRootDirectory()
+{
+    return "/";
+}
+
+double GetCurrentProcessCpuTime()
+{
+#ifdef ANGLE_PLATFORM_FUCHSIA
+    static zx_handle_t me = zx_process_self();
+    zx_info_task_runtime_t task_runtime;
+    zx_object_get_info(me, ZX_INFO_TASK_RUNTIME, &task_runtime, sizeof(task_runtime), nullptr,
+                       nullptr);
+    return static_cast<double>(task_runtime.cpu_time) * 1e-9;
+#else
+    // We could also have used /proc/stat, but that requires us to read the
+    // filesystem and convert from jiffies. /proc/stat also relies on jiffies
+    // (lower resolution) while getrusage can potentially use a sched_clock()
+    // underneath that has higher resolution.
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    double userTime = usage.ru_utime.tv_sec + usage.ru_utime.tv_usec * 1e-6;
+    double systemTime = usage.ru_stime.tv_sec + usage.ru_stime.tv_usec * 1e-6;
+    return userTime + systemTime;
+#endif
+}
+
 }  // namespace angle

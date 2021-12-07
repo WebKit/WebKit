@@ -10,6 +10,7 @@
 
 #include "common/bitset_utils.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/Surface.h"
@@ -249,34 +250,39 @@ angle::Result FramebufferD3D::blit(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-bool FramebufferD3D::checkStatus(const gl::Context *context) const
+gl::FramebufferStatus FramebufferD3D::checkStatus(const gl::Context *context) const
 {
     // if we have both a depth and stencil buffer, they must refer to the same object
     // since we only support packed_depth_stencil and not separate depth and stencil
     if (mState.hasSeparateDepthAndStencilAttachments())
     {
-        return false;
+        return gl::FramebufferStatus::Incomplete(
+            GL_FRAMEBUFFER_UNSUPPORTED,
+            gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
     }
 
     // D3D11 does not allow for overlapping RenderTargetViews.
     // If WebGL compatibility is enabled, this has already been checked at a higher level.
-    ASSERT(!context->getExtensions().webglCompatibility ||
-           mState.colorAttachmentsAreUniqueImages());
-    if (!context->getExtensions().webglCompatibility)
+    ASSERT(!context->isWebGL() || mState.colorAttachmentsAreUniqueImages());
+    if (!context->isWebGL())
     {
         if (!mState.colorAttachmentsAreUniqueImages())
         {
-            return false;
+            return gl::FramebufferStatus::Incomplete(
+                GL_FRAMEBUFFER_UNSUPPORTED,
+                gl::err::kFramebufferIncompleteUnsupportedNonUniqueAttachments);
         }
     }
 
     // D3D requires all render targets to have the same dimensions.
     if (!mState.attachmentsHaveSameDimensions())
     {
-        return false;
+        return gl::FramebufferStatus::Incomplete(
+            GL_FRAMEBUFFER_UNSUPPORTED,
+            gl::err::kFramebufferIncompleteUnsupportedMissmatchedDimensions);
     }
 
-    return true;
+    return gl::FramebufferStatus::Complete();
 }
 
 angle::Result FramebufferD3D::syncState(const gl::Context *context,
@@ -305,7 +311,7 @@ angle::Result FramebufferD3D::syncState(const gl::Context *context,
 const gl::AttachmentList &FramebufferD3D::getColorAttachmentsForRender(const gl::Context *context)
 {
     gl::DrawBufferMask activeProgramOutputs =
-        context->getState().getProgram()->getActiveOutputVariables();
+        context->getState().getProgram()->getExecutable().getActiveOutputVariablesMask();
 
     if (mColorAttachmentsForRender.valid() && mCurrentActiveProgramOutputs == activeProgramOutputs)
     {

@@ -214,6 +214,9 @@ struct FeaturesD3D : FeatureSetBase
         "There is a slow fxc compile performance issue with dynamic uniform indexing if "
         "translating a uniform block with a large array member to cbuffer.",
         &members, "http://anglebug.com/3682"};
+
+    Feature allowES3OnFL10_0 = {"allowES3OnFL10_0", FeatureCategory::D3DWorkarounds,
+                                "Allow ES3 on 10.0 devices", &members};
 };
 
 inline FeaturesD3D::FeaturesD3D()  = default;

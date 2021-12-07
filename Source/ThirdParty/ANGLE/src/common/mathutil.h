@@ -299,6 +299,7 @@ inline unsigned short float32ToFloat11(float fp32)
             // Convert it to a denormalized value.
             const unsigned int shift = (float32ExponentBias - float11ExponentBias) -
                                        (float32Val >> float32ExponentFirstBit);
+            ASSERT(shift < 32);
             float32Val =
                 ((1 << float32ExponentFirstBit) | (float32Val & float32MantissaMask)) >> shift;
         }
@@ -378,6 +379,7 @@ inline unsigned short float32ToFloat10(float fp32)
             // Convert it to a denormalized value.
             const unsigned int shift = (float32ExponentBias - float10ExponentBias) -
                                        (float32Val >> float32ExponentFirstBit);
+            ASSERT(shift < 32);
             float32Val =
                 ((1 << float32ExponentFirstBit) | (float32Val & float32MantissaMask)) >> shift;
         }
@@ -467,9 +469,8 @@ inline float float10ToFloat32(unsigned short fp10)
     }
 }
 
-// Convers to and from float and 16.16 fixed point format.
-
-inline float ConvertFixedToFloat(uint32_t fixedInput)
+// Converts to and from float and 16.16 fixed point format.
+inline float ConvertFixedToFloat(int32_t fixedInput)
 {
     return static_cast<float>(fixedInput) / 65536.0f;
 }
@@ -1128,6 +1129,39 @@ inline unsigned long ScanForward(uint64_t bits)
     ASSERT(ret != 0u);
     return firstBitIndex;
 }
+
+// Return the index of the most significant bit set. Indexing is such that bit 0 is the least
+// significant bit.
+inline unsigned long ScanReverse(uint32_t bits)
+{
+    ASSERT(bits != 0u);
+    unsigned long lastBitIndex = 0ul;
+    unsigned char ret          = _BitScanReverse(&lastBitIndex, bits);
+    ASSERT(ret != 0u);
+    return lastBitIndex;
+}
+
+inline unsigned long ScanReverse(uint64_t bits)
+{
+    ASSERT(bits != 0u);
+    unsigned long lastBitIndex = 0ul;
+#    if defined(ANGLE_IS_64_BIT_CPU)
+    unsigned char ret = _BitScanReverse64(&lastBitIndex, bits);
+#    else
+    unsigned char ret;
+    if (static_cast<uint32_t>(bits >> 32) == 0)
+    {
+        ret = _BitScanReverse(&lastBitIndex, static_cast<uint32_t>(bits));
+    }
+    else
+    {
+        ret = _BitScanReverse(&lastBitIndex, static_cast<uint32_t>(bits >> 32));
+        lastBitIndex += 32ul;
+    }
+#    endif  // defined(ANGLE_IS_64_BIT_CPU)
+    ASSERT(ret != 0u);
+    return lastBitIndex;
+}
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
 
 #if defined(ANGLE_PLATFORM_POSIX)
@@ -1148,6 +1182,30 @@ inline unsigned long ScanForward(uint64_t bits)
                                           : __builtin_ctz(static_cast<uint32_t>(bits)));
 #    endif  // defined(ANGLE_IS_64_BIT_CPU)
 }
+
+inline unsigned long ScanReverse(uint32_t bits)
+{
+    ASSERT(bits != 0u);
+    return static_cast<unsigned long>(sizeof(uint32_t) * CHAR_BIT - 1 - __builtin_clz(bits));
+}
+
+inline unsigned long ScanReverse(uint64_t bits)
+{
+    ASSERT(bits != 0u);
+#    if defined(ANGLE_IS_64_BIT_CPU)
+    return static_cast<unsigned long>(sizeof(uint64_t) * CHAR_BIT - 1 - __builtin_clzll(bits));
+#    else
+    if (static_cast<uint32_t>(bits >> 32) == 0)
+    {
+        return sizeof(uint32_t) * CHAR_BIT - 1 - __builtin_clz(static_cast<uint32_t>(bits));
+    }
+    else
+    {
+        return sizeof(uint32_t) * CHAR_BIT - 1 - __builtin_clz(static_cast<uint32_t>(bits >> 32)) +
+               32;
+    }
+#    endif  // defined(ANGLE_IS_64_BIT_CPU)
+}
 #endif  // defined(ANGLE_PLATFORM_POSIX)
 
 inline unsigned long ScanForward(uint8_t bits)
@@ -1160,21 +1218,14 @@ inline unsigned long ScanForward(uint16_t bits)
     return ScanForward(static_cast<uint32_t>(bits));
 }
 
-// Return the index of the most significant bit set. Indexing is such that bit 0 is the least
-// significant bit.
-inline unsigned long ScanReverse(unsigned long bits)
+inline unsigned long ScanReverse(uint8_t bits)
 {
-    ASSERT(bits != 0u);
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    unsigned long lastBitIndex = 0ul;
-    unsigned char ret          = _BitScanReverse(&lastBitIndex, bits);
-    ASSERT(ret != 0u);
-    return lastBitIndex;
-#elif defined(ANGLE_PLATFORM_POSIX)
-    return static_cast<unsigned long>(sizeof(unsigned long) * CHAR_BIT - 1 - __builtin_clzl(bits));
-#else
-#    error Please implement bit-scan-reverse for your platform!
-#endif
+    return ScanReverse(static_cast<uint32_t>(bits));
+}
+
+inline unsigned long ScanReverse(uint16_t bits)
+{
+    return ScanReverse(static_cast<uint32_t>(bits));
 }
 
 // Returns -1 on 0, otherwise the index of the least significant 1 bit as in GLSL.
@@ -1325,6 +1376,13 @@ constexpr T roundUpPow2(const T value, const T alignment)
 {
     ASSERT(gl::isPow2(alignment));
     return (value + alignment - 1) & ~(alignment - 1);
+}
+
+template <typename T>
+constexpr T roundDownPow2(const T value, const T alignment)
+{
+    ASSERT(gl::isPow2(alignment));
+    return value & ~(alignment - 1);
 }
 
 template <typename T>

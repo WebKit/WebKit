@@ -144,6 +144,9 @@ static D3D9FormatMap BuildD3D9FormatMap()
     InsertD3D9FormatInfo(&map, GL_R8_EXT,                           D3DFMT_X8R8G8B8,      D3DFMT_X8R8G8B8,       LoadR8ToBGRX8                             );
     InsertD3D9FormatInfo(&map, GL_RG8_EXT,                          D3DFMT_X8R8G8B8,      D3DFMT_X8R8G8B8,       LoadRG8ToBGRX8                            );
 
+    InsertD3D9FormatInfo(&map, GL_SRGB8,                            D3DFMT_X8R8G8B8,      D3DFMT_UNKNOWN,        LoadRGB8ToBGRX8                           );
+    InsertD3D9FormatInfo(&map, GL_SRGB8_ALPHA8_EXT,                 D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadRGBA8ToBGRA8                          );
+
     InsertD3D9FormatInfo(&map, GL_BGRA8_EXT,                        D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadToNative<GLubyte, 4>                  );
     InsertD3D9FormatInfo(&map, GL_BGRA4_ANGLEX,                     D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadBGRA4ToBGRA8                          );
     InsertD3D9FormatInfo(&map, GL_BGR5_A1_ANGLEX,                   D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadBGR5A1ToBGRA8                         );
@@ -152,6 +155,11 @@ static D3D9FormatMap BuildD3D9FormatMap()
     InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,    D3DFMT_DXT1,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1,  8>       );
     InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE,  D3DFMT_DXT3,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1, 16>       );
     InsertD3D9FormatInfo(&map, GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE,  D3DFMT_DXT5,          D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1, 16>       );
+
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_SRGB_S3TC_DXT1_EXT,        D3DFMT_DXT1,      D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1,  8>       );
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT,  D3DFMT_DXT1,      D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1,  8>       );
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT,  D3DFMT_DXT3,      D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1, 16>       );
+    InsertD3D9FormatInfo(&map, GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT,  D3DFMT_DXT5,      D3DFMT_UNKNOWN,        LoadCompressedToNative<4, 4, 1, 16>       );
 
     // These formats require checking if the renderer supports D3DFMT_L8 or D3DFMT_A8L8 and
     // then changing the format and loading function appropriately.
@@ -645,7 +653,6 @@ static inline unsigned int ComputeTypeIndex(GLenum type)
 
 const VertexFormat &GetVertexFormatInfo(DWORD supportedDeclTypes, angle::FormatID vertexFormatID)
 {
-    static bool initialized           = false;
     static DWORD initializedDeclTypes = 0;
     static VertexFormat formatConverters[NUM_GL_VERTEX_ATTRIB_TYPES][2][4];
     if (initializedDeclTypes != supportedDeclTypes)
@@ -674,7 +681,6 @@ const VertexFormat &GetVertexFormatInfo(DWORD supportedDeclTypes, angle::FormatI
                 }
             }
         }
-        initialized          = true;
         initializedDeclTypes = supportedDeclTypes;
     }
 

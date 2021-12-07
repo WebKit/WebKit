@@ -57,7 +57,7 @@ void ExtensionsGLANGLE::ensureEnabled(const String& name)
     if (m_requestableExtensions.contains(name) && !m_enabledExtensions.contains(name)) {
         if (!m_context->makeContextCurrent())
             return;
-        gl::RequestExtensionANGLE(name.ascii().data());
+        GL_RequestExtensionANGLE(name.ascii().data());
         m_enabledExtensions.add(name);
 
         if (name == "GL_CHROMIUM_color_buffer_float_rgba"_s)
@@ -88,7 +88,7 @@ String ExtensionsGLANGLE::getTranslatedShaderSourceANGLE(PlatformGLObject shader
         return emptyString();
     Vector<GLchar> name(sourceLength); // GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE includes null termination.
     GCGLint returnedLength = 0;
-    gl::GetTranslatedShaderSourceANGLE(shader, sourceLength, &returnedLength, name.data());
+    GL_GetTranslatedShaderSourceANGLE(shader, sourceLength, &returnedLength, name.data());
     if (!returnedLength)
         return emptyString();
     // returnedLength does not include the null terminator.
@@ -101,7 +101,7 @@ void ExtensionsGLANGLE::initializeAvailableExtensions()
     String extensionsString = getExtensions();
     for (auto& extension : extensionsString.split(' '))
         m_availableExtensions.add(extension);
-    extensionsString = String(reinterpret_cast<const char*>(gl::GetString(GL_REQUESTABLE_EXTENSIONS_ANGLE)));
+    extensionsString = String(reinterpret_cast<const char*>(GL_GetString(GL_REQUESTABLE_EXTENSIONS_ANGLE)));
     for (auto& extension : extensionsString.split(' '))
         m_requestableExtensions.add(extension);
     m_initializedAvailableExtensions = true;
@@ -117,12 +117,12 @@ void ExtensionsGLANGLE::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
     if (!m_context->makeContextCurrent())
         return;
 
-    gl::DrawBuffersEXT(bufs.bufSize, bufs.data);
+    GL_DrawBuffersEXT(bufs.bufSize, bufs.data);
 }
 
 String ExtensionsGLANGLE::getExtensions()
 {
-    return String(reinterpret_cast<const char*>(gl::GetString(GL_EXTENSIONS)));
+    return String(reinterpret_cast<const char*>(GL_GetString(GL_EXTENSIONS)));
 }
 
 GCGLenum ExtensionsGLANGLE::adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type)

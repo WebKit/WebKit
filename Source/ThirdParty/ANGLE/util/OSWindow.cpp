@@ -6,10 +6,16 @@
 
 #include "OSWindow.h"
 
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "common/debug.h"
+#include "common/system_utils.h"
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+#    include "util/android/AndroidWindow.h"
+#endif  // defined(ANGLE_PLATFORM_ANDROID)
 
 #ifndef DEBUG_EVENTS
 #    define DEBUG_EVENTS 0
@@ -440,3 +446,47 @@ void OSWindow::Delete(OSWindow **window)
     delete *window;
     *window = nullptr;
 }
+
+namespace angle
+{
+bool FindTestDataPath(const char *searchPath, char *dataPathOut, size_t maxDataPathOutLen)
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    const std::string searchPaths[] = {
+        AndroidWindow::GetExternalStorageDirectory(),
+        AndroidWindow::GetExternalStorageDirectory() + "/third_party/angle"};
+#else
+    const std::string searchPaths[] = {
+        GetExecutableDirectory(), GetExecutableDirectory() + "/../..", ".",
+        GetExecutableDirectory() + "/../../third_party/angle", "third_party/angle"};
+#endif  // defined(ANGLE_PLATFORM_ANDROID)
+
+    for (const std::string &path : searchPaths)
+    {
+        std::stringstream pathStream;
+        pathStream << path << "/" << searchPath;
+        std::string candidatePath = pathStream.str();
+
+        if (candidatePath.size() + 1 >= maxDataPathOutLen)
+        {
+            ERR() << "FindTestDataPath: Path too long.";
+            return false;
+        }
+
+        if (angle::IsDirectory(candidatePath.c_str()))
+        {
+            memcpy(dataPathOut, candidatePath.c_str(), candidatePath.size() + 1);
+            return true;
+        }
+
+        std::ifstream inFile(candidatePath.c_str());
+        if (!inFile.fail())
+        {
+            memcpy(dataPathOut, candidatePath.c_str(), candidatePath.size() + 1);
+            return true;
+        }
+    }
+
+    return false;
+}
+}  // namespace angle

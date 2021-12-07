@@ -10,6 +10,7 @@
 //        int a;
 //   2. Literal statements: "1.0;". The ESSL output doesn't define a default precision for float,
 //      so float literal statements would end up with no precision which is invalid ESSL.
+//   3. Statements after discard, return, break and continue.
 
 #ifndef COMPILER_TRANSLATOR_TREEOPS_PRUNENOOPS_H_
 #define COMPILER_TRANSLATOR_TREEOPS_PRUNENOOPS_H_

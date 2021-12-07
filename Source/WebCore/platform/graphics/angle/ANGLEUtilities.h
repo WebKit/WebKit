@@ -41,14 +41,14 @@ public:
         ASSERT(bindingPoint != static_cast<GLenum>(0u));
         if (condition) {
             m_bindingPoint = bindingPoint;
-            gl::GetIntegerv(bindingPointQuery, reinterpret_cast<GLint*>(&m_bindingValue));
+            GL_GetIntegerv(bindingPointQuery, reinterpret_cast<GLint*>(&m_bindingValue));
         }
     }
 
     ~ScopedRestoreTextureBinding()
     {
         if (m_bindingPoint)
-            gl::BindTexture(m_bindingPoint, m_bindingValue);
+            GL_BindTexture(m_bindingPoint, m_bindingValue);
     }
 
 private:
@@ -64,17 +64,17 @@ public:
     {
         if (!condition)
             return;
-        gl::GetIntegerv(query(bindingPoint), reinterpret_cast<GLint*>(&m_bindingValue));
+        GL_GetIntegerv(query(bindingPoint), reinterpret_cast<GLint*>(&m_bindingValue));
         if (bindingValue == m_bindingValue)
             return;
         m_bindingPoint = bindingPoint;
-        gl::BindBuffer(m_bindingPoint, bindingValue);
+        GL_BindBuffer(m_bindingPoint, bindingValue);
     }
 
     ~ScopedBufferBinding()
     {
         if (m_bindingPoint)
-            gl::BindBuffer(m_bindingPoint, m_bindingValue);
+            GL_BindBuffer(m_bindingPoint, m_bindingValue);
     }
 
 private:
@@ -110,14 +110,14 @@ public:
     {
         if (!m_bindingChanged && m_bindingValue == bindingValue)
             return;
-        gl::BindFramebuffer(m_framebufferTarget, bindingValue);
+        GL_BindFramebuffer(m_framebufferTarget, bindingValue);
         m_bindingChanged = m_bindingValue != bindingValue;
     }
     GLuint framebufferTarget() const { return m_framebufferTarget; }
     ~ScopedRestoreReadFramebufferBinding()
     {
         if (m_bindingChanged)
-            gl::BindFramebuffer(m_framebufferTarget, m_bindingValue);
+            GL_BindFramebuffer(m_framebufferTarget, m_bindingValue);
     }
 private:
     const GLenum m_framebufferTarget;
@@ -132,27 +132,27 @@ public:
         : m_name(condition ? name : 0)
     {
         if (m_name)
-            gl::GetIntegerv(m_name, &m_originalValue);
+            GL_GetIntegerv(m_name, &m_originalValue);
     }
     ScopedPixelStorageMode(GLenum name, GLint value, bool condition = true)
         : m_name(condition ? name : 0)
     {
         if (m_name) {
-            gl::GetIntegerv(m_name, &m_originalValue);
+            GL_GetIntegerv(m_name, &m_originalValue);
             pixelStore(value);
         }
     }
     ~ScopedPixelStorageMode()
     {
         if (m_name && m_valueChanged)
-            gl::PixelStorei(m_name, m_originalValue);
+            GL_PixelStorei(m_name, m_originalValue);
     }
     void pixelStore(GLint value)
     {
         ASSERT(m_name);
         if (!m_valueChanged && m_originalValue == value)
             return;
-        gl::PixelStorei(m_name, value);
+        GL_PixelStorei(m_name, value);
         m_valueChanged = m_originalValue != value;
     }
     operator GLint() const
@@ -171,11 +171,11 @@ class ScopedTexture {
 public:
     ScopedTexture()
     {
-        gl::GenTextures(1, &m_object);
+        GL_GenTextures(1, &m_object);
     }
     ~ScopedTexture()
     {
-        gl::DeleteTextures(1, &m_object);
+        GL_DeleteTextures(1, &m_object);
     }
     operator GLuint() const
     {
@@ -190,11 +190,11 @@ class ScopedFramebuffer {
 public:
     ScopedFramebuffer()
     {
-        gl::GenFramebuffers(1, &m_object);
+        GL_GenFramebuffers(1, &m_object);
     }
     ~ScopedFramebuffer()
     {
-        gl::DeleteFramebuffers(1, &m_object);
+        GL_DeleteFramebuffers(1, &m_object);
     }
     operator GLuint() const
     {
@@ -224,7 +224,7 @@ public:
     void reset()
     {
         if (m_object) {
-            gl::DeleteSync(m_object);
+            GL_DeleteSync(m_object);
             m_object = { };
         }
     }
@@ -232,7 +232,7 @@ public:
     void fenceSync()
     {
         reset();
-        m_object = gl::FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        m_object = GL_FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     }
     operator GLsync() const { return m_object; }
     operator bool() const { return m_object; }

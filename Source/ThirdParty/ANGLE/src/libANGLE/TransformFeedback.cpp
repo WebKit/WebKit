@@ -134,6 +134,9 @@ angle::Result TransformFeedback::begin(const Context *context,
                                        PrimitiveMode primitiveMode,
                                        Program *program)
 {
+    // TODO: http://anglebug.com/5486: This method should take in as parameter a
+    // ProgramExecutable instead of a Program.
+
     ANGLE_TRY(mImplementation->begin(context, primitiveMode));
     mState.mActive        = true;
     mState.mPrimitiveMode = primitiveMode;
@@ -141,10 +144,14 @@ angle::Result TransformFeedback::begin(const Context *context,
     mState.mVerticesDrawn = 0;
     bindProgram(context, program);
 
-    if (program)
+    // In one of the angle_unittests - "TransformFeedbackTest.SideEffectsOfStartAndStop"
+    // there is a code path where <context> is a nullptr, account for that possiblity.
+    const ProgramExecutable *programExecutable =
+        context ? context->getState().getProgramExecutable() : nullptr;
+    if (programExecutable)
     {
         // Compute the number of vertices we can draw before overflowing the bound buffers.
-        auto strides = program->getTransformFeedbackStrides();
+        auto strides = programExecutable->getTransformFeedbackStrides();
         ASSERT(strides.size() <= mState.mIndexedBuffers.size() && !strides.empty());
         GLsizeiptr minCapacity = std::numeric_limits<GLsizeiptr>::max();
         for (size_t index = 0; index < strides.size(); index++)
@@ -299,11 +306,11 @@ size_t TransformFeedback::getIndexedBufferCount() const
     return mState.mIndexedBuffers.size();
 }
 
-bool TransformFeedback::buffersBoundForOtherUse() const
+bool TransformFeedback::buffersBoundForOtherUseInWebGL() const
 {
     for (auto &buffer : mState.mIndexedBuffers)
     {
-        if (buffer.get() && buffer->isBoundForTransformFeedbackAndOtherUse())
+        if (buffer.get() && buffer->hasWebGLXFBBindingConflict(true))
         {
             return true;
         }

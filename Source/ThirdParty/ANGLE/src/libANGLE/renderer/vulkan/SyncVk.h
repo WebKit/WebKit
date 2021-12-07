@@ -38,7 +38,7 @@ class SyncHelper : public vk::Resource
 
     virtual void releaseToRenderer(RendererVk *renderer);
 
-    virtual angle::Result initialize(ContextVk *contextVk);
+    virtual angle::Result initialize(ContextVk *contextVk, bool isEglSyncObject);
     virtual angle::Result clientWait(Context *context,
                                      ContextVk *contextVk,
                                      bool flushCommands,
@@ -50,14 +50,6 @@ class SyncHelper : public vk::Resource
     {
         return angle::Result::Stop;
     }
-
-  private:
-    // The vkEvent that's signaled on `init` and can be waited on in `serverWait`, or queried with
-    // `getStatus`.
-    Event mEvent;
-    // The fence is signaled once the CB including the `init` signal is executed.
-    // `clientWait` waits on this fence.
-    Shared<Fence> mFence;
 };
 
 // Implementation of sync types: EGLSync(EGL_SYNC_ANDROID_NATIVE_FENCE_ANDROID).

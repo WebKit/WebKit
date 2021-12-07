@@ -5,6 +5,7 @@
 //
 // system_utils_win32.cpp: Implementation of OS-specific functions for Windows.
 
+#include "common/FastVector.h"
 #include "system_utils.h"
 
 #include <windows.h>
@@ -24,17 +25,24 @@ bool SetEnvironmentVar(const char *variableName, const char *value)
 
 std::string GetEnvironmentVar(const char *variableName)
 {
-    std::array<char, MAX_PATH> oldValue;
-    DWORD result =
-        GetEnvironmentVariableA(variableName, oldValue.data(), static_cast<DWORD>(oldValue.size()));
+    FastVector<char, MAX_PATH> value;
+
+    DWORD result;
+
+    // First get the length of the variable, including the null terminator
+    result = GetEnvironmentVariableA(variableName, nullptr, 0);
+
+    // Zero means the variable was not found, so return now.
     if (result == 0)
     {
         return std::string();
     }
-    else
-    {
-        return std::string(oldValue.data());
-    }
+
+    // Now size the vector to fit the data, and read the environment variable.
+    value.resize(result, 0);
+    result = GetEnvironmentVariableA(variableName, value.data(), result);
+
+    return std::string(value.data());
 }
 
 class Win32Library : public Library
@@ -44,11 +52,18 @@ class Win32Library : public Library
     {
         switch (searchType)
         {
-            case SearchType::ApplicationDir:
-                mModule = LoadLibraryA(libraryName);
+            case SearchType::ModuleDir:
+            {
+                std::string moduleRelativePath = ConcatenatePath(GetModuleDirectory(), libraryName);
+                mModule                        = LoadLibraryA(moduleRelativePath.c_str());
                 break;
+            }
+
             case SearchType::SystemDir:
                 mModule = LoadLibraryExA(libraryName, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+                break;
+            case SearchType::AlreadyLoaded:
+                mModule = GetModuleHandleA(libraryName);
                 break;
         }
     }
@@ -65,6 +80,7 @@ class Win32Library : public Library
     {
         if (!mModule)
         {
+            fprintf(stderr, "Module was not loaded\n");
             return nullptr;
         }
 
@@ -72,6 +88,22 @@ class Win32Library : public Library
     }
 
     void *getNative() const override { return reinterpret_cast<void *>(mModule); }
+
+    std::string getPath() const override
+    {
+        if (!mModule)
+        {
+            return "";
+        }
+
+        std::array<char, MAX_PATH> buffer;
+        if (GetModuleFileNameA(mModule, buffer.data(), buffer.size()) == 0)
+        {
+            return "";
+        }
+
+        return std::string(buffer.data());
+    }
 
   private:
     HMODULE mModule = nullptr;
@@ -92,8 +124,8 @@ Library *OpenSharedLibrary(const char *libraryName, SearchType searchType)
     }
 }
 
-Library *OpenSharedLibraryWithExtension(const char *libraryName)
+Library *OpenSharedLibraryWithExtension(const char *libraryName, SearchType searchType)
 {
-    return new Win32Library(libraryName, SearchType::SystemDir);
+    return new Win32Library(libraryName, searchType);
 }
 }  // namespace angle

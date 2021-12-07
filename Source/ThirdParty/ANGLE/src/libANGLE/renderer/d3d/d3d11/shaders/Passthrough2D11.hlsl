@@ -27,7 +27,7 @@ float4 PS_PassthroughA2D(in float4 inPosition : SV_POSITION, in float2 inTexCoor
     return float4(0.0f, 0.0f, 0.0f, TextureF.Sample(Sampler, inTexCoord).a);
 }
 
-float4 PS_PassthroughRGBA2DMS(in float4 inPosition : SV_POSITION, in float2 inTexCoord : TEXCORD0, in uint inSampleIndex : SV_SAMPLEINDEX) : SV_TARGET0
+float4 PS_PassthroughRGBA2DMS(in float4 inPosition : SV_POSITION, in float2 inTexCoord : TEXCOORD0, in uint inSampleIndex : SV_SAMPLEINDEX) : SV_TARGET0
 {
     return TextureF_MS.sample[inSampleIndex][inTexCoord].rgba;
 }

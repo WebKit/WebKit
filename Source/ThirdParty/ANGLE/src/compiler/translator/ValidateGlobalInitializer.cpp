@@ -97,10 +97,9 @@ void ValidateGlobalInitializerTraverser::visitConstantUnion(TIntermConstantUnion
 bool ValidateGlobalInitializerTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
 {
     // Disallow calls to user-defined functions and texture lookup functions in global variable
-    // initializers.
-    // This is done simply by disabling all function calls - built-in math functions don't use
-    // the function call ops.
-    if (node->isFunctionCall())
+    // initializers.  For simplicity, all non-math built-in calls are disallowed.
+    if (node->isFunctionCall() ||
+        (BuiltInGroup::IsBuiltIn(node->getOp()) && !BuiltInGroup::IsMath(node->getOp())))
     {
         onNonConstInitializerVisit(mExtNonConstGlobalInitializers);
     }

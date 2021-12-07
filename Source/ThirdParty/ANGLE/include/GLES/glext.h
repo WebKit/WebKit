@@ -955,9 +955,6 @@ GL_API void GL_APIENTRY glEndTilingQCOM (GLbitfield preserveMask);
 #define GL_WRITEONLY_RENDERING_QCOM       0x8823
 #endif /* GL_QCOM_writeonly_rendering */
 
-/* ANGLE GLES1 extensions */
-#include "glext_angle.h"
-
 #ifdef __cplusplus
 }
 #endif

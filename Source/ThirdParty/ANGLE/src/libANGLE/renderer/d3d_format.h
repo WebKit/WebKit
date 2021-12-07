@@ -10,6 +10,9 @@
 
 #include "libANGLE/renderer/Format.h"
 
+// We forcibly include the D3D9 header here because this file can be used from 3 different backends.
+#include <d3d9.h>
+
 namespace rx
 {
 namespace d3d9

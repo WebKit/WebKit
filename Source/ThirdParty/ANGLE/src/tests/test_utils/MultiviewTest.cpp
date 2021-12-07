@@ -247,6 +247,14 @@ MultiviewImplementationParams VertexShaderOpenGL(GLint majorVersion,
                                          multiviewExtension);
 }
 
+MultiviewImplementationParams VertexShaderVulkan(GLint majorVersion,
+                                                 GLint minorVersion,
+                                                 ExtensionName multiviewExtension)
+{
+    return MultiviewImplementationParams(majorVersion, minorVersion, false, egl_platform::VULKAN(),
+                                         multiviewExtension);
+}
+
 MultiviewImplementationParams VertexShaderD3D11(GLint majorVersion,
                                                 GLint minorVersion,
                                                 ExtensionName multiviewExtension)

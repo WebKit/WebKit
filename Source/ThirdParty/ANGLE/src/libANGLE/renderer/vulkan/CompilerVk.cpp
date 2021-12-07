@@ -20,7 +20,7 @@ CompilerVk::~CompilerVk() {}
 
 ShShaderOutput CompilerVk::getTranslatorOutputType() const
 {
-    return SH_GLSL_VULKAN_OUTPUT;
+    return SH_SPIRV_VULKAN_OUTPUT;
 }
 
 }  // namespace rx

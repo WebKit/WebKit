@@ -20,75 +20,132 @@ class RecordConstantPrecisionTest : public MatchOutputCodeTest
     RecordConstantPrecisionTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_ESSL_OUTPUT) {}
 };
 
-// The constant cannot be folded if its precision is higher than the other operands, since it
-// increases the precision of the consuming expression.
+// The constant's precision must be specified if its precision is higher than the other operands,
+// since it increases the precision of the consuming expression.
 TEST_F(RecordConstantPrecisionTest, HigherPrecisionConstantAsParameter)
 {
-    const std::string &shaderString =
-        "uniform mediump float u;"
-        "void main()\n"
-        "{\n"
-        "    const highp float a = 4096.5;\n"
-        "    mediump float b = fract(a + u);\n"
-        "    gl_FragColor = vec4(b);\n"
-        "}\n";
+    const std::string &shaderString = R"(
+uniform mediump float u;
+void main()
+{
+    const highp float a = 4096.5;
+    mediump float b = fract(a + u);
+    gl_FragColor = vec4(b);
+})";
     compile(shaderString);
     ASSERT_TRUE(foundInCode("const highp float s"));
     ASSERT_FALSE(foundInCode("fract(4096.5"));
     ASSERT_FALSE(foundInCode("fract((4096.5"));
 }
 
-// The constant can be folded if its precision is equal to the other operands, as it does not
-// increase the precision of the consuming expression.
+// The constant's precision does not need to be specified if its precision is equal to the other
+// operands, as it does not increase the precision of the consuming expression.  For simplicity
+// however, the constant's precision is specified anyway.
 TEST_F(RecordConstantPrecisionTest, EqualPrecisionConstantAsParameter)
 {
-    const std::string &shaderString =
-        "uniform mediump float u;"
-        "void main()\n"
-        "{\n"
-        "    const mediump float a = 4096.5;\n"
-        "    mediump float b = fract(a + u);\n"
-        "    gl_FragColor = vec4(b);\n"
-        "}\n";
+    const std::string &shaderString = R"(
+uniform mediump float u;
+void main()
+{
+    const mediump float a = 4096.5;
+    mediump float b = fract(a + u);
+    gl_FragColor = vec4(b);
+})";
     compile(shaderString);
-    ASSERT_FALSE(foundInCode("const mediump float s"));
-    ASSERT_TRUE(foundInCode("fract((4096.5"));
+    ASSERT_TRUE(foundInCode("const mediump float s"));
+    ASSERT_FALSE(foundInCode("fract((4096.5"));
 }
 
-// The constant cannot be folded if its precision is higher than the other operands, since it
-// increases the precision of the consuming expression. This applies also when the constant is
-// part of a constant expression that can be folded.
+// The constant's precision must be specified if its precision is higher than the other operands,
+// since it increases the precision of the consuming expression.  This applies also when the
+// constant is part of a constant expression that can be folded.
 TEST_F(RecordConstantPrecisionTest, FoldedBinaryConstantPrecisionIsHigher)
 {
-    const std::string &shaderString =
-        "uniform mediump float u;"
-        "void main()\n"
-        "{\n"
-        "    const highp float a = 4095.5;\n"
-        "    mediump float b = fract((a + 1.0) + u);\n"
-        "    gl_FragColor = vec4(b);\n"
-        "}\n";
+    const std::string &shaderString = R"(
+uniform mediump float u;
+void main()
+{
+    const highp float a = 4095.5;
+    mediump float b = fract((a + 1.0) + u);
+    gl_FragColor = vec4(b);
+})";
     compile(shaderString);
     ASSERT_TRUE(foundInCode("const highp float s"));
     ASSERT_FALSE(foundInCode("fract(4096.5"));
     ASSERT_FALSE(foundInCode("fract((4096.5"));
 }
 
-// The constant cannot be folded if its precision is higher than the other operands, since it
-// increases the precision of the consuming expression. This applies also when the constant is
-// part of a constant expression that can be folded.
+// The constant's precision must be specified if its precision is higher than the other operands,
+// since it increases the precision of the consuming expression.  This applies also when the
+// constant is part of a constant expression that can be folded.
 TEST_F(RecordConstantPrecisionTest, FoldedUnaryConstantPrecisionIsHigher)
 {
-    const std::string &shaderString =
-        "uniform mediump float u;"
-        "void main()\n"
-        "{\n"
-        "    const highp float a = 0.5;\n"
-        "    mediump float b = sin(fract(a) + u);\n"
-        "    gl_FragColor = vec4(b);\n"
-        "}\n";
+    const std::string &shaderString = R"(
+uniform mediump float u;
+void main()
+{
+    const highp float a = 0.5;
+    mediump float b = sin(fract(a) + u);
+    gl_FragColor = vec4(b);
+})";
     compile(shaderString);
     ASSERT_TRUE(foundInCode("const highp float s"));
     ASSERT_FALSE(foundInCode("sin(0.5"));
     ASSERT_FALSE(foundInCode("sin((0.5"));
+}
+
+// The constant's precision must be specified if its precision is higher than the other operands,
+// since it increases the precision of the consuming expression.  This applies also when the
+// constant is part of a constructor expression.  Note that lowp constants never need their
+// precision specified.
+TEST_F(RecordConstantPrecisionTest, HigherPrecisionConstantInConstructor)
+{
+    const std::string &shaderString = R"(
+uniform mediump float u;
+void main()
+{
+    const highp float a = 4096.5;
+    const lowp float b = 1.0;
+    lowp vec4 result = vec4(b, a, b, u);
+    gl_FragColor = result;
+})";
+    compile(shaderString);
+    ASSERT_TRUE(foundInCode("const highp float s"));
+    ASSERT_FALSE(foundInCode("const lowp float s"));
+    ASSERT_TRUE(foundInCode("vec4(1.0, s"));
+}
+
+// The constant's precision does not need to be specified if its used to initialize a variable.
+TEST_F(RecordConstantPrecisionTest, HigherPrecisionConstantInAssignment)
+{
+    const std::string &shaderString = R"(
+uniform mediump float u;
+void main()
+{
+    const highp float a = 4096.5;
+    mediump float b = a;
+    mediump float c;
+    c = a;
+    gl_FragColor = vec4(b, b, c, c);
+})";
+    compile(shaderString);
+    ASSERT_FALSE(foundInCode("const highp float s"));
+    ASSERT_TRUE(foundInCode("b = 4096.5"));
+    ASSERT_TRUE(foundInCode("c = 4096.5"));
+}
+
+// The constant's precision does not need to be specified if its used as an index.
+TEST_F(RecordConstantPrecisionTest, HigherPrecisionConstantInIndex)
+{
+    const std::string &shaderString = R"(
+uniform mediump float u;
+void main()
+{
+    const highp int a = 33000;
+    mediump float b[34000];
+    gl_FragColor = vec4(b[a]);
+})";
+    compile(shaderString);
+    ASSERT_FALSE(foundInCode("const highp int s"));
+    ASSERT_TRUE(foundInCode("b[33000]"));
 }

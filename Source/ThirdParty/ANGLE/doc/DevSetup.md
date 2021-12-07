@@ -22,17 +22,18 @@ On Windows:
  * Install the [Windows 10 SDK, latest version](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).
    * You can install it through Visual Studio Installer if available.
    * Required for GN-generated Visual Studio projects, the Debug runtime for D3D11, and the D3D Compiler DLL.
- * (optional) See the [Chromium Windows build instructions](https://chromium.googlesource.com/chromium/src/+/master/docs/windows_build_instructions.md) for more info.
+ * (optional) See the [Chromium Windows build instructions](https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md) for more info.
 
 On Linux:
 
- * Install package dependencies by running `install-build-deps.sh` later on.
- * Bison and flex are not needed as we only support generating the translator grammar on Windows.
+ * Dependencies will be handled later (see `install-build-deps.sh` below).
 
 On MacOS:
 
  * [XCode](https://developer.apple.com/xcode/) for Clang and development files.
- * Bison and flex are not needed as we only support generating the translator grammar on Windows.
+ * For Googlers on MacOS, you'll first need authorization to download macOS SDK's from Chromium
+   servers before running `gclient sync`. Obtain this authorization via `cipd auth-login`
+   and following the instructions.
 
 ### Getting the source
 
@@ -41,8 +42,10 @@ git clone https://chromium.googlesource.com/angle/angle
 cd angle
 python scripts/bootstrap.py
 gclient sync
-git checkout master
+git checkout main
 ```
+
+If you're contributing code, you will also need to set up the commit-msg hook. See [ContributingCode#getting-started-with-gerrit](ContributingCode.md#getting-started-with-gerrit) for more detailed instructions.
 
 On Linux only, you need to install all the necessary dependencies before going further by running this command:
 ```
@@ -56,17 +59,24 @@ gn gen out/Debug
 
 On Windows only, ensure you **set `DEPOT_TOOLS_WIN_TOOLCHAIN=0` in your environment** (if you are not a Googler).
 
-GN will generate ninja files. To change the default build options run `gn args out/Debug`.  Some commonly used options are:
+GN will generate ninja files. The default build options build ANGLE with clang and in release mode.
+Often, the default options are the desired ones, but they can be changed by running
+`gn args out/Debug`. Some options that are commonly overriden for development are:
+
 ```
-target_cpu = "x86"        (default is "x64")
-is_clang = false          (to use system default compiler instead of clang)
-is_debug = true           (enable debugging, true is the default)
-dcheck_always_on = true   (enable release asserts and debug layers)
+is_component_build = false         (links dependencies into the build targets)
+target_cpu = "x86"                 (default is "x64")
+is_clang = false (NOT RECOMMENDED) (to use system default compiler instead of clang)
+is_debug = false                   (for release builds. is_debug = true is the default)
+angle_assert_always_on = true      (enable release asserts and debug layers)
 ```
 
 For a release build run `gn args out/Release` and set `is_debug = false`.
 
 On Windows, you can build for the Universal Windows Platform (UWP) by setting `target_os = "winuwp"` in the args.
+Setting `is_component_build = false` is highly recommended to support moving libEGL.dll and libGLESv2.dll to an
+application's directory and being self-contained, instead of depending on other DLLs (d3dcompiler_47.dll is still
+needed for the Direct3D backend).
 
 For more information on GN run `gn help`.
 
@@ -122,7 +132,11 @@ This sections describes how to use ANGLE to build an OpenGL ES application.
 ANGLE can use a variety of backing renderers based on platform.  On Windows, it defaults to D3D11 where it's available,
 or D3D9 otherwise.  On other desktop platforms, it defaults to GL.  On mobile, it defaults to GLES.
 
-ANGLE provides an EGL extension called `EGL_ANGLE_platform_angle` which allows uers to select which renderer to use at EGL initialization time by calling eglGetPlatformDisplayEXT with special enums. Details of the extension can be found in it's specification in `extensions/ANGLE_platform_angle.txt` and `extensions/ANGLE_platform_angle_*.txt` and examples of it's use can be seen in the ANGLE samples and tests, particularly `util/EGLWindow.cpp`.
+ANGLE provides an EGL extension called `EGL_ANGLE_platform_angle` which allows uers to select
+which renderer to use at EGL initialization time by calling eglGetPlatformDisplayEXT with special
+enums. Details of the extension can be found in its specification in
+`extensions/EGL_ANGLE_platform_angle.txt` and `extensions/EGL_ANGLE_platform_angle_*.txt` and
+examples of its use can be seen in the ANGLE samples and tests, particularly `util/EGLWindow.cpp`.
 
 To change the default D3D backend:
 
@@ -163,18 +177,29 @@ On Linux and MacOS, either:
  - Link you application against `libGLESv2` and `libEGL`
  - Use `dlopen` to load the OpenGL ES and EGL entry points at runtime.
 
-## GLSL ES to GLSL Translator
-In addition to OpenGL ES 2.0 and EGL 1.4 libraries, ANGLE also provides a GLSL ES to GLSL translator. This is useful for implementing OpenGL ES emulators on top of desktop OpenGL.
+## GLSL ES Translator
+
+In addition to OpenGL ES and EGL libraries, ANGLE also provides a GLSL ES
+translator. The translator targets various back-ends, including HLSL, GLSL
+for desktop and mobile, SPIR-V and Metal SL. To build the translator, build
+the `angle_shader_translator` target. Run the translator binary without
+arguments to see a usage message.
 
 ### Source and Building
-The translator code is included with ANGLE but fully independent; it resides in `src/compiler`.
-Follow the steps above for [getting and building ANGLE](#getting-the-source) to build the translator on the platform of your choice.
+
+The translator code is included with ANGLE but fully independent; it resides
+in [`src/compiler`](../src/compiler). Follow the steps above for
+[getting and building ANGLE](#getting-the-source) to build the translator on
+the platform of your choice.
 
 ### Usage
-The basic usage is shown in `essl_to_glsl` sample under `samples/translator`. To translate a GLSL ES shader, following functions need to be called in the same order:
 
- * `ShInitialize()` initializes the translator library and must be called only once from each process using the translator.
- * `ShContructCompiler()` creates a translator object for vertex or fragment shader.
- * `ShCompile()` translates the given shader.
- * `ShDestruct()` destroys the given translator.
- * `ShFinalize()` shuts down the translator library and must be called only once from each process using the translator.
+The ANGLE [`shader_translator`](../samples/shader_translator/shader_translator.cpp)
+sample demos basic C++ API usage. To translate a GLSL ES shader, call the following
+functions in the same order:
+
+ * `sh::Initialize()` initializes the translator library and must be called only once from each process using the translator.
+ * `sh::ContructCompiler()` creates a translator object for vertex or fragment shader.
+ * `sh::Compile()` translates the given shader.
+ * `sh::Destruct()` destroys the given translator.
+ * `sh::Finalize()` shuts down the translator library and must be called only once from each process using the translator.

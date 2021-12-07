@@ -6,6 +6,7 @@
 
 #include "gtest/gtest.h"
 #include "test_utils/runner/TestSuite.h"
+#include "util/OSWindow.h"
 
 void ANGLEProcessTestArgs(int *argc, char *argv[]);
 
@@ -18,10 +19,33 @@ void ANGLEProcessTestArgs(int *argc, char *argv[]);
 // likely specialize more register functions more like dEQP instead of relying on static init.
 void RegisterContextCompatibilityTests();
 
+namespace
+{
+constexpr char kTestExpectationsPath[] = "src/tests/angle_end2end_tests_expectations.txt";
+}  // namespace
+
 int main(int argc, char **argv)
 {
     angle::TestSuite testSuite(&argc, argv);
     ANGLEProcessTestArgs(&argc, argv);
     RegisterContextCompatibilityTests();
+
+    constexpr size_t kMaxPath = 512;
+    std::array<char, kMaxPath> foundDataPath;
+    if (!angle::FindTestDataPath(kTestExpectationsPath, foundDataPath.data(), foundDataPath.size()))
+    {
+        std::cerr << "Unable to find test expectations path (" << kTestExpectationsPath << ")\n";
+        return EXIT_FAILURE;
+    }
+
+    // end2end test expectations only allow SKIP at the moment.
+    testSuite.setTestExpectationsAllowMask(angle::GPUTestExpectationsParser::kGpuTestSkip |
+                                           angle::GPUTestExpectationsParser::kGpuTestTimeout);
+
+    if (!testSuite.loadAllTestExpectationsFromFile(std::string(foundDataPath.data())))
+    {
+        return EXIT_FAILURE;
+    }
+
     return testSuite.run();
 }

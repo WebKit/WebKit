@@ -25,6 +25,10 @@
 #    include <os/log.h>
 #endif
 
+#if defined(ANGLE_PLATFORM_WINDOWS)
+#    include <windows.h>
+#endif
+
 #include "anglebase/no_destructor.h"
 #include "common/Optional.h"
 #include "common/angleutils.h"
@@ -129,14 +133,16 @@ std::mutex &GetDebugMutex()
     return *g_debugMutex;
 }
 
-ScopedPerfEventHelper::ScopedPerfEventHelper(gl::Context *context, gl::EntryPoint entryPoint)
-    : mContext(context), mEntryPoint(entryPoint), mFunctionName(nullptr)
+ScopedPerfEventHelper::ScopedPerfEventHelper(gl::Context *context, angle::EntryPoint entryPoint)
+    : mContext(context), mEntryPoint(entryPoint), mFunctionName(nullptr), mCalledBeginEvent(false)
 {}
 
 ScopedPerfEventHelper::~ScopedPerfEventHelper()
 {
-    // EGL_Terminate() can set g_debugAnnotator to nullptr; must call DebugAnnotationsActive() here
-    if (mFunctionName && DebugAnnotationsActive())
+    // EGL_Initialize() and EGL_Terminate() can change g_debugAnnotator.  Must check the value of
+    // g_debugAnnotator and whether ScopedPerfEventHelper::begin() initiated a begine that must be
+    // ended now.
+    if (DebugAnnotationsInitialized() && mCalledBeginEvent)
     {
         g_debugAnnotator->endEvent(mContext, mFunctionName, mEntryPoint);
     }
@@ -156,6 +162,7 @@ void ScopedPerfEventHelper::begin(const char *format, ...)
     ANGLE_LOG(EVENT) << std::string(&buffer[0], len);
     if (DebugAnnotationsInitialized())
     {
+        mCalledBeginEvent = true;
         g_debugAnnotator->beginEvent(mContext, mEntryPoint, mFunctionName, buffer.data());
     }
 }
@@ -163,8 +170,8 @@ void ScopedPerfEventHelper::begin(const char *format, ...)
 LogMessage::LogMessage(const char *file, const char *function, int line, LogSeverity severity)
     : mFile(file), mFunction(function), mLine(line), mSeverity(severity)
 {
-    // EVENT() does not require additional function(line) info.
-    if (mSeverity != LOG_EVENT)
+    // INFO() and EVENT() do not require additional function(line) info.
+    if (mSeverity > LOG_INFO)
     {
         const char *slash = std::max(strrchr(mFile, '/'), strrchr(mFile, '\\'));
         mStream << (slash ? (slash + 1) : mFile) << ":" << mLine << " (" << mFunction << "): ";
@@ -179,7 +186,7 @@ LogMessage::~LogMessage()
         lock = std::unique_lock<std::mutex>(*g_debugMutex);
     }
 
-    if (DebugAnnotationsInitialized() && (mSeverity >= LOG_INFO))
+    if (DebugAnnotationsInitialized() && (mSeverity > LOG_INFO))
     {
         g_debugAnnotator->logMessage(*this);
     }
@@ -279,7 +286,7 @@ void Trace(LogSeverity severity, const char *message)
         }
 #else
         // Note: we use fprintf because <iostream> includes static initializers.
-        fprintf((severity >= LOG_ERR) ? stderr : stdout, "%s: %s\n", LogSeverityName(severity),
+        fprintf((severity >= LOG_WARN) ? stderr : stdout, "%s: %s\n", LogSeverityName(severity),
                 str.c_str());
 #endif
     }

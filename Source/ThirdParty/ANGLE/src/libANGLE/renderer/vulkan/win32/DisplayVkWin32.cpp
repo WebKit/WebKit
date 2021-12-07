@@ -152,7 +152,6 @@ egl::ConfigSet DisplayVkWin32::generateConfigs()
 void DisplayVkWin32::checkConfigSupport(egl::Config *config)
 {
     const vk::Format &formatVk = this->getRenderer()->getFormat(config->renderTargetFormat);
-    VkFormat nativeFormat      = formatVk.vkImageFormat;
 
     // If the format list includes just one entry of VK_FORMAT_UNDEFINED,
     // the surface has no preferred format.  Otherwise, at least one
@@ -164,7 +163,7 @@ void DisplayVkWin32::checkConfigSupport(egl::Config *config)
 
     for (const VkSurfaceFormatKHR &surfaceFormat : mSurfaceFormats)
     {
-        if (surfaceFormat.format == nativeFormat)
+        if (surfaceFormat.format == formatVk.getActualRenderableImageVkFormat())
         {
             return;
         }

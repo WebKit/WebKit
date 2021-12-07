@@ -172,4 +172,8 @@ TEST_P(DynamicPromotionPerfTest, Run)
 }
 
 ANGLE_INSTANTIATE_TEST(DynamicPromotionPerfTest, DynamicPromotionD3D11Params());
+
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DynamicPromotionPerfTest);
+
 }  // anonymous namespace

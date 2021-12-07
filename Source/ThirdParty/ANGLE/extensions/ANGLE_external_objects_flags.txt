@@ -20,8 +20,8 @@ Status
 
 Version
 
-    Last Modified Date: Aug 3, 2020
-    Revision: 1
+    Last Modified Date: Nov 10, 2021
+    Revision: 2
 
 Number
 
@@ -42,6 +42,10 @@ Overview
     allows applications to drop usage flags that are detrimental to
     performance, or add create flags as necessary.
 
+    Additionally, these entry points take the pointer to the chain of extension
+    structures appended to VkImageCreateInfo, so that the OpenGL implementation
+    can recreate the image identically.
+
 New Procedures and Functions
 
     The following commands are added:
@@ -54,7 +58,8 @@ New Procedures and Functions
                                        uint memory,
                                        uint64 offset,
                                        bitfield createFlags,
-                                       bitfield usageFlags);
+                                       bitfield usageFlags,
+                                       const void *imageCreateInfoPNext);
 
         void TexStorageMemFlags2DMultisampleANGLE(enum target,
                                                   sizei samples,
@@ -65,7 +70,8 @@ New Procedures and Functions
                                                   uint memory,
                                                   uint64 offset,
                                                   bitfield createFlags,
-                                                  bitfield usageFlags);
+                                                  bitfield usageFlags,
+                                                  const void *imageCreateInfoPNext);
 
         void TexStorageMemFlags3DANGLE(enum target,
                                        sizei levels,
@@ -76,7 +82,8 @@ New Procedures and Functions
                                        uint memory,
                                        uint64 offset,
                                        bitfield createFlags,
-                                       bitfield usageFlags);
+                                       bitfield usageFlags,
+                                       const void *imageCreateInfoPNext);
 
         void TexStorageMemFlags3DMultisampleANGLE(enum target,
                                                   sizei samples,
@@ -88,7 +95,8 @@ New Procedures and Functions
                                                   uint memory,
                                                   uint64 offset,
                                                   bitfield createFlags,
-                                                  bitfield usageFlags);
+                                                  bitfield usageFlags,
+                                                  const void *imageCreateInfoPNext);
 
         [[ The following are added if direct state access is supported ]]
 
@@ -100,7 +108,8 @@ New Procedures and Functions
                                            uint memory,
                                            uint64 offset,
                                            bitfield createFlags,
-                                           bitfield usageFlags);
+                                           bitfield usageFlags,
+                                           const void *imageCreateInfoPNext);
 
         void TextureStorageMemFlags2DMultisampleANGLE(uint texture,
                                                       sizei samples,
@@ -111,7 +120,8 @@ New Procedures and Functions
                                                       uint memory,
                                                       uint64 offset,
                                                       bitfield createFlags,
-                                                      bitfield usageFlags);
+                                                      bitfield usageFlags,
+                                                      const void *imageCreateInfoPNext);
 
         void TextureStorageMemFlags3DANGLE(uint texture,
                                            sizei levels,
@@ -122,7 +132,8 @@ New Procedures and Functions
                                            uint memory,
                                            uint64 offset,
                                            bitfield createFlags,
-                                           bitfield usageFlags);
+                                           bitfield usageFlags,
+                                           const void *imageCreateInfoPNext);
 
         void TextureStorageMemFlags3DMultisampleANGLE(uint texture,
                                                       sizei samples,
@@ -134,7 +145,8 @@ New Procedures and Functions
                                                       uint memory,
                                                       uint64 offset,
                                                       bitfield createFlags,
-                                                      bitfield usageFlags);
+                                                      bitfield usageFlags,
+                                                      const void *imageCreateInfoPNext);
 
         [[ The following are available in OpenGL only ]]
 
@@ -145,7 +157,8 @@ New Procedures and Functions
                                        uint memory,
                                        uint64 offset,
                                        bitfield createFlags,
-                                       bitfield usageFlags);
+                                       bitfield usageFlags,
+                                       const void *imageCreateInfoPNext);
 
         [[ The following are availble in OpenGL only, and only when
            direct state access is available ]]
@@ -157,7 +170,8 @@ New Procedures and Functions
                                            uint memory,
                                            uint64 offset,
                                            bitfield createFlags,
-                                           bitfield usageFlags);
+                                           bitfield usageFlags,
+                                           const void *imageCreateInfoPNext);
 
 New Tokens
 
@@ -207,25 +221,28 @@ Samplers)
                                       uint memory,
                                       uint64 offset,
                                       bitfield createFlags,
-                                      bitfield usageFlags);
+                                      bitfield usageFlags,
+                                      const void *imageCreateInfoPNext);
 
         void TextureStorageMemFlags*ANGLE(<existing parameters>,
                                           uint memory,
                                           uint64 offset,
                                           bitfield createFlags,
-                                          bitfield usageFlags);
+                                          bitfield usageFlags,
+                                          const void *imageCreateInfoPNext);
 
     For each of the TexStorageMemFlags*ANGLE commands, move the description from
     the corresponding TexStorageMem*EXT from EXT_external_objects under that
     command and add the following language:
 
         "The implementation should apply the same semantics to the internal
-        storage of the texture based on <createFlags> and <usageFlags> as the
-        corresonding VK_IMAGE_CREATE_* and VK_IMAGE_USAGE_* flags would have on
-        a Vulkan image respectively.  See tables 8.17 and 8.18 for the mapping
-        between the GL and Vulkan flags.  It is undefined behavior if the
-        application provides create and usage flags that are not identical to
-        those used to create the Vulkan image."
+        storage of the texture based on <createFlags>, <usageFlags> and
+        <imageCreateInfoPNext> as the corresonding VkImageCreateFlags,
+        VkImageUsageFlags and chained structs to VkImageCreateInfo would have
+        on a Vulkan image respectively.  See tables 8.17 and 8.18 for the
+        mapping between the GL and Vulkan flags.  It is undefined behavior if
+        the application provides create flags, usage flags or chained structs
+        that are not identical to those used to create the Vulkan image."
 
         Table 8.17: Create flags and corresponding Vulkan Image Create Flags
 
@@ -276,9 +293,10 @@ Samplers)
     TexStorageMem*EXT and TextureStorageMem*EXT as such:
 
         "Calling TexStorageMem*EXT is equivalent to calling
-        TexStorageMemFlags*ANGLE with 0 as <createFlags> and all
-        Vulkan-supported usage flags, even if there are no corresponding GL
-        flags specified in this extension."
+        TexStorageMemFlags*ANGLE with 0 as <createFlags>, all
+        Vulkan-supported usage flags as <usageFlags>, even if there are no
+        corresponding GL flags specified in this extension, and NULL as
+        <imageCreateInfoPNext>."
 
 Issues
 
@@ -300,7 +318,16 @@ Issues
         flags in Vulkan, so the GL implementation can assume they are valid.
         Validating this is expensive and unnecessary in almost all applications.
 
+    4)  How can extension structs applied to VkImageCreateInfo be communicated
+        to the GL implementation?
+
+        RESOLVED: The chain of structs itself is directly passed to the
+        implementation.
+
 Revision History
+
+    Revision 2, 2021-11-10 (Shahbaz Youssefi)
+        - Added the imageCreateInfoPNext parameter.
 
     Revision 1, 2020-08-03 (Shahbaz Youssefi)
         - Initial draft based on EXT_external_objects.

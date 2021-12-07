@@ -690,6 +690,7 @@ const angle::PlatformParameters platforms[] = {
     ES3_VULKAN(),
 };
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
 INSTANTIATE_TEST_SUITE_P(
     ,
     DrawBaseVertexBaseInstanceTest,

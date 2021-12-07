@@ -77,7 +77,7 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     }
 
     // Decide if the node represents the call of texelFetchOffset.
-    if (node->getOp() != EOpCallBuiltInFunction)
+    if (!BuiltInGroup::IsBuiltIn(node->getOp()))
     {
         return true;
     }
@@ -100,10 +100,10 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     // Create new node that represents the call of function texelFetch.
     // Its argument list will be: texelFetch(sampler, Position+offset, lod).
 
-    TIntermSequence *texelFetchArguments = new TIntermSequence();
+    TIntermSequence texelFetchArguments;
 
     // sampler
-    texelFetchArguments->push_back(sequence->at(0));
+    texelFetchArguments.push_back(sequence->at(0));
 
     // Position
     TIntermTyped *texCoordNode = sequence->at(1)->getAsTyped();
@@ -116,14 +116,14 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     {
         // For 2DArray samplers, Position is ivec3 and offset is ivec2;
         // So offset must be converted into an ivec3 before being added to Position.
-        TIntermSequence *constructOffsetIvecArguments = new TIntermSequence();
-        constructOffsetIvecArguments->push_back(sequence->at(3)->getAsTyped());
+        TIntermSequence constructOffsetIvecArguments;
+        constructOffsetIvecArguments.push_back(sequence->at(3)->getAsTyped());
 
         TIntermTyped *zeroNode = CreateZeroNode(TType(EbtInt));
-        constructOffsetIvecArguments->push_back(zeroNode);
+        constructOffsetIvecArguments.push_back(zeroNode);
 
         offsetNode = TIntermAggregate::CreateConstructor(texCoordNode->getType(),
-                                                         constructOffsetIvecArguments);
+                                                         &constructOffsetIvecArguments);
         offsetNode->setLine(texCoordNode->getLine());
     }
     else
@@ -134,14 +134,14 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     // Position+offset
     TIntermBinary *add = new TIntermBinary(EOpAdd, texCoordNode, offsetNode);
     add->setLine(texCoordNode->getLine());
-    texelFetchArguments->push_back(add);
+    texelFetchArguments.push_back(add);
 
     // lod
-    texelFetchArguments->push_back(sequence->at(2));
+    texelFetchArguments.push_back(sequence->at(2));
 
-    ASSERT(texelFetchArguments->size() == 3u);
+    ASSERT(texelFetchArguments.size() == 3u);
 
-    TIntermTyped *texelFetchNode = CreateBuiltInFunctionCallNode("texelFetch", texelFetchArguments,
+    TIntermTyped *texelFetchNode = CreateBuiltInFunctionCallNode("texelFetch", &texelFetchArguments,
                                                                  *symbolTable, shaderVersion);
     texelFetchNode->setLine(node->getLine());
 

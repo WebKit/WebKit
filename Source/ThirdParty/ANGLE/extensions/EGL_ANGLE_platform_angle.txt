@@ -103,10 +103,10 @@ New Behavior
 
     The <native_display> parameter is of type EGLNativeDisplayType. If
     <native_display> is EGL_DEFAULT_DISPLAY a default display is returned.
-    Multiple calls with the same <native_display> will return the same
-    EGLDisplay handle. If <platform> is set to EGL_PLATFORM_ANGLE_ANGLE and
-    the returned display is in an uninitialized state, its attributes are
-    overwritten by those provided in the <attrib_list>, if any.
+    Multiple calls with the same parameters will return the same EGLDisplay
+    handle. If <platform> is set to EGL_PLATFORM_ANGLE_ANGLE and the returned
+    display is in an uninitialized state, its attributes are overwritten by
+    those provided in the <attrib_list>, if any.
 
     If no <attrib_list> is specified, the value of
     EGL_PLATFORM_ANGLE_TYPE_ANGLE is implicitly set to

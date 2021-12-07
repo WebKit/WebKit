@@ -1,8 +1,9 @@
 //
-//  mtl_glslang_mtl_utils.h
-//  ANGLE
+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 //
-//  Created by Kyle Piddington on 11/10/20.
+// mtl_glslang_mtl_utils.h: Wrapper for Khronos's glslang compiler for MSL.
 //
 
 #ifndef mtl_glslang_mtl_utils_h
@@ -10,7 +11,6 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/glslang_wrapper_utils.h"
-#include "libANGLE/renderer/metal/mtl_constants.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 
 namespace rx
@@ -39,13 +39,13 @@ struct TranslatedShaderInfo
 void MSLGetShaderSource(const gl::ProgramState &programState,
                         const gl::ProgramLinkedResources &resources,
                         gl::ShaderMap<std::string> *shaderSourcesOut,
-                        ShaderMapInterfaceVariableInfoMap *variableInfoMapOut);
+                        ShaderInterfaceVariableInfoMap *variableInfoMapOut);
 
 angle::Result GlslangGetMSL(const gl::Context *glContext,
                             const gl::ProgramState &programState,
                             const gl::Caps &glCaps,
                             const gl::ShaderMap<std::string> &shaderSources,
-                            const ShaderMapInterfaceVariableInfoMap &variableInfoMap,
+                            const ShaderInterfaceVariableInfoMap &variableInfoMap,
                             gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut,
                             gl::ShaderMap<std::string> *mslCodeOut,
                             size_t xfbBufferCount);

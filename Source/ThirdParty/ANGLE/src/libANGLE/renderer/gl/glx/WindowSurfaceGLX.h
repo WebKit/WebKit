@@ -63,9 +63,12 @@ class WindowSurfaceGLX : public SurfaceGLX
     bool getWindowDimensions(Window window, unsigned int *width, unsigned int *height) const;
 
     Window mParent;
-    unsigned int mParentWidth, mParentHeight;
     Window mWindow;
     Display *mDisplay;
+
+    bool mUseChildWindow;
+    // Only updated when mUseChildWindow is true
+    unsigned int mParentWidth, mParentHeight;
 
     const FunctionsGLX &mGLX;
     DisplayGLX *mGLXDisplay;

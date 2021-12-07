@@ -19,7 +19,6 @@ namespace rx
 {
 namespace vk
 {
-struct Format;
 class FramebufferHelper;
 class ImageHelper;
 class ImageView;
@@ -59,15 +58,19 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
               vk::ImageViewHelper *resolveImageViews,
               gl::LevelIndex levelIndexGL,
               uint32_t layerIndex,
+              uint32_t layerCount,
               RenderTargetTransience transience);
     void reset();
 
-    vk::ImageViewSubresourceSerial getDrawSubresourceSerial() const;
-    vk::ImageViewSubresourceSerial getResolveSubresourceSerial() const;
+    vk::ImageOrBufferViewSubresourceSerial getDrawSubresourceSerial() const;
+    vk::ImageOrBufferViewSubresourceSerial getResolveSubresourceSerial() const;
 
     // Note: RenderTargets should be called in order, with the depth/stencil onRender last.
-    void onColorDraw(ContextVk *contextVk);
-    void onDepthStencilDraw(ContextVk *contextVk);
+    void onColorDraw(ContextVk *contextVk,
+                     uint32_t framebufferLayerCount,
+                     vk::PackedAttachmentIndex index);
+    void onColorResolve(ContextVk *contextVk, uint32_t framebufferLayerCount);
+    void onDepthStencilDraw(ContextVk *contextVk, uint32_t framebufferLayerCount);
 
     vk::ImageHelper &getImageForRenderPass();
     const vk::ImageHelper &getImageForRenderPass() const;
@@ -80,6 +83,9 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     // For cube maps we use single-level single-layer 2D array views.
     angle::Result getImageView(ContextVk *contextVk, const vk::ImageView **imageViewOut) const;
+    angle::Result getImageViewWithColorspace(ContextVk *contextVk,
+                                             gl::SrgbWriteControlMode srgbWriteContrlMode,
+                                             const vk::ImageView **imageViewOut) const;
     angle::Result getResolveImageView(ContextVk *contextVk,
                                       const vk::ImageView **imageViewOut) const;
 
@@ -88,12 +94,18 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     angle::Result getAndRetainCopyImageView(ContextVk *contextVk,
                                             const vk::ImageView **imageViewOut) const;
 
-    const vk::Format &getImageFormat() const;
+    angle::FormatID getImageActualFormatID() const;
+    const angle::Format &getImageActualFormat() const;
+    angle::FormatID getImageIntendedFormatID() const;
+    const angle::Format &getImageIntendedFormat() const;
+
     gl::Extents getExtents() const;
+    gl::Extents getRotatedExtents() const;
     gl::LevelIndex getLevelIndex() const { return mLevelIndexGL; }
     uint32_t getLayerIndex() const { return mLayerIndex; }
+    uint32_t getLayerCount() const { return mLayerCount; }
 
-    gl::ImageIndex getImageIndex() const;
+    gl::ImageIndex getImageIndexForClear(uint32_t layerCount) const;
 
     // Special mutator for Surface RenderTargets. Allows the Framebuffer to keep a single
     // RenderTargetVk pointer.
@@ -104,7 +116,8 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     angle::Result flushStagedUpdates(ContextVk *contextVk,
                                      vk::ClearValuesArray *deferredClears,
-                                     uint32_t deferredClearIndex);
+                                     uint32_t deferredClearIndex,
+                                     uint32_t framebufferLayerCount);
 
     void retainImageViews(ContextVk *contextVk) const;
 
@@ -128,10 +141,12 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
   private:
     angle::Result getImageViewImpl(ContextVk *contextVk,
                                    const vk::ImageHelper &image,
+                                   gl::SrgbWriteControlMode mode,
                                    vk::ImageViewHelper *imageViews,
                                    const vk::ImageView **imageViewOut) const;
 
-    vk::ImageViewSubresourceSerial getSubresourceSerialImpl(vk::ImageViewHelper *imageViews) const;
+    vk::ImageOrBufferViewSubresourceSerial getSubresourceSerialImpl(
+        vk::ImageViewHelper *imageViews) const;
 
     bool isResolveImageOwnerOfData() const;
     vk::ImageHelper *getOwnerOfData() const;
@@ -150,9 +165,14 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     vk::ImageHelper *mResolveImage;
     vk::ImageViewHelper *mResolveImageViews;
 
-    // Which subresource of the image is used as render target.
+    // Which subresource of the image is used as render target.  For single-layer render targets,
+    // |mLayerIndex| will contain the layer index and |mLayerCount| will be 1.  For layered render
+    // targets, |mLayerIndex| will be 0 and |mLayerCount| will be the number of layers in the image
+    // (or level depth, if image is 3D).  Note that blit and other functions that read or write to
+    // the render target always use layer 0, so this works out for users of |getLayerIndex()|.
     gl::LevelIndex mLevelIndexGL;
     uint32_t mLayerIndex;
+    uint32_t mLayerCount;
 
     // If resolve attachment exists, |mTransience| could be *Transient if the multisampled results
     // need to be discarded.

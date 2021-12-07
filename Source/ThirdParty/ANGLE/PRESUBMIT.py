@@ -14,8 +14,8 @@ import subprocess
 import sys
 import tempfile
 
-# Fragment of a regular expression that matches C++ and Objective-C++ implementation files and headers.
-_IMPLEMENTATION_AND_HEADER_EXTENSIONS = r'\.(cc|cpp|cxx|mm|h|hpp|hxx)$'
+# Fragment of a regular expression that matches C/C++ and Objective-C++ implementation files and headers.
+_IMPLEMENTATION_AND_HEADER_EXTENSIONS = r'\.(c|cc|cpp|cxx|mm|h|hpp|hxx)$'
 
 # Fragment of a regular expression that matches C++ and Objective-C++ header files.
 _HEADER_EXTENSIONS = r'\.(h|hpp|hxx)$'
@@ -192,7 +192,9 @@ def _CheckChangeHasBugField(input_api, output_api):
     if len(bugs) == 1 and bugs[0] == 'None':
         return []
 
-    projects = ['angleproject:', 'chromium:', 'dawn:', 'fuchsia:', 'skia:', 'swiftshader:', 'b/']
+    projects = [
+        'angleproject:', 'chromium:', 'dawn:', 'fuchsia:', 'skia:', 'swiftshader:', 'tint:', 'b/'
+    ]
     bug_regex = re.compile(r"([a-z]+[:/])(\d+)")
     errors = []
     extra_help = None
@@ -323,12 +325,15 @@ def _CheckExportValidity(input_api, output_api):
 def _CheckTabsInSourceFiles(input_api, output_api):
     """Forbids tab characters in source files due to a WebKit repo requirement. """
 
-    def implementation_and_headers(f):
+    def implementation_and_headers_including_third_party(f):
+        # Check third_party files too, because WebKit's checks don't make exceptions.
         return input_api.FilterSourceFile(
-            f, files_to_check=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,))
+            f,
+            files_to_check=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,),
+            files_to_skip=[f for f in input_api.DEFAULT_FILES_TO_SKIP if not "third_party" in f])
 
     files_with_tabs = []
-    for f in input_api.AffectedSourceFiles(implementation_and_headers):
+    for f in input_api.AffectedSourceFiles(implementation_and_headers_including_third_party):
         for (num, line) in f.ChangedContents():
             if '\t' in line:
                 files_with_tabs.append(f)

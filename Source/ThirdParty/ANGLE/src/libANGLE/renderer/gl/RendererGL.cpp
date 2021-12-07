@@ -215,8 +215,14 @@ RendererGL::~RendererGL()
 
 angle::Result RendererGL::flush()
 {
+    if (!mWorkDoneSinceLastFlush && !mNeedsFlushBeforeDeleteTextures)
+    {
+        return angle::Result::Continue;
+    }
+
     mFunctions->flush();
     mNeedsFlushBeforeDeleteTextures = false;
+    mWorkDoneSinceLastFlush         = false;
     return angle::Result::Continue;
 }
 
@@ -229,6 +235,7 @@ angle::Result RendererGL::finish()
 
     mFunctions->finish();
     mNeedsFlushBeforeDeleteTextures = false;
+    mWorkDoneSinceLastFlush         = false;
 
     if (mFeatures.finishDoesNotCauseQueriesToBeAvailable.enabled && mUseDebugOutput)
     {
@@ -253,42 +260,6 @@ void RendererGL::pushDebugGroup(GLenum source, GLuint id, const std::string &mes
 
 void RendererGL::popDebugGroup() {}
 
-std::string RendererGL::getVendorString() const
-{
-    return std::string(reinterpret_cast<const char *>(mFunctions->getString(GL_VENDOR)));
-}
-
-std::string RendererGL::getRendererDescription() const
-{
-    std::string nativeVendorString(
-        reinterpret_cast<const char *>(mFunctions->getString(GL_VENDOR)));
-    std::string nativeRendererString(
-        reinterpret_cast<const char *>(mFunctions->getString(GL_RENDERER)));
-
-    std::ostringstream rendererString;
-    rendererString << nativeVendorString << ", " << nativeRendererString << ", OpenGL";
-    if (mFunctions->standard == STANDARD_GL_ES)
-    {
-        rendererString << " ES";
-    }
-    rendererString << " " << mFunctions->version.major << "." << mFunctions->version.minor;
-    if (mFunctions->standard == STANDARD_GL_DESKTOP)
-    {
-        // Some drivers (NVIDIA) use a profile mask of 0 when in compatibility profile.
-        if ((mFunctions->profile & GL_CONTEXT_COMPATIBILITY_PROFILE_BIT) != 0 ||
-            (mFunctions->isAtLeastGL(gl::Version(3, 2)) && mFunctions->profile == 0))
-        {
-            rendererString << " compatibility";
-        }
-        else if ((mFunctions->profile & GL_CONTEXT_CORE_PROFILE_BIT) != 0)
-        {
-            rendererString << " core";
-        }
-    }
-
-    return rendererString.str();
-}
-
 const gl::Version &RendererGL::getMaxSupportedESVersion() const
 {
     // Force generation of caps
@@ -300,10 +271,11 @@ const gl::Version &RendererGL::getMaxSupportedESVersion() const
 void RendererGL::generateCaps(gl::Caps *outCaps,
                               gl::TextureCapsMap *outTextureCaps,
                               gl::Extensions *outExtensions,
-                              gl::Limitations * /* outLimitations */) const
+                              gl::Limitations *outLimitations) const
 {
     nativegl_gl::GenerateCaps(mFunctions.get(), mFeatures, outCaps, outTextureCaps, outExtensions,
-                              &mMaxSupportedESVersion, &mMultiviewImplementationType);
+                              outLimitations, &mMaxSupportedESVersion,
+                              &mMultiviewImplementationType);
 }
 
 GLint RendererGL::getGPUDisjoint()
@@ -370,23 +342,27 @@ angle::Result RendererGL::dispatchCompute(const gl::Context *context,
                                           GLuint numGroupsZ)
 {
     mFunctions->dispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+    mWorkDoneSinceLastFlush = true;
     return angle::Result::Continue;
 }
 
 angle::Result RendererGL::dispatchComputeIndirect(const gl::Context *context, GLintptr indirect)
 {
     mFunctions->dispatchComputeIndirect(indirect);
+    mWorkDoneSinceLastFlush = true;
     return angle::Result::Continue;
 }
 
 angle::Result RendererGL::memoryBarrier(GLbitfield barriers)
 {
     mFunctions->memoryBarrier(barriers);
+    mWorkDoneSinceLastFlush = true;
     return angle::Result::Continue;
 }
 angle::Result RendererGL::memoryBarrierByRegion(GLbitfield barriers)
 {
     mFunctions->memoryBarrierByRegion(barriers);
+    mWorkDoneSinceLastFlush = true;
     return angle::Result::Continue;
 }
 
@@ -466,6 +442,11 @@ void RendererGL::setNeedsFlushBeforeDeleteTextures()
     mNeedsFlushBeforeDeleteTextures = true;
 }
 
+void RendererGL::markWorkSubmitted()
+{
+    mWorkDoneSinceLastFlush = true;
+}
+
 void RendererGL::flushIfNecessaryBeforeDeleteTextures()
 {
     if (mNeedsFlushBeforeDeleteTextures)
@@ -491,6 +472,11 @@ ScopedWorkerContextGL::~ScopedWorkerContextGL()
 bool ScopedWorkerContextGL::operator()() const
 {
     return mValid;
+}
+
+void RendererGL::handleGPUSwitch()
+{
+    nativegl_gl::ReInitializeFeaturesAtGPUSwitch(mFunctions.get(), &mFeatures);
 }
 
 }  // namespace rx

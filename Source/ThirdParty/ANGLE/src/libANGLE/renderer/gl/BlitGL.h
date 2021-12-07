@@ -36,6 +36,7 @@ class FunctionsGL;
 class RenderbufferGL;
 class StateManagerGL;
 class TextureGL;
+struct VertexArrayStateGL;
 
 class BlitGL : angle::NonCopyable
 {
@@ -168,6 +169,8 @@ class BlitGL : angle::NonCopyable
     angle::Result setScratchTextureParameter(const gl::Context *context,
                                              GLenum param,
                                              GLenum value);
+    angle::Result setVAOState(const gl::Context *context);
+    angle::Result initializeVAOState(const gl::Context *context);
 
     const FunctionsGL *mFunctions;
     const angle::FeaturesGL &mFeatures;
@@ -195,11 +198,15 @@ class BlitGL : angle::NonCopyable
     using BlitProgramType = std::tuple<gl::TextureType, GLenum, GLenum>;
     std::map<BlitProgramType, BlitProgram> mBlitPrograms;
 
-    GLuint mScratchTextures[2];
-    GLuint mScratchFBO;
+    GLuint mScratchTextures[2] = {0};
+    GLuint mScratchFBO         = 0;
 
-    GLuint mVAO;
-    GLuint mVertexBuffer;
+    GLuint mVAO                   = 0;
+    VertexArrayStateGL *mVAOState = nullptr;
+    bool mOwnsVAOState            = false;
+
+    const GLuint mTexcoordAttribLocation = 0;
+    GLuint mVertexBuffer                 = 0;
 
     nativegl::TexImageFormat mSRGBMipmapGenerationFormat;
 };

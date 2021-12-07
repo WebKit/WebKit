@@ -98,21 +98,6 @@ void RendererD3D::notifyDeviceLost()
     mDisplay->notifyDeviceLost();
 }
 
-std::string RendererD3D::getVendorString() const
-{
-    LUID adapterLuid = {};
-
-    if (getLUID(&adapterLuid))
-    {
-        char adapterLuidString[64];
-        sprintf_s(adapterLuidString, sizeof(adapterLuidString), "(adapter LUID: %08x%08x)",
-                  adapterLuid.HighPart, adapterLuid.LowPart);
-        return std::string(adapterLuidString);
-    }
-
-    return std::string("");
-}
-
 void RendererD3D::setGPUDisjoint()
 {
     mDisjoint = true;

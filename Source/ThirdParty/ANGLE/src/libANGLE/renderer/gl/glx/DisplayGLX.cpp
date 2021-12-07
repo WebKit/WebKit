@@ -74,6 +74,7 @@ DisplayGLX::DisplayGLX(const egl::DisplayState &state)
       mVisuals(nullptr),
       mContext(nullptr),
       mSharedContext(nullptr),
+      mCurrentNativeContexts(),
       mInitPbuffer(0),
       mUsesNewXDisplay(false),
       mIsMesa(false),
@@ -166,7 +167,6 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
     if (attribMap.contains(EGL_X11_VISUAL_ID_ANGLE))
     {
         mRequestedVisual = static_cast<EGLint>(attribMap.get(EGL_X11_VISUAL_ID_ANGLE, -1));
-
         // There is no direct way to get the GLXFBConfig matching an X11 visual ID
         // so we have to iterate over all the GLXFBConfigs to find the right one.
         int nConfigs;
@@ -265,7 +265,7 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
     }
     ASSERT(mContext);
 
-    mCurrentContexts[std::this_thread::get_id()] = mContext;
+    mCurrentNativeContexts[std::this_thread::get_id()] = mContext;
 
     // FunctionsGL and DisplayGL need to make a few GL calls, for example to
     // query the version of the context so we need to make the context current.
@@ -334,7 +334,7 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
         }
     }
 
-    syncXCommands();
+    syncXCommands(false);
 
     mRenderer.reset(new RendererGLX(std::move(functionsGL), eglAttributes, this));
     const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
@@ -368,7 +368,7 @@ void DisplayGLX::terminate()
     }
     mWorkerPbufferPool.clear();
 
-    mCurrentContexts.clear();
+    mCurrentNativeContexts.clear();
 
     if (mContext)
     {
@@ -408,14 +408,14 @@ egl::Error DisplayGLX::makeCurrent(egl::Display *display,
         newContext  = 0;
     }
     if (newDrawable != mCurrentDrawable ||
-        newContext != mCurrentContexts[std::this_thread::get_id()])
+        newContext != mCurrentNativeContexts[std::this_thread::get_id()])
     {
         if (mGLX.makeCurrent(newDrawable, newContext) != True)
         {
             return egl::EglContextLost() << "Failed to make the GLX context current";
         }
-        mCurrentContexts[std::this_thread::get_id()] = newContext;
-        mCurrentDrawable                             = newDrawable;
+        mCurrentNativeContexts[std::this_thread::get_id()] = newContext;
+        mCurrentDrawable                                   = newDrawable;
     }
 
     return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
@@ -462,7 +462,7 @@ SurfaceImpl *DisplayGLX::createPixmapSurface(const egl::SurfaceState &state,
     return new PixmapSurfaceGLX(state, nativePixmap, mGLX.getDisplay(), mGLX, fbConfig);
 }
 
-egl::Error DisplayGLX::validatePixmap(egl::Config *config,
+egl::Error DisplayGLX::validatePixmap(const egl::Config *config,
                                       EGLNativePixmapType pixmap,
                                       const egl::AttributeMap &attributes) const
 {
@@ -493,12 +493,6 @@ ContextImpl *DisplayGLX::createContext(const gl::State &state,
     RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus =
         GetRobustnessVideoMemoryPurge(attribs);
     return new ContextGL(state, errorSet, mRenderer, robustnessVideoMemoryPurgeStatus);
-}
-
-DeviceImpl *DisplayGLX::createDevice()
-{
-    UNIMPLEMENTED();
-    return nullptr;
 }
 
 egl::Error DisplayGLX::initializeContext(glx::FBConfig config,
@@ -793,12 +787,6 @@ bool DisplayGLX::isValidNativeWindow(EGLNativeWindowType window) const
     return status != 0;
 }
 
-std::string DisplayGLX::getVendorString() const
-{
-    // UNIMPLEMENTED();
-    return "";
-}
-
 egl::Error DisplayGLX::waitClient(const gl::Context *context)
 {
     mGLX.waitGL();
@@ -837,9 +825,9 @@ gl::Version DisplayGLX::getMaxSupportedESVersion() const
     return mRenderer->getMaxSupportedESVersion();
 }
 
-void DisplayGLX::syncXCommands() const
+void DisplayGLX::syncXCommands(bool alwaysSync) const
 {
-    if (mUsesNewXDisplay)
+    if (mUsesNewXDisplay || alwaysSync)
     {
         XSync(mGLX.getDisplay(), False);
     }
@@ -888,9 +876,14 @@ void DisplayGLX::setSwapInterval(glx::Drawable drawable, SwapControlData *data)
     }
 }
 
-bool DisplayGLX::isValidWindowVisualId(unsigned long visualId) const
+bool DisplayGLX::isWindowVisualIdSpecified() const
 {
-    return mRequestedVisual == -1 || static_cast<unsigned long>(mRequestedVisual) == visualId;
+    return mRequestedVisual != -1;
+}
+
+bool DisplayGLX::isMatchingWindowVisualId(unsigned long visualId) const
+{
+    return isWindowVisualIdSpecified() && static_cast<unsigned long>(mRequestedVisual) == visualId;
 }
 
 void DisplayGLX::generateExtensions(egl::DisplayExtensions *outExtensions) const
@@ -1079,6 +1072,11 @@ void DisplayGLX::initializeFrontendFeatures(angle::FrontendFeatures *features) c
 void DisplayGLX::populateFeatureList(angle::FeatureList *features)
 {
     mRenderer->getFeatures().populateFeatureList(features);
+}
+
+RendererGL *DisplayGLX::getRenderer() const
+{
+    return mRenderer.get();
 }
 
 }  // namespace rx

@@ -7,22 +7,24 @@
 // EGLDirectCompositionTest.cpp:
 //   Tests pertaining to DirectComposition and WindowsUIComposition.
 
-#include <d3d11.h>
-#include "test_utils/ANGLETest.h"
+#ifdef ANGLE_ENABLE_D3D11_COMPOSITOR_NATIVE_WINDOW
 
-#include <DispatcherQueue.h>
-#include <VersionHelpers.h>
-#include <Windows.Foundation.h>
-#include <windows.ui.composition.Desktop.h>
-#include <windows.ui.composition.h>
-#include <windows.ui.composition.interop.h>
-#include <wrl.h>
-#include <memory>
+#    include <d3d11.h>
+#    include "test_utils/ANGLETest.h"
 
-#include "libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
-#include "util/OSWindow.h"
-#include "util/com_utils.h"
-#include "util/test_utils.h"
+#    include <DispatcherQueue.h>
+#    include <VersionHelpers.h>
+#    include <Windows.Foundation.h>
+#    include <windows.ui.composition.Desktop.h>
+#    include <windows.ui.composition.h>
+#    include <windows.ui.composition.interop.h>
+#    include <wrl.h>
+#    include <memory>
+
+#    include "libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
+#    include "util/OSWindow.h"
+#    include "util/com_utils.h"
+#    include "util/test_utils.h"
 
 using namespace angle;
 using namespace ABI::Windows::System;
@@ -198,7 +200,11 @@ class EGLDirectCompositionTest : public ANGLETest
         {
             return;
         }
-        ASSERT_EGL_TRUE(eglTerminate(mEglDisplay));
+        if (mEglDisplay != EGL_NO_DISPLAY)
+        {
+            ASSERT_EGL_TRUE(eglTerminate(mEglDisplay));
+            mEglDisplay = EGL_NO_DISPLAY;
+        }
 
         OSWindow::Delete(&mOSWindow);
     }
@@ -245,8 +251,11 @@ TEST_P(EGLDirectCompositionTest, SurfaceSizeFromSpriteSize)
     ASSERT_TRUE(surfacewidth == static_cast<int>(visualsize.X));
     ASSERT_TRUE(surfaceheight == static_cast<int>(visualsize.Y));
 
+    ASSERT_TRUE(eglMakeCurrent(mEglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) !=
+                EGL_FALSE);
     ASSERT_EGL_TRUE(eglDestroySurface(mEglDisplay, s));
     ASSERT_EGL_TRUE(eglDestroyContext(mEglDisplay, mEglContext));
+    mEglContext = EGL_NO_CONTEXT;
 }
 
 // This tests that a WindowSurface can be created using a SpriteVisual as the containing window
@@ -255,9 +264,6 @@ TEST_P(EGLDirectCompositionTest, RenderSolidColor)
 {
     // Only attempt this test when on Windows 10 1803+
     ANGLE_SKIP_TEST_IF(!mRoHelper.SupportedWindowsRelease());
-
-    // http://crbug.com/1063962
-    ANGLE_SKIP_TEST_IF(isD3D11Renderer() && IsIntel());
 
     EGLSurface s{nullptr};
     CreateSurface(mAngleHost, s);
@@ -289,8 +295,13 @@ TEST_P(EGLDirectCompositionTest, RenderSolidColor)
     ASSERT_EGL_TRUE(pixelBuffer[(50 * 50 * 4) + 2] == 0);
     ASSERT_EGL_TRUE(pixelBuffer[(50 * 50 * 4) + 3] == 255);
 
+    ASSERT_TRUE(eglMakeCurrent(mEglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) !=
+                EGL_FALSE);
     ASSERT_EGL_TRUE(eglDestroySurface(mEglDisplay, s));
     ASSERT_EGL_TRUE(eglDestroyContext(mEglDisplay, mEglContext));
+    mEglContext = EGL_NO_CONTEXT;
 }
 
 ANGLE_INSTANTIATE_TEST(EGLDirectCompositionTest, WithNoFixture(ES2_D3D11()));
+
+#endif  // ANGLE_ENABLE_D3D11_COMPOSITOR_NATIVE_WINDOW

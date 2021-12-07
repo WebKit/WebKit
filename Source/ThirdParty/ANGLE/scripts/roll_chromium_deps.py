@@ -8,7 +8,7 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 # This is a modified copy of the script in
-# https://webrtc.googlesource.com/src/+/master/tools_webrtc/autoroller/roll_deps.py
+# https://webrtc.googlesource.com/src/+/main/tools_webrtc/autoroller/roll_deps.py
 # customized for ANGLE.
 """Script to automatically roll Chromium dependencies in the ANGLE DEPS file."""
 
@@ -33,26 +33,61 @@ def FindSrcDirPath():
 ANGLE_CHROMIUM_DEPS = [
     'build',
     'buildtools',
+    'buildtools/clang_format/script',
+    'buildtools/linux64',
+    'buildtools/mac',
+    'buildtools/third_party/libc++/trunk',
+    'buildtools/third_party/libc++abi/trunk',
+    'buildtools/third_party/libunwind/trunk',
+    'buildtools/win',
     'testing',
     'third_party/abseil-cpp',
+    'third_party/android_build_tools',
+    'third_party/android_build_tools/aapt2',
+    'third_party/android_build_tools/art',
+    'third_party/android_build_tools/bundletool',
+    'third_party/android_deps',
+    'third_party/android_ndk',
+    'third_party/android_platform',
+    'third_party/android_sdk',
+    'third_party/android_sdk/androidx_browser/src',
+    'third_party/android_sdk/public',
+    'third_party/android_system_sdk',
+    'third_party/bazel',
     'third_party/catapult',
+    'third_party/colorama/src',
+    'third_party/depot_tools',
+    'third_party/ijar',
+    'third_party/jdk',
+    'third_party/jdk/extras',
+    'third_party/jinja2',
     'third_party/libjpeg_turbo',
+    'third_party/markupsafe',
     'third_party/nasm',
+    'third_party/proguard',
     'third_party/protobuf',
     'third_party/Python-Markdown',
     'third_party/qemu-linux-x64',
     'third_party/qemu-mac-x64',
+    'third_party/r8',
+    'third_party/requests/src',
+    'third_party/six',
+    'third_party/turbine',
     'third_party/zlib',
+    'tools/android/errorprone_plugin',
     'tools/clang',
     'tools/clang/dsymutil',
     'tools/luci-go',
     'tools/mb',
     'tools/md_browser',
     'tools/memory',
+    'tools/perf',
     'tools/protoc_wrapper',
+    'tools/python',
     'tools/skia_goldctl/linux',
     'tools/skia_goldctl/mac',
     'tools/skia_goldctl/win',
+    'tools/valgrind',
 ]
 
 ANGLE_URL = 'https://chromium.googlesource.com/angle/angle'
@@ -75,28 +110,31 @@ ANDROID_DEPS_END = r'=== ANDROID_DEPS Generated Code End ==='
 # Location of automically gathered android deps.
 ANDROID_DEPS_PATH = 'src/third_party/android_deps/'
 
-# TODO(jmadill): Update this with ANGLE wrangler. http://anglebug.com/4059
-NOTIFY_EMAIL = 'jmadill@chromium.org'
+NOTIFY_EMAIL = 'angle-wrangler@grotations.appspotmail.com'
 
+CLANG_TOOLS_URL = 'https://chromium.googlesource.com/chromium/src/tools/clang'
+CLANG_FILE_TEMPLATE = CLANG_TOOLS_URL + '/+/%s/%s'
 
-def add_depot_tools_to_path():
-    sys.path.append(os.path.join(CHECKOUT_SRC_DIR, 'build'))
-    import find_depot_tools
-    find_depot_tools.add_depot_tools_to_path()
-
-
-CLANG_UPDATE_SCRIPT_URL_PATH = 'tools/clang/scripts/update.py'
+CLANG_TOOLS_PATH = 'tools/clang'
+CLANG_UPDATE_SCRIPT_URL_PATH = 'scripts/update.py'
 CLANG_UPDATE_SCRIPT_LOCAL_PATH = os.path.join(CHECKOUT_SRC_DIR, 'tools', 'clang', 'scripts',
                                               'update.py')
 
 DepsEntry = collections.namedtuple('DepsEntry', 'path url revision')
 ChangedDep = collections.namedtuple('ChangedDep', 'path url current_rev new_rev')
+ClangChange = collections.namedtuple('ClangChange', 'mirror_change clang_change')
 CipdDepsEntry = collections.namedtuple('CipdDepsEntry', 'path packages')
 ChangedCipdPackage = collections.namedtuple('ChangedCipdPackage',
                                             'path package current_version new_version')
 
 ChromiumRevisionUpdate = collections.namedtuple('ChromiumRevisionUpdate', ('current_chromium_rev '
                                                                            'new_chromium_rev '))
+
+
+def AddDepotToolsToPath():
+    sys.path.append(os.path.join(CHECKOUT_SRC_DIR, 'build'))
+    import find_depot_tools
+    find_depot_tools.add_depot_tools_to_path()
 
 
 class RollError(Exception):
@@ -196,6 +234,7 @@ def _GetBranches():
 def _ReadGitilesContent(url):
     # Download and decode BASE64 content until
     # https://code.google.com/p/gitiles/issues/detail?id=7 is fixed.
+    logging.debug('Reading gitiles URL %s' % url)
     base64_content = ReadUrlContent(url + '?format=TEXT')
     return base64.b64decode(base64_content[0])
 
@@ -208,6 +247,11 @@ def ReadRemoteCrFile(path_below_src, revision):
 def ReadRemoteCrCommit(revision):
     """Reads a remote Chromium commit message. Returns a string."""
     return _ReadGitilesContent(CHROMIUM_COMMIT_TEMPLATE % revision)
+
+
+def ReadRemoteClangFile(path_below_src, revision):
+    """Reads a remote Clang file of a specific revision. Returns a string."""
+    return _ReadGitilesContent(CLANG_FILE_TEMPLATE % (revision, path_below_src))
 
 
 def ReadUrlContent(url):
@@ -271,7 +315,9 @@ def BuildDepsentryDict(deps_dict):
 
 def _FindChangedCipdPackages(path, old_pkgs, new_pkgs):
     pkgs_equal = ({p['package'] for p in old_pkgs} == {p['package'] for p in new_pkgs})
-    assert pkgs_equal, 'Old: %s\n New: %s' % (old_pkgs, new_pkgs)
+    assert pkgs_equal, ('Old: %s\n New: %s.\nYou need to do a manual roll '
+                        'and remove/add entries in DEPS so the old and new '
+                        'list match.' % (old_pkgs, new_pkgs))
     for old_pkg in old_pkgs:
         for new_pkg in new_pkgs:
             old_version = old_pkg['version']
@@ -354,7 +400,12 @@ def CalculateChangedDeps(angle_deps, new_cr_deps):
     return sorted(result)
 
 
-def CalculateChangedClang(cur_cr_rev, new_cr_rev, autoroll):
+def CalculateChangedClang(changed_deps, autoroll):
+    mirror_change = [change for change in changed_deps if change.path == CLANG_TOOLS_PATH]
+    if not mirror_change:
+        return None
+
+    mirror_change = mirror_change[0]
 
     def GetClangRev(lines):
         for line in lines:
@@ -363,19 +414,17 @@ def CalculateChangedClang(cur_cr_rev, new_cr_rev, autoroll):
                 return match.group(1)
         raise RollError('Could not parse Clang revision!')
 
-    # We don't have locally sync'ed deps on autoroller
-    if not autoroll:
-        with open(CLANG_UPDATE_SCRIPT_LOCAL_PATH, 'rb') as f:
-            current_lines = f.readlines()
-        current_rev = GetClangRev(current_lines)
-    else:
-        cur_clang_update_py = ReadRemoteCrFile(CLANG_UPDATE_SCRIPT_URL_PATH,
-                                               cur_cr_rev).splitlines()
-        current_rev = GetClangRev(cur_clang_update_py)
+    old_clang_update_py = ReadRemoteClangFile(CLANG_UPDATE_SCRIPT_URL_PATH,
+                                              mirror_change.current_rev).splitlines()
+    old_clang_rev = GetClangRev(old_clang_update_py)
+    logging.debug('Found old clang rev: %s' % old_clang_rev)
 
-    new_clang_update_py = ReadRemoteCrFile(CLANG_UPDATE_SCRIPT_URL_PATH, new_cr_rev).splitlines()
-    new_rev = GetClangRev(new_clang_update_py)
-    return ChangedDep(CLANG_UPDATE_SCRIPT_LOCAL_PATH, None, current_rev, new_rev)
+    new_clang_update_py = ReadRemoteClangFile(CLANG_UPDATE_SCRIPT_URL_PATH,
+                                              mirror_change.new_rev).splitlines()
+    new_clang_rev = GetClangRev(new_clang_update_py)
+    logging.debug('Found new clang rev: %s' % new_clang_rev)
+    clang_change = ChangedDep(CLANG_UPDATE_SCRIPT_LOCAL_PATH, None, old_clang_rev, new_clang_rev)
+    return ClangChange(mirror_change, clang_change)
 
 
 def GenerateCommitMessage(
@@ -384,7 +433,7 @@ def GenerateCommitMessage(
         new_commit_pos,
         changed_deps_list,
         autoroll,
-        clang_change=None,
+        clang_change,
 ):
     current_cr_rev = rev_update.current_chromium_rev[0:10]
     new_cr_rev = rev_update.new_chromium_rev[0:10]
@@ -424,10 +473,14 @@ def GenerateCommitMessage(
     else:
         commit_msg.append('No dependencies changed.')
 
-    if clang_change and clang_change.current_rev != clang_change.new_rev:
+    c = clang_change
+    if (c and (c.clang_change.current_rev != c.clang_change.new_rev)):
         commit_msg.append('Clang version changed %s:%s' %
-                          (clang_change.current_rev, clang_change.new_rev))
-        change_url = CHROMIUM_FILE_TEMPLATE % (rev_interval, CLANG_UPDATE_SCRIPT_URL_PATH)
+                          (c.clang_change.current_rev, c.clang_change.new_rev))
+
+        rev_clang = rev_interval = '%s..%s' % (c.mirror_change.current_rev,
+                                               c.mirror_change.new_rev)
+        change_url = CLANG_FILE_TEMPLATE % (rev_clang, CLANG_UPDATE_SCRIPT_URL_PATH)
         commit_msg.append('Details: %s\n' % change_url)
     else:
         commit_msg.append('No update to Clang.\n')
@@ -448,14 +501,31 @@ def GenerateCommitMessage(
 def UpdateDepsFile(deps_filename, rev_update, changed_deps, new_cr_content, autoroll):
     """Update the DEPS file with the new revision."""
 
-    # Autoroll take care of updating chromium_revision
-    if not autoroll:
-        with open(deps_filename, 'rb') as deps_file:
-            deps_content = deps_file.read()
+    with open(deps_filename, 'rb') as deps_file:
+        deps_content = deps_file.read()
+        # Autoroll takes care of updating 'chromium_revision', thus we don't need to.
+        if not autoroll:
+            # Update the chromium_revision variable.
+            deps_content = deps_content.replace(rev_update.current_chromium_rev,
+                                                rev_update.new_chromium_rev)
 
-        # Update the chromium_revision variable.
-        deps_content = deps_content.replace(rev_update.current_chromium_rev,
-                                            rev_update.new_chromium_rev)
+        # Add and remove dependencies. For now: only generated android deps.
+        # Since gclient cannot add or remove deps, we rely on the fact that
+        # these android deps are located in one place to copy/paste.
+        deps_re = re.compile(ANDROID_DEPS_START + '.*' + ANDROID_DEPS_END, re.DOTALL)
+        new_deps = deps_re.search(new_cr_content)
+        old_deps = deps_re.search(deps_content)
+        if not new_deps or not old_deps:
+            faulty = 'Chromium' if not new_deps else 'ANGLE'
+            raise RollError('Was expecting to find "%s" and "%s"\n'
+                            'in %s DEPS' % (ANDROID_DEPS_START, ANDROID_DEPS_END, faulty))
+
+        replacement = new_deps.group(0).replace('src/third_party/android_deps',
+                                                'third_party/android_deps')
+        replacement = replacement.replace('checkout_android',
+                                          'checkout_android and not build_with_chromium')
+
+        deps_content = deps_re.sub(replacement, deps_content)
 
         with open(deps_filename, 'wb') as deps_file:
             deps_file.write(deps_content)
@@ -492,14 +562,14 @@ def _IsTreeClean():
     return False
 
 
-def _EnsureUpdatedMasterBranch(dry_run):
+def _EnsureUpdatedMainBranch(dry_run):
     current_branch = _RunCommand(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])[0].splitlines()[0]
-    if current_branch != 'master':
-        logging.error('Please checkout the master branch and re-run this script.')
+    if current_branch != 'main':
+        logging.error('Please checkout the main branch and re-run this script.')
         if not dry_run:
             sys.exit(-1)
 
-    logging.info('Updating master branch...')
+    logging.info('Updating main branch...')
     _RunCommand(['git', 'pull'])
 
 
@@ -512,7 +582,7 @@ def _CreateRollBranch(dry_run):
 def _RemovePreviousRollBranch(dry_run):
     active_branch, branches = _GetBranches()
     if active_branch == ROLL_BRANCH_NAME:
-        active_branch = 'master'
+        active_branch = 'main'
     if ROLL_BRANCH_NAME in branches:
         logging.info('Removing previous roll branch (%s)', ROLL_BRANCH_NAME)
         if not dry_run:
@@ -611,7 +681,7 @@ def main():
         '--ignore-unclean-workdir',
         action='store_true',
         default=False,
-        help=('Ignore if the current branch is not master or if there '
+        help=('Ignore if the current branch is not main or if there '
               'are uncommitted changes (default: %(default)s).'))
     grp = p.add_mutually_exclusive_group()
     grp.add_argument(
@@ -647,7 +717,7 @@ def main():
     # We don't have locally sync'ed deps on autoroller,
     # so trust it to have depot_tools in path
     if not opts.autoroll:
-        add_depot_tools_to_path()
+        AddDepotToolsToPath()
 
     if not opts.ignore_unclean_workdir and not _IsTreeClean():
         logging.error('Please clean your local checkout first.')
@@ -657,7 +727,7 @@ def main():
         _RemovePreviousRollBranch(opts.dry_run)
 
     if not opts.ignore_unclean_workdir:
-        _EnsureUpdatedMasterBranch(opts.dry_run)
+        _EnsureUpdatedMainBranch(opts.dry_run)
 
     deps_filename = os.path.join(CHECKOUT_SRC_DIR, 'DEPS')
     angle_deps = ParseLocalDepsFile(deps_filename)
@@ -670,15 +740,9 @@ def main():
     new_cr_content = ReadRemoteCrFile('DEPS', rev_update.new_chromium_rev)
     new_cr_deps = ParseDepsDict(new_cr_content)
     changed_deps = CalculateChangedDeps(angle_deps, new_cr_deps)
-    clang_change = CalculateChangedClang(rev_update.current_chromium_rev,
-                                         rev_update.new_chromium_rev, opts.autoroll)
-    commit_msg = GenerateCommitMessage(
-        rev_update,
-        current_commit_pos,
-        new_commit_pos,
-        changed_deps,
-        opts.autoroll,
-        clang_change=clang_change)
+    clang_change = CalculateChangedClang(changed_deps, opts.autoroll)
+    commit_msg = GenerateCommitMessage(rev_update, current_commit_pos, new_commit_pos,
+                                       changed_deps, opts.autoroll, clang_change)
     logging.debug('Commit message:\n%s', commit_msg)
 
     # We are updating a commit that autoroll has created, using existing branch

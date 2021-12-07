@@ -15,7 +15,7 @@
 # grouped after the public destructor or after the private
 # DISALLOW_COPY_AND_ASSIGN macro.
 
-import os, sys, re, string, datetime
+import os, sys, re, string
 
 if len(sys.argv) < 3:
     print('Usage: ' + sys.argv[0] + ' <renderer dir name> <renderer class suffix>')
@@ -83,7 +83,7 @@ $ImplMethodDeclarations$PrivateImplMethodDeclarations};
 """
 
 cpp_file_template = """//
-// Copyright $Year The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -269,8 +269,7 @@ for impl_class in impl_classes:
         'ImplMethodDefinitions': impl_method_definitions,
         'ConstructorParams': constructor_params,
         'BaseContructorArgs': base_constructor_args,
-        'PrivateImplMethodDeclarations': private_impl_method_declarations,
-        'Year': datetime.datetime.now().year,
+        'PrivateImplMethodDeclarations': private_impl_method_declarations
     }
 
     h_file.write(string.Template(h_file_template).substitute(substitutions))

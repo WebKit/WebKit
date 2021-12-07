@@ -27,6 +27,8 @@ class DmaBufImageSiblingEGL : public ExternalImageSiblingEGL
     gl::Format getFormat() const override;
     bool isRenderable(const gl::Context *context) const override;
     bool isTexturable(const gl::Context *context) const override;
+    bool isYUV() const override;
+    bool hasProtectedContent() const override;
     gl::Extents getSize() const override;
     size_t getSamples() const override;
 
@@ -38,6 +40,8 @@ class DmaBufImageSiblingEGL : public ExternalImageSiblingEGL
     egl::AttributeMap mAttribs;
     gl::Extents mSize;
     gl::Format mFormat;
+    bool mYUV;
+    bool mHasProtectedContent;
 };
 
 }  // namespace rx

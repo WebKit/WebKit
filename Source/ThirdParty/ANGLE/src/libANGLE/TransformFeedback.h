@@ -100,7 +100,7 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
     GLsizeiptr getPrimitivesDrawn() const { return mState.getPrimitivesDrawn(); }
 
     // Returns true if any buffer bound to this object is also bound to another target.
-    bool buffersBoundForOtherUse() const;
+    bool buffersBoundForOtherUseInWebGL() const;
 
     angle::Result detachBuffer(const Context *context, BufferID bufferID);
 

@@ -297,7 +297,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         // Bind the secondary fragment color outputs defined in EXT_blend_func_extended. We only use
         // the API to bind fragment output locations in case EXT_blend_func_extended is enabled.
         // Otherwise shader-assigned locations will work.
-        if (context->getExtensions().blendFuncExtended)
+        if (context->getExtensions().blendFuncExtendedEXT)
         {
             gl::Shader *fragmentShader = mState.getAttachedShader(gl::ShaderType::Fragment);
             if (fragmentShader && fragmentShader->getShaderVersion() == 100)
@@ -324,12 +324,12 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                         mFunctions->bindFragDataLocationIndexed(mProgramID, 0, 0,
                                                                 "webgl_FragColor");
                         mFunctions->bindFragDataLocationIndexed(mProgramID, 0, 1,
-                                                                "angle_SecondaryFragColor");
+                                                                "webgl_SecondaryFragColor");
                     }
                     else if (output.name == "gl_SecondaryFragDataEXT")
                     {
                         // Basically we should have a loop here going over the output
-                        // array binding "webgl_FragData[i]" and "angle_SecondaryFragData[i]" array
+                        // array binding "webgl_FragData[i]" and "webgl_SecondaryFragData[i]" array
                         // indices to the correct color buffers and color indices.
                         // However I'm not sure if this construct is legal or not, neither ARB or
                         // EXT version of the spec mention this. They only mention that
@@ -349,7 +349,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
 
                         mFunctions->bindFragDataLocationIndexed(mProgramID, 0, 0, "webgl_FragData");
                         mFunctions->bindFragDataLocationIndexed(mProgramID, 0, 1,
-                                                                "angle_SecondaryFragData");
+                                                                "webgl_SecondaryFragData");
                     }
                 }
             }
@@ -476,8 +476,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
     if (mRenderer->hasNativeParallelCompile())
     {
         mFunctions->linkProgram(mProgramID);
-        // Verify the link
-        checkLinkStatus(infoLog);
+
         return std::make_unique<LinkEventNativeParallel>(postLinkImplTask, mFunctions, mProgramID);
     }
     else if (workerPool->isAsync() &&

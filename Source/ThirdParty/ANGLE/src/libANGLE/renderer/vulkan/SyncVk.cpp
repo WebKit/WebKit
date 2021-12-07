@@ -16,10 +16,59 @@
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 
 #if !defined(ANGLE_PLATFORM_WINDOWS)
+#    include <poll.h>
 #    include <unistd.h>
 #else
 #    include <io.h>
 #endif
+
+namespace
+{
+// Wait for file descriptor to be signaled
+VkResult SyncWaitFd(int fd, uint64_t timeoutNs)
+{
+#if !defined(ANGLE_PLATFORM_WINDOWS)
+    struct pollfd fds;
+    int ret;
+
+    // Convert nanoseconds to milliseconds
+    int timeoutMs = static_cast<int>(timeoutNs / 1000000);
+    // If timeoutNs was non-zero but less than one millisecond, make it a millisecond.
+    if (timeoutNs > 0 && timeoutNs < 1000000)
+    {
+        timeoutMs = 1;
+    }
+
+    ASSERT(fd >= 0);
+
+    fds.fd     = fd;
+    fds.events = POLLIN;
+
+    do
+    {
+        ret = poll(&fds, 1, timeoutMs);
+        if (ret > 0)
+        {
+            if (fds.revents & (POLLERR | POLLNVAL))
+            {
+                return VK_ERROR_UNKNOWN;
+            }
+            return VK_SUCCESS;
+        }
+        else if (ret == 0)
+        {
+            return VK_TIMEOUT;
+        }
+    } while (ret == -1 && (errno == EINTR || errno == EAGAIN));
+
+    return VK_ERROR_UNKNOWN;
+#else
+    UNREACHABLE();
+    return VK_ERROR_UNKNOWN;
+#endif
+}
+
+}  // anonymous namespace
 
 namespace rx
 {
@@ -29,56 +78,23 @@ SyncHelper::SyncHelper() {}
 
 SyncHelper::~SyncHelper() {}
 
-void SyncHelper::releaseToRenderer(RendererVk *renderer)
+void SyncHelper::releaseToRenderer(RendererVk *renderer) {}
+
+angle::Result SyncHelper::initialize(ContextVk *contextVk, bool isEglSyncObject)
 {
-    renderer->collectGarbageAndReinit(&mUse, &mEvent);
-    // TODO: https://issuetracker.google.com/170312581 - Currently just stalling on worker thread
-    // here to try and avoid race condition. If this works, need some alternate solution
-    if (renderer->getFeatures().asynchronousCommandProcessing.enabled)
-    {
-        ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelper::releaseToRenderer");
-        renderer->waitForCommandProcessorIdle(nullptr);
-    }
-    mFence.reset(renderer->getDevice());
-}
+    ASSERT(!mUse.getSerial().valid());
 
-angle::Result SyncHelper::initialize(ContextVk *contextVk)
-{
-    ASSERT(!mEvent.valid());
-
-    RendererVk *renderer = contextVk->getRenderer();
-    VkDevice device      = renderer->getDevice();
-
-    VkEventCreateInfo eventCreateInfo = {};
-    eventCreateInfo.sType             = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
-    eventCreateInfo.flags             = 0;
-
-    DeviceScoped<Event> event(device);
-    ANGLE_VK_TRY(contextVk, event.get().init(device, eventCreateInfo));
-    // TODO: https://issuetracker.google.com/170312581 - For now wait for worker thread to finish
-    // then get next fence from renderer
-    if (contextVk->getRenderer()->getFeatures().commandProcessor.enabled)
-    {
-        if (contextVk->getRenderer()->getFeatures().asynchronousCommandProcessing.enabled)
-        {
-            contextVk->getRenderer()->waitForCommandProcessorIdle(contextVk);
-        }
-        ANGLE_TRY(contextVk->getRenderer()->getNextSubmitFence(&mFence, false));
-    }
-    else
-    {
-        ANGLE_TRY(contextVk->getNextSubmitFence(&mFence));
-    }
-
-    mEvent = event.release();
-
-    vk::CommandBuffer &commandBuffer = contextVk->getOutsideRenderPassCommandBuffer();
-    commandBuffer.setEvent(mEvent.getHandle(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+    // Submit the commands:
+    //
+    // - This breaks the current render pass to ensure the proper ordering of the sync object in the
+    //   commands,
+    // - The sync object has a valid serial when it's waited on later,
+    // - After waiting on the sync object, every resource that's used so far (and is being synced)
+    //   will also be aware that it's finished (based on the serial) and won't incur a further wait
+    //   (for example when a buffer is mapped).
+    //
     retain(&contextVk->getResourceUseList());
-
-    contextVk->onSyncHelperInitialize();
-
-    return angle::Result::Continue;
+    return contextVk->flushImpl(nullptr, RenderPassClosureReason::SyncObjectInit);
 }
 
 angle::Result SyncHelper::clientWait(Context *context,
@@ -105,24 +121,12 @@ angle::Result SyncHelper::clientWait(Context *context,
         return angle::Result::Continue;
     }
 
-    if (flushCommands && contextVk)
-    {
-        ANGLE_TRY(contextVk->flushImpl(nullptr));
-    }
+    // We always flush when a sync object is created, so they should always have a valid Serial
+    // when being waited on.
+    ASSERT(mUse.getSerial().valid() && !usedInRecordedCommands());
 
-    // TODO: https://issuetracker.google.com/170312581 - If we are using worker need to wait for the
-    // commands to be issued before waiting on the fence.
-    if (renderer->getFeatures().asynchronousCommandProcessing.enabled)
-    {
-        ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelper::clientWait");
-        renderer->waitForCommandProcessorIdle(contextVk);
-    }
-
-    // Wait on the fence that's expected to be signaled on the first vkQueueSubmit after
-    // `initialize` was called. The first fence is the fence created to signal this sync.
-    ASSERT(mFence.get().valid());
-    // TODO: https://issuetracker.google.com/170312581 - Wait could be command to worker
-    VkResult status = mFence.get().wait(renderer->getDevice(), timeout);
+    VkResult status = VK_SUCCESS;
+    ANGLE_TRY(renderer->waitForSerialWithUserTimeout(context, mUse.getSerial(), timeout, &status));
 
     // Check for errors, but don't consider timeout as such.
     if (status != VK_TIMEOUT)
@@ -136,22 +140,23 @@ angle::Result SyncHelper::clientWait(Context *context,
 
 angle::Result SyncHelper::serverWait(ContextVk *contextVk)
 {
-    vk::CommandBuffer &commandBuffer = contextVk->getOutsideRenderPassCommandBuffer();
-    commandBuffer.waitEvents(1, mEvent.ptr(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, nullptr, 0, nullptr, 0,
-                             nullptr);
-    retain(&contextVk->getResourceUseList());
+    // Every resource already tracks its usage and issues the appropriate barriers, so there's
+    // really nothing to do here.  An execution barrier is issued to strictly satisfy what the
+    // application asked for.
+    vk::CommandBuffer *commandBuffer;
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer({}, &commandBuffer));
+    commandBuffer->pipelineBarrier(VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                   VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 0,
+                                   nullptr);
     return angle::Result::Continue;
 }
 
 angle::Result SyncHelper::getStatus(Context *context, bool *signaled) const
 {
-    VkResult result = mEvent.getStatus(context->getDevice());
-    if (result != VK_EVENT_SET && result != VK_EVENT_RESET)
-    {
-        ANGLE_VK_TRY(context, result);
-    }
-    *signaled = (result == VK_EVENT_SET);
+    ASSERT(mUse.getSerial().valid() && !usedInRecordedCommands());
+
+    ANGLE_TRY(context->getRenderer()->checkCompletedCommands(context));
+    *signaled = !isCurrentlyInUse(context->getRenderer()->getLastCompletedQueueSerial());
     return angle::Result::Continue;
 }
 
@@ -170,13 +175,26 @@ void SyncHelperNativeFence::releaseToRenderer(RendererVk *renderer)
     renderer->collectGarbageAndReinit(&mUse, &mFenceWithFd);
 }
 
-// Note: Having mFenceWithFd hold the FD, so that ownership is with ICD. Meanwhile store a dup
+// Note: We have mFenceWithFd hold the FD, so that ownership is with ICD. Meanwhile we store a dup
 // of FD in SyncHelperNativeFence for further reference, i.e. dup of FD. Any call to clientWait
 // or serverWait will ensure the FD or dup of FD goes to application or ICD. At release, above
-// it's Garbage collected/destroyed. Otherwise can't time when to close(fd);
+// it's Garbage collected/destroyed. Otherwise we can't time when to close(fd);
 angle::Result SyncHelperNativeFence::initializeWithFd(ContextVk *contextVk, int inFd)
 {
     ASSERT(inFd >= kInvalidFenceFd);
+
+    // If valid FD provided by application - import it to fence.
+    if (inFd > kInvalidFenceFd)
+    {
+        // File descriptor ownership: EGL_ANDROID_native_fence_sync
+        // Whenever a file descriptor is passed into or returned from an
+        // EGL call in this extension, ownership of that file descriptor is
+        // transferred. The recipient of the file descriptor must close it when it is
+        // no longer needed, and the provider of the file descriptor must dup it
+        // before providing it if they require continued use of the native fence.
+        mNativeFenceFd = inFd;
+        return angle::Result::Continue;
+    }
 
     RendererVk *renderer = contextVk->getRenderer();
     VkDevice device      = renderer->getDevice();
@@ -197,76 +215,36 @@ angle::Result SyncHelperNativeFence::initializeWithFd(ContextVk *contextVk, int 
     // Initialize/create a VkFence handle
     ANGLE_VK_TRY(contextVk, fence.get().init(device, fenceCreateInfo));
 
-    int importFenceFd = kInvalidFenceFd;
-    // If valid FD provided by application - import it to fence.
-    if (inFd > kInvalidFenceFd)
-    {
-        importFenceFd = inFd;
-    }
-    // If invalid FD provided by application - create one with fence.
-    else
-    {
-        /*
-          Spec: "When a fence sync object is created or when an EGL native fence sync
-          object is created with the EGL_SYNC_NATIVE_FENCE_FD_ANDROID attribute set to
-          EGL_NO_NATIVE_FENCE_FD_ANDROID, eglCreateSyncKHR also inserts a fence command
-          into the command stream of the bound client API's current context and associates it
-          with the newly created sync object.
-        */
-        // Flush first because the fence comes after current pending set of commands.
-        ANGLE_TRY(contextVk->flushImpl(nullptr));
+    // invalid FD provided by application - create one with fence.
+    /*
+      Spec: "When a fence sync object is created or when an EGL native fence sync
+      object is created with the EGL_SYNC_NATIVE_FENCE_FD_ANDROID attribute set to
+      EGL_NO_NATIVE_FENCE_FD_ANDROID, eglCreateSyncKHR also inserts a fence command
+      into the command stream of the bound client API's current context and associates it
+      with the newly created sync object.
+    */
+    // Flush first because the fence comes after current pending set of commands.
+    ANGLE_TRY(contextVk->flushImpl(nullptr, RenderPassClosureReason::SyncObjectWithFdInit));
 
-        retain(&contextVk->getResourceUseList());
-
-        if (renderer->getFeatures().commandProcessor.enabled)
-        {
-            CommandProcessorTask oneOffQueueSubmit;
-            oneOffQueueSubmit.initOneOffQueueSubmit(VK_NULL_HANDLE, contextVk->getPriority(),
-                                                    &fence.get());
-            renderer->queueCommand(contextVk, &oneOffQueueSubmit);
-            // TODO: https://issuetracker.google.com/170312581 - wait for now
-            if (renderer->getFeatures().asynchronousCommandProcessing.enabled)
-            {
-                ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelperNativeFence::initializeWithFd");
-                renderer->waitForCommandProcessorIdle(contextVk);
-            }
-        }
-        else
-        {
-            Serial serialOut;
-            VkSubmitInfo submitInfo = {};
-            submitInfo.sType        = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-            ANGLE_TRY(renderer->queueSubmit(contextVk, contextVk->getPriority(), submitInfo,
-                                            nullptr, &fence.get(), &serialOut));
-        }
-
-        VkFenceGetFdInfoKHR fenceGetFdInfo = {};
-        fenceGetFdInfo.sType               = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
-        fenceGetFdInfo.fence               = fence.get().getHandle();
-        fenceGetFdInfo.handleType          = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR;
-        ANGLE_VK_TRY(contextVk, fence.get().exportFd(device, fenceGetFdInfo, &importFenceFd));
-    }
-
-    // Spec: Importing a fence payload from a file descriptor transfers ownership of the file
-    // descriptor from the application to the Vulkan implementation. The application must not
-    // perform any operations on the file descriptor after a successful import.
-
-    // Make a dup of importFenceFd before tranfering ownership to created fence.
-    mNativeFenceFd = dup(importFenceFd);
-
-    // Import FD - after creating fence.
-    VkImportFenceFdInfoKHR importFenceFdInfo = {};
-    importFenceFdInfo.sType                  = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
-    importFenceFdInfo.pNext                  = nullptr;
-    importFenceFdInfo.fence                  = fence.get().getHandle();
-    importFenceFdInfo.flags                  = VK_FENCE_IMPORT_TEMPORARY_BIT_KHR;
-    importFenceFdInfo.handleType             = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT;
-    importFenceFdInfo.fd                     = importFenceFd;
-
-    ANGLE_VK_TRY(contextVk, fence.get().importFd(device, importFenceFdInfo));
-    mFenceWithFd = fence.release();
     retain(&contextVk->getResourceUseList());
+
+    Serial serialOut;
+    // exportFd is exporting VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR type handle which
+    // obeys copy semantics. This means that the fence must already be signaled or the work to
+    // signal it is in the graphics pipeline at the time we export the fd. Thus we need to
+    // EnsureSubmitted here.
+    ANGLE_TRY(renderer->queueSubmitOneOff(contextVk, vk::PrimaryCommandBuffer(),
+                                          contextVk->hasProtectedContent(),
+                                          contextVk->getPriority(), nullptr, 0, &fence.get(),
+                                          vk::SubmitPolicy::EnsureSubmitted, &serialOut));
+
+    VkFenceGetFdInfoKHR fenceGetFdInfo = {};
+    fenceGetFdInfo.sType               = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
+    fenceGetFdInfo.fence               = fence.get().getHandle();
+    fenceGetFdInfo.handleType          = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR;
+    ANGLE_VK_TRY(contextVk, fence.get().exportFd(device, fenceGetFdInfo, &mNativeFenceFd));
+
+    mFenceWithFd = fence.release();
 
     return angle::Result::Continue;
 }
@@ -297,24 +275,25 @@ angle::Result SyncHelperNativeFence::clientWait(Context *context,
 
     if (flushCommands && contextVk)
     {
-        ANGLE_TRY(contextVk->flushImpl(nullptr));
+        ANGLE_TRY(contextVk->flushImpl(nullptr, RenderPassClosureReason::SyncObjectClientWait));
     }
 
-    // TODO: https://issuetracker.google.com/170312581 - If we are using worker need to wait for the
-    // commands to be issued before waiting on the fence.
-    if (contextVk->getRenderer()->getFeatures().asynchronousCommandProcessing.enabled)
+    VkResult status = VK_SUCCESS;
+    if (mUse.valid())
     {
-        ANGLE_TRACE_EVENT0("gpu.angle", "SyncHelperNativeFence::clientWait");
-        contextVk->getRenderer()->waitForCommandProcessorIdle(contextVk);
+        // We have a valid serial to wait on
+        ANGLE_TRY(
+            renderer->waitForSerialWithUserTimeout(context, mUse.getSerial(), timeout, &status));
     }
-
-    // Wait for mFenceWithFd to be signaled.
-    VkResult status = mFenceWithFd.wait(renderer->getDevice(), timeout);
-
-    // Check for errors, but don't consider timeout as such.
-    if (status != VK_TIMEOUT)
+    else
     {
-        ANGLE_VK_TRY(context, status);
+        // We need to wait on the file descriptor
+
+        status = SyncWaitFd(mNativeFenceFd, timeout);
+        if (status != VK_TIMEOUT)
+        {
+            ANGLE_VK_TRY(contextVk, status);
+        }
     }
 
     *outResult = status;
@@ -323,11 +302,6 @@ angle::Result SyncHelperNativeFence::clientWait(Context *context,
 
 angle::Result SyncHelperNativeFence::serverWait(ContextVk *contextVk)
 {
-    if (!mFenceWithFd.valid())
-    {
-        return angle::Result::Stop;
-    }
-
     RendererVk *renderer = contextVk->getRenderer();
     VkDevice device      = renderer->getDevice();
 
@@ -345,7 +319,7 @@ angle::Result SyncHelperNativeFence::serverWait(ContextVk *contextVk)
     ANGLE_VK_TRY(contextVk, waitSemaphore.get().importFd(device, importFdInfo));
 
     // Flush current work, block after current pending commands.
-    ANGLE_TRY(contextVk->flushImpl(nullptr));
+    ANGLE_TRY(contextVk->flushImpl(nullptr, RenderPassClosureReason::SyncObjectServerWait));
 
     // Add semaphore to next submit job.
     contextVk->addWaitSemaphore(waitSemaphore.get().getHandle(),
@@ -356,8 +330,16 @@ angle::Result SyncHelperNativeFence::serverWait(ContextVk *contextVk)
 
 angle::Result SyncHelperNativeFence::getStatus(Context *context, bool *signaled) const
 {
-    VkResult result = mFenceWithFd.getStatus(context->getDevice());
-    if (result != VK_SUCCESS && result != VK_NOT_READY)
+    // We've got a serial, check if the serial is still in use
+    if (mUse.valid())
+    {
+        *signaled = !isCurrentlyInUse(context->getRenderer()->getLastCompletedQueueSerial());
+        return angle::Result::Continue;
+    }
+
+    // We don't have a serial, check status of the file descriptor
+    VkResult result = SyncWaitFd(mNativeFenceFd, 0);
+    if (result != VK_TIMEOUT)
     {
         ANGLE_VK_TRY(context, result);
     }
@@ -393,7 +375,7 @@ angle::Result SyncVk::set(const gl::Context *context, GLenum condition, GLbitfie
     ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE);
     ASSERT(flags == 0);
 
-    return mSyncHelper.initialize(vk::GetImpl(context));
+    return mSyncHelper.initialize(vk::GetImpl(context), false);
 }
 
 angle::Result SyncVk::clientWait(const gl::Context *context,
@@ -443,8 +425,9 @@ angle::Result SyncVk::serverWait(const gl::Context *context, GLbitfield flags, G
 
 angle::Result SyncVk::getStatus(const gl::Context *context, GLint *outResult)
 {
-    bool signaled = false;
-    ANGLE_TRY(mSyncHelper.getStatus(vk::GetImpl(context), &signaled));
+    ContextVk *contextVk = vk::GetImpl(context);
+    bool signaled        = false;
+    ANGLE_TRY(mSyncHelper.getStatus(contextVk, &signaled));
 
     *outResult = signaled ? GL_SIGNALED : GL_UNSIGNALED;
     return angle::Result::Continue;
@@ -476,7 +459,7 @@ egl::Error EGLSyncVk::initialize(const egl::Display *display,
         case EGL_SYNC_FENCE_KHR:
             ASSERT(mAttribs.isEmpty());
             mSyncHelper = new vk::SyncHelper();
-            if (mSyncHelper->initialize(vk::GetImpl(context)) == angle::Result::Stop)
+            if (mSyncHelper->initialize(vk::GetImpl(context), true) == angle::Result::Stop)
             {
                 return egl::Error(EGL_BAD_ALLOC, "eglCreateSyncKHR failed to create sync object");
             }

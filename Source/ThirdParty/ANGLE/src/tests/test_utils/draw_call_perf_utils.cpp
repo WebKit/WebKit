@@ -63,6 +63,24 @@ void main()
     gl_FragColor = texture2D(tex1, texCoord) + texture2D(tex2, texCoord);
 })";
 
+constexpr char kEightTextureFS[] = R"(precision mediump float;
+varying vec2 texCoord;
+uniform sampler2D tex1;
+uniform sampler2D tex2;
+uniform sampler2D tex3;
+uniform sampler2D tex4;
+uniform sampler2D tex5;
+uniform sampler2D tex6;
+uniform sampler2D tex7;
+uniform sampler2D tex8;
+void main()
+{
+    gl_FragColor = texture2D(tex1, texCoord) + texture2D(tex2, texCoord) +
+                   texture2D(tex3, texCoord) + texture2D(tex4, texCoord) +
+                   texture2D(tex5, texCoord) + texture2D(tex6, texCoord) +
+                   texture2D(tex7, texCoord) + texture2D(tex8, texCoord);
+})";
+
 void Generate2DTriangleData(size_t numTris, std::vector<float> *floatData)
 {
     for (size_t triIndex = 0; triIndex < numTris; ++triIndex)
@@ -130,6 +148,20 @@ GLuint SetupSimpleTextureProgram()
 GLuint SetupDoubleTextureProgram()
 {
     GLuint program = CompileProgram(kSimpleTexCoordVS, kDoubleTextureFS);
+    if (program == 0u)
+    {
+        return program;
+    }
+
+    // Use the program object
+    glUseProgram(program);
+
+    return program;
+}
+
+GLuint SetupEightTextureProgram()
+{
+    GLuint program = CompileProgram(kSimpleTexCoordVS, kEightTextureFS);
     if (program == 0u)
     {
         return program;

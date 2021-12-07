@@ -54,11 +54,10 @@ typedef std::basic_string<char, std::char_traits<char>, TStringAllocator> TStrin
 typedef std::basic_ostringstream<char, std::char_traits<char>, TStringAllocator> TStringStream;
 
 //
-// Persistent string memory.  Should only be used for strings that survive
-// across compiles.
+// Persistent memory.  Should only be used for strings that survive across compiles.
 //
-#define TPersistString std::string
-#define TPersistStringStream std::ostringstream
+using TPersistString       = std::string;
+using TPersistStringStream = std::ostringstream;
 
 //
 // Pool allocator versions of vectors, lists, and maps
@@ -215,7 +214,7 @@ inline TString str(T i)
 {
     ASSERT(std::numeric_limits<T>::is_integer);
     char buffer[((8 * sizeof(T)) / 3) + 3];
-    constexpr const char *formatStr = std::numeric_limits<T>::is_signed ? "%d" : "%u";
+    const char *formatStr = std::numeric_limits<T>::is_signed ? "%d" : "%u";
     snprintf(buffer, sizeof(buffer), formatStr, i);
     return buffer;
 }

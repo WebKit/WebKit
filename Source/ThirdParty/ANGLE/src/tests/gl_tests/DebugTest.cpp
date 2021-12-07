@@ -6,10 +6,21 @@
 
 // DebugTest.cpp : Tests of the GL_KHR_debug extension
 
+#include "common/debug.h"
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 namespace angle
 {
+constexpr char kBufferObjLabel[]          = "buffer";
+constexpr char kShaderObjLabel[]          = "shader";
+constexpr char kProgramObjLabel[]         = "program";
+constexpr char kVertexArrayObjLabel[]     = "vertexarray";
+constexpr char kQueryObjLabel[]           = "query";
+constexpr char kProgramPipelineObjLabel[] = "programpipeline";
+constexpr GLenum kObjectTypes[]           = {GL_BUFFER_OBJECT_EXT,           GL_SHADER_OBJECT_EXT,
+                                   GL_PROGRAM_OBJECT_EXT,          GL_QUERY_OBJECT_EXT,
+                                   GL_PROGRAM_PIPELINE_OBJECT_EXT, GL_VERTEX_ARRAY_OBJECT_EXT};
 
 class DebugTest : public ANGLETest
 {
@@ -38,6 +49,146 @@ class DebugTest : public ANGLETest
     bool mDebugExtensionAvailable;
 };
 
+void createGLObjectAndLabel(GLenum identifier, GLuint &object, const char **label)
+{
+    switch (identifier)
+    {
+        case GL_BUFFER_OBJECT_EXT:
+            glGenBuffers(1, &object);
+            glBindBuffer(GL_ARRAY_BUFFER, object);
+            *label = kBufferObjLabel;
+            break;
+        case GL_SHADER_OBJECT_EXT:
+            object = glCreateShader(GL_VERTEX_SHADER);
+            *label = kShaderObjLabel;
+            break;
+        case GL_PROGRAM_OBJECT_EXT:
+            object = glCreateProgram();
+            *label = kProgramObjLabel;
+            break;
+        case GL_VERTEX_ARRAY_OBJECT_EXT:
+            glGenVertexArrays(1, &object);
+            glBindVertexArray(object);
+            *label = kVertexArrayObjLabel;
+            break;
+        case GL_QUERY_OBJECT_EXT:
+            glGenQueries(1, &object);
+            glBeginQuery(GL_ANY_SAMPLES_PASSED, object);
+            *label = kQueryObjLabel;
+            break;
+        case GL_PROGRAM_PIPELINE_OBJECT_EXT:
+            glGenProgramPipelines(1, &object);
+            glBindProgramPipeline(object);
+            *label = kProgramPipelineObjLabel;
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
+}
+
+void deleteGLObject(GLenum identifier, GLuint &object)
+{
+    switch (identifier)
+    {
+        case GL_BUFFER_OBJECT_EXT:
+            glDeleteBuffers(1, &object);
+            break;
+        case GL_SHADER_OBJECT_EXT:
+            glDeleteShader(object);
+            break;
+        case GL_PROGRAM_OBJECT_EXT:
+            glDeleteProgram(object);
+            break;
+        case GL_VERTEX_ARRAY_OBJECT_EXT:
+            glDeleteVertexArrays(1, &object);
+            break;
+        case GL_QUERY_OBJECT_EXT:
+            glEndQuery(GL_ANY_SAMPLES_PASSED);
+            glDeleteQueries(1, &object);
+            break;
+        case GL_PROGRAM_PIPELINE_OBJECT_EXT:
+            glDeleteProgramPipelines(1, &object);
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
+}
+
+// Test basic usage of setting and getting labels using GL_EXT_debug_label
+TEST_P(DebugTest, ObjectLabelsEXT)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_debug_label"));
+
+    for (const GLenum identifier : kObjectTypes)
+    {
+        bool skip = false;
+        switch (identifier)
+        {
+            case GL_PROGRAM_PIPELINE_OBJECT_EXT:
+                if (!(getClientMajorVersion() >= 3 && getClientMinorVersion() >= 1) ||
+                    !IsGLExtensionEnabled("GL_EXT_separate_shader_objects"))
+                {
+                    skip = true;
+                }
+                break;
+            case GL_QUERY_OBJECT_EXT:
+                // GLES3 context is required for glGenQueries()
+                if (getClientMajorVersion() < 3 ||
+                    !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"))
+                {
+                    skip = true;
+                }
+                break;
+            case GL_VERTEX_ARRAY_OBJECT_EXT:
+                if (getClientMajorVersion() < 3)
+                {
+                    skip = true;
+                }
+                break;
+            default:
+                break;
+        }
+
+        // if object enum is not supported, move on to the next object type
+        if (skip)
+        {
+            continue;
+        }
+
+        GLuint object;
+        const char *label;
+        createGLObjectAndLabel(identifier, object, &label);
+
+        glLabelObjectEXT(identifier, object, 0, label);
+        ASSERT_GL_NO_ERROR();
+
+        std::vector<char> labelBuf(strlen(label) + 1);
+        GLsizei labelLengthBuf = 0;
+        glGetObjectLabelEXT(identifier, object, static_cast<GLsizei>(labelBuf.size()),
+                            &labelLengthBuf, labelBuf.data());
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_EQ(static_cast<GLsizei>(strlen(label)), labelLengthBuf);
+        EXPECT_STREQ(label, labelBuf.data());
+
+        ASSERT_GL_NO_ERROR();
+
+        deleteGLObject(identifier, object);
+
+        glLabelObjectEXT(identifier, object, 0, label);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        glGetObjectLabelEXT(identifier, object, static_cast<GLsizei>(labelBuf.size()),
+                            &labelLengthBuf, labelBuf.data());
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+}
+
+class DebugTestES3 : public DebugTest
+{};
+
 struct Message
 {
     GLenum source;
@@ -63,13 +214,13 @@ static void GL_APIENTRY Callback(GLenum source,
 }
 
 // Test that all ANGLE back-ends have GL_KHR_debug enabled
-TEST_P(DebugTest, Enabled)
+TEST_P(DebugTestES3, Enabled)
 {
     ASSERT_TRUE(mDebugExtensionAvailable);
 }
 
 // Test that when debug output is disabled, no message are outputted
-TEST_P(DebugTest, DisabledOutput)
+TEST_P(DebugTestES3, DisabledOutput)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -90,7 +241,7 @@ TEST_P(DebugTest, DisabledOutput)
 }
 
 // Test a basic flow of inserting a message and reading it back
-TEST_P(DebugTest, InsertMessage)
+TEST_P(DebugTestES3, InsertMessage)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -134,7 +285,7 @@ TEST_P(DebugTest, InsertMessage)
 }
 
 // Test inserting multiple messages
-TEST_P(DebugTest, InsertMessageMultiple)
+TEST_P(DebugTestES3, InsertMessageMultiple)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -192,7 +343,7 @@ TEST_P(DebugTest, InsertMessageMultiple)
 }
 
 // Test using a debug callback
-TEST_P(DebugTest, DebugCallback)
+TEST_P(DebugTestES3, DebugCallback)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -226,7 +377,7 @@ TEST_P(DebugTest, DebugCallback)
 }
 
 // Test the glGetPointervKHR entry point
-TEST_P(DebugTest, GetPointer)
+TEST_P(DebugTestES3, GetPointer)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -244,7 +395,7 @@ TEST_P(DebugTest, GetPointer)
 }
 
 // Test usage of message control.  Example taken from GL_KHR_debug spec.
-TEST_P(DebugTest, MessageControl1)
+TEST_P(DebugTestES3, MessageControl1)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -292,7 +443,7 @@ TEST_P(DebugTest, MessageControl1)
 }
 
 // Test usage of message control.  Example taken from GL_KHR_debug spec.
-TEST_P(DebugTest, MessageControl2)
+TEST_P(DebugTestES3, MessageControl2)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -340,7 +491,7 @@ TEST_P(DebugTest, MessageControl2)
 }
 
 // Test basic usage of setting and getting labels
-TEST_P(DebugTest, ObjectLabels)
+TEST_P(DebugTestES3, ObjectLabels)
 {
     ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
@@ -372,9 +523,9 @@ TEST_P(DebugTest, ObjectLabels)
 }
 
 // Test basic usage of setting and getting labels
-TEST_P(DebugTest, ObjectPtrLabels)
+TEST_P(DebugTestES3, ObjectPtrLabels)
 {
-    ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable || getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
     GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
@@ -401,8 +552,102 @@ TEST_P(DebugTest, ObjectPtrLabels)
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DebugTest);
+// Test setting labels before, during and after rendering.  The debug markers can be validated by
+// capturing this test under a graphics debugger.
+TEST_P(DebugTestES3, Rendering)
+{
+    ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
 
+    // The test produces the following hierarchy:
+    //
+    // Group: Before Draw
+    // Message: Before Draw Marker
+    //   Message: In Group 1 Marker
+    //   glDrawArrays
+    //   Group: After Draw 1
+    //      glDrawArrays
+    //      Message: In Group 2 Marker
+    //
+    //      glCopyTexImage <-- this breaks the render pass
+    //
+    //      glDrawArrays
+    //   End Group
+    //
+    //   glCopyTexImage <-- this breaks the render pass
+    //
+    //   Group: After Draw 2
+    //      glDrawArrays
+    //
+    //      glCopyTexImage <-- this breaks the render pass
+    //
+    //      Message: In Group 3 Marker
+    //   End Group
+    //   Message: After Draw Marker
+    // End Group
+    const std::string beforeDrawGroup = "Before Draw";
+    const std::string drawGroup1      = "Group 1";
+    const std::string drawGroup2      = "Group 2";
+
+    const std::string beforeDrawMarker = "Before Draw Marker";
+    const std::string inGroup1Marker   = "In Group 1 Marker";
+    const std::string inGroup2Marker   = "In Group 2 Marker";
+    const std::string inGroup3Marker   = "In Group 3 Marker";
+    const std::string afterDrawMarker  = "After Draw Marker";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glUseProgram(program);
+
+    glPushDebugGroupKHR(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, beforeDrawGroup.c_str());
+    glDebugMessageInsertKHR(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_PERFORMANCE, 0,
+                            GL_DEBUG_SEVERITY_NOTIFICATION, -1, beforeDrawMarker.c_str());
+    {
+        glDebugMessageInsertKHR(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_MARKER, 0,
+                                GL_DEBUG_SEVERITY_LOW, -1, inGroup1Marker.c_str());
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION, 0, -1, drawGroup1.c_str());
+        {
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glDebugMessageInsertKHR(GL_DEBUG_SOURCE_THIRD_PARTY, GL_DEBUG_TYPE_PORTABILITY, 0,
+                                    GL_DEBUG_SEVERITY_MEDIUM, -1, inGroup2Marker.c_str());
+
+            GLTexture texture;
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 1, 1, 0);
+
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+        glPopDebugGroupKHR();
+
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 2, 2, 0);
+
+        glPushDebugGroupKHR(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, drawGroup2.c_str());
+        {
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 3, 3, 0);
+
+            glDebugMessageInsertKHR(GL_DEBUG_SOURCE_THIRD_PARTY, GL_DEBUG_TYPE_OTHER, 0,
+                                    GL_DEBUG_SEVERITY_HIGH, -1, inGroup3Marker.c_str());
+        }
+        glPopGroupMarkerEXT();
+
+        glDebugMessageInsertKHR(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+                                GL_DEBUG_SEVERITY_HIGH, -1, afterDrawMarker.c_str());
+    }
+    glPopGroupMarkerEXT();
+
+    ASSERT_GL_NO_ERROR();
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DebugTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(DebugTestES3);
+
+ANGLE_INSTANTIATE_TEST(DebugTest,
+                       ANGLE_ALL_TEST_PLATFORMS_ES1,
+                       ANGLE_ALL_TEST_PLATFORMS_ES2,
+                       ANGLE_ALL_TEST_PLATFORMS_ES3,
+                       ANGLE_ALL_TEST_PLATFORMS_ES31);
 }  // namespace angle

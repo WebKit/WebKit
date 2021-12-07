@@ -292,8 +292,6 @@ TEST_P(FenceSyncTest, MultipleFenceDraw)
         {
             GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
             ASSERT_GL_NO_ERROR();
-            // Force the fence to be created
-            glFlush();
 
             drawGreen      = !drawGreen;
             GLuint program = 0;
@@ -335,7 +333,7 @@ TEST_P(FenceSyncTest, MultipleFenceDraw)
     }
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(FenceNVTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FenceSyncTest);
 ANGLE_INSTANTIATE_TEST_ES3(FenceSyncTest);

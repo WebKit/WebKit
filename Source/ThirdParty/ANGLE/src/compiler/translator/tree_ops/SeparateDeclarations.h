@@ -22,8 +22,11 @@ namespace sh
 {
 class TCompiler;
 class TIntermNode;
+class TSymbolTable;
 
-ANGLE_NO_DISCARD bool SeparateDeclarations(TCompiler *compiler, TIntermNode *root);
+ANGLE_NO_DISCARD bool SeparateDeclarations(TCompiler *compiler,
+                                           TIntermNode *root,
+                                           TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_SEPARATEDECLARATIONS_H_

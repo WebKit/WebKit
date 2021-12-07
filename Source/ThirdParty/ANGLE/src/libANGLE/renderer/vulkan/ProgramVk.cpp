@@ -199,7 +199,7 @@ std::unique_ptr<rx::LinkEvent> ProgramVk::load(const gl::Context *context,
         return std::make_unique<LinkEventDone>(status);
     }
 
-    status = mExecutable.createPipelineLayout(context, nullptr);
+    status = mExecutable.createPipelineLayout(contextVk, mState.getExecutable(), nullptr);
     return std::make_unique<LinkEventDone>(status);
 }
 
@@ -267,15 +267,15 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
     reset(contextVk);
     mExecutable.clearVariableInfoMap();
 
-    // Gather variable info and transform sources.
-    gl::ShaderMap<std::string> shaderSources;
-    GlslangWrapperVk::GetShaderSource(contextVk->getRenderer()->getFeatures(), mState, resources,
-                                      &mGlslangProgramInterfaceInfo, &shaderSources,
-                                      &mExecutable.mVariableInfoMap);
+    // Gather variable info and compiled SPIR-V binaries.
+    gl::ShaderMap<const angle::spirv::Blob *> spirvBlobs;
+    GlslangWrapperVk::GetShaderCode(contextVk->getFeatures(), mState, resources,
+                                    &mGlslangProgramInterfaceInfo, &spirvBlobs,
+                                    &mExecutable.mVariableInfoMap);
 
     // Compile the shaders.
     angle::Result status = mOriginalShaderInfo.initShaders(
-        contextVk, mState.getExecutable().getLinkedShaderStages(), shaderSources, &mExecutable);
+        mState.getExecutable().getLinkedShaderStages(), spirvBlobs, mExecutable.mVariableInfoMap);
     if (status != angle::Result::Continue)
     {
         return std::make_unique<LinkEventDone>(status);
@@ -294,7 +294,7 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
 
     // TODO(jie.a.chen@intel.com): Parallelize linking.
     // http://crbug.com/849576
-    status = mExecutable.createPipelineLayout(context, nullptr);
+    status = mExecutable.createPipelineLayout(contextVk, mState.getExecutable(), nullptr);
     return std::make_unique<LinkEventDone>(status);
 }
 
@@ -353,7 +353,8 @@ void ProgramVk::initDefaultUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap
         if (location.used() && !location.ignored)
         {
             const auto &uniform = uniforms[location.index];
-            if (uniform.isInDefaultBlock() && !uniform.isSampler() && !uniform.isImage())
+            if (uniform.isInDefaultBlock() && !uniform.isSampler() && !uniform.isImage() &&
+                !uniform.isFragmentInOut)
             {
                 std::string uniformName = uniform.name;
                 if (uniform.isArray())
@@ -466,13 +467,13 @@ void ProgramVk::setUniformImpl(GLint location, GLsizei count, const T *v, GLenum
             for (GLint i = 0; i < count; i++)
             {
                 GLint elementOffset = i * layoutInfo.arrayStride + initialArrayOffset;
-                GLint *dest =
+                GLint *dst =
                     reinterpret_cast<GLint *>(uniformBlock.uniformData.data() + elementOffset);
                 const T *source = v + i * componentCount;
 
                 for (int c = 0; c < componentCount; c++)
                 {
-                    dest[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
+                    dst[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
                 }
             }
 
@@ -714,7 +715,7 @@ size_t ProgramVk::calcUniformUpdateRequiredSpace(ContextVk *contextVk,
 
 angle::Result ProgramVk::updateUniforms(ContextVk *contextVk)
 {
-    ASSERT(dirtyUniforms());
+    ASSERT(hasDirtyUniforms());
 
     bool anyNewBufferAllocated                = false;
     uint8_t *bufferData                       = nullptr;
@@ -757,7 +758,7 @@ angle::Result ProgramVk::updateUniforms(ContextVk *contextVk)
         {
             const angle::MemoryBuffer &uniformData = mDefaultUniformBlocks[shaderType].uniformData;
             memcpy(&bufferData[offsets[shaderType]], uniformData.data(), uniformData.size());
-            mExecutable.mDynamicBufferOffsets[offsetIndex] =
+            mExecutable.mDynamicUniformDescriptorOffsets[offsetIndex] =
                 static_cast<uint32_t>(bufferOffset + offsets[shaderType]);
             mDefaultUniformBlocksDirty.reset(shaderType);
         }
@@ -771,8 +772,8 @@ angle::Result ProgramVk::updateUniforms(ContextVk *contextVk)
     {
         // We need to reinitialize the descriptor sets if we newly allocated buffers since we can't
         // modify the descriptor sets once initialized.
-        vk::UniformsAndXfbDesc defaultUniformsDesc;
-        vk::UniformsAndXfbDesc *uniformsAndXfbBufferDesc;
+        vk::UniformsAndXfbDescriptorDesc defaultUniformsDesc;
+        vk::UniformsAndXfbDescriptorDesc *uniformsAndXfbBufferDesc;
 
         if (glExecutable.hasTransformFeedbackOutput())
         {

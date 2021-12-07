@@ -12,50 +12,90 @@
 #define LIBANGLE_VALIDATION_ES1_AUTOGEN_H_
 
 #include "common/PackedEnums.h"
+#include "common/entry_points_enum_autogen.h"
 
 namespace gl
 {
 class Context;
 
-bool ValidateAlphaFunc(const Context *context, AlphaTestFunc funcPacked, GLfloat ref);
-bool ValidateAlphaFuncx(const Context *context, AlphaTestFunc funcPacked, GLfixed ref);
+bool ValidateAlphaFunc(const Context *context,
+                       angle::EntryPoint entryPoint,
+                       AlphaTestFunc funcPacked,
+                       GLfloat ref);
+bool ValidateAlphaFuncx(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        AlphaTestFunc funcPacked,
+                        GLfixed ref);
 bool ValidateClearColorx(const Context *context,
+                         angle::EntryPoint entryPoint,
                          GLfixed red,
                          GLfixed green,
                          GLfixed blue,
                          GLfixed alpha);
-bool ValidateClearDepthx(const Context *context, GLfixed depth);
-bool ValidateClientActiveTexture(const Context *context, GLenum texture);
-bool ValidateClipPlanef(const Context *context, GLenum p, const GLfloat *eqn);
-bool ValidateClipPlanex(const Context *context, GLenum plane, const GLfixed *equation);
+bool ValidateClearDepthx(const Context *context, angle::EntryPoint entryPoint, GLfixed depth);
+bool ValidateClientActiveTexture(const Context *context,
+                                 angle::EntryPoint entryPoint,
+                                 GLenum texture);
+bool ValidateClipPlanef(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        GLenum p,
+                        const GLfloat *eqn);
+bool ValidateClipPlanex(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        GLenum plane,
+                        const GLfixed *equation);
 bool ValidateColor4f(const Context *context,
+                     angle::EntryPoint entryPoint,
                      GLfloat red,
                      GLfloat green,
                      GLfloat blue,
                      GLfloat alpha);
 bool ValidateColor4ub(const Context *context,
+                      angle::EntryPoint entryPoint,
                       GLubyte red,
                       GLubyte green,
                       GLubyte blue,
                       GLubyte alpha);
 bool ValidateColor4x(const Context *context,
+                     angle::EntryPoint entryPoint,
                      GLfixed red,
                      GLfixed green,
                      GLfixed blue,
                      GLfixed alpha);
 bool ValidateColorPointer(const Context *context,
+                          angle::EntryPoint entryPoint,
                           GLint size,
                           VertexAttribType typePacked,
                           GLsizei stride,
                           const void *pointer);
-bool ValidateDepthRangex(const Context *context, GLfixed n, GLfixed f);
-bool ValidateDisableClientState(const Context *context, ClientVertexArrayType arrayPacked);
-bool ValidateEnableClientState(const Context *context, ClientVertexArrayType arrayPacked);
-bool ValidateFogf(const Context *context, GLenum pname, GLfloat param);
-bool ValidateFogfv(const Context *context, GLenum pname, const GLfloat *params);
-bool ValidateFogx(const Context *context, GLenum pname, GLfixed param);
-bool ValidateFogxv(const Context *context, GLenum pname, const GLfixed *param);
+bool ValidateDepthRangex(const Context *context,
+                         angle::EntryPoint entryPoint,
+                         GLfixed n,
+                         GLfixed f);
+bool ValidateDisableClientState(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                ClientVertexArrayType arrayPacked);
+bool ValidateEnableClientState(const Context *context,
+                               angle::EntryPoint entryPoint,
+                               ClientVertexArrayType arrayPacked);
+bool ValidateFogf(const Context *context,
+                  angle::EntryPoint entryPoint,
+                  GLenum pname,
+                  GLfloat param);
+bool ValidateFogfv(const Context *context,
+                   angle::EntryPoint entryPoint,
+                   GLenum pname,
+                   const GLfloat *params);
+bool ValidateFogx(const Context *context,
+                  angle::EntryPoint entryPoint,
+                  GLenum pname,
+                  GLfixed param);
+bool ValidateFogxv(const Context *context,
+                   angle::EntryPoint entryPoint,
+                   GLenum pname,
+                   const GLfixed *param);
 bool ValidateFrustumf(const Context *context,
+                      angle::EntryPoint entryPoint,
                       GLfloat l,
                       GLfloat r,
                       GLfloat b,
@@ -63,110 +103,164 @@ bool ValidateFrustumf(const Context *context,
                       GLfloat n,
                       GLfloat f);
 bool ValidateFrustumx(const Context *context,
+                      angle::EntryPoint entryPoint,
                       GLfixed l,
                       GLfixed r,
                       GLfixed b,
                       GLfixed t,
                       GLfixed n,
                       GLfixed f);
-bool ValidateGetClipPlanef(const Context *context, GLenum plane, const GLfloat *equation);
-bool ValidateGetClipPlanex(const Context *context, GLenum plane, const GLfixed *equation);
-bool ValidateGetFixedv(const Context *context, GLenum pname, const GLfixed *params);
+bool ValidateGetClipPlanef(const Context *context,
+                           angle::EntryPoint entryPoint,
+                           GLenum plane,
+                           const GLfloat *equation);
+bool ValidateGetClipPlanex(const Context *context,
+                           angle::EntryPoint entryPoint,
+                           GLenum plane,
+                           const GLfixed *equation);
+bool ValidateGetFixedv(const Context *context,
+                       angle::EntryPoint entryPoint,
+                       GLenum pname,
+                       const GLfixed *params);
 bool ValidateGetLightfv(const Context *context,
+                        angle::EntryPoint entryPoint,
                         GLenum light,
                         LightParameter pnamePacked,
                         const GLfloat *params);
 bool ValidateGetLightxv(const Context *context,
+                        angle::EntryPoint entryPoint,
                         GLenum light,
                         LightParameter pnamePacked,
                         const GLfixed *params);
 bool ValidateGetMaterialfv(const Context *context,
+                           angle::EntryPoint entryPoint,
                            GLenum face,
                            MaterialParameter pnamePacked,
                            const GLfloat *params);
 bool ValidateGetMaterialxv(const Context *context,
+                           angle::EntryPoint entryPoint,
                            GLenum face,
                            MaterialParameter pnamePacked,
                            const GLfixed *params);
 bool ValidateGetTexEnvfv(const Context *context,
+                         angle::EntryPoint entryPoint,
                          TextureEnvTarget targetPacked,
                          TextureEnvParameter pnamePacked,
                          const GLfloat *params);
 bool ValidateGetTexEnviv(const Context *context,
+                         angle::EntryPoint entryPoint,
                          TextureEnvTarget targetPacked,
                          TextureEnvParameter pnamePacked,
                          const GLint *params);
 bool ValidateGetTexEnvxv(const Context *context,
+                         angle::EntryPoint entryPoint,
                          TextureEnvTarget targetPacked,
                          TextureEnvParameter pnamePacked,
                          const GLfixed *params);
 bool ValidateGetTexParameterxv(const Context *context,
+                               angle::EntryPoint entryPoint,
                                TextureType targetPacked,
                                GLenum pname,
                                const GLfixed *params);
-bool ValidateLightModelf(const Context *context, GLenum pname, GLfloat param);
-bool ValidateLightModelfv(const Context *context, GLenum pname, const GLfloat *params);
-bool ValidateLightModelx(const Context *context, GLenum pname, GLfixed param);
-bool ValidateLightModelxv(const Context *context, GLenum pname, const GLfixed *param);
+bool ValidateLightModelf(const Context *context,
+                         angle::EntryPoint entryPoint,
+                         GLenum pname,
+                         GLfloat param);
+bool ValidateLightModelfv(const Context *context,
+                          angle::EntryPoint entryPoint,
+                          GLenum pname,
+                          const GLfloat *params);
+bool ValidateLightModelx(const Context *context,
+                         angle::EntryPoint entryPoint,
+                         GLenum pname,
+                         GLfixed param);
+bool ValidateLightModelxv(const Context *context,
+                          angle::EntryPoint entryPoint,
+                          GLenum pname,
+                          const GLfixed *param);
 bool ValidateLightf(const Context *context,
+                    angle::EntryPoint entryPoint,
                     GLenum light,
                     LightParameter pnamePacked,
                     GLfloat param);
 bool ValidateLightfv(const Context *context,
+                     angle::EntryPoint entryPoint,
                      GLenum light,
                      LightParameter pnamePacked,
                      const GLfloat *params);
 bool ValidateLightx(const Context *context,
+                    angle::EntryPoint entryPoint,
                     GLenum light,
                     LightParameter pnamePacked,
                     GLfixed param);
 bool ValidateLightxv(const Context *context,
+                     angle::EntryPoint entryPoint,
                      GLenum light,
                      LightParameter pnamePacked,
                      const GLfixed *params);
-bool ValidateLineWidthx(const Context *context, GLfixed width);
-bool ValidateLoadIdentity(const Context *context);
-bool ValidateLoadMatrixf(const Context *context, const GLfloat *m);
-bool ValidateLoadMatrixx(const Context *context, const GLfixed *m);
-bool ValidateLogicOp(const Context *context, LogicalOperation opcodePacked);
+bool ValidateLineWidthx(const Context *context, angle::EntryPoint entryPoint, GLfixed width);
+bool ValidateLoadIdentity(const Context *context, angle::EntryPoint entryPoint);
+bool ValidateLoadMatrixf(const Context *context, angle::EntryPoint entryPoint, const GLfloat *m);
+bool ValidateLoadMatrixx(const Context *context, angle::EntryPoint entryPoint, const GLfixed *m);
+bool ValidateLogicOp(const Context *context,
+                     angle::EntryPoint entryPoint,
+                     LogicalOperation opcodePacked);
 bool ValidateMaterialf(const Context *context,
+                       angle::EntryPoint entryPoint,
                        GLenum face,
                        MaterialParameter pnamePacked,
                        GLfloat param);
 bool ValidateMaterialfv(const Context *context,
+                        angle::EntryPoint entryPoint,
                         GLenum face,
                         MaterialParameter pnamePacked,
                         const GLfloat *params);
 bool ValidateMaterialx(const Context *context,
+                       angle::EntryPoint entryPoint,
                        GLenum face,
                        MaterialParameter pnamePacked,
                        GLfixed param);
 bool ValidateMaterialxv(const Context *context,
+                        angle::EntryPoint entryPoint,
                         GLenum face,
                         MaterialParameter pnamePacked,
                         const GLfixed *param);
-bool ValidateMatrixMode(const Context *context, MatrixType modePacked);
-bool ValidateMultMatrixf(const Context *context, const GLfloat *m);
-bool ValidateMultMatrixx(const Context *context, const GLfixed *m);
+bool ValidateMatrixMode(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        MatrixType modePacked);
+bool ValidateMultMatrixf(const Context *context, angle::EntryPoint entryPoint, const GLfloat *m);
+bool ValidateMultMatrixx(const Context *context, angle::EntryPoint entryPoint, const GLfixed *m);
 bool ValidateMultiTexCoord4f(const Context *context,
+                             angle::EntryPoint entryPoint,
                              GLenum target,
                              GLfloat s,
                              GLfloat t,
                              GLfloat r,
                              GLfloat q);
 bool ValidateMultiTexCoord4x(const Context *context,
+                             angle::EntryPoint entryPoint,
                              GLenum texture,
                              GLfixed s,
                              GLfixed t,
                              GLfixed r,
                              GLfixed q);
-bool ValidateNormal3f(const Context *context, GLfloat nx, GLfloat ny, GLfloat nz);
-bool ValidateNormal3x(const Context *context, GLfixed nx, GLfixed ny, GLfixed nz);
+bool ValidateNormal3f(const Context *context,
+                      angle::EntryPoint entryPoint,
+                      GLfloat nx,
+                      GLfloat ny,
+                      GLfloat nz);
+bool ValidateNormal3x(const Context *context,
+                      angle::EntryPoint entryPoint,
+                      GLfixed nx,
+                      GLfixed ny,
+                      GLfixed nz);
 bool ValidateNormalPointer(const Context *context,
+                           angle::EntryPoint entryPoint,
                            VertexAttribType typePacked,
                            GLsizei stride,
                            const void *pointer);
 bool ValidateOrthof(const Context *context,
+                    angle::EntryPoint entryPoint,
                     GLfloat l,
                     GLfloat r,
                     GLfloat b,
@@ -174,71 +268,124 @@ bool ValidateOrthof(const Context *context,
                     GLfloat n,
                     GLfloat f);
 bool ValidateOrthox(const Context *context,
+                    angle::EntryPoint entryPoint,
                     GLfixed l,
                     GLfixed r,
                     GLfixed b,
                     GLfixed t,
                     GLfixed n,
                     GLfixed f);
-bool ValidatePointParameterf(const Context *context, PointParameter pnamePacked, GLfloat param);
+bool ValidatePointParameterf(const Context *context,
+                             angle::EntryPoint entryPoint,
+                             PointParameter pnamePacked,
+                             GLfloat param);
 bool ValidatePointParameterfv(const Context *context,
+                              angle::EntryPoint entryPoint,
                               PointParameter pnamePacked,
                               const GLfloat *params);
-bool ValidatePointParameterx(const Context *context, PointParameter pnamePacked, GLfixed param);
+bool ValidatePointParameterx(const Context *context,
+                             angle::EntryPoint entryPoint,
+                             PointParameter pnamePacked,
+                             GLfixed param);
 bool ValidatePointParameterxv(const Context *context,
+                              angle::EntryPoint entryPoint,
                               PointParameter pnamePacked,
                               const GLfixed *params);
-bool ValidatePointSize(const Context *context, GLfloat size);
-bool ValidatePointSizex(const Context *context, GLfixed size);
-bool ValidatePolygonOffsetx(const Context *context, GLfixed factor, GLfixed units);
-bool ValidatePopMatrix(const Context *context);
-bool ValidatePushMatrix(const Context *context);
-bool ValidateRotatef(const Context *context, GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
-bool ValidateRotatex(const Context *context, GLfixed angle, GLfixed x, GLfixed y, GLfixed z);
-bool ValidateSampleCoveragex(const Context *context, GLclampx value, GLboolean invert);
-bool ValidateScalef(const Context *context, GLfloat x, GLfloat y, GLfloat z);
-bool ValidateScalex(const Context *context, GLfixed x, GLfixed y, GLfixed z);
-bool ValidateShadeModel(const Context *context, ShadingModel modePacked);
+bool ValidatePointSize(const Context *context, angle::EntryPoint entryPoint, GLfloat size);
+bool ValidatePointSizex(const Context *context, angle::EntryPoint entryPoint, GLfixed size);
+bool ValidatePolygonOffsetx(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            GLfixed factor,
+                            GLfixed units);
+bool ValidatePopMatrix(const Context *context, angle::EntryPoint entryPoint);
+bool ValidatePushMatrix(const Context *context, angle::EntryPoint entryPoint);
+bool ValidateRotatef(const Context *context,
+                     angle::EntryPoint entryPoint,
+                     GLfloat angle,
+                     GLfloat x,
+                     GLfloat y,
+                     GLfloat z);
+bool ValidateRotatex(const Context *context,
+                     angle::EntryPoint entryPoint,
+                     GLfixed angle,
+                     GLfixed x,
+                     GLfixed y,
+                     GLfixed z);
+bool ValidateSampleCoveragex(const Context *context,
+                             angle::EntryPoint entryPoint,
+                             GLclampx value,
+                             GLboolean invert);
+bool ValidateScalef(const Context *context,
+                    angle::EntryPoint entryPoint,
+                    GLfloat x,
+                    GLfloat y,
+                    GLfloat z);
+bool ValidateScalex(const Context *context,
+                    angle::EntryPoint entryPoint,
+                    GLfixed x,
+                    GLfixed y,
+                    GLfixed z);
+bool ValidateShadeModel(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        ShadingModel modePacked);
 bool ValidateTexCoordPointer(const Context *context,
+                             angle::EntryPoint entryPoint,
                              GLint size,
                              VertexAttribType typePacked,
                              GLsizei stride,
                              const void *pointer);
 bool ValidateTexEnvf(const Context *context,
+                     angle::EntryPoint entryPoint,
                      TextureEnvTarget targetPacked,
                      TextureEnvParameter pnamePacked,
                      GLfloat param);
 bool ValidateTexEnvfv(const Context *context,
+                      angle::EntryPoint entryPoint,
                       TextureEnvTarget targetPacked,
                       TextureEnvParameter pnamePacked,
                       const GLfloat *params);
 bool ValidateTexEnvi(const Context *context,
+                     angle::EntryPoint entryPoint,
                      TextureEnvTarget targetPacked,
                      TextureEnvParameter pnamePacked,
                      GLint param);
 bool ValidateTexEnviv(const Context *context,
+                      angle::EntryPoint entryPoint,
                       TextureEnvTarget targetPacked,
                       TextureEnvParameter pnamePacked,
                       const GLint *params);
 bool ValidateTexEnvx(const Context *context,
+                     angle::EntryPoint entryPoint,
                      TextureEnvTarget targetPacked,
                      TextureEnvParameter pnamePacked,
                      GLfixed param);
 bool ValidateTexEnvxv(const Context *context,
+                      angle::EntryPoint entryPoint,
                       TextureEnvTarget targetPacked,
                       TextureEnvParameter pnamePacked,
                       const GLfixed *params);
 bool ValidateTexParameterx(const Context *context,
+                           angle::EntryPoint entryPoint,
                            TextureType targetPacked,
                            GLenum pname,
                            GLfixed param);
 bool ValidateTexParameterxv(const Context *context,
+                            angle::EntryPoint entryPoint,
                             TextureType targetPacked,
                             GLenum pname,
                             const GLfixed *params);
-bool ValidateTranslatef(const Context *context, GLfloat x, GLfloat y, GLfloat z);
-bool ValidateTranslatex(const Context *context, GLfixed x, GLfixed y, GLfixed z);
+bool ValidateTranslatef(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        GLfloat x,
+                        GLfloat y,
+                        GLfloat z);
+bool ValidateTranslatex(const Context *context,
+                        angle::EntryPoint entryPoint,
+                        GLfixed x,
+                        GLfixed y,
+                        GLfixed z);
 bool ValidateVertexPointer(const Context *context,
+                           angle::EntryPoint entryPoint,
                            GLint size,
                            VertexAttribType typePacked,
                            GLsizei stride,

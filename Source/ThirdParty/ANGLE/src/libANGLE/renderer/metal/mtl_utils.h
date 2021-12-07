@@ -26,6 +26,10 @@ namespace rx
 
 class ContextMtl;
 
+void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQueue);
+void StartFrameCapture(ContextMtl *context);
+void StopFrameCapture();
+
 namespace mtl
 {
 
@@ -84,30 +88,31 @@ MTLScissorRect GetScissorRect(const gl::Rectangle &rect,
 
 uint32_t GetDeviceVendorId(id<MTLDevice> metalDevice);
 
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
+    id<MTLDevice> metalDevice,
+    const std::string &source,
+    NSDictionary<NSString *, NSObject *> *substitutionDictionary,
+    bool enableFastMath,
+    AutoObjCPtr<NSError *> *error);
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
                                                 const std::string &source,
-                                                NSDictionary<NSString *, NSObject *> * substitutionDictionary,
-                                                bool enableFastMath,
                                                 AutoObjCPtr<NSError *> *error);
 
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
-                                                const std::string &source,
-                                                AutoObjCPtr<NSError *> *error);
-
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
-                                                const char *source,
-                                                size_t sourceLen,
-                                                NSDictionary<NSString *, NSObject *> * substitutionDictionary,
-                                                bool enableFastMath,
-                                                AutoObjCPtr<NSError *> *error);
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
+    id<MTLDevice> metalDevice,
+    const char *source,
+    size_t sourceLen,
+    NSDictionary<NSString *, NSObject *> *substitutionDictionary,
+    bool enableFastMath,
+    AutoObjCPtr<NSError *> *error);
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibraryFromBinary(id<MTLDevice> metalDevice,
                                                           const uint8_t *binarySource,
                                                           size_t binarySourceLen,
                                                           AutoObjCPtr<NSError *> *error);
 
-bool SupportsIOSGPUFamily(id<MTLDevice> device, uint8_t iOSFamily);
+bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily);
 
 bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily);
 
@@ -162,7 +167,6 @@ bool DeviceHasMaximumRenderTargetSize(id<MTLDevice> device);
 // has alpha channel.
 MTLClearColor EmulatedAlphaClearColor(MTLClearColor color, MTLColorWriteMask colorMask);
 
-
 NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDescriptor *descriptor,
                                                           const Context *context,
                                                           id<MTLDevice> device);
@@ -185,15 +189,15 @@ angle::Result GetTriangleFanIndicesCount(ContextMtl *context,
 
 angle::Result CreateMslShader(Context *context,
                               id<MTLLibrary> shaderLib,
-                              NSString * shaderName,
+                              NSString *shaderName,
                               MTLFunctionConstantValues *funcConstants,
                               AutoObjCPtr<id<MTLFunction>> *shaderOut);
 
-angle::Result CreateMslShader(Context * _Nonnull context,
+angle::Result CreateMslShader(Context *_Nonnull context,
                               id<MTLLibrary> shaderLib,
-                              NSString * _Nonnull shaderName,
-                              MTLFunctionConstantValues * _Nullable funcConstants,
-                              id<MTLFunction> _Nullable  * _Nonnull  shaderOut);
+                              NSString *_Nonnull shaderName,
+                              MTLFunctionConstantValues *_Nullable funcConstants,
+                              id<MTLFunction> _Nullable *_Nonnull shaderOut);
 
 NS_ASSUME_NONNULL_END
 }  // namespace mtl

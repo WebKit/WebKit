@@ -19,17 +19,17 @@ We currently run pre-commit tests on:
  * Windows 32-bit AMD and Windows 64-bit Intel and NVIDIA GPUs
  * Linux 64-bit NVIDIA and Intel GPUs
  * Mac NVIDIA, Intel and AMD GPUs
- * Pixel 2 and Nexus 5X
+ * Pixel 4 and Nexus 5X
  * Fuchsia testing in a VM
 
 Looking at an example build shows how tests are split up between machines. See for example:
 
-[`https://ci.chromium.org/p/chromium/builders/try/mac-angle-rel/5905`](https://ci.chromium.org/p/chromium/builders/try/mac-angle-rel/5905)
+[`https://ci.chromium.org/ui/p/angle/builders/ci/mac-rel/8123/overview`](https://ci.chromium.org/ui/p/angle/builders/ci/mac-rel/8123/overview)
 
-This build ran 82 test steps across 3 GPU families. In some cases (e.g.
-webgl2_conformance_tests) the test is split up between multiple machines to
-run faster (in this case 20 different machines at once). This build took 27
-minutes to complete multiple hours of real automated testing.
+This build ran 68 test steps across 3 GPU families. In some cases (e.g.
+`angle_deqp_gles3_metal_tests`) the test is split up between multiple machines to
+run faster (in this case 2 different machines at once). This build took 23
+minutes to complete 72 minutes of real automated testing.
 
 For more details on running and working with our test sets see the docs in [Contributing Code][Contrib].
 

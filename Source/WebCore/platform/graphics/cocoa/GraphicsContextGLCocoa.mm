@@ -173,8 +173,6 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     }
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
     if (shouldInitializeWithVolatileContextSupport) {
-        // After initialization, EGL_DEFAULT_DISPLAY will return the platform-customized display.
-        ASSERT(display == EGL_GetDisplay(nativeDisplay));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_eagl", "EGL_ANGLE_device_eagl", EGL_EAGL_CONTEXT_ANGLE));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
     }
@@ -331,7 +329,7 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs
     LOG(WebGL, "Got EGLContext");
 
     if (m_isForWebGL2)
-        gl::Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
+        GL_Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
 
     Vector<ASCIILiteral, 4> requiredExtensions;
     if (m_isForWebGL2) {
@@ -341,7 +339,8 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (!needsEAGLOnMac()) {
         // For IOSurface-backed textures.
-        requiredExtensions.append("GL_ANGLE_texture_rectangle"_s);
+        if (!attrs.useMetal)
+            requiredExtensions.append("GL_ANGLE_texture_rectangle"_s);
         // For creating the EGL surface from an IOSurface.
         requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
     }
@@ -376,44 +375,44 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs
     // Create the texture that will be used for the framebuffer.
     GLenum textureTarget = drawingBufferTextureTarget();
 
-    gl::GenTextures(1, &m_texture);
-    gl::BindTexture(textureTarget, m_texture);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    gl::BindTexture(textureTarget, 0);
+    GL_GenTextures(1, &m_texture);
+    GL_BindTexture(textureTarget, m_texture);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL_BindTexture(textureTarget, 0);
 
-    gl::GenFramebuffers(1, &m_fbo);
-    gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    GL_GenFramebuffers(1, &m_fbo);
+    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
 
     if (!attrs.antialias && (attrs.stencil || attrs.depth))
-        gl::GenRenderbuffers(1, &m_depthStencilBuffer);
+        GL_GenRenderbuffers(1, &m_depthStencilBuffer);
 
     // If necessary, create another framebuffer for the multisample results.
     if (attrs.antialias) {
-        gl::GenFramebuffers(1, &m_multisampleFBO);
-        gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+        GL_GenFramebuffers(1, &m_multisampleFBO);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
         m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-        gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
+        GL_GenRenderbuffers(1, &m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth)
-            gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+            GL_GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
     } else if (attrs.preserveDrawingBuffer) {
         // If necessary, create another texture to handle preserveDrawingBuffer:true without
         // antialiasing.
-        gl::GenTextures(1, &m_preserveDrawingBufferTexture);
-        gl::BindTexture(GL_TEXTURE_2D, m_preserveDrawingBufferTexture);
-        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        gl::BindTexture(GL_TEXTURE_2D, 0);
+        GL_GenTextures(1, &m_preserveDrawingBufferTexture);
+        GL_BindTexture(GL_TEXTURE_2D, m_preserveDrawingBufferTexture);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        GL_BindTexture(GL_TEXTURE_2D, 0);
         // Create an FBO with which to perform BlitFramebuffer from one texture to the other.
-        gl::GenFramebuffers(1, &m_preserveDrawingBufferFBO);
+        GL_GenFramebuffers(1, &m_preserveDrawingBufferFBO);
     }
 
-    gl::ClearColor(0, 0, 0, 0);
+    GL_ClearColor(0, 0, 0, 0);
 
     LOG(WebGL, "Created a GraphicsContextGLANGLE (%p).", this);
 }
@@ -423,21 +422,21 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
     GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     if (makeContextCurrent()) {
         if (m_texture)
-            gl::DeleteTextures(1, &m_texture);
+            GL_DeleteTextures(1, &m_texture);
         if (m_multisampleColorBuffer)
-            gl::DeleteRenderbuffers(1, &m_multisampleColorBuffer);
+            GL_DeleteRenderbuffers(1, &m_multisampleColorBuffer);
         if (m_multisampleDepthStencilBuffer)
-            gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+            GL_DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         if (m_multisampleFBO)
-            gl::DeleteFramebuffers(1, &m_multisampleFBO);
+            GL_DeleteFramebuffers(1, &m_multisampleFBO);
         if (m_depthStencilBuffer)
-            gl::DeleteRenderbuffers(1, &m_depthStencilBuffer);
+            GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
         if (m_fbo)
-            gl::DeleteFramebuffers(1, &m_fbo);
+            GL_DeleteFramebuffers(1, &m_fbo);
         if (m_preserveDrawingBufferTexture)
-            gl::DeleteTextures(1, &m_preserveDrawingBufferTexture);
+            GL_DeleteTextures(1, &m_preserveDrawingBufferTexture);
         if (m_preserveDrawingBufferFBO)
-            gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
+            GL_DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
         // If fences are not enabled, this loop will not execute.
         for (auto& fence : m_frameCompletionFences)
             fence.reset();
@@ -580,7 +579,7 @@ bool GraphicsContextGLANGLE::bindDisplayBufferBacking(std::unique_ptr<IOSurface>
 {
     GCGLenum textureTarget = drawingBufferTextureTarget();
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
-    gl::BindTexture(textureTarget, m_texture);
+    GL_BindTexture(textureTarget, m_texture);
     if (!EGL_BindTexImage(m_displayObj, pbuffer, EGL_BACK_BUFFER)) {
         EGL_DestroySurface(m_displayObj, pbuffer);
         return false;
@@ -655,7 +654,7 @@ void* GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IO
     }
 
     // Tell the currently bound texture to use the EGLImage.
-    gl::EGLImageTargetTexture2DOES(target, eglImage);
+    GL_EGLImageTargetTexture2DOES(target, eglImage);
 
     return eglImage;
 }
@@ -676,7 +675,7 @@ void GraphicsContextGLANGLE::prepareForDisplay()
     prepareTextureImpl();
 
     // The IOSurface will be used from other graphics subsystem, so flush GL commands.
-    gl::Flush();
+    GL_Flush();
 
     auto recycledBuffer = m_swapChain.recycleBuffer();
 
@@ -730,14 +729,14 @@ std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
     ScopedTexture texture;
     GCGLenum textureTarget = drawingBufferTextureTarget();
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(drawingBufferTextureTarget()), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
-    gl::BindTexture(textureTarget, texture);
+    GL_BindTexture(textureTarget, texture);
     if (!EGL_BindTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER))
         return std::nullopt;
-    gl::TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     ScopedFramebuffer fbo;
     ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO, fbo);
-    gl::FramebufferTexture2D(fboBinding.framebufferTarget(), GL_COLOR_ATTACHMENT0, textureTarget, texture, 0);
-    ASSERT(gl::CheckFramebufferStatus(fboBinding.framebufferTarget()) == GL_FRAMEBUFFER_COMPLETE);
+    GL_FramebufferTexture2D(fboBinding.framebufferTarget(), GL_COLOR_ATTACHMENT0, textureTarget, texture, 0);
+    ASSERT(GL_CheckFramebufferStatus(fboBinding.framebufferTarget()) == GL_FRAMEBUFFER_COMPLETE);
 
     auto result = readPixelsForPaintResults();
 

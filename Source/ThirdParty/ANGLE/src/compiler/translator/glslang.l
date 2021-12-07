@@ -96,6 +96,7 @@ static bool is_extension_enabled_or_is_core(TParseContext *context,
 // which means in version V1, the symbol is reserved, and remains reserved until V3.  From versions
 // V2 until V3, it's a keyword if the extension is enabled.  From version V3 on, it's a keyword in
 // the spec itself.  Prior to V1, the symbol can be used as identifier.
+static int ES2_extension_2_ES3_keyword(TParseContext *context, TExtension extension1, TExtension extension2, int token);
 static int ES2_reserved_ES3_keyword(TParseContext *context, int token);
 static int ES2_keyword_ES3_reserved(TParseContext *context, int token);
 static int ES3_keyword(TParseContext *context, int token);
@@ -164,6 +165,8 @@ O           [0-7]
 "flat"          { return ES2_reserved_ES3_keyword(context, FLAT); }
 "smooth"        { return ES3_keyword(context, SMOOTH); }
 "noperspective" { return ES3_reserved_ES3_extension(context, TExtension::NV_shader_noperspective_interpolation, NOPERSPECTIVE); }
+
+"patch"        { return ES3_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::EXT_tessellation_shader, PATCH); }
 
 "in"           { return IN_QUAL; }
 "out"          { return OUT_QUAL; }
@@ -244,7 +247,7 @@ O           [0-7]
 "samplerVideoWEBGL"    { return WEBGL_video_texture_extension(context, SAMPLERVIDEOWEBGL); }
 "struct"       { return STRUCT; }
 
-"layout"  { return ES3_keyword(context, LAYOUT); }
+"layout"  { return ES2_extension_2_ES3_keyword(context, TExtension::EXT_shader_framebuffer_fetch, TExtension::EXT_shader_framebuffer_fetch_non_coherent, LAYOUT); }
 
 "yuvCscStandardEXT"    { return ES3_extension(context, TExtension::EXT_YUV_target, YUVCSCSTANDARDEXT); }
 "itu_601"              { return yuvcscstandardext_constant(context); }
@@ -280,7 +283,6 @@ O           [0-7]
 
     /* Reserved keywords for GLSL ES 3.00 that are not reserved for GLSL ES 1.00 */
 "resource"          |
-"patch"             |
 "subroutine"        |
 "common"            |
 "partition"         |
@@ -606,6 +608,26 @@ int WEBGL_video_texture_extension(TParseContext *context, int token)
     struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
     yyscan_t yyscanner = (yyscan_t) context->getScanner();
 
+    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
+    return check_type(yyscanner);
+}
+
+int ES2_extension_2_ES3_keyword(TParseContext *context, TExtension extension1, TExtension extension2, int token)
+{
+    struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
+    yyscan_t yyscanner = (yyscan_t) context->getScanner();
+
+    // A keyword in GLSL ES 3.00 or GLSL ES 1.00 with enabled extension.
+    if (is_extension_enabled_or_is_core(context, 100, extension1, 300))
+    {
+        return token;
+    }
+    else if (is_extension_enabled_or_is_core(context, 100, extension2, 300))
+    {
+        return token;
+    }
+
+    // not a reserved word in GLSL ES 1.00, so could be used as an identifier/type name
     yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
     return check_type(yyscanner);
 }

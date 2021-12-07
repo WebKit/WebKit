@@ -1,0 +1,23 @@
+{
+  "description": [
+      "Copyright 2021 The ANGLE Project Authors. All rights reserved.",
+      "Use of this source code is governed by a BSD-style license that can be",
+      "found in the LICENSE file.",
+      "",
+      "load_texture_border_functions_data.json: Loading channel translation of border color.",
+      "",
+      "The format of the map is a dictionary where the key of each entry is the",
+      "internal format enum, and the value is the ANGLE format enum. Note this map ",
+      "only contains formats which need to reorder border color channel explictly.",
+      "",
+      "Also see gen_load_texture_border_functions_table.py for the code generation step."
+  ],
+  "map":{
+    "GL_ALPHA8_EXT": {
+      "R8_UNORM": "LoadA8ToR8"
+    },
+    "GL_LUMINANCE8_ALPHA8_EXT": {
+      "R8G8_UNORM": "LoadLA8ToR8G8"
+    }
+  }
+}

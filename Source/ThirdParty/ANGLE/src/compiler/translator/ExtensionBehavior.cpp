@@ -20,14 +20,21 @@
     OP(ARB_texture_rectangle)                       \
     OP(ARM_shader_framebuffer_fetch)                \
     OP(EXT_blend_func_extended)                     \
+    OP(EXT_clip_cull_distance)                      \
     OP(EXT_draw_buffers)                            \
     OP(EXT_frag_depth)                              \
     OP(EXT_geometry_shader)                         \
+    OP(OES_geometry_shader)                         \
+    OP(OES_shader_io_blocks)                        \
+    OP(EXT_shader_io_blocks)                        \
     OP(EXT_gpu_shader5)                             \
+    OP(EXT_primitive_bounding_box)                  \
     OP(EXT_shader_framebuffer_fetch)                \
+    OP(EXT_shader_framebuffer_fetch_non_coherent)   \
     OP(EXT_shader_non_constant_global_initializers) \
     OP(EXT_shader_texture_lod)                      \
     OP(EXT_shadow_samplers)                         \
+    OP(EXT_tessellation_shader)                     \
     OP(EXT_texture_buffer)                          \
     OP(EXT_texture_cube_map_array)                  \
     OP(EXT_YUV_target)                              \
@@ -36,6 +43,7 @@
     OP(NV_shader_noperspective_interpolation)       \
     OP(OES_EGL_image_external)                      \
     OP(OES_EGL_image_external_essl3)                \
+    OP(OES_sample_variables)                        \
     OP(OES_shader_multisample_interpolation)        \
     OP(OES_shader_image_atomic)                     \
     OP(OES_standard_derivatives)                    \

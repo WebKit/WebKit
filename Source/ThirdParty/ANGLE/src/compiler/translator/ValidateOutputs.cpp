@@ -82,7 +82,7 @@ void ValidateOutputsTraverser::visitSymbol(TIntermSymbol *symbol)
             mUnspecifiedLocationOutputs.push_back(symbol);
         }
     }
-    else if (qualifier == EvqFragDepth || qualifier == EvqFragDepthEXT)
+    else if (qualifier == EvqFragDepth)
     {
         mUsesFragDepth = true;
     }

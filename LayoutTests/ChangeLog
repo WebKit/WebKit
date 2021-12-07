@@ -1,3 +1,26 @@
+2021-12-07  Kyle Piddington  <kpiddington@apple.com>
+
+        Roll ANGLE to include upstreamed Metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=220896
+        <rdar://problem/73539682>
+
+        Reviewed by Ken Russell and Dean Jackson.
+
+        Update ANGLE to ce854632690e505551414f80d01d864df6118882
+
+        Update s3tc tests to adapt to new ANGLE validation
+        Update shaders-with-name-conflicts to pass, as it tests a valid
+        program.
+
+        * webgl/1.0.3/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-s3tc.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/glsl/misc/shaders-with-name-conflicts.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-s3tc.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/misc/shaders-with-name-conflicts.html:
+        * webgl/pending/resources/webgl_test_files/conformance/context/context-attributes-alpha-depth-stencil-antialias.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/s3tc-and-rgtc.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html:
+
 2021-12-07  Antti Koivisto  <antti@apple.com>
 
         Assertion after removing stylesheet with loading @import rule

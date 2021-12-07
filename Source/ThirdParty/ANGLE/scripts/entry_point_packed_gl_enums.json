@@ -9,6 +9,9 @@
         "Note that all entry points have their suffixes stripped in this file.",
         "See gen_packed_gl_enums.py for the generator that uses this data."
     ],
+    "glAcquireTextures": {
+        "textures": "const TextureID *"
+    },
     "glActiveShaderProgram": {
         "pipeline": "ProgramPipelineID",
         "program": "ShaderProgramID"
@@ -494,13 +497,16 @@
         "program": "ShaderProgramID"
     },
     "glGetActiveUniformBlockiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "uniformBlockIndex": "UniformBlockIndex"
     },
     "glGetActiveUniformBlockivRobust": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "uniformBlockIndex": "UniformBlockIndex"
     },
     "glGetActiveUniformBlockName": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "uniformBlockIndex": "UniformBlockIndex"
     },
     "glGetActiveUniformName": {
         "program": "ShaderProgramID"
@@ -530,8 +536,11 @@
     "glGetBufferPointerv": {
         "target": "BufferBinding"
     },
-    "glGetBufferPointervRobust": {
-        "target": "BufferBinding"
+     "glGetBufferPointervRobust": {
+       "target": "BufferBinding"
+    },
+     "glGetCompressedTexImage": {
+       "target": "TextureTarget"
     },
     "glGetCompressedTextureImage": {
         "texture": "TextureID"
@@ -1390,6 +1399,9 @@
         "id": "QueryID",
         "target": "QueryType"
     },
+    "glReleaseTextures": {
+        "textures": "const TextureID *"
+    },
     "glSamplerParameterf": {
         "sampler": "SamplerID"
     },
@@ -1825,7 +1837,8 @@
         "location": "UniformLocation"
     },
     "glUniformBlockBinding": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "uniformBlockIndex": "UniformBlockIndex"
     },
     "glUnmapBuffer": {
         "target": "BufferBinding"

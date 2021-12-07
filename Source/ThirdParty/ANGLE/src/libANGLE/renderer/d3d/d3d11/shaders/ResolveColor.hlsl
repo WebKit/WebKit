@@ -2,7 +2,7 @@ Texture2DMS<float4> TextureF_MS : register(t0);
 
 // VS_ResolveColor2D: not needed, we reuse VS_Passthrough2D
 
-float4 PS_ResolveColor2D(in float4 inPosition : SV_POSITION, in float2 inTexCoord : TEXCORD0) : SV_TARGET0
+float4 PS_ResolveColor2D(in float4 inPosition : SV_POSITION, in float2 inTexCoord : TEXCOORD0) : SV_TARGET0
 {
     uint width, height, samples;
     TextureF_MS.GetDimensions(width, height, samples);

@@ -67,9 +67,6 @@ TEST_P(DifferentStencilMasksTest, DrawWithSameEffectiveMask)
 // Tests that effectively different front and back masks are illegal.
 TEST_P(DifferentStencilMasksTest, DrawWithDifferentMask)
 {
-    // TODO(hqle): Make this test work for Metal. http://anglebug.com/4134
-    ANGLE_SKIP_TEST_IF(IsMetal());
-
     glStencilMaskSeparate(GL_FRONT, 0x0001);
     glStencilMaskSeparate(GL_BACK, 0x0002);
 

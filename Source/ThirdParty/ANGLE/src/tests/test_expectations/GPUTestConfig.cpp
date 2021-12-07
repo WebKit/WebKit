@@ -17,6 +17,8 @@
 
 #if defined(ANGLE_PLATFORM_APPLE)
 #    include "GPUTestConfig_mac.h"
+#elif defined(ANGLE_PLATFORM_WINDOWS)
+#    include <versionhelpers.h>
 #endif
 
 namespace angle
@@ -25,6 +27,7 @@ namespace angle
 namespace
 {
 
+#if defined(ANGLE_PLATFORM_MACOS)
 // Generic function call to get the OS version information from any platform
 // defined below. This function will also cache the OS version info in static
 // variables.
@@ -35,25 +38,10 @@ inline bool OperatingSystemVersionNumbers(int32_t *majorVersion, int32_t *minorV
     bool ret                          = false;
     if (sSavedMajorVersion == -1 || sSavedMinorVersion == -1)
     {
-#if defined(ANGLE_PLATFORM_WINDOWS)
-        OSVERSIONINFOEX version_info     = {};
-        version_info.dwOSVersionInfoSize = sizeof(version_info);
-        ::GetVersionEx(reinterpret_cast<OSVERSIONINFO *>(&version_info));
-        sSavedMajorVersion = version_info.dwMajorVersion;
-        *majorVersion      = sSavedMajorVersion;
-        sSavedMinorVersion = version_info.dwMinorVersion;
-        *minorVersion      = sSavedMinorVersion;
-        ret                = true;
-
-#elif defined(ANGLE_PLATFORM_APPLE)
         GetOperatingSystemVersionNumbers(&sSavedMajorVersion, &sSavedMinorVersion);
         *majorVersion = sSavedMajorVersion;
         *minorVersion = sSavedMinorVersion;
         ret           = true;
-
-#else
-        ret = false;
-#endif
     }
     else
     {
@@ -63,6 +51,7 @@ inline bool OperatingSystemVersionNumbers(int32_t *majorVersion, int32_t *minorV
     *minorVersion = sSavedMinorVersion;
     return ret;
 }
+#endif
 
 // Check if the OS is any version of Windows
 inline bool IsWin()
@@ -74,96 +63,70 @@ inline bool IsWin()
 #endif
 }
 
-// Check if the OS is a specific major version of windows.
-inline bool IsWinVersion(const int32_t majorVersion)
-{
-    if (IsWin())
-    {
-        int32_t currentMajorVersion = 0;
-        int32_t currentMinorVersion = 0;
-        if (OperatingSystemVersionNumbers(&currentMajorVersion, &currentMinorVersion))
-        {
-            if (currentMajorVersion == majorVersion)
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-// Check if the OS is a specific major and minor version of windows.
-inline bool IsWinVersion(const int32_t majorVersion, const int32_t minorVersion)
-{
-    if (IsWin())
-    {
-        int32_t currentMajorVersion = 0;
-        int32_t currentMinorVersion = 0;
-        if (OperatingSystemVersionNumbers(&currentMajorVersion, &currentMinorVersion))
-        {
-            if (currentMajorVersion == majorVersion && currentMinorVersion == minorVersion)
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 // Check if the OS is Windows XP
 inline bool IsWinXP()
 {
-    if (IsWinVersion(5))
-    {
-        return true;
-    }
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    return IsWindowsXPOrGreater() && !IsWindowsVistaOrGreater();
+#else
     return false;
+#endif
 }
 
 // Check if the OS is Windows Vista
 inline bool IsWinVista()
 {
-    if (IsWinVersion(6, 0))
-    {
-        return true;
-    }
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    return IsWindowsVistaOrGreater() && !IsWindows7OrGreater();
+#else
     return false;
+#endif
 }
 
 // Check if the OS is Windows 7
 inline bool IsWin7()
 {
-    if (IsWinVersion(6, 1))
-    {
-        return true;
-    }
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    return IsWindows7OrGreater() && !IsWindows8OrGreater();
+#else
     return false;
+#endif
 }
 
 // Check if the OS is Windows 8
 inline bool IsWin8()
 {
-    if (IsWinVersion(6, 2) || IsWinVersion(6, 3))
-    {
-        return true;
-    }
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    return IsWindows8OrGreater() && !IsWindows10OrGreater();
+#else
     return false;
+#endif
 }
 
 // Check if the OS is Windows 10
 inline bool IsWin10()
 {
-    if (IsWinVersion(10))
-    {
-        return true;
-    }
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    return IsWindows10OrGreater();
+#else
     return false;
+#endif
+}
+
+// Check if the OS is any version of iOS
+inline bool IsIOS()
+{
+#if defined(ANGLE_PLATFORM_IOS)
+    return true;
+#else
+    return false;
+#endif
 }
 
 // Check if the OS is any version of OSX
 inline bool IsMac()
 {
-#if defined(ANGLE_PLATFORM_APPLE)
+#if defined(ANGLE_PLATFORM_MACOS)
     return true;
 #else
     return false;
@@ -173,18 +136,17 @@ inline bool IsMac()
 // Check if the OS is a specific major and minor version of OSX
 inline bool IsMacVersion(const int32_t majorVersion, const int32_t minorVersion)
 {
-    if (IsMac())
+#if defined(ANGLE_PLATFORM_MACOS)
+    int32_t currentMajorVersion = 0;
+    int32_t currentMinorVersion = 0;
+    if (OperatingSystemVersionNumbers(&currentMajorVersion, &currentMinorVersion))
     {
-        int32_t currentMajorVersion = 0;
-        int32_t currentMinorVersion = 0;
-        if (OperatingSystemVersionNumbers(&currentMajorVersion, &currentMinorVersion))
+        if (currentMajorVersion == majorVersion && currentMinorVersion == minorVersion)
         {
-            if (currentMajorVersion == majorVersion && currentMinorVersion == minorVersion)
-            {
-                return true;
-            }
+            return true;
         }
     }
+#endif
     return false;
 }
 
@@ -320,7 +282,7 @@ inline bool GetGPUTestSystemInfo(SystemInfo **sysInfo)
         sSystemInfo = new SystemInfo;
         if (!GetSystemInfo(sSystemInfo))
         {
-            std::cout << "Error populating SystemInfo for dEQP tests." << std::endl;
+            std::cout << "Error populating SystemInfo." << std::endl;
         }
         else
         {
@@ -411,6 +373,12 @@ inline bool IsVMWare()
     return angle::IsVMWare(GetActiveGPUVendorID());
 }
 
+// Check whether the active GPU is Apple.
+inline bool IsApple()
+{
+    return angle::IsApple(GetActiveGPUVendorID());
+}
+
 // Check whether this is a debug build.
 inline bool IsDebug()
 {
@@ -461,6 +429,16 @@ inline bool IsPixel2XL()
     return IsAndroidDevice("Pixel 2 XL");
 }
 
+inline bool IsPixel4()
+{
+    return IsAndroidDevice("Pixel 4");
+}
+
+inline bool IsPixel4XL()
+{
+    return IsAndroidDevice("Pixel 4 XL");
+}
+
 // Check whether the active GPU is a specific device based on the string device ID.
 inline bool IsDeviceIdGPU(const std::string &gpuDeviceId)
 {
@@ -476,11 +454,13 @@ inline bool IsDeviceIdGPU(const std::string &gpuDeviceId)
 // Check whether the active GPU is a NVIDIA Quadro P400
 inline bool IsNVIDIAQuadroP400()
 {
-    if (!IsNVIDIA())
-    {
-        return false;
-    }
-    return IsDeviceIdGPU("0x1CB3");
+    return (IsNVIDIA() && IsDeviceIdGPU("0x1CB3"));
+}
+
+// Check whether the active GPU is a NVIDIA GTX 1660
+inline bool IsNVIDIAGTX1660()
+{
+    return (IsNVIDIA() && IsDeviceIdGPU("0x2184"));
 }
 
 // Check whether the backend API has been set to D3D9 in the constructor
@@ -527,7 +507,9 @@ inline bool IsMetal(const GPUTestConfig::API &api)
 }  // anonymous namespace
 
 // Load all conditions in the constructor since this data will not change during a test set.
-GPUTestConfig::GPUTestConfig()
+GPUTestConfig::GPUTestConfig() : GPUTestConfig(false) {}
+
+GPUTestConfig::GPUTestConfig(bool isSwiftShader)
 {
     mConditions[kConditionNone]            = false;
     mConditions[kConditionWinXP]           = IsWinXP();
@@ -547,43 +529,55 @@ GPUTestConfig::GPUTestConfig()
     mConditions[kConditionMacHighSierra]   = IsMacHighSierra();
     mConditions[kConditionMacMojave]       = IsMacMojave();
     mConditions[kConditionMac]             = IsMac();
+    mConditions[kConditionIOS]             = IsIOS();
     mConditions[kConditionLinux]           = IsLinux();
     mConditions[kConditionAndroid]         = IsAndroid();
-    mConditions[kConditionNVIDIA]          = IsNVIDIA();
-    mConditions[kConditionAMD]             = IsAMD();
-    mConditions[kConditionIntel]           = IsIntel();
-    mConditions[kConditionVMWare]          = IsVMWare();
-    mConditions[kConditionRelease]         = IsRelease();
-    mConditions[kConditionDebug]           = IsDebug();
-    // If no API provided, pass these conditions by default
-    mConditions[kConditionD3D9]        = true;
-    mConditions[kConditionD3D11]       = true;
-    mConditions[kConditionGLDesktop]   = true;
-    mConditions[kConditionGLES]        = true;
-    mConditions[kConditionVulkan]      = true;
-    mConditions[kConditionSwiftShader] = true;
-    mConditions[kConditionMetal]       = true;
+    // HW vendors are irrelevant if we are running on SW
+    mConditions[kConditionNVIDIA]      = !isSwiftShader && IsNVIDIA();
+    mConditions[kConditionAMD]         = !isSwiftShader && IsAMD();
+    mConditions[kConditionIntel]       = !isSwiftShader && IsIntel();
+    mConditions[kConditionVMWare]      = !isSwiftShader && IsVMWare();
+    mConditions[kConditionApple]       = !isSwiftShader && IsApple();
+    mConditions[kConditionSwiftShader] = isSwiftShader;
 
-    mConditions[kConditionNexus5X]          = IsNexus5X();
-    mConditions[kConditionPixel2OrXL]       = IsPixel2() || IsPixel2XL();
-    mConditions[kConditionNVIDIAQuadroP400] = IsNVIDIAQuadroP400();
+    mConditions[kConditionRelease] = IsRelease();
+    mConditions[kConditionDebug]   = IsDebug();
+    // If no API provided, pass these conditions by default
+    mConditions[kConditionD3D9]      = true;
+    mConditions[kConditionD3D11]     = true;
+    mConditions[kConditionGLDesktop] = true;
+    mConditions[kConditionGLES]      = true;
+    mConditions[kConditionVulkan]    = true;
+    mConditions[kConditionMetal]     = true;
+
+    // Devices are irrelevant if we are running on SW
+    mConditions[kConditionNexus5X]          = !isSwiftShader && IsNexus5X();
+    mConditions[kConditionPixel2OrXL]       = !isSwiftShader && (IsPixel2() || IsPixel2XL());
+    mConditions[kConditionPixel4OrXL]       = !isSwiftShader && (IsPixel4() || IsPixel4XL());
+    mConditions[kConditionNVIDIAQuadroP400] = !isSwiftShader && IsNVIDIAQuadroP400();
+    mConditions[kConditionNVIDIAGTX1660]    = !isSwiftShader && IsNVIDIAGTX1660();
 
     mConditions[kConditionPreRotation]    = false;
     mConditions[kConditionPreRotation90]  = false;
     mConditions[kConditionPreRotation180] = false;
     mConditions[kConditionPreRotation270] = false;
+
+    mConditions[kConditionNoSan] = !IsASan() && !IsTSan() && !IsUBSan();
+    mConditions[kConditionASan]  = IsASan();
+    mConditions[kConditionTSan]  = IsTSan();
+    mConditions[kConditionUBSan] = IsUBSan();
 }
 
 // If the constructor is passed an API, load those conditions as well
-GPUTestConfig::GPUTestConfig(const API &api, uint32_t preRotation) : GPUTestConfig()
+GPUTestConfig::GPUTestConfig(const API &api, uint32_t preRotation)
+    : GPUTestConfig(IsSwiftShader(api))
 {
-    mConditions[kConditionD3D9]        = IsD3D9(api);
-    mConditions[kConditionD3D11]       = IsD3D11(api);
-    mConditions[kConditionGLDesktop]   = IsGLDesktop(api);
-    mConditions[kConditionGLES]        = IsGLES(api);
-    mConditions[kConditionVulkan]      = IsVulkan(api);
-    mConditions[kConditionSwiftShader] = IsSwiftShader(api);
-    mConditions[kConditionMetal]       = IsMetal(api);
+    mConditions[kConditionD3D9]      = IsD3D9(api);
+    mConditions[kConditionD3D11]     = IsD3D11(api);
+    mConditions[kConditionGLDesktop] = IsGLDesktop(api);
+    mConditions[kConditionGLES]      = IsGLES(api);
+    mConditions[kConditionVulkan]    = IsVulkan(api);
+    mConditions[kConditionMetal]     = IsMetal(api);
 
     switch (preRotation)
     {

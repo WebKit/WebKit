@@ -23,8 +23,7 @@ class TDirectiveHandler : public angle::pp::DirectiveHandler, angle::NonCopyable
     TDirectiveHandler(TExtensionBehavior &extBehavior,
                       TDiagnostics &diagnostics,
                       int &shaderVersion,
-                      sh::GLenum shaderType,
-                      bool debugShaderPrecisionSupported);
+                      sh::GLenum shaderType);
     ~TDirectiveHandler() override;
 
     const TPragma &pragma() const { return mPragma; }
@@ -51,7 +50,6 @@ class TDirectiveHandler : public angle::pp::DirectiveHandler, angle::NonCopyable
     TDiagnostics &mDiagnostics;
     int &mShaderVersion;
     sh::GLenum mShaderType;
-    bool mDebugShaderPrecisionSupported;
 };
 
 }  // namespace sh

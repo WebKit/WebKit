@@ -36,7 +36,7 @@ ANGLE_NO_DISCARD bool RewritePipelines(TCompiler &compiler,
                                        const std::vector<sh::ShaderVariable> &inputVaryings,
                                        const std::vector<sh::ShaderVariable> &outputVariables,
                                        IdGen &idGen,
-                                       const TVariable &angleUniformsGlobalInstanceVar,
+                                       DriverUniform &angleUniformsGlobalInstanceVar,
                                        SymbolEnv &symbolEnv,
                                        PipelineStructs &outStructs);
 

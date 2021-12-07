@@ -27,8 +27,6 @@
 #    import <QuartzCore/QuartzCore.h>
 #    import <dlfcn.h>
 
-#    import "libANGLE/renderer/gl/eagl/EAGLFunctions.h"
-
 namespace
 {
 
@@ -66,10 +64,9 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
     mEGLDisplay = display;
 
     angle::SystemInfo info;
-    if (!angle::GetSystemInfo(&info))
-    {
-        return egl::EglNotInitialized() << "Unable to query ANGLE's SystemInfo.";
-    }
+    // It's legal for GetSystemInfo to return false and thereby
+    // contain incomplete information.
+    (void)angle::GetSystemInfo(&info);
 
     mContext = [allocEAGLContextInstance() initWithAPI:kEAGLRenderingAPIOpenGLES3];
     if (mContext == nullptr)
@@ -298,12 +295,6 @@ egl::Error DisplayEAGL::validateClientBuffer(const egl::Config *configuration,
     return egl::NoError();
 }
 
-std::string DisplayEAGL::getVendorString() const
-{
-    // TODO(cwallez) find a useful vendor string
-    return "";
-}
-
 EAGLContextObj DisplayEAGL::getEAGLContext() const
 {
     return mContext;
@@ -313,12 +304,10 @@ void DisplayEAGL::generateExtensions(egl::DisplayExtensions *outExtensions) cons
 {
     outExtensions->iosurfaceClientBuffer = true;
     outExtensions->surfacelessContext    = true;
-    outExtensions->deviceQuery           = true;
 
-    // Contexts are virtualized so textures can be shared globally
-    outExtensions->displayTextureShareGroup = true;
-
-    outExtensions->powerPreference = false;
+    // Contexts are virtualized so textures and semaphores can be shared globally
+    outExtensions->displayTextureShareGroup   = true;
+    outExtensions->displaySemaphoreShareGroup = true;
 
     DisplayGL::generateExtensions(outExtensions);
 }
@@ -409,6 +398,11 @@ void DisplayEAGL::initializeFrontendFeatures(angle::FrontendFeatures *features) 
 void DisplayEAGL::populateFeatureList(angle::FeatureList *features)
 {
     mRenderer->getFeatures().populateFeatureList(features);
+}
+
+RendererGL *DisplayEAGL::getRenderer() const
+{
+    return mRenderer.get();
 }
 }
 

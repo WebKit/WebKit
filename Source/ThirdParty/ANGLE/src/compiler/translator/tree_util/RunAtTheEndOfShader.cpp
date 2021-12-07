@@ -72,7 +72,7 @@ void WrapMainAndAppend(TIntermBlock *root,
     // Replace main() with main0() with the same body.
     TFunction *oldMain =
         new TFunction(symbolTable, kEmptyImmutableString, SymbolType::AngleInternal,
-                      StaticType::GetBasic<EbtVoid>(), false);
+                      StaticType::GetBasic<EbtVoid, EbpUndefined>(), false);
     TIntermFunctionDefinition *oldMainDefinition =
         CreateInternalFunctionDefinitionNode(*oldMain, main->getBody());
 
@@ -81,7 +81,7 @@ void WrapMainAndAppend(TIntermBlock *root,
 
     // void main()
     TFunction *newMain = new TFunction(symbolTable, kMainString, SymbolType::UserDefined,
-                                       StaticType::GetBasic<EbtVoid>(), false);
+                                       StaticType::GetBasic<EbtVoid, EbpUndefined>(), false);
     TIntermFunctionPrototype *newMainProto = new TIntermFunctionPrototype(newMain);
 
     // {
@@ -89,8 +89,8 @@ void WrapMainAndAppend(TIntermBlock *root,
     //     codeToRun
     // }
     TIntermBlock *newMainBody = new TIntermBlock();
-    TIntermAggregate *oldMainCall =
-        TIntermAggregate::CreateFunctionCall(*oldMain, new TIntermSequence());
+    TIntermSequence emptySequence;
+    TIntermAggregate *oldMainCall = TIntermAggregate::CreateFunctionCall(*oldMain, &emptySequence);
     newMainBody->appendStatement(oldMainCall);
     newMainBody->appendStatement(codeToRun);
 

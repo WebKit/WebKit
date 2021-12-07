@@ -589,6 +589,13 @@ void ShaderConstants11::onImageChange(gl::ShaderType shaderType,
     }
 }
 
+void ShaderConstants11::onClipControlChange(bool lowerLeft, bool zeroToOne)
+{
+    mVertex.clipControlOrigin    = lowerLeft ? -1.0f : 1.0f;
+    mVertex.clipControlZeroToOne = zeroToOne ? 1.0f : 0.0f;
+    mShaderConstantsDirty.set(gl::ShaderType::Vertex);
+}
+
 angle::Result ShaderConstants11::updateBuffer(const gl::Context *context,
                                               Renderer11 *renderer,
                                               gl::ShaderType shaderType,
@@ -848,12 +855,12 @@ void StateManager11::updateStencilSizeIfChanged(bool depthStencilInitialized,
 
 void StateManager11::checkPresentPath(const gl::Context *context)
 {
-    if (!mRenderer->presentPathFastEnabled())
-        return;
-
     const auto *framebuffer          = context->getState().getDrawFramebuffer();
     const auto *firstColorAttachment = framebuffer->getFirstColorAttachment();
-    const bool presentPathFastActive = UsePresentPathFast(mRenderer, firstColorAttachment);
+    const bool clipSpaceOriginUpperLeft =
+        context->getState().getClipSpaceOrigin() == gl::ClipSpaceOrigin::UpperLeft;
+    const bool presentPathFastActive =
+        UsePresentPathFast(mRenderer, firstColorAttachment) || clipSpaceOriginUpperLeft;
 
     const int colorBufferHeight = firstColorAttachment ? firstColorAttachment->getSize().height : 0;
 
@@ -937,7 +944,9 @@ angle::Result StateManager11::updateStateForCompute(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-void StateManager11::syncState(const gl::Context *context, const gl::State::DirtyBits &dirtyBits)
+void StateManager11::syncState(const gl::Context *context,
+                               const gl::State::DirtyBits &dirtyBits,
+                               gl::Command command)
 {
     if (!dirtyBits.any())
     {
@@ -1175,7 +1184,7 @@ void StateManager11::syncState(const gl::Context *context, const gl::State::Dirt
                 invalidateProgramShaderStorageBuffers();
                 invalidateDriverUniforms();
                 const gl::ProgramExecutable *executable = state.getProgramExecutable();
-                if (!executable || !executable->isCompute())
+                if (!executable || command != gl::Command::Dispatch)
                 {
                     mInternalDirtyBits.set(DIRTY_BIT_PRIMITIVE_TOPOLOGY);
                     invalidateVertexBuffer();
@@ -1205,6 +1214,22 @@ void StateManager11::syncState(const gl::Context *context, const gl::State::Dirt
             case gl::State::DIRTY_BIT_PROVOKING_VERTEX:
                 invalidateShaders();
                 break;
+            case gl::State::DIRTY_BIT_EXTENDED:
+            {
+                gl::State::ExtendedDirtyBits extendedDirtyBits =
+                    state.getAndResetExtendedDirtyBits();
+
+                for (size_t extendedDirtyBit : extendedDirtyBits)
+                {
+                    switch (extendedDirtyBit)
+                    {
+                        case gl::State::EXTENDED_DIRTY_BIT_CLIP_CONTROL:
+                            checkPresentPath(context);
+                            break;
+                    }
+                }
+                break;
+            }
             default:
                 break;
         }
@@ -1429,6 +1454,10 @@ void StateManager11::syncViewport(const gl::Context *context)
         dxMinViewportBoundsY = 0;
     }
 
+    bool clipSpaceOriginLowerLeft = glState.getClipSpaceOrigin() == gl::ClipSpaceOrigin::LowerLeft;
+    mShaderConstants.onClipControlChange(clipSpaceOriginLowerLeft,
+                                         glState.isClipControlDepthZeroToOne());
+
     const auto &viewport = glState.getViewport();
 
     int dxViewportTopLeftX = 0;
@@ -1447,7 +1476,7 @@ void StateManager11::syncViewport(const gl::Context *context)
 
     D3D11_VIEWPORT dxViewport;
     dxViewport.TopLeftX = static_cast<float>(dxViewportTopLeftX);
-    if (mCurPresentPathFastEnabled)
+    if (mCurPresentPathFastEnabled && clipSpaceOriginLowerLeft)
     {
         // When present path fast is active and we're rendering to framebuffer 0, we must invert
         // the viewport in Y-axis.
@@ -1923,7 +1952,7 @@ angle::Result StateManager11::ensureInitialized(const gl::Context *context)
 
     mShaderConstants.init(caps);
 
-    mIsMultiviewEnabled = extensions.multiview || extensions.multiview2;
+    mIsMultiviewEnabled = extensions.multiviewOVR || extensions.multiview2OVR;
 
     mIndependentBlendStates = extensions.drawBuffersIndexedAny();  // requires FL10_1
 
@@ -1974,12 +2003,13 @@ angle::Result StateManager11::syncFramebuffer(const gl::Context *context)
     RTVArray framebufferRTVs = {{}};
     const auto &colorRTs     = mFramebuffer11->getCachedColorRenderTargets();
 
-    size_t appliedRTIndex                   = 0;
-    bool skipInactiveRTs                    = mRenderer->getFeatures().mrtPerfWorkaround.enabled;
-    const auto &drawStates                  = mFramebuffer11->getState().getDrawBufferStates();
-    gl::DrawBufferMask activeProgramOutputs = mProgramD3D->getState().getActiveOutputVariables();
-    UINT maxExistingRT                      = 0;
-    const auto &colorAttachments            = mFramebuffer11->getState().getColorAttachments();
+    size_t appliedRTIndex  = 0;
+    bool skipInactiveRTs   = mRenderer->getFeatures().mrtPerfWorkaround.enabled;
+    const auto &drawStates = mFramebuffer11->getState().getDrawBufferStates();
+    gl::DrawBufferMask activeProgramOutputs =
+        mProgramD3D->getState().getExecutable().getActiveOutputVariablesMask();
+    UINT maxExistingRT           = 0;
+    const auto &colorAttachments = mFramebuffer11->getState().getColorAttachments();
 
     for (size_t rtIndex = 0; rtIndex < colorRTs.size(); ++rtIndex)
     {

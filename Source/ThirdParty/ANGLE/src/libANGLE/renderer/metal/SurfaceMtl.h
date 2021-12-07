@@ -161,6 +161,7 @@ class WindowSurfaceMtl : public SurfaceMtl
     // implicitly calls ensureCurrentDrawableObtained().
     angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context);
     bool preserveBuffer() const { return mRetainBuffer; }
+
   private:
     angle::Result swapImpl(const gl::Context *context);
     angle::Result obtainNextDrawable(const gl::Context *context);

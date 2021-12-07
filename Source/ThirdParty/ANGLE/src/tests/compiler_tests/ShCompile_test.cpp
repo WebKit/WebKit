@@ -227,6 +227,9 @@ TEST_F(ShCompileTest, DecimalSepLocale)
     }
 }
 
+// Desktop GLSL support is not enabled on Android
+#if !defined(ANGLE_PLATFORM_ANDROID)
+
 // For testing Desktop GL Shaders
 class ShCompileDesktopGLTest : public ShCompileTest
 {
@@ -364,3 +367,5 @@ TEST_F(ShCompileDesktopGLTest, ImplicitConversionFunction)
 
     testCompile(shaderStrings, 1, true);
 }
+
+#endif  // !defined(ANGLE_PLATFORM_ANDROID)

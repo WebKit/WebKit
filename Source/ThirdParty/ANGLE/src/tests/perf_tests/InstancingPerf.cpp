@@ -276,7 +276,7 @@ void InstancingPerfBenchmark::drawBenchmark()
     // Animatino makes the test more interesting visually, but also eats up many CPU cycles.
     if (params.animationEnabled)
     {
-        float time = static_cast<float>(mTimer.getElapsedTime());
+        float time = static_cast<float>(mTimer.getElapsedWallClockTime());
 
         for (size_t pointIndex = 0; pointIndex < mTranslateData.size(); ++pointIndex)
         {

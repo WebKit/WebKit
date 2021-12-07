@@ -276,7 +276,7 @@ TEST_P(SRGBTextureTest, SRGBDecodeTextureParameter)
 // Test basic functionality of SRGB override using the texture parameter
 TEST_P(SRGBTextureTest, SRGBOverrideTextureParameter)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_sRGB_override"));
 
     GLColor linearColor = kLinearColor;
     GLColor srgbColor   = kNonlinearColor;
@@ -307,7 +307,7 @@ TEST_P(SRGBTextureTest, SRGBOverrideTextureParameter)
 // Test that all supported formats can be overridden
 TEST_P(SRGBTextureTestES3, SRGBOverrideFormats)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_sRGB_override"));
 
     constexpr GLenum possibleFormats[] = {GL_RGB8,
                                           GL_RGBA8,
@@ -340,7 +340,7 @@ TEST_P(SRGBTextureTestES3, SRGBOverrideFormats)
     {
         GLTexture tex;
         glBindTexture(GL_TEXTURE_2D, tex.get());
-        glTexStorage2D(GL_TEXTURE_2D, 1, format, 1, 1);
+        glTexStorage2D(GL_TEXTURE_2D, 1, format, 4, 4);
         GLenum error = glGetError();
         if (error == GL_INVALID_ENUM)
         {
@@ -369,7 +369,7 @@ TEST_P(SRGBTextureTestES3, SRGBOverrideFormats)
 // Test interaction between sRGB_override and sampler objects
 TEST_P(SRGBTextureTestES3, SRGBOverrideTextureParameterWithSampler)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_sRGB_override"));
 
     GLColor linearColor = kLinearColor;
     GLColor srgbColor   = kNonlinearColor;
@@ -411,7 +411,7 @@ TEST_P(SRGBTextureTestES3, SRGBOverrideTextureParameterWithSampler)
 // the value of TEXTURE_FORMAT_SRGB_OVERRIDE_EXT is ignored."
 TEST_P(SRGBTextureTestES3, SRGBOverrideTextureParameterNoop)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_sRGB_override"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_sRGB"));
 
     GLColor linearColor = kLinearColor;
@@ -544,7 +544,7 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeTextureAndSamplerParameter)
 TEST_P(SRGBTextureTestES3, SRGBDecodeOverridePriority)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_sRGB_override"));
 
     GLColor linearColor = kLinearColor;
 
@@ -572,9 +572,6 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeOverridePriority)
 TEST_P(SRGBTextureTestES3, GenerateMipmaps)
 {
     ANGLE_SKIP_TEST_IF(IsOpenGL() && ((IsIntel() && IsOSX()) || IsAMD()));
-
-    // http://anglebug.com/5108
-    ANGLE_SKIP_TEST_IF(IsMetal());
 
     auto createAndReadBackTexture = [this](GLenum internalFormat, const GLColor &color) {
         constexpr GLsizei width  = 128;
@@ -628,9 +625,9 @@ TEST_P(SRGBTextureTestES3, GenerateMipmaps)
     }
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SRGBTextureTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SRGBTextureTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(SRGBTextureTestES3);
 
 }  // namespace angle

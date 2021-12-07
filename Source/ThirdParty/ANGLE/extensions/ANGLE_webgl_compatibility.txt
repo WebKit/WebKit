@@ -26,7 +26,7 @@ Status
 
 Version
 
-    Version 3, October 3, 2019
+    Version 4, October 5, 2021
 
 Number
 
@@ -63,6 +63,10 @@ Additions to the OpenGL ES Specification
     the WebGL specification entitled "Differences Between WebGL and OpenGL ES
     2.0" and "Differences Between WebGL and OpenGL ES 3.0".
 
+    GLSL ES shaders targeting version 100 will be treated as though they were
+    targeting the WebGL 1 shader specification, and GLSL ES shaders targeting
+    version 300 as though they were targeting the WebGL 2 shader specification.
+
     When the ANGLE_texture_rectangle extension is supported then Enable,
     Disable, and IsEnabled accept the symbolic constant
     TEXTURE_RECTANGLE_ANGLE, which controls whether ARB_texture_rectangle is
@@ -93,3 +97,4 @@ Revision History
       2    Nov 28, 2016  geofflang  Break the extension requests into a
                                     separate extension.
       3     Oct 3, 2019  jdarpinian Allow disabling ARB_texture_rectangle
+      4     Oct 5, 2021  jmadill    Add wording for shader specs.

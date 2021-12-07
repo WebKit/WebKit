@@ -98,7 +98,6 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     mutable std::mutex mLock;
 };
 
-
 class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
 {
   public:
@@ -110,10 +109,8 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
 
     // Return true if command buffer can be encoded into. Return false if it has been committed
     // and hasn't been restarted.
-    bool valid() const;
-    void commit(CommandBufferFinishOperation operation = NoWait);
-    
-
+    bool ready() const;
+    void commit(CommandBufferFinishOperation operation);
 
     void present(id<CAMetalDrawable> presentationDrawable);
 
@@ -138,8 +135,8 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void set(id<MTLCommandBuffer> metalBuffer);
     void cleanup();
 
-    bool validImpl() const;
-    void commitImpl();
+    bool readyImpl() const;
+    bool commitImpl();
     void forceEndingCurrentEncoder();
 
     void setPendingEvents();
@@ -581,20 +578,11 @@ class BlitCommandEncoder final : public CommandEncoder
                                     uint32_t sliceCount,
                                     uint32_t levelCount);
 
-    BlitCommandEncoder &copyTexture(const TextureRef &src,
-                                    uint32_t srcSlice,
-                                    uint32_t srcLevel,
-                                    const TextureRef &dst,
-                                    uint32_t dstSlice,
-                                    uint32_t dstLevel,
-                                    uint32_t sliceCount,
-                                    uint32_t levelCount);
-
     BlitCommandEncoder &fillBuffer(const BufferRef &buffer, NSRange range, uint8_t value);
 
     BlitCommandEncoder &generateMipmapsForTexture(const TextureRef &texture);
-    BlitCommandEncoder &synchronizeResource(const BufferRef &buffer);
-    BlitCommandEncoder &synchronizeResource(const TextureRef &texture);
+    BlitCommandEncoder &synchronizeResource(Buffer *bufferPtr);
+    BlitCommandEncoder &synchronizeResource(Texture *texturePtr);
 
   private:
     id<MTLBlitCommandEncoder> get()

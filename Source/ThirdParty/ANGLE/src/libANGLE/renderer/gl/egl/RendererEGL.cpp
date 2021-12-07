@@ -15,17 +15,22 @@ RendererEGL::RendererEGL(std::unique_ptr<FunctionsGL> functionsGL,
                          const egl::AttributeMap &attribMap,
                          DisplayEGL *display,
                          EGLContext context,
-                         const native_egl::AttributeVector attribs)
+                         const native_egl::AttributeVector attribs,
+                         bool isExternalContext)
     : RendererGL(std::move(functionsGL), attribMap, display),
       mDisplay(display),
       mContext(context),
-      mAttribs(attribs)
+      mAttribs(attribs),
+      mIsExternalContext(isExternalContext)
 {}
 
 RendererEGL::~RendererEGL()
 {
-    mDisplay->destroyNativeContext(mContext);
-    mContext = nullptr;
+    if (!mIsExternalContext)
+    {
+        mDisplay->destroyNativeContext(mContext);
+        mContext = nullptr;
+    }
 }
 
 EGLContext RendererEGL::getContext() const

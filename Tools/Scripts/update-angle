@@ -41,6 +41,20 @@ if [ ! -z "$1" ] ; then
         echo
         echo "Success."
         exit 0
+    
+    
+    elif [ "$1" = "--regenerate-changes-diff-main" ] ; then
+        rm -rf .git
+        git init
+        git remote add origin https://chromium.googlesource.com/angle/angle
+        git fetch --depth 1 origin main
+        git add -A
+        regenerate_changes_diff origin/main
+        rm -rf .git
+        cat changes.diff
+        echo
+        echo "Success."
+        exit 0
     fi
     echo "Unrecognized argument: $1"
     exit 1
@@ -86,7 +100,7 @@ wait_for_rebase_to_complete() {
 cleanup_after_successful_rebase_and_exit() {
     cd "$ANGLE_DIR"
     echo
-    regenerate_changes_diff "origin/master"
+    regenerate_changes_diff "origin/main"
     git --no-pager diff -b --cached "$LAST_ROLL_COMMIT_HASH" -- Compiler.cmake GLESv2.cmake
     echo
     echo "Rebase complete!"
@@ -103,7 +117,7 @@ cleanup_after_successful_rebase_and_exit() {
     echo
     echo "Press Enter to continue after fixing build:"
     read -r
-    regenerate_changes_diff "origin/master"
+    regenerate_changes_diff "origin/main"
     echo "Removing temporary git repository from Source/ThirdParty/ANGLE"
     rm -rf .git
     git add -A .
@@ -120,7 +134,7 @@ if [ -n "$(git status -s .)" ] ; then
     git status -s .
     echo "Error: ANGLE directory Source/ThirdParty/ANGLE has local uncommitted"
     echo "changes. Please stash your changes first and start with a clean"
-    echo "checkout of WebKit master."
+    echo "checkout of WebKit main."
     exit 1
 fi
 
@@ -129,13 +143,13 @@ PREVIOUS_ANGLE_COMMIT_HASH=$(grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist)
 cd ../../..
 echo "Creating WebKit branch that only contains ANGLE changes, using git-filter-repo."
 echo "This may take a few minutes, but massively speeds up rebasing later."
-git branch -f just-angle master && git-filter-repo --refs refs/heads/just-angle --path Source/ThirdParty/ANGLE --path-rename Source/ThirdParty/ANGLE/: --force
+git branch -f just-angle main && git-filter-repo --refs refs/heads/just-angle --path Source/ThirdParty/ANGLE --path-rename Source/ThirdParty/ANGLE/: --force
 cd "$ANGLE_DIR"
 
 echo "Downloading latest ANGLE via git clone."
 # Remove all files including hidden ones, but not . or ..
 rm -rf ..?* .[!.]* ./*
-git clone --branch master https://chromium.googlesource.com/angle/angle .
+git clone --branch main https://chromium.googlesource.com/angle/angle .
 echo "Successfully downloaded latest ANGLE."
 echo "Commit hash: "
 COMMIT_HASH=$(git rev-parse HEAD)
@@ -161,7 +175,7 @@ sed -i.bak -e "s/<string>[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]<\/string>/<s
 rm ANGLE.plist.bak
 
 echo "Translating gni build files to cmake."
-git checkout origin/master -- src/compiler.gni src/libGLESv2.gni src/libANGLE/renderer/d3d/BUILD.gn
+git checkout origin/main -- src/compiler.gni src/libGLESv2.gni src/libANGLE/renderer/d3d/BUILD.gn
 ./gni-to-cmake.py src/compiler.gni Compiler.cmake
 ./gni-to-cmake.py src/libGLESv2.gni GLESv2.cmake
 ./gni-to-cmake.py src/libANGLE/renderer/d3d/BUILD.gn D3D.cmake --prepend 'src/libANGLE/renderer/d3d/'
@@ -177,13 +191,13 @@ git commit -m "Updated ANGLE.plist, angle_commit.h and cmake files."
 
 # Graft the WebKit commit history on top of the ANGLE commit history at
 # the point of the last ANGLE roll. This will allow us to rebase just
-# the WebKit changes since the last roll on top of ANGLE master.
+# the WebKit changes since the last roll on top of ANGLE main.
 git replace --graft "$LAST_ROLL_COMMIT_HASH" "$PREVIOUS_ANGLE_COMMIT_HASH"
-# Rebase the WebKit commit history on top of ANGLE master.
+# Rebase the WebKit commit history on top of ANGLE main.
 git checkout -b rebased-webkit-changes
 
-echo "Rebasing WebKit's local changes on latest ANGLE master."
-if ! git rebase origin/master; then
+echo "Rebasing WebKit's local changes on latest ANGLE main."
+if ! git rebase origin/main; then
     echo
     echo "There is now a temporary git repo in Source/ThirdParty/ANGLE with a"
     echo "rebase in progress. You must resolve the merge conflict and continue"

@@ -147,11 +147,8 @@ class RobustBufferAccessBehaviorTest : public ANGLETest
 // GL_KHR_robust_buffer_access_behavior is supported.
 TEST_P(RobustBufferAccessBehaviorTest, DrawElementsIndexOutOfRangeWithStaticDraw)
 {
-    ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsWindows() && IsOpenGL());
-
     // Failing on NV after changing shard count of angle_end2end_tests. http://anglebug.com/2799
-    // Also failing on AMD after a validation change. http://anglebug.com/3042
-    ANGLE_SKIP_TEST_IF(IsD3D11_FL93());
+    ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsWindows() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(!initExtension());
 

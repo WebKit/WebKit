@@ -16,6 +16,7 @@
 
 #include <GLSLANG/ShaderVars.h>
 
+#include "common/PackedEnums.h"
 #include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "compiler/translator/CallDAG.h"
 #include "compiler/translator/Diagnostics.h"
@@ -25,7 +26,6 @@
 #include "compiler/translator/Pragma.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/ValidateAST.h"
-#include "third_party/compiler/ArrayBoundsClamper.h"
 
 namespace sh
 {
@@ -38,6 +38,8 @@ class TranslatorHLSL;
 #ifdef ANGLE_ENABLE_METAL
 class TranslatorMetalDirect;
 #endif  // ANGLE_ENABLE_METAL
+
+using SpecConstUsageBits = angle::PackedEnumBitSet<vk::SpecConstUsage, uint32_t>;
 
 //
 // Helper function to check if the shader type is GLSL.
@@ -76,6 +78,11 @@ class TShHandleBase
     angle::PoolAllocator allocator;
 };
 
+struct TFunctionMetadata
+{
+    bool used = false;
+};
+
 //
 // The base class for the machine dependent compiler to derive from
 // for managing object code from the compile.
@@ -106,6 +113,7 @@ class TCompiler : public TShHandleBase
 
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
     bool isEarlyFragmentTestsOptimized() const { return mEarlyFragmentTestsOptimized; }
+    SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
 
     bool isComputeShaderLocalSizeDeclared() const { return mComputeShaderLocalSizeDeclared; }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
@@ -125,7 +133,6 @@ class TCompiler : public TShHandleBase
     {
         return mShaderStorageBlocks;
     }
-    const std::vector<sh::InterfaceBlock> &getInBlocks() const { return mInBlocks; }
 
     ShHashFunction64 getHashFunction() const { return mResources.HashFunction; }
     NameMap &getNameMap() { return mNameMap; }
@@ -134,10 +141,15 @@ class TCompiler : public TShHandleBase
     ShShaderOutput getOutputType() const { return mOutputType; }
     const std::string &getBuiltInResourcesString() const { return mBuiltInResourcesString; }
 
+    bool isHighPrecisionSupported() const;
+
     bool shouldRunLoopAndIndexingValidation(ShCompileOptions compileOptions) const;
+    bool shouldLimitTypeSizes() const;
 
     // Get the resources set by InitBuiltInSymbolTable
     const ShBuiltInResources &getResources() const;
+
+    const TPragma &getPragma() const { return mPragma; }
 
     int getGeometryShaderMaxVertices() const { return mGeometryShaderMaxVertices; }
     int getGeometryShaderInvocations() const { return mGeometryShaderInvocations; }
@@ -151,11 +163,42 @@ class TCompiler : public TShHandleBase
     }
 
     unsigned int getStructSize(const ShaderVariable &var) const;
+
+    int getTessControlShaderOutputVertices() const { return mTessControlShaderOutputVertices; }
+    TLayoutTessEvaluationType getTessEvaluationShaderInputPrimitiveType() const
+    {
+        return mTessEvaluationShaderInputPrimitiveType;
+    }
+    TLayoutTessEvaluationType getTessEvaluationShaderInputVertexSpacingType() const
+    {
+        return mTessEvaluationShaderInputVertexSpacingType;
+    }
+    TLayoutTessEvaluationType getTessEvaluationShaderInputOrderingType() const
+    {
+        return mTessEvaluationShaderInputOrderingType;
+    }
+    TLayoutTessEvaluationType getTessEvaluationShaderInputPointType() const
+    {
+        return mTessEvaluationShaderInputPointType;
+    }
+
+    bool hasAnyPreciseType() const { return mHasAnyPreciseType; }
+
     unsigned int getSharedMemorySize() const;
 
     sh::GLenum getShaderType() const { return mShaderType; }
 
+    // Validate the AST and produce errors if it is inconsistent.
     bool validateAST(TIntermNode *root);
+    // Some transformations may need to temporarily disable validation until they are complete.  A
+    // set of disable/enable helpers are used for this purpose.
+    bool disableValidateFunctionCall();
+    void restoreValidateFunctionCall(bool enable);
+    bool disableValidateVariableReferences();
+    void restoreValidateVariableReferences(bool enable);
+    // When the AST is post-processed (such as to determine precise-ness of intermediate nodes),
+    // it's expected to no longer transform.
+    void enableValidateNoMoreTransformations();
 
   protected:
     // Add emulated functions to the built-in function emulator.
@@ -169,23 +212,13 @@ class TCompiler : public TShHandleBase
     // Get built-in extensions with default behavior.
     const TExtensionBehavior &getExtensionBehavior() const;
     const char *getSourcePath() const;
-    const TPragma &getPragma() const { return mPragma; }
-    void writePragma(ShCompileOptions compileOptions);
     // Relies on collectVariables having been called.
     bool isVaryingDefined(const char *varyingName);
 
-    const ArrayBoundsClamper &getArrayBoundsClamper() const;
-    ShArrayIndexClampingStrategy getArrayIndexClampingStrategy() const;
     const BuiltInFunctionEmulator &getBuiltInFunctionEmulator() const;
 
     virtual bool shouldFlattenPragmaStdglInvariantAll() = 0;
     virtual bool shouldCollectVariables(ShCompileOptions compileOptions);
-    // If precision emulation needed, set isNeeded to true and emulate precision for given
-    //  outputLanguage, returning false if that fails, else returning true.
-    bool emulatePrecisionIfNeeded(TIntermBlock *root,
-                                  TInfoSinkBase &sink,
-                                  bool *isNeeded,
-                                  const ShShaderOutput outputLanguage);
 
     bool wereVariablesCollected() const;
     std::vector<sh::ShaderVariable> mAttributes;
@@ -197,7 +230,12 @@ class TCompiler : public TShHandleBase
     std::vector<sh::InterfaceBlock> mInterfaceBlocks;
     std::vector<sh::InterfaceBlock> mUniformBlocks;
     std::vector<sh::InterfaceBlock> mShaderStorageBlocks;
-    std::vector<sh::InterfaceBlock> mInBlocks;
+
+    // Track what should be validated given passes currently applied.
+    ValidateASTOptions mValidateASTOptions;
+
+    // Specialization constant usage bits
+    SpecConstUsageBits mSpecConstUsageBits;
 
   private:
     // Initialize symbol-table with built-in symbols.
@@ -233,8 +271,7 @@ class TCompiler : public TShHandleBase
     bool mGLPositionInitialized;
 
     // Removes unused function declarations and prototypes from the AST
-    class UnusedPredicate;
-    void pruneUnusedFunctions(TIntermBlock *root);
+    bool pruneUnusedFunctions(TIntermBlock *root);
 
     TIntermBlock *compileTreeImpl(const char *const shaderStrings[],
                                   size_t numStrings,
@@ -256,14 +293,8 @@ class TCompiler : public TShHandleBase
     ShShaderSpec mShaderSpec;
     ShShaderOutput mOutputType;
 
-    struct FunctionMetadata
-    {
-        FunctionMetadata() : used(false) {}
-        bool used;
-    };
-
     CallDAG mCallDag;
-    std::vector<FunctionMetadata> mFunctionMetadata;
+    std::vector<TFunctionMetadata> mFunctionMetadata;
 
     ShBuiltInResources mResources;
     std::string mBuiltInResourcesString;
@@ -274,7 +305,6 @@ class TCompiler : public TShHandleBase
     // Built-in extensions with default behavior.
     TExtensionBehavior mExtensionBehavior;
 
-    ArrayBoundsClamper mArrayBoundsClamper;
     BuiltInFunctionEmulator mBuiltInFunctionEmulator;
 
     // Results of compilation.
@@ -300,13 +330,19 @@ class TCompiler : public TShHandleBase
     TLayoutPrimitiveType mGeometryShaderInputPrimitiveType;
     TLayoutPrimitiveType mGeometryShaderOutputPrimitiveType;
 
+    // tesssellation shader parameters
+    int mTessControlShaderOutputVertices;
+    TLayoutTessEvaluationType mTessEvaluationShaderInputPrimitiveType;
+    TLayoutTessEvaluationType mTessEvaluationShaderInputVertexSpacingType;
+    TLayoutTessEvaluationType mTessEvaluationShaderInputOrderingType;
+    TLayoutTessEvaluationType mTessEvaluationShaderInputPointType;
+
+    bool mHasAnyPreciseType;
+
     // name hashing.
     NameMap mNameMap;
 
     TPragma mPragma;
-
-    // Track what should be validated given passes currently applied.
-    ValidateASTOptions mValidateASTOptions;
 
     ShCompileOptions mCompileOptions;
 };
@@ -322,14 +358,6 @@ class TCompiler : public TShHandleBase
 //
 TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
 void DeleteCompiler(TCompiler *);
-
-void EmitEarlyFragmentTestsGLSL(const TCompiler &, TInfoSinkBase &sink);
-void EmitWorkGroupSizeGLSL(const TCompiler &, TInfoSinkBase &sink);
-void EmitMultiviewGLSL(const TCompiler &,
-                       const ShCompileOptions &,
-                       const TExtension,
-                       const TBehavior,
-                       TInfoSinkBase &sink);
 
 }  // namespace sh
 

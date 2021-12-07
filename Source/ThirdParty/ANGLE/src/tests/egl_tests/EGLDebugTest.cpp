@@ -153,29 +153,33 @@ TEST_P(EGLDebugTest, SetLabel)
 {
     ANGLE_SKIP_TEST_IF(!hasExtension());
 
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    EGLSurface surface = getEGLWindow()->getSurface();
+
     EXPECT_EQ(static_cast<EGLint>(EGL_SUCCESS), eglDebugMessageControlKHR(nullptr, nullptr));
 
     // Display display and object must be equal when setting a display label
-    EXPECT_EQ(static_cast<EGLint>(EGL_SUCCESS),
-              eglLabelObjectKHR(getEGLWindow()->getDisplay(), EGL_OBJECT_DISPLAY_KHR,
-                                getEGLWindow()->getDisplay(), const_cast<char *>("Display")));
+    EXPECT_EQ(
+        static_cast<EGLint>(EGL_SUCCESS),
+        eglLabelObjectKHR(display, EGL_OBJECT_DISPLAY_KHR, display, const_cast<char *>("Display")));
     EXPECT_NE(static_cast<EGLint>(EGL_SUCCESS),
               eglLabelObjectKHR(nullptr, EGL_OBJECT_DISPLAY_KHR, getEGLWindow()->getDisplay(),
                                 const_cast<char *>("Display")));
 
     //  Set a surface label
-    EXPECT_EQ(static_cast<EGLint>(EGL_SUCCESS),
-              eglLabelObjectKHR(getEGLWindow()->getDisplay(), EGL_OBJECT_SURFACE_KHR,
-                                getEGLWindow()->getSurface(), const_cast<char *>("Surface")));
+    EXPECT_EQ(
+        static_cast<EGLint>(EGL_SUCCESS),
+        eglLabelObjectKHR(display, EGL_OBJECT_SURFACE_KHR, surface, const_cast<char *>("Surface")));
     EXPECT_EGL_ERROR(EGL_SUCCESS);
 
     // Provide a surface but use an image label type
-    EXPECT_EQ(static_cast<EGLint>(EGL_BAD_PARAMETER),
-              eglLabelObjectKHR(getEGLWindow()->getDisplay(), EGL_OBJECT_IMAGE_KHR,
-                                getEGLWindow()->getSurface(), const_cast<char *>("Image")));
+    EXPECT_EQ(
+        static_cast<EGLint>(EGL_BAD_PARAMETER),
+        eglLabelObjectKHR(display, EGL_OBJECT_IMAGE_KHR, surface, const_cast<char *>("Image")));
     EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLDebugTest);
 ANGLE_INSTANTIATE_TEST(EGLDebugTest,
                        ES2_D3D9(),
                        ES2_D3D11(),

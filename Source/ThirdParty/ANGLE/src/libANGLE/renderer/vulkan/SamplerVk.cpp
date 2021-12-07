@@ -39,7 +39,7 @@ angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
         mSampler.reset();
     }
 
-    vk::SamplerDesc desc(contextVk->getFeatures(), mState, false, 0);
+    vk::SamplerDesc desc(contextVk, mState, false, nullptr, static_cast<angle::FormatID>(0));
     ANGLE_TRY(renderer->getSamplerCache().getSampler(contextVk, desc, &mSampler));
 
     return angle::Result::Continue;

@@ -29,6 +29,7 @@ class TSymbolTable;
 ANGLE_NO_DISCARD bool RemoveInactiveInterfaceVariables(
     TCompiler *compiler,
     TIntermBlock *root,
+    TSymbolTable *symbolTable,
     const std::vector<sh::ShaderVariable> &attributes,
     const std::vector<sh::ShaderVariable> &inputVaryings,
     const std::vector<sh::ShaderVariable> &outputVariables,

@@ -24,7 +24,8 @@ class ProgramPipelineImpl : public angle::NonCopyable
     virtual void destroy(const gl::Context *context) {}
 
     virtual angle::Result link(const gl::Context *context,
-                               const gl::ProgramMergedVaryings &mergedVaryings);
+                               const gl::ProgramMergedVaryings &mergedVaryings,
+                               const gl::ProgramVaryingPacking &varyingPacking);
 
     const gl::ProgramPipelineState &getState() const { return mState; }
 

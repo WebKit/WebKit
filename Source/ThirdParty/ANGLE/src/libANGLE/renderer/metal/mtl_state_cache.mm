@@ -76,7 +76,6 @@ MTLSamplerDescriptor *ToObjC(const SamplerDesc &desc)
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, mipFilter);
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, maxAnisotropy);
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, compareFunction);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, normalizedCoordinates);
 
     return [objCDesc ANGLE_MTL_AUTORELEASE];
 }
@@ -187,7 +186,7 @@ id<MTLTexture> ToObjC(const TextureRef &texture)
 void BaseRenderPassAttachmentDescToObjC(MTLRenderPassAttachmentDescriptor *dst,
                                         const RenderPassAttachmentDesc &src)
 {
-    auto implicitMsTexture = src.implicitMSTexture();
+    auto implicitMsTexture = src.implicitMSTexture;
 
     if (implicitMsTexture)
     {
@@ -195,31 +194,31 @@ void BaseRenderPassAttachmentDescToObjC(MTLRenderPassAttachmentDescriptor *dst,
         dst.level          = 0;
         dst.slice          = 0;
         dst.depthPlane     = 0;
-        dst.resolveTexture = ToObjC(src.texture());
-        dst.resolveLevel   = src.level().get();
+        dst.resolveTexture = ToObjC(src.texture);
+        dst.resolveLevel   = src.level.get();
         if (dst.resolveTexture.textureType == MTLTextureType3D)
         {
-            dst.resolveDepthPlane = src.sliceOrDepth();
+            dst.resolveDepthPlane = src.sliceOrDepth;
             dst.resolveSlice      = 0;
         }
         else
         {
-            dst.resolveSlice      = src.sliceOrDepth();
+            dst.resolveSlice      = src.sliceOrDepth;
             dst.resolveDepthPlane = 0;
         }
     }
     else
     {
-        dst.texture = ToObjC(src.texture());
-        dst.level   = src.level().get();
+        dst.texture = ToObjC(src.texture);
+        dst.level   = src.level.get();
         if (dst.texture.textureType == MTLTextureType3D)
         {
-            dst.depthPlane = src.sliceOrDepth();
+            dst.depthPlane = src.sliceOrDepth;
             dst.slice      = 0;
         }
         else
         {
-            dst.slice      = src.sliceOrDepth();
+            dst.slice      = src.sliceOrDepth;
             dst.depthPlane = 0;
         }
         dst.resolveTexture    = nil;
@@ -464,8 +463,6 @@ SamplerDesc::SamplerDesc(const gl::SamplerState &glState) : SamplerDesc()
     maxAnisotropy = static_cast<uint32_t>(glState.getMaxAnisotropy());
 
     compareFunction = GetCompareFunc(glState.getCompareFunc());
-
-    normalizedCoordinates = YES;
 }
 
 SamplerDesc &SamplerDesc::operator=(const SamplerDesc &src)
@@ -487,8 +484,6 @@ void SamplerDesc::reset()
     maxAnisotropy = 1;
 
     compareFunction = MTLCompareFunctionNever;
-
-    normalizedCoordinates = YES;
 }
 
 bool SamplerDesc::operator==(const SamplerDesc &rhs) const
@@ -541,44 +536,33 @@ void BlendDesc::reset(MTLColorWriteMask _writeMask)
     sourceAlphaBlendFactor = sourceRGBBlendFactor = MTLBlendFactorOne;
 }
 
-void BlendDesc::updateWriteMask(const gl::BlendState &blendState)
+void BlendDesc::updateWriteMask(const uint8_t angleMask)
 {
-    writeMask = MTLColorWriteMaskNone;
-    if (blendState.colorMaskRed)
-    {
-        writeMask |= MTLColorWriteMaskRed;
-    }
-    if (blendState.colorMaskGreen)
-    {
-        writeMask |= MTLColorWriteMaskGreen;
-    }
-    if (blendState.colorMaskBlue)
-    {
-        writeMask |= MTLColorWriteMaskBlue;
-    }
-    if (blendState.colorMaskAlpha)
-    {
-        writeMask |= MTLColorWriteMaskAlpha;
-    }
-}
+    ASSERT(angleMask == (angleMask & 0xF));
 
-void BlendDesc::updateBlendFactors(const gl::BlendState &blendState)
-{
-    sourceRGBBlendFactor        = GetBlendFactor(blendState.sourceBlendRGB);
-    sourceAlphaBlendFactor      = GetBlendFactor(blendState.sourceBlendAlpha);
-    destinationRGBBlendFactor   = GetBlendFactor(blendState.destBlendRGB);
-    destinationAlphaBlendFactor = GetBlendFactor(blendState.destBlendAlpha);
-}
+// ANGLE's packed color mask is abgr (matches Vulkan & D3D11), while Metal expects rgba.
+#if defined(__aarch64__)
+    // ARM64 can reverse bits in a single instruction
+    writeMask = __builtin_bitreverse8(angleMask) >> 4;
+#else
+    /* On other architectures, Clang generates a polyfill that uses more
+       instructions than the following expression optimized for a 4-bit value.
 
-void BlendDesc::updateBlendOps(const gl::BlendState &blendState)
-{
-    rgbBlendOperation   = GetBlendOp(blendState.blendEquationRGB);
-    alphaBlendOperation = GetBlendOp(blendState.blendEquationAlpha);
-}
+       (abgr * 0x41) & 0x14A:
+        .......abgr +
+        .abgr...... &
+        00101001010 =
+        ..b.r..a.g.
 
-void BlendDesc::updateBlendEnabled(const gl::BlendState &blendState)
-{
-    blendingEnabled = blendState.blend;
+       (b.r..a.g.) * 0x111:
+                b.r..a.g. +
+            b.r..a.g..... +
+        b.r..a.g......... =
+        b.r.bargbarg.a.g.
+              ^^^^
+    */
+    writeMask = ((((angleMask * 0x41) & 0x14A) * 0x111) >> 7) & 0xF;
+#endif
 }
 
 // RenderPipelineColorAttachmentDesc implementation
@@ -609,16 +593,16 @@ void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, MTLColorWri
     BlendDesc::reset(_writeMask);
 }
 
-void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, const BlendDesc &blendState)
+void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, const BlendDesc &blendDesc)
 {
     this->pixelFormat = format;
 
-    BlendDesc::operator=(blendState);
+    BlendDesc::operator=(blendDesc);
 }
 
-void RenderPipelineColorAttachmentDesc::update(const BlendDesc &blendState)
+void RenderPipelineColorAttachmentDesc::update(const BlendDesc &blendDesc)
 {
-    BlendDesc::operator=(blendState);
+    BlendDesc::operator=(blendDesc);
 }
 
 // RenderPipelineOutputDesc implementation
@@ -702,7 +686,11 @@ RenderPassAttachmentDesc::RenderPassAttachmentDesc()
 
 void RenderPassAttachmentDesc::reset()
 {
-    renderTarget       = nullptr;
+    texture.reset();
+    implicitMSTexture.reset();
+    level              = mtl::kZeroNativeMipLevel;
+    sliceOrDepth       = 0;
+    blendable          = false;
     loadAction         = MTLLoadActionLoad;
     storeAction        = MTLStoreActionStore;
     storeActionOptions = MTLStoreActionOptionNone;
@@ -711,9 +699,9 @@ void RenderPassAttachmentDesc::reset()
 bool RenderPassAttachmentDesc::equalIgnoreLoadStoreOptions(
     const RenderPassAttachmentDesc &other) const
 {
-    return renderTarget == other.renderTarget ||
-           (texture() == other.texture() && level() == other.level() &&
-            sliceOrDepth() == other.sliceOrDepth());
+    return texture == other.texture && implicitMSTexture == other.implicitMSTexture &&
+           level == other.level && sliceOrDepth == other.sliceOrDepth &&
+           blendable == other.blendable;
 }
 
 bool RenderPassAttachmentDesc::operator==(const RenderPassAttachmentDesc &other) const
@@ -753,20 +741,24 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc) const
 
 void RenderPassDesc::populateRenderPipelineOutputDesc(RenderPipelineOutputDesc *outDesc) const
 {
-    populateRenderPipelineOutputDesc(MTLColorWriteMaskAll, outDesc);
+    WriteMaskArray writeMaskArray;
+    writeMaskArray.fill(MTLColorWriteMaskAll);
+    populateRenderPipelineOutputDesc(writeMaskArray, outDesc);
 }
 
-void RenderPassDesc::populateRenderPipelineOutputDesc(MTLColorWriteMask colorWriteMask,
+void RenderPassDesc::populateRenderPipelineOutputDesc(const WriteMaskArray &writeMaskArray,
                                                       RenderPipelineOutputDesc *outDesc) const
 {
-    // Default blend state.
-    BlendDesc blendState;
-    blendState.reset(colorWriteMask);
-
-    populateRenderPipelineOutputDesc(blendState, outDesc);
+    // Default blend state with replaced color write masks.
+    BlendDescArray blendDescArray;
+    for (size_t i = 0; i < blendDescArray.size(); i++)
+    {
+        blendDescArray[i].reset(writeMaskArray[i]);
+    }
+    populateRenderPipelineOutputDesc(blendDescArray, outDesc);
 }
 
-void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDesc &blendState,
+void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blendDescArray,
                                                       RenderPipelineOutputDesc *outDesc) const
 {
     auto &outputDescriptor               = *outDesc;
@@ -775,19 +767,23 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDesc &blendStat
     for (uint32_t i = 0; i < this->numColorAttachments; ++i)
     {
         auto &renderPassColorAttachment = this->colorAttachments[i];
-        auto texture                    = renderPassColorAttachment.texture();
+        auto texture                    = renderPassColorAttachment.texture;
 
         if (texture)
         {
-            // Copy parameters from blend state
-            outputDescriptor.colorAttachments[i].update(blendState);
-            if (!renderPassColorAttachment.blendable())
+            if (renderPassColorAttachment.blendable)
+            {
+                // Copy parameters from blend state
+                outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
+                                                           blendDescArray[i]);
+            }
+            else
             {
                 // Disable blending if the attachment's render target doesn't support blending.
-                outputDescriptor.colorAttachments[i].blendingEnabled = false;
+                // Force default blending state to reduce the number of unique states.
+                outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
+                                                           blendDescArray[i].writeMask);
             }
-
-            outputDescriptor.colorAttachments[i].pixelFormat = texture->pixelFormat();
 
             // Combine the masks. This is useful when the texture is not supposed to have alpha
             // channel such as GL_RGB8, however, Metal doesn't natively support 24 bit RGB, so
@@ -808,11 +804,11 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDesc &blendStat
         outputDescriptor.colorAttachments[i].reset();
     }
 
-    auto depthTexture = this->depthAttachment.texture();
+    auto depthTexture = this->depthAttachment.texture;
     outputDescriptor.depthAttachmentPixelFormat =
         depthTexture ? depthTexture->pixelFormat() : MTLPixelFormatInvalid;
 
-    auto stencilTexture = this->stencilAttachment.texture();
+    auto stencilTexture = this->stencilAttachment.texture;
     outputDescriptor.stencilAttachmentPixelFormat =
         stencilTexture ? stencilTexture->pixelFormat() : MTLPixelFormatInvalid;
 }
@@ -964,9 +960,7 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         // Choose shader variant
         id<MTLFunction> vertShader = nil;
         id<MTLFunction> fragShader = nil;
-        // Special case for transform feedback shader, we've already created it! See getTransformFeedbackRenderPipeline
-        if (desc.rasterizationType != mtl::RenderPipelineRasterization::Disabled &&
-            mSpecializedShaderFactory &&
+        if (mSpecializedShaderFactory &&
             mSpecializedShaderFactory->hasSpecializedShader(gl::ShaderType::Vertex, desc))
         {
             if (IsError(mSpecializedShaderFactory->getSpecializedShader(
@@ -1082,30 +1076,34 @@ void RenderPipelineCache::clearPipelineStates()
     mRenderPipelineStates[1].clear();
 }
 
-//ProvokingVertexPipelineDesc
+// ProvokingVertexPipelineDesc
 ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc()
 {
-    memset(this,0,sizeof(*this));
-    
+    memset(this, 0, sizeof(*this));
 }
-ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(const ProvokingVertexComputePipelineDesc &src)
+ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(
+    const ProvokingVertexComputePipelineDesc &src)
 {
-    memcpy(this,&src, sizeof(*this));
+    memcpy(this, &src, sizeof(*this));
 }
-ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(const ProvokingVertexComputePipelineDesc &&src)
+ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(
+    const ProvokingVertexComputePipelineDesc &&src)
 {
-    memcpy(this,&src, sizeof(*this));
+    memcpy(this, &src, sizeof(*this));
 }
-ProvokingVertexComputePipelineDesc &ProvokingVertexComputePipelineDesc::operator=(const ProvokingVertexComputePipelineDesc &src)
+ProvokingVertexComputePipelineDesc &ProvokingVertexComputePipelineDesc::operator=(
+    const ProvokingVertexComputePipelineDesc &src)
 {
-    memcpy(this,&src, sizeof(*this));
+    memcpy(this, &src, sizeof(*this));
     return *this;
 }
-bool ProvokingVertexComputePipelineDesc::operator==(const ProvokingVertexComputePipelineDesc &rhs) const
+bool ProvokingVertexComputePipelineDesc::operator==(
+    const ProvokingVertexComputePipelineDesc &rhs) const
 {
     return memcmp(this, &rhs, sizeof(*this)) == 0;
 }
-bool ProvokingVertexComputePipelineDesc::operator!=(const ProvokingVertexComputePipelineDesc &rhs) const
+bool ProvokingVertexComputePipelineDesc::operator!=(
+    const ProvokingVertexComputePipelineDesc &rhs) const
 {
     return !(*this == rhs);
 }
@@ -1114,17 +1112,13 @@ size_t ProvokingVertexComputePipelineDesc::hash() const
     return angle::ComputeGenericHash(*this);
 }
 
-ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache():
-    mComputeShader(nullptr)
-{
-    
-}
+ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache() : mComputeShader(nullptr)
+{}
 
-ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache(ProvokingVertexCacheSpecializeShaderFactory *specializedShaderFactory):
-    mComputeShader(nullptr),
-    mSpecializedShaderFactory(specializedShaderFactory)
-{
-}
+ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache(
+    ProvokingVertexCacheSpecializeShaderFactory *specializedShaderFactory)
+    : mComputeShader(nullptr), mSpecializedShaderFactory(specializedShaderFactory)
+{}
 
 void ProvokingVertexComputePipelineCache::setComputeShader(Context *context, id<MTLFunction> shader)
 {
@@ -1136,7 +1130,6 @@ void ProvokingVertexComputePipelineCache::setComputeShader(Context *context, id<
     }
 
     recreatePipelineStates(context);
-    
 }
 
 void ProvokingVertexComputePipelineCache::clearPipelineStates()
@@ -1149,13 +1142,13 @@ void ProvokingVertexComputePipelineCache::clear()
     clearPipelineStates();
 }
 
-
-AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::getComputePipelineState(
+AutoObjCPtr<id<MTLComputePipelineState>>
+ProvokingVertexComputePipelineCache::getComputePipelineState(
     ContextMtl *context,
     const ProvokingVertexComputePipelineDesc &desc)
 {
-    auto &table                    = mComputePipelineStates;
-    auto ite                       = table.find(desc);
+    auto &table = mComputePipelineStates;
+    auto ite    = table.find(desc);
     if (ite == table.end())
     {
         return insertComputePipelineState(context, desc);
@@ -1164,14 +1157,14 @@ AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::ge
     return ite->second;
 }
 
-AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::insertComputePipelineState(
+AutoObjCPtr<id<MTLComputePipelineState>>
+ProvokingVertexComputePipelineCache::insertComputePipelineState(
     Context *context,
     const ProvokingVertexComputePipelineDesc &desc)
 {
-    AutoObjCPtr<id<MTLComputePipelineState>> newState =
-        createComputePipelineState(context, desc);
+    AutoObjCPtr<id<MTLComputePipelineState>> newState = createComputePipelineState(context, desc);
 
-    auto re      = mComputePipelineStates.insert(std::make_pair(desc, newState));
+    auto re = mComputePipelineStates.insert(std::make_pair(desc, newState));
     if (!re.second)
     {
         return nil;
@@ -1180,11 +1173,9 @@ AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::in
     return re.first->second;
 }
 
-
-
 void ProvokingVertexComputePipelineCache::recreatePipelineStates(Context *context)
 {
-   
+
     for (auto &ite : mComputePipelineStates)
     {
         if (ite.second == nil)
@@ -1196,7 +1187,8 @@ void ProvokingVertexComputePipelineCache::recreatePipelineStates(Context *contex
     }
 }
 
-AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::createComputePipelineState(
+AutoObjCPtr<id<MTLComputePipelineState>>
+ProvokingVertexComputePipelineCache::createComputePipelineState(
     Context *context,
     const ProvokingVertexComputePipelineDesc &originalDesc)
 {
@@ -1204,9 +1196,8 @@ AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::cr
     {
         // Disable coverage if the render pipeline's sample count is only 1.
         ProvokingVertexComputePipelineDesc desc = originalDesc;
-       
+
         id<MTLFunction> computeFunction = nil;
-        // Special case for transform feedback shader, we've already created it! See getTransformFeedbackRenderPipeline
         if (mSpecializedShaderFactory &&
             mSpecializedShaderFactory->hasSpecializedShader(gl::ShaderType::Compute, desc))
         {
@@ -1219,7 +1210,7 @@ AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::cr
         else
         {
             // Non-specialized version
-            computeFunction = mComputeShader;;
+            computeFunction = mComputeShader;
         }
 
         if (!computeFunction)
@@ -1245,9 +1236,7 @@ AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::cr
     }
 }
 
-
 ProvokingVertexComputePipelineCache::~ProvokingVertexComputePipelineCache() {}
-
 
 // StateCache implementation
 StateCache::StateCache(const angle::FeaturesMtl &features) : mFeatures(features) {}
@@ -1339,8 +1328,6 @@ void StateCache::clear()
     mDepthStencilStates.clear();
     mSamplerStates.clear();
 }
-
-
 
 }  // namespace mtl
 }  // namespace rx

@@ -1,0 +1,58 @@
+# Copyright 2021 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a .pyl, or "Python Literal", file. You can treat it just like a
+# .json file, with the following exceptions:
+# * all keys must be quoted (use single quotes, please);
+# * comments are allowed, using '#' syntax; and
+# * trailing commas are allowed.
+#
+# For more info see Chromium's test_suite_exceptions.pyl in testing/buildbot.
+
+{
+  'angle_end2end_tests': {
+    'modifications': {
+      # anglebug.com/5328 suspecting blue screen caused by multiprocess
+      'linux-intel': {
+        'args': [
+          '--max-processes=1',
+        ],
+      },
+      'win10-x64-intel': {
+        'args': [
+          '--max-processes=1',
+        ],
+      },
+    },
+  },
+  'angle_restricted_trace_gold_tests': {
+    'modifications': {
+      'linux-intel': {
+        'args': [
+          '--flaky-retries=1',
+        ],
+      },
+      'win10-x64-intel': {
+        'args': [
+          '--flaky-retries=1',
+        ],
+      },
+    },
+  },
+  'angle_white_box_tests': {
+    'modifications': {
+      # anglebug.com/5328 suspecting blue screen caused by multiprocess
+      'linux-intel': {
+        'args': [
+          '--max-processes=1',
+        ],
+      },
+      'win10-x64-intel': {
+        'args': [
+          '--max-processes=1',
+        ],
+      },
+    },
+  },
+}

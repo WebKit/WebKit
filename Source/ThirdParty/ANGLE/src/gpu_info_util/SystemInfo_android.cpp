@@ -11,6 +11,7 @@
 #include <sys/system_properties.h>
 #include <cstring>
 #include <fstream>
+#include <string>
 
 #include "common/angleutils.h"
 #include "common/debug.h"
@@ -42,6 +43,11 @@ bool GetSystemInfo(SystemInfo *info)
         isFullyPopulated;
     isFullyPopulated =
         GetAndroidSystemProperty("ro.product.model", &info->machineModelName) && isFullyPopulated;
+
+    std::string androidSdkLevel;
+    isFullyPopulated =
+        GetAndroidSystemProperty("ro.build.version.sdk", &androidSdkLevel) && isFullyPopulated;
+    info->androidSdkLevel = std::stoi(androidSdkLevel);
 
     return GetSystemInfoVulkan(info) && isFullyPopulated;
 }

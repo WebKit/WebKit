@@ -178,7 +178,6 @@ angle_deqp_data_gles3 = [
   "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/synthetic/variant_3.frag",
   "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/synthetic/variant_4.frag",
   "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/vertexShader.glsl",
-  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/arrays.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/declarations.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/literal_parsing.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/name_hiding.test",
@@ -283,6 +282,18 @@ angle_deqp_data_gles31 = [
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/es32/tessellation_negative_user_defined_io.test",
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/es32/uniform_block.test",
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/es32/uniform_location.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/arrays_of_arrays.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_geometry.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_geometry_uniform_types.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_geometry_varying_types.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_io_block.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_shader_storage_block.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_tessellation.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_tessellation_geometry.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_tessellation_geometry_varying_types.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_tessellation_uniform_types.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_tessellation_varying_types.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_uniform.test",
 ]
 
 angle_deqp_external_graphicsfuzz_data_gles3 = [
@@ -298,7 +309,6 @@ angle_deqp_external_graphicsfuzz_data_gles3 = [
 ]
 
 angle_deqp_external_openglcts_data_gles3 = [
-  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/arrays.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/declarations.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/literal_parsing.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/name_hiding.test",
@@ -313,6 +323,7 @@ angle_deqp_data_copy_targets = [
   "deqp_support:vk_gl_cts_data_data_gles31_data_tessellation",
   "deqp_support:vk_gl_cts_data_data_gles31_shaders_es31",
   "deqp_support:vk_gl_cts_data_data_gles31_shaders_es32",
+  "deqp_support:vk_gl_cts_data_data_gles31_shaders_gl45",
   "deqp_support:vk_gl_cts_data_data_gles3_data",
   "deqp_support:vk_gl_cts_data_data_gles3_data_etc1",
   "deqp_support:vk_gl_cts_data_data_gles3_shaders",

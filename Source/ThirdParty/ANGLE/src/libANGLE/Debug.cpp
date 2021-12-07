@@ -149,10 +149,11 @@ void Debug::insertMessage(GLenum source,
                           GLuint id,
                           GLenum severity,
                           const std::string &message,
-                          gl::LogSeverity logSeverity) const
+                          gl::LogSeverity logSeverity,
+                          angle::EntryPoint entryPoint) const
 {
     std::string messageCopy(message);
-    insertMessage(source, type, id, severity, std::move(messageCopy), logSeverity);
+    insertMessage(source, type, id, severity, std::move(messageCopy), logSeverity, entryPoint);
 }
 
 void Debug::insertMessage(GLenum source,
@@ -160,13 +161,18 @@ void Debug::insertMessage(GLenum source,
                           GLuint id,
                           GLenum severity,
                           std::string &&message,
-                          gl::LogSeverity logSeverity) const
+                          gl::LogSeverity logSeverity,
+                          angle::EntryPoint entryPoint) const
 {
     {
         // output all messages to the debug log
         const char *messageTypeString = GLMessageTypeToString(type);
         const char *severityString    = GLSeverityToString(severity);
         std::ostringstream messageStream;
+        if (entryPoint != angle::EntryPoint::GLInvalid)
+        {
+            messageStream << GetEntryPointName(entryPoint) << ": ";
+        }
         messageStream << "GL " << messageTypeString << ": " << severityString << ": " << message;
         switch (logSeverity)
         {
@@ -312,7 +318,7 @@ void Debug::setMessageControl(GLenum source,
 void Debug::pushGroup(GLenum source, GLuint id, std::string &&message)
 {
     insertMessage(source, GL_DEBUG_TYPE_PUSH_GROUP, id, GL_DEBUG_SEVERITY_NOTIFICATION,
-                  std::string(message), gl::LOG_INFO);
+                  std::string(message), gl::LOG_INFO, angle::EntryPoint::GLPushDebugGroup);
 
     Group g;
     g.source  = source;
@@ -330,7 +336,7 @@ void Debug::popGroup()
     mGroups.pop_back();
 
     insertMessage(g.source, GL_DEBUG_TYPE_POP_GROUP, g.id, GL_DEBUG_SEVERITY_NOTIFICATION,
-                  g.message, gl::LOG_INFO);
+                  g.message, gl::LOG_INFO, angle::EntryPoint::GLPopDebugGroup);
 }
 
 size_t Debug::getGroupStackDepth() const
@@ -363,7 +369,7 @@ void Debug::insertPerfWarning(GLenum severity, const char *message, uint32_t *re
 
     // Release the lock before we call insertMessage. It will re-acquire the lock.
     insertMessage(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_PERFORMANCE, 0, severity, std::move(msg),
-                  gl::LOG_INFO);
+                  gl::LOG_INFO, angle::EntryPoint::GLInvalid);
 }
 
 bool Debug::isMessageEnabled(GLenum source, GLenum type, GLuint id, GLenum severity) const

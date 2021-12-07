@@ -7,7 +7,7 @@
 //    Contains utility methods for rewriting indices for provoking vertex usecases.
 //
 
-#include <metal_stdlib>
+#include "common.h"
 #include "rewrite_indices_shared.h"
 using namespace metal;
 
@@ -93,7 +93,7 @@ static inline void outputPrimitive(
                 baseIndex = indexThatRestartedFirst + 1;
                 return;
             }
-            
+
             WRITE_IDX(onOutIndex, tmpIndex);
         }
         break;
@@ -107,7 +107,7 @@ static inline void outputPrimitive(
                 return;
             }
             if((onIndex - baseIndex) & 1) return; // skip this index...
-            
+
             if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
             {
                 WRITE_IDX(onOutIndex, tmpIndex1);
@@ -129,7 +129,7 @@ static inline void outputPrimitive(
                 baseIndex = indexThatRestartedFirst + 1;
                 return;
             }
-            
+
             if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
             {
                 WRITE_IDX(onOutIndex, tmpIndex1);
@@ -153,7 +153,7 @@ static inline void outputPrimitive(
                 return;
             }
             if(((onIndex - baseIndex) % 3) != 0) return; // skip this index...
-            
+
             if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
             {
                 WRITE_IDX(onOutIndex, tmpIndex2);
@@ -179,7 +179,7 @@ static inline void outputPrimitive(
                 baseIndex = indexThatRestartedFirst + 1;
                 return;
             }
-            
+
             if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
             {
                 WRITE_IDX(onOutIndex, tmpIndex2); // 2 is always the provoking vertex .: do not need to do anything special with isOdd
@@ -207,7 +207,7 @@ static inline void outputPrimitive(
             assert(onOutIndex <= (indexCount - 2) * 3);
         }
         break;
-            
+
     }
 #undef READ_IDX
 #undef WRITE_IDX
@@ -250,7 +250,6 @@ kernel void fixIndexBuffer(
                 onIndex = prim;
                 onOutIndex = prim * 3 + 0;
                 break;
-            
         }
         outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, restartIndex, indexCount, baseIndex, onIndex, onOutIndex);
     }

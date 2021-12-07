@@ -219,6 +219,13 @@ const angle::Vector3 &GLES1State::getCurrentNormal() const
     return mCurrentNormal;
 }
 
+bool GLES1State::shouldHandleDirtyProgram()
+{
+    bool ret = isDirty(DIRTY_GLES1_PROGRAM);
+    clearDirtyBits(DIRTY_GLES1_PROGRAM);
+    return ret;
+}
+
 void GLES1State::setCurrentTextureCoords(unsigned int unit, const TextureCoordF &coords)
 {
     setDirty(DIRTY_GLES1_CURRENT_VECTOR);
@@ -293,9 +300,9 @@ const angle::Mat4 &GLES1State::getModelviewMatrix() const
     return mModelviewMatrices.back();
 }
 
-const GLES1State::MatrixStack &GLES1State::currentMatrixStack() const
+const GLES1State::MatrixStack &GLES1State::getMatrixStack(MatrixType mode) const
 {
-    switch (mMatrixMode)
+    switch (mode)
     {
         case MatrixType::Modelview:
             return mModelviewMatrices;
@@ -307,6 +314,11 @@ const GLES1State::MatrixStack &GLES1State::currentMatrixStack() const
             UNREACHABLE();
             return mModelviewMatrices;
     }
+}
+
+const GLES1State::MatrixStack &GLES1State::currentMatrixStack() const
+{
+    return getMatrixStack(mMatrixMode);
 }
 
 void GLES1State::loadMatrix(const angle::Mat4 &m)
@@ -388,6 +400,10 @@ bool GLES1State::isTexCoordArrayEnabled(unsigned int unit) const
 
 bool GLES1State::isTextureTargetEnabled(unsigned int unit, const TextureType type) const
 {
+    if (mTexUnitEnables.empty())
+    {
+        return false;
+    }
     return mTexUnitEnables[unit].test(type);
 }
 
@@ -506,7 +522,7 @@ AttributesMask GLES1State::getVertexArraysAttributeMask() const
                         isClientStateEnabled(attrib));
     }
 
-    for (unsigned int i = 0; i < GLES1Renderer::kTexUnitCount; i++)
+    for (unsigned int i = 0; i < kTexUnitCount; i++)
     {
         attribsMask.set(GLES1Renderer::TexCoordArrayIndex(i), isTexCoordArrayEnabled(i));
     }
@@ -559,26 +575,6 @@ GLenum GLES1State::getHint(GLenum target) const
             UNREACHABLE();
             return 0;
     }
-}
-
-void GLES1State::setDirty(DirtyGles1Type type)
-{
-    mDirtyBits.set(type);
-}
-
-void GLES1State::setAllDirty()
-{
-    mDirtyBits.set();
-}
-
-void GLES1State::clearDirty()
-{
-    mDirtyBits.reset();
-}
-
-bool GLES1State::isDirty(DirtyGles1Type type) const
-{
-    return mDirtyBits.test(type);
 }
 
 }  // namespace gl

@@ -1,0 +1,77 @@
+Name
+
+    ANGLE_vulkan_image
+
+Name Strings
+
+    EGL_ANGLE_vulkan_image
+
+Contributors
+
+    Peng Huang
+
+Contacts
+
+    Peng Huang, Google Inc. (penghuang 'at' chromium.org)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, Nov 17, 2021
+
+Number
+
+    EGL Extension #??
+
+Dependencies
+
+    This extension is written against the wording of the EGL 1.4
+    Specification.
+
+    References the EGL_ANGLE_device_vulkan and EGL_KHR_image_base extensions.
+
+Overview
+
+    This extension allows exporting VkImage from EGL images.
+
+New Types
+
+    None
+
+New Procedures and Functions
+
+    EGLBoolean eglExportVkImageANGLE(
+        EGLDisplay dpy,
+        EGLImageKHR image,
+        void* vk_image,
+        void* vk_image_create_info);
+
+New Tokens
+
+    None
+
+Additions to the EGL 1.4 Specification:
+
+    To export VkImage from an EGLImage, a new API is required.
+
+    The new entrypoint
+        EGLBoolean eglExportVkImageANGLE(
+            EGLDisplay dpy,
+            EGLImageKHR image,
+            void* vk_image,
+            void* vk_image_create_info);
+
+    is used to retrieve the VkImage and VkImageCreateInfo of the EGLImage.
+    The VkImage is stored into <vk_image> pointed memory, and VkImageCreateInfo
+    is filled into <vk_image_create_info> pointed memory.
+
+Issues
+
+    None
+
+Revision History
+
+    Version 1, 2021/11/17 - first draft.

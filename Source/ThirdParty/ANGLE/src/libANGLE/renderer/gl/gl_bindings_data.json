@@ -844,5 +844,27 @@
     [
         "TexBufferEXT",
         "TexBufferRangeEXT"
+    ],
+
+    "GL_EXT_framebuffer_blit":
+    [
+        "BlitFramebufferEXT"
+    ],
+
+    "GL_NV_framebuffer_blit":
+    [
+        "BlitFramebufferNV"
+    ],
+
+    "GL_IMG_multisampled_render_to_texture":
+    [
+        "RenderbufferStorageMultisampleIMG",
+        "FramebufferTexture2DMultisampleIMG"
+    ],
+
+    "GL_EXT_multisampled_render_to_texture":
+    [
+        "RenderbufferStorageMultisampleEXT",
+        "FramebufferTexture2DMultisampleEXT"
     ]
 }

@@ -23,10 +23,6 @@ namespace
 // Start with a fairly small buffer size. We can increase this dynamically as we convert more data.
 constexpr size_t kConvertedElementArrayBufferInitialSize = 1024 * 8;
 
-// The max size that we will use buffer pool for dynamic update.
-// If the buffer size exceeds this limit, we will use only one buffer instead of using the pool.
-constexpr size_t kDynamicBufferPoolMaxBufSize = 128 * 1024;
-
 template <typename IndexType>
 angle::Result GetFirstLastIndices(const IndexType *indices,
                                   size_t count,
@@ -67,8 +63,7 @@ IndexConversionBufferMtl::IndexConversionBufferMtl(ContextMtl *context,
       elemType(elemTypeIn),
       offset(offsetIn),
       primitiveRestartEnabled(primitiveRestartEnabledIn)
-{
-}
+{}
 
 IndexRange IndexConversionBufferMtl::getRangeForConvertedBuffer(size_t count)
 {
@@ -281,8 +276,6 @@ angle::Result BufferMtl::getFirstLastIndices(ContextMtl *contextMtl,
             UNREACHABLE();
             return angle::Result::Stop;
     }
-
-    return angle::Result::Continue;
 }
 
 void BufferMtl::onDataChanged()
@@ -333,8 +326,8 @@ ConversionBufferMtl *BufferMtl::getVertexConversionBuffer(ContextMtl *context,
 {
     for (VertexConversionBufferMtl &buffer : mVertexConversionBuffers)
     {
-        if (buffer.formatID == formatID && buffer.stride == stride &&
-            buffer.offset <= offset && buffer.offset%buffer.stride == offset%stride)
+        if (buffer.formatID == formatID && buffer.stride == stride && buffer.offset <= offset &&
+            buffer.offset % buffer.stride == offset % stride)
         {
             return &buffer;
         }
@@ -372,7 +365,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context, 
     {
         if (buffer.offset == offset)
         {
-            return &buffer;
+            return static_cast<ConversionBufferMtl *>(&buffer);
         }
     }
 
@@ -402,7 +395,7 @@ void BufferMtl::markConversionBuffersDirty()
         buffer.convertedBuffer = nullptr;
         buffer.convertedOffset = 0;
     }
-    mRestartRangeCache = std::nullopt;
+    mRestartRangeCache.markDirty();
 }
 
 void BufferMtl::clearConversionBuffers()
@@ -410,15 +403,15 @@ void BufferMtl::clearConversionBuffers()
     mVertexConversionBuffers.clear();
     mIndexConversionBuffers.clear();
     mUniformConversionBuffers.clear();
-    mRestartRangeCache = std::nullopt;
+    mRestartRangeCache.markDirty();
 }
 
-template<typename T>
+template <typename T>
 static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::BufferRef idxBuffer)
 {
     std::vector<IndexRange> result;
-    const T *bufferData = reinterpret_cast<const T *>(idxBuffer->mapReadOnly(ctx));
-    const size_t numIndices = idxBuffer->size() / sizeof(T);
+    const T *bufferData       = reinterpret_cast<const T *>(idxBuffer->mapReadOnly(ctx));
+    const size_t numIndices   = idxBuffer->size() / sizeof(T);
     constexpr T restartMarker = std::numeric_limits<T>::max();
     for (size_t i = 0; i < numIndices; ++i)
     {
@@ -437,13 +430,14 @@ static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::Buff
     return result;
 }
 
-const std::vector<IndexRange> & BufferMtl::getRestartIndices(ContextMtl * ctx, gl::DrawElementsType indexType)
+const std::vector<IndexRange> &BufferMtl::getRestartIndices(ContextMtl *ctx,
+                                                            gl::DrawElementsType indexType)
 {
-    if (!mRestartRangeCache || mRestartRangeCache->indexType != indexType)
+    if (!mRestartRangeCache || mRestartRangeCache.indexType != indexType)
     {
-        mRestartRangeCache = std::nullopt;
+        mRestartRangeCache.markDirty();
         std::vector<IndexRange> ranges;
-        switch(indexType)
+        switch (indexType)
         {
             case gl::DrawElementsType::UnsignedByte:
                 ranges = calculateRestartRanges<uint8_t>(ctx, getCurrentBuffer());
@@ -457,10 +451,34 @@ const std::vector<IndexRange> & BufferMtl::getRestartIndices(ContextMtl * ctx, g
             default:
                 ASSERT(false);
         }
-        mRestartRangeCache.emplace(std::move(ranges), indexType);
+        mRestartRangeCache = RestartRangeCache(std::move(ranges), indexType);
     }
-    return mRestartRangeCache->ranges;
+    return mRestartRangeCache.ranges;
 }
+
+const std::vector<IndexRange> BufferMtl::getRestartIndicesFromClientData(
+    ContextMtl *ctx,
+    gl::DrawElementsType indexType,
+    mtl::BufferRef idxBuffer)
+{
+    std::vector<IndexRange> restartIndices;
+    switch (indexType)
+    {
+        case gl::DrawElementsType::UnsignedByte:
+            restartIndices = calculateRestartRanges<uint8_t>(ctx, idxBuffer);
+            break;
+        case gl::DrawElementsType::UnsignedShort:
+            restartIndices = calculateRestartRanges<uint16_t>(ctx, idxBuffer);
+            break;
+        case gl::DrawElementsType::UnsignedInt:
+            restartIndices = calculateRestartRanges<uint32_t>(ctx, idxBuffer);
+            break;
+        default:
+            ASSERT(false);
+    }
+    return restartIndices;
+}
+
 angle::Result BufferMtl::setDataImpl(const gl::Context *context,
                                      gl::BufferBinding target,
                                      const void *data,
@@ -502,7 +520,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
         default:
             // dynamic buffer, allow up to 10 update per frame/encoding without
             // waiting for GPU.
-            if (adjustedSize <= kDynamicBufferPoolMaxBufSize)
+            if (adjustedSize <= kConvertedElementArrayBufferInitialSize)
             {
                 maxBuffers = 10;
                 mBufferPool.setAlwaysUseSharedMem();

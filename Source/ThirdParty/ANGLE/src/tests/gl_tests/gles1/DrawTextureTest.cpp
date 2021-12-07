@@ -133,4 +133,59 @@ TEST_P(DrawTextureTest, ColorArrayNotUsed)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Tests that values of differenty types are properly normalized with glColorPointer
+TEST_P(DrawTextureTest, ColorArrayDifferentTypes)
+{
+    constexpr GLubyte kTextureColorData[] = {0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF,
+                                             0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF};
+    constexpr GLfloat kVertexPtrData[]    = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+    constexpr GLfloat kTexCoordPtrData[]  = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
+    constexpr GLubyte kGLubyteData[]      = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    constexpr GLfloat kGLfloatData[]      = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                        1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    constexpr GLfixed kGLfixedData[]      = {0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000,
+                                        0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000,
+                                        0x10000, 0x10000, 0x10000, 0x10000};
+
+    // We check a pixel coordinate at the border of where linear interpolation starts as
+    // we fail to get correct interpolated values when we do not normalize the GLbyte values.
+    constexpr GLint kCheckedPixelX         = 16;
+    constexpr GLint kCheckedPixelY         = 8;
+    constexpr unsigned int kPixelTolerance = 10u;
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, kTextureColorData);
+    glVertexPointer(2, GL_FLOAT, 0, kVertexPtrData);
+    glTexCoordPointer(2, GL_FLOAT, 0, kTexCoordPtrData);
+
+    // Ensure the results do not change unexpectedly regardless of the color data format
+
+    // Test GLubyte
+    glColorPointer(4, GL_UNSIGNED_BYTE, 0, kGLubyteData);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(kCheckedPixelX, kCheckedPixelY, GLColor::red, kPixelTolerance);
+
+    // Test GLfloat
+    glColorPointer(4, GL_FLOAT, 0, kGLfloatData);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(kCheckedPixelX, kCheckedPixelY, GLColor::red, kPixelTolerance);
+
+    // Test GLfixed
+    glColorPointer(4, GL_FIXED, 0, kGLfixedData);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(kCheckedPixelX, kCheckedPixelY, GLColor::red, kPixelTolerance);
+}
+
 ANGLE_INSTANTIATE_TEST_ES1(DrawTextureTest);

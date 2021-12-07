@@ -20,14 +20,18 @@ class DebugAnnotatorVk : public angle::LoggingAnnotator
     DebugAnnotatorVk();
     ~DebugAnnotatorVk() override;
     void beginEvent(gl::Context *context,
-                    gl::EntryPoint entryPoint,
+                    angle::EntryPoint entryPoint,
                     const char *eventName,
                     const char *eventMessage) override;
-    void endEvent(gl::Context *context, const char *eventName, gl::EntryPoint entryPoint) override;
+    void endEvent(gl::Context *context,
+                  const char *eventName,
+                  angle::EntryPoint entryPoint) override;
     bool getStatus() override;
 
   private:
-    bool isDrawOrDispatchEntryPoint(gl::EntryPoint entryPoint) const;
+    bool isDrawEntryPoint(angle::EntryPoint entryPoint) const;
+    bool isDispatchEntryPoint(angle::EntryPoint entryPoint) const;
+    bool isClearOrQueryEntryPoint(angle::EntryPoint entryPoint) const;
 
     // Note: To avoid any race conditions between threads, this class has no private data; all
     // events are stored in ContextVk.

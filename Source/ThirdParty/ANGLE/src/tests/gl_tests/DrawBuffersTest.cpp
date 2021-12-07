@@ -262,9 +262,6 @@ TEST_P(DrawBuffersTest, Gaps)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
-    // TODO(ynovikov): Investigate the failure (http://anglebug.com/1535)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
-
     // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
     // http://anglebug.com/3423
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
@@ -382,9 +379,6 @@ TEST_P(DrawBuffersTest, FirstAndLast)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
-    // TODO(ynovikov): Investigate the failure (https://anglebug.com/1533)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
-
     // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
     // http://anglebug.com/3423
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
@@ -416,9 +410,6 @@ TEST_P(DrawBuffersTest, FirstAndLast)
 TEST_P(DrawBuffersTest, FirstHalfNULL)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
-
-    // TODO(ynovikov): Investigate the failure (https://anglebug.com/1533)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
 
     // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
     // http://anglebug.com/3423
@@ -476,9 +467,6 @@ TEST_P(DrawBuffersWebGL2Test, TwoProgramsWithDifferentOutputsAndClear)
 {
     // TODO(http://anglebug.com/2872): Broken on the GL back-end.
     ANGLE_SKIP_TEST_IF(IsOpenGL());
-
-    // TODO(ynovikov): Investigate the failure (https://anglebug.com/1533)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
 
     // TODO(syoussefi): Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
     // http://anglebug.com/3423
@@ -828,6 +816,195 @@ TEST_P(DrawBuffersTestES3, 2DArrayTextures)
     glDeleteProgram(program);
 }
 
+// Test that blend works when draw buffers and framebuffers change.
+TEST_P(DrawBuffersTestES3, BlendWithDrawBufferAndFramebufferChanges)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_draw_buffers_indexed"));
+
+    // Qualcomm driver crashes in the presence of VK_ATTACHMENT_UNUSED.
+    // http://anglebug.com/3423
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
+
+    // Fails on Intel Ubuntu 19.04 Mesa 19.0.2 Vulkan. http://anglebug.com/3616
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
+
+    // http://anglebug.com/5154
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntel() && IsDesktopOpenGL());
+
+    // Create two framebuffers, one with 3 attachments (fbo3), one with 4 (fbo4).  The test issues
+    // draw calls on fbo3 with different attachments enabled, then switches to fbo4 (without
+    // dirtying blend state) and draws to other attachments.  It ensures that blend state is
+    // appropriately set on framebuffer change.
+
+    GLenum bufs[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,
+                      GL_COLOR_ATTACHMENT3};
+
+    GLFramebuffer fbo[2];
+    GLTexture tex[7];
+    constexpr GLfloat kClearValue[] = {1, 1, 1, 1};
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
+
+    for (uint32_t texIndex = 0; texIndex < 7; ++texIndex)
+    {
+        size_t colorAttachmentIndex = texIndex >= 3 ? texIndex - 3 : texIndex;
+        if (texIndex == 3)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo[1]);
+        }
+
+        glBindTexture(GL_TEXTURE_2D, tex[texIndex]);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttachmentIndex,
+                               GL_TEXTURE_2D, tex[texIndex], 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glDrawBuffers(4, bufs);
+        glClearBufferfv(GL_COLOR, colorAttachmentIndex, kClearValue);
+    }
+    ASSERT_GL_NO_ERROR();
+
+    glEnablei(GL_BLEND, 0);
+    glEnablei(GL_BLEND, 1);
+    glEnablei(GL_BLEND, 2);
+    glEnablei(GL_BLEND, 3);
+
+    glBlendEquationi(0, GL_FUNC_REVERSE_SUBTRACT);
+    glBlendEquationi(1, GL_MIN);
+    glBlendEquationi(2, GL_FUNC_REVERSE_SUBTRACT);
+    glBlendEquationi(3, GL_FUNC_REVERSE_SUBTRACT);
+
+    glBlendFunci(0, GL_ONE, GL_ONE);
+    glBlendFunci(1, GL_DST_ALPHA, GL_DST_ALPHA);
+    glBlendFunci(2, GL_SRC_ALPHA, GL_SRC_ALPHA);
+    glBlendFunci(3, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+
+    bufs[0] = GL_NONE;
+    bufs[2] = GL_NONE;
+    glDrawBuffers(4, bufs);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
+
+    bufs[2] = GL_COLOR_ATTACHMENT2;
+    glDrawBuffers(3, bufs);
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+uniform vec4 value0;
+uniform vec4 value1;
+uniform vec4 value2;
+uniform vec4 value3;
+
+layout(location = 0) out vec4 color0;
+layout(location = 1) out vec4 color1;
+layout(location = 2) out vec4 color2;
+layout(location = 3) out vec4 color3;
+
+void main()
+{
+    color0 = value0;
+    color1 = value1;
+    color2 = value2;
+    color3 = value3;
+}
+)";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint uniforms[4];
+    for (uint32_t attachmentIndex = 0; attachmentIndex < 4; ++attachmentIndex)
+    {
+        char uniformName[20];
+        snprintf(uniformName, sizeof uniformName, "value%u", attachmentIndex);
+        uniforms[attachmentIndex] = glGetUniformLocation(program, uniformName);
+        ASSERT_NE(uniforms[attachmentIndex], -1);
+    }
+
+    // Currently, fbo3 is bound.  The attachment states are:
+    //
+    //     0: DISABLED Color: (1, 1, 1, 1), Blend: reverse subtract, ONE/ONE
+    //     1:          Color: (1, 1, 1, 1), Blend: min, DST_ALPHA/DST_ALPHA
+    //     2:          Color: (1, 1, 1, 1), Blend: reverse subtract, SRC_ALPHA/SRC_ALPHA
+    //
+    // Draw:
+    //
+    //     0: Color: don't care
+    //     1: Color: (0.75, 0.5, 0.25, 0.5)  ->  Result after blend is: (0.75, 0.5, 0.25, 0.5)
+    //     2: Color: (0.25, 0.5, 0.75, 0.5)  ->  Result after blend is: (0.375, 0.25, 0.125, 0.25)
+
+    // Draws green into attachment 1
+    glUniform4f(uniforms[1], 0.75, 0.5, 0.25, 0.5);
+    glUniform4f(uniforms[2], 0.25, 0.5, 0.75, 0.5);
+    drawQuad(program, positionAttrib(), 0.5);
+    ASSERT_GL_NO_ERROR();
+
+    bufs[0] = GL_COLOR_ATTACHMENT0;
+    bufs[1] = GL_NONE;
+    glDrawBuffers(3, bufs);
+
+    // Currently, fbo3 is bound.  The attachment states are:
+    //
+    //     0:          Color: (1, 1, 1, 1), Blend: reverse subtract, ONE/ONE
+    //     1: DISABLED Color: (0.75, 0.5, 0.25, 0.5), Blend: min, DST_ALPHA/DST_ALPHA
+    //     2:          Color: (0.375, 0.25, 0.125, 0.25), Blend: reverse subtract,
+    //     SRC_ALPHA/SRC_ALPHA
+    //
+    // Draw:
+    //
+    //     0: Color: (0.5, 0.25, 0.75, 0.25) ->  Result after blend is: (0.5, 0.75, 0.25, 0.75)
+    //     1: Color: don't care
+    //     2: Color: (0.125, 0, 0, 1)  ->  Result after blend is: (0.25, 0.25, 0.125, 0)
+
+    // Clear with red
+    glUniform4f(uniforms[0], 0.5, 0.25, 0.75, 0.25);
+    glUniform4f(uniforms[2], 0.125, 0, 0, 1);
+    drawQuad(program, positionAttrib(), 0.5);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[1]);
+
+    // Currently, fbo4 is bound.  The attachment states are:
+    //
+    //     0: DISABLED Color: (1, 1, 1, 1), Blend: reverse subtract, ONE/ONE
+    //     1:          Color: (1, 1, 1, 1), Blend: min, DST_ALPHA/DST_ALPHA
+    //     2: DISABLED Color: (1, 1, 1, 1), Blend: reverse subtract, SRC_ALPHA/SRC_ALPHA
+    //     3:          Color: (1, 1, 1, 1), Blend: reverse subtract, ONE_MINUS_SRC_ALPHA/SRC_ALPHA
+    //
+    // Draw:
+    //
+    //     0: Color: don't care
+    //     1: Color: (0.125, 0.5, 0.625, 0.25)  ->  Result after blend is: (0.125, 0.5, 0.625, 0.25)
+    //     2: Color: don't care
+    //     3: Color: (0.75, 0.25, 0.5, 0.75)  ->  Result after blend is:
+    //                                                               (0.5625, 0.6875, 0.625, 0.5625)
+
+    glUniform4f(uniforms[1], 0.125, 0.5, 0.625, 0.25);
+    glUniform4f(uniforms[3], 0.75, 0.25, 0.5, 0.75);
+    drawQuad(program, positionAttrib(), 0.5);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_NEAR(0, 0, 127, 191, 63, 191, 1);
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_NEAR(0, 0, 191, 127, 63, 127, 1);
+    glReadBuffer(GL_COLOR_ATTACHMENT2);
+    EXPECT_PIXEL_NEAR(0, 0, 63, 63, 31, 0, 1);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[1]);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_NEAR(0, 0, 255, 255, 255, 255, 1);
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_NEAR(0, 0, 31, 127, 159, 63, 1);
+    glReadBuffer(GL_COLOR_ATTACHMENT2);
+    EXPECT_PIXEL_NEAR(0, 0, 255, 255, 255, 255, 1);
+    glReadBuffer(GL_COLOR_ATTACHMENT3);
+    EXPECT_PIXEL_NEAR(0, 0, 143, 175, 159, 143, 1);
+}
+
 // Vulkan backend is setting per buffer color mask to false for draw buffers that set to GL_NONE.
 // These set of tests are to test draw buffer change followed by draw/clear/blit and followed by
 // draw buffer change are behaving correctly.
@@ -948,7 +1125,7 @@ TEST_P(ColorMaskForDrawBuffersTest, Clear)
     // Clear attachment1. Buffer0 should retain red and buffer1 should be blue
     drawBuffers[1] = GL_COLOR_ATTACHMENT1;
     setDrawBuffers(4, drawBuffers);
-    GLfloat *clearColor = GLColor::blue.toNormalizedVector().data();
+    angle::Vector4 clearColor = GLColor::blue.toNormalizedVector();
     glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     glClear(GL_COLOR_BUFFER_BIT);
     verifyAttachment2DColor(0, mTextures[0], GL_TEXTURE_2D, 0, GLColor::red);
@@ -965,14 +1142,14 @@ TEST_P(ColorMaskForDrawBuffersTest, ScissoredClear)
     // Clear attachment1. Buffer0 should retain red and buffer1 should be blue
     drawBuffers[1] = GL_COLOR_ATTACHMENT1;
     setDrawBuffers(4, drawBuffers);
-    GLfloat *clearColor = GLColor::blue.toNormalizedVector().data();
+    angle::Vector4 clearColor = GLColor::blue.toNormalizedVector();
     glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     glScissor(0, 0, getWindowWidth() / 2, getWindowHeight() / 2);
     glEnable(GL_SCISSOR_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
 
     resetDrawBuffers();
-    clearColor = GLColor::magenta.toNormalizedVector().data();
+    clearColor = GLColor::magenta.toNormalizedVector();
     glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     glScissor(getWindowWidth() / 2, 0, getWindowWidth() / 2, getWindowHeight() / 2);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -994,9 +1171,6 @@ TEST_P(ColorMaskForDrawBuffersTest, ScissoredClear)
 // Test draw buffer state change followed FBO blit
 TEST_P(ColorMaskForDrawBuffersTest, Blit)
 {
-    // http://anglebug.com/5284
-    ANGLE_SKIP_TEST_IF(IsMetal());
-
     ANGLE_SKIP_TEST_IF(!setupTest());
     setupColorMaskForDrawBuffersTest();
 
@@ -1013,14 +1187,16 @@ TEST_P(ColorMaskForDrawBuffersTest, Blit)
     EXPECT_GL_NO_ERROR();
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
 ANGLE_INSTANTIATE_TEST(DrawBuffersTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ANGLE_ALL_TEST_PLATFORMS_ES3,
                        WithNoTransformFeedback(ES2_VULKAN()));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBuffersWebGL2Test);
 ANGLE_INSTANTIATE_TEST_ES3(DrawBuffersWebGL2Test);
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBuffersTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(DrawBuffersTestES3);
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ColorMaskForDrawBuffersTest);
 ANGLE_INSTANTIATE_TEST_ES3(ColorMaskForDrawBuffersTest);

@@ -299,6 +299,7 @@ void main()
     EXPECT_GL_FALSE(compileResult);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MatrixTest31);
 ANGLE_INSTANTIATE_TEST_ES31(MatrixTest31);
 
 }  // namespace

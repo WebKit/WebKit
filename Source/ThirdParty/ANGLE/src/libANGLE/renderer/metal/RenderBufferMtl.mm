@@ -44,9 +44,8 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
     {
         // Check against the state if we need to recreate the storage.
         if (internalformat != mState.getFormat().info->internalFormat ||
-            static_cast<GLsizei>(width) != mState.getWidth() ||
-            static_cast<GLsizei>(height) != mState.getHeight() ||
-            static_cast<GLsizei>(samples) != mState.getSamples())
+            width != mState.getWidth() || height != mState.getHeight() ||
+            samples != mState.getSamples())
         {
             releaseTexture();
         }
@@ -77,10 +76,10 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
     {
         if (actualSamples == 1 || (mFormat.getCaps().resolve))
         {
-            ANGLE_TRY(mtl::Texture::Make2DTexture(contextMtl, mFormat, static_cast<uint32_t>(width),
-                                                  static_cast<uint32_t>(height), 1,
-                                                  /* renderTargetOnly */ false,
-                                                  /* allowFormatView */ mFormat.hasDepthAndStencilBits(), &mTexture));
+            ANGLE_TRY(mtl::Texture::Make2DTexture(
+                contextMtl, mFormat, static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1,
+                /* renderTargetOnly */ false,
+                /* allowFormatView */ mFormat.hasDepthAndStencilBits(), &mTexture));
 
             // Use implicit resolve for depth stencil texture whenever possible. This is because
             // for depth stencil texture, if stencil needs to be blitted, a formatted clone has
@@ -99,14 +98,15 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
         }
         else
         {
-            ANGLE_TRY(mtl::Texture::Make2DMSTexture(contextMtl, mFormat,
-                                                    static_cast<uint32_t>(width),
-                                                    static_cast<uint32_t>(height), actualSamples,
-                                                    /* renderTargetOnly */ false,
-                                                    /* allowFormatView */ mFormat.hasDepthAndStencilBits(), &mTexture));
+            ANGLE_TRY(mtl::Texture::Make2DMSTexture(
+                contextMtl, mFormat, static_cast<uint32_t>(width), static_cast<uint32_t>(height),
+                actualSamples,
+                /* renderTargetOnly */ false,
+                /* allowFormatView */ mFormat.hasDepthAndStencilBits(), &mTexture));
         }
 
-        mRenderTarget.setWithImplicitMSTexture(mTexture, mImplicitMSTexture, mtl::kZeroNativeMipLevel, 0, mFormat);
+        mRenderTarget.setWithImplicitMSTexture(mTexture, mImplicitMSTexture,
+                                               mtl::kZeroNativeMipLevel, 0, mFormat);
 
         // For emulated channels that GL texture intends to not have,
         // we need to initialize their content.
@@ -124,15 +124,17 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
                 index = gl::ImageIndex::Make2D(0);
             }
 
-            ANGLE_TRY(mtl::InitializeTextureContents(context, mTexture, mFormat, mtl::ImageNativeIndex(index, 0)));
+            ANGLE_TRY(mtl::InitializeTextureContents(context, mTexture, mFormat,
+                                                     mtl::ImageNativeIndex(index, 0)));
             if (mImplicitMSTexture)
             {
-                ANGLE_TRY(mtl::InitializeTextureContents(context, mImplicitMSTexture, mFormat,
-                                                         mtl::ImageNativeIndex(gl::ImageIndex::Make2DMultisample(), 0)));
+                ANGLE_TRY(mtl::InitializeTextureContents(
+                    context, mImplicitMSTexture, mFormat,
+                    mtl::ImageNativeIndex(gl::ImageIndex::Make2DMultisample(), 0)));
             }
         }  // if (emulatedChannels)
         bool isDepthStencil = mFormat.hasDepthOrStencilBits();
-        if(isDepthStencil)
+        if (isDepthStencil)
         {
             gl::ImageIndex index;
             if (actualSamples > 1)
@@ -143,11 +145,13 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
             {
                 index = gl::ImageIndex::Make2D(0);
             }
-            ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(context, mTexture, mFormat, mtl::ImageNativeIndex(index, 0)));
+            ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(
+                context, mTexture, mFormat, mtl::ImageNativeIndex(index, 0)));
             if (mImplicitMSTexture)
             {
-                ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(context, mImplicitMSTexture, mFormat,
-                                                         mtl::ImageNativeIndex(gl::ImageIndex::Make2DMultisample(), 0)));
+                ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(
+                    context, mImplicitMSTexture, mFormat,
+                    mtl::ImageNativeIndex(gl::ImageIndex::Make2DMultisample(), 0)));
             }
         }
     }
@@ -207,10 +211,11 @@ angle::Result RenderbufferMtl::initializeContents(const gl::Context *context,
                                                   const gl::ImageIndex &imageIndex)
 {
     if (imageIndex.valid())
-        return mtl::InitializeTextureContents(context, mTexture, mFormat,
-                                          mtl::ImageNativeIndex::FromBaseZeroGLIndex(imageIndex));
+        return mtl::InitializeTextureContents(
+            context, mTexture, mFormat, mtl::ImageNativeIndex::FromBaseZeroGLIndex(imageIndex));
     else
-        return mtl::InitializeTextureContents(context, mTexture, mFormat,
-                                          mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)));
+        return mtl::InitializeTextureContents(
+            context, mTexture, mFormat,
+            mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)));
 }
 }

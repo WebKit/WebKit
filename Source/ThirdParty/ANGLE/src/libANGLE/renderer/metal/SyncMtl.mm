@@ -22,7 +22,7 @@ namespace rx
 namespace mtl
 {
 // SharedEvent is only available on iOS 12.0+ or mac 10.14+
-#if defined(__IPHONE_12_0) || defined(__MAC_10_14)
+#if ANGLE_MTL_EVENT_AVAILABLE
 Sync::Sync() {}
 Sync::~Sync() {}
 
@@ -87,13 +87,12 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
     // onDestroy(), but the callback might still not be fired yet.
     std::shared_ptr<std::condition_variable> cvRef = mCv;
     std::shared_ptr<std::mutex> lockRef            = mLock;
-#if ANGLE_MTL_EVENT_AVAILABLE
     AutoObjCObj<MTLSharedEventListener> eventListener =
         contextMtl->getDisplay()->getOrCreateSharedEventListener();
     [mMetalSharedEvent.get() notifyListener:eventListener
                                     atValue:mSetCounter
                                       block:^(id<MTLSharedEvent> sharedEvent, uint64_t value) {
-                                        std::unique_lock<std::mutex> lg(*lockRef);
+                                        std::unique_lock<std::mutex> localLock(*lockRef);
                                         cvRef->notify_one();
                                       }];
 
@@ -106,7 +105,6 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
 
     ASSERT(mMetalSharedEvent.get().signaledValue >= mSetCounter);
     *outResult = GL_CONDITION_SATISFIED;
-#endif
 
     return angle::Result::Continue;
 }
@@ -129,8 +127,7 @@ FenceNVMtl::~FenceNVMtl() {}
 
 void FenceNVMtl::onDestroy(const gl::Context *context)
 {
-    UNIMPLEMENTED();
-    return;
+    mSync.onDestroy();
 }
 
 angle::Result FenceNVMtl::set(const gl::Context *context, GLenum condition)

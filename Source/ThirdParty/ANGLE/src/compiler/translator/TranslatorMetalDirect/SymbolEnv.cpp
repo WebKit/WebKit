@@ -9,7 +9,6 @@
 
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/TranslatorMetalDirect/SymbolEnv.h"
 #include "compiler/translator/tree_util/IntermRebuild.h"
 
@@ -76,7 +75,7 @@ class StructFinder : TIntermRebuild
         StructFinder finder(compiler);
         if (!finder.rebuildRoot(root))
         {
-            LOGIC_ERROR();
+            UNREACHABLE();
         }
         return std::move(finder.nameToStruct);
     }
@@ -431,14 +430,12 @@ void SymbolEnv::markSpace(VarField x,
     map[x] = space;
 }
 
-void SymbolEnv::removeSpace(VarField x,
-                          std::unordered_map<VarField, AddressSpace> &map)
+void SymbolEnv::removeSpace(VarField x, std::unordered_map<VarField, AddressSpace> &map)
 {
     // It is in principle permissible to have references to pointers or multiple pointers, but this
     // is not required for now and would require code changes to get right.
     map.erase(x);
 }
-
 
 const AddressSpace *SymbolEnv::isSpace(VarField x,
                                        const std::unordered_map<VarField, AddressSpace> &map) const
@@ -554,7 +551,7 @@ static TBasicType GetTextureBasicType(TBasicType basicType)
             return TBasicType::EbtUInt;
 
         default:
-            LOGIC_ERROR();
+            UNREACHABLE();
             return TBasicType::EbtVoid;
     }
 }
@@ -581,7 +578,7 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
                 name = "metal::" baseName "<uint>";  \
                 break;                               \
             default:                                 \
-                LOGIC_ERROR();                       \
+                UNREACHABLE();                       \
                 name = nullptr;                      \
                 break;                               \
         }                                            \
@@ -663,7 +660,7 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
         // Shadow
         case EbtSampler1DShadow:
         case EbtSampler1DArrayShadow:
-            TODO();
+            UNIMPLEMENTED();
             HANDLE_TEXTURE_NAME("TODO");
             break;
 
@@ -688,12 +685,12 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
         case EbtSamplerExternalOES:       // Only valid if OES_EGL_image_external exists:
         case EbtSamplerExternal2DY2YEXT:  // Only valid if GL_EXT_YUV_target exists:
         case EbtSamplerVideoWEBGL:
-            TODO();
+            UNIMPLEMENTED();
             HANDLE_TEXTURE_NAME("TODO");
             break;
 
         default:
-            LOGIC_ERROR();
+            UNREACHABLE();
             name = nullptr;
             break;
     }

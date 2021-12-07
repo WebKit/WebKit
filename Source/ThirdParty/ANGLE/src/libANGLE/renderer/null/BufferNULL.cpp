@@ -32,6 +32,7 @@ BufferNULL::~BufferNULL()
 
 angle::Result BufferNULL::setDataWithUsageFlags(const gl::Context *context,
                                                 gl::BufferBinding target,
+                                                GLeglClientBufferEXT clientBuffer,
                                                 const void *data,
                                                 size_t size,
                                                 gl::BufferUsage usage,

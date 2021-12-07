@@ -26,6 +26,44 @@ namespace sh
 
 namespace
 {
+// [primarySize-1][secondarySize-1] is the GL type with a basic type of float.
+constexpr GLenum kFloatGLType[4][4] = {
+    // float1xS only makes sense for S == 1
+    {
+        GL_FLOAT,
+        GL_NONE,
+        GL_NONE,
+        GL_NONE,
+    },
+    // float2xS is vec2 for S == 1, and mat2xS o.w.
+    {
+        GL_FLOAT_VEC2,
+        GL_FLOAT_MAT2,
+        GL_FLOAT_MAT2x3,
+        GL_FLOAT_MAT2x4,
+    },
+    // float3xS is vec3 for S == 1, and mat3xS o.w.
+    {
+        GL_FLOAT_VEC3,
+        GL_FLOAT_MAT3x2,
+        GL_FLOAT_MAT3,
+        GL_FLOAT_MAT3x4,
+    },
+    // float4xS is vec4 for S == 1, and mat4xS o.w.
+    {
+        GL_FLOAT_VEC4,
+        GL_FLOAT_MAT4x2,
+        GL_FLOAT_MAT4x3,
+        GL_FLOAT_MAT4,
+    },
+};
+// [primarySize-1] is the GL type with a basic type of int.
+constexpr GLenum kIntGLType[4] = {GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4};
+// [primarySize-1] is the GL type with a basic type of uint.
+constexpr GLenum kUIntGLType[4] = {GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3,
+                                   GL_UNSIGNED_INT_VEC4};
+// [primarySize-1] is the GL type with a basic type of bool.
+constexpr GLenum kBoolGLType[4] = {GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4};
 
 bool IsInterpolationIn(TQualifier qualifier)
 {
@@ -42,6 +80,20 @@ bool IsInterpolationIn(TQualifier qualifier)
     }
 }
 
+bool IsInterpolationOut(TQualifier qualifier)
+{
+    switch (qualifier)
+    {
+        case EvqSmoothOut:
+        case EvqFlatOut:
+        case EvqNoPerspectiveOut:
+        case EvqCentroidOut:
+        case EvqSampleOut:
+            return true;
+        default:
+            return false;
+    }
+}
 }  // anonymous namespace
 
 float NumericLexFloat32OutOfRangeToInfinity(const std::string &str)
@@ -200,167 +252,32 @@ bool strtof_clamp(const std::string &str, float *value)
 
 GLenum GLVariableType(const TType &type)
 {
-    if (type.getBasicType() == EbtFloat)
-    {
-        if (type.isVector())
-        {
-            switch (type.getNominalSize())
-            {
-                case 2:
-                    return GL_FLOAT_VEC2;
-                case 3:
-                    return GL_FLOAT_VEC3;
-                case 4:
-                    return GL_FLOAT_VEC4;
-                default:
-                    UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                    return GL_NONE;
-#endif
-            }
-        }
-        else if (type.isMatrix())
-        {
-            switch (type.getCols())
-            {
-                case 2:
-                    switch (type.getRows())
-                    {
-                        case 2:
-                            return GL_FLOAT_MAT2;
-                        case 3:
-                            return GL_FLOAT_MAT2x3;
-                        case 4:
-                            return GL_FLOAT_MAT2x4;
-                        default:
-                            UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                            return GL_NONE;
-#endif
-                    }
-
-                case 3:
-                    switch (type.getRows())
-                    {
-                        case 2:
-                            return GL_FLOAT_MAT3x2;
-                        case 3:
-                            return GL_FLOAT_MAT3;
-                        case 4:
-                            return GL_FLOAT_MAT3x4;
-                        default:
-                            UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                            return GL_NONE;
-#endif
-                    }
-
-                case 4:
-                    switch (type.getRows())
-                    {
-                        case 2:
-                            return GL_FLOAT_MAT4x2;
-                        case 3:
-                            return GL_FLOAT_MAT4x3;
-                        case 4:
-                            return GL_FLOAT_MAT4;
-                        default:
-                            UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                            return GL_NONE;
-#endif
-                    }
-
-                default:
-                    UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                    return GL_NONE;
-#endif
-            }
-        }
-        else
-        {
-            return GL_FLOAT;
-        }
-    }
-    else if (type.getBasicType() == EbtInt)
-    {
-        if (type.isVector())
-        {
-            switch (type.getNominalSize())
-            {
-                case 2:
-                    return GL_INT_VEC2;
-                case 3:
-                    return GL_INT_VEC3;
-                case 4:
-                    return GL_INT_VEC4;
-                default:
-                    UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                    return GL_NONE;
-#endif
-            }
-        }
-        else
-        {
-            ASSERT(!type.isMatrix());
-            return GL_INT;
-        }
-    }
-    else if (type.getBasicType() == EbtUInt)
-    {
-        if (type.isVector())
-        {
-            switch (type.getNominalSize())
-            {
-                case 2:
-                    return GL_UNSIGNED_INT_VEC2;
-                case 3:
-                    return GL_UNSIGNED_INT_VEC3;
-                case 4:
-                    return GL_UNSIGNED_INT_VEC4;
-                default:
-                    UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                    return GL_NONE;
-#endif
-            }
-        }
-        else
-        {
-            ASSERT(!type.isMatrix());
-            return GL_UNSIGNED_INT;
-        }
-    }
-    else if (type.getBasicType() == EbtBool)
-    {
-        if (type.isVector())
-        {
-            switch (type.getNominalSize())
-            {
-                case 2:
-                    return GL_BOOL_VEC2;
-                case 3:
-                    return GL_BOOL_VEC3;
-                case 4:
-                    return GL_BOOL_VEC4;
-                default:
-                    UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
-                    return GL_NONE;
-#endif
-            }
-        }
-        else
-        {
-            ASSERT(!type.isMatrix());
-            return GL_BOOL;
-        }
-    }
-
     switch (type.getBasicType())
     {
+        case EbtFloat:
+            ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
+            ASSERT(type.getSecondarySize() >= 1 && type.getSecondarySize() <= 4);
+
+            return kFloatGLType[type.getNominalSize() - 1][type.getSecondarySize() - 1];
+
+        case EbtInt:
+            ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
+            ASSERT(type.getSecondarySize() == 1);
+
+            return kIntGLType[type.getNominalSize() - 1];
+
+        case EbtUInt:
+            ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
+            ASSERT(type.getSecondarySize() == 1);
+
+            return kUIntGLType[type.getNominalSize() - 1];
+
+        case EbtBool:
+            ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
+            ASSERT(type.getSecondarySize() == 1);
+
+            return kBoolGLType[type.getNominalSize() - 1];
+
         case EbtSampler2D:
             return GL_SAMPLER_2D;
         case EbtSampler3D:
@@ -551,7 +468,10 @@ bool IsVaryingOut(TQualifier qualifier)
         case EvqCentroidOut:
         case EvqVertexOut:
         case EvqGeometryOut:
+        case EvqTessControlOut:
+        case EvqTessEvaluationOut:
         case EvqSampleOut:
+        case EvqPatchOut:
             return true;
 
         default:
@@ -572,7 +492,10 @@ bool IsVaryingIn(TQualifier qualifier)
         case EvqCentroidIn:
         case EvqFragmentIn:
         case EvqGeometryIn:
+        case EvqTessControlIn:
+        case EvqTessEvaluationIn:
         case EvqSampleIn:
+        case EvqPatchIn:
             return true;
 
         default:
@@ -587,10 +510,47 @@ bool IsVarying(TQualifier qualifier)
     return IsVaryingIn(qualifier) || IsVaryingOut(qualifier);
 }
 
+bool IsMatrixGLType(GLenum type)
+{
+    switch (type)
+    {
+        case GL_FLOAT_MAT2:
+        case GL_FLOAT_MAT3:
+        case GL_FLOAT_MAT4:
+        case GL_FLOAT_MAT2x3:
+        case GL_FLOAT_MAT2x4:
+        case GL_FLOAT_MAT3x2:
+        case GL_FLOAT_MAT3x4:
+        case GL_FLOAT_MAT4x2:
+        case GL_FLOAT_MAT4x3:
+            return true;
+        default:
+            return false;
+    }
+}
+
 bool IsGeometryShaderInput(GLenum shaderType, TQualifier qualifier)
 {
     return (qualifier == EvqGeometryIn) ||
            ((shaderType == GL_GEOMETRY_SHADER_EXT) && IsInterpolationIn(qualifier));
+}
+
+bool IsTessellationControlShaderInput(GLenum shaderType, TQualifier qualifier)
+{
+    return qualifier == EvqTessControlIn ||
+           ((shaderType == GL_TESS_CONTROL_SHADER) && IsInterpolationIn(qualifier));
+}
+
+bool IsTessellationControlShaderOutput(GLenum shaderType, TQualifier qualifier)
+{
+    return qualifier == EvqTessControlOut ||
+           ((shaderType == GL_TESS_CONTROL_SHADER) && IsInterpolationOut(qualifier));
+}
+
+bool IsTessellationEvaluationShaderInput(GLenum shaderType, TQualifier qualifier)
+{
+    return qualifier == EvqTessEvaluationIn ||
+           ((shaderType == GL_TESS_EVALUATION_SHADER) && IsInterpolationIn(qualifier));
 }
 
 InterpolationType GetInterpolationType(TQualifier qualifier)
@@ -599,6 +559,10 @@ InterpolationType GetInterpolationType(TQualifier qualifier)
     {
         case EvqFlatIn:
         case EvqFlatOut:
+        // The auxiliary storage qualifier patch is not used for interpolation
+        // it is a compile-time error to use interpolation qualifiers with patch
+        case EvqPatchIn:
+        case EvqPatchOut:
             return INTERPOLATION_FLAT;
 
         case EvqNoPerspectiveIn:
@@ -613,6 +577,10 @@ InterpolationType GetInterpolationType(TQualifier qualifier)
         case EvqVaryingOut:
         case EvqGeometryIn:
         case EvqGeometryOut:
+        case EvqTessControlIn:
+        case EvqTessControlOut:
+        case EvqTessEvaluationIn:
+        case EvqTessEvaluationOut:
             return INTERPOLATION_SMOOTH;
 
         case EvqCentroidIn:
@@ -627,6 +595,24 @@ InterpolationType GetInterpolationType(TQualifier qualifier)
 #if !UNREACHABLE_IS_NORETURN
             return INTERPOLATION_SMOOTH;
 #endif
+    }
+}
+
+// a field may not have qualifer without in or out.
+InterpolationType GetFieldInterpolationType(TQualifier qualifier)
+{
+    switch (qualifier)
+    {
+        case EvqFlat:
+            return INTERPOLATION_FLAT;
+        case EvqNoPerspective:
+            return INTERPOLATION_NOPERSPECTIVE;
+        case EvqSmooth:
+            return INTERPOLATION_SMOOTH;
+        case EvqCentroid:
+            return INTERPOLATION_CENTROID;
+        default:
+            return GetInterpolationType(qualifier);
     }
 }
 
@@ -714,7 +700,7 @@ bool CanBeInvariantESSL1(TQualifier qualifier)
 bool CanBeInvariantESSL3OrGreater(TQualifier qualifier)
 {
     return IsVaryingOut(qualifier) || qualifier == EvqFragmentOut ||
-           IsBuiltinOutputVariable(qualifier);
+           IsBuiltinOutputVariable(qualifier) || qualifier == EvqFragmentInOut;
 }
 
 bool IsBuiltinOutputVariable(TQualifier qualifier)
@@ -724,12 +710,13 @@ bool IsBuiltinOutputVariable(TQualifier qualifier)
         case EvqPosition:
         case EvqPointSize:
         case EvqFragDepth:
-        case EvqFragDepthEXT:
         case EvqFragColor:
         case EvqSecondaryFragColorEXT:
         case EvqFragData:
         case EvqSecondaryFragDataEXT:
         case EvqClipDistance:
+        case EvqCullDistance:
+        case EvqLastFragData:
         case EvqSampleMask:
             return true;
         default:
@@ -746,6 +733,7 @@ bool IsBuiltinFragmentInputVariable(TQualifier qualifier)
         case EvqPointCoord:
         case EvqFrontFacing:
         case EvqHelperInvocation:
+        case EvqLastFragData:
             return true;
         default:
             break;
@@ -799,11 +787,11 @@ bool IsOutputHLSL(ShShaderOutput output)
 }
 bool IsOutputVulkan(ShShaderOutput output)
 {
-    return output == SH_GLSL_VULKAN_OUTPUT;
+    return output == SH_SPIRV_VULKAN_OUTPUT;
 }
 bool IsOutputMetal(ShShaderOutput output)
 {
-    return output == SH_GLSL_METAL_OUTPUT;
+    return output == SH_SPIRV_METAL_OUTPUT;
 }
 bool IsOutputMetalDirect(ShShaderOutput output)
 {
@@ -983,6 +971,26 @@ bool IsValidImplicitConversion(sh::ImplicitTypeConversion conversion, TOperator 
             break;
     }
     return false;
+}
+
+bool IsPrecisionApplicableToType(TBasicType type)
+{
+    switch (type)
+    {
+        case EbtInt:
+        case EbtUInt:
+        case EbtFloat:
+            // TODO: find all types where precision is applicable; for example samplers.
+            // http://anglebug.com/6132
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsRedeclarableBuiltIn(const ImmutableString &name)
+{
+    return name == "gl_ClipDistance" || name == "gl_CullDistance" || name == "gl_LastFragData";
 }
 
 size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)

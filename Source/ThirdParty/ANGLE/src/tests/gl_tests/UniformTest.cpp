@@ -224,6 +224,7 @@ void main() {
 // Test that we can get and set a float array of uniforms.
 TEST_P(SimpleUniformTest, FloatArrayUniformStateQuery)
 {
+
     constexpr char kFragShader[] = R"(
 precision mediump float;
 uniform float ufloats[4];
@@ -284,6 +285,7 @@ void main() {
 // Test that we can get and set an int array of uniforms.
 TEST_P(SimpleUniformTest, FloatIntUniformStateQuery)
 {
+
     constexpr char kFragShader[] = R"(
 precision mediump float;
 uniform int uints[4];
@@ -325,6 +327,11 @@ class UniformTest : public ANGLETest
 
     void testSetUp() override
     {
+        // TODO(anglebug.com/5505): asserting with latest direct-to-Metal compiler
+        // changes. Must skip all tests explicitly.
+        // if (IsMetal())
+        //    return;
+
         constexpr char kVS[] = "void main() { gl_Position = vec4(1); }";
         constexpr char kFS[] =
             "precision mediump float;\n"
@@ -366,6 +373,7 @@ class UniformTest : public ANGLETest
 
 TEST_P(UniformTest, GetUniformNoCurrentProgram)
 {
+
     glUseProgram(mProgram);
     glUniform1f(mUniformFLocation, 1.0f);
     glUniform1i(mUniformILocation, 1);
@@ -392,6 +400,7 @@ TEST_P(UniformTest, GetUniformNoCurrentProgram)
 
 TEST_P(UniformTest, UniformArrayLocations)
 {
+
     constexpr char kVS[] = R"(precision mediump float;
 uniform float uPosition[4];
 void main(void)
@@ -449,6 +458,7 @@ void main(void)
 // Test that float to integer GetUniform rounds values correctly.
 TEST_P(UniformTest, FloatUniformStateQuery)
 {
+
     std::vector<double> inValues;
     std::vector<GLfloat> expectedFValues;
     std::vector<GLint> expectedIValues;
@@ -570,6 +580,7 @@ TEST_P(UniformTest, IntUniformStateQuery)
 // Test that queries of boolean uniforms round correctly.
 TEST_P(UniformTest, BooleanUniformStateQuery)
 {
+
     glUseProgram(mProgram);
     GLint intValue     = 0;
     GLfloat floatValue = 0.0f;
@@ -614,6 +625,7 @@ TEST_P(UniformTest, BooleanUniformStateQuery)
 // Test queries for arrays of boolean uniforms.
 TEST_P(UniformTest, BooleanArrayUniformStateQuery)
 {
+
     glUseProgram(mProgram);
     GLint boolValuesi[4]   = {0, 1, 0, 1};
     GLfloat boolValuesf[4] = {0, 1, 0, 1};
@@ -800,6 +812,7 @@ TEST_P(UniformTestES3, TransposedMatrixArrayUniformStateQuery)
 // Check that trying setting too many elements of an array doesn't overflow
 TEST_P(UniformTestES3, OverflowArray)
 {
+
     constexpr char kFS[] =
         "#version 300 es\n"
         "precision mediump float;\n"
@@ -1004,6 +1017,7 @@ void CheckOneElement(GetUniformV getUniformv,
 // Check that getting an element array doesn't return the whole array.
 TEST_P(UniformTestES3, ReturnsOnlyOneArrayElement)
 {
+
     static const size_t kArraySize = 4;
     struct UniformArrayInfo
     {
@@ -1447,11 +1461,68 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+TEST_P(UniformTest, UnusedStructInlineUniform)
+{
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+void main()
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+uniform struct {
+  vec3  aVec3;
+  vec2 aVec2;
+}aUniform;
+varying vec2 texcoord;
+void main()
+{
+    gl_FragColor = vec4(0,1,0,1);
+})";
+
+    mProgram = CompileProgram(kVS, kFS);
+    ASSERT_NE(mProgram, 0u);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+TEST_P(UniformTest, UnusedStructInlineUniformWithSampler)
+{
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+void main()
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+uniform struct {
+  sampler2D  aSampler;
+  vec3 aVec3;
+}aUniform;
+varying vec2 texcoord;
+void main()
+{
+    gl_FragColor = vec4(0,1,0,1);
+})";
+
+    mProgram = CompileProgram(kVS, kFS);
+    ASSERT_NE(mProgram, 0u);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleUniformTest);
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(UniformTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(UniformTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(UniformTestES31);
 
 }  // namespace

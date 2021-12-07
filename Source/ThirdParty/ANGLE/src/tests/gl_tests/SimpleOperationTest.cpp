@@ -52,6 +52,9 @@ class SimpleOperationTest : public ANGLETest
                                                        int windowHeight);
 };
 
+class SimpleOperationTest31 : public SimpleOperationTest
+{};
+
 void SimpleOperationTest::verifyBuffer(const std::vector<uint8_t> &data, GLenum binding)
 {
     if (!IsGLExtensionEnabled("GL_EXT_map_buffer_range"))
@@ -1205,6 +1208,107 @@ TEST_P(SimpleOperationTest, PrimitiveModeNegativeTest)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
+// Verify we don't crash when attempting to draw using GL_TRIANGLES without a program bound.
+TEST_P(SimpleOperationTest31, DrawTrianglesWithoutProgramBound)
+{
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+// Verify we don't crash when attempting to draw using GL_LINE_STRIP_ADJACENCY without a program
+// bound.
+TEST_P(SimpleOperationTest31, DrawLineStripAdjacencyWithoutProgramBound)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    glDrawArrays(GL_LINE_STRIP_ADJACENCY, 0, 10);
+}
+
+// Verify instanceCount == 0 is no-op
+TEST_P(SimpleOperationTest, DrawArraysZeroInstanceCountIsNoOp)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_instanced_arrays"));
+
+    // Draw a correct green quad.
+    ANGLE_GL_PROGRAM(program, kBasicVertexShader, kGreenFragmentShader);
+    glUseProgram(program);
+
+    GLint positionLocation = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, positionLocation);
+
+    setupQuadVertexBuffer(0.5f, 1.0f);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLocation);
+
+    // If nothing is drawn it should be red
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+
+    {
+        // Non-instanced draw should draw
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+    {
+        // instanceCount == 0 should be no-op
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArraysInstancedANGLE(GL_TRIANGLES, 0, 6, 0);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    }
+    {
+        // instanceCount > 0 should draw
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArraysInstancedANGLE(GL_TRIANGLES, 0, 6, 1);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+}
+
+// Verify instanceCount == 0 is no-op
+TEST_P(SimpleOperationTest, DrawElementsZeroInstanceCountIsNoOp)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_instanced_arrays"));
+
+    // Draw a correct green quad.
+    ANGLE_GL_PROGRAM(program, kBasicVertexShader, kGreenFragmentShader);
+    glUseProgram(program);
+
+    GLint positionLocation = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, positionLocation);
+
+    setupIndexedQuadVertexBuffer(0.5f, 1.0f);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLocation);
+
+    setupIndexedQuadIndexBuffer();
+
+    // If nothing is drawn it should be red
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+
+    {
+        // Non-instanced draw should draw
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+    {
+        // instanceCount == 0 should be no-op
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElementsInstancedANGLE(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr, 0);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    }
+    {
+        // instanceCount > 0 should draw
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElementsInstancedANGLE(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr, 1);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
@@ -1212,13 +1316,17 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     WithMetalForcedBufferGPUStorage(ES3_METAL()),
     WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
                                              /* hasBarrier */ false,
-                                             /* cheapRenderPass */ false));
+                                             /* cheapRenderPass */ false),
+    WithNoVulkanViewportFlip(ES2_VULKAN()));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     TriangleFanDrawTest,
     WithMetalForcedBufferGPUStorage(ES3_METAL()),
     WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
                                              /* hasBarrier */ false,
-                                             /* cheapRenderPass */ false));
+                                             /* cheapRenderPass */ false),
+    WithNoVulkanViewportFlip(ES2_VULKAN()));
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31(SimpleOperationTest31);
 
 }  // namespace

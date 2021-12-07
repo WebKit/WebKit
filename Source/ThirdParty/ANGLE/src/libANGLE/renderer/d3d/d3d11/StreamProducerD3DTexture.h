@@ -21,7 +21,7 @@ class StreamProducerD3DTexture : public StreamProducerImpl
     StreamProducerD3DTexture(Renderer11 *renderer);
     ~StreamProducerD3DTexture() override;
 
-    egl::Error validateD3DTexture(void *pointer,
+    egl::Error validateD3DTexture(const void *pointer,
                                   const egl::AttributeMap &attributes) const override;
     void postD3DTexture(void *pointer, const egl::AttributeMap &attributes) override;
     egl::Stream::GLTextureDescription getGLFrameDescription(int planeIndex) override;

@@ -6,8 +6,6 @@
 // mtl_render_utils.h:
 //    Defines the class interface for RenderUtils, which contains many utility functions and shaders
 //    for converting, blitting, copying as well as generating data, and many more.
-// NOTE(hqle): Consider splitting this class into multiple classes each doing different utilities.
-// This class has become too big.
 //
 
 #ifndef LIBANGLE_RENDERER_METAL_MTL_RENDER_UTILS_H_
@@ -34,11 +32,13 @@ namespace mtl
 
 struct ClearRectParams
 {
+    ClearRectParams() { clearWriteMaskArray.fill(MTLColorWriteMaskAll); }
+
     Optional<ClearColorValue> clearColor;
     Optional<float> clearDepth;
     Optional<uint32_t> clearStencil;
 
-    MTLColorWriteMask clearColorMask = MTLColorWriteMaskAll;
+    WriteMaskArray clearWriteMaskArray;
 
     const mtl::Format *colorFormat = nullptr;
     gl::Extents dstTextureSize;
@@ -48,6 +48,14 @@ struct ClearRectParams
     gl::Rectangle clearArea;
 
     bool flipY = false;
+};
+
+struct NormalizedCoords
+{
+    NormalizedCoords();
+    NormalizedCoords(float x, float y, float width, float height, const gl::Rectangle &rect);
+    NormalizedCoords(const gl::Rectangle &rect, const gl::Extents &extents);
+    float v[4];
 };
 
 struct BlitParams
@@ -71,7 +79,7 @@ struct BlitParams
     // Source rectangle:
     // NOTE: if srcYFlipped=true, this rectangle will be converted internally to flipped rect before
     // blitting.
-    gl::Rectangle srcRect;
+    NormalizedCoords srcNormalizedCoords;
 
     bool srcYFlipped = false;  // source texture has data flipped in Y direction
     bool unpackFlipX = false;  // flip texture data copying process in X direction
@@ -80,7 +88,8 @@ struct BlitParams
 
 struct ColorBlitParams : public BlitParams
 {
-    MTLColorWriteMask blitColorMask = MTLColorWriteMaskAll;
+    ColorBlitParams() {}
+
     gl::DrawBufferMask enabledBuffers;
     GLenum filter               = GL_NEAREST;
     bool unpackPremultiplyAlpha = false;
@@ -91,8 +100,6 @@ struct ColorBlitParams : public BlitParams
 struct DepthStencilBlitParams : public BlitParams
 {
     TextureRef srcStencil;
-    uint32_t srcStencilLevel = 0;
-    uint32_t srcStencilLayer = 0;
 };
 
 // Stencil blit via an intermediate buffer. NOTE: source depth texture parameter is ignored.
@@ -201,8 +208,8 @@ class ClearUtils final : angle::NonCopyable
     void ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx, uint32_t numColorAttachments);
 
     angle::Result setupClearWithDraw(const gl::Context *context,
-                            RenderCommandEncoder *cmdEncoder,
-                            const ClearRectParams &params);
+                                     RenderCommandEncoder *cmdEncoder,
+                                     const ClearRectParams &params);
     id<MTLDepthStencilState> getClearDepthStencilState(const gl::Context *context,
                                                        const ClearRectParams &params);
     id<MTLRenderPipelineState> getClearRenderPipelineState(const gl::Context *context,
@@ -237,8 +244,8 @@ class ColorBlitUtils final : angle::NonCopyable
                                                    RenderPipelineCache *cacheOut);
 
     angle::Result setupColorBlitWithDraw(const gl::Context *context,
-                                RenderCommandEncoder *cmdEncoder,
-                                const ColorBlitParams &params);
+                                         RenderCommandEncoder *cmdEncoder,
+                                         const ColorBlitParams &params);
 
     id<MTLRenderPipelineState> getColorBlitRenderPipelineState(const gl::Context *context,
                                                                RenderCommandEncoder *cmdEncoder,
@@ -281,8 +288,8 @@ class DepthStencilBlitUtils final : angle::NonCopyable
                                                    RenderPipelineCache *cacheOut);
 
     angle::Result setupDepthStencilBlitWithDraw(const gl::Context *context,
-                                       RenderCommandEncoder *cmdEncoder,
-                                       const DepthStencilBlitParams &params);
+                                                RenderCommandEncoder *cmdEncoder,
+                                                const DepthStencilBlitParams &params);
 
     id<MTLRenderPipelineState> getDepthStencilBlitRenderPipelineState(
         const gl::Context *context,
@@ -566,22 +573,6 @@ class VertexFormatConversionUtils final : angle::NonCopyable
     RenderPipelineCache mComponentsExpandRenderPipelineCache;
 };
 
-// Util class for handling transform feedback
-    class TransformFeedbackUtils
-{
-  public:
-    void onDestroy();
-    AutoObjCPtr<id<MTLRenderPipelineState>> getTransformFeedbackRenderPipeline(
-        ContextMtl *contextMtl,
-        RenderCommandEncoder *cmdEncoder,
-        mtl::RenderPipelineDesc &pipelineDesc);
-
-  private:
-    AutoObjCPtr<id<MTLLibrary>> createMslXfbLibrary(ContextMtl *contextMtl,
-                                                    const std::string &translatedMsl,
-                                                    bool enableFastMath);
-};
-
 // RenderUtils: container class of various util classes above
 class RenderUtils : public Context, angle::NonCopyable
 {
@@ -679,9 +670,6 @@ class RenderUtils : public Context, angle::NonCopyable
                                                  RenderCommandEncoder *renderEncoder,
                                                  const angle::Format &srcAngleFormat,
                                                  const VertexFormatConvertParams &params);
-    angle::Result createTransformFeedbackPSO(const gl::Context *context,
-                                             RenderCommandEncoder *renderEncoder,
-                                             mtl::RenderPipelineDesc &pipelineDesc);
 
     angle::Result generatePrimitiveRestartPointsBuffer(ContextMtl *contextMtl,
                                                        const IndexGenerationParams &params,
@@ -715,7 +703,6 @@ class RenderUtils : public Context, angle::NonCopyable
     MipmapUtils mMipmapUtils;
     std::array<CopyPixelsUtils, angle::EnumSize<PixelType>()> mCopyPixelsUtils;
     VertexFormatConversionUtils mVertexFormatUtils;
-    TransformFeedbackUtils mTransformFeedbackUtils;
 };
 
 }  // namespace mtl

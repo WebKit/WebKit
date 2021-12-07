@@ -112,6 +112,17 @@ size_t TextureImageSiblingMtl::getSamples() const
     return samples > 1 ? samples : 0;
 }
 
+bool TextureImageSiblingMtl::isYUV() const
+{
+    // NOTE(hqle): not supporting YUV image yet.
+    return false;
+}
+
+bool TextureImageSiblingMtl::hasProtectedContent() const
+{
+    return false;
+}
+
 // ImageMtl implementation
 ImageMtl::ImageMtl(const egl::ImageState &state, const gl::Context *context) : ImageImpl(state) {}
 

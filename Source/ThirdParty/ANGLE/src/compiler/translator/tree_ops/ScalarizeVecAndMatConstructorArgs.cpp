@@ -19,6 +19,7 @@
 #include "compiler/translator/tree_util/IntermNodePatternMatcher.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/util.h"
 
 namespace sh
 {
@@ -26,12 +27,12 @@ namespace sh
 namespace
 {
 
-TIntermBinary *ConstructVectorIndexBinaryNode(TIntermSymbol *symbolNode, int index)
+TIntermBinary *ConstructVectorIndexBinaryNode(TIntermTyped *symbolNode, int index)
 {
     return new TIntermBinary(EOpIndexDirect, symbolNode, CreateIndexNode(index));
 }
 
-TIntermBinary *ConstructMatrixIndexBinaryNode(TIntermSymbol *symbolNode, int colIndex, int rowIndex)
+TIntermBinary *ConstructMatrixIndexBinaryNode(TIntermTyped *symbolNode, int colIndex, int rowIndex)
 {
     TIntermBinary *colVectorNode = ConstructVectorIndexBinaryNode(symbolNode, colIndex);
 
@@ -41,12 +42,8 @@ TIntermBinary *ConstructMatrixIndexBinaryNode(TIntermSymbol *symbolNode, int col
 class ScalarizeArgsTraverser : public TIntermTraverser
 {
   public:
-    ScalarizeArgsTraverser(sh::GLenum shaderType,
-                           bool fragmentPrecisionHigh,
-                           TSymbolTable *symbolTable)
+    ScalarizeArgsTraverser(TSymbolTable *symbolTable)
         : TIntermTraverser(true, false, false, symbolTable),
-          mShaderType(shaderType),
-          mFragmentPrecisionHigh(fragmentPrecisionHigh),
           mNodesToScalarize(IntermNodePatternMatcher::kScalarizedVecOrMatConstructor)
     {}
 
@@ -66,12 +63,9 @@ class ScalarizeArgsTraverser : public TIntermTraverser
     //   vec4 v(1, s0[0][0], s0[0][1], s0[0][2]);
     // This function is to create nodes for "mat4 s0 = m;" and insert it to the code sequence. This
     // way the possible side effects of the constructor argument will only be evaluated once.
-    TVariable *createTempVariable(TIntermTyped *original);
+    TIntermTyped *createTempVariable(TIntermTyped *original);
 
     std::vector<TIntermSequence> mBlockStack;
-
-    sh::GLenum mShaderType;
-    bool mFragmentPrecisionHigh;
 
     IntermNodePatternMatcher mNodesToScalarize;
 };
@@ -129,10 +123,10 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
         ASSERT(size > 0);
         TIntermTyped *originalArg = originalArgNode->getAsTyped();
         ASSERT(originalArg);
-        TVariable *argVariable = createTempVariable(originalArg);
+        TIntermTyped *argVariable = createTempVariable(originalArg);
         if (originalArg->isScalar())
         {
-            sequence->push_back(CreateTempSymbolNode(argVariable));
+            sequence->push_back(argVariable);
             size--;
         }
         else if (originalArg->isVector())
@@ -143,15 +137,14 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
                 size -= repeat;
                 for (int index = 0; index < repeat; ++index)
                 {
-                    TIntermSymbol *symbolNode = CreateTempSymbolNode(argVariable);
-                    TIntermBinary *newNode    = ConstructVectorIndexBinaryNode(symbolNode, index);
+                    TIntermBinary *newNode =
+                        ConstructVectorIndexBinaryNode(argVariable->deepCopy(), index);
                     sequence->push_back(newNode);
                 }
             }
             else
             {
-                TIntermSymbol *symbolNode = CreateTempSymbolNode(argVariable);
-                sequence->push_back(symbolNode);
+                sequence->push_back(argVariable);
                 size -= originalArg->getNominalSize();
             }
         }
@@ -165,9 +158,8 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
                 size -= repeat;
                 while (repeat > 0)
                 {
-                    TIntermSymbol *symbolNode = CreateTempSymbolNode(argVariable);
                     TIntermBinary *newNode =
-                        ConstructMatrixIndexBinaryNode(symbolNode, colIndex, rowIndex);
+                        ConstructMatrixIndexBinaryNode(argVariable->deepCopy(), colIndex, rowIndex);
                     sequence->push_back(newNode);
                     rowIndex++;
                     if (rowIndex >= originalArg->getRows())
@@ -180,27 +172,30 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
             }
             else
             {
-                TIntermSymbol *symbolNode = CreateTempSymbolNode(argVariable);
-                sequence->push_back(symbolNode);
+                sequence->push_back(argVariable);
                 size -= originalArg->getCols() * originalArg->getRows();
             }
         }
     }
 }
 
-TVariable *ScalarizeArgsTraverser::createTempVariable(TIntermTyped *original)
+TIntermTyped *ScalarizeArgsTraverser::createTempVariable(TIntermTyped *original)
 {
     ASSERT(original);
 
     TType *type = new TType(original->getType());
     type->setQualifier(EvqTemporary);
-    if (mShaderType == GL_FRAGMENT_SHADER && type->getBasicType() == EbtFloat &&
-        type->getPrecision() == EbpUndefined)
+
+    // The precision of the constant must have been retained (or derived), which will now apply to
+    // the temp variable.  In some cases, the precision cannot be derived, so use the constant as
+    // is.  For example, in the following standalone statement, the precision of the constant 0
+    // cannot be determined:
+    //
+    //      mat2(0, bvec3(m));
+    //
+    if (IsPrecisionApplicableToType(type->getBasicType()) && type->getPrecision() == EbpUndefined)
     {
-        // We use the highest available precision for the temporary variable
-        // to avoid computing the actual precision using the rules defined
-        // in GLSL ES 1.0 Section 4.5.2.
-        type->setPrecision(mFragmentPrecisionHigh ? EbpHigh : EbpMedium);
+        return original;
     }
 
     TVariable *variable = CreateTempVariable(mSymbolTable, type);
@@ -210,18 +205,16 @@ TVariable *ScalarizeArgsTraverser::createTempVariable(TIntermTyped *original)
     TIntermDeclaration *declaration = CreateTempInitDeclarationNode(variable, original);
     sequence.push_back(declaration);
 
-    return variable;
+    return CreateTempSymbolNode(variable);
 }
 
 }  // namespace
 
 bool ScalarizeVecAndMatConstructorArgs(TCompiler *compiler,
                                        TIntermBlock *root,
-                                       sh::GLenum shaderType,
-                                       bool fragmentPrecisionHigh,
                                        TSymbolTable *symbolTable)
 {
-    ScalarizeArgsTraverser scalarizer(shaderType, fragmentPrecisionHigh, symbolTable);
+    ScalarizeArgsTraverser scalarizer(symbolTable);
     root->traverse(&scalarizer);
 
     return compiler->validateAST(root);

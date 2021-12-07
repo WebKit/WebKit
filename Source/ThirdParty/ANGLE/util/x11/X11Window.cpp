@@ -441,7 +441,8 @@ bool X11Window::resize(int width, int height)
     // Wait until the window has actually been resized so that the code calling resize
     // can assume the window has been resized.
     const double kResizeWaitDelay = 0.2;
-    while ((mHeight != height || mWidth != width) && timer.getElapsedTime() < kResizeWaitDelay)
+    while ((mHeight != height || mWidth != width) &&
+           timer.getElapsedWallClockTime() < kResizeWaitDelay)
     {
         messageLoop();
         angle::Sleep(10);

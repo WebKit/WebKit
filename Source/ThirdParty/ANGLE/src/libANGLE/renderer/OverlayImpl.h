@@ -33,13 +33,13 @@ class OverlayImpl : angle::NonCopyable
 
     virtual void onDestroy(const gl::Context *context) {}
 
-    virtual angle::Result init(const gl::Context *context);
+    virtual angle::Result init(const gl::Context *context, bool *successOut);
 
   protected:
     const gl::OverlayState &mState;
 };
 
-inline angle::Result OverlayImpl::init(const gl::Context *context)
+inline angle::Result OverlayImpl::init(const gl::Context *context, bool *successOut)
 {
     return angle::Result::Continue;
 }

@@ -30,6 +30,7 @@ ANGLE_NO_DISCARD bool DeferGlobalInitializers(TCompiler *compiler,
                                               bool initializeUninitializedGlobals,
                                               bool canUseLoopsToInitialize,
                                               bool highPrecisionSupported,
+                                              bool forceDeferGlobalInitializers,
                                               TSymbolTable *symbolTable);
 
 }  // namespace sh

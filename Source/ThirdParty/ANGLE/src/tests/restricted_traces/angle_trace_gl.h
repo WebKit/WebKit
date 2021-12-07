@@ -11,4 +11,6 @@
 #include "trace_egl_loader_autogen.h"
 #include "trace_gles_loader_autogen.h"
 
+#include "trace_fixture.h"
+
 #endif  // ANGLE_TRACE_GL_H_

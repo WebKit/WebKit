@@ -246,8 +246,8 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
 
     ShCompileOptions additionalOptions = SH_INIT_GL_POSITION;
 
-    bool isWebGL = context->getExtensions().webglCompatibility;
-    if (isWebGL && (mState.getShaderType() != gl::ShaderType::Compute))
+    bool isWebGL = context->isWebGL();
+    if (isWebGL && mState.getShaderType() != gl::ShaderType::Compute)
     {
         additionalOptions |= SH_INIT_OUTPUT_VARIABLES;
     }
@@ -258,6 +258,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
     }
 
     const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    if (features.initFragmentOutputVariables.enabled)
+    {
+        additionalOptions |= SH_INIT_FRAGMENT_OUTPUT_VARIABLES;
+    }
 
     if (features.doWhileGLSLCausesGPUHang.enabled)
     {
@@ -307,11 +312,6 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
     if (features.clampPointSize.enabled)
     {
         additionalOptions |= SH_CLAMP_POINT_SIZE;
-    }
-
-    if (features.rewriteVectorScalarArithmetic.enabled)
-    {
-        additionalOptions |= SH_REWRITE_VECTOR_SCALAR_ARITHMETIC;
     }
 
     if (features.dontUseLoopsToInitializeVariables.enabled)

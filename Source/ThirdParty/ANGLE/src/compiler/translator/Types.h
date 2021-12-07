@@ -128,6 +128,7 @@ class TType
           mInterfaceBlock(nullptr),
           mStructure(nullptr),
           mIsStructSpecifier(false),
+          mInterfaceBlockFieldIndex(0),
           mMangledName(mangledName)
     {}
 
@@ -146,6 +147,7 @@ class TType
           mInterfaceBlock(t.mInterfaceBlock),
           mStructure(t.mStructure),
           mIsStructSpecifier(t.mIsStructSpecifier),
+          mInterfaceBlockFieldIndex(0),
           mMangledName(t.mMangledName)
     {
         t.mArraySizesStorage = nullptr;
@@ -225,10 +227,17 @@ class TType
     void toArrayElementType();
     // Removes all array sizes.
     void toArrayBaseType();
+    // Turns a matrix into a column of it.
+    void toMatrixColumnType();
+    // Turns a matrix or vector into a component of it.
+    void toComponentType();
 
     const TInterfaceBlock *getInterfaceBlock() const { return mInterfaceBlock; }
     void setInterfaceBlock(const TInterfaceBlock *interfaceBlockIn);
     bool isInterfaceBlock() const { return type == EbtInterfaceBlock; }
+
+    void setInterfaceBlockField(const TInterfaceBlock *interfaceBlockIn, size_t fieldIndex);
+    size_t getInterfaceBlockFieldIndex() const { return mInterfaceBlockFieldIndex; }
 
     bool isVector() const { return primarySize > 1 && secondarySize == 1; }
     bool isVectorArray() const { return primarySize > 1 && secondarySize == 1 && isArray(); }
@@ -326,6 +335,7 @@ class TType
     bool isStructureContainingMatrices() const;
     bool isStructureContainingType(TBasicType t) const;
     bool isStructureContainingSamplers() const;
+    bool isInterfaceBlockContainingType(TBasicType t) const;
 
     bool isStructSpecifier() const { return mIsStructSpecifier; }
 
@@ -389,6 +399,10 @@ class TType
     // nullptr unless this is a struct
     const TStructure *mStructure;
     bool mIsStructSpecifier;
+
+    // If this is a field of a nameless interface block, this would indicate which member it's
+    // refering to.
+    size_t mInterfaceBlockFieldIndex;
 
     mutable const char *mMangledName;
 };

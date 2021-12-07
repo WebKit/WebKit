@@ -37,14 +37,14 @@ TemporaryANGLESetting::TemporaryANGLESetting(GLenum capability, GLenum scopedSta
     : m_capability(capability)
     , m_scopedState(scopedState)
 {
-    m_originalState = gl::IsEnabled(m_capability);
+    m_originalState = GL_IsEnabled(m_capability);
     if (m_originalState == m_scopedState)
         return;
 
     if (GL_TRUE == m_scopedState)
-        gl::Enable(m_capability);
+        GL_Enable(m_capability);
     else
-        gl::Disable(m_capability);
+        GL_Disable(m_capability);
 }
 
 TemporaryANGLESetting::~TemporaryANGLESetting()
@@ -53,9 +53,9 @@ TemporaryANGLESetting::~TemporaryANGLESetting()
         return;
 
     if (GL_TRUE == m_originalState)
-        gl::Enable(m_capability);
+        GL_Enable(m_capability);
     else
-        gl::Disable(m_capability);
+        GL_Disable(m_capability);
 }
 
 }

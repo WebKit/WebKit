@@ -18,6 +18,9 @@ namespace
 {
 #if defined(ANGLE_PLATFORM_WINDOWS)
 constexpr char kRunAppHelperExecutable[] = "test_utils_unittest_helper.exe";
+#elif (ANGLE_PLATFORM_IOS)
+constexpr char kRunAppHelperExecutable[] =
+    "../test_utils_unittest_helper.app/test_utils_unittest_helper";
 #else
 constexpr char kRunAppHelperExecutable[] = "test_utils_unittest_helper";
 #endif
@@ -59,7 +62,7 @@ TEST(TestUtils, Sleep)
     timer.stop();
 
     // Use a slightly fuzzy range
-    EXPECT_GT(timer.getElapsedTime(), 0.48);
+    EXPECT_GT(timer.getElapsedWallClockTime(), 0.48);
 }
 
 constexpr uint32_t kMaxPath = 1000;
@@ -95,7 +98,7 @@ TEST(TestUtils, MAYBE_CreateAndDeleteTemporaryFile)
     EXPECT_EQ(strcmp(actualString, kOutputString), 0);
 
     // Delete the temporary file.
-    EXPECT_TRUE(angle::DeleteFile(path));
+    EXPECT_TRUE(angle::DeleteSystemFile(path));
 }
 
 // Tests creating and deleting a file in the system temp dir.
@@ -123,20 +126,23 @@ TEST(TestUtils, MAYBE_CreateAndDeleteFileInTempDir)
     EXPECT_EQ(strcmp(actualString, kOutputString), 0);
 
     // Delete the temporary file.
-    EXPECT_TRUE(angle::DeleteFile(path));
+    EXPECT_TRUE(angle::DeleteSystemFile(path));
 }
 
 // TODO: android support. http://anglebug.com/3125
 #if defined(ANGLE_PLATFORM_ANDROID)
 #    define MAYBE_RunApp DISABLED_RunApp
 #    define MAYBE_RunAppAsync DISABLED_RunAppAsync
+#    define MAYBE_RunAppAsyncRedirectStderrToStdout DISABLED_RunAppAsyncRedirectStderrToStdout
 // TODO: fuchsia support. http://anglebug.com/3161
 #elif defined(ANGLE_PLATFORM_FUCHSIA)
 #    define MAYBE_RunApp DISABLED_RunApp
 #    define MAYBE_RunAppAsync DISABLED_RunAppAsync
+#    define MAYBE_RunAppAsyncRedirectStderrToStdout DISABLED_RunAppAsyncRedirectStderrToStdout
 #else
 #    define MAYBE_RunApp RunApp
 #    define MAYBE_RunAppAsync RunAppAsync
+#    define MAYBE_RunAppAsyncRedirectStderrToStdout RunAppAsyncRedirectStderrToStdout
 #endif  // defined(ANGLE_PLATFORM_ANDROID)
 
 // Test running an external application and receiving its output
@@ -151,7 +157,7 @@ TEST(TestUtils, MAYBE_RunApp)
 
     // Test that the application can be executed.
     {
-        ProcessHandle process(args, true, true);
+        ProcessHandle process(args, ProcessOutputCapture::StdoutAndStderrSeparately);
         EXPECT_TRUE(process->started());
         EXPECT_TRUE(process->finish());
         EXPECT_TRUE(process->finished());
@@ -167,7 +173,7 @@ TEST(TestUtils, MAYBE_RunApp)
         bool setEnvDone = SetEnvironmentVar(kRunAppTestEnvVarName, kRunAppTestEnvVarValue);
         EXPECT_TRUE(setEnvDone);
 
-        ProcessHandle process(LaunchProcess(args, true, true));
+        ProcessHandle process(LaunchProcess(args, ProcessOutputCapture::StdoutAndStderrSeparately));
         EXPECT_TRUE(process->started());
         EXPECT_TRUE(process->finish());
 
@@ -191,16 +197,16 @@ TEST(TestUtils, MAYBE_RunAppAsync)
 
     std::vector<const char *> args = {executablePath.c_str(), kRunAppTestArg1, kRunAppTestArg2};
 
-    // Test that the application can be executed.
+    // Test that the application can be executed and the output is captured correctly.
     {
-        ProcessHandle process(args, true, true);
+        ProcessHandle process(args, ProcessOutputCapture::StdoutAndStderrSeparately);
         EXPECT_TRUE(process->started());
 
         constexpr double kTimeout = 3.0;
 
         Timer timer;
         timer.start();
-        while (!process->finished() && timer.getElapsedTime() < kTimeout)
+        while (!process->finished() && timer.getElapsedWallClockTime() < kTimeout)
         {
             angle::Sleep(1);
         }
@@ -209,6 +215,39 @@ TEST(TestUtils, MAYBE_RunAppAsync)
         EXPECT_GT(process->getElapsedTimeSeconds(), 0.0);
         EXPECT_EQ(kRunAppTestStdout, NormalizeNewLines(process->getStdout()));
         EXPECT_EQ(kRunAppTestStderr, NormalizeNewLines(process->getStderr()));
+        EXPECT_EQ(EXIT_SUCCESS, process->getExitCode());
+    }
+}
+
+// Test running an external application and receiving its stdout and stderr output interleaved.
+TEST(TestUtils, MAYBE_RunAppAsyncRedirectStderrToStdout)
+{
+    std::string executablePath = GetExecutableDirectory();
+    EXPECT_NE(executablePath, "");
+    executablePath += "/";
+    executablePath += kRunAppHelperExecutable;
+
+    std::vector<const char *> args = {executablePath.c_str(), kRunAppTestArg1, kRunAppTestArg2};
+
+    // Test that the application can be executed and the output is captured correctly.
+    {
+        ProcessHandle process(args, ProcessOutputCapture::StdoutAndStderrInterleaved);
+        EXPECT_TRUE(process->started());
+
+        constexpr double kTimeout = 3.0;
+
+        Timer timer;
+        timer.start();
+        while (!process->finished() && timer.getElapsedWallClockTime() < kTimeout)
+        {
+            angle::Sleep(1);
+        }
+
+        EXPECT_TRUE(process->finished());
+        EXPECT_GT(process->getElapsedTimeSeconds(), 0.0);
+        EXPECT_EQ(std::string(kRunAppTestStdout) + kRunAppTestStderr,
+                  NormalizeNewLines(process->getStdout()));
+        EXPECT_EQ("", process->getStderr());
         EXPECT_EQ(EXIT_SUCCESS, process->getExitCode());
     }
 }

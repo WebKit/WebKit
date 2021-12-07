@@ -87,4 +87,12 @@ class ANGLE_UTIL_EXPORT OSWindow
     bool mIgnoreSizeEvents;
 };
 
+namespace angle
+{
+// Find a test data file or directory.
+ANGLE_UTIL_EXPORT bool FindTestDataPath(const char *searchPath,
+                                        char *dataPathOut,
+                                        size_t maxDataPathOutLen);
+}  // namespace angle
+
 #endif  // UTIL_OSWINDOW_H_

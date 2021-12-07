@@ -30,6 +30,7 @@ constexpr std::array<GLenum, 3> kSupportedSizedInternalFormats = {GL_RGBA8, GL_R
 
 ANativeWindowBuffer *ClientBufferToANativeWindowBuffer(EGLClientBuffer clientBuffer);
 EGLClientBuffer AHardwareBufferToClientBuffer(const AHardwareBuffer *hardwareBuffer);
+AHardwareBuffer *ClientBufferToAHardwareBuffer(EGLClientBuffer clientBuffer);
 
 EGLClientBuffer CreateEGLClientBufferFromAHardwareBuffer(int width,
                                                          int height,
@@ -41,9 +42,12 @@ void GetANativeWindowBufferProperties(const ANativeWindowBuffer *buffer,
                                       int *width,
                                       int *height,
                                       int *depth,
-                                      int *pixelFormat);
+                                      int *pixelFormat,
+                                      uint64_t *usage);
 GLenum NativePixelFormatToGLInternalFormat(int pixelFormat);
 int GLInternalFormatToNativePixelFormat(GLenum internalFormat);
+
+bool NativePixelFormatIsYUV(int pixelFormat);
 
 AHardwareBuffer *ANativeWindowBufferToAHardwareBuffer(ANativeWindowBuffer *windowBuffer);
 

@@ -11,6 +11,11 @@
 
 #include "common/string_utils.h"
 #include "test_utils/ANGLETest.h"
+#include "test_utils/runner/TestSuite.h"
+
+#if defined(ANGLE_HAS_RAPIDJSON)
+#    include "common/serializer/JsonSerializer.h"
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 
 using namespace angle;
 
@@ -100,12 +105,47 @@ TEST_P(EGLPrintEGLinfoTest, PrintGLInfo)
     std::cout << "\tShader: " << GetGLString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
     std::cout << "\tExtensions:" << std::endl;
-    for (auto extension : ParseExtensions(GetGLString(GL_EXTENSIONS)))
+
+    const std::vector<std::string> extensions = ParseExtensions(GetGLString(GL_EXTENSIONS));
+
+    for (const std::string &extension : extensions)
     {
         std::cout << "\t\t" << extension << std::endl;
     }
 
     std::cout << std::endl;
+
+#if defined(ANGLE_HAS_RAPIDJSON)
+    angle::TestSuite *testSuite = angle::TestSuite::GetInstance();
+    if (!testSuite->hasTestArtifactsDirectory())
+    {
+        return;
+    }
+    JsonSerializer json;
+    json.addCString("Vendor", GetGLString(GL_VENDOR));
+    json.addCString("Version", GetGLString(GL_VERSION));
+    json.addCString("Renderer", GetGLString(GL_RENDERER));
+    json.addCString("ShaderLanguageVersion", GetGLString(GL_SHADING_LANGUAGE_VERSION));
+    json.addVectorOfStrings("Extensions", extensions);
+
+    constexpr size_t kBufferSize = 1000;
+    std::array<char, kBufferSize> buffer;
+    std::time_t timeNow = std::time(nullptr);
+    std::strftime(buffer.data(), buffer.size(), "%B %e, %Y", std::localtime(&timeNow));
+    json.addCString("DateRecorded", buffer.data());
+
+    std::stringstream fnameStream;
+    fnameStream << "GLinfo_" << GetParam() << ".json";
+    std::string fname = fnameStream.str();
+
+    const std::string artifactPath = testSuite->reserveTestArtifactPath(fname);
+
+    {
+        std::vector<uint8_t> jsonData = json.getData();
+        SaveFileHelper saveFile(artifactPath);
+        saveFile.write(jsonData.data(), jsonData.size());
+    }
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 }
 
 #define QUERY_HELPER(enumValue, enumString, stream)                                    \
@@ -158,7 +198,6 @@ static void LogGles2Capabilities(std::ostream &stream)
     constexpr int kMaxViewPortDimsReturnValuesSize = 2;
     QUERY_AND_LOG_CAPABILITY_ARRAY(GL_MAX_VIEWPORT_DIMS, kMaxViewPortDimsReturnValuesSize, stream);
     QUERY_AND_LOG_CAPABILITY(GL_NUM_COMPRESSED_TEXTURE_FORMATS, stream);
-    QUERY_AND_LOG_CAPABILITY(GL_NUM_PROGRAM_BINARY_FORMATS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_NUM_SHADER_BINARY_FORMATS, stream);
 }
 
@@ -191,7 +230,7 @@ static void LogGles3Capabilities(std::ostream &stream)
     QUERY_AND_LOG_CAPABILITY(GL_MAX_VERTEX_UNIFORM_BLOCKS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MAX_VERTEX_UNIFORM_COMPONENTS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MIN_PROGRAM_TEXEL_OFFSET, stream);
-
+    QUERY_AND_LOG_CAPABILITY(GL_NUM_PROGRAM_BINARY_FORMATS, stream);
     // GLES3 capabilities are a superset of GLES2
     LogGles2Capabilities(stream);
 }
@@ -252,6 +291,9 @@ static void LogGles31Capabilities(std::ostream &stream)
 
 static void LogGles32Capabilities(std::ostream &stream)
 {
+    // Most of these capabilities are not implemented yet.
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     QUERY_AND_LOG_CAPABILITY(GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MAX_COMBINED_TESS_CONTROL_UNIFORM_COMPONENTS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MAX_COMBINED_TESS_EVALUATION_UNIFORM_COMPONENTS, stream);
@@ -314,6 +356,11 @@ TEST_P(EGLPrintEGLinfoTest, PrintGLESCapabilities)
 
     switch (getClientMajorVersion())
     {
+        case 1:
+            break;
+        case 2:
+            LogGles2Capabilities(stream);
+            break;
         case 3:
             switch (getClientMinorVersion())
             {
@@ -329,9 +376,6 @@ TEST_P(EGLPrintEGLinfoTest, PrintGLESCapabilities)
                 default:
                     FAIL() << "unknown client minor version.";
             }
-            break;
-        case 2:
-            LogGles2Capabilities(stream);
             break;
         default:
             FAIL() << "unknown client major version.";
@@ -483,4 +527,13 @@ TEST_P(EGLPrintEGLinfoTest, PrintConfigInfo)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(EGLPrintEGLinfoTest, ES2_VULKAN(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(EGLPrintEGLinfoTest,
+                       ES1_VULKAN(),
+                       ES1_VULKAN_SWIFTSHADER(),
+                       ES2_VULKAN(),
+                       ES3_VULKAN(),
+                       ES32_VULKAN(),
+                       ES31_VULKAN_SWIFTSHADER());
+
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLPrintEGLinfoTest);

@@ -322,7 +322,7 @@ egl::Error DisplayD3D::validateClientBuffer(const egl::Config *config,
         case EGL_D3D_TEXTURE_ANGLE:
             return mRenderer->getD3DTextureInfo(config, static_cast<IUnknown *>(clientBuffer),
                                                 attribs, nullptr, nullptr, nullptr, nullptr,
-                                                nullptr);
+                                                nullptr, nullptr);
 
         default:
             return DisplayImpl::validateClientBuffer(config, buftype, clientBuffer, attribs);
@@ -340,7 +340,7 @@ egl::Error DisplayD3D::validateImageClientBuffer(const gl::Context *context,
         {
             return mRenderer->getD3DTextureInfo(nullptr, static_cast<IUnknown *>(clientBuffer),
                                                 attribs, nullptr, nullptr, nullptr, nullptr,
-                                                nullptr);
+                                                nullptr, nullptr);
         }
 
         default:
@@ -353,15 +353,31 @@ void DisplayD3D::generateExtensions(egl::DisplayExtensions *outExtensions) const
     mRenderer->generateDisplayExtensions(outExtensions);
 }
 
-std::string DisplayD3D::getVendorString() const
+std::string DisplayD3D::getRendererDescription()
 {
-    std::string vendorString = "Google Inc.";
     if (mRenderer)
     {
-        vendorString += " " + mRenderer->getVendorString();
+        return mRenderer->getRendererDescription();
     }
+    return std::string();
+}
 
-    return vendorString;
+std::string DisplayD3D::getVendorString()
+{
+    if (mRenderer)
+    {
+        return mRenderer->getVendorString();
+    }
+    return std::string();
+}
+
+std::string DisplayD3D::getVersionString()
+{
+    if (mRenderer)
+    {
+        return mRenderer->getVersionString();
+    }
+    return std::string();
 }
 
 void DisplayD3D::generateCaps(egl::Caps *outCaps) const
@@ -369,7 +385,7 @@ void DisplayD3D::generateCaps(egl::Caps *outCaps) const
     // Display must be initialized to generate caps
     ASSERT(mRenderer != nullptr);
 
-    outCaps->textureNPOT = mRenderer->getNativeExtensions().textureNPOTOES;
+    outCaps->textureNPOT = mRenderer->getNativeExtensions().textureNpotOES;
 }
 
 egl::Error DisplayD3D::waitClient(const gl::Context *context)

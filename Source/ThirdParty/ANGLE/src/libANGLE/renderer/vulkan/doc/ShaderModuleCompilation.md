@@ -79,12 +79,12 @@ Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nr
 "Vulkan Back-end"- ->"ANGLE Front-end": return success
 -->
 
-![Vulkan Shader Translation Flow](https://raw.githubusercontent.com/google/angle/master/src/libANGLE/renderer/vulkan/doc/img/VulkanShaderTranslation.svg?sanitize=true)
+![Vulkan Shader Translation Flow](https://raw.githubusercontent.com/google/angle/main/src/libANGLE/renderer/vulkan/doc/img/VulkanShaderTranslation.svg?sanitize=true)
 
-[GL_KHR_vulkan_glsl]: https://github.com/KhronosGroup/GLSL/blob/master/extensions/khr/GL_KHR_vulkan_glsl.txt
+[GL_KHR_vulkan_glsl]: https://github.com/KhronosGroup/GLSL/blob/main/extensions/khr/GL_KHR_vulkan_glsl.txt
 [glslang]: https://github.com/KhronosGroup/glslang
-[GlslangWrapperVk.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/libANGLE/renderer/vulkan/GlslangWrapperVk.cpp
+[GlslangWrapperVk.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/libANGLE/renderer/vulkan/GlslangWrapperVk.cpp
 [SPIRV-Tools]: https://github.com/KhronosGroup/SPIRV-Tools
-[translator]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/
-[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/TranslatorVulkan.cpp
+[translator]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/
+[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/TranslatorVulkan.cpp
 [VkShaderModule]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkShaderModule.html

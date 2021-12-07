@@ -26,6 +26,7 @@ deqp_include_dirs = [
   "$deqp_path/modules/gles31/functional",
   "$deqp_path/modules/gles31/stress",
   "$deqp_path/modules/glusecases",
+  "$deqp_path/modules/egl",
   "${angle_glslang_dir}",
   "${angle_spirv_tools_dir}",
 ]
@@ -101,6 +102,8 @@ deqp_gles2_sources = [
   "$deqp_path/modules/gles2/functional/es2fLightAmountTest.hpp",
   "$deqp_path/modules/gles2/functional/es2fMultisampleTests.cpp",
   "$deqp_path/modules/gles2/functional/es2fMultisampleTests.hpp",
+  "$deqp_path/modules/gles2/functional/es2fMultisampledRenderToTextureTests.cpp",
+  "$deqp_path/modules/gles2/functional/es2fMultisampledRenderToTextureTests.hpp",
   "$deqp_path/modules/gles2/functional/es2fNegativeBufferApiTests.cpp",
   "$deqp_path/modules/gles2/functional/es2fNegativeBufferApiTests.hpp",
   "$deqp_path/modules/gles2/functional/es2fNegativeFragmentApiTests.cpp",
@@ -858,6 +861,9 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcAggressiveShaderOptimizationsTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcBlendEquationAdvancedTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcBlendEquationAdvancedTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcCompressedFormatTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcCompressedFormatTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcCompressedFormatTests_data.inl",
   "$deqp_path/external/openglcts/modules/common/glcConfigList.cpp",
   "$deqp_path/external/openglcts/modules/common/glcConfigList.hpp",
   "$deqp_path/external/openglcts/modules/common/glcConfigListCase.cpp",
@@ -878,6 +884,10 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcExtTokens.hpp",
   "$deqp_path/external/openglcts/modules/common/glcFragDepthTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcFragDepthTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcFramebufferCompleteness.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcFramebufferCompleteness.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcGLSLVectorConstructorTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcGLSLVectorConstructorTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcInfoTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcInfoTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcInternalformatTests.cpp",
@@ -894,8 +904,6 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcMultipleContextsTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcNearestEdgeTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcNearestEdgeTests.hpp",
-  "$deqp_path/external/openglcts/modules/common/glcNoDefaultContextPackage.cpp",
-  "$deqp_path/external/openglcts/modules/common/glcNoDefaultContextPackage.hpp",
   "$deqp_path/external/openglcts/modules/common/glcNoErrorTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcNoErrorTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcPackedDepthStencilTests.cpp",
@@ -940,8 +948,6 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcShaderRenderCase.hpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderStructTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderStructTests.hpp",
-  "$deqp_path/external/openglcts/modules/common/glcShaderSwitchTests.cpp",
-  "$deqp_path/external/openglcts/modules/common/glcShaderSwitchTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcSpirvUtils.cpp",
   "$deqp_path/external/openglcts/modules/common/glcSpirvUtils.hpp",
   "$deqp_path/external/openglcts/modules/common/glcTestCase.cpp",
@@ -952,6 +958,8 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcTestPackage.hpp",
   "$deqp_path/external/openglcts/modules/common/glcTestSubcase.cpp",
   "$deqp_path/external/openglcts/modules/common/glcTestSubcase.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcTextureCompatibilityTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcTextureCompatibilityTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureFilterAnisotropicTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureFilterAnisotropicTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureRepeatModeTests.cpp",
@@ -1132,6 +1140,8 @@ deqp_khr_gles2_sources = [
 deqp_khr_gles3_sources = [
   "$deqp_path/external/openglcts/modules/gles3/es3cCopyTexImageConversionsTests.cpp",
   "$deqp_path/external/openglcts/modules/gles3/es3cCopyTexImageConversionsTests.hpp",
+  "$deqp_path/external/openglcts/modules/gles3/es3cNumberParsingTests.cpp",
+  "$deqp_path/external/openglcts/modules/gles3/es3cNumberParsingTests.hpp",
   "$deqp_path/external/openglcts/modules/gles3/es3cTestPackage.cpp",
   "$deqp_path/external/openglcts/modules/gles3/es3cTestPackage.hpp",
   "$deqp_path/external/openglcts/modules/gles3/tes3TestCase.hpp",
@@ -1195,6 +1205,12 @@ deqp_khr_gles32_sources = [
 ]
 
 deqp_khr_glesext_sources = [
+  "$deqp_path/external/openglcts/modules/glesext/disjoint_timer_query/esextcDisjointTimerQueryBase.cpp",
+  "$deqp_path/external/openglcts/modules/glesext/disjoint_timer_query/esextcDisjointTimerQueryBase.hpp",
+  "$deqp_path/external/openglcts/modules/glesext/disjoint_timer_query/esextcDisjointTimerQueryHandleReuse.cpp",
+  "$deqp_path/external/openglcts/modules/glesext/disjoint_timer_query/esextcDisjointTimerQueryHandleReuse.hpp",
+  "$deqp_path/external/openglcts/modules/glesext/disjoint_timer_query/esextcDisjointTimerQueryTests.cpp",
+  "$deqp_path/external/openglcts/modules/glesext/disjoint_timer_query/esextcDisjointTimerQueryTests.hpp",
   "$deqp_path/external/openglcts/modules/glesext/draw_buffers_indexed/esextcDrawBuffersIndexedBase.cpp",
   "$deqp_path/external/openglcts/modules/glesext/draw_buffers_indexed/esextcDrawBuffersIndexedBase.hpp",
   "$deqp_path/external/openglcts/modules/glesext/draw_buffers_indexed/esextcDrawBuffersIndexedBlending.cpp",
@@ -2001,11 +2017,9 @@ deqp_libtester_sources = [
   "deqp_support/tcuANGLENativeDisplayFactory.h",
 
   # TODO(jmadill): integrate with dEQP
+  "$angle_root/third_party/renderdoc/src/renderdoc_app.h",
   "deqp_support/tcuRandomOrderExecutor.cpp",
   "deqp_support/tcuRandomOrderExecutor.h",
-]
-
-deqp_libtester_sources_android = [
-  "$deqp_path/framework/platform/android/tcuAndroidInternals.cpp",
-  "$deqp_path/framework/platform/android/tcuAndroidInternals.hpp",
+  "test_utils/RenderDoc.cpp",
+  "test_utils/RenderDoc.h",
 ]

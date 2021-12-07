@@ -58,25 +58,14 @@ class VertexArrayMtl : public VertexArrayImpl
                                  mtl::BufferRef *idxBufferOut,
                                  size_t *idxBufferOffsetOut,
                                  gl::DrawElementsType *indexTypeOut);
-    
-    
+
     std::vector<DrawCommandRange> getDrawIndices(const gl::Context *glContext,
                                                  gl::DrawElementsType originalIndexType,
                                                  gl::DrawElementsType indexType,
                                                  gl::PrimitiveMode primitiveMode,
+                                                 mtl::BufferRef idxBuffer,
                                                  uint32_t indexCount,
                                                  size_t offset);
-    
-    // Use to emulate instanced draw for instance <instanceId>.
-    // The typical call sequence for emulated instance draw is:
-    // - setupDraw()
-    // - draw.
-    // - emulateInstanceDrawStep(1)
-    // - draw.
-    // - emulateInstanceDrawStep(n)
-    // - draw.
-    // - emulateInstanceDrawStep(0)
-    void emulateInstanceDrawStep(mtl::RenderCommandEncoder *cmdEncoder, uint32_t instanceId);
 
   private:
     void reset(ContextMtl *context);
@@ -132,7 +121,7 @@ class VertexArrayMtl : public VertexArrayImpl
                                          size_t vertexCount,
                                          bool isExpandingComponents,
                                          ConversionBufferMtl *conversion);
-    
+
     // These can point to real BufferMtl or converted buffer in mConvertedArrayBufferHolders
     gl::AttribArray<BufferHolderMtl *> mCurrentArrayBuffers;
     gl::AttribArray<SimpleWeakBufferHolderMtl> mConvertedArrayBufferHolders;

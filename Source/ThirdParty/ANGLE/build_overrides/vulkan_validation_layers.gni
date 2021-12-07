@@ -2,11 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//gni/angle.gni")
+import("//build_overrides/vulkan_common.gni")
 
-vulkan_headers_dir = "//third_party/vulkan-headers/src"
-vvl_spirv_tools_dir = "//third_party/spirv-tools/src"
-vvl_glslang_dir = "//third_party/glslang/src"
-
-vulkan_data_subdir = angle_data_dir
-vulkan_gen_subdir = "angle/vulkan"
+vvl_spirv_tools_dir = "//third_party/vulkan-deps/spirv-tools/src"
+vvl_glslang_dir = "//third_party/vulkan-deps/glslang/src"

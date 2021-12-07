@@ -199,7 +199,7 @@ class FormatTable final : angle::NonCopyable
                                    bool supportsiOS4);
 
     std::array<Format, angle::kNumANGLEFormats> mPixelFormatTable;
-    std::unordered_map<MTLPixelFormat, FormatCaps> mNativePixelFormatCapsTable;
+    angle::HashMap<MTLPixelFormat, FormatCaps> mNativePixelFormatCapsTable;
     // One for tightly packed buffers, one for general cases.
     std::array<VertexFormat, angle::kNumANGLEFormats> mVertexFormatTables[2];
 

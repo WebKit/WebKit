@@ -1,7 +1,7 @@
 Name: Chromium base:: helper Classes
 Short Name: base::numerics, base::MRUCachem, base::SHA1
 Version:
-URL: https://chromium.googlesource.com/chromium/src/base/+/master
+URL: https://chromium.googlesource.com/chromium/src/base/+/main
 SOURCE CODE: Copy the Chromium folder manually into this folder and run git cl format.
 Date: 24/05/2017
 Revision: 28b5bbb227d331c01e6ff9b2f8729732135aadc7 (Chromium)

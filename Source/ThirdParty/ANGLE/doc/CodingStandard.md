@@ -35,8 +35,8 @@ This will catch most of the trivial formatting errors and save you time.
 *   {DO} use nullptr (instead of 0 or NULL) for pointers.
 *   {DO} use size\_t for loop iterators and size values.
 *   {DO} use uint8\_t pointers instead of void pointers to denote binary data.
-*   {DO} use C++11/14 according to the [Chromium c++ 11/14 guide]
-    (http://chromium-cpp.appspot.com/).
+*   {DO} use C++11/14 according to the
+    [Chromium C++ 11/14 guide](https://chromium.googlesource.com/chromium/src/+/main/styleguide/c++/c++11.md).
 
 ### [Naming](https://google.github.io/styleguide/cppguide.html#Naming)
 

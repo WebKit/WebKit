@@ -20,7 +20,7 @@ DebugAnnotator11::DebugAnnotator11() {}
 DebugAnnotator11::~DebugAnnotator11() {}
 
 void DebugAnnotator11::beginEvent(gl::Context *context,
-                                  gl::EntryPoint entryPoint,
+                                  angle::EntryPoint entryPoint,
                                   const char *eventName,
                                   const char *eventMessage)
 {
@@ -35,7 +35,7 @@ void DebugAnnotator11::beginEvent(gl::Context *context,
 
 void DebugAnnotator11::endEvent(gl::Context *context,
                                 const char *eventName,
-                                gl::EntryPoint entryPoint)
+                                angle::EntryPoint entryPoint)
 {
     angle::LoggingAnnotator::endEvent(context, eventName, entryPoint);
     if (loggingEnabledForThisThread())

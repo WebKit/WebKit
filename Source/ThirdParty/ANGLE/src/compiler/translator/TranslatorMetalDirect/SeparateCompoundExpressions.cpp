@@ -6,9 +6,8 @@
 
 #include <unordered_map>
 
+#include "common/system_utils.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
-#include "compiler/translator/TranslatorMetalDirect/EnvironmentVariable.h"
 #include "compiler/translator/TranslatorMetalDirect/SeparateCompoundExpressions.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_util/IntermRebuild.h"
@@ -217,7 +216,8 @@ class Separator : public TIntermRebuild
         {
             return true;
         }
-        if((expr.getType().getBasicType() == TBasicType::EbtVoid))
+        // https://bugs.webkit.org/show_bug.cgi?id=227723: Fix for sequence operator.
+        if ((expr.getType().getBasicType() == TBasicType::EbtVoid))
         {
             return true;
         }
@@ -237,7 +237,7 @@ class Separator : public TIntermRebuild
             return;
         }
         auto &bindingMap = getCurrBindingMap();
-        const Name name = mIdGen.createNewName();
+        const Name name  = mIdGen.createNewName();
         auto *var =
             new TVariable(&mSymbolTable, name.rawName(), &newExpr.getType(), name.symbolType());
         auto *decl = new TIntermDeclaration(var, &newExpr);
@@ -601,7 +601,7 @@ class Separator : public TIntermRebuild
     {
         if (!rebuildInPlace(*node.getBody()))
         {
-            LOGIC_ERROR();
+            UNREACHABLE();
         }
         pushStmt(node);
         return {node, VisitBits::Neither};
@@ -619,6 +619,8 @@ class Separator : public TIntermRebuild
 
     PostResult visitGlobalQualifierDeclarationPost(TIntermGlobalQualifierDeclaration &node) override
     {
+        // With the removal of RewriteGlobalQualifierDecls, we may encounter globals while
+        // seperating compound expressions.
         pushStmt(node);
         return node;
     }
@@ -633,7 +635,7 @@ bool sh::SeparateCompoundExpressions(TCompiler &compiler,
                                      IdGen &idGen,
                                      TIntermBlock &root)
 {
-    if (readBoolEnvVar("GMT_DISABLE_SEPARATE_COMPOUND_EXPRESSIONS"))
+    if (angle::GetBoolEnvironmentVar("GMT_DISABLE_SEPARATE_COMPOUND_EXPRESSIONS"))
     {
         return true;
     }

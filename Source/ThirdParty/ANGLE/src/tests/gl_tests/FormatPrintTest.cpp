@@ -15,8 +15,8 @@
 // So we need to include ANGLETest.h first to avoid this conflict.
 
 #include "libANGLE/Context.h"
+#include "libANGLE/capture/gl_enum_utils.h"
 #include "libANGLE/formatutils.h"
-#include "libANGLE/gl_enum_utils.h"
 #include "util/EGLWindow.h"
 
 using namespace angle;

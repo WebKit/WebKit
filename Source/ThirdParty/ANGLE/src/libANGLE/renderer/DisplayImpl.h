@@ -90,13 +90,15 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
                                                  EGLenum target,
                                                  EGLClientBuffer clientBuffer,
                                                  const egl::AttributeMap &attribs) const;
-    virtual egl::Error validatePixmap(egl::Config *config,
+    virtual egl::Error validatePixmap(const egl::Config *config,
                                       EGLNativePixmapType pixmap,
                                       const egl::AttributeMap &attributes) const;
 
-    virtual std::string getVendorString() const = 0;
+    virtual std::string getRendererDescription() = 0;
+    virtual std::string getVendorString()        = 0;
+    virtual std::string getVersionString()       = 0;
 
-    virtual DeviceImpl *createDevice() = 0;
+    virtual DeviceImpl *createDevice();
 
     virtual egl::Error waitClient(const gl::Context *context)                = 0;
     virtual egl::Error waitNative(const gl::Context *context, EGLint engine) = 0;

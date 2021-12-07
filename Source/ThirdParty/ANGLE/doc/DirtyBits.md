@@ -74,7 +74,7 @@ Framebuffer- ->Context: onSubjectStateChange
 Note over Context: cache update
 -->
 
-![State Change Example](https://raw.githubusercontent.com/google/angle/master/doc/img/StateNotificationExample.svg?sanitize=true)
+![State Change Example](https://raw.githubusercontent.com/google/angle/main/doc/img/StateNotificationExample.svg?sanitize=true)
 
 We use the [Observer pattern](https://en.wikipedia.org/wiki/Observer_pattern) to implement cache
 invalidation notifications. See [`Observer.h`](../src/libANGLE/Observer.h). In the example the
@@ -87,7 +87,7 @@ framebuffer's completeness. On subsequent draw calls we skip re-validation at mi
 
 See the below diagram for the dependency relations between Subjects and Observers.
 
-![State Change Notification Flow](https://raw.githubusercontent.com/google/angle/master/doc/img/StateChangeNotificationFlow.svg?sanitize=true)
+![State Change Notification Flow](https://raw.githubusercontent.com/google/angle/main/doc/img/StateChangeNotificationFlow.svg?sanitize=true)
 
 ## Back-end specific Optimizations
 

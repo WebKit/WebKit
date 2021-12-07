@@ -105,7 +105,8 @@ class ProgramVk : public ProgramImpl
 
     angle::Result updateUniforms(ContextVk *contextVk);
 
-    bool dirtyUniforms() const { return mDefaultUniformBlocksDirty.any(); }
+    void setAllDefaultUniformsDirty();
+    bool hasDirtyUniforms() const { return mDefaultUniformBlocksDirty.any(); }
     bool isShaderUniformDirty(gl::ShaderType shaderType) const
     {
         return mDefaultUniformBlocksDirty[shaderType];
@@ -123,12 +124,6 @@ class ProgramVk : public ProgramImpl
     }
     void onProgramBind();
 
-    // Used in testing only.
-    vk::DynamicDescriptorPool *getDynamicDescriptorPool(uint32_t poolIndex)
-    {
-        return &mExecutable.mDynamicDescriptorPools[poolIndex];
-    }
-
     const ProgramExecutableVk &getExecutable() const { return mExecutable; }
     ProgramExecutableVk &getExecutable() { return mExecutable; }
 
@@ -145,25 +140,29 @@ class ProgramVk : public ProgramImpl
                                           const gl::ProgramExecutable &glExecutable,
                                           gl::ShaderMap<VkDeviceSize> &uniformOffsets) const;
 
-    ANGLE_INLINE angle::Result initGraphicsShaderProgram(ContextVk *contextVk,
-                                                         const gl::ShaderType shaderType,
-                                                         ProgramTransformOptions optionBits,
-                                                         ProgramInfo *programInfo,
-                                                         ProgramExecutableVk *executableVk)
+    ANGLE_INLINE angle::Result initGraphicsShaderProgram(
+        ContextVk *contextVk,
+        const gl::ShaderType shaderType,
+        bool isLastPreFragmentStage,
+        ProgramTransformOptions optionBits,
+        ProgramInfo *programInfo,
+        const ShaderInterfaceVariableInfoMap &variableInfoMap)
     {
-        return initProgram(contextVk, shaderType, optionBits, programInfo, executableVk);
+        return initProgram(contextVk, shaderType, isLastPreFragmentStage, optionBits, programInfo,
+                           variableInfoMap);
     }
 
-    ANGLE_INLINE angle::Result initComputeProgram(ContextVk *contextVk,
-                                                  ProgramInfo *programInfo,
-                                                  ProgramExecutableVk *executableVk)
+    ANGLE_INLINE angle::Result initComputeProgram(
+        ContextVk *contextVk,
+        ProgramInfo *programInfo,
+        const ShaderInterfaceVariableInfoMap &variableInfoMap)
     {
         ProgramTransformOptions optionBits = {};
-        return initProgram(contextVk, gl::ShaderType::Compute, optionBits, programInfo,
-                           executableVk);
+        return initProgram(contextVk, gl::ShaderType::Compute, false, optionBits, programInfo,
+                           variableInfoMap);
     }
 
-    GlslangProgramInterfaceInfo &getGlslangProgramInterfaceInfo()
+    const GlslangProgramInterfaceInfo &getGlslangProgramInterfaceInfo()
     {
         return mGlslangProgramInterfaceInfo;
     }
@@ -192,9 +191,10 @@ class ProgramVk : public ProgramImpl
 
     ANGLE_INLINE angle::Result initProgram(ContextVk *contextVk,
                                            const gl::ShaderType shaderType,
+                                           bool isLastPreFragmentStage,
                                            ProgramTransformOptions optionBits,
                                            ProgramInfo *programInfo,
-                                           ProgramExecutableVk *executableVk)
+                                           const ShaderInterfaceVariableInfoMap &variableInfoMap)
     {
         ASSERT(mOriginalShaderInfo.valid());
 
@@ -202,15 +202,16 @@ class ProgramVk : public ProgramImpl
         // specialization constants.
         if (!programInfo->valid(shaderType))
         {
-            ANGLE_TRY(programInfo->initProgram(contextVk, shaderType, mOriginalShaderInfo,
-                                               optionBits, executableVk));
+            const bool isTransformFeedbackProgram =
+                !mState.getLinkedTransformFeedbackVaryings().empty();
+            ANGLE_TRY(programInfo->initProgram(contextVk, shaderType, isLastPreFragmentStage,
+                                               isTransformFeedbackProgram, mOriginalShaderInfo,
+                                               optionBits, variableInfoMap));
         }
         ASSERT(programInfo->valid(shaderType));
 
         return angle::Result::Continue;
     }
-
-    void setAllDefaultUniformsDirty();
 
     gl::ShaderMap<DefaultUniformBlock> mDefaultUniformBlocks;
     gl::ShaderBitSet mDefaultUniformBlocksDirty;

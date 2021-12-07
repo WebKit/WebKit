@@ -6,7 +6,6 @@
 
 #include "compiler/translator/TranslatorMetalDirect/Name.h"
 #include "common/debug.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
 using namespace sh;
@@ -72,6 +71,7 @@ void Name::emit(TInfoSinkBase &out) const
             ASSERT(!mRawName.empty());
             out << mRawName;
             break;
+
         case SymbolType::UserDefined:
             ASSERT(!mRawName.empty());
             if (mRawName != "main")
@@ -83,6 +83,7 @@ void Name::emit(TInfoSinkBase &out) const
                 out << mRawName;
             }
             break;
+
         case SymbolType::AngleInternal:
             ASSERT(!mRawName.empty());
             if (mRawName.beginsWith(kAngleInternalPrefix))
@@ -100,7 +101,7 @@ void Name::emit(TInfoSinkBase &out) const
             break;
 
         case SymbolType::Empty:
-            LOGIC_ERROR();
+            UNREACHABLE();
             break;
     }
 }
@@ -135,7 +136,7 @@ class ExpressionContainsNameVisitor : public TIntermTraverser
 
     bool visitBinary(Visit visit, TIntermBinary *node) override { return !mFoundName; }
 
-    bool visitUnary(Visit visit, TIntermUnary *node) override  { return !mFoundName; }
+    bool visitUnary(Visit visit, TIntermUnary *node) override { return !mFoundName; }
 
     bool visitTernary(Visit visit, TIntermTernary *node) override { return !mFoundName; }
 
@@ -163,60 +164,60 @@ class ExpressionContainsNameVisitor : public TIntermTraverser
 
     bool visitIfElse(Visit visit, TIntermIfElse *node) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
     bool visitSwitch(Visit, TIntermSwitch *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
     bool visitCase(Visit, TIntermCase *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
-    void visitFunctionPrototype(TIntermFunctionPrototype *) override { LOGIC_ERROR(); }
+    void visitFunctionPrototype(TIntermFunctionPrototype *) override { UNREACHABLE(); }
 
     bool visitFunctionDefinition(Visit, TIntermFunctionDefinition *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
     bool visitBlock(Visit, TIntermBlock *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
     bool visitGlobalQualifierDeclaration(Visit, TIntermGlobalQualifierDeclaration *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
     bool visitDeclaration(Visit, TIntermDeclaration *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
     bool visitLoop(Visit, TIntermLoop *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
     bool visitBranch(Visit, TIntermBranch *) override
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
         return false;
     }
 
-    void visitPreprocessorDirective(TIntermPreprocessorDirective *) override { LOGIC_ERROR(); }
+    void visitPreprocessorDirective(TIntermPreprocessorDirective *) override { UNREACHABLE(); }
 };
 
 }  // anonymous namespace

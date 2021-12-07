@@ -59,6 +59,7 @@ class ShaderD3D : public ShaderImpl
     unsigned int getReadonlyImage2DRegisterIndex() const { return mReadonlyImage2DRegisterIndex; }
     unsigned int getImage2DRegisterIndex() const { return mImage2DRegisterIndex; }
     bool useImage2DFunction(const std::string &functionName) const;
+    const std::set<std::string> &getSlowCompilingUniformBlockSet() const;
     void appendDebugInfo(const std::string &info) const { mDebugInfo += info; }
 
     void generateWorkarounds(angle::CompilerWorkaroundsD3D *workarounds) const;
@@ -104,6 +105,7 @@ class ShaderD3D : public ShaderImpl
     std::map<std::string, unsigned int> mUniformRegisterMap;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;
     std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;
+    std::set<std::string> mSlowCompilingUniformBlockSet;
     std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     unsigned int mReadonlyImage2DRegisterIndex;
     unsigned int mImage2DRegisterIndex;

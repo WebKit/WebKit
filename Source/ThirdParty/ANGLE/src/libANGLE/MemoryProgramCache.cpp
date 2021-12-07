@@ -7,22 +7,24 @@
 //   always have to be re-compiled. Can be used in conjunction with the platform
 //   layer to warm up the cache from disk.
 
+// Include zlib first, otherwise FAR gets defined elsewhere.
+#define USE_SYSTEM_ZLIB
+#include "compression_utils_portable.h"
+
 #include "libANGLE/MemoryProgramCache.h"
 
 #include <GLSLANG/ShaderVars.h>
 #include <anglebase/sha1.h>
 
-#include "common/angle_version.h"
+#include "common/angle_version_info.h"
 #include "common/utilities.h"
 #include "libANGLE/BinaryStream.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Uniform.h"
+#include "libANGLE/capture/FrameCapture.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "platform/PlatformMethods.h"
-
-#define USE_SYSTEM_ZLIB
-#include "compression_utils_portable.h"
 
 namespace gl
 {
@@ -48,7 +50,7 @@ class HashStream final : angle::NonCopyable
     std::ostringstream mStringStream;
 };
 
-HashStream &operator<<(HashStream &stream, const Shader *shader)
+HashStream &operator<<(HashStream &stream, Shader *shader)
 {
     if (shader)
     {
@@ -60,7 +62,7 @@ HashStream &operator<<(HashStream &stream, const Shader *shader)
 
 HashStream &operator<<(HashStream &stream, const ProgramBindings &bindings)
 {
-    for (const auto &binding : bindings)
+    for (const auto &binding : bindings.getStableIterationMap())
     {
         stream << binding.first << binding.second;
     }
@@ -69,7 +71,7 @@ HashStream &operator<<(HashStream &stream, const ProgramBindings &bindings)
 
 HashStream &operator<<(HashStream &stream, const ProgramAliasedBindings &bindings)
 {
-    for (const auto &binding : bindings)
+    for (const auto &binding : bindings.getStableIterationMap())
     {
         stream << binding.first << binding.second.location;
     }
@@ -114,7 +116,7 @@ void MemoryProgramCache::ComputeHash(const Context *context,
     }
 
     // Add some ANGLE metadata and Context properties, such as version and back-end.
-    hashStream << ANGLE_COMMIT_HASH << context->getClientMajorVersion()
+    hashStream << angle::GetANGLECommitHash() << context->getClientMajorVersion()
                << context->getClientMinorVersion() << context->getString(GL_RENDERER);
 
     // Hash pre-link program properties.
@@ -124,6 +126,9 @@ void MemoryProgramCache::ComputeHash(const Context *context,
                << program->getState().getTransformFeedbackBufferMode()
                << program->getState().getOutputLocations()
                << program->getState().getSecondaryOutputLocations();
+
+    // Include the status of FrameCapture, which adds source strings to the binary
+    hashStream << context->getShareGroup()->getFrameCaptureShared()->enabled();
 
     // Call the secure SHA hashing function.
     const std::string &programKey = hashStream.str();
@@ -146,18 +151,10 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
     size_t programSize = 0;
     if (get(context, *hashOut, &binaryProgram, &programSize))
     {
-        uint32_t uncompressedSize =
-            zlib_internal::GetGzipUncompressedSize(binaryProgram.data(), programSize);
-
-        std::vector<uint8_t> uncompressedData(uncompressedSize);
-        uLong destLen = uncompressedSize;
-        int zResult   = zlib_internal::GzipUncompressHelper(uncompressedData.data(), &destLen,
-                                                          binaryProgram.data(),
-                                                          static_cast<uLong>(programSize));
-
-        if (zResult != Z_OK)
+        angle::MemoryBuffer uncompressedData;
+        if (!egl::DecompressBlobCacheData(binaryProgram.data(), programSize, &uncompressedData))
         {
-            ERR() << "Failure to decompressed binary data: " << zResult << "\n";
+            ERR() << "Error decompressing binary data.";
             return angle::Result::Incomplete;
         }
 
@@ -220,33 +217,11 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     angle::MemoryBuffer serializedProgram;
     ANGLE_TRY(program->serialize(context, &serializedProgram));
 
-    // Compress the program data
-    uLong uncompressedSize       = static_cast<uLong>(serializedProgram.size());
-    uLong expectedCompressedSize = zlib_internal::GzipExpectedCompressedSize(uncompressedSize);
-
     angle::MemoryBuffer compressedData;
-    if (!compressedData.resize(expectedCompressedSize))
+    if (!egl::CompressBlobCacheData(serializedProgram.size(), serializedProgram.data(),
+                                    &compressedData))
     {
-        ERR() << "Failed to allocate enough memory to hold compressed program. ("
-              << expectedCompressedSize << " bytes )";
-        return angle::Result::Incomplete;
-    }
-
-    int zResult = zlib_internal::GzipCompressHelper(compressedData.data(), &expectedCompressedSize,
-                                                    serializedProgram.data(), uncompressedSize,
-                                                    nullptr, nullptr);
-
-    if (zResult != Z_OK)
-    {
-        FATAL() << "Error compressing binary data: " << zResult;
-        return angle::Result::Incomplete;
-    }
-
-    // Resize the buffer to the actual compressed size
-    if (!compressedData.resize(expectedCompressedSize))
-    {
-        ERR() << "Failed to resize to actual compressed program size. (" << expectedCompressedSize
-              << " bytes )";
+        ERR() << "Error compressing binary data.";
         return angle::Result::Incomplete;
     }
 

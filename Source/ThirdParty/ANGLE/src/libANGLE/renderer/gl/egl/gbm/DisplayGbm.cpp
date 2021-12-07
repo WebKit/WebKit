@@ -117,7 +117,7 @@ DisplayGbm::Buffer::~Buffer()
 {
     reset();
 
-    const FunctionsGL *gl = mDisplay->mRenderer->getFunctions();
+    const FunctionsGL *gl = mDisplay->getRenderer()->getFunctions();
     gl->deleteRenderbuffers(1, &mColorBuffer);
     mColorBuffer = 0;
     gl->deleteRenderbuffers(1, &mDSBuffer);
@@ -138,13 +138,13 @@ void DisplayGbm::Buffer::reset()
 
     if (mImage != EGL_NO_IMAGE_KHR)
     {
-        mDisplay->mEGL->destroyImageKHR(mImage);
+        mDisplay->getFunctionsEGL()->destroyImageKHR(mImage);
         mImage = EGL_NO_IMAGE_KHR;
     }
 
     if (mTexture)
     {
-        const FunctionsGL *gl = mDisplay->mRenderer->getFunctions();
+        const FunctionsGL *gl = mDisplay->getRenderer()->getFunctions();
         gl->deleteTextures(1, &mTexture);
         mTexture = 0;
     }
@@ -201,14 +201,15 @@ bool DisplayGbm::Buffer::resize(int32_t width, int32_t height)
     };
     // clang-format on
 
-    mImage = mDisplay->mEGL->createImageKHR(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attr);
+    mImage = mDisplay->getFunctionsEGL()->createImageKHR(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT,
+                                                         nullptr, attr);
     if (mImage == EGL_NO_IMAGE_KHR)
     {
         return false;
     }
 
-    const FunctionsGL *gl = mDisplay->mRenderer->getFunctions();
-    StateManagerGL *sm    = mDisplay->mRenderer->getStateManager();
+    const FunctionsGL *gl = mDisplay->getRenderer()->getFunctions();
+    StateManagerGL *sm    = mDisplay->getRenderer()->getStateManager();
 
     // Update the storage of the renderbuffers but don't generate new IDs. This will update all
     // framebuffers they are bound to.
@@ -239,7 +240,7 @@ bool DisplayGbm::Buffer::initialize(int width, int height)
 
 void DisplayGbm::Buffer::bindTexImage()
 {
-    const FunctionsGL *gl = mDisplay->mRenderer->getFunctions();
+    const FunctionsGL *gl = mDisplay->getRenderer()->getFunctions();
     gl->eGLImageTargetTexture2DOES(GL_TEXTURE_2D, mImage);
 }
 
@@ -247,8 +248,8 @@ GLuint DisplayGbm::Buffer::getTexture()
 {
     // TODO(fjhenigman) Try not to create a new texture every time.  That already works on Intel
     // and should work on Mali with proper fences.
-    const FunctionsGL *gl = mDisplay->mRenderer->getFunctions();
-    StateManagerGL *sm    = mDisplay->mRenderer->getStateManager();
+    const FunctionsGL *gl = mDisplay->getRenderer()->getFunctions();
+    StateManagerGL *sm    = mDisplay->getRenderer()->getStateManager();
 
     gl->genTextures(1, &mTexture);
     sm->bindTexture(gl::TextureType::_2D, mTexture);
@@ -329,8 +330,8 @@ void DisplayGbm::Buffer::present(const gl::Context *context)
 
 bool DisplayGbm::Buffer::createRenderbuffers()
 {
-    const FunctionsGL *gl = mDisplay->mRenderer->getFunctions();
-    StateManagerGL *sm    = mDisplay->mRenderer->getStateManager();
+    const FunctionsGL *gl = mDisplay->getRenderer()->getFunctions();
+    StateManagerGL *sm    = mDisplay->getRenderer()->getStateManager();
 
     gl->genRenderbuffers(1, &mColorBuffer);
     sm->bindRenderbuffer(GL_RENDERBUFFER, mColorBuffer);
@@ -467,77 +468,7 @@ egl::Error DisplayGbm::initialize(egl::Display *display)
         return egl::EglNotInitialized() << "Could not open drm device.";
     }
 
-    // ANGLE builds its executables with an RPATH so they pull in ANGLE's libGL and libEGL.
-    // Here we need to open the native libEGL.  An absolute path would work, but then we
-    // couldn't use LD_LIBRARY_PATH which is often useful during development.  Instead we take
-    // advantage of the fact that the system lib is available under multiple names (for example
-    // with a .1 suffix) while Angle only installs libEGL.so.
-    FunctionsEGLDL *egl = new FunctionsEGLDL();
-    mEGL                = egl;
-    ANGLE_TRY(egl->initialize(display->getNativeDisplayId(), "libEGL.so.1", nullptr));
-
-    const char *necessaryExtensions[] = {
-        "EGL_KHR_image_base",
-        "EGL_EXT_image_dma_buf_import",
-        "EGL_KHR_surfaceless_context",
-    };
-    for (const char *ext : necessaryExtensions)
-    {
-        if (!mEGL->hasExtension(ext))
-        {
-            return egl::EglNotInitialized() << "need " << ext;
-        }
-    }
-
-    if (mEGL->hasExtension("EGL_MESA_configless_context"))
-    {
-        mConfig = EGL_NO_CONFIG_MESA;
-    }
-    else
-    {
-        // clang-format off
-        const EGLint attrib[] =
-        {
-            // We want RGBA8 and DEPTH24_STENCIL8
-            EGL_RED_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_BLUE_SIZE, 8,
-            EGL_ALPHA_SIZE, 8,
-            EGL_DEPTH_SIZE, 24,
-            EGL_STENCIL_SIZE, 8,
-            EGL_NONE,
-        };
-        // clang-format on
-        EGLint numConfig;
-        EGLConfig config[1];
-        if (!mEGL->chooseConfig(attrib, config, 1, &numConfig) || numConfig < 1)
-        {
-            return egl::EglNotInitialized() << "Could not get EGL config.";
-        }
-        mConfig = config[0];
-    }
-
-    EGLContext context = EGL_NO_CONTEXT;
-    native_egl::AttributeVector attribs;
-    ANGLE_TRY(initializeContext(EGL_NO_CONTEXT, display->getAttributeMap(), &context, &attribs));
-
-    if (!mEGL->makeCurrent(EGL_NO_SURFACE, context))
-    {
-        return egl::EglNotInitialized() << "Could not make context current.";
-    }
-
-    std::unique_ptr<FunctionsGL> functionsGL(mEGL->makeFunctionsGL());
-    functionsGL->initialize(display->getAttributeMap());
-
-    mRenderer.reset(new RendererEGL(std::move(functionsGL), display->getAttributeMap(), this,
-                                    context, attribs));
-    const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
-    if (maxVersion < gl::Version(2, 0))
-    {
-        return egl::EglNotInitialized() << "OpenGL ES 2.0 is not supportable.";
-    }
-
-    return DisplayGL::initialize(display);
+    return DisplayEGL::initialize(display);
 }
 
 void DisplayGbm::pageFlipHandler(int fd,
@@ -612,7 +543,7 @@ void DisplayGbm::presentScreen()
 
 GLuint DisplayGbm::makeShader(GLuint type, const char *src)
 {
-    const FunctionsGL *gl = mRenderer->getFunctions();
+    const FunctionsGL *gl = getRenderer()->getFunctions();
     GLuint shader         = gl->createShader(type);
     gl->shaderSource(shader, 1, &src, nullptr);
     gl->compileShader(shader);
@@ -632,8 +563,8 @@ GLuint DisplayGbm::makeShader(GLuint type, const char *src)
 
 void DisplayGbm::drawWithTexture(const gl::Context *context, Buffer *buffer)
 {
-    const FunctionsGL *gl = mRenderer->getFunctions();
-    StateManagerGL *sm    = mRenderer->getStateManager();
+    const FunctionsGL *gl = getRenderer()->getFunctions();
+    StateManagerGL *sm    = getRenderer()->getStateManager();
 
     if (!mProgram)
     {
@@ -783,8 +714,8 @@ void DisplayGbm::drawBuffer(const gl::Context *context, Buffer *buffer)
             }
         }
 
-        const FunctionsGL *gl = mRenderer->getFunctions();
-        StateManagerGL *sm    = mRenderer->getStateManager();
+        const FunctionsGL *gl = getRenderer()->getFunctions();
+        StateManagerGL *sm    = getRenderer()->getStateManager();
 
         GLuint fbo = mDrawing->createGLFB(context);
         sm->bindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
@@ -803,13 +734,13 @@ void DisplayGbm::drawBuffer(const gl::Context *context, Buffer *buffer)
 
 void DisplayGbm::flushGL()
 {
-    const FunctionsGL *gl = mRenderer->getFunctions();
+    const FunctionsGL *gl = getRenderer()->getFunctions();
     gl->flush();
-    if (mEGL->hasExtension("EGL_KHR_fence_sync"))
+    if (getFunctionsEGL()->hasExtension("EGL_KHR_fence_sync"))
     {
         const EGLint attrib[] = {EGL_SYNC_CONDITION_KHR,
                                  EGL_SYNC_PRIOR_COMMANDS_IMPLICIT_EXTERNAL_ARM, EGL_NONE};
-        EGLSyncKHR fence      = mEGL->createSyncKHR(EGL_SYNC_FENCE_KHR, attrib);
+        EGLSyncKHR fence      = getFunctionsEGL()->createSyncKHR(EGL_SYNC_FENCE_KHR, attrib);
         if (fence)
         {
             // TODO(fjhenigman) Figure out the right way to use fences on Mali GPU
@@ -818,14 +749,15 @@ void DisplayGbm::flushGL()
             // but we still get some.
             for (;;)
             {
-                EGLint r = mEGL->clientWaitSyncKHR(fence, EGL_SYNC_FLUSH_COMMANDS_BIT_KHR, 0);
+                EGLint r =
+                    getFunctionsEGL()->clientWaitSyncKHR(fence, EGL_SYNC_FLUSH_COMMANDS_BIT_KHR, 0);
                 if (r != EGL_TIMEOUT_EXPIRED_KHR)
                 {
                     break;
                 }
                 usleep(99);
             }
-            mEGL->destroySyncKHR(fence);
+            getFunctionsEGL()->destroySyncKHR(fence);
             return;
         }
     }
@@ -840,7 +772,7 @@ void DisplayGbm::terminate()
 
     if (mProgram)
     {
-        const FunctionsGL *gl = mRenderer->getFunctions();
+        const FunctionsGL *gl = getRenderer()->getFunctions();
         gl->deleteProgram(mProgram);
         gl->deleteShader(mVertexShader);
         gl->deleteShader(mFragmentShader);
@@ -849,19 +781,7 @@ void DisplayGbm::terminate()
         mProgram = 0;
     }
 
-    DisplayGL::terminate();
-
-    mRenderer.reset();
-
-    if (mEGL)
-    {
-        // Mesa might crash if you terminate EGL with a context current then re-initialize EGL, so
-        // make our context not current.
-        mEGL->makeCurrent(EGL_NO_SURFACE, EGL_NO_CONTEXT);
-
-        ANGLE_SWALLOW_ERR(mEGL->terminate());
-        SafeDelete(mEGL);
-    }
+    DisplayEGL::terminate();
 
     drmModeFreeConnector(mConnector);
     mConnector = nullptr;
@@ -905,69 +825,6 @@ SurfaceImpl *DisplayGbm::createPbufferSurface(const egl::SurfaceState &state,
     return new SurfaceGbm(state, buffer);
 }
 
-ContextImpl *DisplayGbm::createContext(const gl::State &state,
-                                       gl::ErrorSet *errorSet,
-                                       const egl::Config *configuration,
-                                       const gl::Context *shareContext,
-                                       const egl::AttributeMap &attribs)
-{
-    // All contexts on Gbm are virtualized and share the same renderer.
-    return new ContextEGL(state, errorSet, mRenderer,
-                          RobustnessVideoMemoryPurgeStatus::NOT_REQUESTED);
-}
-
-egl::Error DisplayGbm::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
-                                   egl::Surface *readSurface,
-                                   gl::Context *context)
-{
-    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
-}
-
-bool DisplayGbm::validateEglConfig(const EGLint *configAttribs)
-{
-    EGLint numConfigs;
-    if (!mEGL->chooseConfig(configAttribs, NULL, 0, &numConfigs))
-    {
-        ERR() << "eglChooseConfig failed with error " << egl::Error(mEGL->getError());
-        return false;
-    }
-    if (numConfigs == 0)
-    {
-        return false;
-    }
-    return true;
-}
-
-egl::ConfigSet DisplayGbm::generateConfigs()
-{
-    // clang-format off
-    std::vector<EGLint> configAttribs8888 =
-    {
-        EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER,
-        EGL_SURFACE_TYPE, EGL_DONT_CARE,
-        EGL_CONFIG_CAVEAT, EGL_NONE,
-        EGL_CONFORMANT, EGL_DONT_CARE,
-        EGL_RENDERABLE_TYPE, EGL_DONT_CARE,
-        EGL_RED_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_BLUE_SIZE, 8,
-        EGL_ALPHA_SIZE, 8,
-        EGL_BUFFER_SIZE, 32,
-        EGL_DEPTH_SIZE, 24,
-        EGL_NONE
-    };
-    // clang-format on
-
-    if (!validateEglConfig(configAttribs8888.data()))
-    {
-        ERR() << "No suitable EGL configs found.";
-        return egl::ConfigSet();
-    }
-    mConfigAttribList = configAttribs8888;
-    return DisplayEGL::generateConfigs();
-}
-
 bool DisplayGbm::isValidNativeWindow(EGLNativeWindowType window) const
 {
     return true;
@@ -978,63 +835,12 @@ void DisplayGbm::setSwapInterval(EGLSurface drawable, SwapControlData *data)
     ASSERT(data != nullptr);
 }
 
-void DisplayGbm::generateExtensions(egl::DisplayExtensions *outExtensions) const
+EGLint DisplayGbm::fixSurfaceType(EGLint surfaceType) const
 {
-    DisplayEGL::generateExtensions(outExtensions);
-
-    // Surfaceless contexts are emulated even if there is no native support.
-    outExtensions->surfacelessContext = true;
-}
-
-class WorkerContextGbm final : public WorkerContext
-{
-  public:
-    WorkerContextGbm(EGLContext context, FunctionsEGL *functions);
-    ~WorkerContextGbm() override;
-
-    bool makeCurrent() override;
-    void unmakeCurrent() override;
-
-  private:
-    EGLContext mContext;
-    FunctionsEGL *mFunctions;
-};
-
-WorkerContextGbm::WorkerContextGbm(EGLContext context, FunctionsEGL *functions)
-    : mContext(context), mFunctions(functions)
-{}
-
-WorkerContextGbm::~WorkerContextGbm()
-{
-    mFunctions->destroyContext(mContext);
-}
-
-bool WorkerContextGbm::makeCurrent()
-{
-    if (mFunctions->makeCurrent(EGL_NO_SURFACE, mContext) == EGL_FALSE)
-    {
-        ERR() << "Unable to make the EGL context current.";
-        return false;
-    }
-    return true;
-}
-
-void WorkerContextGbm::unmakeCurrent()
-{
-    mFunctions->makeCurrent(EGL_NO_SURFACE, EGL_NO_CONTEXT);
-}
-
-WorkerContext *DisplayGbm::createWorkerContext(std::string *infoLog,
-                                               EGLContext sharedContext,
-                                               const native_egl::AttributeVector workerAttribs)
-{
-    EGLContext context = mEGL->createContext(mConfig, sharedContext, workerAttribs.data());
-    if (context == EGL_NO_CONTEXT)
-    {
-        *infoLog += "Unable to create the EGL context.";
-        return nullptr;
-    }
-    return new WorkerContextGbm(context, mEGL);
+    EGLint type = DisplayEGL::fixSurfaceType(surfaceType);
+    // Ozone native surfaces don't support EGL_WINDOW_BIT,
+    // but ANGLE uses renderbuffers to emulate windows
+    return type | EGL_WINDOW_BIT;
 }
 
 }  // namespace rx

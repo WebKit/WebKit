@@ -16,10 +16,6 @@
 #include "common/angleutils.h"
 #include "util/Timer.h"
 
-// DeleteFile is defined in the Windows headers to either DeleteFileA or DeleteFileW. Make sure
-// there are no conflicts.
-#undef DeleteFile
-
 namespace angle
 {
 // Cross platform equivalent of the Windows Sleep function
@@ -44,7 +40,7 @@ void PrintStackBacktrace();
 // Get temporary directory.
 bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen);
 
-// Creates a temporary file. The full path is placed in |path|, and the
+// Creates a temporary file. The full path is placed in |tempFileNameOut|, and the
 // function returns true if was successful in creating the file. The file will
 // be empty and all handles closed after this function returns.
 bool CreateTemporaryFile(char *tempFileNameOut, uint32_t maxFileNameLen);
@@ -53,7 +49,7 @@ bool CreateTemporaryFile(char *tempFileNameOut, uint32_t maxFileNameLen);
 bool CreateTemporaryFileInDir(const char *dir, char *tempFileNameOut, uint32_t maxFileNameLen);
 
 // Deletes a file or directory.
-bool DeleteFile(const char *path);
+bool DeleteSystemFile(const char *path);
 
 // Reads a file contents into a string.
 bool ReadEntireFileToString(const char *filePath, char *contentsOut, uint32_t maxLen);
@@ -72,7 +68,7 @@ class Process : angle::NonCopyable
     virtual bool kill()       = 0;
     virtual int getExitCode() = 0;
 
-    double getElapsedTimeSeconds() const { return mTimer.getElapsedTime(); }
+    double getElapsedTimeSeconds() const { return mTimer.getElapsedWallClockTime(); }
     const std::string &getStdout() const { return mStdout; }
     const std::string &getStderr() const { return mStderr; }
 
@@ -85,12 +81,23 @@ class Process : angle::NonCopyable
     std::string mStderr;
 };
 
+enum class ProcessOutputCapture
+{
+    Nothing,
+    // Capture stdout only
+    StdoutOnly,
+    // Capture stdout, and pipe stderr to stdout
+    StdoutAndStderrInterleaved,
+    // Capture stdout and stderr separately
+    StdoutAndStderrSeparately,
+};
+
 class ProcessHandle final : angle::NonCopyable
 {
   public:
     ProcessHandle();
     ProcessHandle(Process *process);
-    ProcessHandle(const std::vector<const char *> &args, bool captureStdout, bool captureStderr);
+    ProcessHandle(const std::vector<const char *> &args, ProcessOutputCapture captureOutput);
     ~ProcessHandle();
     ProcessHandle(ProcessHandle &&other);
     ProcessHandle &operator=(ProcessHandle &&rhs);
@@ -114,13 +121,21 @@ class ProcessHandle final : angle::NonCopyable
 //
 // On success, returns a Process pointer with started() == true.
 // On failure, returns a Process pointer with started() == false.
-Process *LaunchProcess(const std::vector<const char *> &args,
-                       bool captureStdout,
-                       bool captureStderr);
+Process *LaunchProcess(const std::vector<const char *> &args, ProcessOutputCapture captureOutput);
 
 int NumberOfProcessors();
 
 const char *GetNativeEGLLibraryNameWithExtension();
+
+// Intercept Metal shader cache access to avoid slow caching mechanism that caused the test timeout
+// in the past. Note:
+// - If there is NO "--skip-file-hooking" switch in the argument list:
+//   - This function will re-launch the app with additional argument "--skip-file-hooking".
+//   - The running process's image & memory will be re-created.
+// - If there is "--skip-file-hooking" switch in the argument list, this function will do nothing.
+#if defined(ANGLE_PLATFORM_APPLE)
+void InitMetalFileAPIHooking(int argc, char **argv);
+#endif
 }  // namespace angle
 
 #endif  // UTIL_TEST_UTILS_H_

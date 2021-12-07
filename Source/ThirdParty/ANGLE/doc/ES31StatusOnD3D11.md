@@ -29,4 +29,3 @@
 ### Notes [2]
 * Shader storage blocks in non-compute shaders are not implemented yet.
 * Multiple shader storage blocks are not allowed to be bound to the same buffer. See [here](http://anglebug.com/3032).
-* Operating on arrays and structures as whole entities for shader storage block members is not implemented.

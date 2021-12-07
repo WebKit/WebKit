@@ -81,9 +81,7 @@ inline void LoadToNative3To4(size_t width, size_t height, size_t depth,
             type *dest = priv::OffsetDataPointer<type>(output, y, z, outputRowPitch, outputDepthPitch);
             for (size_t x = 0; x < width; x++)
             {
-                dest[x * 4 + 0] = source[x * 3 + 0];
-                dest[x * 4 + 1] = source[x * 3 + 1];
-                dest[x * 4 + 2] = source[x * 3 + 2];
+                memcpy(&dest[x * 4], &source[x * 3], sizeof(type) * 3);
                 dest[x * 4 + 3] = fourthValue;
             }
         }

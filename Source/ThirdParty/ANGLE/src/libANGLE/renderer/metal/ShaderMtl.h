@@ -30,6 +30,7 @@ class ShaderMtl : public ShaderImpl
     {
         return &translatorMetalReflection;
     }
+
     std::string getDebugInfo() const override;
 
     sh::TranslatorMetalReflection translatorMetalReflection = {};

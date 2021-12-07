@@ -47,6 +47,11 @@ void ImageVk::onDestroy(const egl::Display *display)
             GetImplAs<ExternalImageSiblingVk>(GetAs<egl::ExternalImageSibling>(mState.source));
         externalImageSibling->release(renderer);
         mImage = nullptr;
+
+        // This is called as a special case where resources may be allocated by the caller, without
+        // the caller ever issuing a draw command to free them. Specifically, SurfaceFlinger
+        // optimistically allocates EGLImages that it may never draw to.
+        renderer->cleanupCompletedCommandsGarbage();
     }
 }
 
@@ -54,11 +59,14 @@ egl::Error ImageVk::initialize(const egl::Display *display)
 {
     if (egl::IsTextureTarget(mState.target))
     {
-        TextureVk *textureVk = GetImplAs<TextureVk>(GetAs<gl::Texture>(mState.source));
-
-        // Make sure the texture has created its backing storage
         ASSERT(mContext != nullptr);
         ContextVk *contextVk = vk::GetImpl(mContext);
+        TextureVk *textureVk = GetImplAs<TextureVk>(GetAs<gl::Texture>(mState.source));
+
+        // Make sure the texture uses renderable format
+        ANGLE_TRY(ResultToEGL(textureVk->ensureRenderable(contextVk)));
+
+        // Make sure the texture has created its backing storage
         ANGLE_TRY(ResultToEGL(
             textureVk->ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels)));
 
@@ -101,7 +109,8 @@ egl::Error ImageVk::initialize(const egl::Display *display)
 
         // start with some reasonable alignment that's safe for the case where intendedFormatID is
         // FormatID::NONE
-        size_t alignment = mImage->getFormat().getValidImageCopyBufferAlignment();
+        size_t alignment = vk::GetValidImageCopyBufferAlignment(mImage->getIntendedFormatID(),
+                                                                mImage->getActualFormatID());
 
         // Make sure a staging buffer is ready to use to upload data
         mImage->initStagingBuffer(renderer, alignment, vk::kStagingBufferFlags,
@@ -151,9 +160,15 @@ angle::Result ImageVk::orphan(const gl::Context *context, egl::ImageSibling *sib
     ContextVk *contextVk = vk::GetImpl(context);
 
     // Flush the context to make sure the fence has been submitted.
-    ANGLE_TRY(contextVk->flushImpl(nullptr));
+    return contextVk->flushImpl(nullptr, RenderPassClosureReason::ImageOrphan);
+}
 
-    return angle::Result::Continue;
+egl::Error ImageVk::exportVkImage(void *vkImage, void *vkImageCreateInfo)
+{
+    *reinterpret_cast<VkImage *>(vkImage) = mImage->getImage().getHandle();
+    auto *info = reinterpret_cast<VkImageCreateInfo *>(vkImageCreateInfo);
+    *info      = mImage->getVkImageCreateInfo();
+    return egl::NoError();
 }
 
 }  // namespace rx
