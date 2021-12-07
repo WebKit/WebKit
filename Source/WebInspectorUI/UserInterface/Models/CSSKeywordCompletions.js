@@ -31,7 +31,7 @@
 
 WI.CSSKeywordCompletions = {};
 
-WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition, allowEmptyPrefix} = {})
+WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition, allowEmptyPrefix, useFuzzyMatching} = {})
 {
     caretPosition ??= text.length;
     allowEmptyPrefix ??= false;
@@ -42,10 +42,17 @@ WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition,
 
     if (!text.length && allowEmptyPrefix)
         return {prefix: text, completions: WI.CSSCompletions.cssNameCompletions.values};
-    return {prefix: text, completions:WI.CSSCompletions.cssNameCompletions.startsWith(text)};
+
+    let completions;
+    if (useFuzzyMatching)
+        completions = WI.CSSCompletions.cssNameCompletions.executeQuery(text);
+    else
+        completions = WI.CSSCompletions.cssNameCompletions.startsWith(text);
+
+    return {prefix: text, completions};
 };
 
-WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider} = {})
+WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider, useFuzzyMatching} = {})
 {
     caretPosition ??= text.length;
 
@@ -86,9 +93,14 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
     if ((caretIsInMiddleOfToken && currentTokenValue.length) || (!caretIsInMiddleOfToken && tokenAfterCaret && /[a-zA-Z0-9-]/.test(tokenAfterCaret.value[0])))
         return {prefix: "", completions: []};
 
-    // If the current token value is a comma or opening parenthesis, treat it as if we are at the start of a new token.
+    // If the current token value is a comma or open parenthesis, treat it as if we are at the start of a new token.
     if (currentTokenValue === "(" || currentTokenValue === ",")
         currentTokenValue = "";
+
+    // It's not valid CSS to append completions immediately after a closing parenthesis.
+    let tokenBeforeCaret = tokens[indexOfTokenAtCaret - 1];
+    if (currentTokenValue === ")" || tokenBeforeCaret?.value === ")")
+        return {prefix: "", completions: []};
 
     let functionName = null;
     let preceedingFunctionDepth = 0;
@@ -108,14 +120,20 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
         }
     }
 
+    let valueCompletions;
     if (functionName) {
-        let completions = WI.CSSKeywordCompletions.forFunction(functionName);
-        let contextualValueCompletions = additionalFunctionValueCompletionsProvider?.(functionName) || [];
-        completions.addValues(contextualValueCompletions);
-        return {prefix: currentTokenValue, completions: completions.startsWith(currentTokenValue)};
-    }
+        valueCompletions = WI.CSSKeywordCompletions.forFunction(functionName);
+        valueCompletions.addValues(additionalFunctionValueCompletionsProvider?.(functionName) ?? []);
+    } else
+        valueCompletions = WI.CSSKeywordCompletions.forProperty(propertyName);
 
-    return {prefix: currentTokenValue, completions: WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(currentTokenValue)};
+    let completions;
+    if (useFuzzyMatching)
+        completions = valueCompletions.executeQuery(currentTokenValue);
+    else
+        completions = valueCompletions.startsWith(currentTokenValue);
+
+    return {prefix: currentTokenValue, completions};
 };
 
 WI.CSSKeywordCompletions.forProperty = function(propertyName)

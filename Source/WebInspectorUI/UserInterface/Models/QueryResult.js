@@ -36,6 +36,7 @@ WI.QueryResult = class QueryResult
     // Public
 
     get value() { return this._value; }
+    get matches() { return this._matches; }
 
     get rank()
     {

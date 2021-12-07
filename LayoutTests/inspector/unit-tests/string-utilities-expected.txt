@@ -70,3 +70,21 @@ PASS: The letter 'c' and 'e' are escaped.
 PASS: The letter 'c' and 'e' are escaped.
 PASS: The letter 'c', 'd', and 'e' are escaped.
 
+-- Running test case: String.prototype.isLowerCase
+PASS: String with single lowercase character should be lowercase.
+PASS: String with multiple lowercase characters should be lowercase.
+PASS: String with single uppercase character should not be lowercase.
+PASS: String with mixed case characters should not be lowercase.
+PASS: Empty string should not be lowercase.
+PASS: String with non-alpha character should not be lowercase.
+PASS: String with numeric character should not be lowercase.
+
+-- Running test case: String.prototype.isUpperCase
+PASS: String with single uppercase character should be uppercase.
+PASS: String with multiple uppercase characters should be uppercase.
+PASS: String with single lowercase character should not be uppercase.
+PASS: String with mixed case characters should not be uppercase.
+PASS: Empty string should not be uppercase.
+PASS: String with non-alpha character should not be uppercase.
+PASS: String with numeric character should not be uppercase.
+

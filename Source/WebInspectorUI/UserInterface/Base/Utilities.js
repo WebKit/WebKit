@@ -773,7 +773,7 @@ Object.defineProperty(String.prototype, "isLowerCase",
 {
     value()
     {
-        return String(this) === this.toLowerCase();
+        return /^[a-z]+$/.test(this);
     }
 });
 
@@ -781,7 +781,7 @@ Object.defineProperty(String.prototype, "isUpperCase",
 {
     value()
     {
-        return String(this) === this.toUpperCase();
+        return /^[A-Z]+$/.test(this);
     }
 });
 

@@ -58,6 +58,7 @@ WI.CSSCompletions = class CSSCompletions
         this._values.sort();
 
         this._acceptEmptyPrefix = acceptEmptyPrefix;
+        this._queryController = null;
     }
 
     // Static
@@ -253,6 +254,15 @@ WI.CSSCompletions = class CSSCompletions
 
         this._values.pushAll(values);
         this._values.sort();
+
+        this._queryController?.addValues(values);
+    }
+
+    executeQuery(query)
+    {
+        this._queryController ||= new WI.CSSQueryController(this._values);
+
+        return this._queryController.executeQuery(query);
     }
 
     startsWith(prefix)

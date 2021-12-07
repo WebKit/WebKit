@@ -29,6 +29,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
     {
         this._delegate = delegate;
         this._element = element;
+        this._pendingValue = null;
 
         this._completionProvider = completionProvider || null;
         if (this._completionProvider) {
@@ -52,6 +53,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._keyDownCaretPosition = -1;
         this._valueBeforeEditing = "";
         this._completionPrefix = "";
+        this._completionText = "";
         this._controlSpaceKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, WI.KeyboardShortcut.Key.Space);
     }
 
@@ -61,8 +63,17 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     get editing() { return this._editing; }
 
-    get value() { return this._element.textContent; }
-    set value(value) { this._element.textContent = value; }
+    get value()
+    {
+        return this._pendingValue ?? this._element.textContent;
+    }
+
+    set value(value)
+    {
+        this._element.textContent = value;
+
+        this._pendingValue = null;
+    }
 
     valueWithoutSuggestion()
     {
@@ -94,9 +105,6 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         }
 
         this._suggestionHintElement.remove();
-
-        // Removing the suggestion hint element may leave the contents of `_element` fragmented into multiple text nodes.
-        this._combineEditorElementChildren();
     }
 
     startEditing()
@@ -130,6 +138,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         this._editing = false;
         this._valueBeforeEditing = "";
+        this._pendingValue = null;
+        this._completionText = "";
         this._element.classList.remove("editing");
         this._element.contentEditable = false;
 
@@ -143,10 +153,16 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         this._suggestionsView.hide();
 
-        let hadSuggestionHint = !!this.suggestionHint;
+        let hadCompletionText = this._completionText.length > 0;
+
+        // Resetting the suggestion hint removes any suggestion hint element that is attached.
         this.suggestionHint = "";
-        if (hadSuggestionHint && this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
-            this._delegate.spreadsheetTextFieldDidChange(this);
+        this._completionText = "";
+
+        if (hadCompletionText) {
+            this._pendingValue = this.valueWithoutSuggestion();
+            this._delegate?.spreadsheetTextFieldDidChange?.(this);
+        }
     }
 
     detached()
@@ -157,22 +173,26 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     // CompletionSuggestionsView delegate
 
-    completionSuggestionsSelectedCompletion(suggestionsView, selectedText = "")
+    completionSuggestionsSelectedCompletion(suggestionsView, completionText = "")
     {
-        this.suggestionHint = selectedText.slice(this._completionPrefix.length);
+        this._completionText = completionText;
 
-        if (this.suggestionHint.length)
-            this._reAttachSuggestionHint();
+        if (this._completionText.startsWith(this._completionPrefix))
+            this.suggestionHint = this._completionText.slice(this._completionPrefix.length);
+        else
+            this.suggestionHint = "";
+
+        this._updatePendingValueWithCompletionText();
 
         if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
             this._delegate.spreadsheetTextFieldDidChange(this);
     }
 
-    completionSuggestionsClickedCompletion(suggestionsView, selectedText)
+    completionSuggestionsClickedCompletion(suggestionsView, completionText)
     {
-        this.suggestionHint = selectedText.slice(this._completionPrefix.length);
-
-        this._applyCompletionHint({moveCaretToEndOfCompletion: true});
+        this._completionText = completionText;
+        this._updatePendingValueWithCompletionText();
+        this._applyPendingValue({moveCaretToEndOfCompletion: true});
         this.discardCompletion();
 
         if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
@@ -219,7 +239,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (document.activeElement === this._element)
             return;
 
-        this._applyCompletionHint();
+        this._applyPendingValue();
         this.discardCompletion();
 
         let changed = this._valueBeforeEditing !== this.value;
@@ -252,7 +272,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         let isTabKey = event.key === "Tab";
         if (isEnterKey || isTabKey) {
             event.stop();
-            this._applyCompletionHint();
+            this._applyPendingValue();
 
             let direction = (isTabKey && event.shiftKey) ? "backward" : "forward";
 
@@ -338,12 +358,12 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return true;
         }
 
-        if (event.key === "ArrowRight" && this.suggestionHint.length) {
+        if (event.key === "ArrowRight" && this._completionText.length) {
             let selection = window.getSelection();
 
             if (selection.isCollapsed) {
                 event.stop();
-                this._applyCompletionHint({moveCaretToEndOfCompletion: true});
+                this._applyPendingValue({moveCaretToEndOfCompletion: true});
 
                 // When completing "background", don't hide the completion popover.
                 // Continue showing the popover with properties such as "background-color" and "background-image".
@@ -358,21 +378,14 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         if (event.key === "Escape" && this._suggestionsView.visible) {
             event.stop();
-
-            let willChange = !!this.suggestionHint;
             this.discardCompletion();
-
-            if (willChange && this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
-                this._delegate.spreadsheetTextFieldDidChange(this);
 
             return true;
         }
 
-        if (event.key === "ArrowLeft" && (this.suggestionHint || this._suggestionsView.visible)) {
+        if (event.key === "ArrowLeft" && (this._completionText.length || this._suggestionsView.visible)) {
             this.discardCompletion();
 
-            if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
-                this._delegate.spreadsheetTextFieldDidChange(this);
             return true;
         }
 
@@ -405,6 +418,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (!this._editing)
             return;
 
+        this._pendingValue = this.valueWithoutSuggestion().trim();
         this._preventDiscardingCompletionsOnKeyUp = true;
         this._updateCompletions();
 
@@ -417,8 +431,9 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (!this._completionProvider)
             return;
 
+        let useFuzzyMatching = WI.settings.experimentalCSSCompletionFuzzyMatching.value;
         let valueWithoutSuggestion = this.valueWithoutSuggestion();
-        let {completions, prefix} = this._completionProvider(valueWithoutSuggestion, {allowEmptyPrefix: forceCompletions, caretPosition: this._getCaretPosition()});
+        let {completions, prefix} = this._completionProvider(valueWithoutSuggestion, {allowEmptyPrefix: forceCompletions, caretPosition: this._getCaretPosition(), useFuzzyMatching});
         this._completionPrefix = prefix;
 
         if (!completions.length) {
@@ -427,7 +442,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         }
 
         // No need to show the completion popover with only one item that matches the entered value.
-        if (completions.length === 1 && completions[0] === valueWithoutSuggestion) {
+        if (completions.length === 1 && this._suggestionsView.getCompletionText(completions[0]) === valueWithoutSuggestion) {
             this.discardCompletion();
             return;
         }
@@ -440,8 +455,9 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         this._suggestionsView.update(completions);
 
-        if (completions.length === 1) {
-            // No need to show the completion popover that matches the suggestion hint.
+        if (completions.length === 1 && this._suggestionsView.getCompletionText(completions[0]).startsWith(this._completionPrefix)) {
+            // No need to show the completion popover with only one item that begins with the completion prefix.
+            // When using fuzzy matching, the completion prefix may not occur at the beginning of the suggestion.
             this._suggestionsView.hide();
         } else
             this._showSuggestionsView();
@@ -530,27 +546,29 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         return range;
     }
 
-    _applyCompletionHint({moveCaretToEndOfCompletion} = {})
+    _applyPendingValue({moveCaretToEndOfCompletion} = {})
     {
-        if (!this._completionProvider || !this.suggestionHint)
+        if (!this._pendingValue)
             return;
 
-        this._combineEditorElementChildren({newCaretPosition: moveCaretToEndOfCompletion ? this._getCaretPosition() + this.suggestionHint.length : null});
-    }
+        let caretPosition = this._getCaretPosition();
+        let newCaretPosition = moveCaretToEndOfCompletion ? caretPosition - this._completionPrefix.length + this._completionText.length : caretPosition;
 
-    _combineEditorElementChildren({newCaretPosition} = {})
-    {
-        newCaretPosition ??= this._getCaretPosition();
-
-        // Setting the textContent of the element to its current textContent will take the text from the multiple
-        // potential child nodes (potentially a suggestion hint node and some number of existing text nodes) and turn
-        // them into a single text node within the element.
-        this._element.textContent = this._element.textContent;
+        // Setting the value collapses the text selection. Get the caret position before doing this.
+        this.value = this._pendingValue;
 
         if (this._element.textContent.length) {
             let textChildNode = this._element.firstChild;
             window.getSelection().setBaseAndExtent(textChildNode, newCaretPosition, textChildNode, newCaretPosition);
         }
+    }
+
+    _updatePendingValueWithCompletionText()
+    {
+        let caretPosition = this._getCaretPosition();
+        let value = this.valueWithoutSuggestion();
+
+        this._pendingValue = value.slice(0, caretPosition - this._completionPrefix.length) + this._completionText + value.slice(caretPosition + 1, value.length);
     }
 
     _reAttachSuggestionHint()

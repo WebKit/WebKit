@@ -66,7 +66,7 @@ function test()
         expectedCompletions: ["range"],
     });
 
-    function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions, additionalFunctionValueCompletionsProvider}) {
+    function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions, expectedCompletionCount, additionalFunctionValueCompletionsProvider}) {
         suite.addTestCase({
             name,
             description,
@@ -74,10 +74,14 @@ function test()
                 caretPosition ??= text.length;
                 expectedPrefix ??= text;
                 expectedCompletions ??= [];
+                expectedCompletionCount ??= -1;
                 additionalFunctionValueCompletionsProvider ??= () => {};
 
                 let completionResults = WI.CSSKeywordCompletions.forPartialPropertyValue(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider});
                 InspectorTest.expectEqual(completionResults.prefix, expectedPrefix, `Expected result prefix to be "${expectedPrefix}"`);
+
+                if (expectedCompletionCount >= 0)
+                    InspectorTest.expectEqual(completionResults.completions.length, expectedCompletionCount, `Expected exactly ${expectedCompletionCount} completion results.`);
 
                 // Because expected completions could be added at any time, just make sure the list contains our expected completions, instead of enforcing an exact match between expectations and reality.
                 let expectedCompletionsPresent = expectedCompletions.every((expectedCompletion) => {
@@ -227,6 +231,28 @@ function test()
         expectedPrefix: "",
         expectedCompletions: ["--one", "--two"],
         additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
+    });
+
+    // `hsl()a|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.NoWhitespaceAfterFunction",
+        description: "Test that color completions are not offered immediately after a closing parenthesis",
+        propertyName: "background",
+        text: "hsl()a",
+        caretPosition: 6,
+        expectedPrefix: "",
+        expectedCompletionCount: 0
+    });
+
+    // `hsl() a|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.WhitespaceAfterFunction",
+        description: "Test that color completions are offered when a closing parenthesis is followed by whitespace",
+        propertyName: "background",
+        text: "hsl() a",
+        caretPosition: 7,
+        expectedPrefix: "a",
+        expectedCompletions: ["aliceblue", "antiquewhite"],
     });
 
     suite.runTestCasesAndFinish();

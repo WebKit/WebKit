@@ -71,3 +71,12 @@ PASS: All expected completions were present.
 PASS: Expected result prefix to be ""
 PASS: All expected completions were present.
 
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.NoWhitespaceAfterFunction
+PASS: Expected result prefix to be ""
+PASS: Expected exactly 0 completion results.
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.WhitespaceAfterFunction
+PASS: Expected result prefix to be "a"
+PASS: All expected completions were present.
+

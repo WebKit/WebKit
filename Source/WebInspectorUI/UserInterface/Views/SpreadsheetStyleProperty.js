@@ -936,12 +936,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _handleNameChange()
     {
-        this._property.name = this._nameElement.textContent.trim();
+        this._property.name = this._nameTextField.value;
     }
 
     _handleValueChange()
     {
-        let value = this._valueElement.textContent;
+        let value = this._valueTextField.value;
 
         this._property.rawValue = value.trim();
 
@@ -975,9 +975,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
     }
 
-    _nameCompletionDataProvider(text, {caretPosition, allowEmptyPrefix} = {})
+    _nameCompletionDataProvider(text, options = {})
     {
-        return WI.CSSKeywordCompletions.forPartialPropertyName(text, {caretPosition, allowEmptyPrefix});
+        return WI.CSSKeywordCompletions.forPartialPropertyName(text, options);
     }
 
     _handleValueBeforeInput(event)
@@ -999,9 +999,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this.spreadsheetTextFieldDidCommit(this._valueTextField, {direction: "forward"});
     }
 
-    _valueCompletionDataProvider(text, {caretPosition, allowEmptyPrefix} = {})
+    _valueCompletionDataProvider(text, options = {})
     {
-        return WI.CSSKeywordCompletions.forPartialPropertyValue(text, this._nameElement.textContent.trim(), {caretPosition, additionalFunctionValueCompletionsProvider: this.additionalFunctionValueCompletionsProvider.bind(this)});
+        options.additionalFunctionValueCompletionsProvider = this.additionalFunctionValueCompletionsProvider.bind(this);
+        return WI.CSSKeywordCompletions.forPartialPropertyValue(text, this._nameElement.textContent.trim(), options);
     }
 
     _setupJumpToSymbol(element)

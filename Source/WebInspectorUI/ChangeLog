@@ -1,3 +1,121 @@
+2021-12-07  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Support fuzzy matching in CSS completions
+        https://bugs.webkit.org/show_bug.cgi?id=230351
+        <rdar://82976292>
+
+        Reviewed by Devin Rousso.
+
+        Use fuzzy matching for identifying CSS completions in the Styles details sidebar.
+
+        There are three main parts to this patch:
+        1. Introduce `WI.CSSQueryController` with logic to do fuzzy matching on provided values.
+        2. Change `WI.CompletionSuggestionsView` to support both plain strings and `WI.QueryResult`s.
+        3. Change `WI.SpreadsheetTextField` so its `value` doesn't always return its `element.textContent`.
+
+        With fuzzy matching, completions are not guaranteed anymore to be prefixed with the query.
+        Therefore, it's no longer viable to rely on `WI.SpreadsheetTextField.value` being a concatenation of `textContent` of nodes within. 
+
+        To adress this, there's now `WI.SpreadsheetTextField._pendingValue` which includes the prospective
+        completion regardless of whether the query is a completion prefix or at match at any other position.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        Add a flag to enable the fuzzy matching feature.
+
+        * UserInterface/Controllers/CSSQueryController.js: Added.
+        (WI.CSSQueryController):
+        (WI.CSSQueryController.prototype.addValues):
+        (WI.CSSQueryController.prototype.reset):
+        (WI.CSSQueryController.prototype.executeQuery):
+        (WI.CSSQueryController.prototype._findSpecialCharacterIndices):
+        Add a speclialized class to hold the logic for fuzzy matching of CSS properties and values.
+        It clones logic from `WI.ResouceQueryController` with adjustments specific to CSS; more to follow as the feature gets refined.
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions):
+        (WI.CSSCompletions.prototype.addValues):
+        (WI.CSSCompletions.prototype.executeQuery):
+        Support both the current prefix matching approach as well as fuzzy matching.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forPartialPropertyName):
+        Opt into fuzzy matching when getting completions for property names and values. 
+
+        * UserInterface/Models/QueryResult.js:
+        (WI.QueryResult.prototype.get matches):
+        * UserInterface/Test.html:
+
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (.completion-suggestions-container > .item > .highlighted):
+        Highlight specific characters that matched in result identified by fuzzy matching.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WI.CompletionSuggestionsView.prototype.selectNext):
+        (WI.CompletionSuggestionsView.prototype.selectPrevious):
+        (WI.CompletionSuggestionsView.prototype.update):
+        (WI.CompletionSuggestionsView.prototype.getCompletionText):
+        (WI.CompletionSuggestionsView.prototype._createHighlightedCompletionFragment):
+        Change `WI.CompletionSuggestionsView` to hold a list of completions, 
+        either strings or `WI.QueryResult`, and return the appropriate completion text
+        instead of returning the `textContent` of the selected element.
+
+        `WI.CompletionSuggestionsView` is used elsewhere in the Console and Sources panel
+        so avoid impacting those consumers until they opt in to fuzzy matching as well.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._handleNameChange):
+        (WI.SpreadsheetStyleProperty.prototype._handleValueChange):
+        (WI.SpreadsheetStyleProperty.prototype._nameCompletionDataProvider):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+        On change, get the value of the `WI.SpreadsheetTextField` instead of 
+        the corresponding element's `textContent`.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        Introduced `SpreadsheetTextField._completionPrefix` to hold the query a user is typing.
+
+        Introduced `SpreadsheetTextField._completionText` to hold the completion text of the selected but
+        not yet applied completion. This replaces the previous behavior of concatenating the query and `suggestionHint`
+        because with fuzzy matching the completion isn't guaranteed to be prefixed with the query.
+
+        Introduced `SpreadsheetTextField._pendingValue` to hold the result of applying the selected
+        completion. This replaces the previous behavior of `WI.SpreadsheetTextField._combineEditorElementChildren`.
+
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype.get value):
+        Change `WI.SpreadsheetTextField` so its value is divorced from its element's `textContent`.
+        While editing, `WI.SpreadsheetTextField.value` returns the pending value so that
+        a valid CSS string gets written to the stylesheet.
+
+        (WI.SpreadsheetTextField.prototype.set suggestionHint):
+        If the query is a prefix for the selected completion, keep the existing behavior of appending
+        the suggestion hint substring. Otherwise, hide the suggestion hint element because the
+        concatenation doesn't make sense.
+
+        (WI.SpreadsheetTextField.prototype.stopEditing):
+        (WI.SpreadsheetTextField.prototype.discardCompletion):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsSelectedCompletion):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsClickedCompletion):
+        (WI.SpreadsheetTextField.prototype._discardChange):
+        (WI.SpreadsheetTextField.prototype._handleBlur):
+        (WI.SpreadsheetTextField.prototype._handleKeyDown):
+        (WI.SpreadsheetTextField.prototype._handleKeyDownForSuggestionView):
+        (WI.SpreadsheetTextField.prototype._handleInput):
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        (WI.SpreadsheetTextField.prototype._applyPendingValue):
+        After applying a completion, the value is replaced with `WI.SpreadsheetTextField._pendingValue`.
+        At this point, `WI.SpreadsheetTextField.value` and the `textContent` of the element converge.
+
+        (WI.SpreadsheetTextField.prototype._updatePendingValueWithCompletionText):
+        When presented with a completion, the query gets substituted with the full completion text in 
+        `WI.SpreadsheetTextField._pendingValue` regardless of whether the query is a prefix or not.
+
+        (WI.SpreadsheetTextField.prototype._applyCompletionHint): Deleted.
+        (WI.SpreadsheetTextField.prototype._combineEditorElementChildren): Deleted.
+
 2021-12-06  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Support Cascade Layers in the Styles sidebar

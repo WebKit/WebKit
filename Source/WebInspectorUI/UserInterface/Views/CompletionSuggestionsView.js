@@ -32,6 +32,7 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._delegate = delegate || null;
         this._preventBlur = preventBlur || false;
 
+        this._completions = [];
         this._selectedIndex = NaN;
         this._moveIntervalIdentifier = null;
 
@@ -89,9 +90,8 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         else
             ++this.selectedIndex;
 
-        var selectedItemElement = this._selectedItemElement;
-        if (selectedItemElement && this._delegate && typeof this._delegate.completionSuggestionsSelectedCompletion === "function")
-            this._delegate.completionSuggestionsSelectedCompletion(this, selectedItemElement.textContent);
+        if (this._completions[this.selectedIndex])
+            this._delegate?.completionSuggestionsSelectedCompletion?.(this, this.getCompletionText(this._completions[this.selectedIndex]));
     }
 
     selectPrevious()
@@ -101,9 +101,8 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         else
             --this.selectedIndex;
 
-        var selectedItemElement = this._selectedItemElement;
-        if (selectedItemElement && this._delegate && typeof this._delegate.completionSuggestionsSelectedCompletion === "function")
-            this._delegate.completionSuggestionsSelectedCompletion(this, selectedItemElement.textContent);
+        if (this._completions[this.selectedIndex])
+            this._delegate?.completionSuggestionsSelectedCompletion?.(this, this.getCompletionText(this._completions[this.selectedIndex]));
     }
 
     isHandlingClickEvent()
@@ -175,20 +174,37 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
     update(completions, selectedIndex)
     {
         this._containerElement.removeChildren();
+        this._completions = completions;
 
         if (typeof selectedIndex === "number")
             this._selectedIndex = selectedIndex;
 
-        for (var i = 0; i < completions.length; ++i) {
+        for (let [index, completion] of completions.entries()) {
             var itemElement = document.createElement("div");
             itemElement.classList.add("item");
-            itemElement.classList.toggle("selected", i === this._selectedIndex);
-            itemElement.textContent = completions[i];
-            this._containerElement.appendChild(itemElement);
+            itemElement.classList.toggle("selected", index === this._selectedIndex);
 
-            if (this._delegate && typeof this._delegate.completionSuggestionsViewCustomizeCompletionElement === "function")
-                this._delegate.completionSuggestionsViewCustomizeCompletionElement(this, itemElement, completions[i]);
+            if (typeof completion === "string")
+                itemElement.textContent = completion;
+            else if (completion instanceof WI.QueryResult)
+                itemElement.appendChild(this._createMatchedCompletionFragment(completion.value, completion.matchingTextRanges));
+
+            this._containerElement.appendChild(itemElement);
+            this._delegate?.completionSuggestionsViewCustomizeCompletionElement?.(this, itemElement, completion);
         }
+    }
+
+    getCompletionText(completion)
+    {
+        console.assert(typeof completion === "string" || completion instanceof WI.QueryResult, completion);
+
+        if (typeof completion === "string")
+            return completion;
+
+        if (completion instanceof WI.QueryResult)
+            return completion.value;
+
+        return "";
     }
 
     // Private
@@ -201,6 +217,31 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         var element = this._containerElement.children[this._selectedIndex] || null;
         console.assert(element);
         return element;
+    }
+
+    _createMatchedCompletionFragment(completionText, matchingTextRanges)
+    {
+        let completionFragment = document.createDocumentFragment();
+        let lastIndex = 0;
+        for (let textRange of matchingTextRanges) {
+            console.assert(textRange.startColumn >= 0 && textRange.startColumn < completionText.length, textRange);
+            console.assert(textRange.endColumn > 0 && textRange.endColumn <= completionText.length, textRange);
+            console.assert(textRange.startColumn < textRange.endColumn);
+
+            if (textRange.startColumn > lastIndex)
+                completionFragment.append(completionText.substring(lastIndex, textRange.startColumn));
+
+            let matchedSpan = document.createElement("span");
+            matchedSpan.classList.add("matched");
+            matchedSpan.append(completionText.substring(textRange.startColumn, textRange.endColumn));
+            completionFragment.append(matchedSpan);
+            lastIndex = textRange.endColumn;
+        }
+
+        if (lastIndex < completionText.length)
+            completionFragment.append(completionText.substring(lastIndex, completionText.length));
+
+        return completionFragment;
     }
 
     _mouseDown(event)

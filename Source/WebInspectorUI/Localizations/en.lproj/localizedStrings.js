@@ -1607,6 +1607,7 @@ localizedStrings["Usage: %s"] = "Usage: %s";
 localizedStrings["Use Default Appearance"] = "Use Default Appearance";
 localizedStrings["Use Mock Capture Devices"] = "Use Mock Capture Devices";
 localizedStrings["Use default media styles"] = "Use default media styles";
+localizedStrings["Use fuzzy matching for completion suggestions"] = "Use fuzzy matching for completion suggestions";
 localizedStrings["Use the resource cache when loading resources"] = "Use the resource cache when loading resources";
 localizedStrings["User Agent"] = "User Agent";
 localizedStrings["User Agent Style Sheet"] = "User Agent Style Sheet";
