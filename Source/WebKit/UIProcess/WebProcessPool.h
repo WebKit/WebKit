@@ -548,6 +548,8 @@ private:
 
     void registerNotificationObservers();
     void unregisterNotificationObservers();
+
+    void captivePortalModeStateChanged();
 #endif
 
     void setApplicationIsActive(bool);

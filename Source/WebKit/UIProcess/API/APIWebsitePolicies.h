@@ -130,6 +130,7 @@ public:
 
     bool captivePortalModeEnabled() const;
     void setCaptivePortalModeEnabled(std::optional<bool> captivePortalModeEnabled) { m_captivePortalModeEnabled = captivePortalModeEnabled; }
+    bool isCaptivePortalModeExplicitlySet() const { return !!m_captivePortalModeEnabled; }
 
     WebCore::MouseEventPolicy mouseEventPolicy() const { return m_mouseEventPolicy; }
     void setMouseEventPolicy(WebCore::MouseEventPolicy policy) { m_mouseEventPolicy = policy; }

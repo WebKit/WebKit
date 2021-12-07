@@ -496,6 +496,7 @@ public:
 
     void addPreviouslyVisitedPath(const String&);
 
+    bool isCaptivePortalModeExplicitlySet() const { return m_isCaptivePortalModeExplicitlySet; }
     bool shouldEnableCaptivePortalMode() const;
 
 #if ENABLE(DATA_DETECTION)
@@ -3139,6 +3140,7 @@ private:
     bool m_lastNavigationWasAppInitiated { true };
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };
+    bool m_isCaptivePortalModeExplicitlySet { false };
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;
 

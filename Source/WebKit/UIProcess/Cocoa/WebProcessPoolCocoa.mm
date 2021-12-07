@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
+#import "APINavigation.h"
 #import "AccessibilityPreferences.h"
 #import "AccessibilitySupportSPI.h"
 #import "CookieStorageUtilsCF.h"
@@ -127,6 +128,7 @@ NSString *WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKe
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 static CFStringRef AppleColorPreferencesChangedNotification = CFSTR("AppleColorPreferencesChangedNotification");
 #endif
+static const char* const WebKitCaptivePortalModeChangedNotification = "WebKitCaptivePortalModeEnabled";
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 
@@ -180,6 +182,12 @@ static void registerUserDefaultsIfNeeded()
     [registrationDictionary setObject:@YES forKey:WebKitJSCFTLJITEnabledDefaultsKey];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
+}
+
+static std::optional<bool>& cachedCaptivePortalModeEnabledGlobally()
+{
+    static std::optional<bool> cachedCaptivePortalModeEnabledGlobally;
+    return cachedCaptivePortalModeEnabledGlobally;
 }
 
 void WebProcessPool::updateProcessSuppressionState()
@@ -937,15 +945,38 @@ int webProcessThroughputQOS()
     return qos;
 }
 
+void WebProcessPool::captivePortalModeStateChanged()
+{
+    cachedCaptivePortalModeEnabledGlobally() = std::nullopt;
+    auto isNowEnabled = captivePortalModeEnabledBySystem();
+
+    WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::captivePortalModeStateChanged() isNowEnabled=%d", isNowEnabled);
+
+    for (auto& process : m_processes) {
+        bool processHasCaptivePortalModeEnabled = process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Enabled;
+        if (processHasCaptivePortalModeEnabled == isNowEnabled)
+            continue;
+
+        for (auto& page : process->pages()) {
+            // When the captive portal mode changes globally at system level, we reload every page that relied on the system setting (rather
+            // than being explicitly opted in/out by the client app at navigation or PageConfiguration level).
+            if (page->isCaptivePortalModeExplicitlySet())
+                continue;
+
+            WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::captivePortalModeStateChanged() Reloading page with pageProxyID=%" PRIu64 " due to captive portal mode change", page->identifier().toUInt64());
+            page->reload({ });
+        }
+    }
+}
+
 bool captivePortalModeEnabledBySystem()
 {
-    static std::optional<bool> cachedCaptivePortalModeEnabledGlobally;
-    // FIXME: We should invalidate the cached value when the NSUserDefault changes.
-    if (!cachedCaptivePortalModeEnabledGlobally) {
+    auto& cachedState = cachedCaptivePortalModeEnabledGlobally();
+    if (!cachedState) {
         // FIXME: Using NSUserDefaults is a temporary workaround. This setting should be stored elsewhere (TCC?).
-        cachedCaptivePortalModeEnabledGlobally = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitCaptivePortalModeEnabled"];
+        cachedState = [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithUTF8String:WebKitCaptivePortalModeChangedNotification]];
     }
-    return *cachedCaptivePortalModeEnabledGlobally;
+    return *cachedState;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1015,6 +1046,9 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
     if (auto webAuthnProcess = WebAuthnProcessProxy::singletonIfCreated())
         webAuthnProcess->send(Messages::WebAuthnProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 #endif
+
+    if (key == WebKitCaptivePortalModeChangedNotification)
+        captivePortalModeStateChanged();
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 

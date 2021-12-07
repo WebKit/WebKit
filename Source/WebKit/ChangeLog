@@ -1,3 +1,20 @@
+2021-12-07  Chris Dumez  <cdumez@apple.com>
+
+        Reload web views when toggling the captive portal mode at system level
+        https://bugs.webkit.org/show_bug.cgi?id=233900
+
+        Reviewed by Brent Fulgham.
+
+        Reload web views when toggling the captive portal mode at system level, so that the views end up
+        being backed by WebProcesses with the proper captive portal mode.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::cachedCaptivePortalModeEnabledGlobally):
+        (WebKit::WebProcessPool::captivePortalModeStateChanged):
+        (WebKit::captivePortalModeEnabledBySystem):
+        (WebKit::WebProcessPool::notifyPreferencesChanged):
+        * UIProcess/WebProcessPool.h:
+
 2021-12-07  Sihui Liu  <sihui_liu@apple.com>
 
         Fetch and remove file system data via WKWebsiteDataStore

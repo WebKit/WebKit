@@ -204,6 +204,11 @@ bool PageConfiguration::captivePortalModeEnabled() const
     return captivePortalModeEnabledBySystem();
 }
 
+bool PageConfiguration::isCaptivePortalModeExplicitlySet() const
+{
+    return m_defaultWebsitePolicies && m_defaultWebsitePolicies->isCaptivePortalModeExplicitlySet();
+}
+
 #if ENABLE(APPLICATION_MANIFEST)
 ApplicationManifest* PageConfiguration::applicationManifest() const
 {
