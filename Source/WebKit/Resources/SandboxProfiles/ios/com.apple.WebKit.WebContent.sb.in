@@ -1123,10 +1123,7 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-            "com.apple.PowerManagement.control"
-            "com.apple.frontboard.systemappservices"
             "com.apple.iconservices"
-            "com.apple.lsd.open"
         )
     )
 )

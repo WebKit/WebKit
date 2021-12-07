@@ -8015,9 +8015,6 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 static const Vector<ASCIILiteral>& attachmentElementServices()
 {
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-#if PLATFORM(IOS_FAMILY)
-        "com.apple.frontboard.systemappservices"_s,
-#endif
         "com.apple.iconservices"_s,
 #if PLATFORM(MAC)
         "com.apple.iconservices.store"_s,

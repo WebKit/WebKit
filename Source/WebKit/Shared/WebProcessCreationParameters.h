@@ -209,7 +209,6 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
 

@@ -282,20 +282,6 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 #endif
 }
 
-#if PLATFORM(IOS_FAMILY)
-static const Vector<ASCIILiteral>& nonBrowserServices()
-{
-    ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-        "com.apple.lsd.open"_s,
-        "com.apple.iconservices"_s,
-        "com.apple.PowerManagement.control"_s,
-        "com.apple.frontboard.systemappservices"_s
-    });
-    return services;
-}
-#endif
-
 static bool requiresContainerManagerAccess()
 {
 #if PLATFORM(MAC)
@@ -425,9 +411,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (!WebCore::IOSApplication::isMobileSafari())
-        parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), std::nullopt);
-
     if (WebCore::deviceHasAGXCompilerService())
         parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), std::nullopt);
 #endif

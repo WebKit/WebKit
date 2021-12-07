@@ -1,3 +1,26 @@
+2021-12-06  Per Arne  <pvollan@apple.com>
+
+        [iOS] Remove mach service extensions for the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=232952
+        <rdar://problem/85259753>
+
+        Reviewed by Brent Fulgham.
+
+        Remove mach service extensions for the WebContent process, which we think are no longer needed, based on local testing.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::nonBrowserServices): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::attachmentElementServices):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-12-06  Patrick Angle  <pangle@apple.com>
 
         [Cocoa] Web Inspector: Unify Grid overlay drawing code
