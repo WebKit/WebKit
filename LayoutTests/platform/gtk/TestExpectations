@@ -1625,7 +1625,6 @@ webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
 webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 
 # PasteBoard::plainText() does not support file names.

@@ -609,6 +609,11 @@ webkit.org/b/233478 imported/w3c/web-platform-tests/css/css-transforms/backface-
 
 webkit.org/b/233827 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/223884 imported/w3c/web-platform-tests/css/css-values/ic-unit-013.html [ ImageOnlyFailure ]
+
+webkit.org/b/233897 imported/w3c/web-platform-tests/css/motion/offset-distance-002.html [ ImageOnlyFailure ]
+webkit.org/b/233897 imported/w3c/web-platform-tests/css/motion/offset-distance-003.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1121,7 +1126,6 @@ webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailu
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-009.svg [ ImageOnlyFailure ]
-webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-010.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
@@ -1347,8 +1351,6 @@ webkit.org/b/218221 webrtc/vp9-profile2.html [ Timeout Failure ]
 webkit.org/b/219825 [ Release ] webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/219825 [ Debug ] webrtc/sframe-keys.html [ Failure ]
 
-webkit.org/b/222794 webrtc/multi-video.html [ Failure ]
-
 webkit.org/b/224074 webrtc/concurrentVideoPlayback.html [ Timeout Pass ]
 
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
@@ -1362,6 +1364,8 @@ webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Failure ]
 webkit.org/b/233740 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Failure ]
 webkit.org/b/233740 webrtc/vp9-svc.html [ Timeout ]
 webkit.org/b/233740 webrtc/vp9.html [ Timeout ]
+
+webkit.org/b/233879 fast/mediastream/get-display-media-settings.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -2504,6 +2508,7 @@ webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed
 webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker.html [ Failure ]
 webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker.html [ Failure ]
 webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.html [ Failure ]
+webkit.org/b/231818 storage/filesystemaccess/file-handle-getfile-worker.html [ Failure ]
 webkit.org/b/231818 storage/filesystemaccess/handle-move-worker.html [ Failure ]
 webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-basics-worker.html [ Failure ]
 webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-close-worker.html [ Failure ]
@@ -2656,6 +2661,7 @@ webkit.org/b/232386 jquery/css.html [ Timeout ]
 # html with xmlns xhtml. Times out with some syntaxerrors in Js strings with &gt;
 webkit.org/b/232386 svg/as-object/embedded-svg-size-changes.html [ Timeout ]
 
+webkit.org/b/232967 fast/forms/auto-fill-button/input-auto-filled-and-obscured.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 
