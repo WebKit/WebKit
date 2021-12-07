@@ -1,3 +1,13 @@
+2021-12-07  Antti Koivisto  <antti@apple.com>
+
+        Assertion after removing stylesheet with loading @import rule
+        https://bugs.webkit.org/show_bug.cgi?id=233928
+
+        Reviewed by Alan Bujtas.
+
+        * fast/css/import-and-remove-assert-expected.txt: Added.
+        * fast/css/import-and-remove-assert.html: Added.
+
 2021-12-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Account for captions when flexing tables with specified sizes

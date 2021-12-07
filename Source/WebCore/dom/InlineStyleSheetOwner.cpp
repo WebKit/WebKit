@@ -96,6 +96,8 @@ void InlineStyleSheetOwner::insertedIntoDocument(Element& element)
 void InlineStyleSheetOwner::removedFromDocument(Element& element)
 {
     if (m_styleScope) {
+        if (m_sheet && m_sheet->isLoading())
+            m_styleScope->removePendingSheet(element);
         m_styleScope->removeStyleSheetCandidateNode(element);
         m_styleScope = nullptr;
     }
