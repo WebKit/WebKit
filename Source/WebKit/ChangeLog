@@ -1,5 +1,75 @@
 2021-12-06  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286533. rdar://problem/86052131
+
+    Add command line `webpushtool` for daemon development and debugging.
+    https://bugs.webkit.org/show_bug.cgi?id=233845
+    
+    Reviewed by Tim Horton.
+    
+    No behavior change.
+    
+    This utility will eventually be quite fleshed out.
+    
+    For now, it can act as a terminal that prints debug messages from webpushd.
+    
+    * Configurations/webpushtool.xcconfig: Added.
+    * Resources/webpushtool.entitlements: Added.
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebKit.xcodeproj/xcshareddata/xcschemes/webpushtool.xcscheme: Added.
+    
+    * webpushd/webpushtool/WebPushToolConnection.h: Added.
+    * webpushd/webpushtool/WebPushToolConnection.mm: Added.
+    (WebPushTool::Connection::create):
+    (WebPushTool::maybeConnectToService):
+    (WebPushTool::Connection::Connection):
+    (WebPushTool::Connection::connectToService):
+    (WebPushTool::Connection::startAction):
+    (WebPushTool::Connection::startDebugStreamAction):
+    (WebPushTool::Connection::sendAuditToken):
+    (WebPushTool::Connection::connectionDropped):
+    (WebPushTool::Connection::messageReceived):
+    * webpushd/webpushtool/WebPushToolMain.mm: Added.
+    (printUsageAndTerminate):
+    (main):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286533 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-04  Brady Eidson  <beidson@apple.com>
+
+            Add command line `webpushtool` for daemon development and debugging.
+            https://bugs.webkit.org/show_bug.cgi?id=233845
+
+            Reviewed by Tim Horton.
+
+            No behavior change.
+
+            This utility will eventually be quite fleshed out.
+
+            For now, it can act as a terminal that prints debug messages from webpushd.
+
+            * Configurations/webpushtool.xcconfig: Added.
+            * Resources/webpushtool.entitlements: Added.
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebKit.xcodeproj/xcshareddata/xcschemes/webpushtool.xcscheme: Added.
+
+            * webpushd/webpushtool/WebPushToolConnection.h: Added.
+            * webpushd/webpushtool/WebPushToolConnection.mm: Added.
+            (WebPushTool::Connection::create):
+            (WebPushTool::maybeConnectToService):
+            (WebPushTool::Connection::Connection):
+            (WebPushTool::Connection::connectToService):
+            (WebPushTool::Connection::startAction):
+            (WebPushTool::Connection::startDebugStreamAction):
+            (WebPushTool::Connection::sendAuditToken):
+            (WebPushTool::Connection::connectionDropped):
+            (WebPushTool::Connection::messageReceived):
+            * webpushd/webpushtool/WebPushToolMain.mm: Added.
+            (printUsageAndTerminate):
+            (main):
+
+2021-12-06  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286355. rdar://problem/86052131
 
     Add WKWebsiteDataStore configuration option to enable Mock app bundle testing.

@@ -14,6 +14,7 @@
 				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
 			);
 			dependencies = (
+				517B5F6D275B07C3002DC22D /* PBXTargetDependency */,
 				5C1579DF27165E0800ED5280 /* PBXTargetDependency */,
 				5CAF7AA926F93F9F0003F19E /* PBXTargetDependency */,
 				5742A2FA2535619D00B7BA14 /* PBXTargetDependency */,
@@ -1021,6 +1022,8 @@
 		517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A530D1F47A84300DCDC0A /* WebSWClientConnectionMessages.h */; };
 		517B5F2E2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */; };
 		517B5F2F2757382B002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */; };
+		517B5F65275A8D7F002DC22D /* WebPushToolMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F64275A8D7E002DC22D /* WebPushToolMain.mm */; };
+		517B5F68275A9A78002DC22D /* WebPushToolConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F67275A9A78002DC22D /* WebPushToolConnection.mm */; };
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
@@ -2114,6 +2117,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
 			remoteInfo = "Derived Sources";
+		};
+		517B5F6C275B07C3002DC22D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 517B5F5A275A8D3E002DC22D;
+			remoteInfo = webpushtool;
 		};
 		5742A2E72535613F00B7BA14 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4320,6 +4330,12 @@
 		517A530D1F47A84300DCDC0A /* WebSWClientConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSWClientConnectionMessages.h; path = DerivedSources/WebKit2/WebSWClientConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		517A530E1F47A84300DCDC0A /* WebSWClientConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSWClientConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSWClientConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushDaemonConnectionConfiguration.h; sourceTree = "<group>"; };
+		517B5F5B275A8D3E002DC22D /* webpushtool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = webpushtool; sourceTree = BUILT_PRODUCTS_DIR; };
+		517B5F64275A8D7E002DC22D /* WebPushToolMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPushToolMain.mm; sourceTree = "<group>"; };
+		517B5F66275A9A78002DC22D /* WebPushToolConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushToolConnection.h; sourceTree = "<group>"; };
+		517B5F67275A9A78002DC22D /* WebPushToolConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPushToolConnection.mm; sourceTree = "<group>"; };
+		517B5F6A275AA199002DC22D /* webpushtool.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = webpushtool.xcconfig; sourceTree = "<group>"; };
+		517B5F6B275AE50B002DC22D /* webpushtool.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = webpushtool.entitlements; path = Resources/webpushtool.entitlements; sourceTree = "<group>"; };
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/NetworkProcessConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheStorageEngineConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/CacheStorageEngineConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionMessages.h; path = DerivedSources/WebKit2/NetworkProcessConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6372,6 +6388,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		517B5F58275A8D3E002DC22D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5742A2ED2535613F00B7BA14 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -6457,6 +6480,7 @@
 				CD95493526159004008372D9 /* libWebKitSwift.dylib */,
 				A16E66002581930800EE1749 /* MediaFormatReader.bundle */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
+				517B5F5B275A8D3E002DC22D /* webpushtool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6699,6 +6723,7 @@
 				5C8BC796218CB58A00813886 /* SafeBrowsing.xcassets */,
 				E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */,
 				E133FD891423DD7F00FC7BFB /* WebKit.icns */,
+				517B5F6B275AE50B002DC22D /* webpushtool.entitlements */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -6849,6 +6874,7 @@
 				CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */,
 				37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */,
 				5C1579DD27165BE500ED5280 /* webpushd.xcconfig */,
+				517B5F6A275AA199002DC22D /* webpushtool.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -9338,6 +9364,16 @@
 			name = mac;
 			sourceTree = "<group>";
 		};
+		517B5F63275A8D5C002DC22D /* webpushtool */ = {
+			isa = PBXGroup;
+			children = (
+				517B5F66275A9A78002DC22D /* WebPushToolConnection.h */,
+				517B5F67275A9A78002DC22D /* WebPushToolConnection.mm */,
+				517B5F64275A8D7E002DC22D /* WebPushToolMain.mm */,
+			);
+			path = webpushtool;
+			sourceTree = "<group>";
+		};
 		518E8EF116B208F000E91429 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
@@ -9817,6 +9853,7 @@
 			isa = PBXGroup;
 			children = (
 				5CBB6D4D271F67CC00FD1A5D /* com.apple.webkit.webpushd.plist */,
+				517B5F63275A8D5C002DC22D /* webpushtool */,
 				5160E954274B887100567388 /* AppBundleRequest.h */,
 				5160E953274B887100567388 /* AppBundleRequest.mm */,
 				51F7BB75274498BB00C45A72 /* MockAppBundleForTesting.h */,
@@ -13868,6 +13905,22 @@
 			productReference = 372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
+		517B5F5A275A8D3E002DC22D /* webpushtool */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 517B5F62275A8D3E002DC22D /* Build configuration list for PBXNativeTarget "webpushtool" */;
+			buildPhases = (
+				517B5F57275A8D3E002DC22D /* Sources */,
+				517B5F58275A8D3E002DC22D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = webpushtool;
+			productName = webpushtool;
+			productReference = 517B5F5B275A8D3E002DC22D /* webpushtool */;
+			productType = "com.apple.product-type.tool";
+		};
 		5742A2E52535613F00B7BA14 /* WebAuthn */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5742A2F32535613F00B7BA14 /* Build configuration list for PBXNativeTarget "WebAuthn" */;
@@ -14064,6 +14117,9 @@
 				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1140;
 				TargetAttributes = {
+					517B5F5A275A8D3E002DC22D = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					5325BDCD21DFF47700A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
@@ -14120,6 +14176,7 @@
 				942DB232257EE6D4009BD80A /* EmptyDSTROOT */,
 				5CAF7A9926F93A750003F19E /* adattributiond */,
 				5C1579CC27165B2F00ED5280 /* webpushd */,
+				517B5F5A275A8D3E002DC22D /* webpushtool */,
 			);
 		};
 /* End PBXProject section */
@@ -14847,6 +14904,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		517B5F57275A8D3E002DC22D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				517B5F68275A9A78002DC22D /* WebPushToolConnection.mm in Sources */,
+				517B5F65275A8D7F002DC22D /* WebPushToolMain.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5742A2EA2535613F00B7BA14 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -15401,6 +15467,11 @@
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
 			targetProxy = 37F7407812721F740093869B /* PBXContainerItemProxy */;
 		};
+		517B5F6D275B07C3002DC22D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 517B5F5A275A8D3E002DC22D /* webpushtool */;
+			targetProxy = 517B5F6C275B07C3002DC22D /* PBXContainerItemProxy */;
+		};
 		5742A2E62535613F00B7BA14 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
@@ -15626,6 +15697,27 @@
 		372EBB452017E64300085064 /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		517B5F5F275A8D3E002DC22D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 517B5F6A275AA199002DC22D /* webpushtool.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		517B5F60275A8D3E002DC22D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 517B5F6A275AA199002DC22D /* webpushtool.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		517B5F61275A8D3E002DC22D /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 517B5F6A275AA199002DC22D /* webpushtool.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -16019,6 +16111,16 @@
 				372EBB432017E64300085064 /* Debug */,
 				372EBB442017E64300085064 /* Release */,
 				372EBB452017E64300085064 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		517B5F62275A8D3E002DC22D /* Build configuration list for PBXNativeTarget "webpushtool" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				517B5F5F275A8D3E002DC22D /* Debug */,
+				517B5F60275A8D3E002DC22D /* Release */,
+				517B5F61275A8D3E002DC22D /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
