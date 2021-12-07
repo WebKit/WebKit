@@ -412,8 +412,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _inspectorHighlightView = adoptNS([[WKInspectorHighlightView alloc] initWithFrame:CGRectZero]);
         [self insertSubview:_inspectorHighlightView.get() aboveSubview:_rootContentView.get()];
     }
-
-    [_inspectorHighlightView update:highlight scale:[self _contentZoomScale]];
+    [_inspectorHighlightView update:highlight scale:[self _contentZoomScale] frame:_page->unobscuredContentRect()];
 }
 
 - (void)_hideInspectorHighlight

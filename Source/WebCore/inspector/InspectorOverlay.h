@@ -218,8 +218,7 @@ public:
     Inspector::ErrorStringOr<void> clearGridOverlayForNode(Node&);
     void clearAllGridOverlays();
 
-    WEBCORE_EXPORT static FontCascade fontForLayoutLabel();
-    WEBCORE_EXPORT static Path backgroundPathForLayoutLabel(float, float, InspectorOverlay::LabelArrowDirection, InspectorOverlay::LabelArrowEdgePosition, float arrowSize);
+    WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Highlight::GridHighlightOverlay&);
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
@@ -236,10 +235,6 @@ private:
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
-    void drawLayoutHatching(GraphicsContext&, FloatQuad);
-    void drawLayoutLabel(GraphicsContext&, String, FloatPoint, LabelArrowDirection, InspectorOverlay::LabelArrowEdgePosition, Color backgroundColor = Color::white, float maximumWidth = 0);
-
-    void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Highlight::GridHighlightOverlay&);
     std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
 
     void updatePaintRectsTimerFired();

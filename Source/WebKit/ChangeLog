@@ -1,3 +1,43 @@
+2021-12-06  Patrick Angle  <pangle@apple.com>
+
+        [Cocoa] Web Inspector: Unify Grid overlay drawing code
+        https://bugs.webkit.org/show_bug.cgi?id=233773
+
+        Reviewed by Devin Rousso.
+
+        Remove the (almost) 1-to-1 duplicated logic currently being used to turn Grid Overlays into a layer hierarchy
+        and instead use a graphics context to draw the overlays straight into the view to take advantage of the existing
+        drawing code we use for macOS in WebCore::InspectorOverlay. To accommodate this, we now correctly set the
+        content scale factor of the view itself (so that our drawing does not appear blurry) and set the frame of the
+        view equal to the current visible portion of the parent scroll view, which helps us to avoid having an
+        incredibly large graphics context to draw into (which we would if the view's frame was just set to match the
+        frame of the webpage's view). This frame will not always be the same size, such as when zooming in where less of
+        the frame is visible. Combined with the current content scale, this actually means that on zoom the effective
+        number of pixels that need to be drawn is consistent.
+
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.h:
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView initWithFrame:]):
+        - Explicitly set this view to be non-opaque so that page content can be seen below this view. This wasn't
+        previously necessary because the bounds of this view were a zero-rect, which meant the background was never
+        painted.
+
+        (-[WKInspectorHighlightView _removeAllLayers]):
+        (-[WKInspectorHighlightView _createLayers:]):
+        - Because the view's frame origin is now offset, we need to create the node highlight layers offset by the
+        negation of the frame's origin so that they still line up correctly with page content.
+
+        (-[WKInspectorHighlightView drawRect:]):
+        (-[WKInspectorHighlightView update:scale:frame:]):
+        (-[WKInspectorHighlightView _createGridOverlayLayers:scale:]): Deleted.
+        (createLayoutHatchingLayer): Deleted.
+        (createLayoutLabelLayer): Deleted.
+        (-[WKInspectorHighlightView _createGridOverlayLayer:scale:]): Deleted.
+        (-[WKInspectorHighlightView update:scale:]): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _showInspectorHighlight:]):
+
+
 2021-12-06  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r286535) [GTK] Fix clean builds after DerivedSources/WebKit2 move

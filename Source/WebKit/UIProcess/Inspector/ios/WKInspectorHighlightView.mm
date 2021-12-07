@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <WebCore/FloatLine.h>
 #import <WebCore/FloatQuad.h>
-#import <WebCore/FontCascade.h>
-#import <WebCore/FontCascadeDescription.h>
+#import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
-#import <WebCore/TextRun.h>
+#import <WebCore/GraphicsContextCG.h>
 
 @implementation WKInspectorHighlightView
 
@@ -42,7 +40,7 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
     _layers = adoptNS([[NSMutableArray alloc] init]);
-    _gridOverlayLayers = adoptNS([[NSMutableArray alloc] init]);
+    self.opaque = NO;
     return self;
 }
 
@@ -57,9 +55,6 @@
     for (CAShapeLayer *layer in _layers.get())
         [layer removeFromSuperlayer];
     [_layers removeAllObjects];
-    for (CALayer *layer in _gridOverlayLayers.get())
-        [layer removeFromSuperlayer];
-    [_gridOverlayLayers removeAllObjects];
 }
 
 - (void)_createLayers:(NSUInteger)numLayers
@@ -69,6 +64,7 @@
 
     for (NSUInteger i = 0; i < numLayers; ++i) {
         auto layer = adoptNS([[CAShapeLayer alloc] init]);
+        layer.get().position = CGPointMake(-self.frame.origin.x, -self.frame.origin.y);
         [_layers addObject:layer.get()];
         [self.layer addSublayer:layer.get()];
     }
@@ -268,220 +264,36 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     }
 }
 
-- (void)_createGridOverlayLayers:(const WebCore::InspectorOverlay::Highlight&)highlight scale:(double)scale
+- (void)drawRect:(CGRect)dirtyRect
 {
-    for (auto gridOverlay : highlight.gridHighlightOverlays) {
-        auto layer = [self _createGridOverlayLayer:gridOverlay scale:scale];
-        [_gridOverlayLayers addObject:layer];
-        [self.layer addSublayer:layer];
-    }
+    [super drawRect:dirtyRect];
+
+    if (!_highlight)
+        return;
+
+    auto context = WebCore::GraphicsContextCG(UIGraphicsGetCurrentContext());
+    context.clip({ dirtyRect });
+    context.translate(-self.frame.origin.x, -self.frame.origin.y);
+
+    for (auto gridHighlightOverlay : _highlight->gridHighlightOverlays)
+        WebCore::InspectorOverlay::drawGridOverlay(context, gridHighlightOverlay);
 }
 
-static CALayer * createLayoutHatchingLayer(WebCore::FloatQuad quad, WebCore::Color strokeColor)
-{
-    CAShapeLayer *layer = [CAShapeLayer layer];
-
-    constexpr auto hatchSpacing = 12;
-    auto hatchPath = adoptCF(CGPathCreateMutable());
-
-    WebCore::FloatLine topSide = { quad.p1(), quad.p2() };
-    WebCore::FloatLine leftSide = { quad.p1(), quad.p4() };
-
-    // The opposite axis' length is used to determine how far to draw a hatch line in both dimensions, which keeps the lines at a 45deg angle.
-    if (topSide.length() > leftSide.length()) {
-        WebCore::FloatLine bottomSide = { quad.p4(), quad.p3() };
-        // Move across the relative top of the quad, starting left of `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
-        for (float x = -leftSide.length(); x < topSide.length(); x += hatchSpacing) {
-            auto startPoint = topSide.pointAtAbsoluteDistance(x);
-            auto endPoint = bottomSide.pointAtAbsoluteDistance(x + leftSide.length());
-            CGPathMoveToPoint(hatchPath.get(), 0, startPoint.x(), startPoint.y());
-            CGPathAddLineToPoint(hatchPath.get(), 0, endPoint.x(), endPoint.y());
-        }
-    } else {
-        WebCore::FloatLine rightSide = { quad.p2(), quad.p3() };
-        // Move down the relative left side of the quad, starting above `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
-        for (float y = -topSide.length(); y < leftSide.length(); y += hatchSpacing) {
-            auto startPoint = leftSide.pointAtAbsoluteDistance(y);
-            auto endPoint = rightSide.pointAtAbsoluteDistance(y + topSide.length());
-            CGPathMoveToPoint(hatchPath.get(), 0, startPoint.x(), startPoint.y());
-            CGPathAddLineToPoint(hatchPath.get(), 0, endPoint.x(), endPoint.y());
-        }
-    }
-    layer.path = hatchPath.get();
-    layer.strokeColor = cachedCGColor(strokeColor).get();
-    layer.lineWidth = 0.5;
-    layer.lineDashPattern = @[[NSNumber numberWithInt:2], [NSNumber numberWithInt:2]];
-
-    CAShapeLayer *maskLayer = [CAShapeLayer layer];
-    layerPath(maskLayer, quad);
-    layer.mask = maskLayer;
-    return layer;
-}
-
-static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point, WebCore::InspectorOverlay::LabelArrowDirection arrowDirection, WebCore::InspectorOverlay::LabelArrowEdgePosition arrowEdgePosition, WebCore::Color backgroundColor, WebCore::Color strokeColor, double scale, float maximumWidth = 0)
-{
-    auto font = WebCore::InspectorOverlay::fontForLayoutLabel();
-
-    constexpr auto padding = 4;
-    constexpr auto arrowSize = 6;
-    float textHeight = font.fontMetrics().floatHeight();
-
-    float textWidth = font.width(WebCore::TextRun(label));
-    if (maximumWidth && textWidth + (padding * 2) > maximumWidth) {
-        label.append("..."_s);
-        while (textWidth + (padding * 2) > maximumWidth && label.length() >= 4) {
-            // Remove the fourth from last character (the character before the ellipsis) and remeasure.
-            label.remove(label.length() - 4);
-            textWidth = font.width(WebCore::TextRun(label));
-        }
-    }
-
-    // Note: Implementation Difference - The textPosition is the center of text, unlike WebCore::InspectorOverlay, where the textPosition is leftmost point on the baseline of the text.
-    WebCore::FloatPoint textPosition;
-    switch (arrowDirection) {
-    case WebCore::InspectorOverlay::LabelArrowDirection::Down:
-        switch (arrowEdgePosition) {
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
-            textPosition = WebCore::FloatPoint((textWidth / 2) + padding, -(textHeight / 2) - arrowSize - padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
-            textPosition = WebCore::FloatPoint(0, -(textHeight / 2) - arrowSize - padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
-            textPosition = WebCore::FloatPoint(-(textWidth / 2) - padding, -(textHeight / 2) - arrowSize - padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
-            break;
-        }
-        break;
-    case WebCore::InspectorOverlay::LabelArrowDirection::Up:
-        switch (arrowEdgePosition) {
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
-            textPosition = WebCore::FloatPoint((textWidth / 2) + padding, (textHeight / 2) + arrowSize + padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
-            textPosition = WebCore::FloatPoint(0, (textHeight / 2) + arrowSize + padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
-            textPosition = WebCore::FloatPoint(-(textWidth / 2) - padding, (textHeight / 2) + arrowSize + padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
-            break;
-        }
-        break;
-    case WebCore::InspectorOverlay::LabelArrowDirection::Right:
-        switch (arrowEdgePosition) {
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
-            textPosition = WebCore::FloatPoint(-(textWidth / 2) - arrowSize - padding, (textHeight / 2) + padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
-            textPosition = WebCore::FloatPoint(-(textWidth / 2) - arrowSize - padding, 0);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
-            textPosition = WebCore::FloatPoint(-(textWidth / 2) - arrowSize - padding, -(textHeight / 2) - padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
-            break;
-        }
-        break;
-    case WebCore::InspectorOverlay::LabelArrowDirection::Left:
-        switch (arrowEdgePosition) {
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
-            textPosition = WebCore::FloatPoint((textWidth / 2) + arrowSize + padding, (textHeight / 2) + padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
-            textPosition = WebCore::FloatPoint((textWidth / 2) + arrowSize + padding, 0);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
-            textPosition = WebCore::FloatPoint((textWidth / 2) + arrowSize + padding, -(textHeight / 2) - padding);
-            break;
-        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
-            break;
-        }
-        break;
-    case WebCore::InspectorOverlay::LabelArrowDirection::None:
-        // Text position will remain (0, 0).
-        break;
-    }
-
-    CALayer *layer = [CALayer layer];
-
-#if USE(CG)
-    // WebCore::Path::PlatformPathPtr is only a CGPath* when `USE(CG)` is true.
-    auto labelPath = WebCore::InspectorOverlay::backgroundPathForLayoutLabel(textWidth + (padding * 2), textHeight + (padding * 2), arrowDirection, arrowEdgePosition, arrowSize);
-    CGPath* platformLabelPath = labelPath.ensurePlatformPath();
-
-    CAShapeLayer *labelPathLayer = [CAShapeLayer layer];
-    labelPathLayer.path = platformLabelPath;
-    labelPathLayer.fillColor = cachedCGColor(backgroundColor).get();
-    labelPathLayer.strokeColor = cachedCGColor(strokeColor).get();
-    labelPathLayer.position = CGPointMake(point.x(), point.y());
-    [layer addSublayer:labelPathLayer];
-#endif
-
-    CATextLayer *textLayer = [CATextLayer layer];
-    textLayer.frame = CGRectMake(0, 0, textWidth, textHeight);
-    textLayer.string = label;
-    textLayer.font = font.primaryFont().getCTFont();
-    textLayer.fontSize = 12;
-    textLayer.alignmentMode = kCAAlignmentLeft;
-    textLayer.foregroundColor = CGColorGetConstantColor(kCGColorBlack);
-    textLayer.position = CGPointMake(textPosition.x() + point.x(), textPosition.y() + point.y());
-    textLayer.contentsScale = [[UIScreen mainScreen] scale] * scale;
-    [layer addSublayer:textLayer];
-
-    return layer;
-}
-
-- (CALayer *)_createGridOverlayLayer:(const WebCore::InspectorOverlay::Highlight::GridHighlightOverlay&)overlay scale:(double)scale
-{
-    // Keep implementation roughly equivalent to `WebCore::InspectorOverlay::drawGridOverlay`.
-    CALayer *layer = [CALayer layer];
-
-    auto gridLinesPath = adoptCF(CGPathCreateMutable());
-    for (auto gridLine : overlay.gridLines) {
-        CGPathMoveToPoint(gridLinesPath.get(), 0, gridLine.start().x(), gridLine.start().y());
-        CGPathAddLineToPoint(gridLinesPath.get(), 0, gridLine.end().x(), gridLine.end().y());
-    }
-    CAShapeLayer *gridLinesLayer = [CAShapeLayer layer];
-    gridLinesLayer.path = gridLinesPath.get();
-    gridLinesLayer.lineWidth = 1;
-    gridLinesLayer.strokeColor = cachedCGColor(overlay.color).get();
-    [layer addSublayer:gridLinesLayer];
-
-    for (auto gapQuad : overlay.gaps)
-        [layer addSublayer:createLayoutHatchingLayer(gapQuad, overlay.color)];
-
-    for (auto area : overlay.areas) {
-        CAShapeLayer *areaLayer = [CAShapeLayer layer];
-        layerPath(areaLayer, area.quad);
-        areaLayer.lineWidth = 3;
-        areaLayer.fillColor = CGColorGetConstantColor(kCGColorClear);
-        areaLayer.strokeColor = cachedCGColor(overlay.color).get();
-        [layer addSublayer:areaLayer];
-    }
-
-    constexpr auto translucentLabelBackgroundColor = WebCore::Color::white.colorWithAlphaByte(230);
-
-    for (auto area : overlay.areas)
-        [layer addSublayer:createLayoutLabelLayer(area.name, area.quad.center(), WebCore::InspectorOverlay::LabelArrowDirection::None, WebCore::InspectorOverlay::LabelArrowEdgePosition::None, translucentLabelBackgroundColor, overlay.color, scale, area.quad.boundingBox().width())];
-
-    for (auto label : overlay.labels)
-        [layer addSublayer:createLayoutLabelLayer(label.text, label.location, label.arrowDirection, label.arrowEdgePosition, label.backgroundColor, overlay.color, scale)];
-
-    return layer;
-}
-
-- (void)update:(const WebCore::InspectorOverlay::Highlight&)highlight scale:(double)scale
+- (void)update:(const WebCore::InspectorOverlay::Highlight&)highlight scale:(double)scale frame:(const WebCore::FloatRect&)frame
 {
     [self _removeAllLayers];
+
+    _highlight = highlight;
+    self.contentScaleFactor = UIScreen.mainScreen.scale * scale;
+    self.frame = frame;
 
     if (highlight.type == WebCore::InspectorOverlay::Highlight::Type::Node || highlight.type == WebCore::InspectorOverlay::Highlight::Type::NodeList)
         [self _layoutForNodeListHighlight:highlight];
     else if (highlight.type == WebCore::InspectorOverlay::Highlight::Type::Rects)
         [self _layoutForRectsHighlight:highlight];
 
-    [self _createGridOverlayLayers:highlight scale:scale];
+    
+    [self setNeedsDisplay];
 }
 
 @end
