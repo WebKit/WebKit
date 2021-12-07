@@ -50,7 +50,7 @@ StepRange::StepRange(const StepRange& stepRange)
 {
 }
 
-StepRange::StepRange(const Decimal& stepBase, RangeLimitations rangeLimitations, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription& stepDescription)
+StepRange::StepRange(const Decimal& stepBase, RangeLimitations rangeLimitations, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription& stepDescription, IsReversible isReversible)
     : m_maximum(maximum)
     , m_minimum(minimum)
     , m_step(step.isFinite() ? step : 1)
@@ -58,6 +58,7 @@ StepRange::StepRange(const Decimal& stepBase, RangeLimitations rangeLimitations,
     , m_stepDescription(stepDescription)
     , m_hasRangeLimitations(rangeLimitations == RangeLimitations::Valid)
     , m_hasStep(step.isFinite())
+    , m_isReversible(isReversible == IsReversible::Yes)
 {
     ASSERT(m_maximum.isFinite());
     ASSERT(m_minimum.isFinite());

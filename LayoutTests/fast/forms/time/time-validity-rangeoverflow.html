@@ -66,7 +66,8 @@ input.min = '14:00';  // value < min && value > max
 checkOverflow('13:16', '12:00');
 
 // Disabled
-checkOverflow('23:59:59.999', '13:16', true);
+checkNotOverflow('23:59:59.999', '13:16', true);
+checkOverflow('13:17:59.999', '13:16', true);
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

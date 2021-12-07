@@ -51,7 +51,7 @@ PASS [INPUT in TIME status] The value is less than min(with millisecond in 1 dig
 PASS [INPUT in TIME status] The value is less than min(with millisecond in 2 digit)
 PASS [INPUT in TIME status] The value is less than min(with millisecond in 3 digit)
 PASS [INPUT in TIME status] The time missing second part is valid
-FAIL [INPUT in TIME status] The time is max for reversed range assert_false: The validity.rangeUnderflow should be false. expected false got true
+PASS [INPUT in TIME status] The time is max for reversed range
 PASS [INPUT in TIME status] The time is outside the accepted range for reversed range
 PASS [INPUT in TIME status] The time is min for reversed range
 PASS [INPUT in TIME status] The time is inside the accepted range for reversed range

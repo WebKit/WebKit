@@ -269,7 +269,12 @@ bool InputType::rangeUnderflow(const String& value) const
     if (!numericValue.isFinite())
         return false;
 
-    return numericValue < createStepRange(AnyStepHandling::Reject).minimum();
+    auto range = createStepRange(AnyStepHandling::Reject);
+
+    if (range.isReversible() && range.maximum() < range.minimum())
+        return numericValue > range.maximum() && numericValue < range.minimum();
+
+    return numericValue < range.minimum();
 }
 
 bool InputType::rangeOverflow(const String& value) const
@@ -281,7 +286,12 @@ bool InputType::rangeOverflow(const String& value) const
     if (!numericValue.isFinite())
         return false;
 
-    return numericValue > createStepRange(AnyStepHandling::Reject).maximum();
+    auto range = createStepRange(AnyStepHandling::Reject);
+
+    if (range.isReversible() && range.maximum() < range.minimum())
+        return numericValue > range.maximum() && numericValue < range.minimum();
+
+    return numericValue > range.maximum();
 }
 
 bool InputType::isInvalid(const String& value) const
