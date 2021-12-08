@@ -120,10 +120,6 @@ public:
     bool hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
-#if HAVE(IOSURFACE)
-    void setContents(const WebCore::IOSurface&) override;
-    void setContents(const WTF::MachSendRight&) override;
-#endif
 
     void setContentsRect(const FloatRect&) override;
 

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Color.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 

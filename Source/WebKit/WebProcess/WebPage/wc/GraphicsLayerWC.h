@@ -26,7 +26,6 @@
 #pragma once
 
 #include "WCUpateInfo.h"
-#include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <wtf/DoublyLinkedList.h>
 
 namespace WebKit {
@@ -77,7 +76,6 @@ public:
     void setBackfaceVisibility(bool) override;
     void setContentsToSolidColor(const WebCore::Color&) override;
     void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
-    void setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
     bool usesContentsLayer() const override;
     void setShowDebugBorder(bool) override;

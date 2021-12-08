@@ -81,11 +81,8 @@
 - (void)setNeedsDisplay
 {
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
-    if (!layer || !layer->owner())
-        return;
-    if (!layer->owner()->platformCALayerDrawsContent() && !layer->owner()->platformCALayerDelegatesDisplay(layer.get()))
-        return;
-    [super setNeedsDisplay];
+    if (layer && layer->owner() && layer->owner()->platformCALayerDrawsContent())
+        [super setNeedsDisplay];
 }
 
 - (void)setNeedsDisplayInRect:(CGRect)dirtyRect
@@ -97,7 +94,7 @@
     }
 
     if (WebCore::PlatformCALayerClient* layerOwner = platformLayer->owner()) {
-        if (layerOwner->platformCALayerDrawsContent() || layerOwner->platformCALayerDelegatesDisplay(platformLayer.get())) {
+        if (layerOwner->platformCALayerDrawsContent()) {
             [super setNeedsDisplayInRect:dirtyRect];
 
             if (layerOwner->platformCALayerShowRepaintCounter(platformLayer.get())) {
@@ -106,7 +103,6 @@
                 [super setNeedsDisplayInRect:indicatorRect];
             }
         }
-        
     }
 }
 
@@ -117,14 +113,10 @@
         WebThreadLock();
 #endif
     ASSERT(isMainThread());
+    [super display];
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
-    WebCore::PlatformCALayerClient* owner = layer ? layer->owner() : nullptr;
-    if (owner && owner->platformCALayerDelegatesDisplay(layer.get()))
-        owner->platformCALayerLayerDisplay(layer.get());
-    else
-        [super display];
-    if (owner)
-        owner->platformCALayerLayerDidDisplay(layer.get());
+    if (layer && layer->owner())
+        layer->owner()->platformCALayerLayerDidDisplay(layer.get());
 }
 
 - (void)drawInContext:(CGContextRef)context

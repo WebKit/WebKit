@@ -40,6 +40,7 @@
 #import "TiledBacking.h"
 #import "WebActionDisablingCALayerDelegate.h"
 #import "WebCoreCALayerExtras.h"
+#import "WebGLLayer.h"
 #import "WebVideoContainerLayer.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
@@ -53,7 +54,6 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Lock.h>
-#import <wtf/MachSendRight.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -211,6 +211,9 @@ PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(Platf
         && [(WebVideoContainerLayer*)layer playerLayer])
         return LayerTypeAVPlayerLayer;
 
+    if ([layer isKindOfClass:[WebGLLayer class]])
+        return LayerTypeContentsProvidedLayer;
+
     return LayerTypeCustom;
 }
 
@@ -231,7 +234,6 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         break;
     case LayerTypeSimpleLayer:
     case LayerTypeTiledBackingTileLayer:
-    case LayerTypeContentsProvidedLayer:
         layerClass = [WebSimpleLayer class];
         break;
     case LayerTypeTransformLayer:
@@ -262,6 +264,10 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     case LayerTypeAVPlayerLayer:
         if (PAL::isAVFoundationFrameworkAvailable())
             layerClass = PAL::getAVPlayerLayerClass();
+        break;
+    case LayerTypeContentsProvidedLayer:
+        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers.
+        ASSERT_NOT_REACHED();
         break;
 #if ENABLE(MODEL_ELEMENT)
     case LayerTypeModelLayer:
@@ -304,7 +310,7 @@ void PlatformCALayerCocoa::commonInit()
     }
     
     // Clear all the implicit animations on the CALayer
-    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeScrollContainerLayer || m_layerType == LayerTypeCustom)
+    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeContentsProvidedLayer || m_layerType == LayerTypeScrollContainerLayer || m_layerType == LayerTypeCustom)
         [m_layer web_disableAllActions];
     else
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
@@ -790,19 +796,6 @@ void PlatformCALayerCocoa::setContents(CFTypeRef value)
     [m_layer setContents:(__bridge id)value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
-
-#if HAVE(IOSURFACE)
-void PlatformCALayerCocoa::setContents(const WebCore::IOSurface& surface)
-{
-    setContents(surface.asLayerContents());
-}
-
-void PlatformCALayerCocoa::setContents(const WTF::MachSendRight& surfaceHandle)
-{
-    auto surface = WebCore::IOSurface::createFromSendRight(surfaceHandle.copySendRight(), WebCore::DestinationColorSpace::SRGB());
-    setContents(*surface);
-}
-#endif
 
 void PlatformCALayerCocoa::setContentsRect(const FloatRect& value)
 {

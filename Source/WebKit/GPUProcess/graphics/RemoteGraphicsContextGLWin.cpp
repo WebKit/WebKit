@@ -65,13 +65,6 @@ void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& comp
     completionHandler();
 }
 
-#if USE(GRAPHICS_LAYER_WC)
-PlatformLayer* RemoteGraphicsContextGL::platformLayer() const
-{
-    return m_context->layerContentsDisplayDelegate()->platformLayer();
-}
-#endif
-
 }
 
 #endif

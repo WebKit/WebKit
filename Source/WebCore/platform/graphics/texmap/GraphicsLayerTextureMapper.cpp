@@ -342,12 +342,6 @@ void GraphicsLayerTextureMapper::setContentsToPlatformLayer(TextureMapperPlatfor
         m_contentsLayer->setClient(this);
 }
 
-void GraphicsLayerTextureMapper::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& displayDelegate, ContentsLayerPurpose purpose)
-{
-    PlatformLayer* platformLayer = displayDelegate ? displayDelegate->platformLayer() : nullptr;
-    setContentsToPlatformLayer(platformLayer, purpose);
-}
-
 void GraphicsLayerTextureMapper::setShowDebugBorder(bool show)
 {
     if (isShowingDebugBorder() == show)

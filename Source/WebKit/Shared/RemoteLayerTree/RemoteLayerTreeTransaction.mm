@@ -1035,6 +1035,9 @@ String RemoteLayerTreeTransaction::description() const
             case WebCore::PlatformCALayer::LayerTypeAVPlayerLayer:
                 ts << " (context-id " << createdLayer.hostingContextID << ")";
                 break;
+            case WebCore::PlatformCALayer::LayerTypeContentsProvidedLayer:
+                ts << " (context-id " << createdLayer.hostingContextID << ")";
+                break;
             case WebCore::PlatformCALayer::LayerTypeCustom:
                 ts << " (context-id " << createdLayer.hostingContextID << ")";
                 break;

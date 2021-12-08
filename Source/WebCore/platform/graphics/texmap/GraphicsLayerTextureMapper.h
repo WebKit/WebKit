@@ -23,7 +23,6 @@
 
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "Image.h"
 #include "NativeImage.h"
 #include "TextureMapperLayer.h"
@@ -79,7 +78,6 @@ public:
     void setContentsToImage(Image*) override;
     void setContentsToSolidColor(const Color&) override;
     void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
-    void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     bool usesContentsLayer() const override { return m_contentsLayer; }
     PlatformLayer* platformLayer() const override { return m_contentsLayer; }
 

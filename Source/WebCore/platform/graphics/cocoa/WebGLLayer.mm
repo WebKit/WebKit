@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,33 +24,50 @@
  */
 
 #import "config.h"
-#import "ThemeIOS.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(WEBGL)
+#import "WebGLLayer.h"
 
-#import <pal/ios/UIKitSoftLink.h>
-#import <wtf/NeverDestroyed.h>
+#import "GraphicsLayer.h"
+#import "GraphicsLayerCA.h"
+#import "PlatformCALayer.h"
 
-using namespace std;
+@implementation WebGLLayer
 
-namespace WebCore {
-
-Theme& Theme::singleton()
+- (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque
 {
-    static NeverDestroyed<ThemeIOS> theme;
-    return theme;
+    self = [super init];
+    self.transform = CATransform3DIdentity;
+    self.contentsOpaque = contentsOpaque;
+    self.contentsScale = devicePixelRatio;
+    return self;
 }
 
-bool ThemeIOS::userPrefersReducedMotion() const
+// When using an IOSurface as layer contents, we need to flip the
+// layer to take into account that the IOSurface provides content
+// in Y-up. This means that any incoming transform (unlikely, since
+// this is a contents layer) and anchor point must add a Y scale of
+// -1 and make sure the transform happens from the top.
+
+- (void)setTransform:(CATransform3D)t
 {
-    return PAL::softLink_UIKit_UIAccessibilityIsReduceMotionEnabled();
+    [super setTransform:CATransform3DScale(t, 1, -1, 1)];
 }
 
-bool ThemeIOS::userPrefersContrast() const
+- (void)setAnchorPoint:(CGPoint)p
 {
-    return PAL::softLink_UIKit_UIAccessibilityDarkerSystemColorsEnabled();
+    [super setAnchorPoint:CGPointMake(p.x, 1.0 - p.y)];
 }
+
+- (void)display
+{
+    // Show the self.contents as the contents by not doing anything in this function.
+    auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
+    if (layer && layer->owner())
+        layer->owner()->platformCALayerLayerDidDisplay(layer.get());
 
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+@end
+
+#endif // ENABLE(WEBGL)

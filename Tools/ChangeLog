@@ -1,3 +1,15 @@
+2021-12-08  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r286596.
+
+        broke 2 tests on iOS
+
+        Reverted changeset:
+
+        "Cocoa WebGL should support UI side compositing"
+        https://bugs.webkit.org/show_bug.cgi?id=231009
+        https://commits.webkit.org/r286596
+
 2021-12-08  Chris Dumez  <cdumez@apple.com>
 
         Make KVO work for WKWebpagePreferences._captivePortalModeEnabled

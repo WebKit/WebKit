@@ -47,7 +47,7 @@ public:
     ~GraphicsContextGLTextureMapper();
 
     // GraphicsContextGLTextureMapperBase overrides.
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
+    PlatformLayer* platformLayer() const final;
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
 #endif
@@ -60,7 +60,6 @@ public:
 
 protected:
     GraphicsContextGLTextureMapper(WebCore::GraphicsContextGLAttributes&&);
-    Ref<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 };
 
 }

@@ -30,7 +30,6 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "LayoutRect.h"
 #include "RotateTransformOperation.h"
 #include <wtf/HashMap.h>
@@ -610,10 +609,6 @@ void GraphicsLayer::suspendAnimations(MonotonicTime)
 }
 
 void GraphicsLayer::resumeAnimations()
-{
-}
-
-void GraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose)
 {
 }
 

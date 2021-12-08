@@ -52,7 +52,6 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "GraphicsContextGLOpenGL.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -6453,11 +6452,9 @@ bool WebGLRenderingContextBase::isContextUnrecoverablyLost() const
     return m_contextLost && !m_restoreAllowed;
 }
 
-RefPtr<GraphicsLayerContentsDisplayDelegate> WebGLRenderingContextBase::layerContentsDisplayDelegate()
+PlatformLayer* WebGLRenderingContextBase::platformLayer() const
 {
-    if (isContextLost() || m_isPendingPolicyResolution)
-        return nullptr;
-    return m_context->layerContentsDisplayDelegate();
+    return (!isContextLost() && !m_isPendingPolicyResolution) ? m_context->platformLayer() : 0;
 }
 
 void WebGLRenderingContextBase::removeSharedObject(WebGLSharedObject& object)

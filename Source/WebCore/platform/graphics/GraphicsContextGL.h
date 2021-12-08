@@ -28,12 +28,12 @@
 #if ENABLE(WEBGL)
 
 #include "GraphicsContextGLAttributes.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsTypesGL.h"
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "MediaPlayer.h"
+#include "PlatformLayer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -786,7 +786,7 @@ public:
         Yes
     };
 
-    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() = 0;
+    virtual PlatformLayer* platformLayer() const = 0;
 
     ALWAYS_INLINE static bool hasAlpha(DataFormat format)
     {

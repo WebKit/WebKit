@@ -33,7 +33,6 @@
 #include "DisplayListReplayer.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerFactory.h"
 #include "Image.h"
 #include "InMemoryDisplayList.h"
@@ -1247,7 +1246,6 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
         m_contentsLayerPurpose = ContentsLayerPurpose::None;
         m_contentsLayer = nullptr;
     }
-    m_contentsDisplayDelegate = nullptr;
 
     if (contentsLayerChanged)
         noteSublayersChanged();
@@ -1279,7 +1277,6 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
         if (m_contentsLayer)
             noteSublayersChanged();
     }
-    m_contentsDisplayDelegate = nullptr;
 
     noteLayerPropertyChanged(ContentsImageChanged);
 }
@@ -1310,7 +1307,6 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
         m_contentsLayerPurpose = ContentsLayerPurpose::None;
         m_contentsLayer = nullptr;
     }
-    m_contentsDisplayDelegate = nullptr;
 
     if (contentsLayerChanged)
         noteSublayersChanged();
@@ -1347,31 +1343,6 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
         m_contentsLayer = nullptr;
 
     m_contentsLayerPurpose = platformLayer ? purpose : ContentsLayerPurpose::None;
-    m_contentsDisplayDelegate = nullptr;
-    noteSublayersChanged();
-    noteLayerPropertyChanged(ContentsPlatformLayerChanged);
-}
-
-void GraphicsLayerCA::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate, ContentsLayerPurpose purpose)
-{
-    if (m_contentsLayer && delegate == m_contentsDisplayDelegate)
-        return;
-
-    if (m_contentsLayer)
-        m_contentsLayer->setOwner(nullptr);
-    m_contentsLayer = nullptr;
-    m_contentsDisplayDelegate = nullptr;
-    m_contentsLayerPurpose = ContentsLayerPurpose::None;
-    if (delegate) {
-        m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeContentsProvidedLayer, this);
-        m_contentsDisplayDelegate = WTFMove(delegate);
-        m_contentsLayerPurpose = purpose;
-        // Currently delegated display is only useful when delegatee calls setContents, so set the
-        // backing store settings accordingly.
-        m_contentsLayer->setBackingStoreAttached(true);
-        m_contentsLayer->setAcceleratesDrawing(true);
-        m_contentsDisplayDelegate->prepareToDelegateDisplay(*m_contentsLayer);
-    }
 
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
@@ -1905,18 +1876,6 @@ bool GraphicsLayerCA::platformCALayerUseGiantTiles() const
 void GraphicsLayerCA::platformCALayerLogFilledVisibleFreshTile(unsigned blankPixelCount)
 {
     client().logFilledVisibleFreshTile(blankPixelCount);
-}
-
-bool GraphicsLayerCA::platformCALayerDelegatesDisplay(PlatformCALayer* layer) const
-{
-    return m_contentsDisplayDelegate && m_contentsLayer == layer;
-}
-
-void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
-{
-    ASSERT(m_contentsDisplayDelegate);
-    ASSERT(layer == m_contentsLayer);
-    m_contentsDisplayDelegate->display(*layer);
 }
 
 static PlatformCALayer::LayerType layerTypeForCustomBackdropAppearance(GraphicsLayer::CustomAppearance appearance)
@@ -2833,8 +2792,7 @@ void GraphicsLayerCA::updateContentsPlatformLayer()
         return;
 
     // Platform layer was set as m_contentsLayer, and will get parented in updateSublayerList().
-    auto orientation = m_contentsDisplayDelegate ? m_contentsDisplayDelegate->orientation() : defaultContentsOrientation;
-    setupContentsLayer(m_contentsLayer.get(), orientation);
+    setupContentsLayer(m_contentsLayer.get());
 
     if (m_contentsLayerPurpose == ContentsLayerPurpose::Canvas)
         m_contentsLayer->setNeedsDisplay();
@@ -4454,13 +4412,19 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         client().tiledBackingUsageChanged(this, isTiledLayer);
 }
 
-void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer, CompositingCoordinatesOrientation orientation)
+GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const
+{
+    return CompositingCoordinatesOrientation::TopDown;
+}
+
+void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
 {
     // Turn off implicit animations on the inner layer.
 #if !PLATFORM(IOS_FAMILY)
     contentsLayer->setMasksToBounds(true);
 #endif
-    if (orientation == CompositingCoordinatesOrientation::BottomUp) {
+
+    if (defaultContentsOrientation() == CompositingCoordinatesOrientation::BottomUp) {
         TransformationMatrix flipper(
             1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, -1.0f, 0.0f, 0.0f,

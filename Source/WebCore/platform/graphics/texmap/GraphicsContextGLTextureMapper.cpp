@@ -33,7 +33,6 @@
 
 #include "GLContext.h"
 #include "GraphicsContextGLOpenGLManager.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "PixelBuffer.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 #include <wtf/Deque.h>
@@ -80,32 +79,6 @@
 
 namespace WebCore {
 
-namespace {
-
-class PlatformLayerDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
-public:
-    static Ref<PlatformLayerDisplayDelegate> create(PlatformLayer* platformLayer)
-    {
-        return adoptRef(*new PlatformLayerDisplayDelegate(platformLayer));
-    }
-
-    // GraphicsLayerContentsDisplayDelegate overrides.
-    PlatformLayer* platformLayer() const final
-    {
-        return m_platformLayer;
-    }
-
-private:
-    PlatformLayerDisplayDelegate(PlatformLayer* platformLayer)
-        : m_platformLayer(platformLayer)
-    {
-    }
-
-    PlatformLayer* m_platformLayer;
-};
-
-}
-
 RefPtr<GraphicsContextGLTextureMapper> GraphicsContextGLTextureMapper::create(GraphicsContextGLAttributes&& attributes)
 {
     return adoptRef(*new GraphicsContextGLTextureMapper(WTFMove(attributes)));
@@ -115,17 +88,7 @@ GraphicsContextGLTextureMapper::~GraphicsContextGLTextureMapper() = default;
 
 GraphicsContextGLTextureMapper::GraphicsContextGLTextureMapper(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLTextureMapperBase(WTFMove(attributes))
-#if USE(NICOSIA)
-    , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer()))
-#else
-    , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(m_texmapLayer.get()))
-#endif
 {
-}
-
-RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLTextureMapper::layerContentsDisplayDelegate()
-{
-    return m_layerContentsDisplayDelegate.ptr();
 }
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
@@ -158,6 +121,15 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
     GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
 
     return context;
+}
+
+PlatformLayer* GraphicsContextGLTextureMapper::platformLayer() const
+{
+#if USE(NICOSIA)
+    return &m_nicosiaLayer->contentLayer();
+#else
+    return m_texmapLayer.get();
+#endif
 }
 
 #if ENABLE(MEDIA_STREAM)
