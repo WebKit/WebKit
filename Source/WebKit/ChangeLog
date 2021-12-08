@@ -1,5 +1,48 @@
 2021-12-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286631. rdar://problem/86223494
+
+    [Scroll Momentum Generator] Pages lose ability to momentum scroll after dragging between displays
+    https://bugs.webkit.org/show_bug.cgi?id=233948
+    rdar://86110813
+    
+    Reviewed by Tim Horton.
+    
+    This is a conservative fix for the bug. When a view moves to a new screen, WebPageProxy
+    needs to unregister for full speed updates using the old displayID, and register
+    using the new one.
+    
+    Longer term, it would be better if "full speed updates" was a per-observer concept,
+    but that would mean registering an observer while wheel events are being received,
+    which needs a bit more thought.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::windowScreenDidChange):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286631 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+            [Scroll Momentum Generator] Pages lose ability to momentum scroll after dragging between displays
+            https://bugs.webkit.org/show_bug.cgi?id=233948
+            rdar://86110813
+
+            Reviewed by Tim Horton.
+
+            This is a conservative fix for the bug. When a view moves to a new screen, WebPageProxy
+            needs to unregister for full speed updates using the old displayID, and register
+            using the new one.
+
+            Longer term, it would be better if "full speed updates" was a per-observer concept,
+            but that would mean registering an observer while wheel events are being received,
+            which needs a bit more thought.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::windowScreenDidChange):
+
+2021-12-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286566. rdar://problem/86223477
 
     Momentum Event Dispatcher: Momentum phase runs backwards with natural scrolling disabled
