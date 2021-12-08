@@ -2764,6 +2764,7 @@ private:
     std::optional<WebCore::PlatformDisplayID> m_displayID;
 #if HAVE(CVDISPLAYLINK)
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;
+    bool m_registeredForFullSpeedUpdates { false };
 #endif
 
     Deque<NativeWebMouseEvent> m_mouseEventQueue;
