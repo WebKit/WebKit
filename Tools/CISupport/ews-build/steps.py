@@ -3711,6 +3711,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
         if rc == SUCCESS:
+            time.sleep(60)  # It takes time for commits.webkit.org to digest commits
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
             svn_revision = self.svn_revision_from_commit_text(log_text)
             identifier = self.identifier_for_revision(svn_revision)
@@ -3742,7 +3743,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         try:
             response = requests.get(self.url_for_revision_details(revision), timeout=60)
             if response and response.status_code == 200:
-                return response.json().get('identifier', 'r{}'.format(revision))
+                return response.json().get('identifier', 'r{}'.format(revision)).replace('@trunk', '@main')
             else:
                 print('Non-200 status code received from {}: {}'.format(COMMITS_INFO_URL, response.status_code))
                 print(response.text)
