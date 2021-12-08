@@ -1,5 +1,22 @@
 2021-12-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [libpas] Guard Darwin-specific malloc zone usage in mbmalloc sources
+        https://bugs.webkit.org/show_bug.cgi?id=234005
+
+        Reviewed by Yusuke Suzuki.
+
+        Use PAS_OS(DARWIN) build guards for the Darwin-specific malloc header
+        inclusions and malloc_zone_pressure_relief() calls.
+
+        * libpas/src/mbmalloc/mbmalloc_bmalloc.c:
+        (mbscavenge):
+        * libpas/src/mbmalloc/mbmalloc_hotbit.c:
+        (mbscavenge):
+        * libpas/src/mbmalloc/mbmalloc_iso_common_primitive.c:
+        (mbscavenge):
+
+2021-12-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [libpas] Remove the stale SkipListTests.cpp file
         https://bugs.webkit.org/show_bug.cgi?id=234000
 
