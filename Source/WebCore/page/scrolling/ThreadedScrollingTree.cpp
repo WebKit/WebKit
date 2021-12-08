@@ -337,8 +337,12 @@ void ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout()
         m_state = SynchronizationState::Desynchronized;
         // At this point we know the main thread is taking too long in the rendering update,
         // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
-        if (canUpdateLayersOnScrollingThread())
-            applyLayerPositionsInternal();
+        if (canUpdateLayersOnScrollingThread()) {
+            // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
+            ScrollingThread::dispatch([protectedThis = makeRef(*this)]() {
+                protectedThis->applyLayerPositions();
+            });
+        }
         tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
     } else
         tracePoint(ScrollingThreadRenderUpdateSyncEnd);
