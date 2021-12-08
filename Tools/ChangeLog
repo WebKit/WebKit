@@ -1,3 +1,70 @@
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r286368. rdar://problem/85928816
+
+    REGRESSION (r286346): ResourceLoadDelegate.LoadInfo fails
+    https://bugs.webkit.org/show_bug.cgi?id=233689
+    
+    Reviewed by Simon Fraser.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+    This test asserts that archiving a _WKResourceLoadInfo via NSKeyedArchiver
+    encodes to a particular size (607 bytes).
+    
+    If you look at the resultant plist before r286346, the encoded frameID
+    and resourceLoadID have the same value, and because of NSKeyedArchiver
+    deduplication, share the same object.
+    
+    If you look at the resultant plist *after* r286346, the encoded frameID
+    is one larger than the resourceLoadID, thus cannot be deduplicated, and
+    end up encoding as separate objects. This results in the encoded size
+    increasing to 612 bytes.
+    
+    The reason that the encoded frameID is now one value larger is that
+    ObjectIdentifier uses a global identifier pool, and r286346 creates
+    one more ObjectIdentifier during EventHandler construction, destroying
+    our entirely coincidental ID overlap, and causing the aforementioned
+    encoded size change.
+    
+    Remove this assertion from the test, since it is very aggressive and
+    seems unnecessary. We could instead just rebaseline the test, but it
+    seems insufficiently important to burden some future developer with
+    a repeat of this evening of exploration and discovery.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286368 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-01  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r286346): ResourceLoadDelegate.LoadInfo fails
+            https://bugs.webkit.org/show_bug.cgi?id=233689
+
+            Reviewed by Simon Fraser.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+            This test asserts that archiving a _WKResourceLoadInfo via NSKeyedArchiver
+            encodes to a particular size (607 bytes).
+
+            If you look at the resultant plist before r286346, the encoded frameID
+            and resourceLoadID have the same value, and because of NSKeyedArchiver
+            deduplication, share the same object.
+
+            If you look at the resultant plist *after* r286346, the encoded frameID
+            is one larger than the resourceLoadID, thus cannot be deduplicated, and
+            end up encoding as separate objects. This results in the encoded size
+            increasing to 612 bytes.
+
+            The reason that the encoded frameID is now one value larger is that
+            ObjectIdentifier uses a global identifier pool, and r286346 creates
+            one more ObjectIdentifier during EventHandler construction, destroying
+            our entirely coincidental ID overlap, and causing the aforementioned
+            encoded size change.
+
+            Remove this assertion from the test, since it is very aggressive and
+            seems unnecessary. We could instead just rebaseline the test, but it
+            seems insufficiently important to burden some future developer with
+            a repeat of this evening of exploration and discovery.
+
 2021-12-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix the debug build.
