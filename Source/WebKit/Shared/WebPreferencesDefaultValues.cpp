@@ -324,7 +324,7 @@ bool defaultMediaSessionCoordinatorEnabled()
     static dispatch_once_t onceToken;
     static bool enabled { false };
     dispatch_once(&onceToken, ^{
-        if (isInWebProcess())
+        if (WebCore::isInWebProcess())
             enabled = WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.group-session.urlactivity");
         else
             enabled = WTF::processHasEntitlement("com.apple.developer.group-session.urlactivity");
