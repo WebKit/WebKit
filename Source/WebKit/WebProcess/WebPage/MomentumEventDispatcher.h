@@ -39,6 +39,7 @@
 #include <WebCore/RectEdges.h>
 #include <memory>
 #include <wtf/Deque.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -80,6 +81,9 @@ private:
 
     void buildOffsetTableWithInitialDelta(WebCore::FloatSize);
 
+    // Once consumed, this delta *must* be dispatched in an event.
+    WebCore::FloatSize consumeDeltaForCurrentTime();
+
     WebCore::FloatSize offsetAtTime(Seconds);
     std::pair<WebCore::FloatSize, WebCore::FloatSize> computeNextDelta(WebCore::FloatSize currentUnacceleratedDelta);
 
@@ -96,6 +100,7 @@ private:
     HistoricalDeltas m_deltaHistoryY;
 
     std::optional<WallTime> m_lastScrollTimestamp;
+    WallTime m_lastEndedEventTimestamp;
     std::optional<WebWheelEvent> m_lastIncomingEvent;
     WebCore::RectEdges<bool> m_lastRubberBandableEdges;
 #if !RELEASE_LOG_DISABLED
@@ -110,7 +115,7 @@ private:
         std::optional<WebWheelEvent> initiatingEvent;
 
         WebCore::FloatSize currentOffset;
-        WallTime startTime;
+        MonotonicTime startTime;
 
         Vector<WebCore::FloatSize> offsetTable;
 

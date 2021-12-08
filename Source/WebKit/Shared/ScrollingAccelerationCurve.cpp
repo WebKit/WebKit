@@ -34,8 +34,8 @@
 
 namespace WebKit {
 
-ScrollingAccelerationCurve::ScrollingAccelerationCurve(float gainLinear, float gainParabolic, float gainCubic, float gainQuartic, float tangentSpeedLinear, float tangentSpeedParabolicRoot, float resolution)
-    : m_parameters { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution }
+ScrollingAccelerationCurve::ScrollingAccelerationCurve(float gainLinear, float gainParabolic, float gainCubic, float gainQuartic, float tangentSpeedLinear, float tangentSpeedParabolicRoot, float resolution, float frameRate)
+    : m_parameters { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution, frameRate }
 {
 }
 
@@ -53,7 +53,7 @@ ScrollingAccelerationCurve ScrollingAccelerationCurve::interpolate(const Scrolli
     auto tangentSpeedLinear = interpolate(from.m_parameters.tangentSpeedLinear, to.m_parameters.tangentSpeedLinear);
     auto tangentSpeedParabolicRoot = interpolate(from.m_parameters.tangentSpeedParabolicRoot, to.m_parameters.tangentSpeedParabolicRoot);
 
-    return { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, from.m_parameters.resolution };
+    return { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, from.m_parameters.resolution, from.m_parameters.frameRate };
 }
 
 void ScrollingAccelerationCurve::computeIntermediateValuesIfNeeded()
@@ -127,6 +127,7 @@ void ScrollingAccelerationCurve::encode(IPC::Encoder& encoder) const
     encoder << m_parameters.tangentSpeedParabolicRoot;
 
     encoder << m_parameters.resolution;
+    encoder << m_parameters.frameRate;
 }
 
 std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::decode(IPC::Decoder& decoder)
@@ -154,8 +155,11 @@ std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::decode(IPC
     float resolution;
     if (!decoder.decode(resolution))
         return std::nullopt;
+    float frameRate;
+    if (!decoder.decode(frameRate))
+        return std::nullopt;
 
-    return { { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution } };
+    return { { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution, frameRate } };
 }
 
 TextStream& operator<<(TextStream& ts, const ScrollingAccelerationCurve& curve)
@@ -171,6 +175,7 @@ TextStream& operator<<(TextStream& ts, const ScrollingAccelerationCurve& curve)
     ts.dumpProperty("tangentSpeedLinear", curve.m_parameters.tangentSpeedLinear);
     ts.dumpProperty("tangentSpeedParabolicRoot", curve.m_parameters.tangentSpeedParabolicRoot);
     ts.dumpProperty("resolution", curve.m_parameters.resolution);
+    ts.dumpProperty("frameRate", curve.m_parameters.frameRate);
 
     return ts;
 }

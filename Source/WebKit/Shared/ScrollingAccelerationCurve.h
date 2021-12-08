@@ -41,13 +41,14 @@ class NativeWebWheelEvent;
 
 class ScrollingAccelerationCurve {
 public:
-    ScrollingAccelerationCurve(float gainLinear, float gainParabolic, float gainCubic, float gainQuartic, float tangentSpeedLinear, float tangentSpeedParabolicRoot, float resolution);
+    ScrollingAccelerationCurve(float gainLinear, float gainParabolic, float gainCubic, float gainQuartic, float tangentSpeedLinear, float tangentSpeedParabolicRoot, float resolution, float frameRate);
 
     static std::optional<ScrollingAccelerationCurve> fromNativeWheelEvent(const NativeWebWheelEvent&);
 
     static ScrollingAccelerationCurve interpolate(const ScrollingAccelerationCurve& from, const ScrollingAccelerationCurve& to, float amount);
 
     float accelerationFactor(float);
+    float frameRate() const { return m_parameters.frameRate; }
 
     void encode(IPC::Encoder&) const;
     static std::optional<ScrollingAccelerationCurve> decode(IPC::Decoder&);
@@ -60,7 +61,8 @@ public:
             && m_parameters.gainQuartic == other.m_parameters.gainQuartic
             && m_parameters.tangentSpeedLinear == other.m_parameters.tangentSpeedLinear
             && m_parameters.tangentSpeedParabolicRoot == other.m_parameters.tangentSpeedParabolicRoot
-            && m_parameters.resolution == other.m_parameters.resolution;
+            && m_parameters.resolution == other.m_parameters.resolution
+            && m_parameters.frameRate == other.m_parameters.frameRate;
     }
 
     bool operator!=(const ScrollingAccelerationCurve& other) const { return !(*this == other); }
@@ -79,7 +81,11 @@ private:
         float gainQuartic { 0 };
         float tangentSpeedLinear { 0 };
         float tangentSpeedParabolicRoot { 0 };
+
+        // FIXME: Resolution and frame rate are not technically properties
+        // of the curve, just required to use it; they should be plumbed separately.
         float resolution { 0 };
+        float frameRate { 0 };
     } m_parameters;
 
     struct ComputedIntermediateValues {
