@@ -84,6 +84,8 @@ void BaseAudioSharedUnit::startProducingData()
     if (m_suspended)
         resume();
 
+    setIsProducingMicrophoneSamples(true);
+
     if (++m_producingCount != 1)
         return;
 
@@ -177,6 +179,21 @@ void BaseAudioSharedUnit::stopProducingData()
     if (m_producingCount && --m_producingCount)
         return;
 
+    if (m_isRenderingAudio) {
+        setIsProducingMicrophoneSamples(false);
+        return;
+    }
+
+    stopInternal();
+    cleanupAudioUnit();
+}
+
+void BaseAudioSharedUnit::setIsRenderingAudio(bool value)
+{
+    m_isRenderingAudio = value;
+    if (m_isRenderingAudio || m_producingCount)
+        return;
+
     stopInternal();
     cleanupAudioUnit();
 }
@@ -210,8 +227,13 @@ OSStatus BaseAudioSharedUnit::resume()
 
     ASSERT(!m_producingCount);
 
-    forEachClient([](auto& client) {
-        client.setMuted(false);
+    callOnMainThread([weakThis = WeakPtr { this }] {
+        if (!weakThis || weakThis->m_suspended)
+            return;
+
+        weakThis->forEachClient([](auto& client) {
+            client.setMuted(false);
+        });
     });
 
     return 0;

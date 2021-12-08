@@ -507,6 +507,14 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
 }
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& process)
+{
+    for (auto& connection : m_webProcessConnections.values())
+        connection->processIsStartingToCaptureAudio(process);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

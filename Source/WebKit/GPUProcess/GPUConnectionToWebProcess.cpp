@@ -199,7 +199,14 @@ private:
         m_process.setTCCIdentity();
     }
 #endif
-
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void startProducingData(RealtimeMediaSource::Type type) final
+    {
+        if (type != RealtimeMediaSource::Type::Audio)
+            return;
+        m_process.startCapturingAudio();
+    }
+#endif
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
     std::optional<task_id_token_t> webProcessIdentityToken() const final
     {
@@ -900,6 +907,20 @@ void GPUConnectionToWebProcess::updateCaptureOrigin(const WebCore::SecurityOrigi
 {
     m_captureOrigin = originData.securityOrigin();
 }
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+void GPUConnectionToWebProcess::startCapturingAudio()
+{
+    gpuProcess().processIsStartingToCaptureAudio(*this);
+}
+
+void GPUConnectionToWebProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& process)
+{
+    m_isLastToCaptureAudio = this == &process;
+    if (m_audioMediaStreamTrackRendererInternalUnitManager)
+        m_audioMediaStreamTrackRendererInternalUnitManager->notifyLastToCaptureAudioChanged();
+}
+#endif
 
 #if !PLATFORM(COCOA)
 bool GPUConnectionToWebProcess::setCaptureAttributionString() const

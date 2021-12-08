@@ -1,3 +1,25 @@
+2021-12-08  Youenn Fablet  <youenn@apple.com>
+
+        Let RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit switch to VPIO unit if VPIO is running
+        https://bugs.webkit.org/show_bug.cgi?id=233316
+
+        Reviewed by Eric Carlson.
+
+        We track which process is the last to start audio capture.
+        In that case, we register its RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit to the capture unit.
+        This allows RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit to switch between RemoteIO if capture unit does not run
+        or the capture unit if running.
+        This allows to remove the x5 gain workaround.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+
 2021-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [MacCatalyst] Various build fixes

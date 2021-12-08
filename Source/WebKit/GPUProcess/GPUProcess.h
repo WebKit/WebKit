@@ -111,6 +111,10 @@ public:
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
+#endif
+
 private:
     void lowMemoryHandler(Critical, Synchronous);
 

@@ -65,6 +65,7 @@ public:
 #if ENABLE(APP_PRIVACY_REPORT)
         virtual void setTCCIdentity() { }
 #endif
+        virtual void startProducingData(WebCore::RealtimeMediaSource::Type) { }
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();

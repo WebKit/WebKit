@@ -32,6 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class CaptureDevice;
 class CoreAudioCaptureSource;
 class PlatformAudioData;
 
-class BaseAudioSharedUnit {
+class BaseAudioSharedUnit : public CanMakeWeakPtr<BaseAudioSharedUnit> {
 public:
     BaseAudioSharedUnit();
     virtual ~BaseAudioSharedUnit() = default;
@@ -98,6 +99,12 @@ protected:
     const String& persistentID() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
     uint32_t captureDeviceID() const { return m_capturingDevice ? m_capturingDevice->second : 0; }
 
+    void setIsRenderingAudio(bool);
+
+protected:
+    void setIsProducingMicrophoneSamples(bool value) { m_isProducingMicrophoneSamples = value; }
+    bool isProducingMicrophoneSamples() const { return m_isProducingMicrophoneSamples; }
+
 private:
     OSStatus startUnit();
 
@@ -106,6 +113,7 @@ private:
     int m_sampleRate;
     bool m_suspended { false };
     bool m_needsReconfiguration { false };
+    bool m_isRenderingAudio { false };
 
     int32_t m_producingCount { 0 };
 
@@ -114,6 +122,8 @@ private:
     HashSet<CoreAudioCaptureSource*> m_clients;
     Vector<CoreAudioCaptureSource*> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);
     Lock m_audioThreadClientsLock;
+
+    bool m_isProducingMicrophoneSamples { true };
 };
 
 } // namespace WebCore

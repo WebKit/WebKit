@@ -60,6 +60,8 @@ public:
     bool hasUnits() { return !m_units.isEmpty(); }
     class Unit;
 
+    void notifyLastToCaptureAudioChanged();
+
 private:
     // Messages
     void createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, CompletionHandler<void(const WebCore::CAAudioStreamDescription&, size_t)>&& callback);

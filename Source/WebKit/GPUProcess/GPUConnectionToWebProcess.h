@@ -138,6 +138,12 @@ public:
     bool allowsDisplayCapture() const { return m_allowsDisplayCapture; }
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void startCapturingAudio();
+    void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
+    bool isLastToCaptureAudio() const { return m_isLastToCaptureAudio; }
+#endif
+
 #if ENABLE(APP_PRIVACY_REPORT)
     void setTCCIdentity();
 #endif
@@ -292,9 +298,10 @@ private:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
     std::unique_ptr<RemoteAudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
+    bool m_isLastToCaptureAudio { false };
+
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
-#endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
 #if ENABLE(MEDIA_STREAM)
