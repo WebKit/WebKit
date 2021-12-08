@@ -92,12 +92,6 @@ gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer
     return destination->handleMessage(message);
 }
 
-static void autoAudioSinkChildAddedCallback(GstChildProxy*, GObject* object, gchar*, gpointer)
-{
-    if (GST_IS_AUDIO_BASE_SINK(object))
-        g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
-}
-
 Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     initializeDebugCategory();
@@ -135,7 +129,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
         "bus", m_renderBus.get(), "destination", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
 
-    GRefPtr<GstElement> audioSink = createPlatformAudioSink();
+    GRefPtr<GstElement> audioSink = createPlatformAudioSink("music");
     m_audioSinkAvailable = audioSink;
     if (!audioSink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
@@ -145,7 +139,10 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     // Probe platform early on for a working audio output device. This is not needed for the WebKit
     // custom audio sink because it doesn't rely on autoaudiosink.
     if (!WEBKIT_IS_AUDIO_SINK(audioSink.get())) {
-        g_signal_connect(audioSink.get(), "child-added", G_CALLBACK(autoAudioSinkChildAddedCallback), nullptr);
+        g_signal_connect(audioSink.get(), "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer) {
+            if (GST_IS_AUDIO_BASE_SINK(object))
+                g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
+        }), nullptr);
 
         // Autoaudiosink does the real sink detection in the GST_STATE_NULL->READY transition
         // so it's best to roll it to READY as soon as possible to ensure the underlying platform
