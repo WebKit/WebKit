@@ -4273,6 +4273,11 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
     sendWithAsyncReply(Messages::WebPage::FindString(string, options, maxMatchCount), WTFMove(callbackFunction));
 }
 
+void WebPageProxy::findRectsForStringMatches(const String& string, OptionSet<WebKit::FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&& callbackFunction)
+{
+    sendWithAsyncReply(Messages::WebPage::FindRectsForStringMatches(string, options, maxMatchCount), WTFMove(callbackFunction));
+}
+
 void WebPageProxy::getImageForFindMatch(int32_t matchIndex)
 {
     send(Messages::WebPage::GetImageForFindMatch(matchIndex));
@@ -4291,6 +4296,11 @@ void WebPageProxy::indicateFindMatch(int32_t matchIndex)
 void WebPageProxy::hideFindUI()
 {
     send(Messages::WebPage::HideFindUI());
+}
+
+void WebPageProxy::hideFindIndicator()
+{
+    send(Messages::WebPage::HideFindIndicator());
 }
 
 void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)

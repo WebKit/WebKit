@@ -39,6 +39,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/Page.h>
@@ -235,9 +236,10 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     // iOS will reveal the selection through a different mechanism, and
     // we need to avoid sending the non-painted selection change to the UI process
     // so that it does not clear the selection out from under us.
-#if PLATFORM(IOS_FAMILY)
+    //
+    // To share logic between platforms, prevent Editor from revealing the selection
+    // and reveal the selection in FindController::didFindString.
     coreOptions.add(DoNotRevealSelection);
-#endif
 
     willFindString();
 
@@ -301,6 +303,27 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
     });
 }
 
+void FindController::findRectsForStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<FloatRect>&&)>&& completionHandler)
+{
+    auto result = m_webPage->corePage()->findTextMatches(string, core(options), maxMatchCount);
+    m_findMatches = WTFMove(result.ranges);
+
+    auto rects = m_findMatches.map([&] (auto& range) {
+        FloatRect rect = unionRect(RenderObject::absoluteTextRects(range));
+        return range.startContainer().document().frame()->view()->contentsToRootView(rect);
+    });
+
+    completionHandler(WTFMove(rects));
+
+    if (!options.contains(FindOptions::ShowOverlay) && !options.contains(FindOptions::ShowFindIndicator))
+        return;
+
+    bool found = !m_findMatches.isEmpty();
+    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage = RefPtr { m_webPage }, found, string, options, maxMatchCount] () {
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, DidWrap::No, FindUIOriginator::FindStringMatches);
+    });
+}
+
 void FindController::getImageForFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
@@ -344,13 +367,15 @@ void FindController::selectFindMatch(uint32_t matchIndex)
 
 void FindController::indicateFindMatch(uint32_t matchIndex)
 {
+    willFindString();
+
     selectFindMatch(matchIndex);
 
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
-    selectedFrame->selection().revealSelection();
+    didFindString();
 
     updateFindIndicator(*selectedFrame, !!m_findPageOverlay);
 }
@@ -412,6 +437,11 @@ void FindController::willFindString()
 
 void FindController::didFindString()
 {
+    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    if (!selectedFrame)
+        return;
+
+    selectedFrame->selection().revealSelection();
 }
 
 void FindController::didFailToFindString()

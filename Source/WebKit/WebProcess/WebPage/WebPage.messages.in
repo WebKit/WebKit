@@ -312,6 +312,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     HideFindUI()
     CountStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount)
     ReplaceMatches(Vector<uint32_t> matchIndices, String replacementText, bool selectionOnly) -> (uint64_t numberOfReplacements) Async
+
+    FindRectsForStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (Vector<WebCore::FloatRect> matches) Async
+    HideFindIndicator()
     
     AddMIMETypeWithCustomContentProvider(String mimeType)
 

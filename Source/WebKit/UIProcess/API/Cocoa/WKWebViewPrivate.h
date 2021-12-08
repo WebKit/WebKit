@@ -23,6 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+#if __has_include(<UIKit/_UITextSearching.h>)
+#import <UIKit/_UITextSearching.h>
+#endif
+#endif
+
 #import <WebKit/WKDataDetectorTypes.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/_WKActivatedElementInfo.h>
@@ -420,7 +426,11 @@ for this property.
 
 #if TARGET_OS_IPHONE
 
+#if __has_include(<UIKit/_UITextSearching.h>)
+@interface WKWebView (WKPrivateIOS) <_UITextSearching>
+#else
 @interface WKWebView (WKPrivateIOS)
+#endif
 
 #if !TARGET_OS_TV && !TARGET_OS_WATCH
 @property (nonatomic, copy, setter=_setUIEventAttribution:) UIEventAttribution *_uiEventAttribution WK_API_AVAILABLE(ios(15.0));

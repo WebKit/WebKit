@@ -60,6 +60,7 @@ public:
 
     void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
     void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
+    void findRectsForStringMatches(const String&, OptionSet<WebKit::FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&);
     void getImageForFindMatch(uint32_t matchIndex);
     void selectFindMatch(uint32_t matchIndex);
     void indicateFindMatch(uint32_t matchIndex);

@@ -1,3 +1,92 @@
+2021-12-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add initial support for find-in-page SPI
+        https://bugs.webkit.org/show_bug.cgi?id=233915
+        rdar://86140501
+
+        Reviewed by Wenson Hsieh.
+
+        Expose new find-in-page SPI for use by clients.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView selectedTextRange]):
+        (-[WKWebView offsetFromPosition:toPosition:inDocument:]):
+        (-[WKWebView performTextSearchWithQueryString:usingOptions:resultAggregator:]):
+        (-[WKWebView decorateFoundTextRange:inDocument:usingStyle:]):
+        (-[WKWebView clearAllDecoratedFoundText]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findRectsForStringMatches):
+        (WebKit::WebPageProxy::hideFindIndicator):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView offsetFromPosition:toPosition:]):
+
+        The implementation here is needed to determine the relative ordering of
+        two search results.
+
+        (-[WKContentView performTextSearchWithQueryString:usingOptions:resultAggregator:]):
+
+        Call into the WebProcess to perform the search, and asynchronously
+        mark the search as complete.
+
+        A search result is represented as a WKFoundTextRange, and contains
+        two pieces of information.
+
+        1. A rect – so that clients can determine whether or not the result
+           is visible.
+
+        2. An index – to allow for highlighting of a result and to enable
+           determining relative ordering between two results.
+
+        (-[WKContentView decorateFoundTextRange:usingStyle:]):
+        (-[WKContentView clearAllDecoratedFoundText]):
+        (+[WKFoundTextRange foundTextRangeWithRect:index:]):
+        (-[WKFoundTextRange start]):
+        (-[WKFoundTextRange end]):
+        (-[WKFoundTextRange isEmpty]):
+        (+[WKFoundTextPosition textPositionWithIndex:]):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+
+        Prevent Editor from revealing the selection on all platforms, as the
+        existing call to didFindString is now responsible for revealing
+        selection on all platforms.
+
+        (WebKit::FindController::findRectsForStringMatches):
+
+        Gather rects for all search results and return them to the UIProcess.
+
+        (WebKit::FindController::indicateFindMatch):
+
+        This method was previously unused on iOS, and required some changes
+        to work correctly.
+
+        Wrap the call to select the current match with calls to
+        {will|did}FindString to account for iOS specific selection behavior.
+        See the existing comment in didFindString for more details.
+
+        No behavior change on other platforms, since willFindString is empty,
+        and didFindString now reveals the selection.
+
+        (WebKit::FindController::didFindString):
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findRectsForStringMatches):
+        (WebKit::WebPage::hideFindIndicator):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Added two new WebPage messages.
+
+        1. findRectsForStringMatches returns an vector of string match rects
+           for use in the UIProcess.
+
+        2. Expose hideFindIndicator via IPC so that the UIProcess can hide
+           the indicator without dismissing the overlay entirely.
+
 2021-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for `navigator.requestCookieConsent()` behind a disabled feature flag

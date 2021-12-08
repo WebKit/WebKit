@@ -4716,6 +4716,16 @@ void WebPage::findStringMatches(const String& string, OptionSet<FindOptions> opt
     findController().findStringMatches(string, options, maxMatchCount);
 }
 
+void WebPage::findRectsForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(Vector<FloatRect>&&)>&& completionHandler)
+{
+    findController().findRectsForStringMatches(string, options, maxMatchCount, WTFMove(completionHandler));
+}
+
+void WebPage::hideFindIndicator()
+{
+    findController().hideFindIndicator();
+}
+
 void WebPage::getImageForFindMatch(uint32_t matchIndex)
 {
     findController().getImageForFindMatch(matchIndex);

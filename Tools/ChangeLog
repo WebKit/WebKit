@@ -1,3 +1,19 @@
+2021-12-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add initial support for find-in-page SPI
+        https://bugs.webkit.org/show_bug.cgi?id=233915
+        rdar://86140501
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (-[TestSearchAggregator initWithCompletionHandler:]):
+        (-[TestSearchAggregator foundRange:forSearchString:inDocument:]):
+        (-[TestSearchAggregator finishedSearching]):
+        (TEST):
+
+        Added an API test to verify that search results are found correctly.
+
 2021-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for `navigator.requestCookieConsent()` behind a disabled feature flag

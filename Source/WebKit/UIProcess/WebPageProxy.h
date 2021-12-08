@@ -1200,11 +1200,13 @@ public:
     // Find.
     void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&& = [](bool) { });
     void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
+    void findRectsForStringMatches(const String&, OptionSet<WebKit::FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&);
     void getImageForFindMatch(int32_t matchIndex);
     void selectFindMatch(int32_t matchIndex);
     void indicateFindMatch(int32_t matchIndex);
     void didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
+    void hideFindIndicator();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
     void didCountStringMatches(const String&, uint32_t matchCount);

@@ -1763,6 +1763,8 @@ private:
     void hideFindUI();
     void countStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount);
     void replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
+    void findRectsForStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&);
+    void hideFindIndicator();
 
 #if USE(COORDINATED_GRAPHICS)
     void sendViewportAttributesChanged(const WebCore::ViewportArguments&);

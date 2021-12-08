@@ -401,6 +401,27 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @end
 
+#if HAVE(UIFINDINTERACTION)
+
+@interface WKFoundTextRange : UITextRange
+
+@property (nonatomic) CGRect rect;
+@property (nonatomic) NSUInteger index;
+
++ (WKFoundTextRange *)foundTextRangeWithRect:(CGRect)rect index:(NSUInteger)index;
+
+@end
+
+@interface WKFoundTextPosition : UITextPosition
+
+@property (nonatomic) NSUInteger index;
+
++ (WKFoundTextPosition *)textPositionWithIndex:(NSUInteger)index;
+
+@end
+
+#endif
+
 @interface WKAutocorrectionRects : UIWKAutocorrectionRects
 + (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect;
 @end
@@ -5238,6 +5259,11 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition
 {
+#if HAVE(UIFINDINTERACTION)
+    if ([from isKindOfClass:[WKFoundTextPosition class]] && [toPosition isKindOfClass:[WKFoundTextPosition class]])
+        return ((WKFoundTextPosition *)from).index - ((WKFoundTextPosition *)toPosition).index;
+#endif
+
     return 0;
 }
 
@@ -9949,6 +9975,47 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }];
 }
 
+#if HAVE(UIFINDINTERACTION)
+
+- (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
+{
+    // FIXME: (rdar://86140673) Account for _UITextSearchOptions when performing the search.
+    OptionSet<WebKit::FindOptions> findOptions;
+    findOptions.add(WebKit::FindOptions::ShowOverlay);
+
+    _page->findRectsForStringMatches(string, findOptions, 1000, [string, aggregator = retainPtr(aggregator)](const Vector<WebCore::FloatRect>& rects) {
+        NSUInteger index = 0;
+        for (auto& rect : rects) {
+            WKFoundTextRange *range = [WKFoundTextRange foundTextRangeWithRect:rect index:index];
+            [aggregator foundRange:range forSearchString:string inDocument:nil];
+            index++;
+        }
+
+        [aggregator finishedSearching];
+    });
+}
+
+- (void)decorateFoundTextRange:(UITextRange *)range usingStyle:(_UIFoundTextStyle)style
+{
+    if (![range isKindOfClass:[WKFoundTextRange class]])
+        return;
+
+    if (style == _UIFoundTextStyleHighlighted) {
+        _foundHighlightedTextRange = range;
+        WKFoundTextRange *foundRange = (WKFoundTextRange *)range;
+        _page->indicateFindMatch(foundRange.index);
+    } else if (style == _UIFoundTextStyleFound && _foundHighlightedTextRange == range)
+        _page->hideFindIndicator();
+}
+
+- (void)clearAllDecoratedFoundText
+{
+    _foundHighlightedTextRange = nil;
+    _page->hideFindUI();
+}
+
+#endif // HAVE(UIFINDINTERACTION)
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 #if USE(QUICK_LOOK)
@@ -11804,6 +11871,49 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 }
 
 @end
+
+#if HAVE(UIFINDINTERACTION)
+
+@implementation WKFoundTextRange
+
++ (WKFoundTextRange *)foundTextRangeWithRect:(CGRect)rect index:(NSUInteger)index
+{
+    auto range = adoptNS([[WKFoundTextRange alloc] init]);
+    [range setRect:rect];
+    [range setIndex:index];
+    return range.autorelease();
+}
+
+- (WKFoundTextPosition *)start
+{
+    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithIndex:self.index];
+    return position;
+}
+
+- (UITextPosition *)end
+{
+    return self.start;
+}
+
+- (BOOL)isEmpty
+{
+    return NO;
+}
+
+@end
+
+@implementation WKFoundTextPosition
+
++ (WKFoundTextPosition *)textPositionWithIndex:(NSUInteger)index
+{
+    auto pos = adoptNS([[WKFoundTextPosition alloc] init]);
+    [pos setIndex:index];
+    return pos.autorelease();
+}
+
+@end
+
+#endif
 
 @implementation WKAutocorrectionRects
 
