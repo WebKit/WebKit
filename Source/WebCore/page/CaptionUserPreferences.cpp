@@ -97,7 +97,7 @@ CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferences::captionDispla
 void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
 {
     m_displayMode = mode;
-    if (m_testingMode && mode != AlwaysOn) {
+    if (testingMode() && mode != AlwaysOn) {
         setUserPrefersCaptions(false);
         setUserPrefersSubtitles(false);
     }
@@ -176,7 +176,7 @@ void CaptionUserPreferences::captionPreferencesChanged()
 Vector<String> CaptionUserPreferences::preferredLanguages() const
 {
     Vector<String> languages = userPreferredLanguages(ShouldMinimizeLanguages::No);
-    if (m_testingMode && !m_userPreferredLanguage.isEmpty())
+    if (testingMode() && !m_userPreferredLanguage.isEmpty())
         languages.insert(0, m_userPreferredLanguage);
 
     return languages;

@@ -1,3 +1,20 @@
+2021-12-08  Jer Noble  <jer.noble@apple.com>
+
+        [VTT] Fix various issues with complicated rendering of VTT cues
+        https://bugs.webkit.org/show_bug.cgi?id=233901
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/no-snap-to-lines-overlap.vtt: Added.
+        * media/track/captions-webvtt/snap-to-lines-inline-style.vtt: Added.
+        * media/track/captions-webvtt/snap-to-lines-left-and-right.vtt: Added.
+        * media/track/track-webvtt-no-snap-to-lines-overlap-expected.html: Added.
+        * media/track/track-webvtt-no-snap-to-lines-overlap.html: Added.
+        * media/track/track-webvtt-snap-to-lines-inline-style-expected.html: Added.
+        * media/track/track-webvtt-snap-to-lines-inline-style.html: Added.
+        * media/track/track-webvtt-snap-to-lines-left-right-expected.html: Added.
+        * media/track/track-webvtt-snap-to-lines-left-right.html: Added.
+
 2021-12-08  Rob Buis  <rbuis@igalia.com>
 
         [css-contain] Prevent various kinds of propagation to RenderView

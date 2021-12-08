@@ -269,6 +269,7 @@ public:
     virtual bool isRenderMultiColumnSpannerPlaceholder() const { return false; }
 
     virtual bool isRenderScrollbarPart() const { return false; }
+    virtual bool isRenderVTTCue() const { return false; }
 
     bool isDocumentElementRenderer() const { return document().documentElement() == &m_node; }
     bool isBody() const { return node() && node()->hasTagName(HTMLNames::bodyTag); }

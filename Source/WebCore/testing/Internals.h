@@ -56,6 +56,7 @@ class AudioTrack;
 class BaseAudioContext;
 class Blob;
 class CacheStorageConnection;
+class CaptionUserPreferencesTestingModeToken;
 class DOMPointReadOnly;
 class DOMRect;
 class DOMRectList;
@@ -1261,6 +1262,9 @@ private:
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     RefPtr<MockMediaSessionCoordinator> m_mockMediaSessionCoordinator;
+#endif
+#if ENABLE(VIDEO)
+    std::unique_ptr<CaptionUserPreferencesTestingModeToken> m_testingModeToken;
 #endif
 };
 
