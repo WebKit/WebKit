@@ -113,6 +113,8 @@ public:
     virtual float pageScaleFactor() const = 0;
     virtual LayoutSize scrollExtent() const = 0;
     virtual FloatSize viewportSize() const = 0;
+
+    virtual bool momentumScrollingAnimatorEnabled() const { return false; }
 };
 
 class ScrollController {
