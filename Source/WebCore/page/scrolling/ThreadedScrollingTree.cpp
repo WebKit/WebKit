@@ -390,7 +390,6 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
     
     auto now = MonotonicTime::now();
     m_lastDisplayDidRefreshTime = now;
-    serviceScrollAnimations();
 
     if (m_state != SynchronizationState::Idle && canUpdateLayersOnScrollingThread())
         applyLayerPositionsInternal();
