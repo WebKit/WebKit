@@ -750,7 +750,8 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSImportRule.idl
     css/CSSKeyframeRule.idl
     css/CSSKeyframesRule.idl
-    css/CSSLayerRule.idl
+    css/CSSLayerBlockRule.idl
+    css/CSSLayerStatementRule.idl
     css/CSSMediaRule.idl
     css/CSSNamespaceRule.idl
     css/CSSPaintCallback.idl

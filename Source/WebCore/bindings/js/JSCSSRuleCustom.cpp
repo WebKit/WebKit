@@ -32,6 +32,8 @@
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
+#include "CSSLayerBlockRule.h"
+#include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
 #include "CSSPageRule.h"
@@ -43,6 +45,8 @@
 #include "JSCSSImportRule.h"
 #include "JSCSSKeyframeRule.h"
 #include "JSCSSKeyframesRule.h"
+#include "JSCSSLayerBlockRule.h"
+#include "JSCSSLayerStatementRule.h"
 #include "JSCSSMediaRule.h"
 #include "JSCSSNamespaceRule.h"
 #include "JSCSSPageRule.h"
@@ -88,7 +92,13 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSSupportsRule>(globalObject, WTFMove(rule));
     case CSSRule::COUNTER_STYLE_RULE:
         return createWrapper<CSSCounterStyleRule>(globalObject, WTFMove(rule));
-    default:
+    case CSSRule::LAYER_BLOCK_RULE:
+        return createWrapper<CSSLayerBlockRule>(globalObject, WTFMove(rule));
+    case CSSRule::LAYER_STATEMENT_RULE:
+        return createWrapper<CSSLayerStatementRule>(globalObject, WTFMove(rule));
+    case CSSRule::UNKNOWN_RULE:
+    case CSSRule::CHARSET_RULE:
+    case CSSRule::MARGIN_RULE:
         return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }
 }

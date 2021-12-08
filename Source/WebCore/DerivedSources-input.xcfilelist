@@ -878,10 +878,12 @@ $(PROJECT_DIR)/css/CSSCounterStyleRule.idl
 $(PROJECT_DIR)/css/CSSFontFaceRule.idl
 $(PROJECT_DIR)/css/CSSFontPaletteValuesRule.idl
 $(PROJECT_DIR)/css/CSSGroupingRule.idl
+$(PROJECT_DIR)/css/CSSImportRule+Layer.idl
 $(PROJECT_DIR)/css/CSSImportRule.idl
 $(PROJECT_DIR)/css/CSSKeyframeRule.idl
 $(PROJECT_DIR)/css/CSSKeyframesRule.idl
-$(PROJECT_DIR)/css/CSSLayerRule.idl
+$(PROJECT_DIR)/css/CSSLayerBlockRule.idl
+$(PROJECT_DIR)/css/CSSLayerStatementRule.idl
 $(PROJECT_DIR)/css/CSSMediaRule.idl
 $(PROJECT_DIR)/css/CSSNamespaceRule.idl
 $(PROJECT_DIR)/css/CSSPageRule.idl
@@ -1325,8 +1327,8 @@ $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObjectOES.idl
 $(PROJECT_DIR)/html/parser/HTMLEntityNames.in
 $(PROJECT_DIR)/html/parser/create-html-entity-table
 $(PROJECT_DIR)/html/shadow/imageOverlay.css
-$(PROJECT_DIR)/html/shadow/meterElementShadow.css
 $(PROJECT_DIR)/html/shadow/mac/imageControlsMac.css
+$(PROJECT_DIR)/html/shadow/meterElementShadow.css
 $(PROJECT_DIR)/html/track/AudioTrack.idl
 $(PROJECT_DIR)/html/track/AudioTrackList.idl
 $(PROJECT_DIR)/html/track/DataCue.idl

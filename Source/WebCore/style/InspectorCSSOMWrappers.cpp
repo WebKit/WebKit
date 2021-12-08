@@ -30,7 +30,8 @@
 #include "InspectorCSSOMWrappers.h"
 
 #include "CSSImportRule.h"
-#include "CSSLayerRule.h"
+#include "CSSLayerBlockRule.h"
+#include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSRule.h"
 #include "CSSStyleRule.h"
@@ -62,8 +63,8 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
         case CSSRule::IMPORT_RULE:
             collect(downcast<CSSImportRule>(*cssRule).styleSheet());
             break;
-        case CSSRule::LAYER_RULE:
-            collect(downcast<CSSLayerRule>(cssRule));
+        case CSSRule::LAYER_BLOCK_RULE:
+            collect(downcast<CSSLayerBlockRule>(cssRule));
             break;
         case CSSRule::MEDIA_RULE:
             collect(downcast<CSSMediaRule>(cssRule));

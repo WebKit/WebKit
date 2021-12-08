@@ -60,10 +60,10 @@ public:
     bool isMediaRule() const { return type() == StyleRuleType::Media; }
     bool isPageRule() const { return type() == StyleRuleType::Page; }
     bool isStyleRule() const { return type() == StyleRuleType::Style; }
-    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::Layer; }
+    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock; }
     bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
     bool isImportRule() const { return type() == StyleRuleType::Import; }
-    bool isLayerRule() const { return type() == StyleRuleType::Layer; }
+    bool isLayerRule() const { return type() == StyleRuleType::LayerBlock || type() == StyleRuleType::LayerStatement; }
 
     Ref<StyleRuleBase> copy() const;
 
@@ -298,7 +298,7 @@ public:
     static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     Ref<StyleRuleLayer> copy() const { return adoptRef(*new StyleRuleLayer(*this)); }
 
-    bool isStatement() const { return std::holds_alternative<Vector<CascadeLayerName>>(m_nameVariant); }
+    bool isStatement() const { return type() == StyleRuleType::LayerStatement; }
 
     auto& name() const { return std::get<CascadeLayerName>(m_nameVariant); }
     auto& nameList() const { return std::get<Vector<CascadeLayerName>>(m_nameVariant); }

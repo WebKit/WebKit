@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSImportRule.h"
 
+#include "CSSLayerBlockRule.h"
 #include "CSSStyleSheet.h"
 #include "MediaList.h"
 #include "StyleRuleImport.h"
@@ -56,9 +57,13 @@ MediaList& CSSImportRule::media() const
     return *m_mediaCSSOMWrapper;
 }
 
-const std::optional<CascadeLayerName>& CSSImportRule::cascadeLayerName() const
+String CSSImportRule::layerName() const
 {
-    return m_importRule.get().cascadeLayerName();
+    auto name = m_importRule.get().cascadeLayerName();
+    if (!name)
+        return { };
+
+    return stringFromCascadeLayerName(*name);
 }
 
 String CSSImportRule::cssText() const

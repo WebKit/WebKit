@@ -296,6 +296,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontPaletteValuesRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontPaletteValuesRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSGroupingRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSGroupingRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule+Layer.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule+Layer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframeRule.cpp
@@ -304,8 +306,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframesRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframesRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeywordValue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeywordValue.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerRule.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerBlockRule.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerBlockRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerStatementRule.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSLayerStatementRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathInvert.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathInvert.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMathMax.cpp

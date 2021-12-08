@@ -733,7 +733,8 @@ css/CSSImageValue.cpp
 css/CSSImportRule.cpp
 css/CSSKeyframeRule.cpp
 css/CSSKeyframesRule.cpp
-css/CSSLayerRule.cpp
+css/CSSLayerBlockRule.cpp
+css/CSSLayerStatementRule.cpp
 css/CSSLineBoxContainValue.cpp
 css/CSSMarkup.cpp
 css/CSSMediaRule.cpp
@@ -2925,7 +2926,8 @@ JSCSSGroupingRule.cpp
 JSCSSImportRule.cpp
 JSCSSKeyframeRule.cpp
 JSCSSKeyframesRule.cpp
-JSCSSLayerRule.cpp
+JSCSSLayerBlockRule.cpp
+JSCSSLayerStatementRule.cpp
 JSCSSMediaRule.cpp
 JSCSSNamespaceRule.cpp
 JSCSSPageRule.cpp

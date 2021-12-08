@@ -811,7 +811,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
 
         if (m_observerWrapper) {
             unsigned endOffset = m_observerWrapper->endOffset(preludeCopy);
-            m_observerWrapper->observer().startRuleHeader(StyleRuleType::Layer, m_observerWrapper->startOffset(preludeCopy));
+            m_observerWrapper->observer().startRuleHeader(StyleRuleType::LayerStatement, m_observerWrapper->startOffset(preludeCopy));
             m_observerWrapper->observer().endRuleHeader(endOffset);
             m_observerWrapper->observer().startRuleBody(endOffset);
             m_observerWrapper->observer().endRuleBody(endOffset);
@@ -832,7 +832,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
         return StyleRuleLayer::createBlock(WTFMove(*name), makeUnique<DeferredStyleGroupRuleList>(*block, *m_deferredParser));
 
     if (m_observerWrapper) {
-        m_observerWrapper->observer().startRuleHeader(StyleRuleType::Layer, m_observerWrapper->startOffset(preludeCopy));
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::LayerBlock, m_observerWrapper->startOffset(preludeCopy));
         m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(preludeCopy));
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(*block));
     }

@@ -28,7 +28,8 @@
 
 #include "CSSImportRule.h"
 #include "CSSKeyframesRule.h"
-#include "CSSLayerRule.h"
+#include "CSSLayerBlockRule.h"
+#include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
 #include "CSSParserObserver.h"
@@ -107,7 +108,7 @@ static void flattenSourceData(RuleSourceDataList& dataList, RuleSourceDataList& 
     for (auto& data : dataList) {
         if (data->type == WebCore::StyleRuleType::Style)
             target.append(data.copyRef());
-        else if (data->type == WebCore::StyleRuleType::Media || data->type == WebCore::StyleRuleType::Supports || data->type == WebCore::StyleRuleType::Layer)
+        else if (data->type == WebCore::StyleRuleType::Media || data->type == WebCore::StyleRuleType::Supports || data->type == WebCore::StyleRuleType::LayerBlock)
             flattenSourceData(data->childRules, target);
     }
 }
@@ -426,8 +427,8 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (is<CSSSupportsRule>(*rule))
         return &downcast<CSSSupportsRule>(*rule).cssRules();
 
-    if (is<CSSLayerRule>(*rule))
-        return &downcast<CSSLayerRule>(*rule).cssRules();
+    if (is<CSSLayerBlockRule>(*rule))
+        return &downcast<CSSLayerBlockRule>(*rule).cssRules();
 
     return nullptr;
 }
@@ -450,11 +451,12 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
                 ruleGroupingPayloads.append(WTFMove(mediaRulePayload));
             }
         } else if (is<CSSImportRule>(parentRule)) {
-            if (auto& layerName = downcast<CSSImportRule>(parentRule)->cascadeLayerName()) {
+            auto layerName = downcast<CSSImportRule>(parentRule)->layerName();
+            if (!layerName.isNull()) {
                 auto layerRulePayload = Protocol::CSS::Grouping::create()
                     .setType(Protocol::CSS::Grouping::Type::LayerImportRule)
                     .release();
-                layerRulePayload->setText(CSSLayerRule::stringFromCascadeLayerName(*layerName));
+                layerRulePayload->setText(layerName);
                 ruleGroupingPayloads.append(WTFMove(layerRulePayload));
             }
 
@@ -472,12 +474,11 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
                 .release();
             supportsRulePayload->setText(downcast<CSSSupportsRule>(parentRule)->conditionText());
             ruleGroupingPayloads.append(WTFMove(supportsRulePayload));
-        } else if (is<CSSLayerRule>(parentRule)) {
+        } else if (is<CSSLayerBlockRule>(parentRule)) {
             auto layerRulePayload = Protocol::CSS::Grouping::create()
                 .setType(Protocol::CSS::Grouping::Type::LayerRule)
                 .release();
-            if (auto layerName = downcast<CSSLayerRule>(parentRule)->layerName())
-                layerRulePayload->setText(*layerName);
+            layerRulePayload->setText(downcast<CSSLayerBlockRule>(parentRule)->name());
             ruleGroupingPayloads.append(WTFMove(layerRulePayload));
         }
 
