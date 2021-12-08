@@ -655,7 +655,11 @@ void UIDelegate::UIClient::requestCookieConsent(CompletionHandler<void(WebCore::
         return completion(WebCore::CookieConsentDecisionResult::NotSupported);
 
     // FIXME: Add support for the 'more info' handler.
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestCookieConsentWithMoreInfoHandler:nil decisionHandler:makeBlockPtr([completion = WTFMove(completion)] (BOOL decision) mutable {
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:));
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestCookieConsentWithMoreInfoHandler:nil decisionHandler:makeBlockPtr([completion = WTFMove(completion), checker = WTFMove(checker)] (BOOL decision) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
         completion(decision ? WebCore::CookieConsentDecisionResult::Consent : WebCore::CookieConsentDecisionResult::Dissent);
     }).get()];
 }
