@@ -138,9 +138,9 @@ std::unique_ptr<DrawingAreaProxy> ProvisionalPageProxy::takeDrawingArea()
 void ProvisionalPageProxy::cancel()
 {
     // If the provisional load started, then indicate that it failed due to cancellation by calling didFailProvisionalLoadForFrame().
-    if (m_provisionalLoadURL.isEmpty())
+    if (m_provisionalLoadURL.isEmpty() || m_isProcessSwappingOnNavigationResponse)
         return;
-        
+
     ASSERT(m_process->state() == WebProcessProxy::State::Running);
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame");

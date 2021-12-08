@@ -1,5 +1,56 @@
 2021-12-08  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286574. rdar://problem/86224832
+
+    Regression(r286505) imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html is a flaky crash
+    https://bugs.webkit.org/show_bug.cgi?id=233874
+    
+    Reviewed by Darin Adler.
+    
+    r286505 fixed ProvisionalPageProxy so that ProvisionalPageProxy::m_provisionalLoadURL gets properly initialized when the
+    ProvisionalPageProxy gets constructed *after* the provisional load has already started (COOP proces-swap case). One side
+    effect of this though is that ProvisionalPageProxy::cancel() no longer returns early and will try to notify the client
+    that the provisional load failed, dereferencing m_mainFrame in doing so. In the event where the main frame has not yet
+    been created in the new provisional process, this would do a null-dereference of m_mainFrame.
+    
+    To address the issue, we now early return in ProvisionalPageProxy::cancel() if m_isProcessSwappingOnNavigationResponse
+    is true (i.e. The ProvisionalPageProxy was created after the provisional load had started). In such situations, we
+    don't want to ProvisionalPageProxy to be the one notifying the client of the provisional load failure anyway. The reason
+    is that there is still a provisional load going on in the committed process/page.
+    
+    No new tests, covered by existing test that is flakily crashing.
+    
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::cancel):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286574 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-06  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r286505) imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html is a flaky crash
+            https://bugs.webkit.org/show_bug.cgi?id=233874
+
+            Reviewed by Darin Adler.
+
+            r286505 fixed ProvisionalPageProxy so that ProvisionalPageProxy::m_provisionalLoadURL gets properly initialized when the
+            ProvisionalPageProxy gets constructed *after* the provisional load has already started (COOP proces-swap case). One side
+            effect of this though is that ProvisionalPageProxy::cancel() no longer returns early and will try to notify the client
+            that the provisional load failed, dereferencing m_mainFrame in doing so. In the event where the main frame has not yet
+            been created in the new provisional process, this would do a null-dereference of m_mainFrame.
+
+            To address the issue, we now early return in ProvisionalPageProxy::cancel() if m_isProcessSwappingOnNavigationResponse
+            is true (i.e. The ProvisionalPageProxy was created after the provisional load had started). In such situations, we
+            don't want to ProvisionalPageProxy to be the one notifying the client of the provisional load failure anyway. The reason
+            is that there is still a provisional load going on in the committed process/page.
+
+            No new tests, covered by existing test that is flakily crashing.
+
+            * UIProcess/ProvisionalPageProxy.cpp:
+            (WebKit::ProvisionalPageProxy::cancel):
+
+2021-12-08  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286671. rdar://problem/85928816
 
     Momentum Event Dispatcher: Momentum tail should have montonically decreasing deltas and tail gaps
