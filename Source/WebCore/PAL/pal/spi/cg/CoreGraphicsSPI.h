@@ -32,6 +32,10 @@
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <pal/spi/cocoa/IOKitSPI.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
@@ -42,6 +46,7 @@
 
 #if PLATFORM(MAC)
 #include <CoreGraphics/CGAccessibility.h>
+#include <CoreGraphics/CGEventPrivate.h>
 #endif
 
 #else
@@ -350,6 +355,7 @@ CGError CGSSetDenyWindowServerConnections(bool);
 typedef int32_t CGSDisplayID;
 CGSDisplayID CGSMainDisplayID(void);
 
+IOHIDEventRef CGEventCopyIOHIDEvent(CGEventRef);
 #endif // PLATFORM(MAC)
 
 #if ENABLE(PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
