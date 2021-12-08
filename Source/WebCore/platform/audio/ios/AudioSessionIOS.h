@@ -64,6 +64,7 @@ private:
     bool isMuted() const final;
     void handleMutedStateChange() final;
 
+    String m_lastSetPreferredAudioDeviceUID;
     Ref<WTF::WorkQueue> m_workQueue;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
 };
