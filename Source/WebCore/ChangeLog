@@ -1,5 +1,78 @@
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286352. rdar://problem/85928816
+
+    Custom application of r286352 to introduce frameDuration() for a future patch.
+    
+    Pass the timestamp for scrolling thread animations through all the serviceScrollAnimation() calls
+    https://bugs.webkit.org/show_bug.cgi?id=233678
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    All scroll animations serviced at the same time should use a common timestamp, and
+    avoid multiple calls to MonotonicTime::now() by passing the time down through from
+    ThreadedScrollingTree::displayDidRefreshOnScrollingThread().
+    
+    Also minor refactoring in ThreadedScrollingTree to prepare for a future patch.
+    
+    * page/scrolling/ScrollingTree.cpp:
+    (WebCore::ScrollingTree::nominalFramesPerSecond):
+    * page/scrolling/ScrollingTreeScrollingNode.h:
+    * page/scrolling/ScrollingTreeScrollingNodeDelegate.h:
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::frameDuration):
+    (WebCore::ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization):
+    (WebCore::ThreadedScrollingTree::serviceScrollAnimations):
+    (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+    * page/scrolling/ThreadedScrollingTree.h:
+    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+    (WebCore::ScrollingTreeFrameScrollingNodeMac::serviceScrollAnimation):
+    * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+    * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+    (WebCore::ScrollingTreeOverflowScrollingNodeMac::serviceScrollAnimation):
+    * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+    * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+    (WebCore::ScrollingTreeScrollingNodeDelegateMac::serviceScrollAnimation):
+    * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp:
+    (WebCore::ScrollingTreeFrameScrollingNodeNicosia::serviceScrollAnimation):
+    * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.h:
+    * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp:
+    (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::serviceScrollAnimation):
+    * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.h:
+    * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp:
+    (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::serviceScrollAnimation):
+    * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.h:
+    
+    Source/WebKit:
+    
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286352 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+            Custom application of r286352 to prepare for a future patch.
+
+            Pass the timestamp for scrolling thread animations through all the serviceScrollAnimation() calls
+            https://bugs.webkit.org/show_bug.cgi?id=233678
+
+            Reviewed by Tim Horton.
+
+            All scroll animations serviced at the same time should use a common timestamp, and
+            avoid multiple calls to MonotonicTime::now() by passing the time down through from
+            ThreadedScrollingTree::displayDidRefreshOnScrollingThread().
+
+            Also minor refactoring in ThreadedScrollingTree to prepare for a future patch.
+
+            (WebCore::ThreadedScrollingTree::frameDuration):
+            (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+            * page/scrolling/ThreadedScrollingTree.h:
+
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r283353. rdar://problem/85928816
 
     Simplify some scrolling-related code in WebKit with use of RectEdges<bool>

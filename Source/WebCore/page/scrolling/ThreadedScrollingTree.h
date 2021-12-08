@@ -94,6 +94,7 @@ private:
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds) WTF_REQUIRES_LOCK(m_treeLock);
     void delayedRenderingUpdateDetectionTimerFired();
 
+    Seconds frameDuration();
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
 
     enum class SynchronizationState : uint8_t {

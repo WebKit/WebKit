@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
+#include "AnimationFrameRate.h"
 #include "AsyncScrollingCoordinator.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
@@ -296,12 +297,16 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
     m_state = SynchronizationState::InRenderingUpdate;
 }
 
+Seconds ThreadedScrollingTree::frameDuration()
+{
+    auto displayFPS = nominalFramesPerSecond().value_or(FullSpeedFramesPerSecond);
+    return 1_s / (double)displayFPS;
+}
+
 Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
 {
     constexpr double allowableFrameFraction = 0.5;
-    auto displayFPS = nominalFramesPerSecond().value_or(60);
-    Seconds frameDuration = 1_s / (double)displayFPS;
-    return allowableFrameFraction * frameDuration;
+    return allowableFrameFraction * frameDuration();
 }
 
 // This code allows the main thread about half a frame to complete its rendering udpate. If the main thread
