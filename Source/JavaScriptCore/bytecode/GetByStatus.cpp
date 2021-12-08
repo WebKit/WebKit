@@ -70,15 +70,15 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         identifier = &(profiledBlock->identifier(instruction->as<OpGetById>().m_property));
         break;
     }
+
+    case op_try_get_by_id:
+        structureID = instruction->as<OpTryGetById>().metadata(profiledBlock).m_structureID;
+        identifier = &(profiledBlock->identifier(instruction->as<OpTryGetById>().m_property));
+        break;
     case op_get_by_id_direct:
         structureID = instruction->as<OpGetByIdDirect>().metadata(profiledBlock).m_structureID;
         identifier = &(profiledBlock->identifier(instruction->as<OpGetByIdDirect>().m_property));
         break;
-    case op_try_get_by_id: {
-        // FIXME: We should not just bail if we see a try_get_by_id.
-        // https://bugs.webkit.org/show_bug.cgi?id=158039
-        return GetByStatus(NoInformation, false);
-    }
 
     case op_get_by_val:
         return GetByStatus(NoInformation, false);

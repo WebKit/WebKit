@@ -1533,6 +1533,23 @@ macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value
 end
 
 
+llintOpWithMetadata(op_try_get_by_id, OpTryGetById, macro (size, get, dispatch, metadata, return)
+    metadata(t2, t0)
+    get(m_base, t0)
+    loadConstantOrVariableCell(size, t0, t3, .opTryGetByIdSlow)
+    loadi JSCell::m_structureID[t3], t1
+    loadi OpTryGetById::Metadata::m_structureID[t2], t0
+    bineq t0, t1, .opTryGetByIdSlow
+    loadi OpTryGetById::Metadata::m_offset[t2], t1
+    loadPropertyAtVariableOffset(t1, t3, t0)
+    valueProfile(OpTryGetById, m_profile, t2, t0)
+    return(t0)
+
+.opTryGetByIdSlow:
+    callSlowPath(_llint_slow_path_try_get_by_id)
+    dispatch()
+end)
+
 llintOpWithMetadata(op_get_by_id_direct, OpGetByIdDirect, macro (size, get, dispatch, metadata, return)
     metadata(t2, t0)
     get(m_base, t0)

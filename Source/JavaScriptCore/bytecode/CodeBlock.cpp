@@ -1386,11 +1386,20 @@ void CodeBlock::finalizeLLIntInlineCaches()
             clearIfNeeded(metadata.m_modeMetadata, "get by id"_s);
         });
 
+        m_metadata->forEach<OpTryGetById>([&] (auto& metadata) {
+            StructureID oldStructureID = metadata.m_structureID;
+            if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
+                return;
+            dataLogLnIf(Options::verboseOSR(), "Clearing try_get_by_id LLInt property access.");
+            metadata.m_structureID = StructureID();
+            metadata.m_offset = 0;
+        });
+
         m_metadata->forEach<OpGetByIdDirect>([&] (auto& metadata) {
             StructureID oldStructureID = metadata.m_structureID;
             if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
                 return;
-            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
+            dataLogLnIf(Options::verboseOSR(), "Clearing get_by_id_direct LLInt property access.");
             metadata.m_structureID = StructureID();
             metadata.m_offset = 0;
         });
@@ -1461,7 +1470,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
                 && (!brand || vm.heap.isMarked(brand)))
                 return;
 
-            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt set_private_brand transition.");
+            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt check_private_brand transition.");
             metadata.m_structureID = StructureID();
             metadata.m_brand.clear();
         });

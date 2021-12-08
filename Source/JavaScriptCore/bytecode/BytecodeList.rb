@@ -523,6 +523,8 @@ op :try_get_by_id,
     },
     metadata: {
         profile: ValueProfile,
+        structureID: StructureID,
+        offset: unsigned,
     }
 
 op :put_by_id,

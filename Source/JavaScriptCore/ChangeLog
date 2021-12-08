@@ -1,3 +1,32 @@
+2021-12-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add LLInt IC for try_get_by_id of own cacheable value
+        https://bugs.webkit.org/show_bug.cgi?id=233830
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds an LLInt IC for the "own cacheable value" path of try_get_by_id;
+        this is the simplest case and basically the same as get_by_id_direct.
+
+        Performance is neutral with JIT enabled as well as on current uses of try_get_by_id in JSC
+        (e.g. hasObservableSideEffectsForRegexpSplit), but microbenchmarks of try_get_by_id itself see a 2x speedup:
+
+                                             Before                    After
+
+        try-get-by-id-polymorphic      123.8361+-0.4562     ^     61.7586+-0.3770        ^ definitely 2.0052x faster
+        try-get-by-id-basic            124.4437+-0.6091     ^     61.0340+-0.1924        ^ definitely 2.0389x faster
+
+        <geometric>                    124.1207+-0.3130     ^     61.3865+-0.2019        ^ definitely 2.0220x faster
+
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/GetByStatus.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2021-12-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r286502 and r286580.

@@ -1421,6 +1421,22 @@ end
 # convert opcode into a get_by_id_proto_load/get_by_id_unset, respectively, after an
 # execution counter hits zero.
 
+llintOpWithMetadata(op_try_get_by_id, OpTryGetById, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t0)
+    get(m_base, t0)
+    loadi OpTryGetById::Metadata::m_structureID[t5], t1
+    loadConstantOrVariablePayload(size, t0, CellTag, t3, .opTryGetByIdSlow)
+    loadi OpTryGetById::Metadata::m_offset[t5], t2
+    bineq JSCell::m_structureID[t3], t1, .opTryGetByIdSlow
+    loadPropertyAtVariableOffset(t2, t3, t0, t1)
+    valueProfile(OpTryGetById, m_profile, t5, t0, t1)
+    return(t0, t1)
+
+.opTryGetByIdSlow:
+    callSlowPath(_llint_slow_path_try_get_by_id)
+    dispatch()
+end)
+
 llintOpWithMetadata(op_get_by_id_direct, OpGetByIdDirect, macro (size, get, dispatch, metadata, return)
     metadata(t5, t0)
     get(m_base, t0)
