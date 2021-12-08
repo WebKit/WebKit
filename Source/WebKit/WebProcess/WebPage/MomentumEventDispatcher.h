@@ -31,12 +31,14 @@
 #define USE_MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING 0
 #define USE_MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING 1
 
+#include "DisplayLinkObserverID.h"
 #include "ScrollingAccelerationCurve.h"
 #include "WebWheelEvent.h"
 #include <WebCore/FloatSize.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RectEdges.h>
 #include <memory>
+#include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -76,12 +78,12 @@ private:
 
     void dispatchSyntheticMomentumEvent(WebWheelEvent::Phase, WebCore::FloatSize delta);
 
-    void buildOffsetTableWithInitialDelta(FloatSize);
+    void buildOffsetTableWithInitialDelta(WebCore::FloatSize);
 
-    FloatSize offsetAtTime(Seconds);
-    std::pair<FloatSize, FloatSize> computeNextDelta(FloatSize currentUnacceleratedDelta);
+    WebCore::FloatSize offsetAtTime(Seconds);
+    std::pair<WebCore::FloatSize, WebCore::FloatSize> computeNextDelta(WebCore::FloatSize currentUnacceleratedDelta);
 
-    void didReceiveScrollEventWithInterval(FloatSize, Seconds);
+    void didReceiveScrollEventWithInterval(WebCore::FloatSize, Seconds);
     void didReceiveScrollEvent(const WebWheelEvent&);
 
     struct Delta {
@@ -97,7 +99,7 @@ private:
     std::optional<WebWheelEvent> m_lastIncomingEvent;
     WebCore::RectEdges<bool> m_lastRubberBandableEdges;
 #if !RELEASE_LOG_DISABLED
-    FloatSize m_lastActivePhaseDelta;
+    WebCore::FloatSize m_lastActivePhaseDelta;
 #endif
 
     struct {
@@ -107,18 +109,18 @@ private:
         std::optional<ScrollingAccelerationCurve> accelerationCurve;
         std::optional<WebWheelEvent> initiatingEvent;
 
-        FloatSize currentOffset;
+        WebCore::FloatSize currentOffset;
         WallTime startTime;
 
-        Vector<FloatSize> offsetTable;
+        Vector<WebCore::FloatSize> offsetTable;
 
 #if !RELEASE_LOG_DISABLED
-        FloatSize accumulatedEventOffset;
+        WebCore::FloatSize accumulatedEventOffset;
         bool didLogInitialQueueState { false };
 #endif
 
 #if USE(MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING)
-        FloatSize carryOffset;
+        WebCore::FloatSize carryOffset;
 #endif
     } m_currentGesture;
 
