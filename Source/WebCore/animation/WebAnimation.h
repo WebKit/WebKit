@@ -155,6 +155,7 @@ public:
 protected:
     explicit WebAnimation(Document&);
 
+    void initialize();
     void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
 
 private:

@@ -107,6 +107,8 @@ void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation
 
 void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
+    WebAnimation::initialize();
+
     // We need to suspend invalidation of the animation's keyframe effect during its creation
     // as it would otherwise trigger invalidation of the document's style and this would be
     // incorrect since it would happen during style invalidation.
