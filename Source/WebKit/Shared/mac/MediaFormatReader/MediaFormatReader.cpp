@@ -42,6 +42,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/WorkQueue.h>
 
+#include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/cocoa/MediaToolboxSoftLink.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(MTPluginFormatReader);
