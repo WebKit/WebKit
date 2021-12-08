@@ -67,10 +67,13 @@ bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
     if (!m_drawingArea)
         return false;
 
-    if (!isScheduled()) {
-        LOG_WITH_STREAM(DisplayLink, stream << "RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback - triggering update");
-        static_cast<DrawingArea&>(*m_drawingArea.get()).triggerRenderingUpdate();
-    }
+    Locker locker { lock() };
+
+    if (isScheduled())
+        return true;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback - triggering update");
+    static_cast<DrawingArea&>(*m_drawingArea.get()).triggerRenderingUpdate();
 
     setIsScheduled(true);
     return true;
@@ -78,12 +81,15 @@ bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
 
 void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
 {
-    setIsScheduled(false);
+    {
+        Locker locker { lock() };
+        setIsScheduled(false);
 
-    if (!isPreviousFrameDone())
-        return;
+        if (!isPreviousFrameDone())
+            return;
 
-    setIsPreviousFrameDone(false);
+        setIsPreviousFrameDone(false);
+    }
     displayDidRefresh(m_currentUpdate);
     m_currentUpdate = m_currentUpdate.nextUpdate();
 }

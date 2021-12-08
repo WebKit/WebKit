@@ -85,6 +85,8 @@ DisplayRefreshMonitor::~DisplayRefreshMonitor() = default;
 void DisplayRefreshMonitor::stop()
 {
     stopNotificationMechanism();
+
+    Locker locker { m_lock };
     setIsScheduled(false);
 }
 
@@ -152,8 +154,6 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
 
 bool DisplayRefreshMonitor::firedAndReachedMaxUnscheduledFireCount()
 {
-    ASSERT(m_lock.isLocked());
-
     if (isScheduled()) {
         m_unscheduledFireCount = 0;
         return false;
@@ -169,8 +169,10 @@ void DisplayRefreshMonitor::displayLinkFired(const DisplayUpdate& displayUpdate)
         Locker locker { m_lock };
 
         // This may be off the main thread.
-        if (!isPreviousFrameDone())
+        if (!isPreviousFrameDone()) {
+            RELEASE_LOG(DisplayLink, "[Web] DisplayRefreshMonitor::displayLinkFired for display %u - previous frame is not complete", displayID());
             return;
+        }
 
         LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitor::displayLinkFired for display " << displayID() << " - scheduled " << isScheduled() << " unscheduledFireCount " << m_unscheduledFireCount << " of " << m_maxUnscheduledFireCount);
         if (firedAndReachedMaxUnscheduledFireCount()) {
