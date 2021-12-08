@@ -61,6 +61,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
     , m_wheelEventGesturesBecomeNonBlocking(stateNode.wheelEventGesturesBecomeNonBlocking())
     , m_scrollingPerformanceTestingEnabled(stateNode.scrollingPerformanceTestingEnabled())
+    , m_momentumScrollingAnimatorEnabled(stateNode.momentumScrollingAnimatorEnabled())
 {
     if (hasChangedProperty(Property::RootContentsLayer))
         setRootContentsLayer(stateNode.rootContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -112,6 +113,7 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applic
         Property::MinLayoutViewportOrigin,
         Property::MaxLayoutViewportOrigin,
         Property::OverrideVisualViewportSize,
+        Property::MomentumScrollingAnimatorEnabled,
     };
 
     auto properties = ScrollingStateScrollingNode::applicableProperties();
@@ -307,6 +309,15 @@ void ScrollingStateFrameScrollingNode::setScrollingPerformanceTestingEnabled(boo
     
     m_scrollingPerformanceTestingEnabled = enabled;
     setPropertyChanged(Property::ScrollingPerformanceTestingEnabled);
+}
+
+void ScrollingStateFrameScrollingNode::setMomentumScrollingAnimatorEnabled(bool enabled)
+{
+    if (enabled == m_momentumScrollingAnimatorEnabled)
+        return;
+    
+    m_momentumScrollingAnimatorEnabled = enabled;
+    setPropertyChanged(Property::MomentumScrollingAnimatorEnabled);
 }
 
 void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

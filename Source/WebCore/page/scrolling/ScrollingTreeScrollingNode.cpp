@@ -227,6 +227,11 @@ void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
     scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
 }
 
+bool ScrollingTreeScrollingNode::momentumScrollingAnimatorEnabled() const
+{
+    return scrollingTree().momentumScrollingAnimatorEnabled();
+}
+
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
 {
     if (clamping == ScrollClamping::Clamped)

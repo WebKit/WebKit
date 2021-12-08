@@ -100,6 +100,9 @@ public:
     bool scrollingPerformanceTestingEnabled() const { return m_scrollingPerformanceTestingEnabled; }
     void setScrollingPerformanceTestingEnabled(bool value) { m_scrollingPerformanceTestingEnabled = value; }
 
+    bool momentumScrollingAnimatorEnabled() const { return m_momentumScrollingAnimatorEnabled; }
+    void setMomentumScrollingAnimatorEnabled(bool value) { m_momentumScrollingAnimatorEnabled = value; }
+
     WEBCORE_EXPORT OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const PlatformWheelEvent&);
     WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
 
@@ -335,6 +338,7 @@ private:
     bool m_scrollingPerformanceTestingEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wheelEventGesturesBecomeNonBlocking { false };
+    bool m_momentumScrollingAnimatorEnabled { false };
     bool m_needsApplyLayerPositionsAfterCommit { false };
     bool m_inCommitTreeState { false };
 };
