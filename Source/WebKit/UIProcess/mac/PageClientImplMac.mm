@@ -1000,9 +1000,9 @@ void PageClientImpl::takeFocus(WebCore::FocusDirection direction)
     m_impl->takeFocus(direction);
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
+void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
 {
-    m_impl->requestDOMPasteAccess(pasteAccessCategory, elementRect, originIdentifier, WTFMove(completion));
+    m_impl->requestDOMPasteAccess(elementRect, originIdentifier, WTFMove(completion));
 }
 
 

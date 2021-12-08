@@ -1,3 +1,16 @@
+2021-12-08  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r286632.
+
+        Broke 3 tests on iOS
+
+        Reverted changeset:
+
+        "Add a `DOMPasteAccessCategory` to control which pasteboard
+        the WebProcess is granted access to when pasting"
+        https://bugs.webkit.org/show_bug.cgi?id=233939
+        https://commits.webkit.org/r286632
+
 2021-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for `navigator.requestCookieConsent()` behind a disabled feature flag

@@ -758,7 +758,6 @@ def headers_for_type(type):
         'WebCore::COOPDisposition': ['<WebCore/CrossOriginOpenerPolicy.h>'],
         'WebCore::CompositeOperator': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::CreateNewGroupForHighlight': ['<WebCore/AppHighlight.h>'],
-        'WebCore::DOMPasteAccessCategory': ['<WebCore/DOMPasteAccess.h>'],
         'WebCore::DOMPasteAccessResponse': ['<WebCore/DOMPasteAccess.h>'],
         'WebCore::DestinationColorSpace': ['<WebCore/ColorSpace.h>'],
         'WebCore::DisplayList::ItemBufferIdentifier': ['<WebCore/DisplayList.h>'],

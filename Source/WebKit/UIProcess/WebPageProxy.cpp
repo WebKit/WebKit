@@ -2510,20 +2510,15 @@ void WebPageProxy::selectAll()
     send(Messages::WebPage::SelectAll());
 }
 
-static std::optional<DOMPasteAccessCategory> pasteAccessCategoryForCommand(const String& commandName)
+static bool isPasteCommandName(const String& commandName)
 {
-    static NeverDestroyed<HashMap<String, DOMPasteAccessCategory, ASCIICaseInsensitiveHash>> pasteCommandNames = HashMap<String, DOMPasteAccessCategory, ASCIICaseInsensitiveHash> {
-        { "Paste", DOMPasteAccessCategory::General },
-        { "PasteAndMatchStyle", DOMPasteAccessCategory::General },
-        { "PasteAsQuotation", DOMPasteAccessCategory::General },
-        { "PasteAsPlainText", DOMPasteAccessCategory::General },
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> pasteCommandNames = HashSet<String, ASCIICaseInsensitiveHash> {
+        "Paste",
+        "PasteAndMatchStyle",
+        "PasteAsQuotation",
+        "PasteAsPlainText"
     };
-
-    auto it = pasteCommandNames->find(commandName);
-    if (it != pasteCommandNames->end())
-        return it->value;
-
-    return std::nullopt;
+    return pasteCommandNames->contains(commandName);
 }
 
 void WebPageProxy::executeEditCommand(const String& commandName, const String& argument, CompletionHandler<void()>&& callbackFunction)
@@ -2533,8 +2528,8 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
         return;
     }
 
-    if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName))
-        willPerformPasteCommand(*pasteAccessCategory);
+    if (isPasteCommandName(commandName))
+        willPerformPasteCommand();
 
     sendWithAsyncReply(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument), [callbackFunction = WTFMove(callbackFunction), backgroundActivity = m_process->throttler().backgroundActivity("WebPageProxy::executeEditCommand"_s)] () mutable {
         callbackFunction();
@@ -2548,8 +2543,8 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
     if (!hasRunningProcess())
         return;
 
-    if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName))
-        willPerformPasteCommand(*pasteAccessCategory);
+    if (isPasteCommandName(commandName))
+        willPerformPasteCommand();
 
     if (commandName == ignoreSpellingCommandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
@@ -6616,9 +6611,9 @@ void WebPageProxy::setIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditabl
 
 #endif
 
-void WebPageProxy::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    m_pageClient->requestDOMPasteAccess(pasteAccessCategory, elementRect, originIdentifier, WTFMove(completionHandler));
+    m_pageClient->requestDOMPasteAccess(elementRect, originIdentifier, WTFMove(completionHandler));
 }
 
 // BackForwardList
@@ -10819,7 +10814,7 @@ void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMe
 
 #if !PLATFORM(COCOA)
 
-void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory)
+void WebPageProxy::willPerformPasteCommand()
 {
 }
 

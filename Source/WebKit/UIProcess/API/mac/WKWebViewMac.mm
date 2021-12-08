@@ -1232,6 +1232,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self _gestureEventWasNotHandledByWebCore:event];
 }
 
+- (void)_web_grantDOMPasteAccess
+{
+    _impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::GrantedForGesture);
+}
+
 - (void)_takeFindStringFromSelectionInternal:(id)sender
 {
     [self takeFindStringFromSelection:sender];

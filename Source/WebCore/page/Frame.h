@@ -176,7 +176,7 @@ public:
     bool hasHadUserInteraction() const { return m_hasHadUserInteraction; }
     void setHasHadUserInteraction() { m_hasHadUserInteraction = true; }
 
-    bool requestDOMPasteAccess(DOMPasteAccessCategory = DOMPasteAccessCategory::General);
+    bool requestDOMPasteAccess();
 
     String debugDescription() const;
 
