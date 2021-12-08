@@ -318,7 +318,7 @@ public:
 
     bool isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis) const;
     bool isPinnedForScrollDelta(const FloatSize&) const;
-    RectEdges<bool> edgePinnedState() const;
+    WEBCORE_EXPORT RectEdges<bool> edgePinnedState() const;
 
     // True if scrolling happens by moving compositing layers.
     virtual bool usesCompositedScrolling() const { return false; }
