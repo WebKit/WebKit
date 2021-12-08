@@ -390,8 +390,7 @@ auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBuff
             bool forbidLeftExpansion = isLeftmostCharacter && (m_run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion;
             bool forbidRightExpansion = isRightmostCharacter && (m_run.expansionBehavior() & RightExpansionMask) == ForbidRightExpansion;
 
-            static const bool expandAroundIdeographs = FontCascade::canExpandAroundIdeographsInComplexText();
-            bool isIdeograph = expandAroundIdeographs && FontCascade::isCJKIdeographOrSymbol(character);
+            bool isIdeograph = FontCascade::canExpandAroundIdeographsInComplexText() && FontCascade::isCJKIdeographOrSymbol(character);
 
             if (treatAsSpace || isIdeograph || forceLeftExpansion || forceRightExpansion) {
                 auto [expandLeft, expandRight] = expansionLocation(isIdeograph, treatAsSpace, m_run.ltr(), m_isAfterExpansion, forbidLeftExpansion, forbidRightExpansion, forceLeftExpansion, forceRightExpansion);

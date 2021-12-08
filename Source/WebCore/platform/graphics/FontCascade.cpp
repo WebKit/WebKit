@@ -1001,7 +1001,6 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
 
 std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const UChar* characters, unsigned length, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
-    static bool expandAroundIdeographs = canExpandAroundIdeographsInComplexText();
     unsigned count = 0;
     bool isAfterExpansion = (expansionBehavior & LeftExpansionMask) == ForbidLeftExpansion;
     if ((expansionBehavior & LeftExpansionMask) == ForceLeftExpansion) {
@@ -1020,7 +1019,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
                 character = U16_GET_SUPPLEMENTARY(character, characters[i + 1]);
                 i++;
             }
-            if (expandAroundIdeographs && isCJKIdeographOrSymbol(character)) {
+            if (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(character)) {
                 if (!isAfterExpansion)
                     count++;
                 count++;
@@ -1041,7 +1040,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
                 character = U16_GET_SUPPLEMENTARY(characters[i - 2], character);
                 i--;
             }
-            if (expandAroundIdeographs && isCJKIdeographOrSymbol(character)) {
+            if (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(character)) {
                 if (!isAfterExpansion)
                     count++;
                 count++;
