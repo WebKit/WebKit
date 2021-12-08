@@ -211,6 +211,14 @@ public:
         return considerCaching(vm, codeBlock, structure, impl);
     }
 
+    Structure* inlineAccessBaseStructure(VM&)
+    {
+        return m_inlineAccessBaseStructureID.get();
+    }
+
+    static ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
+    static ptrdiff_t offsetOfInlineAccessBaseStructureID() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructureID); }
+
 private:
     ALWAYS_INLINE bool considerCaching(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
     {
@@ -351,19 +359,10 @@ private:
 
 public:
     CodeOrigin codeOrigin;
+    PolymorphicAccess* m_stub { nullptr };
     PropertyOffset byIdSelfOffset;
-    static ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
-    static ptrdiff_t offsetOfInlineAccessBaseStructure() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructure); }
-    union {
-        PolymorphicAccess* stub;
-    } u;
-    Structure* inlineAccessBaseStructure(VM&)
-    {
-        if (!m_inlineAccessBaseStructure)
-            return nullptr;
-        return m_inlineAccessBaseStructure.decode();
-    }
-    StructureID m_inlineAccessBaseStructure;
+    WriteBarrierStructureID m_inlineAccessBaseStructureID;
+
 private:
     CacheableIdentifier m_identifier;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
@@ -422,10 +421,11 @@ public:
     uint8_t countdown { 1 };
     uint8_t repatchCount { 0 };
     uint8_t numberOfCoolDowns { 0 };
-
-    CallSiteIndex callSiteIndex;
-
     uint8_t bufferingCountdown;
+private:
+    Lock m_bufferedStructuresLock;
+public:
+    CallSiteIndex callSiteIndex;
     bool resetByGC : 1;
     bool tookSlowPath : 1;
     bool everConsidered : 1;
@@ -435,8 +435,6 @@ public:
     bool propertyIsString : 1;
     bool propertyIsInt32 : 1;
     bool propertyIsSymbol : 1;
-private:
-    Lock m_bufferedStructuresLock;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

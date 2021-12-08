@@ -73,11 +73,9 @@ public:
     Structure* cachedStructure(VM& vm) const
     {
         UNUSED_PARAM(vm);
-        if (!m_cachedStructureID)
-            return nullptr;
-        return m_cachedStructureID.decode();
+        return m_cachedStructureID.get();
     }
-    StructureID cachedStructureID() const { return m_cachedStructureID; }
+    StructureID cachedStructureID() const { return m_cachedStructureID.value(); }
     uint32_t indexedLength() const { return m_indexedLength; }
     uint32_t endStructurePropertyIndex() const { return m_endStructurePropertyIndex; }
     uint32_t endGenericPropertyIndex() const { return m_endGenericPropertyIndex; }
@@ -108,7 +106,7 @@ private:
     // JSPropertyNameEnumerator is immutable data structure, which allows VM to cache the empty one.
     // After instantiating JSPropertyNameEnumerator, we must not change any fields.
     AuxiliaryBarrier<WriteBarrier<JSString>*> m_propertyNames;
-    StructureID m_cachedStructureID;
+    WriteBarrierStructureID m_cachedStructureID;
     uint32_t m_indexedLength;
     uint32_t m_endStructurePropertyIndex;
     uint32_t m_endGenericPropertyIndex;
