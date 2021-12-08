@@ -2,7 +2,9 @@
     (import "./re-export.js" "sum" (func $sum (param i32 i32) (result i32)))
     (import "./re-export.js" "answer" (global i32))
     (import "./re-export.js" "table" (table $table 4 funcref))
+    (import "./re-export.js" "memory" (memory $memory 1 1))
     (export "table" (table $table))
+    (export "memory" (memory $memory))
     (type $t0 (func (param i32) (result i32)))
     (func $addOne (export "addOne") (type $t0) (param $p0 i32) (result i32)
         i32.const 1

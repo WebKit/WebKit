@@ -1,3 +1,42 @@
+2021-12-08  Asumu Takikawa  <asumu@igalia.com>
+
+        Support WebAssembly.Memory imports in Wasm/ESM modules.
+        https://bugs.webkit.org/show_bug.cgi?id=184745
+
+        Reviewed by Yusuke Suzuki.
+
+        Changes how Wasm code is initialized for modules that are loaded
+        by the module loader and have memory imports. The initial code for
+        the LLInt tier is copied to all memory modes, so that the memory
+        import can be initialized after compilation. When LLInt is turned
+        off, the compilation of B3/Air code is delayed until the memory is
+        initialized.
+
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::createFromExisting):
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::finalizeCreation):
+        (JSC::Wasm::Instance::module const):
+        (JSC::Wasm::Instance::codeBlock const):
+        (JSC::Wasm::Instance::memory const):
+        (JSC::Wasm::Instance::isImportFunction const):
+        (JSC::Wasm::Instance::module): Deleted.
+        (JSC::Wasm::Instance::codeBlock): Deleted.
+        (JSC::Wasm::Instance::memory): Deleted.
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::copyInitialCodeBlockToAllMemoryModes):
+        * wasm/WasmModule.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::instantiate):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::initializeImportsAndExports):
+
 2021-12-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce WriteBarrierStructureID

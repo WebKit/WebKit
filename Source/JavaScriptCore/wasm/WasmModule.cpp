@@ -111,6 +111,18 @@ void Module::compileAsync(Context* context, MemoryMode mode, CodeBlock::AsyncCom
     codeBlock->compileAsync(context, WTFMove(task));
 }
 
+void Module::copyInitialCodeBlockToAllMemoryModes(MemoryMode initialMode)
+{
+    ASSERT(m_codeBlocks[static_cast<uint8_t>(initialMode)]);
+    const CodeBlock& initialBlock = *m_codeBlocks[static_cast<uint8_t>(initialMode)];
+    for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; i++) {
+        if (i == static_cast<uint8_t>(initialMode))
+            continue;
+        Ref<CodeBlock> newBlock = CodeBlock::createFromExisting(static_cast<MemoryMode>(i), initialBlock);
+        m_codeBlocks[i] = WTFMove(newBlock);
+    }
+}
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

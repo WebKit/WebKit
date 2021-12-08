@@ -54,6 +54,7 @@ public:
     typedef void CallbackType(Ref<CodeBlock>&&);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
     static Ref<CodeBlock> create(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
+    static Ref<CodeBlock> createFromExisting(MemoryMode, const CodeBlock&);
 
     void waitUntilFinished();
     void compileAsync(Context*, AsyncCompilationCallback&&);
@@ -137,6 +138,7 @@ private:
 #endif
 
     CodeBlock(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
+    CodeBlock(MemoryMode, const CodeBlock&);
     void setCompilationFinished();
     unsigned m_calleeCount;
     MemoryMode m_mode;

@@ -190,6 +190,7 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     // In order to avoid potentially recompiling a module. We first gather all the import/memory information prior to compiling code.
+    // When called via the module loader, the memory is not available yet at this step, so we skip initializing the memory here.
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::tryCreate(vm, globalObject, moduleKey, module, importObject, globalObject->webAssemblyInstanceStructure(), Ref<Wasm::Module>(module->module()), creationMode);
     if (UNLIKELY(scope.exception())) {
         promise->rejectWithCaughtException(globalObject, scope);

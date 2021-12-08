@@ -65,6 +65,9 @@ public:
     JS_EXPORT_PRIVATE ~Module();
 
     CodeBlock* codeBlockFor(MemoryMode mode) { return m_codeBlocks[static_cast<uint8_t>(mode)].get(); }
+
+    void copyInitialCodeBlockToAllMemoryModes(MemoryMode);
+
 private:
     Ref<CodeBlock> getOrCreateCodeBlock(Context*, MemoryMode);
 

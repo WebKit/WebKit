@@ -75,7 +75,6 @@ public:
 
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
     void setMemory(VM& vm, JSWebAssemblyMemory* value) {
-        ASSERT(!memory());
         m_memory.set(vm, this, value);
         instance().setMemory(memory()->memory());
     }

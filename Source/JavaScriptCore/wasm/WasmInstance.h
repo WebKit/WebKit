@@ -56,10 +56,9 @@ public:
 
     static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&&);
 
-    void finalizeCreation(void* owner, Ref<CodeBlock>&& codeBlock)
+    void finalizeCreation(void* owner)
     {
         m_owner = owner;
-        m_codeBlock = WTFMove(codeBlock);
     }
 
     JS_EXPORT_PRIVATE ~Instance();
@@ -71,9 +70,9 @@ public:
 
     Wasm::Context* context() const { return m_context; }
 
-    Module& module() { return m_module.get(); }
-    CodeBlock* codeBlock() { return m_codeBlock.get(); }
-    Memory* memory() { return m_memory.get(); }
+    Module& module() const { return m_module.get(); }
+    CodeBlock* codeBlock() const { return module().codeBlockFor(memory()->mode()); }
+    Memory* memory() const { return m_memory.get(); }
     Table* table(unsigned);
     void setTable(unsigned, Ref<Table>&&);
     const Element* elementAt(unsigned) const;
@@ -82,7 +81,7 @@ public:
 
     bool isImportFunction(uint32_t functionIndex) const
     {
-        return functionIndex < m_codeBlock->functionImportCount();
+        return functionIndex < codeBlock()->functionImportCount();
     }
 
     void tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex);
@@ -226,7 +225,6 @@ private:
     CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;
     size_t m_cachedBoundsCheckingSize { 0 };
     Ref<Module> m_module;
-    RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;
 
     MallocPtr<Global::Value, VMMalloc> m_globals;

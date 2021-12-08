@@ -37,8 +37,28 @@ namespace JSC { namespace Wasm {
 
 Ref<CodeBlock> CodeBlock::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
 {
-    auto* result = new (NotNull, fastMalloc(sizeof(CodeBlock))) CodeBlock(context, mode, moduleInformation, llintCallees);
-    return adoptRef(*result);
+    return adoptRef(*new CodeBlock(context, mode, moduleInformation, llintCallees));
+}
+
+Ref<CodeBlock> CodeBlock::createFromExisting(MemoryMode mode, const CodeBlock& other)
+{
+    return adoptRef(*new CodeBlock(mode, other));
+}
+
+CodeBlock::CodeBlock(MemoryMode mode, const CodeBlock& other)
+    : m_calleeCount(other.m_calleeCount)
+    , m_mode(mode)
+    , m_llintCallees(other.m_llintCallees)
+    , m_embedderCallees(other.m_embedderCallees)
+    , m_wasmIndirectCallEntryPoints(other.m_wasmIndirectCallEntryPoints)
+    , m_wasmToWasmCallsites(other.m_wasmToWasmCallsites)
+    , m_wasmToWasmExitStubs(other.m_wasmToWasmExitStubs)
+{
+#if ENABLE(WEBASSEMBLY_B3JIT)
+    m_bbqCallees.resize(m_calleeCount);
+    m_omgCallees.resize(m_calleeCount);
+#endif
+    setCompilationFinished();
 }
 
 CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
