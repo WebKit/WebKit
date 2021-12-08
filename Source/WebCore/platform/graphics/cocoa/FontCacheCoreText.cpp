@@ -1338,23 +1338,15 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomString& family, const FontD
 }
 
 #if PLATFORM(MAC)
-static bool shouldAutoActivateFontIfNeeded(const AtomString& family)
+bool FontCache::shouldAutoActivateFontIfNeeded(const AtomString& family)
 {
-#ifndef NDEBUG
-    // This cache is not thread safe so the following assertion is there to
-    // make sure this function is always called from the same thread.
-    static Thread* initThread = &Thread::current();
-    ASSERT(initThread == &Thread::current());
-#endif
-
-    static NeverDestroyed<HashSet<AtomString>> knownFamilies;
     static const unsigned maxCacheSize = 128;
-    ASSERT(knownFamilies.get().size() <= maxCacheSize);
-    if (knownFamilies.get().size() == maxCacheSize)
-        knownFamilies.get().remove(knownFamilies.get().random());
+    ASSERT(m_knownFamilies.size() <= maxCacheSize);
+    if (m_knownFamilies.size() == maxCacheSize)
+        m_knownFamilies.remove(m_knownFamilies.random());
 
     // Only attempt to auto-activate fonts once for performance reasons.
-    return knownFamilies.get().add(family).isNewEntry;
+    return m_knownFamilies.add(family).isNewEntry;
 }
 
 static void autoActivateFont(const String& name, CGFloat size)

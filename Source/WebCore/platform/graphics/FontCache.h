@@ -374,6 +374,10 @@ private:
     static std::optional<ASCIILiteral> alternateFamilyName(const String&);
     static std::optional<ASCIILiteral> platformAlternateFamilyName(const String&);
 
+#if PLATFORM(MAC)
+    bool shouldAutoActivateFontIfNeeded(const AtomString& family);
+#endif
+
     Timer m_purgeTimer;
     
     bool m_shouldMockBoldSystemFontForAccessibility { false };
@@ -387,6 +391,10 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     RecursiveLock m_fontLock;
+#endif
+
+#if PLATFORM(MAC)
+    HashSet<AtomString> m_knownFamilies;
 #endif
 
 #if PLATFORM(COCOA)
