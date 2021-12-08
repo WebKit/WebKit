@@ -1,3 +1,23 @@
+2021-12-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add support for _UITextSearchOptions when finding a string
+        https://bugs.webkit.org/show_bug.cgi?id=233957
+        rdar://86140673
+
+        Reviewed by Wenson Hsieh.
+
+        Add support for case-insensitive, full-word, and prefix matching.
+
+        * Shared/WebFindOptions.h:
+
+        Introduce AtWordEnds at the WebKit layer to support full-word matching
+        when used with AtWordStarts.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView performTextSearchWithQueryString:usingOptions:resultAggregator:]):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::core):
+
 2021-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a missing CompletionHandlerCallChecker around a UI delegate method call after r286640

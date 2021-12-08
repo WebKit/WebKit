@@ -9979,9 +9979,22 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
 {
-    // FIXME: (rdar://86140673) Account for _UITextSearchOptions when performing the search.
     OptionSet<WebKit::FindOptions> findOptions;
     findOptions.add(WebKit::FindOptions::ShowOverlay);
+
+    switch (options.wordMatchMethod) {
+    case _UITextSearchMatchMethodStartsWith:
+        findOptions.add(WebKit::FindOptions::AtWordStarts);
+        break;
+    case _UITextSearchMatchMethodFullWord:
+        findOptions.add({ WebKit::FindOptions::AtWordStarts, WebKit::FindOptions::AtWordEnds });
+        break;
+    default:
+        break;
+    }
+
+    if (options.stringCompareOptions & NSCaseInsensitiveSearch)
+        findOptions.add(WebKit::FindOptions::CaseInsensitive);
 
     _page->findRectsForStringMatches(string, findOptions, 1000, [string, aggregator = retainPtr(aggregator)](const Vector<WebCore::FloatRect>& rects) {
         NSUInteger index = 0;

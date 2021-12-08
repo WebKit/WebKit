@@ -70,6 +70,8 @@ WebCore::FindOptions core(OptionSet<FindOptions> options)
         result.add(WebCore::Backwards);
     if (options.contains(FindOptions::WrapAround))
         result.add(WebCore::WrapAround);
+    if (options.contains(FindOptions::AtWordEnds))
+        result.add(WebCore::AtWordEnds);
     return result;
 }
 

@@ -40,6 +40,7 @@ enum class FindOptions : uint16_t {
     ShowHighlight = 1 << 7,
     DetermineMatchIndex = 1 << 8,
     NoIndexChange = 1 << 9,
+    AtWordEnds = 1 << 10,
 };
 
 } // namespace WebKit
@@ -58,7 +59,8 @@ template<> struct EnumTraits<WebKit::FindOptions> {
         WebKit::FindOptions::ShowFindIndicator,
         WebKit::FindOptions::ShowHighlight,
         WebKit::FindOptions::DetermineMatchIndex,
-        WebKit::FindOptions::NoIndexChange
+        WebKit::FindOptions::NoIndexChange,
+        WebKit::FindOptions::AtWordEnds
     >;
 };
 
