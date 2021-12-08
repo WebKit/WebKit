@@ -353,6 +353,7 @@ class TimelineFromEndpoint {
 
         this.configurations = Configuration.fromQuery();
         this.results = {};
+        this.selectedDots = new Map();
 
         // Suite and test can often be implied by the endpoint, but doing so is more confusing then helpful
         this.suite = suite;
@@ -379,7 +380,6 @@ class TimelineFromEndpoint {
                     element.innerHTML = this.placeholder();
             }
         });
-
         this.commit_callback = () => {
             self.update();
         };
@@ -393,6 +393,8 @@ class TimelineFromEndpoint {
         });
     }
     update() {
+        if (this.radarButtonRef)
+            this.radarButtonRef.setState({show: false});
         const params = queryToParams(document.URL.split('?')[1]);
         const commits = commitsForResults(this.results, params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT, this.allCommits);
         const scale = scaleForCommits(commits);
@@ -503,7 +505,48 @@ class TimelineFromEndpoint {
             }
         });
 
-        return `<div class="content" ref="${this.ref}"></div>`;
+        return `
+        <div style="position:relative">
+            <div class="content" ref="${this.ref}"></div>
+        </div>`;
+    }
+
+    getTestResultStatus(data, willFilterExpected=false) {
+        let failureType = null;
+        let failureNumber = null;
+        if (data.stats) {
+            if (data.start_time)
+                failureNumber = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+            else
+                failureNumber = data.stats[`worst_tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+            if (data.stats.worst_tests_run <= 1)
+                failureNumber = null;
+
+            Expectations.failureTypes.forEach(type => {
+                if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0) {
+                    failureType = type;
+                }
+            });
+        } else {
+            let resultId = Expectations.stringToStateId(data.actual);
+            if (willFilterExpected)
+                resultId = Expectations.stringToStateId(Expectations.unexpectedResults(data.actual, data.expected));
+            Expectations.failureTypes.forEach(type => {
+                if (Expectations.stringToStateId(Expectations.failureTypeMap[type]) >= resultId) {
+                    failureType = type;
+                }
+            });
+        }
+        return {failureType, failureNumber};
+    }
+
+    getTestResultUrl(config, data) {
+        const buildParams = config.toParams();
+        buildParams['suite'] = [this.suite];
+        buildParams['uuid'] = [data.uuid];
+        buildParams['after_time'] = [data.start_time];
+        buildParams['before_time'] = [data.start_time];
+        return `${window.location.protocol}//${window.location.host}/urls/build?${paramsToQuery(buildParams)}`;
     }
 
     render(limit) {
@@ -511,6 +554,111 @@ class TimelineFromEndpoint {
         const self = this;
         const commits = commitsForResults(this.results, limit, this.allCommits);
         const scale = scaleForCommits(commits);
+
+        this.radarButtonRef = REF.createRef({
+            state: {
+                show: false,
+                top: 0,
+                left: 0.
+            },
+            onStateUpdate: (element, stateDiff) => {
+                if ('show' in stateDiff) {
+                    if (stateDiff.show)
+                        element.style.display = 'block';
+                    else
+                        element.style.display = 'none';
+                }
+                if ('top' in stateDiff)
+                    element.style.top = `${stateDiff.top}px`;
+                if ('left' in stateDiff) {
+                    const rect = element.getBoundingClientRect();
+                    element.style.left = `${stateDiff.left - rect.width}px`;
+                }
+            }
+        });
+
+        this.radarButtonRef.fromEvent('click').action(e => {
+            let title = '';
+            let description = '';
+            const failedScopes = new Map();
+            Array.from(this.selectedDots.keys()).forEach(config => {
+                const dots = this.selectedDots.get(config);
+                const {failureType, failureNumber} = this.getTestResultStatus(dots[0], InvestigateDrawer.willFilterExpected);
+                let initFailureType = failureType;
+                let initFailureNumber = failureNumber;
+                // first dot is a successfull one, we don't create radar
+                if (!initFailureType)
+                    return;
+                let lastSuccessDot = dots.filter(dot => {
+                    const {failureType, failureNumber} = this.getTestResultStatus(dot, InvestigateDrawer.willFilterExpected);
+                    return !failureType;
+                });
+                if (lastSuccessDot.length)
+                    lastSuccessDot = lastSuccessDot[0];
+                else
+                    lastSuccessDot = null;
+                failedScopes.set(config, {
+                    initFailureResult: dots[0],
+                    initFailure: {initFailureType, initFailureNumber},
+                    lastSuccessDot
+                });
+            });
+
+            if (!failedScopes.size) {
+                alert('No failures detect in selected results');
+                return;
+            }
+
+            let titleComponentSet = new Set();
+            let descriptionComponent = [];
+            Array.from(failedScopes.keys()).forEach(config => {
+                const failedScope = failedScopes.get(config);
+                const versionName = config.version_name ? config.version_name : Configuration.integerToVersion(config.version);
+                titleComponentSet.add(`${failedScope.initFailure.initFailureType} on ${versionName}(${config.model})`);
+                descriptionComponent.push(`${failedScope.initFailure.initFailureNumber ? `${failedScope.initFailure.initFailureNumber} ${failedScope.initFailure.initFailureType}` : ''}`);
+                descriptionComponent.push(`Hardware:     \t${config.model}`);
+                descriptionComponent.push(`Architecture: \t${config.architecture}`);
+                descriptionComponent.push(`OS:           \t${versionName}`);
+                descriptionComponent.push(`Style:        \t${config.style}`);
+                if (config.suite === 'layout-tests')
+                    descriptionComponent.push(`Flavor        \t${config.flavor}`);
+                if (config.sdk)
+                    descriptionComponent.push(`SDK:          \t${config.sdk}`);
+                descriptionComponent.push('---------------------');
+                descriptionComponent.push(`Most recent failures: ${CommitBank.commitsDuring(failedScope.initFailureResult.uuid).map(commit => commit.label()).join(' ,')}`);
+                descriptionComponent.push(this.getTestResultUrl(config, failedScope.initFailureResult));
+                descriptionComponent.push('---------------------');
+                if (failedScope.lastSuccessDot) {
+                    descriptionComponent.push(`Last success: ${CommitBank.commitsDuring(failedScope.lastSuccessDot.uuid).map(commit => commit.label()).join(' ,')}`);
+                    descriptionComponent.push(this.getTestResultUrl(config, failedScope.lastSuccessDot));
+                }
+            });
+
+            let component = 'WebKit';
+            let version = 'All';
+            switch (this.suite) {
+                case 'webkitpy-tests':
+                    component = 'WebKit Tools';
+                break;
+                case 'internal-media-tests':
+                    component = 'WebKit Media';
+                break;//
+                case 'javascriptcore-tests':
+                    component = 'JavaScriptCore';
+                break;
+            }
+            const radarUrlComponents = {
+                component,
+                version,
+                classification: 'Serious Bug',
+                title: `${this.test ? this.test : this.suite} ${Array.from(titleComponentSet).join(' and ')}`,
+                description: descriptionComponent.join('\n'),
+            };
+            const radarUrl = `rdar://new/problem?${Object.keys(radarUrlComponents).map(key => `${key}=${encodeURIComponent(radarUrlComponents[key])}`).join('&')}`;
+            const radarLinkElement = document.createElement('a');
+            radarLinkElement.setAttribute('href', radarUrl);
+            radarLinkElement.click();
+        });
 
         const colorMap = Expectations.colorMap();
         this.updates = [];
@@ -736,6 +884,12 @@ class TimelineFromEndpoint {
                         onDotClick: onDotClickFactory(config),
                         onDotEnter: onDotEnterFactory(config),
                         onDotLeave: onDotLeave,
+                        onDotsSelected: dots => {
+                            if (dots.length)
+                                this.selectedDots.set(config, dots);
+                            else
+                                this.selectedDots.delete(config);
+                        },
                         exporter: exporterFactory(resultsForConfig),
                     }));
 
@@ -752,6 +906,12 @@ class TimelineFromEndpoint {
                                     onDotClick: onDotClickFactory(sdkConfig),
                                     onDotEnter: onDotEnterFactory(sdkConfig),
                                     onDotLeave: onDotLeave,
+                                    onDotsSelected: dots => {
+                                        if (dots.length)
+                                            this.selectedDots.set(sdkConfig, dots);
+                                        else
+                                            this.selectedDots.delete(sdkConfig);
+                                    },
                                     exporter: exporterFactory(resultsByKey[sdkConfig.toKey()]),
                                 })));
                     });
@@ -779,6 +939,12 @@ class TimelineFromEndpoint {
                         onDotClick: onDotClickFactory(configuration),
                         onDotEnter: onDotEnterFactory(configuration),
                         onDotLeave: onDotLeave,
+                        onDotsSelected: dots => {
+                            if (dots.length)
+                                this.selectedDots.set(configuration, dots);
+                            else
+                                this.selectedDots.delete(configuration);
+                        },
                         exporter: exporterFactory(allResults),
                     })),
                 {expanded: this.configurations.length <= 1},
@@ -816,7 +982,22 @@ class TimelineFromEndpoint {
             };
             self.notifyRerender = notifyRerender;
         }));
-        return Timeline.CanvasContainer(composer, ...children);
+        return Timeline.CanvasContainer({
+            customizedLayer: `<button class="button tiny" style="position:absolute; background: var(--purple); color: var(--white)" ref="${this.radarButtonRef}">
+                File a bug
+            </button>`,
+            onSelecting: (e) => {
+                this.radarButtonRef.setState({show: false});
+            },
+            onSelect: (dots, selectedDotRect, seriesRect, e) => {
+                // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
+                this.radarButtonRef.setState({show: true, top: selectedDotRect.bottom, left: selectedDotRect.right});
+            },
+            onSelectionScroll: (dots, selectedDotRect) => {
+                // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
+                this.radarButtonRef.setState({top: selectedDotRect.bottom, left: selectedDotRect.right});
+            },
+        }, composer, ...children);
     }
 }
 
