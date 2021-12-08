@@ -1,3 +1,21 @@
+2021-12-07  Devin Rousso  <drousso@apple.com>
+
+        Add a `DOMPasteAccessCategory` to control which pasteboard the WebProcess is granted access to when pasting
+        https://bugs.webkit.org/show_bug.cgi?id=233939
+
+        Reviewed by Wenson Hsieh.
+
+        Implementing `-pasteFont:` <https://webkit.org/b/191379> requires that we read from the font
+        pasteboard instead of the general pasteboard. In order to allow web content to trigger this
+        (e.g. `document.execCommand("PasteFont"))`) we must have a way for the WebProcess to signal
+        that it wishes to read from the font pasteboard instead of the general pasteboard. As such,
+        create and pass along a `DOMPasteAccessCategory` to `requestDOMPasteAccess`.
+
+        No change in behavior.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient::requestDOMPasteAccess):
+
 2021-12-07  Cameron McCormack  <heycam@apple.com>
 
         Move FontCache singleton and instance on WorkerGlobalScope to ThreadGlobalData

@@ -1248,7 +1248,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _suppressSelectionAssistantReasons = { };
 
     [self _resetPanningPreventionFlags];
-    [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+    [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
     [self _cancelPendingKeyEventHandler];
 
     _cachedSelectedTextRange = nil;
@@ -1637,7 +1637,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     bool superDidResign = [super resignFirstResponder];
 
     if (superDidResign) {
-        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+        [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
         if (_keyWebEventHandler) {
@@ -1705,7 +1705,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
     _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
     if (lastTouchEvent->type == UIWebTouchEventTouchBegin) {
-        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+        [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
 #if ENABLE(TOUCH_EVENTS)
@@ -3969,7 +3969,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_willHideMenu:(NSNotification *)notification
 {
-    [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+    [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
 - (void)_didHideMenu:(NSNotification *)notification
@@ -3997,7 +3997,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)pasteForWebView:(id)sender
 {
-    if (sender == UIMenuController.sharedMenuController && [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::GrantedForGesture])
+    if (sender == UIMenuController.sharedMenuController && [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::GrantedForGesture])
         return;
 
     _page->executeEditCommand("paste"_s);
@@ -4143,11 +4143,24 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     _page->storeSelectionForAccessibility(false);
 }
 
-- (BOOL)_handleDOMPasteRequestWithResult:(WebCore::DOMPasteAccessResponse)response
+static UIPasteboardName pasteboardNameForAccessCategory(WebCore::DOMPasteAccessCategory pasteAccessCategory)
 {
-    if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture)
-        _page->grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
+    switch (pasteAccessCategory) {
+    case WebCore::DOMPasteAccessCategory::General:
+        return UIPasteboardNameGeneral;
+    }
+}
 
+static UIPasteboard *pasteboardForAccessCategory(WebCore::DOMPasteAccessCategory pasteAccessCategory)
+{
+    switch (pasteAccessCategory) {
+    case WebCore::DOMPasteAccessCategory::General:
+        return UIPasteboard.generalPasteboard;
+    }
+}
+
+- (BOOL)_hidePasteMenuWithResult:(WebCore::DOMPasteAccessResponse)response
+{
     if (auto pasteHandler = WTFMove(_domPasteRequestHandler)) {
         [UIMenuController.sharedMenuController hideMenuFromView:self];
         pasteHandler(response);
@@ -4156,16 +4169,24 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return NO;
 }
 
+- (BOOL)_handleDOMPasteRequestForCategory:(WebCore::DOMPasteAccessCategory)pasteAccessCategory result:(WebCore::DOMPasteAccessResponse)response
+{
+    if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture)
+        _page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(pasteAccessCategory));
+
+    return [self _hidePasteMenuWithResult:response];
+}
+
 - (void)_willPerformAction:(SEL)action sender:(id)sender
 {
     if (action != @selector(paste:))
-        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+        [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
 - (void)_didPerformAction:(SEL)action sender:(id)sender
 {
     if (action == @selector(paste:))
-        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+        [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
 // UIWKInteractionViewProtocol
@@ -5820,7 +5841,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return;
     }
 
-    [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
+    [self _hidePasteMenuWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
     auto* keyboard = [UIKeyboardImpl sharedInstance];
@@ -6609,15 +6630,15 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return foundAtLeastOneMatchingIdentifier;
 }
 
-- (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler
+- (void)_requestDOMPasteAccessForCategory:(WebCore::DOMPasteAccessCategory)pasteAccessCategory elementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler
 {
     if (auto existingCompletionHandler = std::exchange(_domPasteRequestHandler, WTFMove(completionHandler))) {
         ASSERT_NOT_REACHED();
         existingCompletionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
     }
 
-    if (allPasteboardItemOriginsMatchOrigin(UIPasteboard.generalPasteboard, originIdentifier)) {
-        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::GrantedForCommand];
+    if (allPasteboardItemOriginsMatchOrigin(pasteboardForAccessCategory(pasteAccessCategory), originIdentifier)) {
+        [self _handleDOMPasteRequestForCategory:pasteAccessCategory result:WebCore::DOMPasteAccessResponse::GrantedForCommand];
         return;
     }
 

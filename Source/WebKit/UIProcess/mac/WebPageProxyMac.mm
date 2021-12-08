@@ -651,9 +651,13 @@ void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMe
 
 #endif
 
-void WebPageProxy::willPerformPasteCommand()
+void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory)
 {
-    grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
+    switch (pasteAccessCategory) {
+    case DOMPasteAccessCategory::General:
+        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
+        return;
+    }
 }
 
 PlatformView* WebPageProxy::platformView() const
