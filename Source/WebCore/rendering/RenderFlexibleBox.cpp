@@ -2023,7 +2023,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         // items since the start depends on the height of the flexbox, which we
         // only know after we've positioned all the flex items.
         updateLogicalHeight();
-        layoutColumnReverse(children, crossAxisOffset, availableFreeSpace);
+        layoutColumnReverse(children, crossAxisOffset, availableFreeSpace, gapBetweenItems);
     }
 
     if (m_numberOfInFlowChildrenOnFirstLine == -1)
@@ -2032,7 +2032,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
     crossAxisOffset += maxChildCrossAxisExtent;
 }
 
-void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
+void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems)
 {
     // This is similar to the logic in layoutAndPlaceChildren, except we place
     // the children starting from the end of the flexbox. We also don't need to
@@ -2049,7 +2049,11 @@ void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, La
         mainAxisOffset -= mainAxisExtentForChild(child) + flowAwareMarginEndForChild(child);
         setFlowAwareLocationForChild(child, LayoutPoint(mainAxisOffset, crossAxisOffset + flowAwareMarginBeforeForChild(child)));
         mainAxisOffset -= flowAwareMarginStartForChild(child);
-        mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, children.size());
+        
+        if (i != children.size() - 1) {
+            // The last item does not get extra space added.
+            mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, children.size()) + gapBetweenItems;
+        }
     }
 }
     

@@ -1,3 +1,13 @@
+2021-12-08  Vitaly Dyachkov  <obyknovenius@me.com>
+
+        [css-flexbox] `gap` does not work correctly when `flex-direction: column-reverse` is applied
+        https://bugs.webkit.org/show_bug.cgi?id=225278
+
+        Reviewed by Sergio Villar Senin.
+
+        * imported/w3c/web-platform-tests/css/css-flexbox/column-reverse-gap-expected.txt: Added.
+        * imported/w3c/web-platform-tests/css/css-flexbox/column-reverse-gap.html: Added.
+
 2021-12-08  Antoine Quint  <graouts@webkit.org>
 
         'border-radius shorthand is getting expanded in WebKit
