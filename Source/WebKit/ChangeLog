@@ -1,3 +1,48 @@
+2021-12-06  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r286537. rdar://problem/85928816
+
+    Add trace points for generated momentum events
+    https://bugs.webkit.org/show_bug.cgi?id=233857
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Add start/end points for synthetic momentum, and a trace point for each generated event.
+    
+    * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+    (WebKit::MomentumEventDispatcher::dispatchSyntheticMomentumEvent):
+    (WebKit::MomentumEventDispatcher::didStartMomentumPhase):
+    (WebKit::MomentumEventDispatcher::didEndMomentumPhase):
+    
+    Source/WTF:
+    
+    * wtf/SystemTracing.h:
+    
+    Tools:
+    
+    Add start/end points for synthetic momentum, and a trace point for each generated event.
+    
+    * Tracing/SystemTracePoints.plist:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286537 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+            Add trace points for generated momentum events
+            https://bugs.webkit.org/show_bug.cgi?id=233857
+
+            Reviewed by Tim Horton.
+
+            Add start/end points for synthetic momentum, and a trace point for each generated event.
+
+            * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+            (WebKit::MomentumEventDispatcher::dispatchSyntheticMomentumEvent):
+            (WebKit::MomentumEventDispatcher::didStartMomentumPhase):
+            (WebKit::MomentumEventDispatcher::didEndMomentumPhase):
+
 2021-12-03  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286512. rdar://problem/85928816
