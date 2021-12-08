@@ -122,6 +122,7 @@
 		29C15F4825D75FDF001CE31C /* MediaAccessibilitySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29C15F4725D75F63001CE31C /* MediaAccessibilitySPI.h */; };
 		29CDEBA62548D57F007C07B7 /* AXSpeechManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CDEB9E2548D055007C07B7 /* AXSpeechManagerSPI.h */; };
 		2D02E93C2056FAA700A13797 /* AudioToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */; };
+		2D68D6582740B15B005EBB2E /* IOKitSPIIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D68D6572740B15B005EBB2E /* IOKitSPIIOS.h */; };
 		2E1342CC215AA10A007199D2 /* UIKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */; };
 		2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */; };
 		31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31308B1320A21705003FB929 /* SystemPreviewSPI.h */; };
@@ -344,6 +345,7 @@
 		29C15F4725D75F63001CE31C /* MediaAccessibilitySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaAccessibilitySPI.h; sourceTree = "<group>"; };
 		29CDEB9E2548D055007C07B7 /* AXSpeechManagerSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXSpeechManagerSPI.h; sourceTree = "<group>"; };
 		2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioToolboxSPI.h; sourceTree = "<group>"; };
+		2D68D6572740B15B005EBB2E /* IOKitSPIIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPIIOS.h; sourceTree = "<group>"; };
 		2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSoftLink.h; sourceTree = "<group>"; };
 		2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIKitSoftLink.mm; sourceTree = "<group>"; };
 		31308B1320A21705003FB929 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
@@ -589,6 +591,7 @@
 				0C5AF90F1F43A4C7002EAC02 /* CoreUISPI.h */,
 				0C5AF9101F43A4C7002EAC02 /* DataDetectorsUISPI.h */,
 				0C5AF9111F43A4C7002EAC02 /* GraphicsServicesSPI.h */,
+				2D68D6572740B15B005EBB2E /* IOKitSPIIOS.h */,
 				5C7C787523AC3E850065F47E /* ManagedConfigurationSPI.h */,
 				0C5AF9131F43A4C7002EAC02 /* MediaPlayerSPI.h */,
 				0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */,
@@ -915,6 +918,7 @@
 				A39DE74E1F7C443D007BCB00 /* HysteresisActivity.h in Headers */,
 				0C2DA11F1F3BE9E000DBC317 /* ImageIOSPI.h in Headers */,
 				CE5673872151A7B9002F92D7 /* IOKitSPI.h in Headers */,
+				2D68D6582740B15B005EBB2E /* IOKitSPIIOS.h in Headers */,
 				517E03F924B7C0070054895A /* IOKitSPIMac.h in Headers */,
 				0C2DA1421F3BEB4900DBC317 /* IOPMLibSPI.h in Headers */,
 				0C2DA1431F3BEB4900DBC317 /* IOPSLibSPI.h in Headers */,

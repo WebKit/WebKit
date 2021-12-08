@@ -26,8 +26,15 @@
 #pragma once
 
 #if PLATFORM(MAC)
+
+#import <IOKit/hid/IOHIDDevice.h>
+#import <IOKit/hid/IOHIDManager.h>
+#import <IOKit/hid/IOHIDUsageTables.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <IOKit/hid/IOHIDEvent.h>
+#import <IOKit/hid/IOHIDEventData.h>
 #import <IOKit/hid/IOHIDEventSystemClient.h>
 
 #else
@@ -59,6 +66,20 @@ void IOHIDEventSystemClientUnregisterDeviceMatchingBlock(IOHIDEventSystemClientR
 void IOHIDEventSystemClientScheduleWithDispatchQueue(IOHIDEventSystemClientRef, dispatch_queue_t);
 
 CFTypeRef IOHIDServiceClientCopyProperty(IOHIDServiceClientRef service, CFStringRef key);
+
+enum {
+    kIOHIDEventTypeNULL,
+    kIOHIDEventTypeVendorDefined,
+    kIOHIDEventTypeKeyboard = 3,
+    kIOHIDEventTypeRotation = 5,
+    kIOHIDEventTypeScroll = 6,
+    kIOHIDEventTypeZoom = 8,
+    kIOHIDEventTypeDigitizer = 11,
+    kIOHIDEventTypeNavigationSwipe = 16,
+    kIOHIDEventTypeForce = 32,
+
+};
+typedef uint32_t IOHIDEventType;
 
 WTF_EXTERN_C_END
 

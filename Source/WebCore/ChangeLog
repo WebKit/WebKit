@@ -1,3 +1,53 @@
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r285786. rdar://problem/85928816
+
+    Clean up IOKit SPI headers
+    https://bugs.webkit.org/show_bug.cgi?id=233093
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+    * platform/gamepad/mac/HIDGamepadProvider.h:
+    * platform/gamepad/mac/HIDGamepadProvider.mm:
+    
+    Source/WebCore/PAL:
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/spi/cg/CoreGraphicsSPI.h:
+    * pal/spi/cocoa/IOKitSPI.h:
+    * pal/spi/ios/IOKitSPIIOS.h: Added.
+    * pal/spi/mac/IOKitSPIMac.h:
+    IOKit vends a much different set of public API on iOS vs. macOS,
+    so we have separate SPI headers to reduce the confusion.
+    
+    Unfortunately, the SPI header for iOS was not explicitly named as such,
+    and started being used in some macOS code. For a while, this didn't lead
+    to any trouble because the aforementioned macOS code didn't ALSO have
+    the public SDK headers included, but a future patch from Simon will
+    use IOKitSPI.h in a place where the macOS IOKit public headers are included,
+    and thus we must make the split more explicit.
+    
+    Rename IOKitSPI.h to IOKitSPIIOS.h; make IOKitSPI choose the right one.
+    Add some SPI defintions to IOKitSPIMac.h that were missing (which the
+    dependent code was getting via the iOS header on macOS).
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285786 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-13  Tim Horton  <timothy_horton@apple.com>
+
+            Clean up IOKit SPI headers
+            https://bugs.webkit.org/show_bug.cgi?id=233093
+
+            Reviewed by Simon Fraser.
+
+            * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+            * platform/gamepad/mac/HIDGamepadProvider.h:
+            * platform/gamepad/mac/HIDGamepadProvider.mm:
+
 2021-12-02  Alan Coon  <alancoon@apple.com>
 
         Revert r286394. rdar://problem/83070565
