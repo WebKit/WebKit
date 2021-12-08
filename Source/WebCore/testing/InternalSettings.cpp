@@ -441,7 +441,7 @@ bool InternalSettings::vp9DecoderEnabled() const
 
 bool InternalSettings::mediaSourceInlinePaintingEnabled() const
 {
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
     return RuntimeEnabledFeatures::sharedFeatures().mediaSourceInlinePaintingEnabled();
 #else
     return false;

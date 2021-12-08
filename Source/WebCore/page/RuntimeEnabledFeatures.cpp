@@ -81,11 +81,13 @@ void RuntimeEnabledFeatures::setOpusDecoderEnabled(bool isEnabled)
 }
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
 void RuntimeEnabledFeatures::setMediaSourceInlinePaintingEnabled(bool isEnabled)
 {
     m_mediaSourceInlinePaintingEnabled = isEnabled;
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     MediaSessionManagerCocoa::setMediaSourceInlinePaintingEnabled(isEnabled);
+#endif
 }
 #endif
 

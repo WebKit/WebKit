@@ -246,7 +246,7 @@ public:
     bool webAuthenticationModernEnabled() const { return m_areWebAuthenticationModernEnabled; }
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
     WEBCORE_EXPORT void setMediaSourceInlinePaintingEnabled(bool);
     bool mediaSourceInlinePaintingEnabled() const { return m_mediaSourceInlinePaintingEnabled; }
 #endif
@@ -392,7 +392,7 @@ private:
     bool m_areWebAuthenticationModernEnabled { false };
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
     bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
 

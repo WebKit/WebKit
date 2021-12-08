@@ -1,3 +1,14 @@
+2021-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Enable mediaSourceInlinePainting
+        https://bugs.webkit.org/show_bug.cgi?id=233813
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: GStreamer ports can already run tests
+        requiring this setting, without change in the platform layer, until we migrate to the
+        GPUProcess.
+
 2021-12-07  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add initial support for find-in-page SPI

@@ -887,7 +887,7 @@ MediaSourceInlinePaintingEnabled:
   type: bool
   humanReadableName: "Experimental MediaSource Inline Painting"
   humanReadableDescription: "Experimental MediaSource Inline Painting"
-  condition: ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+  condition: ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
   webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
