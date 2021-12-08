@@ -39,7 +39,8 @@ namespace WebKit {
 
 static constexpr Seconds deltaHistoryMaximumAge = 500_ms;
 static constexpr Seconds deltaHistoryMaximumInterval = 150_ms;
-static constexpr Seconds idealCurveFrameRate = 1_s / 60;
+static constexpr float idealCurveFrameRate = 60;
+static constexpr Seconds idealCurveFrameInterval = 1_s / idealCurveFrameRate;
 
 MomentumEventDispatcher::MomentumEventDispatcher(EventDispatcher& dispatcher)
     : m_observerID(DisplayLinkObserverID::generate())
@@ -95,6 +96,9 @@ bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdent
         if (auto lastActivePhaseDelta = event.rawPlatformDelta())
             m_lastActivePhaseDelta = *lastActivePhaseDelta;
     }
+
+    if (event.phase() == WebWheelEvent::PhaseEnded)
+        m_lastEndedEventTimestamp = event.ioHIDEventTimestamp();
 
     if (eventShouldStartSyntheticMomentumPhase(pageIdentifier, event))
         didStartMomentumPhase(pageIdentifier, event);
@@ -159,11 +163,13 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
 
 void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier pageIdentifier, const WebWheelEvent& event)
 {
+    auto momentumStartInterval = event.ioHIDEventTimestamp() - m_lastEndedEventTimestamp;
+
     m_currentGesture.active = true;
     m_currentGesture.pageIdentifier = pageIdentifier;
     m_currentGesture.initiatingEvent = event;
     m_currentGesture.currentOffset = { };
-    m_currentGesture.startTime = WallTime::now();
+    m_currentGesture.startTime = MonotonicTime::now() - momentumStartInterval;
     m_currentGesture.accelerationCurve = [&] () -> std::optional<ScrollingAccelerationCurve> {
         auto curveIterator = m_accelerationCurves.find(m_currentGesture.pageIdentifier);
         if (curveIterator == m_accelerationCurves.end())
@@ -176,9 +182,10 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     // FIXME: The system falls back from the table to just generating deltas
     // directly when the frame interval is within 20fps of idealCurveFrameRate;
     // we should perhaps do the same.
-    buildOffsetTableWithInitialDelta(*event.rawPlatformDelta());
+    float idealCurveMultiplier = m_currentGesture.accelerationCurve->frameRate() / idealCurveFrameRate;
+    buildOffsetTableWithInitialDelta(*event.rawPlatformDelta() * idealCurveMultiplier);
 
-    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseBegan, { });
+    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseBegan, consumeDeltaForCurrentTime());
 }
 
 void MomentumEventDispatcher::didEndMomentumPhase()
@@ -187,7 +194,7 @@ void MomentumEventDispatcher::didEndMomentumPhase()
 
     dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseEnded, { });
 
-    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher saw momentum end phase with total offset %.1f %.1f, duration %f (event offset would have been %.1f %.1f)", m_currentGesture.currentOffset.width(), m_currentGesture.currentOffset.height(), (WallTime::now() - m_currentGesture.startTime).seconds(), m_currentGesture.accumulatedEventOffset.width(), m_currentGesture.accumulatedEventOffset.height());
+    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher saw momentum end phase with total offset %.1f %.1f, duration %f (event offset would have been %.1f %.1f)", m_currentGesture.currentOffset.width(), m_currentGesture.currentOffset.height(), (MonotonicTime::now() - m_currentGesture.startTime).seconds(), m_currentGesture.accumulatedEventOffset.width(), m_currentGesture.accumulatedEventOffset.height());
 
     stopDisplayLink();
 
@@ -251,15 +258,9 @@ void MomentumEventDispatcher::pageScreenDidChange(WebCore::PageIdentifier pageID
         startDisplayLink();
 }
 
-void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID displayID, const WebCore::DisplayUpdate&)
+WebCore::FloatSize MomentumEventDispatcher::consumeDeltaForCurrentTime()
 {
-    if (!m_currentGesture.active)
-        return;
-
-    if (displayID != this->displayID())
-        return;
-
-    auto animationTime = WallTime::now() - m_currentGesture.startTime;
+    auto animationTime = MonotonicTime::now() - m_currentGesture.startTime;
     auto desiredOffset = offsetAtTime(animationTime);
 
 #if !USE(MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING)
@@ -269,9 +270,20 @@ void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID dis
     WebCore::FloatSize delta = desiredOffset - m_currentGesture.currentOffset;
 #endif
 
-    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseChanged, -delta);
-
     m_currentGesture.currentOffset += delta;
+
+    return -delta;
+}
+
+void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID displayID, const WebCore::DisplayUpdate&)
+{
+    if (!m_currentGesture.active)
+        return;
+
+    if (displayID != this->displayID())
+        return;
+
+    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseChanged, consumeDeltaForCurrentTime());
 }
 
 void MomentumEventDispatcher::didReceiveScrollEventWithInterval(WebCore::FloatSize size, Seconds frameInterval)
@@ -343,7 +355,7 @@ WebCore::FloatSize MomentumEventDispatcher::offsetAtTime(Seconds time)
     if (!m_currentGesture.offsetTable.size())
         return { };
 
-    float fractionalFrameNumber = time.seconds() / idealCurveFrameRate.seconds();
+    float fractionalFrameNumber = time.seconds() / idealCurveFrameInterval.seconds();
     unsigned long lowerFrameNumber = std::min<unsigned long>(m_currentGesture.offsetTable.size() - 1, floor(fractionalFrameNumber));
     unsigned long upperFrameNumber = std::min<unsigned long>(m_currentGesture.offsetTable.size() - 1, lowerFrameNumber + 1);
     float amount = fractionalFrameNumber - lowerFrameNumber;
@@ -379,7 +391,7 @@ std::pair<WebCore::FloatSize, WebCore::FloatSize> MomentumEventDispatcher::compu
 {
     WebCore::FloatSize unacceleratedDelta = currentUnacceleratedDelta;
 
-    float decayRate = momentumDecayRate(unacceleratedDelta, idealCurveFrameRate);
+    float decayRate = momentumDecayRate(unacceleratedDelta, idealCurveFrameInterval);
     unacceleratedDelta.scale(decayRate);
 
     auto quantizedUnacceleratedDelta = unacceleratedDelta;
@@ -403,7 +415,7 @@ std::pair<WebCore::FloatSize, WebCore::FloatSize> MomentumEventDispatcher::compu
 #endif
 
     // The delta queue operates on pre-acceleration deltas, so insert the new event *before* accelerating.
-    didReceiveScrollEventWithInterval(quantizedUnacceleratedDelta, idealCurveFrameRate);
+    didReceiveScrollEventWithInterval(quantizedUnacceleratedDelta, idealCurveFrameInterval);
 
     auto accelerateAxis = [&] (HistoricalDeltas& deltas, float value) {
         float totalDelta = 0;

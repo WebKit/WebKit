@@ -39,12 +39,19 @@ static float fromFixedPoint(float value)
     return value / 65536.0f;
 }
 
+static float fromCFNumber(CFNumberRef number)
+{
+    float value;
+    CFNumberGetValue(number, kCFNumberFloatType, &value);
+    return value;
+}
+
 static float readFixedPointParameter(NSDictionary *parameters, const char *key)
 {
     return fromFixedPoint([[parameters objectForKey:@(key)] floatValue]);
 }
 
-static ScrollingAccelerationCurve fromIOHIDCurve(NSDictionary *parameters, float resolution)
+static ScrollingAccelerationCurve fromIOHIDCurve(NSDictionary *parameters, float resolution, float frameRate)
 {
     auto gainLinear = readFixedPointParameter(parameters, kHIDAccelGainLinearKey);
     auto gainParabolic = readFixedPointParameter(parameters, kHIDAccelGainParabolicKey);
@@ -54,17 +61,17 @@ static ScrollingAccelerationCurve fromIOHIDCurve(NSDictionary *parameters, float
     auto tangentSpeedLinear = readFixedPointParameter(parameters, kHIDAccelTangentSpeedLinearKey);
     auto tangentSpeedParabolicRoot = readFixedPointParameter(parameters, kHIDAccelTangentSpeedParabolicRootKey);
 
-    return { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution };
+    return { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution, frameRate };
 }
 
-static ScrollingAccelerationCurve fromIOHIDCurveArrayWithAcceleration(NSArray<NSDictionary *> *ioHIDCurves, float desiredAcceleration, float resolution)
+static ScrollingAccelerationCurve fromIOHIDCurveArrayWithAcceleration(NSArray<NSDictionary *> *ioHIDCurves, float desiredAcceleration, float resolution, float frameRate)
 {
     __block size_t currentIndex = 0;
     __block Vector<std::pair<float, ScrollingAccelerationCurve>> curves;
 
     [ioHIDCurves enumerateObjectsUsingBlock:^(NSDictionary *parameters, NSUInteger i, BOOL *) {
         auto curveAcceleration = readFixedPointParameter(parameters, kHIDAccelIndexKey);
-        auto curve = fromIOHIDCurve(parameters, resolution);
+        auto curve = fromIOHIDCurve(parameters, resolution, frameRate);
 
         if (desiredAcceleration > curveAcceleration)
             currentIndex = i;
@@ -116,19 +123,26 @@ static std::optional<ScrollingAccelerationCurve> fromIOHIDDevice(IOHIDEventSende
         return std::nullopt;
     }
 
-    auto scrollAcceleration = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), scrollAccelerationType.get())));
-    if (!scrollAcceleration) {
+    auto scrollAccelerationCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), scrollAccelerationType.get())));
+    if (!scrollAccelerationCF) {
         RELEASE_LOG(ScrollAnimations, "ScrollingAccelerationCurve::fromIOHIDDevice failed to look up acceleration value");
         return std::nullopt;
     }
+    auto scrollAcceleration = fromFixedPoint(fromCFNumber(scrollAccelerationCF.get()));
 
-    auto resolution = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR(kIOHIDScrollResolutionKey))));
-    if (!resolution) {
+    auto resolutionCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR(kIOHIDScrollResolutionKey))));
+    if (!resolutionCF) {
         RELEASE_LOG(ScrollAnimations, "ScrollingAccelerationCurve::fromIOHIDDevice failed to look up resolution");
         return std::nullopt;
     }
+    auto resolution = fromFixedPoint([(NSNumber *)resolutionCF.get() floatValue]);
 
-    return fromIOHIDCurveArrayWithAcceleration((NSArray *)curves.get(), fromFixedPoint([(NSNumber *)scrollAcceleration.get() floatValue]), fromFixedPoint([(NSNumber *)resolution.get() floatValue]));
+    static CFStringRef dispatchFrameRateKey = CFSTR("ScrollMomentumDispatchRate");
+    static constexpr float defaultDispatchFrameRate = 60;
+    auto frameRateCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), dispatchFrameRateKey)));
+    float frameRate = frameRateCF ? fromCFNumber(frameRateCF.get()) : defaultDispatchFrameRate;
+
+    return fromIOHIDCurveArrayWithAcceleration((NSArray *)curves.get(), scrollAcceleration, resolution, frameRate);
 }
 
 std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::fromNativeWheelEvent(const NativeWebWheelEvent& nativeWebWheelEvent)
