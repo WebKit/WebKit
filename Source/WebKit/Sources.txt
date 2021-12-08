@@ -197,6 +197,7 @@ Shared/PlatformPopupMenuData.cpp
 Shared/PrintInfo.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
+Shared/ScrollingAccelerationCurve.cpp
 Shared/ServiceWorkerInitializationData.cpp
 Shared/SessionState.cpp
 Shared/ShareableBitmap.cpp @no-unify
@@ -722,6 +723,7 @@ WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp
 WebProcess/WebPage/FindController.cpp
 WebProcess/WebPage/IPCTestingAPI.cpp
+WebProcess/WebPage/MomentumEventDispatcher.cpp
 WebProcess/WebPage/PageBanner.cpp
 WebProcess/WebPage/VisitedLinkTableController.cpp
 WebProcess/WebPage/WebBackForwardListProxy.cpp

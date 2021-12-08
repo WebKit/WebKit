@@ -89,6 +89,7 @@ extern "C" {
     M(RemoteLayerTree) \
     M(Resize) \
     M(ResourceLoadStatistics) \
+    M(ScrollAnimations) \
     M(Scrolling) \
     M(Selection) \
     M(ServiceWorker) \

@@ -2886,6 +2886,12 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 
     closeOverlayedViews();
 
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    // FIXME: We should not have to look this up repeatedly, but it can also change occasionally.
+    if (event.momentumPhase() == WebWheelEvent::PhaseBegan && preferences().momentumScrollingAnimatorEnabled())
+        m_scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(event);
+#endif
+
     if (wheelEventCoalescer().shouldDispatchEvent(event)) {
         auto event = wheelEventCoalescer().nextEventToDispatch();
         sendWheelEvent(*event);
@@ -2931,7 +2937,15 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
         rubberBandableEdges.setLeft(!m_backForwardList->backItem());
         rubberBandableEdges.setRight(!m_backForwardList->forwardItem());
     }
-    connection -> send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0);
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    if (event.momentumPhase() == WebWheelEvent::PhaseBegan && m_scrollingAccelerationCurve != m_lastSentScrollingAccelerationCurve) {
+        connection->send(Messages::EventDispatcher::SetScrollingAccelerationCurve(m_webPageID, *m_scrollingAccelerationCurve), 0, { }, Thread::QOS::UserInteractive);
+        m_lastSentScrollingAccelerationCurve = m_scrollingAccelerationCurve;
+    }
+#endif
+
+    connection->send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
@@ -3993,6 +4007,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, std::optio
     if (!hasRunningProcess())
         return;
 
+    send(Messages::EventDispatcher::PageScreenDidChange(m_webPageID, displayID));
     send(Messages::WebPage::WindowScreenDidChange(displayID, nominalFramesPerSecond));
 }
 
@@ -7904,6 +7919,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         m_xrSystem->invalidate();
         m_xrSystem = nullptr;
     }
+#endif
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    m_lastSentScrollingAccelerationCurve = std::nullopt;
 #endif
 }
 
