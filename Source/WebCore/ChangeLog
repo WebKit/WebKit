@@ -1,3 +1,87 @@
+2021-12-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r286481. rdar://problem/85928816
+
+    A Safari tab can rarely get stuck in a state where rendering updates stop happening
+    https://bugs.webkit.org/show_bug.cgi?id=233784
+    rdar://85445072
+    
+    Reviewed by Chris Dumez.
+    
+    Sometimes a Safari tab can get into a state where rendering updates cease to happen,
+    which manifests as partially broken scrolling, blank tiles revealed when scrolling,
+    and somewhat broken page updates. I was able to sometimes reproduce this by clicking
+    on links in eBay emails from Mail on a system with two displays.
+    
+    From the one time I reproduce with logging, the output indicated that DisplayRefreshMonitor::displayLinkFired()
+    would early return because isPreviousFrameDone() was false. The only way for that to occur,
+    barring memory corruption, is if DisplayRefreshMonitorMac::dispatchDisplayDidRefresh() returned early,
+    which it does if the callback comes twice in a single event loop; this may explain the rarity.
+    
+    So fix DisplayRefreshMonitorMac::dispatchDisplayDidRefresh() call setIsPreviousFrameDone(true)
+    so the next callback can make progress
+    
+    Also add some locking annotations and fix one missing lock, and some release logging.
+    
+    Source/WebCore:
+    
+    * platform/graphics/DisplayRefreshMonitor.cpp:
+    (WebCore::DisplayRefreshMonitor::stop):
+    (WebCore::DisplayRefreshMonitor::firedAndReachedMaxUnscheduledFireCount):
+    (WebCore::DisplayRefreshMonitor::displayLinkFired):
+    * platform/graphics/DisplayRefreshMonitor.h:
+    (WebCore::DisplayRefreshMonitor::WTF_REQUIRES_LOCK):
+    (WebCore::DisplayRefreshMonitor::WTF_GUARDED_BY_LOCK):
+    (WebCore::DisplayRefreshMonitor::setMaxUnscheduledFireCount): Deleted.
+    (WebCore::DisplayRefreshMonitor::isScheduled const): Deleted.
+    (WebCore::DisplayRefreshMonitor::setIsScheduled): Deleted.
+    (WebCore::DisplayRefreshMonitor::isPreviousFrameDone const): Deleted.
+    (WebCore::DisplayRefreshMonitor::setIsPreviousFrameDone): Deleted.
+    
+    Source/WebKit:
+    
+    * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp:
+    (WebKit::DisplayRefreshMonitorMac::dispatchDisplayDidRefresh):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286481 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+            A Safari tab can rarely get stuck in a state where rendering updates stop happening
+            https://bugs.webkit.org/show_bug.cgi?id=233784
+            rdar://85445072
+
+            Reviewed by Chris Dumez.
+
+            Sometimes a Safari tab can get into a state where rendering updates cease to happen,
+            which manifests as partially broken scrolling, blank tiles revealed when scrolling,
+            and somewhat broken page updates. I was able to sometimes reproduce this by clicking
+            on links in eBay emails from Mail on a system with two displays.
+
+            From the one time I reproduce with logging, the output indicated that DisplayRefreshMonitor::displayLinkFired()
+            would early return because isPreviousFrameDone() was false. The only way for that to occur,
+            barring memory corruption, is if DisplayRefreshMonitorMac::dispatchDisplayDidRefresh() returned early,
+            which it does if the callback comes twice in a single event loop; this may explain the rarity.
+
+            So fix DisplayRefreshMonitorMac::dispatchDisplayDidRefresh() call setIsPreviousFrameDone(true)
+            so the next callback can make progress
+
+            Also add some locking annotations and fix one missing lock, and some release logging.
+
+            * platform/graphics/DisplayRefreshMonitor.cpp:
+            (WebCore::DisplayRefreshMonitor::stop):
+            (WebCore::DisplayRefreshMonitor::firedAndReachedMaxUnscheduledFireCount):
+            (WebCore::DisplayRefreshMonitor::displayLinkFired):
+            * platform/graphics/DisplayRefreshMonitor.h:
+            (WebCore::DisplayRefreshMonitor::WTF_REQUIRES_LOCK):
+            (WebCore::DisplayRefreshMonitor::WTF_GUARDED_BY_LOCK):
+            (WebCore::DisplayRefreshMonitor::setMaxUnscheduledFireCount): Deleted.
+            (WebCore::DisplayRefreshMonitor::isScheduled const): Deleted.
+            (WebCore::DisplayRefreshMonitor::setIsScheduled): Deleted.
+            (WebCore::DisplayRefreshMonitor::isPreviousFrameDone const): Deleted.
+            (WebCore::DisplayRefreshMonitor::setIsPreviousFrameDone): Deleted.
+
 2021-12-02  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r286410. rdar://problem/85928816
