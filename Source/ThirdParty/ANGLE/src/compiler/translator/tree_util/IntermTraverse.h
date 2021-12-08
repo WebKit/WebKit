@@ -239,10 +239,10 @@ class TIntermTraverser : angle::NonCopyable
     //
     //                    Node 1                                                Node 6
     //                 EOpIndexDirect                                        EOpIndexDirect
-    //                /          \                                              /       \
+    //                /          \                                              /       \.
     //           Node 2        Node 3                                   Node 7        Node 3
     //       EOpIndexIndirect     N     --> replaced with -->       EOpIndexIndirect     N
-    //         /        \                                            /        \
+    //         /        \                                            /        \.
     //      Node 4    Node 5                                      Node 8      Node 5
     //      symbol   expression                                replacement   expression
     //        ^                                                                 ^
