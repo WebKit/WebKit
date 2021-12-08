@@ -2925,16 +2925,13 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
     auto* connection = messageSenderConnection();
     if (!connection)
         return;
-
-    connection->send(
-        Messages::EventDispatcher::WheelEvent(
-            m_webPageID,
-            event,
-            shouldUseImplicitRubberBandControl() ? !m_backForwardList->backItem() : rubberBandsAtLeft(),
-            shouldUseImplicitRubberBandControl() ? !m_backForwardList->forwardItem() : rubberBandsAtRight(),
-            rubberBandsAtTop(),
-            rubberBandsAtBottom()
-    ), 0, { }, Thread::QOS::UserInteractive);
+    
+    auto rubberBandableEdges = this->rubberBandableEdges();
+    if (shouldUseImplicitRubberBandControl()) {
+        rubberBandableEdges.setLeft(!m_backForwardList->backItem());
+        rubberBandableEdges.setRight(!m_backForwardList->forwardItem());
+    }
+    connection -> send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0);
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
@@ -4129,44 +4126,24 @@ void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
     send(Messages::WebPage::SetSuppressScrollbarAnimations(suppressAnimations));
 }
 
-bool WebPageProxy::rubberBandsAtLeft() const
-{
-    return m_rubberBandsAtLeft;
-}
-
 void WebPageProxy::setRubberBandsAtLeft(bool rubberBandsAtLeft)
 {
-    m_rubberBandsAtLeft = rubberBandsAtLeft;
-}
-
-bool WebPageProxy::rubberBandsAtRight() const
-{
-    return m_rubberBandsAtRight;
+    m_rubberBandableEdges.setLeft(rubberBandsAtLeft);
 }
 
 void WebPageProxy::setRubberBandsAtRight(bool rubberBandsAtRight)
 {
-    m_rubberBandsAtRight = rubberBandsAtRight;
-}
-
-bool WebPageProxy::rubberBandsAtTop() const
-{
-    return m_rubberBandsAtTop;
+    m_rubberBandableEdges.setRight(rubberBandsAtRight);
 }
 
 void WebPageProxy::setRubberBandsAtTop(bool rubberBandsAtTop)
 {
-    m_rubberBandsAtTop = rubberBandsAtTop;
-}
-
-bool WebPageProxy::rubberBandsAtBottom() const
-{
-    return m_rubberBandsAtBottom;
+    m_rubberBandableEdges.setTop(rubberBandsAtTop);
 }
 
 void WebPageProxy::setRubberBandsAtBottom(bool rubberBandsAtBottom)
 {
-    m_rubberBandsAtBottom = rubberBandsAtBottom;
+    m_rubberBandableEdges.setBottom(rubberBandsAtBottom);
 }
     
 void WebPageProxy::setEnableVerticalRubberBanding(bool enableVerticalRubberBanding)
@@ -4938,11 +4915,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         if (m_mainFrameHasCustomContentProvider) {
             // Always assume that the main frame is pinned here, since the custom representation view will handle
             // any wheel events and dispatch them to the WKView when necessary.
-            m_mainFrameIsPinnedToLeftSide = true;
-            m_mainFrameIsPinnedToRightSide = true;
-            m_mainFrameIsPinnedToTopSide = true;
-            m_mainFrameIsPinnedToBottomSide = true;
-
+            m_mainFramePinnedState = { true, true, true, true };
             m_uiClient->pinnedStateDidChange(*this);
         }
         pageClient().didCommitLoadForMainFrame(mimeType, frameHasCustomContentProvider);
@@ -7854,10 +7827,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_mainFrameHasHorizontalScrollbar = false;
     m_mainFrameHasVerticalScrollbar = false;
 
-    m_mainFrameIsPinnedToLeftSide = true;
-    m_mainFrameIsPinnedToRightSide = true;
-    m_mainFrameIsPinnedToTopSide = true;
-    m_mainFrameIsPinnedToBottomSide = true;
+    m_mainFramePinnedState = { true, true, true, true };
 
     m_visibleScrollerThumbRect = IntRect();
 
@@ -8764,13 +8734,10 @@ void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, 
     m_mainFrameHasVerticalScrollbar = hasVerticalScrollbar;
 }
 
-void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide)
+void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(RectEdges<bool> pinnedState)
 {
     pageClient().pinnedStateWillChange();
-    m_mainFrameIsPinnedToLeftSide = pinnedToLeftSide;
-    m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
-    m_mainFrameIsPinnedToTopSide = pinnedToTopSide;
-    m_mainFrameIsPinnedToBottomSide = pinnedToBottomSide;
+    m_mainFramePinnedState = pinnedState;
     pageClient().pinnedStateDidChange();
 
     m_uiClient->pinnedStateDidChange(*this);

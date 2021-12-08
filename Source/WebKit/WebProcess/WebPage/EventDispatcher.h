@@ -30,6 +30,7 @@
 #include "WebEvent.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
+#include <WebCore/RectEdges.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <memory>
 #include <wtf/HashMap.h>
@@ -83,7 +84,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
-    void wheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
+    void wheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEvent(WebCore::PageIdentifier, const WebTouchEvent&, CompletionHandler<void(bool)>&&);
     void touchEventWithoutCallback(WebCore::PageIdentifier, const WebTouchEvent&);
