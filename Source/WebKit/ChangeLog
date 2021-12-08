@@ -1,3 +1,36 @@
+2021-12-08  Tim Horton  <timothy_horton@apple.com>
+
+        Momentum Event Dispatcher: Momentum tail should have montonically decreasing deltas and tail gaps
+        https://bugs.webkit.org/show_bug.cgi?id=233993
+        <rdar://problem/86118367>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+        (WebKit::MomentumEventDispatcher::consumeDeltaForCurrentTime):
+        (WebKit::MomentumEventDispatcher::buildOffsetTableWithInitialDelta):
+        (WebKit::MomentumEventDispatcher::computeNextDelta):
+        In order to avoid visual stutter due to integral rounding of the
+        deltas we dispatch in the momentum phase, switch to a table of
+        deltas instead of interpolating along the offset curve during the
+        tail end of the animation (when the rounding makes up a large
+        proportion of each delta).
+
+        (WebKit::MomentumEventDispatcher::equalizeTailGaps):
+        Sort the deltas up until the first zero to ensure a lack of unexpected
+        perceptual acceleration, and then inject skipped frames in order to
+        ensure that frames that have effective scroll movement (non-zero deltas)
+        are always spaced equally-or-further apart than earlier ones, but
+        never closer together (which, again, would be percieved as acceleration).
+
+        (WebKit::MomentumEventDispatcher::handleWheelEvent):
+        (WebKit::MomentumEventDispatcher::pushLogEntry):
+        (WebKit::MomentumEventDispatcher::flushLog):
+        Lastly, adjust some logging to make it easier to tell which row in
+        the output corresponds to an event delta or generated delta, so it's
+        easier to find skipped frames.
+        * WebProcess/WebPage/MomentumEventDispatcher.h:
+
 2021-12-08  Chris Dumez  <cdumez@apple.com>
 
         Make KVO work for WKWebpagePreferences._captivePortalModeEnabled

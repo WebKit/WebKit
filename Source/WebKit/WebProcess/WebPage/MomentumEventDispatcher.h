@@ -27,8 +27,6 @@
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
 
-// FIXME: Remove this once we decide which version we want.
-#define ENABLE_MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING 0
 #define ENABLE_MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING 1
 
 #include "DisplayLinkObserverID.h"
@@ -80,6 +78,7 @@ private:
     void dispatchSyntheticMomentumEvent(WebWheelEvent::Phase, WebCore::FloatSize delta);
 
     void buildOffsetTableWithInitialDelta(WebCore::FloatSize);
+    void equalizeTailGaps();
 
     // Once consumed, this delta *must* be dispatched in an event.
     WebCore::FloatSize consumeDeltaForCurrentTime();
@@ -91,7 +90,7 @@ private:
     void didReceiveScrollEvent(const WebWheelEvent&);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
-    void pushLogEntry();
+    void pushLogEntry(uint32_t generatedPhase, uint32_t eventPhase);
     void flushLog();
 
     WebCore::FloatSize m_lastActivePhaseDelta;
@@ -102,8 +101,8 @@ private:
         float totalGeneratedOffset { 0 };
         float totalEventOffset { 0 };
 
-        uint32_t latestGeneratedPhase { 0 };
-        uint32_t latestEventPhase { 0 };
+        uint32_t generatedPhase { 0 };
+        uint32_t eventPhase { 0 };
     };
     LogEntry m_currentLogState;
     Vector<LogEntry> m_log;
@@ -133,7 +132,10 @@ private:
         WebCore::FloatSize currentOffset;
         MonotonicTime startTime;
 
-        Vector<WebCore::FloatSize> offsetTable;
+        Vector<WebCore::FloatSize> offsetTable; // Always at 60Hz intervals.
+        Vector<WebCore::FloatSize> tailDeltaTable; // Always at event dispatch intervals.
+        Seconds tailStartDelay;
+        unsigned currentTailDeltaIndex { 0 };
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
         WebCore::FloatSize accumulatedEventOffset;
