@@ -66,6 +66,8 @@ IOHIDServiceClientRef IOHIDEventSystemClientCopyServiceForRegistryID(IOHIDEventS
 void IOHIDEventSystemClientRegisterDeviceMatchingBlock(IOHIDEventSystemClientRef, IOHIDServiceClientBlock, void *, void *);
 void IOHIDEventSystemClientUnregisterDeviceMatchingBlock(IOHIDEventSystemClientRef);
 void IOHIDEventSystemClientScheduleWithDispatchQueue(IOHIDEventSystemClientRef, dispatch_queue_t);
+void IOHIDEventSystemClientSetDispatchQueue(IOHIDEventSystemClientRef, dispatch_queue_t);
+void IOHIDEventSystemClientActivate(IOHIDEventSystemClientRef);
 
 CFTypeRef IOHIDServiceClientCopyProperty(IOHIDServiceClientRef service, CFStringRef key);
 
@@ -84,6 +86,7 @@ enum {
 typedef uint32_t IOHIDEventType;
 
 typedef uint32_t IOHIDEventField;
+typedef uint64_t IOHIDEventSenderID;
 
 #ifdef __LP64__
 typedef double IOHIDFloat;
@@ -99,6 +102,7 @@ static const IOHIDEventField kIOHIDEventFieldScrollY = (kIOHIDEventFieldScrollBa
 
 uint64_t IOHIDEventGetTimeStamp(IOHIDEventRef);
 IOHIDFloat IOHIDEventGetFloatValue(IOHIDEventRef, IOHIDEventField);
+IOHIDEventSenderID IOHIDEventGetSenderID(IOHIDEventRef);
 
 WTF_EXTERN_C_END
 
