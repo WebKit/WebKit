@@ -1,5 +1,53 @@
 2021-12-02  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286410. rdar://problem/85928816
+
+    Scrolling complex websites can stutter: scrolling thread commit can get blocked on scroll synchronization
+    https://bugs.webkit.org/show_bug.cgi?id=233738
+    rdar://85880147
+    
+    Reviewed by Tim Horton.
+    
+    The scroll synchronization added in r261985 can cause dropped frames while scrolling. This
+    occurs when ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout(), which is
+    called at the start of a rendering update on the main thread, starts at a time when it will
+    delay the handling of displayDidRefreshOnScrollingThread(). This can result in delaying the
+    CA commit for that frame on the scrolling thread.
+    
+    The solution is to clamp the duration that waitForRenderingUpdateCompletionOrTimeout() waits
+    on the condition, so that it doesn't exceed the next expected display refresh time.
+    
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+    (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+    * page/scrolling/ThreadedScrollingTree.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286410 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+            Scrolling complex websites can stutter: scrolling thread commit can get blocked on scroll synchronization
+            https://bugs.webkit.org/show_bug.cgi?id=233738
+            rdar://85880147
+
+            Reviewed by Tim Horton.
+
+            The scroll synchronization added in r261985 can cause dropped frames while scrolling. This
+            occurs when ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout(), which is
+            called at the start of a rendering update on the main thread, starts at a time when it will
+            delay the handling of displayDidRefreshOnScrollingThread(). This can result in delaying the
+            CA commit for that frame on the scrolling thread.
+
+            The solution is to clamp the duration that waitForRenderingUpdateCompletionOrTimeout() waits
+            on the condition, so that it doesn't exceed the next expected display refresh time.
+
+            * page/scrolling/ThreadedScrollingTree.cpp:
+            (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+            (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+            * page/scrolling/ThreadedScrollingTree.h:
+
+2021-12-02  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286411. rdar://problem/85928816
 
     Scrolling complex websites can stutter: scrolling thread frame can fail to process wheel events
