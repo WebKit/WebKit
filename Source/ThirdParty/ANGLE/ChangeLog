@@ -1,3 +1,18 @@
+2021-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [MacCatalyst] Fix build after r286603
+        https://bugs.webkit.org/show_bug.cgi?id=233977
+
+        Unreviewed.
+
+        Previously, TARGET_OS_IOS and TARGET_OS_MACCATALYST were never on at the same time.
+        Now, they're on at the same time, and ANGLE doesn't expect that. This patch turns
+        off TARGET_OS_IOS when TARGET_OS_MACCATALYST is on, just to get ANGLE to build.
+        The long-term fix is to either update all the sites to use correct macros, or to
+        use the ANGLE_PLATFORM_* defines instead.
+
+        * src/common/platform.h:
+
 2021-12-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, these files are modified after building ANGLE
