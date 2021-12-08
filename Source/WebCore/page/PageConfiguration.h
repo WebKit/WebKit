@@ -38,7 +38,7 @@
 #include "ApplicationManifest.h"
 #endif
 
-#if ENABLE(DEVICE_ORIENTATION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 #include "DeviceOrientationUpdateProvider.h"
 #endif
 
