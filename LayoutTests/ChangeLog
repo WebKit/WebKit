@@ -1,5 +1,22 @@
 2021-12-08  Youenn Fablet  <youenn@apple.com>
 
+        Same-site lax cookies not sent by fetch event handler after page reload
+        https://bugs.webkit.org/show_bug.cgi?id=226386
+        <rdar://problem/78878853>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/cross-site-navigation-same-cookie-lax.https-expected.txt: Added.
+        * http/wpt/service-workers/cross-site-navigation-same-cookie-lax.https.html: Added.
+        * http/wpt/service-workers/resources/get-cookie.py: Added.
+        * http/wpt/service-workers/resources/get-document-cookie.py: Added.
+        * http/wpt/service-workers/resources/set-cookie-lax.py: Added.
+        * http/wpt/service-workers/same-cookie-lax-worker.js: Added.
+        * http/wpt/service-workers/same-cookie-lax.https-expected.txt: Added.
+        * http/wpt/service-workers/same-cookie-lax.https.html: Added.
+
+2021-12-08  Youenn Fablet  <youenn@apple.com>
+
         Safari Bug "no-cache" network error
         https://bugs.webkit.org/show_bug.cgi?id=233916
 

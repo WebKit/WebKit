@@ -2899,8 +2899,10 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
     return ResourceRequestCachePolicy::UseProtocolCachePolicy;
 }
 
-void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate)
+void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate, IsServiceWorkerNavigationLoad isServiceWorkerNavigationLoad)
 {
+    ASSERT(isServiceWorkerNavigationLoad == IsServiceWorkerNavigationLoad::No || mainResource != IsMainResource::Yes);
+
     // If the request came from a previous process due to process-swap-on-navigation then we should not modify the request.
     if (m_currentLoadContinuingState == LoadContinuingState::ContinuingWithRequest)
         return;
@@ -2928,7 +2930,10 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
         }
         addSameSiteInfoToRequestIfNeeded(request, initiator);
     }
-    request.setIsTopSite(isMainFrameMainResource);
+
+    // In case of service worker navigation load, we inherit isTopSite from the FetchEvent request directly.
+    if (isServiceWorkerNavigationLoad == IsServiceWorkerNavigationLoad::No)
+        request.setIsTopSite(isMainFrameMainResource);
 
     Page* page = frame().page();
     bool hasSpecificCachePolicy = request.cachePolicy() != ResourceRequestCachePolicy::UseProtocolCachePolicy;
