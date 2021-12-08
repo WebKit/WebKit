@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSLayerBlockRule.h"
 
+#include "CSSMarkup.h"
 #include "CSSStyleSheet.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
@@ -75,7 +76,7 @@ String stringFromCascadeLayerName(const CascadeLayerName& name)
 {
     StringBuilder result;
     for (auto& segment : name) {
-        result.append(segment);
+        serializeIdentifier(segment, result);
         if (&segment != &name.last())
             result.append('.');
     }

@@ -565,8 +565,14 @@ RefPtr<StyleRuleImport> CSSParserImpl::consumeImportRule(CSSParserTokenRange pre
 
         auto& token = prelude.peek();
         if (token.type() == FunctionToken && equalIgnoringASCIICase(token.value(), "layer")) {
+            auto savedPreludeForFailure = prelude;
             auto contents = CSSPropertyParserHelpers::consumeFunction(prelude);
-            return consumeCascadeLayerName(contents, AllowAnonymous::No);
+            auto layerName = consumeCascadeLayerName(contents, AllowAnonymous::No);
+            if (!layerName || !contents.atEnd()) {
+                prelude = savedPreludeForFailure;
+                return { };
+            }
+            return layerName;
         }
         if (token.type() == IdentToken && equalIgnoringASCIICase(token.value(), "layer")) {
             prelude.consumeIncludingWhitespace();

@@ -32,5 +32,5 @@ typedef USVString CSSOMString;
 [
     Exposed=Window
 ] partial interface CSSImportRule {
-  readonly attribute CSSOMString? layerName;
+    readonly attribute CSSOMString? layerName;
 };

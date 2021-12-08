@@ -68,11 +68,25 @@ String CSSImportRule::layerName() const
 
 String CSSImportRule::cssText() const
 {
+    StringBuilder builder;
+
+    builder.append("@import ", serializeURL(m_importRule.get().href()));
+
+    if (auto layerName = this->layerName(); !layerName.isNull()) {
+        if (layerName.isEmpty())
+            builder.append(" layer");
+        else
+            builder.append(" layer(", layerName, ')');
+    }
+
     if (auto queries = m_importRule.get().mediaQueries()) {
         if (auto mediaText = queries->mediaText(); !mediaText.isEmpty())
-            return makeString("@import url(\"", m_importRule.get().href(), "\") ", mediaText, ';');
+            builder.append(' ', mediaText);
     }
-    return makeString("@import url(\"", m_importRule.get().href(), "\");");
+
+    builder.append(';');
+
+    return builder.toString();
 }
 
 CSSStyleSheet* CSSImportRule::styleSheet() const
