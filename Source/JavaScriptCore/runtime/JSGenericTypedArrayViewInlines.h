@@ -216,7 +216,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     // Handle cases (1) and (2A).
     if (!hasArrayBuffer() || !other->hasArrayBuffer()
         || existingBuffer() != other->existingBuffer()
-        || (elementSize == otherElementSize && vector() <= other->vector())
+        || (elementSize == otherElementSize && (static_cast<void*>(typedVector() + offset) <= static_cast<void*>(other->typedVector() + otherOffset)))
         || type == CopyType::LeftToRight) {
         for (size_t i = 0; i < length; ++i) {
             setIndexQuicklyToNativeValue(
@@ -255,34 +255,34 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto memmoveFastPath = [&] (auto* other) {
+    auto memmoveFastPath = [&] (JSArrayBufferView* other) {
         // The super fast case: we can just memmove since we're the same underlying storage type.
         length = std::min(length, other->length());
         
-        RELEASE_ASSERT(other->canAccessRangeQuickly(objectOffset, length));
         bool success = validateRange(globalObject, offset, length);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (!success)
             return false;
 
-        RELEASE_ASSERT((std::is_same_v<decltype(typedVector()), decltype(other->typedVector())>));
-        memmove(typedVector() + offset, other->typedVector() + objectOffset, length * elementSize);
+        RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->classInfo(vm)->typedArrayStorageType));
+        memmove(typedVector() + offset, bitwise_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
         return true;
     };
 
     const ClassInfo* ci = object->classInfo(vm);
     if (ci->typedArrayStorageType == Adaptor::typeValue)
-        return memmoveFastPath(jsCast<JSGenericTypedArrayView*>(object));
+        return memmoveFastPath(jsCast<JSArrayBufferView*>(object));
 
     auto isSomeUint8 = [] (TypedArrayType type) {
         return type == TypedArrayType::TypeUint8 || type == TypedArrayType::TypeUint8Clamped;
     };
-    if (isSomeUint8(ci->typedArrayStorageType) && isSomeUint8(Adaptor::typeValue)) {
-        if (ci->typedArrayStorageType == TypedArrayType::TypeUint8)
-            return memmoveFastPath(jsCast<JSGenericTypedArrayView<Uint8Adaptor>*>(object));
-        return memmoveFastPath(jsCast<JSGenericTypedArrayView<Uint8ClampedAdaptor>*>(object));
-    }
-    
+
+    if (isSomeUint8(ci->typedArrayStorageType) && isSomeUint8(Adaptor::typeValue))
+        return memmoveFastPath(jsCast<JSArrayBufferView*>(object));
+
+    if (isInt(Adaptor::typeValue) && isInt(ci->typedArrayStorageType) && !isClamped(Adaptor::typeValue) && JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(ci->typedArrayStorageType))
+        return memmoveFastPath(jsCast<JSArrayBufferView*>(object));
+
     switch (ci->typedArrayStorageType) {
     case TypeInt8:
         RELEASE_AND_RETURN(scope, setWithSpecificType<Int8Adaptor>(

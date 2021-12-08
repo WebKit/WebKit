@@ -1,3 +1,20 @@
+2021-12-07  Saam Barati  <sbarati@apple.com>
+
+        TypedArray prototype set should go down the fast path when using non clamped integer types of the same byte size
+        https://bugs.webkit.org/show_bug.cgi?id=233905
+
+        Reviewed by Keith Miller.
+
+        We can use memmove in this scenario because the bitpattern of the
+        data between the signed and unsigned values will be the same.
+
+        This patch also fixes a bug where we were looking at the wrong
+        pointer when determining to do a forward or backwards loop in
+        our memmove. We were looking at the vector instead of vector+offset.
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+
 2021-12-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add LLInt IC for try_get_by_id of own cacheable value

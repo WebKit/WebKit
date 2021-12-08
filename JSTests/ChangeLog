@@ -1,3 +1,14 @@
+2021-12-07  Saam Barati  <sbarati@apple.com>
+
+        TypedArray prototype set should go down the fast path when using non clamped integer types of the same byte size
+        https://bugs.webkit.org/show_bug.cgi?id=233905
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/typed-array-prototype-set.js: Added.
+        * microbenchmarks/typed-array-prototype-set-order.js: Added.
+        * stress/typed-array-prototype-set.js: Added.
+
 2021-12-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] shell's $.globalObjectFor is not safe for non object cells
