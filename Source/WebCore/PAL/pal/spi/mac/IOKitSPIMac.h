@@ -83,7 +83,22 @@ enum {
 };
 typedef uint32_t IOHIDEventType;
 
+typedef uint32_t IOHIDEventField;
+
+#ifdef __LP64__
+typedef double IOHIDFloat;
+#else
+typedef float IOHIDFloat;
+#endif
+
+#define IOHIDEventFieldBase(type) (type << 16)
+
+#define kIOHIDEventFieldScrollBase IOHIDEventFieldBase(kIOHIDEventTypeScroll)
+static const IOHIDEventField kIOHIDEventFieldScrollX = (kIOHIDEventFieldScrollBase | 0);
+static const IOHIDEventField kIOHIDEventFieldScrollY = (kIOHIDEventFieldScrollBase | 1);
+
 uint64_t IOHIDEventGetTimeStamp(IOHIDEventRef);
+IOHIDFloat IOHIDEventGetFloatValue(IOHIDEventRef, IOHIDEventField);
 
 WTF_EXTERN_C_END
 

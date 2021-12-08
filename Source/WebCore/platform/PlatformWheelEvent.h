@@ -154,6 +154,8 @@ public:
     float unacceleratedScrollingDeltaY() const { return m_unacceleratedScrollingDeltaY; }
     
     WallTime ioHIDEventTimestamp() const { return m_ioHIDEventTimestamp; }
+
+    std::optional<FloatSize> rawPlatformDelta() const { return m_rawPlatformDelta; }
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -203,6 +205,7 @@ protected:
 #endif
 #if PLATFORM(COCOA)
     WallTime m_ioHIDEventTimestamp;
+    std::optional<FloatSize> m_rawPlatformDelta;
     unsigned m_scrollCount { 0 };
     float m_unacceleratedScrollingDeltaX { 0 };
     float m_unacceleratedScrollingDeltaY { 0 };
