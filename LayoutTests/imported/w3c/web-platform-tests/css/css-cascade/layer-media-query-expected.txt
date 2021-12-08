@@ -7,4 +7,5 @@ PASS B2 Basic import
 PASS C1 Reordering
 PASS C2 Reordering
 PASS C3 Reordering
+FAIL C4 Reordering assert_equals: C4 Reordering expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 

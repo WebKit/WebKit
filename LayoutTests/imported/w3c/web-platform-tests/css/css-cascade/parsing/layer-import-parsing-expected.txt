@@ -1,0 +1,15 @@
+
+FAIL @import url("nonexist.css") layer; should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer;" but got "@import url(\"nonexist.css\");"
+FAIL @import url("nonexist.css") layer(A); should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer(A);" but got "@import url(\"nonexist.css\");"
+FAIL @import url("nonexist.css") layer(A.B); should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer(A.B);" but got "@import url(\"nonexist.css\");"
+FAIL @import url(nonexist.css) layer; should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer;" but got "@import url(\"nonexist.css\");"
+FAIL @import url(nonexist.css) layer(A); should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer(A);" but got "@import url(\"nonexist.css\");"
+FAIL @import url(nonexist.css) layer(A.B); should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer(A.B);" but got "@import url(\"nonexist.css\");"
+FAIL @import "nonexist.css" layer; should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer;" but got "@import url(\"nonexist.css\");"
+FAIL @import "nonexist.css" layer(A); should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer(A);" but got "@import url(\"nonexist.css\");"
+FAIL @import "nonexist.css" layer(A.B); should be a valid layered import rule assert_equals: serialization should be canonical expected "@import url(\"nonexist.css\") layer(A.B);" but got "@import url(\"nonexist.css\");"
+FAIL @import url("nonexist.css") layer(); should still be a valid import rule with an invalid layer declaration assert_not_equals: invalid layer declaration should be parsed as <general-enclosed> media query got disallowed value 0
+FAIL @import url("nonexist.css") layer(A B); should still be a valid import rule with an invalid layer declaration assert_not_equals: invalid layer declaration should be parsed as <general-enclosed> media query got disallowed value 0
+FAIL @import url("nonexist.css") layer(A . B); should still be a valid import rule with an invalid layer declaration assert_not_equals: invalid layer declaration should be parsed as <general-enclosed> media query got disallowed value 0
+FAIL @import url("nonexist.css") layer(A, B, C); should still be a valid import rule with an invalid layer declaration assert_not_equals: invalid layer declaration should be parsed as <general-enclosed> media query got disallowed value 0
+

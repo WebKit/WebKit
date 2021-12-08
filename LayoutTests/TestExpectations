@@ -2140,6 +2140,11 @@ webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-cascade/important-prop.html [ ImageOnlyFailure ]
 webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Skip ]
+webkit.org/b/233937 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-009.html [ ImageOnlyFailure ]
+webkit.org/b/233937 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-010.html [ ImageOnlyFailure ]
+webkit.org/b/233937 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-011.html [ ImageOnlyFailure ]
+webkit.org/b/233937 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-012.html [ ImageOnlyFailure ]
+webkit.org/b/233944 imported/w3c/web-platform-tests/css/css-cascade/layer-statement-before-import.html [ Pass Failure ]
 
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ ImageOnlyFailure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]
