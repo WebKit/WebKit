@@ -491,10 +491,10 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
         }
 
         CMTime nativeDuration = CMSampleBufferGetDuration(buffer.get());
-        m_currentNativePresentationTimeStamp = CMTimeAdd(m_currentNativePresentationTimeStamp, nativeDuration);
+        m_currentNativePresentationTimeStamp = PAL::CMTimeAdd(m_currentNativePresentationTimeStamp, nativeDuration);
 
         CMTime outputDuration = CMSampleBufferGetOutputDuration(buffer.get());
-        m_currentOutputPresentationTimeStamp = CMTimeAdd(m_currentOutputPresentationTimeStamp, outputDuration);
+        m_currentOutputPresentationTimeStamp = PAL::CMTimeAdd(m_currentOutputPresentationTimeStamp, outputDuration);
 
         error = CMBufferQueueEnqueue(m_outputBufferQueue.get(), buffer.get());
         if (error) {

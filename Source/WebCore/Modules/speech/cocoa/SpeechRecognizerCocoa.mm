@@ -34,6 +34,7 @@
 #import "WebSpeechRecognizerTaskMock.h"
 #import <Speech/Speech.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ void SpeechRecognizer::dataCaptured(const MediaTime&, const PlatformAudioData& d
 {
     auto buffer = createAudioSampleBuffer(data, description, m_currentAudioSampleTime, sampleCount);
     [m_task audioSamplesAvailable:buffer.get()];
-    m_currentAudioSampleTime = CMTimeAdd(m_currentAudioSampleTime, PAL::toCMTime(MediaTime(sampleCount, description.sampleRate())));
+    m_currentAudioSampleTime = PAL::CMTimeAdd(m_currentAudioSampleTime, PAL::toCMTime(MediaTime(sampleCount, description.sampleRate())));
 }
 
 bool SpeechRecognizer::startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier identifier, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives)

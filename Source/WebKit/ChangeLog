@@ -1,3 +1,13 @@
+2021-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [MacCatalyst] Various build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=233995
+
+        Unreviewed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedMachServices):
+
 2021-12-07  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add initial support for find-in-page SPI
