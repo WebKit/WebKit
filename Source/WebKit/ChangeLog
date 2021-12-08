@@ -1,3 +1,42 @@
+2021-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Make KVO work for WKWebpagePreferences._captivePortalModeEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=233954
+
+        Reviewed by Alex Christensen.
+
+        Make KVO work for WKWebpagePreferences._captivePortalModeEnabled so that the client can observe
+        when the system setting changes. Also add SPI to simulate a change of the system setting so that
+        I can write API tests.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:]):
+        (+[WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences init]):
+        (-[WKWebpagePreferences _setCaptivePortalModeEnabled:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h:
+        * UIProcess/CaptivePortalModeObserver.h: Copied from Source/WebKit/UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h.
+        (WebKit::CaptivePortalModeObserver::~CaptivePortalModeObserver):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::captivePortalModeObservers):
+        (WebKit::isCaptivePortalModeEnabledGloballyForTesting):
+        (WebKit::isCaptivePortalModeEnabledBySystemIgnoringCaching):
+        (WebKit::WebProcessPool::captivePortalModeStateChanged):
+        (WebKit::addCaptivePortalModeObserver):
+        (WebKit::removeCaptivePortalModeObserver):
+        (WebKit::captivePortalModeEnabledBySystem):
+        (WebKit::setCaptivePortalModeEnabledGloballyForTesting):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::addCaptivePortalModeObserver):
+        (WebKit::removeCaptivePortalModeObserver):
+        (WebKit::setCaptivePortalModeEnabledGloballyForTesting):
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-12-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for _UITextSearchOptions when finding a string

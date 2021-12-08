@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "APIWebsitePolicies.h"
-#import "WKObject.h"
-#import <WebKit/WKWebpagePreferencesPrivate.h>
+#pragma once
+
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-template<> struct WrapperTraits<API::WebsitePolicies> {
-    using WrapperClass = WKWebpagePreferences;
+class CaptivePortalModeObserver : public CanMakeWeakPtr<CaptivePortalModeObserver> {
+public:
+    virtual ~CaptivePortalModeObserver() { }
+
+    virtual void willChangeCaptivePortalMode() = 0;
+    virtual void didChangeCaptivePortalMode() = 0;
 };
 
-#if PLATFORM(IOS_FAMILY)
-WKContentMode contentMode(WebContentMode);
-WebContentMode webContentMode(WKContentMode);
-#endif
-
-class WebPagePreferencesCaptivePortalModeObserver;
-
-}
-
-@interface WKWebpagePreferences () <WKObject> {
-@package
-    API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
-    std::unique_ptr<WebKit::WebPagePreferencesCaptivePortalModeObserver> _captivePortalModeObserver;
-}
-
-@property (class, nonatomic, readonly) WKWebpagePreferences *defaultPreferences;
-
-- (void)_willChangeCaptivePortalMode;
-- (void)_didChangeCaptivePortalMode;
-
-@end
+} // namespace WebKit

@@ -97,12 +97,13 @@ class PowerSourceNotifier;
 
 namespace WebKit {
 
-class WebBackForwardCache;
+class CaptivePortalModeObserver;
 class HighPerformanceGraphicsUsageSampler;
 class UIGamepad;
 class PerActivityStateCPUUsageSampler;
 class SuspendedPageProxy;
 class WebAutomationSession;
+class WebBackForwardCache;
 class WebContextSupplement;
 class WebPageGroup;
 class WebPageProxy;
@@ -119,7 +120,10 @@ int networkProcessThroughputQOS();
 int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
+void addCaptivePortalModeObserver(CaptivePortalModeObserver&);
+void removeCaptivePortalModeObserver(CaptivePortalModeObserver&);
 bool captivePortalModeEnabledBySystem();
+void setCaptivePortalModeEnabledGloballyForTesting(std::optional<bool>);
 
 enum class CallDownloadDidStart : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -432,6 +436,8 @@ public:
     void setCookieStoragePartitioningEnabled(bool);
 
     void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
+
+    void captivePortalModeStateChanged();
 #endif
 
     ForegroundWebProcessToken foregroundWebProcessToken() const { return ForegroundWebProcessToken(m_foregroundWebProcessCounter.count()); }
@@ -548,8 +554,6 @@ private:
 
     void registerNotificationObservers();
     void unregisterNotificationObservers();
-
-    void captivePortalModeStateChanged();
 #endif
 
     void setApplicationIsActive(bool);

@@ -499,6 +499,16 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     setApplicationSDKVersion(std::numeric_limits<uint32_t>::max());
 }
 
++ (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled
+{
+    WebKit::setCaptivePortalModeEnabledGloballyForTesting(!!isEnabled);
+}
+
++ (void)_clearCaptivePortalModeEnabledGloballyForTesting
+{
+    WebKit::setCaptivePortalModeEnabledGloballyForTesting(std::nullopt);
+}
+
 - (BOOL)_isCookieStoragePartitioningEnabled
 {
     return _processPool->cookieStoragePartitioningEnabled();

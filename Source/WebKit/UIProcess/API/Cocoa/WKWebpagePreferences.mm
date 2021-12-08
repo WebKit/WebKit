@@ -27,10 +27,12 @@
 #import <WebKit/WKWebpagePreferences.h>
 
 #import "APICustomHeaderFields.h"
+#import "CaptivePortalModeObserver.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebContentMode.h"
+#import "WebProcessPool.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -102,6 +104,40 @@ static WebCore::MouseEventPolicy coreMouseEventPolicy(_WKWebsiteMouseEventPolicy
     return WebCore::MouseEventPolicy::Default;
 }
 
+class WebPagePreferencesCaptivePortalModeObserver final : public CaptivePortalModeObserver {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    WebPagePreferencesCaptivePortalModeObserver(id object)
+        : m_object(object)
+    {
+        addCaptivePortalModeObserver(*this);
+    }
+
+    ~WebPagePreferencesCaptivePortalModeObserver()
+    {
+        removeCaptivePortalModeObserver(*this);
+    }
+
+private:
+    void willChangeCaptivePortalMode() final
+    {
+        if (auto object = m_object.get()) {
+            [object willChangeValueForKey:@"_captivePortalModeEnabled"];
+            [object _willChangeCaptivePortalMode];
+        }
+    }
+
+    void didChangeCaptivePortalMode() final
+    {
+        if (auto object = m_object.get()) {
+            [object didChangeValueForKey:@"_captivePortalModeEnabled"];
+            [object _didChangeCaptivePortalMode];
+        }
+    }
+
+    WeakObjCPtr<id> m_object;
+};
+
 } // namespace WebKit
 
 @implementation WKWebpagePreferences
@@ -127,6 +163,7 @@ static WebCore::MouseEventPolicy coreMouseEventPolicy(_WKWebsiteMouseEventPolicy
         return nil;
 
     API::Object::constructInWrapper<API::WebsitePolicies>(self);
+    _captivePortalModeObserver = makeUnique<WebKit::WebPagePreferencesCaptivePortalModeObserver>(self);
 
     return self;
 }
@@ -418,9 +455,6 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (void)_setCaptivePortalModeEnabled:(BOOL)captivePortalModeEnabled
 {
-    if (_websitePolicies->captivePortalModeEnabled() == captivePortalModeEnabled)
-        return;
-
 #if PLATFORM(IOS_FAMILY)
     // On iOS, the web browser entitlement is required to disable captive portal mode.
     if (!captivePortalModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"))
@@ -461,6 +495,13 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKWebpagePreferencesAdditions.mm>
+#else
+- (void)_willChangeCaptivePortalMode
+{
+}
+- (void)_didChangeCaptivePortalMode
+{
+}
 #endif
 
 @end

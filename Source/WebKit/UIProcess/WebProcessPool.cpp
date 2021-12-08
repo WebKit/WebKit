@@ -2124,9 +2124,18 @@ bool WebProcessPool::hasServiceWorkerBackgroundActivityForTesting() const
 #endif
 
 #if !PLATFORM(COCOA)
+void addCaptivePortalModeObserver(CaptivePortalModeObserver&)
+{
+}
+void removeCaptivePortalModeObserver(CaptivePortalModeObserver&)
+{
+}
 bool captivePortalModeEnabledBySystem()
 {
     return false;
+}
+void setCaptivePortalModeEnabledGloballyForTesting(std::optional<bool>)
+{
 }
 #endif
 

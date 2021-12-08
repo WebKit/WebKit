@@ -124,6 +124,8 @@
 + (void)_forceGameControllerFramework WK_API_AVAILABLE(macos(10.13), ios(11.0));
 + (void)_setLinkedOnOrAfterEverythingForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)_setLinkedOnOrBeforeEverythingForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
++ (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)_clearCaptivePortalModeEnabledGloballyForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_preconnectToServer:(NSURL *)serverURL WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView._preconnectToServer", macos(10.13.4, 10.15.4), ios(11.3, 13.4));
 
