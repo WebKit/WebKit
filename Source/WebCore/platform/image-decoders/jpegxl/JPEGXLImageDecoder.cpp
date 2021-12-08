@@ -28,6 +28,8 @@
 
 #if USE(JPEGXL)
 
+#include <optional>
+
 namespace WebCore {
 
 JPEGXLImageDecoder::JPEGXLImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -37,54 +39,177 @@ JPEGXLImageDecoder::JPEGXLImageDecoder(AlphaOption alphaOption, GammaAndColorPro
 
 JPEGXLImageDecoder::~JPEGXLImageDecoder()
 {
-    clear();
+}
+
+size_t JPEGXLImageDecoder::frameCount() const
+{
+    if (!hasAnimation())
+        return 1;
+
+    if (!m_isLastFrameHeaderReceived)
+        const_cast<JPEGXLImageDecoder*>(this)->updateFrameCount();
+
+    return m_frameCount;
+}
+
+RepetitionCount JPEGXLImageDecoder::repetitionCount() const
+{
+    if (hasAnimation()) {
+        if (!m_basicInfo->animation.num_loops) {
+            // If num_loops is zero, repeat infinitely.
+            return RepetitionCountInfinite;
+        }
+        return m_basicInfo->animation.num_loops;
+    }
+    return RepetitionCountNone;
 }
 
 ScalableImageDecoderFrame* JPEGXLImageDecoder::frameBufferAtIndex(size_t index)
 {
-    // TODO: To support animated JPEG XL in the future we need to handle second and subsequent frames.
-    if (index)
+    if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         return nullptr;
+
+    if (index >= frameCount())
+        index = frameCount() - 1;
 
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.grow(1);
 
-    auto& frame = m_frameBufferCache[0];
+    auto& frame = m_frameBufferCache[index];
     if (!frame.isComplete())
-        decode(false, isAllDataReceived());
+        decode(Query::DecodedImage, index, isAllDataReceived());
     return &frame;
 }
 
-void JPEGXLImageDecoder::clear()
+void JPEGXLImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 {
-    m_decoder.reset();
-    m_readOffset = 0;
+    if (m_frameBufferCache.isEmpty())
+        return;
+
+    // Unlike the png and gif cases, we can always try to clear frames before "clearBeforeFrame" because
+    // the dependenciy to the previous frame is handled by libjxl.
+    const Vector<ScalableImageDecoderFrame>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
+
+    for (Vector<ScalableImageDecoderFrame>::iterator i(m_frameBufferCache.begin()); i != end; ++i) {
+        // If the frame is partial, we're still on the way to decode the frame and it's likely
+        // we continue the decode, so we don't clear the frame.
+        if (i->isPartial())
+            continue;
+
+        i->clear();
+    }
 }
 
 bool JPEGXLImageDecoder::setFailed()
 {
-    clear();
+    m_decoder.reset();
     return ScalableImageDecoder::setFailed();
 }
 
-void JPEGXLImageDecoder::decode(bool onlySize, bool allDataReceived)
+void JPEGXLImageDecoder::tryDecodeSize(bool allDataReceived)
+{
+    if (m_basicInfo)
+        return;
+    decode(Query::Size, 0, allDataReceived);
+}
+
+bool JPEGXLImageDecoder::hasAlpha() const
+{
+    return m_basicInfo && m_basicInfo->alpha_bits > 0;
+}
+
+bool JPEGXLImageDecoder::hasAnimation() const
+{
+    return m_basicInfo && m_basicInfo->have_animation;
+}
+
+void JPEGXLImageDecoder::ensureDecoderInitialized()
 {
     if (failed())
         return;
 
-    if (!m_decoder) {
-        clear();
-        m_decoder = JxlDecoderMake(nullptr);
-        if (!m_decoder) {
-            setFailed();
-            return;
-        }
+    if (m_decoder)
+        return;
 
-        if (JxlDecoderSubscribeEvents(m_decoder.get(), JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE) != JXL_DEC_SUCCESS) {
-            setFailed();
-            return;
+    m_decoder = JxlDecoderMake(nullptr);
+    if (!m_decoder) {
+        setFailed();
+        return;
+    }
+
+    if (JxlDecoderSubscribeEvents(m_decoder.get(), JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE) != JXL_DEC_SUCCESS) {
+        setFailed();
+        return;
+    }
+
+    m_readOffset = 0;
+    m_currentFrame = 0;
+    m_lastQuery = Query::Size;
+}
+
+bool JPEGXLImageDecoder::shouldRewind(Query query, size_t frameIndex) const
+{
+    if (m_lastQuery == Query::FrameCount) {
+        // If the current query is not FrameCount, we've completed the previous FrameCount query
+        // and the decoder has reached the EOF, so we need to rewind the decoder for the new query.
+        // Otherwise we continue the FrameCount query, so we must not rewind the decoder.
+        return query != Query::FrameCount;
+    }
+
+    if (m_lastQuery == Query::Size) {
+        // The decoder is at the stream header and doesn't need rewind.
+        return false;
+    }
+
+    // At this point we know m_lastQuery is Query::DecodedImage.
+
+    if (query != Query::DecodedImage)
+        return true;
+
+    // There's two cases where we don't need to rewind:
+    //   1. Previous decoding was interrupted with JXL_DEC_NEED_MORE_INPUT
+    //      and trying to continue decoding the same frame.
+    //   2. Previous decoding was completed (m_currentFrame was incremented) and starting a new frame.
+    // In both cases frameIndex is equal to m_currentFrame.
+    return frameIndex != m_currentFrame;
+}
+
+void JPEGXLImageDecoder::rewind()
+{
+    JxlDecoderRewind(m_decoder.get());
+    JxlDecoderSubscribeEvents(m_decoder.get(), JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE);
+    m_readOffset = 0;
+    m_currentFrame = 0;
+}
+
+void JPEGXLImageDecoder::updateFrameCount()
+{
+    if (failed())
+        return;
+
+    decode(Query::FrameCount, 0, isAllDataReceived());
+
+    if (m_frameCount != m_frameBufferCache.size())
+        m_frameBufferCache.resize(m_frameCount);
+}
+
+void JPEGXLImageDecoder::decode(Query query, size_t frameIndex, bool allDataReceived)
+{
+    ensureDecoderInitialized();
+
+    if (failed())
+        return;
+
+    if (shouldRewind(query, frameIndex)) {
+        rewind();
+        // We care about the frameIndex only if the query is Query::DecodedImage.
+        if (query == Query::DecodedImage && frameIndex) {
+            JxlDecoderSkipFrames(m_decoder.get(), frameIndex);
+            m_currentFrame = frameIndex;
         }
     }
+
+    m_lastQuery = query;
 
     m_data->data();
     size_t dataSize = m_data->size();
@@ -93,61 +218,105 @@ void JPEGXLImageDecoder::decode(bool onlySize, bool allDataReceived)
         return;
     }
 
-    JxlDecoderStatus status = processInput(onlySize);
+    JxlDecoderStatus status = processInput(query);
     // We set the status as failed if the decoder reports an error or requires more data while all data has been received.
     if (status == JXL_DEC_ERROR || (allDataReceived && status == JXL_DEC_NEED_MORE_INPUT)) {
         setFailed();
         return;
     }
 
-    // We release the decoder when we finish the decoding.
-    if (status == JXL_DEC_SUCCESS) {
-        clear();
+    if (query == Query::DecodedImage && status == JXL_DEC_FULL_IMAGE && m_isLastFrameHeaderReceived && m_currentFrame == m_frameCount) {
+        // We free the decoder when the last frame is decoded.
+        m_decoder.reset();
         return;
     }
 
-    // Otherwise we get the decoder ready for subsequent data.
     size_t remainingDataSize = JxlDecoderReleaseInput(m_decoder.get());
     m_readOffset = dataSize - remainingDataSize;
 }
 
-JxlDecoderStatus JPEGXLImageDecoder::processInput(bool onlySize)
+JxlDecoderStatus JPEGXLImageDecoder::processInput(Query query)
 {
     while (true) {
         auto status = JxlDecoderProcessInput(m_decoder.get());
+
+        // Return JXL_DEC_ERROR when we've reached EOF without receiving a frame marked as "is_last".
+        if (status == JXL_DEC_SUCCESS && !m_isLastFrameHeaderReceived)
+            return JXL_DEC_ERROR;
 
         // JXL_DEC_ERROR and JXL_DEC_SUCCESS are terminal states. We also exit from the loop if more data is needed.
         if (status == JXL_DEC_ERROR || status == JXL_DEC_SUCCESS || status == JXL_DEC_NEED_MORE_INPUT)
             return status;
 
         if (status == JXL_DEC_BASIC_INFO) {
-            JxlBasicInfo basicInfo;
-            if (JxlDecoderGetBasicInfo(m_decoder.get(), &basicInfo) != JXL_DEC_SUCCESS)
-                return JXL_DEC_ERROR;
+            if (!m_basicInfo) {
+                JxlBasicInfo basicInfo;
+                if (JxlDecoderGetBasicInfo(m_decoder.get(), &basicInfo) != JXL_DEC_SUCCESS)
+                    return JXL_DEC_ERROR;
 
-            setSize(IntSize(basicInfo.xsize, basicInfo.ysize));
-            if (onlySize)
+                m_basicInfo = basicInfo;
+            }
+
+            if (query == Query::Size) {
+                // setSize() must be called only if the query is Query::Size,
+                // otherwise this would roll back the encoded data status from completed.
+                setSize(IntSize(m_basicInfo->xsize, m_basicInfo->ysize));
                 return status;
+            }
+
             continue;
         }
 
         if (status == JXL_DEC_FRAME) {
             JxlPixelFormat format { 4, JXL_TYPE_UINT8, JXL_NATIVE_ENDIAN, 0 };
+            JxlFrameHeader frameHeader;
+            if (JxlDecoderGetFrameHeader(m_decoder.get(), &frameHeader) != JXL_DEC_SUCCESS)
+                return JXL_DEC_ERROR;
+
+            m_frameCount = std::max(m_frameCount, m_currentFrame + 1);
+
+            if (frameHeader.is_last)
+                m_isLastFrameHeaderReceived = true;
+
+            if (query != Query::DecodedImage) {
+                if (JxlDecoderSetImageOutCallback(m_decoder.get(), &format, [](void*, size_t, size_t, size_t, const void*) { }, nullptr) != JXL_DEC_SUCCESS)
+                    return JXL_DEC_ERROR;
+
+                continue;
+            }
+
+            if (m_currentFrame >= m_frameBufferCache.size())
+                m_frameBufferCache.resize(m_frameCount + 1);
+
+            auto& buffer = m_frameBufferCache[m_currentFrame];
+            if (buffer.isInvalid() && buffer.initialize(size(), m_premultiplyAlpha)) {
+                buffer.setDecodingStatus(DecodingStatus::Partial);
+                buffer.setHasAlpha(false);
+                if (m_basicInfo && m_basicInfo->have_animation) {
+                    buffer.setDuration(Seconds((double)frameHeader.duration * m_basicInfo->animation.tps_denominator / m_basicInfo->animation.tps_numerator));
+                    buffer.setDisposalMethod(ScalableImageDecoderFrame::DisposalMethod::DoNotDispose);
+                }
+            }
+
             if (JxlDecoderSetImageOutCallback(m_decoder.get(), &format, imageOutCallback, this) != JXL_DEC_SUCCESS)
                 return JXL_DEC_ERROR;
+
             continue;
         }
 
         if (status == JXL_DEC_FULL_IMAGE) {
-            if (m_frameBufferCache.isEmpty())
-                continue;
+            if (m_currentFrame < m_frameBufferCache.size()) {
+                auto& buffer = m_frameBufferCache[m_currentFrame];
+                if (!buffer.isInvalid())
+                    buffer.setDecodingStatus(DecodingStatus::Complete);
+            }
 
-            auto& buffer = m_frameBufferCache[0];
-            if (!buffer.isInvalid())
-                buffer.setDecodingStatus(DecodingStatus::Complete);
+            m_currentFrame++;
+            if (query == Query::DecodedImage)
+                return JXL_DEC_FULL_IMAGE;
 
-            // TODO: To support animated JPEG XL in the future we need to handle subsequent data.
-            return JXL_DEC_SUCCESS;
+            ASSERT(query == Query::FrameCount);
+            continue;
         }
     }
 }
@@ -159,17 +328,12 @@ void JPEGXLImageDecoder::imageOutCallback(void* that, size_t x, size_t y, size_t
 
 void JPEGXLImageDecoder::imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels)
 {
-    if (m_frameBufferCache.isEmpty())
+    if (m_currentFrame >= m_frameBufferCache.size())
         return;
 
-    auto& buffer = m_frameBufferCache[0];
-    if (buffer.isInvalid()) {
-        if (!buffer.initialize(size(), m_premultiplyAlpha))
-            return;
-
-        buffer.setDecodingStatus(DecodingStatus::Partial);
-        buffer.setHasAlpha(false);
-    }
+    auto& buffer = m_frameBufferCache[m_currentFrame];
+    if (buffer.isInvalid())
+        return;
 
     uint32_t* row = buffer.backingStore()->pixelAt(x, y);
     uint32_t* currentAddress = row;

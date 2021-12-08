@@ -1,3 +1,22 @@
+2021-12-07  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        Support Animated JPEG-XL images
+        https://bugs.webkit.org/show_bug.cgi?id=233545
+        <rdar://problem/86077143>
+
+        Reviewed by Don Olmstead.
+
+         Add test for animated JPEG XL, based on animated-gif-loop-count.
+
+        * TestExpectations:
+        * fast/images/animated-jpegxl-loop-count-expected.html: Added.
+        * fast/images/animated-jpegxl-loop-count.html: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-1.jxl: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-2.jxl: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-infinite.jxl: Added.
+        * platform/glib/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-12-07  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(iOS 14): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure 

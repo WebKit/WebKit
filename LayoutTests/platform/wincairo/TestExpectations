@@ -272,9 +272,10 @@ media/airplay-autoplay.html [ Skip ]
 # PLATFORM(MAC), internals.rangeForDictionaryLookupAtLocation()
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 
-# JPEG XL is disabled until WebKitRequirements is released with libjxl
-fast/images/jpegxl-as-image.html [ Skip ]
-fast/images/jpegxl-image-decoding.html [ Skip ]
+# JPEG-XL Tests
+fast/images/jpegxl-as-image.html [ Pass ]
+fast/images/jpegxl-image-decoding.html [ Pass ]
+fast/images/animated-jpegxl-loop-count.html [ Pass ]
 
 # DataTransferItems is not yet implemented
 fast/events/clipboard-dataTransferItemList.html [ Skip ]

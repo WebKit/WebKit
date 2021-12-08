@@ -45,25 +45,50 @@ public:
 
     // ScalableImageDecoder
     String filenameExtension() const override { return "jxl"_s; }
+    size_t frameCount() const override;
+    RepetitionCount repetitionCount() const override;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
+    void clearFrameBufferCache(size_t clearBeforeFrame) override;
 
     bool setFailed() override;
 
 private:
+    enum class Query {
+        // This query is used for tryDecodeSize().
+        Size,
+        // We define a query for frame count because JPEG XL doesn't have frame count information in its code stream
+        // so we need to scan the code stream to get the frame count for animated JPEG XL.
+        // JPEG XL container can have frame count metadata but currently libjxl doesn't support it.
+        FrameCount,
+        // Query to decode a single frame.
+        DecodedImage,
+    };
+
     JPEGXLImageDecoder(AlphaOption, GammaAndColorProfileOption);
-    void tryDecodeSize(bool allDataReceived) override { decode(true, allDataReceived); }
+    void tryDecodeSize(bool allDataReceived) override;
 
-    void decode(bool onlySize, bool allDataReceived);
+    bool hasAlpha() const;
+    bool hasAnimation() const;
 
-    void clear();
+    void ensureDecoderInitialized();
+    bool shouldRewind(Query , size_t frameIndex) const;
+    void rewind();
+    void updateFrameCount();
 
-    JxlDecoderStatus processInput(bool onlySize);
-
-    static void imageOutCallback(void* that, size_t x, size_t y, size_t numPixels, const void* pixels);
+    void decode(Query, size_t frameIndex, bool allDataReceived);
+    JxlDecoderStatus processInput(Query);
+    static void imageOutCallback(void*, size_t x, size_t y, size_t numPixels, const void* pixels);
     void imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels);
 
     JxlDecoderPtr m_decoder;
-    size_t m_readOffset = 0;
+    size_t m_readOffset { 0 };
+    std::optional<JxlBasicInfo> m_basicInfo;
+
+    Query m_lastQuery { Query::Size };
+    size_t m_frameCount { 1 };
+    size_t m_currentFrame { 0 };
+
+    bool m_isLastFrameHeaderReceived { false }; // If this is true, we know we don't need to update m_frameCount.
 };
 
 } // namespace WebCore
