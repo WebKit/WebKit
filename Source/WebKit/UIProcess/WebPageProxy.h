@@ -2383,6 +2383,7 @@ private:
 
 #if HAVE(CVDISPLAYLINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
+    void updateDisplayLinkFrequency();
 #endif
     void updateWheelEventActivityAfterProcessSwap();
 
@@ -2751,6 +2752,8 @@ private:
     bool m_isPerformingDOMPrintOperation { false };
 
     bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
+
+    bool m_registeredForFullSpeedUpdates { false };
 
     WebCore::ResourceRequest m_decidePolicyForResponseRequest;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };
