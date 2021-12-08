@@ -35,6 +35,7 @@
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MediaSample.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/SourceBufferParserWebM.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
