@@ -305,6 +305,8 @@ class Package(object):
                 if self.slow_install:
                     AutoInstall.log('{} is known to be slow to install'.format(archive))
 
+                root_location = "/" if not sys.platform.startswith('win') else "{}/".format(os.path.splitdrive(os.path.abspath(install_location))[0])
+
                 log_location = os.path.join(temp_location, 'log.txt')
                 try:
                     with open(log_location, 'w') as setup_log:
@@ -314,7 +316,7 @@ class Package(object):
                                 os.path.join(candidate, 'setup.py'),
                                 'install',
                                 '--home={}'.format(install_location),
-                                '--root=/',
+                                '--root={}'.format(root_location),
                                 '--prefix=',
                                 '--install-lib={}'.format(install_location),
                                 '--install-scripts={}'.format(os.path.join(install_location, 'bin')),
