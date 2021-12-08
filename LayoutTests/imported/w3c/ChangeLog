@@ -1,3 +1,15 @@
+2021-12-08  Antoine Quint  <graouts@webkit.org>
+
+        'border-radius shorthand is getting expanded in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=233960
+
+        Reviewed by Antti Koivisto.
+
+        Add a new WPT to check the behavior of border-radius when serializing using cssText.
+
+        * web-platform-tests/css/css-backgrounds/border-radius-css-text-expected.txt: Added.
+        * web-platform-tests/css/css-backgrounds/border-radius-css-text.html: Added.
+
 2021-12-08  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] import some new WPTs

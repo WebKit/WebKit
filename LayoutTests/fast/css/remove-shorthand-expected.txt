@@ -33,10 +33,10 @@ Removing border-width
 removes "border"
 and adds "border-style, border-color".
 Removing border-radius
-removes "border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius"
+removes "border-radius"
 and adds "".
 Removing -webkit-border-radius
-removes "border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius"
+removes "border-radius"
 and adds "".
 Removing border-spacing
 removes "border-spacing"

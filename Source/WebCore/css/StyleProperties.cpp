@@ -1168,7 +1168,7 @@ String StyleProperties::asText() const
             if (!shorthandPropertyID)
                 shorthandPropertyID = fallbackProperty;
         };
-        
+
         if (is<CSSPendingSubstitutionValue>(property.value())) {
             auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
             shorthandPropertyID = substitutionValue.shorthandPropertyId();
@@ -1245,6 +1245,12 @@ String StyleProperties::asText() const
                 if (!borderInlineFallbackShorthandProperty)
                     borderInlineFallbackShorthandProperty = CSSPropertyBorderInlineStyle;
                 FALLTHROUGH;
+            case CSSPropertyBorderTopLeftRadius:
+            case CSSPropertyBorderTopRightRadius:
+            case CSSPropertyBorderBottomRightRadius:
+            case CSSPropertyBorderBottomLeftRadius:
+                shorthandPropertyID = CSSPropertyBorderRadius;
+                break;
             case CSSPropertyBorderInlineStartColor:
             case CSSPropertyBorderInlineEndColor:
                 if (!borderInlineFallbackShorthandProperty)
