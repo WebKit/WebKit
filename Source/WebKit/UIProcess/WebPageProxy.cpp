@@ -2899,26 +2899,28 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 }
 
 #if HAVE(CVDISPLAYLINK)
-void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState state)
+void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState)
+{
+    updateDisplayLinkFrequency();
+}
+
+void WebPageProxy::updateDisplayLinkFrequency()
 {
     if (!m_process->hasConnection() || !m_displayID)
         return;
 
-    bool wantsFullSpeedUpdates = state == PAL::HysteresisState::Started;
-    process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
+    bool wantsFullSpeedUpdates = m_wheelEventActivityHysteresis.state() == PAL::HysteresisState::Started;
+    if (wantsFullSpeedUpdates != m_registeredForFullSpeedUpdates) {
+        process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
+        m_registeredForFullSpeedUpdates = wantsFullSpeedUpdates;
+    }
 }
 #endif
 
 void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 {
 #if HAVE(CVDISPLAYLINK)
-    if (m_wheelEventActivityHysteresis.state() == PAL::HysteresisState::Started) {
-        if (!m_process->hasConnection() || !m_displayID)
-            return;
-
-        bool wantsFullSpeedUpdates = true;
-        process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
-    }
+    updateDisplayLinkFrequency();
 #endif
 }
 
