@@ -371,7 +371,6 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
 
 void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
 {
-#if USE(CF)
     if (m_dataObject) {
         STGMEDIUM medium;
         if (FAILED(m_dataObject->GetData(cfHDropFormat(), &medium)))
@@ -399,11 +398,6 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
 
     for (auto& filename : list->value)
         reader.readFilename(filename);
-#else
-    UNUSED_PARAM(reader);
-    notImplemented();
-    return;
-#endif
 }
 
 static bool writeURL(WCDataObject *data, const URL& url, String title, bool withPlainText, bool withHTML)
@@ -671,13 +665,11 @@ static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescri
     if (FAILED(hr = dataObject->SetData(fe, &medium, TRUE)))
         goto exit;
 
-#if USE(CF)
     // HDROP
     if (hDropContent) {
         medium.hGlobal = hDropContent;
         hr = dataObject->SetData(cfHDropFormat(), &medium, TRUE);
     }
-#endif
 
 exit:
     if (FAILED(hr)) {

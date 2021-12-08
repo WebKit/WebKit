@@ -46,12 +46,13 @@
 
 namespace WebCore {
 
-#if USE(CF)
 FORMATETC* cfHDropFormat()
 {
     static FORMATETC urlFormat = {CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
+
+#if USE(CF)
 
 static bool urlFromPath(CFStringRef path, String& url)
 {
@@ -84,7 +85,6 @@ static bool getDataMapItem(const DragDataMap* dataObject, FORMATETC* format, Str
 static bool getWebLocData(IDataObject* dataObject, String& url, String* title) 
 {
     bool succeeded = false;
-#if USE(CF)
     WCHAR filename[MAX_PATH];
     WCHAR urlBuffer[INTERNET_MAX_URL_LENGTH];
 
@@ -118,13 +118,11 @@ exit:
     // Free up memory.
     DragFinish(hdrop);
     GlobalUnlock(medium.hGlobal);
-#endif
     return succeeded;
 }
 
 static bool getWebLocData(const DragDataMap* dataObject, String& url, String* title) 
 {
-#if USE(CF)
     WCHAR filename[MAX_PATH];
     WCHAR urlBuffer[INTERNET_MAX_URL_LENGTH];
 
@@ -145,9 +143,6 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
     
     url = String(urlBuffer);
     return true;
-#else
-    return false;
-#endif
 }
 
 static String extractURL(const String &inURL, String* title)
@@ -739,8 +734,7 @@ void getUtf8Data(IDataObject* data, FORMATETC* format, Vector<String>& dataStrin
     ReleaseStgMedium(&store);
 }
 
-#if USE(CF)
-void getCFData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings)
+void getHDropData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings)
 {
     STGMEDIUM store;
     if (FAILED(data->GetData(format, &store)))
@@ -761,7 +755,6 @@ void getCFData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings
     GlobalUnlock(store.hGlobal);
     ReleaseStgMedium(&store);
 }
-#endif
 
 // Setter functions.
 
@@ -795,8 +788,7 @@ void setUtf8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dat
     ::GlobalFree(medium.hGlobal);
 }
 
-#if USE(CF)
-void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
+void setHDropData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
 {
     STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
@@ -815,7 +807,6 @@ void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataS
     data->SetData(format, &medium, FALSE);
     ::GlobalFree(medium.hGlobal);
 }
-#endif
 
 static const ClipboardFormatMap& getClipboardMap()
 {
@@ -825,9 +816,7 @@ static const ClipboardFormatMap& getClipboardMap()
         formatMap.add(texthtmlFormat()->cfFormat, new ClipboardDataItem(texthtmlFormat(), getStringData<UChar>, setUCharData));
         formatMap.add(plainTextFormat()->cfFormat,  new ClipboardDataItem(plainTextFormat(), getStringData<char>, setUtf8Data));
         formatMap.add(plainTextWFormat()->cfFormat,  new ClipboardDataItem(plainTextWFormat(), getStringData<UChar>, setUCharData));
-#if USE(CF)
-        formatMap.add(cfHDropFormat()->cfFormat,  new ClipboardDataItem(cfHDropFormat(), getCFData, setCFData));
-#endif
+        formatMap.add(cfHDropFormat()->cfFormat,  new ClipboardDataItem(cfHDropFormat(), getHDropData, setHDropData));
         formatMap.add(filenameFormat()->cfFormat,  new ClipboardDataItem(filenameFormat(), getStringData<char>, setUtf8Data));
         formatMap.add(filenameWFormat()->cfFormat,  new ClipboardDataItem(filenameWFormat(), getStringData<UChar>, setUCharData));
         formatMap.add(urlFormat()->cfFormat,  new ClipboardDataItem(urlFormat(), getStringData<char>, setUtf8Data));
