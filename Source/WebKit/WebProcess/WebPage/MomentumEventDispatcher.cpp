@@ -300,7 +300,10 @@ WebCore::FloatSize MomentumEventDispatcher::consumeDeltaForCurrentTime()
 
     m_currentGesture.currentOffset += delta;
 
-    return -delta;
+    if (m_currentGesture.initiatingEvent->directionInvertedFromDevice())
+        delta.scale(-1);
+
+    return delta;
 }
 
 void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID displayID, const WebCore::DisplayUpdate&)
@@ -472,10 +475,8 @@ std::pair<WebCore::FloatSize, WebCore::FloatSize> MomentumEventDispatcher::compu
         float averageDelta = totalDelta / count;
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
-        if (!m_currentGesture.didLogInitialQueueState) {
+        if (!m_currentGesture.didLogInitialQueueState)
             RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher initial historical deltas: average delta %f, average time %fms, event count %d", averageDelta, averageFrameIntervalMS, count);
-            m_currentGesture.didLogInitialQueueState = true;
-        }
 #endif
 
         constexpr float velocityGainA = fromFixedPoint(2.f);
@@ -495,6 +496,10 @@ std::pair<WebCore::FloatSize, WebCore::FloatSize> MomentumEventDispatcher::compu
         accelerateAxis(m_deltaHistoryX, quantizedUnacceleratedDelta.width()),
         accelerateAxis(m_deltaHistoryY, quantizedUnacceleratedDelta.height())
     );
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+    m_currentGesture.didLogInitialQueueState = true;
+#endif
 
     return { unacceleratedDelta, acceleratedDelta };
 }
