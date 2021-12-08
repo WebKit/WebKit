@@ -1,3 +1,21 @@
+2021-12-07  Devin Rousso  <drousso@apple.com>
+
+        Add helper methods to `WebCore::FontShadow` for serializing to CSS and converting to `NSShadow`
+        https://bugs.webkit.org/show_bug.cgi?id=233938
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/FontShadowTests.cpp: Added.
+        (TestWebKitAPI::TEST.FontShadow.InvalidColor):
+        (TestWebKitAPI::TEST.FontShadow.NoOffsetOrBlurRadius):
+        (TestWebKitAPI::TEST.FontShadow.NoOffset):
+        (TestWebKitAPI::TEST.FontShadow.NegativeOffset):
+        (TestWebKitAPI::TEST.FontShadow.NoBlurRadius):
+        (TestWebKitAPI::TEST.FontShadow.NegativeBlurRadius):
+        (TestWebKitAPI::TEST.FontShadow.AllNegative):
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2021-12-07  Jonathan Bedard  <jbedard@apple.com>
 
         [commits.webkit.org] Fallback to remote repository (Part 2)

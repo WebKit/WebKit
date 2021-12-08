@@ -48,4 +48,13 @@ RetainPtr<NSShadow> FontShadow::createShadow() const
     return shadow;
 }
 
+FontShadow fontShadowFromNSShadow(NSShadow *shadow)
+{
+    return {
+        colorFromCocoaColor(shadow.shadowColor),
+        FloatSize(shadow.shadowOffset),
+        shadow.shadowBlurRadius,
+    };
+}
+
 }
