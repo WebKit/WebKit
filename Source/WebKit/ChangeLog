@@ -1,3 +1,23 @@
+2021-12-08  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Consider support for the displayName for FIDO authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=233389
+        rdar://84938707
+
+        Reviewed by Brent Fulgham.
+
+        Start storing the displayName field with the platform authenticator
+        and add them to the getAllLocalAuthenticatorCredentials SPI.
+
+        The displayName is part of the WebAuthn level 2 spec:
+        https://www.w3.org/TR/webauthn-2/#dom-publickeycredentialuserentity-displayname
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (getAllLocalAuthenticatorCredentialsImpl):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+
 2021-12-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r286596.

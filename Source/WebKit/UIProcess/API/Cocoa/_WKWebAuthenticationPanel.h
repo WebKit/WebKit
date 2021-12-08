@@ -87,6 +87,7 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationUserVerificationAvailability) {
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialNameKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialDisplayNameKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialIDKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey;

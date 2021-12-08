@@ -100,6 +100,7 @@ static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
 #endif
 
 NSString * const _WKLocalAuthenticatorCredentialNameKey = @"_WKLocalAuthenticatorCredentialNameKey";
+NSString * const _WKLocalAuthenticatorCredentialDisplayNameKey = @"_WKLocalAuthenticatorCredentialDisplayNameKey";
 NSString * const _WKLocalAuthenticatorCredentialIDKey = @"_WKLocalAuthenticatorCredentialIDKey";
 NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey = @"_WKLocalAuthenticatorCredentialRelyingPartyIDKey";
 NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey = @"_WKLocalAuthenticatorCredentialLastModificationDateKey";
@@ -265,14 +266,20 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
             return nullptr;
         }
         auto& username = it->second.getString();
+        auto credential = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
+            username, _WKLocalAuthenticatorCredentialNameKey,
+            attributes[bridge_cast(kSecAttrApplicationLabel)], _WKLocalAuthenticatorCredentialIDKey,
+            attributes[bridge_cast(kSecAttrLabel)], _WKLocalAuthenticatorCredentialRelyingPartyIDKey,
+            attributes[bridge_cast(kSecAttrModificationDate)], _WKLocalAuthenticatorCredentialLastModificationDateKey,
+            attributes[bridge_cast(kSecAttrCreationDate)], _WKLocalAuthenticatorCredentialCreationDateKey,
+            nil
+        ]);
 
-        [result addObject:@{
-            _WKLocalAuthenticatorCredentialNameKey: username,
-            _WKLocalAuthenticatorCredentialIDKey: attributes[bridge_cast(kSecAttrApplicationLabel)],
-            _WKLocalAuthenticatorCredentialRelyingPartyIDKey: attributes[bridge_cast(kSecAttrLabel)],
-            _WKLocalAuthenticatorCredentialLastModificationDateKey: attributes[bridge_cast(kSecAttrModificationDate)],
-            _WKLocalAuthenticatorCredentialCreationDateKey: attributes[bridge_cast(kSecAttrCreationDate)]
-        }];
+        it = responseMap.find(cbor::CBORValue(fido::kDisplayNameMapKey));
+        if (it != responseMap.end() && it->second.isString())
+            [credential setObject:it->second.getString() forKey:_WKLocalAuthenticatorCredentialDisplayNameKey];
+
+        [result addObject:credential.get()];
     }
 
     return result;

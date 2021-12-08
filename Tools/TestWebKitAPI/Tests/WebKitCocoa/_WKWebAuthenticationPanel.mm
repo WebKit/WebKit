@@ -2193,6 +2193,26 @@ TEST(WebAuthenticationPanel, GetAllCredential)
     cleanUpKeychain("example.com");
 }
 
+TEST(WebAuthenticationPanel, GetAllCredentialWithDisplayName)
+{
+    reset();
+
+    // {"id": h'00010203040506070809', "name": "John", "displayName": "Johnny"}
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", "o2JpZEoAAQIDBAUGBwgJZG5hbWVkSm9obmtkaXNwbGF5TmFtZWZKb2hubnk="));
+
+    auto after = adoptNS([[NSDate alloc] init]);
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "John");
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey], "Johnny");
+
+    cleanUpKeychain("example.com");
+}
+
 TEST(WebAuthenticationPanel, UpdateCredentialUsername)
 {
     reset();

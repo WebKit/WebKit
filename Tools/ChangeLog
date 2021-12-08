@@ -1,3 +1,16 @@
+2021-12-08  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Consider support for the displayName for FIDO authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=233389
+        rdar://84938707
+
+        Reviewed by Brent Fulgham.
+
+        Add test for new field stored with platform authenticator: displayName
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r286596.
