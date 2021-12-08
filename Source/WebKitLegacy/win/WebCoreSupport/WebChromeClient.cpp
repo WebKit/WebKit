@@ -38,6 +38,7 @@
 #include "WebView.h"
 #include <WebCore/BString.h>
 #include <WebCore/ContextMenu.h>
+#include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
@@ -874,4 +875,9 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameVi
 #else
     return false;
 #endif
+}
+
+void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
+{
+    completion(CookieConsentDecisionResult::NotSupported);
 }

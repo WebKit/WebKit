@@ -142,6 +142,7 @@ struct TextIndicatorData;
 struct ViewportArguments;
 struct WindowFeatures;
 
+enum class CookieConsentDecisionResult : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 
 class ChromeClient {
@@ -618,6 +619,8 @@ public:
     virtual void startApplePayAMSUISession(const URL&, const ApplePayAMSUIRequest&, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler) { completionHandler(std::nullopt); }
     virtual void abortApplePayAMSUISession() { }
 #endif
+
+    virtual void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) = 0;
 
 protected:
     virtual ~ChromeClient() = default;

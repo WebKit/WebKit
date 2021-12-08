@@ -58,6 +58,7 @@
 #import <WebCore/ColorChooser.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
+#import <WebCore/CookieConsentDecisionResult.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DataListSuggestionPicker.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
@@ -1165,4 +1166,9 @@ RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 #else
     return nullptr;
 #endif
+}
+
+void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
+{
+    completion(CookieConsentDecisionResult::NotSupported);
 }

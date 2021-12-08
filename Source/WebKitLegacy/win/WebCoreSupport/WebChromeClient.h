@@ -183,6 +183,8 @@ public:
 
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
+    void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&);
+
 private:
     COMPtr<IWebUIDelegate> uiDelegate();
 

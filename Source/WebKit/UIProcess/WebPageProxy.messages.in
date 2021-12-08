@@ -616,4 +616,6 @@ messages -> WebPageProxy {
     StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result) Async
     AbortApplePayAMSUISession()
 #endif
+
+    RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result) Async
 }

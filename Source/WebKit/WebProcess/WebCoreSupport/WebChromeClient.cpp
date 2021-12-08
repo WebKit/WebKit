@@ -1559,4 +1559,9 @@ void WebChromeClient::abortApplePayAMSUISession()
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
+void WebChromeClient::requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&& completion)
+{
+    m_page.sendWithAsyncReply(Messages::WebPageProxy::RequestCookieConsent(), WTFMove(completion));
+}
+
 } // namespace WebKit

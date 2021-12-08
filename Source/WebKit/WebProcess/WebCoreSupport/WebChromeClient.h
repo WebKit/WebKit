@@ -31,6 +31,7 @@
 namespace WebCore {
 class HTMLImageElement;
 class RegistrableDomain;
+enum class CookieConsentDecisionResult : uint8_t;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
 }
@@ -461,6 +462,8 @@ private:
     void startApplePayAMSUISession(const URL&, const WebCore::ApplePayAMSUIRequest&, CompletionHandler<void(std::optional<bool>&&)>&&) final;
     void abortApplePayAMSUISession() final;
 #endif
+
+    void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };

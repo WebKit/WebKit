@@ -35,6 +35,7 @@
 #include "CacheStorageProvider.h"
 #include "ColorChooser.h"
 #include "ContextMenuClient.h"
+#include "CookieConsentDecisionResult.h"
 #include "CookieJar.h"
 #include "DOMPasteAccess.h"
 #include "DataListSuggestionPicker.h"
@@ -582,6 +583,11 @@ void EmptyChromeClient::runOpenPanel(Frame&, FileChooser&)
     
 void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&)
 {
+}
+
+void EmptyChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
+{
+    completion(CookieConsentDecisionResult::NotSupported);
 }
 
 void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&)

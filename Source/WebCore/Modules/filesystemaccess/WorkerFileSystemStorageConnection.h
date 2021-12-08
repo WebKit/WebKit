@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class FileSystemSyncAccessHandle;
 class WorkerGlobalScope;
 class WorkerThread;
 

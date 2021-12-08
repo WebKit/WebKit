@@ -176,6 +176,19 @@ CaptureVideoInUIProcessEnabled:
     WebKit:
       default: false
 
+CookieConsentAPIEnabled:
+  type: bool
+  humanReadableName: "Cookie Consent API"
+  humanReadableDescription: "Enable cookie consent API"
+  exposed: [ WebKit ]
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 DOMPasteAccessRequestsEnabled:
   type: bool
   humanReadableName: "DOM Paste Access Requests"

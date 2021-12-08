@@ -257,6 +257,8 @@ private:
 
     RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const final;
 
+    void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_mockVideoPresentationModeEnabled { false };
 #endif

@@ -1,3 +1,17 @@
+2021-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for `navigator.requestCookieConsent()` behind a disabled feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=233890
+        rdar://86117718
+
+        Reviewed by Darin Adler.
+
+        Add the new feature flag (off by default). Note that this is also only an internal feature flag for the time
+        being (rather than an experimental feature flag), such that it cannot (yet) be turned on by non-Apple internal
+        users.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-12-07  Sihui Liu  <sihui_liu@apple.com>
 
         Fetch and remove file system data via WKWebsiteDataStore

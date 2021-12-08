@@ -197,6 +197,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewStartXRSessionWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:startXRSessionWithCompletionHandler:)];
 #endif
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
+    m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -638,6 +639,24 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
             return;
         checker->didCallCompletionHandler();
         completionHandler(result);
+    }).get()];
+}
+
+void UIDelegate::UIClient::requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&& completion)
+{
+    if (!m_uiDelegate)
+        return completion(WebCore::CookieConsentDecisionResult::NotSupported);
+
+    if (!m_uiDelegate->m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler)
+        return completion(WebCore::CookieConsentDecisionResult::NotSupported);
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return completion(WebCore::CookieConsentDecisionResult::NotSupported);
+
+    // FIXME: Add support for the 'more info' handler.
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestCookieConsentWithMoreInfoHandler:nil decisionHandler:makeBlockPtr([completion = WTFMove(completion)] (BOOL decision) mutable {
+        completion(decision ? WebCore::CookieConsentDecisionResult::Consent : WebCore::CookieConsentDecisionResult::Dissent);
     }).get()];
 }
 

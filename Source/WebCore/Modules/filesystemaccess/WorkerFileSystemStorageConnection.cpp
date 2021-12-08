@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerFileSystemStorageConnection.h"
 
+#include "FileSystemSyncAccessHandle.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"

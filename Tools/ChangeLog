@@ -1,3 +1,21 @@
+2021-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for `navigator.requestCookieConsent()` behind a disabled feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=233890
+        rdar://86117718
+
+        Reviewed by Darin Adler.
+
+        Add several new API tests that enable the feature flag and exercise the API.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/CookieConsent.mm: Added.
+        (-[CookieConsentDelegate _webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:]):
+        (TestWebKitAPI::createWebViewForTestingCookieConsent):
+        (TestWebKitAPI::checkForString):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/cookie-consent-basic.html: Added.
+
 2021-12-07  Yousuke Kimoto  <Yousuke.Kimoto@sony.com>
 
         [webkitcorepy] Fail to install python module when a working directory is not on C drive on Windows

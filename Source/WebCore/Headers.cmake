@@ -153,6 +153,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/contact-picker/ContactProperty.h
     Modules/contact-picker/ContactsRequestData.h
 
+    Modules/cookie-consent/CookieConsentDecisionResult.h
+
     Modules/encryptedmedia/CDMClient.h
     Modules/encryptedmedia/MediaKeySystemClient.h
     Modules/encryptedmedia/MediaKeySystemController.h

@@ -1,3 +1,33 @@
+2021-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for `navigator.requestCookieConsent()` behind a disabled feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=233890
+        rdar://86117718
+
+        Reviewed by Darin Adler.
+
+        Add plumbing for an async `requestCookieConsent()` method on ChromeClient that plumbs through the WebKit2 client
+        layer, into a new private (for the time being) UI delegate method. If the new delegate method is not implemented
+        (or there is no UI delegate at all), we immediately invoke the decision handler with a result of `NotSupported`,
+        allowing us to reject the promise with a `NotSupportedError`.
+
+        See WebCore ChangeLog for more details.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::requestCookieConsent):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::requestCookieConsent):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestCookieConsent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestCookieConsent):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2021-12-07  Devin Rousso  <drousso@apple.com>
 
         Add a `DOMPasteAccessCategory` to control which pasteboard the WebProcess is granted access to when pasting
