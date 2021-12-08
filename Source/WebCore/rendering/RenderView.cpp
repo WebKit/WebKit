@@ -329,9 +329,14 @@ RenderElement* RenderView::rendererForRootBackground() const
     if (!is<HTMLHtmlElement>(documentRenderer.element()))
         return &documentRenderer;
 
+    if (shouldApplyAnyContainment(documentRenderer))
+        return nullptr;
+
     if (auto* body = document().body()) {
-        if (auto* renderer = body->renderer())
-            return renderer;
+        if (auto* renderer = body->renderer()) {
+            if (!shouldApplyAnyContainment(*renderer))
+                return renderer;
+        }
     }
     return &documentRenderer;
 }
