@@ -1,5 +1,64 @@
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286270. rdar://problem/85928816
+
+    Plumb raw platform scrolling deltas along in wheel events
+    https://bugs.webkit.org/show_bug.cgi?id=233583
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    * platform/PlatformWheelEvent.cpp:
+    (WebCore::PlatformWheelEvent::createFromGesture):
+    * platform/PlatformWheelEvent.h:
+    (WebCore::PlatformWheelEvent::rawPlatformDelta const):
+    * PAL/pal/spi/mac/IOKitSPIMac.h:
+    
+    Source/WebKit:
+    
+    * Shared/WebEventConversion.cpp:
+    (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+    * Shared/WebWheelEvent.cpp:
+    (WebKit::WebWheelEvent::WebWheelEvent):
+    (WebKit::WebWheelEvent::encode const):
+    (WebKit::WebWheelEvent::decode):
+    * Shared/WebWheelEvent.h:
+    (WebKit::WebWheelEvent::rawPlatformDelta const):
+    * Shared/WebWheelEventCoalescer.cpp:
+    (WebKit::WebWheelEventCoalescer::coalesce):
+    * Shared/mac/WebEventFactory.mm:
+    (WebKit::WebEventFactory::createWebWheelEvent):
+    Extract and plumb raw unaccelerated (in the HID sense) deltas in scroll
+    events for use in a future patch.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286270 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-29  Tim Horton  <timothy_horton@apple.com>
+
+            Plumb raw platform scrolling deltas along in wheel events
+            https://bugs.webkit.org/show_bug.cgi?id=233583
+
+            Reviewed by Simon Fraser.
+
+            * Shared/WebEventConversion.cpp:
+            (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+            * Shared/WebWheelEvent.cpp:
+            (WebKit::WebWheelEvent::WebWheelEvent):
+            (WebKit::WebWheelEvent::encode const):
+            (WebKit::WebWheelEvent::decode):
+            * Shared/WebWheelEvent.h:
+            (WebKit::WebWheelEvent::rawPlatformDelta const):
+            * Shared/WebWheelEventCoalescer.cpp:
+            (WebKit::WebWheelEventCoalescer::coalesce):
+            * Shared/mac/WebEventFactory.mm:
+            (WebKit::WebEventFactory::createWebWheelEvent):
+            Extract and plumb raw unaccelerated (in the HID sense) deltas in scroll
+            events for use in a future patch.
+
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r285790. rdar://problem/85928816
 
     Attach IOHIDEvent timestamps to wheel events
