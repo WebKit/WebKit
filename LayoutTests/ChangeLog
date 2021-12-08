@@ -1,3 +1,17 @@
+2021-12-08  Youenn Fablet  <youenn@apple.com>
+
+        Safari Bug "no-cache" network error
+        https://bugs.webkit.org/show_bug.cgi?id=233916
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/cache-control-request-expected.txt: Added.
+        * http/wpt/service-workers/cache-control-request-worker.js: Added.
+        (async doTest):
+        * http/wpt/service-workers/cache-control-request.html: Added.
+        * http/wpt/service-workers/resources/cross-origin-allow.py: Added.
+        (main):
+
 2021-12-08  Vitaly Dyachkov  <obyknovenius@me.com>
 
         [css-flexbox] `gap` does not work correctly when `flex-direction: column-reverse` is applied

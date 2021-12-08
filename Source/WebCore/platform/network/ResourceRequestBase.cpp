@@ -610,6 +610,15 @@ void ResourceRequestBase::removeHTTPHeaderField(const String& name)
     m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::removeHTTPHeaderField(HTTPHeaderName name)
+{
+    updateResourceRequest();
+
+    m_httpHeaderFields.remove(name);
+
+    m_platformRequestUpdated = false;
+}
+
 #if USE(SYSTEM_PREVIEW)
 
 bool ResourceRequestBase::isSystemPreview() const

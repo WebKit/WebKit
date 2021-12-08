@@ -106,6 +106,7 @@ public:
     WEBCORE_EXPORT void addHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void addHTTPHeaderFieldIfNotPresent(HTTPHeaderName, const String&);
     void removeHTTPHeaderField(const String& name);
+    void removeHTTPHeaderField(HTTPHeaderName);
 
     WEBCORE_EXPORT bool hasHTTPHeaderField(HTTPHeaderName) const;
 

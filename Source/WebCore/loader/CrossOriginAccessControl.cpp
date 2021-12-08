@@ -189,6 +189,8 @@ OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeepFromCleaning(const HTT
         headersToKeep.add(HTTPHeadersToKeepFromCleaning::UserAgent);
     if (headers.contains(HTTPHeaderName::AcceptEncoding))
         headersToKeep.add(HTTPHeadersToKeepFromCleaning::AcceptEncoding);
+    if (headers.contains(HTTPHeaderName::CacheControl))
+        headersToKeep.add(HTTPHeadersToKeepFromCleaning::CacheControl);
     return headersToKeep;
 }
 
@@ -208,6 +210,8 @@ void cleanHTTPRequestHeadersForAccessControl(ResourceRequest& request, OptionSet
         request.clearHTTPUserAgent();
     if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::AcceptEncoding))
         request.clearHTTPAcceptEncoding();
+    if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::CacheControl))
+        request.removeHTTPHeaderField(HTTPHeaderName::CacheControl);
 }
 
 CrossOriginAccessControlCheckDisabler& CrossOriginAccessControlCheckDisabler::singleton()
