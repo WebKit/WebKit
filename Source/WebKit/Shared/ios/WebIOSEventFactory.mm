@@ -177,7 +177,8 @@ WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *eve
         delta,
         { },
         timestamp,
-        timestamp
+        timestamp,
+        { }
     };
 }
 #endif

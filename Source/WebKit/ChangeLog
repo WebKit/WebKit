@@ -1,5 +1,24 @@
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286277. rdar://problem/85928816
+
+    Fix the build
+    
+    * Shared/ios/WebIOSEventFactory.mm:
+    (WebIOSEventFactory::createWebWheelEvent):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286277 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-29  Tim Horton  <timothy_horton@apple.com>
+
+            Fix the build
+
+            * Shared/ios/WebIOSEventFactory.mm:
+            (WebIOSEventFactory::createWebWheelEvent):
+
+2021-12-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286270. rdar://problem/85928816
 
     Plumb raw platform scrolling deltas along in wheel events
