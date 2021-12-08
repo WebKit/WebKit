@@ -1289,72 +1289,36 @@
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
+        SYS_dup
         SYS_fgetxattr
+        SYS_fstatat64
+        SYS_fsync
         SYS_getgid
         SYS_getxattr
+        SYS_mkdirat
         SYS_necp_client_action
         SYS_necp_open
+        SYS_openat_nocancel
+        SYS_pread_nocancel
+        SYS_rmdir
         SYS_sendto
         SYS_setrlimit
         SYS_sigaltstack
+        SYS_sigprocmask
         SYS_socket
-        SYS_thread_selfusage))
+        SYS_thread_selfusage
+        SYS_unlink
+        SYS_writev))
 
-(define (syscall-unix-possibly-not-in-use)
+(define (syscall-unix-rarely-in-use-need-backtrace)
     (syscall-number
         SYS___pthread_kill
-        SYS___pthread_markcancel
         SYS___pthread_sigmask
         SYS___semwait_signal
-        SYS___semwait_signal_nocancel
-        SYS_chmod
-        SYS_connect
-        SYS_connect_nocancel
-        SYS_connectx
-        SYS_csrctl
-        SYS_dup
-        SYS_fchmod
-        SYS_fileport_makeport
-        SYS_fstatat64
-        SYS_fsync
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
-        SYS_getaudit_addr
-        SYS_getpeername
-        SYS_getsockopt ;; used by libwebrtc
-        SYS_kdebug_trace
-        SYS_mkdirat
-        SYS_mlock
-        SYS_mremap_encrypted
-        SYS_munlock
         SYS_open_dprotected_np
-        SYS_openat_nocancel
-        SYS_persona
-        SYS_pipe
-        SYS_pread_nocancel
-        SYS_proc_rlimit_control
-        SYS_process_policy
         SYS_psynch_rw_wrlock
-        SYS_pwrite
-        SYS_recvfrom
-        SYS_recvfrom_nocancel
-        SYS_rmdir
-        SYS_select
-        SYS_select_nocancel
-        SYS_sem_post
-        SYS_sem_wait
-        SYS_sendmsg_nocancel
-        SYS_sendto_nocancel
-        SYS_setpriority
-        SYS_setsockopt
-        SYS_shutdown
-        SYS_sigprocmask
-        SYS_sigreturn
-        SYS_socketpair
-        SYS_umask
-        SYS_unlink
-        SYS_work_interval_ctl
-        SYS_write
-        SYS_writev))
+        SYS_umask))
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))
@@ -1378,7 +1342,7 @@
         (syscall-unix-rarely-in-use))
 
     (allow syscall-unix (with report) (with telemetry-backtrace)
-        (syscall-unix-possibly-not-in-use))
+        (syscall-unix-rarely-in-use-need-backtrace))
 )
 
 (when (defined? 'SYS__map_with_linking_np)
@@ -1555,14 +1519,9 @@
         MSC_semaphore_wait_trap
         MSC_syscall_thread_switch
         MSC_task_name_for_pid
-        MSC_thread_get_special_reply_port))
-
-(define (syscall-mach-possibly-unused)
-    (machtrap-number
-        MSC_mach_msg_overwrite_trap
-        MSC_mk_timer_arm_leeway
+        MSC_thread_get_special_reply_port
         MSC_thread_self_trap))
-
+    
 (when (defined? 'syscall-mach)
     (deny syscall-mach
         (machtrap-number MSC_mach_wait_until))
@@ -1587,9 +1546,6 @@
             (with message "Mach syscall used after launch")
             (syscall-mach-only-in-use-during-launch)))
 #endif
-
-    (allow syscall-mach (with telemetry-backtrace)
-        (syscall-mach-possibly-unused))
 )
 
 (define (kernel-mig-routine-only-in-use-during-launch)
@@ -1632,26 +1588,16 @@
         thread_set_exception_ports
         thread_suspend))
 
-(define (kernel-mig-routine-possibly-unused)
+(define (kernel-mig-routine-rarely-used-need-backtrace)
     (kernel-mig-routine
         clock_get_time
-        host_request_notification
         io_connect_add_client
-        io_connect_map_memory_into_task
-        (when (defined? 'io_connect_set_notification_port) io_connect_set_notification_port)
-        io_registry_entry_get_parent_iterator
-        io_service_add_notification_bin
-        io_service_add_notification_bin_64
         io_service_close
         mach_exception_raise
-        (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
-        (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
         mach_port_request_notification
         mach_vm_region
         mach_vm_region_recurse
-        task_threads_from_user
-        (when (defined? 'vm_copy) vm_copy)
-        (when (defined? 'vm_remap_external) vm_remap_external)))
+        task_threads_from_user))
 
 (define (kernel-mig-routine-rarely-used)
     (kernel-mig-routine
@@ -1666,7 +1612,7 @@
         (apply-message-filter
             (deny mach-message-send (with telemetry))
             (allow mach-message-send (with telemetry-backtrace)
-                (kernel-mig-routine-possibly-unused))
+                (kernel-mig-routine-rarely-used-need-backtrace))
 
             (allow mach-message-send (with telemetry)
                 (kernel-mig-routine-rarely-used))
