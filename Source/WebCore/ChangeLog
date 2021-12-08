@@ -1,3 +1,53 @@
+2021-12-02  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r286411. rdar://problem/85928816
+
+    Scrolling complex websites can stutter: scrolling thread frame can fail to process wheel events
+    https://bugs.webkit.org/show_bug.cgi?id=233739
+    rdar://85946176
+    
+    Reviewed by Tim Horton.
+    
+    While the scrolling thread is chilling in
+    ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout(), waiting up to half a
+    frame to allow the main thread to handle the commit (for scroll synchronization), wheel
+    events may have been dispatched to the scrolling thread.
+    
+    If we blow the timeout and commit anyway, we need to make sure we've handled these wheel
+    events first, so that the current frame can commit some layer movement. We can achieve this
+    by dispatching the applyLayerPositions(), which will enqueue it behind any waiting wheel
+    event dispatch from EventDispatcher::internalWheelEvent().
+    
+    * page/scrolling/ScrollingTree.cpp:
+    (WebCore::ScrollingTree::applyLayerPositions):
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286411 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+            Scrolling complex websites can stutter: scrolling thread frame can fail to process wheel events
+            https://bugs.webkit.org/show_bug.cgi?id=233739
+            rdar://85946176
+
+            Reviewed by Tim Horton.
+
+            While the scrolling thread is chilling in
+            ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout(), waiting up to half a
+            frame to allow the main thread to handle the commit (for scroll synchronization), wheel
+            events may have been dispatched to the scrolling thread.
+
+            If we blow the timeout and commit anyway, we need to make sure we've handled these wheel
+            events first, so that the current frame can commit some layer movement. We can achieve this
+            by dispatching the applyLayerPositions(), which will enqueue it behind any waiting wheel
+            event dispatch from EventDispatcher::internalWheelEvent().
+
+            * page/scrolling/ScrollingTree.cpp:
+            (WebCore::ScrollingTree::applyLayerPositions):
+            * page/scrolling/ThreadedScrollingTree.cpp:
+            (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286352. rdar://problem/85928816
