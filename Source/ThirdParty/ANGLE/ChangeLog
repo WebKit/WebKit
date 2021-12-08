@@ -1,3 +1,12 @@
+2021-12-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, these files are modified after building ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=220896
+        <rdar://problem/73539682>
+
+        * src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc:
+        * src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.metal:
+
 2021-12-07  Lauro Moura  <lmoura@igalia.com>
 
         Avoid noisy Wcomment warnings after ANGLE update in r286603
