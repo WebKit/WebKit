@@ -607,9 +607,9 @@ static CFTimeInterval cachedStartupTimeIntervalSince1970()
     return systemStartupTime;
 }
 
-WallTime eventTimeStampSince1970(NSEvent* event)
+WallTime eventTimeStampSince1970(NSTimeInterval timestamp)
 {
-    return WallTime::fromRawSeconds(static_cast<double>(cachedStartupTimeIntervalSince1970() + [event timestamp]));
+    return WallTime::fromRawSeconds(static_cast<double>(cachedStartupTimeIntervalSince1970() + timestamp));
 }
 
 static inline bool isKeyUpEvent(NSEvent *event)
@@ -720,7 +720,7 @@ public:
         }
 
         m_modifiers = modifiersForEvent(event);
-        m_timestamp = eventTimeStampSince1970(event);
+        m_timestamp = eventTimeStampSince1970(event.timestamp);
 
         // PlatformMouseEvent
         m_position = pointForEvent(event, windowView);
@@ -755,7 +755,7 @@ public:
         // PlatformEvent
         m_type = PlatformEvent::Wheel;
         m_modifiers = modifiersForEvent(event);
-        m_timestamp = eventTimeStampSince1970(event);
+        m_timestamp = eventTimeStampSince1970(event.timestamp);
 
         // PlatformWheelEvent
         m_position = pointForEvent(event, windowView);
@@ -794,7 +794,7 @@ public:
         // PlatformEvent
         m_type = isKeyUpEvent(event) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
         m_modifiers = modifiersForEvent(event);
-        m_timestamp = eventTimeStampSince1970(event);
+        m_timestamp = eventTimeStampSince1970(event.timestamp);
 
         // PlatformKeyboardEvent
         m_text = textFromEvent(event);
