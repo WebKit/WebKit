@@ -30,8 +30,10 @@
 
 #include "EventDispatcher.h"
 #include "Logging.h"
+#include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/DisplayRefreshMonitor.h>
+#include <WebCore/Scrollbar.h>
 
 namespace WebKit {
 
@@ -221,7 +223,7 @@ void MomentumEventDispatcher::startDisplayLink()
     }
 
     // FIXME: Switch down to lower-than-full-speed frame rates for the tail end of the curve.
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, FullSpeedFramesPerSecond), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond), 0);
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher starting display link for display %d", displayID);
 }
 
@@ -262,9 +264,9 @@ void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID dis
 
 #if !USE(MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING)
     // Intentional delta rounding (but at the end!).
-    FloatSize delta = roundedIntSize(desiredOffset - m_currentGesture.currentOffset);
+    WebCore::FloatSize delta = roundedIntSize(desiredOffset - m_currentGesture.currentOffset);
 #else
-    FloatSize delta = desiredOffset - m_currentGesture.currentOffset;
+    WebCore::FloatSize delta = desiredOffset - m_currentGesture.currentOffset;
 #endif
 
     dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseChanged, -delta);
@@ -272,7 +274,7 @@ void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID dis
     m_currentGesture.currentOffset += delta;
 }
 
-void MomentumEventDispatcher::didReceiveScrollEventWithInterval(FloatSize size, Seconds frameInterval)
+void MomentumEventDispatcher::didReceiveScrollEventWithInterval(WebCore::FloatSize size, Seconds frameInterval)
 {
     auto push = [](HistoricalDeltas& deltas, Delta newDelta) {
         bool directionChanged = deltas.size() && (deltas.first().rawPlatformDelta > 0) != (newDelta.rawPlatformDelta > 0);
@@ -310,18 +312,18 @@ void MomentumEventDispatcher::didReceiveScrollEvent(const WebWheelEvent& event)
     didReceiveScrollEventWithInterval(delta, frameInterval);
 }
 
-void MomentumEventDispatcher::buildOffsetTableWithInitialDelta(FloatSize initialUnacceleratedDelta)
+void MomentumEventDispatcher::buildOffsetTableWithInitialDelta(WebCore::FloatSize initialUnacceleratedDelta)
 {
 #if USE(MOMENTUM_EVENT_DISPATCHER_PREMATURE_ROUNDING)
     m_currentGesture.carryOffset = { };
 #endif
     m_currentGesture.offsetTable.clear();
 
-    FloatSize accumulatedOffset;
-    FloatSize unacceleratedDelta = initialUnacceleratedDelta;
+    WebCore::FloatSize accumulatedOffset;
+    WebCore::FloatSize unacceleratedDelta = initialUnacceleratedDelta;
 
     do {
-        FloatSize acceleratedDelta;
+        WebCore::FloatSize acceleratedDelta;
         std::tie(unacceleratedDelta, acceleratedDelta) = computeNextDelta(unacceleratedDelta);
 
         accumulatedOffset += acceleratedDelta;
@@ -336,7 +338,7 @@ static float interpolate(float a, float b, float t)
     return a + t * (b - a);
 }
 
-FloatSize MomentumEventDispatcher::offsetAtTime(Seconds time)
+WebCore::FloatSize MomentumEventDispatcher::offsetAtTime(Seconds time)
 {
     if (!m_currentGesture.offsetTable.size())
         return { };
@@ -352,7 +354,7 @@ FloatSize MomentumEventDispatcher::offsetAtTime(Seconds time)
     };
 }
 
-static float momentumDecayRate(FloatSize delta, Seconds frameInterval)
+static float momentumDecayRate(WebCore::FloatSize delta, Seconds frameInterval)
 {
     constexpr float defaultDecay = 0.975f;
     constexpr float tailVelocity = 250.f;
@@ -373,9 +375,9 @@ static constexpr float fromFixedPoint(float value)
     return value / 65536.0f;
 }
 
-std::pair<FloatSize, FloatSize> MomentumEventDispatcher::computeNextDelta(FloatSize currentUnacceleratedDelta)
+std::pair<WebCore::FloatSize, WebCore::FloatSize> MomentumEventDispatcher::computeNextDelta(WebCore::FloatSize currentUnacceleratedDelta)
 {
-    FloatSize unacceleratedDelta = currentUnacceleratedDelta;
+    WebCore::FloatSize unacceleratedDelta = currentUnacceleratedDelta;
 
     float decayRate = momentumDecayRate(unacceleratedDelta, idealCurveFrameRate);
     unacceleratedDelta.scale(decayRate);
@@ -445,7 +447,7 @@ std::pair<FloatSize, FloatSize> MomentumEventDispatcher::computeNextDelta(FloatS
         return value * multiplier;
     };
 
-    FloatSize acceleratedDelta(
+    WebCore::FloatSize acceleratedDelta(
         accelerateAxis(m_deltaHistoryX, quantizedUnacceleratedDelta.width()),
         accelerateAxis(m_deltaHistoryY, quantizedUnacceleratedDelta.height())
     );

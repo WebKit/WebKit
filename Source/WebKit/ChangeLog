@@ -1,3 +1,35 @@
+2021-12-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r286380. rdar://problem/85928816
+
+    Unreviewed build fixes after r286346.
+    
+    * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+    (WebKit::MomentumEventDispatcher::startDisplayLink):
+    (WebKit::MomentumEventDispatcher::displayWasRefreshed):
+    (WebKit::MomentumEventDispatcher::didReceiveScrollEventWithInterval):
+    (WebKit::MomentumEventDispatcher::buildOffsetTableWithInitialDelta):
+    (WebKit::MomentumEventDispatcher::offsetAtTime):
+    (WebKit::momentumDecayRate):
+    (WebKit::MomentumEventDispatcher::computeNextDelta):
+    * WebProcess/WebPage/MomentumEventDispatcher.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286380 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-01  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fixes after r286346.
+
+            * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+            (WebKit::MomentumEventDispatcher::startDisplayLink):
+            (WebKit::MomentumEventDispatcher::displayWasRefreshed):
+            (WebKit::MomentumEventDispatcher::didReceiveScrollEventWithInterval):
+            (WebKit::MomentumEventDispatcher::buildOffsetTableWithInitialDelta):
+            (WebKit::MomentumEventDispatcher::offsetAtTime):
+            (WebKit::momentumDecayRate):
+            (WebKit::MomentumEventDispatcher::computeNextDelta):
+            * WebProcess/WebPage/MomentumEventDispatcher.h:
+
 2021-12-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286346. rdar://problem/85928816
