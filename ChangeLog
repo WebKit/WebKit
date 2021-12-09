@@ -1,3 +1,11 @@
+2021-12-09  Lauro Moura  <lmoura@igalia.com>
+
+        Adds Lauro Moura's GitHub username to constributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-11-30  Tyler Wilcock  <tyler_w@apple.com>
 
         Move tyler_w@apple.com to first entry in "emails" key
