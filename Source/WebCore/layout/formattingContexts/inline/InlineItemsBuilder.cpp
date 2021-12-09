@@ -321,20 +321,31 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         if (!hasSeenOpaqueItem)
             return;
         // Opaque items (inline items with no paragraph content) get their bidi level values from their adjacent items.
+        enum class InlineBoxHasContent : bool { No, Yes };
+        Vector<InlineBoxHasContent> inlineBoxContentFlagStack;
+        inlineBoxContentFlagStack.reserveInitialCapacity(inlineItems.size());
         auto lastBidiLevel = rootBidiLevel;
         for (auto index = inlineItems.size(); index--;) {
+            auto& inlineItem = inlineItems[index];
             if (inlineItemOffsets[index]) {
-                lastBidiLevel = inlineItems[index].bidiLevel();
+                lastBidiLevel = inlineItem.bidiLevel();
+                inlineBoxContentFlagStack.fill(InlineBoxHasContent::Yes);
                 continue;
             }
-            if (inlineItems[index].isInlineBoxStart()) {
+            if (inlineItem.isInlineBoxStart()) {
+                ASSERT(!inlineBoxContentFlagStack.isEmpty());
                 // Inline box start (e.g <span>) uses its content bidi level (next inline item).
-                inlineItems[index].setBidiLevel(lastBidiLevel);
+                inlineItems[index].setBidiLevel(inlineBoxContentFlagStack.takeLast() == InlineBoxHasContent::Yes ? InlineItem::opaqueBidiLevel : lastBidiLevel);
                 continue;
             }
-            if (inlineItems[index].isInlineBoxEnd()) {
+            if (inlineItem.isInlineBoxEnd()) {
+                inlineBoxContentFlagStack.append(InlineBoxHasContent::No);
                 // Let's not confuse ubidi with non-content entries. Opaque runs are excluded from the visual list.
-                inlineItems[index].setBidiLevel(InlineItem::opaqueBidiLevel);
+                inlineItem.setBidiLevel(InlineItem::opaqueBidiLevel);
+                continue;
+            }
+            if (inlineItem.isWordBreakOpportunity()) {
+                inlineItem.setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
             ASSERT_NOT_REACHED();
