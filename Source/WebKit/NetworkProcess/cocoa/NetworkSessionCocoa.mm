@@ -1773,6 +1773,16 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
     m_attributedBundleIdentifierFromPageIdentifiers.add(pageID, parameters.attributedBundleIdentifier());
 }
 
+void NetworkSessionCocoa::requestResource(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, CompletionHandler<void(const IPC::DataReference&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&& completionHandler)
+{
+    auto session = sessionWrapperForTask(pageID, request, WebCore::StoredCredentialsPolicy::Use, std::nullopt).session;
+    auto nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *data, NSURLResponse *response, NSError *error) mutable {
+        completionHandler(IPC::DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, WebCore::ResourceResponse { response }, WebCore::ResourceError { error });
+    });
+    [[session dataTaskWithRequest:nsRequest completionHandler:completionBlock.get()] resume];
+}
+
 void NetworkSessionCocoa::removeWebPageNetworkParameters(WebPageProxyIdentifier pageID)
 {
     m_perPageSessionSets.remove(pageID);

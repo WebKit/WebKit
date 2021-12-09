@@ -335,6 +335,14 @@ DownloadProxy& NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& dataSt
     return m_downloadProxyMap->createDownloadProxy(dataStore, processPool, resourceRequest, frameInfo, originatingPage);
 }
 
+void NetworkProcessProxy::requestResource(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::RequestResource(pageID, sessionID, request, IPC::FormDataReference(request.httpBody())), [completionHandler = WTFMove(completionHandler)] (IPC::DataReference&& data, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) mutable {
+        auto buffer = SharedBuffer::create(data.data(), data.size());
+        completionHandler(WTFMove(buffer), WTFMove(response), WTFMove(error));
+    });
+}
+
 void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(WebsiteData)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::NetworkProcess::FetchWebsiteData(sessionID, dataTypes, fetchOptions), WTFMove(completionHandler));

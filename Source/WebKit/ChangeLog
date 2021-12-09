@@ -1,3 +1,34 @@
+2021-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to load a resource in the context of a page
+        https://bugs.webkit.org/show_bug.cgi?id=233908
+
+        Reviewed by Tim Horton.
+
+        This is similar to startDownloadUsingRequest but you don't have to get the data from the disk.
+        This is similar to NSURLSession's dataTaskWithRequest:completionHandler: but using the same session as the page.
+        This is needed because LinkPresentation is currently using _getMainResourceDataWithCompletionHandler after loading
+        in a WKWebView made with _relatedWebView to get the content of a resource, and that's awful and limited to certain mime types.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::requestResource):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::requestResource):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::requestResource):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestResource:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::requestResource):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestResource):
+        * UIProcess/WebPageProxy.h:
+
 2021-12-08  BJ Burg  <bburg@apple.com>
 
         Web Inspector: evaluateScriptForExtension() incorrectly unwraps internal errors, causing an ASSERT

@@ -59,7 +59,7 @@ public:
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
     static String parsePath(const Vector<char>& request);
-
+    static String parseBody(const Vector<char>&);
     static Vector<uint8_t> testPrivateKey();
     static Vector<uint8_t> testCertificate();
 

@@ -344,3 +344,50 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     EXPECT_EQ(webPID1, [webView1 _webProcessIdentifier]);
     EXPECT_EQ(webPID2, [webView2 _webProcessIdentifier]);
 }
+
+TEST(NetworkProcess, LoadResource)
+{
+    using namespace TestWebKitAPI;
+    auto html = "<script>document.cookie='testkey=value'</script>";
+    auto secondResponse = "second response";
+    Vector<char> secondRequest;
+    auto server = HTTPServer([&](const Connection& connection) {
+        connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
+            connection.send(HTTPResponse(html).serialize(), [&, connection] {
+                connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
+                    secondRequest = WTFMove(request);
+                    connection.send(HTTPResponse(secondResponse).serialize());
+                });
+            });
+        });
+    });
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    __block bool done = false;
+    RetainPtr<NSMutableURLRequest> postRequest = adoptNS([server.request() mutableCopy]);
+    [postRequest setMainDocumentURL:postRequest.get().URL];
+    [postRequest setHTTPMethod:@"POST"];
+    auto requestBody = "request body";
+    [postRequest setHTTPBody:[NSData dataWithBytes:requestBody length:strlen(requestBody)]];
+    [webView _requestResource:postRequest.get() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(response.URL.absoluteString, postRequest.get().URL.absoluteString);
+        EXPECT_EQ(data.length, strlen(secondResponse));
+        EXPECT_TRUE(!memcmp(data.bytes, secondResponse, data.length));
+        done = true;
+    }];
+    Util::run(&done);
+    EXPECT_TRUE(strnstr(secondRequest.data(), "Cookie: testkey=value\r\n", secondRequest.size()));
+    EXPECT_WK_STREQ(HTTPServer::parseBody(secondRequest), requestBody);
+
+    done = false;
+    [webView _requestResource:[NSURLRequest requestWithURL:[NSURL URLWithString:@"blob:blank"]] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        EXPECT_EQ(error.code, NSURLErrorUnsupportedURL);
+        EXPECT_NULL(data);
+        EXPECT_NULL(response);
+        done = true;
+    }];
+    Util::run(&done);
+}

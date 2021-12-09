@@ -455,6 +455,7 @@ private:
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
+    void requestResource(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, IPC::FormDataReference&&, CompletionHandler<void(IPC::DataReference, WebCore::ResourceResponse, WebCore::ResourceError)>&&);
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 

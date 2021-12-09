@@ -162,6 +162,7 @@ private:
     void removeWebSocketTask(SessionSet&, WebSocketTask&) final;
 #endif
 
+    void requestResource(WebPageProxyIdentifier, WebCore::ResourceRequest&&, CompletionHandler<void(const IPC::DataReference&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&&) final;
     void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) final;
     void removeWebPageNetworkParameters(WebPageProxyIdentifier) final;
     size_t countNonDefaultSessionSets() const final;
