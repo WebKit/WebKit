@@ -80,6 +80,13 @@ void VideoTrackPrivateRemote::updateConfiguration(TrackPrivateRemoteConfiguratio
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
     m_kind = configuration.videoKind;
+    m_codec = configuration.codec;
+    m_width = configuration.width;
+    m_height = configuration.height;
+    m_colorSpace = configuration.colorSpace;
+    m_framerate = configuration.framerate;
+    m_bitrate = configuration.bitrate;
+
     VideoTrackPrivate::setSelected(configuration.selected);
 }
 

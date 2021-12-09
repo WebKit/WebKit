@@ -1,0 +1,29 @@
+
+RUN(video.src = "../content/test.mp4")
+EVENT(canplay)
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.videoTracks[0].configuration != 'null') OK
+EXPECTED (video.videoTracks[0].configuration.codec == 'avc1.4D400D') OK
+EXPECTED (video.videoTracks[0].configuration.width == '320') OK
+EXPECTED (video.videoTracks[0].configuration.height == '240') OK
+EXPECTED (video.videoTracks[0].configuration.bitrate >= '240000') OK
+EXPECTED (video.videoTracks[0].configuration.framerate >= '30') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace != 'null') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.matrix == 'bt470bg') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.primaries == 'smpte170m') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.transfer == 'bt709') OK
+RUN(video.src = "../content/test-hevc.mp4")
+EVENT(canplay)
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.videoTracks[0].configuration != 'null') OK
+EXPECTED (video.videoTracks[0].configuration.codec == 'hvc1.1.6.L93.B0') OK
+EXPECTED (video.videoTracks[0].configuration.width == '320') OK
+EXPECTED (video.videoTracks[0].configuration.height == '240') OK
+EXPECTED (video.videoTracks[0].configuration.bitrate >= '150000') OK
+EXPECTED (video.videoTracks[0].configuration.framerate >= '30') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace != 'null') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.matrix == 'bt709') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.primaries == 'bt709') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.transfer == 'bt709') OK
+END OF TEST
+

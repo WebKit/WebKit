@@ -1,3 +1,16 @@
+2021-12-08  Jer Noble  <jer.noble@apple.com>
+
+        Add an experimental VideoTrackConfiguration class and accessor on VideoTrack
+        https://bugs.webkit.org/show_bug.cgi?id=230841
+
+        Reviewed by Eric Carlson.
+
+        Drive-by change: add a Vector::reverseFindMatching convenience method.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/Vector.h:
+        (WTF::Malloc>::reverseFindMatching const):
+
 2021-12-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Enable mediaSourceInlinePainting

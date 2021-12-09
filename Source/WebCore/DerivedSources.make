@@ -637,6 +637,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
+	$(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
+	$(WebCore)/Modules/webcodecs/VideoColorSpace.idl \
+	$(WebCore)/Modules/webcodecs/VideoColorSpaceInit.idl \
+	$(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
+	$(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
     $(WebCore)/Modules/webdatabase/DOMWindow+WebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
@@ -1167,6 +1172,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
     $(WebCore)/html/track/AudioTrack.idl \
+    $(WebCore)/html/track/AudioTrackConfiguration.idl \
     $(WebCore)/html/track/AudioTrackList.idl \
     $(WebCore)/html/track/DataCue.idl \
     $(WebCore)/html/track/TextTrack.idl \
@@ -1179,6 +1185,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/track/VTTRegion.idl \
     $(WebCore)/html/track/VTTRegionList.idl \
     $(WebCore)/html/track/VideoTrack.idl \
+	$(WebCore)/html/track/VideoTrackConfiguration.idl \
     $(WebCore)/html/track/VideoTrackList.idl \
     $(WebCore)/mathml/MathMLElement.idl \
     $(WebCore)/mathml/MathMLMathElement.idl \

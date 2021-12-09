@@ -754,7 +754,8 @@ public:
     template<typename U> size_t find(const U&) const;
     template<typename MatchFunction> size_t findMatching(const MatchFunction&) const;
     template<typename U> size_t reverseFind(const U&) const;
-    
+    template<typename MatchFunction> size_t reverseFindMatching(const MatchFunction&) const;
+
     template<typename U> bool appendIfNotContains(const U&);
 
     void shrink(size_t size);
@@ -1012,6 +1013,18 @@ size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseF
     for (size_t i = 1; i <= size(); ++i) {
         const size_t index = size() - i;
         if (at(index) == value)
+            return index;
+    }
+    return notFound;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename MatchFunction>
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFindMatching(const MatchFunction& matches) const
+{
+    for (size_t i = 1; i <= size(); ++i) {
+        const size_t index = size() - i;
+        if (matches(at(index)))
             return index;
     }
     return notFound;

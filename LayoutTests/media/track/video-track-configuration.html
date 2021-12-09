@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>video-track-configuration</title>
+	<script src="../video-test.js"></script>
+	<script>
+		window.addEventListener('load', async event => {
+			findMediaElement();
+			run('video.src = "../content/test.mp4"');
+			await waitFor(video, 'canplay');
+			testExpected('video.videoTracks.length', 1);
+			testExpected('video.videoTracks[0].configuration', null, '!=');
+			testExpected('video.videoTracks[0].configuration.codec', 'avc1.4D400D');
+			testExpected('video.videoTracks[0].configuration.width', 320);
+			testExpected('video.videoTracks[0].configuration.height', 240);
+			testExpected('video.videoTracks[0].configuration.bitrate', 240000, '>=');
+			testExpected('video.videoTracks[0].configuration.framerate', 30, '>=');
+			testExpected('video.videoTracks[0].configuration.colorSpace', null, '!=');
+			testExpected('video.videoTracks[0].configuration.colorSpace.matrix', 'bt470bg');
+			testExpected('video.videoTracks[0].configuration.colorSpace.primaries', 'smpte170m');
+			testExpected('video.videoTracks[0].configuration.colorSpace.transfer', 'bt709');
+			run('video.src = "../content/test-hevc.mp4"');
+			await waitFor(video, 'canplay');
+			testExpected('video.videoTracks.length', 1);
+			testExpected('video.videoTracks[0].configuration', null, '!=');
+			testExpected('video.videoTracks[0].configuration.codec', 'hvc1.1.6.L93.B0');
+			testExpected('video.videoTracks[0].configuration.width', 320);
+			testExpected('video.videoTracks[0].configuration.height', 240);
+			testExpected('video.videoTracks[0].configuration.bitrate', 150000, '>=');
+			testExpected('video.videoTracks[0].configuration.framerate', 30, '>=');
+			testExpected('video.videoTracks[0].configuration.colorSpace', null, '!=');
+			testExpected('video.videoTracks[0].configuration.colorSpace.matrix', 'bt709');
+			testExpected('video.videoTracks[0].configuration.colorSpace.primaries', 'bt709');
+			testExpected('video.videoTracks[0].configuration.colorSpace.transfer', 'bt709');
+			endTest();
+		});
+	</script>
+</head>
+<body>
+	<video controls></video>
+</body>
+</html>

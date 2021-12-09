@@ -1,3 +1,32 @@
+2021-12-08  Jer Noble  <jer.noble@apple.com>
+
+        Add an experimental trackConfiguration accessor on AudioTrack & VideoTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=230841
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::configuration):
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::configuration):
+        (WebKit::RemoteVideoTrackProxy::updateConfiguration):
+        (WebKit::RemoteVideoTrackProxy::selectedChanged):
+        (WebKit::RemoteVideoTrackProxy::idChanged):
+        (WebKit::RemoteVideoTrackProxy::labelChanged):
+        (WebKit::RemoteVideoTrackProxy::languageChanged):
+        (WebKit::RemoteVideoTrackProxy::configurationChanged): Deleted.
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+        * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+        (WebKit::TrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TrackPrivateRemoteConfiguration::decode):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.h:
+
 2021-12-08  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [Filters] Add the encoding and decoding for SVGFilter

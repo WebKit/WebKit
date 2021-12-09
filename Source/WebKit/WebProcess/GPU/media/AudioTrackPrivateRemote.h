@@ -66,6 +66,7 @@ private:
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };
+
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
     TrackPrivateRemoteIdentifier m_idendifier;

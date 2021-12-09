@@ -43,6 +43,10 @@ public:
     int trackIndex() const final;
     std::optional<uint64_t> trackUID() const final;
     std::optional<bool> defaultEnabled() const final;
+    String codec() const final;
+    uint32_t width() const final;
+    uint32_t height() const final;
+    double framerate() const final;
 
 private:
     VideoTrackPrivateWebM(webm::TrackEntry&&);

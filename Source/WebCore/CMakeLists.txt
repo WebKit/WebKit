@@ -65,6 +65,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webauthn"
     "${WEBCORE_DIR}/Modules/webauthn/cbor"
     "${WEBCORE_DIR}/Modules/webauthn/fido"
+    "${WEBCORE_DIR}/Modules/webcodecs"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/webdriver"
     "${WEBCORE_DIR}/Modules/websockets"
@@ -660,6 +661,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/PublicKeyCredentialType.idl
     Modules/webauthn/UserVerificationRequirement.idl
 
+    Modules/webcodecs/VideoColorPrimaries.idl
+    Modules/webcodecs/VideoColorSpace.idl
+    Modules/webcodecs/VideoColorSpaceInit.idl
+    Modules/webcodecs/VideoMatrixCoefficients.idl
+    Modules/webcodecs/VideoTransferCharacteristics.idl
+
     Modules/webdatabase/DOMWindow+WebDatabase.idl
     Modules/webdatabase/Database.idl
     Modules/webdatabase/DatabaseCallback.idl
@@ -1113,6 +1120,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/PredefinedColorSpace.idl
 
     html/track/AudioTrack.idl
+    html/track/AudioTrackConfiguration.idl
     html/track/AudioTrackList.idl
     html/track/DataCue.idl
     html/track/TextTrack.idl
@@ -1125,6 +1133,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/track/VTTRegion.idl
     html/track/VTTRegionList.idl
     html/track/VideoTrack.idl
+    html/track/VideoTrackConfiguration.idl
     html/track/VideoTrackList.idl
 
     inspector/CommandLineAPIHost.idl

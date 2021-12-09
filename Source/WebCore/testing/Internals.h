@@ -1026,7 +1026,9 @@ public:
     bool capsLockIsOn();
         
     using HEVCParameterSet = WebCore::HEVCParameters;
+    using HEVCParameterCodec = WebCore::HEVCParameters::Codec;
     std::optional<HEVCParameterSet> parseHEVCCodecParameters(StringView);
+    String createHEVCCodecParametersString(const HEVCParameterSet& parameters);
 
     struct DoViParameterSet {
         String codecName;
@@ -1034,6 +1036,7 @@ public:
         uint16_t bitstreamLevelID;
     };
     std::optional<DoViParameterSet> parseDoViCodecParameters(StringView);
+    String createDoViCodecParametersString(const DoViParameterSet& parameters);
 
     using VPCodecConfigurationRecord = WebCore::VPCodecConfigurationRecord;
     std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView);

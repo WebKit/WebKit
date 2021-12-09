@@ -81,6 +81,11 @@ void AudioTrackPrivateRemote::updateConfiguration(TrackPrivateRemoteConfiguratio
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
     m_kind = configuration.audioKind;
+    setCodec(WTFMove(configuration.codec));
+    setSampleRate(configuration.sampleRate);
+    setNumberOfChannels(configuration.numberOfChannels);
+    setBitrate(configuration.bitrate);
+    
     AudioTrackPrivate::setEnabled(configuration.enabled);
 }
 

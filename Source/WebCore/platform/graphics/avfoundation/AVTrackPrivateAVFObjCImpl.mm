@@ -28,7 +28,9 @@
 
 #if ENABLE(VIDEO)
 
+#import "FormatDescriptionUtilities.h"
 #import "MediaSelectionGroupAVFObjC.h"
+#import "SharedBuffer.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVMetadataItem.h>
@@ -36,6 +38,7 @@
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 @class AVMediaSelectionOption;
@@ -237,6 +240,97 @@ int AVTrackPrivateAVFObjCImpl::trackID() const
         return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] intValue];
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+static AVAssetTrack* assetTrackFor(const AVTrackPrivateAVFObjCImpl& impl)
+{
+    if (impl.playerItemTrack() && impl.playerItemTrack().assetTrack)
+        return impl.playerItemTrack().assetTrack;
+    if (impl.assetTrack())
+        return impl.assetTrack();
+    if (impl.mediaSelectionOption() && impl.mediaSelectionOption()->assetTrack())
+        return impl.mediaSelectionOption()->assetTrack();
+    return nil;
+}
+
+static CMFormatDescriptionRef formatDescriptionFor(const AVTrackPrivateAVFObjCImpl& impl)
+{
+    auto assetTrack = assetTrackFor(impl);
+    if (!assetTrack || !assetTrack.formatDescriptions.count)
+        return nullptr;
+    return static_cast<CMFormatDescriptionRef>(assetTrack.formatDescriptions[0]);
+}
+
+String AVTrackPrivateAVFObjCImpl::codec() const
+{
+    return codecFromFormatDescription(formatDescriptionFor(*this));
+}
+
+uint32_t AVTrackPrivateAVFObjCImpl::width() const
+{
+    if (auto assetTrack = assetTrackFor(*this))
+        return assetTrack.naturalSize.width;
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+uint32_t AVTrackPrivateAVFObjCImpl::height() const
+{
+    if (auto assetTrack = assetTrackFor(*this))
+        return assetTrack.naturalSize.height;
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+PlatformVideoColorSpace AVTrackPrivateAVFObjCImpl::colorSpace() const
+{
+    if (auto colorSpace = colorSpaceFromFormatDescription(formatDescriptionFor(*this)))
+        return *colorSpace;
+    return { };
+}
+
+double AVTrackPrivateAVFObjCImpl::framerate() const
+{
+    if (auto assetTrack = assetTrackFor(*this))
+        return assetTrack.nominalFrameRate;
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+uint32_t AVTrackPrivateAVFObjCImpl::sampleRate() const
+{
+    auto formatDescription = formatDescriptionFor(*this);
+    if (!formatDescription)
+        return 0;
+
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+    if (!asbd)
+        return 0;
+
+    return asbd->mSampleRate;
+}
+
+uint32_t AVTrackPrivateAVFObjCImpl::numberOfChannels() const
+{
+    auto formatDescription = formatDescriptionFor(*this);
+    if (!formatDescription)
+        return 0;
+
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+    if (!asbd)
+        return 0;
+
+    return asbd->mChannelsPerFrame;
+}
+
+uint64_t AVTrackPrivateAVFObjCImpl::bitrate() const
+{
+    auto assetTrack = assetTrackFor(*this);
+    if (!assetTrack)
+        return 0;
+    if (!std::isfinite(assetTrack.estimatedDataRate))
+        return 0;
+    return assetTrack.estimatedDataRate;
 }
 
 }

@@ -55,6 +55,11 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
     setId(m_impl->id());
     setLabel(m_impl->label());
     setLanguage(m_impl->language());
+    setCodec(m_impl->codec());
+    setSampleRate(m_impl->sampleRate());
+    setNumberOfChannels(m_impl->numberOfChannels());
+    setBitrate(m_impl->bitrate());
+
 }
 
 void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)

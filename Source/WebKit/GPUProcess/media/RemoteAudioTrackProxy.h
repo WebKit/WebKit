@@ -76,7 +76,7 @@ private:
     void languageChanged(const AtomString&) final;
     void willRemove() final;
 
-    TrackPrivateRemoteConfiguration& configuration();
+    TrackPrivateRemoteConfiguration configuration();
     void configurationChanged();
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
