@@ -1,5 +1,16 @@
 2021-12-08  Alan Bujtas  <zalan@apple.com>
 
+        Add layout performance test for simple bidi content with inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=234062
+
+        Unreviewed.
+
+        This is in preparation for enabling IFC bidi handling.
+
+        * Layout/line-layout-simple-bidi-with-inline-boxes.html: Added.
+
+2021-12-08  Alan Bujtas  <zalan@apple.com>
+
         Add layout performance test for bidi content with direction override inside inline boxes
         https://bugs.webkit.org/show_bug.cgi?id=234064
 
