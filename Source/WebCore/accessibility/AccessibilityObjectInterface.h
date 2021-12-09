@@ -1682,8 +1682,8 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 inline bool AXCoreObject::isDescendantOfObject(const AXCoreObject* axObject) const
 {
     return axObject && Accessibility::findAncestor<AXCoreObject>(*this, false, [axObject] (const AXCoreObject& object) {
-            return &object == axObject;
-        }) != nullptr;
+        return &object == axObject;
+    }) != nullptr;
 }
 
 inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject* axObject) const

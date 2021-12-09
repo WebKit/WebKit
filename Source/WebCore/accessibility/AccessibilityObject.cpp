@@ -533,7 +533,7 @@ bool AccessibilityObject::isDescendantOfRole(AccessibilityRole role) const
     }) != nullptr;
 }
 
-static void appendAccessibilityObject(AXCoreObject* object, AccessibilityObject::AccessibilityChildrenVector& results)
+static void appendAccessibilityObject(RefPtr<AXCoreObject> object, AccessibilityObject::AccessibilityChildrenVector& results)
 {
     // Find the next descendant of this attachment object so search can continue through frames.
     if (object->isAttachment()) {
@@ -3907,7 +3907,7 @@ String roleToPlatformString(AccessibilityRole role)
 
 // This function determines if the given `axObject` is a radio button part of a different ad-hoc radio group
 // than `referenceObject`, where ad-hoc radio group membership is determined by comparing `name` attributes.
-static bool isRadioButtonInDifferentAdhocGroup(AXCoreObject* axObject, AXCoreObject* referenceObject)
+static bool isRadioButtonInDifferentAdhocGroup(RefPtr<AXCoreObject> axObject, AXCoreObject* referenceObject)
 {
     if (!axObject || !axObject->isRadioButton())
         return false;
@@ -3920,7 +3920,7 @@ static bool isRadioButtonInDifferentAdhocGroup(AXCoreObject* axObject, AXCoreObj
     return axObject->attributeValue("name") != referenceObject->attributeValue("name");
 }
 
-static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, AccessibilitySearchCriteria const& criteria, size_t index)
+static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObject, AccessibilitySearchCriteria const& criteria, size_t index)
 {
     switch (criteria.searchKeys[index]) {
     case AccessibilitySearchKey::AnyType:
@@ -4028,7 +4028,7 @@ static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, Acce
     }
 }
 
-static bool isAccessibilityObjectSearchMatch(AXCoreObject* axObject, AccessibilitySearchCriteria const& criteria)
+static bool isAccessibilityObjectSearchMatch(RefPtr<AXCoreObject> axObject, AccessibilitySearchCriteria const& criteria)
 {
     if (!axObject)
         return false;
@@ -4044,7 +4044,7 @@ static bool isAccessibilityObjectSearchMatch(AXCoreObject* axObject, Accessibili
     return false;
 }
 
-static bool isAccessibilityTextSearchMatch(AXCoreObject* axObject, AccessibilitySearchCriteria const& criteria)
+static bool isAccessibilityTextSearchMatch(RefPtr<AXCoreObject> axObject, AccessibilitySearchCriteria const& criteria)
 {
     if (!axObject)
         return false;
@@ -4058,7 +4058,7 @@ static bool isAccessibilityTextSearchMatch(AXCoreObject* axObject, Accessibility
         || containsPlainText(axObject->stringValue(), criteria.searchText, CaseInsensitive);
 }
 
-static bool objectMatchesSearchCriteriaWithResultLimit(AXCoreObject* object, AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
+static bool objectMatchesSearchCriteriaWithResultLimit(RefPtr<AXCoreObject> object, AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
 {
     if (isAccessibilityObjectSearchMatch(object, criteria) && isAccessibilityTextSearchMatch(object, criteria)) {
         results.append(object);
@@ -4071,7 +4071,7 @@ static bool objectMatchesSearchCriteriaWithResultLimit(AXCoreObject* object, Acc
     return false;
 }
 
-static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreObject* startObject, AccessibilityObject::AccessibilityChildrenVector& results)
+static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, RefPtr<AXCoreObject> startObject, AccessibilityObject::AccessibilityChildrenVector& results)
 {
     // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
@@ -4083,8 +4083,8 @@ static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreOb
     size_t endIndex = isForward ? 0 : childrenSize;
 
     // If the startObject is ignored, we should use an accessible sibling as a start element instead.
-    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object)) {
-        AXCoreObject* parentObject = startObject->parentObject();
+    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object.get())) {
+        RefPtr<AXCoreObject> parentObject = startObject->parentObject();
         // Go up the parent chain to find the highest ancestor that's also being ignored.
         while (parentObject && parentObject->accessibilityIsIgnored()) {
             if (parentObject == object)
@@ -4109,10 +4109,10 @@ static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreOb
     // This is broken into two statements so that it's easier read.
     if (isForward) {
         for (size_t i = startIndex; i > endIndex; i--)
-            appendAccessibilityObject(searchChildren.at(i - 1).get(), results);
+            appendAccessibilityObject(searchChildren.at(i - 1), results);
     } else {
         for (size_t i = startIndex; i < endIndex; i++)
-            appendAccessibilityObject(searchChildren.at(i).get(), results);
+            appendAccessibilityObject(searchChildren.at(i), results);
     }
 }
 
@@ -4125,7 +4125,7 @@ void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObje
     // It does this by stepping up the parent chain and at each level doing a DFS.
 
     // If there's no start object, it means we want to search everything.
-    AXCoreObject* startObject = criteria.startObject;
+    RefPtr<AXCoreObject> startObject = criteria.startObject;
     if (!startObject)
         startObject = criteria.anchorObject;
 
@@ -4134,7 +4134,7 @@ void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObje
     // The first iteration of the outer loop will examine the children of the start object for matches. However, when
     // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
     // exception when no start object was specified because we want to search everything regardless of search direction.
-    AXCoreObject* previousObject = nullptr;
+    RefPtr<AXCoreObject> previousObject;
     if (!isForward && startObject != criteria.anchorObject) {
         previousObject = startObject;
         startObject = startObject->parentObjectUnignored();
@@ -4150,7 +4150,7 @@ void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObje
 
         // This now does a DFS at the current level of the parent.
         while (!searchStack.isEmpty()) {
-            AXCoreObject* searchObject = searchStack.last().get();
+            auto searchObject = searchStack.last();
             searchStack.removeLast();
 
             if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
