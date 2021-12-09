@@ -460,7 +460,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForChildNode(const Display
 
 void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
 {
-    ASSERT(lineContent.visualOrderList.size() == lineContent.runs.size());
+    ASSERT(lineContent.visualOrderList.size() <= lineContent.runs.size());
 
     AncestorStack ancestorStack;
     DisplayBoxNode rootDisplayBoxNode = { };
@@ -479,12 +479,13 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
         auto contentRightInVisualOrder = contentStartInVisualOrder;
         auto& runs = lineContent.runs;
-        for (size_t i = 0; i < runs.size(); ++i) {
-            auto visualIndex = lineContent.visualOrderList[i];
-            auto& lineRun = runs[visualIndex];
+        for (auto visualOrder : lineContent.visualOrderList) {
+            ASSERT(runs[visualOrder].bidiLevel() != InlineItem::opaqueBidiLevel);
+
+            auto& lineRun = runs[visualOrder];
             auto& layoutBox = lineRun.layoutBox();
 
-            auto needsDisplayBox = !lineRun.isInlineBoxEnd() && !lineRun.isWordBreakOpportunity();
+            auto needsDisplayBox = !lineRun.isWordBreakOpportunity();
             if (!needsDisplayBox)
                 continue;
 

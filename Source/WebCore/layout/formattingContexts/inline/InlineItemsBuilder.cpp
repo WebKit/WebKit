@@ -333,15 +333,8 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
                 continue;
             }
             if (inlineItems[index].isInlineBoxEnd()) {
-                // Inline box end (e.g. </span>) also uses the content bidi level, but in this case it's the previous content.
-                auto previousBidiLevel = [&]() -> std::optional<UBiDiLevel> {
-                    for (auto i = index; i--;) {
-                        if (inlineItemOffsets[i])
-                            return inlineItems[i].bidiLevel();
-                    }
-                    return { };
-                }();
-                inlineItems[index].setBidiLevel(previousBidiLevel.value_or(rootBidiLevel));
+                // Let's not confuse ubidi with non-content entries. Opaque runs are excluded from the visual list.
+                inlineItems[index].setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
             ASSERT_NOT_REACHED();

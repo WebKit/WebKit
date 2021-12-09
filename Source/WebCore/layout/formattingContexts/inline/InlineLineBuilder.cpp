@@ -300,13 +300,29 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         if (!m_line.contentNeedsBidiReordering())
             return { };
 
-        Vector<UBiDiLevel> runLevels(lineRuns.size());
-        // FIXME: We may cache these values in Line, if it turns out to be a perf hit.
-        for (size_t i = 0; i < lineRuns.size(); ++i)
-            runLevels[i] = lineRuns[i].bidiLevel();
+        Vector<UBiDiLevel> runLevels;
+        runLevels.reserveInitialCapacity(lineRuns.size());
 
-        Vector<int32_t> visualOrderList(lineRuns.size());
+        Vector<size_t> runIndexOffsetMap;
+        runIndexOffsetMap.reserveInitialCapacity(lineRuns.size());
+        auto hasOpaqueRun = false;
+        for (size_t i = 0, accumulatedOffset = 0; i < lineRuns.size(); ++i) {
+            if (lineRuns[i].bidiLevel() == InlineItem::opaqueBidiLevel) {
+                ++accumulatedOffset;
+                hasOpaqueRun = true;
+                continue;
+            }
+            runLevels.append(lineRuns[i].bidiLevel());
+            runIndexOffsetMap.append(accumulatedOffset);
+        }
+
+        Vector<int32_t> visualOrderList(runLevels.size());
         ubidi_reorderVisual(runLevels.data(), runLevels.size(), visualOrderList.data());
+        if (hasOpaqueRun) {
+            ASSERT(visualOrderList.size() == runIndexOffsetMap.size());
+            for (size_t i = 0; i < runIndexOffsetMap.size(); ++i)
+                visualOrderList[i] += runIndexOffsetMap[visualOrderList[i]];
+        }
         return visualOrderList;
     };
 

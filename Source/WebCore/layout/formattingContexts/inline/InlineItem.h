@@ -51,6 +51,7 @@ public:
     InlineItem(const Box& layoutBox, Type, UBiDiLevel = UBIDI_DEFAULT_LTR);
 
     Type type() const { return m_type; }
+    static constexpr UBiDiLevel opaqueBidiLevel = 0xff;
     UBiDiLevel bidiLevel() const { return m_bidiLevel; }
     const Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }
