@@ -47,6 +47,8 @@ public:
 private:
     FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 
+    unsigned numberOfEffectInputs() const override { return 0; }
+
     // FEImage results are always in DestinationColorSpace::SRGB()
     void setOperatingColorSpace(const DestinationColorSpace&) override { }
 

@@ -117,20 +117,51 @@ RefPtr<FilterEffect> SVGFilter::lastEffect() const
     return m_expression.last().effect.ptr();
 }
 
-bool SVGFilter::apply(const Filter& filter, const std::optional<FilterEffectGeometry>&)
+RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage)
 {
-    setSourceImage({ filter.sourceImage() });
-    return apply();
+    return apply(&sourceImage);
 }
 
-RefPtr<FilterImage> SVGFilter::apply()
+RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage)
 {
     ASSERT(!m_expression.isEmpty());
+
+    FilterImageVector stack;
+
     for (auto& term : m_expression) {
-        if (!term.effect->apply(*this, term.geometry))
+        auto& effect = term.effect;
+        auto geometry = term.geometry;
+
+        if (effect->filterType() == FilterEffect::Type::SourceGraphic) {
+            if (auto result = effect->filterImage()) {
+                stack.append(result.releaseNonNull());
+                continue;
+            }
+
+            if (!sourceImage)
+                return nullptr;
+
+            // Add sourceImage as an input to the SourceGraphic.
+            stack.append(Ref { *sourceImage });
+        }
+
+        // Need to remove the inputs here in case the effect already has a result.
+        auto inputs = effect->takeImageInputs(stack);
+
+        if (auto result = effect->filterImage()) {
+            stack.append(result.releaseNonNull());
+            continue;
+        }
+
+        auto result = term.effect->apply(*this, inputs, geometry);
+        if (!result)
             return nullptr;
+
+        stack.append(result.releaseNonNull());
     }
-    return lastEffect()->filterImage();
+    
+    ASSERT(stack.size() == 1);
+    return stack.takeLast();
 }
 
 IntOutsets SVGFilter::outsets() const

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "FilterEffectGeometry.h"
+#include "FilterImage.h"
+#include "FilterImageVector.h"
 #include "FloatRect.h"
 #include "IntRectExtent.h"
 #include <wtf/RefCounted.h>
@@ -94,7 +96,7 @@ public:
     virtual bool supportsCoreImageRendering() const { return false; }
 #endif
 
-    virtual bool apply(const Filter&, const std::optional<FilterEffectGeometry>& = std::nullopt) { return false; }
+    virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&) { return nullptr; }
     virtual IntOutsets outsets() const { return { }; }
     virtual void clearResult() { }
 

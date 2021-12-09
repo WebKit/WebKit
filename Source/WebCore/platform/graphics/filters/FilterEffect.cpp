@@ -33,12 +33,20 @@
 
 namespace WebCore {
 
-FloatRect FilterEffect::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
+FilterImageVector FilterEffect::takeImageInputs(FilterImageVector& stack) const
 {
-    FloatRect imageRect;
-    for (auto& input : inputs)
-        imageRect.unite(input->imageRect());
-    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
+    unsigned inputsSize = numberOfImageInputs();
+    ASSERT(stack.size() >= inputsSize);
+    if (!inputsSize)
+        return { };
+
+    Vector<Ref<FilterImage>> inputs;
+    inputs.reserveInitialCapacity(inputsSize);
+
+    for (; inputsSize; --inputsSize)
+        inputs.uncheckedAppend(stack.takeLast());
+
+    return inputs;
 }
 
 FloatRect FilterEffect::calculatePrimitiveSubregion(const Filter& filter, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>& geometry) const
@@ -68,50 +76,59 @@ FloatRect FilterEffect::calculatePrimitiveSubregion(const Filter& filter, const 
     return primitiveSubregion;
 }
 
-FilterEffect* FilterEffect::inputEffect(unsigned number) const
+FloatRect FilterEffect::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(number < m_inputEffects.size());
-    return m_inputEffects.at(number).get();
+    FloatRect imageRect;
+    for (auto& input : inputs)
+        imageRect.unite(input->imageRect());
+    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-bool FilterEffect::apply(const Filter& filter, const std::optional<FilterEffectGeometry>& geometry)
+void FilterEffect::transformInputsColorSpace(const FilterImageVector& inputs) const
 {
-    if (hasResult())
-        return true;
+    for (auto& input : inputs)
+        input->transformToColorSpace(operatingColorSpace());
+}
 
-    unsigned size = m_inputEffects.size();
-    for (unsigned i = 0; i < size; ++i) {
-        FilterEffect* in = m_inputEffects.at(i).get();
+void FilterEffect::correctPremultipliedInputs(const FilterImageVector& inputs) const
+{
+    // Correct any invalid pixels, if necessary, in the result of a filter operation.
+    // This method is used to ensure valid pixel values on filter inputs and the final result.
+    // Only the arithmetic composite filter ever needs to perform correction.
+    for (auto& input : inputs)
+        input->correctPremultipliedPixelBuffer();
+}
 
-        // Convert input results to the current effect's color space.
-        ASSERT(in->hasResult());
-        transformResultColorSpace(in, i);
-    }
+RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, FilterImage& input)
+{
+    return apply(filter, FilterImageVector { Ref { input } });
+}
 
-    if (!mayProduceInvalidPremultipliedPixels()) {
-        for (auto& in : m_inputEffects)
-            in->correctPremultipliedResultIfNeeded();
-    }
+RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>& geometry)
+{
+    ASSERT(inputs.size() == numberOfImageInputs());
 
-    auto inputFilterImages = this->inputFilterImages();
+    if (m_filterImage)
+        return m_filterImage;
 
-    auto primitiveSubregion = calculatePrimitiveSubregion(filter, inputFilterImages, geometry);
-    auto imageRect = calculateImageRect(filter, inputFilterImages, primitiveSubregion);
+    auto primitiveSubregion = calculatePrimitiveSubregion(filter, inputs, geometry);
+    auto imageRect = calculateImageRect(filter, inputs, primitiveSubregion);
     auto absoluteImageRect = enclosingIntRect(filter.scaledByFilterScale(imageRect));
 
     if (absoluteImageRect.isEmpty() || ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()))
-        return false;
+        return nullptr;
     
-    auto isAlphaImage = resultIsAlphaImage(inputFilterImages);
-    auto imageColorSpace = resultColorSpace(inputFilterImages);
-
-    m_filterImage = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, filter.renderingMode(), imageColorSpace);
-    if (!m_filterImage)
-        return false;
+    auto isAlphaImage = resultIsAlphaImage(inputs);
+    auto isValidPremultiplied = resultIsValidPremultiplied();
+    auto imageColorSpace = resultColorSpace(inputs);
 
     auto applier = createApplier(filter);
     if (!applier)
-        return false;
+        return nullptr;
+
+    m_filterImage = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace);
+    if (!m_filterImage)
+        return nullptr;
 
     LOG_WITH_STREAM(Filters, stream
         << "FilterEffect " << filterName() << " " << this << " apply():"
@@ -120,7 +137,20 @@ bool FilterEffect::apply(const Filter& filter, const std::optional<FilterEffectG
         << "\n  maxEffectRect " << filter.maxEffectRect(primitiveSubregion)
         << "\n  filter scale " << filter.filterScale());
 
-    return applier->apply(filter, inputFilterImages, *m_filterImage);
+    transformInputsColorSpace(inputs);
+    if (isValidPremultiplied)
+        correctPremultipliedInputs(inputs);
+
+    if (!applier->apply(filter, inputs, *m_filterImage))
+        m_filterImage = nullptr;
+
+    return m_filterImage;
+}
+
+FilterEffect* FilterEffect::inputEffect(unsigned number) const
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(number < m_inputEffects.size());
+    return m_inputEffects.at(number).get();
 }
 
 void FilterEffect::clearResult()
@@ -135,30 +165,6 @@ void FilterEffect::clearResultsRecursive()
     clearResult();
     for (auto& effect : m_inputEffects)
         effect->clearResultsRecursive();
-}
-
-FilterImageVector FilterEffect::inputFilterImages() const
-{
-    FilterImageVector filterImages;
-
-    for (auto& inputEffect : m_inputEffects)
-        filterImages.append(*inputEffect->filterImage());
-
-    return filterImages;
-}
-
-void FilterEffect::correctPremultipliedResultIfNeeded()
-{
-    if (!hasResult() || !mayProduceInvalidPremultipliedPixels())
-        return;
-    m_filterImage->correctPremultipliedPixelBuffer();
-}
-
-void FilterEffect::transformResultColorSpace(const DestinationColorSpace& destinationColorSpace)
-{
-    if (!hasResult())
-        return;
-    m_filterImage->transformToColorSpace(destinationColorSpace);
 }
 
 TextStream& FilterEffect::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

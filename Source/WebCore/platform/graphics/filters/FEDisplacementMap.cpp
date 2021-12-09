@@ -68,6 +68,11 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
+FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+{
+    return filter.maxEffectRect(primitiveSubregion);
+}
+
 const DestinationColorSpace& FEDisplacementMap::resultColorSpace(const FilterImageVector& inputs) const
 {
     // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image
@@ -77,16 +82,11 @@ const DestinationColorSpace& FEDisplacementMap::resultColorSpace(const FilterIma
     return inputs[0]->colorSpace();
 }
 
-void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int index)
+void FEDisplacementMap::transformInputsColorSpace(const FilterImageVector& inputs) const
 {
     // Do not transform the first primitive input, as per the spec.
-    if (index)
-        in->transformResultColorSpace(operatingColorSpace());
-}
-
-FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
-{
-    return filter.maxEffectRect(primitiveSubregion);
+    ASSERT(inputs.size() == 2);
+    inputs[1]->transformToColorSpace(operatingColorSpace());
 }
 
 std::unique_ptr<FilterEffectApplier> FEDisplacementMap::createApplier(const Filter&) const

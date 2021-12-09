@@ -41,6 +41,8 @@ public:
 private:
     FEBlend(BlendMode);
 
+    unsigned numberOfEffectInputs() const override { return 2; }
+    
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 
     void platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,

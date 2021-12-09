@@ -368,15 +368,20 @@ void CSSFilter::clearIntermediateResults()
         function->clearResult();
 }
 
-RefPtr<FilterImage> CSSFilter::apply()
+RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage)
 {
+    if (!sourceImage)
+        return nullptr;
+    
+    RefPtr<FilterImage> result = sourceImage;
+
     for (auto& function : m_functions) {
-        if (function->isSVGFilter())
-            downcast<SVGFilter>(function.ptr())->setSourceImageRect(sourceImageRect());
-        if (!function->apply(*this))
+        result = function->apply(*this, *result);
+        if (!result)
             return nullptr;
     }
-    return lastEffect()->filterImage();
+
+    return result;
 }
 
 void CSSFilter::setFilterRegion(const FloatRect& filterRegion)

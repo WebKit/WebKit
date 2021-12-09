@@ -30,6 +30,8 @@ class FEMerge : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs);
 
+    unsigned numberOfEffectInputs() const override { return m_numberOfEffectInputs; }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<Ref<FEMerge>> decode(Decoder&);
 

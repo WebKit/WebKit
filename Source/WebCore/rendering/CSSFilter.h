@@ -56,7 +56,7 @@ public:
     IntOutsets outsets() const final;
 
     void clearIntermediateResults();
-    RefPtr<FilterImage> apply() final;
+    RefPtr<FilterImage> apply(FilterImage* sourceImage) final;
 
 private:
     CSSFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);

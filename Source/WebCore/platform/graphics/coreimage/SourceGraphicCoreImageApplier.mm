@@ -28,15 +28,16 @@
 
 #if USE(CORE_IMAGE)
 
-#import "Filter.h"
 #import "FilterImage.h"
 #import "PlatformImageBuffer.h"
 
 namespace WebCore {
 
-bool SourceGraphicCoreImageApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result) const
+bool SourceGraphicCoreImageApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
-    auto sourceImage = filter.sourceImage();
+    auto& input = inputs[0].get();
+
+    auto sourceImage = input.imageBuffer();
     if (!sourceImage)
         return false;
 

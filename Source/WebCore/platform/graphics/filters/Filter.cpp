@@ -83,13 +83,20 @@ bool Filter::clampFilterRegionIfNeeded()
 
 RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect)
 {
-    setSourceImage(sourceImage);
-    setSourceImageRect(sourceImageRect);
+    RefPtr<FilterImage> input;
 
-    auto result = apply();
+    if (sourceImage) {
+        auto absoluteSourceImageRect = enclosingIntRect(scaledByFilterScale(sourceImageRect));
+        input = FilterImage::create(m_filterRegion, sourceImageRect, absoluteSourceImageRect, Ref { *sourceImage });
+        if (!input)
+            return nullptr;
+    }
+
+    auto result = apply(input.get());
     if (!result)
-        return { };
+        return nullptr;
 
+    result->correctPremultipliedPixelBuffer();
     result->transformToColorSpace(DestinationColorSpace::SRGB());
     return result;
 }

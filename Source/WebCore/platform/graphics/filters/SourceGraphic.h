@@ -38,7 +38,7 @@ private:
     bool supportsCoreImageRendering() const override { return true; }
 #endif
 
-    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
+    unsigned numberOfEffectInputs() const override { return 0; }
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 

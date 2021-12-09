@@ -34,6 +34,9 @@
 
 namespace WebCore {
 
+static constexpr unsigned maxTotalNumberFilterEffects = 100;
+static constexpr unsigned maxCountChildNodes = 200;
+
 void SVGFilterBuilder::setupBuiltinEffects(Ref<FilterEffect> sourceGraphic)
 {
     m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic.ptr());
@@ -76,28 +79,8 @@ static ColorInterpolation colorInterpolationForElement(SVGElement& element)
 }
 #endif
 
-static unsigned collectEffects(const FilterEffect* effect, HashSet<const FilterEffect*>& allEffects)
-{
-    allEffects.add(effect);
-    unsigned size = effect->numberOfEffectInputs();
-    for (unsigned i = 0; i < size; ++i) {
-        FilterEffect* in = effect->inputEffect(i);
-        collectEffects(in, allEffects);
-    }
-    return allEffects.size();
-}
-
-static unsigned totalNumberFilterEffects(const FilterEffect& lastEffect)
-{
-    HashSet<const FilterEffect*> allEffects;
-    return collectEffects(&lastEffect, allEffects);
-}
-
 RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filterElement)
 {
-    static constexpr unsigned maxCountChildNodes = 200;
-    static constexpr unsigned maxTotalNumberFilterEffects = 100;
-
     if (filterElement.countChildNodes() > maxCountChildNodes)
         return nullptr;
 
@@ -124,10 +107,8 @@ RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filt
         add(effectElement.result(), effect);
     }
 
-    if (!effect || totalNumberFilterEffects(*effect) > maxTotalNumberFilterEffects) {
+    if (!effect)
         clearEffects();
-        return nullptr;
-    }
 
     return effect;
 }
@@ -238,6 +219,9 @@ bool SVGFilterBuilder::buildExpression(SVGFilterExpression& expression) const
 
     FilterEffectVector stack;
     if (!buildEffectExpression(m_lastEffect, stack, 0, expression))
+        return false;
+
+    if (expression.size() > maxTotalNumberFilterEffects)
         return false;
 
     expression.reverse();

@@ -48,11 +48,6 @@ SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)
     inputEffects().append(&sourceEffect);
 }
 
-FloatRect SourceAlpha::calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect&) const
-{
-    return inputs[0]->imageRect();
-}
-
 std::unique_ptr<FilterEffectApplier> SourceAlpha::createApplier(const Filter&) const
 {
     return FilterEffectApplier::create<SourceAlphaSoftwareApplier>(*this);

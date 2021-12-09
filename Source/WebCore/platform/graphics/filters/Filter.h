@@ -44,14 +44,8 @@ public:
     FloatSize filterScale() const { return m_filterScale; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
 
-    FloatRect sourceImageRect() const { return m_sourceImageRect; }
-    void setSourceImageRect(const FloatRect& sourceImageRect) { m_sourceImageRect = sourceImageRect; }
-
     FloatRect filterRegion() const { return m_filterRegion; }
     void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
-
-    ImageBuffer* sourceImage() const { return m_sourceImage.get(); }
-    void setSourceImage(RefPtr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
     ClipOperation clipOperation() const { return m_clipOperation; }
     void setClipOperation(ClipOperation clipOperation) { m_clipOperation = clipOperation; }
@@ -68,8 +62,8 @@ public:
     virtual RefPtr<FilterEffect> lastEffect() const = 0;
 
     bool clampFilterRegionIfNeeded();
-    
-    virtual RefPtr<FilterImage> apply() = 0;
+
+    virtual RefPtr<FilterImage> apply(FilterImage* sourceImage) = 0;
     WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect);
 
 protected:
@@ -81,10 +75,6 @@ private:
     FloatSize m_filterScale;
     ClipOperation m_clipOperation;
     FloatRect m_filterRegion;
-
-    // FIXME: these should not be members of Filter. They should be passed to Filter::apply().
-    FloatRect m_sourceImageRect;
-    RefPtr<ImageBuffer> m_sourceImage;
 };
 
 } // namespace WebCore

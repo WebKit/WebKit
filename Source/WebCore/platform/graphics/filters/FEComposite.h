@@ -63,9 +63,11 @@ public:
 private:
     FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4);
 
+    unsigned numberOfEffectInputs() const override { return 2; }
+
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    bool mayProduceInvalidPremultipliedPixels() const override { return m_type == FECOMPOSITE_OPERATOR_ARITHMETIC; }
+    bool resultIsValidPremultiplied() const override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 

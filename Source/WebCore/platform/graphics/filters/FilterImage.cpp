@@ -38,19 +38,35 @@
 
 namespace WebCore {
 
-RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()));
-    return adoptRef(new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, renderingMode, colorSpace));
+    return adoptRef(new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, renderingMode, colorSpace));
 }
 
-FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer)
+{
+    return adoptRef(*new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, WTFMove(imageBuffer)));
+}
+
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
     : m_primitiveSubregion(primitiveSubregion)
     , m_imageRect(imageRect)
     , m_absoluteImageRect(absoluteImageRect)
     , m_isAlphaImage(isAlphaImage)
+    , m_isValidPremultiplied(isValidPremultiplied)
     , m_renderingMode(renderingMode)
     , m_colorSpace(colorSpace)
+{
+}
+
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer)
+    : m_primitiveSubregion(primitiveSubregion)
+    , m_imageRect(imageRect)
+    , m_absoluteImageRect(absoluteImageRect)
+    , m_renderingMode(imageBuffer->renderingMode())
+    , m_colorSpace(imageBuffer->colorSpace())
+    , m_imageBuffer(WTFMove(imageBuffer))
 {
 }
 
@@ -281,7 +297,7 @@ void FilterImage::copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const Int
 void FilterImage::correctPremultipliedPixelBuffer()
 {
     // Must operate on pre-multiplied results; other formats cannot have invalid pixels.
-    if (!m_premultipliedPixelBuffer)
+    if (!m_premultipliedPixelBuffer || m_isValidPremultiplied)
         return;
 
     Uint8ClampedArray& imageArray = m_premultipliedPixelBuffer->data();

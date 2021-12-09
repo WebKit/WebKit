@@ -40,20 +40,20 @@ class FilterEffectApplier;
 class FilterEffectGeometry;
 
 class FilterEffect : public FilterFunction {
+    using FilterFunction::apply;
+
 public:
     void clearResult() override;
     void clearResultsRecursive();
     bool hasResult() const { return m_filterImage; }
 
-    FilterImage* filterImage() const { return m_filterImage.get(); }
+    RefPtr<FilterImage> filterImage() const { return m_filterImage; }
+    FilterImageVector takeImageInputs(FilterImageVector& stack) const;
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
-    unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
 
-    void transformResultColorSpace(const DestinationColorSpace&);
-
-    bool apply(const Filter&, const std::optional<FilterEffectGeometry>& = std::nullopt) override;
+    RefPtr<FilterImage> apply(const Filter&, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>& = std::nullopt);
 
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
@@ -63,28 +63,27 @@ public:
 protected:
     using FilterFunction::FilterFunction;
 
-    virtual bool mayProduceInvalidPremultipliedPixels() const { return false; }
+    virtual unsigned numberOfEffectInputs() const { return 1; }
+    unsigned numberOfImageInputs() const { return filterType() == FilterEffect::Type::SourceGraphic ? 1 : numberOfEffectInputs(); }
 
-    void correctPremultipliedResultIfNeeded();
-
-    // Correct any invalid pixels, if necessary, in the result of a filter operation.
-    // This method is used to ensure valid pixel values on filter inputs and the final result.
-    // Only the arithmetic composite filter ever needs to perform correction.
-    virtual void correctFilterResultIfNeeded() { }
-
-    virtual void transformResultColorSpace(FilterEffect* in, const int) { in->transformResultColorSpace(m_operatingColorSpace); }
-
-    FilterImageVector inputFilterImages() const;
-    
-    FloatRect calculatePrimitiveSubregion(const Filter&, const FilterImageVector&, const std::optional<FilterEffectGeometry>&) const;
+    FloatRect calculatePrimitiveSubregion(const Filter&, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>&) const;
 
     virtual FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const;
 
     // Solid black image with different alpha values.
     virtual bool resultIsAlphaImage(const FilterImageVector&) const { return false; }
+
+    virtual bool resultIsValidPremultiplied() const { return true; }
+
     virtual const DestinationColorSpace& resultColorSpace(const FilterImageVector&) const { return m_operatingColorSpace; }
 
+    virtual void transformInputsColorSpace(const FilterImageVector& inputs) const;
+    
+    void correctPremultipliedInputs(const FilterImageVector& inputs) const;
+
     virtual std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const = 0;
+
+    RefPtr<FilterImage> apply(const Filter&, FilterImage& input) override;
 
     FilterEffectVector m_inputEffects;
 

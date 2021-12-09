@@ -41,11 +41,6 @@ SourceGraphic::SourceGraphic()
 {
 }
 
-FloatRect SourceGraphic::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect&) const
-{
-    return filter.sourceImageRect();
-}
-
 std::unique_ptr<FilterEffectApplier> SourceGraphic::createApplier(const Filter& filter) const
 {
 #if USE(CORE_IMAGE)

@@ -45,7 +45,8 @@ class ImageBuffer;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&);
 
     // The return values are in filter coordinates.
     FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
@@ -76,7 +77,8 @@ public:
 #endif
 
 private:
-    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, RenderingMode, const DestinationColorSpace&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&);
 
     std::optional<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
@@ -93,6 +95,7 @@ private:
     IntRect m_absoluteImageRect;
 
     bool m_isAlphaImage { false };
+    bool m_isValidPremultiplied { true };
     RenderingMode m_renderingMode;
     DestinationColorSpace m_colorSpace;
 

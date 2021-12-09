@@ -49,6 +49,8 @@ public:
 private:
     FEFlood(const Color& floodColor, float floodOpacity);
 
+    unsigned numberOfEffectInputs() const override { return 0; }
+
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;

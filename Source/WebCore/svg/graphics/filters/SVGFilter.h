@@ -48,7 +48,7 @@ public:
     
     RefPtr<FilterEffect> lastEffect() const final;
 
-    RefPtr<FilterImage> apply() final;
+    RefPtr<FilterImage> apply(FilterImage* sourceImage) final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
@@ -63,7 +63,7 @@ private:
 #endif
     FloatSize resolvedSize(const FloatSize&) const final;
 
-    bool apply(const Filter&, const std::optional<FilterEffectGeometry>& = std::nullopt) final;
+    RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage) final;
     IntOutsets outsets() const final;
     void clearResult() final;
 
