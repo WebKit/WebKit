@@ -4501,12 +4501,16 @@
                 "right",
                 "center",
                 "justify",
+                {
+                    "value": "match-parent",
+                    "url": "https://www.w3.org/TR/css-text-3/#text-align"
+                },
                 "-webkit-left",
                 "-webkit-right",
                 "-webkit-center",
                 {
                     "value": "-webkit-match-parent",
-                    "url": "https://www.w3.org/TR/css-text-3/#text-align"
+                    "url": "non-standard"
                 },
                 {
                     "value": "start",

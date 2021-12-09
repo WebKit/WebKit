@@ -612,7 +612,7 @@ inline TextAlignMode BuilderConverter::convertTextAlign(BuilderState& builderSta
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     ASSERT(primitiveValue.isValueID());
 
-    if (primitiveValue.valueID() != CSSValueWebkitMatchParent)
+    if (primitiveValue.valueID() != CSSValueWebkitMatchParent && primitiveValue.valueID() != CSSValueMatchParent)
         return primitiveValue;
 
     auto& parentStyle = builderState.parentStyle();

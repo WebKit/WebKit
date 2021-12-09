@@ -299,7 +299,7 @@ ol {
 
 li {
     display: list-item;
-    text-align: -webkit-match-parent;
+    text-align: match-parent;
 }
 
 /* FIXME: this should also match ::before::marker and ::after::marker but we don't support

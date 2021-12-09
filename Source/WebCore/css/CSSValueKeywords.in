@@ -342,7 +342,10 @@ justify
 -webkit-left
 -webkit-right
 -webkit-center
+match-parent
 -webkit-match-parent
+//start
+//end
 //
 // CSS_PROP_TEXT_JUSTIFY:
 //

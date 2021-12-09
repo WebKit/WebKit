@@ -1346,7 +1346,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "auto", "fixed",
     ],
     "text-align": [
-        "-webkit-auto", "left", "right", "center", "justify", "-webkit-left", "-webkit-right", "-webkit-center", "-webkit-match-parent", "start", "end",
+        "-webkit-auto", "left", "right", "center", "justify", "match-parent", "-webkit-left", "-webkit-right", "-webkit-center", "-webkit-match-parent", "start", "end",
     ],
     "text-anchor": [
         "middle", "start", "end",

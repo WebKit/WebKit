@@ -1,3 +1,13 @@
+2021-12-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Unprefix CSS value text-align: -webkit-match-parent
+        https://bugs.webkit.org/show_bug.cgi?id=229496
+        <rdar://problem/82628618>
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Models/CSSKeywordCompletions.js: Add 'match-parent'
+
 2021-12-08  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be to notified when an extension tab navigates
