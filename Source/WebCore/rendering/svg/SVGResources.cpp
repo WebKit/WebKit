@@ -35,6 +35,7 @@
 #include "SVGPatternElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
+#include "StyleCachedImage.h"
 #include <wtf/RobinHoodHashSet.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -245,12 +246,16 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
             }
         }
 
-        if (svgStyle.hasMasker()) {
-            AtomString id(svgStyle.maskerResource());
-            if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(document, id)))
-                foundResources = true;
-            else
-                registerPendingResource(extensions, id, element);
+        if (style.hasPositionedMask()) {
+            // FIXME: We should support all the values in the CSS mask property, but for now just use the first mask-image if it's a reference.
+            auto* maskImage = style.maskImage();
+            if (is<StyleCachedImage>(maskImage)) {
+                auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(downcast<StyleCachedImage>(*maskImage).reresolvedURL(document).string(), document);
+                if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(document, resourceID)))
+                    foundResources = true;
+                else
+                    registerPendingResource(extensions, resourceID, element);
+            }
         }
     }
 

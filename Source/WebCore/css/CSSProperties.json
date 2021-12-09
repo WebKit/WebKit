@@ -3342,13 +3342,178 @@
         },
         "mask": {
             "codegen-properties": {
-                "name-for-methods": "MaskerResource",
-                "converter": "SVGURIReference",
-                "svg": true
+                "longhands": [
+                    "mask-image",
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y",
+                    "mask-size",
+                    "mask-repeat-x",
+                    "mask-repeat-y",
+                    "mask-origin",
+                    "mask-clip",
+                    "mask-composite",
+                    "mask-mode"
+                ]
             },
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG/masking.html#MaskProperty"
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask"
+            }
+        },
+        "mask-clip": {
+            "codegen-properties": {
+                "name-for-methods": "Clip",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-clip"
+            }
+        },
+        "mask-composite": {
+            "codegen-properties": {
+                "name-for-methods": "Composite",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-composite"
+            }
+        },
+        "mask-image": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-image"
+                ],
+                "name-for-methods": "Image",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-image"
+            }
+        },
+        "mask-mode": {
+            "codegen-properties": {
+                "name-for-methods": "MaskMode",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-mode"
+            }
+        },
+        "mask-origin": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-origin"
+                ],
+                "name-for-methods": "Origin",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-origin"
+            }
+        },
+        "mask-position": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y"
+                ]
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y"
+                ]
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position-x": {
+            "codegen-properties": {
+                "name-for-methods": "XPosition",
+                "fill-layer-property": true
+            },
+            "status": {
+                "status": "experimental",
+                "comment": "The unprefixed property should be internal-only"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position-y": {
+            "codegen-properties": {
+                "aliases":[
+                    "-webkit-mask-position-y"
+                ],
+                "name-for-methods": "YPosition",
+                "fill-layer-property": true
+            },
+            "status": {
+                "status": "experimental",
+                "comment": "The unprefixed property should be internal-only"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "mask-repeat": {
+            "codegen-properties": {
+                "aliases":[
+                    "-webkit-mask-repeat"
+                ],
+                "longhands": [
+                    "mask-repeat-x",
+                    "mask-repeat-y"
+                ]
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-repeat"
+            }
+        },
+        "mask-repeat-x": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatX",
+                "fill-layer-property": true,
+                "internal-only": true
+            }
+        },
+        "mask-repeat-y": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatY",
+                "fill-layer-property": true,
+                "internal-only": true
+            }
+        },
+        "mask-size": {
+            "codegen-properties": {
+                "aliases":[
+                    "-webkit-mask-size"
+                ],
+                "name-for-methods": "Size",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-size"
             }
         },
         "mask-type": {
@@ -6277,19 +6442,17 @@
         "-webkit-mask": {
             "codegen-properties": {
                 "longhands": [
-                    "-webkit-mask-image",
+                    "mask-image",
                     "-webkit-mask-source-type",
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y",
-                    "-webkit-mask-size",
-                    "-webkit-mask-repeat-x",
-                    "-webkit-mask-repeat-y",
-                    "-webkit-mask-origin",
+                    "mask-size",
+                    "mask-repeat-x",
+                    "mask-repeat-y",
+                    "mask-origin",
                     "-webkit-mask-clip"
-                ]
-            },
-            "status": {
-                "status": "experimental"
+                ],
+                "comment": "Differs from the unprefixed property in accepting -webkit-mask-source-type in place of mask-mode"
             },
             "specification": {
                 "category": "css-masking",
@@ -6301,8 +6464,7 @@
                 "initial": "initialNinePieceImage",
                 "converter": "BorderMask<CSSPropertyWebkitMaskBoxImage>"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6311,8 +6473,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6321,8 +6482,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6331,8 +6491,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6341,8 +6500,7 @@
             "codegen-properties": {
                 "converter": "StyleImage<CSSPropertyWebkitMaskBoxImageSource>"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6351,8 +6509,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6383,132 +6540,12 @@
                 "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-composite"
             }
         },
-        "-webkit-mask-image": {
-            "codegen-properties": {
-                "name-for-methods": "Image",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-image"
-            }
-        },
-        "-webkit-mask-mode": {
-            "codegen-properties": {
-                "name-for-methods": "MaskMode",
-                "fill-layer-property": true
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-mode"
-            }
-        },
-        "-webkit-mask-origin": {
-            "codegen-properties": {
-                "name-for-methods": "Origin",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-origin"
-            }
-        },
-        "-webkit-mask-position": {
-            "codegen-properties": {
-                "longhands": [
-                    "-webkit-mask-position-x",
-                    "-webkit-mask-position-y"
-                ]
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
-            }
-        },
-        "-webkit-mask-position-x": {
-            "codegen-properties": {
-                "name-for-methods": "XPosition",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
-            }
-        },
-        "-webkit-mask-position-y": {
-            "codegen-properties": {
-                "name-for-methods": "YPosition",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
-            }
-        },
-        "-webkit-mask-repeat": {
-            "codegen-properties": {
-                "longhands": [
-                    "-webkit-mask-repeat-x",
-                    "-webkit-mask-repeat-y"
-                ]
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-repeat"
-            }
-        },
-        "-webkit-mask-repeat-x": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatX",
-                "fill-layer-property": true,
-                "internal-only": true
-            }
-        },
-        "-webkit-mask-repeat-y": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatY",
-                "fill-layer-property": true,
-                "internal-only": true
-            }
-        },
-        "-webkit-mask-size": {
-            "codegen-properties": {
-                "name-for-methods": "Size",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-size"
-            }
-        },
         "-webkit-mask-source-type": {
             "codegen-properties": {
-                "synonym": "-webkit-mask-mode",
+                "synonym": "mask-mode",
                 "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }

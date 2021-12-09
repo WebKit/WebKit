@@ -57,11 +57,11 @@ Removing -webkit-margin-collapse
 removes "-webkit-margin-before-collapse, -webkit-margin-after-collapse"
 and adds "".
 Removing -webkit-mask
-removes "-webkit-mask"
+removes "mask-image, -webkit-mask-position-x, -webkit-mask-position-y, mask-repeat-x, mask-repeat-y, -webkit-mask"
 and adds "".
 Removing -webkit-mask-position
-removes "-webkit-mask"
-and adds "-webkit-mask-image, -webkit-mask-repeat-x, -webkit-mask-repeat-y".
+removes "-webkit-mask-position-x, -webkit-mask-position-y, -webkit-mask"
+and adds "".
 Removing overflow
 removes "overflow"
 and adds "".

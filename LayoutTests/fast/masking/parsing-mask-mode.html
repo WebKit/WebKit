@@ -10,10 +10,10 @@
             function setProperty(value) {
                 var div = document.createElement('div');
                 document.body.appendChild(div);
-                div.style.setProperty("-webkit-mask-image", "none, none, none, none");
-                div.style.setProperty("-webkit-mask-mode", value);
+                div.style.setProperty("mask-image", "none, none, none, none");
+                div.style.setProperty("mask-mode", value);
 
-                var computedValue = getComputedStyle(div).getPropertyValue("-webkit-mask-mode");
+                var computedValue = getComputedStyle(div).getPropertyValue("mask-mode");
                 document.body.removeChild(div);
 
                 return computedValue;

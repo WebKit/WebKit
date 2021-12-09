@@ -234,8 +234,14 @@ rect: style.getPropertyValue(marker-mid) : none
 rect: style.getPropertyCSSValue(marker-mid) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(marker-start) : none
 rect: style.getPropertyCSSValue(marker-start) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(mask) : none
-rect: style.getPropertyCSSValue(mask) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(mask-image) : none
+rect: style.getPropertyCSSValue(mask-image) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(mask-origin) : border-box
+rect: style.getPropertyCSSValue(mask-origin) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(mask-repeat) : repeat
+rect: style.getPropertyCSSValue(mask-repeat) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(mask-size) : auto
+rect: style.getPropertyCSSValue(mask-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(mask-type) : luminance
 rect: style.getPropertyCSSValue(mask-type) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(max-height) : none
@@ -476,14 +482,6 @@ rect: style.getPropertyValue(-webkit-mask-clip) : border-box
 rect: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-composite) : source-over
 rect: style.getPropertyCSSValue(-webkit-mask-composite) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-image) : none
-rect: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-origin) : border-box
-rect: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-repeat) : repeat
-rect: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-size) : auto
-rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-print-color-adjust) : economy
@@ -752,8 +750,14 @@ g: style.getPropertyValue(marker-mid) : none
 g: style.getPropertyCSSValue(marker-mid) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(marker-start) : none
 g: style.getPropertyCSSValue(marker-start) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(mask) : none
-g: style.getPropertyCSSValue(mask) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(mask-image) : none
+g: style.getPropertyCSSValue(mask-image) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(mask-origin) : border-box
+g: style.getPropertyCSSValue(mask-origin) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(mask-repeat) : repeat
+g: style.getPropertyCSSValue(mask-repeat) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(mask-size) : auto
+g: style.getPropertyCSSValue(mask-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(mask-type) : luminance
 g: style.getPropertyCSSValue(mask-type) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(max-height) : none
@@ -994,14 +998,6 @@ g: style.getPropertyValue(-webkit-mask-clip) : border-box
 g: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-composite) : source-over
 g: style.getPropertyCSSValue(-webkit-mask-composite) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-image) : none
-g: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-origin) : border-box
-g: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-repeat) : repeat
-g: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-size) : auto
-g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-print-color-adjust) : economy

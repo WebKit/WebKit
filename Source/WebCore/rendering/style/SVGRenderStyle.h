@@ -77,7 +77,6 @@ public:
     static float initialFloodOpacity() { return 1; }
     static Color initialFloodColor() { return Color::black; }
     static Color initialLightingColor() { return Color::white; }
-    static String initialMaskerResource() { return String(); }
     static String initialMarkerStartResource() { return String(); }
     static String initialMarkerMidResource() { return String(); }
     static String initialMarkerEndResource() { return String(); }
@@ -122,9 +121,6 @@ public:
     void setLightingColor(const Color&);
     void setBaselineShiftValue(const SVGLengthValue&);
 
-    // Setters for non-inherited resources
-    void setMaskerResource(const String&);
-
     // Setters for inherited resources
     void setMarkerStartResource(const String&);
     void setMarkerMidResource(const String&);
@@ -168,7 +164,6 @@ public:
     const Length& ry() const { return m_layoutData->ry; }
     const Length& x() const { return m_layoutData->x; }
     const Length& y() const { return m_layoutData->y; }
-    const String& maskerResource() const { return m_nonInheritedResourceData->masker; }
     const String& markerStartResource() const { return m_inheritedResourceData->markerStart; }
     const String& markerMidResource() const { return m_inheritedResourceData->markerMid; }
     const String& markerEndResource() const { return m_inheritedResourceData->markerEnd; }
@@ -182,11 +177,9 @@ public:
     const String& visitedLinkStrokePaintUri() const { return m_strokeData->visitedLinkPaintUri; }
 
     // convenience
-    bool hasMasker() const { return !maskerResource().isEmpty(); }
     bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
     bool hasStroke() const { return strokePaintType() != SVGPaintType::None; }
     bool hasFill() const { return fillPaintType() != SVGPaintType::None; }
-    bool isolatesBlending() const { return hasMasker(); }
 
 private:
     SVGRenderStyle();
@@ -243,7 +236,6 @@ private:
     DataRef<StyleStopData> m_stopData;
     DataRef<StyleMiscData> m_miscData;
     DataRef<StyleLayoutData> m_layoutData;
-    DataRef<StyleResourceData> m_nonInheritedResourceData;
 };
 
 inline void SVGRenderStyle::setCx(const Length& length)
@@ -392,12 +384,6 @@ inline void SVGRenderStyle::setBaselineShiftValue(const SVGLengthValue& shiftVal
 {
     if (!(m_miscData->baselineShiftValue == shiftValue))
         m_miscData.access().baselineShiftValue = shiftValue;
-}
-
-inline void SVGRenderStyle::setMaskerResource(const String& resource)
-{
-    if (!(m_nonInheritedResourceData->masker == resource))
-        m_nonInheritedResourceData.access().masker = resource;
 }
 
 inline void SVGRenderStyle::setMarkerStartResource(const String& resource)

@@ -1,3 +1,64 @@
+2021-12-09  Matt Woodrow  <matt.woodrow@gmail.com>
+
+        Unprefix -webkit-mask
+        https://bugs.webkit.org/show_bug.cgi?id=229082
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-masking/animations/mask-image-interpolation-expected.txt:
+        * web-platform-tests/css/css-masking/animations/mask-position-interpolation-expected.txt:
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html:
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html:
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html.
+        * web-platform-tests/css/css-masking/clip-path/animations/w3c-import.log:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-columns-shape-002.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-001.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-002.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-003.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-004.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-fixed-scroll-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-fixed-scroll.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-path-001-expected.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-path-002-expected.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-path-interpolation-001-expected.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-path-interpolation-002-expected.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-reference-restore.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate-expected.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-backdrop-filter.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-font-loading.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-001.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change.html:
+        * web-platform-tests/css/css-masking/clip-path/reference-local-url-with-base-001.html:
+        * web-platform-tests/css/css-masking/clip-path/reference-mutated.html:
+        * web-platform-tests/css/css-masking/clip-path/reference-nonexisting-existing-local.html:
+        * web-platform-tests/css/css-masking/clip-path/w3c-import.log:
+        * web-platform-tests/css/css-masking/clip-rule/clip-rule-001.html:
+        * web-platform-tests/css/css-masking/clip-rule/clip-rule-002.html:
+        * web-platform-tests/css/css-masking/hit-test/clip-path-element-objectboundingbox-001.html:
+        * web-platform-tests/css/css-masking/hit-test/clip-path-element-objectboundingbox-002.html:
+        * web-platform-tests/css/css-masking/hit-test/clip-path-element-userspaceonuse-001.html:
+        * web-platform-tests/css/css-masking/idlharness.html:
+        * web-platform-tests/css/css-masking/inheritance.sub-expected.txt:
+        * web-platform-tests/css/css-masking/parsing/mask-position-valid-expected.txt:
+        * web-platform-tests/css/css-masking/parsing/mask-valid.sub-expected.txt:
+
 2021-12-09  Antti Koivisto  <antti@apple.com>
 
         [selectors] Use :focus-visible in the user agent style sheet

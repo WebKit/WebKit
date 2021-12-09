@@ -192,7 +192,7 @@ private:
     LengthSize m_sizeLength;
 
     unsigned m_attachment : 2; // FillAttachment
-    unsigned m_clip : 2; // FillBox
+    unsigned m_clip : 3; // FillBox
     unsigned m_origin : 2; // FillBox
     unsigned m_repeatX : 3; // FillRepeat
     unsigned m_repeatY : 3; // FillRepeat

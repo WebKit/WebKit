@@ -326,10 +326,30 @@ template<> inline CSSPrimitiveValue::operator OutlineIsAuto() const
     return OutlineIsAuto::Off;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CompositeOperator e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CompositeOperator e, CSSPropertyID propertyID)
     : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    if (propertyID == CSSPropertyMaskComposite) {
+        switch (e) {
+        case CompositeOperator::SourceOver:
+            m_value.valueID = CSSValueAdd;
+            break;
+        case CompositeOperator::SourceIn:
+            m_value.valueID = CSSValueIntersect;
+            break;
+        case CompositeOperator::SourceOut:
+            m_value.valueID = CSSValueSubtract;
+            break;
+        case CompositeOperator::XOR:
+            m_value.valueID = CSSValueExclude;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        return;
+    }
     switch (e) {
     case CompositeOperator::Clear:
         m_value.valueID = CSSValueClear;
@@ -386,10 +406,13 @@ template<> inline CSSPrimitiveValue::operator CompositeOperator() const
     case CSSValueCopy:
         return CompositeOperator::Copy;
     case CSSValueSourceOver:
+    case CSSValueAdd:
         return CompositeOperator::SourceOver;
     case CSSValueSourceIn:
+    case CSSValueIntersect:
         return CompositeOperator::SourceIn;
     case CSSValueSourceOut:
+    case CSSValueSubtract:
         return CompositeOperator::SourceOut;
     case CSSValueSourceAtop:
         return CompositeOperator::SourceAtop;
@@ -402,6 +425,7 @@ template<> inline CSSPrimitiveValue::operator CompositeOperator() const
     case CSSValueDestinationAtop:
         return CompositeOperator::DestinationAtop;
     case CSSValueXor:
+    case CSSValueExclude:
         return CompositeOperator::XOR;
     case CSSValuePlusDarker:
         return CompositeOperator::PlusDarker;
@@ -729,6 +753,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FillBox e)
     case FillBox::Text:
         m_value.valueID = CSSValueText;
         break;
+    case FillBox::NoClip:
+        m_value.valueID = CSSValueNoClip;
+        break;
     }
 }
 
@@ -749,6 +776,8 @@ template<> inline CSSPrimitiveValue::operator FillBox() const
     case CSSValueText:
     case CSSValueWebkitText:
         return FillBox::Text;
+    case CSSValueNoClip:
+        return FillBox::NoClip;
     default:
         break;
     }

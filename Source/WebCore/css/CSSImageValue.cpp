@@ -40,6 +40,12 @@ static bool operator==(const ResolvedURL& a, const ResolvedURL& b)
     return a.specifiedURLString == b.specifiedURLString && a.resolvedURL == b.resolvedURL;
 }
 
+// https://drafts.csswg.org/css-values/#url-local-url-flag
+bool ResolvedURL::isLocalURL() const
+{
+    return specifiedURLString.startsWith("#");
+}
+
 static ResolvedURL makeResolvedURL(URL&& resolvedURL)
 {
     auto string = resolvedURL.string();
@@ -89,6 +95,9 @@ URL CSSImageValue::reresolvedURL(const Document& document) const
 
     // Re-resolving the URL is important for cases where resolvedURL is still not an absolute URL.
     // This can happen if there was no absolute base URL when the value was created, like a style from a document without a base URL.
+    if (m_location.isLocalURL())
+        return document.completeURL(m_location.specifiedURLString, URL());
+
     return document.completeURL(m_location.resolvedURL.string());
 }
 

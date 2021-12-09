@@ -117,7 +117,10 @@ margin-top: 0px
 marker-end: none
 marker-mid: none
 marker-start: none
-mask: none
+mask-image: none
+mask-origin: border-box
+mask-repeat: repeat
+mask-size: auto
 mask-type: luminance
 max-height: none
 max-width: none
@@ -238,10 +241,6 @@ zoom: 1
 -webkit-mask-box-image-width: auto
 -webkit-mask-clip: border-box
 -webkit-mask-composite: source-over
--webkit-mask-image: none
--webkit-mask-origin: border-box
--webkit-mask-repeat: repeat
--webkit-mask-size: auto
 -webkit-nbsp-mode: normal
 -webkit-print-color-adjust: economy
 -webkit-rtl-ordering: logical

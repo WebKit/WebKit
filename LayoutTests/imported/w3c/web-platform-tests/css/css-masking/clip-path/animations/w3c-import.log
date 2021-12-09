@@ -15,4 +15,18 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition.html

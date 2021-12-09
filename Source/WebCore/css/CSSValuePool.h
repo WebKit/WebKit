@@ -87,6 +87,7 @@ public:
     Ref<CSSPrimitiveValue> createValue(const LengthSize& value, const RenderStyle& style) { return CSSPrimitiveValue::create(value, style); }
     Ref<CSSPrimitiveValue> createCustomIdent(const String& value) { return CSSPrimitiveValue::create(value, CSSUnitType::CustomIdent); }
     template<typename T> static Ref<CSSPrimitiveValue> createValue(T&& value) { return CSSPrimitiveValue::create(std::forward<T>(value)); }
+    template<typename T> static Ref<CSSPrimitiveValue> createValue(T&& value, CSSPropertyID identifier) { return CSSPrimitiveValue::create(std::forward<T>(value), identifier); }
 
     void drain();
 

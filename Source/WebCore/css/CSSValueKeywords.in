@@ -927,6 +927,20 @@ padding
 padding-box
 
 //
+// CSS_PROP_MASK_CLIP
+//
+// Same as background-clip above, except with some extra values.
+no-clip
+
+//
+// CSS_PROP_MASK_COMPOSITE
+//
+add
+subtract
+intersect
+exclude
+
+//
 // Variables Implementation
 //
 var

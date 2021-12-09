@@ -3147,6 +3147,12 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundBox(CSSParserTokenRange& range
     return consumeIdent<CSSValueBorderBox, CSSValuePaddingBox, CSSValueContentBox>(range);
 }
 
+static RefPtr<CSSPrimitiveValue> consumeMaskClip(CSSParserTokenRange& range)
+{
+    // TODO: Also handle fill-box, stroke-box and view-box.
+    return consumeIdent<CSSValueBorderBox, CSSValuePaddingBox, CSSValueContentBox, CSSValueNoClip>(range);
+}
+
 static RefPtr<CSSPrimitiveValue> consumeBackgroundClip(CSSParserTokenRange& range)
 {
     if (auto value = consumeBackgroundBox(range))
@@ -3154,9 +3160,14 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundClip(CSSParserTokenRange& rang
     return consumeIdent<CSSValueText, CSSValueWebkitText>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeBackgroundComposite(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumePrefixedBackgroundComposite(CSSParserTokenRange& range)
 {
     return consumeIdentRange(range, CSSValueClear, CSSValuePlusLighter);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeBackgroundComposite(CSSParserTokenRange& range)
+{
+    return consumeIdentRange(range, CSSValueAdd, CSSValueExclude);
 }
 
 static RefPtr<CSSPrimitiveValue> consumeWebkitMaskSourceType(CSSParserTokenRange& range)
@@ -3236,18 +3247,22 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
         return consumeBackgroundAttachment(range);
     case CSSPropertyBackgroundOrigin:
         return consumeBackgroundBox(range);
+    case CSSPropertyMaskComposite:
+        return consumeBackgroundComposite(range);
     case CSSPropertyWebkitMaskComposite:
     case CSSPropertyWebkitBackgroundComposite:
-        return consumeBackgroundComposite(range);
+        return consumePrefixedBackgroundComposite(range);
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundOrigin:
     case CSSPropertyWebkitMaskClip:
-    case CSSPropertyWebkitMaskOrigin:
+    case CSSPropertyMaskOrigin:
         return consumePrefixedBackgroundBox(property, range, context);
+    case CSSPropertyMaskClip:
+        return consumeMaskClip(range);
     case CSSPropertyBackgroundImage:
-    case CSSPropertyWebkitMaskImage:
+    case CSSPropertyMaskImage:
         return consumeImageOrNone(range, context);
-    case CSSPropertyWebkitMaskMode:
+    case CSSPropertyMaskMode:
         return consumeWebkitMaskMode(range);
     case CSSPropertyWebkitMaskSourceType:
         return consumeWebkitMaskSourceType(range);
@@ -3259,7 +3274,7 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
         return consumePositionY(range, context.mode);
     case CSSPropertyBackgroundSize:
     case CSSPropertyWebkitBackgroundSize:
-    case CSSPropertyWebkitMaskSize:
+    case CSSPropertyMaskSize:
         return consumeBackgroundSize(property, range, context.mode);
     case CSSPropertyBackgroundColor:
         return consumeColor(range, context);
@@ -4435,7 +4450,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyMarkerStart:
     case CSSPropertyMarkerMid:
     case CSSPropertyMarkerEnd:
-    case CSSPropertyMask:
         return consumeNoneOrURI(m_range);
     case CSSPropertyFlexBasis:
         return consumeFlexBasis(m_range, m_context.mode);
@@ -4557,18 +4571,20 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitBackgroundOrigin:
     case CSSPropertyWebkitBackgroundComposite:
     case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyMaskClip:
     case CSSPropertyWebkitMaskClip:
+    case CSSPropertyMaskComposite:
     case CSSPropertyWebkitMaskComposite:
-    case CSSPropertyWebkitMaskImage:
-    case CSSPropertyWebkitMaskOrigin:
+    case CSSPropertyMaskImage:
+    case CSSPropertyMaskOrigin:
     case CSSPropertyWebkitMaskPositionX:
     case CSSPropertyWebkitMaskPositionY:
-    case CSSPropertyWebkitMaskSize:
-    case CSSPropertyWebkitMaskMode:
+    case CSSPropertyMaskSize:
+    case CSSPropertyMaskMode:
     case CSSPropertyWebkitMaskSourceType:
         return consumeCommaSeparatedBackgroundComponent(property, m_range, m_context);
-    case CSSPropertyWebkitMaskRepeatX:
-    case CSSPropertyWebkitMaskRepeatY:
+    case CSSPropertyMaskRepeatX:
+    case CSSPropertyMaskRepeatY:
         return nullptr;
     case CSSPropertyAlignItems:
         return consumeAlignItems(m_range);
@@ -5556,10 +5572,10 @@ bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool 
     return true;
 }
 
-static bool consumeBackgroundPosition(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, RefPtr<CSSValue>& resultX, RefPtr<CSSValue>& resultY)
+static bool consumeBackgroundPosition(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, RefPtr<CSSValue>& resultX, RefPtr<CSSValue>& resultY)
 {
     do {
-        auto position = consumePositionCoordinates(range, context.mode, unitless, PositionSyntax::BackgroundPosition);
+        auto position = consumePositionCoordinates(range, context.mode, UnitlessQuirk::Allow, property == CSSPropertyMaskPosition ? PositionSyntax::Position : PositionSyntax::BackgroundPosition);
         if (!position)
             return false;
         addBackgroundValue(resultX, WTFMove(position->x));
@@ -5628,7 +5644,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                 RefPtr<CSSValue> value;
                 RefPtr<CSSValue> valueY;
                 CSSPropertyID property = shorthand.properties()[i];
-                if (property == CSSPropertyBackgroundRepeatX || property == CSSPropertyWebkitMaskRepeatX) {
+                if (property == CSSPropertyBackgroundRepeatX || property == CSSPropertyMaskRepeatX) {
                     RefPtr<CSSPrimitiveValue> primitiveValue;
                     RefPtr<CSSPrimitiveValue> primitiveValueY;
                     consumeRepeatStyleComponent(m_range, primitiveValue, primitiveValueY, implicit);
@@ -5642,20 +5658,20 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                     value = WTFMove(position->x);
                     valueY = WTFMove(position->y);
                     m_range = rangeCopy;
-                } else if (property == CSSPropertyBackgroundSize || property == CSSPropertyWebkitMaskSize) {
+                } else if (property == CSSPropertyBackgroundSize || property == CSSPropertyMaskSize) {
                     if (!consumeSlashIncludingWhitespace(m_range))
                         continue;
                     value = consumeBackgroundSize(property, m_range, m_context.mode);
                     if (!value || !parsedLonghand[i - 1]) // Position must have been parsed in the current layer.
                         return false;
                 } else if (property == CSSPropertyBackgroundPositionY || property == CSSPropertyBackgroundRepeatY
-                    || property == CSSPropertyWebkitMaskPositionY || property == CSSPropertyWebkitMaskRepeatY) {
+                    || property == CSSPropertyWebkitMaskPositionY || property == CSSPropertyMaskRepeatY) {
                     continue;
                 } else {
                     value = consumeBackgroundComponent(property, m_range, m_context);
                 }
                 if (value) {
-                    if (property == CSSPropertyBackgroundOrigin || property == CSSPropertyWebkitMaskOrigin)
+                    if (property == CSSPropertyBackgroundOrigin || property == CSSPropertyMaskOrigin)
                         originValue = value;
                     parsedLonghand[i] = true;
                     foundProperty = true;
@@ -5678,7 +5694,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                     return false; // Colors are only allowed in the last layer.
                 continue;
             }
-            if ((property == CSSPropertyBackgroundClip || property == CSSPropertyWebkitMaskClip) && !parsedLonghand[i] && originValue) {
+            if ((property == CSSPropertyBackgroundClip || property == CSSPropertyMaskClip || property == CSSPropertyWebkitMaskClip) && !parsedLonghand[i] && originValue) {
                 addBackgroundValue(longhands[i], originValue.releaseNonNull());
                 continue;
             }
@@ -6283,31 +6299,33 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
         return consumeLegacyBreakProperty(property, important);
+    case CSSPropertyMaskPosition:
     case CSSPropertyWebkitMaskPosition:
     case CSSPropertyBackgroundPosition: {
         RefPtr<CSSValue> resultX;
         RefPtr<CSSValue> resultY;
-        if (!consumeBackgroundPosition(m_range, m_context, UnitlessQuirk::Allow, resultX, resultY) || !m_range.atEnd())
+        if (!consumeBackgroundPosition(m_range, m_context, property, resultX, resultY) || !m_range.atEnd())
             return false;
         addProperty(property == CSSPropertyBackgroundPosition ? CSSPropertyBackgroundPositionX : CSSPropertyWebkitMaskPositionX, property, resultX.releaseNonNull(), important);
         addProperty(property == CSSPropertyBackgroundPosition ? CSSPropertyBackgroundPositionY : CSSPropertyWebkitMaskPositionY, property, resultY.releaseNonNull(), important);
         return true;
     }
     case CSSPropertyBackgroundRepeat:
-    case CSSPropertyWebkitMaskRepeat: {
+    case CSSPropertyMaskRepeat: {
         RefPtr<CSSValue> resultX;
         RefPtr<CSSValue> resultY;
         bool implicit = false;
         if (!consumeRepeatStyle(m_range, resultX, resultY, implicit) || !m_range.atEnd())
             return false;
-        addProperty(property == CSSPropertyBackgroundRepeat ? CSSPropertyBackgroundRepeatX : CSSPropertyWebkitMaskRepeatX, property, resultX.releaseNonNull(), important, implicit);
-        addProperty(property == CSSPropertyBackgroundRepeat ? CSSPropertyBackgroundRepeatY : CSSPropertyWebkitMaskRepeatY, property, resultY.releaseNonNull(), important, implicit);
+        addProperty(property == CSSPropertyBackgroundRepeat ? CSSPropertyBackgroundRepeatX : CSSPropertyMaskRepeatX, property, resultX.releaseNonNull(), important, implicit);
+        addProperty(property == CSSPropertyBackgroundRepeat ? CSSPropertyBackgroundRepeatY : CSSPropertyMaskRepeatY, property, resultY.releaseNonNull(), important, implicit);
         return true;
     }
     case CSSPropertyBackground:
         return consumeBackgroundShorthand(backgroundShorthand(), important);
+    case CSSPropertyMask:
     case CSSPropertyWebkitMask:
-        return consumeBackgroundShorthand(webkitMaskShorthand(), important);
+        return consumeBackgroundShorthand(shorthandForProperty(property), important);
     case CSSPropertyTransformOrigin:
         return consumeTransformOrigin(important);
     case CSSPropertyPerspectiveOrigin:

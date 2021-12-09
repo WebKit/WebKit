@@ -291,12 +291,12 @@ static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, co
 {
     auto list = CSSValueList::createSpaceSeparated();
     if (layer.isBackgroundXOriginSet() && layer.backgroundXOrigin() != Edge::Left) {
-        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
+        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyMaskPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list->append(CSSValuePool::singleton().createValue(layer.backgroundXOrigin()));
     }
     list->append(zoomAdjustedPixelValueForLength(layer.xPosition(), style));
     if (layer.isBackgroundYOriginSet() && layer.backgroundYOrigin() != Edge::Top) {
-        ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
+        ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyMaskPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list->append(CSSValuePool::singleton().createValue(layer.backgroundYOrigin()));
     }
     list->append(zoomAdjustedPixelValueForLength(layer.yPosition(), style));
@@ -2723,8 +2723,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyBackgroundColor:
             return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(&style, style.backgroundColor());
         case CSSPropertyBackgroundImage:
-        case CSSPropertyWebkitMaskImage: {
-            auto& layers = propertyID == CSSPropertyWebkitMaskImage ? style.maskLayers() : style.backgroundLayers();
+        case CSSPropertyMaskImage: {
+            auto& layers = propertyID == CSSPropertyMaskImage ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next()) {
                 if (layers.image())
                     return layers.image()->cssValue();
@@ -2741,8 +2741,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyBackgroundSize:
         case CSSPropertyWebkitBackgroundSize:
-        case CSSPropertyWebkitMaskSize: {
-            auto& layers = propertyID == CSSPropertyWebkitMaskSize ? style.maskLayers() : style.backgroundLayers();
+        case CSSPropertyMaskSize: {
+            auto& layers = propertyID == CSSPropertyMaskSize ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
                 return fillSizeToCSSValue(layers.size(), style);
             auto list = CSSValueList::createCommaSeparated();
@@ -2751,8 +2751,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return list;
         }
         case CSSPropertyBackgroundRepeat:
-        case CSSPropertyWebkitMaskRepeat: {
-            auto& layers = propertyID == CSSPropertyWebkitMaskRepeat ? style.maskLayers() : style.backgroundLayers();
+        case CSSPropertyMaskRepeat: {
+            auto& layers = propertyID == CSSPropertyMaskRepeat ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
                 return fillRepeatToCSSValue(layers.repeatX(), layers.repeatY());
             auto list = CSSValueList::createCommaSeparated();
@@ -2769,7 +2769,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(maskSourceTypeToCSSValue(currLayer->maskMode()));
             return list;
         }
-        case CSSPropertyWebkitMaskMode: {
+        case CSSPropertyMaskMode: {
             auto& layers = style.maskLayers();
             if (!layers.next())
                 return maskModeToCSSValue(layers.maskMode());
@@ -2779,13 +2779,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return list;
         }
         case CSSPropertyWebkitBackgroundComposite:
-        case CSSPropertyWebkitMaskComposite: {
-            auto& layers = propertyID == CSSPropertyWebkitMaskComposite ? style.maskLayers() : style.backgroundLayers();
+        case CSSPropertyWebkitMaskComposite:
+        case CSSPropertyMaskComposite: {
+            auto& layers = propertyID == CSSPropertyWebkitBackgroundComposite ? style.backgroundLayers() : style.maskLayers();
             if (!layers.next())
-                return cssValuePool.createValue(layers.composite());
+                return cssValuePool.createValue(layers.composite(), propertyID);
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(cssValuePool.createValue(currLayer->composite()));
+                list->append(cssValuePool.createValue(currLayer->composite(), propertyID));
             return list;
         }
         case CSSPropertyBackgroundAttachment: {
@@ -2801,10 +2802,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyBackgroundOrigin:
         case CSSPropertyWebkitBackgroundClip:
         case CSSPropertyWebkitBackgroundOrigin:
+        case CSSPropertyMaskClip:
         case CSSPropertyWebkitMaskClip:
-        case CSSPropertyWebkitMaskOrigin: {
-            auto& layers = (propertyID == CSSPropertyWebkitMaskClip || propertyID == CSSPropertyWebkitMaskOrigin) ? style.maskLayers() : style.backgroundLayers();
-            bool isClip = propertyID == CSSPropertyBackgroundClip || propertyID == CSSPropertyWebkitBackgroundClip || propertyID == CSSPropertyWebkitMaskClip;
+        case CSSPropertyMaskOrigin: {
+            auto& layers = (propertyID == CSSPropertyMaskClip || propertyID == CSSPropertyWebkitMaskClip || propertyID == CSSPropertyMaskOrigin) ? style.maskLayers() : style.backgroundLayers();
+            bool isClip = propertyID == CSSPropertyBackgroundClip || propertyID == CSSPropertyWebkitBackgroundClip || propertyID == CSSPropertyMaskClip || propertyID == CSSPropertyWebkitMaskClip;
             if (!layers.next())
                 return cssValuePool.createValue(isClip ? layers.clip() : layers.origin());
             auto list = CSSValueList::createCommaSeparated();
@@ -2813,8 +2815,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return list;
         }
         case CSSPropertyBackgroundPosition:
-        case CSSPropertyWebkitMaskPosition: {
-            auto& layers = propertyID == CSSPropertyWebkitMaskPosition ? style.maskLayers() : style.backgroundLayers();
+        case CSSPropertyWebkitMaskPosition:
+        case CSSPropertyMaskPosition: {
+            auto& layers = propertyID == CSSPropertyBackgroundPosition ? style.backgroundLayers() : style.maskLayers();
             if (!layers.next())
                 return createPositionListForLayer(propertyID, layers, style);
 
@@ -3897,6 +3900,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyBackground:
             return getBackgroundShorthandValue();
+        case CSSPropertyMask:
+            return getMaskShorthandValue();
         case CSSPropertyBorder: {
             auto value = propertyValue(CSSPropertyBorderTop, DoNotUpdateLayout);
             const CSSPropertyID properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft };
@@ -4173,8 +4178,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMarqueeStyle:
         case CSSPropertyWebkitMarqueeSpeed:
         case CSSPropertyWebkitMask:
-        case CSSPropertyWebkitMaskRepeatX:
-        case CSSPropertyWebkitMaskRepeatY:
+        case CSSPropertyMaskRepeatX:
+        case CSSPropertyMaskRepeatY:
         case CSSPropertyPerspectiveOriginX:
         case CSSPropertyPerspectiveOriginY:
         case CSSPropertyWebkitTextStroke:
@@ -4185,7 +4190,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         case CSSPropertyBufferedRendering:
         case CSSPropertyClipRule:
-        case CSSPropertyMask:
         case CSSPropertyFloodColor:
         case CSSPropertyFloodOpacity:
         case CSSPropertyLightingColor:
@@ -4517,6 +4521,14 @@ Ref<CSSValueList> ComputedStyleExtractor::getBackgroundShorthandValue()
     static const CSSPropertyID propertiesAfterSlashSeparator[] = { CSSPropertyBackgroundSize, CSSPropertyBackgroundOrigin, CSSPropertyBackgroundClip };
 
     return getFillLayerPropertyShorthandValue(CSSPropertyBackground, StylePropertyShorthand(CSSPropertyBackground, propertiesBeforeSlashSeparator), StylePropertyShorthand(CSSPropertyBackground, propertiesAfterSlashSeparator), CSSPropertyBackgroundColor);
+}
+
+Ref<CSSValueList> ComputedStyleExtractor::getMaskShorthandValue()
+{
+    static const CSSPropertyID propertiesBeforeSlashSeperator[2] = { CSSPropertyMaskImage, CSSPropertyMaskPosition };
+    static const CSSPropertyID propertiesAfterSlashSeperator[6] = { CSSPropertyMaskSize, CSSPropertyMaskRepeat, CSSPropertyMaskOrigin, CSSPropertyMaskClip, CSSPropertyMaskComposite, CSSPropertyMaskMode };
+
+    return getFillLayerPropertyShorthandValue(CSSPropertyMask, StylePropertyShorthand(CSSPropertyMask, propertiesBeforeSlashSeperator), StylePropertyShorthand(CSSPropertyMask, propertiesAfterSlashSeperator), CSSPropertyInvalid);
 }
 
 } // namespace WebCore

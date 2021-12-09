@@ -1213,6 +1213,7 @@ void BoxDecorationPainter::paintFillLayer(PaintingContext& paintingContext, cons
         case FillBox::Content:
             return box.absoluteContentBoxRect();
         case FillBox::Text:
+        case FillBox::NoClip:
             break;
         }
         return { };
@@ -1227,6 +1228,7 @@ void BoxDecorationPainter::paintFillLayer(PaintingContext& paintingContext, cons
         break;
     }
     case FillBox::Text:
+    case FillBox::NoClip:
         break;
     }
 

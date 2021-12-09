@@ -509,7 +509,7 @@ void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* 
 
 bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
 {
-    return style.svgStyle().isolatesBlending() || style.hasFilter() || style.hasBlendMode() || style.opacity() < 1.0f;
+    return style.hasPositionedMask() || style.hasFilter() || style.hasBlendMode() || style.opacity() < 1.0f;
 }
 
 void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderElement& renderer)
@@ -521,7 +521,7 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
         auto* style = ancestor.computedStyle();
         if (!style || !isolatesBlending(*style))
             continue;
-        if (style->svgStyle().hasMasker())
+        if (style->hasPositionedMask())
             ancestor.setShouldIsolateBlending(renderer.style().hasBlendMode());
         return;
     }

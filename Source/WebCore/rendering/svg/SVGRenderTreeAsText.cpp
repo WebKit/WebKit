@@ -60,6 +60,7 @@
 #include "SVGRectElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
+#include "StyleCachedImage.h"
 
 #include <math.h>
 
@@ -556,17 +557,20 @@ void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, Opt
 void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
     const RenderStyle& style = renderer.style();
-    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     // FIXME: We want to use SVGResourcesCache to determine which resources are present, instead of quering the resource <-> id cache.
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.
-    if (!svgStyle.maskerResource().isEmpty()) {
-        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(renderer.document(), svgStyle.maskerResource())) {
-            ts << indent << " ";
-            writeNameAndQuotedValue(ts, "masker", svgStyle.maskerResource());
-            ts << " ";
-            writeStandardPrefix(ts, *masker, behavior, WriteIndentOrNot::No);
-            ts << " " << masker->resourceBoundingBox(renderer) << "\n";
+    if (style.hasPositionedMask()) {
+        auto* maskImage = style.maskImage();
+        if (is<StyleCachedImage>(maskImage)) {
+            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(downcast<StyleCachedImage>(*maskImage).reresolvedURL(renderer.document()).string(), renderer.document());
+            if (auto* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(renderer.document(), resourceID)) {
+                ts << indent << " ";
+                writeNameAndQuotedValue(ts, "masker", resourceID);
+                ts << " ";
+                writeStandardPrefix(ts, *masker, behavior, WriteIndentOrNot::No);
+                ts << " " << masker->resourceBoundingBox(renderer) << "\n";
+            }
         }
     }
     if (style.clipPath() && is<ReferencePathOperation>(style.clipPath())) {

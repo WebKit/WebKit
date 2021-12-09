@@ -67,9 +67,12 @@ public:
     bool knownToBeOpaque(const RenderElement&) const final;
     bool usesDataProtocol() const final;
 
+    URL reresolvedURL(const Document&) const;
+
 private:
     StyleCachedImage(CSSImageValue&, float);
-    URL imageURL();
+
+    URL imageURL() const;
 
     Ref<CSSImageValue> m_cssValue;
     bool m_isPending { true };

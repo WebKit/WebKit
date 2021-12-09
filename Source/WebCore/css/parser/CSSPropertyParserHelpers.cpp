@@ -2823,11 +2823,11 @@ std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRang
     auto value2 = consumePositionComponent(range, parserMode, unitless);
     if (!value2)
         return positionFromOneValue(*value1);
-
+    
     auto value3 = consumePositionComponent(range, parserMode, unitless);
     if (!value3)
         return positionFromTwoValues(*value1, *value2);
-
+    
     auto value4 = consumePositionComponent(range, parserMode, unitless);
     
     std::array<CSSPrimitiveValue*, 5> values {

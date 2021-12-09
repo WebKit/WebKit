@@ -64,9 +64,14 @@ bool StyleCachedImage::operator==(const StyleImage& other) const
     return false;
 }
 
-URL StyleCachedImage::imageURL()
+URL StyleCachedImage::imageURL() const
 {
     return m_cssValue->imageURL();
+}
+
+URL StyleCachedImage::reresolvedURL(const Document& document) const
+{
+    return m_cssValue->reresolvedURL(document);
 }
 
 void StyleCachedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)

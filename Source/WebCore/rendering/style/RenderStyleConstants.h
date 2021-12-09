@@ -332,7 +332,8 @@ enum class FillBox : uint8_t {
     Border,
     Padding,
     Content,
-    Text
+    Text,
+    NoClip
 };
 
 enum class FillRepeat : uint8_t {

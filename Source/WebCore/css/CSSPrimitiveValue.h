@@ -132,6 +132,7 @@ public:
     static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
 
     template<typename T> static Ref<CSSPrimitiveValue> create(T&&);
+    template<typename T> static Ref<CSSPrimitiveValue> create(T&&, CSSPropertyID);
 
     ~CSSPrimitiveValue();
 
@@ -225,6 +226,7 @@ private:
     CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
 
     template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
+    template<typename T> CSSPrimitiveValue(T, CSSPropertyID); // Defined in CSSPrimitiveValueMappings.h
     template<typename T> CSSPrimitiveValue(RefPtr<T>&&);
     template<typename T> CSSPrimitiveValue(Ref<T>&&);
 
@@ -328,6 +330,11 @@ constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
 template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)
 {
     return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value)));
+}
+
+template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value, CSSPropertyID propertyID)
+{
+    return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value), propertyID));
 }
 
 template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const

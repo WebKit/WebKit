@@ -283,7 +283,7 @@ void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, 
         maskMode = MaskMode::Luminance;
         break;
     case CSSValueMatchSource:
-        ASSERT(propertyID == CSSPropertyWebkitMaskMode);
+        ASSERT(propertyID == CSSPropertyMaskMode);
         maskMode = MaskMode::MatchSource;
         break;
     case CSSValueAuto:

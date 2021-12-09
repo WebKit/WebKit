@@ -321,7 +321,7 @@ static inline FillBox clipMax(FillBox clipA, FillBox clipB)
         return FillBox::Padding;
     if (clipA == FillBox::Content || clipB == FillBox::Content)
         return FillBox::Content;
-    return FillBox::Text;
+    return FillBox::NoClip;
 }
 
 void FillLayer::computeClipMax() const
@@ -329,7 +329,7 @@ void FillLayer::computeClipMax() const
     Vector<const FillLayer*, 4> layers;
     for (auto* layer = this; layer; layer = layer->m_next.get())
         layers.append(layer);
-    FillBox computedClipMax = FillBox::Text;
+    FillBox computedClipMax = FillBox::NoClip;
     for (unsigned i = layers.size(); i; --i) {
         auto& layer = *layers[i - 1];
         computedClipMax = clipMax(computedClipMax, layer.clip());

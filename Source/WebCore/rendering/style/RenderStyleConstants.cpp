@@ -498,6 +498,7 @@ TextStream& operator<<(TextStream& ts, FillBox fill)
     case FillBox::Padding: ts << "padding"; break;
     case FillBox::Content: ts << "content"; break;
     case FillBox::Text: ts << "text"; break;
+    case FillBox::NoClip: ts << "no-clip"; break;
     }
     return ts;
 }

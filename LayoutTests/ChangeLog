@@ -1,3 +1,21 @@
+2021-12-09  Matt Woodrow  <matt.woodrow@gmail.com>
+
+        Unprefix -webkit-mask
+        https://bugs.webkit.org/show_bug.cgi?id=229082
+
+        Reviewed by Antti Koivisto.
+
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask-mode.html:
+        * fast/masking/parsing-mask.html:
+        * fast/masking/parsing-webkit-mask-expected.txt: Copied from LayoutTests/fast/masking/parsing-mask-expected.txt.
+        * fast/masking/parsing-webkit-mask.html: Copied from LayoutTests/fast/masking/parsing-mask.html.
+        * platform/mac/imported/w3c/web-platform-tests/css/css-masking/animations/mask-image-interpolation-expected.png: Added.
+        * platform/mac/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-valid.sub-expected.png: Added.
+        * svg/masking/mask-external-reference-expected.svg: Added.
+        * svg/masking/mask-external-reference.svg: Added.
+        * svg/masking/resources/mask-resource.svg: Added.
+
 2021-12-09  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make 6 more layout tests async so they pass in isolated tree mode
