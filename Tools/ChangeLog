@@ -1,3 +1,14 @@
+2021-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up another iOS GPU Processes tester
+        https://bugs.webkit.org/show_bug.cgi?id=234016
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/config.json: Repurpose the Catalina GPU bot for this queue.
+        * CISupport/build-webkit-org/factories_unittest.py:
+        (TestExpectedBuildSteps): Update unit tests.
+
 2021-12-09  Brady Eidson  <beidson@apple.com>
 
         Add ability to inject messages into webpushd
