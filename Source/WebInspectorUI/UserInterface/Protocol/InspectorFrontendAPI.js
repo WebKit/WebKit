@@ -210,8 +210,11 @@ InspectorFrontendAPI = {
         return WI.sharedApp.extensionController.unregisterExtension(extensionID);
     },
 
-    // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise an object
-    // with an 'extensionTabID' key representing the tab identifier for the newly created tab.
+    // Returns a string (WI.WebInspectorExtension.ErrorCode) if an error occurred that prevented creating a tab.
+    // Returns a Promise that is resolved if the evaluation completes and rejected if there was an internal error.
+    // When the promise is fulfilled, it will be either:
+    // - resolved with an object containing a 'result' key and value that is the tab identifier for the new tab.
+    // - rejected with an object containing an 'error' key and value that is the exception that was thrown while evaluating script.
     createTabForExtension(extensionID, tabName, tabIconURL, sourceURL)
     {
         return WI.sharedApp.extensionController.createTabForExtension(extensionID, tabName, tabIconURL, sourceURL);
@@ -233,7 +236,11 @@ InspectorFrontendAPI = {
         return WI.sharedApp.extensionController.reloadForExtension(extensionID, {ignoreCache, userAgent, injectedScript});
     },
 
-    // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise nothing.
+    // Returns a string (WI.WebInspectorExtension.ErrorCode) if an error occurred before attempting to switch tabs.
+    // Returns a Promise that is resolved if the tab could be shown and rejected if the tab could not be shown.
+    // When the promise is fulfilled, it will be either:
+    // - resolved with no value.
+    // - rejected with an object containing an 'error' key and value that is the exception that was thrown while showing the tab.
     showExtensionTab(extensionTabID)
     {
         return WI.sharedApp.extensionController.showExtensionTab(extensionTabID);

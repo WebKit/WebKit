@@ -41,6 +41,7 @@ InspectorExtensionDelegate::InspectorExtensionDelegate(_WKInspectorExtension *in
 {
     m_delegateMethods.inspectorExtensionDidShowTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didShowTabWithIdentifier:)];
     m_delegateMethods.inspectorExtensionDidHideTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didHideTabWithIdentifier:)];
+    m_delegateMethods.inspectorExtensionDidNavigateTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didNavigateTabWithIdentifier:newURL:)];
     m_delegateMethods.inspectorExtensionInspectedPageDidNavigate = [delegate respondsToSelector:@selector(inspectorExtension:inspectedPageDidNavigate:)];
 
     inspectorExtension->_extension->setClient(makeUniqueRef<InspectorExtensionClient>(*this));
@@ -84,6 +85,18 @@ void InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab(c
         return;
 
     [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didHideTabWithIdentifier:extensionTabID];
+}
+
+void InspectorExtensionDelegate::InspectorExtensionClient::didNavigateExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& newURL)
+{
+    if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionDidNavigateTabWithIdentifier)
+        return;
+
+    auto& delegate = m_inspectorExtensionDelegate.m_delegate;
+    if (!delegate)
+        return;
+
+    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didNavigateTabWithIdentifier:extensionTabID newURL:newURL];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::inspectedPageDidNavigate(const WTF::URL& newURL)

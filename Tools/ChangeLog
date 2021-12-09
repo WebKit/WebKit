@@ -1,3 +1,22 @@
+2021-12-08  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be to notified when an extension tab navigates
+        https://bugs.webkit.org/show_bug.cgi?id=233935
+        <rdar://86123899>
+
+        Reviewed by Patrick Angle.
+
+        Add API test coverage for -inspectorExtension:didNavigateTabWithIdentifier:newURL:
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm:
+        (TEST):
+        Drive-by, fix an outdated completion handler type signature.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm:
+        (-[InspectorExtensionDelegateForTesting inspectorExtension:didNavigateTabWithIdentifier:newURL:]):
+        (TEST):
+        Add a test case which exercises the new delegate method.
+
 2021-12-09  Lauro Moura  <lmoura@igalia.com>
 
         [WebXR][WPE] Build fails without openxr installed

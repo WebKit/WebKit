@@ -40,11 +40,11 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         this._tabInfo = tabInfo;
         this._sourceURL = sourceURL;
 
+        this._iframeFinishedInitialLoad = false;
+        this._whenPageAvailablePromise = new WI.WrappedPromise;
+
         this._iframeElement = this.element.appendChild(document.createElement("iframe"));
         this._iframeElement.addEventListener("load", this._extensionFrameDidLoad.bind(this));
-        this._iframeElement.src = this._sourceURL;
-
-        this._frameContentDidLoad = false;
     }
 
     // Static
@@ -71,6 +71,11 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
     get supportsSplitContentBrowser()
     {
         return true;
+    }
+
+    whenPageAvailable()
+    {
+        return this._whenPageAvailablePromise.promise;
     }
 
     attached()
@@ -109,13 +114,35 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
 
     _extensionFrameDidLoad()
     {
-        this._frameContentDidLoad = true;
-        this._maybeDispatchDidShowExtensionTab();
+        // Bounce from the initial empty page to the requested sourceURL.
+        if (!this._iframeFinishedInitialLoad) {
+            this._iframeFinishedInitialLoad = true;
+            WI.sharedApp.extensionController.evaluateScriptInExtensionTab(this._extensionTabID, `document.location.replace("${this._sourceURL}");`);
+            return;
+        }
+
+        // Signal that the page is available since we already bounced to the requested page.
+        if (!this._whenPageAvailablePromise.settled)
+            this._whenPageAvailablePromise.resolve(this._sourceURL);
+
+        this._maybeDispatchDidNavigateExtensionTab();
+    }
+
+    async _maybeDispatchDidNavigateExtensionTab()
+    {
+        if (!this.element.isConnected)
+            return;
+
+        let payload = await WI.sharedApp.extensionController.evaluateScriptInExtensionTab(this._extensionTabID, "document.location.href");
+        console.assert(payload.result, "Should be able to unwrap evaluation in extension tab!", payload.result);
+
+        if (InspectorFrontendHost.supportsWebExtensions)
+            InspectorFrontendHost.didNavigateExtensionTab(this._extension.extensionID, this._extensionTabID, payload.result);
     }
 
     _maybeDispatchDidShowExtensionTab()
     {
-        if (!this._frameContentDidLoad || !this.element.isConnected)
+        if (!this.element.isConnected)
             return;
 
         if (InspectorFrontendHost.supportsWebExtensions)

@@ -1,3 +1,33 @@
+2021-12-08  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be to notified when an extension tab navigates
+        https://bugs.webkit.org/show_bug.cgi?id=233935
+        <rdar://86123899>
+
+        Reviewed by Patrick Angle.
+
+        In order instrument all loads inside the extension iframe, we cannot rely on the <iframe src> attribute
+        to query the currently loaded page, or to change the current page. Use a helper method to query and set
+        the iframe location indirectly using `document.location`.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.createTabForExtension):
+        (WI.WebInspectorExtensionController.prototype.showExtensionTab):
+        Standardize on returning {"result": value} from these methods.
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView):
+        (WI.WebInspectorExtensionTabContentView.prototype.whenPageAvailable): Added.
+        (WI.WebInspectorExtensionTabContentView.prototype._extensionFrameDidLoad):
+        Trigger a load of the actual requested page by evaluating `document.location.href = <url>`
+        in the context of the extension tab iframe. Notify clients when this non-initial load completes.
+
+        (WI.WebInspectorExtensionTabContentView.prototype.async _maybeDispatchDidNavigateExtensionTab):
+        Dispatch didNavigateExtensionTab with the new URL when the extension tab iframe completes a load.
+        Don't notify the client if the extension tab has not yet loaded.
+
 2021-12-09  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Enable fuzzy matching for CSS completions

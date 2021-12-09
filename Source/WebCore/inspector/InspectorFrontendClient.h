@@ -122,6 +122,7 @@ public:
     virtual bool supportsWebExtensions() { return false; }
     virtual void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) { }
     virtual void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) { }
+    virtual void didNavigateExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, const URL&) { }
     virtual void inspectedPageDidNavigate(const URL&) { }
 #endif
 

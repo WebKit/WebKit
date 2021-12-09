@@ -380,6 +380,14 @@ void WebInspectorUI::didHideExtensionTab(const String& extensionID, const String
     m_extensionController->didHideExtensionTab(extensionID, extensionTabID);
 }
 
+void WebInspectorUI::didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const URL& newURL)
+{
+    if (!m_extensionController)
+        return;
+
+    m_extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
+}
+
 void WebInspectorUI::inspectedPageDidNavigate(const URL& newURL)
 {
     if (!m_extensionController)

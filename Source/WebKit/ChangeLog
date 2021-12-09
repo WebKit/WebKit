@@ -1,3 +1,50 @@
+2021-12-08  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be to notified when an extension tab navigates
+        https://bugs.webkit.org/show_bug.cgi?id=233935
+        <rdar://86123899>
+
+        Reviewed by Patrick Angle.
+
+        Add plumbing to notify clients when an extension tab loads. This is implemented similarly to
+        -inspectorExtension:didShowExtensionTab: and -inspectorExtension:didHideExtensionTab:.
+
+        * UIProcess/API/APIInspectorExtensionClient.h:
+        (API::InspectorExtensionClient::didNavigateExtensionTab):
+
+        * UIProcess/API/Cocoa/_WKInspectorExtensionDelegate.h:
+
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm:
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionDelegate):
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionClient::didNavigateExtensionTab):
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::didNavigateExtensionTab):
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::didNavigateExtensionTab):
+
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::didHideExtensionTab):
+        (WebKit::WebInspectorUI::didNavigateExtensionTab):
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::createTabForExtension):
+        Standardize on returning {result: value} for showExtensionTab.
+
+        (WebKit::WebInspectorUIExtensionController::showExtensionTab):
+        Standardize on returning {result: value} for showExtensionTab.
+        Also, there's no need to inspect the result value if it's not an error.
+
+        (WebKit::WebInspectorUIExtensionController::didNavigateExtensionTab):
+        Add plumbing.
+
 2021-12-09  Brady Eidson  <beidson@apple.com>
 
         Add ability to inject messages into webpushd

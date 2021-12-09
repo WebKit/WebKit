@@ -93,7 +93,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         WI.tabBrowser.addTabForContentView(tabContentView, {suppressAnimations: true});
 
         // The calling convention is to return an error string or a result object.
-        return {extensionTabID};
+        return {"result": extensionTabID};
     }
 
     evaluateScriptForExtension(extensionID, scriptSource, {frameURL, contextSecurityOrigin, useContentScriptContext} = {})
@@ -183,6 +183,10 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         }
 
         tabContentView.visible = true;
+
+        // Clients expect to be able to use evaluateScriptInExtensionTab() when this method
+        // returns, so wait for the extension tab to finish its loading sequence. Wrap the result.
+        return tabContentView.whenPageAvailable().then((sourceURL) => { return {"result": sourceURL}; });
     }
 
     hideExtensionTab(extensionTabID, options = {})

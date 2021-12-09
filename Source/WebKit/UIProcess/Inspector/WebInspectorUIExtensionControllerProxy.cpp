@@ -268,6 +268,20 @@ void WebInspectorUIExtensionControllerProxy::didHideExtensionTab(const Inspector
     extensionClient->didHideExtensionTab(extensionTabID);
 }
 
+void WebInspectorUIExtensionControllerProxy::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& newURL)
+{
+    auto it = m_extensionAPIObjectMap.find(extensionID);
+    if (it == m_extensionAPIObjectMap.end())
+        return;
+
+    RefPtr<API::InspectorExtension> extension = it->value;
+    auto extensionClient = extension->client();
+    if (!extensionClient)
+        return;
+
+    extensionClient->didNavigateExtensionTab(extensionTabID, newURL);
+}
+
 void WebInspectorUIExtensionControllerProxy::inspectedPageDidNavigate(const URL& newURL)
 {
     for (auto& extension : copyToVector(m_extensionAPIObjectMap.values())) {

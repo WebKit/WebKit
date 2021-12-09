@@ -707,6 +707,14 @@ void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const
     m_client->didHideExtensionTab(extensionID, extensionTabID);
 }
 
+void InspectorFrontendHost::didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const String& newURLString)
+{
+    if (!m_client)
+        return;
+    
+    m_client->didNavigateExtensionTab(extensionID, extensionTabID, { URL(), newURLString });
+}
+
 void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
 {
     if (!m_client)

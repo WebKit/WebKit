@@ -53,7 +53,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)inspectorExtension:(_WKInspectorExtension *)extension didHideTabWithIdentifier:(NSString *)tabIdentifier;
 
 /**
+ * @abstract Called when a tab associated with this extension has navigated to a new URL.
+ * @param extension The extension that created the tab.
+ * @param tabIdentifier Identifier for the tab that navigated.
+ * @param URL The new URL for the extension tab's page.
+ */
+- (void)inspectorExtension:(_WKInspectorExtension *)extension didNavigateTabWithIdentifier:(NSString *)tabIdentifier newURL:(NSURL *)newURL;
+
+/**
  * @abstract Called when the inspected page has navigated to a new URL.
+ * @param extension The extension that is being notified.
  * @param url The new URL for the inspected page.
  */
 - (void)inspectorExtension:(_WKInspectorExtension *)extension inspectedPageDidNavigate:(NSURL *)url;

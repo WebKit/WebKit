@@ -306,6 +306,14 @@ void RemoteWebInspectorUI::didHideExtensionTab(const Inspector::ExtensionID& ext
     m_extensionController->didHideExtensionTab(extensionID, extensionTabID);
 }
 
+void RemoteWebInspectorUI::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const URL& newURL)
+{
+    if (!m_extensionController)
+        return;
+
+    m_extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
+}
+
 void RemoteWebInspectorUI::inspectedPageDidNavigate(const URL& newURL)
 {
     if (!m_extensionController)
