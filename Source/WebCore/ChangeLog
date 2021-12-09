@@ -1,3 +1,29 @@
+2021-12-09  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/86235842
+
+    2021-12-09  Simon Fraser  <simon.fraser@apple.com>
+
+            rdar://86235842 ([root] J316c: Rubber-banding is more stuttery with the momentum generator enabled)
+
+            Reviewed by Tim Horton.
+
+            Branch-only patch (this timer does not exist on trunk).
+
+            To avoid raciness between displayDidRefresh callbacks and the rubberbanding timer, offset
+            the timer by 1/4 frame. After the first frame, we reset its fire interval back to the
+            nominal frame rate.
+
+            stopAnimationCallback() sets m_isAnimationTimerInOffsetPhase to false to avoid any chance
+            of restarting a stopped timer in the callback.
+
+            * page/scrolling/ScrollingTree.h:
+            * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+            * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+            (WebCore::ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback):
+            (WebCore::ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback):
+            (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired):
+
 2021-12-03  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r285526. rdar://problem/85928816

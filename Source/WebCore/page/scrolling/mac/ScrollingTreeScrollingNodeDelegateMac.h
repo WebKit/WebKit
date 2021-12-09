@@ -110,6 +110,7 @@ private:
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
 
     std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>> m_scrollControllerAnimationTimer;
+    bool m_isAnimationTimerInOffsetPhase { false };
 
     bool m_inMomentumPhase { false };
 };

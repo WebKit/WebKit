@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
+#import "AnimationFrameRate.h"
 #import "Logging.h"
 #import "ScrollingStateScrollingNode.h"
 #import "ScrollingTree.h"
@@ -229,17 +230,28 @@ void ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback(ScrollControl
     if (m_scrollControllerAnimationTimer->isActive())
         return;
 
-    m_scrollControllerAnimationTimer->startRepeating(1_s / 60.);
+    // We offset the timer by a 1/4 frame to avoid it racing with displayDidRefresh callbacks (rdar://86235842).
+    auto framesPerSecond = scrollingTree().nominalFramesPerSecond().value_or(FullSpeedFramesPerSecond);
+    auto firstInterval = (1_s / framesPerSecond) / 4;
+    m_isAnimationTimerInOffsetPhase = true;
+    m_scrollControllerAnimationTimer->startRepeating(firstInterval);
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback(ScrollController&)
 {
+    m_isAnimationTimerInOffsetPhase = false;
     if (m_scrollControllerAnimationTimer)
         m_scrollControllerAnimationTimer->stop();
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired()
 {
+    if (m_scrollControllerAnimationTimer && m_isAnimationTimerInOffsetPhase) {
+        auto framesPerSecond = scrollingTree().nominalFramesPerSecond().value_or(FullSpeedFramesPerSecond);
+        m_scrollControllerAnimationTimer->startRepeating(1_s / framesPerSecond);
+        m_isAnimationTimerInOffsetPhase = false;
+    }
+
     m_scrollController.animationCallback(MonotonicTime::now());
 }
 

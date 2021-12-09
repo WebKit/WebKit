@@ -223,7 +223,9 @@ public:
 
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
-    
+
+    std::optional<FramesPerSecond> nominalFramesPerSecond();
+
     bool hasProcessedWheelEventsRecently();
     WEBCORE_EXPORT void willProcessWheelEvent();
 
@@ -256,8 +258,6 @@ protected:
 
     void setGestureState(std::optional<WheelScrollGestureState>);
     std::optional<WheelScrollGestureState> gestureState();
-
-    std::optional<FramesPerSecond> nominalFramesPerSecond();
 
     void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
     void removeAllNodes() WTF_REQUIRES_LOCK(m_treeLock);
