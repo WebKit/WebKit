@@ -1,3 +1,42 @@
+2021-12-09  Saam Barati  <sbarati@apple.com>
+
+        Add an option to dump the B3 IR for an allowlist of Wasm function indices
+        https://bugs.webkit.org/show_bug.cgi?id=234028
+
+        Reviewed by Tadeu Zagallo.
+
+        * b3/B3Common.cpp:
+        (JSC::B3::shouldDumpIR):
+        * b3/B3Common.h:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::dump const):
+        (JSC::B3::Procedure::setShouldDumpIR):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::shouldDumpIR const):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/testb3.h:
+        (shouldBeVerbose):
+        (lowerToAirForTesting):
+        * b3/testb3_6.cpp:
+        (testInterpreter):
+        (testMoveConstants):
+        * b3/testb3_7.cpp:
+        (testReduceStrengthReassociation):
+        * runtime/OptionsList.h:
+        * tools/FunctionAllowlist.cpp:
+        (JSC::FunctionAllowlist::shouldDumpWasmFunction const):
+        * tools/FunctionAllowlist.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::shouldDumpIRFor):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+
 2021-12-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce BaselineCallLinkInfo and OptimizingCallLinkInfo to shrink sizeof(BaselineCallLinkInfo)

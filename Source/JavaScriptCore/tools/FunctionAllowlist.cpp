@@ -96,6 +96,15 @@ bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
     return m_entries.contains(name + '#' + hash);
 }
 
+bool FunctionAllowlist::shouldDumpWasmFunction(uint32_t index) const
+{
+    if (!m_hasActiveAllowlist)
+        return false;
+    if (m_entries.isEmpty())
+        return false;
+    return m_entries.contains(String::number(index));
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

@@ -359,14 +359,14 @@ void testReduceStrengthReassociation(bool flip)
 
     proc.resetReachability();
 
-    if (shouldBeVerbose()) {
+    if (shouldBeVerbose(proc)) {
         dataLog("IR before reduceStrength:\n");
         dataLog(proc);
     }
 
     reduceStrength(proc);
 
-    if (shouldBeVerbose()) {
+    if (shouldBeVerbose(proc)) {
         dataLog("IR after reduceStrength:\n");
         dataLog(proc);
     }

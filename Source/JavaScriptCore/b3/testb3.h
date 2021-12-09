@@ -97,9 +97,9 @@ inline void usage()
 using namespace JSC;
 using namespace JSC::B3;
 
-inline bool shouldBeVerbose()
+inline bool shouldBeVerbose(Procedure& procedure)
 {
-    return shouldDumpIR(B3Mode);
+    return shouldDumpIR(procedure, B3Mode);
 }
 
 extern Lock crashLock;
@@ -220,13 +220,13 @@ inline void lowerToAirForTesting(Procedure& proc)
 {
     proc.resetReachability();
     
-    if (shouldBeVerbose())
+    if (shouldBeVerbose(proc))
         dataLog("B3 before lowering:\n", proc);
     
     validate(proc);
     lowerToAir(proc);
     
-    if (shouldBeVerbose())
+    if (shouldBeVerbose(proc))
         dataLog("Air after lowering:\n", proc.code());
     
     Air::validate(proc.code());

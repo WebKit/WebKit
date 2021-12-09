@@ -36,8 +36,11 @@ namespace JSC { namespace B3 {
 
 const char* const tierName = "b3  ";
 
-bool shouldDumpIR(B3CompilationMode mode)
+bool shouldDumpIR(Procedure& procedure, B3CompilationMode mode)
 {
+    if (procedure.shouldDumpIR())
+        return true;
+
 #if ENABLE(FTL_JIT)
     return FTL::verboseCompilationEnabled() || FTL::shouldDumpDisassembly() || shouldDumpIRAtEachPhase(mode);
 #else

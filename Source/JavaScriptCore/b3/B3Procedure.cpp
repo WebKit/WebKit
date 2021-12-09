@@ -228,6 +228,7 @@ void Procedure::invalidateCFG()
 
 void Procedure::dump(PrintStream& out) const
 {
+    out.print("Opt Level: ", optLevel(), "\n");
     IndexSet<Value*> valuesInBlocks;
     for (BasicBlock* block : *this) {
         out.print(deepDump(*this, block));
@@ -477,6 +478,12 @@ void Procedure::freeUnneededB3ValuesAfterLowering()
             m_values.remove(value);
     }
     m_values.packIndices();
+}
+
+void Procedure::setShouldDumpIR()
+{
+    m_shouldDumpIR = true;
+    m_code->forcePreservationOfB3Origins();
 }
 
 } } // namespace JSC::B3

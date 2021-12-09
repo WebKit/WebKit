@@ -96,7 +96,7 @@ void OMGForOSREntryPlan::work(CompilationEffort)
     computeExceptionHandlerLocations(exceptionHandlerLocations, internalFunction, context, linkBuffer);
 
     omgEntrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_WASM_CODE_FOR_MODE(CompilationMode::OMGForOSREntryMode, linkBuffer, JITCompilationPtrTag, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+        FINALIZE_CODE_IF(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGForOSREntryMode), linkBuffer, JITCompilationPtrTag, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);

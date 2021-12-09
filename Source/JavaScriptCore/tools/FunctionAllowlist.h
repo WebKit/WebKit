@@ -37,6 +37,7 @@ public:
     explicit FunctionAllowlist(const char*);
 
     bool contains(CodeBlock*) const;
+    bool shouldDumpWasmFunction(uint32_t) const;
 
 private:
     HashSet<String> m_entries;

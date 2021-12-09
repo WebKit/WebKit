@@ -34,6 +34,8 @@
 
 namespace JSC { namespace B3 {
 
+class Procedure;
+
 extern const char* const tierName;
 
 enum B3CompilationMode {
@@ -41,7 +43,7 @@ enum B3CompilationMode {
     AirMode
 };
 
-JS_EXPORT_PRIVATE bool shouldDumpIR(B3CompilationMode);
+JS_EXPORT_PRIVATE bool shouldDumpIR(Procedure&, B3CompilationMode);
 bool shouldDumpIRAtEachPhase(B3CompilationMode);
 bool shouldValidateIR();
 bool shouldValidateIRAtEachPhase();

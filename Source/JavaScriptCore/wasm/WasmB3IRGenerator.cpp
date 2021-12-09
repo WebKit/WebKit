@@ -46,6 +46,7 @@
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "FunctionAllowlist.h"
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "ProbeContext.h"
@@ -3228,6 +3229,17 @@ auto B3IRGenerator::origin() -> Origin
     return bitwise_cast<Origin>(origin);
 }
 
+static bool shouldDumpIRFor(uint32_t functionIndex)
+{
+    static LazyNeverDestroyed<FunctionAllowlist> dumpAllowlist;
+    static std::once_flag initializeAllowlistFlag;
+    std::call_once(initializeAllowlistFlag, [] {
+        const char* functionAllowlistFile = Options::wasmB3FunctionsToDump();
+        dumpAllowlist.construct(functionAllowlistFile);
+    });
+    return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
+}
+
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
@@ -3237,6 +3249,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     compilationContext.procedure = makeUnique<Procedure>();
 
     Procedure& procedure = *compilationContext.procedure;
+    if (shouldDumpIRFor(functionIndex + info.importFunctionCount()))
+        procedure.setShouldDumpIR();
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 

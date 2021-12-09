@@ -280,6 +280,9 @@ public:
 
     JS_EXPORT_PRIVATE void freeUnneededB3ValuesAfterLowering();
 
+    bool shouldDumpIR() const { return m_shouldDumpIR; }
+    void setShouldDumpIR();
+
 private:
     friend class BlockInsertionSet;
 
@@ -307,6 +310,7 @@ private:
     bool m_needsUsedRegisters { true };
     bool m_hasQuirks { false };
     bool m_needsPCToOriginMap { false };
+    bool m_shouldDumpIR { false };
 };
     
 } } // namespace JSC::B3
