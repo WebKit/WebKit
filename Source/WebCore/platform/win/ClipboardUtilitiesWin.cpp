@@ -39,11 +39,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/win/WCharStringExtras.h>
 
-#if USE(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/RetainPtr.h>
-#endif
-
 namespace WebCore {
 
 FORMATETC* cfHDropFormat()
@@ -51,27 +46,6 @@ FORMATETC* cfHDropFormat()
     static FORMATETC urlFormat = {CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
-
-#if USE(CF)
-
-static bool urlFromPath(CFStringRef path, String& url)
-{
-    if (!path)
-        return false;
-
-    RetainPtr<CFURLRef> cfURL = adoptCF(CFURLCreateWithFileSystemPath(0, path, kCFURLWindowsPathStyle, false));
-    if (!cfURL)
-        return false;
-
-    url = CFURLGetString(cfURL.get());
-
-    // Work around <rdar://problem/6708300>, where CFURLCreateWithFileSystemPath makes URLs with "localhost".
-    if (url.startsWith("file://localhost/"))
-        url.remove(7, 9);
-
-    return true;
-}
-#endif
 
 static bool getDataMapItem(const DragDataMap* dataObject, FORMATETC* format, String& item)
 {
@@ -486,14 +460,13 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
     }
-#if USE(CF)
     else if (filenamePolicy == DragData::ConvertFilenames) {
         if (SUCCEEDED(dataObject->GetData(filenameWFormat(), &store))) {
             // file using unicode
             wchar_t* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExists(data) || PathIsUNC(data))) {
-                RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar*)data, wcslen(data)));
-                if (urlFromPath(pathAsCFString.get(), url) && title)
+                url = URL::fileURLWithFileSystemPath(String(data)).fileSystemPath();
+                if (title)
                     *title = url;
             }
             GlobalUnlock(store.hGlobal);
@@ -502,15 +475,14 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
             // filename using ascii
             char* data = static_cast<char*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
-                RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, data, kCFStringEncodingASCII));
-                if (urlFromPath(pathAsCFString.get(), url) && title)
+                url = URL::fileURLWithFileSystemPath(String(data)).fileSystemPath();
+                if (title)
                     *title = url;
             }
             GlobalUnlock(store.hGlobal);
             ReleaseStgMedium(&store);
         }
     }
-#endif
     return url;
 }
 
@@ -524,7 +496,6 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
         return extractURL(url, title);
     if (getDataMapItem(data, urlFormat(), url))
         return extractURL(url, title);
-#if USE(CF)
     if (filenamePolicy != DragData::ConvertFilenames)
         return url;
 
@@ -535,10 +506,11 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
     auto wcharData = stringData.wideCharacters().data();
     if (stringData.isEmpty() || (!PathFileExists(wcharData) && !PathIsUNC(wcharData)))
         return url;
-    RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)wcharData, wcslen(wcharData)));
-    if (urlFromPath(pathAsCFString.get(), url) && title)
+
+    url = URL::fileURLWithFileSystemPath(stringData).fileSystemPath();
+    if (title)
         *title = url;
-#endif
+
     return url;
 }
 
