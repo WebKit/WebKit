@@ -4,7 +4,5 @@
 <dict>
 	<key>com.apple.private.webkit.webpush</key>
 	<true/>
-	<key>com.apple.private.webkit.webpush.inject</key>
-	<true/>
 </dict>
 </plist>

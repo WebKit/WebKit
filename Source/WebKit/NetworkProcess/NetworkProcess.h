@@ -117,7 +117,6 @@ enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
 enum class WebsiteDataType : uint32_t;
 struct NetworkProcessCreationParameters;
-struct WebPushMessage;
 struct WebsiteDataStoreParameters;
 
 #if ENABLE(SERVICE_WORKER)
@@ -397,8 +396,7 @@ public:
     bool ftpEnabled() const { return m_ftpEnabled; }
 
 #if ENABLE(SERVICE_WORKER)
-    void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
-    void processPushMessage(PAL::SessionID, WebPushMessage&&, CompletionHandler<void(bool)>&&);
+    void processPushMessage(PAL::SessionID, const std::optional<IPC::DataReference>&, URL&&, CompletionHandler<void(bool)>&&);
 #endif
 
     void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);

@@ -56,7 +56,6 @@ public:
 
     const String& hostAppCodeSigningIdentifier();
     bool hostAppHasPushEntitlement();
-    bool hostAppHasPushInjectEntitlement();
 
     bool debugModeIsEnabled() const { return m_debugModeEnabled; }
     void setDebugModeIsEnabled(bool);
@@ -75,8 +74,6 @@ private:
 
     void maybeStartNextAppBundleRequest();
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
-
-    bool hostHasEntitlement(const char*);
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
 

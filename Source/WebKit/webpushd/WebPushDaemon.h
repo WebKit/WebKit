@@ -26,11 +26,8 @@
 #pragma once
 
 #include "PushClientConnection.h"
-#include "PushMessageForTesting.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushDaemonConstants.h"
-#include "WebPushMessage.h"
-#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -43,7 +40,6 @@ namespace JSC {
 enum class MessageLevel : uint8_t;
 }
 
-using WebKit::WebPushD::PushMessageForTesting;
 using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 
 namespace WebPushD {
@@ -66,8 +62,6 @@ public:
     void deletePushAndNotificationRegistration(ClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void setDebugModeIsEnabled(ClientConnection*, bool);
     void updateConnectionConfiguration(ClientConnection*, const WebPushDaemonConnectionConfiguration&);
-    void injectPushMessageForTesting(ClientConnection*, const PushMessageForTesting&, CompletionHandler<void(bool)>&&);
-    void getPendingPushMessages(ClientConnection*, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
 
     void broadcastDebugMessage(JSC::MessageLevel, const String&);
 
@@ -81,8 +75,6 @@ private:
 
     ClientConnection* toClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<ClientConnection>> m_connectionMap;
-
-    HashMap<String, Deque<PushMessageForTesting>> m_testingPushMessages;
 };
 
 } // namespace WebPushD

@@ -58,7 +58,6 @@
 #include "WebCookieManager.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
-#include "WebPushMessage.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebSWOriginStore.h"
 #include "WebSWServerConnection.h"
@@ -2556,20 +2555,12 @@ void NetworkProcess::addServiceWorkerSession(PAL::SessionID sessionID, bool proc
         SandboxExtension::consumePermanently(handle);
 }
 
-void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)
+void NetworkProcess::processPushMessage(PAL::SessionID sessionID, const std::optional<IPC::DataReference>& ipcData, URL&& registrationURL, CompletionHandler<void(bool)>&& callback)
 {
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    if (auto* session = networkSession(sessionID)) {
-        session->notificationManager().getPendingPushMessages(WTFMove(callback));
-        return;
-    }
-#endif
-    callback({ });
-}
-
-void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& callback)
-{
-    swServerForSession(sessionID).processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.registrationURL), WTFMove(callback));
+    std::optional<Vector<uint8_t>> data;
+    if (ipcData)
+        data = Vector<uint8_t> { ipcData->data(), ipcData->size() };
+    swServerForSession(sessionID).processPushMessage(WTFMove(data), WTFMove(registrationURL), WTFMove(callback));
 }
 #endif // ENABLE(SERVICE_WORKER)
 

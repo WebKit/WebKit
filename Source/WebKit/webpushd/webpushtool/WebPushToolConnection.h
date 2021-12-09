@@ -25,14 +25,10 @@
 
 #pragma once
 
-#include "PushMessageForTesting.h"
 #include <memory>
 #include <wtf/RetainPtr.h>
-#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
-
-using WebKit::WebPushD::PushMessageForTesting;
 
 namespace WebPushTool {
 
@@ -58,24 +54,19 @@ public:
 
     void connectToService();
 
-    void setPushMessage(std::unique_ptr<PushMessageForTesting>&& message) { m_pushMessage = WTFMove(message); }
-
 private:
     void messageReceived(xpc_object_t);
     void connectionDropped();
 
     void startAction();
     void startDebugStreamAction();
-    void sendPushMessage();
 
     void sendAuditToken();
-
+    
     Action m_action;
     bool m_reconnect { false };
     RetainPtr<xpc_connection_t> m_connection;
     const char* m_serviceName;
-
-    std::unique_ptr<PushMessageForTesting> m_pushMessage;
 };
 
 } // namespace WebPushTool

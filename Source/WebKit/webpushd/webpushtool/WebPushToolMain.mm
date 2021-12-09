@@ -24,13 +24,10 @@
  */
 
 #import "config.h"
-#import "PushMessageForTesting.h"
 #import "WebPushToolConnection.h"
 #import <Foundation/Foundation.h>
 #import <optional>
 #import <wtf/MainThread.h>
-
-using WebKit::WebPushD::PushMessageForTesting;
 
 __attribute__((__noreturn__))
 static void printUsageAndTerminate(NSString *message)
@@ -39,41 +36,13 @@ static void printUsageAndTerminate(NSString *message)
 
     fprintf(stderr, "Usage: webpushtool [options]\n");
     fprintf(stderr, "\n");
-    fprintf(stderr, "  --development\n");
-    fprintf(stderr, "    Connects to mach service \"org.webkit.webpushtestdaemon.service\" (Default)\n");
-    fprintf(stderr, "  --production\n");
-    fprintf(stderr, "    Connects to mach service \"com.apple.webkit.webpushd.service\"\n");
-    fprintf(stderr, "  --streamDebugMessages\n");
-    fprintf(stderr, "    Stream debug messages from webpushd\n");
-    fprintf(stderr, "  --reconnect\n");
-    fprintf(stderr, "    Reconnect after connection is lost\n");
-    fprintf(stderr, "  --push <target app identifier> <registration URL> <message>\n");
-    fprintf(stderr, "    Inject a test push messasge to the target app and registration URL\n");
+    fprintf(stderr, "  --development              Connects to mach service \"org.webkit.webpushtestdaemon.service\" (Default)\n");
+    fprintf(stderr, "  --production               Connects to mach service \"com.apple.webkit.webpushd.service\"\n");
+    fprintf(stderr, "  --streamDebugMessages      Stream debug messages from webpushd\n");
+    fprintf(stderr, "  --reconnect                Reconnect after connection is lost\n");
     fprintf(stderr, "\n");
 
     exit(-1);
-}
-
-static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumerator<NSString *> *enumerator)
-{
-    NSString *appIdentifier = [enumerator nextObject];
-    if (!appIdentifier)
-        return nullptr;
-
-    NSString *registrationString = [enumerator nextObject];
-    if (!registrationString)
-        return nullptr;
-
-    NSURL *registrationURL = [NSURL URLWithString:registrationString];
-    if (!registrationURL)
-        return nullptr;
-
-    NSString *message = [enumerator nextObject];
-    if (!message)
-        return nullptr;
-
-    PushMessageForTesting pushMessage = { appIdentifier, registrationURL, message };
-    return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
 }
 
 int main(int, const char **)
@@ -83,16 +52,13 @@ int main(int, const char **)
     auto preferTestService = WebPushTool::PreferTestService::Yes;
     auto reconnect = WebPushTool::Reconnect::No;
     std::optional<WebPushTool::Action> action;
-    std::unique_ptr<PushMessageForTesting> pushMessage;
 
     @autoreleasepool {
         NSArray *arguments = [[NSProcessInfo processInfo] arguments];
         if (arguments.count == 1)
             printUsageAndTerminate(@"No arguments provided");
 
-        NSEnumerator<NSString *> *enumerator = [[arguments subarrayWithRange:NSMakeRange(1, arguments.count - 1)] objectEnumerator];
-        NSString *argument = [enumerator nextObject];
-        while (argument) {
+        for (NSString *argument in [arguments subarrayWithRange:NSMakeRange(1, arguments.count - 1)]) {
             if ([argument isEqualToString:@"--production"])
                 preferTestService = WebPushTool::PreferTestService::No;
             else if ([argument isEqualToString:@"--development"])
@@ -101,24 +67,15 @@ int main(int, const char **)
                 action = WebPushTool::Action::StreamDebugMessages;
             else if ([argument isEqualToString:@"--reconnect"])
                 reconnect = WebPushTool::Reconnect::Yes;
-            else if ([argument isEqualToString:@"--push"]) {
-                pushMessage = pushMessageFromArguments(enumerator);
-                if (!pushMessage)
-                    printUsageAndTerminate([NSString stringWithFormat:@"Invalid push arguments specified"]);
-            } else
+            else
                 printUsageAndTerminate([NSString stringWithFormat:@"Invalid option provided: %@", argument]);
-
-            argument = [enumerator nextObject];
         }
     }
 
-    if (!action && !pushMessage)
+    if (!action)
         printUsageAndTerminate(@"No action provided");
 
     auto connection = WebPushTool::Connection::create(*action, preferTestService, reconnect);
-    if (pushMessage)
-        connection->setPushMessage(WTFMove(pushMessage));
-
     connection->connectToService();
 
     CFRunLoopRun();

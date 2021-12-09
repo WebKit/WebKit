@@ -78,7 +78,6 @@
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
-- (void)setWildcardMessageHandler:(void (^)(NSString *))handler;
 @end
 
 @interface TestWKWebView : WKWebView
