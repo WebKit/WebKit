@@ -1,3 +1,43 @@
+2021-12-09  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Remove user gesture requirement for using platform authenticator on the web
+        https://bugs.webkit.org/show_bug.cgi?id=230893
+        <rdar://problem/79781342>
+
+        Reviewed by Brent Fulgham.
+
+        Modify layout tests to reflect new WebAuthn user gesture console message.
+
+        * http/wpt/credential-management/credentialscontainer-store-basics.https-expected.txt:
+        * http/wpt/webauthn/ctap-hid-failure.https-expected.txt:
+        * http/wpt/webauthn/ctap-hid-success.https-expected.txt:
+        * http/wpt/webauthn/ctap-nfc-failure.https-expected.txt:
+        * http/wpt/webauthn/idl.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt:
+
 2021-12-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Match :focus-visible on <select> elements

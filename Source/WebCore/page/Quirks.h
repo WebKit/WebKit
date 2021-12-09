@@ -147,10 +147,6 @@ public:
     StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
 #endif
 
-#if ENABLE(WEB_AUTHN)
-    WEBCORE_EXPORT bool shouldBypassUserGestureRequirementForWebAuthn() const;
-#endif
-
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
 #if ENABLE(IMAGE_ANALYSIS)
