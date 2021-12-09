@@ -116,7 +116,7 @@ static void setEligibleForSmartRouting(bool eligible)
     if (!AudioSession::shouldManageAudioSessionCategory())
         return;
 
-    auto *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (![session respondsToSelector:@selector(setEligibleForBTSmartRoutingConsideration:error:)]
         || ![session respondsToSelector:@selector(eligibleForBTSmartRoutingConsideration)])
         return;
@@ -171,7 +171,7 @@ void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
 void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens)
 {
 #if HAVE(AUDIOSESSION_PROCESSASSERTION)
-    auto session = [PAL::getAVAudioSessionClass() sharedInstance];
+    AVAudioSession session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (![session respondsToSelector:@selector(setAuditTokensForProcessAssertion:error:)])
         return;
 
@@ -244,7 +244,7 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy p
         m_lastSetPreferredAudioDeviceUID = emptyString();
 #endif
 
-    auto *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     auto *currentCategory = [session category];
     auto currentOptions = [session categoryOptions];
     auto currentPolicy = [session routeSharingPolicy];
